@@ -27,6 +27,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 
 // Defini si peux lire/modifier utilisateurs et permisssions
@@ -180,22 +181,12 @@ else
         $group = new UserGroup($db);
         $group->fetch($_GET["id"]);
 
-        /*
-         * Affichage onglets
-         */
-
-        $h = 0;
-
-        $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$group->id;
-        $head[$h][1] = $langs->trans("GroupCard");
-        $hselected=$h;
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$group->id;
-        $head[$h][1] = $langs->trans("GroupRights");
-        $h++;
-
-        dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$group->nom);
+		/*
+		 * Affichage onglets
+		 */
+		$head = group_prepare_head($group);
+	
+		dolibarr_fiche_head($head, 'group', $langs->trans("Group").": ".$group->nom);
 
 
         /*
@@ -212,12 +203,16 @@ else
          * Fiche en mode visu
          */
 
-        if ($_GET["action"] != 'edit') {
-
+        if ($_GET["action"] != 'edit')
+        {
             print '<table class="border" width="100%">';
+            
+            // Nom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
             print '<td width="75%" class="valeur">'.$group->nom.'</td>';
             print "</tr>\n";
+            
+            // Note
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">'.nl2br($group->note).'&nbsp;</td>';
             print "</tr>\n";

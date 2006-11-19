@@ -26,7 +26,7 @@
 
 /**
 		\file 		htdocs/lib/authldap.lib.php
-		\brief 		Librairie contenant les fonctions pour accèder au serveur LDAP
+		\brief 		Classe de gestion d'annuaire LDAP
 		\author 	Rodolphe Quiedeville
 		\author		Benoit Mortier
 		\author		Regis Houssin
@@ -545,8 +545,10 @@ class AuthLdap {
      * username. The search criteria is a standard LDAP query - * returns all
      * users.  The $attributeArray variable contains the required user detail field names
      */
-    function getUsers( $search, $attributeArray) {
-
+    function getUsers( $search, $attributeArray)
+    {
+		$userslist=array();
+		
         // Perform the search and get the entry handles
         
         // if the directory is AD, then bind first with the search user first
@@ -555,7 +557,7 @@ class AuthLdap {
         }
 
         $filter = '('.$this->filter.'('.$this->getUserIdentifier().'='.$search.'))';
-
+//print "zzz".$filter;
         $this->result = @ldap_search( $this->connection, $this->people, $filter);
         
         if (!$this->result)
@@ -592,16 +594,8 @@ class AuthLdap {
             }
         }
 
-        if ( !@asort( $userslist)) {
-            /* Sort into alphabetical order. If this fails, it's because there
-            ** were no results returned (array is empty) - so just return false.
-            */
-            $this->ldapErrorCode = -1;
-            $this->ldapErrorText = "No users found matching search criteria ".$search;
-            return false;
-        }
+        asort($userslist);
         return $userslist;
-
     }
     
     /**
@@ -649,22 +643,30 @@ class AuthLdap {
     }
     
 	/**
-	* \brief fonction de recherche avec filtre
-	* \param dn de recherche
-	* \param filtre de recherche (ex: sn=nom_personne)
+	* 	\brief 		Fonction de recherche avec filtre
+	* 	\param 		checkDn		DN de recherche
+	* 	\param 		filter		filtre de recherche (ex: sn=nom_personne)
+	*	\remarks	this->conneciton doit etre défini donc la methode bind ou authbind doit avoir deja été appelée
 	*/
-	function search( $checkDn, $filter) {
-	
+	function search($checkDn, $filter)
+	{
 		// Perform the search and get the entry handles
+		if ($this->serverType != "activedirectory")
+		{
+			$checkDn=utf8_decode($checkDn);
+		}
 	
+		dolibarr_syslog("authldap.lib::search checkDn=".$checkDn." filter=".$filer);
+		
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
 			$this->authBind($this->searchUser, $this->searchPassword);
 		}
 	
-		$this->result = @ldap_search( $this->connection, $checkDn, $filter);
+		
+		$this->result = @ldap_search($this->connection, $checkDn, $filter);
 	
-		$result = @ldap_get_entries( $this->connection, $this->result);
+		$result = @ldap_get_entries($this->connection, $this->result);
 
 		if (!$result)
 		{

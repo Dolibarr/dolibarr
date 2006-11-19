@@ -21,15 +21,15 @@
  */
 
 /**
-        \file       htdocs/contact/ldap.php
+        \file       htdocs/user/group/ldap.php
         \ingroup    ldap
-        \brief      Page fiche LDAP contact
+        \brief      Page fiche LDAP groupe
         \version    $Revision$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 $user->getrights('commercial');
@@ -46,49 +46,27 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-// Protection restriction commercial
-if ($contactid && ! $user->rights->commercial->client->voir)
-{
-    $sql = "SELECT sc.fk_soc, sp.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-    $sql .= " WHERE sp.idp = ".$contactid;
-    if (! $user->rights->commercial->client->voir && ! $socid)
-    {
-    	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-    }
-    if ($socid) $sql .= " AND sp.fk_soc = ".$socid;
-
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-    	if ($db->num_rows() == 0) accessforbidden();
-    }
-    else
-    {
-    	dolibarr_print_error($db);
-    }
-}
 
 
 /*
- *
- *
+ *	Affichage page
  */
 
 llxHeader();
 
 $form = new Form($db);
 
-$contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
+$fgroup = new Usergroup($db, $_GET["id"]);
+$fgroup->fetch($_GET["id"]);
+$fgroup->getrights();
 
 
 /*
  * Affichage onglets
  */
-$head = contact_prepare_head($contact);
+$head = group_prepare_head($fgroup);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
 
 
 
@@ -97,35 +75,23 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->first
  */
 print '<table class="border" width="100%">';
 
-if ($contact->socid > 0)
-{
-    $objsoc = new Societe($db);
-    $objsoc->fetch($contact->socid);
+// Nom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
+print '<td width="75%" class="valeur">'.$fgroup->nom.'</td>';
+print "</tr>\n";
 
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-}
-else
-{
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
-    print $langs->trans("ContactNotLinkedToCompany");
-    print '</td></tr>';
-}
-
-print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $form->civilite_name($contact->civilite_id);
-print '</td></tr>';
-
-print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
-
-print '</table>';
+// Note
+print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
+print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
+print "</tr>\n";
+print "</table>\n";
 
 print '</div>';
 
 print '<br>';
 
 
-print_titre($langs->trans("LDAPInformationsForThisContact"));
+print_titre($langs->trans("LDAPInformationsForThisGroup"));
 
 // Affichage attributs LDAP
 print '<table width="100%" class="noborder">';
@@ -154,8 +120,9 @@ if ($result)
 
 	if ($bind)
 	{
-		$info["cn"] = trim($contact->firstname." ".$contact->name);
-		$dn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
+//		$info["cn"] = $ldap->getUserIdentifier()."=".$fuser->uname;
+		$info["cn"] = trim($fgroup->nom);
+		$dn = "cn=".$info["cn"].",".$conf->global->LDAP_GROUP_DN;
 
 		$result=$ldap->search($dn,'(objectClass=*)');
 

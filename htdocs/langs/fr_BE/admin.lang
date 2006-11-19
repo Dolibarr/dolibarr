@@ -518,7 +518,6 @@ LDAPFieldLogin=Attribut login
 LDAPFieldLoginExample=Attribut par défaut: uid
 LDAPFilterConnection=Filtre de recherche
 LDAPFilterConnectionExample=Filtre par défaut : &(objectClass=user)(objectCategory=person)
-LDAPAttributes=Attributs LDAP
 LDAPFieldLoginSamba=Login
 LDAPFieldLoginSambaExample=Attribut par défaut: samaccountname (Samba and Active Directory)
 LDAPFieldName=Non

@@ -546,7 +546,6 @@ LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Suggested value : uid
 LDAPFilterConnection=Search filter
 LDAPFilterConnectionExample=Suggested value : &(objectClass=user)(objectCategory=person)
-LDAPAttributes=LDAP attributes
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Suggested value : samaccountname (Samba and ActiveDirectory)
 LDAPFieldName=Name

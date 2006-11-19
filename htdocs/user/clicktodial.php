@@ -27,7 +27,7 @@
 */
 
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT."/bookmark4u.class.php";
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
@@ -64,43 +64,13 @@ if ($_GET["id"])
     $fuser->fetch();
     $fuser->fetch_clicktodial();
 
-    $bk4u = new Bookmark4u($db);
-    $bk4u->get_bk4u_uid($fuser);
 
-    /*
-     * Affichage onglets
-     */
+	/*
+	 * Affichage onglets
+	 */
+	$head = user_prepare_head($fuser);
 
-    $h = 0;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserCard");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserRights");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserGUISetup");
-    $h++;
-
-    if ($conf->bookmark4u->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("Bookmark4u");
-        $h++;
-    }
-
-    if ($conf->clicktodial->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("ClickToDial");
-        $hselected=$h;
-        $h++;
-    }
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
+	dolibarr_fiche_head($head, 'clicktodial', $langs->trans("User").": ".$fuser->fullname);
 
     /*
      * Fiche en mode visu

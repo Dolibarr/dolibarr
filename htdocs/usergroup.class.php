@@ -423,7 +423,110 @@ class UserGroup
         }
 
    }
-   
+
+
+	/**
+	*   \brief      Mise à jour dans l'arbre LDAP
+	*   \param      user        Utilisateur qui effectue la mise à jour
+	*	\return		int			<0 si ko, >0 si ok
+	*/
+	function update_ldap($user)
+	{
+		global $conf, $langs;
+
+        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
+
+		$info = array();
+
+		dolibarr_syslog("UserGroup.class::update_ldap this->id=".$this->id,LOG_DEBUG);
+	
+		$ldap=new AuthLdap();
+		$result=$ldap->connect();
+		if ($result)
+		{
+			$bind='';
+			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			{
+				dolibarr_syslog("UserGroup.class::update_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+			}
+			else
+			{
+				dolibarr_syslog("UserGroup.class::update_ldap bind",LOG_DEBUG);
+				$bind=$ldap->bind();
+			}
+			if ($bind)
+			{
+				if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
+				{
+					$info["objectclass"]=array("top",
+											   "person",
+											   "organizationalPerson",
+											   "user");
+				}
+				else
+				{
+					$info["objectclass"]=array("top",
+											   "person",
+											   "organizationalPerson",
+											   "inetOrgPerson");
+				}	
+
+				// Champs obligatoires
+				$info["cn"] = trim($this->nom);
+				if ($this->nom) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
+				else
+				{
+					$langs->load("other");
+					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Name"));
+					return -1;
+				}
+				
+				// Champs optionnels
+				if ($this->note) $info["description"] = $this->note;
+
+				$info["uid"] = "Dolibarr ".$this->id;
+
+				$newdn = "cn=".$info["cn"].",".$conf->global->LDAP_GROUP_DN;
+				$olddn = $newdn;
+				if ($this->old_name) $olddn="cn=".trim($this->old_name).",".$conf->global->LDAP_CONTACT_DN;
+
+				// On supprime et on insère
+				dolibarr_syslog("UserGroup.class::update_ldap olddn=".$olddn." newdn=".$newdn);	
+
+				$result = $ldap->delete($olddn);
+				$result = $ldap->add($newdn, $info);
+				if ($result <= 0)
+				{
+					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
+					dolibarr_syslog("UserGroup.class::update_ldap ".$this->error,LOG_ERROR);	
+					//print_r($info);
+					return -1;
+				}
+				else
+				{
+					dolibarr_syslog("UserGroup.class::update_ldap rowid=".$this->id." added in LDAP");	
+				}
+
+				$ldap->unbind();
+
+				return 1;
+			}
+			else
+			{
+				$this->error = "Error ".ldap_errno($ldap->connection)." ".ldap_error($ldap->connection);
+				dolibarr_syslog("UserGroup.class::update_ldap bind failed",LOG_DEBUG);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error="Failed to connect to LDAP server !";
+			dolibarr_syslog("UserGroup.class::update_ldap Connexion failed",LOG_DEBUG);
+			return -1;
+		}
+	}
+	   
 }
 
 ?>

@@ -33,6 +33,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 
 // Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
@@ -50,7 +51,6 @@ if ($_GET["id"])
 	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
 	                || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
-
 if ($user->id <> $_GET["id"] && ! $canreadperms)
 {
     accessforbidden();
@@ -60,10 +60,10 @@ $langs->load("users");
 $langs->load("companies");
 $langs->load("ldap");
 
+$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 $form = new Form($db);
 
-$action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 
 /**
@@ -116,7 +116,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     }
 }
 
-//reactive un compte ldap
+// Reactive un compte ldap
 if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $candisableuser)
 {
     if ($_GET["id"] <> $user->id)
@@ -236,75 +236,75 @@ if ($_GET["action"] == 'removegroup' && $caneditfield)
     }
 }
 
-if ($_POST["action"] == 'update' && $caneditfield)
+if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 {
-    $message="";
+	$message="";
 
-    $db->begin();
+	$db->begin();
 
-    $edituser = new User($db, $_GET["id"]);
-    $edituser->fetch();
-    
-    $edituser->oldpass       = $edituser->pass;
+	$edituser = new User($db, $_GET["id"]);
+	$edituser->fetch();
 
-    $edituser->nom           = trim($_POST["nom"]);
-    $edituser->prenom        = trim($_POST["prenom"]);
-    $edituser->login         = trim($_POST["login"]);
-    $edituser->pass          = trim($_POST["pass"]);
-    $edituser->admin         = trim($_POST["admin"]);
-    $edituser->office_phone  = trim($_POST["office_phone"]);
-	  $edituser->office_fax    = trim($_POST["office_fax"]);
- 	  $edituser->user_mobile   = trim($_POST["user_mobile"]);
-    $edituser->email         = trim($_POST["email"]);
-    $edituser->note          = trim($_POST["note"]);
-    $edituser->webcal_login  = trim($_POST["webcal_login"]);
+	$edituser->oldpass       = $edituser->pass;
 
-    $ret=$edituser->update();
-    if ($ret < 0)
-    {
-        if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-        {
-            $message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-        }
-        else
-        {
-            $message.='<div class="error">'.$edituser->error.'</div>';
-        }
-    }
-    if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
-    {
-        $ret=$edituser->password($user,$password,$conf->password_encrypted,1);
-        if ($ret < 0)
-        {
-            $message.='<div class="error">'.$edituser->error.'</div>';
-        }
-    }
+	$edituser->nom           = trim($_POST["nom"]);
+	$edituser->prenom        = trim($_POST["prenom"]);
+	$edituser->login         = trim($_POST["login"]);
+	$edituser->pass          = trim($_POST["pass"]);
+	$edituser->admin         = trim($_POST["admin"]);
+	$edituser->office_phone  = trim($_POST["office_phone"]);
+	$edituser->office_fax    = trim($_POST["office_fax"]);
+	$edituser->user_mobile   = trim($_POST["user_mobile"]);
+	$edituser->email         = trim($_POST["email"]);
+	$edituser->note          = trim($_POST["note"]);
+	$edituser->webcal_login  = trim($_POST["webcal_login"]);
 
-    if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
-    {
-        // Si une photo est fournie avec le formulaire
-        if (! is_dir($conf->users->dir_output))
-        {
-            create_exdir($conf->users->dir_output);
-        }
-        if (is_dir($conf->users->dir_output))
-        {
-            $newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
-            if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
-            {
-                $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-            }
-        }
-    }
+	$ret=$edituser->update();
+	if ($ret < 0)
+	{
+		if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+		}
+		else
+		{
+			$message.='<div class="error">'.$edituser->error.'</div>';
+		}
+	}
+	if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
+	{
+		$ret=$edituser->password($user,$password,$conf->password_encrypted,1);
+		if ($ret < 0)
+		{
+			$message.='<div class="error">'.$edituser->error.'</div>';
+		}
+	}
 
-    if ($ret >= 0)
-    {
-        $message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
-        $db->commit();
-    } else
-    {
-        $db->rollback;
-    }
+	if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+	{
+		// Si une photo est fournie avec le formulaire
+		if (! is_dir($conf->users->dir_output))
+		{
+			create_exdir($conf->users->dir_output);
+		}
+		if (is_dir($conf->users->dir_output))
+		{
+			$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
+			if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+			{
+				$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+			}
+		}
+	}
+
+	if ($ret >= 0)
+	{
+		$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
+		$db->commit();
+	} else
+	{
+		$db->rollback;
+	}
 
 }
 
@@ -346,7 +346,9 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
 
 
 
-
+/*
+ * Affichage page
+ */
 
 llxHeader('',$langs->trans("UserCard"));
 
@@ -354,90 +356,108 @@ $html = new Form($db);
 
 if (($action == 'create') || ($action == 'adduserldap'))
 {
-    /* ************************************************************************** */
-    /*                                                                            */
-    /* Affichage fiche en mode création                                           */
-    /*                                                                            */
-    /* ************************************************************************** */
-
-    print_titre($langs->trans("NewUser"));
-    print "<br>";
-
+	/* ************************************************************************** */
+	/*                                                                            */
+	/* Affichage fiche en mode création                                           */
+	/*                                                                            */
+	/* ************************************************************************** */
+	
+	print_titre($langs->trans("NewUser"));
+	print "<br>";
+	
 	print $langs->trans("CreateInternalUserDesc");
-    print "<br>";
-    print "<br>";
+	print "<br>";
+	print "<br>";
+	
+	if ($message) { print $message.'<br>'; }
+	
+	/*
+	* Affiche formulaire d'ajout d'un compte depuis LDAP
+	* si on est en synchro LDAP vers Dolibarr
+	*/
+	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+	{
+		$name      = $conf->global->LDAP_FIELD_NAME;
+		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
+		$mail      = $conf->global->LDAP_FIELD_MAIL;
+		$phone     = $conf->global->LDAP_FIELD_PHONE;
+		$fax       = $conf->global->LDAP_FIELD_FAX;
+		$mobile    = $conf->global->LDAP_FIELD_MOBILE;
+		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+		$SID       = "objectsid";
 
-    if ($message) { print $message.'<br>'; }
-    
-    /*
-     * ajout utilisateur ldap
-     */
-     if ($conf->ldap->enabled)
-     {
-     	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-     	{     		
-     		$name      = $conf->global->LDAP_FIELD_NAME;
-     		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
-     		$mail      = $conf->global->LDAP_FIELD_MAIL;
-     		$phone     = $conf->global->LDAP_FIELD_PHONE;
-     		$fax       = $conf->global->LDAP_FIELD_FAX;
-     		$mobile    = $conf->global->LDAP_FIELD_MOBILE;
-     		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-     		$SID       = "objectsid";
-     		
-     		$ldap = new AuthLdap();
-     		
-     		if ($ldap->connect())
-     		{
-     			$justthese = array( $name, $firstname, $login);
-     			$ldapusers = $ldap->getUsers('*', $justthese);
-     			
-     			if ($ldapusers)
-     			{
-     				$html = new Form($db);
-     				
-     				foreach ($ldapusers as $key => $ldapuser)
-          	{
-       				if($ldapuser[$name] != "")
-          			$liste[$ldapuser[$login]] = utf8_decode($ldapuser[$name])." ".utf8_decode($ldapuser[$firstname]);
-          	}
-           
-           print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-           print '<input type="hidden" name="action" value="adduserldap">';
-           print $html->select_array('users', $liste, '', 1);
-           print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
-           print '</form>';
-           print "<br>";
-          }
-          
-          if ($action == 'adduserldap')
-          {
-          	$selecteduser = $_POST['users'];
-          	$justthese = array( $login,
-                                $name,
-                                $firstname,
-                                $mail,
-                                $phone,
-                                $fax,
-                                $mobile,
-                                $SID);
+		$ldap = new AuthLdap();
 
-          $selectedUser = $ldap->getUsers($selecteduser, $justthese);
-          
-          if ($selectedUser)
-          {
-          	foreach ($selectedUser as $key => $attribute)
-          	{
-					  	$ldap_nom    = utf8_decode($attribute[$name]?$attribute[$name]:'');
-					  	$ldap_prenom = utf8_decode($attribute[$firstname]?$attribute[$firstname]:'');
-					  	$ldap_login  = utf8_decode($attribute[$login]?$attribute[$login]:'');
-					  	$ldap_phone  = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
-					  	$ldap_fax    = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
-					  	$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
-					  	$ldap_mail   = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
-              $ldap_SID    = $attribute[$SID];
-              //$ldap_SID    = bin2hex($attribute[$SID]);
-          }
+		if ($ldap->connect())
+		{
+			$bind='';
+			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			{
+				dolibarr_syslog("user/fiche.php authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+			}
+			else
+			{
+				dolibarr_syslog("user/fiche.php bind",LOG_DEBUG);
+				$bind=$ldap->bind();
+			}
+			if ($bind)
+			{				
+				$justthese = array($name, $firstname, $login);
+				$ldapusers = $ldap->getUsers('*', $justthese);
+
+				//print "eee".$justthese." r ".$ldapusers;
+				//print_r($justthese);
+
+				foreach ($ldapusers as $key => $ldapuser)
+				{
+					if($ldapuser[$name] != "")
+					$liste[$ldapuser[$login]] = utf8_decode($ldapuser[$name])." ".utf8_decode($ldapuser[$firstname]);
+				}
+
+				print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+				print '<table><tr><td>';
+				print $langs->trans("LDAPUsers");
+				print '</td>';
+				print '<td>';
+				print '<input type="hidden" name="action" value="adduserldap">';
+				print $html->select_array('users', $liste, '', 1);
+				print '</td><td>';
+				print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
+				print '</td></tr></table>';
+				print '</form>';
+				print "<br>";
+	
+				// Action (a mettre dans actions)
+				if ($action == 'adduserldap')
+				{
+					$selecteduser = $_POST['users'];
+					$justthese = array( $login,
+					$name,
+					$firstname,
+					$mail,
+					$phone,
+					$fax,
+					$mobile,
+					$SID);
+	
+					$selectedUser = $ldap->getUsers($selecteduser, $justthese);
+	
+					if ($selectedUser)
+					{
+						foreach ($selectedUser as $key => $attribute)
+						{
+							$ldap_nom    = utf8_decode($attribute[$name]?$attribute[$name]:'');
+							$ldap_prenom = utf8_decode($attribute[$firstname]?$attribute[$firstname]:'');
+							$ldap_login  = utf8_decode($attribute[$login]?$attribute[$login]:'');
+							$ldap_phone  = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
+							$ldap_fax    = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
+							$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
+							$ldap_mail   = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
+							$ldap_SID    = $attribute[$SID];
+							//$ldap_SID    = bin2hex($attribute[$SID]);
+						}
+					}
 				}
 			}
 		}
@@ -446,158 +466,166 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			print $ldap->ldapErrorCode;
 			print $ldap->ldapErrorText;
 		}
-		if (!$ldap->close())
+		if (! $ldap->close())
 		{
 			print $ldap->ldapErrorCode;
 			print $ldap->ldapErrorText;
 		}
 	}
-}
-
-    print '<form action="fiche.php" method="post" name="createuser">';
-    print '<input type="hidden" name="action" value="add">';
-    if ($ldap_SID) print '<input type="hidden" name="ldap_sid" value="'.$ldap_SID.'">';
-
-    print '<table class="border" width="100%">';
-
-    print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
-    print '<td>';
-    if ($ldap_nom)
-    {
-    	print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
-    	print $ldap_nom;
-    }
-    else
-    {
-    	print '<input size="30" type="text" name="nom" value="">';
-    }
-    print '</td></tr>';
-
-    print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
-    print '<td>';
-    if ($ldap_prenom)
-    {
-    	print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
-    	print $ldap_prenom;
-    }
-    else
-    {
-    	print '<input size="30" type="text" name="prenom" value="">';
-    }
-    print '</td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
-    print '<td>';
-    if ($ldap_login)
-    {
-    	print '<input type="hidden" name="login" value="'.$ldap_login.'">';
-    	print $ldap_login;
-    }
-    else
-    {
-    	print '<input size="20" maxsize="24" type="text" name="login" value="">';
-    }
-    print '</td></tr>';
-
-    if (!$ldap_SID)
-    {
-    	$generated_password='';
-    	if ($conf->global->USER_PASSWORD_GENERATED)
-    	{
-    		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
-    		$nomfichier=$nomclass.".class.php";
-    		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
-    		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
-    		$genhandler=new $nomclass($db,$conf,$lang,$user);
-    		$generated_password=$genhandler->getNewGeneratedPassword();
-    	 }
-    	}
-    	
-    	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-    	print '<td>';
-    	if ($ldap_SID)
-    	{
-    		print 'mot de passe du domaine';
-    	}
-    	else
-    	{
-    		print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
-    	}
-    	print '</td></tr>';
-
-    if ($user->admin)
-    {
-        print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
-        print '<td>';
-        $form->selectyesnonum('admin',0);
-        print "</td></tr>\n";
-    }
-    
-    print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
-    print '<td>';
-    print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
-    print '</td></tr>';
-
-
-    print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
-    print '<td>';
-    if ($ldap_phone)
-    {
-    	print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
-    	print $ldap_phone;
-    }
-    else
-    {
-    	print '<input size="20" type="text" name="office_phone" value="">';
-    }
-    print '</td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
-    print '<td>';
-    if ($ldap_fax)
-    {
-    	print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
-    	print $ldap_fax;
-    }
-    else
-    {
-    	print '<input size="20" type="text" name="office_fax" value="">';
-    }
-    print '</td></tr>';
-
-    print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
-    print '<td>';
-    if ($ldap_mobile)
-    {
-    	print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
-    	print $ldap_mobile;
-    }
-    else
-    {
-    	print '<input size="20" type="text" name="user_mobile" value="">';
-    }
-    print '</td></tr>';
-
+	
+	print '<form action="fiche.php" method="post" name="createuser">';
+	print '<input type="hidden" name="action" value="add">';
+	if ($ldap_SID) print '<input type="hidden" name="ldap_sid" value="'.$ldap_SID.'">';
+	
+	print '<table class="border" width="100%">';
+	
+	// Nom
+	print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
+	print '<td>';
+	if ($ldap_nom)
+	{
+		print '<input type="hidden" name="nom" value="'.$ldap_nom.'">';
+		print $ldap_nom;
+	}
+	else
+	{
+		print '<input size="30" type="text" name="nom" value="">';
+	}
+	print '</td></tr>';
+	
+	// Prenom
+	print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
+	print '<td>';
+	if ($ldap_prenom)
+	{
+		print '<input type="hidden" name="prenom" value="'.$ldap_prenom.'">';
+		print $ldap_prenom;
+	}
+	else
+	{
+		print '<input size="30" type="text" name="prenom" value="">';
+	}
+	print '</td></tr>';
+	
+	// Login
+	print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
+	print '<td>';
+	if ($ldap_login)
+	{
+		print '<input type="hidden" name="login" value="'.$ldap_login.'">';
+		print $ldap_login;
+	}
+	else
+	{
+		print '<input size="20" maxsize="24" type="text" name="login" value="">';
+	}
+	print '</td></tr>';
+	
+	if (!$ldap_SID)
+	{
+		$generated_password='';
+		if ($conf->global->USER_PASSWORD_GENERATED)
+		{
+			$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+			$nomfichier=$nomclass.".class.php";
+			//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+			require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+			$genhandler=new $nomclass($db,$conf,$lang,$user);
+			$generated_password=$genhandler->getNewGeneratedPassword();
+		}
+	}
+	
+	// Mot de passe
+	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
+	print '<td>';
+	if ($ldap_SID)
+	{
+		print 'mot de passe du domaine';
+	}
+	else
+	{
+		print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+	}
+	print '</td></tr>';
+	
+	// Administrateur
+	if ($user->admin)
+	{
+		print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
+		print '<td>';
+		$form->selectyesnonum('admin',0);
+		print "</td></tr>\n";
+	}
+	
+	// Type
+	print '<tr><td valign="top">'.$langs->trans("Type").'</td>';
+	print '<td>';
+	print $html->textwithhelp($langs->trans("Internal"),$langs->trans("InternalExternalDesc"));
+	print '</td></tr>';
+	
+	// Tel
+	print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
+	print '<td>';
+	if ($ldap_phone)
+	{
+		print '<input type="hidden" name="office_phone" value="'.$ldap_phone.'">';
+		print $ldap_phone;
+	}
+	else
+	{
+		print '<input size="20" type="text" name="office_phone" value="">';
+	}
+	print '</td></tr>';
+	
+	// Fax
+	print '<tr><td valign="top">'.$langs->trans("Fax").'</td>';
+	print '<td>';
+	if ($ldap_fax)
+	{
+		print '<input type="hidden" name="office_fax" value="'.$ldap_fax.'">';
+		print $ldap_fax;
+	}
+	else
+	{
+		print '<input size="20" type="text" name="office_fax" value="">';
+	}
+	print '</td></tr>';
+	
+	// Tel portable
+	print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
+	print '<td>';
+	if ($ldap_mobile)
+	{
+		print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
+		print $ldap_mobile;
+	}
+	else
+	{
+		print '<input size="20" type="text" name="user_mobile" value="">';
+	}
+	print '</td></tr>';
+	
 	// EMail
-    print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
-    print '<td>';
-    if ($ldap_mail)
-    {
-    	print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
-    	print $ldap_mail;
-    }
-    else
-    {
-    	print '<input size="40" type="text" name="email" value="">';
-    }
-    print '</td></tr>';
-
-    print '<tr><td valign="top">';
-    print $langs->trans("Note");
-    print '</td><td>';
+	print '<tr><td valign="top">'.$langs->trans("EMail").'</td>';
+	print '<td>';
+	if ($ldap_mail)
+	{
+		print '<input type="hidden" name="email" value="'.$ldap_mail.'">';
+		print $ldap_mail;
+	}
+	else
+	{
+		print '<input size="40" type="text" name="email" value="">';
+	}
+	print '</td></tr>';
+	
+	// Note
+	print '<tr><td valign="top">';
+	print $langs->trans("Note");
+	print '</td><td>';
 	if ($conf->fckeditor->enabled)
 	{
-    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
 		$doleditor->Create();
 	}
@@ -606,18 +634,18 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
 		print '</textarea>';
 	}
-    print "</td></tr>\n";
-
-    // Autres caractéristiques issus des autres modules
-    if ($conf->webcal->enabled)
-    {
-        print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
-        print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
-    }
-
-    print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
-    print "</table>\n";
-    print "</form>";
+	print "</td></tr>\n";
+	
+	// Autres caractéristiques issus des autres modules
+	if ($conf->webcal->enabled)
+	{
+		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
+		print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+	}
+	
+	print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
+	print "</table>\n";
+	print "</form>";
 }
 else
 {
@@ -660,40 +688,12 @@ else
     		}
     	}
 
-        /*
-         * Affichage onglets
-         */
-
-        $h = 0;
-
-        $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("UserCard");
-        $hselected=$h;
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("UserRights");
-        $h++;
-
-        $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("UserGUISetup");
-        $h++;
-
-        if ($conf->bookmark4u->enabled)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-            $head[$h][1] = $langs->trans("Bookmark4u");
-            $h++;
-        }
-
-        if ($conf->clicktodial->enabled)
-        {
-            $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-            $head[$h][1] = $langs->trans("ClickToDial");
-            $h++;
-        }
-
-        dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
+		/*
+		 * Affichage onglets
+		 */
+		$head = user_prepare_head($fuser);
+	
+		dolibarr_fiche_head($head, 'user', $langs->trans("User").": ".$fuser->fullname);
 
 
         /*
@@ -749,9 +749,11 @@ else
         {
             print '<table class="border" width="100%">';
 
-            $rowspan=15;
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%">'.$fuser->nom.'</td>';
+            $rowspan=17;
+
+            // Ref
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+            print '<td width="50%">'.$fuser->id.'</td>';
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {
@@ -763,6 +765,12 @@ else
             }
             print '</td></tr>';
 
+            // Nom
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+            print '<td width="50%">'.$fuser->nom.'</td>';
+            print "</tr>\n";
+
+            // Prenom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td width="50%">'.$fuser->prenom.'</td>';
             print "</tr>\n";
@@ -1077,12 +1085,11 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<table width="100%" class="border">';
 
-            $rowspan=11;
+            $rowspan=13;
 
-            print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
             print '<td width="50%">';
-            if ($caneditfield) print '<input class="flat" size="30" type="text" name="nom" value="'.$fuser->nom.'">';
-            else print $fuser->nom;
+            print $fuser->id;
             print '</td>';
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
@@ -1102,6 +1109,14 @@ else
         	}
             print '</td></tr>';
 
+            // Nom
+            print "<tr>".'<td valign="top">'.$langs->trans("Name").'</td>';
+            print '<td>';
+            if ($caneditfield) print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
+            else print $fuser->nom;
+            print '</td></tr>';
+
+			// Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td>';
             if ($caneditfield) print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
@@ -1257,13 +1272,19 @@ else
             		else print $fuser->webcal_login;
             		print '</td></tr>';
             }
-            print '<tr><td align="center" colspan="3"><input value="'.$langs->trans("Save").'" class="button" type="submit"></td></tr>';
+
+            print '<tr><td align="center" colspan="3">';
+            print '<input value="'.$langs->trans("Save").'" class="button" type="submit" name="save">';
+            print ' &nbsp; ';
+            print '<input value="'.$langs->trans("Cancel").'" class="button" type="submit" name="cancel">';
+            print '</td></tr>';
 
             print '</table>';
             print '</form>';
+
+			print '</div>';
         }
 
-        print '</div>';
         $ldap->close;
     }
 }

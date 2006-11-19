@@ -114,8 +114,11 @@ class Contact
             // Fin appel triggers
 
 			// \todo	Mettre en trigger
-    	    $this->create_ldap($user);
-            
+        	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+        	{
+	    	    $this->create_ldap($user);
+    		}
+    		        
             return $this->id;
         }
         else
@@ -188,7 +191,10 @@ class Contact
             // Fin appel triggers
 
 			// \todo	Mettre en trigger
-    	    $this->update_ldap($user);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+        	{
+    	    	$this->update_ldap($user);
+    	    }
     	}
     	
 
@@ -257,7 +263,7 @@ class Contact
 
 	
 	/**
-	*   \brief      Mise à jour du contact dans l'arbre LDAP
+	*   \brief      Mise à jour dans l'arbre LDAP
 	*   \param      user        Utilisateur qui effectue la mise à jour
 	*	\return		int			<0 si ko, >0 si ok
 	*/
@@ -265,7 +271,7 @@ class Contact
 	{
 		global $conf, $langs;
 
-        if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
+        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
 
 		$info = array();
 
@@ -626,8 +632,9 @@ class Contact
     }
 
 	/*
-	*    \brief      Efface le contact de la base et éventuellement de l'annuaire LDAP
-	*    \param      id      id du contact a effacer
+	*   \brief      Efface le contact de la base et éventuellement de l'annuaire LDAP
+	*   \param      id      id du contact a effacer
+	*	\return		int		<0 si ko, >0 si ok
 	*/
 	function delete($id)
 	{
@@ -664,19 +671,22 @@ class Contact
         $result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
         // Fin appel triggers
 
-
 		// \todo	Mettre en trigger
-
-		// On modifie contact avec anciens noms
-	 	$savname=$this->name;
-	 	$savfirstname=$this->firstname;
-        $this->name=$this->old_name;
-        $this->firstname=$this->old_firstname;
-
-        $this->delete_ldap($user);
-
-        $this->name=$savname;
-        $this->firstname=$savfirstname;
+       	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+      	{
+			// On modifie contact avec anciens noms
+		 	$savname=$this->name;
+		 	$savfirstname=$this->firstname;
+	        $this->name=$this->old_name;
+	        $this->firstname=$this->old_firstname;
+	
+	        $this->delete_ldap($user);
+	
+	        $this->name=$savname;
+	        $this->firstname=$savfirstname;
+		}
+		
+		return 1;
 	}
 
   

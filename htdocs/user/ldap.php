@@ -21,15 +21,14 @@
  */
 
 /**
-        \file       htdocs/contact/ldap.php
+        \file       htdocs/user/ldap.php
         \ingroup    ldap
-        \brief      Page fiche LDAP contact
+        \brief      Page fiche LDAP utilisateur
         \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 $user->getrights('commercial');
@@ -46,49 +45,26 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-// Protection restriction commercial
-if ($contactid && ! $user->rights->commercial->client->voir)
-{
-    $sql = "SELECT sc.fk_soc, sp.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-    $sql .= " WHERE sp.idp = ".$contactid;
-    if (! $user->rights->commercial->client->voir && ! $socid)
-    {
-    	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;
-    }
-    if ($socid) $sql .= " AND sp.fk_soc = ".$socid;
-
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-    	if ($db->num_rows() == 0) accessforbidden();
-    }
-    else
-    {
-    	dolibarr_print_error($db);
-    }
-}
-
 
 /*
- *
- *
+ *	Affichage page
  */
 
 llxHeader();
 
 $form = new Form($db);
 
-$contact = new Contact($db);
-$contact->fetch($_GET["id"], $user);
+$fuser = new User($db, $_GET["id"]);
+$fuser->fetch();
+$fuser->getrights();
 
 
 /*
  * Affichage onglets
  */
-$head = contact_prepare_head($contact);
+$head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, 'ldap', $langs->trans("User").": ".$fuser->fullname);
 
 
 
@@ -97,26 +73,32 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->first
  */
 print '<table class="border" width="100%">';
 
-if ($contact->socid > 0)
-{
-    $objsoc = new Societe($db);
-    $objsoc->fetch($contact->socid);
+// Ref
+print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<td>'.$fuser->id.'</td>';
+print '</tr>';
 
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+// Nom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+print '<td>'.$fuser->nom.'</td>';
+print "</tr>\n";
+
+// Prenom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+print '<td>'.$fuser->prenom.'</td>';
+print "</tr>\n";
+
+// Login
+print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
+if ($fuser->ldap_sid)
+{
+	print '<td class="warning">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
 }
 else
 {
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
-    print $langs->trans("ContactNotLinkedToCompany");
-    print '</td></tr>';
+	print '<td>'.$fuser->login.'</td>';
 }
-
-print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
-print $form->civilite_name($contact->civilite_id);
-print '</td></tr>';
-
-print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+print '</tr>';
 
 print '</table>';
 
@@ -125,7 +107,7 @@ print '</div>';
 print '<br>';
 
 
-print_titre($langs->trans("LDAPInformationsForThisContact"));
+print_titre($langs->trans("LDAPInformationsForThisUser"));
 
 // Affichage attributs LDAP
 print '<table width="100%" class="noborder">';
@@ -154,8 +136,9 @@ if ($result)
 
 	if ($bind)
 	{
-		$info["cn"] = trim($contact->firstname." ".$contact->name);
-		$dn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
+//		$info["cn"] = $ldap->getUserIdentifier()."=".$fuser->uname;
+		$info["cn"] = trim($fuser->prenom." ".$fuser->nom);
+		$dn = "cn=".$info["cn"].",".$conf->global->LDAP_USER_DN;
 
 		$result=$ldap->search($dn,'(objectClass=*)');
 

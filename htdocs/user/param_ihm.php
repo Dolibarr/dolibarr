@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,8 +25,8 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("companies");
 $langs->load("products");
@@ -93,43 +93,12 @@ if ($_POST["action"] == 'update')
 llxHeader();
 
 
-
 /*
  * Affichage onglets
  */
+$head = user_prepare_head($fuser);
 
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-$head[$h][1] = $langs->trans("UserCard");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-$head[$h][1] = $langs->trans("UserRights");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
-$head[$h][1] = $langs->trans("UserGUISetup");
-$hselected=$h;
-$h++;
-
-if ($conf->bookmark4u->enabled)
-{
-    $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("Bookmark4u");
-    $h++;
-}
-
-if ($conf->clicktodial->enabled)
-{
-    $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("ClickToDial");
-    $h++;
-}
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
-
-
+dolibarr_fiche_head($head, 'guisetup', $langs->trans("User").": ".$fuser->fullname);
 
 
 if ($_GET["action"] == 'edit')

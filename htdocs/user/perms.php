@@ -28,8 +28,8 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
@@ -75,40 +75,13 @@ if ($_GET["id"])
     $fuser->fetch();
     $fuser->getrights();
 
-    /*
-     * Affichage onglets
-     */
+	/*
+	 * Affichage onglets
+	 */
+	$head = user_prepare_head($fuser);
 
-    $h = 0;
+	dolibarr_fiche_head($head, 'rights', $langs->trans("User").": ".$fuser->fullname);
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/fiche.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserCard");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/perms.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserRights");
-    $hselected=$h;
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/param_ihm.php?id='.$fuser->id;
-    $head[$h][1] = $langs->trans("UserGUISetup");
-    $h++;
-
-    if ($conf->bookmark4u->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/user/addon.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("Bookmark4u");
-        $h++;
-    }
-
-    if ($conf->clicktodial->enabled)
-    {
-        $head[$h][0] = DOL_URL_ROOT.'/user/clicktodial.php?id='.$fuser->id;
-        $head[$h][1] = $langs->trans("ClickToDial");
-        $h++;
-    }
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("User").": ".$fuser->fullname);
 
     $db->begin();
 

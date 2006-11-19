@@ -28,8 +28,8 @@
         \version    $Revision$
 */
 
-
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 $langs->load("users");
 
@@ -74,23 +74,13 @@ if ($_GET["id"])
     $fgroup->fetch($_GET["id"]);
     $fgroup->getrights();
 
-    /*
-     * Affichage onglets
-     */
+	/*
+	 * Affichage onglets
+	 */
+	$head = group_prepare_head($fgroup);
 
-    $h = 0;
+	dolibarr_fiche_head($head, 'rights', $langs->trans("Group").": ".$fgroup->nom);
 
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/fiche.php?id='.$fgroup->id;
-    $head[$h][1] = $langs->trans("GroupCard");
-    $h++;
-
-    $head[$h][0] = DOL_URL_ROOT.'/user/group/perms.php?id='.$fgroup->id;
-    $head[$h][1] = $langs->trans("GroupRights");
-    $hselected=$h;
-    $h++;
-
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("Group").": ".$fgroup->nom);
 
     $db->begin();
 
