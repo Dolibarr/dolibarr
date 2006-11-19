@@ -91,3 +91,4 @@ PublicMemberList=Liste des membres publiques
 BlankSubscriptionForm=Formulaire inscription
 MemberPublicLinks=Liens/pages publiques
 ExportDataset_member_1=Adhérentes et attributs
+LastMembers=Les %s derniers adhérents

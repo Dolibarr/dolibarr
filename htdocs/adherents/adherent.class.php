@@ -1408,6 +1408,31 @@ class Adherent
         return '';
     }
 
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$this->id.'">';
+		$lienfin='</a>';
+		
+		$picto='user';
+		$label=$langs->trans("ShowMember");
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+
 	/**
 	 *    	\brief      Retourne le libellé du statut d'un adhérent (brouillon, validé, résilié)
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
@@ -1419,11 +1444,13 @@ class Adherent
     }
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
- 	 *    	\param      statut      id statut
-	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
- 	 *    	\return     string      Libellé
- 	 */
+	*    	\brief      Renvoi le libellé d'un statut donné
+ 	*    	\param      statut      			Id statut
+	*		\param		need_subscription		1 si type adherent avec cotisation, 0 sinon
+	*		\param		date_end_subscription	Date fin adhésion
+	*    	\param      mode        			0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+ 	*    	\return     string      			Libellé
+ 	*/
     function LibStatut($statut,$need_subscription,$date_end_subscription,$mode=0)
     {
         global $langs;

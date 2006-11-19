@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,6 +183,55 @@ print "</table></form>";
 
 print '</td><td class="notopnoleftnoright" valign="top">';
 
+/*
+ * Dernières adherent
+ */
+$max=5;
+
+$sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
+$sql.= " ".$db->pdate("a.tms")." as datem,  ".$db->pdate("datefin")." as date_end_subscription,";
+$sql.= " ta.cotisation";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
+$sql.= " WHERE a.fk_adherent_type = ta.rowid";
+$sql.= " ORDER BY a.tms DESC";
+$sql.= $db->plimit($max, 0);
+
+$resql=$db->query($sql);
+if ($resql)
+{
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td colspan="3">'.$langs->trans("LastMembers",$max).'</td></tr>';
+
+    $num = $db->num_rows($resql);
+    if ($num)
+    {
+        $i = 0;
+        $var = True;
+        while ($i < $num)
+        {
+            $var=!$var;
+            $obj = $db->fetch_object($resql);
+            print "<tr $bc[$var]>";
+            $staticmember->id=$obj->rowid;
+            $staticmember->ref=trim($obj->prenom.' '.$obj->nom);
+            print '<td>'.$staticmember->getNomUrl(1).'</td>';
+            print '<td>'.dolibarr_print_date($obj->datem,'dayhour').'</td>';
+            print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$obj->date_end_subscription,5).'</td>';
+            print '</tr>';
+            $i++;
+        }
+    }
+    print "</table><br>";
+}
+else
+{
+	dolibarr_print_error($db);
+}
+
+
+
+// Tableau résumé par an
 $Total=array();
 $Number=array();
 $tot=0;
@@ -234,6 +283,11 @@ print "</table><br>\n";
 
 print '</td></tr>';
 print '</table>';
+
+
+
+
+
 
 $db->close();
 
