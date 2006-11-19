@@ -529,6 +529,7 @@ LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection
 LDAPTestSynchroContact=Test contact's synchronization
 LDAPTestSynchroUser=Test user's synchronization
+LDAPTestSynchroGroup=Test group's synchronization
 LDAPTestSynchroMember=Test member's synchronization
 LDAPSynchroOK=Synchronization test successful
 LDAPSynchroKO=Failed synchronization test

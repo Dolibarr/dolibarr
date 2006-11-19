@@ -1341,7 +1341,108 @@ class User
 			return -1;
 		}
 	}
+
+
+	/**
+	*	\brief      Mise à jour de l'arbre LDAP
+	*   \param      user        Utilisateur qui efface
+	*	\return		int			<0 si ko, >0 si ok
+	*/
+	function delete_ldap($user)
+	{
+		global $conf, $langs;
+
+        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
+
+		dolibarr_syslog("User.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
 	
+		$ldap=new AuthLdap();
+		$result=$ldap->connect();
+		if ($result)
+		{
+			$bind='';
+			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			{
+				dolibarr_syslog("User.class::delete_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+			}
+			else
+			{
+				dolibarr_syslog("User.class::delete_ldap bind",LOG_DEBUG);
+				$bind=$ldap->bind();
+			}
+			
+			if ($bind)
+			{
+				$info["cn"] = trim($this->prenom." ".$this->nom);
+				$dn = "cn=".$info["cn"].",".$conf->global->LDAP_USER_DN;
+				
+				$result=$ldap->delete($dn);
+				
+				return $result;
+			}
+		}
+		else
+		{
+			$this->error="Failed to connect to LDAP server !";
+			dolibarr_syslog("User.class::update_ldap Connexion failed",LOG_DEBUG);
+			return -1;
+		}
+	}
+	
+	
+	/**
+	 *		\brief		Initialise le user avec valeurs fictives aléatoire
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+
+		$this->nom='DOLIBARR';
+		$this->prenom='SPECIMEN';
+		$this->fullname=trim($this->prenom.' '.$this->nom);
+		$this->note='This is a note';
+		$this->code='DOSP';
+		$this->email='email@specimen.com';
+		$this->office_tel='0999999999';
+		$this->office_fax='0999999998';
+		$this->user_mobile='0999999997';
+		$this->admin=0;
+		$this->login='dolibspec';
+		$this->pass='dolibspec';
+		$this->datec=time();
+		$this->datem=time();
+		$this->webcal_login='dolibspec';
+
+		$this->datelastlogi=time();
+		$this->datepreviouslogin=time();
+		$this->statut=1;
+
+		$socid = rand(1, $num_socs);
+		$this->societe_id = $socids[$socid];
+	}	
 }
 
 ?>

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -20,14 +20,14 @@
  * $Source$
  */
 
-/**	  
+/**
 	 \file       htdocs/usergroup.class.php
 	 \brief      Fichier de la classe des groupes d'utilisateur
 	 \author     Rodolphe Qiedeville
 	 \version    $Revision$
 */
 
-/**    
+/**
        \class      UserGroup
        \brief      Classe permettant la gestion des groupes d'utilisateur
 */
@@ -35,7 +35,7 @@
 class UserGroup
 {
     var $db;
-    
+
     var $id;
     var $nom;
     var $note;
@@ -52,7 +52,7 @@ class UserGroup
     {
         $this->db = $DB;
         $this->id = $id;
-        
+
         return 0;
     }
 
@@ -64,19 +64,19 @@ class UserGroup
     function fetch($id)
     {
         $this->id = $id;
-    
+
         $sql  = "SELECT g.rowid, g.nom, g.note, g.datec, tms as datem";
         $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
         $sql .= " WHERE g.rowid = ".$this->id;
-    
+
         $result = $this->db->query($sql);
-    
+
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
-    
+
                 $this->id = $obj->rowid;
                 $this->nom  = $obj->nom;
                 $this->note = $obj->note;
@@ -84,16 +84,16 @@ class UserGroup
                 $this->datem = $obj->datem;
             }
             $this->db->free($result);
-    
+
         }
         else
         {
             dolibarr_syslog("UserGroup::Fetch Erreur");
         }
-    
+
     }
 
-  
+
   /**
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid         id du droit à ajouter
@@ -105,10 +105,10 @@ class UserGroup
     {
         $err=0;
         $whereforadd='';
-        
+
         $this->db->begin();
 
-        if ($rid) 
+        if ($rid)
         {
             // Si on a demandé ajout d'un droit en particulier, on récupère
             // les caractéristiques (module, perms et subperms) de ce droit.
@@ -116,7 +116,7 @@ class UserGroup
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
             $sql.=" id = '".$rid."'";
-       
+
             $result=$this->db->query($sql);
             if ($result) {
                 $obj = $this->db->fetch_object($result);
@@ -152,7 +152,7 @@ class UserGroup
             $sql = "SELECT id";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE $whereforadd";
-            
+
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -162,22 +162,22 @@ class UserGroup
                 {
                     $obj = $this->db->fetch_object($result);
                     $nid = $obj->id;
-       
+
                     $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=$nid";
                     if (! $this->db->query($sql)) $err++;
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_rights (fk_usergroup, fk_id) VALUES ($this->id, $nid)";
                     if (! $this->db->query($sql)) $err++;
-    
+
                     $i++;
                 }
             }
-            else 
+            else
             {
                 $err++;
                 dolibarr_print_error($this->db);
             }
         }
-    
+
         if ($err) {
             $this->db->rollback();
             return -$err;
@@ -186,7 +186,7 @@ class UserGroup
             $this->db->commit();
             return 1;
         }
-        
+
     }
 
 
@@ -201,10 +201,10 @@ class UserGroup
     {
         $err=0;
         $wherefordel='';
-        
+
         $this->db->begin();
 
-        if ($rid) 
+        if ($rid)
         {
             // Si on a demandé supression d'un droit en particulier, on récupère
             // les caractéristiques module, perms et subperms de ce droit.
@@ -212,7 +212,7 @@ class UserGroup
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
             $sql.=" id = '".$rid."'";
-       
+
             $result=$this->db->query($sql);
             if ($result) {
                 $obj = $this->db->fetch_object($result);
@@ -258,20 +258,20 @@ class UserGroup
                 {
                     $obj = $this->db->fetch_object($result);
                     $nid = $obj->id;
-       
+
                     $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights WHERE fk_usergroup = $this->id AND fk_id=$nid";
                     if (! $this->db->query($sql)) $err++;
-    
+
                     $i++;
                 }
             }
-            else 
+            else
             {
                 $err++;
                 dolibarr_print_error($this->db);
             }
         }
-    
+
         if ($err) {
             $this->db->rollback();
             return -$err;
@@ -282,7 +282,7 @@ class UserGroup
         }
 
     }
-    
+
 
   /**
    *    \brief      Charge dans l'objet group, la liste des permissions auquels le groupe a droit
@@ -333,7 +333,7 @@ class UserGroup
           // que les droits sont en cache (car tous chargés) pour cet instance de user
           $this->all_permissions_are_loaded=1;
         }
-        
+
     }
 
   /**
@@ -343,7 +343,7 @@ class UserGroup
   function delete()
   {
     $this->db->begin();
-    
+
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
     $sql .= " WHERE fk_usergroup = ".$this->id;
     $this->db->query($sql);
@@ -355,7 +355,7 @@ class UserGroup
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
     $sql .= " WHERE rowid = ".$this->id;
     $result=$this->db->query($sql);
-    if ($result) 
+    if ($result)
     {
         $this->db->commit();
 	    return 1;
@@ -439,7 +439,7 @@ class UserGroup
 		$info = array();
 
 		dolibarr_syslog("UserGroup.class::update_ldap this->id=".$this->id,LOG_DEBUG);
-	
+
 		$ldap=new AuthLdap();
 		$result=$ldap->connect();
 		if ($result)
@@ -457,7 +457,7 @@ class UserGroup
 			}
 			if ($bind)
 			{
-				if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
+				if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
 				{
 					$info["objectclass"]=array("top",
 											   "person",
@@ -470,7 +470,7 @@ class UserGroup
 											   "person",
 											   "organizationalPerson",
 											   "inetOrgPerson");
-				}	
+				}
 
 				// Champs obligatoires
 				$info["cn"] = trim($this->nom);
@@ -481,7 +481,7 @@ class UserGroup
 					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Name"));
 					return -1;
 				}
-				
+
 				// Champs optionnels
 				if ($this->note) $info["description"] = $this->note;
 
@@ -492,20 +492,20 @@ class UserGroup
 				if ($this->old_name) $olddn="cn=".trim($this->old_name).",".$conf->global->LDAP_CONTACT_DN;
 
 				// On supprime et on insère
-				dolibarr_syslog("UserGroup.class::update_ldap olddn=".$olddn." newdn=".$newdn);	
+				dolibarr_syslog("UserGroup.class::update_ldap olddn=".$olddn." newdn=".$newdn);
 
 				$result = $ldap->delete($olddn);
 				$result = $ldap->add($newdn, $info);
 				if ($result <= 0)
 				{
 					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
-					dolibarr_syslog("UserGroup.class::update_ldap ".$this->error,LOG_ERROR);	
+					dolibarr_syslog("UserGroup.class::update_ldap ".$this->error,LOG_ERROR);
 					//print_r($info);
 					return -1;
 				}
 				else
 				{
-					dolibarr_syslog("UserGroup.class::update_ldap rowid=".$this->id." added in LDAP");	
+					dolibarr_syslog("UserGroup.class::update_ldap rowid=".$this->id." added in LDAP");
 				}
 
 				$ldap->unbind();
@@ -526,7 +526,71 @@ class UserGroup
 			return -1;
 		}
 	}
-	   
+
+	/**
+	*	\brief      Mise à jour de l'arbre LDAP
+	*   \param      user        Utilisateur qui efface
+	*	\return		int			<0 si ko, >0 si ok
+	*/
+	function delete_ldap($user)
+	{
+		global $conf, $langs;
+
+        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
+
+		dolibarr_syslog("UserGroup.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
+
+		$ldap=new AuthLdap();
+		$result=$ldap->connect();
+		if ($result)
+		{
+			$bind='';
+			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			{
+				dolibarr_syslog("UserGroup.class::delete_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+			}
+			else
+			{
+				dolibarr_syslog("UserGroup.class::delete_ldap bind",LOG_DEBUG);
+				$bind=$ldap->bind();
+			}
+
+			if ($bind)
+			{
+				$info["cn"] = trim($this->nom);
+				$dn = "cn=".$info["cn"].",".$conf->global->LDAP_GROUP_DN;
+
+				$result=$ldap->delete($dn);
+
+				return $result;
+			}
+		}
+		else
+		{
+			$this->error="Failed to connect to LDAP server !";
+			dolibarr_syslog("UserGroup.class::update_ldap Connexion failed",LOG_DEBUG);
+			return -1;
+		}
+	}
+
+	/**
+	 *		\brief		Initialise le groupe avec valeurs fictives aléatoire
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+
+		$this->nom='DOLIBARR GROUP SPECIMEN';
+		$this->note='This is a note';
+	    $this->datec=time();
+	    $this->datem=time();
+	}
 }
 
 ?>

@@ -41,20 +41,22 @@ English Dolibarr changelog
 - Save and show last connexion date for users.
 - Enhancements on a lot of forms for better ergonomy.
 - Can add/remove company logo.
+- Added LDAP synchronisation for users, groups and/or contacts.
 - Can configure your own SMTP server/port for mail sendings.
 - Works even on "UTF8 by default" systems (Mysql, Linux...)
 - Better compatibility with different PHP version or setup.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
 - Added mysqli driver.
-- Traduction more complete.
 - Add a WISIWYG editor (FCKEditor) to edit note and comment areas.
+- Added AJAX features like a 'search product selector'.
+- Modules boxes on main page can be dragged and dropped (with firefox only).
 - Support for PHP5.
 - Removed obsolete files and documentation.
+- Traduction more complete.
 - Added admin tools (backup and files purge).
 - Added a tool to build a lang package.
 - Added a tool to build a module package.
 - Added a tool to build a theme package.
-- Modules boxes on main page can be dragged and dropped (with firefox only).
 
 
 

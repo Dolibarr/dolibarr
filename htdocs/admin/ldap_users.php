@@ -31,6 +31,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 $langs->load("admin");
@@ -206,6 +208,71 @@ print '</div>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
+/*
+ * Test de la connexion
+ */
+if (function_exists("ldap_connect"))
+{
+	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+	{
+		print '<br>';
+		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testuser">'.$langs->trans("LDAPTestSynchroUser").'</a>';
+		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testgroup">'.$langs->trans("LDAPTestSynchroGroup").'</a>';
+		print '<br><br>';
+	}
+
+	if ($_GET["action"] == 'testuser')
+	{
+		// Creation contact
+		$fuser=new User($db);
+		$fuser->initAsSpecimen();
+
+		// Test synchro
+		//$result1=$fuser->delete_ldap($user);
+		$result2=$fuser->update_ldap($user);
+		$result3=$fuser->delete_ldap($user);
+	
+		if ($result2 > 0)
+		{
+			print img_picto('','info').' ';
+			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+		}
+		else
+		{
+			print img_picto('','error').' ';
+			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$fuser->error;
+			print '</font><br>';
+		}
+
+	}
+
+	if ($_GET["action"] == 'testgroup')
+	{
+		// Creation contact
+		$fgroup=new UserGroup($db);
+		$fgroup->initAsSpecimen();
+
+		// Test synchro
+		//$result1=$fgroup->delete_ldap($user);
+		$result2=$fgroup->update_ldap($user);
+		$result3=$fgroup->delete_ldap($user);
+	
+		if ($result2 > 0)
+		{
+			print img_picto('','info').' ';
+			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+		}
+		else
+		{
+			print img_picto('','error').' ';
+			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$fgroup->error;
+			print '</font><br>';
+		}
+
+	}
+}
 
 $db->close();
 

@@ -211,7 +211,7 @@ class Contact
 	{
 		global $conf, $langs;
 
-        if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
+        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
 
 		dolibarr_syslog("Contact.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
 	
@@ -233,7 +233,7 @@ class Contact
 			
 			if ($bind)
 			{
-				$info["cn"] = utf8_encode(trim($this->firstname." ".$this->name));
+				$info["cn"] = trim($this->firstname." ".$this->name);
 				$dn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
 				
 				$result=$ldap->delete($dn);

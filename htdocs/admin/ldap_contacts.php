@@ -210,7 +210,8 @@ if (function_exists("ldap_connect"))
 	if ($conf->global->LDAP_SERVER_HOST)
 	{
 		print '<br>';
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a><br><br>';
+		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+		print '<br><br>';
 	}
 
 	if ($_GET["action"] == 'test')
@@ -220,7 +221,7 @@ if (function_exists("ldap_connect"))
 		$contact->initAsSpecimen();
 
 		// Test synchro
-		$result1=$contact->delete_ldap($user);
+		//$result1=$contact->delete_ldap($user);
 		$result2=$contact->update_ldap($user);
 		$result3=$contact->delete_ldap($user);
 	
