@@ -36,9 +36,19 @@ function contact_prepare_head($contrat)
 	$head = array();
 	
 	$head[$h][0] = DOL_URL_ROOT.'/contact/fiche.php?id='.$_GET["id"];
-	$head[$h][1] = $langs->trans("General");
+	$head[$h][1] = $langs->trans("Card");
 	$head[$h][2] = 'general';
 	$h++;
+	
+	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+	{
+		$langs->load("ldap");
+		
+		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$_GET["id"];
+		$head[$h][1] = $langs->trans("LDAPCard");
+		$head[$h][2] = 'ldap';
+		$h++;
+	}
 	
 	$head[$h][0] = DOL_URL_ROOT.'/contact/perso.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("PersonalInformations");
@@ -49,14 +59,6 @@ function contact_prepare_head($contrat)
 	$head[$h][1] = $langs->trans("ExportImport");
 	$head[$h][2] = 'exportimport';
 	$h++;
-	
-	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
-	{
-		$head[$h][0] = DOL_URL_ROOT.'/contact/ldap.php?id='.$_GET["id"];
-		$head[$h][1] = $langs->trans("LDAP");
-		$head[$h][2] = 'ldap';
-		$h++;
-	}
 	
 	$head[$h][0] = DOL_URL_ROOT.'/contact/info.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans("Info");
