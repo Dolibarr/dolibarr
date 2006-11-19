@@ -53,7 +53,7 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
  * 	Actions
  */
 
-if ($_POST["action"] == 'sendinfo')
+if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 {
     $adh = new Adherent($db);
     $adh->id = $rowid;
@@ -115,7 +115,7 @@ if ($_POST["action"] == 'cotisation')
     }
 }
 
-if ($action == 'update')
+if ($_REQUEST["action"] == 'update')
 {
 	if ($_POST["bouton"] == $langs->trans("Save"))
 	{
@@ -680,6 +680,13 @@ if ($rowid && $action != 'edit')
     if ($action == 'valid')
     {
         $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid");
+        print '<br>';
+    }
+
+    // Confirmation de l'envoi fiche par mail
+    if ($action == 'sendinfo')
+    {
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("SendCardByMail"),$langs->trans("ConfirmSendCardByMail"),"confirm_sendinfo");
         print '<br>';
     }
 
