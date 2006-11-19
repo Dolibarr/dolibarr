@@ -66,8 +66,9 @@ if ($resql)
 		print $langs->trans("UpdateContact")." rowid=".$obj->rowid;
 
 		$contact = new Contact($db);
-
 		$contact->id = $obj->rowid;
+		$contact->fetch($contact->id);
+		
 		$result=$contact->update_ldap($user);
 		if ($result > 0)
 		{

@@ -2107,8 +2107,8 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
 
 /**
  *   \brief   Retourne le numéro de la semaine par rapport a une date
- *   \param   time   date au format 'timestamp'
- *   \return  Numéro de semaine
+ *   \param   time   	Date au format 'timestamp'
+ *   \return  int		Numéro de semaine
  */
 function numero_semaine($time)
 {
@@ -2183,6 +2183,16 @@ function numero_semaine($time)
     //echo $jour."-".$mois."-".$annee." (".date("d-m-Y",$premierJeudiAnnee)." - ".date("d-m-Y",$jeudiSemaine).") -> ".$numeroSemaine."<BR>";
 
     return sprintf("%02d",$numeroSemaine);
+}
+
+
+/**
+ *   \brief   Retourne le picto champ obligatoire
+ *   \return  string		Chaine avec picto obligatoire
+ */
+function picto_required()
+{
+	return '<b>*</b>';
 }
 
 ?>

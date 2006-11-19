@@ -527,6 +527,11 @@ LDAPDnContactActiveExample=Activated/Unactivated synchronization
 LDAPContactDn=Dolibarr contacts' DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection
+LDAPTestSynchroContact=Test contact's synchronization
+LDAPTestSynchroUser=Test user's synchronization
+LDAPTestSynchroMember=Test member's synchronization
+LDAPSynchroOK=Synchronization test successful
+LDAPSynchroKO=Failed synchronization test
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
 LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s)

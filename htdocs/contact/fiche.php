@@ -30,6 +30,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
@@ -608,7 +609,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 
 	// Historique des actions sur ce contact
-	print_titre ($langs->trans("TasksHistoryForThisContact"));
+	print_titre($langs->trans("TasksHistoryForThisContact"));
 	$histo=array();
 	$numaction = 0 ;
 
@@ -680,11 +681,12 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Date").'</td>';
-	print '<td align="center">'.$langs->trans("Status").'</td>';
 	print '<td>'.$langs->trans("Actions").'</td>';
 	print '<td>'.$langs->trans("Comments").'</td>';
-	print '<td>'.$langs->trans("Author").'</td></tr>';
-
+	print '<td>'.$langs->trans("Author").'</td>';
+	print '<td align="center">'.$langs->trans("Status").'</td>';
+	print '</tr>';
+	
 	foreach ($histo as $key=>$value)
 	{
 		$var=!$var;
@@ -692,14 +694,6 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 		// Date
 		print "<td>". dolibarr_print_date($histo[$key]['date'],"%d %b %Y %H:%M") ."</td>";
-
-		// Status/Percent
-		if ($histo[$key]['percent'] < 100) {
-			print "<td align=\"center\">".$histo[$key]['percent']."%</td>";
-		}
-		else {
-			print "<td align=\"center\">".$langs->trans("Done")."</td>";
-		}
 
 		// Action
 		print '<td>';
@@ -732,6 +726,13 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		}
 		else print "&nbsp;";
 		print "</td>";
+
+		// Status/Percent
+		print '<td align="right">';
+		$actionstatic=new ActionComm($db);
+		print $actionstatic->LibStatut($histo[$key]['percent'],5);
+		print '</td>';
+		
 		print "</tr>\n";
 	}
 	print "</table>";

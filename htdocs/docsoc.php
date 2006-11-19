@@ -168,7 +168,7 @@ if ($socid > 0)
 
 	    // Affiche formulaire upload
 		$html=new Form($db);
-		$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),1);
+		$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),0);
 
         // Affiche liste des documents existant
         print_titre($langs->trans("AttachedFiles"));

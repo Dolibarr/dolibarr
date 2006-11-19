@@ -28,15 +28,6 @@
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
-        \remarks    Exemple configuration :
-                    LDAP_SERVER_HOST    Serveur LDAP		      192.168.1.50
-                    LDAP_SERVER_PORT    Port LDAP             389
-                    LDAP_ADMIN_DN       Administrateur LDAP	  cn=adminldap,dc=societe,dc=com	
-                    LDAP_ADMIN_PASS     Mot de passe		      xxxxxxxx
-                    LDAP_USER_DN        DN des utilisateurs	  ou=users,dc=societe,dc=com
-                    LDAP_GROUP_DN       DN des groupes		    ou=groups,dc=societe,dc=com	
-                    LDAP_CONTACT_DN     DN des contacts		    ou=contacts,dc=societe,dc=com
-                    LDAP_SERVER_TYPE    Type				          Openldap
 */
 
 require("./pre.inc.php");
@@ -141,19 +132,19 @@ print "</tr>\n";
 
 // DN Pour les utilisateurs
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPUserDn").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPUserDn").picto_required().'</b></td><td>';
 print '<input size="38" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td></tr>';
 
 // DN pour les groupes
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPGroupDn").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPGroupDn").picto_required().'</b></td><td>';
 print '<input size="38" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td></tr>';
 
 // Filtre de connexion
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
 print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
 print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td></tr>';
 
@@ -171,7 +162,7 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td></tr>';
 
 // Name
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFieldName").picto_required().'</b></td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td></tr>';
 
@@ -205,8 +196,8 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMobile").'</td><td>';
 print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->LDAP_FIELD_MOBILE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
 
-
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
 
 print '</form>';

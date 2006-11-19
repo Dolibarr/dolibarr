@@ -28,19 +28,11 @@
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
-        \remarks    Exemple configuration :
-                    LDAP_SERVER_HOST    Serveur LDAP		      192.168.1.50
-                    LDAP_SERVER_PORT    Port LDAP             389
-                    LDAP_ADMIN_DN       Administrateur LDAP	  cn=adminldap,dc=societe,dc=com	
-                    LDAP_ADMIN_PASS     Mot de passe		      xxxxxxxx
-                    LDAP_USER_DN        DN des utilisateurs	  ou=users,dc=societe,dc=com
-                    LDAP_GROUP_DN       DN des groupes		    ou=groups,dc=societe,dc=com	
-                    LDAP_CONTACT_DN     DN des contacts		    ou=contacts,dc=societe,dc=com
-                    LDAP_SERVER_TYPE    Type				          Openldap
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("admin");
 
@@ -137,13 +129,13 @@ $html=new Form($db);
 
 // DN Pour les contacts
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPContactDn").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPContactDn").picto_required().'</b></td><td>';
 print '<input size="38" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td></tr>';
 
 // Name
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldName").'</td><td>';
+print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFieldName").picto_required().'</b></td><td>';
 print '<input size="25" type="text" name="fieldname" value="'.$conf->global->LDAP_FIELD_NAME.'">';
 print '</td><td>'.$langs->trans("LDAPFieldNameExample").'</td></tr>';
 
@@ -179,7 +171,8 @@ print '<input size="25" type="text" name="fieldmobile" value="'.$conf->global->L
 print '</td><td>'.$langs->trans("LDAPFieldMobileExample").'</td></tr>';
 
 
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
 
 print '</form>';
@@ -187,6 +180,44 @@ print '</form>';
 print '</div>';
 
 print info_admin($langs->trans("LDAPDescValues"));
+
+/*
+ * Test de la connexion
+ */
+if (function_exists("ldap_connect"))
+{
+	if ($conf->global->LDAP_SERVER_HOST)
+	{
+		print '<br>';
+		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a><br><br>';
+	}
+
+	if ($_GET["action"] == 'test')
+	{
+		// Creation contact
+		$contact=new Contact($db);
+		$contact->initAsSpecimen();
+
+		// Test synchro
+		$result1=$contact->delete_ldap($user);
+		$result2=$contact->update_ldap($user);
+		$result3=$contact->delete_ldap($user);
+	
+		if ($result2 > 0)
+		{
+			print img_picto('','info').' ';
+			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+		}
+		else
+		{
+			print img_picto('','error').' ';
+			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$contact->error;
+			print '</font><br>';
+		}
+
+	}
+}
 
 $db->close();
 

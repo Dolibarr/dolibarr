@@ -28,15 +28,6 @@
 		\ingroup    ldap
 		\brief      Page d'administration/configuration du module Ldap
 		\version    $Revision$
-        \remarks    Exemple configuration :
-                    LDAP_SERVER_HOST    Serveur LDAP		      192.168.1.50
-                    LDAP_SERVER_PORT    Port LDAP             389
-                    LDAP_ADMIN_DN       Administrateur LDAP	  cn=adminldap,dc=societe,dc=com	
-                    LDAP_ADMIN_PASS     Mot de passe		      xxxxxxxx
-                    LDAP_USER_DN        DN des utilisateurs	  ou=users,dc=societe,dc=com
-                    LDAP_GROUP_DN       DN des groupes		    ou=groups,dc=societe,dc=com	
-                    LDAP_CONTACT_DN     DN des contacts		    ou=contacts,dc=societe,dc=com
-                    LDAP_SERVER_TYPE    Type				          Openldap
 */
 
 require("./pre.inc.php");
@@ -251,8 +242,8 @@ print '</td><td>'.$langs->trans("LDAPServerUseTLSExample").'</td></tr>';
 
 
 
-
-print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
+$var=!$var;
+print '<tr '.$bc[$var].'><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
 
 print '</form>';
