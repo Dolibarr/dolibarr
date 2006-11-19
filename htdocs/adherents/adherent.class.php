@@ -35,6 +35,8 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
+
 
 /**
         \class      Adherent
