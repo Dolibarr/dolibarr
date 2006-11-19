@@ -3,7 +3,7 @@
 # Use this sample to add a ou "contacts"
 # This is the second thing to create after creating the root my-domain
 #
-# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapadd_sample1.txt
+# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapadd_sample2.txt
 
 dn: ou=contacts,dc=my-domain,dc=com
 objectClass: organizationalUnit

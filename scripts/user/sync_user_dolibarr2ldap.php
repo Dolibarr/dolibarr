@@ -21,9 +21,9 @@
  */
 
 /**
-        \file       scripts/company/sync_contacts_dolibarr2ldap.php
+        \file       scripts/user/sync_user_dolibarr2ldap.php
         \ingroup    ldap company
-        \brief      Script de mise a jour des contacts dans LDAP depuis base Dolibarr
+        \brief      Script de mise a jour des users dans LDAP depuis base Dolibarr
 */
 
 // Test si mode batch
@@ -56,15 +56,15 @@ $error=0;
 print "***** $script_file ($version) *****\n";
 
 /*
-if (! $conf->global->LDAP_CONTACT_ACTIVE)
+if (! $conf->global->LDAP_SYNCHRO_ACTIVE)
 {
 	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
 	exit 1;	
 }
 */
 
-$sql = "SELECT idp as rowid";
-$sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
+$sql = "SELECT rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."user";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -76,13 +76,13 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-		$contact = new Contact($db);
-		$contact->id = $obj->rowid;
-		$contact->fetch($contact->id);
+		$fuser = new User($db);
+		$fuser->id = $obj->rowid;
+		$fuser->fetch();
 		
-		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->fullname;
+		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
 
-		$result=$contact->update_ldap($user);
+		$result=$fuser->update_ldap($user);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");
@@ -90,7 +90,7 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$contact->error;
+			print " - ".$langs->trans("KO").' - '.$fuser->error;
 		}
 		print "\n";
 
