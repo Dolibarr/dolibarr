@@ -634,7 +634,8 @@ class UserGroup
 
 		// Champs
 		if ($this->nom && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->nom;
-		if ($this->note) $info["description"] = $this->note;
+		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 
 		return $info;
 	}
