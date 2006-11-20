@@ -368,39 +368,56 @@ class UserGroup
     }
   }
 
-  /**
-   *        \brief      Crée un groupe en base
-   *        \return     si erreur <0, si ok renvoie id groupe créé
-   */
-  	function create()
-  	{
-    $sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
-    $sql .= " VALUES(now(),'".addslashes($this->nom)."')";
+	/**
+	*        \brief      Crée un groupe en base
+	*        \return     si erreur <0, si ok renvoie id groupe cr
+	*/
+	function create()
+	{
+		global $conf,$langs;
+		
+		$sql = "INSERT into ".MAIN_DB_PREFIX."usergroup (datec,nom)";
+		$sql .= " VALUES(now(),'".addslashes($this->nom)."')";
+	
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$table =  "".MAIN_DB_PREFIX."usergroup";
+			$this->id = $this->db->last_insert_id($table);
+	
+			if ($this->update(1) < 0) return -2;
+	
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('GROUP_CREATE',$this,$user,$lang,$conf);
+			if ($result < 0) $error++;
+			// Fin appel triggers
+	
+			// \todo	Mettre en trigger
+			if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+			{
+				$this->create_ldap($user);
+			}
+	
+			return $this->id;
+		}
+		else
+		{
+			dolibarr_syslog("UserGroup::Create");
+			return -1;
+		}
+	}
 
-    $result=$this->db->query($sql);
-    if ($result)
+
+	/**
+	*    \brief      Mise à jour en base d'un utilisateur
+	*    \return     <0 si echec, >=0 si ok
+	*/
+  	function update($notrigger=0)
     {
-        $table =  "".MAIN_DB_PREFIX."usergroup";
-        $this->id = $this->db->last_insert_id($table);
-
-        if ($this->update() < 0) return -2;
-
-        return $this->id;
-    }
-    else
-    {
-        dolibarr_syslog("UserGroup::Create");
-        return -1;
-    }
-  }
-
-
-  /**
-   *    \brief      Mise à jour en base d'un utilisateur
-   *    \return     <0 si echec, >=0 si ok
-   */
-  	function update()
-    {
+		global $conf, $langs;
+		
         $sql = "UPDATE ".MAIN_DB_PREFIX."usergroup SET ";
         $sql .= " nom = '".addslashes($this->nom)."',";
         $sql .= " note = '".addslashes($this->note)."'";
@@ -412,6 +429,24 @@ class UserGroup
         {
             if ($this->db->affected_rows())
             {
+
+				if (! $notrigger)
+				{
+                    // Appel des triggers
+                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                    $interface=new Interfaces($this->db);
+                    $result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$lang,$conf);
+                    if ($result < 0) $error++;
+                    // Fin appel triggers
+
+
+					// \todo	Mettre en trigger
+		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+		        	{
+			    	    $this->update_ldap($user);
+		    		}
+				}
+				
                 return 1;
             }
             return 0;

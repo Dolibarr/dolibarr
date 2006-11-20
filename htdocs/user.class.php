@@ -579,7 +579,7 @@ class User
      */
     function create()
     {
-        global $langs;
+        global $conf,$langs;
     
         // Nettoyage parametres
         $this->login = trim($this->login);
@@ -632,6 +632,12 @@ class User
                     if ($result < 0) $error++;
                     // Fin appel triggers
     
+					// \todo	Mettre en trigger
+		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+		        	{
+			    	    $this->create_ldap($user);
+		    		}
+
                     if (! $error)
                     {
                         $this->db->commit();
@@ -776,9 +782,7 @@ class User
    */
   	function update($create=0)
     {
-        global $langs;
-        
-        
+        global $conf,$langs;
         
         // Nettoyage parametres
         $this->nom=trim($this->nom);
@@ -817,10 +821,10 @@ class User
         $sql .= ", note = '".addslashes($this->note)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
-        $result = $this->db->query($sql);
-        if ($result)
+        $resql = $this->db->query($sql);
+        if ($resql)
         {
-            if ($this->db->affected_rows())
+            if ($this->db->affected_rows($resql))
             {
                 if (! $create)
                 {
@@ -830,6 +834,12 @@ class User
                     $result=$interface->run_triggers('USER_MODIFY',$this,$user,$lang,$conf);
                     if ($result < 0) $error++;
                     // Fin appel triggers
+
+					// \todo	Mettre en trigger
+		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+		        	{
+			    	    $this->update_ldap($user);
+		    		}
                 }
                 
                 return 1;
