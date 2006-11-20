@@ -116,19 +116,23 @@ print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
 
 // Nom
-print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td></tr>';
 
 // Prenom
-print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+$langs->load("admin");
 
 // LDAP DN
-$langs->load("admin");
-print '<tr><td>'.$langs->trans("LDAPContactDn").'*</td><td class="valeur">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
+
+// LDAP Clé
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>'.$langs->trans("LDAPPrimaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPSecondaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPServerPort").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
 print '</table>';
 

@@ -109,7 +109,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     if ($_GET["id"] <> $user->id)
     {
         $edituser = new User($db, $_GET["id"]);
-        $edituser->fetch($_GET["id"]);
+        $edituser->id=$_GET["id"];
         $edituser->delete();
         Header("Location: index.php");
         exit;

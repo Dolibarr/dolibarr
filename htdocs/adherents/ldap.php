@@ -93,7 +93,7 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Member").": ".$adh->fullname);
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td></tr>';
+print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td></tr>';
 
 // Nom
 print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
@@ -109,14 +109,18 @@ print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.
 // Type
 print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
 
-// LDAP DN
 $langs->load("admin");
-print '<tr><td>'.$langs->trans("LDAPMemberDn").'*</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
+
+// LDAP DN
+print '<tr><td>LDAP '.$langs->trans("LDAPMemberDn").'</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
+
+// LDAP Clé
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_MEMBERS."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>'.$langs->trans("LDAPPrimaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPSecondaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPServerPort").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
 print '</table>';
 

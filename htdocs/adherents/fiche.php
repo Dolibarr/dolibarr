@@ -574,7 +574,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->password.'"></td></tr>';
 
 	// Type
-    print '<tr><td width="15%">'.$langs->trans("MemberType").'*</td><td width="35%">';
+    print '<tr><td">'.$langs->trans("MemberType").'*</td><td">';
     $listetype=$adht->liste_array();
     if (sizeof($listetype)) {
         $htmls->select_array("type", $listetype, $typeid);
@@ -752,14 +752,14 @@ if ($rowid && $action != 'edit')
     print '<table class="border" width="100%">';
 
     // Ref
-    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="3">'.$adh->id.'&nbsp;</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="3">'.$adh->id.'&nbsp;</td></tr>';
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
     print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
     // Prenom
-    print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Firstname").'*</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
     print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 

@@ -100,14 +100,18 @@ else
 }
 print '</tr>';
 
-// LDAP DN
 $langs->load("admin");
-print '<tr><td>'.$langs->trans("LDAPUserDn").'*</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
+
+// LDAP DN
+print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
+
+// LDAP Clé
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_USERS."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>'.$langs->trans("LDAPPrimaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPSecondaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>'.$langs->trans("LDAPServerPort").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
 print '</table>';
 

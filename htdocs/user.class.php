@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
- * 
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -37,6 +37,7 @@
   	    \version    $Revision$
 */
 
+require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
 
 
 /**
@@ -47,7 +48,7 @@
 class User
 {
 	var $db;
-	
+
 	var $id;
 	var $ldap_sid;
 	var $fullname;
@@ -72,12 +73,12 @@ class User
 	var $datepreviouslogin;
 	var $statut;
 	var $lang;
-	
+
 	var $error;
 	var $userpref_limite_liste;
 	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-	
-	
+
+
 	/**
 	 *    \brief Constructeur de la classe
 	 *    \param  DB         Handler accès base de données
@@ -87,11 +88,11 @@ class User
 	{
 		$this->db = $DB;
 		$this->id = $id;
-		
+
 		// Preference utilisateur
 		$this->liste_limit = 0;
 		$this->clicktodial_enabled = 0;
-		  
+
 		$this->all_permissions_are_loaded = 0;
 		$this->admin=0;
 
@@ -124,7 +125,7 @@ class User
         {
             $sql .= " WHERE u.rowid = ".$this->id;
         }
-        
+
         dolibarr_syslog("User.class::fetch this->id=".$this->id." login=".$login);
         $result = $this->db->query($sql);
         if ($result)
@@ -136,7 +137,7 @@ class User
                 $this->ldap_sid = $obj->ldap_sid;
                 $this->nom = $obj->name;
                 $this->prenom = $obj->firstname;
-        
+
                 $this->fullname = trim($this->prenom . ' ' . $this->nom);
                 $this->code = $obj->code;
                 $this->login = $obj->login;
@@ -150,19 +151,19 @@ class User
                 $this->note = $obj->note;
                 $this->statut = $obj->statut;
                 $this->lang = $obj->lang;
-				
+
                 $this->datec  = $obj->datec;
                 $this->datem  = $obj->datem;
                 $this->datelastlogin     = $obj->datel;
                 $this->datepreviouslogin = $obj->datep;
-        
+
                 $this->webcal_login = $obj->webcal_login;
                 $this->societe_id = $obj->fk_societe;
-                
+
                 if (! $this->lang) $this->lang='fr_FR';
             }
             $this->db->free($result);
-        
+
         }
         else
         {
@@ -170,7 +171,7 @@ class User
             dolibarr_syslog("User.class::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
             return -1;
         }
-        
+
         // Recupere parametrage global propre à l'utilisateur
         // \todo a stocker/recupérer en session pour eviter ce select a chaque page
         $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
@@ -198,7 +199,7 @@ class User
         }
 
         // Recupere parametrage propre à la page et à l'utilisateur
-        // \todo SCRIPT_URL non defini sur tous serveurs 
+        // \todo SCRIPT_URL non defini sur tous serveurs
         // Paramétrage par page desactivé pour l'instant
         if (1==2 && isset($_SERVER['SCRIPT_URL']))
         {
@@ -228,10 +229,10 @@ class User
                 return -1;
             }
         }
-        
+
         return 1;
     }
-  
+
   /**
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid         id du droit à ajouter
@@ -244,10 +245,10 @@ class User
         dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
         $err=0;
         $whereforadd='';
-        
+
         $this->db->begin();
 
-        if ($rid) 
+        if ($rid)
         {
             // Si on a demandé ajout d'un droit en particulier, on récupère
             // les caractéristiques (module, perms et subperms) de ce droit.
@@ -255,7 +256,7 @@ class User
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
             $sql.=" id = '".$rid."'";
-       
+
             $result=$this->db->query($sql);
             if ($result) {
                 $obj = $this->db->fetch_object($result);
@@ -287,7 +288,7 @@ class User
             $sql = "SELECT id";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE $whereforadd";
-            
+
             $result=$this->db->query($sql);
             if ($result)
             {
@@ -297,22 +298,22 @@ class User
                 {
                     $obj = $this->db->fetch_object($result);
                     $nid = $obj->id;
-       
+
                     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
                     if (! $this->db->query($sql)) $err++;
                     $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $nid)";
                     if (! $this->db->query($sql)) $err++;
-    
+
                     $i++;
                 }
             }
-            else 
+            else
             {
                 $err++;
                 dolibarr_print_error($this->db);
             }
         }
-    
+
         if ($err) {
             $this->db->rollback();
             return -$err;
@@ -321,7 +322,7 @@ class User
             $this->db->commit();
             return 1;
         }
-        
+
     }
 
 
@@ -336,10 +337,10 @@ class User
     {
         $err=0;
         $wherefordel='';
-        
+
         $this->db->begin();
 
-        if ($rid) 
+        if ($rid)
         {
             // Si on a demandé supression d'un droit en particulier, on récupère
             // les caractéristiques module, perms et subperms de ce droit.
@@ -347,7 +348,7 @@ class User
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
             $sql.=" id = '".$rid."'";
-       
+
             $result=$this->db->query($sql);
             if ($result) {
                 $obj = $this->db->fetch_object($result);
@@ -389,20 +390,20 @@ class User
                 {
                     $obj = $this->db->fetch_object($result);
                     $nid = $obj->id;
-       
+
                     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$nid";
                     if (! $this->db->query($sql)) $err++;
-    
+
                     $i++;
                 }
             }
-            else 
+            else
             {
                 $err++;
                 dolibarr_print_error($this->db);
             }
         }
-    
+
         if ($err) {
             $this->db->rollback();
             return -$err;
@@ -425,7 +426,7 @@ class User
             // Si les permissions ont déja été chargé pour ce user, on quitte
             return;
         }
-        
+
         // Récupération des droits utilisateurs + récupération des droits groupes
 
         // D'abord les droits utilisateurs
@@ -441,7 +442,7 @@ class User
             while ($i < $num)
             {
                 $row = $this->db->fetch_row($result);
-        
+
                 if ($row[1])
                 {
                     if ($row[2])
@@ -457,18 +458,18 @@ class User
                     {
                         $this->rights->$row[0]->$row[1] = 1;
                     }
-        
+
                 }
                 $i++;
             }
            $this->db->free($result);
         }
-        
+
         // Maintenant les droits groupes
         $sql  = " SELECT r.module, r.perms, r.subperms";
         $sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
         $sql .= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
-        
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -477,10 +478,10 @@ class User
             while ($i < $num)
             {
                 $row = $this->db->fetch_row($result);
-        
+
                 if (strlen($row[1]) > 0)
                 {
-        
+
                     if (strlen($row[2]) > 0)
                     {
                         $this->rights->$row[0]->$row[1]->$row[2] = 1;
@@ -489,20 +490,20 @@ class User
                     {
                         $this->rights->$row[0]->$row[1] = 1;
                     }
-        
+
                 }
                 $i++;
             }
            $this->db->free($result);
         }
-        
+
         if ($module == '')
         {
             // Si module etait non defini, alors on a tout chargé, on peut donc considérer
             // que les droits sont en cache (car tous chargés) pour cet instance de user
             $this->all_permissions_are_loaded=1;
         }
-        
+
     }
 
 
@@ -513,9 +514,9 @@ class User
     function setstatus($statut)
     {
         $error=0;
-        
+
 		$this->db->begin();
-		
+
         // Désactive utilisateur
         $sql = "UPDATE ".MAIN_DB_PREFIX."user";
         $sql.= " SET statut = ".$statut;
@@ -543,20 +544,26 @@ class User
             return 1;
         }
     }
-  
-  
+
+
     /**
      *    \brief      Supprime complètement un utilisateur
      */
     function delete()
     {
+    	global $conf,$langs;
+    	
+    	$this->db->begin();
+
+		$this->fetch();
+		
         // Supprime droits
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id";
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
         if ($this->db->query($sql))
         {
-    
+
         }
-    
+
         // Si contact, supprime lien
         if ($this->contact_id)
         {
@@ -570,8 +577,33 @@ class User
         // Supprime utilisateur
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
         $result = $this->db->query($sql);
+
+	    if ($result)
+	    {
+	        // Appel des triggers
+	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	        $interface=new Interfaces($this->db);
+	        $result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
+	        if ($result < 0) $error++;
+	        // Fin appel triggers
+
+			// \todo	Mettre en trigger
+	    	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+	    	{
+	    	    $this->delete_ldap($user);
+			}
+
+	    	$this->db->commit();
+		    return 1;
+	    }
+	    else
+	    {
+	        $this->db->rollback();
+	        dolibarr_print_error($this->db);
+		    return -1;
+	    }
     }
-  
+
 
     /**
      *      \brief      Crée un utilisateur en base
@@ -580,10 +612,10 @@ class User
     function create()
     {
         global $conf,$langs;
-    
+
         // Nettoyage parametres
         $this->login = trim($this->login);
-        
+
         $this->db->begin();
 
         $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
@@ -593,7 +625,7 @@ class User
         {
             $num = $this->db->num_rows($resql);
             $this->db->free($resql);
-    
+
             if ($num)
             {
                 $this->error = $langs->trans("ErrorLoginAlreadyExists");
@@ -603,20 +635,20 @@ class User
             {
                 $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
                 $result=$this->db->query($sql);
-    
+
                 if ($result)
                 {
                     $table =  "".MAIN_DB_PREFIX."user";
                     $this->id = $this->db->last_insert_id($table);
-    
+
                     // Set default rights
-                    if ($this->set_default_rights() < 0) 
+                    if ($this->set_default_rights() < 0)
                     {
                         $this->error=$this->db->error();
                         $this->db->rollback();
                         return -5;
                     }
-                    
+
                     // Update minor fields
                     if ($this->update() < 0)
                     {
@@ -624,14 +656,14 @@ class User
                         $this->db->rollback();
                         return -4;
                     }
-    
+
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
                     if ($result < 0) $error++;
                     // Fin appel triggers
-    
+
 					// \todo	Mettre en trigger
 		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
 		        	{
@@ -675,7 +707,7 @@ class User
     function create_from_contact($contact)
     {
         global $langs;
-    
+
         // Positionne paramètres
         $this->nom = $contact->nom;
         $this->prenom = $contact->prenom;
@@ -684,12 +716,12 @@ class User
         $this->admin = 0;
 
         $this->email = $contact->email;
-    
+
         $this->db->begin();
-    
+
         // Crée et positionne $this->id
         $result=$this->create();
-        
+
         if ($result > 0)
         {
             $sql = "UPDATE ".MAIN_DB_PREFIX."user";
@@ -703,7 +735,7 @@ class User
                 $sql.= " SET fk_user = ".$this->id;
                 $sql.= " WHERE idp = ".$contact->id;
                 $resql=$this->db->query($sql);
-        
+
                 if ($resql)
                 {
                     $this->db->commit();
@@ -716,7 +748,7 @@ class User
 
                     $this->db->rollback();
                     return -2;
-                }                        
+                }
             }
             else
             {
@@ -735,7 +767,7 @@ class User
             $this->db->rollback();
             return $result;
         }
-    
+
     }
 
   /**
@@ -745,7 +777,7 @@ class User
 	function set_default_rights()
     {
         $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
-        
+
         if ($this->db->query($sql))
         {
             $num = $this->db->num_rows();
@@ -762,16 +794,16 @@ class User
         $i = 0;
         while ($i < $num)
         {
-        
+
             $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = $this->id AND fk_id=$rd[$i]";
             $result=$this->db->query($sql);
-        
+
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."user_rights (fk_user, fk_id) VALUES ($this->id, $rd[$i])";
             $result=$this->db->query($sql);
             if (! $result) return -1;
             $i++;
         }
-        
+
         return $i;
     }
 
@@ -783,12 +815,12 @@ class User
   	function update($create=0)
     {
         global $conf,$langs;
-        
+
         // Nettoyage parametres
         $this->nom=trim($this->nom);
         $this->prenom=trim($this->prenom);
         $this->login=trim($this->login);
-        
+
         if ($conf->global->DATABASE_PWD_ENCRYPTED && $this->oldpass != $this->pass)
 		    {
 		    	$this->pass = md5($this->pass);
@@ -797,12 +829,12 @@ class User
 		    {
 		    	$this->pass=trim($this->pass);
 		    }
-		    
+
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
         if (!strlen($this->code)) $this->code = $this->login;
-        
+
         dolibarr_syslog("User::update nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
 
@@ -841,7 +873,7 @@ class User
 			    	    $this->update_ldap($user);
 		    		}
                 }
-                
+
                 return 1;
             }
             return 0;
@@ -865,7 +897,7 @@ class User
         dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
 
         $now=time();
-        
+
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
         $sql.= " datepreviouslogin = datelastlogin,";
         $sql.= " datelastlogin = ".$this->db->idate($now).",";
@@ -884,8 +916,8 @@ class User
             return -1;
         }
    }
-   
-   
+
+
 	/**
 	 *    \brief     Change le mot de passe d'un utilisateur
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
@@ -897,14 +929,14 @@ class User
     {
         global $langs;
         $longueurmotdepasse=8;
-        
+
         dolibarr_syslog("User.class::password user=".$user." password=--hidden-- isencrypted=".$isencrypted);
-        
+
         if (! $password)
         {
             $password =  strtolower(substr(md5(uniqid(rand())),0,$longueurmotdepasse));
         }
-    
+
         if ($isencrypted)
         {
         	// Crypte avec systeme encodage par defaut du PHP
@@ -917,7 +949,7 @@ class User
         }
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($sqlpass)."'";
         $sql.= " WHERE rowid = ".$this->id;
-    
+
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -955,12 +987,12 @@ class User
     function send_password($user, $password='')
     {
         global $langs;
-        
+
         require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
         $subject = $langs->trans("SubjectNewPassword");
         $msgishtml=0;
-        
+
         $mesg .= "Bonjour,\n\n";
         $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
         $mesg .= $langs->trans("Login")." : $this->login\n";
@@ -995,21 +1027,21 @@ class User
       return $this->error;
     }
 
-  
+
   /**
    *    \brief      Lecture des infos de click to dial
    */
   	function fetch_clicktodial()
     {
-      
+
       $sql = "SELECT login, pass, poste FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
       $sql .= " WHERE u.fk_user = ".$this->id;
-      
+
       $result = $this->db->query($sql);
 
-      if ($result) 
+      if ($result)
 	{
-	  if ($this->db->num_rows()) 
+	  if ($this->db->num_rows())
 	    {
 	      $obj = $this->db->fetch_object();
 
@@ -1017,8 +1049,8 @@ class User
 	      $this->clicktodial_password = $obj->pass;
 	      $this->clicktodial_poste = $obj->poste;
 
-	      if (strlen(trim($this->clicktodial_login)) && 
-		  strlen(trim($this->clicktodial_password)) && 
+	      if (strlen(trim($this->clicktodial_login)) &&
+		  strlen(trim($this->clicktodial_password)) &&
 		  strlen(trim($this->clicktodial_poste)))
 		{
 		  $this->clicktodial_enabled = 1;
@@ -1039,7 +1071,7 @@ class User
    */
   	function update_clicktodial()
     {
-      
+
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_clicktodial";
       $sql .= " WHERE fk_user = ".$this->id;
 
@@ -1051,10 +1083,10 @@ class User
       $sql .= ", '". $this->clicktodial_login ."'";
       $sql .= ", '". $this->clicktodial_password ."'";
       $sql .= ", '". $this->clicktodial_poste."')";
-      
+
       $result = $this->db->query($sql);
 
-      if ($result) 
+      if ($result)
 	{
 	  return 0;
 	}
@@ -1075,12 +1107,12 @@ class User
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
       $sql .= " WHERE fk_user  = ".$this->id;
       $sql .= " AND fk_usergroup = ".$group;
-  
+
       $result = $this->db->query($sql);
 
       $sql = "INSERT INTO ".MAIN_DB_PREFIX."usergroup_user (fk_user, fk_usergroup)";
       $sql .= " VALUES (".$this->id.",".$group.")";
-	    
+
       $result = $this->db->query($sql);
     }
 
@@ -1094,7 +1126,7 @@ class User
       $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
       $sql .= " WHERE fk_user  = ".$this->id;
       $sql .= " AND fk_usergroup = ".$group;
-  
+
       $result = $this->db->query($sql);
     }
 
@@ -1107,9 +1139,9 @@ class User
 	function getNomUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -1123,7 +1155,7 @@ class User
 		$result.=$lien.$this->nom.' '.$this->prenom.$lienfin;
 		return $result;
 	}
-	
+
 	/**
 	 *    	\brief      Renvoie login clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
@@ -1133,9 +1165,9 @@ class User
 	function getLoginUrl($withpicto=0,$option='')
 	{
 		global $langs;
-		
+
 		$result='';
-		
+
 		$lien = '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
@@ -1149,7 +1181,7 @@ class User
 		$result.=$lien.$this->login.$lienfin;
 		return $result;
 	}
-	
+
 	/**
 	 *    \brief      Retourne le libellé du statut d'un user (actif, inactif)
 	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
@@ -1202,7 +1234,7 @@ class User
 			if ($statut == 1) return $langs->trans('Enabled').' '.img_picto($langs->trans('Enabled'),'statut4');
 			if ($statut == 0) return $langs->trans('Disabled').' '.img_picto($langs->trans('Disabled'),'statut5');
 		}
-	}	
+	}
 
 
 	/**
@@ -1216,7 +1248,7 @@ class User
 		return $this->update_ldap($user);
 	}
 
-	
+
 	/**
 	*   \brief      Mise à jour dans l'arbre LDAP
 	*   \param      user        Utilisateur qui effectue la mise à jour
@@ -1231,7 +1263,7 @@ class User
 		$info = array();
 
 		dolibarr_syslog("User.class::update_ldap this->id=".$this->id,LOG_DEBUG);
-	
+
 		$ldap=new AuthLdap();
 		$result=$ldap->connect();
 		if ($result)
@@ -1265,13 +1297,13 @@ class User
 				if ($result <= 0)
 				{
 					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
-					dolibarr_syslog("User.class::update_ldap ".$this->error,LOG_ERROR);	
+					dolibarr_syslog("User.class::update_ldap ".$this->error,LOG_ERROR);
 					//print_r($info);
 					return -1;
 				}
 				else
 				{
-					dolibarr_syslog("User.class::update_ldap rowid=".$this->id." added in LDAP");	
+					dolibarr_syslog("User.class::update_ldap rowid=".$this->id." added in LDAP");
 				}
 
 				$ldap->unbind();
@@ -1306,7 +1338,7 @@ class User
         //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
 
 		dolibarr_syslog("User.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
-	
+
 		$ldap=new AuthLdap();
 		$result=$ldap->connect();
 		if ($result)
@@ -1322,14 +1354,14 @@ class User
 				dolibarr_syslog("User.class::delete_ldap bind",LOG_DEBUG);
 				$bind=$ldap->bind();
 			}
-			
+
 			if ($bind)
 			{
 				$info=$this->_load_ldap_info($info);
 
 				$dn = $conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
 				$result=$ldap->delete($dn);
-				
+
 				return $result;
 			}
 		}
@@ -1340,13 +1372,13 @@ class User
 			return -1;
 		}
 	}
-	
+
 
 	function _load_ldap_info($info)
 	{
 		global $conf,$langs;
-		
-		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
+
+		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
 		{
 			$info["objectclass"]=array("top",
 									   "person",
@@ -1359,9 +1391,9 @@ class User
 									   "person",
 									   "organizationalPerson",
 									   "inetOrgPerson");
-		}	
+		}
 
-		// Champs 
+		// Champs
 		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
@@ -1371,7 +1403,7 @@ class User
 		{
 			$soc = new Societe($this->db);
 			$soc->fetch($this->societe_id);
-	
+
 			$info["o"] = $soc->nom;
 			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
@@ -1386,36 +1418,36 @@ class User
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
 		if ($this->note) $info["description"] = $this->note;
 		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
-	
+
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
 		{
 			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
-	
+
 			$info['uidnumber'] = $this->id;
-	
+
 			$info['phpgwTz']      = 0;
 			$info['phpgwMailType'] = 'INTERNET';
 			$info['phpgwMailHomeType'] = 'INTERNET';
-	
+
 			$info["phpgwContactTypeId"] = 'n';
 			$info["phpgwContactCatId"] = 0;
 			$info["phpgwContactAccess"] = "public";
-	
+
 			if (strlen($this->egroupware_id) == 0)
 			{
 				$this->egroupware_id = 1;
 			}
-	
+
 			$info["phpgwContactOwner"] = $this->egroupware_id;
-	
+
 			if ($this->email) $info["rfc822Mailbox"] = $this->email;
 			if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
 		}
 
 		return $info;
 	}
-	
-	
+
+
 	/**
 	 *		\brief		Initialise le user avec valeurs fictives aléatoire
 	 */
@@ -1467,7 +1499,7 @@ class User
 
 		$socid = rand(1, $num_socs);
 		$this->societe_id = $socids[$socid];
-	}	
+	}
 }
 
 ?>

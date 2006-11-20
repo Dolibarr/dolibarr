@@ -27,6 +27,9 @@
 	 \version    $Revision$
 */
 
+require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+
+
 /**
        \class      UserGroup
        \brief      Classe permettant la gestion des groupes d'utilisateur
@@ -336,37 +339,53 @@ class UserGroup
 
     }
 
-  /**
-   *        \brief      Efface un groupe de la base
-   *        \return     < 0 si erreur, > 0 si ok
-   */
-  function delete()
-  {
-    $this->db->begin();
+	/**
+	*        \brief      Efface un groupe de la base
+	*        \return     < 0 si erreur, > 0 si ok
+	*/
+	function delete()
+	{
+    	global $conf,$langs;
 
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
-    $sql .= " WHERE fk_usergroup = ".$this->id;
-    $this->db->query($sql);
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
-    $sql .= " WHERE fk_usergroup = ".$this->id;
-    $this->db->query($sql);
-
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
-    $sql .= " WHERE rowid = ".$this->id;
-    $result=$this->db->query($sql);
-    if ($result)
-    {
-        $this->db->commit();
-	    return 1;
-    }
-    else
-    {
-        $this->db->rollback();
-        dolibarr_print_error($this->db);
-	    return -1;
-    }
-  }
+		$this->db->begin();
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_rights";
+		$sql .= " WHERE fk_usergroup = ".$this->id;
+		$this->db->query($sql);
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup_user";
+		$sql .= " WHERE fk_usergroup = ".$this->id;
+		$this->db->query($sql);
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."usergroup";
+		$sql .= " WHERE rowid = ".$this->id;
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
+			if ($result < 0) $error++;
+			// Fin appel triggers
+	
+			// \todo	Mettre en trigger
+			if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+			{
+				$this->delete_ldap($user);
+			}
+	
+	
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
 
 	/**
 	*        \brief      Crée un groupe en base
@@ -613,10 +632,8 @@ class UserGroup
 									   "inetOrgPerson");
 		}
 
-		// Champs 
-		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
-		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
-		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		// Champs
+		if ($this->nom && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->nom;
 		if ($this->note) $info["description"] = $this->note;
 
 		return $info;
