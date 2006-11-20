@@ -64,7 +64,7 @@ class FormMail
 	var $substit=array();
 	var $param=array();
 	
-	var $errorstr;
+	var $error;
 
   
 	/**

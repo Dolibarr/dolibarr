@@ -63,6 +63,7 @@ AddActionDone=Ajouter action faite
 Close=Clôturer
 Close2=Fermer
 Confirm=Confirmer
+ConfirmSendCardByMail=Voulez vous envoyer cette fiche par mail ?
 Delete=Supprimer
 Remove=Enlever
 Resiliate=Résilier

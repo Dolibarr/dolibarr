@@ -7,6 +7,7 @@ LdapUacf_ACCOUNTDISABLE=Account is disabled on this domain
 LDAPInformationsForThisContact=Informations in LDAP database for this contact
 LDAPInformationsForThisUser=Informations in LDAP database for this user
 LDAPInformationsForThisGroup=Informations in LDAP database for this group
+LDAPInformationsForThisMember=Informations in LDAP database for this member
 LDAPAttribute=LDAP attribute
 LDAPAttributes=LDAP attributes
 LDAPCard=LDAP card

@@ -174,10 +174,10 @@ class AuthLdap {
      * 2.1.2 : Simply closes the connection set up earlier.
      * Returns true if OK, false if there was an error.
      */
-    function close() {
-        if ( !@ldap_close($this->connection)) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
+    function close()
+    {
+        if ($this->connection && ! @ldap_close($this->connection))
+        {
             return false;
         } else {
             return true;
@@ -192,6 +192,7 @@ class AuthLdap {
         if ( !$this->result=@ldap_bind( $this->connection)) {
             $this->ldapErrorCode = ldap_errno( $this->connection);
             $this->ldapErrorText = ldap_error( $this->connection);
+            $this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
             return false;
         } else {
             return true;
@@ -224,6 +225,7 @@ class AuthLdap {
         if ( !$this->result = @ldap_bind( $this->connection,$bindDn,$pass)) {
             $this->ldapErrorCode = ldap_errno( $this->connection);
             $this->ldapErrorText = ldap_error( $this->connection);
+            $this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
             return false;
         } else {
             return true;

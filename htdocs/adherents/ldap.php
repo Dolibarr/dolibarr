@@ -21,31 +21,32 @@
  */
 
 /**
-        \file       htdocs/user/group/ldap.php
+        \file       htdocs/adherents/ldap.php
         \ingroup    ldap
-        \brief      Page fiche LDAP groupe
+        \brief      Page fiche LDAP adherent
         \version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $user->getrights('commercial');
 
 $langs->load("companies");
+$langs->load("members");
 $langs->load("ldap");
 
 // Protection quand utilisateur externe
-$contactid = isset($_GET["id"])?$_GET["id"]:'';
+$rowid = isset($_GET["id"])?$_GET["id"]:'';
 
 $socid=0;
 if ($user->societe_id > 0)
 {
     $socid = $user->societe_id;
 }
-
 
 
 /*
@@ -56,17 +57,33 @@ llxHeader();
 
 $form = new Form($db);
 
-$fgroup = new Usergroup($db, $_GET["id"]);
-$fgroup->fetch($_GET["id"]);
-$fgroup->getrights();
+
+$adh = new Adherent($db);
+$adh->id = $rowid;
+$result=$adh->fetch($rowid);
+if (! $result)
+{
+	dolibarr_print_error($db,"Failed to get adherent: ".$adh->error);
+	exit;
+}
+$adh->fetch_optionals($rowid);
+
+$adht = new AdherentType($db);
+$result=$adht->fetch($adh->typeid);
+if (! $result)
+{
+	dolibarr_print_error($db,"Failed to get type of adherent: ".$adht->error);
+	exit;
+}
+
 
 
 /*
  * Affichage onglets
  */
-$head = group_prepare_head($fgroup);
+$head = member_prepare_head($adh);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
+dolibarr_fiche_head($head, 'ldap', $langs->trans("Member").": ".$adh->fullname);
 
 
 
@@ -75,33 +92,40 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Group").": ".$fgroup->nom);
  */
 print '<table class="border" width="100%">';
 
-// Nom
-print '<tr><td width="25%" valign="top">'.$langs->trans("Name").'</td>';
-print '<td width="75%" class="valeur">'.$fgroup->nom.'</td>';
-print "</tr>\n";
+// Ref
+print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td></tr>';
 
-// Note
-print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-print '<td class="valeur">'.nl2br($fgroup->note).'&nbsp;</td>';
-print "</tr>\n";
+// Nom
+print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+print '</tr>';
+
+// Prenom
+print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
+print '</tr>';
+
+// Login
+print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+
+// Type
+print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
 
 // LDAP DN
 $langs->load("admin");
-print '<tr><td>'.$langs->trans("LDAPGroupDn").'*</td><td class="valeur">'.$conf->global->LDAP_GROUP_DN."</td></tr>\n";
+print '<tr><td>'.$langs->trans("LDAPMemberDn").'*</td><td class="valeur">'.$conf->global->LDAP_MEMBER_DN."</td></tr>\n";
 
 // LDAP Server
 print '<tr><td>'.$langs->trans("LDAPPrimaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
 print '<tr><td>'.$langs->trans("LDAPSecondaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
 print '<tr><td>'.$langs->trans("LDAPServerPort").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
-print "</table>\n";
+print '</table>';
 
 print '</div>';
 
 print '<br>';
 
 
-print_titre($langs->trans("LDAPInformationsForThisGroup"));
+print_titre($langs->trans("LDAPInformationsForThisMember"));
 
 // Affichage attributs LDAP
 print '<table width="100%" class="noborder">';
@@ -130,14 +154,15 @@ if ($result)
 
 	if ($bind)
 	{
-		$info["cn"] = trim($fgroup->nom);
+		$info["cn"] = trim($adh->prenom." ".$adh->nom);
+		$info["uid"] = trim($adh->login);
 
-		$dn = $conf->global->LDAP_GROUP_DN;
+		$dn = $conf->global->LDAP_MEMBER_DN;
 //		$dn = "cn=".$info["cn"].",".$dn;
 //		$dn = "uid=".$info["uid"].",".$dn
 		$search = "(cn=".$info["cn"].")";
 		//$search = "(uid=".$info["uid"].")";
-
+		
 		$result=$ldap->search($dn,$search);
 
 		// Affichage arbre

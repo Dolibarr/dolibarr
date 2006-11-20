@@ -41,7 +41,7 @@
 class Form
 {
     var $db;
-    var $errorstr;
+    var $error;
     
     var $cache_types_paiements_code=array();
     var $cache_types_paiements_libelle=array();
@@ -2372,7 +2372,7 @@ class Form
      */
     function error()
     {
-        return $this->errorstr;
+        return $this->error;
     }
 
 

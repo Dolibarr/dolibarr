@@ -29,6 +29,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
@@ -557,12 +558,20 @@ if ($action == 'create')
 
     print '<table class="border" width="100%">';
 
+    // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
     print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
 
+	// Prenom
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
     $rowspan=12;
     print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12"></textarea></td></tr>';
+
+	// Login
+    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
+	
+	// Mot de pass
+    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->password.'"></td></tr>';
 
 	// Type
     print '<tr><td width="15%">'.$langs->trans("MemberType").'*</td><td width="35%">';
@@ -583,15 +592,21 @@ if ($action == 'create')
     print "</td>\n";
 
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
+    
+    // Adresse
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
     print '<textarea name="adresse" wrap="soft" cols="40" rows="2"></textarea></td></tr>';
+    
+    // CP
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
+
+	// Ville
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
     $htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays_code');
     print '</td></tr>';
+    
+    // EMail
     print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="member_email" size="40" value="'.$adh->email.'"></td></tr>';
-    print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
-    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->password.'"></td></tr>';
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
@@ -659,17 +674,13 @@ if ($rowid && $action != 'edit')
     $html = new Form($db);
 
 
-    /*
-     * Affichage onglets
-     */
-    $h = 0;
+	/*
+	 * Affichage onglets
+	 */
+	$head = member_prepare_head($adh);
 
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = $langs->trans("Card");
-    $hselected=$h;
-    $h++;
+	dolibarr_fiche_head($head, 'general', $langs->trans("Member").": ".$adh->fullname);
 
-    dolibarr_fiche_head($head, $hselected, $langs->trans("MemberCard"));
 
     // Confirmation de la suppression de l'adhérent
     if ($action == 'delete')
@@ -737,19 +748,26 @@ if ($rowid && $action != 'edit')
     }
 
 
-    print '<table class="border" width="100%">';
     print '<form action="fiche.php" method="post">';
+    print '<table class="border" width="100%">';
 
+    // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="3">'.$adh->id.'&nbsp;</td></tr>';
 
+    // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
     print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
 
+    // Prenom
     print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur" width="35%">'.$adh->prenom.'&nbsp;</td>';
     print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
+    // Login
+    print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+
+	// Type
+	print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
 
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
@@ -757,7 +775,6 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'</td></tr>';
     print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-    print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
     //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
@@ -771,8 +788,8 @@ if ($rowid && $action != 'edit')
         print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
     }
     
-    print '</form>';
     print "</table>\n";
+    print '</form>';
     
     print "</div>\n";
 
@@ -907,13 +924,14 @@ if ($rowid && $action != 'edit')
      */
     if ($user->rights->adherent->cotisation->creer)
     {
+        print "\n\n<!-- Form add subscription -->\n";
+        print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
         print "<table class=\"border\" width=\"100%\">\n";
     
-        print '<form name="cotisation" method="post" action="fiche.php">';
+        print '<tr><td width="15%">'.$langs->trans("SubscriptionEndDate");
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-    
-        print '<tr><td width="15%">'.$langs->trans("SubscriptionEndDate").'</td>';
+        print '</td>';
         print '<td width="35%">';
         if ($adh->datefin)
         {
@@ -968,10 +986,11 @@ if ($rowid && $action != 'edit')
             print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
         }
 
-        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"</td></tr>';
+        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
     
-        print '</form>';
         print '</table>';
+        print '</form>';
+		print "\n<!-- End form subscription -->\n\n";
     }
     
     print '</td></tr>';

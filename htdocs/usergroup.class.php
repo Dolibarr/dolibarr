@@ -426,6 +426,18 @@ class UserGroup
 
 
 	/**
+	*   \brief      Creation dans l'arbre LDAP
+	*   \param      user        Utilisateur qui effectue la creation
+	*	\return		int			<0 si ko, >0 si ok
+	*/
+	function create_ldap($user)
+	{
+		dolibarr_syslog("UserGroup.class::create_ldap this->id=".$this->id,LOG_DEBUG);
+		return $this->update_ldap($user);
+	}
+
+	
+	/**
 	*   \brief      Mise à jour dans l'arbre LDAP
 	*   \param      user        Utilisateur qui effectue la mise à jour
 	*	\return		int			<0 si ko, >0 si ok
@@ -457,45 +469,17 @@ class UserGroup
 			}
 			if ($bind)
 			{
-				if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
-				{
-					$info["objectclass"]=array("top",
-											   "person",
-											   "organizationalPerson",
-											   "user");
-				}
-				else
-				{
-					$info["objectclass"]=array("top",
-											   "person",
-											   "organizationalPerson",
-											   "inetOrgPerson");
-				}
+				$info=$this->_load_ldap_info($info);
 
-				// Champs obligatoires
-				$info["cn"] = trim($this->nom);
-				if ($this->nom) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
-				else
-				{
-					$langs->load("other");
-					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Name"));
-					return -1;
-				}
-
-				// Champs optionnels
-				if ($this->note) $info["description"] = $this->note;
-
-				$info["uid"] = "Dolibarr ".$this->id;
-
-				$newdn = "cn=".$info["cn"].",".$conf->global->LDAP_GROUP_DN;
-				$olddn = $newdn;
-				if ($this->old_name) $olddn="cn=".trim($this->old_name).",".$conf->global->LDAP_CONTACT_DN;
+				// Definitition du DN
+				$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
+				$olddn = $dn;
 
 				// On supprime et on insère
-				dolibarr_syslog("UserGroup.class::update_ldap olddn=".$olddn." newdn=".$newdn);
+				dolibarr_syslog("User.class::update_ldap dn=".$dn." olddn=".$olddn);
 
 				$result = $ldap->delete($olddn);
-				$result = $ldap->add($newdn, $info);
+				$result = $ldap->add($dn, $info);
 				if ($result <= 0)
 				{
 					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
@@ -558,9 +542,9 @@ class UserGroup
 
 			if ($bind)
 			{
-				$info["cn"] = trim($this->nom);
-				$dn = "cn=".$info["cn"].",".$conf->global->LDAP_GROUP_DN;
+				$info=$this->_load_ldap_info($info);
 
+				$dn = $conf->global->LDAP_KEY_GROUPS."=".$info[$conf->global->LDAP_KEY_GROUPS].",".$conf->global->LDAP_GROUP_DN;
 				$result=$ldap->delete($dn);
 
 				return $result;
@@ -573,6 +557,36 @@ class UserGroup
 			return -1;
 		}
 	}
+
+
+	function _load_ldap_info($info)
+	{
+		global $conf,$langs;
+		
+		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "user");
+		}
+		else
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "inetOrgPerson");
+		}
+
+		// Champs 
+		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
+		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->note) $info["description"] = $this->note;
+
+		return $info;
+	}
+
 
 	/**
 	 *		\brief		Initialise le groupe avec valeurs fictives aléatoire

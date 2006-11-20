@@ -55,7 +55,7 @@ class Don
     var $statut;
     
     var $projet;
-    var $errorstr;
+    var $error;
     
     /**
      *    \brief  Constructeur
@@ -186,10 +186,10 @@ class Don
      */
     function print_error_list()
     {
-    $num = sizeof($this->errorstr);
+    $num = sizeof($this->error);
     for ($i = 0 ; $i < $num ; $i++)
       {
-	print "<li>" . $this->errorstr[$i];
+	print "<li>" . $this->error[$i];
       }
     }
 
@@ -267,7 +267,7 @@ class Don
       
       if ($err)
 	{
-	  $this->errorstr = $error_string;
+	  $this->error = $error_string;
 	  return 0;
 	}
       else

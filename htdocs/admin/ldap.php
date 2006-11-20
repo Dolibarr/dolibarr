@@ -32,6 +32,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");
 
@@ -74,7 +75,11 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 
 llxHeader();
 
+
+$head = ldap_prepare_head();
+
 print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
+
 
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
@@ -86,36 +91,9 @@ if ($mesg) print '<div class="error">'.$mesg.'</div>';
 else print '<br>';
 
 
-// Onglets
-$h = 0;
 
-$head[$h][0] = DOL_URL_ROOT."/admin/ldap.php";
-$head[$h][1] = $langs->trans("LDAPGlobalParameters");
-$hselected=$h;
-$h++;
 
-if ($conf->global->LDAP_SYNCHRO_ACTIVE)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/ldap_users.php";
-	$head[$h][1] = $langs->trans("LDAPUsersAndGroupsSynchro");
-	$h++;
-}
-
-if ($conf->global->LDAP_CONTACT_ACTIVE)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/ldap_contacts.php";
-	$head[$h][1] = $langs->trans("LDAPContactsSynchro");
-	$h++;
-}
-
-if ($conf->global->LDAP_MEMBERS_ACTIVE)
-{
-	$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
-	$head[$h][1] = $langs->trans("LDAPMembersSynchro");
-	$h++;
-}
-
-dolibarr_fiche_head($head, $hselected, $langs->trans("LDAP"));
+dolibarr_fiche_head($head, 'ldap', $langs->trans("LDAP"));
 
 $var=true;
 $html=new Form($db);

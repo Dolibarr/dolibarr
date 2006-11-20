@@ -115,8 +115,20 @@ print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
 
+// Nom
 print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+
+// Prenom
 print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+// LDAP DN
+$langs->load("admin");
+print '<tr><td>'.$langs->trans("LDAPContactDn").'*</td><td class="valeur">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
+
+// LDAP Server
+print '<tr><td>'.$langs->trans("LDAPPrimaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
+print '<tr><td>'.$langs->trans("LDAPSecondaryServer").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
+print '<tr><td>'.$langs->trans("LDAPServerPort").'*</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
 print '</table>';
 
@@ -146,7 +158,7 @@ if ($result)
 		dolibarr_syslog("ldap.php: authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
 		$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
 	}
-	else
+	if (! $bind)	// Si pas de login ou si connexion avec login en echec, on tente en anonyme
 	{
 		dolibarr_syslog("ldap.php: bind",LOG_DEBUG);
 		$bind=$ldap->bind();
@@ -155,9 +167,14 @@ if ($result)
 	if ($bind)
 	{
 		$info["cn"] = trim($contact->firstname." ".$contact->name);
-		$dn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
 
-		$result=$ldap->search($dn,'(objectClass=*)');
+		$dn = $conf->global->LDAP_CONTACT_DN;
+//		$dn = "cn=".$info["cn"].",".$dn;
+//		$dn = "uid=".$info["uid"].",".$dn
+		$search = "(cn=".$info["cn"].")";
+		//$search = "(uid=".$info["uid"].")";
+
+		$result=$ldap->search($dn,$search);
 
 		// Affichage arbre
 		if (sizeof($result))
@@ -169,15 +186,18 @@ if ($result)
 		{
 			print '<tr><td colspan="2">'.$langs->trans("LDAPRecordNotFound").'</td></tr>';
 		}
+		
+		$ldap->unbind();
 	}
 	else
 	{
-		dolibarr_print_error('',$ldap);
+		dolibarr_print_error('',$ldap->error);
 	}
+	$ldap->close();
 }
 else
 {
-	dolibarr_print_error('',$ldap);
+	dolibarr_print_error('',$ldap->error);
 }
 
 print '</table>';

@@ -517,8 +517,9 @@ class Adherent
 
 
     /**
-    		\brief fonction qui récupére l'adhérent en donnant son rowid
-    		\param	rowid
+    		\brief 		Fonction qui récupére l'adhérent en donnant son rowid
+    		\param		rowid
+    		\return		int			<0 si KO, >0 si OK
     */
     function fetch($rowid)
     {
@@ -531,13 +532,14 @@ class Adherent
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
-
-        $result=$this->db->query( $sql);
-        if ($result)
+		dolibarr_syslog("Adherent.class::fetch sql=".$sql);
+		
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
-            if ($this->db->num_rows($result))
+            if ($this->db->num_rows($resql))
             {
-                $obj = $this->db->fetch_object($result);
+                $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
                 $this->statut         = $obj->statut;
@@ -568,12 +570,13 @@ class Adherent
                 $this->type           = $obj->type;
                 $this->need_subscription = ($obj->cotisation=='yes'?1:0);
             }
+			return 1;
         }
         else
         {
-            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+			return -1;
         }
-
     }
 
 

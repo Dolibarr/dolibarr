@@ -119,6 +119,13 @@ class Conf
 		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="default.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
 
+		// Variable globales LDAP
+		if (! $this->global->LDAP_KEY_USERS) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! $this->global->LDAP_KEY_GROUPS) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! $this->global->LDAP_KEY_CONTACTS) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! $this->global->LDAP_KEY_MEMBERS) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
+
+
 		/*
 		 * Charge l'objet de traduction et positionne langage courant global
 		 */

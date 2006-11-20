@@ -233,9 +233,9 @@ class Contact
 			
 			if ($bind)
 			{
-				$info["cn"] = trim($this->firstname." ".$this->name);
-				$dn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
-				
+				$info=$this->_load_ldap_info($info);
+
+				$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
 				$result=$ldap->delete($dn);
 				
 				return $result;
@@ -250,8 +250,81 @@ class Contact
 	}
 	
 	
+	function _load_ldap_info($info)
+	{
+		global $conf,$langs;
+
+		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "user");
+		}
+		else
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "inetOrgPerson");
+		}	
+
+		// Champs 
+		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
+		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->poste) $info["title"] = $this->poste;
+		if ($this->socid > 0)
+		{
+			$soc = new Societe($this->db);
+			$soc->fetch($this->socid);
+
+			$info["o"] = $soc->nom;
+			if ($soc->client == 1)      $info["businessCategory"] = "Customers";
+			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
+			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
+		}
+		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
+		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
+		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
+		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
+		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
+		if ($this->note) $info["description"] = $this->note;
+		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+
+		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
+		{
+			$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
+
+			$info['uidnumber'] = $this->id;
+
+			$info['phpgwTz']      = 0;
+			$info['phpgwMailType'] = 'INTERNET';
+			$info['phpgwMailHomeType'] = 'INTERNET';
+
+			$info["phpgwContactTypeId"] = 'n';
+			$info["phpgwContactCatId"] = 0;
+			$info["phpgwContactAccess"] = "public";
+
+			if (strlen($this->egroupware_id) == 0)
+			{
+				$this->egroupware_id = 1;
+			}
+
+			$info["phpgwContactOwner"] = $this->egroupware_id;
+
+			if ($this->email) $info["rfc822Mailbox"] = $this->email;
+			if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
+		}
+						
+		return $info;
+	}
+
+
 	/**
-	*   \brief      Creation d'un contact dans l'arbre LDAP
+	*   \brief      Creation dans l'arbre LDAP
 	*   \param      user        Utilisateur qui effectue la creation
 	*	\return		int			<0 si ko, >0 si ok
 	*/
@@ -294,90 +367,19 @@ class Contact
 			}
 			if ($bind)
 			{
-				if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
-				{
-					$info["objectclass"]=array("top",
-											   "person",
-											   "organizationalPerson",
-											   "user");
-				}
-				else
-				{
-					$info["objectclass"]=array("top",
-											   "person",
-											   "organizationalPerson",
-											   "inetOrgPerson");
-				}	
+				$info=$this->_load_ldap_info($info);
 
-				// Champs obligatoires
-				$info["cn"] = trim($this->firstname." ".$this->name);
-				if ($this->name) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
-				else
-				{
-					$langs->load("other");
-					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Name"));
-					return -1;
-				}
-				
-				// Champs optionnels
-				if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
-				if ($this->poste) $info["title"] = $this->poste;
-				if ($this->socid > 0)
-				{
-					$soc = new Societe($this->db);
-					$soc->fetch($this->socid);
-
-					$info["o"] = $soc->nom;
-					if ($soc->client == 1)      $info["businessCategory"] = "Customers";
-					if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
-					if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
-				}
-				if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
-				if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
-				if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
-				if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
-				if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
-				if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
-				if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-				if ($this->note) $info["description"] = $this->note;
-				if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
-
-				if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
-				{
-					$info["objectclass"][4] = "phpgwContact"; // compatibilite egroupware
-
-					$info['uidnumber'] = $this->id;
-
-					$info['phpgwTz']      = 0;
-					$info['phpgwMailType'] = 'INTERNET';
-					$info['phpgwMailHomeType'] = 'INTERNET';
-
-					$info["phpgwContactTypeId"] = 'n';
-					$info["phpgwContactCatId"] = 0;
-					$info["phpgwContactAccess"] = "public";
-
-					if (strlen($user->egroupware_id) == 0)
-					{
-						$user->egroupware_id = 1;
-					}
-
-					$info["phpgwContactOwner"] = $user->egroupware_id;
-
-					if ($this->email) $info["rfc822Mailbox"] = $this->email;
-					if ($this->phone_mobile) $info["phpgwCellTelephoneNumber"] = $this->phone_mobile;
-				}
-
-				$info["uid"] = "Dolibarr ".$this->id. ": ".trim($this->firstname." ".$this->name);
-
-				$newdn = "cn=".$info["cn"].",".$conf->global->LDAP_CONTACT_DN;
-				$olddn = $newdn;
-				if ($this->old_firstname || $this->old_name) $olddn="cn=".trim($this->old_firstname." ".$this->old_name).",".$conf->global->LDAP_CONTACT_DN;
+				// Definitition du DN
+				$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
+				$olddn = $dn;
+				if (($this->old_firstname || $this->old_name) && $conf->global->LDAP_KEY_CONTACTS=="cn")
+					$olddn=$conf->global->LDAP_KEY_CONTACTS."=".trim($this->old_firstname." ".$this->old_name).",".$conf->global->LDAP_CONTACT_DN;
 
 				// On supprime et on insère
-				dolibarr_syslog("Contact.class::update_ldap olddn=".$olddn." newdn=".$newdn);	
+				dolibarr_syslog("User.class::update_ldap dn=".$dn." olddn=".$olddn);
 
 				$result = $ldap->delete($olddn);
-				$result = $ldap->add($newdn, $info);
+				$result = $ldap->add($dn, $info);
 				if ($result <= 0)
 				{
 					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;

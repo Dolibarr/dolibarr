@@ -159,39 +159,43 @@ class AdherentType
   }
 
 	/**
-		\brief fonction qui permet de récupérer le status de l'adhérent
-		\param rowid
-*/
-
+		\brief 		Fonction qui permet de récupérer le status de l'adhérent
+		\param 		rowid
+		\return		int			<0 si KO, >0 si OK
+	*/
 	function fetch($rowid)
-  {
-    $sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
-    $sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
-    $sql .= " WHERE d.rowid = $rowid";
-    
-    if ( $this->db->query( $sql) )
-    {
-        if ($this->db->num_rows())
-        {
-            $obj = $this->db->fetch_object();
-    
-            $this->id             = $obj->rowid;
-            $this->libelle        = $obj->libelle;
-            $this->statut         = $obj->statut;
-            $this->cotisation     = $obj->cotisation;
-            $this->mail_valid     = $obj->mail_valid;
-            $this->commentaire    = $obj->note;
-            $this->vote           = $obj->vote;
-        }
-    }
-    else
-    {
-        print $this->db->error();
-    }
+	{
+		$sql = "SELECT d.rowid, d.libelle, d.statut, d.cotisation, d.mail_valid, d.note, d.vote";
+		$sql .= " FROM ".MAIN_DB_PREFIX."adherent_type as d";
+		$sql .= " WHERE d.rowid = ".$rowid;
+		dolibarr_syslog("Adherent_type::fetch sql=".$sql);
 
-  }
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ($this->db->num_rows($resql))
+			{
+				$obj = $this->db->fetch_object($resql);
+		
+				$this->id             = $obj->rowid;
+				$this->libelle        = $obj->libelle;
+				$this->statut         = $obj->statut;
+				$this->cotisation     = $obj->cotisation;
+				$this->mail_valid     = $obj->mail_valid;
+				$this->commentaire    = $obj->note;
+				$this->vote           = $obj->vote;
+			}
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
-  function liste_array()
+
+	function liste_array()
     {
       $projets = array();
 
