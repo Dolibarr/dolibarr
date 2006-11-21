@@ -25,7 +25,7 @@
 
 
 /**
-		\file 		htdocs/lib/authldap.lib.php
+		\file 		htdocs/lib/ldap.class.php
 		\brief 		Classe de gestion d'annuaire LDAP
 		\author 	Rodolphe Quiedeville
 		\author		Benoit Mortier
@@ -33,9 +33,8 @@
 		\author		Laurent Destailleur
 		\version 	$Revision$
 */
-
-class AuthLdap {
-
+class Ldap
+{
 
     /**
      * Tableau des serveurs (IP addresses ou nom d'hôtes)
@@ -108,7 +107,7 @@ class AuthLdap {
      * Constructor- creates a new instance of the authentication class
      *
      */
-    function AuthLdap ()
+    function Ldap ()
     {
     	global $conf;
 
@@ -135,6 +134,8 @@ class AuthLdap {
         $this->attr_fax        = $conf->global->LDAP_FIELD_FAX;
         $this->attr_mobile     = $conf->global->LDAP_FIELD_MOBILE;
     }
+
+
     
     // 2.1 Connection handling methods -------------------------------------------
 
@@ -170,6 +171,60 @@ class AuthLdap {
         return false;
     }
 
+	
+    /**
+     * 2.1.1 : Connects to the server. Just creates a connection which is used
+     * in all later access to the LDAP server. If it can't connect and bind
+     * anonymously, it creates an error code of -1. Returns true if connected,
+     * false if failed. Takes an array of possible servers - if one doesn't work,
+     * it tries the next and so on.
+     */
+    function connect_bind($errorifauthfails=0)
+    {
+        foreach ($this->server as $key => $host)
+     	{
+        	if (ereg('^ldap',$host)) {
+            $this->connection = ldap_connect($host);
+          } else {
+          	$this->connection = ldap_connect($host,$this->serverPort);
+          }
+          if ($this->connection) {
+          	$this->setVersion();
+          	if ($this->serverType == "activedirectory") {
+          		$this->setReferrals();
+          		return true;
+          	} else {
+                    // Connected, now try binding anonymously
+                    $this->result=@ldap_bind( $this->connection);
+
+			if ($result)
+		{
+			$bind='';
+			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			{
+				dolibarr_syslog("UserGroup.class::update_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+			}
+			else
+			{
+				dolibarr_syslog("UserGroup.class::update_ldap bind",LOG_DEBUG);
+				$bind=$ldap->bind();
+			}
+
+
+
+					}
+                return true;
+            }
+        }
+
+        $this->ldapErrorCode = -1;
+        $this->ldapErrorText = "Unable to connect to any server";
+        return false;
+    }	
+
+			
+			
     /**
      * 2.1.2 : Simply closes the connection set up earlier.
      * Returns true if OK, false if there was an error.
@@ -200,19 +255,19 @@ class AuthLdap {
     }
     
     /**
-		 * \brief unbind du serveur ldap.
-		 * \param	ds
-		 * \return	bool
-		 */
-		 function unbind() {
-		 	if (!$this->result=@ldap_unbind($this->connection))	{
-		 		$this->ldapErrorCode = ldap_errno( $this->connection);
-		 		$this->ldapErrorText = ldap_error( $this->connection);
-		 		return false;
-		 	} else {
-		 		return true;
-		 	}
-		}
+	* 	\brief 		Unbind du serveur ldap.
+	* 	\param		ds
+	* 	\return		bool
+	*/
+	function unbind() {
+	if (!$this->result=@ldap_unbind($this->connection))	{
+		$this->ldapErrorCode = ldap_errno( $this->connection);
+		$this->ldapErrorText = ldap_error( $this->connection);
+		return false;
+	} else {
+		return true;
+	}
+	}
 
 
     /**
@@ -248,7 +303,8 @@ class AuthLdap {
 		 * \return	version
      */
      function setVersion() {
-     	$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
+     	global $conf;
+     	$ldapsetversion = ldap_set_option($this->connection, $conf->global->LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
      	return $ldapsetversion;
     }
     
@@ -257,9 +313,12 @@ class AuthLdap {
 		 * \return	referrals
      */
      function setReferrals() {
-     	$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
+     	global $conf;
+     	$ldapreferrals = ldap_set_option($this->connection, $conf->global->LDAP_OPT_REFERRALS, 0);
      	return $ldapreferrals;
     }
+
+
 
     // 2.2 Password methods ------------------------------------------------------
 
@@ -446,8 +505,7 @@ class AuthLdap {
 			}
 		}
 				
-		dolibarr_syslog("authldap::add dn=".$dn);
-		dolibarr_syslog("authldap::add info=".join(',',$info));
+		dolibarr_syslog("ldap.class::add dn=".$dn." info=".join(',',$info));
 
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
@@ -471,7 +529,7 @@ class AuthLdap {
 			$dn=utf8_encode($dn);
 		}
 		
-		dolibarr_syslog("authldap::delete Delete LDAP entry dn=".$dn);
+		dolibarr_syslog("ldap.class::delete Delete LDAP entry dn=".$dn);
 
 		$result=@ldap_delete($this->connection, $dn);
 
@@ -483,30 +541,31 @@ class AuthLdap {
 
     // 2.4 Attribute methods -----------------------------------------------------
     /**
-     * 2.4.1 : Returns an array containing a set of attribute values.
-     * For most searches, this will just be one row, but sometimes multiple
-     * results are returned (eg:- multiple email addresses)
+     * 2.4.1 : Returns an array containing values for an attribute and for first record matching filterrecord
      */
-    function getAttribute ( $uname,$attribute) {
-
-        $results[0] = $attribute;
-        $filtre = $this->getUserIdentifier()."=$uname";
+    function getAttribute($filterrecord,$attribute)
+    {
+        $attributes[0] = $attribute;
 
         // We need to search for this user in order to get their entry.
-        $this->result = @ldap_search( $this->connection,$this->people,$filtre,$results);
-        $info = ldap_get_entries( $this->connection, $this->result);
+        $this->result = @ldap_search($this->connection,$this->people,$filterrecord,$attributes);
+
+		// Pourquoi cette ligne ?
+        //$info = ldap_get_entries($this->connection, $this->result);
 
         // Only one entry should ever be returned (no user will have the same uid)
-        $entry = ldap_first_entry( $this->connection, $this->result);
+        $entry = ldap_first_entry($this->connection, $this->result);
 
-        if ( !$entry) {
+        if (!$entry)
+		{
             $this->ldapErrorCode = -1;
             $this->ldapErrorText = "Couldn't find user";
             return false;  // Couldn't find the user...
         }
 
-        // Get all the member DNs
-        if ( !$values = @ldap_get_values( $this->connection, $entry, $attribute)) {
+        // Get values
+        if (! $values = @ldap_get_values( $this->connection, $entry, $attribute))
+		{
             $this->ldapErrorCode = ldap_errno( $this->connection);
             $this->ldapErrorText = ldap_error( $this->connection);
             return false; // No matching attributes
@@ -517,37 +576,13 @@ class AuthLdap {
     }
 
 
-    /**
-     * 2.4.2 : Allows an attribute value to be set.
-     * This can only usually be done after an authenticated bind as a
-     * directory manager - otherwise, read/write access will not be granted.
-     */
-    function setAttribute( $uname, $attribute, $value) {
-        // Construct a full DN...
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        $attrib_dn = $this->getUserIdentifier()."=$uname," . $this->setDn(true);
-
-        $info[$attribute] = $value;
-        // Change attribute
-        $this->result = ldap_modify( $this->connection, $attrib_dn, $info);
-        if ( $this->result) {
-            // Change went OK
-            return true;
-        } else {
-            // Couldn't change password...
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false;
-        }
-    }
-
     // 2.5 User methods ----------------------------------------------------------
     /**
      * 2.5.1 : Returns an array containing a details of users, sorted by
      * username. The search criteria is a standard LDAP query - * returns all
      * users.  The $attributeArray variable contains the required user detail field names
      */
-    function getUsers( $search, $attributeArray)
+    function getUsers($search, $attributeArray)
     {
 		$userslist=array();
 		
@@ -559,7 +594,7 @@ class AuthLdap {
         }
 
         $filter = '('.$this->filter.'('.$this->getUserIdentifier().'='.$search.'))';
-//print "zzz".$filter;
+		//print "zzz".$filter;
         $this->result = @ldap_search( $this->connection, $this->people, $filter);
         
         if (!$this->result)
@@ -648,7 +683,7 @@ class AuthLdap {
 	* 	\brief 		Fonction de recherche avec filtre
 	* 	\param 		checkDn		DN de recherche
 	* 	\param 		filter		filtre de recherche (ex: sn=nom_personne)
-	*	\remarks	this->conneciton doit etre défini donc la methode bind ou authbind doit avoir deja été appelée
+	*	\remarks	this->connection doit etre défini donc la methode bind ou authbind doit avoir deja été appelée
 	*/
 	function search($checkDn, $filter)
 	{
@@ -658,7 +693,7 @@ class AuthLdap {
 			$checkDn=utf8_decode($checkDn);
 		}
 	
-		dolibarr_syslog("authldap.lib::search checkDn=".$checkDn." filter=".$filer);
+		dolibarr_syslog("ldap.class::search checkDn=".$checkDn." filter=".$filer);
 		
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
