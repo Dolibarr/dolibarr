@@ -170,25 +170,40 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'testgroup')
 	{
-		// Creation contact
+		// Creation objet
 		$fgroup=new UserGroup($db);
 		$fgroup->initAsSpecimen();
 
 		// Test synchro
-		//$result1=$fgroup->delete_ldap($user);
-		$result2=$fgroup->update_ldap($user);
-		$result3=$fgroup->delete_ldap($user);
-	
-		if ($result2 > 0)
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+
+		if ($result > 0)
 		{
-			print img_picto('','info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			$info=$fgroup->_load_ldap_info();
+			$dn=$fgroup->_load_ldap_dn($info);
+
+			$result2=$ldap->update($dn,$info,$user);
+			$result3=$ldap->delete($dn);
+
+			if ($result2 > 0)
+			{
+				print img_picto('','info').' ';
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			}
+			else
+			{
+				print img_picto('','error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+				print ': '.$ldap->error;
+				print '</font><br>';
+			}
 		}
 		else
 		{
 			print img_picto('','error').' ';
-			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$fgroup->error;
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
 			print '</font><br>';
 		}
 	}

@@ -375,15 +375,18 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	* Affiche formulaire d'ajout d'un compte depuis LDAP
 	* si on est en synchro LDAP vers Dolibarr
 	*/
+
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
+		$fullname  = $conf->global->LDAP_FIELD_FULLNAME;
 		$name      = $conf->global->LDAP_FIELD_NAME;
 		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
+		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+
 		$mail      = $conf->global->LDAP_FIELD_MAIL;
 		$phone     = $conf->global->LDAP_FIELD_PHONE;
 		$fax       = $conf->global->LDAP_FIELD_FAX;
 		$mobile    = $conf->global->LDAP_FIELD_MOBILE;
-		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
 		$SID       = "objectsid";
 
 		$ldap = new Ldap();
@@ -403,7 +406,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			}
 			if ($bind)
 			{				
-				$justthese = array($name, $firstname, $login);
+				$justthese = array($fullname, $name, $firstname, $login);
 				$ldapusers = $ldap->getUsers('*', $justthese);
 
 				//print "eee".$justthese." r ".$ldapusers;
@@ -411,8 +414,11 @@ if (($action == 'create') || ($action == 'adduserldap'))
 
 				foreach ($ldapusers as $key => $ldapuser)
 				{
-					if($ldapuser[$name] != "")
-					$liste[$ldapuser[$login]] = utf8_decode($ldapuser[$name])." ".utf8_decode($ldapuser[$firstname]);
+					if ($ldapuser[$login])
+					{
+						if ($ldapuser[$name] != "") $liste[$ldapuser[$login]] = trim($ldapuser[$name]." ".$ldapuser[$firstname]);
+						else if ($ldapuser[$fullname] != "")  $liste[$ldapuser[$login]] = $ldapuser[$fullname];
+					}
 				}
 
 				print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -663,12 +669,12 @@ else
     	// Connexion ldap
     	if ($conf->ldap->enabled && $fuser->ldap_sid)
     	{
-    		
     		$ldap = new Ldap();
-    		if ($ldap->connect())
+    		$result=$ldap->connect_bind();
+    		if ($result > 0)
     		{
     			$entries = $ldap->fetch($fuser->login);
-    			if (!$entries)
+    			if (! $entries)
     			{
     				$message .= $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
     			}

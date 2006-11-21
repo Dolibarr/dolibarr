@@ -40,7 +40,7 @@ function member_prepare_head($member)
 	$head[$h][2] = 'general';
 	$h++;
 	
-	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBERS_ACTIVE)
+	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		$langs->load("ldap");
 		

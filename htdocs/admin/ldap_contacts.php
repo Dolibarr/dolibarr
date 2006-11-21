@@ -223,25 +223,40 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'test')
 	{
-		// Creation contact
+		// Creation objet
 		$contact=new Contact($db);
 		$contact->initAsSpecimen();
 
 		// Test synchro
-		//$result1=$contact->delete_ldap($user);
-		$result2=$contact->update_ldap($user);
-		$result3=$contact->delete_ldap($user);
-	
-		if ($result2 > 0)
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+
+		if ($result > 0)
 		{
-			print img_picto('','info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			$info=$contact->_load_ldap_info();
+			$dn=$contact->_load_ldap_dn($info);
+
+			$result2=$ldap->update($dn,$info,$user);
+			$result3=$ldap->delete($dn);
+
+			if ($result2 > 0)
+			{
+				print img_picto('','info').' ';
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			}
+			else
+			{
+				print img_picto('','error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+				print ': '.$ldap->error;
+				print '</font><br>';
+			}
 		}
 		else
 		{
 			print img_picto('','error').' ';
-			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$contact->error;
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
 			print '</font><br>';
 		}
 

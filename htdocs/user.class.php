@@ -588,10 +588,16 @@ class User
 	        // Fin appel triggers
 
 			// \todo	Mettre en trigger
-	    	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-	    	{
-	    	    $this->delete_ldap($user);
-			}
+        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$this->_load_ldap_info();
+				$dn=$this->_load_ldap_dn($info);
+				
+	    	    $ldap->delete($dn,$info,$user);
+    		}
 
 	    	$this->db->commit();
 		    return 1;
@@ -667,7 +673,13 @@ class User
 					// \todo	Mettre en trigger
 		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
 		        	{
-			    	    $this->create_ldap($user);
+		        		$ldap=new Ldap();
+		        		$ldap->connect_bind();
+
+						$info=$this->_load_ldap_info();
+						$dn=$this->_load_ldap_dn($info);
+						
+			    	    $ldap->add($dn,$info,$user);
 		    		}
 
                     if (! $error)
@@ -870,7 +882,13 @@ class User
 					// \todo	Mettre en trigger
 		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
 		        	{
-			    	    $this->update_ldap($user);
+		        		$ldap=new Ldap();
+		        		$ldap->connect_bind();
+
+						$info=$this->_load_ldap_info();
+						$dn=$this->_load_ldap_dn($info);
+						
+			    	    $ldap->update($dn,$info,$user);
 		    		}
                 }
 
@@ -1237,146 +1255,34 @@ class User
 	}
 
 
-	/**
-	*   \brief      Creation dans l'arbre LDAP
-	*   \param      user        Utilisateur qui effectue la creation
-	*	\return		int			<0 si ko, >0 si ok
+	/*
+	*	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	*	\param		info		Info string loaded by _load_ldap_info
+	*	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+								1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+								2=Return key only (uid=qqq)
+	*	\return		string		DN
 	*/
-	function create_ldap($user)
+	function _load_ldap_dn($info,$mode=0)
 	{
-		dolibarr_syslog("User.class::create_ldap this->id=".$this->id,LOG_DEBUG);
-		return $this->update_ldap($user);
+		global $conf;
+		$dn='';
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
+		if ($mode==1) $dn=$conf->global->LDAP_USER_DN;
+		if ($mode==2) $dn=$conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS];
+		return $dn;
 	}
 
 
-	/**
-	*   \brief      Mise à jour dans l'arbre LDAP
-	*   \param      user        Utilisateur qui effectue la mise à jour
-	*	\return		int			<0 si ko, >0 si ok
+	/*
+	*	\brief		Retourne chaine dn dand l'annuaire LDAP
+	*	\return		array		Tableau info des attributs
 	*/
-	function update_ldap($user)
-	{
-		global $conf, $langs;
-
-        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
-
-		$info = array();
-
-		dolibarr_syslog("User.class::update_ldap this->id=".$this->id,LOG_DEBUG);
-
-		$ldap=new Ldap();
-		$result=$ldap->connect();
-		if ($result)
-		{
-			$bind='';
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-			{
-				dolibarr_syslog("User.class::update_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-			}
-			else
-			{
-				dolibarr_syslog("User.class::update_ldap bind",LOG_DEBUG);
-				$bind=$ldap->bind();
-			}
-			if ($bind)
-			{
-				$info=$this->_load_ldap_info($info);
-
-				// Definitition du DN
-				$dn = $conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
-				$olddn = $dn;
-				if (($this->old_firstname || $this->old_name) && $conf->global->LDAP_KEY_USERS=="cn")
-					$olddn=$conf->global->LDAP_KEY_USERS."=".trim($this->old_firstname." ".$this->old_name).",".$conf->global->LDAP_USER_DN;
-
-				// On supprime et on insère
-				dolibarr_syslog("User.class::update_ldap dn=".$dn." olddn=".$olddn);
-
-				$result = $ldap->delete($olddn);
-				$result = $ldap->add($dn, $info);
-				if ($result <= 0)
-				{
-					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
-					dolibarr_syslog("User.class::update_ldap ".$this->error,LOG_ERROR);
-					//print_r($info);
-					return -1;
-				}
-				else
-				{
-					dolibarr_syslog("User.class::update_ldap rowid=".$this->id." added in LDAP");
-				}
-
-				$ldap->unbind();
-
-				return 1;
-			}
-			else
-			{
-				$this->error = "Error ".ldap_errno($ldap->connection)." ".ldap_error($ldap->connection);
-				dolibarr_syslog("User.class::update_ldap bind failed",LOG_DEBUG);
-				return -1;
-			}
-		}
-		else
-		{
-			$this->error="Failed to connect to LDAP server !";
-			dolibarr_syslog("User.class::update_ldap Connexion failed",LOG_DEBUG);
-			return -1;
-		}
-	}
-
-
-	/**
-	*	\brief      Mise à jour de l'arbre LDAP
-	*   \param      user        Utilisateur qui efface
-	*	\return		int			<0 si ko, >0 si ok
-	*/
-	function delete_ldap($user)
-	{
-		global $conf, $langs;
-
-        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
-
-		dolibarr_syslog("User.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
-
-		$ldap=new Ldap();
-		$result=$ldap->connect();
-		if ($result)
-		{
-			$bind='';
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-			{
-				dolibarr_syslog("User.class::delete_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-			}
-			else
-			{
-				dolibarr_syslog("User.class::delete_ldap bind",LOG_DEBUG);
-				$bind=$ldap->bind();
-			}
-
-			if ($bind)
-			{
-				$info=$this->_load_ldap_info($info);
-
-				$dn = $conf->global->LDAP_KEY_USERS."=".$info[$conf->global->LDAP_KEY_USERS].",".$conf->global->LDAP_USER_DN;
-				$result=$ldap->delete($dn);
-
-				return $result;
-			}
-		}
-		else
-		{
-			$this->error="Failed to connect to LDAP server !";
-			dolibarr_syslog("User.class::update_ldap Connexion failed",LOG_DEBUG);
-			return -1;
-		}
-	}
-
-
-	function _load_ldap_info($info)
+	function _load_ldap_info()
 	{
 		global $conf,$langs;
+
+		$info=array();
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
 		{
@@ -1416,7 +1322,7 @@ class User
 		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->note) $info["description"] = $this->note;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
@@ -1446,7 +1352,7 @@ class User
 
 		return $info;
 	}
-
+	
 
 	/**
 	 *		\brief		Initialise le user avec valeurs fictives aléatoire

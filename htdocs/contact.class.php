@@ -84,6 +84,8 @@ class Contact
      */
     function create($user)
     {
+    	global $conf, $langs;
+    	
 		// Nettoyage parametres
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
@@ -116,7 +118,13 @@ class Contact
 			// \todo	Mettre en trigger
         	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
         	{
-	    	    $this->create_ldap($user);
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$this->_load_ldap_info();
+				$dn=$this->_load_ldap_dn($info);
+				
+	    	    $ldap->add($dn,$info,$user);
     		}
     		        
             return $this->id;
@@ -138,11 +146,15 @@ class Contact
      */
     function update($id, $user=0, $call_trigger=1)
     {
+    	global $conf, $langs;
+    	
         $this->id = $id;
     
     	// Nettoyage parametres
         $this->name=trim($this->name);
         $this->firstname=trim($this->firstname);
+        $this->fullname=trim($this->firstname.' '.$this->name);
+        
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
     
@@ -190,11 +202,18 @@ class Contact
             $result=$interface->run_triggers('CONTACT_UPDATE',$this,$user,$langs,$conf);
             // Fin appel triggers
 
+
 			// \todo	Mettre en trigger
         	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
         	{
-    	    	$this->update_ldap($user);
-    	    }
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$this->_load_ldap_info();
+				$dn=$this->_load_ldap_dn($info);
+				
+	    	    $ldap->update($dn,$info,$user);
+    		}
     	}
     	
 
@@ -202,55 +221,30 @@ class Contact
     }
   
   
-	/**
-	*	\brief      Mise à jour de l'arbre LDAP
-	*   \param      user        Utilisateur qui efface
-	*	\return		int			<0 si ko, >0 si ok
+	/*
+	*	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	*	\param		info		Info string loaded by _load_ldap_info
+	*	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+								1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+								2=Return key only (uid=qqq)
+	*	\return		string		DN
 	*/
-	function delete_ldap($user)
+	function _load_ldap_dn($info,$mode=0)
 	{
-		global $conf, $langs;
-
-        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
-
-		dolibarr_syslog("Contact.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
-	
-		$ldap=new Ldap();
-		$result=$ldap->connect();
-		if ($result)
-		{
-			$bind='';
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-			{
-				dolibarr_syslog("Contact.class::delete_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-			}
-			else
-			{
-				dolibarr_syslog("Contact.class::delete_ldap bind",LOG_DEBUG);
-				$bind=$ldap->bind();
-			}
-			
-			if ($bind)
-			{
-				$info=$this->_load_ldap_info($info);
-
-				$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-				$result=$ldap->delete($dn);
-				
-				return $result;
-			}
-		}
-		else
-		{
-			$this->error="Failed to connect to LDAP server !";
-			dolibarr_syslog("Contact.class::update_ldap Connexion failed",LOG_DEBUG);
-			return -1;
-		}
+		global $conf;
+		$dn='';
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
+		if ($mode==1) $dn=$conf->global->LDAP_CONTACT_DN;
+		if ($mode==2) $dn=$conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS];
+		return $dn;
 	}
-	
-	
-	function _load_ldap_info($info)
+
+
+	/*
+	*	\brief		Retourne chaine dn dand l'annuaire LDAP
+	*	\return		array		Tableau info des attributs
+	*/
+	function _load_ldap_info()
 	{
 		global $conf,$langs;
 
@@ -270,9 +264,10 @@ class Contact
 		}	
 
 		// Champs 
-		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
 		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+
 		if ($this->poste) $info["title"] = $this->poste;
 		if ($this->socid > 0)
 		{
@@ -291,7 +286,7 @@ class Contact
 		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->note) $info["description"] = $this->note;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
 		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
@@ -322,146 +317,57 @@ class Contact
 		return $info;
 	}
 
-
-	/**
-	*   \brief      Creation dans l'arbre LDAP
-	*   \param      user        Utilisateur qui effectue la creation
-	*	\return		int			<0 si ko, >0 si ok
-	*/
-	function create_ldap($user)
-	{
-		dolibarr_syslog("Contact.class::create_ldap this->id=".$this->id,LOG_DEBUG);
-		return $this->update_ldap($user);
-	}
-
 	
-	/**
-	*   \brief      Mise à jour dans l'arbre LDAP
-	*   \param      user        Utilisateur qui effectue la mise à jour
-	*	\return		int			<0 si ko, >0 si ok
+	/*
+	*    \brief      Mise à jour des alertes
+	*    \param      id          id du contact
+	*    \param      user        Utilisateur qui demande l'alerte
 	*/
-	function update_ldap($user)
+	function update_perso($id, $user=0)
 	{
-		global $conf, $langs;
-
-        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_CONTACT_ACTIVE) return 0;
-
-		$info = array();
-
-		dolibarr_syslog("Contact.class::update_ldap this->id=".$this->id,LOG_DEBUG);
+		// Mis a jour contact
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
 	
-		$ldap=new Ldap();
-		$result=$ldap->connect();
-		if ($result)
+		if ($this->birthday>0)
 		{
-			$bind='';
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+			if (eregi('\-',$this->birthday))
 			{
-				dolibarr_syslog("Contact.class::update_ldap authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+				// Si date = chaine
+				$sql .= ", birthday='".$this->birthday."'";
 			}
 			else
 			{
-				dolibarr_syslog("Contact.class::update_ldap bind",LOG_DEBUG);
-				$bind=$ldap->bind();
+				// Si date = timestamp
+				$sql .= ", birthday=".$this->db->idate($this->birthday);
 			}
-			if ($bind)
-			{
-				$info=$this->_load_ldap_info($info);
-
-				// Definitition du DN
-				$dn = $conf->global->LDAP_KEY_CONTACTS."=".$info[$conf->global->LDAP_KEY_CONTACTS].",".$conf->global->LDAP_CONTACT_DN;
-				$olddn = $dn;
-				if (($this->old_firstname || $this->old_name) && $conf->global->LDAP_KEY_CONTACTS=="cn")
-					$olddn=$conf->global->LDAP_KEY_CONTACTS."=".trim($this->old_firstname." ".$this->old_name).",".$conf->global->LDAP_CONTACT_DN;
-
-				// On supprime et on insère
-				dolibarr_syslog("User.class::update_ldap dn=".$dn." olddn=".$olddn);
-
-				$result = $ldap->delete($olddn);
-				$result = $ldap->add($dn, $info);
-				if ($result <= 0)
-				{
-					$this->error = ldap_errno($ldap->connection)." ".ldap_error($ldap->connection)." ".$ldap->error;
-					dolibarr_syslog("Contact.class::update_ldap ".$this->error);	
-					//print_r($info);
-					return -1;
-				}
-				else
-				{
-					dolibarr_syslog("Contact.class::update_ldap rowid=".$this->id." added in LDAP");	
-				}
-
-				$ldap->unbind();
-
-				return 1;
-			}
-			else
-			{
-				$this->error = "Error ".ldap_errno($ldap->connection)." ".ldap_error($ldap->connection);
-				dolibarr_syslog("Contact.class::update_ldap bind failed",LOG_DEBUG);
-				return -1;
-			}
+		}
+		$sql .= " WHERE idp=$id";
+	
+		$result = $this->db->query($sql);
+		if (!$result)
+		{
+			$this->error='Echec sql='.$sql;
+		}
+	
+		// Mis a jour alerte birthday
+		if ($this->birthday_alert)
+		{
+			$sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
+			$sql.= "values (1,".$id.",".$user->id.")";
 		}
 		else
 		{
-			$this->error="Failed to connect to LDAP server !";
-			dolibarr_syslog("Contact.class::update_ldap Connexion failed",LOG_DEBUG);
-			return -1;
+			$sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
+			$sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
 		}
+		$result = $this->db->query($sql);
+		if (!$result)
+		{
+			$this->error='Echec sql='.$sql;
+		}
+	
+		return $result;
 	}
-  
-  
-  /*
-   *    \brief      Mise à jour des alertes
-   *    \param      id          id du contact
-   *    \param      user        Utilisateur qui demande l'alerte
-   */
-  function update_perso($id, $user=0)
-    {
-      // Mis a jour contact
-      $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
-
-      if ($this->birthday>0)
-	{
-	  if (eregi('\-',$this->birthday))
-	    {
-	      // Si date = chaine
-	      $sql .= ", birthday='".$this->birthday."'";
-	    }        
-	  else
-	    {
-	      // Si date = timestamp
-	      $sql .= ", birthday=".$this->db->idate($this->birthday);
-	    }
-	}
-      $sql .= " WHERE idp=$id";
-
-      $result = $this->db->query($sql);
-      if (!$result) 
-	{
-	  $this->error='Echec sql='.$sql;
-	}
-      
-      // Mis a jour alerte birthday
-      if ($this->birthday_alert)
-	{
-	  $sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-	  $sql.= "values (1,".$id.",".$user->id.")";
-	}
-      else
-	{
-	  $sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
-	  $sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
-	}
-      $result = $this->db->query($sql);
-      if (!$result) 
-	{
-	  $this->error='Echec sql='.$sql;
-	}
- 
-      return $result;
-    }
 
 
     /*
@@ -496,7 +402,8 @@ class Contact
                 $this->firstname      = $obj->firstname;
                 $this->nom            = $obj->name;
                 $this->prenom         = $obj->firstname;
-    
+                $this->fullname       = trim($this->firstname . ' ' . $this->name);
+
                 $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
@@ -507,8 +414,6 @@ class Contact
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
                 $this->poste          = $obj->poste;
-    
-                $this->fullname       = trim($this->firstname . ' ' . $this->name);
     
                 $this->phone_pro      = trim($obj->phone);
                 $this->fax            = trim($obj->fax);
@@ -674,20 +579,17 @@ class Contact
         // Fin appel triggers
 
 		// \todo	Mettre en trigger
-       	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
-      	{
-			// On modifie contact avec anciens noms
-		 	$savname=$this->name;
-		 	$savfirstname=$this->firstname;
-	        $this->name=$this->old_name;
-	        $this->firstname=$this->old_firstname;
-	
-	        $this->delete_ldap($user);
-	
-	        $this->name=$savname;
-	        $this->firstname=$savfirstname;
+    	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+    	{
+    		$ldap=new Ldap();
+    		$ldap->connect_bind();
+
+			$info=$this->_load_ldap_info();
+			$dn=$this->_load_ldap_dn($info);
+			
+    	    $ldap->delete($dn,$info,$user);
 		}
-		
+
 		return 1;
 	}
 

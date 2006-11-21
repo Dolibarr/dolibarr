@@ -546,8 +546,8 @@ LDAPSynchroOK=Synchronization test successful
 LDAPSynchroKO=Failed synchronization test
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
-LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s)
-LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s)
+LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=%s)
+LDAPBindKO=Connect/Authentificate to LDAP server failed (Server=%s, Port=%s, Admin=%s, Password=%s)
 LDAPUnbindSuccessfull=Disconnect successfull
 LDAPUnbindFailed=Disconnect failed
 LDAPConnectToDNSuccessfull=Connection au DN (%s) réussie

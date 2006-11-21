@@ -59,8 +59,9 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
 
 	if ($error)
 	{
@@ -200,6 +201,14 @@ print '</td><td>'.$langs->trans("LDAPFieldFaxExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_FAX.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_FAX?' checked="true"':'')."></td>";
 print '</tr>';
 
+// Description
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>';
+print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
+print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
+print '</tr>';
+
 $var=!$var;
 print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
@@ -224,25 +233,40 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'testuser')
 	{
-		// Creation contact
+		// Creation objet
 		$fuser=new User($db);
 		$fuser->initAsSpecimen();
 
 		// Test synchro
-		//$result1=$fuser->delete_ldap($user);
-		$result2=$fuser->update_ldap($user);
-		$result3=$fuser->delete_ldap($user);
-	
-		if ($result2 > 0)
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+
+		if ($result > 0)
 		{
-			print img_picto('','info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			$info=$fuser->_load_ldap_info();
+			$dn=$fuser->_load_ldap_dn($info);
+
+			$result2=$ldap->update($dn,$info,$user);
+			$result3=$ldap->delete($dn);
+
+			if ($result2 > 0)
+			{
+				print img_picto('','info').' ';
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			}
+			else
+			{
+				print img_picto('','error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+				print ': '.$ldap->error;
+				print '</font><br>';
+			}
 		}
 		else
 		{
 			print img_picto('','error').' ';
-			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$fuser->error;
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
 			print '</font><br>';
 		}
 

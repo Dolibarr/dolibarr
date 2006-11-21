@@ -175,7 +175,6 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 
 		    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
 		    'userfilter' => $conf->global->$conf->global->LDAP_FILTER_CONNECTION
-		    //'userattr' => 'samAccountName',
 		    //'userfilter' => '(objectClass=user)',
 	    );
 

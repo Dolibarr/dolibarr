@@ -67,7 +67,7 @@ function ldap_prepare_head()
 		$h++;
 	}
 	
-	if ($conf->global->LDAP_MEMBERS_ACTIVE)
+	if ($conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/admin/ldap_members.php";
 		$head[$h][1] = $langs->trans("LDAPMembersSynchro");

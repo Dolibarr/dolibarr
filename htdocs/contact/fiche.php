@@ -133,18 +133,19 @@ if ($user->rights->societe->contact->creer)
 
 if ($user->rights->societe->contact->supprimer)
 {
-  if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
-  {
-    $contact = new Contact($db);
+	if ($_POST["action"] == 'confirm_delete' AND $_POST["confirm"] == 'yes')
+	{
+		$contact = new Contact($db);
+		$contact->fetch($_GET["id"]);
 
-    $contact->old_name      = $_POST["old_name"];
-    $contact->old_firstname = $_POST["old_firstname"];
+		$contact->old_name      = $_POST["old_name"];
+		$contact->old_firstname = $_POST["old_firstname"];
 
-    $result = $contact->delete($_GET["id"]);
+		$result = $contact->delete($_GET["id"]);
 
-    Header("Location: index.php");
-    exit;
-  }
+		Header("Location: index.php");
+		exit;
+	}
 }
 
 if ($user->rights->societe->contact->creer)

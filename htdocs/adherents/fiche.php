@@ -574,7 +574,7 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->password.'"></td></tr>';
 
 	// Type
-    print '<tr><td">'.$langs->trans("MemberType").'*</td><td">';
+    print '<tr><td>'.$langs->trans("MemberType").'*</td><td>';
     $listetype=$adht->liste_array();
     if (sizeof($listetype)) {
         $htmls->select_array("type", $listetype, $typeid);

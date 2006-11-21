@@ -333,8 +333,8 @@ class Adherent
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
 		$sql .= " VALUES (now())";
 
+		dolibarr_syslog("Adherent.class::create sql=".$sql);
 		$result = $this->db->query($sql);
-
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
@@ -345,6 +345,17 @@ class Adherent
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
             // Fin appel triggers
+
+			// \todo	Mettre en trigger
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+				$info=$this->_load_ldap_info();
+				$dn=$this->_load_ldap_dn($info);
+				
+	    	    $ldap->add($dn,$info,$user);
+    		}
 
 			return 1;
 		}
@@ -365,7 +376,7 @@ class Adherent
 	{
 		global $conf,$langs,$user;
 
-		dolibarr_syslog("Adherent.class.php::update $disable_trigger");
+		dolibarr_syslog("Adherent.class::update $disable_trigger");
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -388,14 +399,15 @@ class Adherent
 		$sql .= ",email='"  .$this->email."'";
 		$sql .= ",login='"  .$this->login."'";
 		$sql .= ",pass='"   .$this->pass."'";
-		$sql .= ",naiss="   .$this->naiss?"'".$this->naiss."'":"null";
-		$sql .= ",photo="   .$this->photo?"'".$this->photo."'":"null";
+		$sql .= ",naiss="   .($this->naiss?"'".$this->naiss."'":"null");
+		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
 		$sql .= ",public='" .$this->public."'";
 		$sql .= ",statut="  .$this->statut;
 		$sql .= ",fk_adherent_type=".$this->typeid;
 		$sql .= ",morphy='".$this->morphy."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Adherent::update sql=$sql");
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
@@ -439,6 +451,19 @@ class Adherent
 	        $interface=new Interfaces($this->db);
 	        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
 	        // Fin appel triggers
+	        
+			// \todo	Mettre en trigger
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$this->_load_ldap_info();
+				$dn=$this->_load_ldap_dn($info);
+				
+	    	    $ldap->update($dn,$info,$user);
+    		}
+	        
 		}
 
 		$this->db->commit();
@@ -447,48 +472,64 @@ class Adherent
 	}
 
 
-/**
-		\brief fonction qui supprime l'adhérent et les données associées
-		\param	rowid
-*/
+	/**
+			\brief 		Fonction qui supprime l'adhérent et les données associées
+			\param		rowid
+	*/
+	function delete($rowid)
+	{
+		global $conf, $langs;
+		
+		$result = 0;
 
-  function delete($rowid)
-
-  {
-    $result = 0;
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = $rowid";
-
-    if ( $this->db->query( $sql) )
-      {
-	if ( $this->db->affected_rows() )
-	  {
-
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = $rowid";
-	    if ( $this->db->query( $sql) )
-	      {
-		if ( $this->db->affected_rows() )
-		  {
-		    $result = 1;
-		  }
-	      }
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = $rowid";
-	    if ( $this->db->query( $sql) )
-	      {
-		if ( $this->db->affected_rows() )
-		  {
-		    $result = 1;
-		  }
-	      }
-	  }
-      }
-    else
-      {
-      dolibarr_print_error($this->db);
-      }
-
-    return $result;
-
-  }
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
+		if ( $this->db->query( $sql) )
+		{
+			if ( $this->db->affected_rows() )
+			{
+	
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
+				if ( $this->db->query( $sql) )
+				{
+					if ( $this->db->affected_rows() )
+					{
+						$result = 1;
+					}
+				}
+		
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+				dolibarr_syslog("Adherent.class::delete");
+				
+				if ( $this->db->query( $sql) )
+				{
+					if ( $this->db->affected_rows() )
+					{
+						$result = 1;
+	
+						// \todo	Mettre en trigger
+						if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+						{
+							$ldap=new Ldap();
+							$ldap->connect_bind();
+	
+							$info=$this->_load_ldap_info();
+							$dn=$this->_load_ldap_dn($info);
+	
+							$ldap->delete($dn,$info,$user);
+						}
+	
+					}
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	
+		return $result;
+	
+	}
 
 /**
 		\brief      Fonction qui récupére l'adhérent en donnant son login
@@ -666,7 +707,7 @@ class Adherent
     {
         global $conf,$langs,$user;
 
-        dolibarr_syslog("Adherent.class.php::cotisation $date, $montant, $accountid, $operation, $label, $num_chq");
+        dolibarr_syslog("Adherent.class::cotisation $date, $montant, $accountid, $operation, $label, $num_chq");
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
@@ -1628,5 +1669,69 @@ class Adherent
 		$this->type='Type adherent';	// Libellé type adherent
 		$this->need_subscription=0;
 	}
+	
+	
+	/*
+	*	\brief		Retourne chaine DN complete dans l'annuaire LDAP pour l'objet
+	*	\param		info		Info string loaded by _load_ldap_info
+	*	\param		mode		0=Return DN without key inside (ou=xxx,dc=aaa,dc=bbb)
+								1=Return full DN (uid=qqq,ou=xxx,dc=aaa,dc=bbb)
+								2=Return key only (uid=qqq)
+	*	\return		string		DN
+	*/
+	function _load_ldap_dn($info,$mode=0)
+	{
+		global $conf;
+		$dn='';
+		if ($mode==0) $dn=$conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS].",".$conf->global->LDAP_MEMBER_DN;
+		if ($mode==1) $dn=$conf->global->LDAP_MEMBER_DN;
+		if ($mode==2) $dn=$conf->global->LDAP_KEY_MEMBERS."=".$info[$conf->global->LDAP_KEY_MEMBERS];
+		return $dn;
+	}
+
+
+	/*
+	*	\brief		Retourne chaine dn dans l'annuaire LDAP
+	*	\return		array		Tableau info des attributs
+	*/
+	function _load_ldap_info()
+	{
+		global $conf,$langs;
+
+		$info=array();
+
+		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "user");
+		}
+		else
+		{
+			$info["objectclass"]=array("top",
+									   "person",
+									   "organizationalPerson",
+									   "inetOrgPerson");
+		}
+
+		// Champs
+		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
+		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
+		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
+		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
+		if ($this->poste) $info["title"] = $this->poste;
+		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
+		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
+		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
+		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
+		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
+		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
+		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+
+		return $info;
+	}	
 }
 ?>

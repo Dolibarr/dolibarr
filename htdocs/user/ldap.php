@@ -132,50 +132,26 @@ print '</tr>';
 
 // Lecture LDAP
 $ldap=new Ldap();
-$result=$ldap->connect();
-if ($result)
+$result=$ldap->connect_bind();
+if ($result > 0)
 {
-	$bind='';
-	if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+	$info=$fuser->_load_ldap_info();
+	$dn=$fuser->_load_ldap_dn($info,1);
+	$search = "(".$fuser->_load_ldap_dn($info,2).")";
+	$result=$ldap->search($dn,$search);
+
+	// Affichage arbre
+	if (sizeof($result))
 	{
-		dolibarr_syslog("ldap.php: authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-		$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-	}
-	if (! $bind)	// Si pas de login ou si connexion avec login en echec, on tente en anonyme
-	{
-		dolibarr_syslog("ldap.php: bind",LOG_DEBUG);
-		$bind=$ldap->bind();
-	}
-
-	if ($bind)
-	{
-		$info["cn"] = trim($fuser->prenom." ".$fuser->nom);
-
-		$dn = $conf->global->LDAP_USER_DN;
-//		$dn = "cn=".$info["cn"].",".$dn;
-//		$dn = "uid=".$info["uid"].",".$dn
-		$search = "(cn=".$info["cn"].")";
-		//$search = "(uid=".$info["uid"].")";
-
-		$result=$ldap->search($dn,$search);
-
-		// Affichage arbre
-		if (sizeof($result))
-		{
-			$html=new Form($db);
-			$html->show_ldap_content($result,0,0,true);
-		}
-		else
-		{
-			print '<tr><td colspan="2">'.$langs->trans("LDAPRecordNotFound").'</td></tr>';
-		}
-
-		$ldap->unbind();
+		$html=new Form($db);
+		$html->show_ldap_content($result,0,0,true);
 	}
 	else
 	{
-		dolibarr_print_error('',$ldap->error);
+		print '<tr><td colspan="2">'.$langs->trans("LDAPRecordNotFound").'</td></tr>';
 	}
+
+	$ldap->unbind();
 	$ldap->close();
 }
 else

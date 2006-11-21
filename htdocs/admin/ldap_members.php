@@ -216,7 +216,7 @@ print info_admin($langs->trans("LDAPDescValues"));
  */
 if (function_exists("ldap_connect"))
 {
-	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_MEMBERS_ACTIVE)
+	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		print '<br>';
 		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testmember">'.$langs->trans("LDAPTestSynchroMember").'</a>';
@@ -226,59 +226,48 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'testmember')
 	{
-		// Creation adherent
+		// Creation objet
 		$adherent=new Adherent($db);
 		$adherent->initAsSpecimen();
 
 		// Test synchro
-		//$result1=$fuser->delete_ldap($user);
-		$result2=$adherent->update_ldap($user);
-		$result3=$adherent->delete_ldap($user);
-	
-		if ($result2 > 0)
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+
+		if ($result > 0)
 		{
-			print img_picto('','info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			$info=$adherent->_load_ldap_info();
+			$dn=$adherent->_load_ldap_dn($info);
+
+			$result2=$ldap->update($dn,$info,$user);
+			$result3=$ldap->delete($dn);
+
+			if ($result2 > 0)
+			{
+				print img_picto('','info').' ';
+				print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
+			}
+			else
+			{
+				print img_picto('','error').' ';
+				print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+				print ': '.$ldap->error;
+				print '</font><br>';
+			}
 		}
 		else
 		{
 			print img_picto('','error').' ';
-			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$adherent->error;
+			print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+			print ': '.$ldap->error;
 			print '</font><br>';
 		}
-
+		
 	}
 
-	if ($_GET["action"] == 'testtype')
-	{
-		// Creation type adherent
-		$typeadherent=new AdherentType($db);
-		$typeadherent->initAsSpecimen();
-
-		// Test synchro
-		//$result1=$fgroup->delete_ldap($user);
-		$result2=$typeadherent->update_ldap($user);
-		$result3=$typeadherent->delete_ldap($user);
-	
-		if ($result2 > 0)
-		{
-			print img_picto('','info').' ';
-			print '<font class="ok">'.$langs->trans("LDAPSynchroOK").'</font><br>';
-		}
-		else
-		{
-			print img_picto('','error').' ';
-			print '<font class="warning">'.$langs->trans("LDAPSynchroKO");
-			print ': '.$typeadherent->error;
-			print '</font><br>';
-		}
-
-	}
 }
 
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

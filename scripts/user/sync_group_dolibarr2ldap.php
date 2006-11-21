@@ -47,7 +47,7 @@ $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 
 require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
 
 $error=0;
