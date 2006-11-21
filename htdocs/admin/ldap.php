@@ -31,7 +31,7 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");
@@ -257,7 +257,7 @@ if (function_exists("ldap_connect"))
 
 	if ($_GET["action"] == 'test')
 	{
-		$ldap = new AuthLdap();	// Les parametres sont passés et récupérés via $conf
+		$ldap = new Ldap();	// Les parametres sont passés et récupérés via $conf
 
 		$result = $ldap->connect();	// Avec OpenLDAP 2.x.x, $reslt sera toujours vrai car connection a lieu dans premeiere fonction ldap_*
 		if ($result)

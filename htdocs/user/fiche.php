@@ -32,7 +32,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
 
@@ -124,7 +124,7 @@ if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $candisableuser)
         $userid = $_GET["id"];
         $reactiveuser = new User($db, $userid);
         $reactiveuser->fetch();
-        $ldap = New AuthLdap();
+        $ldap = new Ldap();
         if ($ldap->connect())
         {
         	$checkDn = $conf->global->LDAP_USER_DN;
@@ -386,7 +386,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
 		$SID       = "objectsid";
 
-		$ldap = new AuthLdap();
+		$ldap = new Ldap();
 
 		if ($ldap->connect())
 		{
@@ -664,7 +664,7 @@ else
     	if ($conf->ldap->enabled && $fuser->ldap_sid)
     	{
     		
-    		$ldap = New AuthLdap();
+    		$ldap = new Ldap();
     		if ($ldap->connect())
     		{
     			$entries = $ldap->fetch($fuser->login);

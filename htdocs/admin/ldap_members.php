@@ -33,7 +33,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");

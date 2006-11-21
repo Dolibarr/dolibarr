@@ -37,7 +37,7 @@
   	    \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
@@ -1264,7 +1264,7 @@ class User
 
 		dolibarr_syslog("User.class::update_ldap this->id=".$this->id,LOG_DEBUG);
 
-		$ldap=new AuthLdap();
+		$ldap=new Ldap();
 		$result=$ldap->connect();
 		if ($result)
 		{
@@ -1339,7 +1339,7 @@ class User
 
 		dolibarr_syslog("User.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
 
-		$ldap=new AuthLdap();
+		$ldap=new Ldap();
 		$result=$ldap->connect();
 		if ($result)
 		{

@@ -33,7 +33,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT."/usergroup.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.lib.php");
 
 $langs->load("admin");

@@ -30,7 +30,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/contact.lib.php");
-require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 $user->getrights('commercial');
 
@@ -152,7 +152,7 @@ print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>';
 
 // Lecture LDAP
-$ldap=new AuthLdap();
+$ldap=new Ldap();
 $result=$ldap->connect();
 if ($result)
 {

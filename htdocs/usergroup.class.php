@@ -27,7 +27,7 @@
 	 \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/authldap.lib.php");
+require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
@@ -506,7 +506,7 @@ class UserGroup
 
 		dolibarr_syslog("UserGroup.class::update_ldap this->id=".$this->id,LOG_DEBUG);
 
-		$ldap=new AuthLdap();
+		$ldap=new Ldap();
 		$result=$ldap->connect();
 		if ($result)
 		{
@@ -578,7 +578,7 @@ class UserGroup
 
 		dolibarr_syslog("UserGroup.class::delete_ldap this->id=".$this->id,LOG_DEBUG);
 
-		$ldap=new AuthLdap();
+		$ldap=new Ldap();
 		$result=$ldap->connect();
 		if ($result)
 		{
