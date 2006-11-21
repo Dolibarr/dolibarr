@@ -217,9 +217,9 @@ class Translate {
      *  \param       param3      chaine de param1
      *  \return      string      chaine traduite
      */
-    function trans($str, $param1='', $param2='', $param3='')
+    function trans($str, $param1='', $param2='', $param3='', $param4='')
     {
-        return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3));
+        return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3),htmlentities($param4));
     }
 
 
@@ -232,14 +232,15 @@ class Translate {
      *  \param       param1      chaine de param1
      *  \param       param2      chaine de param1
      *  \param       param3      chaine de param1
+     *  \param       param4      chaine de param1
      *  \return      string      chaine traduite
      */
-    function transnoentities($key, $param1='', $param2='', $param3='')
+    function transnoentities($key, $param1='', $param2='', $param3='', $param4='')
     {
         if ($this->getTransFromTab($key))
         {
             // Si la traduction est disponible
-            return sprintf($this->tab_translate[$key],$param1,$param2,$param3);
+            return sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
         }
         return $key;
     }
