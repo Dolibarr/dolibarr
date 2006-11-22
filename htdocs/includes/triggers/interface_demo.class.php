@@ -104,33 +104,51 @@ class InterfaceDemo
         // Users
         if     ($action == 'USER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'USER_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'USER_NEW_PASSWORD')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'USER_DISABLE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'USER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
 
         // Companies
         elseif     ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'COMPANY_MODIFY')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'COMPANY_DELETE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+
+        // Contacts
+        elseif ($action == 'CONTACT_CREATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'CONTACT_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
+        elseif ($action == 'CONTACT_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
 
         // Products
@@ -283,12 +301,6 @@ class InterfaceDemo
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
         }
 
-		// If not found
-        else
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");
-			return -1;
-        }
 		return 0;
     }
 

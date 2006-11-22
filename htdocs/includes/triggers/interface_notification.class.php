@@ -94,6 +94,9 @@ class InterfaceNotification
      */
 	function run_trigger($action,$object,$user,$langs,$conf)
     {
+        // Mettre ici le code à exécuter en réaction de l'action
+        // Les données de l'action sont stockées dans $object
+    
 		// Si module notification non actif, on ne fait rien
 		if (! $conf->notification->enabled) return 0;
 
@@ -101,7 +104,7 @@ class InterfaceNotification
 
 		if ($action == 'BILL_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 2;
             $ref = sanitize_string($object->ref);
@@ -112,9 +115,9 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socid, $mesg, 'facture', $object->id, $filepdf);
 		}
 
-		if ($action == 'FICHEINTER_VALIDATE')
+		elseif ($action == 'FICHEINTER_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 1;
             $ref = sanitize_string($object->ref);
@@ -125,9 +128,9 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socid, $mesg, 'ficheinter', $object->id, $filepdf);
 		}
 
-		if ($action == 'ORDER_SUPPLIER_VALIDATE')
+		elseif ($action == 'ORDER_SUPPLIER_VALIDATE')
 		{
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
 
 			$action_notify = 3;
             $ref = sanitize_string($object->ref);
@@ -138,6 +141,14 @@ class InterfaceNotification
             $notify->send($action_notify, $object->socid, $mesg, 'order_supplier', $object->id, $filepdf);
 		}
 
+		// If not found
+/*
+        else
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+			return -1;
+        }
+*/
 		return 0;
     }
 

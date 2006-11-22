@@ -37,8 +37,6 @@
   	    \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-
 
 /**
         \class      User
@@ -587,18 +585,6 @@ class User
 	        if ($result < 0) $error++;
 	        // Fin appel triggers
 
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->delete($dn,$info,$user);
-    		}
-
 	    	$this->db->commit();
 		    return 1;
 	    }
@@ -669,18 +655,6 @@ class User
                     $result=$interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
                     if ($result < 0) $error++;
                     // Fin appel triggers
-
-					// \todo	Mettre en trigger
-		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-		        	{
-		        		$ldap=new Ldap();
-		        		$ldap->connect_bind();
-
-						$info=$this->_load_ldap_info();
-						$dn=$this->_load_ldap_dn($info);
-						
-			    	    $ldap->add($dn,$info,$user);
-		    		}
 
                     if (! $error)
                     {
@@ -878,18 +852,6 @@ class User
                     $result=$interface->run_triggers('USER_MODIFY',$this,$user,$lang,$conf);
                     if ($result < 0) $error++;
                     // Fin appel triggers
-
-					// \todo	Mettre en trigger
-		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-		        	{
-		        		$ldap=new Ldap();
-		        		$ldap->connect_bind();
-
-						$info=$this->_load_ldap_info();
-						$dn=$this->_load_ldap_dn($info);
-						
-			    	    $ldap->update($dn,$info,$user);
-		    		}
                 }
 
                 return 1;

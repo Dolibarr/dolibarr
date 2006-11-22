@@ -115,7 +115,7 @@ class InterfaceWebCal
         // Actions
         if ($action == 'ACTION_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -141,9 +141,9 @@ class InterfaceWebCal
             $this->desc=$libellecal;
         }
 
-        if ($action == 'COMPANY_CREATE')
+        elseif ($action == 'COMPANY_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
             
             // Initialisation donnees (date,duree,texte,desc)
@@ -157,9 +157,9 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
-        if ($action == 'CONTRACT_VALIDATE')
+        elseif ($action == 'CONTRACT_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             // Initialisation donnees (date,duree,texte,desc)
@@ -169,9 +169,9 @@ class InterfaceWebCal
             $this->desc=$langs->trans("ContractValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'CONTRACT_CANCEL')
+        elseif ($action == 'CONTRACT_CANCEL')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -180,9 +180,9 @@ class InterfaceWebCal
             $this->desc=$langs->trans("ContractCanceledInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'CONTRACT_CLOSE')
+        elseif ($action == 'CONTRACT_CLOSE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -191,18 +191,9 @@ class InterfaceWebCal
             $this->desc=$langs->trans("ContractClosedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-
-        if ($action == 'PROPAL_CREATE')
+        elseif ($action == 'PROPAL_VALIDATE')
         {
-			// Pas interessant
-		}
-        if ($action == 'PROPAL_MODIFY')
-        {
-			// Etat brouillon pas interessant
-		}
-        if ($action == 'PROPAL_VALIDATE')
-        {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -211,7 +202,7 @@ class InterfaceWebCal
             $this->desc=$langs->trans("PropalValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'PROPAL_CLOSE_SIGNED')
+        elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
             $langs->load("other");
@@ -222,7 +213,7 @@ class InterfaceWebCal
             $this->desc=$langs->trans("PropalClosedSignedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'PROPAL_CLOSE_REFUSED')
+        elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
             $langs->load("other");
@@ -234,15 +225,7 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         
-        if ($action == 'BILL_CREATE')
-        {
-			// Etat brouillon pas interessant
-		}
-        if ($action == 'BILL_MODIFY')
-        {
-			// Pas interessant
-		}
-        if ($action == 'BILL_VALIDATE')
+        elseif ($action == 'BILL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
             $langs->load("other");
@@ -253,7 +236,7 @@ class InterfaceWebCal
             $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'BILL_PAYED')
+        elseif ($action == 'BILL_PAYED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
             $langs->load("other");
@@ -264,7 +247,7 @@ class InterfaceWebCal
             $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
-        if ($action == 'BILL_CANCELED')
+        elseif ($action == 'BILL_CANCELED')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
             $langs->load("other");
@@ -300,6 +283,14 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
+		// If not found
+/*
+        else
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran by ".__FILE__." but no handler found for this action.");
+			return 0;
+        }
+*/
 
         // Ajoute entrée dans webcal
         if ($this->date)
@@ -334,7 +325,7 @@ class InterfaceWebCal
                 return -1;
             }
         }
-        
+
 		return 0;
     }
 

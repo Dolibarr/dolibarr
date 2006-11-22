@@ -603,7 +603,7 @@ class Ldap
 			}
 		}
 
-		dolibarr_syslog("ldap.class::add dn=".$dn." info=".join(',',$info));
+		dolibarr_syslog("Ldap.class::add dn=".$dn." info=".join(',',$info));
 
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
@@ -627,7 +627,7 @@ class Ldap
 			$dn=utf8_encode($dn);
 		}
 
-		dolibarr_syslog("ldap.class::delete Delete LDAP entry dn=".$dn);
+		dolibarr_syslog("Ldap.class::delete Delete LDAP entry dn=".$dn);
 
 		$result=@ldap_delete($this->connection, $dn);
 
@@ -791,7 +791,7 @@ class Ldap
 			$checkDn=utf8_decode($checkDn);
 		}
 
-		dolibarr_syslog("ldap.class::search checkDn=".$checkDn." filter=".$filter);
+		dolibarr_syslog("Ldap.class::search checkDn=".$checkDn." filter=".$filter);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
