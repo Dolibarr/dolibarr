@@ -156,59 +156,59 @@ if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $candisableuser)
 // Action ajout user
 if ($_POST["action"] == 'add' && $canadduser)
 {
-    $message="";
-    if (! $_POST["nom"]) {
-        $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
-        $action="create";       // Go back to create page
-    }
-    if (! $_POST["login"]) {
-        $message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
-        $action="create";       // Go back to create page
-    }
+	$message="";
+	if (! $_POST["nom"]) {
+		$message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+		$action="create";       // Go back to create page
+	}
+	if (! $_POST["login"]) {
+		$message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+		$action="create";       // Go back to create page
+	}
 
-    if (! $message)
-    {
-        $edituser = new User($db);
+	if (! $message)
+	{
+		$edituser = new User($db);
 
-        $edituser->nom           = trim($_POST["nom"]);
-        $edituser->prenom        = trim($_POST["prenom"]);
-        $edituser->login         = trim($_POST["login"]);
-        $edituser->admin         = trim($_POST["admin"]);
-        $edituser->office_phone  = trim($_POST["office_phone"]);
-        $edituser->office_fax    = trim($_POST["office_fax"]);
-        $edituser->user_mobile   = trim($_POST["user_mobile"]);
-        $edituser->email         = trim($_POST["email"]);
-        $edituser->webcal_login  = trim($_POST["webcal_login"]);
-        $edituser->note          = trim($_POST["note"]);
-        $edituser->ldap_sid      = trim($_POST["ldap_sid"]);
+		$edituser->nom           = trim($_POST["nom"]);
+		$edituser->prenom        = trim($_POST["prenom"]);
+		$edituser->login         = trim($_POST["login"]);
+		$edituser->admin         = trim($_POST["admin"]);
+		$edituser->office_phone  = trim($_POST["office_phone"]);
+		$edituser->office_fax    = trim($_POST["office_fax"]);
+		$edituser->user_mobile   = trim($_POST["user_mobile"]);
+		$edituser->email         = trim($_POST["email"]);
+		$edituser->webcal_login  = trim($_POST["webcal_login"]);
+		$edituser->note          = trim($_POST["note"]);
+		$edituser->ldap_sid      = trim($_POST["ldap_sid"]);
 
-        $db->begin();
+		$db->begin();
 
-        $id = $edituser->create();
+		$id = $edituser->create();
 
-        if ($id > 0)
-        {
-            if (isset($_POST['password']) && trim($_POST['password']))
-            {
-                $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
-            }
+		if ($id > 0)
+		{
+			if (isset($_POST['password']) && trim($_POST['password']))
+			{
+				$edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
+			}
 
-            $db->commit();
+			$db->commit();
 
-            Header("Location: fiche.php?id=$id");
-            exit;
-        }
-        else
-        {
-            $db->rollback();
+			Header("Location: fiche.php?id=$id");
+			exit;
+		}
+		else
+		{
+			$db->rollback();
 
-            //$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-            $message='<div class="error">'.$edituser->error.$id.'</div>';
+			//$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+			$message='<div class="error">'.$edituser->error.$id.'</div>';
 
-            $action="create";       // Go back to create page
-        }
+			$action="create";       // Go back to create page
+		}
 
-    }
+	}
 }
 
 // Action ajout groupe utilisateur
