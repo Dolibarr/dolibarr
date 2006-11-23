@@ -159,7 +159,7 @@ print '</form>';
 print '<br>';
 
 // Bon de livraison activation/desactivation
-$var=!$var;
+$var=false;
 print "<form method=\"post\" action=\"security.php\">";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
