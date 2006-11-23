@@ -29,6 +29,9 @@ require_once('./lib/nusoap.php');
 
 // Create the soap Object
 $s = new soap_server;
+$ns='oscommerce';
+$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
+$s->wsdl->schemaTargetNamespace=$ns;
 
 // Register a method available for clients
 $s->register('get_article');

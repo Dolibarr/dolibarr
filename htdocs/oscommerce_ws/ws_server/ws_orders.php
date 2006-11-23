@@ -28,6 +28,9 @@ require_once('./includes/configure.php');
 
 // Create the soap Object
 $s = new soap_server;
+$ns='oscommerce';
+$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
+$s->wsdl->schemaTargetNamespace=$ns;
 
 // Register the methods available for clients
 $s->register('get_CAmensuel');
