@@ -102,7 +102,7 @@ class InterfaceLdap
         if (! $conf->ldap->enabled) return 0;     // Module non actif
 
         // Users
-        if     ($action == 'USER_CREATE')
+        if ($action == 'USER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
@@ -153,24 +153,104 @@ class InterfaceLdap
     		}
         }
 
+		// Groupes
+        elseif ($action == 'GROUP_CREATE')
+        {
+        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->add($dn,$info,$user);
+    		}
+		}
+        elseif ($action == 'GROUP_MODIFY')
+        {
+        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->update($dn,$info,$user);
+    		}
+		}
+        elseif ($action == 'GROUP_DELETE')
+        {
+        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->delete($dn,$info,$user);
+    		}
+		}
+		
         // Contacts
         elseif ($action == 'CONTACT_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+	      	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->add($dn,$info,$user);
+    		}
         }
         elseif ($action == 'CONTACT_MODIFY')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->update($dn,$info,$user);
+    		}
         }
         elseif ($action == 'CONTACT_DELETE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+	    	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
+	    	{
+	    		$ldap=new Ldap();
+	    		$ldap->connect_bind();
+	
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->delete($dn,$info,$user);
+			}
         }
 
         // Members
         elseif ($action == 'MEMBER_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->add($dn,$info,$user);
+    		}
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
@@ -183,6 +263,16 @@ class InterfaceLdap
         elseif ($action == 'MEMBER_MODIFY')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+        		$ldap=new Ldap();
+        		$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+				
+	    	    $ldap->update($dn,$info,$user);
+    		}
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
@@ -191,6 +281,16 @@ class InterfaceLdap
         elseif ($action == 'MEMBER_DELETE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+			{
+				$ldap=new Ldap();
+				$ldap->connect_bind();
+
+				$info=$object->_load_ldap_info();
+				$dn=$object->_load_ldap_dn($info);
+
+				$ldap->delete($dn,$info,$user);
+			}
         }
 
 		// If not found

@@ -102,7 +102,7 @@ class Contact
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."socpeople");
     
-            $result=$this->update($this->id, $user, 0);
+            $result=$this->update($this->id, $user, 1);
             if ($result < 0)
             {
                 $this->error=$this->db->error();
@@ -113,20 +113,9 @@ class Contact
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('CONTACT_CREATE',$this,$user,$langs,$conf);
+			if ($result < 0) $error++;
             // Fin appel triggers
 
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->add($dn,$info,$user);
-    		}
-    		        
             return $this->id;
         }
         else
@@ -141,10 +130,10 @@ class Contact
      *      \brief      Mise à jour des infos
      *      \param      id          	Id du contact à mettre à jour
      *      \param      user        	Objet utilisateur qui effectue la mise à jour
-     *      \param      call_trigger    0=non, 1=oui
+     *      \param      notrigger	    0=non, 1=oui
      *      \return     int         	<0 si erreur, >0 si ok
      */
-    function update($id, $user=0, $call_trigger=1)
+    function update($id, $user=0, $notrigger=0)
     {
     	global $conf, $langs;
     	
@@ -194,28 +183,15 @@ class Contact
             return -1;
         }
 
-		if ($call_trigger)
+		if (! $notrigger)
 		{
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('CONTACT_UPDATE',$this,$user,$langs,$conf);
+            $result=$interface->run_triggers('CONTACT_MODIFY',$this,$user,$langs,$conf);
+			if ($result < 0) $error++;
             // Fin appel triggers
-
-
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->update($dn,$info,$user);
-    		}
     	}
-    	
 
         return 1;
     }
@@ -571,24 +547,12 @@ class Contact
 			return -1;
 		}
 	
-
         // Appel des triggers
         include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
         $interface=new Interfaces($this->db);
         $result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
+		if ($result < 0) $error++;
         // Fin appel triggers
-
-		// \todo	Mettre en trigger
-    	if ($conf->ldap->enabled && $conf->global->LDAP_CONTACT_ACTIVE)
-    	{
-    		$ldap=new Ldap();
-    		$ldap->connect_bind();
-
-			$info=$this->_load_ldap_info();
-			$dn=$this->_load_ldap_dn($info);
-			
-    	    $ldap->delete($dn,$info,$user);
-		}
 
 		return 1;
 	}

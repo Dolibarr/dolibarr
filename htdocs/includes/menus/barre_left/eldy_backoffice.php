@@ -20,7 +20,7 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_left/eldy.php
+	    \file       htdocs/includes/menus/barre_left/eldy_backoffice.php
 		\brief      Gestionnaire du menu du gauche Eldy
 		\version    $Revision$
 

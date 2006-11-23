@@ -795,10 +795,10 @@ class User
 
   /**
    *    \brief      Mise à jour en base d'un utilisateur
-   *    \param      create      1 si update durant le create, 0 sinon
-   *    \return     int         <0 si echec, >=0 si ok
+   *    \param      notrigger		1 si update durant le create, 0 sinon
+   *    \return     int         	<0 si KO, >=0 si OK
    */
-  	function update($create=0)
+  	function update($notrigger=0)
     {
         global $conf,$langs;
 
@@ -821,7 +821,7 @@ class User
         $this->admin=$this->admin?$this->admin:0;
         if (!strlen($this->code)) $this->code = $this->login;
 
-        dolibarr_syslog("User::update nom=".$this->nom.", prenom=".$this->prenom);
+        dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
 
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
@@ -844,7 +844,7 @@ class User
         {
             if ($this->db->affected_rows($resql))
             {
-                if (! $create)
+                if (! $notrigger)
                 {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");

@@ -344,20 +344,10 @@ class Adherent
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
             $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
+			if ($result < 0) $error++;
             // Fin appel triggers
 
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->add($dn,$info,$user);
-    		}
-
-			return 1;
+			return $this->id;
 		}
 		else
 		{
@@ -369,14 +359,14 @@ class Adherent
 
 	/**
 			\brief fonction qui met à jour l'adhérent
-			\param		disable_triggers	1=désactive le trigger UPDATE (quand appelé par creation)
-			\return		int					<0 si ko, >0 si ok
+			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
+			\return		int				<0 si KO, >0 si OK
 	*/
-	function update($disable_trigger=0)
+	function update($notrigger=0)
 	{
 		global $conf,$langs,$user;
 
-		dolibarr_syslog("Adherent.class::update $disable_trigger");
+		dolibarr_syslog("Adherent.class::update $notrigger");
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -444,26 +434,14 @@ class Adherent
 			}
 		}
 
-		if (! $disable_trigger)
+		if (! $notrigger)
 		{
 	        // Appel des triggers
 	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	        $interface=new Interfaces($this->db);
 	        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
-	        // Fin appel triggers
-	        
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->update($dn,$info,$user);
-    		}
-	        
+			if ($result < 0) $error++;
+ 	        // Fin appel triggers
 		}
 
 		$this->db->commit();
@@ -475,6 +453,7 @@ class Adherent
 	/**
 			\brief 		Fonction qui supprime l'adhérent et les données associées
 			\param		rowid
+			\return		int			<0 si KO, >0 si OK
 	*/
 	function delete($rowid)
 	{
@@ -483,41 +462,30 @@ class Adherent
 		$result = 0;
 
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
-		if ( $this->db->query( $sql) )
+		if ( $this->db->query($sql) )
 		{
 			if ( $this->db->affected_rows() )
 			{
 	
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-				if ( $this->db->query( $sql) )
+				if ($this->db->query( $sql))
 				{
-					if ( $this->db->affected_rows() )
-					{
-						$result = 1;
-					}
+
 				}
 		
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
 				dolibarr_syslog("Adherent.class::delete");
 				
-				if ( $this->db->query( $sql) )
+				if ( $this->db->query($sql) )
 				{
 					if ( $this->db->affected_rows() )
 					{
-						$result = 1;
-	
-						// \todo	Mettre en trigger
-						if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
-						{
-							$ldap=new Ldap();
-							$ldap->connect_bind();
-	
-							$info=$this->_load_ldap_info();
-							$dn=$this->_load_ldap_dn($info);
-	
-							$ldap->delete($dn,$info,$user);
-						}
-	
+				        // Appel des triggers
+				        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				        $interface=new Interfaces($this->db);
+				        $result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
+						if ($result < 0) $error++;
+				        // Fin appel triggers
 					}
 				}
 			}
@@ -525,6 +493,7 @@ class Adherent
 		else
 		{
 			dolibarr_print_error($this->db);
+			return -1;
 		}
 	
 		return $result;
@@ -817,6 +786,7 @@ class Adherent
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
+			if ($result < 0) $error++;
 			// Fin appel triggers
 
 			$this->db->commit();

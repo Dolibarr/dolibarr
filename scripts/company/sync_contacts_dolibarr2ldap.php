@@ -82,7 +82,13 @@ if ($resql)
 		
 		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->fullname;
 
-		$result=$contact->update_ldap($user);
+		$ldap=new Ldap();
+		$ldap->connect_bind();
+		
+		$info=$contact->_load_ldap_info();
+		$dn=$contact->_load_ldap_dn($info);
+		
+		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");
@@ -90,7 +96,7 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$contact->error;
+			print " - ".$langs->trans("KO").' - '.$ldap->error;
 		}
 		print "\n";
 

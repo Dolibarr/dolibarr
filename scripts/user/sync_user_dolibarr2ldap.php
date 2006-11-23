@@ -82,7 +82,13 @@ if ($resql)
 		
 		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
 
-		$result=$fuser->update_ldap($user);
+		$ldap=new Ldap();
+		$ldap->connect_bind();
+
+		$info=$fuser->_load_ldap_info();
+		$dn=$fuser->_load_ldap_dn($info);
+
+		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");

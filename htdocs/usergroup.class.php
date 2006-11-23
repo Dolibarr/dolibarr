@@ -369,18 +369,6 @@ class UserGroup
 			if ($result < 0) $error++;
 			// Fin appel triggers
 	
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->delete($dn,$info,$user);
-    		}
-	
 			$this->db->commit();
 			return 1;
 		}
@@ -418,18 +406,6 @@ class UserGroup
 			if ($result < 0) $error++;
 			// Fin appel triggers
 	
-			// \todo	Mettre en trigger
-        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-        	{
-        		$ldap=new Ldap();
-        		$ldap->connect_bind();
-
-				$info=$this->_load_ldap_info();
-				$dn=$this->_load_ldap_dn($info);
-				
-	    	    $ldap->add($dn,$info,$user);
-    		}
-	
 			return $this->id;
 		}
 		else
@@ -441,8 +417,9 @@ class UserGroup
 
 
 	/**
-	*    \brief      Mise à jour en base d'un utilisateur
-	*    \return     <0 si echec, >=0 si ok
+	*		\brief      Mise à jour en base d'un utilisateur
+    *      	\param      notrigger	    0=non, 1=oui
+	*    	\return     int				<0 si KO, >=0 si OK
 	*/
   	function update($notrigger=0)
     {
@@ -468,19 +445,6 @@ class UserGroup
                     $result=$interface->run_triggers('GROUP_MODIFY',$this,$user,$lang,$conf);
                     if ($result < 0) $error++;
                     // Fin appel triggers
-
-
-					// \todo	Mettre en trigger
-		        	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE)
-		        	{
-		        		$ldap=new Ldap();
-		        		$ldap->connect_bind();
-
-						$info=$this->_load_ldap_info();
-						$dn=$this->_load_ldap_dn($info);
-						
-			    	    $ldap->update($dn,$info,$user);
-		    		}
 				}
 				
                 return 1;

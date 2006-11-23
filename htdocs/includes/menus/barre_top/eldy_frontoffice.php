@@ -20,7 +20,7 @@
  */
 
 /**
-	    \file       htdocs/includes/menus/barre_top/eldy.php
+	    \file       htdocs/includes/menus/barre_top/eldy_frontoffice.php
 		\brief      Gestionnaire nommé eldy du menu du haut
 		\version    $Revision$
 

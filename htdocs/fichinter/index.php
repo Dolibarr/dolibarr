@@ -54,6 +54,13 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
+// Securité accès client
+if ($user->societe_id > 0)
+{
+	$action = '';
+	$socid = $user->societe_id;
+}
+
 
 llxHeader();
 
