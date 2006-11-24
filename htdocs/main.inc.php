@@ -71,6 +71,7 @@ $bc[1]="class=\"pair\"";
 // Exemple: array('ldap');
 //$authmode=array('ldap');
 $authmode=array('http','dolibarr');
+//$authmode=array('ldap');
 if (isset($dolibarr_auto_user)) $authmode=array('auto');
 
 // Si la demande du login a déjà eu lieu, on le récupère depuis la session
@@ -155,27 +156,22 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	    // Authentification Apache KO ou non active, pas de mode force on demande le login
 	    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
 	
-	    //if ($conf->global->LDAP_SERVER_PROTOCOLVERSION == 3)
-	    //{
-	    	$ldap = 'ldap://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
-	    //}
-	    //else
-	    //{
-	    //	$ldap = 'ldap2://'.$conf->global->LDAP_ADMIN_DN.':'.$conf->global->LDAP_ADMIN_PASS.'@'.$conf->global->LDAP_SERVER_HOST.':'.$conf->global->LDAP_SERVER_PORT.'/'.$conf->global->LDAP_SERVER_DN;
-	    //}
-	
+	    $ldapdebug=true;
+	    if ($ldapdebug) print "DEBUG: Traces connexions LDAP<br>\n";
 	    $params = array(
-		    'dsn' => $ldap,
 		    'host' => $conf->global->LDAP_SERVER_HOST,
 		    'port' => $conf->global->LDAP_SERVER_PORT,
-		    'version' => $conf->global->LDAP_SERVER_PORT,
+		    'version' => 3,
 		    'basedn' => $conf->global->LDAP_SERVER_DN,
 		    'binddn' => $conf->global->LDAP_ADMIN_DN,
 		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
 
-		    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA,
-		    'userfilter' => $conf->global->$conf->global->LDAP_FILTER_CONNECTION
-		    //'userfilter' => '(objectClass=user)',
+			'debug' => $ldapdebug,
+			
+//		    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA
+		    'userattr' => $conf->global->LDAP_FIELD_LOGIN,
+//		    'userfilter' => $conf->global->LDAP_FILTER_CONNECTION
+		    'userfilter' => ''
 	    );
 
 	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");
