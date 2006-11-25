@@ -60,8 +60,8 @@ class User
 	var $user_mobile;
 	var $admin;
 	var $login;
-	var $pass;
-	var $oldpass;
+	var $pass;					// Mot de passe en clair
+	var $pass_indatabase;		// Mot de passe crypté en base
 	var $datec;
 	var $datem;
 	var $societe_id;
@@ -105,6 +105,8 @@ class User
 	*/
 	function fetch($login='')
     {
+    	global $conf;
+    	
         // Recupere utilisateur
         $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
         $sql.= " u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
@@ -139,9 +141,10 @@ class User
                 $this->fullname = trim($this->prenom . ' ' . $this->nom);
                 $this->code = $obj->code;
                 $this->login = $obj->login;
-                $this->pass  = $obj->pass;
-                $this->office_phone  = $obj->office_phone;
-                $this->office_fax  = $obj->office_fax;
+                $this->pass_indatabase = $obj->pass;
+                if (! $conf->password_encrypted) $this->pass = $obj->pass;
+                $this->office_phone = $obj->office_phone;
+                $this->office_fax   = $obj->office_fax;
                 $this->user_mobile  = $obj->user_mobile;
                 $this->email = $obj->email;
                 $this->admin = $obj->admin;
@@ -240,7 +243,7 @@ class User
    */
     function addrights($rid,$allmodule='',$allperms='')
     {
-        dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
+        dolibarr_syslog("User.class::addrights $rid, $allmodule, $allperms");
         $err=0;
         $whereforadd='';
 
@@ -730,7 +733,7 @@ class User
                 else
                 {
                     $this->error=$this->db->error()." - $sql";
-                    dolibarr_syslog("User::create_from_contact - 20 - ".$this->error);
+                    dolibarr_syslog("User.class::create_from_contact - 20 - ".$this->error);
 
                     $this->db->rollback();
                     return -2;
@@ -739,7 +742,7 @@ class User
             else
             {
                 $this->error=$this->db->error()." - $sql";
-                dolibarr_syslog("User::create_from_contact - 10 - ".$this->error);
+                dolibarr_syslog("User.class::create_from_contact - 10 - ".$this->error);
 
                 $this->db->rollback();
                 return -1;
@@ -748,7 +751,7 @@ class User
         else
         {
             // $this->error deja positionné
-            dolibarr_syslog("User::create_from_contact - 0");
+            dolibarr_syslog("User.class::create_from_contact - 0");
 
             $this->db->rollback();
             return $result;
@@ -800,35 +803,44 @@ class User
    */
   	function update($notrigger=0)
     {
-        global $conf,$langs;
+        global $conf,$langs,$user;
 
         // Nettoyage parametres
         $this->nom=trim($this->nom);
         $this->prenom=trim($this->prenom);
         $this->login=trim($this->login);
-
-        if ($conf->global->DATABASE_PWD_ENCRYPTED && $this->oldpass != $this->pass)
-		    {
-		    	$this->pass = md5($this->pass);
-		    }
-		    else
-		    {
-		    	$this->pass=trim($this->pass);
-		    }
-
+        $this->pass=trim($this->pass);
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
         if (!strlen($this->code)) $this->code = $this->login;
 
-        dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
+        dolibarr_syslog("User.class::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
 
+		// Mise a jour mot de passe
+        if ($this->pass)
+        {
+	        if ($conf->password_encrypted)
+	        {
+	        	// On met a jour systematiquement
+				$this->password($user,$this->pass,$conf->password_encrypted);
+	        }
+	        else
+	        {
+        		if ($this->pass != $this->pass_indatabase)
+        		{
+        			// Si mot de passe saisi et différent de celui en base
+					$this->password($user,$this->pass,$conf->password_encrypted);
+				}
+			}
+		}
+
+		// Mise a jour autres infos
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
         $sql .= " name = '".addslashes($this->nom)."'";
         $sql .= ", firstname = '".addslashes($this->prenom)."'";
         $sql .= ", login = '".addslashes($this->login)."'";
-        if ($this->pass) $sql .= ", pass = '".addslashes($this->pass)."'";
         $sql .= ", admin = ".$this->admin;
         $sql .= ", office_phone = '$this->office_phone'";
         $sql .= ", office_fax = '$this->office_fax'";
@@ -901,33 +913,38 @@ class User
 	/**
 	 *    \brief     Change le mot de passe d'un utilisateur
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
-	 *    \param     password         Nouveau mot de passe (généré par defaut si non communiqué)
+	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
 	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
 	 *    \return    string           mot de passe, < 0 si erreur
 	 */
-    function password($user, $password='', $isencrypted = 0)
+    function password($user, $password='', $isencrypted=0)
     {
         global $langs;
-        $longueurmotdepasse=8;
 
-        dolibarr_syslog("User.class::password user=".$user." password=--hidden-- isencrypted=".$isencrypted);
+        dolibarr_syslog("User.class::password user=".$user." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
 
+        // Si nouveau mot de passe non communiqué, on génère par module
         if (! $password)
         {
+        	// TODO Mettre appel au module de génération de mot de passe
+	        $longueurmotdepasse=8;
             $password =  strtolower(substr(md5(uniqid(rand())),0,$longueurmotdepasse));
         }
 
+		// Cryptage mot de passe
         if ($isencrypted)
         {
         	// Crypte avec systeme encodage par defaut du PHP
             //$sqlpass = crypt($password, makesalt());
-            $sqlpass = md5($password);
+            $password_indatabase = md5($password);
         }
         else
         {
-            $sqlpass = $password;
+            $password_indatabase = $password;
         }
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($sqlpass)."'";
+
+		// Mise a jour
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
@@ -936,6 +953,7 @@ class User
             if ($this->db->affected_rows())
             {
 		        $this->pass=$password;
+		        $this->pass_indatabase=$password_indatabase;
 
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");

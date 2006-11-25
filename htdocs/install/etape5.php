@@ -124,7 +124,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 			
             $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
             $sql.= ",'".$_POST["login"]."'";
-            $sql.= ",'".($conf->global->DATABASE_PWD_ENCRYPTED?md5($_POST["pass"]):$_POST["pass"])."'";
+            $sql.= ",'".($conf->password_encrypted?md5($_POST["pass"]):$_POST["pass"])."'";
             $sql.= ",1,'Administrateur','AD".$code."')";
 	    	//print "sql=".$sql." ".mysql_errno($db->db);
 	        $resql=$db->query($sql);

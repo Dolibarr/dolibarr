@@ -245,7 +245,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 	$edituser = new User($db, $_GET["id"]);
 	$edituser->fetch();
 
-	$edituser->oldpass       = $edituser->pass;
+	//$edituser->oldpass_indatabase = $edituser->pass_indatabase;
 
 	$edituser->nom           = trim($_POST["nom"]);
 	$edituser->prenom        = trim($_POST["prenom"]);
@@ -734,7 +734,7 @@ else
          */
         if ($action == 'enable')
         {
-            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnabledUser",$fuser->login),"confirm_enable");
+            $html->form_confirm("fiche.php?id=$fuser->id",$langs->trans("EnableAUser"),$langs->trans("ConfirmEnableUser",$fuser->login),"confirm_enable");
             print '<br>';
         }
 
@@ -812,9 +812,16 @@ else
             }
             else
             {
-            	print '<td width="50%">'.eregi_replace('.','*',$fuser->pass);
+            	print '<td width="50%">';
+            	if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
+            	else
+            	{
+	            	if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase;
+            		else print $langs->trans("Hidden");
+            	}
+            	print "</td>";
             }
-            print "</td></tr>\n";
+            print "</tr>\n";
 
             // Administrateur
             print '<tr><td width="25%" valign="top">'.$langs->trans("Administrator").'</td>';

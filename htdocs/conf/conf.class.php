@@ -105,8 +105,8 @@ class Conf
 		$db->free($result);
 
 
-		// On reprend parametres du conf.php
-		//... Mettre les param
+		// On reprend parametres du fichier de config conf.php
+		// \TODO Mettre tous les param du fichier conf dans une propriété de la classe
 		$this->password_encrypted=$this->global->DATABASE_PWD_ENCRYPTED;
 
 
