@@ -927,8 +927,8 @@ class User
         if (! $password)
         {
         	// TODO Mettre appel au module de génération de mot de passe
-	        $longueurmotdepasse=8;
-            $password =  strtolower(substr(md5(uniqid(rand())),0,$longueurmotdepasse));
+        	$password=creer_pass_aleatoire_1('');
+        	//$password=creer_pass_aleatoire_2('');
         }
 
 		// Cryptage mot de passe
@@ -1387,6 +1387,55 @@ class User
 		$socid = rand(1, $num_socs);
 		$this->societe_id = $socids[$socid];
 	}
+}
+
+
+/**
+		\brief      Fonction pour créer un mot de passe aléatoire en minuscule
+		\param	    sel			Donnée aléatoire
+		\return		string		Mot de passe
+*/
+function creer_pass_aleatoire_1($sel = "")
+{
+	$longueur = 8;
+
+	return strtolower(substr(md5(uniqid(rand())),0,$longueur));
+}
+
+
+/**
+		\brief      Fonction pour créer un mot de passe aléatoire mélangeant majuscule,
+					minuscule, chiffre et alpha et caractères spéciaux
+		\remarks    La fonction a été prise sur http://www.uzine.net/spip
+		\param	    sel			Donnée aléatoire
+		\return		string		Mot de passe
+*/
+function creer_pass_aleatoire_2($sel = "")
+{
+	$longueur=8;
+	
+	$seed = (double) (microtime() + 1) * time();
+	srand($seed);
+
+	for ($i = 0; $i < $longueur; $i++)
+	{
+		if (!$s)
+		{
+			if (!$s) $s = rand();
+			$s = substr(md5(uniqid($s).$sel), 0, 16);
+		}
+		$r = unpack("Cr", pack("H2", $s.$s));
+		$x = $r['r'] & 63;
+		if ($x < 10) $x = chr($x + 48);
+		else if ($x < 36) $x = chr($x + 55);
+		else if ($x < 62) $x = chr($x + 61);
+		else if ($x == 63) $x = '/';
+		else $x = '.';
+		$pass .= $x;
+		$s = substr($s, 2);
+	}
+	
+	return $pass;
 }
 
 ?>

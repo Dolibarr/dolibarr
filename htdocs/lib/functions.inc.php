@@ -1855,34 +1855,6 @@ function yn($yesno, $case=1) {
 
 
 /**
-		\brief      Fonction pour créer un mot de passe aléatoire
-		\param	    longueur    longueur du mot de passe (8 par defaut)
-		\param	    sel			donnée aléatoire
-		\remarks    la fonction a été prise sur http://www.uzine.net/spip
-*/
-function creer_pass_aleatoire($longueur = 8, $sel = "") {
-  $seed = (double) (microtime() + 1) * time();
-  srand($seed);
-
-  for ($i = 0; $i < $longueur; $i++) {
-    if (!$s) {
-      if (!$s) $s = rand();
-      $s = substr(md5(uniqid($s).$sel), 0, 16);
-    }
-    $r = unpack("Cr", pack("H2", $s.$s));
-    $x = $r['r'] & 63;
-    if ($x < 10) $x = chr($x + 48);
-    else if ($x < 36) $x = chr($x + 55);
-    else if ($x < 62) $x = chr($x + 61);
-    else if ($x == 63) $x = '/';
-    else $x = '.';
-    $pass .= $x;
-    $s = substr($s, 2);
-  }
-  return $pass;
-}
-
-/**
 		\brief      Fonction pour initialiser un salt pour la fonction crypt
 		\param		$type		2=>renvoi un salt pour cryptage DES
 		                        12=>renvoi un salt pour cryptage MD5
