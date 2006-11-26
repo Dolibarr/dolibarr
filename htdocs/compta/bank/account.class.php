@@ -192,7 +192,7 @@ class Account
      */
     function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
     {
-        dolibarr_syslog("Account::addline: $date, $oper, $label, $amount, $num_chq, $categorie, $user");
+        dolibarr_syslog("Account::addline: date=$date, oper=$oper, label=$label, amount=$amount, num_chq=$num_chq, categorie=$categorie, user=$user");
         if ($this->rowid)
         {
             $this->db->begin();
