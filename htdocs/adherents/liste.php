@@ -208,7 +208,7 @@ if ($result)
     }
     print "</table>\n";
 
-	if ($num > $conf->liste_limite)
+	if ($num > $conf->liste_limit)
 	{
 	    print "<table class=\"noborder\" width=\"100%\">";
 	    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
