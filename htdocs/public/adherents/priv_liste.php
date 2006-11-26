@@ -23,67 +23,78 @@
 
 require("./pre.inc.php");
 
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+$page=$_GET["page"];
+$filter=$_GET["filter"];
+$statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
-llxHeaderVierge();
-
-
-if ($sortorder == "") {  $sortorder="ASC"; }
-if ($sortfield == "") {  $sortfield="nom"; }
-
+if (! $sortorder) {  $sortorder="ASC"; }
+if (! $sortfield) {  $sortfield="nom"; }
 if ($page == -1) { $page = 0 ; }
-
 $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo from ".MAIN_DB_PREFIX."adherent where statut=1 ORDER BY  $sortfield $sortorder ". $db->plimit($conf->liste_limit, $offset);
+
+llxHeaderVierge();
+
+
+$sql = "select rowid,prenom,nom, societe, cp,ville,email,naiss,photo";
+$sql.= " from ".MAIN_DB_PREFIX."adherent where statut=1";
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 //$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, cp, ville, d.email, t.libelle as type, d.morphy, d.statut, t.cotisation";
 //$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 //$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = $statut";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
 $result = $db->query($sql);
-if ($result) 
+if ($result)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print_barre_liste("Liste des adhérents", $page, "priv_liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield");
-  print "<table class=\"noborder\" width=\"100%\">";
+	$num = $db->num_rows($result);
+	$i = 0;
 
-  print '<tr class="liste_titre">';
-  print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
-  print_liste_field_titre("Date naissance","priv_liste.php","naiss","&page=$page");
-  print_liste_field_titre("Email","priv_liste.php","email","&page=$page");
-  print_liste_field_titre("CP","priv_liste.php","cp","&page=$page");
-  print_liste_field_titre("Vile","priv_liste.php","ville","&page=$page");
-  print "<td>Photo</td>\n";
-  print "</tr>\n";
-    
-  $var=True;
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object( $i);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print "<td><a href=\"priv_fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
-      print "<td>$objp->naiss</td>\n";
-      print "<td>$objp->email</td>\n";
-      print "<td>$objp->cp</td>\n";
-      print "<td>$objp->ville</td>\n";
-      if (isset($objp->photo) && $objp->photo!= ''){
-	print "<td><A HREF=\"$objp->photo\"><IMG SRC=\"$objp->photo\" HEIGHT=64 WIDTH=64></A></TD>\n";
-      }else{
-	print "<td>&nbsp;</td>\n";
-      }
-      print "</tr>";
-      $i++;
-    }
-  print "</table>";
+	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
+	print_barre_liste($langs->trans("ListOfMembers"), $page, "priv_liste.php", $param);
+	print "<table class=\"noborder\" width=\"100%\">";
+
+	print '<tr class="liste_titre">';
+	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
+	print_liste_field_titre($langs->trans("Birthdate"),"priv_liste.php","naiss",$param);
+	print_liste_field_titre($langs->trans("EMail"),"priv_liste.php","email",$param);
+	print_liste_field_titre($langs->trans("Zip"),"priv_liste.php","cp",$param);
+	print_liste_field_titre($langs->trans("Town"),"priv_liste.php","ville",$param);
+	print "<td>".$langs->trans("Photo")."</td>\n";
+	print "</tr>\n";
+
+	$var=True;
+	while ($i < $num && $i < $conf->liste_limit)
+	{
+		$objp = $db->fetch_object($result);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+		print "<td><a href=\"priv_fiche.php?rowid=$objp->rowid\">".stripslashes($objp->prenom)." ".stripslashes($objp->nom)." / ".stripslashes($objp->societe)."</a></TD>\n";
+		print "<td>$objp->naiss</td>\n";
+		print "<td>$objp->email</td>\n";
+		print "<td>$objp->cp</td>\n";
+		print "<td>$objp->ville</td>\n";
+		if (isset($objp->photo) && $objp->photo!= '')
+		{
+			print "<td><A HREF=\"$objp->photo\"><IMG SRC=\"$objp->photo\" HEIGHT=64 WIDTH=64></A></TD>\n";
+		}
+		else
+		{
+			print "<td>&nbsp;</td>\n";
+		}
+		print "</tr>";
+		$i++;
+	}
+	print "</table>";
 }
 else
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 

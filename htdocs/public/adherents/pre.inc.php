@@ -42,8 +42,11 @@ function llxHeader($head = "")
 
 function llxHeaderVierge($head = "")
 {
-  global $user, $conf, $langs;
+	global $user, $conf, $langs;
 
+	top_htmlhead('');
+    print '<body>';
+	
 }
 
 ?>
