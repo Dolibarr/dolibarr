@@ -478,7 +478,9 @@ function dolibarr_print_ca($ca)
 */
 function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 {
-    $deltastring="+$duration_value";
+	if ($duration_value == 0) return $time;
+	if ($duration_value > 0) $deltastring="+".abs($duration_value);
+	if ($duration_value < 0) $deltastring="-".abs($duration_value);
     if ($duration_unit == 'd') { $deltastring.=" day"; }
     if ($duration_unit == 'm') { $deltastring.=" month"; }
     if ($duration_unit == 'y') { $deltastring.=" year"; }

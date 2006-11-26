@@ -435,6 +435,27 @@ class Cotisation
 		}
 	}
 
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
 
+//		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php?rowid='.$this->id.'">';
+//		$lienfin='</a>';
+		
+		$picto='payment';
+		$label=$langs->trans("ShowSubscription");
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
 }
 ?>

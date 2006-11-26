@@ -266,7 +266,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Year").'</td>';
 print '<td align="right">'.$langs->trans("Subscriptions").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
-print '<td align="right">'.$langs->trans("Average").'</td>';
+print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print "</tr>\n";
 
 $var=true;

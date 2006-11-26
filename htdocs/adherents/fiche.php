@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/member.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
 
@@ -117,71 +118,63 @@ if ($_POST["action"] == 'cotisation')
     }
 }
 
-if ($_REQUEST["action"] == 'update')
+if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
-	if ($_POST["bouton"] == $langs->trans("Save"))
+	$datenaiss='';
+	if (isset($_POST["naissday"]) && $_POST["naissday"]
+	 && isset($_POST["naissmonth"])
+	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
-		$datenaiss='';
-		if (isset($_POST["naissday"]) && $_POST["naissday"]
-		 && isset($_POST["naissmonth"])
-		 && isset($_POST["naissyear"]) && $_POST["naissyear"])
+		$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+	}
+
+	$adh->id          = $_POST["rowid"];
+	$adh->prenom      = $_POST["prenom"];
+	$adh->nom         = $_POST["nom"];
+	$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
+	$adh->login       = $_POST["login"];
+	$adh->pass        = $_POST["pass"];
+
+	$adh->societe     = $_POST["societe"];
+	$adh->adresse     = $_POST["adresse"];
+	$adh->cp          = $_POST["cp"];
+	$adh->ville       = $_POST["ville"];
+	$adh->pays_id     = $_POST["pays"];
+
+	$adh->phone       = $_POST["phone"];
+	$adh->phone_perso = $_POST["phone_perso"];
+	$adh->phone_mobile= $_POST["phone_mobile"];
+	$adh->email       = $_POST["email"];
+	$adh->naiss       = $datenaiss;
+	$adh->date        = $datenaiss;	// A virer
+	$adh->photo       = $_POST["photo"];
+
+	$adh->typeid      = $_POST["type"];
+	$adh->commentaire = $_POST["comment"];
+	$adh->morphy      = $_POST["morphy"];
+
+	$adh->amount      = $_POST["amount"];
+
+	// recuperation du statut et public
+	$adh->statut      = $_POST["statut"];
+	$adh->public      = $_POST["public"];
+
+	foreach($_POST as $key => $value)
+	{
+		if (ereg("^options_",$key))
 		{
-			$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+			$adh->array_options[$key]=$_POST[$key];
 		}
-
-		$adh->id          = $_POST["rowid"];
-		$adh->prenom      = $_POST["prenom"];
-		$adh->nom         = $_POST["nom"];
-		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
-		$adh->login       = $_POST["login"];
-		$adh->pass        = $_POST["pass"];
-
-		$adh->societe     = $_POST["societe"];
-		$adh->adresse     = $_POST["adresse"];
-		$adh->cp          = $_POST["cp"];
-		$adh->ville       = $_POST["ville"];
-		$adh->pays_id     = $_POST["pays"];
-
-		$adh->phone       = $_POST["phone"];
-		$adh->phone_perso = $_POST["phone_perso"];
-		$adh->phone_mobile= $_POST["phone_mobile"];
-		$adh->email       = $_POST["email"];
-		$adh->naiss       = $datenaiss;
-		$adh->date        = $datenaiss;	// A virer
-		$adh->photo       = $_POST["photo"];
-
-		$adh->typeid      = $_POST["type"];
-		$adh->commentaire = $_POST["comment"];
-		$adh->morphy      = $_POST["morphy"];
-
-		$adh->amount      = $_POST["amount"];
-
-		// recuperation du statut et public
-		$adh->statut      = $_POST["statut"];
-		$adh->public      = $_POST["public"];
-
-		foreach($_POST as $key => $value)
-		{
-			if (ereg("^options_",$key))
-			{
-				$adh->array_options[$key]=$_POST[$key];
-			}
-		}
-		if ($adh->update($user,0) >= 0)
-		{
-			Header("Location: fiche.php?rowid=".$adh->id);
-			exit;
-		}
-		else
-		{
-		    $errmsg=$adh->error;
-			$action='';
-		}
+	}
+	if ($adh->update($user,0) >= 0)
+	{
+		Header("Location: fiche.php?rowid=".$adh->id);
+		exit;
 	}
 	else
 	{
-		Header("Location: fiche.php?rowid=".$rowid);
-		exit;
+	    $errmsg=$adh->error;
+		$action='';
 	}
 }
 
@@ -482,17 +475,12 @@ if ($action == 'edit')
 	$adht = new AdherentType($db);
 
 
-    /*
-     * Affichage onglets
-     */
-    $h = 0;
-
-    $head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$rowid;
-    $head[$h][1] = $langs->trans("Card");
-    $hselected=$h;
-    $h++;
-
-    dolibarr_fiche_head($head, $hselected, $langs->trans("MemberCard"));
+	/*
+	 * Affichage onglets
+	 */
+	$head = member_prepare_head($adh);
+	
+	dolibarr_fiche_head($head, 'general', $langs->trans("Member").": ".$adh->fullname);
 
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -501,7 +489,6 @@ if ($action == 'edit')
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
-	print "<input type=\"hidden\" name=\"public\" value=\"".$adh->public."\">";
 	
 	$htmls = new Form($db);
 
@@ -510,13 +497,14 @@ if ($action == 'edit')
 	
 	// Nom
 	print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	// Notes
 	print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
 
 	// Prenom
 	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	$rowspan=16;
 	print '<td rowspan="'.$rowspan.'" valign="top">';
-	print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
+	print '<textarea name="comment" wrap="soft" cols="70" rows="16">'.$adh->commentaire.'</textarea></td></tr>';
 	
 	// Login
 	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
@@ -574,10 +562,18 @@ if ($action == 'edit')
 	{
 		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
 	}
-	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" name="bouton" value="'.$langs->trans("Save").'">&nbsp;';
-	print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'">';
+
+	// Profil public
+    print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+    $htmls->select_YesNo($adh->public);
+    print "</td></tr>\n";
+
+	print '<tr><td colspan="3" align="center">';
+	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
+	print ' &nbsp; &nbsp; &nbsp; ';
+	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</td></tr>';
+
 	print '</table>';
 	print '</form>';
 	
@@ -857,7 +853,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
 
 	// Date naissance
-    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'&nbsp;</td></tr>';
     
     // URL
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
@@ -897,7 +893,7 @@ if ($rowid && $action != 'edit')
     // Réactiver
     if ($adh->statut == 0)
     {
-        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Restore")."</a>\n";
+        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
     }
     
     // Envoi fiche par mail
@@ -972,9 +968,10 @@ if ($rowid && $action != 'edit')
      * Liste des cotisations
      *
      */
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
-    $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-    $sql .= " WHERE d.rowid = c.fk_adherent AND d.rowid=$rowid";
+    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
+    $sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+    $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+    $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
     
     $result = $db->query($sql);
     if ($result)
@@ -985,6 +982,7 @@ if ($rowid && $action != 'edit')
         print "<table class=\"noborder\" width=\"100%\">\n";
     
         print '<tr class="liste_titre">';
+        print '<td>'.$langs->trans("Ref").'</td>';
         print '<td>'.$langs->trans("DateSubscription").'</td>';
         print "<td align=\"right\">".$langs->trans("Amount")."</td>\n";
         print "</tr>\n";
@@ -995,6 +993,10 @@ if ($rowid && $action != 'edit')
             $objp = $db->fetch_object($result);
             $var=!$var;
             print "<tr $bc[$var]>";
+            $cotisation=new Cotisation($db);
+            $cotisation->ref=$objp->crowid;
+            $cotisation->id=$objp->crowid;
+            print '<td>'.$cotisation->getNomUrl(1).'</td>';
             print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
             print '<td align="right">'.price($objp->cotisation).'</td>';
             print "</tr>";

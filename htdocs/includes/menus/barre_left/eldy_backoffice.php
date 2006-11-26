@@ -635,10 +635,10 @@ class MenuLeft {
                   $newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
                 
                   $newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
+                  if ($conf->export->enabled && $leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
                   if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
-                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->export);
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export,'_new');
+                  if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php?leftmenu=export","Etiquettes d'adhérents",1,$user->rights->adherent->export,'_new');
                 
                   $newmenu->add(DOL_URL_ROOT."/public/adherents/index.php?leftmenu=member_public",$langs->trans("MemberPublicLinks"));
 				  /*
@@ -686,7 +686,8 @@ class MenuLeft {
             for ($i = 0 ; $i < sizeof($this->menu_array) ; $i++) 
             {
                 $alt++;
-                if ($this->menu_array[$i]['level']==0) {
+                if ($this->menu_array[$i]['level']==0) 
+                {
                     if (($alt%2==0))
                     {
                         print '<div class="blockvmenuimpair">'."\n";
@@ -697,32 +698,44 @@ class MenuLeft {
                     }
                 }
     
-                if ($this->menu_array[$i]['level']==0) {
-                    if ($this->menu_array[$i]['enabled'])
-                        print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                    else 
-                        print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-                }
-                if ($this->menu_array[$i]['level']==1) {
-                    if ($this->menu_array[$i]['enabled'])
-                        print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                    else 
-                        print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-                }
-                if ($this->menu_array[$i]['level']==2) {
-                    if ($this->menu_array[$i]['enabled'])
-                        print '&nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                    else 
-                        print '&nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-                }
-                if ($this->menu_array[$i]['level']==3) {
-                    if ($this->menu_array[$i]['enabled'])
-                        print '&nbsp; &nbsp; &nbsp; &nbsp; <a class="vsmenu" href="'.$this->menu_array[$i]['url'].'">'.$this->menu_array[$i]['titre'].'</a><br>';
-                    else 
-                        print '&nbsp; &nbsp; &nbsp; &nbsp; <font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
-                }
+				// Place tabulation
+				$tabul=($this->menu_array[$i]['level'] - 1);
+				if ($tabul > 0)
+				{
+					for ($j=0; $j < $tabul; $j++)
+					{
+						print '&nbsp; &nbsp; ';
+					}
+				}
                 
-                if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)  {
+                // Menu niveau 0
+                if ($this->menu_array[$i]['level'] == 0)
+                {
+	                if ($this->menu_array[$i]['enabled'])
+	                {
+	                    print '<a class="vmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a><br>';
+	                }
+	                else 
+	                {
+	                    print '<font class="vmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+					}
+				}
+                // Menu niveau > 0
+                if ($this->menu_array[$i]['level'] > 0)
+                {
+	                if ($this->menu_array[$i]['enabled'])
+	                {
+	                    print '<a class="vsmenu" href="'.$this->menu_array[$i]['url'].'"'.($this->menu_array[$i]['target']?' target="'.$this->menu_array[$i]['target'].'"':'').'>'.$this->menu_array[$i]['titre'].'</a><br>';
+	                }
+	                else 
+	                {
+	                    print '<font class="vsmenudisabled">'.$this->menu_array[$i]['titre'].'</font><br>';
+					}
+				}
+				
+								
+                if ($i == (sizeof($this->menu_array)-1) || $this->menu_array[$i+1]['level']==0)
+                {
                     print "</div>\n";
                 }
             }

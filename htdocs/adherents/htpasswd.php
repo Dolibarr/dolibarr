@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*! \file htdocs/adherents/htpasswd.php
+/**
+		\file 		htdocs/adherents/htpasswd.php
         \ingroup    adherent
 		\brief      Page d'export htpasswd du fichier des adherents
 		\author     Rodolphe Quiedeville
@@ -34,7 +35,6 @@ llxHeader();
 
 if ($sortorder == "") {  $sortorder="ASC"; }
 if ($sortfield == "") {  $sortfield="d.login"; }
-
 if (! isset($statut))
 {
   $statut = 1 ;
@@ -45,40 +45,44 @@ if (! isset($cotis))
   // par defaut les adherents doivent etre a jour de cotisation
   $cotis=1;
 }
+
+
+
 $sql = "SELECT d.login, d.pass, ".$db->pdate("d.datefin")." as datefin";
 $sql .= " FROM ".MAIN_DB_PREFIX."adherent as d ";
 $sql .= " WHERE d.statut = $statut ";
-if ($cotis==1){
-  $sql .= " AND datefin > now() ";
-}
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
-
-$result = $db->query($sql);
-if ($result) 
+if ($cotis==1)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print "<BR><DIV class=\"titre\">Export au format htpasswd des login des adhérents</DIV><BR>\n";
-  //print_barre_liste("Export au format htpasswd des login des adhérents", $page, "htpasswd.php", "");
-  print "<HR>\n";
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($result);
-      $htpass=crypt($objp->pass,makesalt());
-      print $objp->login.":".$htpass."<BR>\n";
-      $i++;
-    }
-  print "<HR>\n";
+	$sql .= " AND datefin > now() ";
+}
+$sql.= " ORDER BY $sortfield $sortorder";
+//$sql.=$db->plimit($conf->liste_limit, $offset);
+
+$resql = $db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+
+	print_barre_liste($langs->trans("HTPasswordExport"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',0);
+
+	print "<hr>\n";
+	while ($i < $num)
+	{
+		$objp = $db->fetch_object($result);
+		$htpass=crypt($objp->pass,makesalt());
+		print $objp->login.":".$htpass."<br>\n";
+		$i++;
+	}
+	print "<hr>\n";
 }
 else
 {
-  print $sql;
-  print $db->error();
+	dolibarr_print_error($db);
 }
 
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

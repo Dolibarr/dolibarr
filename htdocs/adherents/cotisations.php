@@ -29,6 +29,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
 $sortorder=$_GET["sortorder"];
@@ -109,10 +111,6 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !='')
 llxHeader();
 
 
-$params="&amp;select_date=".$select_date;
-print_barre_liste($langs->trans("ListOfSubscriptions"), $page, "cotisations.php", $params, $sortfield, $sortorder,'',$num);
-
-
 // Liste des cotisations
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, b.fk_account,";
 $sql.= " c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank as bank, c.rowid as crowid,";
@@ -120,11 +118,12 @@ $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
 $sql.= " WHERE d.rowid = c.fk_adherent";
-if(isset($date_select) && $date_select != '')
+if (isset($date_select) && $date_select != '')
 {
-  $sql .= " AND dateadh LIKE '$date_select%'";
+  $sql.= " AND dateadh LIKE '$date_select%'";
 }
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) 
@@ -132,10 +131,15 @@ if ($result)
     $num = $db->num_rows($result);
     $i = 0;
 
+
+    $param.="&amp;statut=$statut&amp;date_select=$date_select";
+	print_barre_liste($langs->trans("ListOfSubscriptions"), $page, $_SERVER["PHP_SELF"], $param, $sortfield, $sortorder,'',$num);
+
+
     print '<table class="noborder" width="100%">';
 
-    $param="&page=$page&statut=$statut&amp;date_select=$date_select";
     print '<tr class="liste_titre">';
+    print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"","align=\"right\"",$sortfield);
@@ -147,15 +151,24 @@ if ($result)
 
     $var=true;
     $total=0;
-    while ($i < $num)
+    while ($i < $num && $i < $conf->liste_limit)
     {
         $objp = $db->fetch_object($result);
         $total+=price($objp->cotisation);
 
+        $cotisation=new Cotisation($db);
+        $cotisation->ref=$objp->crowid;
+        $cotisation->id=$objp->crowid;
+
+        $adherent=new Adherent($db);
+        $adherent->ref=trim($objp->prenom.' '.$objp->nom);
+        $adherent->id=$objp->rowid;
+
         $var=!$var;
         print "<tr $bc[$var]>";
-        print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
-        print "<td><a href=\"fiche.php?rowid=$objp->rowid&action=edit\">".img_object($langs->trans("ShowMember"),"user").' '.stripslashes($objp->prenom)." ".stripslashes($objp->nom)."</a></td>\n";
+        print '<td>'.$cotisation->getNomUrl(1).'</td>';
+        print '<td>'.dolibarr_print_date($objp->dateadh)."</td>\n";
+        print '<td>'.$adherent->getNomUrl(1).'</td>';
         print '<td align="right">'.price($objp->cotisation).'</td>';
         if ($conf->global->ADHERENT_BANK_USE)
         {
@@ -189,6 +202,7 @@ if ($result)
     $var=!$var;
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
+    print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">".price($total)."</td>\n";
     if ($conf->global->ADHERENT_BANK_USE)

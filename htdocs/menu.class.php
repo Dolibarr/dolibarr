@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- * 
  */
 
 /**
@@ -60,14 +59,16 @@ class Menu {
      *  \param      titre       Libelle menu à afficher
      *  \param      level       Niveau du menu à ajouter
      *  \param      enabled     Menu actif ou non
+     *  \param      target		Target lien
      */
-    function add($url, $titre, $level=0, $enabled=1)
+    function add($url, $titre, $level=0, $enabled=1, $target='')
     {
         $i = sizeof($this->liste);
         $this->liste[$i]['url'] = $url;
         $this->liste[$i]['titre'] = $titre;
         $this->liste[$i]['level'] = $level;
         $this->liste[$i]['enabled'] = $enabled;
+        $this->liste[$i]['target'] = $target;
     }
 
     /**
@@ -76,11 +77,12 @@ class Menu {
      *  \param      titre       Libelle menu à afficher
      *  \param      level       Niveau du menu à ajouter
      *  \param      enabled     Menu actif ou non
+     *  \param      target		Target lien
      */
-    function add_submenu($url, $titre, $level=1, $enabled=1)
+    function add_submenu($url, $titre, $level=1, $enabled=1, $target='')
     {
         $i = sizeof($this->liste) - 1;
-        $this->add($url, $titre, $level, $enabled);
+        $this->add($url, $titre, $level, $enabled, $target);
     }
 
 }

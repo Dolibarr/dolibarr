@@ -337,10 +337,17 @@ class Adherent
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
-
+		if (! $this->datec) $this->datec=time();
+		
+		$this->db->begin();
+		
 		// Insertion membre
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec,login)";
-		$sql.= " VALUES (now(),'".$this->login."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent";
+		$sql.= " (datec,login)";
+		$sql.= " VALUES (";
+		$sql.= " '".$this->db->idate($this->datec)."',";
+		$sql.= " '".addslashes($this->login)."'";
+		$sql.= ")";
 
 		dolibarr_syslog("Adherent.class::create sql=".$sql);
 		$result = $this->db->query($sql);
@@ -353,7 +360,12 @@ class Adherent
 				
 				// Mise a jour
 				$result=$this->update($user,1);
-	
+				if ($result < 0)
+				{
+					$this->db->rollback();
+					return -1;
+				}
+				
 	            // Appel des triggers
 	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
@@ -361,17 +373,30 @@ class Adherent
 				if ($result < 0) $error++;
 	            // Fin appel triggers
 	
+				if ($error)
+				{
+					$this->error=$interface->error;
+					$this->db->rollback();
+					return -1;
+				}
+				else
+				{
+					$this->db->commit();
+				}
+	
 				return $this->id;
 			}
 			else
 			{
-				dolibarr_print_error($this->db,'Failed to get last insert id');
+				$this->error='Failed to get last insert id';
+				$this->db->rollback();
 				return -1;
 			}				
 		}
 		else
 		{
 			$this->error=$this->db->error();
+			$this->db->rollback();
 			return -1;
 		}
 	}
@@ -379,6 +404,7 @@ class Adherent
 
 	/**
 			\brief 		Fonction qui met à jour l'adhérent
+			\param		user			Utilisateur qui réalise la mise a jour
 			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
 			\return		int				<0 si KO, >0 si OK
 	*/
@@ -386,7 +412,7 @@ class Adherent
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Adherent.class::update $notrigger");
+		dolibarr_syslog("Adherent.class::update user=".$user." notrigger=".$notrigger);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -398,28 +424,29 @@ class Adherent
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " prenom = '".$this->prenom ."'";
-		$sql .= ",nom='"    .$this->nom."'";
-		$sql .= ",login='"  .$this->login."'";
-		$sql .= ",pass='"   .$this->pass."'";
-		$sql .= ",societe='".$this->societe."'";
+		$sql .= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
+		$sql .= ",nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
+		$sql .= ",login="   .($this->login?"'".addslashes($this->login)."'":"null");
+		$sql .= ",pass="    .($this->pass?"'".addslashes($this->pass)."'":"null");
+		$sql .= ",societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
 		$sql .= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
-		$sql .= ",cp='"     .$this->cp."'";
-		$sql .= ",ville='"  .$this->ville."'";
-		$sql .= ",pays='"   .$this->pays_id."'";
-		$sql .= ",email='"  .$this->email."'";
+		$sql .= ",cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
+		$sql .= ",ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
+		$sql .= ",pays="    ."'".$this->pays_id."'";
+		$sql .= ",email="   ."'".$this->email."'";
 		$sql .= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
 		$sql .= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
 		$sql .= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
 		$sql .= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
 		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
-		$sql .= ",public='" .$this->public."'";
+		$sql .= ",public="  ."'".$this->public."'";
 		$sql .= ",statut="  .$this->statut;
 		$sql .= ",fk_adherent_type=".$this->typeid;
-		$sql .= ",morphy='" .$this->morphy."'";
+		$sql .= ",morphy="  ."'".$this->morphy."'";
 
 		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
-		if ($this->datefin) $sql .= ",datefin='".$this->db->idate($this->datefin)."'";	// Ne doit etre vidé que par effacement cotisation
+		if ($this->datefin)   $sql .= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
+		if ($this->datevalid) $sql .= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
 
 		$sql .= " WHERE rowid = ".$this->id;
 
@@ -723,11 +750,11 @@ class Adherent
     		\param	    montant     	Montant cotisation
     		\param		account_id		Id compte bancaire
     		\param		operation		Type operation (si Id compte bancaire fourni)
-    		\param		operation		Label operation (si Id compte bancaire fourni)
+    		\param		label			Label operation (si Id compte bancaire fourni)
     		\param		num_chq			Numero cheque (si Id compte bancaire fourni)
             \return     int         	rowid de l'entrée ajoutée, <0 si erreur
     */
-    function cotisation($date, $montant, $accountid, $operation, $label, $num_chq)
+    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='')
     {
         global $conf,$langs,$user;
 
@@ -800,6 +827,7 @@ class Adherent
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
+                if ($result < 0) $error++;
                 // Fin appel triggers
 
                	$this->db->commit();
@@ -1765,5 +1793,61 @@ class Adherent
 
 		return $info;
 	}	
+
+
+    /**
+     *      \brief     Charge les informations d'ordre info dans l'objet adherent
+     *      \param     id       Id du membre a charger
+     */
+	function info($id)
+	{
+		$sql = 'SELECT a.rowid, '.$this->db->pdate('a.datec').' as datec,';
+		$sql.= ' '.$this->db->pdate('a.datevalid').' as datev,';
+		$sql.= ' '.$this->db->pdate('a.tms').' as datem,';
+		$sql.= ' a.fk_user_author, a.fk_user_valid, a.fk_user_mod';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'adherent as a';
+		$sql.= ' WHERE a.rowid = '.$id;
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db, $obj->fk_user_author);
+					$cuser->fetch();
+					$this->user_creation   = $cuser;
+				}
+
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db, $obj->fk_user_valid);
+					$vuser->fetch();
+					$this->user_validation = $vuser;
+				}
+
+				if ($obj->fk_user_mod)
+				{
+					$muser = new User($this->db, $obj->fk_user_mod);
+					$muser->fetch();
+					$this->user_modification = $mluser;
+				}
+
+				$this->date_creation     = $obj->datec;
+				$this->date_validation   = $obj->datev;
+				$this->date_modification = $obj->datem;
+			}
+
+			$this->db->free($result);
+
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+
 }
 ?>

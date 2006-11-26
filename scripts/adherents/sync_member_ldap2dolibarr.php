@@ -54,10 +54,11 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 $error=0;
 
 
-print "***** $script_file ($version) *****\n";
+if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
-if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
+print "***** $script_file ($version) *****\n";
+print 'DN='.$conf->global->LDAP_MEMBER_DN."\n";
+print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 
 /*
 if (! $conf->global->LDAP_MEMBER_ACTIVE)
@@ -100,15 +101,19 @@ else
 	exit;
 }
 
+
+
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result >= 0)
 {
 	$justthese=array();
 
-	print 'DN='.$conf->global->LDAP_MEMBER_DN."\n";
-	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
-
+	
+	// On désactive la synchro Dolibarr vers LDAP
+	$conf->global->LDAP_MEMBER_ACTIVE=0;
+	
+	
 	$ldaprecords = $ldap->search($conf->global->LDAP_MEMBER_DN, '('.$conf->global->LDAP_KEY_MEMBERS.'=*)');
 	if (is_array($ldaprecords))
 	{
@@ -142,22 +147,24 @@ if ($result >= 0)
 
 			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION][0];
 			$member->morphy='phy';
-			//$member->photo;
+			$member->photo='';
 			$member->public=1;
 			$member->statut=-1;		// Par defaut, statut brouillon
+			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
+			// Cas particulier (on ne rentre jamais dans ce if)
 			if (isset($ldapuser["prnxstatus"][0]))
 			{
+				$member->datec=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
+				$member->datevalid=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
 				if ($ldapuser["prnxstatus"][0]==1)
 				{
 					$member->statut=1;
-					$member->datev=time();
 				}
 				else
 				{
 					$member->statut=0;
 				}
 			}
-			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
 			
 			// Propriete type membre
 			$member->typeid=$typeid;
@@ -187,13 +194,14 @@ if ($result >= 0)
 			$datelast=dolibarr_mktime($ldapuser["prnxlastcontribution"][0]);
 			if ($datefirst)
 			{
-				$crowid=$member->cotisation($datefirst, 0, 0, $operation, $label, $num_chq);
+				$crowid=$member->cotisation($datefirst, 0, 0);
 			}
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
 				$price=price2num($ldapuser["prnxlastcontributionprice"][0]);
-				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0, $operation, $label, $num_chq);
+				//print "xx".$datelast."-".dolibarr_time_plus_duree($datelast,-1,'y')."\n";
+				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0);
 			}
 			
 			//----------------------------

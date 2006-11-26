@@ -635,7 +635,7 @@ function llxFooter($foot='',$limitIEbug=1)
     global $conf, $dolibarr_auto_user, $micro_start_time;
     
     print "\n</div>\n".'<!-- end div class="fiche" -->'."\n";
-    print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->';
+    print "\n</div>\n".'<!-- end div class="vmenuplusfiche" -->'."\n";
     
     if (isset($_SERVER['DOL_TUNING']))
     {

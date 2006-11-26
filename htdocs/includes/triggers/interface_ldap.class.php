@@ -113,7 +113,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->add($dn,$info,$user);
+	    	    return $ldap->add($dn,$info,$user);
     		}
         }
         elseif ($action == 'USER_MODIFY')
@@ -127,7 +127,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->update($dn,$info,$user);
+	    	    return $ldap->update($dn,$info,$user);
     		}
         }
         elseif ($action == 'USER_NEW_PASSWORD')
@@ -149,7 +149,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->delete($dn,$info,$user);
+	    	    return $ldap->delete($dn,$info,$user);
     		}
         }
 
@@ -164,7 +164,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->add($dn,$info,$user);
+	    	    return $ldap->add($dn,$info,$user);
     		}
 		}
         elseif ($action == 'GROUP_MODIFY')
@@ -177,7 +177,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->update($dn,$info,$user);
+	    	    return $ldap->update($dn,$info,$user);
     		}
 		}
         elseif ($action == 'GROUP_DELETE')
@@ -190,7 +190,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->delete($dn,$info,$user);
+	    	    return $ldap->delete($dn,$info,$user);
     		}
 		}
 		
@@ -206,7 +206,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->add($dn,$info,$user);
+	    	    return $ldap->add($dn,$info,$user);
     		}
         }
         elseif ($action == 'CONTACT_MODIFY')
@@ -220,7 +220,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->update($dn,$info,$user);
+	    	    return $ldap->update($dn,$info,$user);
     		}
         }
         elseif ($action == 'CONTACT_DELETE')
@@ -234,7 +234,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->delete($dn,$info,$user);
+	    	    return $ldap->delete($dn,$info,$user);
 			}
         }
 
@@ -246,19 +246,26 @@ class InterfaceLdap
         	{
         		$ldap=new Ldap();
         		$ldap->connect_bind();
+				
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->add($dn,$info,$user);
+	    	    return $ldap->add($dn,$info,$user);
     		}
         }
         elseif ($action == 'MEMBER_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+			}
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+			}
         }
         elseif ($action == 'MEMBER_MODIFY')
         {
@@ -271,12 +278,15 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    $ldap->update($dn,$info,$user);
+	    	    return $ldap->update($dn,$info,$user);
     		}
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+			}
         }
         elseif ($action == 'MEMBER_DELETE')
         {
@@ -289,7 +299,7 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-				$ldap->delete($dn,$info,$user);
+				return $ldap->delete($dn,$info,$user);
 			}
         }
 

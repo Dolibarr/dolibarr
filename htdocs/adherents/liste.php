@@ -57,8 +57,10 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin,";
-$sql.= " d.email, d.fk_adherent_type as type_id, t.libelle as type, d.morphy, d.statut, t.cotisation";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ";
+$sql.= " ".$db->pdate("d.datefin")." as datefin,";
+$sql.= " d.email, d.fk_adherent_type as type_id, d.morphy, d.statut,";
+$sql.= " t.libelle as type, t.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
 $sql.= " WHERE d.fk_adherent_type = t.rowid ";
 if ($sall) 
@@ -172,29 +174,32 @@ if ($result)
         print "</td>";
 
         // Date fin cotisation
-        print "<td>";
-        if ($objp->cotisation == 'yes')
+        if ($objp->datefin)
         {
-            if ($objp->datefin)
+	        print '<td align="center">';
+            if ($objp->datefin < time() && $objp->statut > 0)
             {
-                if ($objp->datefin < time() && $objp->statut > 0)
-                {
-                    print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning()."</td>\n";
-                }
-                else
-                {
-                    print dolibarr_print_date($objp->datefin)."</td>\n";
-                }
+                print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning();
             }
-            else {
-                print $langs->trans("SubscriptionNotReceived");
-                if ($objp->statut > 0) print " ".img_warning();
-                print "</td>\n";
+            else
+            {
+                print dolibarr_print_date($objp->datefin);
             }
+            print '</td>';
         }
         else
         {
-            print "&nbsp;</td>";
+	        print '<td align="left">';
+	        if ($objp->cotisation == 'yes')
+	        {
+                print $langs->trans("SubscriptionNotReceived");
+                if ($objp->statut > 0) print " ".img_warning();
+	        }
+	        else
+	        {
+	            print '&nbsp;';
+	        }
+            print '</td>';
         }
 
         // Actions

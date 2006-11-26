@@ -50,6 +50,11 @@ function member_prepare_head($member)
 		$h++;
 	}
 
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;
+	$head[$h][1] = $langs->trans("Info");
+	$head[$h][2] = 'info';
+	$h++;
+
 	return $head;
 }
 
