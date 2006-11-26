@@ -105,9 +105,12 @@ if ($account > 0)
 	$acct = new Account($db);
 	$acct->fetch($account);
 
-	// Chargement des categories dans $options
+	// Chargement des categories bancaires dans $options
 	$nbcategories=0;
-	$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_categ;";
+	$sql = "SELECT rowid, label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
+	$sql.= " ORDER BY label";
+
 	$result = $db->query($sql);
 	if ($result)
 	{
