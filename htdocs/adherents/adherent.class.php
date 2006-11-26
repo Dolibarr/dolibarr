@@ -795,7 +795,7 @@ class Adherent
 	                $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user);
 	                if ($insertid > 0)
 	                {
-	        			$inserturlid=$acct->add_url_line($insertid, $adh->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
+	        			$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
 	                    if ($inserturlid > 0)
 	                    {
 	                        // Met a jour la table cotisation
