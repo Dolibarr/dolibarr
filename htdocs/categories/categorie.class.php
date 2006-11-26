@@ -592,7 +592,8 @@ class Categorie
 
 	
 	/**
-	* Retourne toutes les catégories
+	* 		\brief		Retourne toutes les catégories
+	*		\return		array		Tableau d'objet Categorie
 	*/
 	function get_all_categories ()
 	{
@@ -616,6 +617,7 @@ class Categorie
 			return -1;
 		}
 	}
+	
 	/**
 	* 	\brief		Retourne le nombre total de catégories
 	*	\return		int		Nombre de categories
