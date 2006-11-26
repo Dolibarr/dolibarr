@@ -284,10 +284,10 @@ if ($_POST["action"] == 'add')
     $public=0;
     if (isset($public)) $public=1;
 
-    if (!$error)
+    if (! $error)
     {
         // Email a peu pres correct et le login n'existe pas
-        if ($adh->create($user->id))
+        if ($adh->create($user) > 0)
         {
             if ($cotisation > 0)
             {
@@ -350,8 +350,8 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
-    $adh->rowid=$rowid;
-    $adh->validate($user->id);
+    $adh->id=$rowid;
+    $adh->validate($user);
     $adh->fetch($rowid);
 
     $adht = new AdherentType($db);
@@ -377,7 +377,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
-	$adh->rowid=$rowid;
+	$adh->id=$rowid;
     $adh->resiliate($user->id);
     $adh->fetch($rowid);
 
@@ -396,7 +396,7 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 {
-    $adh->rowid=$rowid;
+    $adh->id=$rowid;
     $adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -411,7 +411,7 @@ if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 {
-	$adh->rowid=$rowid;
+	$adh->id=$rowid;
     $adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -426,7 +426,7 @@ if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-	$adh->rowid=$rowid;
+	$adh->id=$rowid;
     $adh->fetch($rowid);
     if(!$adh->del_to_spip()){
         $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
@@ -435,7 +435,7 @@ if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
- 	$adh->rowid=$rowid;
+ 	$adh->id=$rowid;
     $adh->fetch($rowid);
     if (!$adh->add_to_spip())
     {
@@ -889,9 +889,15 @@ if ($rowid && $action != 'edit')
     print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Edit")."</a>";
     
     // Valider
-    if ($adh->statut < 1)
+    if ($adh->statut == -1)
     {
         print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+    }
+
+    // Réactiver
+    if ($adh->statut == 0)
+    {
+        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Restore")."</a>\n";
     }
     
     // Envoi fiche par mail

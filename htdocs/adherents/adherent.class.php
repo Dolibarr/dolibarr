@@ -69,8 +69,13 @@ class Adherent
 	var $public;
 	var $commentaire;
 	var $statut;			// -1=brouillon, 0=résilié, 1=validé,payé
-	var $naiss;
 	var $photo;
+
+	var $datec;
+	var $datem;
+	var $datefin;
+	var $datevalid;
+	var $naiss;
 
 	var $typeid;			// Id type adherent
 	var $type;				// Libellé type adherent
@@ -373,7 +378,7 @@ class Adherent
 
 
 	/**
-			\brief fonction qui met à jour l'adhérent
+			\brief 		Fonction qui met à jour l'adhérent
 			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
 			\return		int				<0 si KO, >0 si OK
 	*/
@@ -407,12 +412,15 @@ class Adherent
 		$sql .= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
 		$sql .= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
 		$sql .= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
-		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
 		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
 		$sql .= ",public='" .$this->public."'";
 		$sql .= ",statut="  .$this->statut;
 		$sql .= ",fk_adherent_type=".$this->typeid;
 		$sql .= ",morphy='" .$this->morphy."'";
+
+		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+		if ($this->datefin) $sql .= ",datefin='".$this->db->idate($this->datefin)."'";	// Ne doit etre vidé que par effacement cotisation
+
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=$sql");
@@ -565,8 +573,13 @@ class Adherent
 
         $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
-        $sql.= " d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
-        $sql.= " ".$this->db->pdate("d.datefin")." as datefin, d.pays,";
+        $sql.= " d.photo, d.fk_adherent_type, d.morphy,";
+        $sql.= " ".$this->db->pdate("d.datec")." as datec,";
+        $sql.= " ".$this->db->pdate("d.tms")." as datem,";
+        $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
+        $sql.= " ".$this->db->pdate("d.naiss")." as datenaiss,";
+        $sql.= " ".$this->db->pdate("d.datevalid")." as datev,";
+        $sql.= " d.pays,";
         $sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
         $sql.= " t.libelle as type, t.cotisation as cotisation";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
@@ -600,11 +613,17 @@ class Adherent
                 $this->phone_perso    = $obj->phone_perso;
                 $this->phone_mobile   = $obj->phone_mobile;
                 $this->email          = $obj->email;
-                $this->naiss          = $obj->naiss;
+
                 $this->photo          = $obj->photo;
                 $this->statut         = $obj->statut;
                 $this->public         = $obj->public;
+
+                $this->datec          = $obj->datec;
+                $this->datem          = $obj->datem;
                 $this->datefin        = $obj->datefin;
+                $this->datevalid      = $obj->datevalid;
+                $this->naiss          = $obj->datenaiss;
+
                 $this->commentaire    = $obj->note;
                 $this->morphy         = $obj->morphy;
 
@@ -700,7 +719,7 @@ class Adherent
     /**
     		\brief      Fonction qui insère la cotisation dans la base de données
     					et eventuellement liens dans banques, mailman, etc...
-    		\param	    date        	Date cotisation
+    		\param	    date        	Date d'effet de la cotisation
     		\param	    montant     	Montant cotisation
     		\param		account_id		Id compte bancaire
     		\param		operation		Type operation (si Id compte bancaire fourni)
@@ -718,8 +737,8 @@ class Adherent
         $sql .= " VALUES (".$this->id.", now(), ".$this->db->idate($date).", ".$montant.")";
 
         dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
-        $result=$this->db->query($sql);
-        if ($result)
+        $resql=$this->db->query($sql);
+        if ($resql)
         {
             $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
 			// datefin = date + 1 an
@@ -729,10 +748,9 @@ class Adherent
             $sql.= " WHERE rowid =". $this->id;
             
             dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
-            $resql=$this->db->query( $sql);
+            $resql=$this->db->query($sql);
             if ($resql)
             {
-
 		        // Rajout du nouveau cotisant dans les listes qui vont bien
 		        if ($conf->global->ADHERENT_MAILMAN_LISTS_COTISANT && ! $adh->datefin)
 		        {
@@ -807,15 +825,16 @@ class Adherent
 	 *		\param		userid		userid adhérent à valider
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
-	function validate($userid)
+	function validate($user)
 	{
 		global $user,$langs,$conf;
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql.= " statut=1, datevalid = now(),";
-		$sql.= " fk_user_valid=".$userid;
-		$sql.= " WHERE rowid = $this->id";
+		$sql.= " fk_user_valid=".$user->id;
+		$sql.= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Adherent.class::validate sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

@@ -126,15 +126,15 @@ if ($result)
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","t.cotisation",$param,"","",$sortfield);
     print '<td width="60" align="center">'.$langs->trans("Action")."</td>\n";
     print "</tr>\n";
 
     $var=True;
-    while ($i < $num)
+    while ($i < $num && $i < $conf->liste_limit)
     {
         if ($_GET["type"] && $i==0)
         {

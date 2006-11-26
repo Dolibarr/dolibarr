@@ -140,13 +140,25 @@ if ($result >= 0)
 			$member->phone_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE][0];
 			$member->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL][0];
 
-			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
 			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION][0];
 			$member->morphy='phy';
 			//$member->photo;
 			$member->public=1;
 			$member->statut=-1;		// Par defaut, statut brouillon
-			if (isset($ldapuser["prnxstatus"][0])) $member->statut=($ldapuser["prnxstatus"][0]==1 ? 1 : 0);
+			if (isset($ldapuser["prnxstatus"][0]))
+			{
+				if ($ldapuser["prnxstatus"][0]==1)
+				{
+					$member->statut=1;
+					$member->datev=time();
+				}
+				else
+				{
+					$member->statut=0;
+				}
+			}
+			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
+			$member->datefin=dolibarr_mktime($ldapuser["prnxlastcontribution"][0]),1,'y');
 			
 			// Propriete type membre
 			$member->typeid=$typeid;
@@ -181,7 +193,7 @@ if ($result >= 0)
 			if ($datelast)
 			{
 				$price=price2num($ldapuser["prnxlastcontributionprice"][0]);
-				$crowid=$member->cotisation($datelast, $price, 0, $operation, $label, $num_chq);
+				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0, $operation, $label, $num_chq);
 			}
 			
 			//----------------------------
