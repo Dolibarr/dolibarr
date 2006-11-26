@@ -390,13 +390,11 @@ class Ldap
 			return -3;
 		}
 
-        //if (! $conf->ldap->enabled || ! $conf->global->LDAP_SYNCHRO_ACTIVE) return 0;
+		if (! $olddn) $olddn=$dn;
 
-		if (! $olddn) $olddn = $dn;
-
-		// On supprime et on insère
 		dolibarr_syslog("Ldap.class::update dn=".$dn." olddn=".$olddn);
 
+		// On supprime et on insère
 		$result = $this->delete($olddn);
 		$result = $this->add($dn, $info, $user);
 		if ($result <= 0)
@@ -593,17 +591,14 @@ class Ldap
 	{
 		global $conf;
 
-		// Encode en UTF8
-		if ($conf->global->LDAP_SERVER_TYPE != 'activedirectory')
-		{
-			$dn=utf8_encode($dn);
-			foreach($info as $key => $val)
-			{
-				if (! is_array($val)) $info[$key]=utf8_encode($val);
-			}
-		}
-
 		dolibarr_syslog("Ldap.class::add dn=".$dn." info=".join(',',$info));
+
+		// Encode en UTF8
+		$dn=$this->ldap_utf8_encode($dn);
+		foreach($info as $key => $val)
+		{
+			if (! is_array($val)) $info[$key]=$this->ldap_utf8_encode($val);
+		}
 
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
@@ -621,13 +616,10 @@ class Ldap
 	{
 		global $conf;
 
-		// Encode en UTF8
-		if ($conf->global->LDAP_SERVER_TYPE != 'activedirectory')
-		{
-			$dn=utf8_encode($dn);
-		}
-
 		dolibarr_syslog("Ldap.class::delete Delete LDAP entry dn=".$dn);
+
+		// Encode en UTF8
+		$dn=$this->ldap_utf8_encode($dn);
 
 		$result=@ldap_delete($this->connection, $dn);
 
@@ -680,53 +672,43 @@ class Ldap
      * username. The search criteria is a standard LDAP query - * returns all
      * users.  The $attributeArray variable contains the required user detail field names
      */
-    function getUsers($search, $attributeArray)
+    function getUsers($search, $userDn, $useridentifier, $attributeArray)
     {
 		$userslist=array();
+		
+		dolibarr_syslog("Ldap.class::getUsers search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=".$attributeArray);
 
-        // Perform the search and get the entry handles
-
-        // if the directory is AD, then bind first with the search user first
+	    // if the directory is AD, then bind first with the search user first
         if ($this->serverType == "activedirectory") {
             $this->authBind($this->searchUser, $this->searchPassword);
         }
 
-        $filter = '('.$this->filter.'('.$this->getUserIdentifier().'='.$search.'))';
-		//print "zzz".$filter;
-        $this->result = @ldap_search( $this->connection, $this->people, $filter);
+        $filter = '('.$useridentifier.'='.$search.')';
+        $this->result = @ldap_search($this->connection, $userDn, $filter);
 
         if (!$this->result)
         {
-        	$this->ldapErrorCode = ldap_errno( $this->connection);
-        	$this->ldapErrorText = ldap_error( $this->connection);
+        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+        	return -1;
         }
 
-        $info = @ldap_get_entries( $this->connection, $this->result);
-
-        for( $i = 0; $i < $info["count"]; $i++)
+        $info = @ldap_get_entries($this->connection, $this->result);
+		//print_r($info);
+        for ($i = 0; $i < $info["count"]; $i++)
         {
-            // Get the username, and create an array indexed by it...
-            // Modify these as you see fit.
-            $uname = $info[$i][$this->getUserIdentifier()][0];
-
-            // add to the array for each attribute in my list
-            for ( $j = 0; $j < count( $attributeArray); $j++)
-            {
-                if (strtolower($attributeArray[$j]) == "dn")
-                {
-                    $userslist["$uname"]["$attributeArray[$j]"]      = $info[$i][strtolower($attributeArray[$j])];
-                }
-                else if (strtolower($attributeArray[$j]) == "objectsid")
-                {
-                	  	$objectsid = $this->getObjectSid($uname);
-                	  	$userslist["$uname"]["$attributeArray[$j]"]    = $objectsid;
-                	  	//$userslist["$uname"]["$attributeArray[$j]"]    = $objectsid[0];
-                }
-                else
-                {
-                    $userslist["$uname"]["$attributeArray[$j]"]      = $info[$i][strtolower($attributeArray[$j])][0];
-                }
-            }
+            $recordid=$this->ldap_utf8_decode($info[$i][$useridentifier][0]);
+			if ($recordid)
+			{
+				//print "Found record with key $useridentifier=".$recordid."<br>\n";
+	            $userslist[$recordid][$useridentifier]=$recordid;
+	
+	            // Add to the array for each attribute in my list
+	            for ($j = 0; $j < count($attributeArray); $j++)
+	            {
+	            	//print " Param ".$attributeArray[$j]."=".$info[$i][$attributeArray[$j]][0]."<br>\n";
+	                $userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$attributeArray[$j]][0]);
+	            }
+			}
         }
 
         asort($userslist);
@@ -736,6 +718,7 @@ class Ldap
     /**
      * Récupère le SID de l'utilisateur
      * ldapuser. le login de l'utilisateur
+     *	\deprecated
      */
     function getObjectSid($ldapUser)
     {
@@ -753,6 +736,7 @@ class Ldap
 
     /**
      *  Converts a little-endian hex-number to one, that 'hexdec' can convert
+     *	\deprecated
      */
     function littleEndian($hex) {
     	for ($x=strlen($hex)-2; $x >= 0; $x=$x-2) {
@@ -763,6 +747,7 @@ class Ldap
 
     /**
      * Returns the textual SID
+     *	\deprecated
      */
      function binSIDtoText($binsid) {
      	$hex_sid=bin2hex($binsid);
@@ -779,34 +764,30 @@ class Ldap
 
 	/**
 	* 	\brief 		Fonction de recherche avec filtre
-	* 	\param 		checkDn		DN de recherche
-	* 	\param 		filter		filtre de recherche (ex: sn=nom_personne)
 	*	\remarks	this->connection doit etre défini donc la methode bind ou authbind doit avoir deja été appelée
+	* 	\param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
+	* 	\param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
+	*	\return		array			Tableau des reponses
 	*/
 	function search($checkDn, $filter)
 	{
-		// Perform the search and get the entry handles
-		if ($this->serverType != "activedirectory")
-		{
-			$checkDn=utf8_decode($checkDn);
-		}
-
 		dolibarr_syslog("Ldap.class::search checkDn=".$checkDn." filter=".$filter);
+
+		$checkDn=$this->ldap_utf8_encode($checkDn);
+		$filter=$this->ldap_utf8_encode($filter);
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
 			$this->authBind($this->searchUser, $this->searchPassword);
 		}
 
-
 		$this->result = @ldap_search($this->connection, $checkDn, $filter);
 
 		$result = @ldap_get_entries($this->connection, $this->result);
-
-		if (!$result)
+		if (! $result)
 		{
-			$this->ldapErrorCode = ldap_errno( $this->connection);
-			$this->ldapErrorText = ldap_error( $this->connection);
+			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+			return -1;
 		}
 		else
 		{
@@ -820,8 +801,8 @@ class Ldap
      * \brief récupère les attributs de l'utilisateur
      * \param $user : utilisateur ldap
      */
-    function fetch( $user) {
-
+    function fetch($user)
+    {
         // Perform the search and get the entry handles
 
         // if the directory is AD, then bind first with the search user first
@@ -832,27 +813,26 @@ class Ldap
 
         $filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
 
-        $this->result = @ldap_search( $this->connection, $this->people, $filter);
+        $this->result = @ldap_search($this->connection, $this->people, $filter);
 
         $result = @ldap_get_entries( $this->connection, $this->result);
 
-        if (!$result)
+        if (! $result)
         {
-        	$this->ldapErrorCode = ldap_errno( $this->connection);
-        	$this->ldapErrorText = ldap_error( $this->connection);
+        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
         }
         else
         {
-        	$this->name       = utf8_decode($result[0][$this->attr_name][0]);
-        	$this->firstname  = utf8_decode($result[0][$this->attr_firstname][0]);
-        	$this->login      = utf8_decode($result[0][$userIdentifier][0]);
-        	$this->phone      = utf8_decode($result[0][$this->attr_phone][0]);
-        	$this->fax        = utf8_decode($result[0][$this->attr_fax][0]);
-        	$this->mail       = utf8_decode($result[0][$this->attr_mail][0]);
-        	$this->mobile     = utf8_decode($result[0][$this->attr_mobile][0]);
+        	$this->name       = $this->ldap_utf8_decode($result[0][$this->attr_name][0]);
+        	$this->firstname  = $this->ldap_utf8_decode($result[0][$this->attr_firstname][0]);
+        	$this->login      = $this->ldap_utf8_decode($result[0][$userIdentifier][0]);
+        	$this->phone      = $this->ldap_utf8_decode($result[0][$this->attr_phone][0]);
+        	$this->fax        = $this->ldap_utf8_decode($result[0][$this->attr_fax][0]);
+        	$this->mail       = $this->ldap_utf8_decode($result[0][$this->attr_mail][0]);
+        	$this->mobile     = $this->ldap_utf8_decode($result[0][$this->attr_mobile][0]);
 
-        	$this->uacf       = $this->parseUACF(utf8_decode($result[0]["useraccountcontrol"][0]));
-        	$this->pwdlastset = utf8_decode($result[0]["pwdlastset"][0]);
+        	$this->uacf       = $this->parseUACF($this->ldap_utf8_decode($result[0]["useraccountcontrol"][0]));
+        	$this->pwdlastset = $this->ldap_utf8_decode($result[0]["pwdlastset"][0]);
 
         	ldap_free_result($this->result);
         }
@@ -1004,5 +984,31 @@ class Ldap
     return($retval);
   }
 
-} // End of class
+
+	/*
+	*	\brief		Encode in UTF8 or not
+	*	\param		string		String to decode
+	*	\return		string		String decoded
+	*/
+	function ldap_utf8_encode($string)
+	{
+		if ($this->serverType != "activedirectory")	return utf8_encode($string);
+		else return($string);
+	}
+	
+
+	/*
+	*	\brief		Decode in UTF8 or not
+	*	\param		string		String to decode
+	*	\return		string		String decoded
+	*/
+	function ldap_utf8_decode($string)
+	{
+		if ($this->serverType != "activedirectory")	return utf8_decode($string);
+		else return($string);
+	}	
+
+}
+
+
 ?>

@@ -62,6 +62,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_SID',$_POST["fieldsid"])) $error++;
 
 	if ($error)
 	{
@@ -207,6 +208,14 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldDescription").'</td><td>'
 print '<input size="25" type="text" name="fielddescription" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'">';
 print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Sid
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldSid").'</td><td>';
+print '<input size="25" type="text" name="fieldsid" value="'.$conf->global->LDAP_FIELD_SID.'">';
+print '</td><td>'.$langs->trans("LDAPFieldSidExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_SID.'"'.($conf->global->LDAP_KEY_GROUPS==$conf->global->LDAP_FIELD_SID?' checked="true"':'')."></td>";
 print '</tr>';
 
 $var=!$var;

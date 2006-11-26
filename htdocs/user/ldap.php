@@ -45,6 +45,41 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
+$fuser = new User($db, $_GET["id"]);
+$fuser->fetch();
+$fuser->getrights();
+
+
+/*
+* Actions
+*/
+
+if ($_GET["action"] == 'dolibarr2ldap')
+{
+	$message="";
+
+	$db->begin();
+
+	$ldap=new Ldap();
+	$ldap->connect_bind();
+
+	$info=$fuser->_load_ldap_info();
+	$dn=$fuser->_load_ldap_dn($info);
+	
+    $ret=$ldap->update($dn,$info,$user);	// Marche en creation LDAP et mise a jour
+
+	if ($ret >= 0)
+	{
+		$message.='<div class="ok">'.$langs->trans("UserSynchronized").'</div>';
+		$db->commit();
+	}
+	else
+	{
+		$message.='<div class="error">'.$ldap->error.'</div>';
+		$db->rollback();
+	}
+}
+
 
 /*
  *	Affichage page
@@ -53,10 +88,6 @@ if ($user->societe_id > 0)
 llxHeader();
 
 $form = new Form($db);
-
-$fuser = new User($db, $_GET["id"]);
-$fuser->fetch();
-$fuser->getrights();
 
 
 /*
@@ -117,12 +148,29 @@ print '</table>';
 
 print '</div>';
 
-print '<br>';
+
+if ($message) { print $message; }
 
 
-print_titre($langs->trans("LDAPInformationsForThisUser"));
+/*
+ * Barre d'actions
+ */
+
+print '<div class="tabsAction">';
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
+{
+	print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?id='.$fuser->id.'&amp;action=dolibarr2ldap">'.$langs->trans("ForceSynchronize").'</a>';
+}
+
+print "</div>\n";
+print "<br>\n";
+
+
 
 // Affichage attributs LDAP
+print_titre($langs->trans("LDAPInformationsForThisUser"));
+
 print '<table width="100%" class="noborder">';
 
 print '<tr class="liste_titre">';
@@ -139,7 +187,11 @@ if ($result > 0)
 	$dn=$fuser->_load_ldap_dn($info,1);
 	$search = "(".$fuser->_load_ldap_dn($info,2).")";
 	$result=$ldap->search($dn,$search);
-
+	if ($result < 0)
+	{
+		dolibarr_print_error($db,$ldap->error);
+	}
+	
 	// Affichage arbre
 	if (sizeof($result))
 	{

@@ -14,3 +14,6 @@ LDAPCard=Fiche LDAP
 LDAPRecordNotFound=Enregistrement non trouvé dans la base LDAP
 LDAPUsers=Utilisateurs en base LDAP
 LDAPGroups=Groupes en base LDAP
+SynchronizeDolibarr2Ldap=Synchroniser utilisateur (Dolibarr -> LDAP)
+UserSynchronized=Utilisateur synchronisé
+ForceSynchronize=Forcer synchro Dolibarr -> LDAP

@@ -808,6 +808,7 @@ class User
         // Nettoyage parametres
         $this->nom=trim($this->nom);
         $this->prenom=trim($this->prenom);
+        $this->fullname=trim($this->prenom." ".$this->nom);
         $this->login=trim($this->login);
         $this->pass=trim($this->pass);
         $this->email=trim($this->email);

@@ -116,43 +116,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     }
 }
 
-// Reactive un compte ldap
-if ($conf->ldap->enabled && $_GET["action"] == 'reactivate' && $candisableuser)
-{
-    if ($_GET["id"] <> $user->id)
-    {
-        $userid = $_GET["id"];
-        $reactiveuser = new User($db, $userid);
-        $reactiveuser->fetch();
-        $ldap = new Ldap();
-        if ($ldap->connect())
-        {
-        	$checkDn = $conf->global->LDAP_USER_DN;
-        	$filter = $conf->global->LDAP_FIELD_NAME.'=*';
-        	$user_sid = $reactiveuser->ldap_sid;
-        	$entries = $ldap->search($checkDn, $filter);
-        	$identifier = $ldap->getUserIdentifier();
-        	
-        	for ($i = 0; $i < $entries["count"] ; $i++) {
-        		$objectsid = $ldap->getObjectSid($entries[$i][$identifier][0]);
-        		 	if ($user_sid == $objectsid){
-        		 		$reactiveuser->login = $entries[$i][$identifier][0];
-        		 	}
-        	}
-        	
-        	$reactiveuser->update();
-        	
-          Header("Location: fiche.php?id=$userid");
-          exit;
-        }
-        else
-        {
-        	print $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
-        }
-        $ldap->close();
-    }
-}
-
 // Action ajout user
 if ($_POST["action"] == 'add' && $canadduser)
 {
@@ -303,7 +266,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$db->commit();
 	} else
 	{
-		$db->rollback;
+		$db->rollback();
 	}
 
 }
@@ -344,6 +307,47 @@ if ((($_POST["action"] == 'confirm_password' && $_POST["confirm"] == 'yes')
     }
 }
 
+// Action initialisation donnees depuis record LDAP
+if ($_POST["action"] == 'adduserldap')
+{
+	$selecteduser = $_POST['users'];
+
+	$justthese = array(
+		$conf->global->LDAP_FIELD_NAME,
+		$conf->global->LDAP_FIELD_FIRSTNAME,
+		$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+		$conf->global->LDAP_FIELD_MAIL,
+		$conf->global->LDAP_FIELD_PHONE,
+		$conf->global->LDAP_FIELD_FAX,
+		$conf->global->LDAP_FIELD_MOBILE,
+		$conf->global->LDAP_FIELD_SID);
+
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
+	if ($result >= 0)
+	{
+		$ldapusers = $ldap->getUsers($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese);
+		if (is_array($ldapusers))
+		{
+			foreach ($ldapusers as $key => $attribute)
+			{
+				$ldap_nom    = $attribute[$conf->global->LDAP_FIELD_NAME];
+				$ldap_prenom = $attribute[$conf->global->LDAP_FIELD_NAME];
+				$ldap_login  = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
+				$ldap_phone  = $attribute[$conf->global->LDAP_FIELD_LOGIN_PHONE];
+				$ldap_fax    = $attribute[$conf->global->LDAP_FIELD_LOGIN_FAX];
+				$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_LOGIN_MOBILE];
+				$ldap_mail   = $attribute[$conf->global->LDAP_FIELD_LOGIN_MAIL];
+				$ldap_sid    = $attribute[$conf->global->LDAP_FIELD_LOGIN_SID];
+			}
+		}
+	}
+	else
+	{
+		$message='<div class="error">'.$ldap->error.'</div>';
+	}
+}
+
 
 
 /*
@@ -371,58 +375,46 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	
 	if ($message) { print $message.'<br>'; }
 	
-	/*
-	* Affiche formulaire d'ajout d'un compte depuis LDAP
-	* si on est en synchro LDAP vers Dolibarr
-	*/
 
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
-		$fullname  = $conf->global->LDAP_FIELD_FULLNAME;
-		$name      = $conf->global->LDAP_FIELD_NAME;
-		$firstname = $conf->global->LDAP_FIELD_FIRSTNAME;
-		$login     = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+		/*
+		* Affiche formulaire d'ajout d'un compte depuis LDAP
+		* si on est en synchro LDAP vers Dolibarr
+		*/
 
-		$mail      = $conf->global->LDAP_FIELD_MAIL;
-		$phone     = $conf->global->LDAP_FIELD_PHONE;
-		$fax       = $conf->global->LDAP_FIELD_FAX;
-		$mobile    = $conf->global->LDAP_FIELD_MOBILE;
-		$SID       = "objectsid";
-
+		print "\n\n<!-- Form liste LDAP debut -->\n";
+		print '<table width="100%" class="border"><tr><td>';
+		
 		$ldap = new Ldap();
-
-		if ($ldap->connect())
+		$result = $ldap->connect_bind();
+		if ($result >= 0)
 		{
-			$bind='';
-			if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
-			{
-				dolibarr_syslog("user/fiche.php authBind user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-				$bind=$ldap->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-			}
-			else
-			{
-				dolibarr_syslog("user/fiche.php bind",LOG_DEBUG);
-				$bind=$ldap->bind();
-			}
-			if ($bind)
-			{				
-				$justthese = array($fullname, $name, $firstname, $login);
-				$ldapusers = $ldap->getUsers('*', $justthese);
+			$justthese=array($conf->global->LDAP_KEY_USERS,
+							 $conf->global->LDAP_FIELD_FULLNAME,
+							 $conf->global->LDAP_FIELD_NAME,
+							 $conf->global->LDAP_FIELD_FIRSTNAME,
+							 $conf->global->LDAP_FIELD_LOGIN_SAMBA);
 
-				//print "eee".$justthese." r ".$ldapusers;
-				//print_r($justthese);
-
+			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese);
+			if (is_array($ldapusers))
+			{
+				$liste=array();
 				foreach ($ldapusers as $key => $ldapuser)
 				{
-					if ($ldapuser[$login])
+					$record='';
+					foreach ($justthese as $value)
 					{
-						if ($ldapuser[$name] != "") $liste[$ldapuser[$login]] = trim($ldapuser[$name]." ".$ldapuser[$firstname]);
-						else if ($ldapuser[$fullname] != "")  $liste[$ldapuser[$login]] = $ldapuser[$fullname];
+						if ($value)
+						{
+							$record.=$value."=".$ldapuser[$value]." ";
+						}
 					}
+					$liste[$key] = $record;
 				}
-
+	
 				print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-				print '<table><tr><td>';
+				print '<table class="noborder"><tr><td>';
 				print $langs->trans("LDAPUsers");
 				print '</td>';
 				print '<td>';
@@ -432,51 +424,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
 				print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
 				print '</td></tr></table>';
 				print '</form>';
-				print "<br>";
-	
-				// Action (a mettre dans actions)
-				if ($action == 'adduserldap')
-				{
-					$selecteduser = $_POST['users'];
-					$justthese = array( $login,
-					$name,
-					$firstname,
-					$mail,
-					$phone,
-					$fax,
-					$mobile,
-					$SID);
-	
-					$selectedUser = $ldap->getUsers($selecteduser, $justthese);
-	
-					if ($selectedUser)
-					{
-						foreach ($selectedUser as $key => $attribute)
-						{
-							$ldap_nom    = utf8_decode($attribute[$name]?$attribute[$name]:'');
-							$ldap_prenom = utf8_decode($attribute[$firstname]?$attribute[$firstname]:'');
-							$ldap_login  = utf8_decode($attribute[$login]?$attribute[$login]:'');
-							$ldap_phone  = utf8_decode($attribute[$phone]?$attribute[$phone]:'');
-							$ldap_fax    = utf8_decode($attribute[$fax]?$attribute[$fax]:'');
-							$ldap_mobile = utf8_decode($attribute[$mobile]?$attribute[$mobile]:'');
-							$ldap_mail   = utf8_decode($attribute[$mail]?$attribute[$mail]:'');
-							$ldap_SID    = $attribute[$SID];
-							//$ldap_SID    = bin2hex($attribute[$SID]);
-						}
-					}
-				}
+			}
+			else
+			{
+				$message='<div class="error">'.$ldap->error.'</div>';
 			}
 		}
 		else
 		{
-			print $ldap->ldapErrorCode;
-			print $ldap->ldapErrorText;
+			$message='<div class="error">'.$ldap->error.'</div>';
 		}
-		if (! $ldap->close())
-		{
-			print $ldap->ldapErrorCode;
-			print $ldap->ldapErrorText;
-		}
+
+		print "</td></tr></table>";
+		print "\n<!-- Form liste LDAP fin -->\n\n";
+		print '<br>';
 	}
 	
 	print '<form action="fiche.php" method="post" name="createuser">';
@@ -667,6 +628,7 @@ else
     	$fuser->fetch();
 
     	// Connexion ldap
+    	// pour recuperer passDoNotExpire et userChangePassNextLogon
     	if ($conf->ldap->enabled && $fuser->ldap_sid)
     	{
     		$ldap = new Ldap();
@@ -676,21 +638,21 @@ else
     			$entries = $ldap->fetch($fuser->login);
     			if (! $entries)
     			{
-    				$message .= $ldap->ldapErrorCode." - ".$ldap->ldapErrorText;
+    				$message .= $ldap->error;
     			}
-    		}
 
-    		//On vérifie les options du compte
-    		foreach ($ldap->uacf as $key => $statut)
-    		{
-    			if ($key == 65536)
-    			{
-    				$passDoNotExpire = $langs->trans("LdapUacf_".$statut);
-    			}
-    		}
-    		if ($ldap->pwdlastset == 0 && $ldap->pwdlastset != "")
-    		{
-    			$userChangePassNextLogon = $langs->trans("UserMustChangePassNextLogon");
+	    		//On vérifie les options du compte
+	    		foreach ($ldap->uacf as $key => $statut)
+	    		{
+	    			if ($key == 65536)
+	    			{
+	    				$passDoNotExpire = $langs->trans("LdapUacf_".$statut);
+	    			}
+	    		}
+	    		if ($ldap->pwdlastset == 0 && $ldap->pwdlastset != "")
+	    		{
+	    			$userChangePassNextLogon = $langs->trans("UserMustChangePassNextLogon");
+	    		}
     		}
     	}
 
