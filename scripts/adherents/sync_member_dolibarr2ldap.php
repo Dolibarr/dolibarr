@@ -72,8 +72,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$ldap=new Ldap();
+	$ldap->connect_bind();
+
 	while ($i < $num)
 	{
+		$ldap->error="";
+		
 		$obj = $db->fetch_object($resql);
 
 		$member = new Adherent($db);
@@ -81,7 +86,10 @@ if ($resql)
 		
 		print $langs->trans("UpdateMember")." rowid=".$member->id." ".$member->fullname;
 
-		$result=$member->update_ldap($user);
+		$info=$member->_load_ldap_info();
+		$dn=$member->_load_ldap_dn($info);
+		
+		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{
 			print " - ".$langs->trans("OK");
@@ -89,12 +97,15 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$member->error;
+			print " - ".$langs->trans("KO").' - '.$ldap->error;
 		}
 		print "\n";
 
 		$i++;
 	}
+	
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {

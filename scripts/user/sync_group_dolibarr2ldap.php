@@ -72,8 +72,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$ldap=new Ldap();
+	$ldap->connect_bind();
+	
 	while ($i < $num)
 	{
+		$ldap->error="";
+
 		$obj = $db->fetch_object($resql);
 
 		$fgroup = new UserGroup($db);
@@ -82,9 +87,6 @@ if ($resql)
 		
 		print $langs->trans("UpdateGroup")." rowid=".$fgroup->id." ".$fgroup->nom;
 
-		$ldap=new Ldap();
-		$ldap->connect_bind();
-		
 		$info=$fgroup->_load_ldap_info();
 		$dn=$fgroup->_load_ldap_dn($info);
 		
@@ -96,12 +98,15 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$fgroup->error;
+			print " - ".$langs->trans("KO").' - '.$ldap->error;
 		}
 		print "\n";
 
 		$i++;
 	}
+
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {

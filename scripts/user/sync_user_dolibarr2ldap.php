@@ -72,8 +72,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$ldap=new Ldap();
+	$ldap->connect_bind();
+
 	while ($i < $num)
 	{
+		$ldap->error="";
+
 		$obj = $db->fetch_object($resql);
 
 		$fuser = new User($db);
@@ -81,9 +86,6 @@ if ($resql)
 		$fuser->fetch();
 		
 		print $langs->trans("UpdateUser")." rowid=".$fuser->id." ".$fuser->fullname;
-
-		$ldap=new Ldap();
-		$ldap->connect_bind();
 
 		$info=$fuser->_load_ldap_info();
 		$dn=$fuser->_load_ldap_dn($info);
@@ -96,12 +98,15 @@ if ($resql)
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$fuser->error;
+			print " - ".$langs->trans("KO").' - '.$ldap->error;
 		}
 		print "\n";
 
 		$i++;
 	}
+
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {

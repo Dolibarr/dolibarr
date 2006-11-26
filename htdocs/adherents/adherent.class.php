@@ -50,6 +50,8 @@ class Adherent
 	var $prenom;
 	var $nom;
 	var $fullname;
+	var $login;
+	var $pass;
 	var $societe;
 	var $adresse;
 	var $cp;
@@ -57,18 +59,21 @@ class Adherent
 	var $pays_id;
 	var $pays_code;
 	var $pays;
-	var $morphy;
+
 	var $email;
+	var $phone;
+	var $phone_perso;
+	var $phone_mobile;
+
+	var $morphy;
 	var $public;
 	var $commentaire;
-	var $statut;
-	var $login;
-	var $pass;
+	var $statut;			// -1=brouillon, 0=résilié, 1=validé,payé
 	var $naiss;
 	var $photo;
 
 	var $typeid;			// Id type adherent
-	var $type;			// Libellé type adherent
+	var $type;				// Libellé type adherent
 	var $need_subscription;
 
 	//  var $public;
@@ -95,7 +100,7 @@ class Adherent
 
 
 	/**
-		\brief	    function envoyant un email au destinataire (recipient) avec le text fourni en parametre.
+		\brief	    Fonction envoyant un email au destinataire (recipient) avec le text fourni en parametre.
 		\param	    recipients		destinataires
 		\param	    text			contenu du message
 		\param	    subject			sujet du message
@@ -338,7 +343,7 @@ class Adherent
 		if ($result)
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-			$result=$this->update(1);
+			$result=$this->update($user,1);
 
             // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -362,9 +367,9 @@ class Adherent
 			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
 			\return		int				<0 si KO, >0 si OK
 	*/
-	function update($notrigger=0)
+	function update($user,$notrigger=0)
 	{
-		global $conf,$langs,$user;
+		global $conf,$langs;
 
 		dolibarr_syslog("Adherent.class::update $notrigger");
 
@@ -380,21 +385,24 @@ class Adherent
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
 		$sql .= " prenom = '".$this->prenom ."'";
 		$sql .= ",nom='"    .$this->nom."'";
+		$sql .= ",login='"  .$this->login."'";
+		$sql .= ",pass='"   .$this->pass."'";
 		$sql .= ",societe='".$this->societe."'";
 		$sql .= ",adresse='".$this->adresse."'";
 		$sql .= ",cp='"     .$this->cp."'";
 		$sql .= ",ville='"  .$this->ville."'";
 		$sql .= ",pays='"   .$this->pays_code."'";
-		$sql .= ",note='"   .$this->commentaire."'";
 		$sql .= ",email='"  .$this->email."'";
-		$sql .= ",login='"  .$this->login."'";
-		$sql .= ",pass='"   .$this->pass."'";
-		$sql .= ",naiss="   .($this->naiss?"'".$this->naiss."'":"null");
+		$sql .= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
+		$sql .= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
+		$sql .= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
+		$sql .= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
+		$sql .= ",naiss="   .$this->db->idate($this->naiss);
 		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
 		$sql .= ",public='" .$this->public."'";
 		$sql .= ",statut="  .$this->statut;
 		$sql .= ",fk_adherent_type=".$this->typeid;
-		$sql .= ",morphy='".$this->morphy."'";
+		$sql .= ",morphy='" .$this->morphy."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=$sql");
@@ -500,30 +508,29 @@ class Adherent
 	
 	}
 
-/**
-		\brief      Fonction qui récupére l'adhérent en donnant son login
-		\param	    login		login de l'adhérent
-*/
-
+	/**
+	*		\brief      Fonction qui récupére l'adhérent en donnant son login
+	*		\param	    login		login de l'adhérent
+	*/
 	function fetch_login($login)
-  {
-    $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
-
-    $result=$this->db->query( $sql);
-
-    if ($result)
-    {
-        if ($this->db->num_rows())
-        {
-            $obj = $this->db->fetch_object($result);
-            $this->fetch($obj->rowid);
-        }
-    }
-    else
-    {
-        dolibarr_print_error($this->db);
-    }
-  }
+	{
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login' LIMIT 1";
+	
+		$result=$this->db->query( $sql);
+	
+		if ($result)
+		{
+			if ($this->db->num_rows())
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->fetch($obj->rowid);
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
 
 
     /**
@@ -535,7 +542,9 @@ class Adherent
     {
         global $langs;
 
-        $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note, d.email, d.login, d.pass, d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
+        $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
+        $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
+        $sql.= " d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
         $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
         $sql.= " d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
         $sql.= " t.libelle as type, t.cotisation as cotisation";
@@ -552,12 +561,11 @@ class Adherent
                 $obj = $this->db->fetch_object($resql);
 
                 $this->id             = $obj->rowid;
-                $this->statut         = $obj->statut;
-                $this->public         = $obj->public;
-                $this->date           = $obj->datedon;
                 $this->prenom         = $obj->prenom;
                 $this->nom            = $obj->nom;
                 $this->fullname       = trim($obj->nom.' '.$obj->prenom);
+                $this->login          = $obj->login;
+                $this->pass           = $obj->pass;
                 $this->societe        = $obj->societe;
                 $this->adresse        = $obj->adresse;
                 $this->cp             = $obj->cp;
@@ -567,11 +575,15 @@ class Adherent
                 if ($langs->trans("Country".$obj->pays_code) != "Country".$obj->pays_code) $this->pays = $langs->trans("Country".$obj->pays_code);
                 elseif ($obj->pays_lib) $this->pays=$obj->pays_lib;
                 else $this->pays=$obj->pays;
+                $this->phone          = $obj->phone;
+                $this->phone_perso    = $obj->phone_perso;
+                $this->phone_mobile   = $obj->phone_mobile;
                 $this->email          = $obj->email;
-                $this->login          = $obj->login;
-                $this->pass           = $obj->pass;
                 $this->naiss          = $obj->naiss;
                 $this->photo          = $obj->photo;
+                $this->statut         = $obj->statut;
+                $this->public         = $obj->public;
+                $this->date           = $obj->datedon;
                 $this->datefin        = $obj->datefin;
                 $this->commentaire    = $obj->note;
                 $this->morphy         = $obj->morphy;
@@ -1614,10 +1626,11 @@ class Adherent
 		// Initialise paramètres
 		$this->id=0;
 		$this->specimen=1;
-		$this->fullname = 'DOLIBARR SPECIMEN';
 		$this->nom = 'DOLIBARR';
 		$this->prenom = 'SPECIMEN';
 		$this->fullname=trim($this->nom.' '.$this->prenom);
+		$this->login='dolibspec';
+		$this->pass='dolibspec';
 		$this->societe = 'Societe ABC';
 		$this->adresse = '61 jump street';
 		$this->cp = '75000';
@@ -1625,15 +1638,16 @@ class Adherent
 		$this->pays_id = 1;
 		$this->pays_code = 'FR';
 		$this->pays = 'France';
-		$this->moraphy = 1;
+		$this->morphy = 1;
 		$this->email = 'specimen@specimen.com';
-		$this->public=1;
+		$this->phone        = '0999999999';
+		$this->phone_perso  = '0999999998';
+		$this->phone_mobile = '0999999997';
 		$this->commentaire='No comment';
-		$this->statut=1;
-		$this->login='dolibspec';
-		$this->pass='dolibspec';
 		$this->naiss=time();
 		$this->photo='';
+		$this->public=1;
+		$this->statut=1;
 
 		$this->typeid=1;				// Id type adherent
 		$this->type='Type adherent';	// Libellé type adherent
@@ -1687,19 +1701,20 @@ class Adherent
 
 		// Champs
 		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
-		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
+		if ($this->nom && $conf->global->LDAP_FIELD_NAME)         $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
-		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
-		if ($this->poste) $info["title"] = $this->poste;
-		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
-		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
-		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
-		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
+		if ($this->login && $conf->global->LDAP_FIELD_LOGIN)      $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
+		if ($this->poste && $conf->global->LDAP_FIELD_TITLE)      $info[$conf->global->LDAP_FIELD_TITLE] = $this->poste;
+		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS)  $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)           $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
+		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)       $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
+		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)     $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays;
+		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE)  $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
 		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
-		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
-		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	      $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
+		if ($this->email && $conf->global->LDAP_FIELD_MAIL)       $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
 
 		return $info;
 	}	

@@ -72,8 +72,13 @@ if ($resql)
 	$num = $db->num_rows($resql);
 	$i = 0;
 
+	$ldap=new Ldap();
+	$ldap->connect_bind();
+	
 	while ($i < $num)
 	{
+		$ldap->error="";
+
 		$obj = $db->fetch_object($resql);
 
 		$contact = new Contact($db);
@@ -82,9 +87,6 @@ if ($resql)
 		
 		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->fullname;
 
-		$ldap=new Ldap();
-		$ldap->connect_bind();
-		
 		$info=$contact->_load_ldap_info();
 		$dn=$contact->_load_ldap_dn($info);
 		
@@ -102,6 +104,9 @@ if ($resql)
 
 		$i++;
 	}
+
+	$ldap->unbind();
+	$ldap->close();
 }
 else
 {

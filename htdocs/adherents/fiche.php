@@ -129,22 +129,30 @@ if ($_REQUEST["action"] == 'update')
 		$adh->id          = $_POST["rowid"];
 		$adh->prenom      = $_POST["prenom"];
 		$adh->nom         = $_POST["nom"];
-		$adh->societe     = $_POST["societe"];
-		$adh->adresse     = $_POST["adresse"];
-		$adh->amount      = $_POST["amount"];
-		$adh->cp          = $_POST["cp"];
-		$adh->ville       = $_POST["ville"];
-		$adh->email       = $_POST["email"];
+		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
 		$adh->login       = $_POST["login"];
 		$adh->pass        = $_POST["pass"];
-		$adh->naiss       = $_POST["naiss"];
-		$adh->photo       = $_POST["photo"];
-		$adh->date        = $datenaiss;
-		$adh->note        = $_POST["note"];
+
+		$adh->societe     = $_POST["societe"];
+		$adh->adresse     = $_POST["adresse"];
+		$adh->cp          = $_POST["cp"];
+		$adh->ville       = $_POST["ville"];
 		$adh->pays        = $_POST["pays"];
+
+		$adh->phone       = $_POST["phone"];
+		$adh->phone_perso = $_POST["phone_perso"];
+		$adh->phone_mobile= $_POST["phone_mobile"];
+		$adh->email       = $_POST["email"];
+		$adh->naiss       = $_POST["naiss"];
+		$adh->date        = $adh->naiss;
+		$adh->photo       = $_POST["photo"];
+
 		$adh->typeid      = $_POST["type"];
 		$adh->commentaire = $_POST["comment"];
 		$adh->morphy      = $_POST["morphy"];
+
+		$adh->amount      = $_POST["amount"];
+
 		// recuperation du statut et public
 		$adh->statut      = $_POST["statut"];
 		$adh->public      = $_POST["public"];
@@ -156,7 +164,7 @@ if ($_REQUEST["action"] == 'update')
 				$adh->array_options[$key]=$_POST[$key];
 			}
 		}
-		if ($adh->update(0) >= 0)
+		if ($adh->update($user,0) >= 0)
 		{
 			Header("Location: fiche.php?rowid=".$adh->id);
 			exit;
@@ -197,11 +205,14 @@ if ($_POST["action"] == 'add')
     $cp=$_POST["cp"];
     $ville=$_POST["ville"];
     $pays_code=$_POST["pays_code"];
+
+    $phone=$_POST["phone"];
+    $phone_perso=$_POST["phone_perso"];
+    $phone_mobile=$_POST["phone_mobile"];
     $email=$_POST["member_email"];
     $login=$_POST["member_login"];
     $pass=$_POST["member_pass"];
     $photo=$_POST["photo"];
-    $note=$_POST["note"];
     $comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
@@ -214,12 +225,14 @@ if ($_POST["action"] == 'add')
     $adh->cp          = $cp;
     $adh->ville       = $ville;
     $adh->pays_code   = $pays_code;
+    $adh->phone       = $phone;
+    $adh->phone_perso = $phone_perso;
+    $adh->phone_mobile= $phone_mobile;
     $adh->email       = $email;
     $adh->login       = $login;
     $adh->pass        = $pass;
     $adh->naiss       = $datenaiss;
     $adh->photo       = $photo;
-    $adh->note        = $note;
     $adh->typeid      = $type;
     $adh->commentaire = $comment;
     $adh->morphy      = $morphy;
@@ -482,17 +495,26 @@ if ($action == 'edit')
 	print "<input type=\"hidden\" name=\"public\" value=\"".$adh->public."\">";
 	
 	$htmls = new Form($db);
+
+    // Ref
+    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
 	
 	// Nom
 	print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
-	print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
+	print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
 
 	// Prenom
 	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-	$rowspan=13;
+	$rowspan=16;
 	print '<td rowspan="'.$rowspan.'" valign="top">';
 	print '<textarea name="comment" wrap="soft" cols="40" rows="15">'.$adh->commentaire.'</textarea></td></tr>';
 	
+	// Login
+	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+	
+	// Password
+	print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'</td><td>';
 	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
@@ -511,14 +533,27 @@ if ($action == 'edit')
 	// Adresse
 	print '<tr><td>'.$langs->trans("Address").'</td><td>';
 	print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
+
+	// Cp
 	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
+	
+	// Pays
 	print '<tr><td>'.$langs->trans("Country").'</td><td>';
 	$htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
 	print '</td></tr>';
-	print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
-	print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+	
+	// Tel
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.$adh->phone.'"></td></tr>';
 
+	// Tel perso
+	print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.$adh->phone_perso.'"></td></tr>';
+
+	// Tel mobile
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.$adh->phone_mobile.'"></td></tr>';
+
+	// EMail
+	print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
+	
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
     $htmls->select_date(-1,'naiss','','',1,'update');
@@ -560,18 +595,18 @@ if ($action == 'create')
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
-    print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
+    print '<td width="50%" valign="top">'.$langs->trans("Notes").' :</td></tr>';
 
 	// Prenom
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-    $rowspan=12;
-    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12"></textarea></td></tr>';
+    $rowspan=15;
+    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12">'.$adh->commantaire.'</textarea></td></tr>';
 
 	// Login
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
 	
 	// Mot de pass
-    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->password.'"></td></tr>';
+    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->pass.'"></td></tr>';
 
 	// Type
     print '<tr><td>'.$langs->trans("MemberType").'*</td><td>';
@@ -595,22 +630,31 @@ if ($action == 'create')
     
     // Adresse
     print '<tr><td valign="top">'.$langs->trans("Address").'</td><td>';
-    print '<textarea name="adresse" wrap="soft" cols="40" rows="2"></textarea></td></tr>';
+    print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
     
-    // CP
+    // CP / Ville
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td><input type="text" name="cp" size="8"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
 
-	// Ville
+	// Pays
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
     $htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays_code');
     print '</td></tr>';
     
+    // Tel pro
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.$adh->phone.'"></td></tr>';
+
+    // Tel perso
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.$adh->phone_perso.'"></td></tr>';
+
+    // Tel mobile
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.$adh->phone_mobile.'"></td></tr>';
+
     // EMail
     print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="member_email" size="40" value="'.$adh->email.'"></td></tr>';
 
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $htmls->select_date(-1,'naiss','','',1,'add');
+    $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'add');
     print "</td></tr>\n";
 
 	// Url photo
@@ -756,7 +800,7 @@ if ($rowid && $action != 'edit')
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
-    print '<td valign="top" width="50%">'.$langs->trans("Comments").'</td></tr>';
+    print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
 
     // Prenom
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
@@ -768,22 +812,50 @@ if ($rowid && $action != 'edit')
 
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
+    
+    // Morphy
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
 
+    // Tiers
     print '<tr><td>'.$langs->trans("Company").'</td><td class="valeur">'.$adh->societe.'&nbsp;</td></tr>';
+
+	// Adresse
     print '<tr><td>'.$langs->trans("Address").'</td><td class="valeur">'.nl2br($adh->adresse).'&nbsp;</td></tr>';
+    
+    // CP / Ville
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
+    
+    // Pays
     print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'</td></tr>';
+
+    // Tel pro.
+    print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.$adh->phone.'</td></tr>';
+
+    // Tel perso
+    print '<tr><td>'.$langs->trans("PhonePerso").'</td><td class="valeur">'.$adh->phone_perso.'</td></tr>';
+
+    // Tel mobile
+    print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.$adh->phone_mobile.'</td></tr>';
+    
+    // EMail
     print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
-    //  print '<tr><td>Pass</td><td class="valeur">'.$adh->pass.'&nbsp;</td></tr>';
+
+	// Date naissance
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.$adh->naiss.'&nbsp;</td></tr>';
+    
+    // URL
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
+    
+    // Public
     print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">';
     if ($adh->public==1) print $langs->trans("Yes");
     else print $langs->trans("No");
     print '</td></tr>';
+    
+    // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
     
+    // Autres attributs
     foreach($adho->attribute_label as $key=>$value){
         print "<tr><td>$value</td><td>".$adh->array_options["options_$key"]."&nbsp;</td></tr>\n";
     }

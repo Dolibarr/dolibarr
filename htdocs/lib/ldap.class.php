@@ -221,8 +221,8 @@ class Ldap
 					// Try in auth mode
 					if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
 					{
-						dolibarr_syslog("Ldap.class::connect_bind try authBind on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-						$result=$this->authBind($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+						dolibarr_syslog("Ldap.class::connect_bind try bindauth on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+						$result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
 						if ($result)
 						{
 							$this->bind=$this->result;
@@ -287,8 +287,8 @@ class Ldap
     {
         if (! $this->result=@ldap_bind($this->connection))
         {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
+            $this->ldapErrorCode = ldap_errno($this->connection);
+            $this->ldapErrorText = ldap_error($this->connection);
             $this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
             return false;
         }
@@ -304,14 +304,17 @@ class Ldap
      * "cn=Directory Manager" under iPlanet. For a user, it will be something
      * like "uid=jbloggs,ou=People,dc=foo,dc=com".
      */
-    function authBind( $bindDn,$pass)
+    function bindauth($bindDn,$pass)
     {
-        if ( !$this->result = @ldap_bind( $this->connection,$bindDn,$pass)) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
+        if (! $this->result = @ldap_bind( $this->connection,$bindDn,$pass))
+        {
+            $this->ldapErrorCode = ldap_errno($this->connection);
+            $this->ldapErrorText = ldap_error($this->connection);
             $this->error=$this->ldapErrorCode." ".$this->ldapErrorText;
             return false;
-        } else {
+        }
+        else
+        {
             return true;
         }
     }
@@ -585,7 +588,7 @@ class Ldap
 	*	\param		dn			DN entry key
 	*	\param		info		Attributes array
 	*	\param		user		Objet utilisateru qui crée
-	*	\return		boolean		<0 si KO, >0 si OK
+	*	\return		int			<0 si KO, >0 si OK
 	*/
 	function add($dn, $info, $user)
 	{
@@ -600,6 +603,8 @@ class Ldap
 			if (! is_array($val)) $info[$key]=$this->ldap_utf8_encode($val);
 		}
 
+		$this->dump($dn,$info);
+		
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
 
@@ -610,7 +615,7 @@ class Ldap
 	/*
 	* 	\brief		Delete a LDAP entry
 	*	\param		dn			DN entry key
-	*	\return		boolean		<0 si KO, >0 si OK
+	*	\return		int			<0 si KO, >0 si OK
 	*/
 	function delete($dn)
 	{
@@ -627,6 +632,40 @@ class Ldap
 		return -1;
 	}
 
+
+	/*
+	* 	\brief		Dump a LDAP message to ldapinput.in file
+	*	\param		dn			DN entry key
+	*	\param		info		Attributes array
+	*	\return		int			<0 si KO, >0 si OK
+	*/
+	function dump($dn, $info)
+	{
+		global $conf;
+		create_exdir($conf->ldap->dir_temp);
+		
+		$file=$conf->ldap->dir_temp.'/ldapinput.in';
+		$fp=fopen($file,"w");
+		if ($fp)
+		{
+			fputs($fp, "dn: ".$dn."\n");	
+			foreach($info as $key => $value)
+			{
+				if (! is_array($value))
+				{
+					fputs($fp, "$key: $value\n");
+				}
+				else
+				{
+					foreach($value as $valuekey => $valuevalue)
+					{
+						fputs($fp, "$key: $valuevalue\n");
+					}
+				}
+			}
+			fclose($fp);
+		}
+	}
 
 
     // 2.4 Attribute methods -----------------------------------------------------
@@ -680,7 +719,7 @@ class Ldap
 
 	    // if the directory is AD, then bind first with the search user first
         if ($this->serverType == "activedirectory") {
-            $this->authBind($this->searchUser, $this->searchPassword);
+            $this->bindauth($this->searchUser, $this->searchPassword);
         }
 
         $filter = '('.$useridentifier.'='.$search.')';
@@ -716,25 +755,6 @@ class Ldap
     }
 
     /**
-     * Récupère le SID de l'utilisateur
-     * ldapuser. le login de l'utilisateur
-     *	\deprecated
-     */
-    function getObjectSid($ldapUser)
-    {
-    	$criteria =  $this->getUserIdentifier()."=$ldapUser";
-    	$justthese = array("objectsid");
-
-    	$ldapSearchResult = ldap_search($this->connection, $this->people, $criteria, $justthese);
-
-    	$entry = ldap_first_entry($this->connection, $ldapSearchResult);
-    	$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid");
-    	$SIDText = $this->binSIDtoText($ldapBinary[0]);
-    	return $SIDText;
-    	return $ldapBinary;
-    }
-
-    /**
      *  Converts a little-endian hex-number to one, that 'hexdec' can convert
      *	\deprecated
      */
@@ -745,26 +765,9 @@ class Ldap
     	return $result;
     }
 
-    /**
-     * Returns the textual SID
-     *	\deprecated
-     */
-     function binSIDtoText($binsid) {
-     	$hex_sid=bin2hex($binsid);
-     	$rev = hexdec(substr($hex_sid,0,2));          // Get revision-part of SID
-     	$subcount = hexdec(substr($hex_sid,2,2));    // Get count of sub-auth entries
-     	$auth = hexdec(substr($hex_sid,4,12));      // SECURITY_NT_AUTHORITY
-     	$result = "$rev-$auth";
-     	for ($x=0;$x < $subcount; $x++) {
-     		$subauth[$x] = hexdec($this->littleEndian(substr($hex_sid,16+($x*8),8)));  // get all SECURITY_NT_AUTHORITY
-     		$result .= "-".$subauth[$x];
-     	}
-     	return $result;
-    }
-
 	/**
 	* 	\brief 		Fonction de recherche avec filtre
-	*	\remarks	this->connection doit etre défini donc la methode bind ou authbind doit avoir deja été appelée
+	*	\remarks	this->connection doit etre défini donc la methode bind ou bindauth doit avoir deja été appelée
 	* 	\param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
 	* 	\param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
 	*	\return		array			Tableau des reponses
@@ -778,7 +781,7 @@ class Ldap
 
 		// if the directory is AD, then bind first with the search user first
 		if ($this->serverType == "activedirectory") {
-			$this->authBind($this->searchUser, $this->searchPassword);
+			$this->bindauth($this->searchUser, $this->searchPassword);
 		}
 
 		$this->result = @ldap_search($this->connection, $checkDn, $filter);
@@ -807,7 +810,7 @@ class Ldap
 
         // if the directory is AD, then bind first with the search user first
         if ($this->serverType == "activedirectory") {
-            $this->authBind($this->searchUser, $this->searchPassword);
+            $this->bindauth($this->searchUser, $this->searchPassword);
         }
         $userIdentifier = $this->getUserIdentifier();
 
@@ -875,23 +878,6 @@ class Ldap
         } else {
             return $this->attr_login;
         }
-    }
-
-   /**
-		* \brief permet d'enlever les accents d'une chaine.
-		* \param	str
-		* \return	string
-    */
-    function dolibarr_ldap_unacc($str)
-    {
-    	$stu = ereg_replace("é","e",$str);
-    	$stu = ereg_replace("è","e",$stu);
-    	$stu = ereg_replace("ê","e",$stu);
-    	$stu = ereg_replace("à","a",$stu);
-    	$stu = ereg_replace("ç","c",$stu);
-    	$stu = ereg_replace("ï","i",$stu);
-    	$stu = ereg_replace("ä","a",$stu);
-    	return $stu;
     }
 
    /**

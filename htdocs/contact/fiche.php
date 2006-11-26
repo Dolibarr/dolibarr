@@ -304,10 +304,10 @@ if ($user->rights->societe->contact->creer)
 		$form->select_pays($contact->fk_pays);
 		print '</td></tr>';
 
-		print '<tr><td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
-		print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
+		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-		print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
+		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
 		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("Email").'</td><td colspan="3"><input name="email" type="text" size="50" maxlength="80" value="'.$contact->email.'"></td></tr>';
@@ -382,10 +382,10 @@ if ($user->rights->societe->contact->creer)
 		$form->select_pays($contact->fk_pays);
 		print '</td></tr>';
 
-		print '<tr><td>Tel Pro</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
-		print '<td>Tel Perso</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
+		print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input name="phone_pro" type="text" size="18" maxlength="80" value="'.$contact->phone_pro.'"></td>';
+		print '<td>'.$langs->trans("PhonePerso").'</td><td><input name="phone_perso" type="text" size="18" maxlength="80" value="'.$contact->phone_perso.'"></td></tr>';
 
-		print '<tr><td>Portable</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
+		print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input name="phone_mobile" type="text" size="18" maxlength="80" value="'.$contact->phone_mobile.'"></td>';
 		print '<td>'.$langs->trans("Fax").'</td><td><input name="fax" type="text" size="18" maxlength="80" value="'.$contact->fax.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("EMail").'</td><td><input name="email" type="text" size="40" maxlength="80" value="'.$contact->email.'"></td>';
@@ -501,10 +501,10 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->pays;
 	print '</td></tr>';
 
-	print '<tr><td>Tel Pro</td><td>'.$contact->phone_pro.'</td>';
-	print '<td>Tel Perso</td><td>'.$contact->phone_perso.'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.$contact->phone_pro.'</td>';
+	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.$contact->phone_perso.'</td></tr>';
 
-	print '<tr><td>Portable</td><td>'.$contact->phone_mobile.'</td>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.$contact->phone_mobile.'</td>';
 	print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>';

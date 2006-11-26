@@ -442,7 +442,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	
 	print '<form action="fiche.php" method="post" name="createuser">';
 	print '<input type="hidden" name="action" value="add">';
-	if ($ldap_SID) print '<input type="hidden" name="ldap_sid" value="'.$ldap_SID.'">';
+	if ($ldap_sid) print '<input type="hidden" name="ldap_sid" value="'.$ldap_sid.'">';
 	
 	print '<table class="border" width="100%">';
 	
@@ -488,7 +488,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	}
 	print '</td></tr>';
 	
-	if (!$ldap_SID)
+	if (!$ldap_sid)
 	{
 		$generated_password='';
 		if ($conf->global->USER_PASSWORD_GENERATED)
@@ -505,7 +505,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	// Mot de passe
 	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
 	print '<td>';
-	if ($ldap_SID)
+	if ($ldap_sid)
 	{
 		print 'mot de passe du domaine';
 	}

@@ -479,6 +479,11 @@ alter table llx_facturedet_rec add column total_ht real;
 alter table llx_facturedet_rec add column total_tva real;
 alter table llx_facturedet_rec add column total_ttc real;
 
+alter table llx_adherent add column phone            varchar(30) after email;
+alter table llx_adherent add column phone_perso      varchar(30) after phone;
+alter table llx_adherent add column phone_mobile     varchar(30) after phone_perso;
+
+
 
 update llx_facture set fk_facture_source=null where fk_facture_source is not null and type = 0;
 

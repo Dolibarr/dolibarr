@@ -297,6 +297,7 @@ class Conf
 		$this->export->dir_temp  =DOL_DATA_ROOT."/export/temp";
 		// Module ldap
 		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
+		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";
 		// Module FCKeditor
 		$this->fckeditor->enabled=defined("MAIN_MODULE_FCKEDITOR")?MAIN_MODULE_FCKEDITOR:0;
 		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
