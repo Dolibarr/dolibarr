@@ -73,7 +73,7 @@ if ($_POST["action"] == 'cotisation')
     $reday=$_POST["reday"];
     $remonth=$_POST["remonth"];
     $reyear=$_POST["reyear"];
-	$datecotisation=@mktime(12, 0 , 0, $remonth, $reday, $reyear);
+	$datecotisation=@mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
     $cotisation=$_POST["cotisation"];
 
 	$accountid=$_POST["accountid"];
@@ -88,12 +88,19 @@ if ($_POST["action"] == 'cotisation')
 	    $action='';
 	}
 
-    if (! $cotisation > 0)
+    if (! $_POST["cotisation"] > 0)
     {
 	    $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
 	    $action='';
     }
-
+	if ($conf->global->ADHERENT_BANK_USE)
+	{
+		if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("FinancialAccount"));
+		if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("PaymentMode"));
+		if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("Label"));
+		if ($errmsg) $action='';
+	}
+	
     if ($action)
     {
         $db->begin();
@@ -109,6 +116,12 @@ if ($_POST["action"] == 'cotisation')
 	        {
 	            $adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
 	        }
+
+		    $_POST["cotisation"]='';
+			$_POST["accountid"]='';
+			$_POST["operation"]='';
+			$_POST["label"]='';
+			$_POST["num_chq"]='';
         }
         else
         {
@@ -616,7 +629,8 @@ if ($action == 'create')
 	// Type
     print '<tr><td>'.$langs->trans("MemberType").'*</td><td>';
     $listetype=$adht->liste_array();
-    if (sizeof($listetype)) {
+    if (sizeof($listetype))
+    {
         $htmls->select_array("type", $listetype, $typeid);
     } else {
         print '<font class="error">'.$langs->trans("NoTypeDefinedGoToSetup").'</font>';   
@@ -664,7 +678,8 @@ if ($action == 'create')
 
 	// Url photo
     print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
-    foreach($adho->attribute_label as $key=>$value){
+    foreach($adho->attribute_label as $key=>$value)
+    {
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
 
@@ -961,7 +976,7 @@ if ($rowid && $action != 'edit')
     print '<table border=0 width="100%">';
     
     print '<tr>';
-    print '<td valign="top">';
+    print '<td valign="top" width="50%">';
     
     
     /*
@@ -969,14 +984,20 @@ if ($rowid && $action != 'edit')
      *
      */
     $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
-    $sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh";
+    $sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank,";
+    $sql.= " ba.rowid as baid, ba.label, ba.bank";
     $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
     $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
     
     $result = $db->query($sql);
     if ($result)
     {
-        $num = $db->num_rows();
+        $cotisationstatic=new Cotisation($db);
+    	$accountstatic=new Account($db);
+
+        $num = $db->num_rows($result);
         $i = 0;
     
         print "<table class=\"noborder\" width=\"100%\">\n";
@@ -984,7 +1005,11 @@ if ($rowid && $action != 'edit')
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("Ref").'</td>';
         print '<td>'.$langs->trans("DateSubscription").'</td>';
-        print "<td align=\"right\">".$langs->trans("Amount")."</td>\n";
+        print '<td align="right">'.$langs->trans("Amount").'</td>';
+        if ($conf->global->ADHERENT_BANK_USE)
+        {
+	        print '<td align="right">'.$langs->trans("Account").'</td>';
+		}
         print "</tr>\n";
     
         $var=True;
@@ -993,12 +1018,26 @@ if ($rowid && $action != 'edit')
             $objp = $db->fetch_object($result);
             $var=!$var;
             print "<tr $bc[$var]>";
-            $cotisation=new Cotisation($db);
-            $cotisation->ref=$objp->crowid;
-            $cotisation->id=$objp->crowid;
-            print '<td>'.$cotisation->getNomUrl(1).'</td>';
+            $cotisationstatic->ref=$objp->crowid;
+            $cotisationstatic->id=$objp->crowid;
+            print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
             print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
             print '<td align="right">'.price($objp->cotisation).'</td>';
+            if ($conf->global->ADHERENT_BANK_USE)
+            {
+	            print '<td align="right">';
+	            if ($objp->fk_bank) 
+	            {
+	        	   	$accountstatic->label=$objp->label;
+			    	$accountstatic->id=$objp->baid;
+	            	print $accountstatic->getNomUrl(1);
+	            }
+	            else
+	            {
+	            	print '&nbsp;';	
+	            }
+	            print '</td>';
+            }
             print "</tr>";
             $i++;
         }
@@ -1009,7 +1048,7 @@ if ($rowid && $action != 'edit')
         dolibarr_print_error($db);
     }
     
-    print '</td><td>';
+    print '</td><td valign="top">';
     
     
     /*
@@ -1018,14 +1057,15 @@ if ($rowid && $action != 'edit')
     if ($user->rights->adherent->cotisation->creer)
     {
         print "\n\n<!-- Form add subscription -->\n";
+        
         print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
         print "<table class=\"border\" width=\"100%\">\n";
     
-        print '<tr><td width="15%">'.$langs->trans("SubscriptionEndDate");
+        print '<tr><td>'.$langs->trans("SubscriptionEndDate");
         print '<input type="hidden" name="action" value="cotisation">';
         print '<input type="hidden" name="rowid" value="'.$rowid.'">';
         print '</td>';
-        print '<td width="35%">';
+        print '<td>';
         if ($adh->datefin)
         {
             if ($adh->datefin < time())
@@ -1049,7 +1089,7 @@ if ($rowid && $action != 'edit')
         print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
         if ($adh->datefin > 0)
         {
-            $html->select_date($adh->datefin + (3600*24),'','','','',"cotisation");
+            $html->select_date(dolibarr_time_plus_duree($adh->datefin,1,'d'),'','','','',"cotisation");
         }
         else
         {
@@ -1058,20 +1098,20 @@ if ($rowid && $action != 'edit')
         print "</td></tr>";
     
     
-        print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
         if ($conf->global->ADHERENT_BANK_USE)
         {
             print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-            $html->select_types_paiements('','operation');
+            $html->select_types_paiements($_POST["operation"],'operation');
             print "</td></tr>\n";
 
             print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
-            $html->select_comptes('','accountid');
+            $html->select_comptes($_POST["accountid"],'accountid',0,'',1);
             print "</td></tr>\n";
 
             print '<tr><td>'.$langs->trans("Numero").'</td><td>';
-            print '<input name="num_chq" type="text" size="8">';
+            print '<input name="num_chq" type="text" size="8" value="'.$_POST["num_chq"].'">';
             print "</td></tr>\n";
 
             print '<tr><td>'.$langs->trans("Label").'</td>';
@@ -1083,6 +1123,7 @@ if ($rowid && $action != 'edit')
     
         print '</table>';
         print '</form>';
+        
 		print "\n<!-- End form subscription -->\n\n";
     }
     

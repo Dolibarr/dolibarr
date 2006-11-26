@@ -790,12 +790,11 @@ class Adherent
 	                $acct=new Account($this->db,$accountid);
 
 	                $dateop=strftime("%Y%m%d",time());
-	                $amount=$cotisation;
 
-	                $insertid=$acct->addline($dateop, $operation, $label, $amount, $num_chq, '', $user);
+	                $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user);
 	                if ($insertid > 0)
 	                {
-	        			$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $adh->getFullname(), 'member');
+	        			$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $this->getFullname(), 'member');
 	                    if ($inserturlid > 0)
 	                    {
 	                        // Met a jour la table cotisation
