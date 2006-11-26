@@ -43,6 +43,7 @@ $langs->load("users");
 
 $user->getrights('adherent');
 
+$adh = new Adherent($db);
 $adho = new AdherentOptions($db);
 $errmsg='';
 
@@ -58,7 +59,6 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 
 if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db);
     $adh->id = $rowid;
     $adh->fetch($rowid);
     $adh->send_an_email($adh->email,"Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
@@ -66,7 +66,6 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'cotisation')
 {
-    $adh = new Adherent($db);
     $adh->id = $rowid;
     $adh->fetch($rowid);
 
@@ -122,9 +121,13 @@ if ($_REQUEST["action"] == 'update')
 {
 	if ($_POST["bouton"] == $langs->trans("Save"))
 	{
-		$datenaiss=mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-
-		$adh = new Adherent($db);
+		$datenaiss='';
+		if (isset($_POST["naissday"]) && $_POST["naissday"]
+		 && isset($_POST["naissmonth"])
+		 && isset($_POST["naissyear"]) && $_POST["naissyear"])
+		{
+			$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		}
 
 		$adh->id          = $_POST["rowid"];
 		$adh->prenom      = $_POST["prenom"];
@@ -137,14 +140,14 @@ if ($_REQUEST["action"] == 'update')
 		$adh->adresse     = $_POST["adresse"];
 		$adh->cp          = $_POST["cp"];
 		$adh->ville       = $_POST["ville"];
-		$adh->pays        = $_POST["pays"];
+		$adh->pays_id     = $_POST["pays"];
 
 		$adh->phone       = $_POST["phone"];
 		$adh->phone_perso = $_POST["phone_perso"];
 		$adh->phone_mobile= $_POST["phone_mobile"];
 		$adh->email       = $_POST["email"];
-		$adh->naiss       = $_POST["naiss"];
-		$adh->date        = $adh->naiss;
+		$adh->naiss       = $datenaiss;
+		$adh->date        = $datenaiss;	// A virer
 		$adh->photo       = $_POST["photo"];
 
 		$adh->typeid      = $_POST["type"];
@@ -189,12 +192,12 @@ if ($_POST["action"] == 'add')
 	 && isset($_POST["naissmonth"])
 	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
-		$datenaiss=mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 	}
 	$datecotisation='';
 	if (isset($_POST["naissday"]) && isset($_POST["naissmonth"]) && isset($_POST["naissyear"]))
 	{
-		$datecotisation=mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$datecotisation=@mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
     $type=$_POST["type"];
@@ -204,7 +207,7 @@ if ($_POST["action"] == 'add')
     $adresse=$_POST["adresse"];
     $cp=$_POST["cp"];
     $ville=$_POST["ville"];
-    $pays_code=$_POST["pays_code"];
+    $pays_id=$_POST["pays_id"];
 
     $phone=$_POST["phone"];
     $phone_perso=$_POST["phone_perso"];
@@ -217,14 +220,13 @@ if ($_POST["action"] == 'add')
     $morphy=$_POST["morphy"];
     $cotisation=$_POST["cotisation"];
 
-    $adh = new Adherent($db);
     $adh->prenom      = $prenom;
     $adh->nom         = $nom;
     $adh->societe     = $societe;
     $adh->adresse     = $adresse;
     $adh->cp          = $cp;
     $adh->ville       = $ville;
-    $adh->pays_code   = $pays_code;
+    $adh->pays_id     = $pays_id;
     $adh->phone       = $phone;
     $adh->phone_perso = $phone_perso;
     $adh->phone_mobile= $phone_mobile;
@@ -333,16 +335,22 @@ if ($_POST["action"] == 'add')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db);
-    $adh->delete($rowid);
-    Header("Location: liste.php");
-    exit;
+    $result=$adh->delete($rowid);
+    if ($result > 0)
+    {
+    	Header("Location: liste.php");
+    	exit;
+    }
+    else
+    {
+    	$mesg=$adh->error;
+    }
 }
 
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+    $adh->rowid=$rowid;
     $adh->validate($user->id);
     $adh->fetch($rowid);
 
@@ -369,7 +377,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+	$adh->rowid=$rowid;
     $adh->resiliate($user->id);
     $adh->fetch($rowid);
 
@@ -388,7 +396,7 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+    $adh->rowid=$rowid;
     $adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -403,7 +411,7 @@ if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+	$adh->rowid=$rowid;
     $adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
@@ -418,7 +426,7 @@ if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+	$adh->rowid=$rowid;
     $adh->fetch($rowid);
     if(!$adh->del_to_spip()){
         $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
@@ -427,9 +435,10 @@ if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
-    $adh = new Adherent($db, $rowid);
+ 	$adh->rowid=$rowid;
     $adh->fetch($rowid);
-    if (!$adh->add_to_spip()){
+    if (!$adh->add_to_spip())
+    {
         $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->error."<BR>\n";
     }
 }
@@ -556,7 +565,7 @@ if ($action == 'edit')
 	
 	// Date naissance
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $htmls->select_date(-1,'naiss','','',1,'update');
+    $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
     print "</td></tr>\n";
 
 	// Url photo
@@ -599,8 +608,8 @@ if ($action == 'create')
 
 	// Prenom
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-    $rowspan=15;
-    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="60" rows="12">'.$adh->commantaire.'</textarea></td></tr>';
+    $rowspan=16;
+    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="70" rows="14">'.$adh->commantaire.'</textarea></td></tr>';
 
 	// Login
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
@@ -637,7 +646,7 @@ if ($action == 'create')
 
 	// Pays
     print '<tr><td>'.$langs->trans("Country").'</td><td>';
-    $htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays_code');
+    $htmls->select_pays($adh->pays_id ? $adh->pays_id : $mysoc->pays_id,'pays_id');
     print '</td></tr>';
     
     // Tel pro
@@ -662,6 +671,13 @@ if ($action == 'create')
     foreach($adho->attribute_label as $key=>$value){
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
     }
+
+	// Profil public
+    print "<tr><td>".$langs->trans("Public")."</td><td>\n";
+    $htmls->select_YesNo($adh->public);
+    print "</td></tr>\n";
+
+
     print "</table>\n";
     print '<br>';
 
@@ -824,9 +840,9 @@ if ($rowid && $action != 'edit')
     
     // CP / Ville
     print '<tr><td>'.$langs->trans("Zip").' / '.$langs->trans("Town").'</td><td class="valeur">'.$adh->cp.' '.$adh->ville.'&nbsp;</td></tr>';
-    
+
     // Pays
-    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$adh->pays.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Country").'</td><td class="valeur">'.$html->pays_name($adh->pays_id).'</td></tr>';
 
     // Tel pro.
     print '<tr><td>'.$langs->trans("PhonePro").'</td><td class="valeur">'.$adh->phone.'</td></tr>';
@@ -847,10 +863,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
     
     // Public
-    print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">';
-    if ($adh->public==1) print $langs->trans("Yes");
-    else print $langs->trans("No");
-    print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';
     
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';

@@ -491,7 +491,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 		\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		\param	    format      Format d'affichage de la date
 									"%d %b %Y",
-									"%d/%m/%Y %h:%M:%s",
+									"%d/%m/%Y %H:%M:%S",
 									"day", "daytext", "dayhour", "dayhourtext"
 		\return     string      Date formatée ou '' si time null
 */
@@ -535,6 +535,20 @@ function dolibarr_print_date($time,$format='')
         // Date est un timestamps
         return strftime($format,$time);
     }
+}
+
+
+/**
+		\brief  	Retourne une date fabriqué depuis une chaine
+		\param		string			Date formatée en chaine (YYYYMMDD ou YYYYMMDDHHMMSS)
+		\return		date			Date
+*/
+function dolibarr_mktime($string)
+{
+	$string=eregi_replace('[^0-9]','',$string);
+	$tmp=$string.'000000';					// Si date YYYYMMDD
+	$date=mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+	return $date;
 }
 
 
@@ -1240,7 +1254,7 @@ function accessforbidden($message='')
 */
 function dolibarr_print_error($db='',$msg='')
 {
-    global $langs;
+    global $langs,$argv;
     $syslog = '';
 
     // Si erreur intervenue avant chargement langue
@@ -1267,7 +1281,7 @@ function dolibarr_print_error($db='',$msg='')
     else                              // Mode CLI
     {
 
-        print $langs->trans("ErrorInternalErrorDetected")."\n";
+        print $langs->trans("ErrorInternalErrorDetected").": ".$argv[0]."\n";
         $syslog.="pid=".getmypid();
     }
 
@@ -1293,7 +1307,8 @@ function dolibarr_print_error($db='',$msg='')
         $syslog.=", db_error=".$db->error();
     }
 
-    if ($msg) {
+    if ($msg)
+    {
         if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
         {
             print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;

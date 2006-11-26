@@ -80,9 +80,6 @@ llxHeader();
 
 $head = ldap_prepare_head();
 
-print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
-
-
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
@@ -90,10 +87,9 @@ if (! function_exists("ldap_connect"))
 }
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
-else print '<br>';
 
 
-dolibarr_fiche_head($head, 'users', $langs->trans("LDAP"));
+dolibarr_fiche_head($head, 'users', $langs->trans("LDAPSetup"));
 
 
 print $langs->trans("LDAPDescUsers").'<br>';
@@ -102,24 +98,34 @@ print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 
-print '<table class="noborder" width="100%">';
    
-$var=true;
 $html=new Form($db);
 
+print '<table class="noborder" width="100%">';
+$var=true;
 
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
-print '<td>'.$langs->trans("LDAPNamingAttribute").'</td>';
+print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
 // DN Pour les utilisateurs
 $var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPUserDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPUserDn").picto_required().'</b></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_USER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
+
+print '</table>';
+print '<br>';
+print '<table class="noborder" width="100%">';
+$var=true;
+
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
+print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+print "</tr>\n";
 
 // Filtre
 /*
@@ -228,6 +234,7 @@ print '</div>';
 
 print info_admin($langs->trans("LDAPDescValues"));
 
+
 /*
  * Test de la connexion
  */
@@ -281,6 +288,7 @@ if (function_exists("ldap_connect"))
 
 	}
 }
+
 
 $db->close();
 

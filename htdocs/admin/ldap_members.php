@@ -59,13 +59,15 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
-	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE_PERSO',$_POST["fieldphoneperso"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS',$_POST["fieldaddress"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP',$_POST["fieldzip"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN',$_POST["fieldtown"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY',$_POST["fieldcountry"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_BIRTHDATE',$_POST["fieldbirthdate"])) $error++;
 
 	if ($error)
 	{
@@ -83,9 +85,6 @@ llxHeader();
 
 $head = ldap_prepare_head();
 
-print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
-
-
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
@@ -93,10 +92,9 @@ if (! function_exists("ldap_connect"))
 }
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
-else print '<br>';
 
 
-dolibarr_fiche_head($head, 'members', $langs->trans("LDAP"));
+dolibarr_fiche_head($head, 'members', $langs->trans("LDAPSetup"));
 
 
 print $langs->trans("LDAPDescMembers").'<br>';
@@ -105,24 +103,34 @@ print '<br>';
 
 print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?action=setvalue">';
 
-print '<table class="noborder" width="100%">';
-   
-$var=true;
 $html=new Form($db);
+
+print '<table class="noborder" width="100%">';
+$var=true;
 
 
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
-print '<td>'.$langs->trans("LDAPNamingAttribute").'</td>';
+print '<td colspan="4">'.$langs->trans("LDAPSynchronizeUsers").'</td>';
 print "</tr>\n";
 
 // DN Pour les adherents
 $var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPMemberDn").picto_required().'</b></td><td>';
+print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPMemberDn").picto_required().'</b></td><td>';
 print '<input size="48" type="text" name="user" value="'.$conf->global->LDAP_MEMBER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPMemberDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
+
+print '</table>';
+print '<br>';
+print '<table class="noborder" width="100%">';
+$var=true;
+
+print '<tr class="liste_titre">';
+print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
+print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
+print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
+print "</tr>\n";
 
 // Filtre
 /*
@@ -181,12 +189,20 @@ print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_MAIL.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_MAIL?' checked="true"':'')."></td>";
 print '</tr>';
 
-// Phone
+// Phone pro
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PHONE.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_PHONE?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Phone perso
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhonePerso").'</td><td>';
+print '<input size="25" type="text" name="fieldphoneperso" value="'.$conf->global->LDAP_FIELD_PHONE_PERSO.'">';
+print '</td><td>'.$langs->trans("LDAPFieldPhonePersoExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PHONE_PERSO.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_PHONEHOME?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Mobile
@@ -245,6 +261,14 @@ print '</td><td>'.$langs->trans("LDAPFieldDescriptionExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_DESCRIPTION.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_DESCRIPTION?' checked="true"':'')."></td>";
 print '</tr>';
 
+// Date naissance
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldBirthdate").'</td><td>';
+print '<input size="25" type="text" name="fieldbirthdate" value="'.$conf->global->LDAP_FIELD_BIRTHDATE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldBirthdateExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_BIRTHDATE.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_BIRTHDATE?' checked="true"':'')."></td>";
+print '</tr>';
+
 $var=!$var;
 print '<tr '.$bc[$var].'><td colspan="4" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td></tr>';
 print '</table>';
@@ -254,6 +278,7 @@ print '</form>';
 print '</div>';
 
 print info_admin($langs->trans("LDAPDescValues"));
+
 
 /*
  * Test de la connexion

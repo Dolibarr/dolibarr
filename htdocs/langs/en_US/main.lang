@@ -18,7 +18,7 @@ ErrorGoToModuleSetup=Go to Module setup to fix this
 ErrorFailedToSendMail=Failed to send mail (sender=%s, receiver=%s)
 ErrorAttachedFilesDisabled=Attaching files feature is disabled on this serveur
 ErrorFileNotUploaded=File was not uploaded
-ErrorInternalErrorDetected=Internal error detected
+ErrorInternalErrorDetected=Error detected
 ErrorNoRequestRan=No request ran
 ErrorWrongHostParameter=Wrong host parameter
 ErrorYourCountryIsNotDefined=Your country is not defined. Go to Home-Setup-Edit and post again the form.

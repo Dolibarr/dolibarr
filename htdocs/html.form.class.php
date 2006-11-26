@@ -316,17 +316,18 @@ class Form
 		$sql.= " WHERE active = 1";
 		$sql.= " ORDER BY code ASC;";
 	
-		if ($this->db->query($sql))
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
-			$num = $this->db->num_rows();
+			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)
 			{
 				$foundselected=false;
 				while ($i < $num)
 				{
-					$obj = $this->db->fetch_object();
+					$obj = $this->db->fetch_object($resql);
 					if ($selected && $selected != '-1' && ($selected == $obj->rowid || $selected == $obj->code))
 					{
 						$foundselected=true;
@@ -1085,7 +1086,7 @@ class Form
      *      \param      selected        Id présélectionné
      *      \param      htmlname        Nom de la zone select
      */
-    function select_YesNo($selected='',$htmlname='')
+    function select_YesNo($selected='',$htmlname='yesno')
     {
         global $langs;
         print '<select class="flat" name="'.$htmlname.'">';
@@ -2722,8 +2723,9 @@ class Form
 		global $bc;
 		
 		$count++;
-		if ($count > 1000) return;	// To avoid infinite loop
-	
+		if ($count > 1000) return -1;	// To avoid infinite loop
+		if (! is_array($result)) return -1;
+		
 		foreach($result as $key => $val)
 		{
 			if ("$key" == "objectclass") continue;

@@ -78,9 +78,6 @@ llxHeader();
 
 $head = ldap_prepare_head();
 
-print_fiche_titre($langs->trans("LDAPSetup"),'','setup');
-
-
 // Test si fonction LDAP actives
 if (! function_exists("ldap_connect"))
 {
@@ -88,12 +85,10 @@ if (! function_exists("ldap_connect"))
 }
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
-else print '<br>';
 
 
 
-
-dolibarr_fiche_head($head, 'ldap', $langs->trans("LDAP"));
+dolibarr_fiche_head($head, 'ldap', $langs->trans("LDAPSetup"));
 
 $var=true;
 $html=new Form($db);

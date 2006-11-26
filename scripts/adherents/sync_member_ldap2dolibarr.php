@@ -49,6 +49,7 @@ $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
 $error=0;
 
@@ -66,12 +67,47 @@ if (! $conf->global->LDAP_MEMBER_ACTIVE)
 }
 */
 
+// Charge tableau de correspondance des pays
+$hashlib2rowid=array();
+$countries=array();
+$sql = "SELECT rowid, code, libelle, active";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+$sql.= " WHERE active = 1";
+$sql.= " ORDER BY code ASC;";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+	if ($num)
+	{
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj)
+			{
+				//print 'Load cache for country '.strtolower($obj->libelle).' rowid='.$obj->rowid."\n";
+				$hashlib2rowid[strtolower($obj->libelle)]=$obj->rowid;
+				$countries[$obj->rowid]=array('rowid' => $obj->rowid, 'label' => $obj->libelle, 'code' => $obj->code);
+			}
+			$i++;
+		}
+	}
+}
+else
+{
+	dolibarr_print_error($db);
+	exit;
+}
 
 $ldap = new Ldap();
 $result = $ldap->connect_bind();
 if ($result >= 0)
 {
 	$justthese=array();
+
+	print 'DN='.$conf->global->LDAP_MEMBER_DN."\n";
+	print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 
 	$ldaprecords = $ldap->search($conf->global->LDAP_MEMBER_DN, '('.$conf->global->LDAP_KEY_MEMBERS.'=*)');
 	if (is_array($ldaprecords))
@@ -81,60 +117,86 @@ if ($result >= 0)
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
 			if ($key == 'count') continue;
-			
+
 			$member = new Adherent($db);
 
 			// Propriete membre
 			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME][0];
 			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME][0];
 			$member->fullname=($ldapuser[$conf->global->LDAP_FIELD_FULLNAME][0] ? $ldapuser[$conf->global->LDAP_FIELD_FULLNAME][0] : trim($member->prenom." ".$member->nom));
-			//$member->societe;
-			//$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_FULLNAME]
-			//$member->cp;
-			//$member->ville;
-			//$member->pays_id;
-			//$member->pays_code;
-			//$member->pays;
-			//$member->morphy;
-			$member->email=$ldapuser[$conf->global->LDAP_FIELD_EMAIL][0];
-			//$member->public;
-			//$member->commentaire;
-			$member->statut=-1;
 			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN][0];
 			//$member->pass;
-			//$member->naiss;
+
+			//$member->societe;
+			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS][0];
+			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP][0];
+			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN][0];
+			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY][0];	// Pays en libelle
+			$member->pays_id=$countries[$hashlib2rowid[strtolower($member->pays)]]['rowid'];
+			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->pays)]]['code'];
+
+			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE][0];
+			$member->phone_perso=$ldapuser[$conf->global->LDAP_FIELD_PHONE_PERSO][0];
+			$member->phone_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE][0];
+			$member->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL][0];
+
+			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
+			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION][0];
+			$member->morphy='phy';
 			//$member->photo;
+			$member->public=1;
+			$member->statut=-1;		// Par defaut, statut brouillon
+			if (isset($ldapuser["prnxstatus"][0])) $member->statut=($ldapuser["prnxstatus"][0]==1 ? 1 : 0);
 			
 			// Propriete type membre
 			$member->typeid=$typeid;
 
+			// Creation membre
+			print $langs->trans("MemberCreate").' no '.$key.': '.$member->fullname;
+			$member_id=$member->create();
+			if ($member_id > 0)
+			{
+				print ' --> '.$member_id;
+			}
+			else
+			{
+				$error++;
+				print ' --> '.$member->error;
+			}
+			print "\n";
+
+			//print_r($member);
+
 
 			//----------------------------
-			// YOUR OWN RULES HERE
+			// YOUR OWN CODE HERE
 			//----------------------------
 			
-			
+			$datefirst=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
+			$datelast=dolibarr_mktime($ldapuser["prnxlastcontribution"][0]);
+			if ($datefirst)
+			{
+				$crowid=$member->cotisation($datefirst, 0, 0, $operation, $label, $num_chq);
+			}
+			if ($datelast)
+			{
+				$price=price2num($ldapuser["prnxlastcontributionprice"][0]);
+				$crowid=$member->cotisation($datelast, $price, 0, $operation, $label, $num_chq);
+			}
 			
 			//----------------------------
-			// END
+			// END OF OWN CODE HERE
 			//----------------------------
-
-			print $langs->trans("MemberCreate").' no '.$key.': '.$member->fullname."\n";
-
-			print_r($member);
-			exit;			
-			
-//			$member->create();
-
-			$error++;
 		}
 		
 		if (! $error)
 		{
+			print $langs->trans("NoErrorCommitIsDone")."\n";
 			$db->commit();
 		}
 		else
 		{
+			print $langs->trans("SommeErrorWereFoundRollbackIsDone",$error)."\n";
 			$db->rollback();
 		}
 	}

@@ -147,13 +147,20 @@ if ($result > 0)
 	$info=$adh->_load_ldap_info();
 	$dn=$adh->_load_ldap_dn($info,1);
 	$search = "(".$adh->_load_ldap_dn($info,2).")";
-	$result=$ldap->search($dn,$search);
+	$records=$ldap->search($dn,$search);
 
 	// Affichage arbre
-	if (sizeof($result))
+	if (sizeof($records))
 	{
-		$html=new Form($db);
-		$html->show_ldap_content($result,0,0,true);
+		if (! is_array($records))
+		{
+			print '<tr><td colspan="2">'.$langs->trans("ErrorFailedToReadLDAP").'</td></tr>';	
+		}
+		else
+		{
+			$html=new Form($db);
+			$result=$html->show_ldap_content($records,0,0,true);
+		}
 	}
 	else
 	{

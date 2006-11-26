@@ -81,22 +81,21 @@ class Adherent
 
 	var $error;
 
-/**
-		\brief Adherent
-		\param DB		base de données
-		\param id		id de l'adhérent
-*/
 
-  function Adherent($DB, $id='')
-  {
-    $this->db = $DB ;
-    $this->id = $id;
-    $this->statut = -1;
-    // l'adherent n'est pas public par defaut
-    $this->public = 0;
-    // les champs optionnels sont vides
-    $this->array_options=array();
-  }
+	/**
+			\brief Adherent
+			\param DB		base de données
+			\param id		id de l'adhérent
+	*/
+	function Adherent($DB)
+	{
+		$this->db = $DB ;
+		$this->statut = -1;
+		// l'adherent n'est pas public par defaut
+		$this->public = 0;
+		// les champs optionnels sont vides
+		$this->array_options=array();
+	}
 
 
 	/**
@@ -328,31 +327,42 @@ class Adherent
 		global $conf,$langs,$user;
 
 		// Verification parametres
-		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email)) {
+		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
+		{
 			$this->error = $langs->trans("ErrorBadEMail",$this->email);
 			return -1;
 		}
 
-		$this->date = $this->db->idate($this->date);
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec)";
-		$sql .= " VALUES (now())";
+		// Insertion membre
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent (datec,login)";
+		$sql.= " VALUES (now(),'".$this->login."')";
 
 		dolibarr_syslog("Adherent.class::create sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
-			$result=$this->update($user,1);
-
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
-            // Fin appel triggers
-
-			return $this->id;
+			$id = $this->db->last_insert_id(MAIN_DB_PREFIX."adherent");
+			if ($id > 0)
+			{
+				$this->id=$id;
+				
+				// Mise a jour
+				$result=$this->update($user,1);
+	
+	            // Appel des triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
+				if ($result < 0) $error++;
+	            // Fin appel triggers
+	
+				return $this->id;
+			}
+			else
+			{
+				dolibarr_print_error($this->db,'Failed to get last insert id');
+				return -1;
+			}				
 		}
 		else
 		{
@@ -388,16 +398,16 @@ class Adherent
 		$sql .= ",login='"  .$this->login."'";
 		$sql .= ",pass='"   .$this->pass."'";
 		$sql .= ",societe='".$this->societe."'";
-		$sql .= ",adresse='".$this->adresse."'";
+		$sql .= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
 		$sql .= ",cp='"     .$this->cp."'";
 		$sql .= ",ville='"  .$this->ville."'";
-		$sql .= ",pays='"   .$this->pays_code."'";
+		$sql .= ",pays='"   .$this->pays_id."'";
 		$sql .= ",email='"  .$this->email."'";
 		$sql .= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
 		$sql .= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
 		$sql .= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
 		$sql .= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
-		$sql .= ",naiss="   .$this->db->idate($this->naiss);
+		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
 		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
 		$sql .= ",public='" .$this->public."'";
 		$sql .= ",statut="  .$this->statut;
@@ -466,36 +476,47 @@ class Adherent
 	function delete($rowid)
 	{
 		global $conf, $langs;
-		
 		$result = 0;
 
+		// Suppression options
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
-		if ( $this->db->query($sql) )
-		{
-			if ( $this->db->affected_rows() )
-			{
-	
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-				if ($this->db->query( $sql))
-				{
-
-				}
 		
-				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-				dolibarr_syslog("Adherent.class::delete");
-				
-				if ( $this->db->query($sql) )
+		dolibarr_syslog("Adherent.class::delete sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
+			dolibarr_syslog("Adherent.class::delete sql=".$sql);
+			$resql=$this->db->query( $sql);
+			if ($resql)
+			{
+
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return -1;
+			}
+	
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+			dolibarr_syslog("Adherent.class::delete sql=".$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				if ($this->db->affected_rows($resql))
 				{
-					if ( $this->db->affected_rows() )
-					{
-				        // Appel des triggers
-				        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-				        $interface=new Interfaces($this->db);
-				        $result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
-						if ($result < 0) $error++;
-				        // Fin appel triggers
-					}
+			        // Appel des triggers
+			        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			        $interface=new Interfaces($this->db);
+			        $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
+					if ($result < 0) $error++;
+			        // Fin appel triggers
 				}
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return -1;
 			}
 		}
 		else
@@ -545,8 +566,8 @@ class Adherent
         $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, d.statut, d.public, d.adresse, d.cp, d.ville, d.note,";
         $sql.= " d.email, d.phone, d.phone_perso, d.phone_mobile, d.login, d.pass,";
         $sql.= " d.naiss, d.photo, d.fk_adherent_type, d.morphy,";
-        $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
-        $sql.= " d.pays, p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
+        $sql.= " ".$this->db->pdate("d.datefin")." as datefin, d.pays,";
+        $sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
         $sql.= " t.libelle as type, t.cotisation as cotisation";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
@@ -583,7 +604,6 @@ class Adherent
                 $this->photo          = $obj->photo;
                 $this->statut         = $obj->statut;
                 $this->public         = $obj->public;
-                $this->date           = $obj->datedon;
                 $this->datefin        = $obj->datefin;
                 $this->commentaire    = $obj->note;
                 $this->morphy         = $obj->morphy;
@@ -680,30 +700,35 @@ class Adherent
     /**
     		\brief      Fonction qui insère la cotisation dans la base de données
     					et eventuellement liens dans banques, mailman, etc...
-    		\param	    date        Date cotisation
-    		\param	    montant     Montant cotisation
-            \return     int         rowid de l'entrée ajoutée, <0 si erreur
+    		\param	    date        	Date cotisation
+    		\param	    montant     	Montant cotisation
+    		\param		account_id		Id compte bancaire
+    		\param		operation		Type operation (si Id compte bancaire fourni)
+    		\param		operation		Label operation (si Id compte bancaire fourni)
+    		\param		num_chq			Numero cheque (si Id compte bancaire fourni)
+            \return     int         	rowid de l'entrée ajoutée, <0 si erreur
     */
     function cotisation($date, $montant, $accountid, $operation, $label, $num_chq)
     {
         global $conf,$langs,$user;
 
-        dolibarr_syslog("Adherent.class::cotisation $date, $montant, $accountid, $operation, $label, $num_chq");
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
-        $sql .= " VALUES ($this->id, now(), ".$this->db->idate($date).", $montant)";
+        $sql .= " VALUES (".$this->id.", now(), ".$this->db->idate($date).", ".$montant.")";
 
+        dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
         $result=$this->db->query($sql);
         if ($result)
         {
             $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
 			// datefin = date + 1 an
-            $datefin = mktime(12, 0 , 0, strftime("%m",$date), strftime("%d",$date),
-                                            strftime("%Y",$date)+1) - (24 * 3600);
+            $datefin = dolibarr_time_plus_duree($date,1,'y');
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
             $sql.= " WHERE rowid =". $this->id;
+            
+            dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
             $resql=$this->db->query( $sql);
             if ($resql)
             {
@@ -1709,12 +1734,13 @@ class Adherent
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)           $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
 		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)       $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
 		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)     $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays;
-		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE)  $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
-		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
+		if ($this->email && $conf->global->LDAP_FIELD_MAIL)       $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
+		if ($this->phone && $conf->global->LDAP_FIELD_PHONE)      $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone;
+		if ($this->phone_perso && $conf->global->LDAP_FIELD_PHONE_PERSO) $info[$conf->global->LDAP_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	      $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->email && $conf->global->LDAP_FIELD_MAIL)       $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
+		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'%Y%m%d%H%M%SZ');
 
 		return $info;
 	}	

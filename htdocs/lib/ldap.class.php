@@ -608,8 +608,16 @@ class Ldap
 		//print_r($info);
 		$result=@ldap_add($this->connection, $dn, $info);
 
-		if ($result) return 1;
-		return -1;
+		if ($result)
+		{
+			dolibarr_syslog("Ldap.class::add successfull");
+			return 1;
+		}
+		else
+		{
+			dolibarr_syslog("Ldap.class::add failed");
+			return -1;
+		}
 	}
 
 	/*
