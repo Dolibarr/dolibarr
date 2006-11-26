@@ -29,8 +29,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-if ($conf->facture->enabled)  require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 if ($conf->facture->enabled)  require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 
 $user->getrights(); // On a besoin des permissions sur plusieurs modules
