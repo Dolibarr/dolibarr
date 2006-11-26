@@ -799,7 +799,7 @@ class Adherent
 	                    if ($inserturlid > 0)
 	                    {
 	                        // Met a jour la table cotisation
-	                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$crowid;
+	                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
 	                        $resql = $this->db->query($sql);
 	                        if (! $resql)
 	                        {
