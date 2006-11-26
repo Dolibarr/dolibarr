@@ -48,7 +48,7 @@ $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
 $filter=$_GET["filter"];
-$statut=isset($_GET["statut"])?$_GET["statut"]:1;
+$statut=isset($_GET["statut"])?$_GET["statut"]:'';
 
 if (! $sortorder) {  $sortorder="ASC"; }
 if (! $sortfield) {  $sortfield="d.nom"; }
@@ -89,7 +89,8 @@ if ($filter == 'outofdate')
 {
     $sql.=" AND datefin < sysdate()";
 }
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
+$sql.= " ORDER BY $sortfield $sortorder";
+$sql.= " ".$db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
 if ($result) 
@@ -116,11 +117,12 @@ if ($result)
         $titre.=" (".$objp->type.")";
     }
 
-    print_barre_liste($titre, $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+    $param="";
+    if (isset($_GET["statut"])) $param.="&statut=$statut";
+    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
     print "<table class=\"noborder\" width=\"100%\">";
 
-    $param="&page=$page".(isset($_GET["statut"])?"&statut=$statut":"");
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield);
@@ -204,11 +206,15 @@ if ($result)
         print "</tr>";
         $i++;
     }
-    print "</table><br>\n";
+    print "</table>\n";
 
-    print "<table class=\"noborder\" width=\"100%\">";
-    print_barre_liste("", $page, "liste.php", "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
-    print "</table><br>\n";
+	if ($num > $conf->liste_limite)
+	{
+	    print "<table class=\"noborder\" width=\"100%\">";
+	    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+	    print "</table><br>\n";
+	}
+	print "<br>";
 }
 else
 {
