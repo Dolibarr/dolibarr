@@ -371,7 +371,7 @@ class Adherent
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
 			return -1;
 		}
 	}
@@ -808,6 +808,7 @@ class Adherent
             else
             {
                 $this->error=$this->db->error();
+                dolibarr_syslog("Adherent.class::cotisation error ".$this->error);
                 $this->db->rollback();
                 return -2;
             }
@@ -815,6 +816,7 @@ class Adherent
         else
         {
             $this->error=$this->db->error();
+            dolibarr_syslog("Adherent.class::cotisation error ".$this->error);
             $this->db->rollback();
             return -1;
         }

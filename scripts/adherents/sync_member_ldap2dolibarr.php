@@ -158,7 +158,6 @@ if ($result >= 0)
 				}
 			}
 			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
-			$member->datefin=dolibarr_mktime($ldapuser["prnxlastcontribution"][0]),1,'y');
 			
 			// Propriete type membre
 			$member->typeid=$typeid;
@@ -192,6 +191,7 @@ if ($result >= 0)
 			}
 			if ($datelast)
 			{
+				// Cree derniere cotisation et met a jour datefin dans adherent
 				$price=price2num($ldapuser["prnxlastcontributionprice"][0]);
 				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0, $operation, $label, $num_chq);
 			}
