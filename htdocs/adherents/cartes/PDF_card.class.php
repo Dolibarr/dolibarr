@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +19,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /* Inspire de PDF_Label 
@@ -370,6 +370,8 @@ class PDF_card extends FPDF {
    */
   function _Croix($x1=0,$y1=0,$x2=210,$y2=297,$epaisseur=1,$taille=5)
     {
+      //$this->Color('#888888');
+      
       $this->SetLineWidth($epaisseur);
       $lg=$taille/2;
       // croix haut gauche
@@ -385,6 +387,7 @@ class PDF_card extends FPDF {
       $this->Line($x2,$y2-$lg,$x2,$y2+$lg);
       $this->Line($x2-$lg,$y2,$x2+$lg,$y2);
 
+      //$this->Color('#000000');
     }
 }
 ?>

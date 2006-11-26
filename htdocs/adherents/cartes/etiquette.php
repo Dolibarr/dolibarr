@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2003 Jean-Louis Bergamo <jlb@j1b.org>
+ * Copyright (C) 2003 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,10 +19,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*! \file htdocs/adherents/cartes/etiquette.php
+/**
+		\file 		htdocs/adherents/cartes/etiquette.php
         \ingroup    adherent
 		\brief      Page de creation d'etiquettes
 		\version    $Revision$
@@ -58,10 +59,14 @@ if (!isset($annee)){
 }
 
 // requete en prenant que les adherents a jour de cotisation
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin, adresse,cp,ville,pays, t.libelle as type, d.naiss, d.email, d.photo";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin > now()";
-$sql .= " ORDER BY d.rowid ASC ";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, ".$db->pdate("d.datefin")." as datefin,";
+$sql.= " d.adresse, d.cp, d.ville, d.naiss, d.email, d.photo,";
+$sql.= " t.libelle as type,";
+$sql.= " p.libelle as pays";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+$sql.= " WHERE d.fk_adherent_type = t.rowid AND d.statut = 1 AND datefin >= now()";
+$sql.= " ORDER BY d.rowid ASC";
 
 $result = $db->query($sql);
 if ($result) 
@@ -78,9 +83,12 @@ if ($result)
 
   $db->close();
   $pdf->Output();
-}else{
-  llxHeader();
-  print "Erreur de la base de données : ".$db->error();
-  llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
 }
+else
+{
+	dolibarr_print_error($db);
+
+	llxFooter('$Date$ - $Revision$');
+}
+
 ?> 
