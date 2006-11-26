@@ -231,7 +231,17 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
                         print $modulename;
                         print "</td>";
                         */
-                        print '<td align="center">'.($obj->getNbOfRecipients()).'</td>';
+                        $nbofrecipient=$obj->getNbOfRecipients();
+                        print '<td align="center">';
+                        if ($nbofrecipient >= 0)
+                        {
+                        	print $nbofrecipient;
+                        }
+                        else
+                        {
+                        	print $langs->trans("Error").' '.img_error($obj->error);
+                        }
+                        print '</td>';
 
                         print '<td align="center">';
                         $filter=$obj->formFilter();

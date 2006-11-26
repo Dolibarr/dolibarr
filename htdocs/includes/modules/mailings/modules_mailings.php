@@ -81,6 +81,7 @@ class MailingTargets
         }
         else
         {
+        	$this->error=$this->db->error();
             return -1;
         }
     }

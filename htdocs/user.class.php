@@ -277,18 +277,20 @@ class User
             if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
         }
         else {
+            // On a pas demandé un droit en particulier mais une liste de droits
+            // sur la base d'un nom de module de de perms
             // Where pour la liste des droits à ajouter
             if ($allmodule) $whereforadd="module='$allmodule'";
             if ($allperms)  $whereforadd=" AND perms='$allperms'";
         }
 
-        // Ajout des droits de la liste whereforadd
+        // Ajout des droits trouvés grace au critere whereforadd
         if ($whereforadd)
         {
             //print "$module-$perms-$subperms";
             $sql = "SELECT id";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
-            $sql.= " WHERE $whereforadd";
+            $sql.= " WHERE ".$whereforadd;
 
             $result=$this->db->query($sql);
             if ($result)
@@ -369,12 +371,13 @@ class User
             if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
         }
         else {
+            // On a demandé suppression d'un droit sur la base d'un nom de module ou perms
             // Where pour la liste des droits à supprimer
             if ($allmodule) $wherefordel="module='$allmodule'";
             if ($allperms)  $wherefordel=" AND perms='$allperms'";
         }
 
-        // Suppression des droits de la liste wherefordel
+        // Suppression des droits selon critere defini dans wherefordel
         if ($wherefordel)
         {
             //print "$module-$perms-$subperms";
@@ -416,10 +419,21 @@ class User
 
     }
 
-  /**
-   *    \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
-   *    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
-   */
+
+	/**
+	*    \brief      Vide la tableau des droits de l'utilisateur
+	*/
+	function clearrights()
+    {
+		$this->rights='';
+		$this->all_permissions_are_loaded=false;
+	}
+
+
+	/**
+	*    \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
+	*    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+	*/
 	function getrights($module='')
     {
         if ($this->all_permissions_are_loaded)
@@ -435,6 +449,7 @@ class User
         $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
         $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
 
+		dolibarr_syslog('User.class::getrights this->id='.$this->id.' module='.$module);
         $result = $this->db->query($sql);
         if ($result)
         {
