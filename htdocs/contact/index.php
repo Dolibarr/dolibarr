@@ -90,10 +90,12 @@ if ($_POST["button_removefilter"])
  
 llxHeader();
 
-$sql = "SELECT s.idp, s.nom, p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
+$sql = "SELECT s.idp, s.nom, ";
+$sql.= " p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " FROM ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX."socpeople as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc";
 $sql.= " WHERE 1=1 ";
 
