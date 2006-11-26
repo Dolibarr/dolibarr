@@ -434,7 +434,7 @@ class DoliDb
     }
 
     /**
-        \brief      Formatage (par PHP) de la date en texte qui s'insere dans champ date.
+        \brief      Formatage (par PHP) d'une date au format texte pour insertion dans champ date.
                     Fonction à utiliser pour générer les INSERT.
         \param	    param       Date tms à convertir
         \return	    date        Date au format text YYYYMMDDHHMMSS.
