@@ -1,6 +1,7 @@
 -- ===================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -46,18 +47,15 @@ create table llx_adherent
   phone_mobile     varchar(30),
   naiss            date,             -- date de naissance
   photo            varchar(255),     -- url vers photo
-
   statut           smallint NOT NULL DEFAULT 0,
   public           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   datefin          datetime,  -- date de fin de validité de la cotisation
   note             text,
-
   datevalid        datetime,  -- date de validation
   datec            datetime,  -- date de creation
   tms              timestamp, -- date de modification
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,
-  fk_user_valid    integer NOT NULL
- 
+  fk_user_valid    integer NOT NULL, 
   UNIQUE INDEX(login)
 )type=innodb;
