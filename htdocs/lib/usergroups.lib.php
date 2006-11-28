@@ -31,6 +31,7 @@
 function user_prepare_head($user)
 {
 	global $langs, $conf;
+	$langs->load("users");
 	
 	$h = 0;
 	$head = array();
