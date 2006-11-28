@@ -5,8 +5,8 @@
 
 
 !define MUI_PROD "Dolibarr" ;Define your own software name here
-!define MUI_PRODUCT "Dolibarr 2.0.0 beta1" ;Define your own uninstall software name here
-!define MUI_VERSION_DOT "2.0.0-beta1" ;Define your own software version here
+!define MUI_PRODUCT "Dolibarr 2.1" ;Define your own uninstall software name here
+!define MUI_VERSION_DOT "2.1" ;Define your own software version here
 !define MUI_PUBLISHER "Rodolphe Quiedeville, Laurent Destailleur"
 !define MUI_URL "http://dolibarr.com"
 !define MUI_COMMENTS "Thanks for using Dolibarr"
@@ -144,7 +144,6 @@ Section "Dolibarr" Dolibarr
 	File "..\..\*"
 	File /r "..\..\doc"
 	File /r "..\..\htdocs"
-	File /r "..\..\misc"
 	File /r "..\..\mysql"
 	File /r "..\..\pgsql"
 	File /r "..\..\scripts"
@@ -181,11 +180,14 @@ Section "Clean CVS files" CvsClean
     RMDir /r "$INSTDIR\doc\images\CVS"
     RMDir /r "$INSTDIR\doc\install\CVS"
     RMDir /r "$INSTDIR\doc\user\CVS"
+    RMDir /r "$INSTDIR\doc\wiki\CVS"
+    RMDir /r "$INSTDIR\htdocs\accountancy\CVS"
     RMDir /r "$INSTDIR\htdocs\adherents\cartes\CVS"
     RMDir /r "$INSTDIR\htdocs\adherents\CVS"
     RMDir /r "$INSTDIR\htdocs\admin\CVS"
     RMDir /r "$INSTDIR\htdocs\admin\system\CVS"
     RMDir /r "$INSTDIR\htdocs\admin\update\CVS"
+    RMDir /r "$INSTDIR\htdocs\avoir\CVS"
     RMDir /r "$INSTDIR\htdocs\bookmarks\CVS"
     RMDir /r "$INSTDIR\htdocs\boutique\auteur\CVS"
     RMDir /r "$INSTDIR\htdocs\boutique\client\CVS"
@@ -305,9 +307,11 @@ Section "Clean CVS files" CvsClean
     RMDir /r "$INSTDIR\htdocs\lib\CVS"
     RMDir /r "$INSTDIR\htdocs\lib\jabber\CVS"
     RMDir /r "$INSTDIR\htdocs\lib\vcard\CVS"
+    RMDir /r "$INSTDIR\htdocs\livraison\CVS"
     RMDir /r "$INSTDIR\htdocs\lolix\CVS"
     RMDir /r "$INSTDIR\htdocs\lolix\cv\CVS"
     RMDir /r "$INSTDIR\htdocs\lolix\societe\CVS"
+    RMDir /r "$INSTDIR\htdocs\oscommerce_ws\CVS"
     RMDir /r "$INSTDIR\htdocs\postnuke\articles\CVS"
     RMDir /r "$INSTDIR\htdocs\postnuke\CVS"
     RMDir /r "$INSTDIR\htdocs\product\album\CVS"
@@ -379,6 +383,7 @@ Section "Clean CVS files" CvsClean
     RMDir /r "$INSTDIR\htdocs\user\admin\CVS"
     RMDir /r "$INSTDIR\htdocs\user\group\CVS"
     RMDir /r "$INSTDIR\htdocs\user\modules\CVS"
+    RMDir /r "$INSTDIR\htdocs\webservices\CVS"
     RMDir /r "$INSTDIR\misc\CVS"
     RMDir /r "$INSTDIR\misc\purgedemo\CVS"
     RMDir /r "$INSTDIR\mysql\CVS"
