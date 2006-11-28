@@ -171,7 +171,7 @@ SectionEnd
 Section "Dolibarr" Dolibarr
 
 	SetOutPath $INSTDIR
-	File "..\..\*"
+	File /x CVS /x .cvsignore /x Thumbs.db "..\..\*"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\doc"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\htdocs"
 	File /r /x CVS /x .cvsignore /x Thumbs.db "..\..\mysql"
