@@ -28,9 +28,10 @@
 		\brief      Page des societes
 		\version    $Revision$
 */
-
 require("./pre.inc.php");
 require("../../tva.class.php");
+
+$langs->load("other");
 
 $year=$_GET["year"];
 if ($year == 0 )

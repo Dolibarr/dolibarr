@@ -1148,76 +1148,91 @@ class Societe
 
   }
 
-  /**
-   *    \brief      Renvoie la liste des contacts emails existant pour la société
-   *    \return     array       tableau des contacts emails
-   */
-  function contact_email_array()
-  {
-    $contact_email = array();
 
-    $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
-
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-
-	if ($nump)
-	  {
-	    $i = 0;
-	    while ($i < $nump)
-	      {
-		$obj = $this->db->fetch_object();
-
-		$contact_email[$obj->idp] = "$obj->firstname $obj->name &lt;$obj->email&gt;";
-		$i++;
-	      }
-	  }
-	return $contact_email;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-
-  }
-
-  /**
-   *    \brief      Renvoie la liste des contacts de cette société
-   *    \return     array      tableau des contacts
-   */
-  function contact_array()
-  {
-    $contacts = array();
-
-    $sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
-
-    if ($this->db->query($sql) )
-      {
-	$nump = $this->db->num_rows();
-
-	if ($nump)
-	  {
-	    $i = 0;
-	    while ($i < $nump)
-	      {
-		$obj = $this->db->fetch_object();
-
-		$contacts[$obj->idp] = "$obj->firstname $obj->name";
-		$i++;
-	      }
-	  }
-	return $contacts;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-
-  }
+	/**
+	*    \brief      Renvoie la liste des contacts emails existant pour la sociét
+	*    \return     array       tableau des contacts emails
+	*/
+	function thirdparty_and_contact_email_array()
+	{
+		global $langs;
+		
+		$contact_email = $this->contact_email_array();
+		if ($this->email)
+		{
+			// TODO: Tester si email non deja présent dans tableau contact
+			$contact_email[-1]=$langs->trans("ThirdParty").': '.dolibarr_trunc($this->nom,16)." &lt;".$this->email."&gt;";;
+		}
+		return $contact_email;
+	}
+	
+	/**
+	*    \brief      Renvoie la liste des contacts emails existant pour la société
+	*    \return     array       tableau des contacts emails
+	*/
+	function contact_email_array()
+	{
+		$contact_email = array();
+	
+		$sql = "SELECT idp, email, name, firstname";
+		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
+		$sql.= " WHERE fk_soc = '".$this->id."'";
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$contact_email[$obj->idp] = trim($obj->firstname." ".$obj->name)." &lt;".$obj->email."&gt;";
+					$i++;
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+		return $contact_email;
+	}
+	
+	
+	/**
+	*    \brief      Renvoie la liste des contacts de cette sociét
+	*    \return     array      tableau des contacts
+	*/
+	function contact_array()
+	{
+		$contacts = array();
+	
+		$sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$nump = $this->db->num_rows($resql);
+			if ($nump)
+			{
+				$i = 0;
+				while ($i < $nump)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$contacts[$obj->idp] = "$obj->firstname $obj->name";
+					$i++;
+				}
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+		return $contacts;
+	}
 
     /**
-     *    \brief      Renvoie l'email d'un contact par son id
+     *    \brief      Renvoie l'email d'un contact depuis son id
      *    \param      rowid       id du contact
      *    \return     string      email du contact
      */

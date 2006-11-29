@@ -53,7 +53,7 @@ require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
-if (isset($_GET["msg"])) { $msg=urldecode($_GET["msg"]); }
+if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
@@ -196,7 +196,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		}
 		else
 		{
-			$msg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
+			$mesg = '<div class="error">'.$langs->trans("ErrorFailedToCopyProposal",$_POST['copie_propal']).'</div>';
 		}
 	}
 	else
@@ -245,7 +245,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 			}
 			else
 			{
-				$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+				$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
 				$error=1;
 			}
 		}
@@ -297,26 +297,37 @@ if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 if ($_POST['action'] == 'send')
 {
     $langs->load('mails');
+
     $propal= new Propal($db);
     if ( $propal->fetch($_POST['propalid']) )
     {
         $propalref = sanitize_string($propal->ref);
         $file = $conf->propal->dir_output . '/' . $propalref . '/' . $propalref . '.pdf';
+        
         if (is_readable($file))
         {
-            $soc = new Societe($db, $propal->socid);
-            if ($_POST['sendto'])
-            {
-                // Le destinataire a été fourni via le champ libre
-                $sendto = $_POST['sendto'];
-                $sendtoid = 0;
-            }
-            elseif ($_POST['receiver'])
-            {
-                // Le destinataire a été fourni via la liste déroulante
-                $sendto = $soc->contact_get_email($_POST['receiver']);
-                $sendtoid = $_POST['receiver'];
-            }
+            $propal->fetch_client();
+            
+			if ($_POST['sendto'])
+			{
+				// Le destinataire a été fourni via le champ libre
+				$sendto = $_POST['sendto'];
+				$sendtoid = 0;
+			}
+			elseif ($_POST['receiver'])
+			{
+				// Le destinataire a été fourni via la liste déroulante
+				if ($_POST['receiver'] < 0)	// Id du tiers
+				{
+					$sendto = $propal->client->email;
+					$sendtoid = 0;
+				}
+				else	// Id du contact
+				{
+					$sendto = $propal->client->contact_get_email($_POST['receiver']);
+					$sendtoid = $_POST['receiver'];
+				}
+			}
 
             if (strlen($sendto))
             {
@@ -356,54 +367,82 @@ if ($_POST['action'] == 'send')
                     $filename[1] = $_FILES['addedfile']['name'];
                     $mimetype[1] = $_FILES['addedfile']['type'];
                 }
+
                 // Envoi de la propal
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
-                if ($mailfile->sendfile())
-                {
-                    $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
-                    // Insertion action
-                    include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-                    $actioncomm = new ActionComm($db);
-                    $actioncomm->type_id     = $actiontypeid;
-                    $actioncomm->label       = $actionmsg2;
-                    $actioncomm->note        = $actionmsg;
-                    $actioncomm->date        = time();  // L'action est faite maintenant
-                    $actioncomm->percent     = 100;
-                    $actioncomm->contact     = new Contact($db,$sendtoid);
-                    $actioncomm->societe     = new Societe($db,$propal->socid);
-                    $actioncomm->user        = $user;   // User qui a fait l'action
-                    $actioncomm->propalrowid = $propal->id;
-                    $ret=$actioncomm->add($user);       // User qui saisi l'action
-                    if ($ret < 0)
-                    {
-                        dolibarr_print_error($db);
-                    }
-                    else
-                    {
-                        // Renvoie sur la fiche
-                        Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($msg));
-                        exit;
-                    }
-                }
-                else
-                {
-                    $msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
-                }
+				if ($mailfile->error)
+				{
+					$mesg='<div class="error">'.$mailfile->error.'</div>';
+				}
+				else
+				{
+					$result=$mailfile->sendfile();
+					if ($result)
+					{
+	                    $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+
+	                    // Insertion action
+	                    require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+	                    $actioncomm = new ActionComm($db);
+	                    $actioncomm->type_id     = $actiontypeid;
+	                    $actioncomm->label       = $actionmsg2;
+	                    $actioncomm->note        = $actionmsg;
+	                    $actioncomm->date        = time();  // L'action est faite maintenant
+	                    $actioncomm->percent     = 100;
+	                    $actioncomm->contact     = new Contact($db,$sendtoid);
+	                    $actioncomm->societe     = new Societe($db,$propal->socid);
+	                    $actioncomm->user        = $user;   // User qui a fait l'action
+	                    $actioncomm->propalrowid = $propal->id;
+
+	                    $ret=$actioncomm->add($user);       // User qui saisit l'action
+	                    if ($ret < 0)
+	                    {
+	                        dolibarr_print_error($db);
+	                    }
+	                    else
+	                    {
+	                        // Renvoie sur la fiche
+	                        Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&msg='.urlencode($mesg));
+	                        exit;
+	                    }
+	                }
+	                else
+	                {
+						$langs->load("other");
+						$mesg='<div class="error">';
+						if ($mailfile->error) 
+						{
+							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+							$mesg.='<br>'.$mailfile->error;
+						}
+						else
+						{
+							$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						}
+						$mesg.='</div>';
+					}
+	            }
             }
             else
             {
-                $msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-                dolibarr_syslog('Le mail du destinataire est vide');
+				$langs->load("other");
+                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+				dolibarr_syslog('Recipient email is empty');
             }
         }
         else
         {
-            dolibarr_syslog('Impossible de lire :'.$file);
+			$langs->load("other");
+			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			dolibarr_syslog('Failed to read file: '.$file);
         }
     }
     else
     {
-        dolibarr_syslog('Impossible de lire les données de la propale. Le fichier propal n\'a peut-être pas été généré.');
+		$langs->load("other");
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
     }
 }
 
@@ -677,7 +716,7 @@ $html = new Form($db);
  */
 if ($_GET['propalid'] > 0)
 {
-	if ($msg) print "$msg<br>";
+	if ($mesg) print "$mesg<br>";
 
 	$propal = new Propal($db);
 
@@ -1648,7 +1687,7 @@ if ($conf->expedition->enabled)
 		print_titre($langs->trans('SendPropalByMail'));
 
 		$liste[0]="&nbsp;";
-		foreach ($societe->contact_email_array() as $key=>$value)
+		foreach ($societe->thirdparty_and_contact_email_array() as $key=>$value)
 		{
 			$liste[$key]=$value;
 		}
@@ -1674,6 +1713,8 @@ if ($conf->expedition->enabled)
 		$formmail->param['returnurl']=DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
 
 		$formmail->show_form();
+
+		print '<br>';
 	}
 
 }

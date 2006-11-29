@@ -490,6 +490,7 @@ print '</td></tr></table>';
  */
 $boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
 $boxjavascriptids=array();
+//print_r($boxarray);
 
 // Gestion deplacement des boxes
 if (eregi('boxobject_([0-9]+)',$_GET["switchfrom"],$regfrom)

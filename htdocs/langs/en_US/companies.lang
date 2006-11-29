@@ -47,6 +47,7 @@ Town=Town
 Web=Web
 Birthday=Birthday
 VATIsUsed=Using VAT
+ThirdPartyEMail=%s
 ##### Professionnal ID #####
 ProfId1=Professional ID 1
 ProfId2=Professional ID 2

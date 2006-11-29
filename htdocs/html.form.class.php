@@ -1034,7 +1034,7 @@ class Form
                 $obj = $this->db->fetch_object($resql);
 
                 // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
+                $libelle=($langs->trans("PaymentModeShort".$obj->code)!=("PaymentModeShort".$obj->code)?$langs->trans("PaymentModeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_types_paiements_code[$obj->id]=$obj->code;
                 $this->cache_types_paiements_libelle[$obj->id]=$libelle;
                 $this->cache_types_paiements_type[$obj->id]=$obj->type;

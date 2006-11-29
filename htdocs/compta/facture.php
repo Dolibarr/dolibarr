@@ -819,17 +819,27 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 
 		if (is_readable($file))
 		{
-			$soc = new Societe($db, $fac->socid);
-
-			if ($_POST['sendto']) {
+			$fac->fetch_client();
+			
+			if ($_POST['sendto'])
+			{
 				// Le destinataire a été fourni via le champ libre
 				$sendto = $_POST['sendto'];
 				$sendtoid = 0;
 			}
-			elseif ($_POST['receiver']) {
+			elseif ($_POST['receiver'])
+			{
 				// Le destinataire a été fourni via la liste déroulante
-				$sendto = $soc->contact_get_email($_POST['receiver']);
-				$sendtoid = $_POST['receiver'];
+				if ($_POST['receiver'] < 0)	// Id du tiers
+				{
+					$sendto = $fac->client->email;
+					$sendtoid = 0;
+				}
+				else	// Id du contact
+				{
+					$sendto = $fac->client->contact_get_email($_POST['receiver']);
+					$sendtoid = $_POST['receiver'];
+				}
 			}
 
 			if (strlen($sendto))
@@ -877,10 +887,13 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				$filepath[0] = $file;
 				$filename[0] = $fac->ref.'.pdf';
 				$mimetype[0] = 'application/pdf';
-				$filepath[1] = $_FILES['addedfile']['tmp_name'];
-				$filename[1] = $_FILES['addedfile']['name'];
-				$mimetype[1] = $_FILES['addedfile']['type'];
-
+                if ($_FILES['addedfile']['tmp_name'])
+				{
+					$filepath[1] = $_FILES['addedfile']['tmp_name'];
+					$filename[1] = $_FILES['addedfile']['name'];
+					$mimetype[1] = $_FILES['addedfile']['type'];
+				}
+				
 				// Envoi de la facture
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
@@ -889,7 +902,8 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				}
 				else
 				{
-					if ($mailfile->sendfile())
+					$result=$mailfile->sendfile();
+					if ($result)
 					{
 						$mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
 
@@ -900,7 +914,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$actioncomm->type_id     = $actiontypeid;
 						$actioncomm->label       = $actionmsg2;
 						$actioncomm->note        = $actionmsg;
-						$actioncomm->date        = time();
+						$actioncomm->date        = time();	// L'action est faite maintenant
 						$actioncomm->percent     = 100;
 						$actioncomm->contact     = new Contact($db,$sendtoid);
 						$actioncomm->societe     = new Societe($db,$fac->socid);
@@ -908,7 +922,6 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$actioncomm->facid       = $fac->id;
 
 						$ret=$actioncomm->add($user);       // User qui saisit l'action
-
 						if ($ret < 0)
 						{
 							dolibarr_print_error($db);
@@ -924,8 +937,15 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 					{
 						$langs->load("other");
 						$mesg='<div class="error">';
-						$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
-						if ($mailfile->error) $mesg.='<br>'.$mailfile->error;
+						if ($mailfile->error) 
+						{
+							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+							$mesg.='<br>'.$mailfile->error;
+						}
+						else
+						{
+							$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						}
 						$mesg.='</div>';
 					}
 				}
@@ -936,7 +956,6 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				$mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').'</div>';
 				dolibarr_syslog('Recipient email is empty');
 			}
-
 		}
 		else
 		{
@@ -1571,15 +1590,14 @@ if ($_GET['action'] == 'create')
 }
 else
 {
+	/* *************************************************************************** */
+	/*                                                                             */
+	/* Fiche en mode visu                                                          */
+	/*                                                                             */
+	/* *************************************************************************** */
 	$id = $_GET['facid'];
 	if ($id > 0)
 	{
-		/* *************************************************************************** */
-		/*                                                                             */
-		/* Fiche en mode visu                                                          */
-		/*                                                                             */
-		/* *************************************************************************** */
-
 		if ($mesg) print $mesg.'<br>';
 
 		$fac = New Facture($db);
@@ -2772,7 +2790,7 @@ else
 				print_titre($langs->trans('SendBillByMail'));
 
 				$liste[0]='&nbsp;';
-				foreach ($soc->contact_email_array() as $key=>$value)
+				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
 				{
 					$liste[$key]=$value;
 				}
@@ -2828,7 +2846,7 @@ else
 				print_titre($langs->trans('SendReminderBillByMail'));
 
 				$liste[0]='&nbsp;';
-				foreach ($soc->contact_email_array() as $key=>$value)
+				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
 				{
 					$liste[$key]=$value;
 				}
@@ -2857,7 +2875,6 @@ else
 
 				print '<br>';
 			}
-
 		}
 		else
 		{

@@ -131,7 +131,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 			}
 			else
 			{
-				$msg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
+				$mesg = '<div class="error">'.$langs->trans("ErrorFailedToAddContact").'</div>';
 				$error=1;
 			}
 		}
@@ -516,26 +516,37 @@ if ($action=='remove_file')
 if ($_POST['action'] == 'send')
 {
     $langs->load('mails');
+
     $commande= new Commande($db);
     if ( $commande->fetch($_POST['orderid']) )
     {
         $orderref = sanitize_string($commande->ref);
         $file = $conf->commande->dir_output . '/' . $orderref . '/' . $orderref . '.pdf';
+        
         if (is_readable($file))
         {
-            $soc = new Societe($db, $commande->socid);
-            if ($_POST['sendto'])
-            {
-                // Le destinataire a été fourni via le champ libre
-                $sendto = $_POST['sendto'];
-                $sendtoid = 0;
-            }
-            elseif ($_POST['receiver'])
-            {
-                // Le destinataire a été fourni via la liste déroulante
-                $sendto = $soc->contact_get_email($_POST['receiver']);
-                $sendtoid = $_POST['receiver'];
-            }
+            $commande->fetch_client();
+
+			if ($_POST['sendto'])
+			{
+				// Le destinataire a été fourni via le champ libre
+				$sendto = $_POST['sendto'];
+				$sendtoid = 0;
+			}
+			elseif ($_POST['receiver'])
+			{
+				// Le destinataire a été fourni via la liste déroulante
+				if ($_POST['receiver'] < 0)	// Id du tiers
+				{
+					$sendto = $commande->client->email;
+					$sendtoid = 0;
+				}
+				else	// Id du contact
+				{
+					$sendto = $commande->client->contact_get_email($_POST['receiver']);
+					$sendtoid = $_POST['receiver'];
+				}
+			}
 
             if (strlen($sendto))
             {
@@ -575,54 +586,82 @@ if ($_POST['action'] == 'send')
                     $filename[1] = $_FILES['addedfile']['name'];
                     $mimetype[1] = $_FILES['addedfile']['type'];
                 }
+
                 // Envoi de la commande
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
-                if ($mailfile->sendfile())
-                {
-                    $msg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
-                    // Insertion action
-                    include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-                    $actioncomm = new ActionComm($db);
-                    $actioncomm->type_id     = $actiontypeid;
-                    $actioncomm->label       = $actionmsg2;
-                    $actioncomm->note        = $actionmsg;
-                    $actioncomm->date        = time();  // L'action est faite maintenant
-                    $actioncomm->percent     = 100;
-                    $actioncomm->contact     = new Contact($db,$sendtoid);
-                    $actioncomm->societe     = new Societe($db,$commande->socid);
-                    $actioncomm->user        = $user;   // User qui a fait l'action
-                    $actioncomm->orderrowid  = $commande->id;
-                    $ret=$actioncomm->add($user);       // User qui saisi l'action
-                    if ($ret < 0)
-                    {
-                        dolibarr_print_error($db);
-                    }
-                    else
-                    {
-                        // Renvoie sur la fiche
-                        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&msg='.urlencode($msg));
-                        exit;
-                    }
-                }
-                else
-                {
-                    $msg='<div class="error">'.$langs->trans('ErrorFailedToSendMail',$from,$sendto).' - '.$actioncomm->error.'</div>';
-                }
+				if ($mailfile->error)
+				{
+					$mesg='<div class="error">'.$mailfile->error.'</div>';
+				}
+				else
+				{
+					$result=$mailfile->sendfile();
+					if ($result)
+	                {
+	                    $mesg='<div class="ok">'.$langs->trans('MailSuccessfulySent',$from,$sendto).'.</div>';
+
+	                    // Insertion action
+	                    require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
+	                    $actioncomm = new ActionComm($db);
+	                    $actioncomm->type_id     = $actiontypeid;
+	                    $actioncomm->label       = $actionmsg2;
+	                    $actioncomm->note        = $actionmsg;
+	                    $actioncomm->date        = time();  // L'action est faite maintenant
+	                    $actioncomm->percent     = 100;
+	                    $actioncomm->contact     = new Contact($db,$sendtoid);
+	                    $actioncomm->societe     = new Societe($db,$commande->socid);
+	                    $actioncomm->user        = $user;   // User qui a fait l'action
+	                    $actioncomm->orderrowid  = $commande->id;
+
+	                    $ret=$actioncomm->add($user);       // User qui saisit l'action
+	                    if ($ret < 0)
+	                    {
+	                        dolibarr_print_error($db);
+	                    }
+	                    else
+	                    {
+	                        // Renvoie sur la fiche
+	                        Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&msg='.urlencode($mesg));
+	                        exit;
+	                    }
+	                }
+	                else
+	                {
+						$langs->load("other");
+						$mesg='<div class="error">';
+						if ($mailfile->error) 
+						{
+							$mesg.=$langs->trans('ErrorFailedToSendMail',$from,$sendto);
+							$mesg.='<br>'.$mailfile->error;
+						}
+						else
+						{
+							$mesg.='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+						}
+						$mesg.='</div>';
+					}
+				}
             }
             else
             {
-                $msg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
-                dolibarr_syslog('Le mail du destinataire est vide');
+				$langs->load("other");
+                $mesg='<div class="error">'.$langs->trans('ErrorMailRecipientIsEmpty').' !</div>';
+				dolibarr_syslog('Recipient email is empty');
             }
         }
         else
         {
-            dolibarr_syslog('Impossible de lire :'.$file);
+			$langs->load("other");
+			$mesg='<div class="error">'.$langs->trans('ErrorCantReadFile',$file).'</div>';
+			dolibarr_syslog('Failed to read file: '.$file);
         }
     }
     else
     {
-        dolibarr_syslog('Impossible de lire les données de la commande. Le fichier commande n\'a peut-être pas été généré.');
+		$langs->load("other");
+		$mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
+		dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
     }
 }
 
@@ -941,15 +980,17 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	}
 }
 else
-/* *************************************************************************** */
-/*                                                                             */
-/* Mode vue et edition                                                         */
-/*                                                                             */
-/* *************************************************************************** */
 {
+	/* *************************************************************************** */
+	/*                                                                             */
+	/* Mode vue et edition                                                         */
+	/*                                                                             */
+	/* *************************************************************************** */
 	$id = $_GET['id'];
 	if ($id > 0)
 	{
+		if ($mesg) print $mesg.'<br>';
+
 		$commande = new Commande($db);
 		if ( $commande->fetch($_GET['id']) > 0)
 		{
@@ -1840,7 +1881,7 @@ else
 				$soc->fetch($commande->socid);
 
 				$liste[0]="&nbsp;";
-				foreach ($soc->contact_email_array() as $key=>$value)
+				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
 				{
 					$liste[$key]=$value;
 				}
@@ -1866,8 +1907,9 @@ else
 				$formmail->param['returnurl']=DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id;
 
 				$formmail->show_form();
-			}
 
+				print '<br>';
+			}
 		}
 		else
 		{

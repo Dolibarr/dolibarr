@@ -78,7 +78,7 @@ class pdf_paiement
 		$pdf->Text(11,$this->tab_top + 6,'Date');
 	
 		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-		$pdf->Text(42, $this->tab_top + 6, $langs->trans("PaymentType"));
+		$pdf->Text(42, $this->tab_top + 6, $langs->trans("PaymentMode"));
 	
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
 		$pdf->Text(82, $this->tab_top + 6, $langs->trans("Invoice"));
