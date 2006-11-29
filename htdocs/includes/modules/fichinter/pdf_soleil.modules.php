@@ -63,7 +63,7 @@ class pdf_soleil extends ModelePDFFicheinter
         $this->marge_basse=10;
         
         // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=$mysoc->pays_code;
+        $this->emetteur=$mysoc;
         if (! $this->emetteur->code_pays) $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
     }
 
