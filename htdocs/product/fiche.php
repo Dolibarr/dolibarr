@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Régis Houssin        <regis.houssin@cap-networks.com>
@@ -38,6 +38,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("bills");
+$langs->load("products");
 
 
 $mesg = '';
@@ -410,7 +411,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	{
 		 print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
     }
-    $langs->load("bills");
+
     print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
     print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
     print '</td></tr>';
@@ -486,11 +487,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
  */
 if ($_GET["id"] || $_GET["ref"])
 {
-
-    llxHeader("","",$langs->trans("CardProduct".$product->type));
-
-
     $product = new Product($db);
+
     if ($_GET["ref"])
     {
     	$result = $product->fetch('',$_GET["ref"]);
@@ -500,6 +498,9 @@ if ($_GET["id"] || $_GET["ref"])
     {
     	$result = $product->fetch($_GET["id"]);
     }
+
+    llxHeader("","",$langs->trans("CardProduct".$product->type));
+
     if ( $result )
     {
 
@@ -580,7 +581,7 @@ if ($_GET["id"] || $_GET["ref"])
             print '</td></tr>';
 
             // TVA
-            $langs->load("bills");
+
             print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
 
             // Stock
@@ -653,7 +654,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
         print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
-        $langs->load("bills");
+
         print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
         print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
         print '</td></tr>';
@@ -1015,7 +1016,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	// Factures
 	if($conf->facture->enabled && $user->rights->facture->creer)
 	{
-		$langs->load("bills");
+
 
 		print '<tr class="liste_titre"><td width="50%" valign="top">';
 		print_titre($langs->trans("AddToMyBills"));
