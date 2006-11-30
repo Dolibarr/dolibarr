@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -146,17 +146,6 @@ if ($_GET["id"] > 0)
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 			print '</tr>';
-
-			// Ligne info remises tiers
-            print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
-			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount();
-			print '. ';
-			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-			print '.';
-			print '</td></tr>';
 
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
@@ -306,7 +295,7 @@ if ($_GET["id"] > 0)
          */
         echo '<table class="liste" width="100%">';
 
-        $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice";
+        $sql = "SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.subprice";
         $sql.= " FROM ".MAIN_DB_PREFIX."commandedet as l ";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON l.fk_product = p.rowid";
         $sql.= " WHERE l.fk_commande = ".$commande->id;
