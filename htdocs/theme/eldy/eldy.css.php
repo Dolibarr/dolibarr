@@ -999,3 +999,31 @@ tr.visible {
 td.hidden {
     display: none;
 }
+
+
+/* ============================================================================== */
+/*  Afficher/cacher                                                               */
+/* ============================================================================== */
+
+#evolForm input.error {
+                        font-weight: bold;
+                        border: solid 2px #FF0000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
+#evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
+                        background: beige;
+                        color: black;
+                        border: solid 1px #000000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
+#evolForm input.normal {	/*** Retour à l'état normal après l'utilisation ***/
+                         background: white;
+                         color: black;
+                         border: solid 1px white;
+                         padding: 1px 1px 1px 1px;
+                         margin: 1px 1px 1px 1px;
+               }
