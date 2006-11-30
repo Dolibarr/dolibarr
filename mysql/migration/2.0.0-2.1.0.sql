@@ -1,10 +1,12 @@
+--
+-- $Id$
+-- $Source$
 -- $Revision$
 --
 -- Attention à l ordre des requetes.
 -- Ce fichier doit être chargé sur une version 2.0.0 
 -- sans AUCUNE erreur ni warning
 --
-
 
 create table llx_paiementfourn_facturefourn
 (
