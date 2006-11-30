@@ -90,6 +90,9 @@ DolibarrProjectLeader=Project leader
 OtherDeveloppers=Other developers/contributors
 OfficialWebSite=Internationnal official web site
 OfficialWebSiteFr=French official web site
+CurrentTheme=Current theme
+CurrentTopMenuHandler=Current top menu handler
+CurrentLeftMenuHandler=Current left menu handler
 ModuleSetup=Module setup
 ModulesSetup=Modules setup
 ModuleFamilyBase=System
@@ -101,6 +104,7 @@ ModuleFamilyOther=Other
 ModuleFamilyTechnic=Tools or System Modules
 ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
+# Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management
 Module1Name=Companies

@@ -90,6 +90,9 @@ DolibarrProjectLeader=Chef de projet
 OtherDeveloppers=Autres développeurs/contributeurs
 OfficialWebSite=Site web officiel internationnal
 OfficialWebSiteFr=Site web officiel francophone
+CurrentTheme=Theme courant
+CurrentTopMenuHandler=Gestionnaire menu haut courant
+CurrentLeftMenuHandler=Gestionnaire menu gauche courant
 ModuleSetup=Configuration du module
 ModulesSetup=Configuration des modules
 ModuleFamilyBase=Système
@@ -101,6 +104,7 @@ ModuleFamilyOther=Autre
 ModuleFamilyTechnic=Modules outils ou système
 ModuleFamilyExperimental=Modules expérimentaux (ne pas utiliser en production)
 ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
+# Modules
 Module0Name=Utilisateurs & groupes
 Module0Desc=Gestion des utilisateurs et groupes
 Module1Name=Sociétés
