@@ -51,50 +51,52 @@ else if ($_POST["action"] == 'multiprix_num')
 if ($_POST["action"] == 'multiprix')
 {
 	$res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
-	if(! $db->fetch_row())
+	if(! $db->fetch_row($res))
 	{
 		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
-		// on ajoute le champ price_level dans la table societe
-		if(! $db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc))
+		if ($_POST["activate_multiprix"])
 		{
-			dolibarr_print_error($db);
-			exit;
-		}
-		// on crée la table societe_prices
-		else
-		{
-			$table = MAIN_DB_PREFIX."societe_prices";
-			$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-			$fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
-			$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-			$fields['datec'] = array('type'=>'datetime','default'=> 'null');
-			$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
-			$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-			if(! $db->DDLCreateTable($table,$fields,"rowid","InnoDB") > 0)
+			// on ajoute le champ price_level dans la table societe
+			if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
 			{
 				dolibarr_print_error($db);
-				print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+				exit;
 			}
+			// on crée la table societe_prices
 			else
 			{
-				dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-				dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-				Header("Location: produit.php");
+				$table = MAIN_DB_PREFIX."societe_prices";
+				$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+				$fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
+				$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
+				$fields['datec'] = array('type'=>'datetime','default'=> 'null');
+				$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
+				$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
+				if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
+				{
+					dolibarr_print_error($db);
+					exit;
+				}
 			}
 		}
-	}
-	else
-	{
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
 		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
 		Header("Location: produit.php");
+		exit;
 	}
-	exit;
+	else
+	{
+		dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+		Header("Location: produit.php");
+		exit;
+	}
 }
 else if ($_POST["action"] == 'sousproduits')
 {
   	$res=$db->DDLDescTable(MAIN_DB_PREFIX."product_association");
-	if(! $db->fetch_row())
+	if(! $db->fetch_row($res))
 	{
 		$table = MAIN_DB_PREFIX."product_association";
 		$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
@@ -102,21 +104,24 @@ else if ($_POST["action"] == 'sousproduits')
 		$fields['qty'] = array('type'=>'double','default'=> 'null');
 		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
 		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-		if (! $db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) > 0)
+		if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
 		{
 			dolibarr_print_error($db);
-			print "<script language='JavaScript'>setTimeout(\"document.location='./produit.php'\",5000);</script>";
+			exit;
 		}
 		else
 		{
 			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
 			Header("Location: produit.php");
+			exit;
 	  }
 	}
 	else
 	{
+		dolibarr_syslog("Table definition already ok");
 		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
 		Header("Location: produit.php");
+		exit;
 	}
 }
 else if ($_POST["action"] == 'changeproductdesc')

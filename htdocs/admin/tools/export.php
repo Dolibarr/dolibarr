@@ -126,12 +126,13 @@ if ($what == 'mysql')
 
 	print $langs->trans("BackupResult").': ';
 
-
 	// Debut appel methode execution
 	$fullcommand=$command." ".$param." 2>&1";
 	if ($compression == 'none') $handle = fopen($outputfile, 'w');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
+	
+	dolibarr_syslog("Run command ".$fullcommand);
 	$handlein = popen($fullcommand, 'r');
 	while (!feof($handlein))
 	{
@@ -158,7 +159,10 @@ if ($what == 'mysql')
 	{
 		// Renommer fichier sortie en fichier erreur	
 		//print "$outputfile -> $outputerror";
+		dol_delete_file($outputerror);
 		@rename($outputfile,$outputerror);
+		// Si safe_mode on et command hors du parametre exec, on a un fichier out donc errormsg vide
+		if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunCommand");	
 	}
 	// Fin execution commande
 
