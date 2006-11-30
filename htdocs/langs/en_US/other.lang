@@ -10,6 +10,7 @@ ErrorCantReadDir=Failed to read directory '%s'
 ErrorFailedToFindEntity=Failed to read entity '%s'
 ErrorBadLoginPassword=Bad value for login or password
 ErrorLoginDisabled=Your account has been disabled
+ErrorFailedToRunExternalCommand=Failed to run external command. Check it is available and runnable by your PHP server. If PHP <b>Safe Mode</b> is enabled, check that command is inside a directory defined by parameter <b>safe_mode_exec_dir</b>.
 Calendar=Calendar
 AddTrip=Add trip
 Tools=Tools

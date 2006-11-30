@@ -10,6 +10,7 @@ ErrorCantReadDir=Echec de lecture du répertoire '%s'
 ErrorFailedToFindEntity=Echec de lecture de l'entité '%s'
 ErrorBadLoginPassword=Identifiants login ou mot de passe incorrects
 ErrorLoginDisabled=Votre compte est désactivé
+ErrorFailedToRunExternalCommand=Echec de l'exécution de la commande externe. Vérifiez qu'elle est disponible et exécutable par votre serveur PHP. Si le <b>Safe Mode</b> PHP est actif, vérifiez que la commande se trouve dans un répertoire définie dans le paramètre <b>safe_mode_exec_dir</b>.
 Calendar=Calendrier
 AddTrip=Créer déplacement
 Tools=Outils

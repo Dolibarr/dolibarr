@@ -162,7 +162,7 @@ if ($what == 'mysql')
 		dol_delete_file($outputerror);
 		@rename($outputfile,$outputerror);
 		// Si safe_mode on et command hors du parametre exec, on a un fichier out donc errormsg vide
-		if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunCommand");	
+		if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");	
 	}
 	// Fin execution commande
 
