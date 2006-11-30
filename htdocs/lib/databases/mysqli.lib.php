@@ -613,14 +613,14 @@ class DoliDb
 
 	/**
 		\brief      Crée une table
-		\param	    table Nom de la table
-		\param	    fields tableau associatif [nom champ][tableau des descriptions]
-		\param	    primary_key Nom du champ qui sera la clef primaire
-		\param	    unique_keys tableau associatifs Nom de champs qui seront clef unique => valeur
-		\param	    fulltext tableau des Nom de champs qui seront indexés en fulltext
-		\param	    key tableau des champs clés noms => valeur
-		\param	    type type de la table
-		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+		\param	    table 			Nom de la table
+		\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+		\param	    primary_key 	Nom du champ qui sera la clef primaire
+		\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+		\param	    fulltext 		Tableau des Nom de champs qui seront indexés en fulltext
+		\param	    key 			Tableau des champs clés noms => valeur
+		\param	    type 			Type de la table
+		\return	    int				<0 si KO, >=0 si OK
     */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
@@ -633,26 +633,26 @@ class DoliDb
 			$sqlfields[$i] = $field_name." ";
 			$sqlfields[$i]  .= $field_desc['type'];
 			if( eregi("^[^ ]",$field_desc['value']))
-				$sqlfields[$i]  .= "(".$field_desc['value'].")";
+			$sqlfields[$i]  .= "(".$field_desc['value'].")";
 			else if( eregi("^[^ ]",$field_desc['attribute']))
-				$sqlfields[$i]  .= " ".$field_desc['attribute'];
+			$sqlfields[$i]  .= " ".$field_desc['attribute'];
 			else if( eregi("^[^ ]",$field_desc['default']))
 			{
 				if(eregi("null",$field_desc['default']))
-					$sqlfields[$i]  .= " default ".$field_desc['default'];
+				$sqlfields[$i]  .= " default ".$field_desc['default'];
 				else
-					$sqlfields[$i]  .= " default '".$field_desc['default']."'";
+				$sqlfields[$i]  .= " default '".$field_desc['default']."'";
 			}
 			else if( eregi("^[^ ]",$field_desc['null']))
-				$sqlfields[$i]  .= " ".$field_desc['null'];
-
+			$sqlfields[$i]  .= " ".$field_desc['null'];
+	
 			else if( eregi("^[^ ]",$field_desc['extra']))
-				$sqlfields[$i]  .= " ".$field_desc['extra'];
+			$sqlfields[$i]  .= " ".$field_desc['extra'];
 			$i++;
 		}
 		if($primary_key != "")
-			$pk = "primary key(".$primary_key.")";
-
+		$pk = "primary key(".$primary_key.")";
+	
 		if($unique_keys != "")
 		{
 			$i = 0;
@@ -673,17 +673,18 @@ class DoliDb
 		}
 		$sql .= implode(',',$sqlfields);
 		if($primary_key != "")
-			$sql .= ",".$pk;
+		$sql .= ",".$pk;
 		if($unique_keys != "")
-			$sql .= ",".implode(',',$sqluq);
+		$sql .= ",".implode(',',$sqluq);
 		if($keys != "")
-			$sql .= ",".implode(',',$sqlk);
+		$sql .= ",".implode(',',$sqlk);
 		$sql .=") type=".$type;
-		// dolibarr_syslog($sql);
+
+		dolibarr_syslog($sql);
 		if(! $this -> query($sql))
-			return false;
+			return -1;
 		else
-			return true;
+			return 1;
 	}
 
 	/**
@@ -694,18 +695,20 @@ class DoliDb
 	*/
 	function DDLDescTable($table,$field="")
     {
-		// $this->results = $this->query("DESC ".$table." ".$field);
-		$this->results = $this->query("DESC ".$table." ".$field);
+		$sql="DESC ".$table." ".$field;
+
+		dolibarr_syslog($sql);
+		$this->results = $this->query($sql);
 		return $this->results;
     }
 
 	/**
 		\brief      Insère un nouveau champ dans une table
-		\param	    table Nom de la table
-		\param			field_name Nom du champ à insérer
-		\param	    field_desc tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre]
-		\param	    field_position Optionnel ex.: "after champtruc"
-		\return	    true/false    selon si requête a provoqué un erreur mysql ou pas
+		\param	    table 			Nom de la table
+		\param		field_name 		Nom du champ à insérer
+		\param	    field_desc 		Tableau associatif de description duchamp à insérer[nom du paramètre][valeur du paramètre]
+		\param	    field_position 	Optionnel ex.: "after champtruc"
+		\return	    int				<0 si KO, >0 si OK
     */
 	function DDLAddField($table,$field_name,$field_desc,$field_position="")
 	{
@@ -729,9 +732,9 @@ class DoliDb
 		$sql .= " ".$field_position;
 
 		if(! $this -> query($sql))
-			return false;
+			return -1;
 		else
-			return true;
+			return 1;
 	}
 
 }
