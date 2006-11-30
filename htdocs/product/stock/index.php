@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-        \file       htdocs/product/stock/index.php
-        \ingroup    stock
-        \brief      Page accueil stocks produits
-        \version    $Revision$
+   \file       htdocs/product/stock/index.php
+   \ingroup    stock
+   \brief      Page accueil stocks produits
+   \version    $Revision$
 */
 
 require_once("./pre.inc.php");
@@ -36,14 +36,12 @@ $langs->load("stocks");
 if (!$user->rights->stock->lire)
   accessforbidden();
 
-
 llxHeader("","",$langs->trans("Stocks"));
 
 print_fiche_titre($langs->trans("StocksArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
-
 
 /*
  * Zone recherche entrepot
@@ -57,10 +55,8 @@ print $langs->trans("Ref").':</td><td><input class="flat" type="text" size="18" 
 print "<tr $bc[0]><td>".$langs->trans("Other").':</td><td><input type="text" name="sall" class="flat" size="18"></td>';
 print "</table></form><br>";
 
-
-
 $sql = "SELECT e.label, e.rowid, e.statut FROM ".MAIN_DB_PREFIX."entrepot as e";
-$sql .= " ORDER BY e.statut DESC ";
+$sql .= " WHERE statut in (0,1) ORDER BY e.statut DESC ";
 $sql .= $db->plimit(15 ,0);
 $result = $db->query($sql) ;
 
