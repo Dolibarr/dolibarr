@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -39,8 +39,8 @@ create table llx_product
   stock_propale      integer DEFAULT 0,
   stock_commande     integer DEFAULT 0,
   seuil_stock_alerte integer DEFAULT 0,
-  gencode            varchar(255) DEFAULT NULL
-
+  gencode            varchar(255) DEFAULT NULL,
+  canvas             varchar(15) DEFAULT ''
 )type=innodb;
 
 
