@@ -82,7 +82,7 @@ class MenuTop {
 
         print '<table class="tmenu"><tr class="tmenu">';
 
-        // Entrée home
+        // Home
         $id="";
 
         if ($_GET["mainmenu"] == "home" || ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "home"))
@@ -98,7 +98,7 @@ class MenuTop {
         }
         print '<td class="tmenu"><a class="tmenu" '.($id?'id="'.$id.'" ':'').'href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
-        // Entrée adherent
+        // Adherent
         if ($conf->adherent->enabled && $user->rights->adherent->lire)
         {
             $langs->load("members");
@@ -120,7 +120,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
         }
 
-        // Entrée commercial
+        // Commercial
         if ($conf->commercial->enabled && $user->rights->commercial->main->lire)
         {
             $langs->load("commercial");
@@ -143,7 +143,7 @@ class MenuTop {
 
         }
 
-        // Entrée compta/tréso (sert pour banque, tva, entités à facturer...)
+        // Compta/tréso (sert pour banque, tva, entités à facturer...)
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled)
         {
 //            if ($user->rights->compta->general->lire || $user->rights->comptaexpert->general->lire)
@@ -168,7 +168,7 @@ class MenuTop {
 //            }
         }
 
-        // Entrée projets
+        // Projects
         if ($conf->projet->enabled && $user->rights->projet->lire)
         {
             $langs->load("projects");
@@ -191,7 +191,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project">'.$chaine.'</a></td>';
         }
 
-        // Entrée produit/service
+        // Produit/service
         if (($conf->produit->enabled || $conf->service->enabled)  && $user->rights->produit->lire)
         {
             $langs->load("products");
@@ -218,7 +218,7 @@ class MenuTop {
 
         }
 
-        // Entrée fournisseur
+        // Supplier
         if ($conf->fournisseur->enabled && $user->rights->fournisseur->commande->lire)
         {
             $langs->load("suppliers");
@@ -240,7 +240,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
         }
 
-        // Entrée telephonie
+        // Telephonie
         if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
         {
             $class="";
@@ -256,7 +256,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
         }
 
-        // Entrée energie
+        // Energie
         if ($conf->energie->enabled)
         {
             $langs->load("energy");
@@ -273,7 +273,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
         }
         
-        // Entrée OSCommerce 1
+        // OSCommerce 1
         if ($conf->boutique->enabled)
         {
             $langs->load("shop");
@@ -290,7 +290,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=boutique"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
 
-        // Entrée OSCommerce 2
+        // OSCommerce 2
         if ($conf->oscommerce2->enabled)
         {
             $langs->load("shop");
@@ -307,7 +307,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=oscommerce2"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
 
-        // Entrée webcal
+        // Webcal
         if ($conf->webcal->enabled)
         {
             $langs->load("other");
@@ -326,7 +326,29 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
 
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
+        }
+
+        // Mantis
+        if ($conf->mantis->enabled)
+        {
+            $langs->load("other");
+
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "mantis")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            elseif (ereg("^".DOL_URL_ROOT.".*\/mantis",$_SERVER["PHP_SELF"]) || ereg("^".DOL_URL_ROOT."\/mantis\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
         }
 
     print '</tr></table>';

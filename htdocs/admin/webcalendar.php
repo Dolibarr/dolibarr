@@ -45,13 +45,8 @@ $def = array();
 $actiontest=$_POST["test"];
 $actionsave=$_POST["save"];
 
-// Test saisie mot de passe
-if ($_POST["phpwebcalendar_pass"] != $_POST["phpwebcalendar_pass2"])
-{
-    $mesg="<div class=\"error\">".$langs->trans("ErrorPasswordDiffers")."</div>";
-}
-// Positionne la variable pour le test d'affichage de l'icone
-elseif ($actionsave)
+// Sauvegardes parametres
+if ($actionsave)
 {
     $i=0;
 
@@ -104,11 +99,13 @@ elseif ($actiontest)
         $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
         $resql=$webcal->localdb->query($sql);
         if ($resql) {
-            $mesg ="<div class=\"ok\">".$langs->trans("WebCalTestOk",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"],$_POST["phpwebcalendar_user"]);
+            $mesg ="<div class=\"ok\">";
+            $mesg.=$langs->trans("WebCalTestOk",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"],$_POST["phpwebcalendar_user"]);
             $mesg.="</div>";
         }
         else {
-            $mesg ="<div class=\"error\">".$langs->trans("WebCalErrorConnectOkButWrongDatabase");
+            $mesg ="<div class=\"error\">";
+            $mesg.=$langs->trans("WebCalErrorConnectOkButWrongDatabase");
             $mesg.="</div>";
         }
 
@@ -145,11 +142,13 @@ print '<br>';
 
 print '<form name="phpwebcalendarconfig" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print "<table class=\"noborder\" width=\"100%\">";
+
 print "<tr class=\"liste_titre\">";
 print "<td width=\"30%\">".$langs->trans("Parameter")."</td>";
 print "<td>".$langs->trans("Value")."</td>";
 print "<td>".$langs->trans("Examples")."</td>";
 print "</tr>";
+
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("WebCalURL")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_url\" value=\"". ($_POST["phpwebcalendar_url"]?$_POST["phpwebcalendar_url"]:$conf->global->PHPWEBCALENDAR_URL) . "\" size=\"40\"></td>";
@@ -157,6 +156,7 @@ print "<td>http://localhost/webcalendar/";
 print "<br>https://webcalendarserver/";
 print "</td>";
 print "</tr>";
+
 print "<tr class=\"pair\">";
 print "<td>".$langs->trans("WebCalServer")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_host\" value=\"". ($_POST["phpwebcalendar_host"]?$_POST["phpwebcalendar_host"]:$conf->global->PHPWEBCALENDAR_HOST) . "\" size=\"30\"></td>";
@@ -164,6 +164,7 @@ print "<td>localhost";
 //print "<br>__dolibarr_main_db_host__ <i>(".$dolibarr_main_db_host.")</i>"
 print "</td>";
 print "</tr>";
+
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("WebCalDatabaseName")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_dbname\" value=\"". ($_POST["phpwebcalendar_dbname"]?$_POST["phpwebcalendar_dbname"]:$conf->global->PHPWEBCALENDAR_DBNAME) . "\" size=\"30\"></td>";
@@ -171,6 +172,7 @@ print "<td>webcalendar";
 //print "<br>__dolibarr_main_db_name__ <i>(".$dolibarr_main_db_name.")</i>";
 print "</td>";
 print "</tr>";
+
 print "<tr class=\"pair\">";
 print "<td>".$langs->trans("WebCalUser")."</td>";
 print "<td><input type=\"text\" class=\"flat\" name=\"phpwebcalendar_user\" value=\"". ($_POST["phpwebcalendar_user"]?$_POST["phpwebcalendar_user"]:$conf->global->PHPWEBCALENDAR_USER) . "\" size=\"30\"></td>";
@@ -178,6 +180,7 @@ print "<td>webcaluser";
 //print "<br>__dolibarr_main_db_user__ <i>(".$dolibarr_main_db_user.")</i>";
 print "</td>";
 print "</tr>";
+
 print "<tr class=\"impair\">";
 print "<td>".$langs->trans("Password")."</td>";
 print "<td><input type=\"password\" class=\"flat\" name=\"phpwebcalendar_pass\" value=\"" . ($_POST["phpwebcalendar_pass"]?$_POST["phpwebcalendar_pass"]:$conf->global->PHPWEBCALENDAR_PASS) . "\" size=\"30\"></td>";
@@ -185,13 +188,7 @@ print '<td>';
 //if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
 print "</tr>";
-print "<tr class=\"pair\">";
-print "<td>".$langs->trans("PasswordRetype")."</td>";
-print "<td><input type=\"password\" class=\"flat\" name=\"phpwebcalendar_pass2\" value=\"" . ($_POST["phpwebcalendar_pass2"]?$_POST["phpwebcalendar_pass2"]:$conf->global->PHPWEBCALENDAR_PASS) ."\" size=\"30\"></td>";
-print '<td>';
-//if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
-print '&nbsp;</td>';
-print "</tr>";
+
 print "</table>";
 print "<br>";
 

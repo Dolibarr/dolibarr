@@ -125,10 +125,10 @@ class DoliDb
 
         // Essai connexion serveur
         $this->db = $this->connect($host, $user, $pass, $name, $newlink);
-
         if ($this->db)
         {
-			// Si client connecté avec charset different de celui de Dolibarr
+			// Si client connecté avec charset different de celui de la base Dolibarr
+			// (La base Dolibarr a été forcée en this->forcecharset à l'install)
 			if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
 			{
 				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
@@ -141,7 +141,7 @@ class DoliDb
             // host, login ou password incorrect
             $this->connected = 0;
             $this->ok = 0;
-            dolibarr_syslog("DoliDB::DoliDB : Erreur Connect");
+            dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
         }
 
         // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
@@ -194,8 +194,9 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
+       	dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=$passwd, name=$name");
         $this->db  = @mysql_connect($host, $login, $passwd);
-        //print "Resultat fonction connect: ".$this->db;
+        //print "Resultat fonction connect: ".$this->db." - mysql_error=".mysql_error();
         return $this->db;
     }
 
@@ -581,6 +582,7 @@ class DoliDb
             \param	        database		nom de la database à créer
             \return	        resource		resource définie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+            				On force creation de la base avec le charset forcecharset
     */
     function DDLCreateDb($database)
     {
