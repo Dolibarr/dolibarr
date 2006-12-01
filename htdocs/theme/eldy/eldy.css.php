@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1008,7 +1009,7 @@ td.hidden {
 #evolForm input.error {
                         font-weight: bold;
                         border: solid 2px #FF0000;
-                        padding: 1px 1px 1px 1px;
+                        padding: 0px 0px 0px 0px;
                         margin: 1px 1px 1px 1px;
               }
 
