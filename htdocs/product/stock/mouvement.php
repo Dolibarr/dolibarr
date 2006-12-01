@@ -35,20 +35,21 @@ $langs->load("products");
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-
 $page = $_GET["page"];
 $sortfield = $_GET["sortfield"];
 $sortorder = $_GET["sortorder"];
-
 if ($page < 0) $page = 0;
-$limit = $conf->liste_limit;
-$offset = $limit * $page;
+$offset = $conf->liste_limit * $page;
 
 if (! $sortfield) $sortfield="m.datem";
 if (! $sortorder) $sortorder="DESC";
 
-$sql = "SELECT p.rowid, p.label as produit, s.label as stock, m.value, ".$db->pdate("m.datem")." as datem, s.rowid as entrepot_id";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
+
+
+$sql = "SELECT p.rowid, p.label as produit,";
+$sql.= " s.label as stock, s.rowid as entrepot_id,";
+$sql.= " m.value, ".$db->pdate("m.datem")." as datem";
+$sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
@@ -60,7 +61,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 	$sql.= ' AND IFNULL(c.visible,1)=1';
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
-$sql .= $db->plimit($limit + 1 ,$offset);
+$sql .= $db->plimit($conf->liste_limit + 1 ,$offset);
 $resql = $db->query($sql) ;
 
 if ($resql)
@@ -121,17 +122,18 @@ if ($resql)
 	}
 
 
-	print_barre_liste($texte, $page, "mouvement.php", "&sref=$sref&snom=$snom", $sortfield, $sortorder,'',$num);
+	$param="&id=".$_GET["id"]."&sref=$sref&snom=$snom";
+	print_barre_liste($texte, $page, "mouvement.php", $param, $sortfield, $sortorder,'',$num);
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","","","",$sortfield);
-	print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","","","",$sortfield);
-	print "<td align=\"center\">".$langs->trans("Units")."</td>";
-	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","","","",$sortfield);
+	print_liste_field_titre($langs->trans("Date"),"mouvement.php", "m.datem","",$param,"",$sortfield);
+	print_liste_field_titre($langs->trans("Product"),"mouvement.php", "p.ref","",$param,"",$sortfield);
+	print_liste_field_titre($langs->trans("Warehouse"),"mouvement.php", "s.label","",$param,"",$sortfield);
+	print_liste_field_titre($langs->trans("Units"),"mouvement.php", "m.value","",$param,'align="right"',$sortfield);
 	print "</tr>\n";
 
 	$var=True;
-	while ($i < min($num,$limit))
+	while ($i < min($num,$conf->liste_limit))
 	{
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
@@ -140,10 +142,10 @@ if ($resql)
 		print "<td><a href=\"../fiche.php?id=$objp->rowid\">";
 		print img_object($langs->trans("ShowProduct"),"product").' '.$objp->produit;
 		print "</a></td>\n";
-		print '<td align="center">'.$objp->value.'</td>';
-		print "<td><a href=\"fiche.php?id=$objp->entrepot_id\">";
-		print img_object($langs->trans("ShowWarehous"),"stock").' '.$objp->stock;
+		print '<td><a href="fiche.php?id='.$objp->entrepot_id.'">';
+		print img_object($langs->trans("ShowWarehouse"),"stock").' '.$objp->stock;
 		print "</a></td>\n";
+		print '<td align="right">'.$objp->value.'</td>';
 		print "</tr>\n";
 		$i++;
 	}
