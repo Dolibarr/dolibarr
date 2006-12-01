@@ -6,17 +6,15 @@ English Dolibarr changelog
 - Added a better installer.
 - Support user and groups permissions.
 - Translation in english and support for several languages.
-- Experimental support for Postgresql.
 - New enhanced look and several new themes.
 - Small search boxes for each Dolibarr elements (invoices, contracts,
   orders, proposals...)
-- Modules boxes on main page can be dragged and dropped (with firefox only).
-- Support credit note and discounts (relative and absolute) on
-  commercial proposal, orders and invoices.
 - Added an export assistant module to export main dolibarr data.
 - Added backup tool to backup database via mysqldump.
 - Added product categories management with a categorie tree.
 - Management of companies' discounts (relative or absolute).
+- Support credit note and discounts (relative and absolute) on
+  commercial proposal, orders and invoices.
 - Support multi-langual description for products.
 - Graphical enhancements (picto to describe all status).
 - Added more permissions (ie: can restrict access for a commercial user
@@ -51,6 +49,7 @@ English Dolibarr changelog
 - Added AJAX features like a 'search product selector'.
 - Modules boxes on main page can be dragged and dropped (with firefox only).
 - Support for PHP5.
+- Experimental support for Postgresql (not working yet, but waiting feedbacks).
 - Removed obsolete files and documentation.
 - Added admin tools (backup and files purge).
 - Added a tool to build a lang package.
