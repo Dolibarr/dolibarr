@@ -783,7 +783,7 @@ class Product
       }
     
     $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
-    $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte";
+    $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -807,7 +807,7 @@ class Product
 	$this->duration_value     = substr($result["duration"],0,strlen($result["duration"])-1);
 	$this->duration_unit      = substr($result["duration"],-1);
 	$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
-	
+	$this->canvas             = $result["canvas"];
 	$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 	
 	if ($this->type == 0)
