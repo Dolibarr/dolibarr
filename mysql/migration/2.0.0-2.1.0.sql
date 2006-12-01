@@ -60,6 +60,7 @@ ALTER TABLE llx_societe modify parent             integer;
 UPDATE llx_societe set parent = null where parent = 0;
 
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
+alter table llx_product add canvas varchar(15) DEFAULT '';
 
 insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PROFORMA',    6,1, 'Proforma','Réglement avant livraison',0,0);
 
