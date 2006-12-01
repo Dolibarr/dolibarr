@@ -32,13 +32,15 @@
 /**
    \class      Product
    \brief      Classe permettant la gestion des produits prédéfinis
+   \todo comment $typeprodserv
 */
 
 class Product
 {
   var $db ;
-  
+  //! Identifiant unique
   var $id ;
+  //! Référence
   var $ref;
   var $libelle;
   var $description;
@@ -47,7 +49,9 @@ class Product
   var $tva_tx;
   var $type;
   var $seuil_stock_alerte;
+  //! Duree de validite du service
   var $duration_value;
+  //! Unite de duree
   var $duration_unit;
   var $status;
   
@@ -56,11 +60,13 @@ class Product
   var $stats_contrat=array();
   var $stats_facture=array();
   var $multilangs=array();
-  
+
   var $typeprodserv;
   var $error;
-  var $canvas; // Canevas a utiliser si le produit n'est pas un produit generique
-  
+  //! Canevas a utiliser si le produit n'est pas un produit generique
+  var $canvas; 
+  //! Nombre de piece en commande, non expedie
+  var $stock_in_command;
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler accès base de données
@@ -783,7 +789,8 @@ class Product
       }
     
     $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
-    $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas";
+    $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
+    $sql.= " stock_commande";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -808,6 +815,9 @@ class Product
 	$this->duration_unit      = substr($result["duration"],-1);
 	$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 	$this->canvas             = $result["canvas"];
+
+	$this->stock_in_command   = $result["stock_in_command"];
+
 	$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 	
 	if ($this->type == 0)
