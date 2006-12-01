@@ -1892,9 +1892,8 @@ class Product
       }
   }
 
-
   /**
-   *    \brief  Augment ou réduit la valeur de stock pour le produit
+   *    \brief  Augmente ou réduit la valeur de stock pour le produit
    *    \param  user            utilisateur qui demande l'ajustement
    *    \param  id_entrepot     id de l'entrepot
    *    \param  nbpiece         nombre de pieces
@@ -1907,49 +1906,73 @@ class Product
 
     if ($this->db->begin())
       {
-
-	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-	$sql .= " SET stock_commande = stock_commande ".$op[$mouvement].", stock_propale = stock_propale ".$op[$mouvement];
-	$sql .= " WHERE rowid = $this->id ";
-
+	$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock ";
+	$sql .= " SET reel = reel ".$op[$mouvement];
+	$sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
+	
 	if ($this->db->query($sql) )
 	  {
-	    $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock ";
-	    $sql .= " SET reel = reel ".$op[$mouvement];
-	    $sql .= " WHERE fk_product = $this->id AND fk_entrepot = $id_entrepot";
-
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
+	    $sql .= " VALUES (now(), $this->id, $id_entrepot, ".$op[$mouvement].", 0, $user->id)";
+	    
 	    if ($this->db->query($sql) )
 	      {
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author)";
-		$sql .= " VALUES (now(), $this->id, $id_entrepot, ".$op[$mouvement].", 0, $user->id)";
-
-		if ($this->db->query($sql) )
-		  {
-		    $this->db->commit();
-		    return 1;
-		  }
-		else
-		  {
-		    dolibarr_print_error($this->db);
-		    $this->db->rollback();
-		    return -2;
-		  }
+		$this->db->commit();
+		return 1;
 	      }
 	    else
 	      {
 		dolibarr_print_error($this->db);
 		$this->db->rollback();
-		return -1;
+		return -2;
 	      }
 	  }
 	else
 	  {
- 	    dolibarr_print_error($this->db);
+	    dolibarr_print_error($this->db);
 	    $this->db->rollback();
-	    return -3;
-	  }
+	    return -1;
+	  }	
       }
   }
+  
+  /**
+   *    \brief  Augmente ou réduit le nombre de piece en commande a expedier
+   *    \param  nbpiece         nombre de pieces
+   *    \param  mouvement       0 = ajout, 1 = suppression
+   *    \return     int             < 0 si erreur, > 0 si ok
+   */
+  function ajust_stock_commande($nbpiece, $mouvement)
+  {
+    $op[0] = "+" . trim($nbpiece);
+    $op[1] = "-" . trim($nbpiece);
+
+    if ($this->db->begin())
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."product ";
+	$sql .= " SET stock_commande = stock_commande ".$op[$mouvement];
+	$sql .= " WHERE rowid = '".$this->id ."';";
+
+	if ($this->db->query($sql) )
+	  {
+	    $this->db->commit();
+	    return 1;
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	    $this->db->rollback();
+	    return -2;
+	  }
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+	$this->db->rollback();
+	return -3;
+      }
+  }
+
 
   /**
    *    \brief      Charge les informations en stock du produit
