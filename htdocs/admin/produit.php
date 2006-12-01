@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
- * Copyright (C) 2006      Andre Cianfarani          <acianfa@free.fr>
+/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/admin/produit.php
-		\ingroup    produit
-		\brief      Page d'administration/configuration du module Produit
-		\version    $Revision$
+   \file       htdocs/admin/produit.php
+   \ingroup    produit
+   \brief      Page d'administration/configuration du module Produit
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -38,110 +39,117 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'nbprod')
 {
-    dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"]);
-    Header("Location: produit.php");
-    exit;
+  dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"]);
+  Header("Location: produit.php");
+  exit;
 }
 else if ($_POST["action"] == 'multiprix_num')
 {
-    dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"]);
-    Header("Location: produit.php");
-    exit;
+  dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"]);
+  Header("Location: produit.php");
+  exit;
 }
 if ($_POST["action"] == 'multiprix')
 {
-	$res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
-	if(! $db->fetch_row($res))
+  $res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
+  if(! $db->fetch_row($res))
+    {
+      $field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
+      if ($_POST["activate_multiprix"])
 	{
-		$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
-		if ($_POST["activate_multiprix"])
+	  // on ajoute le champ price_level dans la table societe
+	  if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
+	    {
+	      dolibarr_print_error($db);
+	      exit;
+	    }
+	  // on crée la table societe_prices
+	  else
+	    {
+	      $table = MAIN_DB_PREFIX."societe_prices";
+	      $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+	      $fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
+	      $fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
+	      $fields['datec'] = array('type'=>'datetime','default'=> 'null');
+	      $fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
+	      $fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
+	      if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
 		{
-			// on ajoute le champ price_level dans la table societe
-			if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
-			{
-				dolibarr_print_error($db);
-				exit;
-			}
-			// on crée la table societe_prices
-			else
-			{
-				$table = MAIN_DB_PREFIX."societe_prices";
-				$fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-				$fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
-				$fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-				$fields['datec'] = array('type'=>'datetime','default'=> 'null');
-				$fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
-				$fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-				if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
-				{
-					dolibarr_print_error($db);
-					exit;
-				}
-			}
+		  dolibarr_print_error($db);
+		  exit;
 		}
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-		Header("Location: produit.php");
-		exit;
+	    }
 	}
-	else
-	{
-		dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-		dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-		Header("Location: produit.php");
-		exit;
-	}
+      dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+      dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+      Header("Location: produit.php");
+      exit;
+    }
+  else
+    {
+      dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
+      dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+      dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+      Header("Location: produit.php");
+      exit;
+    }
 }
 else if ($_POST["action"] == 'sousproduits')
 {
-  	$res=$db->DDLDescTable(MAIN_DB_PREFIX."product_association");
-	if(! $db->fetch_row($res))
+  $res=$db->DDLDescTable(MAIN_DB_PREFIX."product_association");
+  if(! $db->fetch_row($res))
+    {
+      $table = MAIN_DB_PREFIX."product_association";
+      $fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+      $fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
+      $fields['qty'] = array('type'=>'double','default'=> 'null');
+      $keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
+      $keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
+      if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
 	{
-		$table = MAIN_DB_PREFIX."product_association";
-		$fields['fk_product_pere'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-		$fields['fk_product_fils'] = array('type'=>'int','value'=>'11','null'=> 'not null','default'=> '0');
-		$fields['qty'] = array('type'=>'double','default'=> 'null');
-		$keys['idx_product_association_fk_product_pere'] = "fk_product_pere" ;
-		$keys['idx_product_association_fk_product_fils'] = "fk_product_fils" ;
-		if ($db->DDLCreateTable($table,$fields,"","InnoDB","","",$keys) < 0)
-		{
-			dolibarr_print_error($db);
-			exit;
-		}
-		else
-		{
-			dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
-			Header("Location: produit.php");
-			exit;
-	  }
+	  dolibarr_print_error($db);
+	  exit;
 	}
-	else
+      else
 	{
-		dolibarr_syslog("Table definition already ok");
-		dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
-		Header("Location: produit.php");
-		exit;
+	  dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+	  Header("Location: produit.php");
+	  exit;
 	}
+    }
+  else
+    {
+      dolibarr_syslog("Table definition already ok");
+      dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
+      Header("Location: produit.php");
+      exit;
+    }
 }
 else if ($_POST["action"] == 'changeproductdesc')
 {
-    dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-    dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", 0);
-    Header("Location: produit.php");
-    exit;
+  dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
+  dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", 0);
+  Header("Location: produit.php");
+  exit;
 }
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
-    dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
-    Header("Location: produit.php");
-    exit;
+  dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
+  Header("Location: produit.php");
+  exit;
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
-    dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
-    Header("Location: produit.php");
-    exit;
+  dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
+  Header("Location: produit.php");
+  exit;
+}
+else if ($_GET["action"] == 'set')
+{
+  $const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
+  dolibarr_set_const($db, $const, $_GET["value"]);
+  Header("Location: produit.php");
+  exit;
 }
 
 
@@ -150,7 +158,6 @@ else if ($_POST["action"] == 'usesearchtoselectproduct')
  */
 
 llxHeader('',$langs->trans("ProductSetup"));
-
 
 print_fiche_titre($langs->trans("ProductSetup"),'','setup');
 
@@ -195,15 +202,15 @@ print '</form>';
 // multiprix nombre de prix a proposer
 if($conf->global->PRODUIT_MULTIPRICES == 1)
 {
-	$var=!$var;
-	print "<form method=\"post\" action=\"produit.php\">";
-	print "<input type=\"hidden\" name=\"action\" value=\"multiprix_num\">";
-	print "<tr ".$bc[$var].">";
-	print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
-	print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_MULTIPRICES_LIMIT."\"></td>";
-	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-	print '</tr>';
-	print '</form>';
+  $var=!$var;
+  print "<form method=\"post\" action=\"produit.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"multiprix_num\">";
+  print "<tr ".$bc[$var].">";
+  print '<td>'.$langs->trans("MultiPricesNumPrices").'</td>';
+  print "<td align=\"right\"><input size=\"3\" type=\"text\" class=\"flat\" name=\"value\" value=\"".$conf->global->PRODUIT_MULTIPRICES_LIMIT."\"></td>";
+  print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+  print '</tr>';
+  print '</form>';
 }
 
 // sousproduits activation/desactivation
@@ -228,17 +235,17 @@ print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProduct").'</td>';
 if (! $conf->use_ajax)
 {
-	print '<td width="60" align="right" colspan="2">';
-	print $langs->trans("NotAvailableWhenAjaxDisabled");	
-	print "</td>";
+  print '<td width="60" align="right" colspan="2">';
+  print $langs->trans("NotAvailableWhenAjaxDisabled");	
+  print "</td>";
 }
 else
 {
-	print '<td width="60" align="right">';
-	print $html->selectyesno("activate_usesearchtoselectproduct",$conf->global->PRODUIT_USE_SEARCH_TO_SELECT,1);
-	print '</td><td align="right">';
-	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-	print "</td>";
+  print '<td width="60" align="right">';
+  print $html->selectyesno("activate_usesearchtoselectproduct",$conf->global->PRODUIT_USE_SEARCH_TO_SELECT,1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
 }
 print '</tr>';
 print '</form>';
@@ -260,7 +267,7 @@ print '</form>';
 
 if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
 {
-	// Visualiser description produit dans les formulaires activation/desactivation
+  // Visualiser description produit dans les formulaires activation/desactivation
   $var=!$var;
   print "<form method=\"post\" action=\"produit.php\">";
   print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
@@ -274,6 +281,66 @@ if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
   print '</tr>';
   print '</form>';
 }
+
+print '<tr class="liste_titre">';
+print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
+print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
+print "  <td width=\"80\">&nbsp;</td></tr>\n";
+
+require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
+$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+
+if(is_dir($dir))
+{
+  $handle=opendir($dir);
+  $var=true;
+  
+  while (($file = readdir($handle))!==false)
+    {
+      if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
+	{
+	  $parts = explode('.',$file);
+	  $classname = 'Product'.ucfirst($parts[1]);
+	  
+	  require_once($dir.$file);
+	  
+	  $module = new $classname();
+	  
+	  $var=!$var;
+	  print "<tr $bc[$var]><td>";
+  
+	  print $module->description;
+	  
+	  print '</td><td align="center">';
+
+	  
+	  
+	  if (defined ("PRODUIT_SPECIAL_LIVRE") && PRODUIT_SPECIAL_LIVRE == 1)
+	    {
+	      print img_tick();
+	      print '</td><td align="center">';
+	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';	      
+	    }
+	  else
+	    {
+	      print '&nbsp;</td><td align="center">';
+	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
+	    }
+	  
+	  print '</td>';
+	  
+	  print '</tr>';
+	}
+    }
+  closedir($handle);
+}
+else
+{
+  print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+}
+
+
+
 
 print '</table>';
 
