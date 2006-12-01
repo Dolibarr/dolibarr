@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Régis Houssin        <regis.houssin@cap-networks.com>
@@ -24,10 +24,10 @@
  */
 
 /**
-        \file       htdocs/product/sousproduits/fiche.php
-        \ingroup    product
-        \brief      Page de la fiche produit
-        \version    $Revision$
+   \file       htdocs/product/sousproduits/fiche.php
+   \ingroup    product
+   \brief      Page de la fiche produit
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -35,11 +35,8 @@ require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 	
-
-
 $langs->load("bills");
 $langs->load("products");
-
 
 $mesg = '';
 $ref=isset($_GET["ref"])?$_GET["ref"]:$_POST["ref"];
@@ -143,81 +140,80 @@ $html = new Form($db);
 if ($id || $ref)
 {
 
-    if ( $result )
+  if ( $result )
     {
-
-        if ($action <> 'edit' &&$action <> 'search' && $action <> 're-edit')
-        {
-            /*
-             *  En mode visu
-             */
-			$head=product_prepare_head($product);
-			$titre=$langs->trans("CardProduct".$product->type);
-			dolibarr_fiche_head($head, 'subproduct', $titre);
-
-
-            print($mesg);
-            
-            print '<table class="border" width="100%">';
-
-            print "<tr>";
-
-            $nblignes=6;
-            if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-            if ($product->type == 1) $nblignes++;
-
-            // Reference
-            print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-            
-            // Suivant/précédent
-            $product->load_previous_next_ref();
-	          $previous_ref = $product->ref_previous?'<a href="?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	          $next_ref     = $product->ref_next?'<a href="?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-	          if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	          print '<a href="?id='.$product->id.'">'.$product->ref.'</a>';
-	          if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-            
-            print '</td>';
-            
-            if ($product->is_photo_available($conf->produit->dir_output))
+      
+      if ($action <> 'edit' &&$action <> 'search' && $action <> 're-edit')
+	{
+	  /*
+	   *  En mode visu
+	   */
+	  $head=product_prepare_head($product);
+	  $titre=$langs->trans("CardProduct".$product->type);
+	  dolibarr_fiche_head($head, 'subproduct', $titre);
+	  
+	  
+	  print($mesg);
+	  
+	  print '<table class="border" width="100%">';
+	  
+	  print "<tr>";
+	  
+	  $nblignes=6;
+	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
+	  if ($product->type == 1) $nblignes++;
+	  
+	  // Reference
+	  print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
+	  
+	  // Suivant/précédent
+	  $product->load_previous_next_ref();
+	  $previous_ref = $product->ref_previous?'<a href="?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+	  $next_ref     = $product->ref_next?'<a href="?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+	  print '<a href="?id='.$product->id.'">'.$product->ref.'</a>';
+	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+	  
+	  print '</td>';
+	  
+	  if ($product->is_photo_available($conf->produit->dir_output))
             {
-                // Photo
-                print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-                $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-                print '</td>';
+	      // Photo
+	      print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
+	      $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+	      print '</td>';
             }
-            
-            print '</tr>';
-
-            // Libelle
-            print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-            print '</tr>';
-			
-			$product->get_sousproduits_arbo ();
-            print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
-            
+	  
+	  print '</tr>';
+	  
+	  // Libelle
+	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
+	  print '</tr>';
+	  
+	  $product->get_sousproduits_arbo ();
+	  print '<tr><td>'.$langs->trans("AssociatedProductsNumber").'</td><td>'.sizeof($product->get_arbo_each_prod()).'</td>';
+	  
           // associations sousproduits
-		$prods_arbo = $product->get_arbo_each_prod();
-		if(sizeof($prods_arbo) > 0)
+	  $prods_arbo = $product->get_arbo_each_prod();
+	  if(sizeof($prods_arbo) > 0)
+	    {
+	      print '<tr><td colspan="2">';
+	      print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
+	      foreach($prods_arbo as $key => $value)
 		{
-			print '<tr><td colspan="2">';
-			print '<b>'.$langs->trans("ProductAssociationList").'</b><br>';
-			foreach($prods_arbo as $key => $value)
-			{
-				// print $value[1].' :: '.$value[0].'<br>';
-				print $value[0].'<br>';
-			}
-					 
-		
-            print '</td></tr>';
+		  print '- <a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$value[1].'">'.$value[0].'</a><br>';
+		}
+	      
+	      
+	      print '</td></tr>';
             }
-
-            print "</table>\n";
-
-            print "</div>\n";
+	  
+	  print "</table>\n";
+	  
+	  print "</div>\n";
         }
     }
-
+  
     /*
      * Fiche en mode edition
      */
