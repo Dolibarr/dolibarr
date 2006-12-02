@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -22,10 +22,10 @@
  */
  
 /**
-		\file       htdocs/product/stock/mouvement.php
-		\ingroup    stock
-		\brief      Page liste des mouvements de stocks
-		\version    $Revision$
+   \file       htdocs/product/stock/mouvement.php
+   \ingroup    stock
+   \brief      Page liste des mouvements de stocks
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -52,13 +52,15 @@ $sql.= " m.value, ".$db->pdate("m.datem")." as datem";
 $sql.= " FROM ".MAIN_DB_PREFIX."entrepot as s, ".MAIN_DB_PREFIX."stock_mouvement as m, ".MAIN_DB_PREFIX."product as p";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 $sql .= " WHERE m.fk_product = p.rowid AND m.fk_entrepot = s.rowid";
+if ($_GET["id"])
+  $sql .= " AND s.rowid ='".$_GET["id"]."'";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-	$sql.= ' AND IFNULL(c.visible,1)=1';
+  $sql.= " AND IFNULL(c.visible,1)=1";
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($conf->liste_limit + 1 ,$offset);
@@ -66,31 +68,31 @@ $resql = $db->query($sql) ;
 
 if ($resql)
 {
-	$num = $db->num_rows($result);
-
-	if ($_GET["id"])
+  $num = $db->num_rows($result);
+  
+  if ($_GET["id"])
+    {
+      $entrepot = new Entrepot($db);
+      $result = $entrepot->fetch($_GET["id"]);
+      if ($result < 0)
 	{
-	    $entrepot = new Entrepot($db);
-	    $result = $entrepot->fetch($_GET["id"]);
-	    if ($result < 0)
-	    {
-	        dolibarr_print_error($db);
-	    }
+	  dolibarr_print_error($db);
 	}
-	
-	$i = 0;
-
-	$texte = $langs->trans("ListOfStockMovements");
-	llxHeader("","",$texte);
-
-
-	/*
-	* Affichage onglets
-	*/
-	if ($_GET["id"])
-	{
+    }
+  
+  $i = 0;
+  
+  $texte = $langs->trans("ListOfStockMovements");
+  llxHeader("","",$texte);
+  
+  
+  /*
+   * Affichage onglets
+   */
+  if ($_GET["id"])
+    {
 		$h = 0;
-	
+		
 		$head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche.php?id='.$entrepot->id;
 		$head[$h][1] = $langs->trans("WarehouseCard");
 		$h++;
