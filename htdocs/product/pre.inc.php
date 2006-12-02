@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-		\file       htdocs/product/pre.inc.php
-		\ingroup    product,service
-		\brief      Fichier gestionnaire du menu gauche des produits et services
-		\version    $Revision$
+   \file       htdocs/product/pre.inc.php
+   \ingroup    product,service
+   \brief      Fichier gestionnaire du menu gauche des produits et services
+   \version    $Revision$
 */
 require("../main.inc.php");
 
@@ -36,56 +36,84 @@ $user->getrights('facture');
 
 function llxHeader($head = "", $urlp = "", $title="")
 {
-	global $user, $conf, $langs;
-	$langs->load("products");
-	$user->getrights("produit");
-	
-	top_menu($head, $title);
-	
-	$menu = new Menu();
-	
-	if ($conf->produit->enabled)
+  global $user, $conf, $langs;
+  $langs->load("products");
+  $user->getrights("produit");
+  
+  top_menu($head, $title);
+  
+  $menu = new Menu();
+  
+  if ($conf->produit->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
+      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
+      
+      if ($user->societe_id == 0 && $user->rights->produit->creer)
 	{
-		$menu->add(DOL_URL_ROOT."/product/index.php?type=0", $langs->trans("Products"));
-		$menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=0", $langs->trans("List"));
-	
-		if ($user->societe_id == 0 && $user->rights->produit->creer)
+	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+	}
+    }
+  
+  // Produit specifique
+  $dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+
+  if(is_dir($dir))
+    {
+      if ($handle = opendir($dir))
+	{
+	  while (($file = readdir($handle))!==false)
+	    {
+	      if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 		{
-			$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0", $langs->trans("NewProduct"));
+		  $parts = explode('.',$file);
+		  $classname = 'Product'.ucfirst($parts[1]);
+		  
+		  require_once($dir.$file);
+		  
+		  $module = new $classname();
+		  
+		  if ($module->active === '1')
+		    {
+		      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0&amp;canvas=".$module->canvas, $langs->trans($module->menu_new));
+		    }
 		}
+	    }
+	  closedir($handle);
 	}
-	
-	if ($conf->service->enabled)
+    }
+
+  if ($conf->service->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
+      $menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
+      if ($user->societe_id == 0  && $user->rights->produit->creer)
 	{
-		$menu->add(DOL_URL_ROOT."/product/index.php?type=1", $langs->trans("Services"));
-		$menu->add_submenu(DOL_URL_ROOT."/product/liste.php?type=1", $langs->trans("List"));
-		if ($user->societe_id == 0  && $user->rights->produit->creer)
-		{
-			$menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
-		}
+	  $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=1", $langs->trans("NewService"));
 	}
-	
-	if ($conf->fournisseur->enabled) {
-		$langs->load("suppliers");
-		$menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
-	}
-	
-	$menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
-	if ($conf->propal->enabled)
-	{
-		$menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"));
-	}
-	
-	if ($conf->stock->enabled)
-	{
-		$menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
-	}
-	
-	if ($conf->categorie->enabled)
-	{
-		$menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
-	}
-	
-	left_menu($menu->liste);
+    }
+  
+  if ($conf->fournisseur->enabled) {
+    $langs->load("suppliers");
+    $menu->add(DOL_URL_ROOT."/fourn/index.php", $langs->trans("Suppliers"));
+  }
+  
+  $menu->add(DOL_URL_ROOT."/product/stats/", $langs->trans("Statistics"));
+  if ($conf->propal->enabled)
+    {
+      $menu->add_submenu(DOL_URL_ROOT."/product/popuprop.php", $langs->trans("Popularity"));
+    }
+  
+  if ($conf->stock->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
+    }
+  
+  if ($conf->categorie->enabled)
+    {
+      $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
+    }
+  
+  left_menu($menu->liste);
 }
 ?>
