@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
@@ -23,10 +23,10 @@
  */
 
 /**
-        \file       htdocs/product/fournisseurs.php
-        \ingroup    product
-        \brief      Page de l'onglet fournisseur de produits
-        \version    $Revision$
+   \file       htdocs/product/fournisseurs.php
+   \ingroup    product
+   \brief      Page de l'onglet fournisseur de produits
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -333,17 +333,18 @@ if ($_GET["id"] || $_GET["ref"])
           // Modifier-Supprimer
           print '<td align="center">';
           if ($user->rights->produit->creer) {
-	            print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'&amp;price='.$objp->price.'">'.img_edit()."</a>";
-                print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'">';
+	    print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'&amp;price='.$objp->price.'">'.img_edit()."</a>";
+	    print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'">';
+	    print img_disable($langs->trans("Remove")).'</a>';
           }
-          print img_disable($langs->trans("Remove")).'</a>';
+
           print '</td>';
           
-		  print '</tr>';
-
-		  $i++;
+	  print '</tr>';
+	  
+	  $i++;
 		}
-
+	      
 	      $db->free($resql);
 	    }
 	    else {
