@@ -38,7 +38,7 @@ $user->getrights('facture');
 function llxHeader($head = "", $urlp = "", $title="")
 {
   global $user, $conf, $langs;
-  $langs->load("products");
+
   $user->getrights("produit");
   
   top_menu($head, $title);
@@ -83,6 +83,8 @@ function llxHeader($head = "", $urlp = "", $title="")
 	  closedir($handle);
 	}
     }
+
+  $menu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Reassort"));
 
   if ($conf->service->enabled)
     {
