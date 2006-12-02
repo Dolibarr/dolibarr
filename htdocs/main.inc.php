@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -24,9 +24,9 @@
  */
 
 /**
-        \file       htdocs/main.inc.php
-        \brief      Fichier de formatage generique des ecrans Dolibarr
-        \version    $Revision$
+   \file       htdocs/main.inc.php
+   \brief      Fichier de formatage generique des ecrans Dolibarr
+   \version    $Revision$   
 */
 
 // Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
@@ -51,14 +51,10 @@ if (get_magic_quotes_gpc())
    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 }
 
-
 require_once("master.inc.php");
-
 
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
-
-
 
 /*
  * Phase identification
@@ -270,6 +266,22 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
+// SMARTY
+// Definit dans le fichier de conf
+// $dolibarr_smarty_libs_dir="/home/www/dolitar/external-libs/smarty/libs/";
+// $dolibarr_smarty_compile="/home/www/dolitar/smarty_templates";
+// $dolibarr_smarty_cache="/home/www/dolitar/smarty_cache";
+
+$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
+if (file_exists ($smarty_libs))
+{
+  require($smarty_libs);
+  $smarty = new Smarty();
+  $smarty->compile_dir = $dolibarr_smarty_compile;
+  $smarty->cache_dir = $dolibarr_smarty_cache;
+  //$smarty->config_dir = '/web/www.domain.com/smarty/configs';
+}
+
 // Defini gestionnaire de menu a utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
@@ -291,14 +303,13 @@ if (! $user->login) accessforbidden();
 // Verifie si user actif
 if ($user->statut < 1)
 {
-	// Si non actif, on delogue le user
-	$langs->load("other");
-    dolibarr_syslog ("Authentification ko (en mode Pear Base Dolibarr) car login desactive");
-	accessforbidden($langs->trans("ErrorLoginDisabled"));
-	exit;
+  // Si non actif, on delogue le user
+  $langs->load("other");
+  dolibarr_syslog ("Authentification ko (en mode Pear Base Dolibarr) car login desactive");
+  accessforbidden($langs->trans("ErrorLoginDisabled"));
+  exit;
 }
 			
-
 
 dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"]);
 
@@ -316,34 +327,34 @@ $langs->load("main");
  */
 if (defined("MAIN_NOT_INSTALLED"))
 {
-    Header("Location: ".DOL_URL_ROOT."/install/index.php");
-    exit;
+  Header("Location: ".DOL_URL_ROOT."/install/index.php");
+  exit;
 }
 
 // Constantes utilise pour definir le nombre de lignes des textarea
 if (! eregi("firefox",$_SERVER["HTTP_USER_AGENT"]))
 {
-    define('ROWS_1',1);
-    define('ROWS_2',2);
-    define('ROWS_3',3);
-    define('ROWS_4',4);
-    define('ROWS_5',5);
-    define('ROWS_6',6);
-    define('ROWS_7',7);
-    define('ROWS_8',8);
-    define('ROWS_9',9);
+  define('ROWS_1',1);
+  define('ROWS_2',2);
+  define('ROWS_3',3);
+  define('ROWS_4',4);
+  define('ROWS_5',5);
+  define('ROWS_6',6);
+  define('ROWS_7',7);
+  define('ROWS_8',8);
+  define('ROWS_9',9);
 }
 else
 {
-    define('ROWS_1',0);
-    define('ROWS_2',1);
-    define('ROWS_3',2);
-    define('ROWS_4',3);
-    define('ROWS_5',4);
-    define('ROWS_6',5);
-    define('ROWS_7',6);
-    define('ROWS_8',7);
-    define('ROWS_9',8);
+  define('ROWS_1',0);
+  define('ROWS_2',1);
+  define('ROWS_3',2);
+  define('ROWS_4',3);
+  define('ROWS_5',4);
+  define('ROWS_6',5);
+  define('ROWS_7',6);
+  define('ROWS_8',7);
+  define('ROWS_9',8);
 }
 
 
