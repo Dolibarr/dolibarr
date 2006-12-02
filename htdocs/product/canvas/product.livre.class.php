@@ -39,11 +39,33 @@ class ProductLivre extends Product
    *    \param      DB          Handler accès base de données
    *    \param      id          Id produit (0 par defaut)
    */
-  function ProductLivre($DB, $id=0)
+  function ProductLivre($DB=0, $id=0)
   {
     $this->db = $DB;
     $this->id = $id ;
     $this->canvas = "livre";
+    $this->name = "livre";
+    $this->description = "Gestion des livres";
+    $this->active = PRODUIT_SPECIAL_LIVRE;
+    $this->menu_new = 'NewBook';
+  }
+  /**
+   *    \brief      Creation
+   *    \param      id          Id livre ('' par defaut)
+   */
+  function CreateCanvas($id)
+  {
+    $sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre (rowid)";
+    $sql.= " VALUES ('".$id."');";
+
+    $result = $this->db->query($sql) ;
+
+    $sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre_contrat (fk_cnv_livre)";
+    $sql.= " VALUES ('".$id."');";
+
+    $result = $this->db->query($sql) ;
+
+    return 0;
   }
   /**
    *    \brief      Lecture des donnees dans la base
@@ -56,8 +78,7 @@ class ProductLivre extends Product
 
     if ($result >= 0)
       {
-	$sql = "SELECT rowid,isbn,ean,pages,px_feuillet";
-
+	$sql = "SELECT rowid,isbn,ean,pages,px_feuillet,px_couverture,format";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre";
 	if ($id) $sql.= " WHERE rowid = '".$id."'";
 	if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -71,7 +92,27 @@ class ProductLivre extends Product
 	    $this->isbn               = $result["isbn"];
 	    $this->ean                = $result["ean"];
 	    $this->pages              = $result["pages"];
+	    $this->format             = $result["format"];
 	    $this->px_feuillet        = $result["px_feuillet"];
+	    $this->px_couverture      = $result["px_couverture"];
+
+	    $this->db->free();
+	  }
+
+	$sql = "SELECT quantite,taux,duree";
+
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre_contrat";
+	$sql.= " WHERE fk_cnv_livre = '".$this->id."'";
+	
+	$result = $this->db->query($sql) ;
+
+	if ( $result )
+	  {
+	    $result = $this->db->fetch_array();
+
+	    $this->contrat_taux       = $result["taux"];
+	    $this->contrat_duree      = $result["duree"];
+	    $this->contrat_quantite   = $result["quantite"];
 
 	    $this->db->free();
 	  }
@@ -100,20 +141,61 @@ class ProductLivre extends Product
 
     $ean = $ean . $this->calculate_ean_key($ean);
 
-    $pages = trim($datas["pages"]);
-    $px_feuillet = trim($datas["px_feuillet"]);
+    $pages         = abs(trim($datas["pages"]));
+    $px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
+    $px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
+
+    $px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
+
+    $stock_loc     = trim($datas["stock_loc"]);
+    $format        = trim($datas["format"]);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre ";
     $sql .= " SET isbn = '$isbn'";
     $sql .= " , ean = '$ean'";
-    $sql .= " , pages = '$pages'";
-    $sql .= " , px_feuillet = '$px_feuillet'";
+    $sql .= " , pages         = '$pages'";
+    $sql .= " , px_feuillet   = '$px_feuillet'";
+    $sql .= " , px_couverture = '$px_couverture'";
+    $sql .= " , px_revient    = '$px_revient'";
+    $sql .= " , stock_loc     = '$stock_loc'";
+    $sql .= " , format        = '$format'";
     $sql .= " WHERE rowid = " . $this->id;
 
     if ( $this->db->query($sql) )
       {
 
       }
+
+    $taux   = str_replace(',','.',abs(trim($datas["contrat_taux"])));
+    $quant  = trim($datas["contrat_quant"]);
+    $duree  = trim($datas["contrat_duree"]);
+
+    $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre_contrat ";
+    $sql .= " SET taux    = '$taux'";
+    $sql .= " , duree     = '$duree'";
+    $sql .= " , quantite  = '$quant'";
+
+    $sql .= " WHERE fk_cnv_livre = " . $this->id;
+
+    if ( $this->db->query($sql) )
+      {
+
+      }
+
+  }
+  /**
+   *    \brief      Calcule le prix de revient d'un livre
+   *    \param      pages     Nombre de pages
+   *    \param      couv      Prix de la couverture
+   *    \param      feuil     Prix d'un feuillet
+   *    \param      quant     Nombre de drois achetes
+   *    \note       source http://fr.wikipedia.org/wiki/ISBN
+   */
+  function _calculate_prix_revient($pages, $couv, $feuil, $quant)
+  {
+    $cost = ( ($pages / 2 * $feuil) + $couv ) * $quant;
+
+    return $cost;
   }
   /**
    *    \brief      Calcule la clef d'un numero ISBN
@@ -172,20 +254,31 @@ class ProductLivre extends Product
 
     $isbn_parts = explode('-',$this->isbn);
     
-    $smarty->assign('prod_isbna',    $isbn_parts[0]);
-    $smarty->assign('prod_isbnb',    $isbn_parts[1]);
-    $smarty->assign('prod_isbnc',    $isbn_parts[2]);
+    $smarty->assign('prod_isbna',     $isbn_parts[0]);
+    $smarty->assign('prod_isbnb',     $isbn_parts[1]);
+    $smarty->assign('prod_isbnc',     $isbn_parts[2]);
 
-    $smarty->assign('prod_ean',     $this->ean);
+    $smarty->assign('prod_ean',       $this->ean);
 
-    $smarty->assign('prod_isbn13',  '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
+    $smarty->assign('prod_isbn13',    '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
 
-    $smarty->assign('prod_ref',     $this->ref);
-    $smarty->assign('prod_pages',   $this->pages);
-    $smarty->assign('prod_pxfeuil', $this->px_feuillet);
-    $smarty->assign('prod_pxvente', price($this->price));
+    $smarty->assign('prod_ref',       $this->ref);
+    $smarty->assign('prod_pages',     $this->pages);
+    $smarty->assign('prod_format',    $this->format);
+    $smarty->assign('prod_pxfeuil',   $this->px_feuillet);
+    $smarty->assign('prod_pxcouv',    $this->px_couverture);
+    $smarty->assign('prod_pxrevient', price($this->px_revient));
+    $smarty->assign('prod_pxvente',   price($this->price));
+    $smarty->assign('prod_label',     $this->libelle);
 
-    $smarty->assign('prod_label', $this->libelle);
+    $smarty->assign('prod_contrat_taux',     $this->contrat_taux);
+    $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
+    $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
+
+    $smarty->assign('prod_stock_reel',        $this->stock_reel);
+    $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
+    $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
+    $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
   }
 
 }
