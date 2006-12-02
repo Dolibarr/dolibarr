@@ -87,62 +87,62 @@ if ($_GET["action"] == 'remove_fourn')
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 
-    $product = new Product($db);
-    if( $product->fetch($_GET["id"]) )
+  $product = new Product($db);
+  if( $product->fetch($_GET["id"]) )
     {
-        $db->begin();
-
-        $error=0;
-
-        if ($_POST["ref_fourn"])
+      $db->begin();
+      
+      $error=0;
+      
+      if ($_POST["ref_fourn"])
         {
-        	$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
-        	if ($ret < 0)
-        	{
-        		$error++;
-        		$mesg='<div class="error">'.$product->error.'</div>';
-        	}
+	  $ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
+	  if ($ret < 0)
+	    {
+	      $error++;
+	      $mesg='<div class="error">'.$product->error.'</div>';
+	    }
         }
-        else
+      else
         {
-        	$error++;
-        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
+	  $error++;
+	  $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Ref")).'</div>';
         }
-        
-        if ($_POST["qty"])
+      
+      if ($_POST["qty"])
         {
-        	if ($_POST["price"] > 0)
-        	{
-        		$ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
-        		if ($ret < 0)
-        		{
-        			$error++;
-        			$mesg='<div class="error">'.$product->error.'</div>';
-        			if ($ret == -2)
-        			{
-        				$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
-        			}
-        		}
-          }
+	  if ($_POST["price"] >= 0)
+	    {
+	      $ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
+	      if ($ret < 0)
+		{
+		  $error++;
+		  $mesg='<div class="error">'.$product->error.'</div>';
+		  if ($ret == -2)
+		    {
+		      $mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
+		    }
+		}
+	    }
           else
-          {
-          	$error++;
-          	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Price")).'</div>';
-          }
+	    {
+	      $error++;
+	      $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Price")).'</div>';
+	    }
         }
-        else
+      else
         {
-        	$error++;
-        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Qty")).'</div>';
+	  $error++;
+	  $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Qty")).'</div>';
         }
-        	        
-        if (! $error)
+      
+      if (! $error)
         {
-            $db->commit();
+	  $db->commit();
         }
-        else {
-            $db->rollback();
-        }
+      else {
+	$db->rollback();
+      }
     }
 }
 
@@ -215,45 +215,45 @@ if ($_GET["id"] || $_GET["ref"])
 
 
         // Formulaire ajout prix
-		  if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
-		    {
-		      $langs->load("suppliers");
-			  
-              if ($_GET["id_fourn"]) {
-                  print_fiche_titre($langs->trans("ChangeSupplierPrice"));
-	          } else {
-                  print_fiche_titre($langs->trans("AddSupplierPrice"));
-	          }		  
-		      print '<table class="border" width="100%">';
-		      print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
-		      print '<input type="hidden" name="action" value="updateprice">';
-
-              if ($_GET["id_fourn"]) {
-		        print '<input type="hidden" name="id_fourn" value="'.$_GET["id_fourn"].'">';
-                $product->fetch_fourn_data($_GET["id_fourn"]);
-                print '<input type="hidden" name="ref_fourn" value="'.$product->ref_fourn.'">';
-		      } else {
-      	        print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
-      	        $html=new Form($db);
-      	        $html->select_societes('','id_fourn','fournisseur=1');
-      	        print '</td></tr>';
-      	        print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-                print '<input class="flat" name="ref_fourn" size="25" value="">';
-      	        print '</td></tr>';
+	if ($_GET["action"] == 'add_price' && $user->rights->produit->creer)
+	  {
+	    $langs->load("suppliers");
+	    
+	    if ($_GET["id_fourn"]) {
+	      print_fiche_titre($langs->trans("ChangeSupplierPrice"));
+	    } else {
+	      print_fiche_titre($langs->trans("AddSupplierPrice"));
+	    }		  
+	    print '<table class="border" width="100%">';
+	    print '<form action="fournisseurs.php?id='.$product->id.'" method="post">';
+	    print '<input type="hidden" name="action" value="updateprice">';
+	    
+	    if ($_GET["id_fourn"]) {
+	      print '<input type="hidden" name="id_fourn" value="'.$_GET["id_fourn"].'">';
+	      $product->fetch_fourn_data($_GET["id_fourn"]);
+	      print '<input type="hidden" name="ref_fourn" value="'.$product->ref_fourn.'">';
+	    } else {
+	      print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
+	      $html=new Form($db);
+	      $html->select_societes('','id_fourn','fournisseur=1');
+	      print '</td></tr>';
+	      print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+	      print '<input class="flat" name="ref_fourn" size="25" value="">';
+	      print '</td></tr>';
             }
-            			  
-		      print '<tr><td>'.$langs->trans("Qty").'</td>';
-		      $quantity = $_GET["qty"] ? $_GET["qty"] : "1";
- 		      print '<td><input class="flat" name="qty" size="5" value="'.$quantity.'"></td>';
-		      print '<td>'.$langs->trans("Price").'</td>';
-		      print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
-
-		      print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
-		      print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-		      print '</form>';
-		      print '</table>';
-		    }    
-
+	    
+	    print '<tr><td>'.$langs->trans("Qty").'</td>';
+	    $quantity = $_GET["qty"] ? $_GET["qty"] : "1";
+	    print '<td><input class="flat" name="qty" size="5" value="'.$quantity.'"></td>';
+	    print '<td>'.$langs->trans("Price").'</td>';
+	    print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
+	    
+	    print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+	    print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	    print '</form>';
+	    print '</table>';
+	  }    
+	
         /* ************************************************************************** */
         /*                                                                            */ 
         /* Barre d'action                                                             */ 
