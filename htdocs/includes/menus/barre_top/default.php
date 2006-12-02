@@ -96,7 +96,7 @@ class MenuTop {
         else {
             $id="";
         }
-        print '<td class="tmenu"><a class="tmenu" '.($id?'id="'.$id.'" ':'').'href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
+        print '<td class="tmenu"><a class="tmenu" '.($id?'id="'.$id.'" ':'').'href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
         // Adherent
         if ($conf->adherent->enabled && $user->rights->adherent->lire)
