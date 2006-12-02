@@ -56,7 +56,7 @@ function llxHeader($head = "", $title="", $addons='') {
       // Sécurité accés client
       if ($user->societe_id == 0 && $user->rights->societe->creer) 
         {
-          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&type=f",$langs->trans("NewSupplier"));
+          $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
         }
     }
   
