@@ -25,6 +25,7 @@
    \ingroup    product,service
    \brief      Fichier gestionnaire du menu gauche des produits et services
    \version    $Revision$
+   \todo       Rodo - Gere les menus depuis les canvas
 */
 require("../main.inc.php");
 
