@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -151,7 +151,7 @@ if ($resql)
     }
 
     print_barre_liste($langs->trans("BillsSuppliers").($socid?" $soc->nom":""),$page,"index.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
-
+    print '<form method="get" action="index.php">';
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"index.php","facnumber","&amp;socid=$socid","","",$sortfield);
@@ -164,9 +164,9 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form method="get" action="index.php">';
+
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre" align="right">';
     print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
     print '</td><td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';
@@ -182,7 +182,6 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
     print "</tr>\n";
-    print '</form>';
 
     $facturestatic = new FactureFournisseur($db);
 
@@ -228,7 +227,8 @@ if ($resql)
         }
       }
     
-    print "</table>";
+    print "</table>\n";
+    print "</form>\n";
     $db->free($resql);
 }
 else

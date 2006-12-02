@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -89,7 +89,7 @@ else
   dolibarr_print_error($db);
 }
 
-print '</td><td witdh="70%" valign="top">';
+print '</td><td width="70%" valign="top">';
 
 $sql = "SELECT u.name, u.firstname";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";

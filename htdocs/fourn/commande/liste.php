@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,16 +21,15 @@
  */
 
 /** 
-        \file       htdocs/fourn/commande/liste.php
-        \ingroup    fournisseur
-        \brief      Liste des commandes fournisseurs
-        \version    $Revision$
+    \file       htdocs/fourn/commande/liste.php
+    \ingroup    fournisseur
+    \brief      Liste des commandes fournisseurs
+    \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("orders");
-
 
 $page  = ( is_numeric($_GET["page"]) ?  $_GET["page"] : 0 );
 $socid = ( is_numeric($_GET["socid"]) ? $_GET["socid"] : 0 );
@@ -107,7 +106,7 @@ if ($resql)
 
 
     print_barre_liste($title, $page, "liste.php", "", $sortfield, $sortorder, '', $num);
-
+    print '<form action="liste.php" method="GET">';
     print '<table class="liste">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
@@ -118,13 +117,12 @@ if ($resql)
     print "</tr>\n";
 
     print '<tr class="liste_titre">';
-    print '<form action="liste.php" method="GET">';
+
     print '<td><input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'"></td>';
     print '<td><input type="text" class="flat" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
     print '<td colspan="2" class="liste_titre" align="right">';
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
-    print '</form>';
     print '</tr>';
 
     $var=true;
@@ -161,7 +159,9 @@ if ($resql)
         print "</tr>\n";
         $i++;
     }
-    print "</table>";
+    print "</table>\n";
+    print "</form>\n";
+
     $db->free($resql);
 }
 else

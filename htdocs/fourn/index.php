@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -98,6 +98,7 @@ if ($resql)
   
   print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
 
+  print '<form action="index.php" method="GET">';
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
@@ -109,7 +110,7 @@ if ($resql)
   print "</tr>\n";
 
   print '<tr class="liste_titre">';
-  print '<form action="index.php" method="GET">';
+
   print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
   print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
 
@@ -123,7 +124,7 @@ if ($resql)
 
 
   print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
-  print '</form>';
+
   print '</tr>';
 
   $var=True;
@@ -144,7 +145,8 @@ if ($resql)
       print "</tr>\n";
       $i++;
     }
-  print "</table>";
+  print "</table>\n";
+  print "</form>\n";
   $db->free($resql);
 }
 else 
