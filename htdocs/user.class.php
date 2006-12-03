@@ -107,29 +107,29 @@ class User
 	*	\param      login       Si défini, login a utiliser pour recherche
 	*	\return		int			<0 si ko, >0 si ok
 	*/
-	function fetch($login='')
-    {
-    	global $conf;
-    	
-        // Recupere utilisateur
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
-        $sql.= " u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
-        $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
-        $sql.= " u.statut, u.lang,";
-        $sql.= " ".$this->db->pdate("u.datec")." as datec,";
-        $sql.= " ".$this->db->pdate("u.tms")." as datem,";
-        $sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
-        $sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
-        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-        if ($login)
-        {
-            $sql .= " WHERE u.login = '".$login."'";
-        }
-        else
-        {
-            $sql .= " WHERE u.rowid = ".$this->id;
-        }
-
+  function fetch($login='')
+  {
+    global $conf;
+    
+    // Recupere utilisateur
+    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
+    $sql.= " u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
+    $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
+    $sql.= " u.statut, u.lang,";
+    $sql.= " ".$this->db->pdate("u.datec")." as datec,";
+    $sql.= " ".$this->db->pdate("u.tms")." as datem,";
+    $sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
+    $sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+    if ($login)
+      {
+	$sql .= " WHERE u.login = '".$login."'";
+      }
+    else
+      {
+	$sql .= " WHERE u.rowid = ".$this->id;
+      }
+    
         dolibarr_syslog("User.class::fetch this->id=".$this->id." login=".$login);
         $result = $this->db->query($sql);
         if ($result)
@@ -1407,19 +1407,49 @@ class User
 		$socid = rand(1, $num_socs);
 		$this->societe_id = $socids[$socid];
 	}
+
+  /**
+   *    \brief      Charge la liste des entrepots pour l'utilisateur
+   *    \return     int   0 si ok, <> 0 si erreur
+   */
+  function load_entrepots()
+  {
+    $err=0;
+    $this->entrepots = array();
+    $sql = "SELECT fk_entrepot,consult,send";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot";
+    $sql.= " WHERE fk_user = '".$this->id."'";
+    
+    if ( $this->db->query($sql) ) 
+      {
+	while ($obj = $this->db->fetch_object($result) )
+	  {
+	    $this->entrepots[$i]['id'] = $obj->consult;
+	    $this->entrepots[$i]['consult'] = $obj->consult;
+	    $this->entrepots[$i]['send'] = $obj->send;
+	  }
+      }
+    else 
+      {
+	$err++;
+	dolibarr_print_error($this->db);
+      }    
+    return $err;
+  }
+
 }
 
 
 /**
-		\brief      Fonction pour créer un mot de passe aléatoire en minuscule
-		\param	    sel			Donnée aléatoire
-		\return		string		Mot de passe
+   \brief      Fonction pour créer un mot de passe aléatoire en minuscule
+   \param	    sel			Donnée aléatoire
+   \return		string		Mot de passe
 */
 function creer_pass_aleatoire_1($sel = "")
 {
-	$longueur = 8;
-
-	return strtolower(substr(md5(uniqid(rand())),0,$longueur));
+  $longueur = 8;
+  
+  return strtolower(substr(md5(uniqid(rand())),0,$longueur));
 }
 
 
@@ -1457,33 +1487,6 @@ function creer_pass_aleatoire_2($sel = "")
   return $pass;
 }
 
-/**
- *    \brief      Charge la liste des entrepots pour l'utilisateur
- *    \return     int   0 si ok, <> 0 si erreur
- */
-function load_entrepots()
-{
-  $err=0;
-  $this->entrepots = array();
-  $sql = "SELECT fk_entrepot,consult,send";
-  $sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot";
-  $sql.= " WHERE fk_user = '".$this->id."'";
-  
-  if ( $this->db->query($sql) ) 
-    {
-      while ($obj = $this->db->fetch_object($result) )
-	{
-	  $this->entrepots[$i]['id'] = $obj->consult;
-	  $this->entrepots[$i]['consult'] = $obj->consult;
-	  $this->entrepots[$i]['send'] = $obj->send;
-	}
-    }
-  else 
-    {
-      $err++;
-      dolibarr_print_error($this->db);
-    }    
-  return $err;
-}
+
 
 ?>
