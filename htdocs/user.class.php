@@ -1,11 +1,11 @@
 <?php
-/* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
- * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
+ * Copyright (C) 2005      Lionel Cousteix      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,77 +26,81 @@
  */
 
 /**
-	    \file       htdocs/user.class.php
-  	    \brief      Fichier de la classe utilisateur
-  	    \author     Rodolphe Qiedeville
-  	    \author     Jean-Louis Bergamo
-  	    \author     Laurent Destailleur
-  	    \author     Sebastien Di Cintio
-  	    \author     Benoit Mortier
-  	    \author     Regis Houssin
-  	    \version    $Revision$
+   \file       htdocs/user.class.php
+   \brief      Fichier de la classe utilisateur
+   \author     Rodolphe Quiedeville
+   \author     Jean-Louis Bergamo
+   \author     Laurent Destailleur
+   \author     Sebastien Di Cintio
+   \author     Benoit Mortier
+   \author     Regis Houssin
+   \author Lionel Cousteix
+   \version    $Revision$
 */
 
 
 /**
-        \class      User
-		\brief      Classe permettant la gestion d'un utilisateur
+   \class      User
+   \brief      Classe permettant la gestion d'un utilisateur
 */
 
 class User
 {
-	var $db;
+  var $db;
+  
+  var $id;
+  var $ldap_sid;
+  var $fullname;
+  var $nom;
+  var $prenom;
+  var $note;
+  var $code;
+  var $email;
+  var $office_tel;
+  var $office_fax;
+  var $user_mobile;
+  var $admin;
+  var $login;
+  //! Mot de passe en clair
+  var $pass;
+  //! Mot de passe crypté en base
+  var $pass_indatabase;
+  var $datec;
+  var $datem;
+  var $societe_id;
+  var $webcal_login;
+  
+  var $datelastlogin;
+  var $datepreviouslogin;
+  var $statut;
+  var $lang;
+  
+  var $error;
+  var $userpref_limite_liste;
+  var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
+  //! Liste des entrepots auquel a acces l'utilisateur
+  var $entrepots;
 
-	var $id;
-	var $ldap_sid;
-	var $fullname;
-	var $nom;
-	var $prenom;
-	var $note;
-	var $code;
-	var $email;
-	var $office_tel;
-	var $office_fax;
-	var $user_mobile;
-	var $admin;
-	var $login;
-	var $pass;					// Mot de passe en clair
-	var $pass_indatabase;		// Mot de passe crypté en base
-	var $datec;
-	var $datem;
-	var $societe_id;
-	var $webcal_login;
-
-	var $datelastlogin;
-	var $datepreviouslogin;
-	var $statut;
-	var $lang;
-
-	var $error;
-	var $userpref_limite_liste;
-	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-
-
-	/**
-	 *    \brief Constructeur de la classe
-	 *    \param  DB         Handler accès base de données
-	 *    \param  id         Id de l'utilisateur (0 par défaut)
-	 */
-	function User($DB, $id=0)
-	{
-		$this->db = $DB;
-		$this->id = $id;
-
-		// Preference utilisateur
-		$this->liste_limit = 0;
-		$this->clicktodial_enabled = 0;
-
-		$this->all_permissions_are_loaded = 0;
-		$this->admin=0;
-
-		return 1;
-	}
-
+  /**
+   *    \brief Constructeur de la classe
+   *    \param  DB         Handler accès base de données
+   *    \param  id         Id de l'utilisateur (0 par défaut)
+   */
+  function User($DB, $id=0)
+  {
+    $this->db = $DB;
+    $this->id = $id;
+    
+    // Preference utilisateur
+    $this->liste_limit = 0;
+    $this->clicktodial_enabled = 0;
+    
+    $this->all_permissions_are_loaded = 0;
+    $this->admin=0;
+    
+    return 1;
+  }
+  
 
 	/**
 	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
@@ -1420,38 +1424,66 @@ function creer_pass_aleatoire_1($sel = "")
 
 
 /**
-		\brief      Fonction pour créer un mot de passe aléatoire mélangeant majuscule,
-					minuscule, chiffre et alpha et caractères spéciaux
-		\remarks    La fonction a été prise sur http://www.uzine.net/spip
-		\param	    sel			Donnée aléatoire
-		\return		string		Mot de passe
+   \brief      Fonction pour créer un mot de passe aléatoire mélangeant majuscule,
+   minuscule, chiffre et alpha et caractères spéciaux
+   \remarks    La fonction a été prise sur http://www.uzine.net/spip
+   \param	    sel			Donnée aléatoire
+   \return		string		Mot de passe
 */
 function creer_pass_aleatoire_2($sel = "")
 {
-	$longueur=8;
-	
-	$seed = (double) (microtime() + 1) * time();
-	srand($seed);
-
-	for ($i = 0; $i < $longueur; $i++)
+  $longueur=8;
+  
+  $seed = (double) (microtime() + 1) * time();
+  srand($seed);
+  
+  for ($i = 0; $i < $longueur; $i++)
+    {
+      if (!$s)
 	{
-		if (!$s)
-		{
-			if (!$s) $s = rand();
-			$s = substr(md5(uniqid($s).$sel), 0, 16);
-		}
-		$r = unpack("Cr", pack("H2", $s.$s));
-		$x = $r['r'] & 63;
-		if ($x < 10) $x = chr($x + 48);
-		else if ($x < 36) $x = chr($x + 55);
-		else if ($x < 62) $x = chr($x + 61);
-		else if ($x == 63) $x = '/';
-		else $x = '.';
-		$pass .= $x;
-		$s = substr($s, 2);
+	  if (!$s) $s = rand();
+	  $s = substr(md5(uniqid($s).$sel), 0, 16);
 	}
-	
-	return $pass;
+      $r = unpack("Cr", pack("H2", $s.$s));
+      $x = $r['r'] & 63;
+      if ($x < 10) $x = chr($x + 48);
+      else if ($x < 36) $x = chr($x + 55);
+      else if ($x < 62) $x = chr($x + 61);
+      else if ($x == 63) $x = '/';
+      else $x = '.';
+      $pass .= $x;
+      $s = substr($s, 2);
+    }  
+  return $pass;
+}
+
+/**
+ *    \brief      Charge la liste des entrepots pour l'utilisateur
+ *    \return     int   0 si ok, <> 0 si erreur
+ */
+function load_entrepots()
+{
+  $err=0;
+  $this->entrepots = array();
+  $sql = "SELECT fk_entrepot,consult,send";
+  $sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot";
+  $sql.= " WHERE fk_user = '".$this->id."'";
+  
+  if ( $this->db->query($sql) ) 
+    {
+      while ($obj = $this->db->fetch_object($result) )
+	{
+	  $this->entrepots[$i]['id'] = $obj->consult;
+	  $this->entrepots[$i]['consult'] = $obj->consult;
+	  $this->entrepots[$i]['send'] = $obj->send;
+	}
+    }
+  else 
+    {
+      $err++;
+      dolibarr_print_error($this->db);
+    }    
+  return $err;
 }
 
 ?>
