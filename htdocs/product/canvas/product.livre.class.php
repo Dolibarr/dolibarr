@@ -48,20 +48,45 @@ class ProductLivre extends Product
     $this->description = "Gestion des livres";
     $this->active = PRODUIT_SPECIAL_LIVRE;
     $this->menu_new = 'NewBook';
+    $this->menu_clear = 1;
   }
   /**
    *    \brief      Creation
-   *    \param      id          Id livre ('' par defaut)
+   *    \param      id          Id livre
    */
-  function CreateCanvas($id)
+  function CreateCanvas($user,$datas)
   {
+    $id = $this->create($user);
+
+
     $sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre (rowid)";
     $sql.= " VALUES ('".$id."');";
 
     $result = $this->db->query($sql) ;
 
-    $sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre_contrat (fk_cnv_livre)";
-    $sql.= " VALUES ('".$id."');";
+    if ( $result )
+      {
+	$sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre_contrat (fk_cnv_livre)";
+	$sql.= " VALUES ('".$id."');";
+
+	$result = $this->db->query($sql) ;
+      }
+    
+    if ( $result )
+      {
+	$this->UpdateCanvas($datas);
+      }
+
+    return $id;
+  }
+  /**
+   *    \brief      Supression
+   *    \param      id          Id livre
+   */
+  function DeleteCanvas($id)
+  {
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_cnv_livre ";
+    $sql.= " WHERE rowid = '".$id."';";
 
     $result = $this->db->query($sql) ;
 
