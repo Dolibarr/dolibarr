@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -216,13 +216,17 @@ else
             $hselected=$h;
             $h++;
 
-			$head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
-			$head[$h][1] = $langs->trans("StockMovements");
-			$h++;
-		
+	    $head[$h][0] = DOL_URL_ROOT.'/product/stock/mouvement.php?id='.$entrepot->id;
+	    $head[$h][1] = $langs->trans("StockMovements");
+	    $h++;
+	    
             $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
             $head[$h][1] = $langs->trans("Info");
             $h++;
+
+	    $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
+	    $head[$h][1] = $langs->trans("Users");
+	    $h++;
 
             dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
