@@ -262,7 +262,7 @@ class ProductLivre extends Product
 	$sum += 3 * $ean{$i};
       }
 
-    $key = ($sum % 10);
+    $key = (10 - ($sum % 10));
 
     return $key;
   }
