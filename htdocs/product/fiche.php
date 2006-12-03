@@ -38,7 +38,6 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("bills");
-$langs->load("products");
 
 $mesg = '';
 
@@ -63,7 +62,16 @@ if ($_GET["action"] == 'fastappro')
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-    $product = new Product($db);
+  if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
+    {
+      $class = 'Product'.ucfirst($_POST["canvas"]);
+      include_once('canvas/product.'.$_POST["canvas"].'.class.php');
+      $product = new $class($db);
+    }
+  else
+    {
+      $product = new Product($db);
+    }
 
     $product->ref                = $_POST["ref"];
     $product->libelle            = $_POST["libelle"];
@@ -91,23 +99,14 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     
     if ( $value != $current_lang ) $e_product = $product;
     
-    $id = $product->create($user);
-
-    // Produit spécifique
-    if ($id > 0)
+    // Produit spécifique    
+    if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
       {
-	if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
-	  {
-	    $class = 'Product'.ucfirst($product->canvas);
-	    include_once('canvas/product.'.$product->canvas.'.class.php');
-	    
-	    $product = new $class($db);
-	    if ($product->CreateCanvas($id) > 0)
-	      {
-		// Erreur
-		$id = 0;
-	      }
-	  }
+	$id = $product->CreateCanvas($user, $_POST);
+      }
+    else
+      {
+	$id = $product->create($user);
       }
     
     if ($id > 0)
