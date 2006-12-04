@@ -27,13 +27,6 @@
  <td width="35%">{$prod_stock_in_command}</td>
 </tr>
 
-
-
-</table>
-<br>
-<table class="border" width="100%">
-
-
 <tr>
  <td width="15%">Durée du contrat : </td>
  <td width="35%">{$prod_contrat_duree}</td>
@@ -48,6 +41,6 @@
  <td>{$prod_contrat_quant}</td>
 </tr>
 
-<tr>
+</table>
 
 <!-- END SMARTY TEMPLATE -->

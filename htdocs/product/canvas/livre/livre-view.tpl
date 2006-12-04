@@ -43,11 +43,10 @@
   <td width="35%">{$prod_tva_tx}</td>
 
 </tr>
-
-
-
 </table>
+
 <br>
+
 <table class="border" width="100%">
 
 <tr>
