@@ -24,9 +24,9 @@
 // Code identique a /expedition/fiche.php
 
 /**
-        \file       htdocs/expedition/commande.php
-        \ingroup    expedition
-        \version    $Revision$
+   \file       htdocs/expedition/commande.php
+   \ingroup    expedition
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -48,28 +48,27 @@ $user->getrights('expedition');
 if (!$user->rights->commande->lire)
 	accessforbidden();
 
-
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socid = $user->societe_id;
+  $action = '';
+  $socid = $user->societe_id;
 }
 
+// Chargement des permissions
+$error = $user->load_entrepots();
 
 /*
  * Actions
  */
 if ($_POST["action"] == 'confirm_cloture' && $_POST["confirm"] == 'yes')
 {
-    $commande = new Commande($db);
-    $commande->fetch($_GET["id"]);
-    $result = $commande->cloture($user);
+  $commande = new Commande($db);
+  $commande->fetch($_GET["id"]);
+  $result = $commande->cloture($user);
 }
 
-
 $html = new Form($db);
-
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -78,7 +77,6 @@ $html = new Form($db);
 /* *************************************************************************** */
 
 llxHeader('',$langs->trans("OrderCard"));
-
 
 if ($_GET["id"] > 0)
 {
@@ -108,108 +106,108 @@ if ($_GET["id"] > 0)
         }
 
         // Onglet commande
-			$nbrow=8;
-			if ($conf->projet->enabled) $nbrow++;
+	$nbrow=8;
+	if ($conf->projet->enabled) $nbrow++;
 
-			print '<table class="border" width="100%">';
+	print '<table class="border" width="100%">';
 
-            // Ref
-			print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-			print '<td colspan="3">'.$commande->ref.'</td>';
-			print '</tr>';
+	// Ref
+	print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
+	print '<td colspan="3">'.$commande->ref.'</td>';
+	print '</tr>';
 
-			// Ref commande client
-			print '<tr><td>';
-            print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-			print $langs->trans('RefCustomer').'</td><td align="left">';
-            print '</td>';
-            if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-            print '</tr></table>';
-            print '</td><td colspan="3">';
-			if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
-			{
-				print '<form action="fiche.php?id='.$id.'" method="post">';
-				print '<input type="hidden" name="action" value="set_ref_client">';
-				print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
-				print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-				print '</form>';
-			}
-			else
-			{
-				print $commande->ref_client;
-			}
-			print '</td>';
-			print '</tr>';
-			
-
-			// Société
-			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
-			print '</tr>';
-
-			// Date
-			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
-			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
-			if ($commande->source == 0)
-			{
-				// Si source = propal
-				$propal = new Propal($db);
-				$propal->fetch($commande->propale_id);
-				print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
-			}
-			print '</td>';
-			print '</tr>';
-			
-			// Date de livraison
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DateDelivery');
-			print '</td>';
-					
-			if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="2">';
-			if ($_GET['action'] == 'editdate_livraison')
-			{
-				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setdate_livraison">';
-                $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print '</form>';
-			}
-			else
-			{
-				print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
-			}
-			print '</td>';
-			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
-			print nl2br($commande->note_public);			
-			print '</td>';
-			print '</tr>';
-			
-			
-			// Adresse de livraison
-			print '<tr><td height="10">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('DeliveryAddress');
-			print '</td>';
-					
-			if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="2">';
-			
-			if ($_GET['action'] == 'editdelivery_adress')
-			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
-			}
-			else
-			{
-				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
-			}
-			print '</td></tr>';
-			
-			// Conditions et modes de réglement
+	// Ref commande client
+	print '<tr><td>';
+	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+	print $langs->trans('RefCustomer').'</td><td align="left">';
+	print '</td>';
+	if ($_GET['action'] != 'RefCustomerOrder' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;id='.$commande->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="3">';
+	if ($user->rights->commande->creer && $_GET['action'] == 'RefCustomerOrder')
+	  {
+	    print '<form action="fiche.php?id='.$id.'" method="post">';
+	    print '<input type="hidden" name="action" value="set_ref_client">';
+	    print '<input type="text" class="flat" size="20" name="ref_client" value="'.$commande->ref_client.'">';
+	    print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	    print '</form>';
+	  }
+	else
+	  {
+	    print $commande->ref_client;
+	  }
+	print '</td>';
+	print '</tr>';
+	
+	
+	// Société
+	print '<tr><td>'.$langs->trans('Company').'</td>';
+	print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
+	print '</tr>';
+	
+	// Date
+	print '<tr><td>'.$langs->trans('Date').'</td>';
+	print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+	print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
+	if ($commande->source == 0)
+	  {
+	    // Si source = propal
+	    $propal = new Propal($db);
+	    $propal->fetch($commande->propale_id);
+	    print ' -> <a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.$propal->ref.'</a>';
+	  }
+	print '</td>';
+	print '</tr>';
+	
+	// Date de livraison
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('DateDelivery');
+	print '</td>';
+	
+	if ($_GET['action'] != 'editdate_livraison' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDateDelivery'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	if ($_GET['action'] == 'editdate_livraison')
+	  {
+	    print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
+	    print '<input type="hidden" name="action" value="setdate_livraison">';
+	    $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+	    print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+	    print '</form>';
+	  }
+	else
+	  {
+	    print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
+	  }
+	print '</td>';
+	print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+	print nl2br($commande->note_public);			
+	print '</td>';
+	print '</tr>';
+	
+	
+	// Adresse de livraison
+	print '<tr><td height="10">';
+	print '<table class="nobordernopadding" width="100%"><tr><td>';
+	print $langs->trans('DeliveryAddress');
+	print '</td>';
+	
+	if ($_GET['action'] != 'editdelivery_adress' && $commande->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$commande->socid.'&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+	print '</tr></table>';
+	print '</td><td colspan="2">';
+	
+	if ($_GET['action'] == 'editdelivery_adress')
+	  {
+	    $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','commande',$commande->id);
+	  }
+	else
+	  {
+	    $html->form_adresse_livraison($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->adresse_livraison_id,$_GET['socid'],'none','commande',$commande->id);
+	  }
+	print '</td></tr>';
+	
+	// Conditions et modes de réglement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -399,42 +397,40 @@ if ($_GET["id"] > 0)
          * Boutons Actions
          */
         if ($user->societe_id == 0)
-        {
+	  {
             print '<div class="tabsAction">';
 
             // Bouton expedier sans gestion des stocks
             if (! $conf->stock->enabled && $reste_a_livrer_total > 0 && ! $commande->brouillon && $user->rights->expedition->creer)
-            {
+	      {
                 print '<a class="butAction" href="'.DOL_URL_ROOT.'/expedition/fiche.php?action=create&amp;commande_id='.$_GET["id"].'">'.$langs->trans("NewSending").'</a>';
-            }
+	      }
 
             print "</div>";
 
         }
 
+	print '<table width="100%"><tr><td width="50%" valign="top">';
 
-
-		print '<table width="100%"><tr><td width="50%" valign="top">';
-
-		/*
-		* Documents générés
-		*
-		*/
-		$comref = sanitize_string($commande->ref);
-		$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
-		$relativepath = $comref.'/'.$comref.'.pdf';
-		$filedir = $conf->commande->dir_output . '/' . $comref;
-		$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-		$genallowed=0;
-		$delallowed=0;
-		
-		$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
+	/*
+	 * Documents générés
+	 *
+	 */
+	$comref = sanitize_string($commande->ref);
+	$file = $conf->commande->dir_output . '/' . $comref . '/' . $comref . '.pdf';
+	$relativepath = $comref.'/'.$comref.'.pdf';
+	$filedir = $conf->commande->dir_output . '/' . $comref;
+	$urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
+	$genallowed=0;
+	$delallowed=0;
+	
+	$somethingshown=$html->show_documents('commande',$comref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 
 
         print '</td><td valign="top" width="50%">';
 
 
-		// Bouton expedier avec gestion des stocks
+	// Bouton expedier avec gestion des stocks
         if ($conf->stock->enabled && $reste_a_livrer_total > 0 && $commande->statut > 0 && $commande->statut < 3 && $user->rights->expedition->creer)
         {
             print_titre($langs->trans("NewSending"));
@@ -448,13 +444,26 @@ if ($_GET["id"] > 0)
             $entrepot = new Entrepot($db);
             $langs->load("stocks");
 
+
+
             print '<tr>';
             print '<td>'.$langs->trans("Warehouse").'</td>';
             print '<td>';
-            $html->select_array("entrepot_id",$entrepot->list_array());
+
+	    if (sizeof($user->entrepots) === 1)
+	      {
+		$uentrepot = array();
+		$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
+		$html->select_array("entrepot_id",$uentrepot);
+	      }
+	    else
+	      {
+		$html->select_array("entrepot_id",$entrepot->list_array());
+	      }
+
             if (sizeof($entrepot->list_array()) <= 0) 
             {
-                print ' &nbsp; Aucun entrepôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
+	      print ' &nbsp; Aucun entrepôt définit, <a href="'.DOL_URL_ROOT.'/product/stock/fiche.php?action=create">definissez en un</a>';
             }
             print '</td></tr>';
             /*
