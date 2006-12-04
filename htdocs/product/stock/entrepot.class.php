@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,15 +21,16 @@
  */
 
 /**
-	    \file       htdocs/product/stock/entrepot.class.php
-		\ingroup    stock
-		\brief      Fichier de la classe de gestion des entrepots
-		\version    $Revision$
+   \file       htdocs/product/stock/entrepot.class.php
+   \ingroup    stock
+   \brief      Fichier de la classe de gestion des entrepots
+   \version    $Revision$
 */
 
 
-/**     \class      Entrepot
-		\brief      Classe permettant la gestion des entrepots
+/**     
+   \class      Entrepot
+   \brief      Classe permettant la gestion des entrepots
 */
 
 class Entrepot
@@ -40,9 +41,11 @@ class Entrepot
   var $id;
   var $libelle;
   var $description;
+  //! Statut 1 pour ouvert, 0 pour ferme
   var $statut;
   var $lieu;
   var $address;
+  //! Code Postal
   var $cp;
   var $ville;
   var $pays_id;
@@ -52,64 +55,69 @@ class Entrepot
    *    \param      DB      Handler d'accès à la base de donnée
    */
   function Entrepot($DB)
-    {
-        global $langs;
-        $this->db = $DB;
-        
-        $this->statuts[0] = $langs->trans("Closed2");
-        $this->statuts[1] = $langs->trans("Opened");
-    }
+  {
+    global $langs;
+    $this->db = $DB;
+    
+    $this->statuts[0] = $langs->trans("Closed2");
+    $this->statuts[1] = $langs->trans("Opened");
+  }
 
   /*
    *    \brief      Creation d'un entrepot en base
    *    \param      Objet user qui crée l'entrepot
    */
   function create($user) 
-    {
-	  // Si libelle non defini, erreur
-	  if ($this->libelle == '') {
-  		  $this->error = "Libellé obligatoire";
-		  return 0;
-	  }
-	  
-      $this->db->begin();
-      
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
-	  $sql .= " VALUES (now(),".$user->id.")";
-
-	  $result=$this->db->query($sql);
-	  if ($result)
-	    {
-	      $id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
-	      if ($id > 0)
-		{
-		  $this->id = $id;
-
-		  if ( $this->update($id, $user) > 0)
-		    {
-		      $this->db->commit();
-		      return $id;
-		    }
-		  else
-		    {
-		      $this->db->rollback();
-		      return -3;
-		    }
-		}
-		else {
-            $this->error="Failed to get insert id";
-  	        return -2;
-		}
-	    }
-	  else
-	    {
-          $this->error="Failed to insert warehouse";
-          $this->db->rollback();
-	      return -1;
-	    }
-
+  {
+    // Si libelle non defini, erreur
+    if ($this->libelle == '') {
+      $this->error = "Libellé obligatoire";
+      return 0;
     }
-
+    
+    $this->db->begin();
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."entrepot (datec, fk_user_author)";
+    $sql .= " VALUES (now(),".$user->id.")";
+    
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	$id = $this->db->last_insert_id(MAIN_DB_PREFIX."entrepot");	      
+	if ($id > 0)
+	  {
+	    $this->id = $id;
+	    
+	    if ( $this->update($id, $user) > 0)
+	      {
+		$this->db->commit();
+		return $id;
+	      }
+	    else
+	      {
+		dolibarr_syslog("Entrepot::Create return -3");
+		$this->db->rollback();
+		return -3;
+	      }
+	  }
+	else {
+	  $this->error="Failed to get insert id";
+	  dolibarr_syslog("Entrepot::Create return -2");
+	  return -2;
+	}
+      }
+    else
+      {
+	$this->error="Failed to insert warehouse";
+	dolibarr_syslog("Entrepot::Create return -1");
+	dolibarr_syslog("Entrepot::Create ".$this->error);
+	dolibarr_syslog("Entrepot::Create ".$this->db->error());
+	$this->db->rollback();
+	return -1;
+      }
+      
+  }
+  
   /*
    *    \brief      Mise a jour des information d'un entrepot
    *    \param      id      id de l'entrepot à modifier
@@ -126,81 +134,83 @@ class Entrepot
       $this->ville=trim($this->ville);
       $this->pays_id=trim($this->pays_id?$this->pays_id:0);
       
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
-	  $sql .= " SET label = '" . $this->libelle ."'";
-	  $sql .= ",description = '" . $this->description ."'";
-	  $sql .= ",statut = " . $this->statut ;
-	  $sql .= ",lieu = '" . $this->lieu ."'";
-	  $sql .= ",address = '" . $this->address ."'";
-	  $sql .= ",cp = '" . $this->cp ."'";
-	  $sql .= ",ville = '" . $this->ville ."'";
-	  $sql .= ",fk_pays = " . $this->pays_id;
-	  $sql .= " WHERE rowid = " . $id;
-	  
-	  if ( $this->db->query($sql) )
-	    {
-	      return 1;
-	    }
-	  else
-	    {
-          $this->error=$this->db->error()." sql=$sql";;
-	      return -1;
-	    }
+      $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";
+      $sql .= " SET label = '" . $this->libelle ."'";
+      $sql .= ",description = '" . $this->description ."'";
+      $sql .= ",statut = " . $this->statut ;
+      $sql .= ",lieu = '" . $this->lieu ."'";
+      $sql .= ",address = '" . $this->address ."'";
+      $sql .= ",cp = '" . $this->cp ."'";
+      $sql .= ",ville = '" . $this->ville ."'";
+      $sql .= ",fk_pays = " . $this->pays_id;
+      $sql .= " WHERE rowid = " . $id;
+      
+      if ( $this->db->query($sql) )
+	{
+	  return 1;
 	}
-
-
+      else
+	{
+	  $this->error=$this->db->error()." sql=$sql";;
+	  dolibarr_syslog("Entrepot::Update return -1");
+	  dolibarr_syslog("Entrepot::Update ".$this->error);
+	  return -1;
+	}
+    }
+  
+  
   /**
    *    \brief      Recupéeration de la base d'un entrepot
    *    \param      id      id de l'entrepot a récupérer
    */
   function fetch ($id)
     {    
-        $sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
-        $sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
-        $sql .= " WHERE rowid = $id";
-        
-        $result = $this->db->query($sql);
-        if ($result)
+      $sql  = "SELECT rowid, label, description, statut, lieu, address, cp, ville, fk_pays";
+      $sql .= " FROM ".MAIN_DB_PREFIX."entrepot";
+      $sql .= " WHERE rowid = $id";
+      
+      $result = $this->db->query($sql);
+      if ($result)
         {
-            $obj=$this->db->fetch_object($result);
-        
-            $this->id             = $obj->rowid;
-            $this->ref            = $obj->rowid;
-            $this->libelle        = $obj->label;
-            $this->description    = $obj->description;
-            $this->statut         = $obj->statut;
-            $this->lieu           = $obj->lieu; 
-            $this->address        = $obj->address;
-            $this->cp             = $obj->cp;
-            $this->ville          = $obj->ville;
-            $this->pays_id        = $obj->fk_pays;
-            
-            if ($this->pays_id)
+	  $obj=$this->db->fetch_object($result);
+	  
+	  $this->id             = $obj->rowid;
+	  $this->ref            = $obj->rowid;
+	  $this->libelle        = $obj->label;
+	  $this->description    = $obj->description;
+	  $this->statut         = $obj->statut;
+	  $this->lieu           = $obj->lieu; 
+	  $this->address        = $obj->address;
+	  $this->cp             = $obj->cp;
+	  $this->ville          = $obj->ville;
+	  $this->pays_id        = $obj->fk_pays;
+	  
+	  if ($this->pays_id)
             {
               $sqlp = "SELECT libelle from ".MAIN_DB_PREFIX."c_pays where rowid = ".$this->pays_id;
               $resql=$this->db->query($sqlp);
               if ($resql)
-              {
-                $objp = $this->db->fetch_object($resql);
-              }
+		{
+		  $objp = $this->db->fetch_object($resql);
+		}
               else
-              {
-                dolibarr_print_error($db);
-              }
-            $this->pays=$objp->libelle;
+		{
+		  dolibarr_print_error($db);
+		}
+	      $this->pays=$objp->libelle;
+	    }
+	  
+	  $this->db->free($result);
+	  return 1;
         }
-        
-            $this->db->free($result);
-            return 1;
-        }
-        else
+      else
         {
-            $this->error=$this->db->error();
-            return -1;
+	  $this->error=$this->db->error();
+	  return -1;
         }
-   }
-
-
+    }
+  
+  
   /*
    * \brief     Charge les informations d'ordre info dans l'objet entrepot
    * \param     id      id de l'entrepot a charger
@@ -278,38 +288,38 @@ class Entrepot
   /**
    *    \brief      Renvoie le stock (nombre de produits) de l'entrepot
    */
-    function nb_products()
-    {
-    	  global $conf,$user;
-    	  
-        $sql = "SELECT sum(ps.reel)";
-        $sql .= " FROM llx_product_stock as ps";
-        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-        {
-           $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-              $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-        }
-        $sql .= " WHERE ps.fk_entrepot = ".$this->id;
-        if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-        {
-           $sql.= ' AND IFNULL(c.visible,1)=1';
-        }
+  function nb_products()
+  {
+    global $conf,$user;
+    
+    $sql = "SELECT sum(ps.reel)";
+    $sql .= " FROM llx_product_stock as ps";
+    if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+      {
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+      }
+    $sql .= " WHERE ps.fk_entrepot = ".$this->id;
+    if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+      {
+	$sql.= ' AND IFNULL(c.visible,1)=1';
+      }
+    
+    $result = $this->db->query($sql) ;
+    
+    if ( $result )
+      {
+	$row = $this->db->fetch_row(0);
+	return $row[0];
         
-          $result = $this->db->query($sql) ;
-        
-          if ( $result )
-        {
-          $row = $this->db->fetch_row(0);
-          return $row[0];
-        
-          $this->db->free();
-        }
-          else
-        {
-          return 0;
-        }
-    }
-
+	$this->db->free();
+      }
+    else
+      {
+	return 0;
+      }
+  }
+  
 
 	/**
 	 *    \brief      Retourne le libellé du statut d'un entrepot (ouvert, ferme)
