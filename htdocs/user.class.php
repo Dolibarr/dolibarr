@@ -34,7 +34,7 @@
    \author     Sebastien Di Cintio
    \author     Benoit Mortier
    \author     Regis Houssin
-   \author Lionel Cousteix
+   \author     Lionel Cousteix
    \version    $Revision$
 */
 
@@ -620,10 +620,12 @@ class User
 
 
     /**
-     *      \brief      Crée un utilisateur en base
-     *      \return     int         si erreur <0, si ok renvoie id compte créé
+     *  \brief      Crée un utilisateur en base
+     *  \param      user        Objet User
+     *  \return     int         si erreur <0, si ok renvoie id compte créé
+     *  \todo       Verifier tous les appels à cette fonction et ajouter le param $user
      */
-  function create($user)
+  function create($user='')
   {
     global $conf,$langs;
     
