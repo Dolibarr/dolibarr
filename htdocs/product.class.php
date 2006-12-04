@@ -44,15 +44,19 @@ class Product
   var $ref;
   var $libelle;
   var $description;
+  //! Prix de vente
   var $price;
   var $multiprices=array();
+  //! Taux de TVA
   var $tva_tx;
+  //! Type 0 pour produit, 1 pour service
   var $type;
   var $seuil_stock_alerte;
   //! Duree de validite du service
   var $duration_value;
   //! Unite de duree
   var $duration_unit;
+  // Statut indique si le produit est en vente '1' ou non '0'
   var $status;
   
   var $stats_propale=array();
@@ -85,13 +89,10 @@ class Product
     $this->typeprodser[1]=$langs->trans("Service");
     $this->canvas = '';
   }
-  
-  
   /**
    *    \brief      Vérifie que la référence et libellé du produit est non null
    *    \return     int         1 si ok, 0 sinon
    */
-  
   function check()
   {
     $this->ref = ereg_replace("'","",stripslashes($this->ref));
@@ -113,8 +114,6 @@ class Product
 	return 1;
       }
   }
-  
-  
   /**
    *    \brief    Insère le produit en base
    *    \param    user        Utilisateur qui effectue l'insertion
@@ -147,10 +146,10 @@ class Product
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
 	    $sql.= " (datec, ";
 	    if ($this->ref) $sql.= "ref, ";
-	    $sql.= "fk_user_author, fk_product_type, price)";
+	    $sql.= "fk_user_author, fk_product_type, price, canvas)";
 	    $sql.= " VALUES (now(), ";
 	    if ($this->ref) $sql.= "'".$this->ref."', ";
-	    $sql.= $user->id.", ".$this->type.", '" . $this->price . "')";
+	    $sql.= $user->id.", ".$this->type.", '" . $this->price . "','".$this->canvas."')";
 	    $result = $this->db->query($sql);
 	    if ( $result )
 	      {
@@ -201,8 +200,6 @@ class Product
     $this->db->rollback();
     return -1;
   }
-
-
   /**
    *    \brief      Mise à jour du produit en base
    *    \param      id          id du produit
@@ -816,7 +813,7 @@ class Product
 	$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 	$this->canvas             = $result["canvas"];
 
-	$this->stock_in_command   = $result["stock_in_command"];
+	$this->stock_in_command   = $result["stock_commande"];
 
 	$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
 	
