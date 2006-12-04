@@ -34,7 +34,7 @@ create table llx_product_cnv_livre
   px_revient         float,             -- prix de revient
   stock_loc          varchar(5),        -- emplacement dans le stock
 
-  pages              smallint UNSIGNED, -- nombre de page
+  pages              smallint UNSIGNED  -- nombre de page
 
 )type=innodb;
 
