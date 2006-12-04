@@ -26,6 +26,7 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livrecontrat.class.php');
 
 /**
    \class      ProductLivre
@@ -48,8 +49,31 @@ class ProductLivre extends Product
     $this->description = "Gestion des livres";
     $this->active = PRODUIT_SPECIAL_LIVRE;
     $this->menu_new = 'NewBook';
+    $this->menu_add = 1;
     $this->menu_clear = 1;
+    
+    $this->menus[0][0] = DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0&amp;canvas=livre";
+    $this->menus[0][1] = 'NewBook';
+    $this->menus[1][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livre";
+    $this->menus[1][1] = 'ListBook';
+    $this->menus[2][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livrecontrat";
+    $this->menus[2][1] = 'ListContract';
+    $this->menus[3][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livrecouverture";
+    $this->menus[3][1] = 'ListCover';
   }
+
+  /**
+   *   \brief  Personnalise les menus
+   *   \param  menu       Objet Menu
+   *   \todo   Rodo - faire plus propre c'est trop goret
+   */
+  
+  function PersonnalizeMenu(&$menu)
+  {
+    $menu->remove_last();
+    $menu->remove_last();
+  }
+
   /**
    *    \brief      Creation
    *    \param      id          Id livre
@@ -80,23 +104,51 @@ class ProductLivre extends Product
 	    $error = -6;
 	  }
       }
-    /*
+    // Creation du contrat associe
     if ( $error === 0 )
       {
-	$sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre_contrat (fk_cnv_livre)";
-	$sql.= " VALUES ('".$id."');";
+	$this->contrat = new ProductLivreContrat($this->db);
 
-	$result = $this->db->query($sql) ;
-	if ($result)
+	$this->contrat->ref                = $this->ref.'-CL';
+	$this->contrat->libelle            = 'Contrat';
+	$this->contrat->price              = 0;
+	$this->contrat->tva_tx             = 0;
+	$this->contrat->type               = 0;
+	$this->contrat->status             = 0;
+	$this->contrat->description        = 'Droits du livre';
+	$this->contrat->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+	$this->contrat->canvas             = 'livrecontrat';
+
+	$contrat_id = $this->contrat->CreateCanvas($user, $this->id, $datas);
+
+	if ($contrat_id > 0)
 	  {
-	    $error = 0;
-	  }
-	else
-	  {
-	    $error = -5;
+	    $this->add_subproduct($this->contrat->id);
 	  }
       }
-    */
+    // Creation du produit couverture
+    if ( $error === 0 )
+      {
+	$this->couverture = new Product($this->db);
+
+	$this->couverture->ref                = $this->ref.'-CO';
+	$this->couverture->libelle            = 'Couverture';
+	$this->couverture->price              = 0;
+	$this->couverture->tva_tx             = 0;
+	$this->couverture->type               = 0;
+	$this->couverture->status             = 0;
+	$this->couverture->description        = 'Couverture du livre';
+	$this->couverture->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+	$this->couverture->canvas             = 'livrecouverture';
+
+	$this->couverture_id = $this->couverture->create($user);
+
+	if ($this->couverture_id > 0)
+	  {
+	    $this->add_subproduct($this->couverture_id);
+	  }
+      }
+
     if ( $error === 0 )
       {
 	$error = $this->UpdateCanvas($datas);
@@ -137,7 +189,7 @@ class ProductLivre extends Product
 
     if ($result >= 0)
       {
-	$sql = "SELECT rowid,isbn,ean,pages,px_feuillet,px_couverture,format";
+	$sql = "SELECT rowid,isbn,ean,pages,px_feuillet,fk_couverture,format,fk_contrat";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre";
 	if ($id) $sql.= " WHERE rowid = '".$id."'";
 	if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -153,25 +205,13 @@ class ProductLivre extends Product
 	    $this->pages              = $result["pages"];
 	    $this->format             = $result["format"];
 	    $this->px_feuillet        = $result["px_feuillet"];
-	    $this->px_couverture      = $result["px_couverture"];
+	    $this->couverture_id      = $result["fk_couverture"];
 
 	    $this->db->free();
 	  }
 
-	/*
-	$sql = "SELECT quantite,taux,duree";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre_contrat";
-	$sql.= " WHERE fk_cnv_livre = '".$this->id."'";	
-	$result = $this->db->query($sql) ;
-	if ( $result )
-	  {
-	    $result = $this->db->fetch_array();
-	    $this->contrat_taux       = $result["taux"];
-	    $this->contrat_duree      = $result["duree"];
-	    $this->contrat_quantite   = $result["quantite"];
-	    $this->db->free();
-	  }
-	*/
+	$this->contrat = new ProductLivreContrat($this->db);
+	$this->contrat->FetchCanvas($result["fk_contrat"]);
       }
 
     return $result;
@@ -210,8 +250,9 @@ class ProductLivre extends Product
     $sql .= " , ean = '$ean'";
     $sql .= " , pages         = '$pages'";
     $sql .= " , px_feuillet   = '$px_feuillet'";
-    $sql .= " , px_couverture = '$px_couverture'";
     $sql .= " , px_revient    = '$px_revient'";
+    $sql .= " , fk_couverture = '".$this->couverture->id."'";
+    $sql .= " , fk_contrat    = '".$this->contrat->id."'";
     $sql .= " , stock_loc     = '$stock_loc'";
     $sql .= " , format        = '$format'";
     $sql .= " WHERE rowid = " . $this->id;
@@ -225,27 +266,8 @@ class ProductLivre extends Product
 	$error = -1;
       }
 
-    $taux   = str_replace(',','.',abs(trim($datas["contrat_taux"])));
-    $quant  = trim($datas["contrat_quant"]);
-    $duree  = trim($datas["contrat_duree"]);
-    /*
-    if (!$error)
-      {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre_contrat ";
-	$sql .= " SET taux    = '$taux'";
-	$sql .= " , duree     = '$duree'";
-	$sql .= " , quantite  = '$quant'";	
-	$sql .= " WHERE fk_cnv_livre = " . $this->id;	
-	if ( $this->db->query($sql) )
-	  {
-	    $error = 0;
-	  }
-	else
-	  {
-	    $error = -2;
-	  }
-      }
-      /*
+    $this->contrat->UpdateCanvas($datas);
+    
     return $error;
   }
   /**
@@ -331,12 +353,14 @@ class ProductLivre extends Product
     $smarty->assign('prod_pages',     $this->pages);
     $smarty->assign('prod_format',    $this->format);
     $smarty->assign('prod_pxfeuil',   $this->px_feuillet);
-    $smarty->assign('prod_pxcouv',    $this->px_couverture);
+
+    $smarty->assign('prod_pxcouv',    $this->couverture->price);
+
     $smarty->assign('prod_pxrevient', price($this->px_revient));
     $smarty->assign('prod_pxvente',   price($this->price));
     $smarty->assign('prod_label',     $this->libelle);
 
-    $smarty->assign('prod_contrat_taux',     $this->contrat_taux);
+    $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
     $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
     $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
 
