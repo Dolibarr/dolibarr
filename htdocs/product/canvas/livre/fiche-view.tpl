@@ -44,7 +44,9 @@
 
 <tr>
  <td width="15%">Stock</td>
- <td width="35%"><b>{$prod_stock_dispo}</b></td>
+ <td width="35%" {$smarty_stock_dispo_class}>
+   {$prod_stock_dispo}
+ </td>
  <td width="15%">Seuil d'alerte</td>
  <td width="35%">{$prod_stock_alert}</td>
 </tr>
