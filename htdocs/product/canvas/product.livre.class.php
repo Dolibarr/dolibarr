@@ -56,28 +56,62 @@ class ProductLivre extends Product
    */
   function CreateCanvas($user,$datas)
   {
+    $this->db->begin();
+
     $id = $this->create($user);
 
+    if ($id > 0)
+      {
+	$error = 0;
+      }
 
-    $sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre (rowid)";
-    $sql.= " VALUES ('".$id."');";
-
-    $result = $this->db->query($sql) ;
-
-    if ( $result )
+    if ( $error === 0 )
+      {
+	$sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre (rowid)";
+	$sql.= " VALUES ('".$id."');";
+	
+	$result = $this->db->query($sql) ;
+	if ($result)
+	  {
+	    $error = 0;
+	  }
+	else
+	  {
+	    $error = -6;
+	  }
+      }
+    /*
+    if ( $error === 0 )
       {
 	$sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre_contrat (fk_cnv_livre)";
 	$sql.= " VALUES ('".$id."');";
 
 	$result = $this->db->query($sql) ;
+	if ($result)
+	  {
+	    $error = 0;
+	  }
+	else
+	  {
+	    $error = -5;
+	  }
       }
-    
-    if ( $result )
+    */
+    if ( $error === 0 )
       {
-	$this->UpdateCanvas($datas);
+	$error = $this->UpdateCanvas($datas);
       }
 
-    return $id;
+    if ( $error === 0 )
+      {
+	$this->db->commit();
+	return $this->id;
+      }
+    else
+      {
+	$this->db->rollback();
+	return -1;
+      }
   }
   /**
    *    \brief      Supression
@@ -124,24 +158,20 @@ class ProductLivre extends Product
 	    $this->db->free();
 	  }
 
+	/*
 	$sql = "SELECT quantite,taux,duree";
-
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre_contrat";
-	$sql.= " WHERE fk_cnv_livre = '".$this->id."'";
-	
+	$sql.= " WHERE fk_cnv_livre = '".$this->id."'";	
 	$result = $this->db->query($sql) ;
-
 	if ( $result )
 	  {
 	    $result = $this->db->fetch_array();
-
 	    $this->contrat_taux       = $result["taux"];
 	    $this->contrat_duree      = $result["duree"];
 	    $this->contrat_quantite   = $result["quantite"];
-
 	    $this->db->free();
 	  }
-
+	*/
       }
 
     return $result;
@@ -188,25 +218,35 @@ class ProductLivre extends Product
 
     if ( $this->db->query($sql) )
       {
-
+	$error = 0;
+      }
+    else
+      {
+	$error = -1;
       }
 
     $taux   = str_replace(',','.',abs(trim($datas["contrat_taux"])));
     $quant  = trim($datas["contrat_quant"]);
     $duree  = trim($datas["contrat_duree"]);
-
-    $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre_contrat ";
-    $sql .= " SET taux    = '$taux'";
-    $sql .= " , duree     = '$duree'";
-    $sql .= " , quantite  = '$quant'";
-
-    $sql .= " WHERE fk_cnv_livre = " . $this->id;
-
-    if ( $this->db->query($sql) )
+    /*
+    if (!$error)
       {
-
+	$sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre_contrat ";
+	$sql .= " SET taux    = '$taux'";
+	$sql .= " , duree     = '$duree'";
+	$sql .= " , quantite  = '$quant'";	
+	$sql .= " WHERE fk_cnv_livre = " . $this->id;	
+	if ( $this->db->query($sql) )
+	  {
+	    $error = 0;
+	  }
+	else
+	  {
+	    $error = -2;
+	  }
       }
-
+      /*
+    return $error;
   }
   /**
    *    \brief      Calcule le prix de revient d'un livre
