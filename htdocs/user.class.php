@@ -623,97 +623,97 @@ class User
      *      \brief      Crée un utilisateur en base
      *      \return     int         si erreur <0, si ok renvoie id compte créé
      */
-    function create()
-    {
-        global $conf,$langs;
+  function create($user)
+  {
+    global $conf,$langs;
+    
+    // Nettoyage parametres
+    $this->login = trim($this->login);
+    
+    $this->db->begin();
+    
+    $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
+    $sql.= " WHERE login ='".addslashes($this->login)."'";
+    $resql=$this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$this->db->free($resql);
+	
+	if ($num)
+	  {
+	    $this->error = $langs->trans("ErrorLoginAlreadyExists");
+	    return -6;
+	  }
+	else
+	  {
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
+	    $result=$this->db->query($sql);
+	    
+	    if ($result)
+	      {
+		$table =  "".MAIN_DB_PREFIX."user";
+		$this->id = $this->db->last_insert_id($table);
+		
+		// Set default rights
+		if ($this->set_default_rights() < 0)
+		  {
+		    $this->error=$this->db->error();
+		    $this->db->rollback();
+		    return -5;
+		  }
+		
+		// Update minor fields
+		if ($this->update() < 0)
+		  {
+		    $this->error=$this->db->error();
+		    $this->db->rollback();
+		    return -4;
+		  }
+		
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		$interface = new Interfaces($this->db);
+		$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
+		if ($result < 0) $error++;
+		// Fin appel triggers
+		
+		if (! $error)
+		  {
+		    $this->db->commit();
+		    return $this->id;
+		  }
+		else
+		  {
+		    $this->error=$interface->error;
+		    $this->db->rollback();
+		    return -3;
+		  }
+	      }
+	    else
+	      {
+		$this->error=$this->db->error();
+		$this->db->rollback();
+		return -2;
+	      }
+	  }
+      }
+    else
+      {
+	$this->error=$this->db->error();
+	$this->db->rollback();
+	return -1;
+      }
+  }
 
-        // Nettoyage parametres
-        $this->login = trim($this->login);
 
-        $this->db->begin();
-
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-        $sql.= " WHERE login ='".addslashes($this->login)."'";
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $num = $this->db->num_rows($resql);
-            $this->db->free($resql);
-
-            if ($num)
-            {
-                $this->error = $langs->trans("ErrorLoginAlreadyExists");
-                return -6;
-            }
-            else
-            {
-                $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
-                $result=$this->db->query($sql);
-
-                if ($result)
-                {
-                    $table =  "".MAIN_DB_PREFIX."user";
-                    $this->id = $this->db->last_insert_id($table);
-
-                    // Set default rights
-                    if ($this->set_default_rights() < 0)
-                    {
-                        $this->error=$this->db->error();
-                        $this->db->rollback();
-                        return -5;
-                    }
-
-                    // Update minor fields
-                    if ($this->update() < 0)
-                    {
-                        $this->error=$this->db->error();
-                        $this->db->rollback();
-                        return -4;
-                    }
-
-                    // Appel des triggers
-                    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                    $interface=new Interfaces($this->db);
-                    $result=$interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
-                    if ($result < 0) $error++;
-                    // Fin appel triggers
-
-                    if (! $error)
-                    {
-                        $this->db->commit();
-                        return $this->id;
-                    }
-                    else
-                    {
-                        $this->error=$interface->error;
-                        $this->db->rollback();
-                        return -3;
-                    }
-                }
-                else
-                {
-                    $this->error=$this->db->error();
-                    $this->db->rollback();
-                    return -2;
-                }
-            }
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            $this->db->rollback();
-            return -1;
-        }
-    }
-
-
-    /**
-     *      \brief      Créé en base un utilisateur depuis l'objet contact
-     *      \param      contact     Objet du contact source
-     *      \return     int         si erreur <0, si ok renvoie id compte créé
-     */
-    function create_from_contact($contact)
-    {
+  /**
+   *      \brief      Créé en base un utilisateur depuis l'objet contact
+   *      \param      contact     Objet du contact source
+   *      \return     int         si erreur <0, si ok renvoie id compte créé
+   */
+  function create_from_contact($contact)
+  {
         global $langs;
 
         // Positionne paramètres
@@ -782,7 +782,7 @@ class User
    *    \brief      Affectation des permissions par défaut
    *    \return     si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
    */
-	function set_default_rights()
+  function set_default_rights()
     {
         $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
 
@@ -820,7 +820,7 @@ class User
    *    \param      notrigger		1 si update durant le create, 0 sinon
    *    \return     int         	<0 si KO, >=0 si OK
    */
-  	function update($notrigger=0)
+  function update($notrigger=0)
     {
         global $conf,$langs,$user;
 
@@ -904,7 +904,7 @@ class User
    *				Fonction appelée lors d'une nouvelle connexion
    *    \return     <0 si echec, >=0 si ok
    */
-  	function update_last_login_date()
+  function update_last_login_date()
     {
         dolibarr_syslog ("Mise a jour date derniere connexion pour user->id=".$this->id);
 
@@ -1049,7 +1049,7 @@ class User
   /**
    *    \brief      Lecture des infos de click to dial
    */
-  	function fetch_clicktodial()
+  function fetch_clicktodial()
     {
 
       $sql = "SELECT login, pass, poste FROM ".MAIN_DB_PREFIX."user_clicktodial as u";
@@ -1416,17 +1416,22 @@ class User
   {
     $err=0;
     $this->entrepots = array();
-    $sql = "SELECT fk_entrepot,consult,send";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot";
+    $sql = "SELECT e.rowid,ue.consult,ue.send,e.label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."user_entrepot as ue,".MAIN_DB_PREFIX."entrepot as e";
     $sql.= " WHERE fk_user = '".$this->id."'";
+    $sql .= " AND e.statut = 1";
+    $sql .= " AND e.rowid = ue.fk_entrepot";
     
     if ( $this->db->query($sql) ) 
       {
+	$i=0;
 	while ($obj = $this->db->fetch_object($result) )
 	  {
 	    $this->entrepots[$i]['id'] = $obj->consult;
 	    $this->entrepots[$i]['consult'] = $obj->consult;
 	    $this->entrepots[$i]['send'] = $obj->send;
+	    $this->entrepots[$i]['label'] = $obj->label;
+	    $i++;
 	  }
       }
     else 
