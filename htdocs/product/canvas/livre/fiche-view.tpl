@@ -33,10 +33,18 @@
 </tr>
 <tr>
  <td>Prix de revient</td>
- <td>{$prod_pxrevient}</td>
+ <td colspan="3">{$prod_pxrevient}</td>
+</tr>
+<tr>
  <td>Prix de vente</td>
  <td>{$prod_pxvente}</td>
+
+  <td width="15%">Taux TVA</td>
+  <td width="35%">{$prod_tva_tx}</td>
+
 </tr>
+
+
 
 </table>
 <br>
@@ -63,10 +71,14 @@
  <td colspan="3">{$prod_pages}</td>
 </tr>
 
+ <tr>
+  <td>Statut</td>
+  <td colspan="3"></td>
+ </tr>
+
 </table>
 <br>
 <table class="border" width="100%">
-
 
 <tr>
  <td width="15%">Durée du contrat : </td>
@@ -82,7 +94,23 @@
  <td>{$prod_contrat_quant}</td>
 </tr>
 
-<tr>
+</table>
+
+<br />
+
+<table class="border" width="100%">
+
+ <tr>
+  <td width="15%" valign="top">Description</td>
+  <td width="85%">{$prod_description}</td>
+ </tr>
+
+ <tr>
+  <td width="15%" valign="top">Note (non visible sur les factures, propals...)</td>
+  <td width="85%">{$prod_note}</td>
+ </tr>
+
+</table>
 
 
 

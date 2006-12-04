@@ -349,12 +349,16 @@ class ProductLivre extends Product
 
     $smarty->assign('prod_isbn13',    '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
 
-    $smarty->assign('prod_ref',       $this->ref);
-    $smarty->assign('prod_pages',     $this->pages);
-    $smarty->assign('prod_format',    $this->format);
-    $smarty->assign('prod_pxfeuil',   $this->px_feuillet);
+    $smarty->assign('prod_ref',         $this->ref);
+    $smarty->assign('prod_tva_tx',      $this->tva_tx);
+    $smarty->assign('prod_description', $this->description);
+    $smarty->assign('prod_note',        $this->note);
 
-    $smarty->assign('prod_pxcouv',    $this->couverture->price);
+    $smarty->assign('prod_pages',       $this->pages);
+    $smarty->assign('prod_format',      $this->format);
+    $smarty->assign('prod_pxfeuil',     $this->px_feuillet);
+
+    $smarty->assign('prod_pxcouv',      $this->couverture->price);
 
     $smarty->assign('prod_pxrevient', price($this->px_revient));
     $smarty->assign('prod_pxvente',   price($this->price));
@@ -373,8 +377,6 @@ class ProductLivre extends Product
       {
 	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
       }
-
-
   }
 
 }

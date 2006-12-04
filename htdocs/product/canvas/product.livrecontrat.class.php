@@ -170,5 +170,41 @@ class ProductLivreContrat extends Product
 
     return $error;
   }
+   /**
+   *    \brief      Assigne les valeurs pour les templates Smarty
+   *    \param      smarty     Instance de smarty
+   */
+  function assign_values(&$smarty)
+  {
+    $smarty->assign('prod_canvas',  'livre');
+    $smarty->assign('prod_id',      $this->id);
+
+    $smarty->assign('prod_isbn',    $this->isbn);
+
+    $isbn_parts = explode('-',$this->isbn);
+    
+    $smarty->assign('prod_isbna',     $isbn_parts[0]);
+    $smarty->assign('prod_isbnb',     $isbn_parts[1]);
+    $smarty->assign('prod_isbnc',     $isbn_parts[2]);
+
+    $smarty->assign('prod_ean',       $this->ean);
+
+    $smarty->assign('prod_isbn13',    '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
+
+    $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
+    $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
+    $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
+
+    $smarty->assign('prod_stock_reel',        $this->stock_reel);
+    $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
+    $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
+    $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
+
+    if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
+      {
+	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
+      }
+  }
+
 }
 ?>
