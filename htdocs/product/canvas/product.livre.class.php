@@ -368,6 +368,13 @@ class ProductLivre extends Product
     $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
     $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
     $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
+
+    if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
+      {
+	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
+      }
+
+
   }
 
 }
