@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/product/liste.php
-        \ingroup    produit
-		\brief      Page liste des produits ou services
-		\version    $Revision$
+   \file       htdocs/product/liste.php
+   \ingroup    produit
+   \brief      Page liste des produits ou services
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -59,13 +59,13 @@ $offset = $limit * $page ;
 
 if (isset($_POST["button_removefilter_x"]))
 {
-    $sref="";
-    $snom="";
+  $sref="";
+  $snom="";
 }
 
 if (isset($_REQUEST['catid']))
 {
-    $catid = $_REQUEST['catid'];
+  $catid = $_REQUEST['catid'];
 }
 
 
@@ -81,47 +81,51 @@ $sql.= ' p.duration, p.envente as statut';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
 {
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
 
 if ($_GET["fourn_id"] > 0)
 {
-    $fourn_id = $_GET["fourn_id"];
-    $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
+  $fourn_id = $_GET["fourn_id"];
+  $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 }
 $sql .= " WHERE 1=1";
 if ($sall)
 {
-    $sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+  $sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
 }
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
-    $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
+  $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
 }
 if ($sref)
 {
-    $sql .= " AND p.ref like '%".$sref."%'";
+  $sql .= " AND p.ref like '%".$sref."%'";
 }
 if ($snom)
 {
-    $sql .= " AND p.label like '%".$snom."%'";
+  $sql .= " AND p.label like '%".$snom."%'";
 }
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
-    $sql .= " AND p.envente = ".$_GET["envente"];
+  $sql .= " AND p.envente = ".$_GET["envente"];
+}
+if (isset($_GET["canvas"]) && strlen($_GET["canvas"]) > 0)
+{
+  $sql .= " AND p.canvas = '".mysql_escape_string($_GET["canvas"])."'";
 }
 if($catid)
 {
-    $sql .= " AND cp.fk_categorie = ".$catid;
+  $sql .= " AND cp.fk_categorie = ".$catid;
 }
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
-	$sql.= ' AND IFNULL(c.visible,1)=1';
+  $sql.= ' AND IFNULL(c.visible,1)=1';
 }
 if ($fourn_id > 0)
 {
-    $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
+  $sql .= " AND p.rowid = pf.fk_product AND pf.fk_soc = ".$fourn_id;
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -129,54 +133,54 @@ $resql = $db->query($sql) ;
 
 if ($resql)
 {
-    $num = $db->num_rows($resql);
+  $num = $db->num_rows($resql);
 
-    $i = 0;
+  $i = 0;
 
-    if ($num == 1 && ($sall or $snom or $sref))
+  if ($num == 1 && ($sall or $snom or $sref))
     {
-        $objp = $db->fetch_object($resql);
-        Header("Location: fiche.php?id=$objp->rowid");
-        exit;
+      $objp = $db->fetch_object($resql);
+      Header("Location: fiche.php?id=$objp->rowid");
+      exit;
     }
-
-    if (isset($_GET["envente"]) || isset($_POST["envente"]))
+  
+  if (isset($_GET["envente"]) || isset($_POST["envente"]))
     {
-        $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
+      $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
     }
-
-    if (isset($_GET["type"]) || isset($_POST["type"]))
+  
+  if (isset($_GET["type"]) || isset($_POST["type"]))
     {
-        $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-        if ($type) { $texte = $langs->trans("Services"); }
-        else { $texte = $langs->trans("Products"); }
+      $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+      if ($type) { $texte = $langs->trans("Services"); }
+      else { $texte = $langs->trans("Products"); }
     } else {
-        $texte = $langs->trans("ProductsAndServices");
+      $texte = $langs->trans("ProductsAndServices");
     }
-
-
-    llxHeader("","",$texte);
-
-    if ($sref || $snom || $sall || $_POST["search"])
+  
+  
+  llxHeader("","",$texte);
+  
+  if ($sref || $snom || $sall || $_POST["search"])
     {
-        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
-    else
+  else
     {
-        print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
     }
-    
-    if (isset($catid))
+  
+  if (isset($catid))
     {
-        print "<div id='ways'>";
-        $c = new Categorie ($db, $catid);
-        $ways = $c->print_all_ways(' &gt; ','product/liste.php');
-        print " &gt; ".$ways[0]."<br />\n";
-        print "</div><br />";
+      print "<div id='ways'>";
+      $c = new Categorie ($db, $catid);
+      $ways = $c->print_all_ways(' &gt; ','product/liste.php');
+      print " &gt; ".$ways[0]."<br />\n";
+      print "</div><br />";
     }
 
     print '<table class="liste" width="100%">';
-
+    
     // Lignes des titres
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
@@ -201,9 +205,9 @@ if ($resql)
     print '</td>';
     if ($conf->service->enabled && $type != 0) 
     {
-        print '<td class="liste_titre">';
-        print '&nbsp;';
-        print '</td>';
+      print '<td class="liste_titre">';
+      print '&nbsp;';
+      print '</td>';
     }
     print '<td class="liste_titre">';
     print '&nbsp;';
@@ -222,22 +226,22 @@ if ($resql)
     
     $var=True;
     while ($i < min($num,$limit))
-    {
+      {
         $objp = $db->fetch_object($resql);
         
-        		// Multilangs
-		if ($conf->global->MAIN_MULTILANGS) // si l'option est active
-		{
-			$sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
-			$sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
-			$sql.= " LIMIT 1";
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$objtp = $db->fetch_object($result);
-				if ($objtp->label != '') $objp->label = $objtp->label;
-			}
-		}
+	// Multilangs
+	if ($conf->global->MAIN_MULTILANGS) // si l'option est active
+	  {
+	    $sql = "SELECT label FROM ".MAIN_DB_PREFIX."product_det";
+	    $sql.= " WHERE fk_product=".$objp->rowid." AND lang='". $langs->getDefaultLang() ."'";
+	    $sql.= " LIMIT 1";
+	    $result = $db->query($sql);
+	    if ($result)
+	      {
+		$objtp = $db->fetch_object($result);
+		if ($objtp->label != '') $objp->label = $objtp->label;
+	      }
+	  }
         
         $var=!$var;
         print '<tr '.$bc[$var].'><td nowrap="nowrap">';
@@ -265,24 +269,24 @@ if ($resql)
     
     if ($num > $conf->liste_limit)
     {
-	    if ($sref || $snom || $sall || $_POST["search"])
-	    {
-	        print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
-	    }
-	    else
-	    {
-	        print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
-	    }
+      if ($sref || $snom || $sall || $_POST["search"])
+	{
+	  print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
 	}
-	    
+      else
+	{
+	  print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+	}
+    }
+    
     $db->free($resql);
-
+    
     print "</table>";
-
+    
 }
 else
 {
-    dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 
 
