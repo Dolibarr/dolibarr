@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser  <simon@kornog-computing.com>
  *
@@ -22,9 +22,9 @@
  */
 
 /**
-        \file       htdocs/admin/pre.inc.php
-		\brief      Fichier gestionnaire du menu de gauche de l'espace configuration
-		\version    $Revision$
+   \file       htdocs/admin/pre.inc.php
+   \brief      Fichier gestionnaire du menu de gauche de l'espace configuration
+   \version    $Revision$
 */
 
 require("../main.inc.php");
@@ -55,6 +55,9 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 
   $menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
+
+  $langs->load("users");
+  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
 
   $menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 
