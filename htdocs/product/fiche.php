@@ -513,7 +513,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     {
       //RODO
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
-      $smarty->display('fiche-create.tpl');
+      $smarty->display($product->canvas.'-create.tpl');
     }
 }
 
@@ -605,40 +605,8 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  print '</tr>';
 	  
-	  $smarty->display('fiche-view.tpl');
+	  $smarty->display($product->canvas.'-view.tpl');
 	  	  
-	  // Statut
-	  print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	  print $product->getLibStatut(2);
-	  print '</td></tr>';
-	  
-	  // TVA
-	  
-	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
-	  	  
-	  // Description
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
-	  
-	  // Durée
-	  if ($product->type == 1)
-            {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
-	      
-	      if ($product->duration_value > 1)
-                {
-		  $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-                }
-	      else {
-		$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-	      }
-	      print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-	      
-	      print '</td></tr>';
-            }
-	  
-	  // Note
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';	  
-	  print "</table>\n";	  
 	  print "</div>\n<!-- CUT HERE -->\n";
         }
  
@@ -878,7 +846,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	else
 	  {
-	    $smarty->display('fiche-edit.tpl');
+	    $smarty->display($product->canvas.'-edit.tpl');
 	  }
       }
 }
