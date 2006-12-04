@@ -51,7 +51,7 @@ $type=trim($type);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-if (! $sortfield) $sortfield="stock";
+if (! $sortfield) $sortfield="stock_dispo";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 $limit = $conf->liste_limit;
@@ -78,7 +78,7 @@ $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut,';
-$sql.= ' SUM(reel) as stock';
+$sql.= ' SUM(reel) as stock,p.stock_commande,(SUM(reel) - p.stock_commande) as stock_dispo';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 $sql.= ',' .MAIN_DB_PREFIX.'product_stock as s';
 if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
@@ -184,7 +184,7 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateModification"),"reassort.php", "p.tms","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("StockAvailable"),"reassort.php", "p.stock_dispo","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Stock"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
@@ -250,7 +250,7 @@ if ($resql)
         print '</a> ';
         print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
         print '<td>'.$objp->label.'</td>';
-        print '<td align="center">'.dolibarr_print_date($objp->datem).'</td>';
+
         if ($conf->service->enabled && $type != 0) 
         {
             print '<td align="center">';
@@ -260,6 +260,7 @@ if ($resql)
             else print $objp->duration;
             print '</td>';
         }
+        print '<td align="right">'.$objp->stock_dispo.'</td>';
         print '<td align="right">'.$objp->stock.'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
         print "</tr>\n";
