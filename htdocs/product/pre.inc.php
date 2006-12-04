@@ -68,15 +68,18 @@ function llxHeader($head = "", $urlp = "", $title="")
 	      if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 		{
 		  $parts = explode('.',$file);
-		  $classname = 'Product'.ucfirst($parts[1]);
-		  
-		  require_once($dir.$file);
-		  
+		  $classname = 'Product'.ucfirst($parts[1]);		  
+		  require_once($dir.$file);		  
 		  $module = new $classname();
 		  
-		  if ($module->active === '1')
+		  if ($module->active === '1' && $module->menu_add === 1)
 		    {
-		      $menu->add_submenu(DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0&amp;canvas=".$module->canvas, $langs->trans($module->menu_new));
+		      $module->PersonnalizeMenu($menu);
+		      $langs->load("products_".$module->canvas);
+		      for ($j = 0 ; $j < sizeof($module->menus) ; $j++)
+			{
+			  $menu->add_submenu($module->menus[$j][0], $langs->trans($module->menus[$j][1]));
+			}
 		    }
 		}
 	    }
