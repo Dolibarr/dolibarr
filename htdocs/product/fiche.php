@@ -195,39 +195,38 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 
         if ($product->check())
         {
-            $id = $product->create($user);
-            if ($id > 0)
+	  $id = $product->create($user);
+	  if ($id > 0)
             {
-                // $product->clone_fournisseurs($originalId, $id);
-
-                $db->commit();
-
-                Header("Location: fiche.php?id=$id");
-                $db->close();
-                exit;
+	      // $product->clone_fournisseurs($originalId, $id);
+	      
+	      $db->commit();
+	      
+	      Header("Location: fiche.php?id=$id");
+	      $db->close();
+	      exit;
             }
-            else	if ($id == -3)
+	  else	if ($id == -3)
             {
-                $db->rollback();
-
-                $_error = 1;
-                $_GET["action"] = "";
-                dolibarr_print_error($product->db);
+	      $db->rollback();
+	      
+	      $_error = 1;
+	      $_GET["action"] = "";
+	      dolibarr_print_error($product->db);
             }
-            else
+	  else
             {
-                $db->rollback();
-
-                dolibarr_print_error($product->db);
+	      $db->rollback();	      
+	      dolibarr_print_error($product->db);
             }
         }
     }
     else
-    {
+      {
         $db->rollback();
-
+	
         dolibarr_print_error($product->db);
-    }
+      }
 }
 
 /*
@@ -546,9 +545,12 @@ if ($_GET["id"] || $_GET["ref"])
       $result = $product->FetchCanvas($_GET["id"]);
       
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
-
       
       $product->assign_values($smarty);     
+    }
+  else
+    {
+      $product->canvas = '';
     }
   // END TODO RODO FINISH THIS PART
   

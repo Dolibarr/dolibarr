@@ -72,6 +72,14 @@ class Menu {
     }
 
     /**
+     *  \brief   Supprime la derniere entree de menu
+     */
+    function remove_last()
+    {      
+      array_pop($this->liste);
+    }
+
+    /**
      *  \brief      Ajoute une entrée de menu de niveau inférieur
      *  \param      url         Url a suivre sur le clic
      *  \param      titre       Libelle menu à afficher

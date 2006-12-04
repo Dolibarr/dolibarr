@@ -117,6 +117,7 @@ class Product
   /**
    *    \brief    Insère le produit en base
    *    \param    user        Utilisateur qui effectue l'insertion
+   *    \return   int     id du produit ou numero d'erreur < 0
    */
   function create($user)
   {
@@ -224,7 +225,7 @@ class Product
     if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
     $sql .= ",tva_tx = '" . $this->tva_tx."'";
     $sql .= ",envente = " . $this->status;
-    $sql .= ",seuil_stock_alerte = " . $this->seuil_stock_alerte;
+    $sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
     $sql .= ",description = '" . addslashes($this->description) ."'";
     $sql .= ",note = '" . addslashes($this->note) ."'";
     $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
@@ -1304,10 +1305,10 @@ class Product
   }
 
   /**
-   *    \brief      Lie un sousproduit au produit/service
+   *    \brief      Lie un produit associe au produit/service
    *    \param      id_pere    Id du produit auquel sera lié le produit à lier
-   *    \param      id_fils  Id du produit à lier
-   *    \return     int         < 0 si erreur, > 0 si ok
+   *    \param      id_fils    Id du produit à lier
+   *    \return     int        < 0 si erreur, > 0 si ok
    */
   function add_sousproduit($id_pere, $id_fils,$qty)
   {
@@ -1408,6 +1409,33 @@ class Product
 	    else
 	      return false;
 	  }
+      }
+  }
+
+  /**
+   *    \brief      Lie un sous produit au produit/service
+   *    \param      id_sub     Id du produit à lier
+   *    \return     int        < 0 si erreur, > 0 si ok
+   */
+  function add_subproduct($id_sub)
+  {
+    if ($id_sub)
+      {
+	$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'product_subproduct(fk_product,fk_product_subproduct)';
+	$sql .= ' VALUES ("'.$this->id.'","'.$id_sub.'")';
+	if (! $this->db->query($sql))
+	  {
+	    dolibarr_print_error($this->db);
+	    return -1;
+	  }
+	else
+	  {
+	    return 0;
+	  }
+      }
+    else
+      {
+	return -2;
       }
   }
 
