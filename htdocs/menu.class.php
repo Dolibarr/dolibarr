@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -21,28 +21,27 @@
  */
 
 /**
-        \file       htdocs/menu.class.php
-        \brief      Fichier de la classe de gestion du menu gauche
-        \version    $Revision$
+   \file       htdocs/menu.class.php
+   \brief      Fichier de la classe de gestion du menu gauche
+   \version    $Revision$
 */
 
 
 /**
-        \class      Menu
-        \brief      Classe de gestion du menu gauche
+   \class      Menu
+   \brief      Classe de gestion du menu gauche
 */
 
 class Menu {
 
     var $liste;
 
-
     /**
      *  \brief      Constructeur classe menu
      */
     function Menu()
     {
-        $this->liste = array();
+      $this->liste = array();
     }
 
     /**
@@ -75,8 +74,9 @@ class Menu {
      *  \brief   Supprime la derniere entree de menu
      */
     function remove_last()
-    {      
-      array_pop($this->liste);
+    { 
+      if (sizeof($this->liste) > 1)
+	array_pop($this->liste);
     }
 
     /**
