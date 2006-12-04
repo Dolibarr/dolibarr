@@ -34,21 +34,15 @@
     {$prod_isbn}
   </td>
   <td width="15%">ISBN-13</td>
-  <td width="35%">978-
-    <input name="isbn13" size="13" maxlength="12" class="normal" 
-     onfocus="this.className='focus';" onblur="this.className='normal';" value="{$prod_isbn}">
+  <td width="35%"><i>sera calculé</i>
   </td>
  </tr>
 
  <tr>
   <td width="15%">EAN</td>
-  <td width="35%">
-    <input class="normal" name="ean" size="16" maxlength="15" value="{$prod_ean}"
-     onfocus="this.className='focus';" onblur="this.className='normal';">
-  </td>
-  <td>Code barre</td>
-  <td>{$prod_ean}</td>
+  <td colspan="3" width="85%"><i>sera calculé</i></td>
  </tr>
+
  <tr>
   <td>Pages</td>
   <td>
@@ -75,14 +69,14 @@
 </tr>
 <tr>
  <td>Prix de revient</td>
- <td>{$prod_pxrevient}</td>
- <td>Prix de vente</td>
- <td>{$prod_pxvente}</td>
+ <td colspan="3"><i>sera calculé</i></td>
 </tr>
 
  <tr>
+  <td>Prix de vente</td>
+  <td>{$prod_pxvente}</td>
   <td>Taux TVA</td>
-  <td colspan="2">
+  <td>
    <select class="flat" name="tva_tx">
     <option value="0">0%</option>
     <option value="5.5">5.5%</option>
@@ -90,38 +84,45 @@
    </select>
   </td>
  </tr>
+</table>
+
+<br />
+
+<table class="border" width="100%">
  <tr>
-  <td>État</td>
-  <td colspan="2">
+  <td width="15%">Seuil stock</td>
+  <td width="35%">
+   <input name="seuil_stock_alerte" size="4" value=""
+     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+  </td>
+  <td width="15%">Emplacement Stock</td>
+  <td width="35%">
+   <input name="stock_loc" size="8" value=""
+     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+  </td>
+ </tr>
+ <tr>
+  <td>Statut</td>
+  <td colspan="3">
    <select class="flat" name="statut">
     <option value="1" selected="true">En vente</option>
     <option value="0">Hors vente</option>
    </select>
   </td>
  </tr>
- <tr>
-  <td>Seuil stock</td>
-  <td colspan="2"><input name="seuil_stock_alerte" size="4"
-  value="300"></td>
- </tr>
+</table>
 
-<tr>
- <td>Emplacement Stock</td>
- <td colspan="3">{$prod_pages}</td>
-</tr>
+<br />
 
+<table class="border" width="100%">
 <tr>
- <td colspan="4">Contrat</td>
-</tr>
-
-<tr>
- <td>Durée du contrat :</td>
- <td>
+ <td width="15%">Durée du contrat :</td>
+ <td width="35%">
   <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$prod_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
- <td>Date d'application</td>
- <td>
+ <td width="15%">Date d'application</td>
+ <td width="35%">
   <input name="contrat_date_app" type="text" size="7" maxlength="6" value="{$prod_contrat_date_app}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
@@ -139,38 +140,32 @@
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
 </tr>
+</table>
 
+<br />
+
+<table class="border" width="100%">
  <tr>
-  <td valign="top">Description</td>
-  <td colspan="3">
-    <textarea name="desc" rows="4" cols="90"></textarea>
+  <td width="15%" valign="top">Description</td>
+  <td width="85%" colspan="3">
+    <textarea name="desc" rows="6" cols="70"></textarea>
   </td>
  </tr>
 
  <tr>
-  <td valign="top">Note (non visible sur les factures, propals...)
+  <td width="15%" valign="top">Note (non visible sur les factures, propals...)
   </td>
-  <td colspan="3">
-   <textarea name="note" rows="8" cols="70"></textarea>
+  <td width="85%" colspan="3">
+   <textarea name="note" rows="4" cols="70"></textarea>
   </td>
  </tr>
  <tr>
   <td colspan="4" align="center">
-   <input type="submit" class="button" value="Enregistrer">&nbsp;
-   <input type="submit" class="button" name="cancel" value="Annuler">
+   <input type="submit" class="button" value="Créer">
   </td>
  </tr>
 
 </table>
 </form>
-<!-- CUT HERE -->
-
-
-
-
-
-
-
-
 
 <!-- END SMARTY TEMPLATE -->
