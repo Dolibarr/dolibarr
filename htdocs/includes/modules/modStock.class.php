@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,36 +21,36 @@
  */
 
 /**
-        \defgroup   stock     Module stock
-        \brief      Module pour gérer la tenue de stocks produits
+   \defgroup   stock     Module stock
+   \brief      Module pour gérer la tenue de stocks produits
 */
 
 /**
-        \file       htdocs/includes/modules/modStock.class.php
-        \ingroup    stock
-        \brief      Fichier de description et activation du module Stock
+   \file       htdocs/includes/modules/modStock.class.php
+   \ingroup    stock
+   \brief      Fichier de description et activation du module Stock
 */
 
 include_once "DolibarrModules.class.php";
 
 /**
-        \class      modStock
-		\brief      Classe de description et activation du module Stock
+   \class      modStock
+   \brief      Classe de description et activation du module Stock
 */
 
 class modStock extends DolibarrModules
 {
 
-   /**
-    *   \brief      Constructeur. Definit les noms, constantes et boites
-    *   \param      DB      handler d'accès base
-    */
+  /**
+   *   \brief      Constructeur. Definit les noms, constantes et boites
+   *   \param      DB      handler d'accès base
+   */
   function modStock($DB)
   {
     $this->db = $DB ;
     $this->id = 'stock';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 52 ;
-
+    
     $this->family = "products";
     $this->name = "Stock produits";
     $this->description = "Gestion des stocks";
@@ -64,6 +64,8 @@ class modStock extends DolibarrModules
 
     // Dir
     $this->dirs = array();
+
+    $this->config_page_url = "stock.php";
 
     // Dépendences
     $this->depends = array("modProduit");
