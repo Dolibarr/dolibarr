@@ -1028,3 +1028,7 @@ td.hidden {
                          padding: 1px 1px 1px 1px;
                          margin: 1px 1px 1px 1px;
                }
+
+td.alerte {
+ background: #FF99A9;
+}
