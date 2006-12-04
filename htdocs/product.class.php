@@ -1413,6 +1413,35 @@ class Product
   }
 
   /**
+   *    \brief      Remplit le tableau des sous-produits
+   *    \return     int        < 0 si erreur, > 0 si ok
+   */
+  function load_subproduct()
+  {
+    $this->subproducts_id = array();
+    $i = 0;
+
+    $sql = "SELECT fk_product_subproduct FROM ".MAIN_DB_PREFIX."product_subproduct";
+    $sql .= " WHERE fk_product=$this->id;";
+
+      if ($result = $this->db->query($sql))
+	{
+	  while ($row = $this->db->fetch_row($result) )
+	  {
+	    $this->subproducts_id[$i] = $row[0];
+	    $i++;
+	  }
+	  $this->db->free($result);
+	  return 0;
+	}
+      else
+	{
+	  return -1;
+	}
+  }
+
+
+  /**
    *    \brief      Lie un sous produit au produit/service
    *    \param      id_sub     Id du produit à lier
    *    \return     int        < 0 si erreur, > 0 si ok
@@ -1990,6 +2019,16 @@ class Product
 
 	if ($this->db->query($sql) )
 	  {
+
+	    $this->load_subproduct();
+
+	    for ($i = 0 ; $i < sizeof($this->subproducts_id) ; $i++)
+	      {
+		$product = new Product($this->db);
+		$product->id = $this->subproducts_id[$i];
+		$product->ajust_stock_commande($nbpiece, $mouvement);
+	      }
+
 	    $this->db->commit();
 	    return 1;
 	  }
