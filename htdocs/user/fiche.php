@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -45,15 +45,15 @@ $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 // Defini si peux lire/modifier info user ou mot de passe
 if ($_GET["id"])
 {
-	// $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
-	$caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
-	                || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
-	$caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
-	                || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
+  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
+  $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
+		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
+  $caneditpassword=( (($user->id == $_GET["id"]) && $user->rights->user->self->password)
+		     || (($user->id != $_GET["id"]) && $user->rights->user->user->password) );
 }
 if ($user->id <> $_GET["id"] && ! $canreadperms)
 {
-    accessforbidden();
+  accessforbidden();
 }
 
 $langs->load("users");
@@ -131,45 +131,45 @@ if ($_POST["action"] == 'add' && $canadduser)
 
 	if (! $message)
 	{
-		$edituser = new User($db);
+	  $edituser = new User($db);
 
-		$edituser->nom           = trim($_POST["nom"]);
-		$edituser->prenom        = trim($_POST["prenom"]);
-		$edituser->login         = trim($_POST["login"]);
-		$edituser->admin         = trim($_POST["admin"]);
-		$edituser->office_phone  = trim($_POST["office_phone"]);
-		$edituser->office_fax    = trim($_POST["office_fax"]);
-		$edituser->user_mobile   = trim($_POST["user_mobile"]);
-		$edituser->email         = trim($_POST["email"]);
-		$edituser->webcal_login  = trim($_POST["webcal_login"]);
-		$edituser->note          = trim($_POST["note"]);
-		$edituser->ldap_sid      = trim($_POST["ldap_sid"]);
-
-		$db->begin();
-
-		$id = $edituser->create();
-
-		if ($id > 0)
+	  $edituser->nom           = trim($_POST["nom"]);
+	  $edituser->prenom        = trim($_POST["prenom"]);
+	  $edituser->login         = trim($_POST["login"]);
+	  $edituser->admin         = trim($_POST["admin"]);
+	  $edituser->office_phone  = trim($_POST["office_phone"]);
+	  $edituser->office_fax    = trim($_POST["office_fax"]);
+	  $edituser->user_mobile   = trim($_POST["user_mobile"]);
+	  $edituser->email         = trim($_POST["email"]);
+	  $edituser->webcal_login  = trim($_POST["webcal_login"]);
+	  $edituser->note          = trim($_POST["note"]);
+	  $edituser->ldap_sid      = trim($_POST["ldap_sid"]);
+	  
+	  $db->begin();
+	  
+	  $id = $edituser->create($user);
+	  
+	  if ($id > 0)
+	    {
+	      if (isset($_POST['password']) && trim($_POST['password']))
 		{
-			if (isset($_POST['password']) && trim($_POST['password']))
-			{
-				$edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
-			}
-
-			$db->commit();
-
-			Header("Location: fiche.php?id=$id");
-			exit;
+		  $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
 		}
-		else
-		{
-			$db->rollback();
-
-			//$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-			$message='<div class="error">'.$edituser->error.$id.'</div>';
-
-			$action="create";       // Go back to create page
-		}
+	      
+	      $db->commit();
+	      
+	      Header("Location: fiche.php?id=$id");
+	      exit;
+	    }
+	  else
+	    {
+	      $db->rollback();
+	      
+	      //$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+	      $message='<div class="error">'.$edituser->error.$id.'</div>';
+	      
+	      $action="create";       // Go back to create page
+	    }
 
 	}
 }
