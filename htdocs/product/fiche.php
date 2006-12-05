@@ -513,12 +513,14 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     {
       //RODO
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
-      $smarty->display($product->canvas.'-create.tpl');
+      $smarty->display($_GET["canvas"].'-create.tpl');
     }
 }
 
 /**
+ *
  * Fiche produit
+ *
  */
 if ($_GET["id"] || $_GET["ref"])
 {
@@ -558,109 +560,71 @@ if ($_GET["id"] || $_GET["ref"])
   
   if ( $result )
     {      
+      if ($_GET["action"] <> 'edit')
+	{	  
+	  $head=product_prepare_head($product);
+	  $titre=$langs->trans("CardProduct".$product->type);
+	  dolibarr_fiche_head($head, 'card', $titre);
+	  print "\n<!-- CUT HERE -->\n";	  
+	  // Confirmation de la suppression de la facture
+	  if ($_GET["action"] == 'delete')
+            {
+	      $html = new Form($db);
+	      $html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
+	      print "<br />\n";
+            }
+
+	  print($mesg);
+	  	  
+	  $product->load_previous_next_ref();
+	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+	}
       if ($_GET["action"] <> 'edit' && $product->canvas <> '')
         {
 	  /*
 	   *  Smarty en mode visu
 	   */
-	  
-	  $head=product_prepare_head($product);
-	  $titre=$langs->trans("CardProduct".$product->type);
-	  dolibarr_fiche_head($head, 'card', $titre);
-	  print "\n<!-- CUT HERE -->\n";	  
-	  // Confirmation de la suppression de la facture
-	  if ($_GET["action"] == 'delete')
-            {
-	      $html = new Form($db);
-	      $html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
-	      print "<br />\n";
-            }
+	  $smarty->assign('fiche_cursor_prev',$previous_ref);
+	  $smarty->assign('fiche_cursor_next',$next_ref);
 
-	  print($mesg);
-
-	  print '<table class="border" width="100%">';	  
-	  print "<tr>";
-	  
-	  $nblignes=6;
-	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-	  if ($product->type == 1) $nblignes++;
-	  
-	  // Reference
-	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
-	  $product->load_previous_next_ref();
-	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	  print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
-	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-	  print '</td>';
-	  
-	  if ($product->is_photo_available($conf->produit->dir_output))
-            {
-	      // Photo
-	      print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-	      $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-	      print '</td>';
-            }
-	  
-	  print '</tr>';
-	  
+	  // Photo
+	  //$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+	  	  
 	  $smarty->display($product->canvas.'-view.tpl');
 	  	  
 	  print "</div>\n<!-- CUT HERE -->\n";
         }
  
-
         if ($_GET["action"] <> 'edit' && $product->canvas == '')
         {
 	  /*
 	   *  En mode visu
 	   */
-	  
-	  $head=product_prepare_head($product);
-	  $titre=$langs->trans("CardProduct".$product->type);
-	  dolibarr_fiche_head($head, 'card', $titre);
-	  print "\n<!-- CUT HERE -->\n";	  
-	  // Confirmation de la suppression de la facture
-	  if ($_GET["action"] == 'delete')
-            {
-	      $html = new Form($db);
-	      $html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
-	      print "<br />\n";
-            }
-
-	  print($mesg);
-	  
-	  print '<table class="border" width="100%">';	  
-	  print "<tr>";
-	  
-	  $nblignes=6;
-	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-	  if ($product->type == 1) $nblignes++;
-	  
+	  print '<table class="border" width="100%"><tr>';	  
+	  	  
 	  // Reference
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
-	  $product->load_previous_next_ref();
-	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
 	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
 	  print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
 	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
 	  print '</td>';
 	  
+
+	  $nblignes=6;
+	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
+	  if ($product->type == 1) $nblignes++;
 	  if ($product->is_photo_available($conf->produit->dir_output))
             {
 	      // Photo
 	      print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
 	      $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
 	      print '</td>';
-            }
-	  
+            }	  
 	  print '</tr>';
 	  
 	  // Libelle
-	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
-	  print '</tr>';
+	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
 	  
 	  // MultiPrix
 	  if($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -678,15 +642,13 @@ if ($_GET["id"] || $_GET["ref"])
 	    {
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
 	      print '</tr>';
-	    }
-	  
+	    }	  
 	  // Statut
 	  print '<tr><td>'.$langs->trans("Status").'</td><td>';
 	  print $product->getLibStatut(2);
 	  print '</td></tr>';
 	  
-	  // TVA
-	  
+	  // TVA	  
 	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
 	  
 	  // Stock
@@ -717,8 +679,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  // Durée
 	  if ($product->type == 1)
             {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
-	      
+	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';	      
 	      if ($product->duration_value > 1)
                 {
 		  $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
@@ -732,10 +693,8 @@ if ($_GET["id"] || $_GET["ref"])
             }
 	  
 	  // Note
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
-	  
-	  print "</table>\n";
-	  
+	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';	  
+	  print "</table>\n";	  
 	  print "</div>\n<!-- CUT HERE -->\n";
         }
     }
