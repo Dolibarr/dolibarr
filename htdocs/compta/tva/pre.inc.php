@@ -39,6 +39,7 @@ function llxHeader($head = "") {
   $menu->add_submenu("reglement.php",$langs->trans("Payments"));
   $menu->add_submenu("fiche.php?action=create",$langs->trans("NewPayment"));
   $menu->add_submenu("clients.php",$langs->trans("Clients"));
+  $menu->add_submenu("quadri.php",$langs->trans("Quadri"));
 
   left_menu($menu->liste);
 }
