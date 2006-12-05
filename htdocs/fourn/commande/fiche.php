@@ -609,7 +609,7 @@ else
 			$sql.= ", p.label";
 			$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as	p ON l.fk_product =	p.rowid";
-			$sql.= " WHERE l.fk_commande = $commande->id";
+			$sql.= " WHERE l.fk_commande = ".$commande->id;
 			$sql.= " ORDER BY l.rowid";
 	
 			$resql = $db->query($sql);
@@ -669,14 +669,17 @@ else
 					if ($_GET["action"]	== 'editline' && $_GET["rowid"]	== $objp->rowid)
 					{
 						print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
+						print "<tr $bc[$var]>";
+						print '<td><textarea name="eldesc" cols="60" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
 						print '<input type="hidden"	name="action" value="updateligne">';
 						print '<input type="hidden"	name="elrowid" value="'.$_GET["rowid"].'">';
 						print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
-						print "<tr $bc[$var]>";
-						print '<td><textarea name="eldesc" cols="60" rows="2">'.$objp->description.'</textarea></td>';
-						print '<td>&nbsp;</td>';
+						print '</td>';
+						print '<td>';
+						$html->select_tva('tva_tx',$objp->tva_tx);
+						print '</td>';
 						print '<td align="center"><input size="3" type="text" name="qty" value="'.$objp->qty.'"></td>';
-						print '<td align="right"><input	size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">&nbsp;%</td>';
+						print '<td align="right"><input	size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
 						print '<td align="right"><input	size="6" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
 						print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 						print '<br /><input	type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
