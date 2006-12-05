@@ -28,10 +28,15 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
+$langs->load("stocks");
 
 if (!$user->admin)
   accessforbidden();
 
+
+/*
+* Actions
+*/
 if ($_POST["action"] == 'stock_userstock')
 {
   dolibarr_set_const($db, "STOCK_USERSTOCK", $_POST["stock_userstock"]);
@@ -44,6 +49,7 @@ elseif ($_POST["action"] == 'stock_userstock_autocreate')
   Header("Location: stock.php");
   exit;
 }
+
 /*
  * Affiche page
  */
@@ -102,5 +108,5 @@ if ($conf->global->STOCK_USERSTOCK == 1)
 print '</table>';
 $db->close();
 
-llxFooter();
+llxFooter('$Date$ - $Revision$');
 ?>

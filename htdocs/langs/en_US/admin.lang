@@ -669,3 +669,6 @@ MantisTestOk=Connection to server '%s' on database '%s' with user '%s' successfu
 MantisTestKo1=Connection to server '%s' succeed but database '%s' could not be reached.
 MantisTestKo2=Connection to server '%s' with user '%s' failed.
 MantisErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Mantis database.
+##### Stock #####
+StockSetup=Configuration module stock
+UserWarehouse=Use user personal stocks

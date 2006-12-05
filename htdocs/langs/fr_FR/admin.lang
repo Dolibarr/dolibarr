@@ -669,3 +669,6 @@ MantisTestOk=La connexion au serveur '%s' sur la base '%s' par l'utilisateur '%s
 MantisTestKo1=La connexion au serveur '%s' a réussi mais la base '%s' n'a pu être atteinte.
 MantisTestKo2=La connexion au serveur '%s' par l'utilisateur '%s' à échoué.
 MantisErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base Mantis.
+##### Stock #####
+StockSetup=Configuration module stock
+UserWarehouse=Utiliser des stocks personnels aux utilisateurs
