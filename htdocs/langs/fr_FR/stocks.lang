@@ -33,3 +33,4 @@ NumberOfUnit=Nombre de pièces
 TotalStock=Total en stock
 StockTooLow=Stock insuffisant
 EnhancedValue=Valorisation
+EnhancedValueOfWarehouses=Valorisation des stocks
