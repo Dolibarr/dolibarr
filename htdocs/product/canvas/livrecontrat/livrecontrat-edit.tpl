@@ -68,7 +68,7 @@
  <tr>
   <td width="15%" valign="top">Description</td>
   <td width="85%">
-    <textarea name="desc" rows="6" cols="70"></textarea>
+    <textarea name="desc" rows="6" cols="70">{$prod_description}</textarea>
   </td>
  </tr>
 
@@ -76,7 +76,7 @@
   <td width="15%" valign="top">Note (non visible sur les factures, propals...)
   </td>
   <td width="85%">
-   <textarea name="note" rows="4" cols="70"></textarea>
+   <textarea name="note" rows="4" cols="70">{$prod_note}</textarea>
   </td>
  </tr>
  <tr>
@@ -85,17 +85,6 @@
    <input type="submit" class="button" name="cancel" value="Annuler">
   </td>
  </tr>
-
 </table>
 </form>
-<!-- CUT HERE -->
-
-
-
-
-
-
-
-
-
 <!-- END SMARTY TEMPLATE -->
