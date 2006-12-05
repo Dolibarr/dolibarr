@@ -620,93 +620,93 @@ class User
 
 
     /**
-     *  \brief      Crée un utilisateur en base
-     *  \param      user        Objet User
-     *  \return     int         si erreur <0, si ok renvoie id compte créé
+     *  \brief      Crée l'utilisateur en base
+     *  \param      user        Objet user qui demande la creation
+     *  \return     int         <0 si KO, id compte créé si OK
      *  \todo       Verifier tous les appels à cette fonction et ajouter le param $user
      */
-  function create($user='')
-  {
-    global $conf,$langs;
-    
-    // Nettoyage parametres
-    $this->login = trim($this->login);
-    
-    $this->db->begin();
-    
-    $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-    $sql.= " WHERE login ='".addslashes($this->login)."'";
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$num = $this->db->num_rows($resql);
-	$this->db->free($resql);
+	function create($user='')
+	{
+		global $conf,$langs;
 	
-	if ($num)
-	  {
-	    $this->error = $langs->trans("ErrorLoginAlreadyExists");
-	    return -6;
-	  }
-	else
-	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
-	    $result=$this->db->query($sql);
-	    
-	    if ($result)
-	      {
-		$table =  "".MAIN_DB_PREFIX."user";
-		$this->id = $this->db->last_insert_id($table);
-		
-		// Set default rights
-		if ($this->set_default_rights() < 0)
-		  {
-		    $this->error=$this->db->error();
-		    $this->db->rollback();
-		    return -5;
-		  }
-		
-		// Update minor fields
-		if ($this->update() < 0)
-		  {
-		    $this->error=$this->db->error();
-		    $this->db->rollback();
-		    return -4;
-		  }
-		
-		// Appel des triggers
-		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-		$interface = new Interfaces($this->db);
-		$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
-		if ($result < 0) $error++;
-		// Fin appel triggers
-		
-		if (! $error)
-		  {
-		    $this->db->commit();
-		    return $this->id;
-		  }
+		// Nettoyage parametres
+		$this->login = trim($this->login);
+	
+		$this->db->begin();
+	
+		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$this->db->free($resql);
+	
+			if ($num)
+			{
+				$this->error = $langs->trans("ErrorLoginAlreadyExists");
+				return -6;
+			}
+			else
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
+				$result=$this->db->query($sql);
+	
+				if ($result)
+				{
+					$table =  "".MAIN_DB_PREFIX."user";
+					$this->id = $this->db->last_insert_id($table);
+	
+					// Set default rights
+					if ($this->set_default_rights() < 0)
+					{
+						$this->error=$this->db->error();
+						$this->db->rollback();
+						return -5;
+					}
+	
+					// Update minor fields
+					if ($this->update() < 0)
+					{
+						$this->error=$this->db->error();
+						$this->db->rollback();
+						return -4;
+					}
+	
+					// Appel des triggers
+					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+					$interface = new Interfaces($this->db);
+					$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
+					if ($result < 0) $error++;
+					// Fin appel triggers
+	
+					if (! $error)
+					{
+						$this->db->commit();
+						return $this->id;
+					}
+					else
+					{
+						$this->error=$interface->error;
+						$this->db->rollback();
+						return -3;
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					$this->db->rollback();
+					return -2;
+				}
+			}
+		}
 		else
-		  {
-		    $this->error=$interface->error;
-		    $this->db->rollback();
-		    return -3;
-		  }
-	      }
-	    else
-	      {
-		$this->error=$this->db->error();
-		$this->db->rollback();
-		return -2;
-	      }
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	$this->db->rollback();
-	return -1;
-      }
-  }
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}
 
 
   /**
