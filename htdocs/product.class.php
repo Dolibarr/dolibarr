@@ -1281,7 +1281,6 @@ class Product
     return $resarray;
   }
 
-
   /**
    *    \brief  Renvoie le nombre de propales dans lesquelles figure le produit par mois
    *    \param  socid       id societe
@@ -1302,6 +1301,29 @@ class Product
 	$sql .= " AND p.fk_soc = $socid";
       }
     $sql .= " GROUP BY date_format(p.datep,'%Y%m') DESC ;";
+
+    return $this->_get_stats($sql);
+  }
+
+  /**
+   *    \brief  Renvoie le nombre de commandes dans lesquelles figure le produit par mois
+   *    \param  socid       id societe
+   *    \return array       nombre de commandes par mois
+   */
+  function get_nb_order($socid=0)
+  {
+    global $conf, $user;
+
+    $sql = "SELECT sum(d.qty), date_format(p.date_commande, '%Y%m') ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as d, ".MAIN_DB_PREFIX."commande as p";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE p.rowid = d.fk_commande and d.fk_product =".$this->id;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if ($socid > 0)
+      {
+	$sql .= " AND p.fk_soc = $socid";
+      }
+    $sql .= " GROUP BY date_format(p.date_commande,'%Y%m') DESC ;";
 
     return $this->_get_stats($sql);
   }
