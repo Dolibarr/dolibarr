@@ -74,7 +74,10 @@
 
  <tr>
   <td>Prix de vente</td>
-  <td>{$prod_pxvente}</td>
+  <td>
+   <input name="price" type="text" size="7" maxlength="6" value=""
+    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+  </td>
   <td>Taux TVA</td>
   <td>
    <select class="flat" name="tva_tx">
