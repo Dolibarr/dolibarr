@@ -1,0 +1,116 @@
+<?php
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+   \file       htdocs/product/stock/valo.php
+    \ingroup    stock
+     \brief      Page de valorisation des stocks
+      \version    $Revision$
+*/
+
+require("./pre.inc.php");
+require_once("./entrepot.class.php");
+
+$user->getrights('stocks');
+$langs->load("stocks");
+
+if (!$user->rights->stock->lire)
+  accessforbidden();
+
+$sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
+$sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
+
+$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+if (! $sortfield) $sortfield="valo";
+if (! $sortorder) $sortorder="DESC";
+$page = $_GET["page"];
+if ($page < 0) $page = 0;
+$limit = $conf->liste_limit;
+$offset = $limit * $page;
+
+
+$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays, sum(ps.reel * p.price) as valo";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,".MAIN_DB_PREFIX."product_stock as ps,".MAIN_DB_PREFIX."product as p";
+$sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = p.rowid";
+if ($sref)
+{
+  $sql .= " AND e.ref like '%".$sref."%'";
+}
+if ($sall)
+{
+  $sql .= " AND (e.label like '%".$sall."%' OR e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+}
+$sql .= " GROUP BY e.rowid";
+$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= $db->plimit($limit + 1 ,$offset);
+
+$result = $db->query($sql) ;
+if ($result)
+{
+  $num = $db->num_rows($result);
+  
+  $i = 0;
+  
+  llxHeader("","",$langs->trans("EnhancedValueOfWarehouses"));
+  
+  print_barre_liste($langs->trans("EnhancedValueOfWarehouses"), $page, "valo.php", "", $sortfield, $sortorder,'',$num);
+  
+  print '<table class="noborder" width="100%">';  
+  print "<tr class=\"liste_titre\">";
+  print_liste_field_titre($langs->trans("Ref"),"valo.php", "e.label","","","",$sortfield);
+  print_liste_field_titre($langs->trans("LocationSummary"),"valo.php", "e.lieu","","","",$sortfield);
+  print_liste_field_titre($langs->trans("EnhancedValue"),"valo.php", "valo",'','','align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Status"),"valo.php", "e.statut",'','','align="right"',$sortfield);
+  print "</tr>\n";
+
+  if ($num) 
+    {
+      $entrepot=new Entrepot($db);
+      
+      $var=True;
+      while ($i < min($num,$limit))
+	{
+	  $objp = $db->fetch_object($result);
+	  $var=!$var;
+	  print "<tr $bc[$var]>";
+	  print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
+	  print '<td>'.$objp->lieu.'</td>';
+	  print '<td align="right">'.price($objp->valo).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
+	  print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
+	  print "</tr>\n";
+	  $i++;
+	}
+    }	
+  $db->free($result);
+  print "</table>";
+}
+else
+{
+  dolibarr_print_error($db);
+}
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
+?>
