@@ -116,117 +116,137 @@ if ($_GET["id"] || $_GET["ref"])
         $HEIGHT=160;
         $dir = $conf->produit->dir_temp;
         if (! file_exists($dir.'/'.$product->id))
-        {
+	  {
             if (create_exdir($dir.'/'.$product->id) < 0)
-            {
+	      {
                 $mesg = $langs->trans("ErrorCanNotCreateDir",$dir);
-            }
-        }
+	      }
+	  }
+	
+	$graphfiles=array(
+			  'propal'           =>array('modulepart'=>'productstats_proposals', 
+						     'file' => $product->id.'/propal12m.png', 
+						     'label' => $langs->trans("Nombre propal sur les 12 derniers mois")),
+			  'orders'           =>array('modulepart'=>'productstats_orders', 
+						     'file' => $product->id.'/orders12m.png', 
+						     'label' => $langs->trans("Nombre commande clients sur les 12 derniers mois")),
+			  'invoices'         =>array('modulepart'=>'productstats_invoices', 
+						     'file' => $product->id.'/invoices12m.png', 
+						     'label' => $langs->trans("Nombre facture clients sur les 12 derniers mois")),
+			  'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers', 
+						     'file' => $product->id.'/invoicessuppliers12m.png', 
+						     'label' => $langs->trans("Nombre facture fournisseurs sur les 12 derniers mois")),
 
-		$graphfiles=array(
-			'propal'           =>array('modulepart'=>'productstats_proposals', 'file' => $product->id.'/propal12m.png', 'label' => $langs->trans("Nombre propal sur les 12 derniers mois")),
-//			'orders'           =>array('modulepart'=>'productstats_orders', 'file' => $product->id.'/orders12m.png', 'label' => $langs->trans("Nombre commande clients sur les 12 derniers mois")),
-//			'orderssuppliers'  =>array('modulepart'=>'productstats_orderssuppliers', 'file' => $product->id.'/orderssuppliers12m.png', 'label' => $langs->trans("Nombre commande fournisseurs sur les 12 derniers mois")),
-//			'contracts'        =>array('modulepart'=>'productstats_contracts', 'file' => $product->id.'/contracts12m.png', 'label' => $langs->trans("Nombre contrats sur les 12 derniers mois")),
-			'invoices'         =>array('modulepart'=>'productstats_invoices', 'file' => $product->id.'/invoices12m.png', 'label' => $langs->trans("Nombre facture clients sur les 12 derniers mois")),
-			'invoicessuppliers'=>array('modulepart'=>'productstats_invoicessuppliers', 'file' => $product->id.'/invoicessuppliers12m.png', 'label' => $langs->trans("Nombre facture fournisseurs sur les 12 derniers mois")),
-		);
+			  //			'orderssuppliers'  =>array('modulepart'=>'productstats_orderssuppliers', 'file' => $product->id.'/orderssuppliers12m.png', 'label' => $langs->trans("Nombre commande fournisseurs sur les 12 derniers mois")),
+			  //			'contracts'        =>array('modulepart'=>'productstats_contracts', 'file' => $product->id.'/contracts12m.png', 'label' => $langs->trans("Nombre contrats sur les 12 derniers mois")),
 
+			  );
+	
         $px = new DolGraph();
         $mesg = $px->isGraphKo();
         if (! $mesg)
-        {
-        	foreach($graphfiles as $key => $val)
-        	{
-        		if (! $graphfiles[$key]['file']) continue;
-        		
-        		$graph_data = array();
+	  {
+	    foreach($graphfiles as $key => $val)
+	      {
+		if (! $graphfiles[$key]['file']) continue;
+		
+		$graph_data = array();
+		
+		// \todo Test si deja existant et recent, on ne genere pas
+		if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid);
+		if ($key == 'orders')            $graph_data = $product->get_nb_order($socid);
+		if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid);
+		if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid);
+		if (is_array($graph_data))
+		  {
+		    $px->SetData($graph_data);
+		    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+		    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+		    $px->SetWidth($WIDTH);
+		    $px->SetHeight($HEIGHT);
+		    $px->SetHorizTickIncrement(1);
+		    $px->SetPrecisionY(0);
+		    $px->SetShading(5);
+		    //print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-        		// \todo Test si deja existant et recent, on ne genere pas
-				if ($key == 'propal')            $graph_data = $product->get_nb_propal($socid);
-				if ($key == 'invoices')          $graph_data = $product->get_nb_vente($socid);
-				if ($key == 'invoicessuppliers') $graph_data = $product->get_nb_achat($socid);
-				if (is_array($graph_data))
-				{
-		            $px->SetData($graph_data);
-					$px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-					$px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-		            $px->SetWidth($WIDTH);
-		            $px->SetHeight($HEIGHT);
-					$px->SetHorizTickIncrement(1);
-					$px->SetPrecisionY(0);
-					$px->SetShading(5);
-					//print 'x '.$key.' '.$graphfiles[$key]['file'];
-		            $px->draw($dir."/".$graphfiles[$key]['file']);
-		        }
-		        else
-		        {
-		        	dolibarr_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
-		        }
-			}
-		}
-
+		    if ($key == 'orders') 
+		      {
+			$px->library  = 'artichow';
+		      } 
+		    else
+		      {
+			$px->library  = 'phplot';
+		      }
+		    
+		    $px->draw($dir."/".$graphfiles[$key]['file']);
+		  }
+		else
+		  {
+		    dolibarr_print_error($db,'Error for calculating graph on key='.$key.' - '.$product->error);
+		  }
+	      }
+	  }
+	
         $mesg = $langs->trans("ChartGenerated");
-
-		// Affichage graphs
-		$i=0;
+	
+	// Affichage graphs
+	$i=0;
     	foreach($graphfiles as $key => $val)
-    	{
-			if (! $graphfiles[$key]['file']) continue;
-
-			if ($graphfiles == 'propal' && ! $user->right->propale->lire) continue;
-			if ($graphfiles == 'invoices' && ! $user->right->facture->lire) continue;
-			if ($graphfiles == 'invoices_suppliers' && ! $user->right->fournisseur->facture->lire) continue;
-			
-			
-			if ($i % 2 == 0) print '<tr>';
-			
-        	// Show graph
-        	print '<td width="50%" align="center">';
-
-			print '<table class="border" width="100%">';
-			// Label
-			print '<tr class="liste_titre"><td colspan="2">';
-        	print $graphfiles[$key]['label'];
-			print '</td></tr>';
-			// Image
-			print '<tr><td colspan="2" align="center">';
-	        $url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&file='.urlencode($graphfiles[$key]['file']);
-	        //print $url;
-	        print '<img src="'.$url.'">';
-			print '</td></tr>';
-			// Date génération
-			print '<tr>';
-	        if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
-	        {
-	            print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"%d %b %Y %H:%M:%S")).'</td>';
-	        }
-	        else
-	        {
-	            print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
-	        }
-	        print '<td align="center"><a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
-	        print '</tr>';
-			print '</table>';
-			
-        	print '</td>';
-
-			if ($i % 2 == 1) print '</tr>';
-			
-
-			$i++;
-		}
-
-		if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
-
-
+	  {
+	    if (! $graphfiles[$key]['file']) continue;
+	    
+	    if ($graphfiles == 'propal' && ! $user->right->propale->lire) continue;
+	    if ($graphfiles == 'order' && ! $user->right->commande->lire) continue;
+	    if ($graphfiles == 'invoices' && ! $user->right->facture->lire) continue;
+	    if ($graphfiles == 'invoices_suppliers' && ! $user->right->fournisseur->facture->lire) continue;
+	    
+	    
+	    if ($i % 2 == 0) print '<tr>';
+	    
+	    // Show graph
+	    print '<td width="50%" align="center">';
+	    
+	    print '<table class="border" width="100%">';
+	    // Label
+	    print '<tr class="liste_titre"><td colspan="2">';
+	    print $graphfiles[$key]['label'];
+	    print '</td></tr>';
+	    // Image
+	    print '<tr><td colspan="2" align="center">';
+	    $url=DOL_URL_ROOT.'/viewimage.php?modulepart='.$graphfiles[$key]['modulepart'].'&file='.urlencode($graphfiles[$key]['file']);
+	    //print $url;
+	    print '<img src="'.$url.'">';
+	    print '</td></tr>';
+	    // Date génération
+	    print '<tr>';
+	    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
+	      {
+		print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"%d %b %Y %H:%M:%S")).'</td>';
+	      }
+	    else
+	      {
+		print '<td>'.($mesg?'<font class="error">'.$mesg.'</font>':$langs->trans("ChartNotGenerated")).'</td>';
+	      }
+	    print '<td align="center"><a href="fiche.php?id='.$product->id.'&amp;action=recalcul">'.img_picto($langs->trans("ReCalculate"),'refresh').'</a></td>';
+	    print '</tr>';
+	    print '</table>';
+	    
+	    print '</td>';
+	    
+	    if ($i % 2 == 1) print '</tr>';
+	    
+	    
+	    $i++;
+	  }
+	
+	if ($i % 2 == 1) print '<td>&nbsp;</td></tr>';
+		
         print '</table>';
-
-
+		
         // Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent en fin de page
         print '<div class="tabsAction">';
         print '</div>';
-
+	
     }
 }
 else
