@@ -87,20 +87,28 @@ if ($result)
   if ($num) 
     {
       $entrepot=new Entrepot($db);
-      
+      $total = 0;      
       $var=True;
       while ($i < min($num,$limit))
 	{
 	  $objp = $db->fetch_object($result);
-	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print '<td><a href="fiche.php?id='.$objp->ref.'">'.img_object($langs->trans("ShowWarehouse"),'stock').' '.$objp->label.'</a></td>';
 	  print '<td>'.$objp->lieu.'</td>';
 	  print '<td align="right">'.price($objp->valo).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
 	  print '<td align="right">'.$entrepot->LibStatut($objp->statut,5).'</td>';
 	  print "</tr>\n";
+	  $total += $objp->valo;
+	  $var=!$var;
 	  $i++;
 	}
+
+      print "<tr $bc[$var]>";
+      print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
+      print '<td align="right">'.price($total).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
+      print '<td align="right">&nbsp;</td>';
+      print "</tr>\n";
+
     }	
   $db->free($result);
   print "</table>";
