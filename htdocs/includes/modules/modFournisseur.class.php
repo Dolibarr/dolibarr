@@ -71,7 +71,7 @@ class modFournisseur extends DolibarrModules
 		$this->langfiles = array("bills","companies","suppliers");
         
 		// Config pages
-		$this->config_page_url = "fournisseur.php";
+		$this->config_page_url = array("fournisseur.php");
 		
 		// Constantes
 		$this->const = array();

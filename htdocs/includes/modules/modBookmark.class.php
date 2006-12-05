@@ -69,7 +69,7 @@ class modBookmark extends DolibarrModules
     $this->requiredby = array();
 
     // Config pages
-    //$this->config_page_url = "";
+    //$this->config_page_url = array();
 
     // Constantes
     $this->const = array();

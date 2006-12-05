@@ -65,7 +65,7 @@ class modStock extends DolibarrModules
     // Dir
     $this->dirs = array();
 
-    $this->config_page_url = "stock.php";
+    $this->config_page_url = array("stock.php");
 
     // Dépendences
     $this->depends = array("modProduit");

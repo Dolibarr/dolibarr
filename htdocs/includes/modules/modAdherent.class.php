@@ -68,7 +68,7 @@ class modAdherent extends DolibarrModules
     
         // Config pages
         //-------------
-        $this->config_page_url = "adherent.php";
+        $this->config_page_url = array("adherent.php");
     
         // Dépendances
         //------------

@@ -70,7 +70,9 @@ class modProduit extends DolibarrModules
     // Dépendances
     $this->depends = array();
 	$this->requiredby = array("modStock","modService","modBarcode");
-    $this->config_page_url = "produit.php";
+
+	// Config pages
+    $this->config_page_url = array("produit.php");
 	$this->langfiles = array("products","companies");
 	
     // Constantes

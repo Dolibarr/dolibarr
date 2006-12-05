@@ -68,7 +68,7 @@ class modMailing extends DolibarrModules
     $this->langfiles = array("mails");
 
     // Config pages
-    $this->config_page_url = "mailing.php";
+    $this->config_page_url = array("mailing.php");
 
     // Constantes
     $this->const = array();

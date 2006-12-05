@@ -66,7 +66,7 @@ class modComptabiliteExpert extends DolibarrModules
     $this->special = 0;
         
     // Config pages
-    $this->config_page_url = "comptaexpert.php";
+    $this->config_page_url = array("comptaexpert.php");
 
     // Dépendances
     $this->depends = array("modFacture","modBanque");

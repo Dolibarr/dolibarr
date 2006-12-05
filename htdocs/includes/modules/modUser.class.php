@@ -66,7 +66,7 @@ class modUser extends DolibarrModules
     $this->dirs = array();
 
     // Config pages
-    // $this->config_page_url = "/user/admin/index.php";
+    // $this->config_page_url = array("/user/admin/index.php");
 
     // Dépendances
     $this->depends = array();

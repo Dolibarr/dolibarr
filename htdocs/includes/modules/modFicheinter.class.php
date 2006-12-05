@@ -68,7 +68,7 @@ class modFicheinter  extends DolibarrModules
     $this->dirs = array();
 
     // Config pages
-    $this->config_page_url = "fichinter.php";
+    $this->config_page_url = array("fichinter.php");
 
     // Dépendances
     $this->depends = array("modSociete");

@@ -69,7 +69,7 @@ class modClickToDial extends DolibarrModules
     $this->requiredby = array();
 
     // Config pages
-    $this->config_page_url = "clicktodial.php";
+    $this->config_page_url = array("clicktodial.php");
 
     // Constantes
     $this->const = array();

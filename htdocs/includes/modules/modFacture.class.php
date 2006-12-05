@@ -73,7 +73,7 @@ class modFacture extends DolibarrModules
 		$this->langfiles = array("bills","companies");
     
         // Config pages
-        $this->config_page_url = "facture.php";
+        $this->config_page_url = array("facture.php");
     
         // Constantes
         $this->const = array();

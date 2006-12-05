@@ -60,7 +60,7 @@ class modLdap extends DolibarrModules
 		$this->dirs = array();
 	
 		// Config pages
-		$this->config_page_url = "ldap.php";
+		$this->config_page_url = array("ldap.php");
 	
 		// Dépendances
 		$this->depends = array();

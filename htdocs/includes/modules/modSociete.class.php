@@ -63,7 +63,7 @@ class modSociete extends DolibarrModules
 
     $this->const_name = 'MAIN_MODULE_SOCIETE';
     $this->special = 0;
-    $this->config_page_url = "societe.php";
+    $this->config_page_url = array("societe.php");
     $this->picto='company';
     
     // Dir

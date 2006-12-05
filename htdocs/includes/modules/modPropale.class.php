@@ -67,7 +67,7 @@ class modPropale extends DolibarrModules
 
     // Dépendances
     $this->depends = array("modSociete","modCommercial");
-    $this->config_page_url = "propale.php";
+    $this->config_page_url = array("propale.php");
 
     // Constantes
     $this->const = array();

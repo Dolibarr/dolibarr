@@ -66,7 +66,7 @@ class modDon  extends DolibarrModules
     $this->requiredby = array();
 
     // Config pages
-    $this->config_page_url = "dons.php";
+    $this->config_page_url = array("dons.php");
 
     // Constantes
     $this->const = array();

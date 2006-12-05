@@ -65,7 +65,7 @@ class modDeplacement extends DolibarrModules
     $this->dirs = array();
 
     // Config pages
-    $this->config_page_url = "";
+    $this->config_page_url = array();
 
     // Dépendances
     $this->depends = array();
