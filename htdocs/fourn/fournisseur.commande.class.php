@@ -65,48 +65,48 @@ class CommandeFournisseur extends Commande
     /**
      * Lit une commande
      */
-    function fetch ($id)
-    {
-        $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
-        $sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
-        $sql .= " c.note, c.note_public,";
-        $sql .= " cm.libelle as methode_commande";
-        $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-        $sql .= " WHERE c.rowid = ".$id;
-
-        $result = $this->db->query($sql) ;
-        if ($result)
-        {
-            $obj = $this->db->fetch_object();
-    
-            $this->id                  = $obj->rowid;
-            $this->ref                 = $obj->ref;
-            $this->socid              = $obj->fk_soc;
-            $this->fourn_id            = $obj->fk_soc;
-            $this->statut              = $obj->fk_statut;
-            $this->user_author_id      = $obj->fk_user_author;
-            $this->total_ht            = $obj->total_ht;
-            $this->total_tva           = $obj->tva;
-            $this->total_ttc           = $obj->total_ttc;
-            $this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
-            $this->date                = $obj->date_creation;
-            $this->remise_percent      = $obj->remise_percent;
-            $this->methode_commande_id = $obj->fk_methode_commande;
-            $this->methode_commande    = $obj->methode_commande;
-    
-            $this->source              = $obj->source;
-            $this->facturee            = $obj->facture;
-            $this->projet_id           = $obj->fk_projet;
-            $this->note                = $obj->note;
-            $this->note_public         = $obj->note_public;
-    
-            $this->db->free();
-    
-            if ($this->statut == 0) $this->brouillon = 1;
-    
-// export pdf -----------
-			
+	function fetch($id)
+	{
+		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql .= " c.note, c.note_public,";
+		$sql .= " cm.libelle as methode_commande";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
+		$sql .= " WHERE c.rowid = ".$id;
+	
+		$resql = $this->db->query($sql) ;
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+	
+			$this->id                  = $obj->rowid;
+			$this->ref                 = $obj->ref;
+			$this->socid               = $obj->fk_soc;
+			$this->fourn_id            = $obj->fk_soc;
+			$this->statut              = $obj->fk_statut;
+			$this->user_author_id      = $obj->fk_user_author;
+			$this->total_ht            = $obj->total_ht;
+			$this->total_tva           = $obj->tva;
+			$this->total_ttc           = $obj->total_ttc;
+			$this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
+			$this->date                = $obj->date_creation;
+			$this->remise_percent      = $obj->remise_percent;
+			$this->methode_commande_id = $obj->fk_methode_commande;
+			$this->methode_commande    = $obj->methode_commande;
+	
+			$this->source              = $obj->source;
+			$this->facturee            = $obj->facture;
+			$this->projet_id           = $obj->fk_projet;
+			$this->note                = $obj->note;
+			$this->note_public         = $obj->note_public;
+	
+			$this->db->free();
+	
+			if ($this->statut == 0) $this->brouillon = 1;
+	
+			// export pdf -----------
+	
 			$this->lignes = array();
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label, p.description as product_desc, p.ref, p.fk_product_type, p.rowid as prodid';
@@ -115,45 +115,52 @@ class CommandeFournisseur extends Commande
 			$sql.= ' WHERE l.fk_commande = '.$this->id;
 			$sql.= ' ORDER BY l.rowid';
 			$result = $this->db->query($sql);
-                if ($result)
-                {
-                    $num = $this->db->num_rows($result);
-                    $i = 0;
-    
-                    while ($i < $num)
-                    {
-                        $objp                  = $this->db->fetch_object($result);
-    
-                        $ligne                 = new CommandeFournisseurLigne();
-
-                        $ligne->desc           = $objp->description;  // Description ligne
-                        $ligne->qty            = $objp->qty;
-                        $ligne->tva_tx         = $objp->tva_tx;
-                        $ligne->subprice       = $objp->subprice;
-                        $ligne->remise_percent = $objp->remise_percent;
-                        $ligne->price          = $objp->price;
-                        $ligne->fk_product     = $objp->fk_product;
-
-                        $ligne->libelle        = $objp->label;        // Label produit
-                        $ligne->product_desc   = $objp->product_desc; // Description produit
-                        $ligne->ref            = $objp->ref;
-    
-                        $this->lignes[$i]      = $ligne;
-                        //dolibarr_syslog("1 ".$ligne->desc);
-                        //dolibarr_syslog("2 ".$ligne->product_desc);
-                        $i++;
-                    }
-                    $this->db->free($result);
-    
-        }
-        else
-        {
-            dolibarr_syslog("CommandeFournisseur::Fetch Error $sql");
-            dolibarr_syslog("CommandeFournisseur::Fetch Error ".$this->db->error());
-            return -1;
-        }
-    }
-}
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
+				$i = 0;
+	
+				while ($i < $num)
+				{
+					$objp                  = $this->db->fetch_object($result);
+	
+					$ligne                 = new CommandeFournisseurLigne();
+	
+					$ligne->desc           = $objp->description;  // Description ligne
+					$ligne->qty            = $objp->qty;
+					$ligne->tva_tx         = $objp->tva_tx;
+					$ligne->subprice       = $objp->subprice;
+					$ligne->remise_percent = $objp->remise_percent;
+					$ligne->price          = $objp->price;
+					$ligne->fk_product     = $objp->fk_product;
+	
+					$ligne->libelle        = $objp->label;        // Label produit
+					$ligne->product_desc   = $objp->product_desc; // Description produit
+					$ligne->ref            = $objp->ref;
+	
+					$this->lignes[$i]      = $ligne;
+					//dolibarr_syslog("1 ".$ligne->desc);
+					//dolibarr_syslog("2 ".$ligne->product_desc);
+					$i++;
+				}
+				$this->db->free($result);
+	
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+			return -1;
+		}			
+	}
 
     /**
      *      \brief      Insère ligne de log
@@ -621,7 +628,7 @@ class CommandeFournisseur extends Commande
         $desc = trim($desc);
         $remise_percent = price2num($remise_percent);
         
-        dolibarr_syslog("Fournisseur_Commande.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+        dolibarr_syslog("Fournisseur.Commande.class::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 
         if ($qty < 1 && ! $fk_product)
         {
@@ -639,7 +646,7 @@ class CommandeFournisseur extends Commande
                 if ($prod->fetch($fk_product) > 0)
                 {
                     $result=$prod->get_buyprice($this->fourn_id,$qty);
-                    if ($result)
+                    if ($result > 0)
                     {
                         $label = $prod->libelle;
                         $desc  = $prod->description;
@@ -647,13 +654,25 @@ class CommandeFournisseur extends Commande
                         $pu    = $prod->fourn_pu;
                         $ref   = $prod->ref;
                     }
-                    else
+                    if ($result == 0 || $result == -1)
                     {
                         $this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
                         $this->db->rollback();
-                        dolibarr_syslog($this->error);
+                        dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
                         return -1;
                     }
+                    if ($result < -1)
+                    {
+                        $this->error=$prod->error;
+                        $this->db->rollback();
+                        dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
+                        return -1;
+                	}
+                }
+                else
+                {
+                	$this->error=$this->db->error();
+                	return -1;
                 }
             }
     
@@ -668,7 +687,9 @@ class CommandeFournisseur extends Commande
     
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
             $sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num($remise)."','".$ref."') ;";
-            if ( $this->db->query( $sql) )
+            dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
+            $resql=$this->db->query($sql);
+            if ($resql)
             {
                 $this->update_price();
 
@@ -683,28 +704,35 @@ class CommandeFournisseur extends Commande
         }
     }
 
-  /** 
-   * Supprime une ligne de la commande
-   *
-   */
-  function delete_line($idligne)
-    {
-      if ($this->statut == 0)
+	/**
+	* Supprime une ligne de la commande
+	*
+	*/
+	function delete_line($idligne)
 	{
-	  $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
-	  
-	  if ($this->db->query($sql) )
-	    {
-	      $this->update_price();
-	      
-	      return 0;
-	    }
-	  else
-	    {
-	      return -1;
-	    }
+		if ($this->statut == 0)
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseurdet WHERE rowid = ".$idligne;
+			$resql=$this->db->query($sql);
+
+			dolibarr_syslog("Fournisseur.commande.class::delete_line sql=".$sql);
+			if ($resql)
+			{
+				$result=$this->update_price();
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		else
+		{
+			return -1;
+		}
 	}
-    }
+
   /**
    * Mettre à jour le prix
    *
@@ -1150,6 +1178,7 @@ class CommandeFournisseur extends Commande
 			else
 			{
 				$this->error=$this->db->error();
+				dolibarr_syslog("Commande.fournisseur.class::updateline ".$this->error);
 				$this->db->rollback();
 				return -1;
 			}
@@ -1157,6 +1186,7 @@ class CommandeFournisseur extends Commande
 		else
 		{
 			$this->error="Commande::updateline Order status makes operation forbidden";
+			dolibarr_syslog("Commande.fournisseur.class::updateline ".$this->error);
 			return -2;
 		}
 	}

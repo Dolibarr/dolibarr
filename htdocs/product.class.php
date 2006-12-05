@@ -559,71 +559,73 @@ class Product
   }
 
 
-  /**
-   *    \brief      Lit le prix pratiqué par un fournisseur
-   *    \param      fourn_id        Id du fournisseur
-   *    \param      qty             Quantite recherchée
-   *    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
-   */
-  function get_buyprice($fourn_id, $qty)
-  {
-    $result = 0;
-    $sql = "SELECT pf.price as price, pf.quantity as quantity";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
-    $sql.= " WHERE pf.fk_soc = ".$fourn_id;
-    $sql.= " AND pf.fk_product =" .$this->id;
-    $sql.= " AND quantity <= ".$qty;
-    $sql.= " ORDER BY quantity DESC";
-    $sql.= " LIMIT 1";
-
-    dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
-
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$obj = $this->db->fetch_object($resql);
-	if ($obj && $obj->quantity > 0)
-	  {
-	    $this->buyprice = $obj->price;                      // \deprecated
-	    $this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
-	    return 1;
-	  }
-	else
-	  {
-	    // On refait le meme select mais sans critere de quantite
-	    $sql = "SELECT pf.price as price, pf.quantity as quantity";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
-	    $sql.= " WHERE pf.fk_soc = ".$fourn_id;
-	    $sql.= " AND pf.fk_product =" .$this->id;
-	    //$sql.= " AND quantity <= ".$qty;
-	    $sql.= " ORDER BY quantity DESC";
-	    $sql.= " LIMIT 1";
-
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	      {
-		$num=$this->db->num_rows($result);
-		if ($num)
-		  {
-		    return -1;	// Ce produit existe chez ce fournisseur mais qté insuffisante
-		  }
+	/**
+	*    \brief      Lit le prix pratiqué par un fournisseur
+	*    \param      fourn_id        Id du fournisseur
+	*    \param      qty             Quantite recherchée
+	*    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
+	*/
+	function get_buyprice($fourn_id, $qty)
+	{
+		$result = 0;
+		$sql = "SELECT pf.price as price, pf.quantity as quantity";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
+		$sql.= " WHERE pf.fk_soc = ".$fourn_id;
+		$sql.= " AND pf.fk_product =" .$this->id;
+		$sql.= " AND quantity <= ".$qty;
+		$sql.= " ORDER BY quantity DESC";
+		$sql.= " LIMIT 1";
+	
+		dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
+	
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			if ($obj && $obj->quantity > 0)
+			{
+				$this->buyprice = $obj->price;                      // \deprecated
+				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+				return 1;
+			}
+			else
+			{
+				// On refait le meme select mais sans critere de quantite
+				$sql = "SELECT pf.price as price, pf.quantity as quantity";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
+				$sql.= " WHERE pf.fk_soc = ".$fourn_id;
+				$sql.= " AND pf.fk_product =" .$this->id;
+				//$sql.= " AND quantity <= ".$qty;
+				$sql.= " ORDER BY quantity DESC";
+				$sql.= " LIMIT 1";
+	
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$num=$this->db->num_rows($result);
+					if ($num)
+					{
+						return -1;	// Ce produit existe chez ce fournisseur mais qté insuffisante
+					}
+					else
+					{
+						return 0;	// Ce produit n'existe pas chez ce fournisseur
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					return -3;
+				}
+			}
+		}
 		else
-		  {
-		    return 0;	// Ce produit n'existe pas chez ce fournisseur
-		  }
-	      }
-	    else
-	      {
-		return -3;
-	      }
-	  }
-      }
-    else
-      {
-	return -2;
-      }
-    return $result;
-  }
+		{
+			$this->error=$this->db->error();
+			return -2;
+		}
+		return $result;
+	}
 
 
   /**

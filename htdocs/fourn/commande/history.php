@@ -49,7 +49,7 @@ if ($_GET["id"] > 0)
 	$soc = new Societe($db);
 	$commande = new CommandeFournisseur($db);
 
-	if ( $commande->fetch($_GET["id"]) == 0)
+	if ( $commande->fetch($_GET["id"]) >= 0)
 	{
 		$soc->fetch($commande->socid);
 

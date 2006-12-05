@@ -70,7 +70,7 @@ $html = new Form($db);
 if ($_GET["id"] > 0)
 {
 	$commande = new CommandeFournisseur($db);
-	if ( $commande->fetch($_GET["id"]) == 0)
+	if ( $commande->fetch($_GET["id"]) >= 0)
 	{
 		$soc = new Societe($db);
 		$soc->fetch($commande->socid);
