@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -44,7 +44,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 	
 	$menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("MenuNewWarehouse"));
 	$menu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"));
-	
+	$menu->add_submenu(DOL_URL_ROOT."/product/stock/valo.php", $langs->trans("EnhancedValue"));
 	$menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
 	
 	left_menu($menu->liste);
