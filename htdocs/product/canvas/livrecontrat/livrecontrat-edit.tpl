@@ -3,7 +3,10 @@
 <form id="evolForm" action="fiche.php" method="post">
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="id" value="{$prod_id}">
+<input type="hidden" name="ref" value="{$prod_ref}">
+<input type="hidden" name="libelle" value="{$prod_label}">
 <input type="hidden" name="canvas" value="{$prod_canvas}">
+<input type="hidden" name="statut" value="0">
 
 <table class="border" width="100%">
  <tr>
@@ -42,7 +45,7 @@
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
  <td width="15%">Date d'application</td>
- <td width="35%">{html_select_date field_order='DMY'}</td>
+ <td width="35%">{html_select_date field_order='DMY' time=$prod_contrat_date_app start_year='-10' reverse_years=True}</td>
 </tr>
 
 <tr>
@@ -63,21 +66,21 @@
 
 <table class="border" width="100%">
  <tr>
-  <td valign="top">Description</td>
-  <td colspan="3">
+  <td width="15%" valign="top">Description</td>
+  <td width="85%">
     <textarea name="desc" rows="6" cols="70"></textarea>
   </td>
  </tr>
 
  <tr>
-  <td valign="top">Note (non visible sur les factures, propals...)
+  <td width="15%" valign="top">Note (non visible sur les factures, propals...)
   </td>
-  <td colspan="3">
+  <td width="85%">
    <textarea name="note" rows="4" cols="70"></textarea>
   </td>
  </tr>
  <tr>
-  <td colspan="4" align="center">
+  <td colspan="2" align="center">
    <input type="submit" class="button" value="Enregistrer">&nbsp;
    <input type="submit" class="button" name="cancel" value="Annuler">
   </td>
