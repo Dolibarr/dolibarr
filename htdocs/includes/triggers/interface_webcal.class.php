@@ -204,7 +204,7 @@ class InterfaceWebCal
         }
         elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -215,7 +215,7 @@ class InterfaceWebCal
         }
         elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -227,7 +227,7 @@ class InterfaceWebCal
         
         elseif ($action == 'BILL_VALIDATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -238,7 +238,7 @@ class InterfaceWebCal
         }
         elseif ($action == 'BILL_PAYED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -249,7 +249,7 @@ class InterfaceWebCal
         }
         elseif ($action == 'BILL_CANCELED')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -261,7 +261,7 @@ class InterfaceWebCal
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();
@@ -273,7 +273,7 @@ class InterfaceWebCal
         }
         elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
-            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched");
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
 
             $this->date=time();

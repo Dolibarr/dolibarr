@@ -37,108 +37,109 @@
 
 class InterfaceUser
 {
-  var $db;
-  
-  /**
-   *   \brief      Constructeur.
-   *   \param      DB      Handler d'accès base
-   */
-  function InterfaceUser($DB)
-  {
-    $this->db = $DB ;
-    
-    $this->name = "User";
-    $this->family = "user";
-    $this->description = "Les triggers de ce composant s'appliquent sur les utilisateurs.";
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
-  }
-    
-  /**
-   *   \brief      Renvoi nom du lot de triggers
-   *   \return     string      Nom du lot de triggers
-   */
-  function getName()
-  {
-    return $this->name;
-  }
-  
-  /**
-   *   \brief      Renvoi descriptif du lot de triggers
-   *   \return     string      Descriptif du lot de triggers
-   */
-  function getDesc()
-  {
-    return $this->description;
-  }
-  
-  /**
-   *   \brief      Renvoi version du lot de triggers
-   *   \return     string      Version du lot de triggers
-   */
-  function getVersion()
-  {
-    global $langs;
-    $langs->load("admin");
-    
-    if ($this->version == 'experimental') return $langs->trans("Experimental");
-    elseif ($this->version == 'dolibarr') return DOL_VERSION;
-    elseif ($this->version) return $this->version;
-    else return $langs->trans("Unknown");
-  }
-  
-  /**
-   *      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-   *                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
-   *      \param      action      Code de l'evenement
-   *      \param      object      Objet concerné
-   *      \param      user        Objet user
-   *      \param      lang        Objet lang
-   *      \param      conf        Objet conf
-   *      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
-   */
-  function run_trigger($action,$object,$user,$langs,$conf)
-  {
-    // Mettre ici le code à exécuter en réaction de l'action
-    // Les données de l'action sont stockées dans $object
-    
-    // Users
-    if ($action == 'USER_CREATE')
-      {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
-	dolibarr_syslog($conf->global->STOCK_USERSTOCK . ' '. $conf->global->STOCK_USERSTOCK_AUTOCREATE );
-	if ($conf->global->STOCK_USERSTOCK == 1 && $conf->global->STOCK_USERSTOCK_AUTOCREATE == 1)
-	  {
-	    require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
-	    $entrepot = new Entrepot($this->db);
-	    $entrepot->libelle = 'Stock Personnel '.$object->nom;
-	    $entrepot->description = 'Cet entrepot représente le stock personnel de '.$object->prenom.' '.$object->nom;
-	    $entrepot->statut = 1;
-	    $entrepot->create($user);
-	  }
-
-      }
-    elseif ($action == 'USER_MODIFY')
-      {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
-      }
-    elseif ($action == 'USER_NEW_PASSWORD')
-      {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
-      }
-    elseif ($action == 'USER_DISABLE')
-      {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched. id=".$object->id);
-      }
-    
-
-    else
-      {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' was ran but no handler found for this action.");
-	return -1;
-      }
-    return 0;
-  }
+	var $db;
+    var $error;
+	
+	/**
+	*   \brief      Constructeur.
+	*   \param      DB      Handler d'accès base
+	*/
+	function InterfaceUser($DB)
+	{
+		$this->db = $DB ;
+	
+		$this->name = "User";
+		$this->family = "user";
+		$this->description = "Les triggers de ce composant s'appliquent sur les utilisateurs.";
+		$this->revision = explode(' ','$Revision$');
+		$this->version = $this->revision[1];
+	}
+	
+	/**
+	*   \brief      Renvoi nom du lot de triggers
+	*   \return     string      Nom du lot de triggers
+	*/
+	function getName()
+	{
+		return $this->name;
+	}
+	
+	/**
+	*   \brief      Renvoi descriptif du lot de triggers
+	*   \return     string      Descriptif du lot de triggers
+	*/
+	function getDesc()
+	{
+		return $this->description;
+	}
+	
+	/**
+	*   \brief      Renvoi version du lot de triggers
+	*   \return     string      Version du lot de triggers
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+	
+		if ($this->version == 'experimental') return $langs->trans("Experimental");
+		elseif ($this->version == 'dolibarr') return DOL_VERSION;
+		elseif ($this->version) return $this->version;
+		else return $langs->trans("Unknown");
+	}
+	
+	/**
+	*      \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
+	*                  D'autres fonctions run_trigger peuvent etre présentes dans includes/triggers
+	*      \param      action      Code de l'evenement
+	*      \param      object      Objet concern
+	*      \param      user        Objet user
+	*      \param      lang        Objet lang
+	*      \param      conf        Objet conf
+	*      \return     int         <0 si ko, 0 si aucune action faite, >0 si ok
+	*/
+	function run_trigger($action,$object,$user,$langs,$conf)
+	{
+		// Mettre ici le code à exécuter en réaction de l'action
+		// Les données de l'action sont stockées dans $object
+	
+		// Users
+		if ($action == 'USER_CREATE')
+		{
+			dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			dolibarr_syslog($conf->global->STOCK_USERSTOCK . ' '. $conf->global->STOCK_USERSTOCK_AUTOCREATE );
+			if ($conf->global->STOCK_USERSTOCK == 1 && $conf->global->STOCK_USERSTOCK_AUTOCREATE == 1)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+				$entrepot = new Entrepot($this->db);
+				$entrepot->libelle = 'Stock Personnel '.$object->nom;
+				$entrepot->description = 'Cet entrepot représente le stock personnel de '.$object->prenom.' '.$object->nom;
+				$entrepot->statut = 1;
+				$entrepot->create($user);
+			}
+	
+		}
+		elseif ($action == 'USER_MODIFY')
+		{
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		}
+		elseif ($action == 'USER_NEW_PASSWORD')
+		{
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		}
+		elseif ($action == 'USER_DISABLE')
+		{
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+		}
+	
+	
+		else
+		{
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+			return -1;
+		}
+		return 0;
+	}
   
 }
 ?>
