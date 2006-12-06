@@ -451,6 +451,8 @@ alter table llx_c_pays modify libelle varchar(50) NOT NULL;
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
 
 
+alter table llx_product_price add price_level tinyint(4) NULL DEFAULT 1;
+
 drop table if exists llx_sqltables;
 
 
@@ -472,8 +474,8 @@ alter table llx_product_det modify description text;
 
 create table llx_accountingdebcred
 (
-	fk_transaction  integer		NOT NULL,
-	fk_account      integer		NOT NULL,
+ fk_transaction  integer		NOT NULL,
+ fk_account      integer		NOT NULL,
 	amount          real		NOT NULL,
 	direction       varchar(1)	NOT NULL
 )type=innodb;
@@ -485,8 +487,6 @@ alter table llx_facturedet_rec add column total_ttc real;
 alter table llx_adherent add column phone            varchar(30) after email;
 alter table llx_adherent add column phone_perso      varchar(30) after phone;
 alter table llx_adherent add column phone_mobile     varchar(30) after phone_perso;
-
-
 
 update llx_facture set fk_facture_source=null where fk_facture_source is not null and type = 0;
 
@@ -501,4 +501,3 @@ ALTER TABLE llx_boxes ADD INDEX idx_boxes_boxid (box_id);
 -- V4 ALTER TABLE llx_boxes ADD CONSTRAINT fk_boxes_box_id FOREIGN KEY (box_id) REFERENCES llx_boxes_def (rowid);
 
 ALTER TABLE llx_boxes ADD INDEX idx_boxes_fk_user (fk_user);
-
