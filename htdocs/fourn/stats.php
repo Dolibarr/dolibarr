@@ -97,7 +97,7 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "stats.php", "", $sortfield, $sortorder, '', $num);
+  print_barre_liste($langs->trans("SuppliersProductsSellSalesTurnover"), $page, "stats.php", "", $sortfield, $sortorder, '', $num);
 
   print '<form action="stats.php" method="GET">';
   print '<table class="liste" width="100%">';
