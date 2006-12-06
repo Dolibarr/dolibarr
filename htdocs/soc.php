@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -24,10 +24,10 @@
  */
 
 /**
-        \file       htdocs/soc.php
-        \ingroup    societe
-        \brief      Onglet societe d'une societe
-        \version    $Revision$
+   \file       htdocs/soc.php
+    \ingroup    societe
+     \brief      Onglet societe d'une societe
+      \version    $Revision$
 */
 
 require("pre.inc.php");
@@ -62,19 +62,17 @@ if ($user->societe_id > 0)
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
-        $sql = "SELECT sc.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+  $sql = "SELECT sc.fk_soc";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 0) accessforbidden();
+    }
 }
-
+// Initialisation de l'objet Societe
 $soc = new Societe($db);
-
-
 
 /*
  * Actions
@@ -125,6 +123,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     $soc->typent_id             = $_POST["typent_id"];
     $soc->client                = $_POST["client"];
     $soc->fournisseur           = $_POST["fournisseur"];
+    $soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
     
     if ($_POST["action"] == 'add')
     {
@@ -207,6 +206,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
          * Fiche societe en mode création
          */
         $soc->fournisseur=0;
+	$soc->fournisseur_categorie = 0;
         if ($_GET["type"]=='f') { $soc->fournisseur=1; }
         if ($_GET["type"]=='c') { $soc->client=1; }
         if ($_GET["type"]=='p') { $soc->client=2; }
@@ -232,8 +232,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             $soc->ape=$_POST["ape"];
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
-
-			$soc->tva_assuj = $_POST["assujtva_value"];
+	    
+	    $soc->tva_assuj = $_POST["assujtva_value"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
         }
@@ -296,13 +296,29 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         $form->selectyesnonum("fournisseur",$soc->fournisseur);
         print '</td>';
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-        print '<table class="noborder"><tr><td>';
-        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15"></td><td>';
+        //print '<table class="noborder"><tr><td>';
+        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+	//print '</td><td>';
         //print '<input type="image" name="getsuppliercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
-        print '</td></tr></table>';
+        //print '</td></tr></table>';
         print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+	if ($soc->fournisseur)
+	  {
+	    $load = $soc->LoadSupplierCateg();
+	    if ( $load == 0)
+	      {
+		if (sizeof($soc->SupplierCategories) > 0)
+		  {
+		    print '<tr>';
+		    print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+		    $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+		    print '</td></tr>';
+		  }
+	      }
+	  }
+
+        print '<tr><td>'.$load.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
         print '</textarea></td></tr>';
 
