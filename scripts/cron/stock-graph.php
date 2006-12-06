@@ -65,7 +65,9 @@ else
 /*
  *
  */
-for ($i = 0 ; $i < 366 ; $i++)
+$now = time();
+$year = strftime('%Y',$now);
+for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
 {
   foreach ($entrepots as $key => $ent)
     {
@@ -79,6 +81,7 @@ for ($i = 0 ; $i < 366 ; $i++)
  */
 $sql  = "SELECT date_format(date_calcul,'%j'), value, fk_entrepot";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation as e";
+$sql .= " WHERE date_format(date_calcul, '%Y') = '".$year."'";
 $sql .= " ORDER BY date_calcul ASC";
 
 $resql = $db->query($sql) ;
@@ -105,14 +108,14 @@ else
 
 require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 
-  foreach ($entrepots as $key => $ent)
-    {
-
-      $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$key.".png";
-      $title = 'Valorisation du stock (euros HT)';
-
-      graph_datas($file, $title, $values[$key], $legends);
-    }
+foreach ($entrepots as $key => $ent)
+{
+  $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$key."-".$year.".png";
+  $title = "Valorisation du stock (euros HT) sur l'année ".$year;
+  
+  graph_datas($file, $title, $values[$key], $legends);
+print "$file\n";
+}
 
 
 
