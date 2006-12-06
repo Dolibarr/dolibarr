@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
@@ -81,11 +81,11 @@ class Societe
 	var $code_compta_fournisseur;
 	
 	var $note;
-	
-	var $stcomm_id;				// code statut prospect
-	var $statut_commercial;
-	
-	var $price_level;
+  //! code statut prospect
+  var $stcomm_id;
+  var $statut_commercial;
+  
+  var $price_level;
 
 
   /**
@@ -95,7 +95,7 @@ class Societe
    */
   function Societe($DB, $id=0)
   {
-	global $conf;
+    global $conf;
 	
     $this->db = $DB;
     $this->creation_bit = 0;
@@ -108,7 +108,7 @@ class Societe
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
 
-	// Définit selon les modules codeclient et codefournisseur
+    // Définit selon les modules codeclient et codefournisseur
 	
     // definit module code client
     $varclient = $conf->global->SOCIETE_CODECLIENT_ADDON;
@@ -171,6 +171,9 @@ class Societe
                 	$this->add_commercial($user, $user->id);
                 }
 
+		// si le fournisseur est classe on l'ajoute
+		$this->AddFournisseurInCategory($this->fournisseur_categorie);
+
                 if ($ret >= 0)
                 {
                     $this->use_webcal=($conf->global->PHPWEBCALENDAR_COMPANYCREATE=='always'?1:0);
@@ -193,7 +196,6 @@ class Societe
                 }
             }
             else
-
             {
                 if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                 {
@@ -1700,12 +1702,56 @@ class Societe
     */
     function isInEEC()
     {
-    	// \todo liste code pays à compléter
-		$country_code_in_EEC=array('BE','FR','LU');	
-    	//print "dd".$this->pays_code;
-		return in_array($this->pays_code,$country_code_in_EEC);
+      // \todo liste code pays à compléter
+      $country_code_in_EEC=array('BE','FR','LU');	
+      //print "dd".$this->pays_code;
+      return in_array($this->pays_code,$country_code_in_EEC);
+    }
+   /*
+    *  \brief     Charge la liste des categories fournisseurs
+    *   \return    0 in success, <> 0 in error
+    */
+    function LoadSupplierCateg()
+    {
+      $this->SupplierCategories = array();
+      $sql = "SELECT rowid, label";
+      $sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie;";
+      
+      $resql=$this->db->query($sql);
+      if ($resql)
+        {
+	  while ($obj = $this->db->fetch_object($resql) )
+	    {
+	      $this->SupplierCategories[$obj->rowid] = $obj->label;
+	    }
+	  return 0;
 	}
-
+      else
+	{
+	  return -1;
+	}
+    }
+  /*
+   *  \brief     Charge la liste des categories fournisseurs
+   *   \return    0 in success, <> 0 in error
+   */
+  function AddFournisseurInCategory($categorie_id)
+  {
+    if ($categorie_id > 0)
+      {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie_fournisseur (fk_categorie, fk_societe) ";
+	$sql.= " VALUES ('".$categorie_id."','".$this->id."');";
+	
+	if ($resql=$this->db->query($sql))
+	  return 0;
+      }
+    else
+      {
+	return 0;
+      }
+    return -1;
+  }
+  
 }
 
 ?>
