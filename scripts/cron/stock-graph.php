@@ -44,21 +44,44 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 /*
  *
  */
+$sql  = "SELECT distinct(fk_entrepot)";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
+
+$resql = $db->query($sql) ;
+$entrepots = array();
+if ($resql)
+{
+  $i = 0;
+  while ($row = $db->fetch_row($resql))
+    {
+      $entrepots[$row[0]] = $row[0];
+    }
+  $db->free($resql);
+}
+else
+{
+  print $sql;
+}
+/*
+ *
+ */
+for ($i = 0 ; $i < 366 ; $i++)
+{
+  foreach ($entrepots as $key => $ent)
+    {
+      $values[$key][$i] = 0;
+    }
+  $legends[$i] = strftime('%b',mktime(12,12,12,1,1,2006) + ($i * 3600 * 24));
+}
+
+/*
+ *
+ */
 $sql  = "SELECT date_format(date_calcul,'%j'), value, fk_entrepot";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation as e";
 $sql .= " ORDER BY date_calcul ASC";
 
 $resql = $db->query($sql) ;
-
-for ($i = 0 ; $i < 366 ; $i++)
-{
-  for ($e = 0 ; $e < 8 ; $e++)
-    {
-      $values[$e][$i] = 0;
-    }
-  $legends[$i] = strftime('%b',mktime(12,12,12,1,1,2006) + ($i * 3600 * 24));
-}
-
 
 if ($resql)
 {
@@ -82,15 +105,15 @@ else
 
 require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 
-$file = DOL_DATA_ROOT."/graph/entrepot/entrepot.png";
-$title = 'Valorisation du stock (euros HT)';
+  foreach ($entrepots as $key => $ent)
+    {
 
-graph_datas($file, $title, $values[0], $legends);
+      $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$key.".png";
+      $title = 'Valorisation du stock (euros HT)';
 
-$file = DOL_DATA_ROOT."/graph/entrepot/entrepot-7.png";
-$title = 'Valorisation du stock (euros HT)';
+      graph_datas($file, $title, $values[$key], $legends);
+    }
 
-graph_datas($file, $title, $values[7], $legends);
 
 
 function graph_datas($file, $title, $values, $legends)
