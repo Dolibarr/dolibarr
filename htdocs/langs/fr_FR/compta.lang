@@ -57,3 +57,4 @@ NewAccount=Nouveau compte
 SalesTurnover=Chiffre d'affaire
 AccountancyExport=Export comptable
 ErrorWrongAccountancyCodeForCompany=Code compta client incorrect pour %s
+SuppliersProductsSellSalesTurnover=Chiffres d'affaire générés par la vente des produits des fournisseurs
