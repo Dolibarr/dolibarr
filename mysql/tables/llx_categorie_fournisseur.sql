@@ -20,7 +20,7 @@
 --
 -- ============================================================================
 
-create table llx_categorie_founisseur
+create table llx_categorie_fournisseur
 (
   fk_categorie  integer NOT NULL,
   fk_societe    integer NOT NULL,
