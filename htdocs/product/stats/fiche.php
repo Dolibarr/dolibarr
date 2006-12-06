@@ -169,14 +169,6 @@ if ($_GET["id"] || $_GET["ref"])
 		    $px->SetShading(5);
 		    //print 'x '.$key.' '.$graphfiles[$key]['file'];
 
-		    // Pour orders, on force la lib graphique sur artichow
-		    // \todo A supprimer car on peut switcher entre artichow et phplot par la 
-		    // constante MAIN_GRAPH_LIBRARY qui peut valoir ('artichow' ou 'phplot')
-		    if ($key == 'orders') 
-		      {
-			$px->library  = 'artichow';
-		      } 
-		    
 		    $px->draw($dir."/".$graphfiles[$key]['file']);
 		  }
 		else
