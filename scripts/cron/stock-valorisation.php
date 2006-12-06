@@ -41,7 +41,6 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
       $verbose = 3;
     }
 }
-
 /*
  *
  *
@@ -68,64 +67,5 @@ else
 {
   print $sql;
 }
-
-
-/*
- *
- */
-$sql  = "SELECT sum(value)";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation as e";
-$sql .= " GROUP BY date_calcul";
-$sql .= " ORDER BY date_calcul ASC";
-
-$resql = $db->query($sql) ;
-
-if ($resql)
-{
-  $i = 0;
-  while ($row = $db->fetch_row($resql))
-    {
-      $values[$i] = $row[0];
-      if ($verbose)
-	print $values[$i]."\n";
-      $i++;
-    }
-  $db->free($resql);
-}
-else
-{
-  print $sql;
-}
-
-
-require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
-
-$graph = new Graph(800, 600);
-if (isset($this->title)) $graph->title->set($this->title);
-
-$graph->border->hide();
-    
-$color = new Color(244,244,244);
-
-$graph->setAntiAliasing(TRUE);
-
-$graph->setBackgroundColor( $color );
-
-
-
-$plot = new LinePlot($values);
-$plot->setSize(1, 0.96);
-$plot->setCenter(0.5, 0.52);
-
-
-
-$plot->xAxis->setLabelText($legends);
-$plot->xAxis->label->setFont(new Tuffy(7));
-
-$graph->add($plot);
-
-$file = DOL_DATA_ROOT."/graph/entrepot/entrepot.png";
-
-$graph->draw($file);
 
 ?>
