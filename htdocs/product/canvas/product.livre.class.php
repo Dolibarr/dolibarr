@@ -334,25 +334,25 @@ class ProductLivre extends Product
    */
   function assign_values(&$smarty)
   {
-    $smarty->assign('prod_canvas',  'livre');
-    $smarty->assign('prod_id',      $this->id);
+    $smarty->assign('prod_id',          $this->id);
+    $smarty->assign('prod_ref',         $this->ref);
+    $smarty->assign('prod_label',       $this->libelle);
+    $smarty->assign('prod_note',        $this->note);
+    $smarty->assign('prod_description', $this->description);
+    $smarty->assign('prod_canvas',      $this->canvas);
 
-    $smarty->assign('prod_isbn',    $this->isbn);
+    $smarty->assign('prod_isbn',     $this->isbn);
 
     $isbn_parts = explode('-',$this->isbn);
     
-    $smarty->assign('prod_isbna',     $isbn_parts[0]);
-    $smarty->assign('prod_isbnb',     $isbn_parts[1]);
-    $smarty->assign('prod_isbnc',     $isbn_parts[2]);
+    $smarty->assign('prod_isbna',    $isbn_parts[0]);
+    $smarty->assign('prod_isbnb',    $isbn_parts[1]);
+    $smarty->assign('prod_isbnc',    $isbn_parts[2]);
+    $smarty->assign('prod_ean',      $this->ean);
 
-    $smarty->assign('prod_ean',       $this->ean);
+    $smarty->assign('prod_isbn13',   '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
 
-    $smarty->assign('prod_isbn13',    '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
-
-    $smarty->assign('prod_ref',         $this->ref);
     $smarty->assign('prod_tva_tx',      $this->tva_tx);
-    $smarty->assign('prod_description', $this->description);
-    $smarty->assign('prod_note',        $this->note);
 
     $smarty->assign('prod_pages',       $this->pages);
     $smarty->assign('prod_format',      $this->format);
@@ -362,7 +362,6 @@ class ProductLivre extends Product
 
     $smarty->assign('prod_pxrevient', price($this->px_revient));
     $smarty->assign('prod_pxvente',   price($this->price));
-    $smarty->assign('prod_label',     $this->libelle);
 
     $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
     $smarty->assign('prod_contrat_duree',    $this->contrat_duree);

@@ -26,6 +26,8 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livre.class.php');
+
 /**
    \class      ProductLivreContrat
    \brief      Classe permettant la gestion des livres, cette classe surcharge la classe produit
@@ -114,6 +116,7 @@ class ProductLivreContrat extends Product
    *    \brief      Lecture des donnees dans la base
    *    \param      id          Id livre ('' par defaut)
    *    \param      ref         Reference du livre ('' par defaut)
+   *    \todo       Rodo Resoudre le probleme de boucle infinie avec le livre
    */
   function FetchCanvas($id='', $ref='')
   {
@@ -121,7 +124,8 @@ class ProductLivreContrat extends Product
 
     if ($result >= 0)
       {
-	$sql = "SELECT taux,quantite,duree";
+	$sql = "SELECT fk_cnv_livre,taux,quantite,duree,";
+	$sql.= $this->db->pdate('date_app') ." as date_app";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre_contrat";
 	if ($id) $sql.= " WHERE rowid = '".$id."'";
 	if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -135,6 +139,12 @@ class ProductLivreContrat extends Product
 	    $this->taux               = $result["taux"];
 	    $this->quantite           = $result["quantite"];
 	    $this->duree              = $result["duree"];
+	    $this->date_app           = $result["date_app"];
+
+	    // On charge le livre pour avoir le titre
+	    // ne pas utiliser FetchCanvas qui cree une boucle infinie
+	    $this->livre = new ProductLivre($this->db);
+	    $this->livre->Fetch($result["fk_cnv_livre"]);
 
 	    $this->db->free();
 	  }
@@ -152,11 +162,13 @@ class ProductLivreContrat extends Product
     $quant  = trim($datas["contrat_quant"]);
     $duree  = trim($datas["contrat_duree"]);
 
+    $date_app = mktime(1,1,1,$datas["Date_Month"],$datas["Date_Day"],$datas["Date_Year"]);
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre_contrat ";
     $sql .= " SET taux    = '$taux'";
     $sql .= " , quantite  = '$quant'";
     $sql .= " , duree     = '$duree'";
-    $sql .= " , date_app  = '$date_app'";
+    $sql .= " , date_app  = '".$this->db->idate($date_app)."'";
     $sql .= " WHERE rowid = " . $this->id;
 
     if ( $this->db->query($sql) )
@@ -176,24 +188,18 @@ class ProductLivreContrat extends Product
    */
   function assign_values(&$smarty)
   {
-    $smarty->assign('prod_canvas',  'livre');
-    $smarty->assign('prod_id',      $this->id);
+    $smarty->assign('prod_id',          $this->id);
+    $smarty->assign('prod_ref',         $this->ref);
+    $smarty->assign('prod_label',       $this->livre->libelle);
+    $smarty->assign('prod_note',        $this->note);
+    $smarty->assign('prod_description', $this->description);
 
-    $smarty->assign('prod_isbn',    $this->isbn);
+    $smarty->assign('prod_canvas',        $this->canvas);
 
-    $isbn_parts = explode('-',$this->isbn);
-    
-    $smarty->assign('prod_isbna',     $isbn_parts[0]);
-    $smarty->assign('prod_isbnb',     $isbn_parts[1]);
-    $smarty->assign('prod_isbnc',     $isbn_parts[2]);
-
-    $smarty->assign('prod_ean',       $this->ean);
-
-    $smarty->assign('prod_isbn13',    '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
-
-    $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
-    $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
-    $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
+    $smarty->assign('prod_contrat_taux',     $this->taux);
+    $smarty->assign('prod_contrat_duree',    $this->duree);
+    $smarty->assign('prod_contrat_date_app', $this->date_app);
+    $smarty->assign('prod_contrat_quant',    $this->quantite);
 
     $smarty->assign('prod_stock_reel',        $this->stock_reel);
     $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
@@ -205,6 +211,5 @@ class ProductLivreContrat extends Product
 	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
       }
   }
-
 }
 ?>

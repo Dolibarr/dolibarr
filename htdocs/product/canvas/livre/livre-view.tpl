@@ -1,6 +1,13 @@
 <!-- BEGIN SMARTY TEMPLATE -->
-</table>
+
 <table class="border" width="100%">
+<tr>
+ <td width="15%">Référence</td>
+ <td width="35%" style="font-weight: bold;">{$prod_ref}</td>
+ <td width="50%" colspan="2" align="right">
+  {$fiche_cursor_prev}{$fiche_cursor_next}
+ </td>
+</tr>
 <tr>
  <td width="15%">Titre</td>
  <td width="85%" colspan="3">{$prod_label}</td>
@@ -10,8 +17,8 @@
  <td width="35%">{$prod_isbn}</td>
  <td width="15%">ISBN-13</td>
  <td width="35%">{$prod_isbn13}</td>
-
 </tr>
+
 <tr>
  <td width="15%">EAN</td>
  <td width="35%">{$prod_ean}</td>
