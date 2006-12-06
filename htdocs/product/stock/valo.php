@@ -112,6 +112,11 @@ if ($result)
     }	
   $db->free($result);
   print "</table>";
+
+  print '<br />';
+  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&file=entrepot.png';
+
+  print '<img src="'.$url.'">';
 }
 else
 {
