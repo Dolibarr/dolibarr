@@ -114,9 +114,17 @@ if ($result)
   print "</table>";
 
   print '<br />';
-  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&file=entrepot.png';
 
-  print '<img src="'.$url.'">';
+  $year = strftime("%Y",time());
+  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$year.'.png';
+  print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
+
+  if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/entrepot-'.($year-1).'.png'))
+    {
+      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.($year-1).'.png';
+      print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+    }
+
 }
 else
 {
