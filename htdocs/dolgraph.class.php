@@ -47,9 +47,9 @@
 class DolGraph
 {
 	//! Type du graphique
-	var $type='bars';
+	var $type='bars';		// bars, lines, ...
 	//! Tableau de donnees
-	var $data;
+	var $data;				// array(array('abs1',valA1,valB1), array('abs2',valA2,valB2), ...)
 	var $width=380;
 	var $height=200;
 	var $MaxValue=0;
@@ -64,11 +64,20 @@ class DolGraph
 
 	var $library='';		// Par defaut on utiliser PHPlot
 
+	var $bordercolor;		// array(R,G,B)
+	var $bgcolor;			// array(R,G,B)
+	var $datacolor;			// array(array(R,G,B),...)
+	var $alpha='25';		// % transparancy
+	
 
+	/*
+	*	Constructeur
+	*/
 	function DolGraph()
 	{
 		global $conf;
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
+
 
 		// Test si module GD présent
 		$modules_list = get_loaded_extensions();
@@ -82,6 +91,7 @@ class DolGraph
 			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour générer les graphiques.";
 			return -1;
 		}
+
 
 		// Défini propriétés de l'objet graphe
 		$this->library=$conf->global->MAIN_GRAPH_LIBRARY;
@@ -138,38 +148,139 @@ class DolGraph
 	*/
 	function draw_artichow($file)
 	{
-		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+		dolibarr_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
+
+		// Create graph
+		$class='';
+		if ($this->type == 'bars') $class='BarPlot';
+		if ($this->type == 'lines') $class='LinePlot';
+		include_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/".$class.".class.php";
+
+		$group = new PlotGroup;
+		$group->setPadding(30, 10, NULL, NULL);
 
 		$graph = new Graph($this->width, $this->height);
-		if (isset($this->title)) $graph->title->set($this->title);
-
 		$graph->border->hide();
-
-		$color = new Color(244,244,244);
-
-		$graph->setAntiAliasing(TRUE);
-
-		$graph->setBackgroundColor( $color );
-
-		$i = 0;
-		foreach($this->data as $key => $value)
+		$graph->setAntiAliasing(true);
+		if (isset($this->title)) 
 		{
-			$values[$i]  = $value[1];
-			$legends[$i] = $value[0];
+			$graph->title->set($this->title);
+			$graph->title->setFont(new Tuffy(10));
+		}
+/*
+		if (isset($this->SetShading))
+		{
+			// Ombre ne fonctionne pas. Un Mars a celui qui trouve pourquoi.
+			$shadow=new Shadow(3);
+			$shadow->setSize($this->SetShading);
+			$graph->Shadow=$shadow;
+		}
+*/
+
+		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
+		$graph->setBackgroundColor($bgcolor);
+		//print "dd".sizeof($this->data);
+		
+		// On boucle sur chaque lot de donnees
+		$legends=array();
+		$i=0;
+		$nblot=sizeof($this->data[0])-1;
+		if (! $nblot) $end=1;
+		while ($i < $nblot)
+		{
+			$j=0;
+			$values=array();
+			foreach($this->data as $key => $valarray)
+			{
+				$legends[$j] = $valarray[0];
+				$values[$j]  = $valarray[$i+1];
+				$j++;
+			}
+
+			/*
+			print "Lot de donnees $i<br>";
+			print_r($values);
+			print '<br>';
+			*/
+			
+			if ($this->type == 'bars')
+			{
+				// Artichow ne gère pas les valeurs inconnues
+				// Donc si inconnu, on la fixe à null
+				$newvalues=array();
+				foreach($values as $val)
+				{
+					$newvalues[]=(is_numeric($val) ? $val : null);
+				}
+
+				//$plot = new BarPlot($newvalues,1,1,0);
+				$plot = new BarPlot($newvalues);
+
+			    $plot->barShadow->setSize(2);
+			    $plot->barShadow->setPosition(Shadow::RIGHT_TOP);
+			    $plot->barShadow->setColor(new Color(160, 160, 160, 10));
+			    $plot->barShadow->smooth(TRUE);
+    			//$plot->setSize(1, 0.96);
+				//$plot->setCenter(0.5, 0.52);
+		
+				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],25);
+				$plot->setBarColor($color);
+		
+				// Le mode automatique est plus efficace
+				$plot->SetYMax($this->MaxValue);
+				$plot->SetYMin($this->MinValue);
+			}
+	
+			if ($this->type == 'lines')
+			{
+				// Artichow ne gère pas les valeurs inconnues
+				// Donc si inconnu, on la fixe à null
+				$newvalues=array();
+				foreach($values as $val)
+				{
+					$newvalues[]=(is_numeric($val) ? $val : null);
+				}
+	
+				$plot = new LinePlot($newvalues);
+				//$plot->setSize(1, 0.96);
+				//$plot->setCenter(0.5, 0.52);
+		
+				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],25);
+				$plot->setColor($color);
+				
+				// Le mode automatique est plus efficace
+				$plot->SetYMax($this->MaxValue);
+				$plot->SetYMin($this->MinValue);
+			}
+	
+			$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce saturés
+	
+			if ($nblot >= 2)
+			{
+				$group->legend->add($plot, $this->Legend[$i], Legend::MARK);
+
+				$group->add($plot);
+			}
+			else
+			{
+   				$plot->xAxis->setLabelText($legends);
+				$plot->xAxis->label->setFont(new Tuffy(7));
+
+				$graph->add($plot);
+			}			
+
 			$i++;
 		}
+		
+		if ($nblot >= 2)
+		{
+			$group->axis->bottom->setLabelText($legends);
+			$group->axis->bottom->label->setFont(new Tuffy(7));
 
-		$plot = new BarPlot($values);
-		$plot->setSize(1, 0.96);
-		$plot->setCenter(0.5, 0.52);
-
-		$plot->setBarColor( new LightGreen(25) );
-
-		$plot->xAxis->setLabelText($legends);
-		$plot->xAxis->label->setFont(new Tuffy(7));
-
-		$graph->add($plot);
-
+			$graph->add($group);
+		}
+		
+		// Generate file
 		$graph->draw($file);
 	}
 
@@ -179,33 +290,20 @@ class DolGraph
 	*/
 	function draw_phplot($file)
 	{
-		// Prepare parametres
-		$this->prepare_phplot($file);
+		dolibarr_syslog("DolGraph.class::draw_phplot this->type=".$this->type);
 
-		$this->generate_phplot();
-	}
-
-	/**
-	*    \brief      Prépare l'objet PHPlot
-	*    \param      file    Nom du fichier image à générer
-	*/
-	function prepare_phplot($file)
-	{
 		// Vérifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
 		$graphpathdir=DOL_DOCUMENT_ROOT."/includes/phplot";
 		if (defined('PHPLOT_PATH')) $graphpathdir=PHPLOT_PATH;
 		if ($conf->global->PHPLOT_PATH) $graphpathdir=$conf->global->PHPLOT_PATH;
 		if (! eregi('[\\\/]$',$graphpathdir)) $graphpathdir.='/';
 		include_once($graphpathdir.'phplot.php');
-
-		// Define the object
-		$this->graph = new PHPlot($this->width, $this->height);
-
 		$phplotversion=4;
 		if (defined('TOTY')) $phplotversion=5;
 
+		// Create graph
+		$this->graph = new PHPlot($this->width, $this->height);
 		$this->graph->SetIsInline(1);
-
 		$this->graph->SetPlotType($this->type);
 		$this->graph->SetDataValues($this->data);
 
@@ -295,6 +393,7 @@ class DolGraph
 		{
 			$this->graph->SetShading($this->SetShading);
 		}
+
 		$this->graph->SetTickLength(6);
 
 		$this->graph->SetBackgroundColor($this->bgcolor);
@@ -333,28 +432,23 @@ class DolGraph
 
 		if ($phplotversion >= 5)
 		{
-			// Ne gere pas la transparence
+			// Ne gere la transparence qu'en phplot >= 5
 			// $this->graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
 			$this->graph->SetDrawPlotAreaBackground(array(255,255,255));
 		}
 
 		$this->graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
 		$this->graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
-
 		$this->graph->SetOutputFile($file);
-	}
-
-	/**
-	*    \brief      Génère le graph dans fichier préparer dans $graph
-	*    \param      file    Nom du fichier image
-	*/
-	function generate_phplot()
-	{
+		
+		// Generate file
 		$this->graph->DrawGraph();
 	}
 
 
 
+	/*
+	*/
 	function SetPrecisionY($which_prec)
 	{
 		$this->PrecisionY = $which_prec;
@@ -544,6 +638,11 @@ class DolGraph
 		//print "min=".$min." res=".$res;
 		return $res;
 	}
+}
+
+
+function setYear($value) {
+    return $value + 2000;
 }
 
 ?>

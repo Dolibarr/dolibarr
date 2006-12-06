@@ -120,8 +120,7 @@ class modBanque extends DolibarrModules
     
         $sql = array();
     
-        $this->dirs[0] = DOL_DATA_ROOT.'/graph/';
-        $this->dirs[1] = DOL_DATA_ROOT.'/graph/banque/';
+        $this->dirs[0] = $conf->banque->dir_output;
     
         return $this->_init($sql);
     }
