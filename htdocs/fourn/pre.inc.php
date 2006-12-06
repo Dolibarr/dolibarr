@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -58,13 +58,15 @@ function llxHeader($head = "", $title="", $addons='') {
         {
           $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
         }
-    }
+
   
-  if ($conf->societe->enabled && $user->rights->societe->lire)
-    {
-      $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
-    }
+      if ($conf->societe->enabled )
+	{
+	  $menu->add_submenu(DOL_URL_ROOT."/fourn/contact.php",$langs->trans("Contacts"));
+	}
   
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"));
+    }
 
   $langs->load("bills");
   if ($user->societe_id == 0 && $user->rights->fournisseur->facture->lire)
