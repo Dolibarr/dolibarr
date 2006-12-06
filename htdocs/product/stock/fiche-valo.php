@@ -116,9 +116,9 @@ if ($_GET["id"])
             
       print "<div class=\"graph\">\n";
       
-      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&file=entrepot-'.$entrepot->id.'.png';
+      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'.png';
       
-      print '<img src="'.$url.'">';            
+      print '<img src="'.$url.'" alt="Valorisation du stock">';            
       print "</div>";
 }
 
