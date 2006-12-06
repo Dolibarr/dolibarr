@@ -426,6 +426,13 @@ class Conf
 		  $this->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
 		}
 
+		// Defini MAIN_GRAPH_LIBRARY
+		if (! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
+		{
+			$this->global->MAIN_GRAPH_LIBRARY='phplot';
+			// $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
+		}
+
 		// Format de la date
 		// \todo Mettre les 4 formats dans fichier langue
 		$this->format_date_short="%d/%m/%Y";
