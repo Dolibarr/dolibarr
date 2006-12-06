@@ -35,5 +35,5 @@ BoxTitleSalesTurnover=Sales turnover
 BoxTitleTotalUnpayedCustomerBills=Unpayed customer's invoices
 BoxTitleTotalUnpayedSuppliersBills=Unpayed supplier's invoices
 BoxMyLastBookmarks=My last %s bookmarks
-FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Informations are from %s
+FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Last successfull refresh date: %s
 NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.

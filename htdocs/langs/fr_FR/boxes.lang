@@ -35,5 +35,5 @@ BoxTitleSalesTurnover=Le chiffre d'affaire réalisé
 BoxTitleTotalUnpayedCustomerBills=Impayés clients
 BoxTitleTotalUnpayedSuppliersBills=Impayés fournisseurs
 BoxMyLastBookmarks=Mes %s derniers marque-pages
-FailedToRefreshDataInfoNotUpToDate=Echec du rafraichissement du flux RSS. Les informations datent du %s
+FailedToRefreshDataInfoNotUpToDate=Echec du rafraichissement du flux RSS. Date du dernier rafraichissement: %s
 NoRecordedBookmarks=Pas de bookmarks personnels. Cliquer ici pour en ajouter.
