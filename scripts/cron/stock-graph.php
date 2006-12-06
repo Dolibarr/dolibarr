@@ -92,9 +92,6 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $values[$row[2]][$row[0]] = $row[1];
-      if ($verbose)
-	print $values[$i]."\n";
-
       $values[0][$row[0]] += $row[1];
 
       $i++;
@@ -111,14 +108,22 @@ require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 foreach ($entrepots as $key => $ent)
 {
   $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$key."-".$year.".png";
-  $title = "Valorisation du stock (euros HT) sur l'année ".$year;
+  $title = "Valorisation du stock de l'entrepot (euros HT) sur l'année ".$year;
   
   graph_datas($file, $title, $values[$key], $legends);
   if ($verbose)
     print "$file\n";
 }
+/*
+ * Graph cumulatif
+ *
+ */
+$file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$year.".png";
+$title = "Valorisation du stock global (euros HT) sur l'année ".$year;
 
-
+graph_datas($file, $title, $values[0], $legends);
+if ($verbose)
+  print "$file\n";
 
 function graph_datas($file, $title, $values, $legends)
 {
