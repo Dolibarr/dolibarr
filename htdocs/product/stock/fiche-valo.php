@@ -115,10 +115,16 @@ if ($_GET["id"])
       /* ************************************************************************** */
             
       print "<div class=\"graph\">\n";
+      $year = strftime("%Y",time());
+      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.$year.'.png';
+      print '<img src="'.$url.'" alt="Valorisation du stock année '.($year).'">';
       
-      $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'.png';
-      
-      print '<img src="'.$url.'" alt="Valorisation du stock">';            
+      if (file_exists(DOL_DATA_ROOT.'/graph/entrepot/entrepot-'.$entrepot->id.'-'.($year-1).'.png'))
+	{
+	  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_stock&amp;file=entrepot-'.$entrepot->id.'-'.($year-1).'.png';
+	  print '<br /><img src="'.$url.'" alt="Valorisation du stock année '.($year-1).'">';
+	}
+
       print "</div>";
 }
 
