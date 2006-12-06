@@ -114,7 +114,8 @@ foreach ($entrepots as $key => $ent)
   $title = "Valorisation du stock (euros HT) sur l'année ".$year;
   
   graph_datas($file, $title, $values[$key], $legends);
-print "$file\n";
+  if ($verbose)
+    print "$file\n";
 }
 
 
