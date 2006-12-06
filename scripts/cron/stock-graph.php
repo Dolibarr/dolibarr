@@ -73,6 +73,7 @@ for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
     {
       $values[$key][$i] = 0;
     }
+  $values[0][$i] = 0;
   $legends[$i] = strftime('%b',mktime(12,12,12,1,1,2006) + ($i * 3600 * 24));
 }
 
