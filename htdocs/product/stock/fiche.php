@@ -220,13 +220,17 @@ else
 	    $head[$h][1] = $langs->trans("StockMovements");
 	    $h++;
 	    
-            $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-            $head[$h][1] = $langs->trans("Info");
-            $h++;
+	    $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
+	    $head[$h][1] = $langs->trans("EnhancedValue");
+	    $h++;
 
 	    $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
 	    $head[$h][1] = $langs->trans("Users");
 	    $h++;
+
+            $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+            $head[$h][1] = $langs->trans("Info");
+            $h++;
 
             dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
 
