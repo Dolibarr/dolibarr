@@ -206,6 +206,15 @@ if ($modulepart)
       $accessallowed=1;
       $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
     }
+
+    // Wrapping pour les graph energie
+    if ($modulepart == 'graph_stock')
+    {
+      $accessallowed=1;
+      $original_file=DOL_DATA_ROOT.'/graph/entrepot/'.$original_file;
+    }
+
+
 }
 
 // Limite accès si droits non corrects
