@@ -34,3 +34,4 @@ TotalStock=Total en stock
 StockTooLow=Stock insuffisant
 EnhancedValue=Valorisation
 EnhancedValueOfWarehouses=Valorisation des stocks
+UserWarehouseAutoCreate=Créer un stock automatiquement à la création d'un utilisateur
