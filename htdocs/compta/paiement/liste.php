@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
  
 /**
-        \file       htdocs/compta/paiement/liste.php
-        \ingroup    compta
-        \brief      Page liste des paiements des factures clients
-        \version    $Revision$
+   \file       htdocs/compta/paiement/liste.php
+    \ingroup    compta
+     \brief      Page liste des paiements des factures clients
+      \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -62,7 +62,8 @@ if (! $sortfield) $sortfield="p.rowid";
   
 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
-$sql.= " c.libelle as paiement_type,";
+//$sql.= " c.libelle as paiement_type,";
+$sql.= " c.code as paiement_code,"; 
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c,";
 $sql.= " ".MAIN_DB_PREFIX."paiement as p";
@@ -88,7 +89,8 @@ if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage
     // Paiements liés à aucune facture (pour aide au diagnostic)
     $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
     $sql.= " p.statut, p.num_paiement,";
-    $sql.= " c.libelle as paiement_type";
+    //$sql.= " c.libelle as paiement_type";
+    $sql.= " c.code as paiement_code";
     $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
     $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf";
@@ -145,7 +147,8 @@ if ($resql)
         print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
 
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
-        print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+        //print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+	print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
         print '<td>';
         if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
         else print '&nbsp;';
