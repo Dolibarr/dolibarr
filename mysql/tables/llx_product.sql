@@ -41,7 +41,7 @@ create table llx_product
   seuil_stock_alerte integer DEFAULT 0,
   gencode            varchar(255) DEFAULT NULL,
   weight             float DEFAULT 0,
-  units              tinyint DEFAULT 0,
+  weight_units       tinyint(1) DEFAULT 0,
   canvas             varchar(15) DEFAULT ''
 )type=innodb;
 
