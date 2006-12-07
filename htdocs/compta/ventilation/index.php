@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,18 +22,16 @@
 
 /**
    \file       htdocs/compta/ventilation/index.php
-   \ingroup    compta
-   \brief      Page accueil ventilation
-   \version    $Revision$
+    \ingroup    compta
+     \brief      Page accueil ventilation
+      \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 $langs->load("compta");
 
-
 llxHeader('','Compta - Ventilation');
-
 
 print_fiche_titre("Ventilation Comptable");
 
@@ -41,26 +39,16 @@ print '<table border="0" width="100%" class="notopnoleftnoright">';
 
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
+$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet as fd";
+$sql.= " , ".MAIN_DB_PREFIX."facture as f";
+$sql.= " WHERE fd.fk_code_ventilation = 0";
+$sql.= " AND f.rowid = fd.fk_facture AND f.fk_statut = 1;";
 
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."facturedet";
-$sql .= " WHERE fk_export_compta = 0";
 $result = $db->query($sql);
 if ($result)
 {
   $row = $db->fetch_row($result);
   $nbfac = $row[0];
-
-  $db->free($result);
-}
-
-$sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."paiement";
-$sql .= " WHERE fk_export_compta = 0";
-
-$result = $db->query($sql);
-if ($result)
-{
-  $row = $db->fetch_row($result);
-  $nbp = $row[0];
 
   $db->free($result);
 }
@@ -73,7 +61,6 @@ print '<tr class="liste_titre"><td>'.$langs->trans("Type").'</td><td align="righ
 $var=!$var;
 print "<tr $bc[$var]>".'<td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
 $var=!$var;
-print "<tr $bc[$var]>".'<td>'.$langs->trans("Payments").'</td><td align="right">'.$nbp.'</td></tr>';
 print "</table>\n";
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
