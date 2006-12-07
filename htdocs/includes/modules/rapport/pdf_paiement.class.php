@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,62 +22,66 @@
  */
 
 /**
-        \file       htdocs/includes/modules/rapport/pdf_paiement.class.php
-		\ingroup    banque
-		\brief      Fichier de la classe permettant de générer les rapports de paiement
-		\version    $Revision$
+   \file       htdocs/includes/modules/rapport/pdf_paiement.class.php
+    \ingroup    banque
+     \brief      Fichier de la classe permettant de générer les rapports de paiement
+      \version    $Revision$
 */
 
 require_once(FPDF_PATH.'fpdf.php');
 
-
-/**	    \class      pdf_paiement
-		\brief      Classe permettant de générer les rapports de paiement
+/**	
+   \class      pdf_paiement
+   \brief      Classe permettant de générer les rapports de paiement
 */
 
 class pdf_paiement
 {
-
-    /**		\brief  Constructeur
-    		\param	db		handler accès base de donnée
-    */
-  	function pdf_paiement($db=0)
-    { 
-    	global $langs;
-		$langs->load("bills");
-
-		$this->db = $db;
-		$this->description = $langs->trans("ListOfCustomerPayments");
-		
-		$this->tab_top = 30;
-		
-		$this->line_height = 5;
-		$this->line_per_page = 25;
-		$this->tab_height = 230;	//$this->line_height * $this->line_per_page;
-
-	}
-
-
-	function Header(&$pdf, $page, $pages)
-	{
-		global $langs;
-
-		$title=$this->description.' - '.dolibarr_print_date(mktime(0,0,0,$this->month),"%B");
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(76, 10, $title);
-	
-		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 16, $langs->trans("Date")." : ".dolibarr_print_date(time(),"%d %b %Y"));
-	
-		$pdf->SetFont('Arial','',12);
-		$pdf->Text(11, 22, $langs->trans("Page")." : ".$page);
-		//      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
-	
-		$pdf->SetFont('Arial','',12);
-	
-		$pdf->Text(11,$this->tab_top + 6,'Date');
-	
-		$pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
+  /**	
+     \brief  Constructeur
+     \param	db		handler accès base de donnée
+  */
+  function pdf_paiement($db=0)
+  { 
+    global $langs;
+    $langs->load("bills");
+    
+    $this->db = $db;
+    $this->description = $langs->trans("ListOfCustomerPayments");
+    
+    $this->tab_top = 30;
+    
+    $this->line_height = 5;
+    $this->line_per_page = 25;
+    $this->tab_height = 230;	//$this->line_height * $this->line_per_page;
+    
+  }
+  /**	
+     \brief  Generate Header
+     \param  pdf pdf object
+     \param  page current page number
+     \param  pages number of pages
+  */  
+  function Header(&$pdf, $page, $pages)
+  {
+    global $langs;
+    
+    $title=$this->description.' - '.dolibarr_print_date(mktime(0,0,0,$this->month),"%B");
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Text(76, 10, $title);
+    
+    $pdf->SetFont('Arial','B',12);
+    $pdf->Text(11, 16, $langs->trans("Date")." : ".dolibarr_print_date(time(),"%d %b %Y"));
+    
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(11, 22, $langs->trans("Page")." : ".$page);
+    //      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
+    
+    $pdf->SetFont('Arial','',12);
+    
+    $pdf->Text(11,$this->tab_top + 6,'Date');
+    
+    $pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
 		$pdf->Text(42, $this->tab_top + 6, $langs->trans("PaymentMode"));
 	
 		$pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
@@ -154,24 +158,22 @@ class pdf_paiement
 
 		}
 	}
-
-
     /**
-    		\brief  Fonction générant le rapport sur le disque
-    		\param	_dir		repertoire
-    		\param	month		mois du rapport
-    		\param	year		annee du rapport
+       \brief  Fonction générant le rapport sur le disque
+       \param	_dir		repertoire
+       \param	month		mois du rapport
+       \param	year		annee du rapport
     */
-  	function write_pdf_file($_dir, $month, $year)
-    {
-    	global $langs;
+  function write_pdf_file($_dir, $month, $year)
+  {
+    global $langs;
+    
+    $this->month=$month;
+    $this->year=$year;
+    
+    $dir=$_dir.'/'.$year;
     	
-    	$this->month=$month;
-    	$this->year=$year;
-    	
-    	$dir=$_dir.'/'.$year;
-    	
-		if (! is_dir($dir))
+	if (! is_dir($dir))
 		{
 			$result=create_exdir($dir);
 			if ($result < 0)
@@ -189,7 +191,8 @@ class pdf_paiement
 		$pdf->Open();
 		
 		$sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";
-		$sql .= ", c.libelle as paiement_type, p.num_paiement";
+		//$sql .= ", c.libelle as paiement_type, p.num_paiement";
+		$sql .= ", c.code as paiement_code, p.num_paiement";
 		$sql .= ", p.amount as paiement_amount, f.total_ttc as facture_amount ";
 		$sql .= ", pf.amount as pf_amount ";
 		$sql .= ", p.rowid as prowid";
@@ -217,7 +220,8 @@ class pdf_paiement
 		
 				$lines[$i][0] = $objp->facnumber;
 				$lines[$i][1] = dolibarr_print_date($objp->dp,"%d %B %Y");
-				$lines[$i][2] = $objp->paiement_type ;
+				//$lines[$i][2] = $objp->paiement_type ;
+				$lines[$i][2] = $langs->trans("PaymentTypeShort".$objp->paiement_code);
 				$lines[$i][3] = $objp->num_paiement;
 				$lines[$i][4] = price($objp->paiement_amount);
 				$lines[$i][5] = price($objp->facture_amount);
