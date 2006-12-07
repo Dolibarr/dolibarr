@@ -2188,8 +2188,6 @@ function numero_semaine($time)
 
     return sprintf("%02d",$numeroSemaine);
 }
-
-
 /**
  *   \brief   Retourne le picto champ obligatoire
  *   \return  string		Chaine avec picto obligatoire
@@ -2198,5 +2196,58 @@ function picto_required()
 {
 	return '<b>*</b>';
 }
+/**
+ *   \brief   Convertit une masse d'une unite vers une autre unite
+ *   \param   weight    float	Masse a convertir
+ *   \param   from_unit int     Unite originale en puissance de 10
+ *   \param   to_unit   int     Nouvelle unite  en puissance de 10
+ *   \return  float	        Masse convertie
+ */
+function weight_convert($weight,&$from_unit,$to_unit)
+{
+  /* Pour convertire 320 gr en Kg appeler
+   *  $f = -3
+   *  weigh_convert(320, $f, 0) retournera 0.32
+   *
+   */
+  while ($from_unit  <> $to_unit)
+    {
+      if ($from_unit > $to_unit)
+	{
+	  $weight = $weight * 10;
+	  $from_unit = $from_unit - 1;
+	  $weight = weight_convert($weight,$from_unit, $to_unit);
+	}
+      if ($from_unit < $to_unit)
+	{
+	  $weight = $weight / 10;
+	  $from_unit = $from_unit + 1;
+	  $weight = weight_convert($weight,$from_unit, $to_unit);
+	}
+    }
 
+  return $weight;
+}
+/**
+ *   \brief   Renvoi le texte d'une unite
+ *   \param   int      Unit
+ *   \return  string	      Unite
+ *   \todo    gerer les autres unités de mesure comme la livre, le gallon, le litre, ...
+ */
+function weight_units_string($unit)
+{
+  /* Note Rodo aux dev :)
+   * Ne pas insérer dans la base de données ces valeurs
+   * cela surchagerait inutilement d'une requete supplémentaire
+   * pour quelque chose qui est somme toute peu variable
+   */
+
+  $weight_string[3] = 'Tonnes';
+  $weight_string[0] = 'kg';
+  $weight_string[-3] = 'g';
+  $weight_string[-6] = 'mg';
+
+
+  return $weight_string[$unit];
+}
 ?>
