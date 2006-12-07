@@ -40,6 +40,8 @@ create table llx_product
   stock_commande     integer DEFAULT 0,
   seuil_stock_alerte integer DEFAULT 0,
   gencode            varchar(255) DEFAULT NULL,
+  weight             float DEFAULT 0,
+  units              char(2) DEFAULT 'kg',
   canvas             varchar(15) DEFAULT ''
 )type=innodb;
 
