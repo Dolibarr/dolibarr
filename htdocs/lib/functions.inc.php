@@ -1768,36 +1768,51 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 
 
 /**
-		\brief      Fonction qui retourne un montant monétaire formaté
-		\remarks    Fonction utilisée dans les pdf et les pages html
-		\param	    amount			Montant a formater
-		\param	    html			Formatage html ou pas (0 par defaut)
-		\param	    outlangs		Objet langs pour formatage
-		\seealso	price2num		Fonction inverse de price
+   \brief      Fonction qui retourne un montant monétaire formaté
+   \remarks    Fonction utilisée dans les pdf et les pages html
+   \param	    amount			Montant a formater
+   \param	    html			Formatage html ou pas (0 par defaut)
+   \param	    outlangs		Objet langs pour formatage
+   \seealso	price2num		Fonction inverse de price
 */
 function price($amount, $html=0, $outlangs='')
 {
-	global $langs;
+  global $langs;
 
-	// Separateurs par defaut
-	$dec='.'; $thousand=' ';
+  // Separateurs par defaut
+  $dec='.'; $thousand=' ';
+  
+  // Si $outlangs non force, on prend langue utilisateur
+  if (! is_object($outlangs)) $outlangs=$langs;
+  
+  if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
+  if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
+  //print "x".$langs->trans("SeparatorThousand")."x";
 
-	// Si $outlangs non force, on prend langue utilisateur
-	if (! is_object($outlangs)) $outlangs=$langs;
+  // On pose par defaut 2 decimales
+  $decimal = 2;
+  $amount = ereg_replace(',','.',$amount);
+  $datas = explode('.',$amount);
+  $cents = $datas[1];
+  // On augmente au besoin
+  if ($cents > 99 )
+    {
+      $decimal = 3;
+    }
+  if ($cents > 999 )
+    {
+      $decimal = 4;
+    }
 
-	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
-	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
-	//print "x".$langs->trans("SeparatorThousand")."x";
-
-	// Formate nombre
-	if ($html)
-	{
-		return ereg_replace(' ','&nbsp;',number_format($amount, 2, $dec, $thousand));
-	}
-	else
-	{
-		return number_format($amount, 2, $dec, $thousand);
-	}
+  // Formate nombre
+  if ($html)
+    {
+      return ereg_replace(' ','&nbsp;',number_format($amount, $decimal, $dec, $thousand));
+    }
+  else
+    {
+      return number_format($amount, $decimal, $dec, $thousand);
+    }
 }
 
 /**
