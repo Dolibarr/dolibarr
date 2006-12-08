@@ -47,14 +47,15 @@ $form = new Form($db);
 
 print_fiche_titre($langs->trans("SystemToolsArea"),'','setup');
 
-//print "<br>";
-print info_admin($langs->trans("SystemAreaForAdminOnly")).'<br>';
+print "<br>";
+print $langs->trans("SystemToolsAreaDesc").'<br>';
+print "<br>";
 
 
 if ($message) print $message.'<br>';
 
 
-print $langs->trans("SystemToolsAreaDesc").'<br>';
+print info_admin($langs->trans("SystemAreaForAdminOnly")).'<br>';
 
 
 
