@@ -47,6 +47,7 @@ PaymentMode=Mode règlement
 PaymentConditions=Conditions de règlement
 PaymentConditionsShort=Conditions règlement
 PaymentAmount=Montant réglement
+ValidatePayment=Valider ce réglement
 PaymentHigherThanReminderToPay=Réglement supérieur au reste à payer
 ClassifyPayed=Classer 'Payée'
 ClassifyPayedPartially=Classer 'Payée partiellement'
