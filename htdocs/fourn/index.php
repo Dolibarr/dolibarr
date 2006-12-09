@@ -22,24 +22,16 @@
  */
 
 /**
-        \file       htdocs/fourn/index.php
-        \ingroup    fournisseur
-        \brief      Page accueil de la zone fournisseurs
-        \version    $Revision$
+   \file       htdocs/fourn/index.php
+   \ingroup    fournisseur
+   \brief      Page accueil de la zone fournisseurs
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 
 if (!$user->rights->societe->lire)
   accessforbidden();
-
-
-$page = isset($_GET["page"])?$_GET["page"]:'';
-$sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
-$sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
-$socname = isset($_GET["socname"])?$_GET["socname"]:'';
-$search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
-$search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
 
 $langs->load("suppliers");
 $langs->load("orders");
@@ -55,18 +47,53 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
-
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
- * Mode Liste
+ * Liste des categories
  *
  */
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
+$sql .= " ORDER BY label ASC";
 
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  print '<table class="liste" width="100%">';
+  print '<tr class="liste_titre"><td>';
+  print $langs->trans("Category");
+  print "</td></tr>\n";
+
+  $var=True;
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      $var=!$var;
+      print "<tr $bc[$var]>\n";
+      print '<td><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a>';
+      print "</td>\n";
+      print "</tr>\n";
+    }
+  print "</table>\n";
+
+  $db->free($resql);
+}
+else 
+{
+  dolibarr_print_error($db);
+}
+print "</td>\n";
+print '<td valign="top" width="70%" class="notopnoleft">';
+
+/*
+ * Liste des 10 derniers saisis
+ *
+ */
 $sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -75,20 +102,8 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.idp=".$socid;
-if ($socname) {
-  $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
-  $sortfield = "lower(s.nom)";
-  $sortorder = "ASC";
-}
-if ($search_nom)
-{
-  $sql .= " AND s.nom LIKE '%".$search_nom."%'";
-}
-if ($search_ville)
-{
-  $sql .= " AND s.ville LIKE '%".$search_ville."%'";
-}
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+
+$sql .= " ORDER BY s.datec DESC LIMIT 10; ";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -96,63 +111,37 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  print_barre_liste($langs->trans("ListOfSuppliers"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
-
-  print '<form action="index.php" method="GET">';
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec","","",'align="center"',$sortfield);
-  print '<td class="liste_titre">&nbsp;</td>';
+  print "<td>".$langs->trans("Company")."</td>\n";
+  print "<td>".$langs->trans("SupplierCode")."</td>\n";
+  print "<td>".$langs->trans("DateCreation")."</td>\n";
   print "</tr>\n";
-
-  print '<tr class="liste_titre">';
-
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
-
-  print '<td align="left" class="liste_titre">';
-  print '<input class="flat" type="text" size="10" name="search_code_fournisseur" value="'.$_GET["search_code_fournisseur"].'">';
-  print '</td>';
-
-  print '<td align="left" class="liste_titre">';
-  print '<input class="flat" type="text" size="10" name="search_compta" value="'.$_GET["search_compta"].'">';
-  print '</td>';
-
-
-  print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
-
-  print '</tr>';
 
   $var=True;
 
-  while ($i < min($num,$conf->liste_limit))
+  while ($obj = $db->fetch_object($resql) )
     {
-      $obj = $db->fetch_object($resql);	
       $var=!$var;
 
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
-      print "<td>".$obj->ville."</td>\n";       
       print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-      print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';
       print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-      print "<td>&nbsp;</td>\n";       
       print "</tr>\n";
-      $i++;
     }
   print "</table>\n";
-  print "</form>\n";
+
   $db->free($resql);
 }
 else 
 {
   dolibarr_print_error($db);
 }
+
+print "</td></tr>\n";
+print "</table>\n";
 
 $db->close();
 
