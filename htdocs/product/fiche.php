@@ -102,14 +102,9 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     if ( $value != $current_lang ) $e_product = $product;
     
     // Produit spécifique    
-    if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
-      {
-	$id = $product->CreateCanvas($user, $_POST);
-      }
-    else
-      {
-	$id = $product->create($user);
-      }
+    // $_POST n'est pas utilise dans la classe Product
+    // mais dans des classes qui hérite de Product
+    $id = $product->Create($user, $_POST);
     
     if ($id > 0)
       {
@@ -141,6 +136,7 @@ if ($_POST["action"] == 'update' &&
       $product->note               = $_POST["note"];
       $product->status             = $_POST["statut"];
       $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+      $product->stock_loc          = $_POST["stock_loc"];
       $product->duration_value     = $_POST["duration_value"];
       $product->duration_unit      = $_POST["duration_unit"];
       $product->canvas             = $_POST["canvas"];
