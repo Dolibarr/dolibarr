@@ -59,7 +59,15 @@
   <td>
   <input name="format" size="8" maxlength="7" value="{$prod_format}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
-</td>
+  </td>
+ </tr>
+ <tr>
+  <td>Poids</td>
+  <td colspan="3">
+   <input name="weight" size="5" value=""
+     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">g
+   <input name="weight_units" type="hidden" value="-3">
+  </td>
  </tr>
 <tr>
  <td>Prix au feuillet</td>
@@ -112,7 +120,7 @@
 <tr>
   <td width="15%">Emplacement Stock</td>
   <td width="85%" colspan="3">
-   <input name="stock_loc" size="8" value=""
+   <input name="stock_loc" size="8" value="{$prod_stock_loc}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
   </td>
  </tr>

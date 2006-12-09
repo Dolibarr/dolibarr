@@ -82,7 +82,7 @@
 
 <tr>
  <td>Emplacement Stock</td>
- <td colspan="3">{$stock_loc}</td>
+ <td colspan="3">{$prod_stock_loc}</td>
 </tr>
 
  <tr>
