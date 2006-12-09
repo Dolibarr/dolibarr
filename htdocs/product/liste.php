@@ -68,13 +68,31 @@ if (isset($_REQUEST['catid']))
   $catid = $_REQUEST['catid'];
 }
 
-
 /*
  * Affichage mode liste
  *
  */
 
-$title=$langs->trans("ProductsAndServices");
+if ($_GET["canvas"] <> '' && file_exists('canvas/product.'.$_GET["canvas"].'.class.php') )
+{
+  $class = 'Product'.ucfirst($_GET["canvas"]);
+  include_once('canvas/product.'.$_GET["canvas"].'.class.php');
+}
+else
+{
+  $title=$langs->trans("ProductsAndServices");
+
+  if (isset($_GET["type"]) || isset($_POST["type"]))
+    {
+      $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
+      if ($type) { $texte = $langs->trans("Services"); }
+      else { $texte = $langs->trans("Products"); }
+    } else {
+      $texte = $langs->trans("ProductsAndServices");
+    }
+}
+
+
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut';
@@ -148,17 +166,7 @@ if ($resql)
     {
       $envente = (isset($_GET["envente"])?$_GET["envente"]:$_POST["envente"]);
     }
-  
-  if (isset($_GET["type"]) || isset($_POST["type"]))
-    {
-      $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-      if ($type) { $texte = $langs->trans("Services"); }
-      else { $texte = $langs->trans("Products"); }
-    } else {
-      $texte = $langs->trans("ProductsAndServices");
-    }
-  
-  
+     
   llxHeader("","",$texte);
   
   if ($sref || $snom || $sall || $_POST["search"])
