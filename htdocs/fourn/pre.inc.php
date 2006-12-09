@@ -59,6 +59,7 @@ function llxHeader($head = "", $title="", $addons='') {
           $menu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;type=f",$langs->trans("NewSupplier"));
         }
 
+      $menu->add_submenu(DOL_URL_ROOT."/fourn/liste.php",$langs->trans("List"));
   
       if ($conf->societe->enabled )
 	{
