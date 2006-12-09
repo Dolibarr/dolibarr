@@ -77,6 +77,9 @@ if ($_GET["canvas"] <> '' && file_exists('canvas/product.'.$_GET["canvas"].'.cla
 {
   $class = 'Product'.ucfirst($_GET["canvas"]);
   include_once('canvas/product.'.$_GET["canvas"].'.class.php');
+
+  $object = new $class($db);
+  $object->LoadListDatas($limit, $offset, $sortfield, $sortorder);
 }
 else
 {
@@ -191,28 +194,7 @@ if ($resql)
 
   if ($_GET["canvas"] <> '' && file_exists($smarty->template_dir . '/product/canvas/'.$_GET["canvas"].'/liste.tpl') )
     {
-      $smartdatas = array();
-      while ($i < min($num,$limit))
-	{
-	  $datas = array();
-	  $objp = $db->fetch_object($resql);
-
-	  $datas["id"]       = $objp->rowid;
-	  $datas["ref"]      = $objp->ref;
-	  $datas["titre"]    = $objp->label;
-	  $datas["casier"]   = 0;
-	  $datas["entrepot"] = 0;
-	  $datas["ventes"]   = 0;
-	  $datas["stock"]    = 0;
-	  $datas["pages"]    = 0;
-	  $datas["prix"]     = price($objp->price);
-	  $datas["valo"]     = 0;
-
-	  array_push($smartdatas,$datas);
-
-	  $i++;
-	}
-      $smarty->assign('datas', $smartdatas);
+      $smarty->assign('datas', $object->list_datas);
 
       $smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
     }
