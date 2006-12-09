@@ -96,9 +96,7 @@
   <td width="15%">Taux TVA</td>
   <td width="35%">
    <select class="flat" name="tva_tx">
-    <option value="0">0%</option>
-    <option value="5.5">5.5%</option>
-    <option value="19.6" selected="true">19.6%</option>
+    {html_options values=$tva_taux_value output=$tva_taux_libelle selected="$prod_tva_tx"}
    </select>
   </td>
  </tr>
