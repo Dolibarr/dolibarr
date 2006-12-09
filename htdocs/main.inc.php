@@ -70,15 +70,17 @@ $authmode=array('http','dolibarr');
 //$authmode=array('ldap');
 if (isset($dolibarr_auto_user)) $authmode=array('auto');
 
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+session_name($sessionname);
+session_start();
+//dolibarr_syslog("We are in a session. Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_user']=".$_SESSION["dol_user"]);
+
 // Si la demande du login a déjà eu lieu, on le récupère depuis la session
 // sinon appel du module qui réalise sa demande.
 // A l'issu de cette phase, la variable $login sera définie.
 $login='';
-if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_token"]))
+if (! session_id() || ! isset($_SESSION["dol_user"]))
 {
-    session_name("DOLSESSID_".$dolibarr_main_db_name);
-    session_start();
-
 	// On est pas déjà authentifié, on demande le login/mot de passe
 	// A l'issu de cette demande, le login et un jeton doivent avoir été placé
 	// en session dans dol_user et dol_token et la page rappelée.
@@ -121,7 +123,7 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	    );
 
 	    $aDol = new DOLIAuth("DB", $params, "dol_loginfunction");
-	    $aDol->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
+	    $aDol->setSessionName($sessionname);
     	$aDol->start();
 	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
 	    if ($result)
@@ -171,6 +173,7 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	    );
 
 	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");
+	    $aDol->setSessionName($sessionname);
 	    $aDol->start();
 	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
 	    if ($result)
@@ -194,28 +197,31 @@ if (! session_id() && ! isset($_SESSION["dol_user"])  && ! isset($_SESSION["dol_
 	        exit;
 	    }
     }
+    
+	// Charge l'objet user depuis son login
+	$result=$user->fetch($login);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
+		exit;
+	}
 }
 else
 {
-	// On est déjà en session
-    $login=$_SESSION["dol_user"];
-}
-
-// Charge l'objet user depuis son login
-$result=$user->fetch($login);
-if ($result <= 0)
-{
-	dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
-	exit;
+	// On est déjà en session qui a sauvegardé profil utilisateur
+	$user=$_SESSION["dol_user"];
+    dolibarr_syslog("This is an already user logged session. _SESSION['dol_user']=".$user);
+	$user->db=$db;
+    $login=$user->login;
 }
 
 // Est-ce une nouvelle session
 if (! isset($_SESSION["dol_user"]))
 {
     // Nouvelle session pour ce login
-    dolibarr_syslog("New session in DOLSESSID_".$dolibarr_main_db_name.": ".session_id());
-    $user->update_last_login_date();
     $_SESSION["dol_user"]=$user;
+    dolibarr_syslog("This is a new started user session. _SESSION['dol_user']=".$user);
+    $user->update_last_login_date();
 }
 
 
