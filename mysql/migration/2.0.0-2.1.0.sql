@@ -520,3 +520,21 @@ create table llx_fournisseur_categorie
   label         varchar(255)
 
 )type=innodb;
+
+create table llx_fournisseur_ca
+(
+  fk_societe    integer,
+  date_calcul   datetime,
+  year          smallint UNSIGNED,
+  ca_genere     float,
+  UNIQUE (fk_societe, year)
+)type=innodb;
+
+create table llx_product_ca
+(
+  fk_product    integer,
+  date_calcul   datetime,
+  year          smallint UNSIGNED,
+  ca_genere     float,
+  UNIQUE (fk_product, year)
+)type=innodb;
