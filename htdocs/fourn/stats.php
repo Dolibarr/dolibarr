@@ -58,8 +58,8 @@ if ($user->societe_id > 0)
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="ca";
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="year";
 
 
 /*
@@ -67,7 +67,7 @@ if (! $sortfield) $sortfield="ca";
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, SUM(ca.ca_genere) as ca";
+$sql = "SELECT s.idp, s.nom, s.ville, ca.ca_genere as ca, ca.year";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."fournisseur_ca as ca";
@@ -88,7 +88,8 @@ if ($search_ville)
 {
   $sql .= " AND s.ville LIKE '%".$search_ville."%'";
 }
-$sql .= " GROUP BY ca.fk_societe";
+$sql .= " AND ca.year > (date_format(now(),'%Y') - 5)";
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $resql = $db->query($sql);
@@ -97,55 +98,87 @@ if ($resql)
   $num = $db->num_rows($resql);
   $i = 0;
   
-  print_barre_liste($langs->trans("SuppliersProductsSellSalesTurnover"), $page, "stats.php", "", $sortfield, $sortorder, '', $num);
-
-  print '<form action="stats.php" method="GET">';
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield);
-  print '<td class="liste_titre">&nbsp;</td>';
-  print_liste_field_titre($langs->trans("CA"),$_SERVER["PHP_SELF"],"s.code_compta","","",'align="right"',$sortfield);
-  print '<td align="left" class="liste_titre">&nbsp;</td>';
-  print "</tr>\n";
-
-  print '<tr class="liste_titre">';
-
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
-  print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
-
-  print '<td align="left" class="liste_titre">&nbsp;';
-  print '</td>';
-
-  print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
-
-  print '</tr>';
-
-  $var=True;
-
   while ($i < min($num,$conf->liste_limit))
     {
       $obj = $db->fetch_object($resql);	
       $var=!$var;
-
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
-      print "<td>".$obj->ville."</td>\n";       
-      print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-      print '<td align="right">'.price($obj->ca).'&nbsp;</td>';
-      print '<td align="right">&nbsp;</td>';
-      print "</tr>\n";
       $i++;
+
+      $fourns[$obj->idp] = $obj->nom;
+      $years[$obj->year] = $obj->year;
+      $ca[$obj->idp][$obj->year] = $obj->ca;
     }
-  print "</table>\n";
-  print "</form>\n";
-  $db->free($resql);
+
 }
 else 
 {
   dolibarr_print_error($db);
 }
+
+
+print_barre_liste($langs->trans("SuppliersProductsSellSalesTurnover"), $page, "stats.php", "", $sortfield, $sortorder, '', $num);
+
+print '<form action="stats.php" method="GET">';
+print '<table class="liste" width="100%">';
+print '<tr class="liste_titre">';
+print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
+print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield);
+print '<td class="liste_titre">&nbsp;</td>';
+
+foreach($years as $year)
+{
+  print  '<td align="right" class="liste_titre">'.$langs->trans("CA") .' '.$year.'</td>';
+}
+print '<td align="left" class="liste_titre">&nbsp;</td>';
+print "</tr>\n";
+
+print '<tr class="liste_titre">';
+
+print '<td class="liste_titre"><input type="text" class="flat" name="search_nom" value="'.$search_nom.'"></td>';
+print '<td class="liste_titre"><input type="text" class="flat" name="search_ville" value="'.$search_ville.'"></td>';
+
+foreach($years as $year)
+{
+  print '<td align="left" class="liste_titre">&nbsp;';
+  print '</td>';
+}
+
+print '<td class="liste_titre" colspan="2" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+
+print '</tr>';
+$var=True;
+
+foreach($fourns as $fid => $fnom)
+{
+  $var=!$var;
+  
+  print "<tr $bc[$var]>";
+  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+  print "&nbsp;<a href=\"fiche.php?socid=$fid\">$fnom</a></td>\n";
+  print "<td>".$obj->ville."</td>\n";       
+  print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+  
+  foreach($years as $year)
+    {
+      print '<td align="right">'.price($ca[$fid][$year]).'&nbsp;</td>';
+    }
+  print '<td align="right">&nbsp;</td>';
+  print "</tr>\n";
+}
+
+print "</table>\n";
+print "</form>\n";
+$db->free($resql);
+
+
+
+
+
+
+
+
+
+
 
 $db->close();
 
