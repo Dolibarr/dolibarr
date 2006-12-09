@@ -1,9 +1,6 @@
 <!-- SMARTY  -->
 
 <form action="liste.php?canvas=livre" method="post" name="formulaire">
-<input type="hidden" name="sortfield" value="p.ref">
-<input type="hidden" name="sortorder" value="ASC">
-<input type="hidden" name="type" value="0">
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
