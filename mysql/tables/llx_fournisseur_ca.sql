@@ -25,6 +25,6 @@ create table llx_fournisseur_ca
   fk_societe    integer,
   date_calcul   datetime,
   year          smallint UNSIGNED,
-  ca_genere     float
-
+  ca_genere     float,
+  UNIQUE (fk_societe, year)
 )type=innodb;
