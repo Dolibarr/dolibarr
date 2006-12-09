@@ -62,6 +62,11 @@ class ProductLivre extends Product
     $this->menus[3][1] = 'ListCover';
   }
 
+  function GetListeTitre()
+  {
+    return 'Livres';
+  }
+
   /**
    *   \brief  Personnalise les menus
    *   \param  menu       Objet Menu
@@ -78,11 +83,12 @@ class ProductLivre extends Product
    *    \brief      Creation
    *    \param      id          Id livre
    */
-  function CreateCanvas($user,$datas)
+  function Create($user,$datas)
   {
     $this->db->begin();
 
-    $id = $this->create($user);
+    $id = parent::Create($user);
+    //$id = $this->create($user);
 
     if ($id > 0)
       {
@@ -253,7 +259,6 @@ class ProductLivre extends Product
     $sql .= " , px_revient    = '$px_revient'";
     $sql .= " , fk_couverture = '".$this->couverture->id."'";
     $sql .= " , fk_contrat    = '".$this->contrat->id."'";
-    $sql .= " , stock_loc     = '$stock_loc'";
     $sql .= " , format        = '$format'";
     $sql .= " WHERE rowid = " . $this->id;
 
@@ -350,27 +355,32 @@ class ProductLivre extends Product
     $smarty->assign('prod_isbnc',    $isbn_parts[2]);
     $smarty->assign('prod_ean',      $this->ean);
 
-    $smarty->assign('prod_isbn13',   '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
+    $smarty->assign('prod_isbn13',           '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
 
-    $smarty->assign('prod_tva_tx',      $this->tva_tx);
+    $smarty->assign('prod_tva_tx',           $this->tva_tx);
 
-    $smarty->assign('prod_pages',       $this->pages);
-    $smarty->assign('prod_format',      $this->format);
-    $smarty->assign('prod_pxfeuil',     $this->px_feuillet);
+    $smarty->assign('prod_pages',            $this->pages);
+    $smarty->assign('prod_format',           $this->format);
+    $smarty->assign('prod_pxfeuil',          $this->px_feuillet);
 
-    $smarty->assign('prod_pxcouv',      $this->couverture->price);
+    $smarty->assign('prod_pxcouv',           $this->couverture->price);
 
-    $smarty->assign('prod_pxrevient', price($this->px_revient));
-    $smarty->assign('prod_pxvente',   price($this->price));
+    $smarty->assign('prod_weight',           $this->weight);
+    $smarty->assign('prod_weight_units',     $this->weight_units);
+
+    $smarty->assign('prod_pxrevient',        price($this->px_revient));
+    $smarty->assign('prod_pxvente',          price($this->price));
 
     $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
     $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
     $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
 
-    $smarty->assign('prod_stock_reel',        $this->stock_reel);
-    $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
-    $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
-    $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
+    $smarty->assign('prod_stock_loc',        $this->stock_loc);
+
+    $smarty->assign('prod_stock_reel',       $this->stock_reel);
+    $smarty->assign('prod_stock_dispo',      ($this->stock_reel - $this->stock_in_command));
+    $smarty->assign('prod_stock_in_command', $this->stock_in_command);
+    $smarty->assign('prod_stock_alert',      $this->seuil_stock_alerte);
 
     if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
       {
@@ -378,5 +388,80 @@ class ProductLivre extends Product
       }
   }
 
+  /* 
+   * Fetch Datas Liste
+   *
+   *
+   */
+  function LoadListDatas()
+  {
+    $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type,';
+    $sql.= ' p.duration, p.envente as statut, p.stock_loc';
+    $sql.= ',pl.pages';
+    $sql.= ',SUM(fd.qty) as ventes';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p,'.MAIN_DB_PREFIX.'product_cnv_livre as pl';  
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_product = p.rowid';
+    $sql .= " WHERE p.rowid=pl.rowid ";
+
+    if ($sall)
+      {
+	$sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+      }
+
+    if ($sref)
+      {
+	$sql .= " AND p.ref like '%".$sref."%'";
+      }
+
+    if ($snom)
+      {
+	$sql .= " AND p.label like '%".$snom."%'";
+      }
+
+    if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
+      {
+	$sql .= " AND p.envente = ".$_GET["envente"];
+      }
+    $sql.= 'GROUP BY p.rowid';
+    //    $sql .= " ORDER BY $sortfield $sortorder ";
+    //    $sql .= $this->db->plimit($limit + 1 ,$offset);
+    $limit = 10;
+    $this->list_datas = array();    
+
+    $resql = $this->db->query($sql) ;
+
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+
+	$i = 0;
+	while ($i < min($num,$limit))
+	  {
+	    $datas = array();
+	    $obj = $this->db->fetch_object($resql);
+	    
+	    $datas["id"]        = $obj->rowid;
+	    $datas["ref"]       = $obj->ref;
+	    $datas["titre"]     = $obj->label;
+	    $datas["casier"]    = 0;
+	    $datas["entrepot"]  = 0;
+	    $datas["ventes"]    = $obj->ventes;
+	    $datas["stock"]     = 0;
+	    $datas["stock_loc"] = stripslashes($obj->stock_loc);
+	    $datas["pages"]     = $obj->pages;
+	    $datas["prix"]      = price($obj->price);
+	    $datas["valo"]      = 0;
+	    
+	    array_push($this->list_datas,$datas);
+	    
+	    $i++;
+	  }
+	$this->db->free($resql);
+      }
+    else
+      {
+	print $sql;
+      }
+  }
 }
 ?>
