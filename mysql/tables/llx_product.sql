@@ -39,6 +39,7 @@ create table llx_product
   stock_propale      integer DEFAULT 0,
   stock_commande     integer DEFAULT 0,
   seuil_stock_alerte integer DEFAULT 0,
+  stock_loc          varchar(10),         -- emplacement dans le stock
   gencode            varchar(255) DEFAULT NULL,
   weight             real DEFAULT NULL,
   weight_units       tinyint DEFAULT NULL,
