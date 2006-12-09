@@ -40,36 +40,36 @@
 
 class Form
 {
-    var $db;
-    var $error;
+  var $db;
+  var $error;
     
-    var $cache_types_paiements_code=array();
-    var $cache_types_paiements_libelle=array();
-    var $cache_conditions_paiements_code=array();
-    var $cache_conditions_paiements_libelle=array();
+  var $cache_types_paiements_code=array();
+  var $cache_types_paiements_libelle=array();
+  var $cache_conditions_paiements_code=array();
+  var $cache_conditions_paiements_libelle=array();
 
-
-    /**
-    	\brief     Constructeur
-        \param     DB      handler d'accès base de donnée
-    */
-    function Form($DB)
-    {
-        $this->db = $DB;
-        
-        return 1;
-    }
+  var $tva_taux;
+  /**
+     \brief     Constructeur
+     \param     DB      handler d'accès base de donnée
+  */
+  function Form($DB)
+  {
+    $this->db = $DB;
+    
+    return 1;
+  }
   
   
-    /**
-    	\brief      Affiche un texte avec picto help qui affiche un tooltip
-        \param      text				Texte à afficher
-        \param      htmltooltip     	Contenu html du tooltip
-        \param		direction			1=Le picto est après, -1=le picto est avant
-        \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
-        \param		string				Code html du texte.picto
-    */
-    function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
+  /**
+     \brief      Affiche un texte avec picto help qui affiche un tooltip
+     \param      text				Texte à afficher
+     \param      htmltooltip     	Contenu html du tooltip
+     \param		direction			1=Le picto est après, -1=le picto est avant
+     \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
+     \param		string				Code html du texte.picto
+  */
+  function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
     {
 		global $conf;
 		
@@ -1984,75 +1984,127 @@ class Form
      */
     function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
     {
-        global $langs,$conf,$mysoc;
+      global $langs,$conf,$mysoc;
 
-		//print $societe_vendeuse."-".$societe_acheteuse;
-        if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
+      //print $societe_vendeuse."-".$societe_acheteuse;
+      if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
         {
-            if ($societe_vendeuse->id == $mysoc->id)
+	  if ($societe_vendeuse->id == $mysoc->id)
             {
-                print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
+	      print '<font class="error">'.$langs->trans("ErrorYourCountryIsNotDefined").'</div>';
             }
-            else
+	  else
             {
-                print '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
+	      print '<font class="error">'.$langs->trans("ErrorSupplierCountryIsNotDefined").'</div>';
             }
-            return;
+	  return;
         }
-
-		if (is_object($societe_vendeuse->pays_code))
-		{
-			$code_pays=$societe_vendeuse->pays_code;
-		}
-		else
-		{
-			$code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
-		}
-		
-		// Recherche liste des codes TVA du pays vendeur
-        $sql  = "SELECT t.taux,t.recuperableonly";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
-        $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
-        $sql .= " AND t.active = 1";
-        $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
-
-        $resql=$this->db->query($sql);
-        if ($resql)
+      
+      if (is_object($societe_vendeuse->pays_code))
+	{
+	  $code_pays=$societe_vendeuse->pays_code;
+	}
+      else
+	{
+	  $code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
+	}
+      
+      // Recherche liste des codes TVA du pays vendeur
+      $sql  = "SELECT t.taux,t.recuperableonly";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+      $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
+      $sql .= " AND t.active = 1";
+      $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+      
+      $resql=$this->db->query($sql);
+      if ($resql)
         {
-            $num = $this->db->num_rows($resql);
-            for ($i = 0; $i < $num; $i++)
+	  $num = $this->db->num_rows($resql);
+	  for ($i = 0; $i < $num; $i++)
             {
-                $obj = $this->db->fetch_object($resql);
-                $txtva[ $i ] = $obj->taux;
-                $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+	      $obj = $this->db->fetch_object($resql);
+	      $txtva[ $i ] = $obj->taux;
+	      $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
             }
         }
-        else
+      else
         {
-            print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry").'</div>';
-		}        	
-
-		// Définition du taux à présélectionner
-		if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-        // Si taux par defaut n'a pu etre trouvé, on prend dernier.
-        // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
-        if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
-
-        $nbdetaux = sizeof($txtva);
-
-        print '<select class="flat" name="'.$name.'">';
-        if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
-
-        for ($i = 0 ; $i < $nbdetaux ; $i++)
+	  print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry").'</div>';
+	}        	
+      
+      // Définition du taux à présélectionner
+      if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+      // Si taux par defaut n'a pu etre trouvé, on prend dernier.
+      // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+      if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
+      
+      $nbdetaux = sizeof($txtva);
+      
+      print '<select class="flat" name="'.$name.'">';
+      if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
+      
+      for ($i = 0 ; $i < $nbdetaux ; $i++)
         {
-            print '<option value="'.$txtva[$i].'"';
-            if ($txtva[$i] == $defaulttx)
+	  print '<option value="'.$txtva[$i].'"';
+	  if ($txtva[$i] == $defaulttx)
             {
-                print ' selected="true"';
+	      print ' selected="true"';
             }
-            print '>'.$libtva[$i].'</option>';
+	  print '>'.$libtva[$i].'</option>';
+	  
+	  $this->tva_taux_value[$i] = $txtva[$i];
+	  $this->tva_taux_libelle[$i] = $libtva[$i];
+	  
         }
-        print '</select>';
+      print '</select>';
+    }
+  
+
+    function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
+    {
+      global $langs,$conf,$mysoc;
+     
+      if (is_object($societe_vendeuse->pays_code))
+	{
+	  $code_pays=$societe_vendeuse->pays_code;
+	}
+      else
+	{
+	  $code_pays=$mysoc->pays_code;	// Pour compatibilite ascendente
+	}
+      
+      // Recherche liste des codes TVA du pays vendeur
+      $sql  = "SELECT t.taux,t.recuperableonly";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_tva as t, ".MAIN_DB_PREFIX."c_pays as p";
+      $sql .= " WHERE t.fk_pays = p.rowid AND p.code = '".$code_pays."'";
+      $sql .= " AND t.active = 1";
+      $sql .= " ORDER BY t.taux ASC, t.recuperableonly ASC";
+      
+      $resql=$this->db->query($sql);
+      if ($resql)
+        {
+	  $num = $this->db->num_rows($resql);
+	  for ($i = 0; $i < $num; $i++)
+            {
+	      $obj = $this->db->fetch_object($resql);
+	      $txtva[ $i ] = $obj->taux;
+	      $libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+            }
+        }
+      
+      // Définition du taux à présélectionner
+      if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+      // Si taux par defaut n'a pu etre trouvé, on prend dernier.
+      // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
+      if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
+      
+      $nbdetaux = sizeof($txtva);
+      
+      for ($i = 0 ; $i < $nbdetaux ; $i++)
+        {
+	  $this->tva_taux_value[$i] = $txtva[$i];
+	  $this->tva_taux_libelle[$i] = $libtva[$i];	  
+        }
     }
 
 
