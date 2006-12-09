@@ -1,65 +1,53 @@
 <!-- SMARTY  -->
 
-<form action="liste.php" method="post" name="formulaire">
+<form action="liste.php?canvas=livre" method="post" name="formulaire">
 <input type="hidden" name="sortfield" value="p.ref">
 <input type="hidden" name="sortorder" value="ASC">
 <input type="hidden" name="type" value="0">
 
 <table class="liste" width="100%">
  <tr class="liste_titre">
-  <td class="liste_titre_sel">Case
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="/theme/eldy/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="/theme/eldy/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  </a>
+  <td class="liste_titre">Case
   </td>
 
-  <td class="liste_titre_sel" >Référence
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
+  <td class="liste_titre" >Référence
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="/theme/eldy/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="/theme/eldy/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   </a>
   </td>
 
 
-  <td class="liste_titre_sel">N3
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
+  <td class="liste_titre">N3
+  <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="/theme/eldy/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
   </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
+  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="/theme/eldy/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
   </a>
   </td>
 
-  <td class="liste_titre_sel">Casier
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=asc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="/theme/eldy/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
-  </a>
-  <a href="liste.php?sortfield=p.ref&amp;sortorder=desc&amp;begin=&amp;envente=&amp;type=0&amp;fourn_id=&amp;snom=&amp;sref=">
-  <img src="/theme/eldy/img/1uparrow.png" border="0" alt="Z-A" title="Z-A">
-  </a>
+  <td class="liste_titre">Casier
   </td>
 
-  <td class="liste_titre_sel">Entrepôt
+  <td class="liste_titre">Entrepôt
   </td>
 
-  <td class="liste_titre_sel">Ventes
+  <td class="liste_titre">Ventes
   </td>
 
-  <td class="liste_titre_sel">Stock
+  <td class="liste_titre">Stock
   </td>
 
-  <td class="liste_titre_sel">Pages
+  <td class="liste_titre">Pages
   </td>
 
-  <td class="liste_titre_sel">Prix
+  <td class="liste_titre" align="right">Prix
   </td>
 
-  <td class="liste_titre_sel">Valorisation
+  <td class="liste_titre" align="right">Valorisation
   </td>
 
 </tr>
@@ -85,11 +73,11 @@
       <td>{$datas[mysec].titre}</td>
       <td>{$datas[mysec].casier}</td>
       <td>{$datas[mysec].entrepot}</td>
-      <td>{$datas[mysec].vente}</td>
+      <td>{$datas[mysec].ventes}</td>
       <td>{$datas[mysec].stock}</td>
       <td>{$datas[mysec].pages}</td>
-      <td>{$datas[mysec].prix}</td>
-      <td>{$datas[mysec].valo}</td>
+      <td align="right">{$datas[mysec].prix}</td>
+      <td align="right">{$datas[mysec].valo}</td>
    </tr>
 {/strip}
 {/section}
