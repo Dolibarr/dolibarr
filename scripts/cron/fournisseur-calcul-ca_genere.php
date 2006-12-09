@@ -108,9 +108,11 @@ $ca_products = array();
 $ca_fourns = array();
 foreach($real_products as $key => $value)
 {
-  $sql = "SELECT sum(total_ht) ";
-  $sql.= " FROM ".MAIN_DB_PREFIX."facturedet";
-  $sql.= " WHERE fk_product ='".$key."';";
+  $sql = "SELECT sum(fd.total_ht) ";
+  $sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
+  $sql.= " WHERE fk_product ='".$key."'";
+  $sql.= " AND f.rowid = fd.fk_facture";
+  $sql .=" AND date_format(f.datef,'%Y') = '".$year."';";
   
   $resql = $db->query($sql) ;
 
@@ -128,7 +130,10 @@ foreach($real_products as $key => $value)
       print $sql;
     }
 }
-
+/*
+ * Mets a jour la table fournisseur
+ *
+ */
 foreach($ca_fourns as $key => $value)
 {
   $sqld = "DELETE FROM ".MAIN_DB_PREFIX."fournisseur_ca";
@@ -137,6 +142,22 @@ foreach($ca_fourns as $key => $value)
   $resqld = $db->query($sqld);
 
   $sqli = "INSERT INTO ".MAIN_DB_PREFIX."fournisseur_ca";
+  $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."');";
+  
+  $resqli = $db->query($sqli);
+}
+/*
+ * Mets a jour la table produit
+ *
+ */
+foreach($ca_products as $key => $value)
+{
+  $sqld = "DELETE FROM ".MAIN_DB_PREFIX."product_ca";
+  $sqld .= " WHERE year = $year AND fk_societe=$key;";
+  
+  $resqld = $db->query($sqld);
+
+  $sqli = "INSERT INTO ".MAIN_DB_PREFIX."product_ca";
   $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."');";
   
   $resqli = $db->query($sqli);
