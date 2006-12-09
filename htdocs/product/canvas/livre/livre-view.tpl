@@ -32,14 +32,23 @@
  <td>{$prod_format}</td>
 </tr>
 <tr>
- <td>Prix au feuillet</td>
- <td>{$prod_pxfeuil}</td>
+ <td>Poids</td>
+ <td colspan="3">{$prod_weight}g</td>
+</tr>
+</table>
 
- <td>Prix couverture</td>
- <td>{$prod_pxcouv}</td>
+<br>
+
+<table class="border" width="100%">
+<tr>
+ <td width="15%">Prix au feuillet</td>
+ <td width="35%">{$prod_pxfeuil}</td>
+
+ <td width="15%">Prix couverture</td>
+ <td width="35%">{$prod_pxcouv}</td>
 </tr>
 <tr>
- <td>Prix de revient</td>
+ <td width="15%">Prix de revient</td>
  <td colspan="3">{$prod_pxrevient}</td>
 </tr>
 <tr>
@@ -48,7 +57,6 @@
 
   <td width="15%">Taux TVA</td>
   <td width="35%">{$prod_tva_tx}</td>
-
 </tr>
 </table>
 
@@ -74,7 +82,7 @@
 
 <tr>
  <td>Emplacement Stock</td>
- <td colspan="3">{$prod_pages}</td>
+ <td colspan="3">{$stock_loc}</td>
 </tr>
 
  <tr>
