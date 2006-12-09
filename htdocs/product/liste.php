@@ -163,11 +163,11 @@ if ($resql)
   
   if ($sref || $snom || $sall || $_POST["search"])
     {
-      print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
     }
   else
     {
-      print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+      print_barre_liste($texte, $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
     }
   
   if (isset($catid))
@@ -179,28 +179,30 @@ if ($resql)
       print "</div><br />";
     }
 
-    print '<table class="liste" width="100%">';
-    
-    // Lignes des titres
-    print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-    print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
-    print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
-    if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
-    print "</tr>\n";
-
-    // Lignes des champs de filtre
     print '<form action="liste.php" method="post" name="formulaire">';
     print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
     print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
     print '<input type="hidden" name="type" value="'.$type.'">';
+
+    print '<table class="liste" width="100%">';
+    
+    // Lignes des titres
+    print "<tr class=\"liste_titre\">";
+    print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+    print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
+    print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration","&amp;envente=$envente&".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    print "</tr>\n";
+
+    // Lignes des champs de filtre
+
     print '<tr class="liste_titre">';
     print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
     print '</td>';
-    print '<td class="liste_titre" valign="right">';
+    print '<td class="liste_titre" align="right">';
     print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
     print '</td>';
     if ($conf->service->enabled && $type != 0) 
@@ -220,7 +222,7 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_removefilter" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" alt="'.$langs->trans("RemoveFilter").'">';
     print '</td>';
     print '</tr>';
-    print '</form>';
+
 
     $product_static=new Product($db);
     
@@ -271,18 +273,18 @@ if ($resql)
     {
       if ($sref || $snom || $sall || $_POST["search"])
 	{
-	  print_barre_liste($texte, $page, "liste.php", "&sref=".$sref."&snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
+	  print_barre_liste($texte, $page, "liste.php", "&amp;sref=".$sref."&amp;snom=".$snom."&amp;sall=".$sall."&amp;envente=".$_POST["envente"], $sortfield, $sortorder,'',$num);
 	}
       else
 	{
-	  print_barre_liste($texte, $page, "liste.php", "&sref=$sref&snom=$snom&fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
+	  print_barre_liste($texte, $page, "liste.php", "&amp;sref=$sref&amp;snom=$snom&amp;fourn_id=$fourn_id".(isset($type)?"&amp;type=$type":""), $sortfield, $sortorder,'',$num);
 	}
     }
     
     $db->free($resql);
     
     print "</table>";
-    
+    print '</form>';    
 }
 else
 {
