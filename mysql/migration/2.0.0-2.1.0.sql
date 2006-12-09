@@ -505,3 +505,18 @@ ALTER TABLE llx_boxes ADD INDEX idx_boxes_boxid (box_id);
 -- V4 ALTER TABLE llx_boxes ADD CONSTRAINT fk_boxes_box_id FOREIGN KEY (box_id) REFERENCES llx_boxes_def (rowid);
 
 ALTER TABLE llx_boxes ADD INDEX idx_boxes_fk_user (fk_user);
+
+
+create table llx_categorie_fournisseur
+(
+  fk_categorie  integer NOT NULL,
+  fk_societe    integer NOT NULL,
+  UNIQUE (fk_categorie, fk_societe)
+)type=innodb;
+
+create table llx_fournisseur_categorie
+(
+  rowid         integer AUTO_INCREMENT PRIMARY KEY,
+  label         varchar(255)
+
+)type=innodb;
