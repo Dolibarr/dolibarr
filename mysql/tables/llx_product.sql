@@ -41,9 +41,9 @@ create table llx_product
   seuil_stock_alerte integer DEFAULT 0,
   stock_loc          varchar(10),         -- emplacement dans le stock
   gencode            varchar(255) DEFAULT NULL,
-  weight             real DEFAULT NULL,
-  weight_units       tinyint DEFAULT NULL,
-  canvas             varchar(15) DEFAULT ''
+  weight             float        DEFAULT NULL,
+  weight_units       tinyint      DEFAULT NULL,
+  canvas             varchar(15)  DEFAULT ''
 )type=innodb;
 
 
