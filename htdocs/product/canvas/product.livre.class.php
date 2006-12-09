@@ -54,11 +54,11 @@ class ProductLivre extends Product
     
     $this->menus[0][0] = DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0&amp;canvas=livre";
     $this->menus[0][1] = 'NewBook';
-    $this->menus[1][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livre";
+    $this->menus[1][0] = DOL_URL_ROOT."/product/liste.php?canvas=livre";
     $this->menus[1][1] = 'ListBook';
-    $this->menus[2][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livrecontrat";
+    $this->menus[2][0] = DOL_URL_ROOT."/product/liste.php?canvas=livrecontrat";
     $this->menus[2][1] = 'ListContract';
-    $this->menus[3][0] = DOL_URL_ROOT."/product/liste.php?action=create&amp;type=0&amp;canvas=livrecouverture";
+    $this->menus[3][0] = DOL_URL_ROOT."/product/liste.php?canvas=livrecouverture";
     $this->menus[3][1] = 'ListCover';
   }
 
@@ -393,7 +393,7 @@ class ProductLivre extends Product
    *
    *
    */
-  function LoadListDatas()
+  function LoadListDatas($list, $offset, $sortfield, $sortorder)
   {
     $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type,';
     $sql.= ' p.duration, p.envente as statut, p.stock_loc';
@@ -422,10 +422,10 @@ class ProductLivre extends Product
       {
 	$sql .= " AND p.envente = ".$_GET["envente"];
       }
-    $sql.= 'GROUP BY p.rowid';
-    //    $sql .= " ORDER BY $sortfield $sortorder ";
-    //    $sql .= $this->db->plimit($limit + 1 ,$offset);
-    $limit = 10;
+    $sql.= " GROUP BY p.rowid";
+    $sql.= " ORDER BY $sortfield $sortorder ";
+    $sql.= $this->db->plimit($limit + 1 ,$offset);
+
     $this->list_datas = array();    
 
     $resql = $this->db->query($sql) ;
