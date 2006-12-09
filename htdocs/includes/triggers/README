@@ -1,0 +1,8 @@
+Ce répertoire contient tous les triggers disponibles.
+
+Le nom de certain trigger se termine par -NORUN ce qui signigie que ceux-ci
+ne seront pas éxécutés, si vous souhiatez les utiliser il suffit de rennommer 
+ceux-ci en supprimant -NORUN de leur nom.
+
+
+$Id$
