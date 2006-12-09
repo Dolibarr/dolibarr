@@ -61,7 +61,7 @@ UPDATE llx_societe set parent = null where parent = 0;
 
 alter table llx_product add stock_loc varchar(10) DEFAULT NULL;
 alter table llx_product add gencode varchar(255) DEFAULT NULL;
-alter table llx_product add weight real DEFAULT NULL;
+alter table llx_product add weight float DEFAULT NULL;
 alter table llx_product add weight_units tinyint DEFAULT NULL;
 alter table llx_product add canvas varchar(15) DEFAULT '';
 
