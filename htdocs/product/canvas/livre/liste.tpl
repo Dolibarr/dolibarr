@@ -38,11 +38,9 @@
   <td class="liste_titre">Ventes
   </td>
 
-  <td class="liste_titre">Stock
-  </td>
+  <td class="liste_titre">Stock</td>
 
-  <td class="liste_titre">Pages
-  </td>
+  <td class="liste_titre" align="center">Pages</td>
 
   <td class="liste_titre" align="right">Prix
   </td>
@@ -68,14 +66,14 @@
 {section name=mysec loop=$datas}
 {strip}
    <tr class="{cycle values="pair,impair"}">
-      <td>{$datas[mysec].case}</td>
+      <td>{$datas[mysec].stock_loc}</td>
       <td><a href="fiche.php?id={$datas[mysec].id}">{$datas[mysec].ref}</a></td>
       <td>{$datas[mysec].titre}</td>
       <td>{$datas[mysec].casier}</td>
       <td>{$datas[mysec].entrepot}</td>
       <td>{$datas[mysec].ventes}</td>
       <td>{$datas[mysec].stock}</td>
-      <td>{$datas[mysec].pages}</td>
+      <td align="center">{$datas[mysec].pages}</td>
       <td align="right">{$datas[mysec].prix}</td>
       <td align="right">{$datas[mysec].valo}</td>
    </tr>
