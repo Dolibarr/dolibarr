@@ -217,7 +217,7 @@ class DolGraph
 				$plot = new BarPlot($newvalues);
 
 			    $plot->barShadow->setSize(2);
-			    $plot->barShadow->setPosition(Shadow::RIGHT_TOP);
+			    $plot->barShadow->setPosition('Shadow::RIGHT_TOP');
 			    $plot->barShadow->setColor(new Color(160, 160, 160, 10));
 			    $plot->barShadow->smooth(TRUE);
     			//$plot->setSize(1, 0.96);
@@ -257,7 +257,7 @@ class DolGraph
 	
 			if ($nblot >= 2)
 			{
-				$group->legend->add($plot, $this->Legend[$i], Legend::MARK);
+				$group->legend->add($plot, $this->Legend[$i], 'Legend::MARK');
 
 				$group->add($plot);
 			}
