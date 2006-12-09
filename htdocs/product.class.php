@@ -219,14 +219,17 @@ class Product
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
     $this->note = trim($this->note);
+    $this->new_weight = trim($this->new_weight);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
     $sql .= " SET label = '" . addslashes($this->libelle) ."'";
     if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
     $sql .= ",tva_tx = '" . $this->tva_tx."'";
     $sql .= ",envente = " . $this->status;
+    $sql .= ",weight = '" . $this->new_weight."'";
     $sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
     $sql .= ",description = '" . addslashes($this->description) ."'";
+    $sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
     $sql .= ",note = '" . addslashes($this->note) ."'";
     $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
     $sql .= " WHERE rowid = " . $id;
@@ -790,7 +793,7 @@ class Product
     
     $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
     $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
-    $sql.= " stock_commande";
+    $sql.= " stock_commande, stock_loc, weight, weight_units";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -815,6 +818,9 @@ class Product
 	$this->duration_unit      = substr($result["duration"],-1);
 	$this->seuil_stock_alerte = $result["seuil_stock_alerte"];
 	$this->canvas             = $result["canvas"];
+	$this->stock_loc          = $result["stock_loc"];
+	$this->weight             = $result["weight"];
+	$this->weight_units       = $result["weight_units"];
 
 	$this->stock_in_command   = $result["stock_commande"];
 
