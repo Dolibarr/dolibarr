@@ -214,6 +214,12 @@ if ($modulepart)
       $original_file=DOL_DATA_ROOT.'/graph/entrepot/'.$original_file;
     }
 
+    // Wrapping pour les graph fournisseurs
+    if ($modulepart == 'graph_fourn')
+    {
+      $accessallowed=1;
+      $original_file=DOL_DATA_ROOT.'/graph/fournisseur/'.$original_file;
+    }
 
 }
 
