@@ -555,6 +555,21 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         }
         print '</td></tr>';
 
+	if ($soc->fournisseur)
+	  {
+	    $load = $soc->LoadSupplierCateg();
+	    if ( $load == 0)
+	      {
+		if (sizeof($soc->SupplierCategories) > 0)
+		  {
+		    print '<tr>';
+		    print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+		    $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+		    print '</td></tr>';
+		  }
+	      }
+	  }
+
         print '<tr><td valign="top">'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
         print '</textarea></td></tr>';
