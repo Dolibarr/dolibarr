@@ -379,10 +379,15 @@ class Societe
             $sql .= " WHERE idp = '" . $id ."'";
 
         	
-        	dolibarr_syslog("Societe.class::update sql=".$sql);
+	    dolibarr_syslog("Societe.class::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
+
+		// si le fournisseur est classe on l'ajoute
+		$this->AddFournisseurInCategory($this->fournisseur_categorie);
+
+
                 if ($call_trigger)
                 {
                     // Appel des triggers
