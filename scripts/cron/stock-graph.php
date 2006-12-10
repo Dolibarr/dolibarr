@@ -44,6 +44,17 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 /*
  *
  */
+$dir = DOL_DATA_ROOT."/graph/entrepot";
+if (!is_dir($dir) )
+{
+  if (! @mkdir($dir,0755))
+    {
+      die ("Can't create $dir");
+    }
+}
+/*
+ *
+ */
 $sql  = "SELECT distinct(fk_entrepot)";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation";
 
@@ -108,7 +119,7 @@ require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 
 foreach ($entrepots as $key => $ent)
 {
-  $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$key."-".$year.".png";
+  $file = $dir ."/entrepot-".$key."-".$year.".png";
   $title = "Valorisation du stock de l'entrepot (euros HT) sur l'année ".$year;
   
   graph_datas($file, $title, $values[$key], $legends);
