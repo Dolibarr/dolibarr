@@ -57,14 +57,14 @@ if (! $socid) accessforbidden();
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
-        $sql = "SELECT sc.rowid";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.idp AND sc.fk_user = ".$user->id." AND s.fournisseur = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+  $sql = "SELECT sc.rowid";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.idp AND sc.fk_user = ".$user->id." AND s.fournisseur = 1";
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 0) accessforbidden();
+    }
 }
 
 
@@ -75,75 +75,75 @@ $societe = new Fournisseur($db);
 
 if ( $societe->fetch($socid) )
 {
-	$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
-	$addons[0][1] = $societe->nom;
-
-	llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
-
-	/*
-	 * Affichage onglets
-	 */
-	$head = societe_prepare_head($societe);
-
-	dolibarr_fiche_head($head, 'supplier', $societe->nom);
-
-
-	print '<table width="100%">';
-	print '<tr><td valign="top" width="50%">';
-
-	print '<table class="border" width="100%">';
-	print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
-
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-
-	if ($societe->fournisseur)
-	{
-		print '<tr><td nowrap="nowrap">';
-		print $langs->trans('SupplierCode').'</td><td colspan="3">';
-		print $societe->code_fournisseur;
-		if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-		print '</td></tr>';
-	}
-
-	print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
-
-	print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
-	print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
-	print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
-	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
-
-	// Assujeti à TVA ou pas
-	print '<tr>';
-	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-	print yn($societe->tva_assuj);
-	print '</td>';
-	print '</tr>';
-
-	print '</table>';
-
-
-	print '</td><td valign="top" width="50%">';
-	$var=true;
-
-	$MAXLIST=4;
-
-	// Lien recap
-	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre">';
-	print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
-	print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
-	print '</tr>';
-	print '</table>';
-	print '<br>';
-
-	/*
-	 * Liste des commandes associées
-	 */
-	$orderstatic = new CommandeFournisseur($db);
-
-	$sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
+  $addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$socid;
+  $addons[0][1] = $societe->nom;
+  
+  llxHeader('',$langs->trans('SupplierCard').' : '.$societe->nom, $addons);
+  
+  /*
+   * Affichage onglets
+   */
+  $head = societe_prepare_head($societe);
+  
+  dolibarr_fiche_head($head, 'supplier', $societe->nom);
+  
+  
+  print '<table width="100%">';
+  print '<tr><td valign="top" width="50%">';
+  
+  print '<table class="border" width="100%">';
+  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
+  
+  print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+  
+  if ($societe->fournisseur)
+    {
+      print '<tr><td nowrap="nowrap">';
+      print $langs->trans('SupplierCode').'</td><td colspan="3">';
+      print $societe->code_fournisseur;
+      if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+      print '</td></tr>';
+    }
+  
+  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
+  
+  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
+  print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
+  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
+  
+  // Assujeti à TVA ou pas
+  print '<tr>';
+  print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+  print yn($societe->tva_assuj);
+  print '</td>';
+  print '</tr>';
+  
+  print '</table>';
+  
+  
+  print '</td><td valign="top" width="50%">';
+  $var=true;
+  
+  $MAXLIST=4;
+  
+  // Lien recap
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre">';
+  print '<td colspan="4"><table width="100%" class="noborder"><tr><td>'.$langs->trans("Summary").'</td>';
+  print '<td align="right"><a href="'.DOL_URL_ROOT.'/fourn/recap-fourn.php?socid='.$societe->id.'">'.$langs->trans("ShowSupplierPreview").'</a></td></tr></table></td>';
+  print '</tr>';
+  print '</table>';
+  print '<br>';
+  
+  /*
+   * Liste des commandes associées
+   */
+  $orderstatic = new CommandeFournisseur($db);
+  
+  $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
+  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 	$sql.= " WHERE p.fk_soc =".$societe->id;
 	$sql.= " ORDER BY p.rowid";
 	$sql.= " ".$db->plimit($MAXLIST);
