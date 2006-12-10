@@ -25,6 +25,7 @@ create table llx_fournisseur_ca
   fk_societe    integer,
   date_calcul   datetime,
   year          smallint UNSIGNED,
-  ca_genere     float,
+  ca_genere     float,                  -- ca genere par les ventes des produits de ce fournisseur
+  ca_achat      float(11,2) DEFAULT 0,  -- ca effectue aupres de ce fournisseur (somme de ses factures)
   UNIQUE (fk_societe, year)
 )type=innodb;
