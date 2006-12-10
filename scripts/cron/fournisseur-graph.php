@@ -84,7 +84,7 @@ foreach ($fournisseurs as $id => $fdir)
 {
   $values = array();
   $legends = array(); 
-  $sql  = "SELECT year, ca_genere";
+  $sql  = "SELECT year, ca_genere, ca_achat";
   $sql .= " FROM ".MAIN_DB_PREFIX."fournisseur_ca";
   $sql .= " WHERE fk_societe = $id";
   $sql .= " ORDER BY year ASC";
@@ -96,7 +96,8 @@ foreach ($fournisseurs as $id => $fdir)
       $i = 0;
       while ($row = $db->fetch_row($resql))
 	{
-	  $values[$i]  = $row[1];
+	  $values_gen[$i]  = $row[1];
+	  $values_ach[$i]  = $row[2];
 	  $legends[$i] = $row[0];
 	  
 	  $i++;
@@ -111,11 +112,19 @@ foreach ($fournisseurs as $id => $fdir)
   require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
   
   $file = $fdir ."ca_genere-".$id.".png";
-  $title = "CA généré en euros HT";
+  $title = "CA généré par ce fournisseur (euros HT)";
   
-  graph_datas($file, $title, $values, $legends);
+  graph_datas($file, $title, $values_gen, $legends);
   if ($verbose)
     print "$file\n";
+
+  $file = $fdir ."ca_achat-".$id.".png";
+  $title = "CA avec ce fournisseur (euros HT)";
+  
+  graph_datas($file, $title, $values_ach, $legends);
+  if ($verbose)
+    print "$file\n";
+
 }
 
 function graph_datas($file, $title, $values, $legends)
@@ -147,6 +156,8 @@ function graph_datas($file, $title, $values, $legends)
  $plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
  $plot->barShadow->setColor(new Color(180, 180, 180, 10));
  $plot->barShadow->smooth(TRUE);
+
+ $plot->xAxis->hideTicks();
 
  $plot->xAxis->setLabelText($legends);
  $plot->xAxis->label->setFont(new Tuffy(7));
