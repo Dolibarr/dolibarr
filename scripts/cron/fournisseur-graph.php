@@ -65,7 +65,8 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $fdir = $dir.'/'.get_exdir($row[0],3);
-      print $fdir."\n";
+      if ($verbose)
+	print $fdir."\n";
       create_exdir($fdir);
       $fournisseurs[$row[0]] = $fdir;
     }
@@ -119,7 +120,6 @@ foreach ($fournisseurs as $id => $fdir)
 
 function graph_datas($file, $title, $values, $legends)
 {
-
   $graph = new Graph(500, 200);
   $graph->title->set($title);
   $graph->title->setFont(new Tuffy(10));
@@ -131,10 +131,7 @@ function graph_datas($file, $title, $values, $legends)
   $graph->setAntiAliasing(TRUE);
   $graph->setBackgroundColor( $color );
 
-  //$plot->yAxis->title->set("euros");
-
   $plot = new BarPlot($values);
-
 
   $plot->setBarGradient(
 			new LinearGradient(
@@ -151,12 +148,10 @@ function graph_datas($file, $title, $values, $legends)
  $plot->barShadow->setColor(new Color(180, 180, 180, 10));
  $plot->barShadow->smooth(TRUE);
 
-
-  $plot->xAxis->setLabelText($legends);
-  $plot->xAxis->label->setFont(new Tuffy(7));
+ $plot->xAxis->setLabelText($legends);
+ $plot->xAxis->label->setFont(new Tuffy(7));
   
   $graph->add($plot);
-
   $graph->draw($file);
 }
 ?>
