@@ -26,6 +26,9 @@ require ("../../htdocs/master.inc.php");
 
 $verbose = 0;
 
+$now = time();
+$year = strftime('%Y',$now);
+
 for ($i = 1 ; $i < sizeof($argv) ; $i++)
 {
   if ($argv[$i] == "-v")
@@ -40,14 +43,38 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
     {
       $verbose = 3;
     }
+  if ($argv[$i] == "-y")
+    {
+      $year = $argv[$i+1];
+    }
 }
 
-$now = time();
-$year = strftime('%Y',$now);
-
 $fournisseurs = array();
+$fournisseurs_ca_achat = array();
 $products = array();
 $real_products = array();
+/*
+ *
+ *
+ */
+$sql  = "SELECT fk_soc, date_format(datef,'%Y'),sum(total_ht) ";
+$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn";
+$sql .= " GROUP BY fk_soc, date_format(datef,'%Y') ";
+$resql = $db->query($sql) ;
+
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $fournisseurs_ca_achat[$row[0]][$row[1]] = $row[2];
+    }
+  $db->free($resql);
+}
+else
+{
+  print $sql;
+}
+
 /*
  *
  *
@@ -142,7 +169,8 @@ foreach($ca_fourns as $key => $value)
   $resqld = $db->query($sqld);
 
   $sqli = "INSERT INTO ".MAIN_DB_PREFIX."fournisseur_ca";
-  $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."');";
+  $sqli .= " VALUES ($key,now(),$year,'".str_replace(',','.',$value)."'";
+  $sqli.=  ",'". $fournisseurs_ca_achat[$key][$year] ."');";
   
   $resqli = $db->query($sqli);
 }
