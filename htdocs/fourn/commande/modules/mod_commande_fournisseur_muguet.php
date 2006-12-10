@@ -28,8 +28,8 @@
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/mod_commande_fournisseur_muguet.php");
-
+//require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/mod_commande_fournisseur_muguet.php");
+require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
 /**	    \class      mod_commande_fournisseur_muguet
 		\brief      Classe du modèle de numérotation de référence de commande Marbre
