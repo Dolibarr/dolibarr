@@ -65,10 +65,9 @@ if ($resql)
   $i = 0;
   
   print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>';
+  print '<tr class="liste_titre"><td colspan="2">';
   print $langs->trans("Category");
   print "</td></tr>\n";
-
   $var=True;
 
   while ($obj = $db->fetch_object($resql))
@@ -76,7 +75,8 @@ if ($resql)
       $var=!$var;
       print "<tr $bc[$var]>\n";
       print '<td><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a>';
-      print "</td>\n";
+      print '</td><td align="right">';
+      print '<a href="stats.php?cat='.$obj->rowid.'">('.$langs->trans("Stats").')</a>';
       print "</tr>\n";
     }
   print "</table>\n";
