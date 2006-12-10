@@ -65,9 +65,11 @@ if ($resql)
   while ($row = $db->fetch_row($resql))
     {
       $fdir = $dir.'/'.get_exdir($row[0],3);
+
       if ($verbose)
 	print $fdir."\n";
       create_exdir($fdir);
+
       $fournisseurs[$row[0]] = $fdir;
     }
   $db->free($resql);
@@ -82,7 +84,8 @@ else
 
 foreach ($fournisseurs as $id => $fdir)
 {
-  $values = array();
+  $values_gen = array();
+  $values_ach = array();
   $legends = array(); 
   $sql  = "SELECT year, ca_genere, ca_achat";
   $sql .= " FROM ".MAIN_DB_PREFIX."fournisseur_ca";
