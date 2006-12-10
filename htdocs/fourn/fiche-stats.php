@@ -87,57 +87,37 @@ if ( $societe->fetch($socid) )
 
   dolibarr_fiche_head($head, 'supplierstat', $societe->nom);
 
-
-  print '<table width="100%">';
-  print '<tr><td valign="top" width="50%">';
-
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
 
   print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
 
-  if ($societe->fournisseur)
-    {
-      print '<tr><td nowrap="nowrap">';
-      print $langs->trans('SupplierCode').'</td><td colspan="3">';
-      print $societe->code_fournisseur;
-      if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-      print '</td></tr>';
-    }
+  print '<tr><td nowrap="nowrap">';
+  print $langs->trans('SupplierCode').'</td><td colspan="3">';
+  print $societe->code_fournisseur;
+  if ($societe->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+  print '</td></tr>';
+  
+  print "</table><br />";
 
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($societe->adresse).'</td></tr>';
-
-  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$societe->cp.'</td>';
-  print '<td>'.$langs->trans("Town").'</td><td>'.$societe->ville.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$societe->pays.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($societe->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($societe->fax).'&nbsp;</td></tr>';
-  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$societe->url\">$societe->url</a>&nbsp;</td></tr>";
-
-  // Assujeti à TVA ou pas
-  print '<tr>';
-  print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-  print yn($societe->tva_assuj);
-  print '</td>';
-  print '</tr>';
-
-  print '</table>';
-
-
-  print '</td><td valign="top" width="50%">';
+  print '<table width="100%">';
+  print '<tr><td valign="top" width="50%">';
 
   $file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";
-  $year = strftime("%Y",time());
+
   $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
   print '<img src="'.$url.'" alt="CA genere">';
 
+  print '</td><td valign="top" width="50%">';
 
+  $file = get_exdir($societe->id, 3) . "ca_achat-".$societe->id.".png";
+
+  $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_fourn&amp;file='.$file;
+  print '<img src="'.$url.'" alt="CA">';
 
   print '</td></tr>';
   print '</table>' . "\n";
   print '</div>';
-
-
-
 }
 else
 {
