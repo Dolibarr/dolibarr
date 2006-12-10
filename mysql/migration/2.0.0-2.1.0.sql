@@ -530,6 +530,8 @@ create table llx_fournisseur_ca
   UNIQUE (fk_societe, year)
 )type=innodb;
 
+alter table llx_fournisseur_ca add ca_achat float(11,2) DEFAULT 0;
+
 create table llx_product_ca
 (
   fk_product    integer,
