@@ -99,7 +99,7 @@ foreach ( $products as $id => $fdir)
       $ca[$i]  = 0;
     }
 
-  $sql  = "SELECT date_format(f.datef,'%b'), count(*), sum(fd.total_ht), date_format(f.datef,'%m')";
+  $sql  = "SELECT date_format(f.datef,'%b'), sum(fd.qty), sum(fd.total_ht), date_format(f.datef,'%m')";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
   $sql .= " WHERE f.rowid = fd.fk_facture AND date_format(f.datef,'%Y')='".$year."'";
   $sql .= " AND fd.fk_product ='".$id."'";
@@ -147,13 +147,13 @@ foreach ( $products as $id => $fdir)
   $num = array();
   $ca = array();
   $legends = array(); 
-  $sql  = "SELECT date_format(f.datef,'%Y'), count(*), sum(fd.total_ht)";
+  $sql  = "SELECT date_format(f.datef,'%Y'), sum(fd.qty), sum(fd.total_ht)";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
   $sql .= " WHERE f.rowid = fd.fk_facture";
   $sql .= " AND fd.fk_product ='".$id."'";
   $sql .= " GROUP BY date_format(f.datef,'%Y')";
   $sql .= " ORDER BY date_format(f.datef,'%Y') ASC ;";
-
+  print "$sql\n";
   $resql = $db->query($sql) ;
   
   if ($resql)
