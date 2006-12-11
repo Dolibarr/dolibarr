@@ -122,7 +122,7 @@ foreach ($fournisseurs as $id => $fdir)
     print "$file\n";
 
   $file = $fdir ."ca_achat-".$id.".png";
-  $title = "CA avec ce fournisseur (euros HT)";
+  $title = "Charges pour ce fournisseur (euros HT)";
   
   graph_datas($file, $title, $values_ach, $legends);
   if ($verbose)
