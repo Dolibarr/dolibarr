@@ -98,7 +98,7 @@ foreach ( $products as $id => $fdir)
       $num[$i]  = 0;
       $ca[$i]  = 0;
     }
-
+  
   $sql  = "SELECT date_format(f.datef,'%b'), sum(fd.qty), sum(fd.total_ht), date_format(f.datef,'%m')";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
   $sql .= " WHERE f.rowid = fd.fk_facture AND date_format(f.datef,'%Y')='".$year."'";
@@ -115,8 +115,7 @@ foreach ( $products as $id => $fdir)
 	{
 	  $legends[($row[3] - 1)] = $row[0];
 	  $num[($row[3] - 1)]  = $row[1];
-	  $ca[($row[3] - 1)]  = $row[2];
-	  
+	  $ca[($row[3] - 1)]  = $row[2];	  
 	  $i++;
 	}
       $db->free($resql);
@@ -126,17 +125,19 @@ foreach ( $products as $id => $fdir)
       print $sql;
     }
 
-  $graph = new DolGraph();
+  if ($i > 0)
+    {
+      $graph = new DolGraph();
     
-  $file = $fdir ."ventes-".$year."-".$id.".png";
-  $title = "Ventes";
-  
-  $graph->SetTitle($title);
-  $graph->BarLineOneYearArtichow($file, $ca, $num, $legends);
+      $file = $fdir ."ventes-".$year."-".$id.".png";
+      $title = "Ventes";
+      
+      $graph->SetTitle($title);
+      $graph->BarLineOneYearArtichow($file, $ca, $num, $legends);
 
-
-  if ($verbose)
-    print "$file\n";
+      if ($verbose)
+	print "$file\n";
+    }
 }
 /*
  * Ventes annuelles
@@ -174,16 +175,19 @@ foreach ( $products as $id => $fdir)
       print $sql;
     }
 
-  $graph = new DolGraph();
+  if ($i > 0)
+    {
+      $graph = new DolGraph();
   
-  $file = $fdir ."ventes-".$id.".png";
-  $title = "Ventes";
-  
-  $graph->SetTitle($title);
-  $graph->BarLineAnnualArtichow($file, $ca, $num, $legends);
-  
-  if ($verbose)
-    print "$file\n";
+      $file = $fdir ."ventes-".$id.".png";
+      $title = "Ventes";
+      
+      $graph->SetTitle($title);
+      $graph->BarLineAnnualArtichow($file, $ca, $num, $legends);
+      
+      if ($verbose)
+	print "$file\n";
+    }
 }
 
 
