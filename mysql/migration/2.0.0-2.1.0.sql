@@ -540,3 +540,16 @@ create table llx_product_ca
   ca_genere     float,
   UNIQUE (fk_product, year)
 )type=innodb;
+
+create table llx_commande_fournisseur_dispatch
+(
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
+  qty            float,              -- quantité
+  fk_entrepot    integer,
+  fk_user        integer,
+  datec          datetime
+)type=innodb;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
