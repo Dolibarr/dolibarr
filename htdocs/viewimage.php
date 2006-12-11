@@ -220,6 +220,12 @@ if ($modulepart)
       $accessallowed=1;
       $original_file=DOL_DATA_ROOT.'/graph/fournisseur/'.$original_file;
     }
+    // Wrapping pour les graph des produits
+    if ($modulepart == 'graph_product')
+    {
+      $accessallowed=1;
+      $original_file=DOL_DATA_ROOT.'/graph/product/'.$original_file;
+    }
 
 }
 
