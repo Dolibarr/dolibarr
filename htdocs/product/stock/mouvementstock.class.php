@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,15 +21,16 @@
  */
 
 /**
-	    \file       htdocs/product/stock/mouvementstock.class.php
-		\ingroup    stock
-		\brief      Fichier de la classe de gestion des mouvements de stocks
-		\version    $Revision$
+   \file       htdocs/product/stock/mouvementstock.class.php
+   \ingroup    stock
+   \brief      Fichier de la classe de gestion des mouvements de stocks
+   \version    $Revision$
 */
 
 
-/**     \class      MouvementStock
-		\brief      Classe permettant la gestion des mouvements de stocks
+/**
+   \class      MouvementStock
+   \brief      Classe permettant la gestion des mouvements de stocks
 */
 
 class MouvementStock
@@ -88,10 +89,16 @@ class MouvementStock
      *
      */
     function livraison($user, $fk_product, $entrepot_id, $qty) 
-    {
-    
-      return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);
-    
+    {    
+      return $this->_create($user, $fk_product, $entrepot_id, (0 - $qty), 2);    
+    }
+    /*
+     *
+     *
+     */
+    function reception($user, $fk_product, $entrepot_id, $qty) 
+    {    
+      return $this->_create($user, $fk_product, $entrepot_id, $qty, 3);
     }
 
 }
