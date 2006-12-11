@@ -77,7 +77,7 @@ if (isset($_REQUEST['catid']))
 $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
-$sql.= ' p.duration, p.envente as statut,';
+$sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' SUM(reel) as stock,p.stock_commande,(SUM(reel) - p.stock_commande) as stock_dispo';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 $sql.= ',' .MAIN_DB_PREFIX.'product_stock as s';
@@ -245,8 +245,18 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'><td nowrap="nowrap">';
         print "<a href=\"fiche.php?id=$objp->rowid\">";
-        if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
-        else print img_object($langs->trans("ShowProduct"),"product");
+        if ($objp->fk_product_type) 
+	  {
+	    print img_object($langs->trans("ShowService"),"service");
+	  }
+        else
+	  {
+	    if ( $objp->stock_dispo > $objp->seuil_stock_alerte) {
+	      print img_object($langs->trans("ShowProduct"),"product");
+	    } else {
+	      print img_warning($langs->trans("StockTooLow"));
+	    }
+	  }
         print '</a> ';
         print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
         print '<td>'.$objp->label.'</td>';
