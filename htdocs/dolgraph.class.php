@@ -724,6 +724,17 @@ class DolGraph
 
   function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
   {
+    $ok = 0;
+    foreach($linevalues as $val)
+      {
+	$sum1 += abs($val);
+      }
+    foreach($barvalues as $val)
+      {
+	$sum2 += abs($val);
+      }
+    $ok = sizeof($values) * $sum1 * $sum2;
+
     if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
       {
     require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
@@ -807,50 +818,53 @@ class DolGraph
       }
   }
 
-
-
   function BarAnnualArtichow($file='', $values='', $legends='')
   {
     require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
 
-    if (sizeof($values) > 0)
+    $ok = 0;
+    foreach($values as $val)
       {
+	$sum += abs($val);
+      }
+    $ok = sizeof($values) * $sum;
 
-    $graph = new Graph(500, 200);
-    $graph->title->set($this->title);
-    $graph->title->setFont(new Tuffy(10));
-    
-    $graph->border->hide();
-    
-    $color = new Color(222,231,236);
-    
-    $graph->setAntiAliasing(TRUE);
-    $graph->setBackgroundColor( $color );
-    
-    $plot = new BarPlot($values);
-    
-    $plot->setBarGradient(
-			  new LinearGradient(
-					     new Color(244,244,244),
-					     new Color(222,231,236),
-					     90
-					     )
-			  );
-    
-    $plot->setSpace(5, 5, NULL, NULL);
-    
-    $plot->barShadow->setSize(4);
-    $plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
-    $plot->barShadow->setColor(new Color(180, 180, 180, 10));
-    $plot->barShadow->smooth(TRUE);
-    
-    $plot->xAxis->hideTicks();
-    
-    $plot->xAxis->setLabelText($legends);
-    $plot->xAxis->label->setFont(new Tuffy(7));
-    
-    $graph->add($plot);
-    $graph->draw($file);    
+    if ($ok > 0)
+      {
+	$graph = new Graph(500, 200);
+	$graph->title->set($this->title);
+	$graph->title->setFont(new Tuffy(10));	
+	$graph->border->hide();
+	
+	$color = new Color(222,231,236);
+	
+	$graph->setAntiAliasing(TRUE);
+	$graph->setBackgroundColor( $color );
+	
+	$plot = new BarPlot($values);
+	
+	$plot->setBarGradient(
+			      new LinearGradient(
+						 new Color(244,244,244),
+						 new Color(222,231,236),
+						 90
+						 )
+			      );
+	
+	$plot->setSpace(5, 5, NULL, NULL);
+	
+	$plot->barShadow->setSize(4);
+	$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
+	$plot->barShadow->setColor(new Color(180, 180, 180, 10));
+	$plot->barShadow->smooth(TRUE);
+	
+	$plot->xAxis->hideTicks();
+	
+	$plot->xAxis->setLabelText($legends);
+	$plot->xAxis->label->setFont(new Tuffy(7));
+	
+	$graph->add($plot);
+	$graph->draw($file);    
       }
   }
   
