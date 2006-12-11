@@ -513,6 +513,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
     {
       //RODO
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
+      $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+      $smarty->assign('tva_taux_value', $html->tva_taux_value);
+      $smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
       $smarty->display($_GET["canvas"].'-create.tpl');
     }
 }
@@ -657,7 +660,7 @@ if ($_GET["id"] || $_GET["ref"])
 	      print '<tr><td>'.$langs->trans("Stock").'</td>';
 	      if ($product->no_stock)
                 {
-		  print "<td>Pas de définition de stock pour ce produit";
+		  print "<td>".$langs->trans("NoStockDefined");
                 }
 	      else
                 {
@@ -805,6 +808,9 @@ if ($_GET["id"] || $_GET["ref"])
 	  }
 	else
 	  {
+	    $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+	    $smarty->assign('tva_taux_value', $html->tva_taux_value);
+	    $smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
 	    $smarty->display($product->canvas.'-edit.tpl');
 	  }
       }
