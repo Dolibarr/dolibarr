@@ -21,10 +21,11 @@
  *
  */
 
-/**	    \file       htdocs/product/stock/pre.inc.php
-        \ingroup    stock
-		\brief      Fichier gestionnaire du menu gauche de stocks
-		\version    $Revision$
+/**
+   \file       htdocs/product/stock/pre.inc.php
+   \ingroup    stock
+   \brief      Fichier gestionnaire du menu gauche de stocks
+   \version    $Revision$
 */
 
 require("../../main.inc.php");
@@ -32,21 +33,23 @@ require("./entrepot.class.php");
 
 function llxHeader($head = "", $urlp = "", $title="")
 {
-	global $langs,$conf,$user;
-	
-	top_menu($head, $title);
-	
-	$langs->load("stocks");
-		
-	$menu = new Menu();
-	
-	$menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
-	
-	$menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("MenuNewWarehouse"));
-	$menu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"));
-	$menu->add_submenu(DOL_URL_ROOT."/product/stock/valo.php", $langs->trans("EnhancedValue"));
-	$menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
-	
-	left_menu($menu->liste);
+  global $langs,$conf,$user;
+  
+  top_menu($head, $title);
+  
+  $langs->load("stocks");
+  
+  $menu = new Menu();
+  
+  $menu->add(DOL_URL_ROOT."/product/stock/", $langs->trans("Stock"));
+  
+  $menu->add_submenu(DOL_URL_ROOT."/product/stock/fiche.php?action=create", $langs->trans("MenuNewWarehouse"));
+  $menu->add_submenu(DOL_URL_ROOT."/product/stock/liste.php", $langs->trans("List"));
+  $menu->add_submenu(DOL_URL_ROOT."/product/stock/valo.php", $langs->trans("EnhancedValue"));
+  $menu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Restock"));
+  
+  $menu->add(DOL_URL_ROOT."/product/stock/mouvement.php", $langs->trans("Movements"));
+  
+  left_menu($menu->liste);
 }
 ?>
