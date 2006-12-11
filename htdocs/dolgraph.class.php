@@ -288,361 +288,404 @@ class DolGraph
 	*    \brief      Génère le fichier graphique sur le disque
 	*    \param      file    Nom du fichier image
 	*/
-	function draw_phplot($file)
-	{
-		dolibarr_syslog("DolGraph.class::draw_phplot this->type=".$this->type);
+  function draw_phplot($file)
+  {
+    dolibarr_syslog("DolGraph.class::draw_phplot this->type=".$this->type);
 
-		// Vérifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
-		$graphpathdir=DOL_DOCUMENT_ROOT."/includes/phplot";
-		if (defined('PHPLOT_PATH')) $graphpathdir=PHPLOT_PATH;
-		if ($conf->global->PHPLOT_PATH) $graphpathdir=$conf->global->PHPLOT_PATH;
-		if (! eregi('[\\\/]$',$graphpathdir)) $graphpathdir.='/';
-		include_once($graphpathdir.'phplot.php');
-		$phplotversion=4;
-		if (defined('TOTY')) $phplotversion=5;
+    // Vérifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
+    $graphpathdir=DOL_DOCUMENT_ROOT."/includes/phplot";
+    if (defined('PHPLOT_PATH')) $graphpathdir=PHPLOT_PATH;
+    if ($conf->global->PHPLOT_PATH) $graphpathdir=$conf->global->PHPLOT_PATH;
+    if (! eregi('[\\\/]$',$graphpathdir)) $graphpathdir.='/';
+    include_once($graphpathdir.'phplot.php');
+    $phplotversion=4;
+    if (defined('TOTY')) $phplotversion=5;
 
-		// Create graph
-		$this->graph = new PHPlot($this->width, $this->height);
-		$this->graph->SetIsInline(1);
-		$this->graph->SetPlotType($this->type);
-		$this->graph->SetDataValues($this->data);
+    // Create graph
+    $this->graph = new PHPlot($this->width, $this->height);
+    $this->graph->SetIsInline(1);
+    $this->graph->SetPlotType($this->type);
+    $this->graph->SetDataValues($this->data);
 
-		// Precision axe y (pas de decimal si 3 chiffres ou plus)
-		if ($this->PrecisionY > -1)
-		{
-			$this->graph->SetPrecisionY($this->PrecisionY);
-			if ($this->PrecisionY == 0)		// Si precision de 0
-			{
-				// Determine un nombre de ticks qui permet decoupage qui tombe juste
-				$maxval=$this->getMaxValue();
-				$minval=$this->getMinValue();
-				if ($maxval * $minval >= 0)	// Si du meme signe
-				{
-					$plage=$maxval;
-				}
-				else
-				{
-					$plage=$maxval-$minval;
-				}
-				if (abs($plage) <= 2)
-				{
-					$this->SetMaxValue(2);
-					$maxticks=2;
-				}
-				else
-				{
-					$maxticks=10;
-					if (substr($plage,0,1) == 3 || substr($plage,0,1) == 6)
-					{
-						$maxticks=min(6,$plage);
-					}
-					elseif (substr($plage,0,1) == 4 || substr($plage,0,1) == 8)
-					{
-						$maxticks=min(8,$plage);
-					}
-					elseif (substr($plage,0,1) == 7)
-					{
-						$maxticks=min(7,$plage);
-					}
-					elseif (substr($plage,0,1) == 9)
-					{
-						$maxticks=min(9,$plage);
-					}
-				}
-				$this->graph->SetNumVertTicks($maxticks);
-				//				print 'minval='.$minval.' - maxval='.$maxval.' - plage='.$plage.' - maxticks='.$maxticks.'<br>';
-			}
-		}
-		else
-		{
-			$this->graph->SetPrecisionY(3-strlen(round($this->GetMaxValueInData())));
-		}
-		$this->graph->SetPrecisionX(0);
+    // Precision axe y (pas de decimal si 3 chiffres ou plus)
+    if ($this->PrecisionY > -1)
+      {
+	$this->graph->SetPrecisionY($this->PrecisionY);
+	if ($this->PrecisionY == 0)		// Si precision de 0
+	  {
+	    // Determine un nombre de ticks qui permet decoupage qui tombe juste
+	    $maxval=$this->getMaxValue();
+	    $minval=$this->getMinValue();
+	    if ($maxval * $minval >= 0)	// Si du meme signe
+	      {
+		$plage=$maxval;
+	      }
+	    else
+	      {
+		$plage=$maxval-$minval;
+	      }
+	    if (abs($plage) <= 2)
+	      {
+		$this->SetMaxValue(2);
+		$maxticks=2;
+	      }
+	    else
+	      {
+		$maxticks=10;
+		if (substr($plage,0,1) == 3 || substr($plage,0,1) == 6)
+		  {
+		    $maxticks=min(6,$plage);
+		  }
+		elseif (substr($plage,0,1) == 4 || substr($plage,0,1) == 8)
+		  {
+		    $maxticks=min(8,$plage);
+		  }
+		elseif (substr($plage,0,1) == 7)
+		  {
+		    $maxticks=min(7,$plage);
+		  }
+		elseif (substr($plage,0,1) == 9)
+		  {
+		    $maxticks=min(9,$plage);
+		  }
+	      }
+	    $this->graph->SetNumVertTicks($maxticks);
+	    //				print 'minval='.$minval.' - maxval='.$maxval.' - plage='.$plage.' - maxticks='.$maxticks.'<br>';
+	  }
+      }
+    else
+      {
+	$this->graph->SetPrecisionY(3-strlen(round($this->GetMaxValueInData())));
+      }
+    $this->graph->SetPrecisionX(0);
 
-		// Set areas
-		$top_space=40;
-		if ($phplotversion >= 5) $top_space=25;
-		$left_space=80;								// For y labels
-		$right_space=10;							// If no legend
-		if (isset($this->Legend))
-		{
-			foreach($this->Legend as $key => $val)
-			{
-				$maxlen=max($maxlen,$val);
-			}
-			$right_space=50+strlen($maxlen)*6;	// For legend
-		}
+    // Set areas
+    $top_space=40;
+    if ($phplotversion >= 5) $top_space=25;
+    $left_space=80;								// For y labels
+    $right_space=10;							// If no legend
+    if (isset($this->Legend))
+      {
+	foreach($this->Legend as $key => $val)
+	  {
+	    $maxlen=max($maxlen,$val);
+	  }
+	$right_space=50+strlen($maxlen)*6;	// For legend
+      }
 
-		$this->graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width-$right_space, $this->height-40);
-		if (isset($this->MaxValue))
-		{
-			$this->graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
-		}
+    $this->graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width-$right_space, $this->height-40);
+    if (isset($this->MaxValue))
+      {
+	$this->graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
+      }
 
-		// Define title
-		if (isset($this->title)) $this->graph->SetTitle($this->title);
+    // Define title
+    if (isset($this->title)) $this->graph->SetTitle($this->title);
 
-		// Défini position du graphe (et legende) au sein de l'image
-		if (isset($this->Legend))
-		{
-			$this->graph->SetLegendPixels($this->width-$right_space+8,40,'');
-			$this->graph->SetLegend($this->Legend);
-		}
+    // Défini position du graphe (et legende) au sein de l'image
+    if (isset($this->Legend))
+      {
+	$this->graph->SetLegendPixels($this->width-$right_space+8,40,'');
+	$this->graph->SetLegend($this->Legend);
+      }
 
-		if (isset($this->SetShading))
-		{
-			$this->graph->SetShading($this->SetShading);
-		}
+    if (isset($this->SetShading))
+      {
+	$this->graph->SetShading($this->SetShading);
+      }
 
-		$this->graph->SetTickLength(6);
+    $this->graph->SetTickLength(6);
 
-		$this->graph->SetBackgroundColor($this->bgcolor);
-		$this->graph->SetDataColors($this->datacolor, $this->bordercolor);
+    $this->graph->SetBackgroundColor($this->bgcolor);
+    $this->graph->SetDataColors($this->datacolor, $this->bordercolor);
 
-		if ($this->SetNumXTicks > -1)
-		{
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$this->graph->SetXLabelType('');
-				$this->graph->SetNumXTicks($this->SetNumXTicks);
-			}
-			else
-			{
-				$this->graph->SetNumHorizTicks($this->SetNumXTicks);
-			}
-		}
-		if ($this->SetHorizTickIncrement > -1)
-		{
-			// Les ticks sont en mode forc
-			$this->graph->SetHorizTickIncrement($this->SetHorizTickIncrement);
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$this->graph->SetXLabelType('');
-				$this->graph->SetXTickLabelPos('none');
-			}
-		}
-		else
-		{
-			// Les ticks sont en mode automatique
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$this->graph->SetXDataLabelPos('none');
-			}
-		}
+    if ($this->SetNumXTicks > -1)
+      {
+	if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
+	  {
+	    $this->graph->SetXLabelType('');
+	    $this->graph->SetNumXTicks($this->SetNumXTicks);
+	  }
+	else
+	  {
+	    $this->graph->SetNumHorizTicks($this->SetNumXTicks);
+	  }
+      }
+    if ($this->SetHorizTickIncrement > -1)
+      {
+	// Les ticks sont en mode forc
+	$this->graph->SetHorizTickIncrement($this->SetHorizTickIncrement);
+	if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
+	  {
+	    $this->graph->SetXLabelType('');
+	    $this->graph->SetXTickLabelPos('none');
+	  }
+      }
+    else
+      {
+	// Les ticks sont en mode automatique
+	if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
+	  {
+	    $this->graph->SetXDataLabelPos('none');
+	  }
+      }
 
-		if ($phplotversion >= 5)
-		{
-			// Ne gere la transparence qu'en phplot >= 5
-			// $this->graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
-			$this->graph->SetDrawPlotAreaBackground(array(255,255,255));
-		}
+    if ($phplotversion >= 5)
+      {
+	// Ne gere la transparence qu'en phplot >= 5
+	// $this->graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
+	$this->graph->SetDrawPlotAreaBackground(array(255,255,255));
+      }
 
-		$this->graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
-		$this->graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
-		$this->graph->SetOutputFile($file);
+    $this->graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
+    $this->graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
+    $this->graph->SetOutputFile($file);
 		
-		// Generate file
-		$this->graph->DrawGraph();
-	}
+    // Generate file
+    $this->graph->DrawGraph();
+  }
 
 
 
-	/*
-	*/
-	function SetPrecisionY($which_prec)
-	{
-		$this->PrecisionY = $which_prec;
-		return true;
-	}
+  /*
+   */
+  function SetPrecisionY($which_prec)
+  {
+    $this->PrecisionY = $which_prec;
+    return true;
+  }
 
-	/*
-	\remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
-	*/
-	function SetHorizTickIncrement($xi)
-	{
-		$this->SetHorizTickIncrement = $xi;
-		return true;
-	}
+  /*
+    \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+  */
+  function SetHorizTickIncrement($xi)
+  {
+    $this->SetHorizTickIncrement = $xi;
+    return true;
+  }
 
-	/*
-	\remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
-	*/
-	function SetNumXTicks($xt)
-	{
-		$this->SetNumXTicks = $xt;
-		return true;
-	}
+  /*
+    \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+  */
+  function SetNumXTicks($xt)
+  {
+    $this->SetNumXTicks = $xt;
+    return true;
+  }
 
 
-	function SetYLabel($label)
-	{
-		$this->YLabel = $label;
-	}
+  function SetYLabel($label)
+  {
+    $this->YLabel = $label;
+  }
 
-	function SetWidth($w)
-	{
-		$this->width = $w;
-	}
+  function SetWidth($w)
+  {
+    $this->width = $w;
+  }
 
-	function SetTitle($title)
-	{
-		$this->title = $title;
-	}
+  function SetTitle($title)
+  {
+    $this->title = $title;
+  }
 
-	function SetData($data)
-	{
-		$this->data = $data;
-	}
+  function SetData($data)
+  {
+    $this->data = $data;
+  }
 
-	function SetType($type)
-	{
-		$this->type = $type;
-	}
+  function SetType($type)
+  {
+    $this->type = $type;
+  }
 
-	function SetLegend($legend)
-	{
-		$this->Legend = $legend;
-	}
+  function SetLegend($legend)
+  {
+    $this->Legend = $legend;
+  }
 
-	function SetMaxValue($max)
-	{
-		$this->MaxValue = $max;
-	}
-	function GetMaxValue()
-	{
-		return $this->MaxValue;
-	}
+  function SetMaxValue($max)
+  {
+    $this->MaxValue = $max;
+  }
+  function GetMaxValue()
+  {
+    return $this->MaxValue;
+  }
 
-	function SetMinValue($min)
-	{
-		$this->MinValue = $min;
-	}
-	function GetMinValue()
-	{
-		return $this->MinValue;
-	}
+  function SetMinValue($min)
+  {
+    $this->MinValue = $min;
+  }
+  function GetMinValue()
+  {
+    return $this->MinValue;
+  }
 
-	function SetHeight($h)
-	{
-		$this->height = $h;
-	}
+  function SetHeight($h)
+  {
+    $this->height = $h;
+  }
 
-	function SetShading($s)
-	{
-		$this->SetShading = $s;
-	}
+  function SetShading($s)
+  {
+    $this->SetShading = $s;
+  }
 
-	function ResetBgColor()
-	{
-		unset($this->bgcolor);
-	}
+  function ResetBgColor()
+  {
+    unset($this->bgcolor);
+  }
 
-	/**
-	*	\brief		Definie la couleur de fond du graphique
-	*	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
-	*/
-	function SetBgColor($bg_color = array(255,255,255))
-	{
-		global $theme_bgcolor,$theme_bgcoloronglet;
-		if (! is_array($bg_color))
-		{
-			if ($bg_color == 'onglet')
-			{
-				//print 'ee'.join(',',$theme_bgcoloronglet);
-				$this->bgcolor = $theme_bgcoloronglet;
-			}
-			else
-			{
-				$this->bgcolor = $theme_bgcolor;
-			}
-		}
-		else
-		{
-			$this->bgcolor = $bg_color;
-		}
-	}
+  /**
+   *	\brief		Definie la couleur de fond du graphique
+   *	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
+   */
+  function SetBgColor($bg_color = array(255,255,255))
+  {
+    global $theme_bgcolor,$theme_bgcoloronglet;
+    if (! is_array($bg_color))
+      {
+	if ($bg_color == 'onglet')
+	  {
+	    //print 'ee'.join(',',$theme_bgcoloronglet);
+	    $this->bgcolor = $theme_bgcoloronglet;
+	  }
+	else
+	  {
+	    $this->bgcolor = $theme_bgcolor;
+	  }
+      }
+    else
+      {
+	$this->bgcolor = $bg_color;
+      }
+  }
 
-	function ResetDataColor()
-	{
-		unset($this->datacolor);
-	}
+  function ResetDataColor()
+  {
+    unset($this->datacolor);
+  }
 
-	function GetMaxValueInData()
-	{
-		$k = 0;
-		$vals = array();
+  function GetMaxValueInData()
+  {
+    $k = 0;
+    $vals = array();
 
-		$nblines = sizeof($this->data);
-		$nbvalues = sizeof($this->data[0]) - 1;
+    $nblines = sizeof($this->data);
+    $nbvalues = sizeof($this->data[0]) - 1;
 
-		for ($j = 0 ; $j < $nblines ; $j++)
-		{
-			for ($i = 0 ; $i < $nbvalues ; $i++)
-			{
-				$vals[$k] = $this->data[$j][$i+1];
-				$k++;
-			}
-		}
-		rsort($vals);
-		return $vals[0];
-	}
+    for ($j = 0 ; $j < $nblines ; $j++)
+      {
+	for ($i = 0 ; $i < $nbvalues ; $i++)
+	  {
+	    $vals[$k] = $this->data[$j][$i+1];
+	    $k++;
+	  }
+      }
+    rsort($vals);
+    return $vals[0];
+  }
 
-	function GetMinValueInData()
-	{
-		$k = 0;
-		$vals = array();
+  function GetMinValueInData()
+  {
+    $k = 0;
+    $vals = array();
 
-		$nblines = sizeof($this->data);
-		$nbvalues = sizeof($this->data[0]) - 1;
+    $nblines = sizeof($this->data);
+    $nbvalues = sizeof($this->data[0]) - 1;
 
-		for ($j = 0 ; $j < $nblines ; $j++)
-		{
-			for ($i = 0 ; $i < $nbvalues ; $i++)
-			{
-				$vals[$k] = $this->data[$j][$i+1];
-				$k++;
-			}
-		}
-		sort($vals);
-		return $vals[0];
-	}
+    for ($j = 0 ; $j < $nblines ; $j++)
+      {
+	for ($i = 0 ; $i < $nbvalues ; $i++)
+	  {
+	    $vals[$k] = $this->data[$j][$i+1];
+	    $k++;
+	  }
+      }
+    sort($vals);
+    return $vals[0];
+  }
 
-	function GetCeilMaxValue()
-	{
-		$max = $this->GetMaxValueInData();
-		if ($max != 0) $max++;
-		$size=strlen(abs(ceil($max)));
-		$factor=1;
-		for ($i=0; $i < ($size-1); $i++)
-		{
-			$factor*=10;
-		}
-		$res=ceil($max/$factor)*$factor;
+  function GetCeilMaxValue()
+  {
+    $max = $this->GetMaxValueInData();
+    if ($max != 0) $max++;
+    $size=strlen(abs(ceil($max)));
+    $factor=1;
+    for ($i=0; $i < ($size-1); $i++)
+      {
+	$factor*=10;
+      }
+    $res=ceil($max/$factor)*$factor;
 
-		//print "max=".$max." res=".$res;
-		return $res;
-	}
+    //print "max=".$max." res=".$res;
+    return $res;
+  }
 
-	function GetFloorMinValue()
-	{
-		$min = $this->GetMinValueInData();
-		if ($min != 0) $min--;
-		$size=strlen(abs(floor($min)));
-		$factor=1;
-		for ($i=0; $i < ($size-1); $i++)
-		{
-			$factor*=10;
-		}
-		$res=floor($min/$factor)*$factor;
+  function GetFloorMinValue()
+  {
+    $min = $this->GetMinValueInData();
+    if ($min != 0) $min--;
+    $size=strlen(abs(floor($min)));
+    $factor=1;
+    for ($i=0; $i < ($size-1); $i++)
+      {
+	$factor*=10;
+      }
+    $res=floor($min/$factor)*$factor;
 
-		//print "min=".$min." res=".$res;
-		return $res;
-	}
+    //print "min=".$min." res=".$res;
+    return $res;
+  }
+
+  function BarAnnualArtichow($file='', $values='', $legends='')
+  {
+
+    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+
+    $graph = new Graph(500, 200);
+    $graph->title->set($this->title);
+    $graph->title->setFont(new Tuffy(10));
+    
+    $graph->border->hide();
+    
+    $color = new Color(222,231,236);
+    
+    $graph->setAntiAliasing(TRUE);
+    $graph->setBackgroundColor( $color );
+    
+    $plot = new BarPlot($values);
+    
+    $plot->setBarGradient(
+			  new LinearGradient(
+					     new Color(244,244,244),
+					     new Color(222,231,236),
+					     90
+					     )
+			  );
+    
+    $plot->setSpace(5, 5, NULL, NULL);
+    
+    $plot->barShadow->setSize(4);
+    $plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
+    $plot->barShadow->setColor(new Color(180, 180, 180, 10));
+    $plot->barShadow->smooth(TRUE);
+    
+    $plot->xAxis->hideTicks();
+    
+    $plot->xAxis->setLabelText($legends);
+    $plot->xAxis->label->setFont(new Tuffy(7));
+    
+    $graph->add($plot);
+    $graph->draw($file);    
+  }
+  
 }
 
 
 function setYear($value) {
-    return $value + 2000;
+  return $value + 2000;
 }
 
 ?>
