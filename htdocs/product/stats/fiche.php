@@ -100,8 +100,30 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
-		print $product->getLibStatut(2);
+	print $product->getLibStatut(2);
         print '</td></tr>';
+
+	// Stock
+	if ($product->type == 0 && $conf->stock->enabled)
+	  {
+	    print '<tr><td>'.$langs->trans("Stock").'</td>';
+	    if ($product->no_stock)
+	      {
+		print "<td>".$langs->trans("NoStockDefined");
+	      }
+	    else
+	      {
+		if ($product->stock_reel <= $product->seuil_stock_alerte)
+		  {
+		    print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+		  }
+		else
+		  {
+		    print "<td>".$product->stock_reel;
+		  }
+	      }
+	    print '</td></tr>';
+	  }	
 	//show_stats_for_company($product,$socid);
 
 	/*
