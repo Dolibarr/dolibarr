@@ -102,12 +102,29 @@ if ($_GET["id"] || $_GET["ref"])
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">';
 		print $product->getLibStatut(2);
         print '</td></tr>';
+	//show_stats_for_company($product,$socid);
 
-		show_stats_for_company($product,$socid);
+	/*
+	 * Graphs additionels generes pas les cron
+	 *
+	 */
+	$year = strftime('%Y',time());
+	$file = get_exdir($product->id, 3) . "ventes-".$year."-".$product->id.".png";	
 
-        print '</table>';
-        print '</div>';
+	if (file_exists (DOL_DATA_ROOT.'/graph/product/'.$file) )
+	  {
+	    print '<tr><td>Ventes</td><td>';
+	
+	    $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_product&amp;file='.$file;
+	    print '<img src="'.$url.'" alt="Ventes">';
+	    $file = get_exdir($product->id, 3) . "ventes-".$product->id.".png";
+	    $url=DOL_URL_ROOT.'/viewimage.php?modulepart=graph_product&amp;file='.$file;
+	    print '<img src="'.$url.'" alt="Ventes">';
+	    print '</td></tr>';
+	  }
 
+	print '</table>';
+	print '</div>';
 
         print '<table width="100%">';
 
