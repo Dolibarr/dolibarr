@@ -724,6 +724,8 @@ class DolGraph
 
   function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
   {
+    if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
+      {
     require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
     require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
     
@@ -802,6 +804,7 @@ class DolGraph
      */
     $graph->add($group);
     $graph->draw($file);
+      }
   }
 
 
@@ -809,6 +812,9 @@ class DolGraph
   function BarAnnualArtichow($file='', $values='', $legends='')
   {
     require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+
+    if (sizeof($values) > 0)
+      {
 
     $graph = new Graph(500, 200);
     $graph->title->set($this->title);
@@ -845,6 +851,7 @@ class DolGraph
     
     $graph->add($plot);
     $graph->draw($file);    
+      }
   }
   
 }
