@@ -87,7 +87,7 @@ function llxHeader($head = "", $urlp = "", $title="")
 	}
     }
 
-  $menu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Reassort"));
+  $menu->add_submenu(DOL_URL_ROOT."/product/reassort.php?type=0", $langs->trans("Restock"));
 
   if ($conf->service->enabled)
     {
