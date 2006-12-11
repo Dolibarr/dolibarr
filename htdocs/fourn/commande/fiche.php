@@ -39,6 +39,7 @@ $langs->load('bills');
 $langs->load('propal');
 $langs->load('deliveries');
 $langs->load('products');
+$langs->load('stocks');
 
 $user->getrights("fournisseur");
 
