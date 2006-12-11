@@ -2978,6 +2978,7 @@ else
 			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
 
 			$i = 0;
+			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
 			print '<table class="liste" width="100%">';
 			print '<tr class="liste_titre">';
 			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid,'',$sortfield);
@@ -2990,9 +2991,9 @@ else
 			print '</tr>';
 
 			// Lignes des champs de filtre
-			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre" valign="right">';
+			print '<td class="liste_titre" align="right">';
 			print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 			print '</td><td class="liste_titre">&nbsp;</td>';
 			print '<td class="liste_titre" align="left">';
@@ -3005,7 +3006,6 @@ else
 			print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
 			print '</td>';
 			print '</tr>';
-			print '</form>';
 
 			if ($num > 0)
 			{
@@ -3073,7 +3073,8 @@ else
 				}
 			}
 
-			print '</table>';
+			print "</table>\n";
+			print "</form>\n";
 			$db->free($resql);
 		}
 		else
