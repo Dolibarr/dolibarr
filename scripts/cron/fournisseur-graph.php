@@ -23,6 +23,7 @@
  *
  */
 require ("../../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
 $verbose = 0;
 
@@ -112,60 +113,26 @@ foreach ($fournisseurs as $id => $fdir)
       print $sql;
     }
 
-  require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+  $graph = new DolGraph();
   
   $file = $fdir ."ca_genere-".$id.".png";
   $title = "CA généré par ce fournisseur (euros HT)";
   
+  $graph->SetTitle($title);
+  $graph->BarAnnualArtichow($file, $values_ach, $legends);
+
   graph_datas($file, $title, $values_gen, $legends);
   if ($verbose)
     print "$file\n";
 
   $file = $fdir ."ca_achat-".$id.".png";
   $title = "Charges pour ce fournisseur (euros HT)";
+
+  $graph->SetTitle($title);
+  $graph->BarAnnualArtichow($file, $values_ach, $legends);
   
-  graph_datas($file, $title, $values_ach, $legends);
   if ($verbose)
     print "$file\n";
-
 }
 
-function graph_datas($file, $title, $values, $legends)
-{
-  $graph = new Graph(500, 200);
-  $graph->title->set($title);
-  $graph->title->setFont(new Tuffy(10));
-
-  $graph->border->hide();
-    
-  $color = new Color(222,231,236);
-
-  $graph->setAntiAliasing(TRUE);
-  $graph->setBackgroundColor( $color );
-
-  $plot = new BarPlot($values);
-
-  $plot->setBarGradient(
-			new LinearGradient(
-					   new Color(244,244,244),
-					   new Color(222,231,236),
-					   90
-					   )
-			);
-
- $plot->setSpace(5, 5, NULL, NULL);
-
- $plot->barShadow->setSize(4);
- $plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
- $plot->barShadow->setColor(new Color(180, 180, 180, 10));
- $plot->barShadow->smooth(TRUE);
-
- $plot->xAxis->hideTicks();
-
- $plot->xAxis->setLabelText($legends);
- $plot->xAxis->label->setFont(new Tuffy(7));
-  
-  $graph->add($plot);
-  $graph->draw($file);
-}
 ?>
