@@ -121,7 +121,6 @@ foreach ($fournisseurs as $id => $fdir)
   $graph->SetTitle($title);
   $graph->BarAnnualArtichow($file, $values_ach, $legends);
 
-  graph_datas($file, $title, $values_gen, $legends);
   if ($verbose)
     print "$file\n";
 
