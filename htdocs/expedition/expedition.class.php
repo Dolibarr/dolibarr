@@ -317,7 +317,6 @@ class Expedition extends CommonObject
                     /*
                      * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
                      */
-
                     dolibarr_syslog("expedition.class.php::valid enregistrement des mouvements");
 
                     $sql = "SELECT cd.fk_product, ed.qty ";
