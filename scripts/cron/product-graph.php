@@ -1,0 +1,190 @@
+<?PHP
+/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *
+ *
+ * Crée les graphiques pour les fournisseurs
+ *
+ */
+require ("../../htdocs/master.inc.php");
+require_once (DOL_DOCUMENT_ROOT."/dolgraph.class.php");
+
+$verbose = 0;
+
+for ($i = 1 ; $i < sizeof($argv) ; $i++)
+{
+  if ($argv[$i] == "-v")
+    {
+      $verbose = 1;
+    }
+  if ($argv[$i] == "-vv")
+    {
+      $verbose = 2;
+    }
+  if ($argv[$i] == "-vvv")
+    {
+      $verbose = 3;
+    }
+}
+
+$now = time();
+$year = strftime('%Y',$now);
+
+/*
+ *
+ */
+$dir = DOL_DATA_ROOT."/graph/product";
+if (!is_dir($dir) )
+{
+  if (! @mkdir($dir,0755))
+    {
+      die ("Can't create $dir\n");
+    }
+}
+/*
+ *
+ */
+$sql  = "SELECT distinct(fk_product)";
+$sql .= " FROM ".MAIN_DB_PREFIX."facturedet";
+
+$resql = $db->query($sql) ;
+$products = array();
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $fdir = $dir.'/'.get_exdir($row[0],3);
+
+      if ($verbose)
+	print $fdir."\n";
+      create_exdir($fdir);
+
+      $products[$row[0]] = $fdir;
+    }
+  $db->free($resql);
+}
+else
+{
+  print $sql;
+}
+/*
+ *
+ */
+foreach ( $products as $id => $fdir)
+{
+  $num = array();
+  $ca = array();
+  $legends = array(); 
+
+  for ($i = 0 ; $i < 12 ; $i++)
+    {
+      $legends[$i] = strftime('%b',mktime(1,1,1,($i+1),1, $year) );
+      $num[$i]  = 0;
+      $ca[$i]  = 0;
+    }
+
+  $sql  = "SELECT date_format(f.datef,'%b'), count(*), sum(fd.total_ht), date_format(f.datef,'%m')";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
+  $sql .= " WHERE f.rowid = fd.fk_facture AND date_format(f.datef,'%Y')='".$year."'";
+  $sql .= " AND fd.fk_product ='".$id."'";
+  $sql .= " GROUP BY date_format(f.datef,'%b')";
+  $sql .= " ORDER BY date_format(f.datef,'%m') ASC ;";
+  print "$sql\n";
+  $resql = $db->query($sql) ;
+  
+  if ($resql)
+    {
+      $i = 0;
+      while ($row = $db->fetch_row($resql))
+	{
+	  $legends[($row[3] - 1)] = $row[0];
+	  $num[($row[3] - 1)]  = $row[1];
+	  $ca[($row[3] - 1)]  = $row[2];
+	  
+	  $i++;
+	}
+      $db->free($resql);
+    }
+  else
+    {
+      print $sql;
+    }
+
+  $graph = new DolGraph();
+    
+  $file = $fdir ."ventes-".$year."-".$id.".png";
+  $title = "Ventes";
+  
+  $graph->SetTitle($title);
+  $graph->BarLineOneYearArtichow($file, $ca, $num, $legends);
+
+
+  if ($verbose)
+    print "$file\n";
+}
+/*
+ * Ventes annuelles
+ *
+ */
+foreach ( $products as $id => $fdir)
+{
+  $num = array();
+  $ca = array();
+  $legends = array(); 
+  $sql  = "SELECT date_format(f.datef,'%Y'), count(*), sum(fd.total_ht)";
+  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."facturedet as fd";
+  $sql .= " WHERE f.rowid = fd.fk_facture";
+  $sql .= " AND fd.fk_product ='".$id."'";
+  $sql .= " GROUP BY date_format(f.datef,'%Y')";
+  $sql .= " ORDER BY date_format(f.datef,'%Y') ASC ;";
+
+  $resql = $db->query($sql) ;
+  
+  if ($resql)
+    {
+      $i = 0;
+      while ($row = $db->fetch_row($resql))
+	{
+	  $legends[$i] = $row[0];
+	  $num[$i]  = $row[1];
+	  $ca[$i]  = $row[2];
+	  
+	  $i++;
+	}
+      $db->free($resql);
+    }
+  else
+    {
+      print $sql;
+    }
+
+  $graph = new DolGraph();
+  
+  $file = $fdir ."ventes-".$id.".png";
+  $title = "Ventes";
+  
+  $graph->SetTitle($title);
+  $graph->BarLineAnnualArtichow($file, $ca, $num, $legends);
+  
+  if ($verbose)
+    print "$file\n";
+}
+
+
+?>
