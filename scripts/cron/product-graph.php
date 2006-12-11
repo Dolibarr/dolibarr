@@ -154,7 +154,7 @@ foreach ( $products as $id => $fdir)
   $sql .= " AND fd.fk_product ='".$id."'";
   $sql .= " GROUP BY date_format(f.datef,'%Y')";
   $sql .= " ORDER BY date_format(f.datef,'%Y') ASC ;";
-  print "$sql\n";
+
   $resql = $db->query($sql) ;
   
   if ($resql)
