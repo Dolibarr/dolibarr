@@ -448,7 +448,6 @@ else
 	  $a = $h;
 	  $h++;
 
-	  $h = 0;
 	  $head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
 	  $head[$h][1] = $langs->trans("OrderDispatch");
 	  $h++;
