@@ -32,7 +32,7 @@
         \version    $Revision$
 */
 
-define('DOL_VERSION','2.1-alpha');
+define('DOL_VERSION','2.1-beta');
 define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
