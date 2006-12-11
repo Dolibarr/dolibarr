@@ -105,7 +105,7 @@ foreach ( $products as $id => $fdir)
   $sql .= " AND fd.fk_product ='".$id."'";
   $sql .= " GROUP BY date_format(f.datef,'%b')";
   $sql .= " ORDER BY date_format(f.datef,'%m') ASC ;";
-  print "$sql\n";
+
   $resql = $db->query($sql) ;
   
   if ($resql)
