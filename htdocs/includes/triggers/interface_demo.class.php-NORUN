@@ -258,6 +258,10 @@ class InterfaceDemo
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
+		elseif ($action == 'LINEBILL_INSERT')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+        }
 
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
