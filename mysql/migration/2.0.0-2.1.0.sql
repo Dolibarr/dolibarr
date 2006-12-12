@@ -303,6 +303,7 @@ ALTER TABLE llx_facture_rec ADD UNIQUE INDEX idx_facture_rec_uk_titre (titre);
 
 ALTER TABLE llx_commandedet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
 ALTER TABLE llx_commandedet ADD COLUMN coef real;
+ALTER TABLE llx_commandedet ADD COLUMN special_code tinyint(1) UNSIGNED DEFAULT 0;
 
 ALTER TABLE llx_propaldet ADD COLUMN fk_remise_except	integer NULL AFTER remise;
 ALTER TABLE llx_propaldet ADD COLUMN coef real after price;
