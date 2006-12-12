@@ -115,7 +115,7 @@ if ($resql)
   print '<tr class="liste_titre">';
   print "<td>".$langs->trans("Company")."</td>\n";
   print "<td>".$langs->trans("SupplierCode")."</td>\n";
-  print "<td>".$langs->trans("DateCreation")."</td>\n";
+  print '<td align="center">'.$langs->trans("DateCreation")."</td>\n";
   print "</tr>\n";
 
   $var=True;
