@@ -124,7 +124,7 @@ class InterfaceFraisport
 	 * Calcul le poids du colis
 	 *
 	 */
-	$sql = "SELECT p.weight, p.weight_units";
+	$sql = "SELECT (p.weight*fd.qty), p.weight_units";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."commandedet as fd";
 	$sql.= " WHERE fd.fk_product = p.rowid";
 	$sql.= " AND fd.fk_commande = '".$object->fk_commande."'";
