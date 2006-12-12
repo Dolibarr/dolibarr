@@ -20,10 +20,10 @@
  */
 
 /**
-   \file       htdocs/product/canvas/product.livre.class.php
-   \ingroup    produit
+ \file       htdocs/product/canvas/product.livre.class.php
+  \ingroup    produit
    \brief      Fichier de la classe des produits specifiques de type livre
-   \version    $Revision$
+    \version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livrecontrat.class.php');
@@ -56,10 +56,12 @@ class ProductLivre extends Product
     $this->menus[0][1] = 'NewBook';
     $this->menus[1][0] = DOL_URL_ROOT."/product/liste.php?canvas=livre";
     $this->menus[1][1] = 'ListBook';
+    /*
     $this->menus[2][0] = DOL_URL_ROOT."/product/liste.php?canvas=livrecontrat";
     $this->menus[2][1] = 'ListContract';
     $this->menus[3][0] = DOL_URL_ROOT."/product/liste.php?canvas=livrecouverture";
     $this->menus[3][1] = 'ListCover';
+    */
   }
 
   function GetListeTitre()
@@ -71,14 +73,12 @@ class ProductLivre extends Product
    *   \brief  Personnalise les menus
    *   \param  menu       Objet Menu
    *   \todo   Rodo - faire plus propre c'est trop goret
-   */
-  
+   */  
   function PersonnalizeMenu(&$menu)
   {
     $menu->remove_last();
     $menu->remove_last();
   }
-
   /**
    *    \brief      Creation
    *    \param      id          Id livre
@@ -125,7 +125,7 @@ class ProductLivre extends Product
 	$this->contrat->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
 	$this->contrat->canvas             = 'livrecontrat';
 
-	$contrat_id = $this->contrat->CreateCanvas($user, $this->id, $datas);
+	$contrat_id = $this->contrat->Create($user, $this->id, $datas);
 
 	if ($contrat_id > 0)
 	  {
@@ -393,9 +393,9 @@ class ProductLivre extends Product
    *
    *
    */
-  function LoadListDatas($list, $offset, $sortfield, $sortorder)
+  function LoadListDatas($limit, $offset, $sortfield, $sortorder)
   {
-    $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type,';
+    $sql = 'SELECT p.rowid, p.ref, p.label, pl.px_feuillet as price, p.fk_product_type,';
     $sql.= ' p.duration, p.envente as statut, p.stock_loc';
     $sql.= ',pl.pages';
     $sql.= ',SUM(fd.qty) as ventes';
