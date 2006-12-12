@@ -219,7 +219,7 @@ class Product
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
     $this->note = trim($this->note);
-    $this->new_weight = trim($this->new_weight);
+    $this->new_weight = trim(ereg_replace(",",".",$this->new_weight));
     $this->new_weight_units = trim($this->new_weight_units);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
