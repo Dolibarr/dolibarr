@@ -29,3 +29,7 @@ StatusSendingValidated=Validée (produits à envoyer ou envoyés)
 StatusSendingDraftShort=Brouillon
 StatusSendingValidatedShort=Validée
 SendingSheet=Bordereau d'expédition
+Hauliers=Transporteurs
+Haulier=Transporteur
+HauliersArea=Espace transporteurs
+NewHaulier=Nouveau transporteur
