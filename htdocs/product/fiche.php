@@ -489,6 +489,14 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	  print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
 	  print '</td></tr>';
 	}
+      else
+	{
+	  // Le poids ne concerne que les produits et pas les services
+	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	  print '<input name="weight" size="4" value="0">';
+	  print $html->select_weight_units("weight_units");
+	  print '</td></tr>';
+	}
       
       // Note (invisible sur facture, propales...)
       print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
@@ -694,7 +702,13 @@ if ($_GET["id"] || $_GET["ref"])
 	      
 	      print '</td></tr>';
             }
-	  
+	  else
+	    {
+	      print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	      print $product->weight." ";
+	      print weight_units_string($product->weight_units);
+	      print "</td></tr>\n";
+	    }	  
 	  // Note
 	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';	  
 	  print "</table>\n";	  
@@ -783,6 +797,14 @@ if ($_GET["id"] || $_GET["ref"])
 
             print '</td></tr>';
         }
+      else
+	{
+	  // Le poids ne concerne que les produits et pas les services
+	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	  print '<input name="weight" size="5" value="'.$product->weight.'">';
+	  print $html->select_weight_units("weight_units",$product->weight_units);
+	  print '</td></tr>';
+	}
 
         // Note
         print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
