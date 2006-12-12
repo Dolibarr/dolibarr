@@ -107,15 +107,17 @@ class InterfaceFraisport
       {
 	return $this->_add_line_haulier($action,$object,$user,$langs,$conf);
       }
+    // Renvoi 0 car aucune action de faite
+    return 0;
   }
 
 
   function _add_line_haulier($action,$object,$user,$langs,$conf)
   {
-    // Calcul les frais de port automatiquement
+    // Ajoute une ligne de frais de port automatiquement
     // 
     //
-    if (1 == 1)
+    if ($conf->global->COMMANDE_ADD_DELIVERY_COST_LINE)
       {
 	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->fk_commande);
 	/*
@@ -197,15 +199,15 @@ class InterfaceFraisport
 	  }
 	/*
 	 * Calcul les frais de port
-	 *
 	 */
 	$desc = "Frais de port (".$total." kg)";
 	$txtva = 19.6;
 	$rang = $num_lignes + 1;
 
-	$total_ht = 1 * $total;
-	$total_tva = round($total_ht * $txtva / 100,2);
-	$total_ttc = $total_ht + $total_tva;
+	// Tout a 0 tant que l'on ne sait pas calculer
+	$total_ht = 0;
+	$total_tva = 0;
+	$total_ttc = 0;
 
 	if ($exists > 0)
 	  {
@@ -220,7 +222,7 @@ class InterfaceFraisport
 	    
 	    if ($resql)
 	      {
-		
+		return 2;
 	      }
 	    else
 	      {
@@ -253,21 +255,19 @@ class InterfaceFraisport
 	    
 	    if ($resql)
 	      {
-		
+		return 1;
 	      }
 	    else
 	      {
 		dolibarr_syslog("Trigger '".$this->name."' in action '$action' [5] SQL ERROR $sql");
 	      }
 	  }
-
       }
     else
       {
-	dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-	return -1;
+	// Aucune action car l'option est desactivee
+	return 0;
       }
-    return 0;  
   }
 }
 ?>
