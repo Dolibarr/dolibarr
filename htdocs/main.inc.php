@@ -73,17 +73,17 @@ if (isset($dolibarr_auto_user)) $authmode=array('auto');
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 session_name($sessionname);
 session_start();
-//dolibarr_syslog("We are in a session. Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_user']=".$_SESSION["dol_user"]);
+//dolibarr_syslog("We are in a session. Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
 
 // Si la demande du login a déjà eu lieu, on le récupère depuis la session
 // sinon appel du module qui réalise sa demande.
 // A l'issu de cette phase, la variable $login sera définie.
 $login='';
-if (! session_id() || ! isset($_SESSION["dol_user"]))
+if (! session_id() || ! isset($_SESSION["dol_login"]))
 {
 	// On est pas déjà authentifié, on demande le login/mot de passe
 	// A l'issu de cette demande, le login et un jeton doivent avoir été placé
-	// en session dans dol_user et dol_token et la page rappelée.
+	// en session dans dol_login et dol_token et la page rappelée.
 
 	// MODE AUTO
 	if (in_array('auto',$authmode) && ! $login)
@@ -208,19 +208,20 @@ if (! session_id() || ! isset($_SESSION["dol_user"]))
 }
 else
 {
-	// On est déjà en session qui a sauvegardé profil utilisateur
-	$user=$_SESSION["dol_user"];
-    dolibarr_syslog("This is an already user logged session. _SESSION['dol_user']=".$user);
-	$user->db=$db;
+	// On est déjà en session qui a sauvegardé login
+	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal idnetifiés
+	$login=$_SESSION["dol_login"];
+    dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
+	$user->fetch($login);
     $login=$user->login;
 }
 
 // Est-ce une nouvelle session
-if (! isset($_SESSION["dol_user"]))
+if (! isset($_SESSION["dol_login"]))
 {
     // Nouvelle session pour ce login
-    $_SESSION["dol_user"]=$user;
-    dolibarr_syslog("This is a new started user session. _SESSION['dol_user']=".$user);
+    $_SESSION["dol_login"]=$user->login;
+    dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]);
     $user->update_last_login_date();
 }
 
