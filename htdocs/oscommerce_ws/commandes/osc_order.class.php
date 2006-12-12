@@ -169,7 +169,60 @@ class Osc_order
 		} 
 
 	}
-	
+	/**
+*      \brief      Mise à jour de la table de transition
+*      \param      oscid      Id du produit dans OsC 
+*	   \param	   prodid	  champ référence 	
+*      \return     int     <0 si ko, >0 si ok
+*/
+	function transcode($osc_orderid, $doli_orderid)
+	{
+
+		print "entree transcode <br>";
+
+		/* suppression et insertion */
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_orders WHERE osc_prodid = ".$osc_orderid.";";
+		$result=$this->db->query($sql);
+        if ($result)
+        {
+			print "suppression ok ".$sql."  * ".$result;
+		}
+        else
+        {
+			print "suppression rate ".$sql."  * ".$result;
+            dolibarr_syslog("osc_order::transcode echec suppression");
+//            $this->db->rollback();
+//            return -1;
+		}
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_order VALUES (".$osc_orderid." ,  now() , ".$doli_orderid.") ;";
+
+		$result=$this->db->query($sql);
+        if ($result)
+        {
+			print "insertion ok ". $sql."  ". $result;
+		}
+        else
+        {
+			print "insertion rate ".$sql." , ".$result;
+            dolibarr_syslog("osc_product::transcode echec insert");
+//            $this->db->rollback();
+//            return -1;
+		}
+	return 0;	
+     }
+// converti le client osc en client dolibarr
+
+	function get_orderid($osc_orderid)
+	{
+		$sql = "SELECT doli_orderidp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."osc_order";
+		$sql.= " WHERE osc_orderid = ".$osc_orderid;
+		$result=$this->db->query($sql);
+		$row = $this->db->fetch_row($resql);
+// test d'erreurs
+		return $row[0];	
+	}
+
 	}
 
 ?>

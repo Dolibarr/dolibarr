@@ -391,10 +391,16 @@ class ActionComm
 		$lien = '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 
-        $transcode=$langs->trans("Action".$this->code);
-        $libelle=($transcode!="Action".$this->code ? $transcode : $this->libelle);
-		$libelleshort=$libelle;
-		if ($option) $libelleshort=dolibarr_trunc($libelle,$option);
+        if ($langs->trans("Action".$this->code) != "Action".$this->code)
+        {
+        	$libelle=$langs->trans("Action".$this->code);
+        	$libelleshort=$langs->trans("Action".$this->code,'','','','',$option);
+        }
+        else
+        {
+        	$libelle=$this->libelle;
+        	$libelleshort=dolibarr_trunc($this->libelle,$option);
+        }
 		
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin.' ');
 		$result.=$lien.$libelleshort.$lienfin;

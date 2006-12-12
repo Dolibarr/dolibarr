@@ -210,19 +210,27 @@ class Translate {
     
     
     /**
-     *  \brief       Retourne la version traduite du texte passé en paramètre
-     *               Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
-     *               et si toujours pas trouvé, il est retourné tel quel
-     *               Les paramètres de cette méthode peuvent contenir de balises HTML.
-     *  \param       str         chaine a traduire
-     *  \param       param1      chaine de param1
-     *  \param       param2      chaine de param1
-     *  \param       param3      chaine de param1
-     *  \return      string      chaine traduite
+     *  \brief      Retourne la version traduite du texte passé en paramètre
+     *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
+     *              et si toujours pas trouvé, il est retourné tel quel
+     *              Les paramètres de cette méthode peuvent contenir de balises HTML.
+     *  \param      key         clé de chaine a traduire
+     *  \param      param1      chaine de param1
+     *  \param      param2      chaine de param1
+     *  \param      param3      chaine de param1
+     *	\param		maxsize		taille max
+     *  \return     string      chaine traduite
      */
-    function trans($str, $param1='', $param2='', $param3='', $param4='')
+    function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
     {
-        return $this->transnoentities($str,htmlentities($param1),htmlentities($param2),htmlentities($param3),htmlentities($param4));
+        if ($this->getTransFromTab($key))
+        {
+            // Si la traduction est disponible
+            $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
+            if ($maxsize) $str=dolibarr_trunc($str,$maxsize);
+            return htmlentities($str);
+        }
+        return $key;
     }
 
 

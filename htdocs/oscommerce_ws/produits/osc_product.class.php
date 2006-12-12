@@ -34,6 +34,8 @@
 
 class Osc_product
 {
+	var $db;
+	
 	var $osc_id;
 	var $osc_ref;
 	var $osc_name;
@@ -50,13 +52,14 @@ class Osc_product
      *    \brief      Constructeur de la classe
      *    \param      id          Id produit (0 par defaut)
      */	
-	function Osc_product($id=0) {
+	function Osc_product($DB, $id=0) {
 
         global $langs;
       
         $this->osc_id = $id ;
 
         /* les initialisations nécessaires */
+        $this->db = $DB;
 	}
 
 /**
@@ -111,6 +114,60 @@ class Osc_product
 			return -1;
 		} 
 		return 0;
+	}
+
+/**
+*      \brief      Mise à jour de la table de transition
+*      \param      oscid      Id du produit dans OsC 
+*	   \param	   prodid	  champ référence 	
+*      \return     int     <0 si ko, >0 si ok
+*/
+	function transcode($oscid, $prodid)
+	{
+
+		print "entree transcode <br>";
+
+		/* suppression et insertion */
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_product WHERE osc_prodid = ".$oscid.";";
+		$result=$this->db->query($sql);
+        if ($result)
+        {
+			print "suppression ok ".$sql."  * ".$result;
+		}
+        else
+        {
+			print "suppression rate ".$sql."  * ".$result;
+            dolibarr_syslog("osc_product::transcode echec suppression");
+//            $this->db->rollback();
+//            return -1;
+		}
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."osc_product VALUES (".$oscid." ,  now() , ".$prodid.") ;";
+
+		$result=$this->db->query($sql);
+        if ($result)
+        {
+			print "insertion ok ". $sql."  ". $result;
+		}
+        else
+        {
+			print "insertion rate ".$sql." , ".$result;
+            dolibarr_syslog("osc_product::transcode echec insert");
+//            $this->db->rollback();
+//            return -1;
+		}
+	return 0;	
+     }
+// converti le client osc en client dolibarr
+
+	function get_productid($osc_product)
+	{
+		$sql = "SELECT doli_prodidp";
+		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
+		$sql.= " WHERE osc_prodid = ".$osc_product;
+		$result=$this->db->query($sql);
+		$row = $this->db->fetch_row($resql);
+// test d'erreurs
+		return $row[0];	
 	}
 
 	

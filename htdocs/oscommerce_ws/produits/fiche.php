@@ -29,7 +29,7 @@ if ($action == '' && !$cancel) {
 
  if ($_GET['id'])
  {
-  $osc_prod = new Osc_product();
+  $osc_prod = new Osc_product($db, $_GET['id']);
   $result = $osc_prod->fetch($_GET['id']);
 
   if ( !$result)
@@ -54,6 +54,8 @@ if ($action == '' && !$cancel) {
 	  if ( $user->rights->produit->creer) {
         print '<a class="tabAction" href="fiche.php?action=import&amp;id='.$osc_prod->osc_id.'">'.$langs->trans("Import").'</a>';
     	}
+
+ 		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
      
@@ -75,7 +77,7 @@ if ($action == '' && !$cancel) {
 */
  if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->produit->creer)
     {
-		  $osc_prod = new Osc_product();
+		  $osc_prod = new Osc_product($db, $_GET['id']);
   		  $result = $osc_prod->fetch($_GET['id']);
   
 	  if ( !$result )
@@ -99,11 +101,22 @@ if ($action == '' && !$cancel) {
 			$product->status = 1; /* en vente */
 		 } 
 
+/* utilisation de la table de transco*/
+		if ($osc_prod->get_productid($osc_prod->osc_id)>0)
+		{
+			print '<p>Ce produit existe déjà</p>';
+		}
+		else {
 			$id = $product->create($user);
 	       
 		    if ($id > 0)
 		    {
-		       	print '<br>création réussie produit '.$id.' référence : '.$product->ref.'</br>';
+	       	print "\n<div class=\"tabsAction\">\n";
+	       	print '<p>création réussie produit '.$id.' référence : '.$product->ref.'</p>';
+				$res = $osc_prod->transcode($osc_prod->osc_id,$product->id);
+				print '<p>transcode '.$res.' | '.$product->id.' osc : '.$osc_prod->osc_id.'</p>';
+		    	print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+				print "\n</div><br>\n";
 				$id_entrepot = OSC_ENTREPOT;
 				$id = $product->create_stock($id_entrepot,$osc_prod->osc_stock);
 				if ($id > 0)  exit;
@@ -139,6 +152,7 @@ if ($action == '' && !$cancel) {
 					else print '<br>update impossible $id : '.$id.' </br>';
 				}
 		    }
+		 }
  
     }
 

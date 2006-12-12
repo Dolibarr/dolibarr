@@ -66,6 +66,7 @@ elseif (!($err = $client->getError()) )
 		print "<td>Ville</td>";
 		print "<td>Pays</td>";
 		print '<td align="center">Téléphone</td>';
+		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
 	   
 		while ($i < $num) {
@@ -78,6 +79,7 @@ elseif (!($err = $client->getError()) )
     		print "<TD>".$result[$i][entry_city]."</TD>\n";
     		print '<TD align="center">'.$result[$i][countries_name]."</TD>\n";
     		print '<TD align="center">'.$result[$i][customers_telephone]."</TD>\n";
+    		print '<TD align="center"><a href="fiche.php?action=import&custid='.$result[$i][customers_id].'"'."><b>importer</b></a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}

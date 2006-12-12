@@ -54,20 +54,27 @@ if ($action == '' && !$cancel) {
 	  if ( $user->rights->societe->creer) {
         print '<a class="tabAction" href="fiche.php?action=import&amp;custid='.$osc_cust->osc_custid.'">'.$langs->trans("Import").'</a>';
     	}
+    print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
      
 	}
       else
 	{
-	  print "<p>ERROR 1c</p>\n";
-	  dolibarr_print_error('',"erreur webservice ".$osc_cust->error);
+	  	print "\n<div class=\"tabsAction\">\n";
+		  print "<p>ERROR 1c</p>\n";
+	  	  dolibarr_print_error('',"erreur webservice ".$osc_cust->error);
+    	  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		print "\n</div><br>\n";
 	}
  }
  else
  {
-   print "<p>ERROR 1b</p>\n";
-   print "Error";
+  	print "\n<div class=\"tabsAction\">\n";
+	   print "<p>ERROR 1b</p>\n";
+	   print "Error";
+	   print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+	print "\n</div><br>\n";
  }
 }
 /* action Import création de l'objet product de dolibarr 
@@ -83,8 +90,11 @@ if ($action == '' && !$cancel) {
 			$societe = new Societe($db);
 	    	if ($_error == 1)
 	    	{
-	       		print '<br>erreur 1</br>';
-				exit;
+	      
+			  	print "\n<div class=\"tabsAction\">\n";
+		    		print '<br>erreur 1</br>';
+		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+				print "\n</div><br>\n";
 	    	}
 
 	    	/* initialisation */
@@ -105,14 +115,22 @@ if ($action == '' && !$cancel) {
 			$societe->client = 1; // mettre 0 si prospect
 		 } 
 
+/* utilisation de la table de transco*/
+		if ($osc_cust->get_clientid($osc_cust->osc_custid)>0)
+		{
+			print '<p>Ce client existe déjà</p>';
+		}
+		else {
 			$id = $societe->create($user);
 	       
 		    if ($id == 0)
 		    {
-		       	print '<br>création réussie nouveau client/prospect '.$societe->id.' nom : '.$societe->nom.'</br>';
-				$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
-print '<br>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'</br>';
-
+		    	print "\n<div class=\"tabsAction\">\n";
+			    	print '<p>création réussie nouveau client/prospect '.$societe->id.' nom : '.$societe->nom.'</p>';
+			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
+					print '<p>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'</p>';
+		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+				print "\n</div><br>\n";
 		    }
 		    else
 		    {
@@ -128,8 +146,10 @@ print '<br>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'
 				 $societe_control = new Societe($db);
 				 if ($_error == 1)
 		    	 {
+			    	print "\n<div class=\"tabsAction\">\n";
 		       		print '<br>erreur 1</br>';
-					exit;
+			    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+					print "\n</div><br>\n";
 		    	 }
 			     $idp = $societe_control->fetch($socid = $osc_cust->osc_ref);
 					
@@ -143,6 +163,7 @@ print '<br>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'
 					else print '<br>update impossible $id : '.$idp.' </br>';
 				}
 		    }
+		 }
  
     }
 

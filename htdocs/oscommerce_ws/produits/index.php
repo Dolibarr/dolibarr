@@ -66,6 +66,7 @@ elseif (!($err = $client->getError()) )
 		print "<td>Groupe</td>";
 		print '<td align="center">Stock</td>';
 		print '<TD align="center">Status</TD>';
+		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
 	   
 		while ($i < $num) {
@@ -78,6 +79,7 @@ elseif (!($err = $client->getError()) )
     		print "<TD>".$result[$i][manufacturer]."</TD>\n";
     		print '<TD align="center">'.$result[$i][quantity]."</TD>\n";
     		print '<TD align="center">'.$result[$i][status]."</TD>\n";
+    		print '<TD align="center"><a href="fiche.php?action=import&id='.$result[$i][OSC_id].'"'."><b>importer</b></a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}

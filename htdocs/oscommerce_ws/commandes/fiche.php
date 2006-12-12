@@ -55,20 +55,26 @@ if ($action == '' && !$cancel) {
 	  if ( $user->rights->commande->creer) {
         print '<a class="tabAction" href="fiche.php?action=import&amp;orderid='.$osc_order->osc_orderid.'">'.$langs->trans("Import").'</a>';
     	}
+  	  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
      
 	}
       else
 	{
-	  print "<p>ERROR 1c</p>\n";
-	  dolibarr_print_error('',"erreur webservice ".$osc_order->error);
+	  print "\n<div class=\"tabsAction\">\n";
+		  print "<p>ERROR 1c</p>\n";
+		  dolibarr_print_error('',"erreur webservice ".$osc_order->error);
+		  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+	  print "\n</div><br>\n";
 	}
  }
  else
  {
-   print "<p>ERROR 1b</p>\n";
-   print "Error";
+	  print "\n<div class=\"tabsAction\">\n";
+		  print "<p>ERROR 1b</p>\n";
+		  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+	  print "\n</div><br>\n";
  }
 }
 /* action Import création de l'objet commande de dolibarr 
@@ -81,13 +87,25 @@ if ($action == '' && !$cancel) {
 	  if ( !$result )
 	  {
 			$commande = $osc_order->osc2dolibarr($_GET["orderid"]);
-			print_r($commande);		
+	//		print_r($commande);		
 		} 
+/* utilisation de la table de transco*/
+		if ($osc_order->get_orderid($osc_order->osc_orderid)>0)
+		{
+			print '<p>Cette commande existe déjà</p>';
+		}
+		else {
 			$id = $commande->create($user);
 	       
 		    if ($id > 0)
 		    {
-		       	print '<br>création réussie nouvelle commande '.$id;
+				  print "\n<div class=\"tabsAction\">\n";
+		       	  print '<br>création réussie nouvelle commande '.$id;
+   			     $res = $osc_order->transcode($osc_order->osc_orderid,$id);
+					  print '<p>transcode '.$res.' | '.$id.' osc : '.$osc_order->osc_orderid.'</p>';
+					  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+				  print "\n</div><br>\n";
+
 				if ($id > 0)  exit;
 		    }
 		    else
@@ -117,6 +135,7 @@ if ($action == '' && !$cancel) {
 					else print '<br>update impossible $id : '.$id.' </br>';
 				}
 		    }
+		 }
  
     }
 

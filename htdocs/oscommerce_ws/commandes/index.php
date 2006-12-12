@@ -66,6 +66,7 @@ elseif (!($err = $client->getError()) )
 		print "<td>Date</td>";
 		print "<td>Montant</td>";
 		print '<td align="center">Paiement</td>';
+		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
 	   
 		while ($i < $num) {
@@ -73,11 +74,13 @@ elseif (!($err = $client->getError()) )
 
 		    print "<TR $bc[$var]>";
 		    print '<TD><a href="fiche.php?orderid='.$result[$i][orders_id].'">'.$result[$i][orders_id]."</TD>\n";
+    		print "<TD>  </TD>\n";
     		print "<TD>".$result[$i][customers_name]."</TD>\n";
     		print "<TD>".$result[$i][date_purchased]."</TD>\n";
     		print "<TD>".$result[$i][value]."</TD>\n";
-    		print '<TD align="center">'.$result[$i][payment_method]."</TD>\n";
+    		print '<TD align="center">'.' '.$result[$i][payment_method]."</TD>\n";
 //    		print '<TD align="center">'/*.$result[$i][customers_telephone]*/."</TD>\n";
+    		print '<TD align="center"><a href="fiche.php?action=import&orderid='.$result[$i][orders_id].'">'."<b>importer</b></a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}
