@@ -38,5 +38,12 @@ create table llx_commandedet
   total_ttc       real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
   info_bits		  integer DEFAULT 0, 	-- TVA NPR ou non
   coef           real,              -- coefficient de marge
+  special_code        tinyint(1) UNSIGNED DEFAULT 0, -- code pour les lignes speciales
   rang           integer DEFAULT 0
 )type=innodb;
+
+-- 
+-- Liste des codes pour special_code
+--
+-- 1 : frais de port
+--
