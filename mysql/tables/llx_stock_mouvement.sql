@@ -28,6 +28,7 @@ create table llx_stock_mouvement
   fk_product      integer NOT NULL,
   fk_entrepot     integer NOT NULL,
   value           integer,
+  price           float DEFAULT 0,
   type_mouvement  smallint,
   fk_user_author  integer,
 
