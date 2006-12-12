@@ -59,6 +59,10 @@ FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
 FeaturesSupported=Fonctionnalités supportées
 Width=Largeur
 Height=Hauteur
+Weight=Poids
+WeightUnitmg=tonnes
+WeightUnitkg=kg
+WeightUnitg=g
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

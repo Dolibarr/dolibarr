@@ -44,6 +44,11 @@ function product_prepare_head($product)
 	$head[$h][2] = 'price';
 	$h++;
 	
+	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
+	$head[$h][1] = $langs->trans("Photos");
+	$head[$h][2] = 'photos';
+	$h++;
+	
 	//affichage onglet catégorie
 	if ($conf->categorie->enabled)
 	{
@@ -77,6 +82,15 @@ function product_prepare_head($product)
 		$h++;
 	}
 	
+	// sousproduits
+	if($conf->global->PRODUIT_SOUSPRODUITS == 1)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
+		$head[$h][1] = $langs->trans('AssociatedProducts');
+		$head[$h][2] = 'subproduct';
+		$h++;
+	}
+
 	if ($conf->fournisseur->enabled)
 	{
 		$head[$h][0] = DOL_URL_ROOT."/product/fournisseurs.php?id=".$product->id;
@@ -90,24 +104,9 @@ function product_prepare_head($product)
 	$head[$h][2] = 'stats';
 	$h++;
 	
-	// sousproduits
-	if($conf->global->PRODUIT_SOUSPRODUITS == 1)
-	{
-		$head[$h][0] = DOL_URL_ROOT."/product/sousproduits/fiche.php?id=".$product->id;
-		$head[$h][1] = $langs->trans('AssociatedProducts');
-		$head[$h][2] = 'subproduct';
-		$h++;
-	}
-	
-	
 	$head[$h][0] = DOL_URL_ROOT."/product/stats/facture.php?id=".$product->id;
 	$head[$h][1] = $langs->trans('Referers');
 	$head[$h][2] = 'referers';
-	$h++;
-	
-	$head[$h][0] = DOL_URL_ROOT."/product/photos.php?id=".$product->id;
-	$head[$h][1] = $langs->trans("Photos");
-	$head[$h][2] = 'photos';
 	$h++;
 	
 	$head[$h][0] = DOL_URL_ROOT.'/product/document.php?id='.$product->id;

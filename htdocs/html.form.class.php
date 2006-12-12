@@ -2070,25 +2070,26 @@ class Form
      */
     function select_weight_units($name='weight_units', $default='0', $adddefault=0)
     {
-      global $langs,$conf,$mysoc;
-
-      $units[3] = "Tonne";
-      $units[0] = "kg";
-      $units[-3] = "g";
-           
-      print '<select class="flat" name="'.$name.'">';
-      if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
-      
-      foreach ($units as $key => $value)
-        {
-	  print '<option value="'.$key.'"';
-	  if ($key == $default)
-            {
-	      print ' selected="true"';
-            }
-	  print '>'.$value.'</option>';	  	  
-        }
-      print '</select>';
+		global $langs,$conf,$mysoc;
+		$langs->load("other");
+		
+		$units[3]  = $langs->trans("WeightUnitmg");
+		$units[0]  = $langs->trans("WeightUnitkg");
+		$units[-3] = $langs->trans("WeightUnitg");
+		
+		print '<select class="flat" name="'.$name.'">';
+		if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
+		
+		foreach ($units as $key => $value)
+		{
+			print '<option value="'.$key.'"';
+			if ($key == $default)
+			{
+				print ' selected="true"';
+			}
+			print '>'.$value.'</option>';
+		}
+		print '</select>';
     }
 
     function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')

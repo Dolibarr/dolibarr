@@ -201,6 +201,7 @@ class Product
     $this->db->rollback();
     return -1;
   }
+  
   /**
    *    \brief      Mise à jour du produit en base
    *    \param      id          id du produit
@@ -219,7 +220,7 @@ class Product
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
     $this->note = trim($this->note);
-    $this->new_weight = trim(ereg_replace(",",".",$this->new_weight));
+    $this->new_weight = price2num($this->new_weight);
     $this->new_weight_units = trim($this->new_weight_units);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
@@ -227,12 +228,12 @@ class Product
     if ($this->ref) $sql .= ",ref = '" . $this->ref ."'";
     $sql .= ",tva_tx = '" . $this->tva_tx."'";
     $sql .= ",envente = " . $this->status;
-    $sql .= ",weight = '" . $this->new_weight."'";
+    $sql .= ",weight = " . ($this->new_weight!='' ? "'".$this->new_weight."'" : 'null');
     $sql .= ",weight_units = '" . $this->new_weight_units."'";
     $sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
     $sql .= ",description = '" . addslashes($this->description) ."'";
     $sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
-    $sql .= ",note = '" . addslashes($this->note) ."'";
+    $sql .= ",note = '" .        addslashes($this->note) ."'";
     $sql .= ",duration = '" . $this->duration_value . $this->duration_unit ."'";
     $sql .= " WHERE rowid = " . $id;
 

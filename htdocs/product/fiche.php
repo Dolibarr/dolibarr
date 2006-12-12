@@ -24,10 +24,10 @@
  */
 
 /**
-   \file       htdocs/product/fiche.php
-   \ingroup    product
-   \brief      Page de la fiche produit
-   \version    $Revision$
+*		\file       htdocs/product/fiche.php
+*		\ingroup    product
+*		\brief      Page de la fiche produit
+*		\version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -47,795 +47,801 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 /*
- *
- */
+*
+*/
 if ($_GET["action"] == 'fastappro')
 {
-    $product = new Product($db);
-    $product->fetch($_GET["id"]);
-    $result = $product->fastappro($user);
-    Header("Location: fiche.php?id=".$_GET["id"]);
-    exit;
+	$product = new Product($db);
+	$product->fetch($_GET["id"]);
+	$result = $product->fastappro($user);
+	Header("Location: fiche.php?id=".$_GET["id"]);
+	exit;
 }
 
 
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-  if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
-    {
-      $class = 'Product'.ucfirst($_POST["canvas"]);
-      include_once('canvas/product.'.$_POST["canvas"].'.class.php');
-      $product = new $class($db);
-    }
-  else
-    {
-      $product = new Product($db);
-    }
+	if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
+	{
+		$class = 'Product'.ucfirst($_POST["canvas"]);
+		include_once('canvas/product.'.$_POST["canvas"].'.class.php');
+		$product = new $class($db);
+	}
+	else
+	{
+		$product = new Product($db);
+	}
 
-    $product->ref                = $_POST["ref"];
-    $product->libelle            = $_POST["libelle"];
-    $product->price              = $_POST["price"];
-    $product->tva_tx             = $_POST["tva_tx"];
-    $product->type               = $_POST["type"];
-    $product->status             = $_POST["statut"];
-    $product->description        = $_POST["desc"];
-    $product->note               = $_POST["note"];
-    $product->duration_value     = $_POST["duration_value"];
-    $product->duration_unit      = $_POST["duration_unit"];
-    $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-    $product->canvas             = $_POST["canvas"];
-    $product->new_weight         = $_POST["weight"];
-    $product->new_weight_units   = $_POST["weight_units"];
-    // MultiPrix
-    if($conf->global->PRODUIT_MULTIPRICES == 1)
-      {
-	for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	  {
-	    if($_POST["price_".$i])
-	      $product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
-	    else
-	      $product->multiprices["$i"] = "";
-	  }
-      }
-    
-    if ( $value != $current_lang ) $e_product = $product;
-    
-    // Produit spécifique    
-    // $_POST n'est pas utilise dans la classe Product
-    // mais dans des classes qui hérite de Product
-    $id = $product->Create($user, $_POST);
-    
-    if ($id > 0)
-      {
-        Header("Location: fiche.php?id=$id");
-        exit;
-      }
-    else
-      {
-    	$mesg='<div class="error">'.$product->error.'</div>';
-        $_GET["action"] = "create";
-        $_GET["type"] = $_POST["type"];
-      }
+	$product->ref                = $_POST["ref"];
+	$product->libelle            = $_POST["libelle"];
+	$product->price              = $_POST["price"];
+	$product->tva_tx             = $_POST["tva_tx"];
+	$product->type               = $_POST["type"];
+	$product->status             = $_POST["statut"];
+	$product->description        = $_POST["desc"];
+	$product->note               = $_POST["note"];
+	$product->duration_value     = $_POST["duration_value"];
+	$product->duration_unit      = $_POST["duration_unit"];
+	$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+	$product->canvas             = $_POST["canvas"];
+	$product->new_weight         = $_POST["weight"];
+	$product->new_weight_units   = $_POST["weight_units"];
+	// MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+			if($_POST["price_".$i])
+			$product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
+			else
+			$product->multiprices["$i"] = "";
+		}
+	}
+
+	if ( $value != $current_lang ) $e_product = $product;
+
+	// Produit spécifique
+	// $_POST n'est pas utilise dans la classe Product
+	// mais dans des classes qui hérite de Product
+	$id = $product->Create($user, $_POST);
+
+	if ($id > 0)
+	{
+		Header("Location: fiche.php?id=$id");
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$product->error.'</div>';
+		$_GET["action"] = "create";
+		$_GET["type"] = $_POST["type"];
+	}
 }
 
 // Action mise a jour d'un produit ou service
 if ($_POST["action"] == 'update' &&
-    $_POST["cancel"] <> $langs->trans("Cancel") &&
-    $user->rights->produit->creer)
+$_POST["cancel"] <> $langs->trans("Cancel") &&
+$user->rights->produit->creer)
 {
-  $product = new Product($db);
-  if ($product->fetch($_POST["id"]))
-    {
-      $product->ref                = $_POST["ref"];
-      $product->libelle            = $_POST["libelle"];
-      if ( isset( $_POST["price"] ) )
-        $product->price              = $_POST["price"];
-      $product->tva_tx             = $_POST["tva_tx"];
-      $product->description        = $_POST["desc"];
-      $product->note               = $_POST["note"];
-      $product->status             = $_POST["statut"];
-      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-      $product->stock_loc          = $_POST["stock_loc"];
-      $product->duration_value     = $_POST["duration_value"];
-      $product->duration_unit      = $_POST["duration_unit"];
-      $product->canvas             = $_POST["canvas"];
-      $product->new_weight         = $_POST["weight"];
-      $product->new_weight_units   = $_POST["weight_units"];
-      
-      if ($product->check())
-        {
-	  if ($product->update($product->id, $user) > 0)
-            {
-	      $_GET["action"] = '';
-	      $_GET["id"] = $_POST["id"];
-            }
-	  else
-            {
-	      $_GET["action"] = 'edit';
-	      $_GET["id"] = $_POST["id"];
-	      $mesg = $product->error;
-            }
-        }
-        else
-        {
-            $_GET["action"] = 'edit';
-            $_GET["id"] = $_POST["id"];
-            $mesg = $langs->trans("ErrorProductBadRefOrLabel");
-        }
-
-
-      // Produit spécifique
-      if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+	$product = new Product($db);
+	if ($product->fetch($_POST["id"]))
 	{
-	  $class = 'Product'.ucfirst($product->canvas);
-	  include_once('canvas/product.'.$product->canvas.'.class.php');
-	  	  
-	  $product = new $class($db);
-	  if ($product->FetchCanvas($_POST["id"]))
-	    {
-	      $product->UpdateCanvas($_POST);
-	    }
-	}      
-    }
+		$product->ref                = $_POST["ref"];
+		$product->libelle            = $_POST["libelle"];
+		if ( isset( $_POST["price"] ) )
+		$product->price              = $_POST["price"];
+		$product->tva_tx             = $_POST["tva_tx"];
+		$product->description        = $_POST["desc"];
+		$product->note               = $_POST["note"];
+		$product->status             = $_POST["statut"];
+		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+		$product->stock_loc          = $_POST["stock_loc"];
+		$product->duration_value     = $_POST["duration_value"];
+		$product->duration_unit      = $_POST["duration_unit"];
+		$product->canvas             = $_POST["canvas"];
+		$product->new_weight         = $_POST["weight"];
+		$product->new_weight_units   = $_POST["weight_units"];
+
+		if ($product->check())
+		{
+			if ($product->update($product->id, $user) > 0)
+			{
+				$_GET["action"] = '';
+				$_GET["id"] = $_POST["id"];
+			}
+			else
+			{
+				$_GET["action"] = 'edit';
+				$_GET["id"] = $_POST["id"];
+				$mesg = $product->error;
+			}
+		}
+		else
+		{
+			$_GET["action"] = 'edit';
+			$_GET["id"] = $_POST["id"];
+			$mesg = $langs->trans("ErrorProductBadRefOrLabel");
+		}
+
+
+		// Produit spécifique
+		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+		{
+			$class = 'Product'.ucfirst($product->canvas);
+			include_once('canvas/product.'.$product->canvas.'.class.php');
+
+			$product = new $class($db);
+			if ($product->FetchCanvas($_POST["id"]))
+			{
+				$product->UpdateCanvas($_POST);
+			}
+		}
+	}
 }
 
 // clone d'un produit
 if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 {
-    $db->begin();
+	$db->begin();
 
-    $product = new Product($db);
-    $originalId = $_GET["id"];
-    if ($product->fetch($_GET["id"]) > 0)
-    {
-        $product->ref = "Clone ".$product->ref;
-        $product->status = 0;
-        $product->id = null;
+	$product = new Product($db);
+	$originalId = $_GET["id"];
+	if ($product->fetch($_GET["id"]) > 0)
+	{
+		$product->ref = "Clone ".$product->ref;
+		$product->status = 0;
+		$product->id = null;
 
-        if ($product->check())
-        {
-	  $id = $product->create($user);
-	  if ($id > 0)
-            {
-	      // $product->clone_fournisseurs($originalId, $id);
-	      
-	      $db->commit();
-	      
-	      Header("Location: fiche.php?id=$id");
-	      $db->close();
-	      exit;
-            }
-	  else	if ($id == -3)
-            {
-	      $db->rollback();
-	      
-	      $_error = 1;
-	      $_GET["action"] = "";
-	      dolibarr_print_error($product->db);
-            }
-	  else
-            {
-	      $db->rollback();	      
-	      dolibarr_print_error($product->db);
-            }
-        }
-    }
-    else
-      {
-        $db->rollback();
-	
-        dolibarr_print_error($product->db);
-      }
+		if ($product->check())
+		{
+			$id = $product->create($user);
+			if ($id > 0)
+			{
+				// $product->clone_fournisseurs($originalId, $id);
+
+				$db->commit();
+
+				Header("Location: fiche.php?id=$id");
+				$db->close();
+				exit;
+			}
+			else	if ($id == -3)
+			{
+				$db->rollback();
+
+				$_error = 1;
+				$_GET["action"] = "";
+				dolibarr_print_error($product->db);
+			}
+			else
+			{
+				$db->rollback();
+				dolibarr_print_error($product->db);
+			}
+		}
+	}
+	else
+	{
+		$db->rollback();
+
+		dolibarr_print_error($product->db);
+	}
 }
 
 /*
- * Suppression d'un produit/service pas encore affecté
- */
+* Suppression d'un produit/service pas encore affect
+*/
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->produit->supprimer)
 {
-  $product = new Product($db);
-  $product->fetch($_GET["id"]);
-  $result = $product->delete($_GET["id"]);
-  
-  if ($result == 0)
-    {
-      llxHeader();
-      print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
-      llxFooter();
-      exit ;
-    }
-  else
-    {
-      $reload = 0;
-      $_GET["action"]='';
-    }
+	$product = new Product($db);
+	$product->fetch($_GET["id"]);
+	$result = $product->delete($_GET["id"]);
+
+	if ($result == 0)
+	{
+		llxHeader();
+		print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
+		llxFooter();
+		exit ;
+	}
+	else
+	{
+		$reload = 0;
+		$_GET["action"]='';
+	}
 }
 
 
 /*
- * Ajout du produit dans une propal
- */
+* Ajout du produit dans une propal
+*/
 if ($_POST["action"] == 'addinpropal')
 {
-  $propal = New Propal($db);
-  $result=$propal->fetch($_POST["propalid"]);
-  if ($result <= 0)
-    {
-      dolibarr_print_error($db,$propal->error);
-      exit;
-    }
-  
-  $soc = new Societe($db);
-  $soc->fetch($propal->socid,$user);
+	$propal = New Propal($db);
+	$result=$propal->fetch($_POST["propalid"]);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$propal->error);
+		exit;
+	}
 
-  $prod = new Product($db, $_GET['id']);
-  $result=$prod->fetch($_GET['id']);
-  if ($result <= 0)
-    {
-      dolibarr_print_error($db,$prod->error);
-      exit;
-    }
-  
-    // multiprix
-    if ($conf->global->PRODUIT_MULTIPRICES == 1)
-      {
-	$pu = $prod->multiprices[$soc->price_level];
-      }
-    else
-      {
-    	$pu=$prod->price;
-      }
-    
-    $desc = $prod->description;
-    $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
-    
-    $result = $propal->addline($propal->id,
-                               $desc,
-                               $pu,
-                               $_POST["qty"],
-                               $tva_tx,
-                               $prod->id,
-                               $_POST["remise_percent"]);
-    if ($result > 0)
-      {
-	Header("Location: ../comm/propal.php?propalid=".$propal->id);
-	return;
-      }
-    
-    $mesg = $langs->trans("ErrorUnknown").": $result";
+	$soc = new Societe($db);
+	$soc->fetch($propal->socid,$user);
+
+	$prod = new Product($db, $_GET['id']);
+	$result=$prod->fetch($_GET['id']);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$prod->error);
+		exit;
+	}
+
+	// multiprix
+	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		$pu = $prod->multiprices[$soc->price_level];
+	}
+	else
+	{
+		$pu=$prod->price;
+	}
+
+	$desc = $prod->description;
+	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+
+	$result = $propal->addline($propal->id,
+	$desc,
+	$pu,
+	$_POST["qty"],
+	$tva_tx,
+	$prod->id,
+	$_POST["remise_percent"]);
+	if ($result > 0)
+	{
+		Header("Location: ../comm/propal.php?propalid=".$propal->id);
+		return;
+	}
+
+	$mesg = $langs->trans("ErrorUnknown").": $result";
 }
 
 /*
- * Ajout du produit dans une commande
- */
+* Ajout du produit dans une commande
+*/
 if ($_POST["action"] == 'addincommande')
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-  
-  $commande = New Commande($db);
-  $commande->fetch($_POST["commandeid"]);
-  
-  $soc = new Societe($db);
-  $soc->fetch($commande->socid,$user);
-  
-  // multiprix
-  if ($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      $pu = $product->multiprices[$soc->price_level];
-    }
-  else
-    {
-      $pu=$product->price;
-    }
-  
-  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
-  
-  $result =  $commande->addline($commande->id,
-				$product->description,
-				$pu,
-				$_POST["qty"],
-				$tva_tx,
-				$product->id,
-				$_POST["remise_percent"]);
-  
-  Header("Location: ../commande/fiche.php?id=".$commande->id);
-  exit;
+	$product = new Product($db);
+	$result = $product->fetch($_GET["id"]);
+
+	$commande = New Commande($db);
+	$commande->fetch($_POST["commandeid"]);
+
+	$soc = new Societe($db);
+	$soc->fetch($commande->socid,$user);
+
+	// multiprix
+	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		$pu = $product->multiprices[$soc->price_level];
+	}
+	else
+	{
+		$pu=$product->price;
+	}
+
+	$tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
+
+	$result =  $commande->addline($commande->id,
+	$product->description,
+	$pu,
+	$_POST["qty"],
+	$tva_tx,
+	$product->id,
+	$_POST["remise_percent"]);
+
+	Header("Location: ../commande/fiche.php?id=".$commande->id);
+	exit;
 }
 
 /*
- * Ajout du produit dans une facture
- */
+* Ajout du produit dans une facture
+*/
 if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-  
-  $facture = New Facture($db);
-  $facture->fetch($_POST["factureid"]);
-  
-  $soc = new Societe($db);
-  $soc->fetch($facture->socid,$user);
-  
-  // multiprix
-  if ($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      $pu = $product->multiprices[$soc->price_level];
-    }
-  else
-    {
-      $pu=$product->price;
-    }
-  
-  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
-  
-  $facture->addline($facture->id,
-		    $product->description,
-		    $pu,
-		    $_POST["qty"],
-		    $tva_tx,
-		    $product->id,
-		    $_POST["remise_percent"]);
-  
-  Header("Location: ../compta/facture.php?facid=".$facture->id);
-  exit;
+	$product = new Product($db);
+	$result = $product->fetch($_GET["id"]);
+
+	$facture = New Facture($db);
+	$facture->fetch($_POST["factureid"]);
+
+	$soc = new Societe($db);
+	$soc->fetch($facture->socid,$user);
+
+	// multiprix
+	if ($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		$pu = $product->multiprices[$soc->price_level];
+	}
+	else
+	{
+		$pu=$product->price;
+	}
+
+	$tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
+
+	$facture->addline($facture->id,
+	$product->description,
+	$pu,
+	$_POST["qty"],
+	$tva_tx,
+	$product->id,
+	$_POST["remise_percent"]);
+
+	Header("Location: ../compta/facture.php?facid=".$facture->id);
+	exit;
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
-  $action = '';
-  Header("Location: fiche.php?id=".$_POST["id"]);
-  exit;
+	$action = '';
+	Header("Location: fiche.php?id=".$_POST["id"]);
+	exit;
 }
 
 $html = new Form($db);
 
 /*
- * Action création du produit
- */
+* Action création du produit
+*/
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
-  $product = new Product($db);
-  
-  if ($_error == 1)
-    {
-      $product = $e_product;
-    }
-  
-  llxHeader("","",$langs->trans("CardProduct".$product->type));
+	$product = new Product($db);
 
-  if ($mesg) print "$mesg\n";
- 
-  if ($_GET["canvas"] == '')
-    {
-      print '<form action="fiche.php" method="post">';
-      print '<input type="hidden" name="action" value="add">';
-      print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
-      
-      if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
-      if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
-      print_fiche_titre($title);
-      
-      print '<table class="border" width="100%">';
-      print '<tr>';
-      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
-      if ($_error == 1)
+	if ($_error == 1)
 	{
-	  print $langs->trans("RefAlreadyExists");
+		$product = $e_product;
 	}
-      print '</td></tr>';
-      print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-      
-      if($conf->global->PRODUIT_MULTIPRICES == 1)
+
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
+
+	if ($mesg) print "$mesg\n";
+
+	if ($_GET["canvas"] == '')
 	{
-	  print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
-	  for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	    {
-	      print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td></tr>';
-	    }
+		print '<form action="fiche.php" method="post">';
+		print '<input type="hidden" name="action" value="add">';
+		print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
+
+		if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
+		if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
+		print_fiche_titre($title);
+
+		print '<table class="border" width="100%">';
+		print '<tr>';
+		print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+		if ($_error == 1)
+		{
+			print $langs->trans("RefAlreadyExists");
+		}
+		print '</td></tr>';
+		print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+
+		if($conf->global->PRODUIT_MULTIPRICES == 1)
+		{
+			print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+			for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+			{
+				print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td></tr>';
+			}
+		}
+		// PRIX
+		else
+		{
+			print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+		}
+
+		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
+		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		print '</td></tr>';
+
+		print '<tr><td>'.$langs->trans("Status").'</td><td>';
+		print '<select class="flat" name="statut">';
+		print '<option value="1">'.$langs->trans("OnSell").'</option>';
+		print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+		print '</select>';
+		print '</td></tr>';
+
+		if ($_GET["type"] == 0 && $conf->stock->enabled)
+		{
+			print '<tr><td>Seuil stock</td><td>';
+			print '<input name="seuil_stock_alerte" size="4" value="0">';
+			print '</td></tr>';
+		}
+		else
+		{
+			print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+		}
+
+		// Description (utilisé dans facture, propale...)
+		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="desc" rows="4" cols="90">';
+			print '</textarea>';
+		}
+
+		print "</td></tr>";
+
+		if ($_GET["type"] == 1)
+		{
+			print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+			print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
+			print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
+			print '</td></tr>';
+		}
+		else
+		{
+			// Le poids ne concerne que les produits et pas les services
+			print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+			print '<input name="weight" size="4" value="">';
+			print $html->select_weight_units("weight_units");
+			print '</td></tr>';
+		}
+
+		// Note (invisible sur facture, propales...)
+		print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('note','',200,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea name="note" rows="8" cols="70">';
+			print '</textarea>';
+		}
+		print "</td></tr>";
+
+		print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
+		print '</table>';
+		print '</form>';
 	}
-      // PRIX
-      else
+	else
 	{
-	  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
+		//RODO
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
+		$null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+		$smarty->assign('tva_taux_value', $html->tva_taux_value);
+		$smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
+		$smarty->display($_GET["canvas"].'-create.tpl');
 	}
-      
-      print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
-      print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-      print '</td></tr>';
-      
-      print '<tr><td>'.$langs->trans("Status").'</td><td>';
-      print '<select class="flat" name="statut">';
-      print '<option value="1">'.$langs->trans("OnSell").'</option>';
-      print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
-      print '</select>';
-      print '</td></tr>';
-      
-      if ($_GET["type"] == 0 && $conf->stock->enabled)
-	{
-	  print '<tr><td>Seuil stock</td><td>';
-	  print '<input name="seuil_stock_alerte" size="4" value="0">';
-	  print '</td></tr>';
-	}
-      else
-	{
-	  print '<input name="seuil_stock_alerte" type="hidden" value="0">';
-	}
-      
-      // Description (utilisé dans facture, propale...)
-      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
-      
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-	{
-	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	  $doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
-	  $doleditor->Create();
-	}
-      else
-	{
-	  print '<textarea name="desc" rows="4" cols="90">';
-	  print '</textarea>';
-	}
-      
-      print "</td></tr>";
-      
-      if ($_GET["type"] == 1)
-	{
-	  print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
-	  print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
-	  print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
-	  print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
-	  print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
-	  print '</td></tr>';
-	}
-      else
-	{
-	  // Le poids ne concerne que les produits et pas les services
-	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	  print '<input name="weight" size="4" value="0">';
-	  print $html->select_weight_units("weight_units");
-	  print '</td></tr>';
-	}
-      
-      // Note (invisible sur facture, propales...)
-      print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-	{
-	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	  $doleditor=new DolEditor('note','',200,'dolibarr_notes','',false);
-	  $doleditor->Create();
-	}
-      else
-	{
-	  print '<textarea name="note" rows="8" cols="70">';
-	  print '</textarea>';
-	}
-      print "</td></tr>";
-      
-      print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
-      print '</table>';
-      print '</form>';
-    }
-  else
-    {
-      //RODO
-      $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
-      $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-      $smarty->assign('tva_taux_value', $html->tva_taux_value);
-      $smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
-      $smarty->display($_GET["canvas"].'-create.tpl');
-    }
 }
 
 /**
- *
- * Fiche produit
- *
- */
+*
+* Fiche produit
+*
+*/
 if ($_GET["id"] || $_GET["ref"])
 {
-  $product = new Product($db);
+	$product = new Product($db);
 
-  if ($_GET["ref"])
-    {
-      $result = $product->fetch('',$_GET["ref"]);
-      $_GET["id"] = $product->id;
-    }
-  elseif ($_GET["id"]) 
-    {
-      $result = $product->fetch($_GET["id"]);
-    }
-  
-  // Gestion des produits specifiques
-  if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
-    {
-      $class = 'Product'.ucfirst($product->canvas);
-      include_once('canvas/product.'.$product->canvas.'.class.php');
-
-      $product = new $class($db);
-      
-      $result = $product->FetchCanvas($_GET["id"]);
-      
-      $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
-      
-      $product->assign_values($smarty);     
-    }
-  else
-    {
-      $product->canvas = '';
-    }
-  // END TODO RODO FINISH THIS PART
-  
-  llxHeader("","",$langs->trans("CardProduct".$product->type));
-  
-  if ( $result )
-    {      
-      if ($_GET["action"] <> 'edit')
-	{	  
-	  $head=product_prepare_head($product);
-	  $titre=$langs->trans("CardProduct".$product->type);
-	  dolibarr_fiche_head($head, 'card', $titre);
-	  print "\n<!-- CUT HERE -->\n";	  
-	  // Confirmation de la suppression de la facture
-	  if ($_GET["action"] == 'delete')
-            {
-	      $html = new Form($db);
-	      $html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
-	      print "<br />\n";
-            }
-
-	  print($mesg);
-	  	  
-	  $product->load_previous_next_ref();
-	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-	}
-      if ($_GET["action"] <> 'edit' && $product->canvas <> '')
-        {
-	  /*
-	   *  Smarty en mode visu
-	   */
-	  $smarty->assign('fiche_cursor_prev',$previous_ref);
-	  $smarty->assign('fiche_cursor_next',$next_ref);
-
-	  // Photo
-	  //$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-	  	  
-	  $smarty->display($product->canvas.'-view.tpl');
-	  	  
-	  print "</div>\n<!-- CUT HERE -->\n";
-        }
- 
-        if ($_GET["action"] <> 'edit' && $product->canvas == '')
-        {
-	  /*
-	   *  En mode visu
-	   */
-	  print '<table class="border" width="100%"><tr>';	  
-	  	  
-	  // Reference
-	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
-	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	  print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
-	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-	  print '</td>';
-	  
-
-	  $nblignes=6;
-	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-	  if ($product->type == 1) $nblignes++;
-	  if ($product->is_photo_available($conf->produit->dir_output))
-            {
-	      // Photo
-	      print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-	      $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-	      print '</td>';
-            }	  
-	  print '</tr>';
-	  
-	  // Libelle
-	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
-	  
-	  // MultiPrix
-	  if($conf->global->PRODUIT_MULTIPRICES == 1)
-	    {
-	      print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td>'.price($product->price).'</td>';
-	      print '</tr>';
-	      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-		{
-		  print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
-		  print '</tr>';
-		}
-	    }
-	  // Prix
-	  else
-	    {
-	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
-	      print '</tr>';
-	    }	  
-	  // Statut
-	  print '<tr><td>'.$langs->trans("Status").'</td><td>';
-	  print $product->getLibStatut(2);
-	  print '</td></tr>';
-	  
-	  // TVA	  
-	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
-	  
-	  // Stock
-	  if ($product->type == 0 && $conf->stock->enabled)
-            {
-	      print '<tr><td>'.$langs->trans("Stock").'</td>';
-	      if ($product->no_stock)
-                {
-		  print "<td>".$langs->trans("NoStockDefined");
-                }
-	      else
-                {
-		  if ($product->stock_reel <= $product->seuil_stock_alerte)
-                    {
-		      print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
-                    }
-		  else
-                    {
-		      print "<td>".$product->stock_reel;
-                    }
-                }
-	      print '</td></tr>';
-            }
-	  
-            // Description
-	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
-	  
-	  // Durée
-	  if ($product->type == 1)
-            {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';	      
-	      if ($product->duration_value > 1)
-                {
-		  $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-                }
-	      else {
-		$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-	      }
-	      print $langs->trans($dur[$product->duration_unit])."&nbsp;";
-	      
-	      print '</td></tr>';
-            }
-	  else
-	    {
-	      print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	      print $product->weight." ";
-	      print weight_units_string($product->weight_units);
-	      print "</td></tr>\n";
-	    }	  
-	  // Note
-	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';	  
-	  print "</table>\n";	  
-	  print "</div>\n<!-- CUT HERE -->\n";
-        }
-    }
-    
-    /*
-     * Fiche en mode edition
-     */
-    if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
-      {
-        print_fiche_titre($langs->trans('Edit').' '.$types[$product->type].' : '.$product->ref, "");
-
-        if ($mesg) {
-            print '<br><div class="error">'.$mesg.'</div><br>';
-        }
-
-	if ( $product->canvas == '')
-	  {
-	    print "<!-- CUT HERE -->\n";
-	    print "<form action=\"fiche.php\" method=\"post\">\n";
-	    print '<input type="hidden" name="action" value="update">';
-	    print '<input type="hidden" name="id" value="'.$product->id.'">';
-	    print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
-	    print '<table class="border" width="100%">';
-	    print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
-	    print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
-
-        print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
-        print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
-        print '</td></tr>';
-        print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-        print '<select class="flat" name="statut">';
-        if ($product->status)
-	  {
-            print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
-            print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
-	  }
-        else
-	  {
-            print '<option value="1">'.$langs->trans("OnSell").'</option>';
-            print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
-	  }
-        print '</td></tr>';
-        if ($product->type == 0 && $conf->stock->enabled)
-	  {
-            print "<tr>".'<td>Seuil stock</td><td colspan="2">';
-            print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
-            print '</td></tr>';
-	  }
-        else
-	  {
-	  print '<input name="seuil_stock_alerte" type="hidden" value="0">';
-        }
-	
-    	// Description (utilisé dans facture, propale...)
-        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
-        print "\n";
-        if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-        {
-	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	  $doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
-	  $doleditor->Create();
-        }
-        else
-        {
-	  print '<textarea name="desc" rows="4" cols="90">';
-	  print $product->description;
-	  print "</textarea>";
-        }
-       	print "</td></tr>";
-        print "\n";
-
-        if ($product->type == 1)
-	  {
-            print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
-            print '&nbsp; ';
-            print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
-            print '&nbsp; ';
-            print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
-            print '&nbsp; ';
-            print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
-            print '&nbsp; ';
-            print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
-
-            print '</td></tr>';
-        }
-      else
+	if ($_GET["ref"])
 	{
-	  // Le poids ne concerne que les produits et pas les services
-	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	  print '<input name="weight" size="5" value="'.$product->weight.'">';
-	  print $html->select_weight_units("weight_units",$product->weight_units);
-	  print '</td></tr>';
+		$result = $product->fetch('',$_GET["ref"]);
+		$_GET["id"] = $product->id;
+	}
+	elseif ($_GET["id"])
+	{
+		$result = $product->fetch($_GET["id"]);
 	}
 
-        // Note
-        print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-	  {
-	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-	    $doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);
-	    $doleditor->Create();
-	  }
-        else
-	  {
-	    print '<textarea name="note" rows="8" cols="70">';
-	    print $product->note;
-	    print "</textarea>";
-	  }
-	print "</td></tr>";
-        
-        print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-        print '</table>';
-        print '</form>';
-	print "<!-- CUT HERE -->\n";
-	  }
+	// Gestion des produits specifiques
+	if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+	{
+		$class = 'Product'.ucfirst($product->canvas);
+		include_once('canvas/product.'.$product->canvas.'.class.php');
+
+		$product = new $class($db);
+
+		$result = $product->FetchCanvas($_GET["id"]);
+
+		$smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
+
+		$product->assign_values($smarty);
+	}
 	else
-	  {
-	    $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
-	    $smarty->assign('tva_taux_value', $html->tva_taux_value);
-	    $smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
-	    $smarty->display($product->canvas.'-edit.tpl');
-	  }
-      }
+	{
+		$product->canvas = '';
+	}
+	// END TODO RODO FINISH THIS PART
+
+	llxHeader("","",$langs->trans("CardProduct".$product->type));
+
+	if ( $result )
+	{
+		if ($_GET["action"] <> 'edit')
+		{
+			$head=product_prepare_head($product);
+			$titre=$langs->trans("CardProduct".$product->type);
+			dolibarr_fiche_head($head, 'card', $titre);
+			print "\n<!-- CUT HERE -->\n";
+			// Confirmation de la suppression de la facture
+			if ($_GET["action"] == 'delete')
+			{
+				$html = new Form($db);
+				$html->form_confirm("fiche.php?id=".$product->id,$langs->trans("DeleteProduct"),$langs->trans("ConfirmDeleteProduct"),"confirm_delete");
+				print "<br />\n";
+			}
+
+			print($mesg);
+
+			$product->load_previous_next_ref();
+			$previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
+			$next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+		}
+		if ($_GET["action"] <> 'edit' && $product->canvas <> '')
+		{
+			/*
+			*  Smarty en mode visu
+			*/
+			$smarty->assign('fiche_cursor_prev',$previous_ref);
+			$smarty->assign('fiche_cursor_next',$next_ref);
+
+			// Photo
+			//$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+
+			$smarty->display($product->canvas.'-view.tpl');
+
+			print "</div>\n<!-- CUT HERE -->\n";
+		}
+
+		if ($_GET["action"] <> 'edit' && $product->canvas == '')
+		{
+			/*
+			*  En mode visu
+			*/
+			print '<table class="border" width="100%"><tr>';
+
+			// Reference
+			print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
+			if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+			print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+			if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+			print '</td>';
+
+
+			$nblignes=6;
+			if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
+			if ($product->type == 1) $nblignes++;
+			if ($product->is_photo_available($conf->produit->dir_output))
+			{
+				// Photo
+				print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
+				$nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
+				print '</td>';
+			}
+			print '</tr>';
+
+			// Libelle
+			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td></tr>';
+
+			// MultiPrix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+				print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td>'.price($product->price).'</td>';
+				print '</tr>';
+				for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+				{
+					print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
+					print '</tr>';
+				}
+			}
+			// Prix
+			else
+			{
+				print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
+				print '</tr>';
+			}
+			// Statut
+			print '<tr><td>'.$langs->trans("Status").'</td><td>';
+			print $product->getLibStatut(2);
+			print '</td></tr>';
+
+			// TVA
+			print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
+
+			// Stock
+			if ($product->type == 0 && $conf->stock->enabled)
+			{
+				print '<tr><td>'.$langs->trans("Stock").'</td>';
+				if ($product->no_stock)
+				{
+					print "<td>".$langs->trans("NoStockDefined");
+				}
+				else
+				{
+					if ($product->stock_reel <= $product->seuil_stock_alerte)
+					{
+						print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+					}
+					else
+					{
+						print "<td>".$product->stock_reel;
+					}
+				}
+				print '</td></tr>';
+			}
+
+			// Description
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
+
+			// Durée
+			if ($product->type == 1)
+			{
+				print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
+				if ($product->duration_value > 1)
+				{
+					$dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+				}
+				else {
+					$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+				}
+				print $langs->trans($dur[$product->duration_unit])."&nbsp;";
+
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				if ($product->weight != '')
+				{
+					print $product->weight." ".weight_units_string($product->weight_units);
+				}
+				else
+				{
+					print '&nbsp;';
+				}
+				print "</td></tr>\n";
+			}
+			// Note
+			print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
+			print "</table>\n";
+			print "</div>\n<!-- CUT HERE -->\n";
+		}
+	}
+
+	/*
+	* Fiche en mode edition
+	*/
+	if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
+	{
+		print_fiche_titre($langs->trans('Edit').' '.$types[$product->type].' : '.$product->ref, "");
+
+		if ($mesg) {
+			print '<br><div class="error">'.$mesg.'</div><br>';
+		}
+
+		if ( $product->canvas == '')
+		{
+			print "<!-- CUT HERE -->\n";
+			print "<form action=\"fiche.php\" method=\"post\">\n";
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="id" value="'.$product->id.'">';
+			print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
+			print '<table class="border" width="100%">';
+			print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+			print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
+
+			print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
+			print $html->select_tva("tva_tx", $product->tva_tx, $mysoc, '', $product->tva_tx);
+			print '</td></tr>';
+			print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+			print '<select class="flat" name="statut">';
+			if ($product->status)
+			{
+				print '<option value="1" selected="true">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0">'.$langs->trans("NotOnSell").'</option>';
+			}
+			else
+			{
+				print '<option value="1">'.$langs->trans("OnSell").'</option>';
+				print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
+			}
+			print '</td></tr>';
+			if ($product->type == 0 && $conf->stock->enabled)
+			{
+				print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+				print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
+				print '</td></tr>';
+			}
+			else
+			{
+				print '<input name="seuil_stock_alerte" type="hidden" value="0">';
+			}
+
+			// Description (utilisé dans facture, propale...)
+			print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
+			print "\n";
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea name="desc" rows="4" cols="90">';
+				print $product->description;
+				print "</textarea>";
+			}
+			print "</td></tr>";
+			print "\n";
+
+			if ($product->type == 1)
+			{
+				print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="w"'.($product->duration_unit=='w'?' checked':'').'>'.$langs->trans("Week");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="m"'.($product->duration_unit=='m'?' checked':'').'>'.$langs->trans("Month");
+				print '&nbsp; ';
+				print '<input name="duration_unit" type="radio" value="y"'.($product->duration_unit=='y'?' checked':'').'>'.$langs->trans("Year");
+
+				print '</td></tr>';
+			}
+			else
+			{
+				// Le poids ne concerne que les produits et pas les services
+				print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+				print '<input name="weight" size="5" value="'.$product->weight.'">';
+				print $html->select_weight_units("weight_units",$product->weight_units);
+				print '</td></tr>';
+			}
+
+			// Note
+			print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea name="note" rows="8" cols="70">';
+				print $product->note;
+				print "</textarea>";
+			}
+			print "</td></tr>";
+
+			print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+			print '</table>';
+			print '</form>';
+			print "<!-- CUT HERE -->\n";
+		}
+		else
+		{
+			$null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
+			$smarty->assign('tva_taux_value', $html->tva_taux_value);
+			$smarty->assign('tva_taux_libelle', $html->tva_taux_libelle);
+			$smarty->display($product->canvas.'-edit.tpl');
+		}
+	}
 }
 
 
@@ -849,34 +855,34 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '')
 {
-    if ( $user->rights->produit->creer)
-    {
-        print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+	if ( $user->rights->produit->creer)
+	{
+		print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
-        print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
-    }
+		print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+	}
 
-/*
-    if ($product->type == 0 && $user->rights->commande->creer)
-    {
-    	$langs->load('orders');
-        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-        print $langs->trans("CreateCustomerOrder").'</a>';
-    }
+	/*
+	if ($product->type == 0 && $user->rights->commande->creer)
+	{
+	$langs->load('orders');
+	print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+	print $langs->trans("CreateCustomerOrder").'</a>';
+	}
 
-    if ($product->type == 0 && $user->rights->fournisseur->commande->creer)
-    {
-    	$langs->load('orders');
-        print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
-        print $langs->trans("CreateSupplierOrder").'</a>';
-    }
-*/
+	if ($product->type == 0 && $user->rights->fournisseur->commande->creer)
+	{
+	$langs->load('orders');
+	print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+	print $langs->trans("CreateSupplierOrder").'</a>';
+	}
+	*/
 
-    $product_is_used = $product->verif_prod_use($product->id);
-    if ($user->rights->produit->supprimer && ! $product_is_used)
-    {
-	      print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
-    }
+	$product_is_used = $product->verif_prod_use($product->id);
+	if ($user->rights->produit->supprimer && ! $product_is_used)
+	{
+		print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
+	}
 
 }
 
@@ -1247,7 +1253,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	}
 
 	print '</table>';
-	
+
 	print '<br>';
 }
 
