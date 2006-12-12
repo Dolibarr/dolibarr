@@ -334,9 +334,9 @@ class Contrat extends CommonObject
         $this->lignes = array();
     
         // Selectionne les lignes contrats liées à un produit
-        $sql = "SELECT p.rowid, p.label, p.description as product_desc, p.ref,";
-        $sql.= " d.description, d.statut, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
-        $sql.= " d.info_bits,";
+        $sql = "SELECT p.label, p.description as product_desc, p.ref,";
+        $sql.= " d.rowid, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
+        $sql.= " d.info_bits, d.fk_product";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
@@ -356,17 +356,18 @@ class Contrat extends CommonObject
                 $ligne                 = new ContratLigne();
                 $ligne->id             = $objp->rowid;
                 $ligne->desc           = $objp->description;  // Description ligne
-                $ligne->libelle        = $objp->label;        // Label produit
-                $ligne->product_desc   = $objp->product_desc; // Description produit
                 $ligne->qty            = $objp->qty;
-                $ligne->ref            = $objp->ref;
                 $ligne->tva_tx         = $objp->tva_tx;
                 $ligne->subprice       = $objp->subprice;
                 $ligne->statut 		   = $objp->statut;
                 $ligne->remise_percent = $objp->remise_percent;
                 $ligne->price          = $objp->price;
-                $ligne->fk_product     = $objp->rowid;
+                $ligne->fk_product     = $objp->fk_product;
                 $ligne->info_bits      = $objp->info_bits;
+
+                $ligne->ref            = $objp->ref;
+                $ligne->libelle        = $objp->label;        // Label produit
+                $ligne->product_desc   = $objp->product_desc; // Description produit
                     
                 $ligne->date_debut_prevue = $objp->date_ouverture_prevue;
                 $ligne->date_debut_reel   = $objp->date_ouverture;
