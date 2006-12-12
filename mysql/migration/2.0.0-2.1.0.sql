@@ -65,7 +65,7 @@ alter table llx_product add weight float DEFAULT NULL;
 alter table llx_product add weight_units tinyint DEFAULT NULL;
 alter table llx_product add canvas varchar(15) DEFAULT '';
 
-ALTER TABLE llx_stock_mouvement ADD COLUMN price FLOAT DEFAULT 0;
+ALTER TABLE llx_stock_mouvement ADD COLUMN price FLOAT(13,4) DEFAULT 0;
 
 insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_facture, fdm, nbjour) values (6,'PROFORMA',    6,1, 'Proforma','Réglement avant livraison',0,0);
 
