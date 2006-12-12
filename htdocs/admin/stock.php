@@ -20,10 +20,10 @@
  */
 
 /**
-   \file       htdocs/admin/stock.php
-   \ingroup    stock
+ \file       htdocs/admin/stock.php
+  \ingroup    stock
    \brief      Page d'administration/configuration du module gestion de stock
-   \version    $Revision$
+    \version    $Revision$
 */
 require("./pre.inc.php");
 
@@ -32,7 +32,6 @@ $langs->load("stocks");
 
 if (!$user->admin)
   accessforbidden();
-
 
 /*
 * Actions
@@ -46,6 +45,12 @@ if ($_POST["action"] == 'stock_userstock')
 elseif ($_POST["action"] == 'stock_userstock_autocreate')
 {
   dolibarr_set_const($db, "STOCK_USERSTOCK_AUTOCREATE", $_POST["stock_userstock_autocreate"]);
+  Header("Location: stock.php");
+  exit;
+}
+elseif ($_POST["action"] == 'stock_bill')
+{
+  dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", $_POST["stock_bill"]);
   Header("Location: stock.php");
   exit;
 }
@@ -71,24 +76,17 @@ print "  </tr>\n";
 // sousproduits activation/desactivation
 $var=!$var;
 
-
 print "<tr ".$bc[$var].">";
-
 print '<td width="60%">'.$langs->trans("UserWarehouse").'</td>';
 print '<td width="160" align="right">';
 print "<form method=\"post\" action=\"stock.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"stock_userstock\">";
 print $html->selectyesno("stock_userstock",$conf->global->STOCK_USERSTOCK,1);
-
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print '</form>';
-print "</td>";
-
-print '</tr>';
+print "</form>\n</td>\n</tr>\n";
 
 if ($conf->global->STOCK_USERSTOCK == 1)
 {
-  // utilisation formulaire Ajax sur choix produit
   $var=!$var;
 
   print "<tr ".$bc[$var].">";
@@ -104,6 +102,16 @@ if ($conf->global->STOCK_USERSTOCK == 1)
   print "</td>\n";   
   print "</tr>\n";
 }
+$var=!$var;
+
+print "<tr ".$bc[$var].">";
+print '<td width="60%">'.$langs->trans("DeStockReStockOnBill").'</td>';
+print '<td width="160" align="right">';
+print "<form method=\"post\" action=\"stock.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"stock_bill\">";
+print $html->selectyesno("stock_bill",$conf->global->STOCK_CALCULATE_ON_BILL,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</form>\n</td>\n</tr>\n";
 
 print '</table>';
 $db->close();
