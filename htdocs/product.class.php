@@ -220,6 +220,7 @@ class Product
     $this->description = trim($this->description);
     $this->note = trim($this->note);
     $this->new_weight = trim($this->new_weight);
+    $this->new_weight_units = trim($this->new_weight_units);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
     $sql .= " SET label = '" . addslashes($this->libelle) ."'";
@@ -227,6 +228,7 @@ class Product
     $sql .= ",tva_tx = '" . $this->tva_tx."'";
     $sql .= ",envente = " . $this->status;
     $sql .= ",weight = '" . $this->new_weight."'";
+    $sql .= ",weight_units = '" . $this->new_weight_units."'";
     $sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
     $sql .= ",description = '" . addslashes($this->description) ."'";
     $sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
