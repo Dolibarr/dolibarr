@@ -188,188 +188,189 @@ class Commande extends CommonObject
     }
     
     
-	/**   	\brief      Valide la commande
-	 *    	\param      user        Utilisateur qui valide
-	 *		\return		int			<=0 si ko, >0 si ok
-	 */
-	function valid($user)
-	{
-		global $conf;
-
-		if ($user->rights->commande->valider)
-		{
-			$this->db->begin();
-			
-			// Definition du nom de module de numerotation de commande
-			$soc = new Societe($this->db);
-			$soc->fetch($this->socid);
-			$num=$this->getNextNumRef($soc);
-
-			// Classe la société rattachée comme client
-  			$result=$soc->set_as_client();
-
-			// on vérifie si la commande est en numérotation provisoire
-			$comref = substr($this->ref, 1, 4);
-			if ($comref == 'PROV')
-			{
-				$num = $this->getNextNumRef($soc);
-			}
-			else
-			{
-				$num = $this->ref;
-			}
-
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
-
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				// On efface le répertoire de pdf provisoire
-				$comref = sanitize_string($this->ref);
-				if ($conf->commande->dir_output)
-				{
-					$dir = $conf->commande->dir_output . "/" . $comref ;
-					$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-					if (file_exists($file))
-					{
-						commande_delete_preview($this->db, $this->id, $this->ref);
-
-						if (!dol_delete_file($file))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-			                $this->db->rollback();
-							return 0;
-						}
-					}
-					if (file_exists($dir))
-					{
-						if (!dol_delete_dir($dir))
-						{
-							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-			                $this->db->rollback();
-							return 0;
-						}
-					}
-				}
-
-				// Appel des triggers
-				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-				$interface=new Interfaces($this->db);
-				$result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
-				// Fin appel triggers
-
-                $this->db->commit();
-                return $this->id;
-			}
-			else
-			{
-                $this->db->rollback();
-				$this->error=$this->db->error();
-				return -1;
-			}
-		}
-
-		$this->error='Autorisation insuffisante';
-		return -1;
-	}
+  /**
+   *  \brief   Valide la commande
+   *  \param   user     Utilisateur qui valide
+   *  \return  int	<=0 si ko, >0 si ok
+   */
+  function valid($user)
+  {
+    global $conf;
+    
+    if ($user->rights->commande->valider)
+      {
+	$this->db->begin();
 	
-	/**
+	// Definition du nom de module de numerotation de commande
+	$soc = new Societe($this->db);
+	$soc->fetch($this->socid);
+	$num=$this->getNextNumRef($soc);
+	
+	// Classe la société rattachée comme client
+	$result=$soc->set_as_client();
+	
+	// on vérifie si la commande est en numérotation provisoire
+	$comref = substr($this->ref, 1, 4);
+	if ($comref == 'PROV')
+	  {
+	    $num = $this->getNextNumRef($soc);
+	  }
+	else
+	  {
+	    $num = $this->ref;
+	  }
+	
+	$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
+	$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
+	
+	$resql=$this->db->query($sql);
+	if ($resql)
+	  {
+	    // On efface le répertoire de pdf provisoire
+	    $comref = sanitize_string($this->ref);
+	    if ($conf->commande->dir_output)
+	      {
+		$dir = $conf->commande->dir_output . "/" . $comref ;
+		$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+		if (file_exists($file))
+		  {
+		    commande_delete_preview($this->db, $this->id, $this->ref);
+		    
+		    if (!dol_delete_file($file))
+		      {
+			$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+			$this->db->rollback();
+			return 0;
+		      }
+		  }
+		if (file_exists($dir))
+		  {
+		    if (!dol_delete_dir($dir))
+		      {
+			$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+			$this->db->rollback();
+			return 0;
+		      }
+		  }
+	      }
+
+	    // Appel des triggers
+	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	    $interface=new Interfaces($this->db);
+	    $result=$interface->run_triggers('ORDER_VALIDATE',$this,$user,$langs,$conf);
+	    // Fin appel triggers
+	    
+	    $this->db->commit();
+	    return $this->id;
+	  }
+	else
+	  {
+	    $this->db->rollback();
+	    $this->error=$this->db->error();
+	    return -1;
+	  }
+      }
+    
+    $this->error='Autorisation insuffisante';
+    return -1;
+  }
+  
+  /**
    *
    *
    */
-    function set_draft($userid)
-    {
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
+  function set_draft($userid)
+  {
+    $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
     
-        $sql .= " WHERE rowid = $this->id;";
+    $sql .= " WHERE rowid = $this->id;";
     
-        if ($this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-        }
-    }
-	
+    if ($this->db->query($sql) )
+      {
+	return 1;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+      }
+  }
+  
   /**
    *    \brief      Cloture la commande
    *    \param      user        Objet utilisateur qui cloture
    *    \return     int         <0 si ko, >0 si ok
    */
-	function cloture($user)
-	{
-		global $conf;
-		if ($user->rights->commande->valider)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-			$sql.= ' SET fk_statut = 3,';
-			$sql.= ' fk_user_cloture = '.$user->id.',';
-			$sql.= ' date_cloture = now()';
-			$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
-
-			if ($this->db->query($sql) )
-			{
-				if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1)
-							{
-								require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-								for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
-								{
-										$prod = new Product($this->db, $this->lignes[$i]->fk_product);
-										$prod -> get_sousproduits_arbo ();
-										$prods_arbo = $prod->get_each_prod();
-										if(sizeof($prods_arbo) > 0)
-										{
-											foreach($prods_arbo as $key => $value)
-											{
-													// on décompte le stock de tous les sousproduits
-													$mouvS = new MouvementStock($this->db);
-													$entrepot_id = "1";
-                            						$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
-													
-											}
-										}
-										// on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
-										// $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
-									}
-							
-							}
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return -1;
-			}
-		}
-	}
+  function cloture($user)
+  {
+    global $conf;
+    if ($user->rights->commande->valider)
+      {
+	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+	$sql.= ' SET fk_statut = 3,';
+	$sql.= ' fk_user_cloture = '.$user->id.',';
+	$sql.= ' date_cloture = now()';
+	$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+	
+	if ($this->db->query($sql) )
+	  {
+	    if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1)
+	      {
+		require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+		for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+		  {
+		    $prod = new Product($this->db, $this->lignes[$i]->fk_product);
+		    $prod -> get_sousproduits_arbo ();
+		    $prods_arbo = $prod->get_each_prod();
+		    if(sizeof($prods_arbo) > 0)
+		      {
+			foreach($prods_arbo as $key => $value)
+			  {
+			    // on décompte le stock de tous les sousproduits
+			    $mouvS = new MouvementStock($this->db);
+			    $entrepot_id = "1";
+			    $result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+			    
+			  }
+		      }
+		    // on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
+		    // $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+		  }
+		
+	      }
+	    return 1;
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	    return -1;
+	  }
+      }
+  }
   /**
    * Annule la commande
    *
    */
-	function cancel($user)
-	{
-		if ($user->rights->commande->valider)
-		{
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
-			$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
-
-			if ($this->db->query($sql) )
-			{
-				return 1;
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-			}
-		}
-	}
-
+  function cancel($user)
+  {
+    if ($user->rights->commande->valider)
+      {
+	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
+	$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
+	
+	if ($this->db->query($sql) )
+	  {
+	    return 1;
+	  }
+	else
+	  {
+	    dolibarr_print_error($this->db);
+	  }
+      }
+  }
+  
   /**
-   * 		\brief		Créé la commande
-   *		\param		user		Objet utilisateur qui crée
+   *  \brief	Créé la commande
+   *  \param	user Objet utilisateur qui crée
    */
   function create($user)
   {
@@ -421,88 +422,88 @@ class Commande extends CommonObject
     if ($resql)
       {
 	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'commande');
-
-            if ($this->id)
-            {
-                /*
-                 *  Insertion du detail des produits dans la base
-                 */
-				for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
-				{
-					$resql = $this->addline(
-						$this->id,
-						$this->lines[$i]->desc,
-						$this->lines[$i]->subprice,
-						$this->lines[$i]->qty,
-						$this->lines[$i]->tva_tx,
-						$this->lines[$i]->fk_product,
-						$this->lines[$i]->remise_percent
-						);
-
-					if ($resql < 0)
-					{
-						$this->error=$this->db->error;
-						dolibarr_print_error($this->db);
-						break;
-					}
-				}
-				
-				// Mise a jour ref
-				$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
-				if ($this->db->query($sql))
-				{
-					if ($this->id && $this->propale_id)
-					{
-						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
-						$this->db->query($sql);
-					  
-					  // On récupère les différents contact interne et externe
-					  $prop = New Propal($this->db, $this->socid, $this->propale_id);
-					  
-					  // On récupère le commercial suivi propale
-						$this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
-						
-						if ($this->userid)
-						{
-							//On passe le commercial suivi propale en commercial suivi commande
-							$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
-						}
-					  
-					  // On récupère le contact client suivi propale
-						$this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
-						
-						if ($this->contactid)
-						{
-							//On passe le contact client suivi propale en contact client suivi commande
-							$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
-						}
-					}
-			    	
-	                // Appel des triggers
-	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	                $interface=new Interfaces($this->db);
-	                $result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
-	                // Fin appel triggers
-
-			    	$this->db->commit();
-					return $this->id;
-				}
-				else
-				{
-			        $this->db->rollback();
-					return -1;
-				}
-			}
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-	        $this->db->rollback();
-			return -1;
-		}
-	}
-
-
+	
+	if ($this->id)
+	  {
+	    /*
+	     *  Insertion du detail des produits dans la base
+	     */
+	    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
+	      {
+		$resql = $this->addline(
+					$this->id,
+					$this->lines[$i]->desc,
+					$this->lines[$i]->subprice,
+					$this->lines[$i]->qty,
+					$this->lines[$i]->tva_tx,
+					$this->lines[$i]->fk_product,
+					$this->lines[$i]->remise_percent
+					);
+		
+		if ($resql < 0)
+		  {
+		    $this->error=$this->db->error;
+		    dolibarr_print_error($this->db);
+		    break;
+		  }
+	      }
+	    
+	    // Mise a jour ref
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
+	    if ($this->db->query($sql))
+	      {
+		if ($this->id && $this->propale_id)
+		  {
+		    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
+		    $this->db->query($sql);
+		    
+		    // On récupère les différents contact interne et externe
+		    $prop = New Propal($this->db, $this->socid, $this->propale_id);
+		    
+		    // On récupère le commercial suivi propale
+		    $this->userid = $prop->getIdcontact('internal', 'SALESREPFOLL');
+		    
+		    if ($this->userid)
+		      {
+			//On passe le commercial suivi propale en commercial suivi commande
+			$this->add_contact($this->userid[0], 'SALESREPFOLL', 'internal');
+		      }
+		    
+		    // On récupère le contact client suivi propale
+		    $this->contactid = $prop->getIdcontact('external', 'CUSTOMER');
+		    
+		    if ($this->contactid)
+		      {
+			//On passe le contact client suivi propale en contact client suivi commande
+			$this->add_contact($this->contactid[0], 'CUSTOMER', 'external');
+		      }
+		  }
+		
+		// Appel des triggers
+		include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		$interface=new Interfaces($this->db);
+		$result=$interface->run_triggers('ORDER_CREATE',$this,$user,$langs,$conf);
+		// Fin appel triggers
+		
+		$this->db->commit();
+		return $this->id;
+	      }
+	    else
+	      {
+		$this->db->rollback();
+		return -1;
+	      }
+	  }
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+	$this->db->rollback();
+	return -1;
+      }
+  }
+  
+  
   /**
    *    	\brief     	Ajout d'un produit dans la commande, en base
    * 		\param    	commandeid      id de la commande
@@ -1181,9 +1182,10 @@ class Commande extends CommonObject
 	}
   
   /**
-   *    \brief      Supprime une ligne de la commande
-   *    \param      idligne     Id de la ligne à supprimer
-   *    \return     int         >0 si ok, <0 si ko
+   *  \brief      Supprime une ligne de la commande
+   *  \param      idligne     Id de la ligne à supprimer
+   *  \return     int         >0 si ok, <0 si ko
+   *  \todo ajouter une transaction SQL
    */
   function delete_line($idligne)
   {
@@ -1205,16 +1207,14 @@ class Commande extends CommonObject
 	    $this->db->free($result);
 	  }
 
-	$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid = '$idligne';";
-	if ($this->db->query($sql) )
-	  {
-	    $this->update_price();
-	    return 1;
-	  }
-	else
-	  {
-	    return -1;
-	  }
+	$Ligne = new CommandeLigne($this->db);
+	$Ligne->id = $idligne;
+	$Ligne->fk_commande = $this->id; // On en a besoin dans les triggers
+	$result = $Ligne->Delete();
+
+	$this->update_price();
+
+	return $result;
       }
   }
   
@@ -2092,9 +2092,9 @@ class Commande extends CommonObject
 
 
 /**
-   \class      CommandeLigne
-   \brief      Classe de gestion des lignes de commande
-*/
+ *  \class      CommandeLigne
+ *  \brief      Classe de gestion des lignes de commande
+ */
 
 class CommandeLigne
 {
@@ -2173,9 +2173,9 @@ class CommandeLigne
 	$this->coef           = $objp->coef;
 	$this->rang           = $objp->rang;
 	
-	$this->ref			  = $objp->product_ref;
-	$this->product_libelle= $objp->product_libelle;
-	$this->product_desc	  = $objp->product_desc;
+	$this->ref	       = $objp->product_ref;
+	$this->product_libelle = $objp->product_libelle;
+	$this->product_desc    = $objp->product_desc;
 	
 	$this->db->free($result);
       }
@@ -2184,13 +2184,42 @@ class CommandeLigne
 	dolibarr_print_error($this->db);
       }
   }
-  
+
+  /**
+   *    \brief     	Supprime la ligne de commande en base
+   *	\return		int <0 si ko, 0 si ok
+   */
+  function Delete()
+  {
+    global $langs, $conf;
+
+    dolibarr_syslog("CommandeLigne::Delete id=".$this->id);
+
+    $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
+    if ($this->db->query($sql) )
+      {
+	// Appel des triggers
+	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	$interface=new Interfaces($this->db);
+	$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
+	// Fin appel triggers
+
+	return 0;
+      }
+    else
+      {
+	dolibarr_syslog("CommandeLigne::Delete id=".$this->id." ERROR SQL $sql");
+	return -1;
+      }   
+  }
   /**
    *    \brief     	Insère l'objet ligne de commande en base
    *	\return		int		<0 si ko, >0 si ok
    */
   function insert()
   {
+    global $langs, $conf;
+
     dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
     $this->db->begin();
     
@@ -2250,10 +2279,15 @@ class CommandeLigne
 	$product->ajust_stock_commande($this->qty, 0);
       }
 
- 
     $resql=$this->db->query($sql);
     if ($resql)
       {
+	// Appel des triggers
+	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	$interface=new Interfaces($this->db);
+	$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
+	// Fin appel triggers
+
 	$this->db->commit();
 	return 1;	
       }
