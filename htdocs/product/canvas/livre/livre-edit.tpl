@@ -64,7 +64,7 @@
  <tr>
   <td>Poids</td>
   <td colspan="3">
-   <input name="weight" size="5" value=""
+   <input name="weight" size="5" value="{$prod_weight}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">g
    <input name="weight_units" type="hidden" value="-3">
   </td>
