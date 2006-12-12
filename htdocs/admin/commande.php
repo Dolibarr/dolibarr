@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004	Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Sebastien Di Cintio		<sdicintio@ressource-toi.org>
- * Copyright (C) 2004      	Benoit Mortier			<benoit.mortier@opensides.be>
- * Copyright (C) 2004      	Andre Cianfarani		<acianfa@free.fr>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Andre Cianfarani <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,115 +24,115 @@
  */
 
 /**
-    	\file       htdocs/admin/commande.php
-		\ingroup    commande
-		\brief      Page d'administration-configuration du module Commande
-		\version    $Revision$
+   \file       htdocs/admin/commande.php
+   \ingroup    commande
+   \brief      Page d'administration-configuration du module Commande
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-
 
 $langs->load("admin");
 $langs->load("bills");
 $langs->load("other");
 $langs->load("orders");
 
-
 if (!$user->admin)
   accessforbidden();
-
 
 /*
  * Actions
  */
 if ($_GET["action"] == 'specimen')
 {
-	$modele=$_GET["module"];
-
-	$commande = new Commande($db);
-	$commande->initAsSpecimen();
-
-	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+  $modele=$_GET["module"];
+  
+  $commande = new Commande($db);
+  $commande->initAsSpecimen();
+  
+  // Charge le modele
+  $dir = DOL_DOCUMENT_ROOT . "/includes/modules/commande/";
+  $file = "pdf_".$modele.".modules.php";
+  if (file_exists($dir.$file))
+    {
+      $classname = "pdf_".$modele;
+      require_once($dir.$file);
+      
+      $obj = new $classname($db);
+      
+      if ($obj->write_pdf_file($commande) > 0)
 	{
-		$classname = "pdf_".$modele;
-		require_once($dir.$file);
-
-		$obj = new $classname($db);
-
-		if ($obj->write_pdf_file($commande) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
-			return;
-		}
+	  header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
+	  return;
 	}
+    }
 }
 
 if ($_GET["action"] == 'set')
 {
-	$type='order';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-    if ($db->query($sql))
+  $type='order';
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+  if ($db->query($sql))
     {
-
+      
     }
 }
 
 if ($_GET["action"] == 'del')
 {
-    $type='order';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
+  $type='order';
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+  $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+  if ($db->query($sql))
     {
-
+      
     }
 }
 
 if ($_GET["action"] == 'setdoc')
 {
-	$db->begin();
-	
-    if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"]))
+  $db->begin();
+  
+  if (dolibarr_set_const($db, "COMMANDE_ADDON_PDF",$_GET["value"]))
     {
-        $conf->global->COMMANDE_ADDON_PDF = $_GET["value"];
+      $conf->global->COMMANDE_ADDON_PDF = $_GET["value"];
     }
-
-    // On active le modele
-    $type='order';
-    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    $result1=$db->query($sql_del);
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
-    $result2=$db->query($sql);
-    if ($result1 && $result2) 
+  
+  // On active le modele
+  $type='order';
+  $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+  $sql_del .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+  $result1=$db->query($sql_del);
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom,type) VALUES ('".$_GET["value"]."','".$type."')";
+  $result2=$db->query($sql);
+  if ($result1 && $result2) 
     {
-		$db->commit();
+      $db->commit();
     }
-    else
+  else
     {
-    	$db->rollback();
+      $db->rollback();
     }
 }
 
 if ($_GET["action"] == 'setmod')
 {
-    // \todo Verifier si module numerotation choisi peut etre activé
-    // par appel methode canBeActivated
-
-	dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
+  // \todo Verifier si module numerotation choisi peut etre activé
+  // par appel methode canBeActivated
+  
+  dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
 }
 
 if ($_POST["action"] == 'sethidetreated')
 {
-    dolibarr_set_const($db, "COMMANDE_HIDE_TREATED",$_POST["hidetreated"]);
+  dolibarr_set_const($db, "COMMANDE_HIDE_TREATED",$_POST["hidetreated"]);
 }
 
-
+if ($_POST["action"] == 'deliverycostline')
+{
+  dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
+}
 
 /*
  * Affichage page
@@ -339,23 +339,38 @@ print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
-print '<td width="80">&nbsp;</td>';
+print '<td align="center" width="160">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
 // cacher les commandes classer facturées des listes
 $var=! $var;
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="sethidetreated">';
+
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("HideTreadedOrders");
-print '</td><td width="60" align="center">';
+print '</td><td width="160" align="center">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="sethidetreated">';
 print $html->selectyesno("hidetreated",$conf->global->COMMANDE_HIDE_TREATED,1);
-print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</form>\n";
 print "</td></tr>\n";
+
+
+// cacher les commandes classer facturées des listes
+$var=! $var;
+
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("AddDeliveryCostLine");
+print '</td><td width="160" align="center">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="deliverycostline">';
+print $html->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print '</form>';
+print "</td></tr>\n";
+
+
 
 print '</table>';
 
