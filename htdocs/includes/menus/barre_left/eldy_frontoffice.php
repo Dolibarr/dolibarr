@@ -168,14 +168,14 @@ class MenuLeft {
 						/*
 						$newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
 
-						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
+						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
 						$newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("List"), 1, $user->rights->societe->lire);
 
-						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
-						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
-						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
-						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
-						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&sortorder=desc&begin=&stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
+						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
+						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);
+						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=1", $langs->trans("LastProspectToContact"), 2, $user->rights->societe->lire);
+						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=2", $langs->trans("LastProspectContactInProcess"), 2, $user->rights->societe->lire);
+						if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=3", $langs->trans("LastProspectContactDone"), 2, $user->rights->societe->lire);
 
 						$newmenu->add_submenu(DOL_URL_ROOT."/comm/contact.php?leftmenu=prospects&amp;type=p", $langs->trans("Contacts"), 1, $user->rights->societe->lire);
 						*/
@@ -239,10 +239,10 @@ class MenuLeft {
 							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=contracts", $langs->trans("NewContract"), 1, $user->rights->contrat->creer);
 							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/liste.php?leftmenu=contracts", $langs->trans("List"), 1 ,$user->rights->contrat->lire);
 							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts", $langs->trans("MenuServices"), 1 ,$user->rights->contrat->lire);
-							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=0", $langs->trans("MenuInactiveServices"), 2 ,$user->rights->contrat->lire);
-							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4", $langs->trans("MenuRunningServices"), 2 ,$user->rights->contrat->lire);
-							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=4&filter=expired", $langs->trans("MenuExpiredServices"), 2 ,$user->rights->contrat->lire);
-							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&mode=5", $langs->trans("MenuClosedServices"), 2 ,$user->rights->contrat->lire);
+							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&amp;mode=0", $langs->trans("MenuInactiveServices"), 2 ,$user->rights->contrat->lire);
+							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&amp;mode=4", $langs->trans("MenuRunningServices"), 2 ,$user->rights->contrat->lire);
+							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&amp;mode=4&amp;filter=expired", $langs->trans("MenuExpiredServices"), 2 ,$user->rights->contrat->lire);
+							if ($leftmenu=="contracts") $newmenu->add_submenu(DOL_URL_ROOT."/contrat/services.php?leftmenu=contracts&amp;mode=5", $langs->trans("MenuClosedServices"), 2 ,$user->rights->contrat->lire);
 						}
 
 						// Interventions
@@ -278,7 +278,7 @@ class MenuLeft {
 								// Sécurité accés client
 								if ($user->societe_id == 0)
 								{
-									$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
+									$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"),1,$user->rights->societe->creer && $user->rights->fournisseur->lire);
 								}
 								$newmenu->add_submenu(DOL_URL_ROOT."/fourn/index.php?leftmenu=suppliers", $langs->trans("List"),1,$user->rights->societe->lire && $user->rights->fournisseur->lire);
 								if ($conf->societe->enabled)
@@ -309,10 +309,10 @@ class MenuLeft {
 								$newmenu->add(DOL_URL_ROOT."/compta/index.php?leftmenu=customers", $langs->trans("Customers"),0,$user->rights->societe->lire);
 								if ($user->societe_id == 0)
 								{
-									$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
+									$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"),1,$user->rights->societe->creer);
 								}
 								$newmenu->add(DOL_URL_ROOT."/compta/clients.php?leftmenu=customers", $langs->trans("List"),1,$user->rights->societe->lire);
-								$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
+								$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=customers&amp;type=c", $langs->trans("Contacts"),1,$user->rights->societe->lire);
 							}
 
 							// Factures
@@ -357,7 +357,7 @@ class MenuLeft {
 						if ($conf->commande->enabled )
 						{
 						$langs->load("orders");
-						if ($conf->facture->enabled) $newmenu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&status=3", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire);
+						if ($conf->facture->enabled) $newmenu->add(DOL_URL_ROOT."/compta/commande/liste.php?leftmenu=orders&amp;status=3", $langs->trans("MenuOrdersToBill"), 0, $user->rights->commande->lire);
 						//                  if ($leftmenu=="orders") $newmenu->add_submenu(DOL_URL_ROOT."/commande/", $langs->trans("StatusOrderToBill"), 1 ,$user->rights->commande->lire);
 						}
 						*/
@@ -366,7 +366,7 @@ class MenuLeft {
 						if ($conf->don->enabled)
 						{
 							$langs->load("donations");
-							$newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire);
+							$newmenu->add(DOL_URL_ROOT."/compta/dons/index.php?leftmenu=donations&amp;mainmenu=accountancy",$langs->trans("Donations"), 0, $user->rights->don->lire);
 							if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/fiche.php?action=create",$langs->trans("NewDonation"), 1, $user->rights->don->creer);
 							if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/liste.php",$langs->trans("List"), 1, $user->rights->don->lire);
 							if ($leftmenu=="donations") $newmenu->add_submenu(DOL_URL_ROOT."/compta/dons/stats.php",$langs->trans("Statistics"), 1, $user->rights->don->lire);
@@ -376,14 +376,14 @@ class MenuLeft {
 						if ($conf->deplacement->enabled)
 						{
 							$langs->load("trips");
-							$newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&mainmenu=accountancy", $langs->trans("Trips"), 0, $user->rights->deplacement->lire);
+							$newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&amp;mainmenu=accountancy", $langs->trans("Trips"), 0, $user->rights->deplacement->lire);
 						}
 
 						// Charges sociales
 						/*
 						if ($conf->tax->enabled)
 						{
-						$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->tax->charges->lire);
+						$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&amp;mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->tax->charges->lire);
 						if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->tax->charges->creer);
 						}
 						*/
@@ -392,7 +392,7 @@ class MenuLeft {
 						/*
 						if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0)
 						{
-						$newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->tax->charges->lire);
+						$newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&amp;mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->tax->charges->lire);
 						if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->tax->charges->creer);
 						if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->tax->charges->lire);
 						}
@@ -448,7 +448,7 @@ class MenuLeft {
 						if ($conf->banque->enabled)
 						{
 						$langs->load("banks");
-						$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
+						$newmenu->add(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=bank&amp;mainmenu=bank",$langs->trans("Bank"),0,$user->rights->banque->lire);
 						}
 						*/
 						// Rapports
@@ -456,7 +456,7 @@ class MenuLeft {
 						if ($conf->compta->enabled || $conf->comptaexpert->enabled)
 						{
 						// Bilan, résultats
-						$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
+						$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
 
 						if ($leftmenu=="ca") $newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca","Résultat / Exercice",1,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
 						if ($leftmenu=="ca") $newmenu->add_submenu(DOL_URL_ROOT."/compta/resultat/clientfourn.php?leftmenu=ca",$langs->trans("ByCompanies"),2,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
@@ -539,9 +539,9 @@ class MenuLeft {
 							// Sécurité accés client
 							if ($user->societe_id == 0)
 							{
-								$newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&action=create&type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer);
+								$newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer);
 							}
-							$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire);
+							$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire);
 						}
 
 						if ($conf->facture->enabled)
@@ -602,7 +602,7 @@ class MenuLeft {
 							$langs->load("mails");
 							/*
 							$newmenu->add(DOL_URL_ROOT."/comm/mailing/index.php?leftmenu=mailing", $langs->trans("EMailings"), 0, $user->rights->mailing->lire);
-							$newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&action=create", $langs->trans("NewMailing"), 1, $user->rights->mailing->creer);
+							$newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/fiche.php?leftmenu=mailing&amp;action=create", $langs->trans("NewMailing"), 1, $user->rights->mailing->creer);
 							$newmenu->add_submenu(DOL_URL_ROOT."/comm/mailing/liste.php?leftmenu=mailing", $langs->trans("List"), 1, $user->rights->mailing->lire);
 							*/
 						}
@@ -633,7 +633,7 @@ class MenuLeft {
 						{
 							$user->getrights("adherent");
 
-							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
+							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
 							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
 							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"),1,$user->rights->adherent->lire);
 							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
@@ -643,8 +643,8 @@ class MenuLeft {
 							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
 
 							$langs->load("compta");
-							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
-							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1,1&amp;leftmenu=accountancy&mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
+							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
+							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1,1&amp;leftmenu=accountancy&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
 							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
 
 							if ($conf->banque->enabled)
@@ -653,7 +653,7 @@ class MenuLeft {
 								$newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
 							}
 
-							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->export);
+							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Export"),0,$user->rights->adherent->export);
 							if ($conf->export->enabled && $leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"),1,$user->rights->adherent->export);
 							if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php?leftmenu=export",$langs->trans("Filehtpasswd"),1,$user->rights->adherent->export);
 							if ($leftmenu=="export") $newmenu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php?leftmenu=export",$langs->trans("MembersCards"),1,$user->rights->adherent->export);
@@ -661,9 +661,9 @@ class MenuLeft {
 
 							$newmenu->add(DOL_URL_ROOT."/public/adherents/index.php","Espace adherents public");
 
-							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
-							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
-							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/options.php?leftmenu=setup&",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
+							$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=setup&amp;mainmenu=members",$langs->trans("Setup"),0,$user->rights->adherent->configurer);
+							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/type.php?leftmenu=setup&amp;",$langs->trans("MembersTypes"),1,$user->rights->adherent->configurer);
+							$newmenu->add_submenu(DOL_URL_ROOT."/adherents/options.php?leftmenu=setup&amp;",$langs->trans("MembersAttributes"),1,$user->rights->adherent->configurer);
 						}
 
 					}

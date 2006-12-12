@@ -95,7 +95,7 @@ class MenuTop {
             $class = 'class="tmenu"';
         }
     
-        print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
+        print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
 
         // Members
@@ -113,7 +113,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
         }
         
         // Products-Services
@@ -136,7 +136,7 @@ class MenuTop {
             if ($conf->service->enabled) { $chaine.=$langs->trans("Services"); }
         
             if ($user->rights->produit->lire)
-                print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a></td>';
+                print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/product/index.php?mainmenu=products&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$chaine.'</a></td>';
             else
                 print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font>';
         }
@@ -156,7 +156,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
         }
 
         // Commercial
@@ -174,7 +174,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
         
         }
         
@@ -194,7 +194,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
         }
 
         // Projets
@@ -212,7 +212,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
         }
 
         // Tools
@@ -230,9 +230,9 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
+            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
         }
         
         // OSCommerce 1
@@ -250,7 +250,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/boutique/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
         
         // OSCommerce 2
@@ -268,7 +268,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
         
         // Webcal
@@ -286,7 +286,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal&leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
         }
 
         // Mantis
