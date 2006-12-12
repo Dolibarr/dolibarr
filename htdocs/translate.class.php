@@ -155,8 +155,11 @@ class Translate {
         if ($alt || ! $filelangexists)
         {
             // Repertoire de la langue alternative
-            if ($this->defaultlang != "en_US") $scandiralt = $this->dir."/en_US";   
-            else $scandiralt = $this->dir."/fr_FR";
+			if ($this->defaultlang == "en_US") $scandiralt = $this->dir."/fr_FR";
+            elseif (eregi('^fr',$this->defaultlang) && $this->defaultlang != 'fr_FR') $scandiralt = $this->dir."/fr_FR";
+            elseif (eregi('^en',$this->defaultlang) && $this->defaultlang != 'en_US') $scandiralt = $this->dir."/en_US";
+           	else $scandiralt = $this->dir."/en_US";
+
             $file_lang = $scandiralt . "/$domain.lang";
             $filelangexists=is_file($file_lang);
             $alt=1;
