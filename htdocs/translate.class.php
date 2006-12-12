@@ -210,7 +210,7 @@ class Translate {
     
     
     /**
-     *  \brief      Retourne la version traduite du texte passé en paramètre
+     *  \brief      Retourne la version traduite du texte passé en paramètre en la codant en HTML
      *              Si il n'y a pas de correspondance pour ce texte, on cherche dans fichier alternatif
      *              et si toujours pas trouvé, il est retourné tel quel
      *              Les paramètres de cette méthode peuvent contenir de balises HTML.
@@ -219,7 +219,7 @@ class Translate {
      *  \param      param2      chaine de param1
      *  \param      param3      chaine de param1
      *	\param		maxsize		taille max
-     *  \return     string      chaine traduite
+     *  \return     string      chaine traduite et codé en HTML
      */
     function trans($key, $param1='', $param2='', $param3='', $param4='', $maxsize=0)
     {
@@ -228,7 +228,15 @@ class Translate {
             // Si la traduction est disponible
             $str=sprintf($this->tab_translate[$key],$param1,$param2,$param3,$param4);
             if ($maxsize) $str=dolibarr_trunc($str,$maxsize);
-            return htmlentities($str);
+            // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
+            $newstr=ereg_replace('<','__lt__',$str);
+            $newstr=ereg_replace('>','__gt__',$newstr);
+            // Cryptage en html de la chaine
+            $newstr=htmlentities($newstr);
+            // On restaure les tags HTML
+            $newstr=ereg_replace('__lt__','<',$newstr);
+            $newstr=ereg_replace('__gt__','>',$newstr);
+            return $newstr;
         }
         return $key;
     }
