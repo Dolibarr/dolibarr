@@ -22,10 +22,10 @@
  */
 
 /**
-	        \file       htdocs/fourn/commande/index.php
-	        \ingroup    commande
-	        \brief      Page accueil commandes fournisseurs
-	        \version    $Revision$
+   \file       htdocs/fourn/commande/index.php
+   \ingroup    commande
+   \brief      Page accueil commandes fournisseurs
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -42,10 +42,7 @@ if ($user->societe_id > 0)
 
 $commande = new CommandeFournisseur($db);
 
-
-
 print_barre_liste($langs->trans("SuppliersOrders"), $page, "index.php", "", $sortfield, $sortorder, '', $num);
-
 
 print '<table class="noborder" width="100%">';
 print '<tr valign="top"><td width="30%">';
@@ -88,9 +85,13 @@ else
 {
   dolibarr_print_error($db);
 }
-
+/*
+ *
+ */
 print '</td><td width="70%" valign="top">';
-
+/*
+ *
+ */
 $sql = "SELECT u.name, u.firstname";
 $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql .= " , ".MAIN_DB_PREFIX."user_rights as ur";
@@ -126,9 +127,7 @@ else
   dolibarr_print_error($db);
 }
 
-
 print '</td></tr></table>';
-
 
 $db->close();
 
