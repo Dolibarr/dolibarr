@@ -21,6 +21,11 @@
  *
  * Calcul la valorisation du stock
  *
+ *
+ * CE SCRIPT EST OBSOLETE NE PLUS L'UTILISER
+ *
+ * CONSERVE DANS LE CVS POUR QUELQUES TEMPS
+ *
  */
 require ("../../htdocs/master.inc.php");
 
@@ -41,31 +46,34 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
       $verbose = 3;
     }
 }
+
+dolibarr_syslog("CRON-SCRIPT stock-valorisation.php Ce script est obsolete ne plus utiliser");
+
 /*
  *
  *
+ $sql  = "SELECT e.rowid as ref, sum(ps.reel * p.price) as valo";
+ $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,".MAIN_DB_PREFIX."product_stock as ps,".MAIN_DB_PREFIX."product as p";
+ $sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = p.rowid";
+ $sql .= " GROUP BY e.rowid"; 
+ $resql = $db->query($sql) ; 
+ if ($resql)
+ {
+ while ($row = $db->fetch_row($resql))
+ {
+ $sqli = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
+ $sqli .= " VALUES (now(),$row[0],$row[1])"; 
+ $resqli = $db->query($sqli);
+ }
+ $db->free($resql);
+ }
+ else
+ {
+ print $sql;
+ }
+ *
  */
-$sql  = "SELECT e.rowid as ref, sum(ps.reel * p.price) as valo";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,".MAIN_DB_PREFIX."product_stock as ps,".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = p.rowid";
-$sql .= " GROUP BY e.rowid";
 
-$resql = $db->query($sql) ;
 
-if ($resql)
-{
-  while ($row = $db->fetch_row($resql))
-    {
-      $sqli = "INSERT INTO ".MAIN_DB_PREFIX."entrepot_valorisation";
-      $sqli .= " VALUES (now(),$row[0],$row[1])";
-     
-      $resqli = $db->query($sqli);
-    }
-  $db->free($resql);
-}
-else
-{
-  print $sql;
-}
 
 ?>
