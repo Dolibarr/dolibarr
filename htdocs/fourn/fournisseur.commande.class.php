@@ -728,7 +728,7 @@ class CommandeFournisseur extends Commande
     return $res;
   }
 
-  function DispatchProduct($user, $product, $qty, $entrepot)
+  function DispatchProduct($user, $product, $qty, $entrepot, $price=0)
   {
     global $conf;
     $error = 0;
@@ -756,7 +756,7 @@ class CommandeFournisseur extends Commande
 	     * Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
 	     */	       
 	    $mouv = new MouvementStock($this->db);
-	    $result=$mouv->reception($user, $product, $entrepot, $qty);
+	    $result=$mouv->reception($user, $product, $entrepot, $qty, $price);
 	    if ($result < 0)
 	      {
 		$this->error=$this->db->error()." - sql=$sql";
