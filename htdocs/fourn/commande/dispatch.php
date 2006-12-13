@@ -77,7 +77,8 @@ if ($_POST["action"] ==	'dispatch' && $user->rights->fournisseur->commande->rece
 	  $prod = "product_".$reg[1];
 	  $qty = "qty_".$reg[1];
 	  $ent = "entrepot_".$reg[1];
-	  $result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent]);
+	  $pu = "pu_".$reg[1];
+	  $result = $commande->DispatchProduct($user, $_POST[$prod], $_POST[$qty], $_POST[$ent], $_POST[$pu]);
 	}
     }
 
@@ -205,7 +206,7 @@ if ($id	> 0)
 	      $db->free($resql);
 	    }
 
-	  $sql = "SELECT l.ref,l.fk_product,l.description,l.price,sum(l.qty) as qty";
+	  $sql = "SELECT l.ref,l.fk_product,l.description,(sum(l.price * l.qty) / sum(l.qty)) as price, sum(l.qty) as qty";
 	  $sql.= ", l.rowid";
 	  $sql.= ", p.label";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet as l";
@@ -244,6 +245,7 @@ if ($id	> 0)
 		  print ' - '.$objp->label;
 		  if ($objp->description) print '<br>'.nl2br($objp->description);
 		  print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
+		  print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->price.'">';
 		  print "</td>\n";
 
 		  print '<td align="right">'.$objp->qty.'</td>';
