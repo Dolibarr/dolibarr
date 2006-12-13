@@ -555,3 +555,21 @@ create table llx_commande_fournisseur_dispatch
 )type=innodb;
 
 ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
+
+create table llx_stock_valorisation
+(
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
+  tms                timestamp,             -- date technique mise à jour automatiquement
+  date_valo          datetime,              -- date de valorisation
+  fk_product         integer NOT NULL,      -- id du produit concerne par l'operation
+  qty_ope            float(9,3),            -- quantité de l'operation
+  price_ope          float(12,4),           -- prix unitaire du produit concerne par l'operation
+  valo_ope           float(12,4),           -- valorisation de l'operation
+  price_pmp          float(12,4),           -- valeur PMP de l'operation
+  qty_stock          float(9,3) DEFAULT 0,  -- qunatite en stock
+  valo_pmp           float(12,4),           -- valorisation du stock en PMP
+  fk_stock_mouvement integer,               -- id du mouvement de stock
+
+  key(fk_product)
+)type=innodb;
+
