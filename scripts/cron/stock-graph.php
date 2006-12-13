@@ -19,7 +19,7 @@
  * $Source$
  *
  *
- * Calcul la valorisation du stock
+ * Créé le graph de valorisation du stock
  *
  */
 require ("../../htdocs/master.inc.php");
@@ -49,7 +49,7 @@ if (!is_dir($dir) )
 {
   if (! @mkdir($dir,0755))
     {
-      die ("Can't create $dir");
+      die ("Can't create $dir\n");
     }
 }
 /*
@@ -91,7 +91,7 @@ for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
 /*
  *
  */
-$sql  = "SELECT date_format(date_calcul,'%j'), value, fk_entrepot";
+$sql  = "SELECT date_format(date_calcul,'%j'), valo_pmp, fk_entrepot";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot_valorisation as e";
 $sql .= " WHERE date_format(date_calcul, '%Y') = '".$year."'";
 $sql .= " ORDER BY date_calcul ASC";
@@ -120,7 +120,7 @@ require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 foreach ($entrepots as $key => $ent)
 {
   $file = $dir ."/entrepot-".$key."-".$year.".png";
-  $title = "Valorisation du stock de l'entrepot (euros HT) sur l'année ".$year;
+  $title = "Valorisation PMP du stock de l'entrepôt (euros HT) sur l'année ".$year;
   
   graph_datas($file, $title, $values[$key], $legends);
   if ($verbose)
@@ -131,7 +131,7 @@ foreach ($entrepots as $key => $ent)
  *
  */
 $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$year.".png";
-$title = "Valorisation du stock global (euros HT) sur l'année ".$year;
+$title = "Valorisation PMP du stock global (euros HT) sur l'année ".$year;
 
 graph_datas($file, $title, $values[0], $legends);
 if ($verbose)
