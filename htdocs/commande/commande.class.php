@@ -2191,7 +2191,7 @@ class CommandeLigne
    */
   function Delete()
   {
-    global $langs, $conf;
+    global $langs, $conf, $user;
 
     dolibarr_syslog("CommandeLigne::Delete id=".$this->id);
 
@@ -2212,13 +2212,14 @@ class CommandeLigne
 	return -1;
       }   
   }
+
   /**
    *    \brief     	Insère l'objet ligne de commande en base
    *	\return		int		<0 si ko, >0 si ok
    */
   function insert()
   {
-    global $langs, $conf;
+    global $langs, $conf, $user;
 
     dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
     $this->db->begin();
