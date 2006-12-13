@@ -42,17 +42,20 @@ $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-if (! $sortfield) $sortfield="valo";
+if (! $sortfield) $sortfield="valo_pmp";
 if (! $sortorder) $sortorder="DESC";
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
-
-$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.address, e.cp, e.ville, e.fk_pays, sum(ps.reel * p.price) as valo";
-$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e,".MAIN_DB_PREFIX."product_stock as ps,".MAIN_DB_PREFIX."product as p";
-$sql .= " WHERE ps.fk_entrepot = e.rowid AND ps.fk_product = p.rowid";
+/*
+ *
+ *
+ */
+$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.valo_pmp as valo";
+$sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
+$sql .= " WHERE 1=1 ";
 if ($sref)
 {
   $sql .= " AND e.ref like '%".$sref."%'";
@@ -61,8 +64,7 @@ if ($sall)
 {
   $sql .= " AND (e.label like '%".$sall."%' OR e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
 }
-$sql .= " GROUP BY e.rowid";
-$sql .= " ORDER BY $sortfield $sortorder";
+$sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
 $result = $db->query($sql) ;
