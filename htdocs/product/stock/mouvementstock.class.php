@@ -230,7 +230,7 @@ class MouvementStock
     function CalculateValoPmp($mvid, $fk_product, $qty, $price=0, &$value_ope)
     {
       $error = 0;
-      dolibarr_syslog("MouvementStock::CalculateValoPmp $user->id, $fk_product, $qty, $price");
+      dolibarr_syslog("MouvementStock::CalculateValoPmp $mvid, $fk_product, $qty, $price");
 
       if ( $qty <> 0 )
 	{
@@ -247,9 +247,9 @@ class MouvementStock
 		{
 		  while ($row = $this->db->fetch_row($resql) )
 		    {
-		      $price_pmp = $row [0];
-		      $qty_stock = $row [1];
-		      $stock_value_pmp = $row [2];
+		      $price_pmp = $row[0];
+		      $qty_stock = $row[1];
+		      $stock_value_pmp = $row[2];
 		    }
 		  $this->db->free($resql);
 		}
