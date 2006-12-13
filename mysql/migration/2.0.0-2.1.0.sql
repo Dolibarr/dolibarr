@@ -584,3 +584,4 @@ create table llx_entrepot_valorisation
   key(fk_entrepot)
 )type=innodb;
 
+ALTER TABLE llx_entrepot ADD COLUMN valo_pmp float(12,4) DEFAULT 0;
