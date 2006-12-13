@@ -39,7 +39,7 @@ dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
 
 session_name("DOLSESSID_".$dolibarr_main_db_name);
 session_start();
-session_unregister("dol_user");
+session_unregister("dol_login");
 
 $a = new DOLIAuth("DB");
 $a->setSessionName("DOLSESSID_".$dolibarr_main_db_name);
