@@ -202,6 +202,23 @@ class MouvementStock
 		  dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
 		}
 	    }
+
+	  if ($error === 0)
+	    {	      
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot";
+	      $sql.= " SET valo_pmp='".ereg_replace(",",".",$new_value)."'";
+	      $sql.= " WHERE rowid = $entrepot_id ";
+	      
+	      if ($this->db->query($sql))
+		{
+		  
+		}
+	      else
+		{	  
+		  $error = -28;
+		  dolibarr_syslog("MouvementStock::CalculateEntrepotValoPmp ERRORSQL[$error]");
+		}
+	    }
 	  
 	  if ($error === 0)
 	    {
