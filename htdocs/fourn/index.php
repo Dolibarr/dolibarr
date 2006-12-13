@@ -117,7 +117,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print '<td>'.$commande->statuts[$row[1]].'</td>';
       print '<td align="center">'.$row[0].'</td>';
-      print '<td align="center"><a href="liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+      print '<td align="center"><a href="commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
 
       print "</tr>\n";
       $i++;
