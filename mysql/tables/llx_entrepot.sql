@@ -34,6 +34,7 @@ create table llx_entrepot
   ville           varchar(50),
   fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
+  valo_pmp        float(12,4),    -- valoristaion du stock en PMP
   fk_user_author  integer
 )type=innodb;
 
