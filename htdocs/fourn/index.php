@@ -56,7 +56,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  */
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
-$sql .= " ORDER BY label ASC";
+$sql.= " ORDER BY label ASC";
 
 $resql = $db->query($sql);
 if ($resql)
@@ -87,6 +87,53 @@ else
 {
   dolibarr_print_error($db);
 }
+/*
+ *
+ */
+$commande = new CommandeFournisseur($db);
+$sql = "SELECT count(cf.rowid), fk_statut,";
+$sql.= " cf.rowid,cf.ref";
+$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
+$sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
+$sql.= " WHERE cf.fk_soc = s.idp ";
+$sql.= " GROUP BY cf.fk_statut";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  print '<br/><table class="liste" width="100%">';
+  print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+  print "</tr>\n";
+  $var=True;
+
+  while ($i < $num)
+    {
+      $row = $db->fetch_row($resql);
+      $var=!$var;
+
+      print "<tr $bc[$var]>";
+      print '<td>'.$commande->statuts[$row[1]].'</td>';
+      print '<td align="center">'.$row[0].'</td>';
+      print '<td align="center"><a href="liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+
+      print "</tr>\n";
+      $i++;
+    }
+  print "</table>";
+  $db->free($resql);
+}
+else 
+{
+  dolibarr_print_error($db);
+}
+
+/*
+ *
+ *
+ */
 print "</td>\n";
 print '<td valign="top" width="70%" class="notopnoleft">';
 
