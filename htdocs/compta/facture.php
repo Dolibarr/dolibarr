@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -25,10 +25,10 @@
  */
 
 /**
-		\file       htdocs/compta/facture.php
-		\ingroup    facture
-		\brief      Page de création d'une facture
-		\version    $Revision$
+   \file       htdocs/compta/facture.php
+   \ingroup    facture
+   \brief      Page de création d'une facture
+   \version    $Revision$
 */
 
 require('./pre.inc.php');
@@ -199,96 +199,96 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 // Repasse la facture en mode brouillon
 if ($_GET['action'] == 'modif' && $user->rights->facture->modifier && $conf->global->FACTURE_ENABLE_EDITDELETE)
 {
-	$fac = new Facture($db);
+  $fac = new Facture($db);
   $fac->fetch($_GET['facid']);
 
   // On vérifie si la facture a des paiements
   $sql = 'SELECT pf.amount';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
-	$sql.= ' WHERE pf.fk_facture = '.$fac->id;
-
-	$result = $db->query($sql);
-
-	if ($result)
+  $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf';
+  $sql.= ' WHERE pf.fk_facture = '.$fac->id;
+  
+  $result = $db->query($sql);
+  
+  if ($result)
+    {
+      $i = 0;
+      $num = $db->num_rows($result);
+      
+      while ($i < $num)
 	{
-		$i = 0;
-		$num = $db->num_rows($result);
-
-		while ($i < $num)
-		{
-			$objp = $db->fetch_object($result);
-			$totalpaye += $objp->amount;
-		  $i++;
-		}
+	  $objp = $db->fetch_object($result);
+	  $totalpaye += $objp->amount;
+	  $i++;
 	}
-
+    }
+  
   $resteapayer = $fac->total_ttc - $totalpaye;
-
-	// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-	$ventilExportCompta = $fac->getVentilExportCompta();
-
-	// On vérifie si aucun paiement n'a été effectué
-	if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
-	{
-		$fac->set_draft($user);
-  }
+  
+  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+  $ventilExportCompta = $fac->getVentilExportCompta();
+  
+  // On vérifie si aucun paiement n'a été effectué
+  if ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0)
+    {
+      $fac->set_draft($user);
+    }
 }
 
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
-    if ($user->rights->facture->creer)
+  if ($user->rights->facture->creer)
     {
-    	$fac = new Facture($db);
-    	$fac->fetch($_GET['facid']);
-    	$fac->deleteline($_GET['rowid']);
-    	if ($_REQUEST['lang_id'])
+      $fac = new Facture($db);
+      $fac->fetch($_GET['facid']);
+      $fac->deleteline($_GET['rowid'], $user);
+      if ($_REQUEST['lang_id'])
     	{
-    		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     	}
-    	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+      facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
     }
-    Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
-    exit;
+  Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+  exit;
 }
 
 // Classe à "payée"
 if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
-	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
-	$result = $fac->set_payed($user);
+  $fac = new Facture($db);
+  $fac->fetch($_GET['facid']);
+  $result = $fac->set_payed($user);
 }
 if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
-	$fac = new Facture($db);
-	$fac->fetch($_GET['facid']);
-	$close_code=$_POST["close_code"];
-	$close_note=$_POST["close_note"];
-	if ($close_code)
+  $fac = new Facture($db);
+  $fac->fetch($_GET['facid']);
+  $close_code=$_POST["close_code"];
+  $close_note=$_POST["close_note"];
+  if ($close_code)
+    {
+      /*
+	if ($close_code == 'other' && ! $close_note)
 	{
-/*
-		if ($close_code == 'other' && ! $close_note)
-		{
-			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
-		}
-		else
-		{
-*/
-			if ($close_code == 'abandon')
-			{
-				$result = $fac->set_canceled($user,$close_code,$close_note);
-			}
-			else
-			{
-				$result = $fac->set_payed($user,$close_code,$close_note);
-			}
-//		}
+	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+      */
+      if ($close_code == 'abandon')
+	{
+	  $result = $fac->set_canceled($user,$close_code,$close_note);
 	}
+      else
+	{
+	  $result = $fac->set_payed($user,$close_code,$close_note);
+	}
+      //		}
+    }
+  else
+    {
+      $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+    }
 }
 
 /*
@@ -630,22 +630,28 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 			}
 		}
 
+		$price_base_type = 'HT';
+
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
+		// Ecrase $base_price_type par celui du produit
         if ($_POST['idprod'])
         {
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
 
+	    $price_base_type = $prod->price_base_type;
+
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-            	$pu = $prod->multiprices[$soc->price_level];
+	      $pu = $prod->multiprices[$soc->price_level];
             }
             else
             {
-            	$pu=$prod->price;
+	      $pu = $prod->price;
+	      $pu_ttc = $prod->price_ttc;
             }
 
             // La description de la ligne est celle saisie ou
@@ -661,23 +667,27 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         }
         else
         {
-        	$pu=$_POST['pu'];
-        	$tva_tx=$_POST['tva_tx'];
-        	$desc=$_POST['desc'];
+	  $pu=$_POST['pu'];
+	  $tva_tx=$_POST['tva_tx'];
+	  $desc=$_POST['desc'];
         }
 
-		// Insere ligne
-		$result = $fac->addline(
-			$_POST['facid'],
-			$desc,
-			$pu,
-			$_POST['qty'],
-			$tva_tx,
-			$_POST['idprod'],
-			$_POST['remise_percent'],
-			$date_start,
-			$date_end
-			);
+	// Insere ligne
+	$result = $fac->addline(
+				$_POST['facid'],
+				$desc,
+				$pu,
+				$_POST['qty'],
+				$tva_tx,
+				$_POST['idprod'],
+				$_POST['remise_percent'],
+				$date_start,
+				$date_end,
+				0,
+				'',
+				'',
+				$price_base_type, $pu_ttc
+				);
 	}
 
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
@@ -725,22 +735,22 @@ if ($_POST['action'] == 'updateligne' && $user->rights->facture->creer && $_POST
 
 if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer && ! $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
-	$fac = new Facture($db,'',$_GET['facid']);
-	$fac->fetch($_GET['facid']);
-	$result = $fac->deleteline($_GET['rowid']);
-	if ($result > 0)
+  $fac = new Facture($db,'',$_GET['facid']);
+  $fac->fetch($_GET['facid']);
+  $result = $fac->deleteline($_GET['rowid'], $user);
+  if ($result > 0)
+    {
+      if ($_REQUEST['lang_id'])
 	{
-		if ($_REQUEST['lang_id'])
-		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-	//	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	else
-	{
-		print $fac->error;
-	}
+      //	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+    }
+  else
+    {
+      print $fac->error;
+    }
 }
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
@@ -1341,28 +1351,28 @@ if ($_GET['action'] == 'create')
 
 	if ($_GET['propalid'] > 0)
 	{
-		print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
-//		print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
-//		print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
-		print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
-
-		print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.img_object($langs->trans("ShowPropal"),'propal').' '.$propal->ref.'</a></td></tr>';
-		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
-		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->total_tva)."</td></tr>";
-		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total)."</td></tr>";
+	  print '<input type="hidden" name="amount"         value="'.$propal->price.'">'."\n";
+	  print '<input type="hidden" name="total"          value="'.$propal->total.'">'."\n";
+	  print '<input type="hidden" name="tva"            value="'.$propal->tva.'">'."\n";
+	  //print '<input type="hidden" name="remise_absolue" value="'.$propal->remise_absolue.'">'."\n";
+	  //print '<input type="hidden" name="remise_percent" value="'.$propal->remise_percent.'">'."\n";
+	  print '<input type="hidden" name="propalid"       value="'.$propal->id.'">';
+	  
+	  print '<tr><td>'.$langs->trans('Proposal').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id.'">'.img_object($langs->trans("ShowPropal"),'propal').' '.$propal->ref.'</a></td></tr>';
+	  print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($propal->price).'</td></tr>';
+	  print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($propal->total_tva)."</td></tr>";
+	  print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($propal->total)."</td></tr>";
 	}
 	elseif ($_GET['commandeid'] > 0)
-	{
-		print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
-		print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
-		print '<input type="hidden" name="tva"            value="'.$commande->tva.'">'."\n";
-//		print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
-//		print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
-		print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
-
-		print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td></tr>';
+	  {
+	    print '<input type="hidden" name="amount"         value="'.$commande->total_ht.'">'."\n";
+	    print '<input type="hidden" name="total"          value="'.$commande->total_ttc.'">'."\n";
+	    print '<input type="hidden" name="tva"            value="'.$commande->tva.'">'."\n";
+	    //print '<input type="hidden" name="remise_absolue" value="'.$commande->remise_absolue.'">'."\n";
+	    //print '<input type="hidden" name="remise_percent" value="'.$commande->remise_percent.'">'."\n";
+	    print '<input type="hidden" name="commandeid"     value="'.$commande->id.'">';
+	    
+	    print '<tr><td>'.$langs->trans('Order').'</td><td colspan="2"><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a></td></tr>';
 		print '<tr><td>'.$langs->trans('TotalHT').'</td><td colspan="2">'.price($commande->total_ht).'</td></tr>';
 		print '<tr><td>'.$langs->trans('TotalVAT').'</td><td colspan="2">'.price($commande->total_tva)."</td></tr>";
 		print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($commande->total_ttc)."</td></tr>";
@@ -1590,1498 +1600,1495 @@ if ($_GET['action'] == 'create')
 }
 else
 {
-	/* *************************************************************************** */
-	/*                                                                             */
-	/* Fiche en mode visu                                                          */
-	/*                                                                             */
-	/* *************************************************************************** */
-	$id = $_GET['facid'];
-	if ($id > 0)
+  /* *************************************************************************** */
+  /*                                                                             */
+  /* Fiche en mode visu                                                          */
+  /*                                                                             */
+  /* *************************************************************************** */
+  $id = $_GET['facid'];
+  if ($id > 0)
+    {
+      if ($mesg) print $mesg.'<br>';
+      
+      $fac = New Facture($db);
+      if ( $fac->fetch($_GET['facid'], $user->societe_id) > 0)
 	{
-		if ($mesg) print $mesg.'<br>';
-
-		$fac = New Facture($db);
-		if ( $fac->fetch($_GET['facid'], $user->societe_id) > 0)
+	  $soc = new Societe($db, $fac->socid);
+	  $soc->fetch($fac->socid);
+	  $absolute_discount=$soc->getCurrentDiscount();
+	  
+	  $totalpaye = $fac->getSommePaiement();
+	  $resteapayer = $fac->total_ttc - $totalpaye;
+	  if ($fac->paye) $resteapayer=0;
+	  
+	  $author = new User($db);
+	  if ($fac->user_author)
+	    {
+	      $author->id = $fac->user_author;
+	      $author->fetch();
+	    }
+	  
+	  $facidnext=$fac->getIdReplacingInvoice();
+	  
+	  
+	  $head = facture_prepare_head($fac);
+	  
+	  dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
+	  
+	  /*
+	   * Confirmation de la suppression de la facture
+	   */
+	  if ($_GET['action'] == 'delete')
+	    {
+	      $text=$langs->trans('ConfirmDeleteBill');
+	      $html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$text,'confirm_delete');
+	      print '<br />';
+	    }
+	  
+	  /*
+	   * Confirmation de la validation
+	   */
+	  if ($_GET['action'] == 'valid')
+	    {
+	      // on vérifie si la facture est en numérotation provisoire
+	      $facref = substr($fac->ref, 1, 4);
+	      if ($facref == 'PROV')
 		{
-			$soc = new Societe($db, $fac->socid);
-			$soc->fetch($fac->socid);
-			$absolute_discount=$soc->getCurrentDiscount();
-
- 			$totalpaye = $fac->getSommePaiement();
-			$resteapayer = $fac->total_ttc - $totalpaye;
-			if ($fac->paye) $resteapayer=0;
-
-			$author = new User($db);
-			if ($fac->user_author)
-			{
-			    $author->id = $fac->user_author;
-			    $author->fetch();
-			}
-
-			$facidnext=$fac->getIdReplacingInvoice();
-			
-
-			$head = facture_prepare_head($fac);
-
-			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
-
-			/*
-			 * Confirmation de la suppression de la facture
- 			 */
-			if ($_GET['action'] == 'delete')
-			{
-				$text=$langs->trans('ConfirmDeleteBill');
-				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('DeleteBill'),$text,'confirm_delete');
-				print '<br />';
-			}
-
-			/*
- 			 * Confirmation de la validation
- 			 */
-			if ($_GET['action'] == 'valid')
-			{
-				// on vérifie si la facture est en numérotation provisoire
-				$facref = substr($fac->ref, 1, 4);
-				if ($facref == 'PROV')
-				{
-					$numfa = $fac->getNextNumRef($soc);
-				}
-				else
-				{
-					$numfa = $fac->ref;
-				}
-
-				$text=$langs->trans('ConfirmValidateBill',$numfa);
-				if ($conf->notification->enabled)
-				{
-					require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
-					$notify=new Notify($db);
-					$text.='<br>';
-					$text.=$notify->confirmMessage(2,$fac->socid);
-				}
-
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid');
-				print '<br />';
-			}
-
-			/*
- 			 * Confirmation du classement payé
- 			 */
-			if ($_GET['action'] == 'payed' && $resteapayer <= 0)
-			{
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
-				print '<br />';
-			}
-			if ($_GET['action'] == 'payed' && $resteapayer > 0)
-			{
-				// Crée un tableau formulaire
-				//$helpescompte_avoir=$langs->trans("ConfirmClassifyPayedPartiallyAvoir");
-				$helpescompte_vat    =$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
-				$helpescompte_abandon=$langs->trans("ConfirmClassifyPayedPartiallyAbandon");
-				//$reason_avoir  =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAvoir",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_avoir,1);
-				$reason_vat    =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_vat,1);
-				$reason_abandon=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAbandon",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_abandon,1);
-				//$arrayreasons['avoir']       =$reason_avoir;
-				$arrayreasons['discount_vat']=$reason_vat;
-				$arrayreasons['abandon']     =$reason_abandon;
-				$formquestion=array(
-					'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
-					array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
-					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
-				);
-				// Paiement incomplet. On demande si motif = escompte ou autre
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
-				print '<br />';
-			}
-
-			/*
-			 * Confirmation du classement abandonne
-			 */
-			if ($_GET['action'] == 'canceled')
-			{
-				// S'il y a une facture de remplacement pas encore validée (etat brouillon), 
-				// on ne permet pas de classer abandonner la facture.
-				if ($facidnext)
-				{
-					$facturereplacement=new Facture($db);
-					$facturereplacement->fetch($facidnext);
-					$statusreplacement=$facturereplacement->statut;
-				}
-				if ($facidnext && $statusreplacement == 0)
-				{
-					print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
-				}
-				else
-				{				
-					$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
-					print '<br />';
-				}
-			}
-
-			/*
-			 * Confirmation de la suppression d'une ligne produit
-			 */
-			if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-			{
-				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-				print '<br />';
-			}
-
-			/*
-			 *   Facture
-			 */
-			print '<table class="border" width="100%">';
-
-			// Reference
-			print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
-
-						// Ref client
-            /*
-              \todo
-              L'info "Reference commande client" est une carac de la commande et non de la facture.
-              Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
-              Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
-            */
-            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
+		  $numfa = $fac->getNextNumRef($soc);
+		}
+	      else
+		{
+		  $numfa = $fac->ref;
+		}
+	      
+	      $text=$langs->trans('ConfirmValidateBill',$numfa);
+	      if ($conf->notification->enabled)
+		{
+		  require_once(DOL_DOCUMENT_ROOT ."/notify.class.php");
+		  $notify=new Notify($db);
+		  $text.='<br>';
+		  $text.=$notify->confirmMessage(2,$fac->socid);
+		}
+	      
+	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ValidateBill'),$text,'confirm_valid');
+	      print '<br />';
+	    }
+	  
+	  /*
+	   * Confirmation du classement payé
+	   */
+	  if ($_GET['action'] == 'payed' && $resteapayer <= 0)
+	    {
+	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
+	      print '<br />';
+	    }
+	  if ($_GET['action'] == 'payed' && $resteapayer > 0)
+	    {
+	      // Crée un tableau formulaire
+	      //$helpescompte_avoir=$langs->trans("ConfirmClassifyPayedPartiallyAvoir");
+	      $helpescompte_vat    =$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
+	      $helpescompte_abandon=$langs->trans("ConfirmClassifyPayedPartiallyAbandon");
+	      //$reason_avoir  =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAvoir",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_avoir,1);
+	      $reason_vat    =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_vat,1);
+	      $reason_abandon=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAbandon",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_abandon,1);
+	      //$arrayreasons['avoir']       =$reason_avoir;
+	      $arrayreasons['discount_vat']=$reason_vat;
+	      $arrayreasons['abandon']     =$reason_abandon;
+	      $formquestion=array(
+				  'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
+				  array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
+				  array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
+				  );
+	      // Paiement incomplet. On demande si motif = escompte ou autre
+	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
+	      print '<br />';
+	    }
+	  
+	  /*
+	   * Confirmation du classement abandonne
+	   */
+	  if ($_GET['action'] == 'canceled')
+	    {
+	      // S'il y a une facture de remplacement pas encore validée (etat brouillon), 
+	      // on ne permet pas de classer abandonner la facture.
+	      if ($facidnext)
+		{
+		  $facturereplacement=new Facture($db);
+		  $facturereplacement->fetch($facidnext);
+		  $statusreplacement=$facturereplacement->statut;
+		}
+	      if ($facidnext && $statusreplacement == 0)
+		{
+		  print '<div class="error">'.$langs->trans("ErrorCantCancelIfReplacementInvoiceNotValidated").'</div>';
+		}
+	      else
+		{				
+		  $html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
+		  print '<br />';
+		}
+	    }
+	  
+	  /*
+	   * Confirmation de la suppression d'une ligne produit
+	   */
+	  if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	    {
+	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+	      print '<br />';
+	    }
+	  
+	  /*
+	   *   Facture
+	   */
+	  print '<table class="border" width="100%">';
+	  
+	  // Reference
+	  print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+	  
+	  // Ref client
+	  /*
+	    \todo
+	    L'info "Reference commande client" est une carac de la commande et non de la facture.
+	    Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
+	    Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
+	  */
+	  if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
             {
-				print '<tr><td>';
-				print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
-				print $langs->trans('RefCustomerOrder').'</td><td align="left">';
-				print '</td>';
-				if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-				print '</tr></table>';
-				print '</td><td colspan="5">';
-				if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
-				{
-					print '<form action="facture.php?facid='.$id.'" method="post">';
-					print '<input type="hidden" name="action" value="set_ref_client">';
-					print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
-					print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-					print '</form>';
-				}
-				else
-				{
-					print $fac->ref_client;
-				}
-				print '</td>';
-				print '</tr>';
-			}
+	      print '<tr><td>';
+	      print '<table class="nobordernopadding" width="100%"><tr><td nowrap="nowrap">';
+	      print $langs->trans('RefCustomerOrder').'</td><td align="left">';
+	      print '</td>';
+	      if ($_GET['action'] != 'RefCustomerOrder' && $fac->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=RefCustomerOrder&amp;facid='.$fac->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+	      print '</tr></table>';
+	      print '</td><td colspan="5">';
+	      if ($user->rights->facture->creer && $_GET['action'] == 'RefCustomerOrder')
+		{
+		  print '<form action="facture.php?facid='.$id.'" method="post">';
+		  print '<input type="hidden" name="action" value="set_ref_client">';
+		  print '<input type="text" class="flat" size="20" name="ref_client" value="'.$fac->ref_client.'">';
+		  print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+		  print '</form>';
+		}
+	      else
+		{
+		  print $fac->ref_client;
+		}
+	      print '</td>';
+	      print '</tr>';
+	    }
+	  
+	  // Tiers Société
+	  print '<tr><td>'.$langs->trans('Company').'</td>';
+	  print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
+	  print '</tr>';
+	  
+	  // Type
+	  print '<tr><td width="20%">'.$langs->trans('Type').'</td><td colspan="5">';
+	  print $fac->getLibType();
+	  if ($fac->type == 1)
+	    {
+	      $facreplaced=new Facture($db);
+	      $facreplaced->fetch($fac->fk_facture_source);
+	      print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
+	    }
+	  if ($fac->type == 2)
+	    {
+	      $facreplaced=new Facture($db);
+	      $facreplaced->fetch($fac->fk_facture_source);
+	      print ' ('.$langs->transnoentities("CorrectInvoice",$facreplaced->getNomUrl(1)).')';
+	    }
+	  $facidavoir=$fac->getIdAvoirInvoice();
+	  if (sizeof($facidavoir) > 0)
+	    {
+	      print ' ('.$langs->transnoentities("InvoiceHasAvoir");
+	      $i=0;
+	      foreach($facidavoir as $id)
+		{
+		  if ($i==0) print ' ';
+		  else print ',';
+		  $facavoir=new Facture($db);
+		  $facavoir->fetch($id);
+		  print $facavoir->getNomUrl(1);
+		}
+	      print ')';
+	    }
+	  if ($facidnext > 0)
+	    {
+	      $facthatreplace=new Facture($db);
+	      $facthatreplace->fetch($facidnext);
+	      print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
+	    }
+	  print '</td></tr>';
+	  
+	  // Ligne info remises tiers
+	  print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+	  if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+	  else print $langs->trans("CompanyHasNoRelativeDiscount");
+	  print '. ';
+	  if ($absolute_discount)
+	    {
+	      if ($fac->statut > 0 || $fac->type == 2)
+		{
+		  print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		}
+	      else
+		{
+		  print '<br>';
+		  print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount);
+		}
+	    }
+	  else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+	  print '</td></tr>';
+	  
+	  // Dates
+	  print '<tr><td>'.$langs->trans('Date').'</td>';
+	  print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
+	  
+	  $nbrows=8;
+	  if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
+	  if ($conf->projet->enabled) $nbrows++;
+	  
+	  print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
+	  
+	  /*
+	   * Liste des paiements
+	   */
+	  $sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
+	  $sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
+	  $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
+	  $sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
+	  $sql.= ' ORDER BY dp DESC';
+	  
+	  $result = $db->query($sql);
+	  if ($result)
+	    {
+	      $num = $db->num_rows($result);
+	      $i = 0;
+	      print '<table class="noborder" width="100%">';
+	      
+	      if ($fac->type != 2)
+		{
+		  // Liste des paiements
+		  print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
+		  print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
+		  
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object($result);
+		      $var=!$var;
+		      print '<tr '.$bc[$var].'><td>';
+		      print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
+		      print dolibarr_print_date($objp->dp).'</a></td>';
+		      print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
+		      print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
+		      print '</tr>';
+		      $i++;
+		    }
+		  
+		  // Solde facture
+		  print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		  print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		  if ($fac->close_code == 'escompte')
+		    {
+		      print '<tr><td colspan="2" align="right" nowrap="1">';
+		      print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
+		      print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		    }
+		  print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
+		  print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		}
+	      else
+		{
+		  // Solde avoir
+		  print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
+		  print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+		}
+	      print '</table>';
+	      $db->free($result);
+	    }
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
+	  
+	  print '</td></tr>';
+	  
+	  // Date limite reglement
+	  print '<tr>';
+	  print '<td>'.$langs->trans('DateMaxPayment').'</td>';
+	  print '<td colspan="3">';
+	  if ($fac->type != 2)
+	    {
+	      print dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
+	      if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
+	    }
+	  else
+	    {
+	      print '&nbsp;';
+	    }
+	  print '</td></tr>';
+	  
+	  // Conditions de réglement
+	  print '<tr><td>';
+	  print '<table class="nobordernopadding" width="100%"><tr><td>';
+	  print $langs->trans('PaymentConditionsShort');
+	  print '</td>';
+	  if ($fac->type != 2 && $_GET['action'] != 'editconditions' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
+	  print '</tr></table>';
+	  print '</td><td colspan="3">';
+	  if ($fac->type != 2)
+	    {
+	      if ($_GET['action'] == 'editconditions')
+		{
+		  $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
+		}
+	      else
+		{
+		  $html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+		}
+	    }
+	  else
+	    {
+	      print '&nbsp;';
+	    }
+	  print '</td></tr>';
 
-			// Tiers Société
-			print '<tr><td>'.$langs->trans('Company').'</td>';
-			print '<td colspan="5">'.$soc->getNomUrl(1,'compta').'</td>';
-			print '</tr>';
+	  // Mode de reglement
+	  print '<tr><td width="25%">';
+	  print '<table class="nobordernopadding" width="100%"><tr><td>';
+	  print $langs->trans('PaymentMode');
+	  print '</td>';
+	  if ($_GET['action'] != 'editmode' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
+	  print '</tr></table>';
+	  print '</td><td colspan="3">';
+	  if ($_GET['action'] == 'editmode')
+	    {
+	      $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'mode_reglement_id');
+	    }
+	  else
+	    {
+	      $html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
+	    }
+	  print '</td></tr>';
+	  
+	  // Lit lignes de facture pour déterminer montant
+	  // On s'en sert pas mais ca sert pour debuggage
+	  $sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_taux,';
+	  $sql .= ' l.remise_percent, l.subprice';
+	  $sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
+	  $sql .= ' WHERE l.fk_facture = '.$fac->id;
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num_lignes = $db->num_rows($resql);
+	      $i=0;
+	      $total_lignes_ht=0;
+	      $total_lignes_vat=0;
+	      $total_lignes_ttc=0;
+	      while ($i < $num_lignes)
+		{
+		  $obj=$db->fetch_object($resql);
+		  $ligne_ht=($obj->price*$obj->qty);
+		  $ligne_vat=($ligne_ht*$obj->tva_taux/100);
+		  $ligne_ttc=($ligne_ht+$ligne_vat);
+		  $total_lignes_ht+=$ligne_ht;
+		  $total_lignes_vat+=$ligne_vat;
+		  $total_lignes_ttc+=$ligne_ttc;
+		  $i++;
+		}
+	    }
+	  
+	  // Montants
+	  print '<tr><td>'.$langs->trans('AmountHT').'</td>';
+	  print '<td align="right" colspan="2" nowrap>'.price($fac->total_ht).'</td>';
+	  print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+	  print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
+	  print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+	  print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
+	  print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+	  
+	  // Statut
+	  print '<tr><td>'.$langs->trans('Status').'</td>';
+	  print '<td align="left" colspan="3">'.($fac->getLibStatut(4,$totalpaye)).'</td></tr>';
+	  
+	  // Projet
+	  if ($conf->projet->enabled)
+	    {
+	      $langs->load('projects');
+	      print '<tr>';
+	      print '<td>';
+	      
+	      print '<table class="nobordernopadding" width="100%"><tr><td>';
+	      print $langs->trans('Project');
+	      print '</td>';
+	      if ($_GET['action'] != 'classer')
+		{
+		  print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
+		  print img_edit($langs->trans('SetProject'),1);
+		  print '</a></td>';
+		}
+	      print '</tr></table>';
+	      
+	      print '</td><td colspan="3">';
+	      if ($_GET['action'] == 'classer')
+		{
+		  $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'projetid');
+		}
+	      else
+		{
+		  $html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'none');
+		}
+	      print '</td>';
+	      print '</tr>';
+	    }
 
-			// Type
-			print '<tr><td width="20%">'.$langs->trans('Type').'</td><td colspan="5">';
-			print $fac->getLibType();
-			if ($fac->type == 1)
+	  print '</table><br>';
+
+
+	  /*
+	   * Lignes de factures
+	   */
+	  $sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
+	  $sql.= ' l.remise_percent, l.subprice, l.info_bits,';
+	  $sql.= ' '.$db->pdate('l.date_start').' as date_start,';
+	  $sql.= ' '.$db->pdate('l.date_end').' as date_end,';
+	  $sql.= ' p.ref, p.fk_product_type, p.label as product,';
+	  $sql.= ' p.description as product_desc';
+	  $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
+	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
+	  $sql.= ' WHERE l.fk_facture = '.$fac->id;
+	  $sql.= ' ORDER BY l.rang ASC, l.rowid';
+
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num_lignes = $db->num_rows($resql);
+	      $i = 0; $total = 0;
+
+	      print '<table class="noborder" width="100%">';
+
+	      if ($num_lignes)
+		{
+
+		  print '<tr class="liste_titre">';
+		  print '<td>'.$langs->trans('Description').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+		  print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+		  print '<td width="16">&nbsp;</td>';
+		  print '<td width="16">&nbsp;</td>';
+		  print '<td width="12">&nbsp;</td>';
+		  print "</tr>\n";
+
+		}
+	      $var=true;
+	      while ($i < $num_lignes)
+		{
+		  $objp = $db->fetch_object($resql);
+		  $var=!$var;
+
+		  // Ligne en mode visu
+		  if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+		    {
+		      print '<tr '.$bc[$var].'>';
+		      if ($objp->fk_product > 0)
 			{
-				$facreplaced=new Facture($db);
-				$facreplaced->fetch($fac->fk_facture_source);
-				print ' ('.$langs->transnoentities("ReplaceInvoice",$facreplaced->getNomUrl(1)).')';
-			}
-			if ($fac->type == 2)
-			{
-				$facreplaced=new Facture($db);
-				$facreplaced->fetch($fac->fk_facture_source);
-				print ' ('.$langs->transnoentities("CorrectInvoice",$facreplaced->getNomUrl(1)).')';
-			}
-			$facidavoir=$fac->getIdAvoirInvoice();
-			if (sizeof($facidavoir) > 0)
-			{
-				print ' ('.$langs->transnoentities("InvoiceHasAvoir");
-				$i=0;
-				foreach($facidavoir as $id)
-				{
-					if ($i==0) print ' ';
-					else print ',';
-					$facavoir=new Facture($db);
-					$facavoir->fetch($id);
-					print $facavoir->getNomUrl(1);
-				}
-				print ')';
-			}
-			if ($facidnext > 0)
-			{
-				$facthatreplace=new Facture($db);
-				$facthatreplace->fetch($facidnext);
-				print ' ('.$langs->transnoentities("ReplacedByInvoice",$facthatreplace->getNomUrl(1)).')';
-			}
-			print '</td></tr>';
+			  print '<td>';
+			  print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+			  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+			  if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+			  else print img_object($langs->trans('ShowProduct'),'product');
+			  print ' '.$objp->ref.'</a>';
+			  print ' - '.nl2br(stripslashes($objp->product));
+			  print_date_range($objp->date_start,$objp->date_end);
+			  print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 
-			// Ligne info remises tiers
-			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
-			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			print '. ';
-			if ($absolute_discount)
-			{
-				if ($fac->statut > 0 || $fac->type == 2)
-				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-				}
-				else
-				{
-					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount);
-				}
-			}
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
-			print '</td></tr>';
-
-			// Dates
-			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
-
-            $nbrows=8;
-            if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
-			if ($conf->projet->enabled) $nbrows++;
-
-			print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
-
-			/*
-			 * Liste des paiements
-			 */
-			$sql = 'SELECT '.$db->pdate('datep').' as dp, pf.amount,';
-			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
-			$sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-			$sql.= ' ORDER BY dp DESC';
-
-			$result = $db->query($sql);
-			if ($result)
-			{
-				$num = $db->num_rows($result);
-				$i = 0;
-				print '<table class="noborder" width="100%">';
-
-				if ($fac->type != 2)
-				{
-					// Liste des paiements
-					print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
-					print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
-
-					$var=True;
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($result);
-						$var=!$var;
-						print '<tr '.$bc[$var].'><td>';
-						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-						print dolibarr_print_date($objp->dp).'</a></td>';
-						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-						print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
-						print '</tr>';
-						$i++;
-					}
-
-					// Solde facture
-					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-					if ($fac->close_code == 'escompte')
-					{
-						print '<tr><td colspan="2" align="right" nowrap="1">';
-						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
-						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-					}
-					print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayer).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-				}
-				else
-				{
-					// Solde avoir
-					print '<tr><td colspan="2" align="right">'.$langs->trans('TotalTTCToYourCredit').' :</td>';
-					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price(abs($fac->total_ttc)).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-				}
-				print '</table>';
-				$db->free($result);
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-
-			print '</td></tr>';
-
-			// Date limite reglement
-			print '<tr>';
-			print '<td>'.$langs->trans('DateMaxPayment').'</td>';
-			print '<td colspan="3">';
-			if ($fac->type != 2)
-			{
-				print dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
-				if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td></tr>';
-
-			// Conditions de réglement
-			print '<tr><td>';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentConditionsShort');
-			print '</td>';
-			if ($fac->type != 2 && $_GET['action'] != 'editconditions' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($fac->type != 2)
-			{
-				if ($_GET['action'] == 'editconditions')
-				{
-					$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'cond_reglement_id');
-				}
-				else
-				{
-					$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
-				}
-			}
-			else
-			{
-				print '&nbsp;';
-			}
-			print '</td></tr>';
-
-			// Mode de reglement
-			print '<tr><td width="25%">';
-			print '<table class="nobordernopadding" width="100%"><tr><td>';
-			print $langs->trans('PaymentMode');
-			print '</td>';
-			if ($_GET['action'] != 'editmode' && $fac->brouillon && $user->rights->facture->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-			print '</tr></table>';
-			print '</td><td colspan="3">';
-			if ($_GET['action'] == 'editmode')
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'mode_reglement_id');
-			}
-			else
-			{
-				$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
-			}
-			print '</td></tr>';
-
-			// Lit lignes de facture pour déterminer montant
-			// On s'en sert pas mais ca sert pour debuggage
-			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_taux,';
-			$sql .= ' l.remise_percent, l.subprice';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
-			$sql .= ' WHERE l.fk_facture = '.$fac->id;
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num_lignes = $db->num_rows($resql);
-				$i=0;
-				$total_lignes_ht=0;
-				$total_lignes_vat=0;
-				$total_lignes_ttc=0;
-				while ($i < $num_lignes)
-				{
-					$obj=$db->fetch_object($resql);
-					$ligne_ht=($obj->price*$obj->qty);
-					$ligne_vat=($ligne_ht*$obj->tva_taux/100);
-					$ligne_ttc=($ligne_ht+$ligne_vat);
-					$total_lignes_ht+=$ligne_ht;
-					$total_lignes_vat+=$ligne_vat;
-					$total_lignes_ttc+=$ligne_ttc;
-					$i++;
-				}
-			}
-
-			// Montants
-			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
-			print '<td align="right" colspan="2" nowrap>'.price($fac->total_ht).'</td>';
-			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_tva).'</td>';
-			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-			print '<tr><td>'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2" nowrap>'.price($fac->total_ttc).'</td>';
-			print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
-			// Statut
-			print '<tr><td>'.$langs->trans('Status').'</td>';
-			print '<td align="left" colspan="3">'.($fac->getLibStatut(4,$totalpaye)).'</td></tr>';
-
-			// Projet
-			if ($conf->projet->enabled)
-			{
-				$langs->load('projects');
-				print '<tr>';
-				print '<td>';
-
-				print '<table class="nobordernopadding" width="100%"><tr><td>';
-				print $langs->trans('Project');
-				print '</td>';
-				if ($_GET['action'] != 'classer')
-				{
-				    print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;facid='.$fac->id.'">';
-				    print img_edit($langs->trans('SetProject'),1);
-				    print '</a></td>';
-				}
-				print '</tr></table>';
-
-				print '</td><td colspan="3">';
-				if ($_GET['action'] == 'classer')
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'projetid');
-				}
-				else
-				{
-					$html->form_project($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->socid,$fac->projetid,'none');
-				}
-				print '</td>';
-				print '</tr>';
-			}
-
-			print '</table><br>';
-
-
-			/*
-			 * Lignes de factures
-			 */
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
-			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
-			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
-			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
-			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
-          	$sql.= ' p.description as product_desc';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet as l';
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product p ON l.fk_product=p.rowid';
-			$sql.= ' WHERE l.fk_facture = '.$fac->id;
-			$sql.= ' ORDER BY l.rang ASC, l.rowid';
-
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num_lignes = $db->num_rows($resql);
-				$i = 0; $total = 0;
-
-				print '<table class="noborder" width="100%">';
-
-				if ($num_lignes)
-				{
-
-					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans('Description').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="12">&nbsp;</td>';
-					print "</tr>\n";
-
-				}
-				$var=true;
-				while ($i < $num_lignes)
-				{
-					$objp = $db->fetch_object($resql);
-					$var=!$var;
-
-					// Ligne en mode visu
-					if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
-					{
-						print '<tr '.$bc[$var].'>';
-						if ($objp->fk_product > 0)
-						{
-							print '<td>';
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
-							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br(stripslashes($objp->product));
-							print_date_range($objp->date_start,$objp->date_end);
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
-
-				            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-							if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+			  // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
+			  if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                             {
-                            	print '<br>'.nl2br($objp->product_desc);
+			      print '<br>'.nl2br($objp->product_desc);
                             }
 
-							print '</td>';
-						}
-						else
-						{
-							print '<td>';
-							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-							if (($objp->info_bits & 2) == 2)
-							{
-								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socid.'">';
-								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
-								print '</a>';
-								if ($objp->description) print ' - '.nl2br($objp->description);
-							}
-							else
-							{
-								print nl2br($objp->description);
-								print_date_range($objp->date_start,$objp->date_end);
-							}
-							print "</td>\n";
-						}
-						print '<td align="right">'.$objp->tva_taux.'%</td>';
-						print '<td align="right">'.price($objp->subprice)."</td>\n";
-						print '<td align="right">';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print $objp->qty;
-						}
-						else print '&nbsp;';
-						print '</td>';
-						if ($objp->remise_percent > 0)
-						{
-							print '<td align="right">'.$objp->remise_percent."%</td>\n";
-						}
-						else
-						{
-							print '<td>&nbsp;</td>';
-						}
-						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
-
-						// Icone d'edition et suppression
-						if ($fac->statut == 0  && $user->rights->facture->creer)
-						{
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-							print img_edit();
-							print '</a></td>';
-							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-							{
-								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete_product_line&amp;rowid='.$objp->rowid.'">';
-							}
-							else
-							{
-								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
-							}
-							print img_delete();
-							print '</a></td>';
-							print '<td align="right">';
-							if ($i > 0)
-							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
-								print img_up();
-								print '</a>';
-							}
-							if ($i < $num_lignes-1)
-							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
-								print img_down();
-								print '</a>';
-							}
-							print '</td>';
-						}
-						else
-						{
-							print '<td colspan="3">&nbsp;</td>';
-						}
-						print '</tr>';
-					}
-
-					// Ligne en mode update
-					if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
-					{
-						print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
-						print '<input type="hidden" name="action" value="updateligne">';
-						print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-						print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
-						print '<tr '.$bc[$var].'>';
-						print '<td>';
-						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-						if ($objp->fk_product > 0)
-						{
-							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
-							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br($objp->product);
-							print '<br>';
-						}
-						// éditeur wysiwyg
-						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-						{
-					    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-							$doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
-							$doleditor->Create();
-						}
-						else
-						{
-							print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
-						}
-						print '</td>';
-						print '<td align="right">';
-						if(! $soc->tva_assuj)
-							print '<input type="hidden" name="tva_tx" value="0">0';
-						else
-							print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
-						print '</td>';
-						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice).'"></td>';
-						print '<td align="right">';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
-						}
-						else print '&nbsp;';
-						print '</td>';
-						print '<td align="right" nowrap>';
-						if (($objp->info_bits & 2) != 2)
-						{
-							print '<input size="2" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
-						}
-						else print '&nbsp;';
-						print '</td>';
-						print '<td align="center" rowspan="1" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
-						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-						print '</tr>' . "\n";
-						if ($conf->service->enabled)
-						{
-							print '<tr '.$bc[$var].'>';
-							print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-							print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1,"updateligne");
-							print ' '.$langs->trans('to').' ';
-							print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1,"updateligne");
-							print '</td>';
-							print '</tr>';
-						}
-						print "</form>\n";
-					}
-
-					$total = $total + ($objp->qty * $objp->price);
-					$i++;
-				}
-
-				$db->free($resql);
+			  print '</td>';
 			}
-			else
+		      else
 			{
-				dolibarr_print_error($db);
+			  print '<td>';
+			  print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+			  if (($objp->info_bits & 2) == 2)
+			    {
+			      print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socid.'">';
+			      print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
+			      print '</a>';
+			      if ($objp->description) print ' - '.nl2br($objp->description);
+			    }
+			  else
+			    {
+			      print nl2br($objp->description);
+			      print_date_range($objp->date_start,$objp->date_end);
+			    }
+			  print "</td>\n";
 			}
+		      print '<td align="right">'.$objp->tva_taux.'%</td>';
+		      print '<td align="right">'.price($objp->subprice)."</td>\n";
+		      print '<td align="right">';
+		      if (($objp->info_bits & 2) != 2)
+			{
+			  print $objp->qty;
+			}
+		      else print '&nbsp;';
+		      print '</td>';
+		      if ($objp->remise_percent > 0)
+			{
+			  print '<td align="right">'.$objp->remise_percent."%</td>\n";
+			}
+		      else
+			{
+			  print '<td>&nbsp;</td>';
+			}
+		      print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
 
-			/*
-			 * Lignes de remise
-			 */
+		      // Icone d'edition et suppression
+		      if ($fac->statut == 0  && $user->rights->facture->creer)
+			{
+			  print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+			  print img_edit();
+			  print '</a></td>';
+			  if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+			    {
+			      print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete_product_line&amp;rowid='.$objp->rowid.'">';
+			    }
+			  else
+			    {
+			      print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=deleteline&amp;rowid='.$objp->rowid.'">';
+			    }
+			  print img_delete();
+			  print '</a></td>';
+			  print '<td align="right">';
+			  if ($i > 0)
+			    {
+			      print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+			      print img_up();
+			      print '</a>';
+			    }
+			  if ($i < $num_lignes-1)
+			    {
+			      print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+			      print img_down();
+			      print '</a>';
+			    }
+			  print '</td>';
+			}
+		      else
+			{
+			  print '<td colspan="3">&nbsp;</td>';
+			}
+		      print '</tr>';
+		    }
 
-    // Réductions relatives (Remises-Ristournes-Rabbais)
-/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremisepercent">';
-			print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerRelativeDiscount');
-			if ($fac->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editrelativediscount')
+		  // Ligne en mode update
+		  if ($_GET['action'] == 'editline' && $user->rights->facture->creer && $_GET['rowid'] == $objp->rowid)
+		    {
+		      print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
+		      print '<input type="hidden" name="action" value="updateligne">';
+		      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+		      print '<input type="hidden" name="rowid" value="'.$_GET['rowid'].'">';
+		      print '<tr '.$bc[$var].'>';
+		      print '<td>';
+		      print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+		      if ($objp->fk_product > 0)
 			{
-				print '<input type="text" name="remise_percent" size="2" value="'.$fac->remise_percent.'">%';
+			  print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+			  if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+			  else print img_object($langs->trans('ShowProduct'),'product');
+			  print ' '.$objp->ref.'</a>';
+			  print ' - '.nl2br($objp->product);
+			  print '<br>';
 			}
-			else
+		      // éditeur wysiwyg
+		      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 			{
-				print $fac->remise_percent?$fac->remise_percent.'%':'&nbsp;';
+			  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			  $doleditor=new DolEditor('desc',$objp->description,164,'dolibarr_details');
+			  $doleditor->Create();
 			}
-			print '</font></td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] != 'editrelativediscount') print $fac->remise_percent?'-'.price($fac->remise_percent*$total/100):$langs->trans("DiscountNone");
-			else print '&nbsp;';
-			print '</font></td>';
-			if ($_GET['action'] != 'editrelativediscount')
+		      else
 			{
-				if ($fac->brouillon && $user->rights->facture->creer)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_percent)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
+			  print '<textarea name="desc" class="flat" cols="70" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
 			}
-			else
+		      print '</td>';
+		      print '<td align="right">';
+		      if(! $soc->tva_assuj)
+			print '<input type="hidden" name="tva_tx" value="0">0';
+		      else
+			print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
+		      print '</td>';
+		      print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice).'"></td>';
+		      print '<td align="right">';
+		      if (($objp->info_bits & 2) != 2)
 			{
-				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+			  print '<input size="2" type="text" class="flat" name="qty" value="'.$objp->qty.'">';
 			}
-			print '</tr>';
-			print '</form>';
-*/
+		      else print '&nbsp;';
+		      print '</td>';
+		      print '<td align="right" nowrap>';
+		      if (($objp->info_bits & 2) != 2)
+			{
+			  print '<input size="2" type="text" class="flat" name="remise_percent" value="'.$objp->remise_percent.'">%';
+			}
+		      else print '&nbsp;';
+		      print '</td>';
+		      print '<td align="center" rowspan="1" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+		      print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+		      print '</tr>' . "\n";
+		      if ($conf->service->enabled)
+			{
+			  print '<tr '.$bc[$var].'>';
+			  print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+			  print $html->select_date($objp->date_start,'date_start',0,0,$objp->date_start?0:1,"updateligne");
+			  print ' '.$langs->trans('to').' ';
+			  print $html->select_date($objp->date_end,'date_end',0,0,$objp->date_end?0:1,"updateligne");
+			  print '</td>';
+			  print '</tr>';
+			}
+		      print "</form>\n";
+		    }
 
-		    // Réductions absolues (Remises-Ristournes-Rabbais)
-/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremiseabsolue">';
-			print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerAbsoluteDiscount');
-			if ($fac->brouillon) print ' <font style="font-weight: normal">('.($absolute_discount?$langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editabsolutediscount')
-			{
-				print '-<input type="text" name="remise_absolue" size="2" value="'.$fac->remise_absolue.'">';
-			}
-			else
-			{
-				print $fac->remise_absolue?'-'.price($fac->remise_absolue):$langs->trans("DiscountNone");
-			}
-			print '</font></td>';
-			if ($_GET['action'] != 'editabsolutediscount')
-			{
-				if ($fac->brouillon && $user->rights->facture->creer)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_absolue)
-				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
-					print img_delete();
-					print '</a></td>';
-				}
-				else
-				{
-					print '<td>&nbsp;</td>';
-				}
-				print '<td>&nbsp;</td>';
-			}
-			else
-			{
-				print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-			}
-			print '</tr>';
-			print '</form>';
-*/
+		  $total = $total + ($objp->qty * $objp->price);
+		  $i++;
+		}
 
-			/*
-			 * Ajouter une ligne
-			 */
-			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid')
-			{
-				print '<tr class="liste_titre">';
-				print '<td>';
-				print '<a name="add"></a>'; // ancre
-				print $langs->trans('Description').'</td>';
-				print '<td align="right">'.$langs->trans('VAT').'</td>';
-				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-				print '<td align="right">'.$langs->trans('Qty').'</td>';
-				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print "</tr>\n";
+	      $db->free($resql);
+	    }
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
 
-                // Ajout produit produits/services personalisés
-				print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
-				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-				print '<input type="hidden" name="action" value="addligne">';
+	  /*
+	   * Lignes de remise
+	   */
 
-                $var=true;
-				print '<tr '.$bc[$var].'>';
-				print '<td colspan="1">';
-				print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
-				print '<td align="right">';
-				if($soc->tva_assuj == "0")
-					print '<input type="hidden" name="tva_tx" value="0">0';
-				else
-					$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
-				print '</td>';
-				print '<td align="right"><input type="text" name="pu" size="6"></td>';
-				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
-				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-				print '</tr>';
-				if ($conf->service->enabled)
-				{
-					print '<tr '.$bc[$var].'>';
-					print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-					print $html->select_date('','date_start',0,0,1,"addligne");
-					print ' '.$langs->trans('to').' ';
-					print $html->select_date('','date_end',0,0,1,"addligne");
-					print '</td>';
-					print '</tr>';
-				}
-				print '</form>';
+	  // Réductions relatives (Remises-Ristournes-Rabbais)
+	  /* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
+	     $var=!$var;
+	     print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	     print '<input type="hidden" name="action" value="setremisepercent">';
+	     print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	     print '<tr class="liste_total"><td>';
+	     print $langs->trans('CustomerRelativeDiscount');
+	     if ($fac->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
+	     print '</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td align="right"><font style="font-weight: normal">';
+	     if ($_GET['action'] == 'editrelativediscount')
+	     {
+	     print '<input type="text" name="remise_percent" size="2" value="'.$fac->remise_percent.'">%';
+	     }
+	     else
+	     {
+	     print $fac->remise_percent?$fac->remise_percent.'%':'&nbsp;';
+	     }
+	     print '</font></td>';
+	     print '<td align="right"><font style="font-weight: normal">';
+	     if ($_GET['action'] != 'editrelativediscount') print $fac->remise_percent?'-'.price($fac->remise_percent*$total/100):$langs->trans("DiscountNone");
+	     else print '&nbsp;';
+	     print '</font></td>';
+	     if ($_GET['action'] != 'editrelativediscount')
+	     {
+	     if ($fac->brouillon && $user->rights->facture->creer)
+	     {
+	     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
+	     }
+	     else
+	     {
+	     print '<td>&nbsp;</td>';
+	     }
+	     if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_percent)
+	     {
+	     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
+	     print img_delete();
+	     print '</a></td>';
+	     }
+	     else
+	     {
+	     print '<td>&nbsp;</td>';
+	     }
+	     print '<td>&nbsp;</td>';
+	     }
+	     else
+	     {
+	     print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+	     }
+	     print '</tr>';
+	     print '</form>';
+	  */
 
-                // Ajout de produits/services prédéfinis
-                if ($conf->produit->enabled)
+	  // Réductions absolues (Remises-Ristournes-Rabbais)
+	  /* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
+	     $var=!$var;
+	     print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	     print '<input type="hidden" name="action" value="setremiseabsolue">';
+	     print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	     print '<tr class="liste_total"><td>';
+	     print $langs->trans('CustomerAbsoluteDiscount');
+	     if ($fac->brouillon) print ' <font style="font-weight: normal">('.($absolute_discount?$langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
+	     print '</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td>&nbsp;</td>';
+	     print '<td align="right"><font style="font-weight: normal">';
+	     if ($_GET['action'] == 'editabsolutediscount')
+	     {
+	     print '-<input type="text" name="remise_absolue" size="2" value="'.$fac->remise_absolue.'">';
+	     }
+	     else
+	     {
+	     print $fac->remise_absolue?'-'.price($fac->remise_absolue):$langs->trans("DiscountNone");
+	     }
+	     print '</font></td>';
+	     if ($_GET['action'] != 'editabsolutediscount')
+	     {
+	     if ($fac->brouillon && $user->rights->facture->creer)
+	     {
+	     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;facid='.$fac->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
+	     }
+	     else
+	     {
+	     print '<td>&nbsp;</td>';
+	     }
+	     if ($fac->brouillon && $user->rights->facture->creer && $fac->remise_absolue)
+	     {
+	     print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
+	     print img_delete();
+	     print '</a></td>';
+	     }
+	     else
+	     {
+	     print '<td>&nbsp;</td>';
+	     }
+	     print '<td>&nbsp;</td>';
+	     }
+	     else
+	     {
+	     print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
+	     }
+	     print '</tr>';
+	     print '</form>';
+	  */
+
+	  /*
+	   * Ajouter une ligne
+	   */
+	  if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid')
+	    {
+	      print '<tr class="liste_titre">';
+	      print '<td>';
+	      print '<a name="add"></a>'; // ancre
+	      print $langs->trans('Description').'</td>';
+	      print '<td align="right">'.$langs->trans('VAT').'</td>';
+	      print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+	      print '<td align="right">'.$langs->trans('Qty').'</td>';
+	      print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print "</tr>\n";
+
+	      // Ajout produit produits/services personalisés
+	      print '<form name="addligne" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+	      print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	      print '<input type="hidden" name="action" value="addligne">';
+
+	      $var=true;
+	      print '<tr '.$bc[$var].'>';
+	      print '<td colspan="1">';
+	      print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
+	      print '<td align="right">';
+	      if($soc->tva_assuj == "0")
+		print '<input type="hidden" name="tva_tx" value="0">0';
+	      else
+		$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+	      print '</td>';
+	      print '<td align="right"><input type="text" name="pu" size="6"></td>';
+	      print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+	      print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
+	      print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+	      print '</tr>';
+	      if ($conf->service->enabled)
+		{
+		  print '<tr '.$bc[$var].'>';
+		  print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		  print $html->select_date('','date_start',0,0,1,"addligne");
+		  print ' '.$langs->trans('to').' ';
+		  print $html->select_date('','date_end',0,0,1,"addligne");
+		  print '</td>';
+		  print '</tr>';
+		}
+	      print '</form>';
+
+	      // Ajout de produits/services prédéfinis
+	      if ($conf->produit->enabled)
                 {
-    				print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
-    				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-    				print '<input type="hidden" name="action" value="addligne_predef">';
+		  print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+		  print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+		  print '<input type="hidden" name="action" value="addligne_predef">';
 
-                    $var=! $var;
-    				print '<tr '.$bc[$var].'>';
-    				print '<td colspan="2">';
-					// multiprix
-					if($conf->global->PRODUIT_MULTIPRICES == 1)
-						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
-					else
-                    	$html->select_produits('','idprod','',$conf->produit->limit_size);
-                    if (! $conf->use_ajax) print '<br>';
-                    print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
-                    print '<td>&nbsp;</td>';
-    				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
-    				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
-    				print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-    				print '</tr>';
-    				if ($conf->service->enabled)
-    				{
-    					print '<tr '.$bc[$var].'>';
-    					print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
-    					print $html->select_date('','date_start_predef',0,0,1,"addligne_predef");
-    					print ' '.$langs->trans('to').' ';
-    					print $html->select_date('','date_end_predef',0,0,1,"addligne_predef");
-    					print '</td>';
-    					print '</tr>';
-    				}
-    				print '</form>';
+		  $var=! $var;
+		  print '<tr '.$bc[$var].'>';
+		  print '<td colspan="2">';
+		  // multiprix
+		  if($conf->global->PRODUIT_MULTIPRICES == 1)
+		    $html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+		  else
+		    $html->select_produits('','idprod','',$conf->produit->limit_size);
+		  if (! $conf->use_ajax) print '<br>';
+		  print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
+		  print '<td>&nbsp;</td>';
+		  print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+		  print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
+		  print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+		  print '</tr>';
+		  if ($conf->service->enabled)
+		    {
+		      print '<tr '.$bc[$var].'>';
+		      print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+		      print $html->select_date('','date_start_predef',0,0,1,"addligne_predef");
+		      print ' '.$langs->trans('to').' ';
+		      print $html->select_date('','date_end_predef',0,0,1,"addligne_predef");
+		      print '</td>';
+		      print '</tr>';
+		    }
+		  print '</form>';
                 }
 
-			}
-			print "</table>\n";
+	    }
+	  print "</table>\n";
 
-			print "</div>\n";
+	  print "</div>\n";
 
 
-			/*
-			 * Boutons actions
-			 */
+	  /*
+	   * Boutons actions
+	   */
 
-			if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
+	  if ($user->societe_id == 0 && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
+	    {
+	      print '<div class="tabsAction">';
+
+	      // Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
+	      if ($fac->statut == 1)
+		{
+		  // On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
+		  $ventilExportCompta = $fac->getVentilExportCompta();
+
+		  if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
+		      && ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
+		    {
+		      print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
+		    }
+		}
+
+	      // Récurrente
+	      if (! $conf->global->FACTURE_DISABLE_RECUR)
+		{
+		  print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+		}
+
+	      // Valider
+	      if ($fac->statut == 0 && $num_lignes > 0)
+		{
+		  if ($user->rights->facture->valider)
+		    {
+		      print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
+		    }
+		}
+	      else
+		{
+		  // Générer
+		  if ($fac->statut >= 1 && $user->rights->facture->creer)
+		    {
+		      if ($fac->paye == 0)
 			{
-				print '<div class="tabsAction">';
-
-				// Editer une facture déjà validée, sans paiement effectué et pas exporté en compta
-				if ($fac->statut == 1)
-				{
-					// On vérifie si les lignes de factures ont été exportées en compta et/ou ventilées
-					$ventilExportCompta = $fac->getVentilExportCompta();
-
-					if ($conf->global->FACTURE_ENABLE_EDITDELETE && $user->rights->facture->modifier
-					&& ($resteapayer == $fac->total_ttc	&& $fac->paye == 0 && $ventilExportCompta == 0))
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-					}
-				}
-
-				// Récurrente
-				if (! $conf->global->FACTURE_DISABLE_RECUR)
-				{
-					print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
-				}
-
-				// Valider
-				if ($fac->statut == 0 && $num_lignes > 0)
-				{
-					if ($user->rights->facture->valider)
-					{
-						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
-					}
-				}
-				else
-				{
-					// Générer
-					if ($fac->statut >= 1 && $user->rights->facture->creer)
-					{
-						if ($fac->paye == 0)
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
-						}
-						else
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
-						}
-					}
-				}
+			  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
+			}
+		      else
+			{
+			  print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
+			}
+		    }
+		}
 			
-				// Envoyer
-				if ($fac->statut == 1 && $user->rights->facture->envoyer)
-				{
-					if ($facidnext)
-					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendByMail').'</span>';
-					}
-					else
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
-					}
-				}
-
-				// Envoyer une relance
-				if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
-				{
-					if ($facidnext)
-					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendRemindByMail').'</span>';
-					}
-					else
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
-					}
-				}
-
-				// Emettre paiement
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
-				{
-					if ($facidnext)
-					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('DoPaiement').'</span>';
-					}
-					else
-					{
-						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaiement').'</a>';
-					}
-				}
-
-				// Classer 'payé'
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
-						&& $resteapayer <= 0)
-				{
-					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
-				}
-
-				// Classer 'fermée' (possible si validée et pas encore classée payée)
-				if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
-						&& $user->rights->facture->paiement)
-				{
-					if ($totalpaye > 0)
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
-					}
-					else
-					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
-
-						// \todo
-						// Ajouter bouton "Annuler et Créer facture remplacement"
-					}
-				}
-
-				// Supprimer
-				if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
-				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-				}
-
-				print '</div>';
-			}
-
-			print '<table width="100%"><tr><td width="50%" valign="top">';
-			print '<a name="builddoc"></a>'; // ancre
-
-			/*
-			 * Documents générés
-			 */
-			$filename=sanitize_string($fac->ref);
-			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
-			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
-			$genallowed=($fac->statut >= 1 && $user->rights->facture->creer);
-			$delallowed=$user->rights->facture->supprimer;
-
-			$var=true;
-
-			print '<br>';
-			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
-
-			/*
-			 *   Propales rattachées
-			 */
-			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.price, p.ref, p.rowid as propalid';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
-			if (!$conf->commande->enabled)
-			{
-				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
-			}
-			else
-			{
-				$sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-				$sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propale = p.rowid";
-			}
-
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				if ($num)
-				{
-					$i = 0; $total = 0;
-					if ($somethingshown) print '<br>';
-					$somethingshown=1;
-					print_titre($langs->trans('RelatedCommercialProposals'));
-					print '<table class="noborder" width="100%">';
-					print '<tr class="liste_titre">';
-					print '<td>'.$langs->trans('Ref').'</td>';
-					print '<td>'.$langs->trans('Date').'</td>';
-					print '<td align="right">'.$langs->trans('Price').'</td>';
-					print '</tr>';
-
-					$var=True;
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($resql);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
-						print '<td>'.dolibarr_print_date($objp->dp).'</td>';
-						print '<td align="right">'.price($objp->price).'</td>';
-						print '</tr>';
-						$total = $total + $objp->price;
-						$i++;
-					}
-					print '<tr class="liste_total"><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
-					print '</table>';
-				}
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-
-			/*
-			 * Commandes rattachées
-			 */
-			if($conf->commande->enabled)
-			{
-				$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
-				$resql = $db->query($sql);
-				if ($resql)
-				{
-					$num = $db->num_rows($resql);
-					if ($num)
-					{
-						$i = 0; $total = 0;
-						if ($somethingshown) print '<br>';
-						$somethingshown=1;
-						print_titre($langs->trans('RelatedOrders'));
-						print '<table class="noborder" width="100%">';
-						print '<tr class="liste_titre">';
-						print '<td>'.$langs->trans('Ref').'</td>';
-           				print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
-						print '<td align="center">'.$langs->trans('Date').'</td>';
-						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
-						print '</tr>';
-						$var=true;
-						while ($i < $num)
-						{
-							$objp = $db->fetch_object($resql);
-							$var=!$var;
-							print '<tr '.$bc[$var].'><td>';
-							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-   							print '<td>'.$objp->ref_client.'</td>';
-							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
-							print '<td align="right">'.price($objp->total_ht).'</td>';
-							print "</tr>\n";
-							$total = $total + $objp->total_ht;
-							$i++;
-						}
-						print '<tr class="liste_total">';
-						print '<td align="left">'.$langs->trans('TotalHT').'</td>';
-   					print '<td>&nbsp;</td>';
-   					print '<td>&nbsp;</td>';
-						print '<td align="right">'.price($total).'</td></tr>';
-						print '</table>';
-					}
-				}
-				else
-				{
-					dolibarr_print_error($db);
-				}
-			}
-
-			print '</td><td valign="top" width="50%">';
-
-			/*
-			 * Liste des actions propres à la facture
-			 */
-			$sql = 'SELECT id, '.$db->pdate('a.datea').' as da, a.label, a.note, code';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u ';
-			$sql .= ' WHERE a.fk_user_author = u.rowid ';
-			$sql .= ' AND a.fk_action in (9,10) ';
-			$sql .= ' AND a.fk_soc = '.$fac->socid ;
-			$sql .= ' AND a.fk_facture = '.$fac->id;
-
-			$resql = $db->query($sql);
-			if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				if ($num)
-				{
-					print '<br>';
-					print_titre($langs->trans('ActionsOnBill'));
-
-					$i = 0; $total = 0;
-					print '<table class="border" width="100%">';
-					print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
-					print "\n";
-
-					$var=True;
-					while ($i < $num)
-					{
-						$objp = $db->fetch_object($resql);
-						$var=!$var;
-						print '<tr '.$bc[$var].'>';
-						print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-						print '<td>'.dolibarr_print_date($objp->da).'</td>';
-						print '<td>'.stripslashes($objp->label).'</td>';
-						print '<td>'.$objp->code.'</td>';
-						print '</tr>';
-						$i++;
-					}
-					print '</table>';
-				}
-			}
-			else
-			{
-				dolibarr_print_error($db);
-			}
-
-			print '</td></tr></table>';
-
-
-			/*
-			 * Affiche formulaire mail
-			 */
-			if ($_GET['action'] == 'presend')
-			{
-				$facref = sanitize_string($fac->ref);
-				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
-
-				// Construit PDF si non existant
-				if (! is_readable($file))
-				{
-					if ($_REQUEST['lang_id'])
-					{
-						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-					}
-					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
-				    if ($result <= 0)
-				    {
-				    	dolibarr_print_error($db,$result);
-				        exit;
-				    }
-				}
-
-				print '<br>';
-				print_titre($langs->trans('SendBillByMail'));
-
-				$liste[0]='&nbsp;';
-				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-				{
-					$liste[$key]=$value;
-				}
-
-				// Créé l'objet formulaire mail
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
-				$formmail = new FormMail($db);
-				$formmail->fromname = $user->fullname;
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withto=$liste;
-				$formmail->withcc=1;
-				$formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
-				$formmail->withfile=1;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				$formmail->withcancel=1;
-				// Tableau des substitutions
-				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des paramètres complémentaires du post
-				$formmail->param['action']='send';
-				$formmail->param['models']='facture_send';
-				$formmail->param['facid']=$fac->id;
-				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-
-				$formmail->show_form();
-
-				print '<br>';
-			}
-
-			if ($_GET['action'] == 'prerelance')
-			{
-				$facref = sanitize_string($fac->ref);
-				$file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
-
-				// Construit PDF si non existant
-				if (! is_readable($file))
-				{
-					if ($_REQUEST['lang_id'])
-					{
-						$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-						$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-					}
-					$result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
-				    if ($result <= 0)
-				    {
-				    	dolibarr_print_error($db,$result);
-				        exit;
-				    }
-				}
-
-				print '<br>';
-				print_titre($langs->trans('SendReminderBillByMail'));
-
-				$liste[0]='&nbsp;';
-				foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
-				{
-					$liste[$key]=$value;
-				}
-
-				// Créé l'objet formulaire mail
-				include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
-				$formmail = new FormMail($db);
-				$formmail->fromname = $user->fullname;
-				$formmail->frommail = $user->email;
-				$formmail->withfrom=1;
-				$formmail->withto=$liste;
-				$formmail->withcc=1;
-				$formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
-				$formmail->withfile=1;
-				$formmail->withbody=1;
-				$formmail->withdeliveryreceipt=1;
-				// Tableau des substitutions
-				$formmail->substit['__FACREF__']=$fac->ref;
-				// Tableau des paramètres complémentaires
-				$formmail->param['action']='relance';
-				$formmail->param['models']='facture_relance';
-				$formmail->param['facid']=$fac->id;
-				$formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
-
-				$formmail->show_form();
-
-				print '<br>';
-			}
-		}
-		else
+	      // Envoyer
+	      if ($fac->statut == 1 && $user->rights->facture->envoyer)
 		{
-			dolibarr_print_error($db,$fac->error);
+		  if ($facidnext)
+		    {
+		      print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendByMail').'</span>';
+		    }
+		  else
+		    {
+		      print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
+		    }
 		}
+
+	      // Envoyer une relance
+	      if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
+		{
+		  if ($facidnext)
+		    {
+		      print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendRemindByMail').'</span>';
+		    }
+		  else
+		    {
+		      print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=prerelance">'.$langs->trans('SendRemindByMail').'</a>';
+		    }
+		}
+
+	      // Emettre paiement
+	      if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+		{
+		  if ($facidnext)
+		    {
+		      print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('DoPaiement').'</span>';
+		    }
+		  else
+		    {
+		      print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaiement').'</a>';
+		    }
+		}
+
+	      // Classer 'payé'
+	      if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
+		  && $resteapayer <= 0)
+		{
+		  print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
+		}
+
+	      // Classer 'fermée' (possible si validée et pas encore classée payée)
+	      if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
+		  && $user->rights->facture->paiement)
+		{
+		  if ($totalpaye > 0)
+		    {
+		      print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
+		    }
+		  else
+		    {
+		      print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+
+		      // \todo
+		      // Ajouter bouton "Annuler et Créer facture remplacement"
+		    }
+		}
+
+	      // Supprimer
+	      if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
+		{
+		  print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		}
+
+	      print '</div>';
+	    }
+
+	  print '<table width="100%"><tr><td width="50%" valign="top">';
+	  print '<a name="builddoc"></a>'; // ancre
+
+	  /*
+	   * Documents générés
+	   */
+	  $filename=sanitize_string($fac->ref);
+	  $filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
+	  $urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
+	  $genallowed=($fac->statut >= 1 && $user->rights->facture->creer);
+	  $delallowed=$user->rights->facture->supprimer;
+
+	  $var=true;
+
+	  print '<br>';
+	  $somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
+
+	  /*
+	   *   Propales rattachées
+	   */
+	  $sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.price, p.ref, p.rowid as propalid';
+	  $sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
+	  if (!$conf->commande->enabled)
+	    {
+	      $sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+	      $sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
+	    }
+	  else
+	    {
+	      $sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+	      $sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propale = p.rowid";
+	    }
+
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      if ($num)
+		{
+		  $i = 0; $total = 0;
+		  if ($somethingshown) print '<br>';
+		  $somethingshown=1;
+		  print_titre($langs->trans('RelatedCommercialProposals'));
+		  print '<table class="noborder" width="100%">';
+		  print '<tr class="liste_titre">';
+		  print '<td>'.$langs->trans('Ref').'</td>';
+		  print '<td>'.$langs->trans('Date').'</td>';
+		  print '<td align="right">'.$langs->trans('Price').'</td>';
+		  print '</tr>';
+
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object($resql);
+		      $var=!$var;
+		      print '<tr '.$bc[$var].'>';
+		      print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
+		      print '<td>'.dolibarr_print_date($objp->dp).'</td>';
+		      print '<td align="right">'.price($objp->price).'</td>';
+		      print '</tr>';
+		      $total = $total + $objp->price;
+		      $i++;
+		    }
+		  print '<tr class="liste_total"><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
+		  print '</table>';
+		}
+	    }
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
+
+	  /*
+	   * Commandes rattachées
+	   */
+	  if($conf->commande->enabled)
+	    {
+	      $sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
+	      $sql .= ' FROM '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'co_fa as co_fa WHERE co_fa.fk_commande = c.rowid AND co_fa.fk_facture = '.$fac->id;
+	      $resql = $db->query($sql);
+	      if ($resql)
+		{
+		  $num = $db->num_rows($resql);
+		  if ($num)
+		    {
+		      $i = 0; $total = 0;
+		      if ($somethingshown) print '<br>';
+		      $somethingshown=1;
+		      print_titre($langs->trans('RelatedOrders'));
+		      print '<table class="noborder" width="100%">';
+		      print '<tr class="liste_titre">';
+		      print '<td>'.$langs->trans('Ref').'</td>';
+		      print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+		      print '<td align="center">'.$langs->trans('Date').'</td>';
+		      print '<td align="right">'.$langs->trans('AmountHT').'</td>';
+		      print '</tr>';
+		      $var=true;
+		      while ($i < $num)
+			{
+			  $objp = $db->fetch_object($resql);
+			  $var=!$var;
+			  print '<tr '.$bc[$var].'><td>';
+			  print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
+			  print '<td>'.$objp->ref_client.'</td>';
+			  print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
+			  print '<td align="right">'.price($objp->total_ht).'</td>';
+			  print "</tr>\n";
+			  $total = $total + $objp->total_ht;
+			  $i++;
+			}
+		      print '<tr class="liste_total">';
+		      print '<td align="left">'.$langs->trans('TotalHT').'</td>';
+		      print '<td>&nbsp;</td>';
+		      print '<td>&nbsp;</td>';
+		      print '<td align="right">'.price($total).'</td></tr>';
+		      print '</table>';
+		    }
+		}
+	      else
+		{
+		  dolibarr_print_error($db);
+		}
+	    }
+
+	  print '</td><td valign="top" width="50%">';
+
+	  /*
+	   * Liste des actions propres à la facture
+	   */
+	  $sql = 'SELECT id, '.$db->pdate('a.datea').' as da, a.label, a.note, code';
+	  $sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u ';
+	  $sql .= ' WHERE a.fk_user_author = u.rowid ';
+	  $sql .= ' AND a.fk_action in (9,10) ';
+	  $sql .= ' AND a.fk_soc = '.$fac->socid ;
+	  $sql .= ' AND a.fk_facture = '.$fac->id;
+
+	  $resql = $db->query($sql);
+	  if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      if ($num)
+		{
+		  print '<br>';
+		  print_titre($langs->trans('ActionsOnBill'));
+
+		  $i = 0; $total = 0;
+		  print '<table class="border" width="100%">';
+		  print '<tr '.$bc[$var].'><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Date').'</td><td>'.$langs->trans('Action').'</td><td>'.$langs->trans('By').'</td></tr>';
+		  print "\n";
+
+		  $var=True;
+		  while ($i < $num)
+		    {
+		      $objp = $db->fetch_object($resql);
+		      $var=!$var;
+		      print '<tr '.$bc[$var].'>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
+		      print '<td>'.dolibarr_print_date($objp->da).'</td>';
+		      print '<td>'.stripslashes($objp->label).'</td>';
+		      print '<td>'.$objp->code.'</td>';
+		      print '</tr>';
+		      $i++;
+		    }
+		  print '</table>';
+		}
+	    }
+	  else
+	    {
+	      dolibarr_print_error($db);
+	    }
+
+	  print '</td></tr></table>';
+
+
+	  /*
+	   * Affiche formulaire mail
+	   */
+	  if ($_GET['action'] == 'presend')
+	    {
+	      $facref = sanitize_string($fac->ref);
+	      $file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+
+	      // Construit PDF si non existant
+	      if (! is_readable($file))
+		{
+		  if ($_REQUEST['lang_id'])
+		    {
+		      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		    }
+		  $result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
+		  if ($result <= 0)
+		    {
+		      dolibarr_print_error($db,$result);
+		      exit;
+		    }
+		}
+
+	      print '<br>';
+	      print_titre($langs->trans('SendBillByMail'));
+
+	      $liste[0]='&nbsp;';
+	      foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+		{
+		  $liste[$key]=$value;
+		}
+
+	      // Créé l'objet formulaire mail
+	      include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+	      $formmail = new FormMail($db);
+	      $formmail->fromname = $user->fullname;
+	      $formmail->frommail = $user->email;
+	      $formmail->withfrom=1;
+	      $formmail->withto=$liste;
+	      $formmail->withcc=1;
+	      $formmail->withtopic=$langs->trans('SendBillRef','__FACREF__');
+	      $formmail->withfile=1;
+	      $formmail->withbody=1;
+	      $formmail->withdeliveryreceipt=1;
+	      $formmail->withcancel=1;
+	      // Tableau des substitutions
+	      $formmail->substit['__FACREF__']=$fac->ref;
+	      // Tableau des paramètres complémentaires du post
+	      $formmail->param['action']='send';
+	      $formmail->param['models']='facture_send';
+	      $formmail->param['facid']=$fac->id;
+	      $formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
+
+	      $formmail->show_form();
+
+	      print '<br>';
+	    }
+
+	  if ($_GET['action'] == 'prerelance')
+	    {
+	      $facref = sanitize_string($fac->ref);
+	      $file = $conf->facture->dir_output . '/' . $facref . '/' . $facref . '.pdf';
+
+	      // Construit PDF si non existant
+	      if (! is_readable($file))
+		{
+		  if ($_REQUEST['lang_id'])
+		    {
+		      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+		      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		    }
+		  $result=facture_pdf_create($db, $fac->id, '', $_REQUEST['model'], $outputlangs);
+		  if ($result <= 0)
+		    {
+		      dolibarr_print_error($db,$result);
+		      exit;
+		    }
+		}
+
+	      print '<br>';
+	      print_titre($langs->trans('SendReminderBillByMail'));
+
+	      $liste[0]='&nbsp;';
+	      foreach ($soc->thirdparty_and_contact_email_array() as $key=>$value)
+		{
+		  $liste[$key]=$value;
+		}
+
+	      // Créé l'objet formulaire mail
+	      include_once(DOL_DOCUMENT_ROOT.'/html.formmail.class.php');
+	      $formmail = new FormMail($db);
+	      $formmail->fromname = $user->fullname;
+	      $formmail->frommail = $user->email;
+	      $formmail->withfrom=1;
+	      $formmail->withto=$liste;
+	      $formmail->withcc=1;
+	      $formmail->withtopic=$langs->trans('SendReminderBillRef','__FACREF__');
+	      $formmail->withfile=1;
+	      $formmail->withbody=1;
+	      $formmail->withdeliveryreceipt=1;
+	      // Tableau des substitutions
+	      $formmail->substit['__FACREF__']=$fac->ref;
+	      // Tableau des paramètres complémentaires
+	      $formmail->param['action']='relance';
+	      $formmail->param['models']='facture_relance';
+	      $formmail->param['facid']=$fac->id;
+	      $formmail->param['returnurl']=DOL_URL_ROOT.'/compta/facture.php?facid='.$fac->id;
+
+	      $formmail->show_form();
+
+	      print '<br>';
+	    }
 	}
-	else
+      else
 	{
-		/***************************************************************************
-		 *                                                                         *
-		 *                      Mode Liste                                         *
-		 *                                                                         *
-		 ***************************************************************************/
-		$page     =$_GET['page'];
-		$sortorder=$_GET['sortorder'];
-		$sortfield=$_GET['sortfield'];
-		$month    =$_GET['month'];
-		$year     =$_GET['year'];
-		$limit = $conf->liste_limit;
-		$offset = $limit * $page ;
-
-		if (! $sortorder) $sortorder='DESC';
-		if (! $sortfield) $sortfield='f.datef';
-
-		$facturestatic=new Facture($db);
-
-		if ($page == -1) $page = 0 ;
-
-		$sql = 'SELECT ';
-		$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
-		$sql.= ' '.$db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite,';
-		$sql.= ' f.paye as paye, f.fk_statut,';
-		$sql.= ' s.nom, s.idp';
-		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ','.MAIN_DB_PREFIX.'facture as f';
-		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture ';
-		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON f.rowid=fd.fk_facture ';
-		$sql.= ' WHERE f.fk_soc = s.idp';
-		if ($socid) $sql .= ' AND s.idp = '.$socid;
-		if ($month > 0) $sql .= ' AND date_format(f.datef, \'%m\') = '.$month;
-		if ($_GET['filtre'])
-		{
-			$filtrearr = split(',', $_GET['filtre']);
-			foreach ($filtrearr as $fil)
-			{
-				$filt = split(':', $fil);
-				$sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
-			}
-		}
-		if ($_GET['search_ref'])
-		{
-			$sql .= ' AND f.facnumber like \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
-		}
-		if ($_GET['search_societe'])
-		{
-			$sql .= ' AND s.nom like \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
-		}
-		if ($_GET['search_montant_ht'])
-		{
-			$sql .= ' AND f.total = \''.addslashes(trim($_GET['search_montant_ht'])).'\'';
-		}
-		if ($_GET['search_montant_ttc'])
-		{
-			$sql .= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
-		}
-		if ($year > 0)
-		{
-			$sql .= ' AND date_format(f.datef, \'%Y\') = '.$year;
-		}
-		if ($_POST['sf_ref'])
-		{
-			$sql .= ' AND f.facnumber like \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
-		}
-		if ($sall)
-		{
-			$sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
-		}
-
-		$sql .= ' GROUP BY f.rowid';
-
-		$sql .= ' ORDER BY ';
-		$listfield=split(',',$sortfield);
-		foreach ($listfield as $key => $value)
-			$sql.= $listfield[$key].' '.$sortorder.',';
-		$sql .= ' f.rowid DESC ';
-
-		$sql .= $db->plimit($limit+1,$offset);
-
-		$resql = $db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-
-			if ($socid)
-			{
-				$soc = new Societe($db);
-				$soc->fetch($socid);
-			}
-
-			print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
-
-			$i = 0;
-			print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
-			print '<table class="liste" width="100%">';
-			print '<tr class="liste_titre">';
-			print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid,'',$sortfield);
-			print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid,'align="center"',$sortfield);
-			print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid,'',$sortfield);
-			print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid,'align="right"',$sortfield);
-			print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid,'align="right"',$sortfield);
-			print '</tr>';
-
-			// Lignes des champs de filtre
-
-			print '<tr class="liste_titre">';
-			print '<td class="liste_titre" align="right">';
-			print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
-			print '</td><td class="liste_titre">&nbsp;</td>';
-			print '<td class="liste_titre" align="left">';
-			print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
-			print '</td><td class="liste_titre" align="right">';
-			print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
-			print '</td><td class="liste_titre" align="right">';
-			print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
-			print '</td><td class="liste_titre" colspan="2" align="right">';
-			print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
-			print '</td>';
-			print '</tr>';
-
-			if ($num > 0)
-			{
-				$var=True;
-				$total=0;
-				$totalrecu=0;
-
-				while ($i < min($num,$limit))
-				{
-					$objp = $db->fetch_object($resql);
-					$var=!$var;
-
-					print '<tr '.$bc[$var].'>';
-					print '<td nowrap="nowrap">';
-					$facturestatic->id=$objp->facid;
-					$facturestatic->ref=$objp->facnumber;
-					$facturestatic->type=$objp->type;
-					print $facturestatic->getNomUrl(1);
-					print $objp->increment;
-					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
-					print '</td>';
-
-					if ($objp->df > 0 )
-					{
-						print '<td align="center" nowrap>';
-						$y = strftime('%Y',$objp->df);
-						$m = strftime('%m',$objp->df);
-						print strftime('%d',$objp->df);
-						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
-						print substr(strftime('%B',$objp->df),0,3).'</a>';
-						print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
-						print strftime('%Y',$objp->df).'</a></td>';
-					}
-					else
-					{
-						print '<td align="center"><b>!!!</b></td>';
-					}
-					print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
-					print '<td align="right">'.price($objp->total).'</td>';
-					print '<td align="right">'.price($objp->total_ttc).'</td>';
-					print '<td align="right">'.price($objp->am).'</td>';
-
-					// Affiche statut de la facture
-					print '<td align="right" nowrap="nowrap">';
-					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
-					print '</td>';
-
-					print '</tr>';
-					$total+=$objp->total;
-					$total_ttc+=$objp->total_ttc;
-					$totalrecu+=$objp->am;
-					$i++;
-				}
-
-				if (($offset + $num) <= $limit)
-				{
-					// Print total
-					print '<tr class="liste_total">';
-					print '<td class="liste_total" colspan="3" align="left">'.$langs->trans('Total').'</td>';
-					print '<td class="liste_total" align="right">'.price($total).'</td>';
-					print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
-					print '<td class="liste_total" align="right">'.price($totalrecu).'</td>';
-					print '<td class="liste_total" align="center">&nbsp;</td>';
-					print '</tr>';
-				}
-			}
-
-			print "</table>\n";
-			print "</form>\n";
-			$db->free($resql);
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
+	  dolibarr_print_error($db,$fac->error);
 	}
+    }
+  else
+    {
+      /***************************************************************************
+       *                                                                         *
+       *                      Mode Liste                                         *
+       *                                                                         *
+       ***************************************************************************/
+      $page     =$_GET['page'];
+      $sortorder=$_GET['sortorder'];
+      $sortfield=$_GET['sortfield'];
+      $month    =$_GET['month'];
+      $year     =$_GET['year'];
+      $limit = $conf->liste_limit;
+      $offset = $limit * $page ;
+
+      if (! $sortorder) $sortorder='DESC';
+      if (! $sortfield) $sortfield='f.datef';
+
+      $facturestatic=new Facture($db);
+
+      if ($page == -1) $page = 0 ;
+
+      $sql = 'SELECT ';
+      $sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
+      $sql.= ' '.$db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite,';
+      $sql.= ' f.paye as paye, f.fk_statut,';
+      $sql.= ' s.nom, s.idp';
+      if (! $sall) $sql.= ' ,sum(pf.amount) as am';
+      $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
+      $sql.= ','.MAIN_DB_PREFIX.'facture as f';
+      if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture ';
+      if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON f.rowid=fd.fk_facture ';
+      $sql.= ' WHERE f.fk_soc = s.idp';
+      if ($socid) $sql .= ' AND s.idp = '.$socid;
+      if ($month > 0) $sql .= ' AND date_format(f.datef, \'%m\') = '.$month;
+      if ($_GET['filtre'])
+	{
+	  $filtrearr = split(',', $_GET['filtre']);
+	  foreach ($filtrearr as $fil)
+	    {
+	      $filt = split(':', $fil);
+	      $sql .= ' AND ' . trim($filt[0]) . ' = ' . trim($filt[1]);
+	    }
+	}
+      if ($_GET['search_ref'])
+	{
+	  $sql .= ' AND f.facnumber like \'%'.addslashes(trim($_GET['search_ref'])).'%\'';
+	}
+      if ($_GET['search_societe'])
+	{
+	  $sql .= ' AND s.nom like \'%'.addslashes(trim($_GET['search_societe'])).'%\'';
+	}
+      if ($_GET['search_montant_ht'])
+	{
+	  $sql .= ' AND f.total = \''.addslashes(trim($_GET['search_montant_ht'])).'\'';
+	}
+      if ($_GET['search_montant_ttc'])
+	{
+	  $sql .= ' AND f.total_ttc = \''.addslashes(trim($_GET['search_montant_ttc'])).'\'';
+	}
+      if ($year > 0)
+	{
+	  $sql .= ' AND date_format(f.datef, \'%Y\') = '.$year;
+	}
+      if ($_POST['sf_ref'])
+	{
+	  $sql .= ' AND f.facnumber like \'%'.addslashes(trim($_POST['sf_ref'])) . '%\'';
+	}
+      if ($sall)
+	{
+	  $sql .= ' AND (s.nom like \'%'.addslashes($sall).'%\' OR f.facnumber like \'%'.addslashes($sall).'%\' OR f.note like \'%'.addslashes($sall).'%\' OR fd.description like \'%'.addslashes($sall).'%\')';
+	}
+
+      $sql .= ' GROUP BY f.rowid';
+
+      $sql .= ' ORDER BY ';
+      $listfield=split(',',$sortfield);
+      foreach ($listfield as $key => $value)
+	$sql.= $listfield[$key].' '.$sortorder.',';
+      $sql .= ' f.rowid DESC ';
+
+      $sql .= $db->plimit($limit+1,$offset);
+
+      $resql = $db->query($sql);
+      if ($resql)
+	{
+	  $num = $db->num_rows($resql);
+
+	  if ($socid)
+	    {
+	      $soc = new Societe($db);
+	      $soc->fetch($socid);
+	    }
+
+	  print_barre_liste($langs->trans('BillsCustomers').' '.($socid?' '.$soc->nom:''),$page,'facture.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
+
+	  $i = 0;
+	  print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">'."\n";
+	  print '<table class="liste" width="100%">';
+	  print '<tr class="liste_titre">';
+	  print_liste_field_titre($langs->trans('Ref'),$_SERVER['PHP_SELF'],'f.facnumber','','&amp;socid='.$socid,'',$sortfield);
+	  print_liste_field_titre($langs->trans('Date'),$_SERVER['PHP_SELF'],'f.datef','','&amp;socid='.$socid,'align="center"',$sortfield);
+	  print_liste_field_titre($langs->trans('Company'),$_SERVER['PHP_SELF'],'s.nom','','&amp;socid='.$socid,'',$sortfield);
+	  print_liste_field_titre($langs->trans('AmountHT'),$_SERVER['PHP_SELF'],'f.total','','&amp;socid='.$socid,'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans('AmountTTC'),$_SERVER['PHP_SELF'],'f.total_ttc','','&amp;socid='.$socid,'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans('Received'),$_SERVER['PHP_SELF'],'am','','&amp;socid='.$socid,'align="right"',$sortfield);
+	  print_liste_field_titre($langs->trans('Status'),$_SERVER['PHP_SELF'],'fk_statut,paye,am','','&amp;socid='.$socid,'align="right"',$sortfield);
+	  print '</tr>';
+
+	  // Lignes des champs de filtre
+
+	  print '<tr class="liste_titre">';
+	  print '<td class="liste_titre" align="right">';
+	  print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
+	  print '</td><td class="liste_titre">&nbsp;</td>';
+	  print '<td class="liste_titre" align="left">';
+	  print '<input class="flat" type="text" name="search_societe" value="'.$_GET['search_societe'].'">';
+	  print '</td><td class="liste_titre" align="right">';
+	  print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+	  print '</td><td class="liste_titre" align="right">';
+	  print '<input class="flat" type="text" size="10" name="search_montant_ttc" value="'.$_GET['search_montant_ttc'].'">';
+	  print '</td><td class="liste_titre" colspan="2" align="right">';
+	  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
+	  print "</td></tr>\n";
+
+	  if ($num > 0)
+	    {
+	      $var=True;
+	      $total=0;
+	      $totalrecu=0;
+
+	      while ($i < min($num,$limit))
+		{
+		  $objp = $db->fetch_object($resql);
+		  $var=!$var;
+
+		  print '<tr '.$bc[$var].'>';
+		  print '<td nowrap="nowrap">';
+		  $facturestatic->id=$objp->facid;
+		  $facturestatic->ref=$objp->facnumber;
+		  $facturestatic->type=$objp->type;
+		  print $facturestatic->getNomUrl(1);
+		  print $objp->increment;
+		  if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
+		  print "</td>\n";
+
+		  if ($objp->df > 0 )
+		    {
+		      print '<td align="center" nowrap>';
+		      $y = strftime('%Y',$objp->df);
+		      $m = strftime('%m',$objp->df);
+		      print strftime('%d',$objp->df);
+		      print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'&amp;month='.$m.'">';
+		      print substr(strftime('%B',$objp->df),0,3).'</a>';
+		      print ' <a href="'.$_SERVER["PHP_SELF"].'?year='.$y.'">';
+		      print strftime('%Y',$objp->df).'</a></td>';
+		    }
+		  else
+		    {
+		      print '<td align="center"><b>!!!</b></td>';
+		    }
+		  print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
+		  print '<td align="right">'.price($objp->total).'</td>';
+		  print '<td align="right">'.price($objp->total_ttc).'</td>';
+		  print '<td align="right">'.price($objp->am).'</td>';
+
+		  // Affiche statut de la facture
+		  print '<td align="right" nowrap="nowrap">';
+		  print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
+		  print "</td></tr>\n";
+		  $total+=$objp->total;
+		  $total_ttc+=$objp->total_ttc;
+		  $totalrecu+=$objp->am;
+		  $i++;
+		}
+
+	      if (($offset + $num) <= $limit)
+		{
+		  // Print total
+		  print '<tr class="liste_total">';
+		  print '<td class="liste_total" colspan="3" align="left">'.$langs->trans('Total').'</td>';
+		  print '<td class="liste_total" align="right">'.price($total).'</td>';
+		  print '<td class="liste_total" align="right">'.price($total_ttc).'</td>';
+		  print '<td class="liste_total" align="right">'.price($totalrecu).'</td>';
+		  print '<td class="liste_total" align="center">&nbsp;</td>';
+		  print '</tr>';
+		}
+	    }
+
+	  print "</table>\n";
+	  print "</form>\n";
+	  $db->free($resql);
+	}
+      else
+	{
+	  dolibarr_print_error($db);
+	}
+    }
 }
 
 $db->close();
