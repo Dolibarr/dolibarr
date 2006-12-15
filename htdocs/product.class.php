@@ -2415,7 +2415,11 @@ class Product
       }
 
   }
-
+  /**
+     \brief Affecte les valeurs smarty
+     \remarks Rodolphe : pour l'instant la fonction est vide mais necessaire pour compatibilite
+              avec les canvas A terme la fiche produit utilisera aussi smarty      
+   */
   function assign_smarty_values(&$smarty)
   {
 
