@@ -435,8 +435,12 @@ class ProductLivre extends Product
     $sql.= ' p.duration, p.envente as statut, p.stock_loc';
     $sql.= ',pl.pages';
     $sql.= ',SUM(fd.qty) as ventes';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'product_cnv_livre as pl,'.MAIN_DB_PREFIX.'product as p';  
+    $sql.= ",sc.reel as casier, se.reel as entrepot";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_product = p.rowid';
+    $sql.= ','.MAIN_DB_PREFIX.'product_cnv_livre as pl';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as sc ON sc.fk_product = pl.rowid AND sc.fk_entrepot = 1';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_stock as se ON se.fk_product = pl.rowid AND se.fk_entrepot = 2';
     $sql .= " WHERE p.rowid=pl.rowid ";
 
     if ($sall)
@@ -479,8 +483,8 @@ class ProductLivre extends Product
 	    $datas["id"]        = $obj->rowid;
 	    $datas["ref"]       = $obj->ref;
 	    $datas["titre"]     = $obj->label;
-	    $datas["casier"]    = 0;
-	    $datas["entrepot"]  = 0;
+	    $datas["casier"]    = $obj->casier;
+	    $datas["entrepot"]  = $obj->entrepot;
 	    $datas["ventes"]    = $obj->ventes;
 	    $datas["stock"]     = 0;
 	    $datas["stock_loc"] = stripslashes($obj->stock_loc);

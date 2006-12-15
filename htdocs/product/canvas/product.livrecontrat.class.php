@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Auguria SARL <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -154,7 +155,7 @@ class ProductLivreContrat extends Product
   {
     dolibarr_syslog("ProductLivreContrat::UpdateCanvas");
 
-    $taux   = str_replace(',','.',abs(trim($datas["contrat_taux"])));
+    $taux   = ereg_replace(',','.',abs(trim($datas["contrat_taux"])));
     $quant  = trim($datas["contrat_quant"]);
     $duree  = trim($datas["contrat_duree"]);
 
