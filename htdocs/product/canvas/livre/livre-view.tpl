@@ -42,21 +42,20 @@
 <table class="border" width="100%">
 <tr>
  <td width="15%">Prix au feuillet</td>
- <td width="35%">{$prod_pxfeuil}</td>
+ <td width="35%">{$prod_pxfeuil} HT</td>
 
  <td width="15%">Prix couverture</td>
- <td width="35%">{$prod_pxcouv}</td>
+ <td width="35%">{$prod_pxcouv} HT</td>
 </tr>
 <tr>
  <td width="15%">Prix de revient</td>
- <td colspan="3">{$prod_pxrevient}</td>
+ <td colspan="3">{$prod_pxrevient} HT</td>
 </tr>
 <tr>
  <td>Prix de vente</td>
  <td>{$prod_pxvente} TTC</td>
-
-  <td width="15%">Taux TVA</td>
-  <td width="35%">{$prod_tva_tx}</td>
+ <td width="15%">Taux TVA</td>
+ <td width="35%">{$prod_tva_tx} %</td>
 </tr>
 </table>
 
@@ -101,7 +100,7 @@
 
 <tr>
  <td>Taux conclu</td>
- <td>{$livre_contrat_taux}</td>
+ <td>{$livre_contrat_taux} %</td>
  <td>Quantité achetée</td>
  <td>{$livre_contrat_quant}</td>
 </tr>
