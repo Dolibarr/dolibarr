@@ -585,3 +585,20 @@ create table llx_entrepot_valorisation
 )type=innodb;
 
 ALTER TABLE llx_entrepot ADD COLUMN valo_pmp float(12,4) DEFAULT 0;
+
+create table llx_user_entrepot
+(
+  rowid        integer AUTO_INCREMENT PRIMARY KEY,
+  fk_entrepot  integer UNSIGNED, -- pointe sur llx_entrepot
+  fk_user      integer UNSIGNED, -- pointe sur llx_user
+  consult      tinyint(1) UNSIGNED,
+  send         tinyint(1) UNSIGNED
+)type=innodb;
+
+create table llx_product_subproduct
+(
+  rowid                 integer AUTO_INCREMENT PRIMARY KEY,
+  fk_product            integer NOT NULL, -- id du produit maitre
+  fk_product_subproduct integer NOT NULL, -- id du sous-produit
+  UNIQUE(fk_product, fk_product_subproduct)
+)type=innodb;
