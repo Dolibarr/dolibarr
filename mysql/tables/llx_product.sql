@@ -30,6 +30,8 @@ create table llx_product
   description        text,
   note               text,
   price              double,
+  price_ttc          float(12,4) DEFAULT 0,
+  price_base_type    varchar(3)  DEFAULT 'HT',
   tva_tx             double,
   fk_user_author     integer,
   envente            tinyint DEFAULT 1,
