@@ -118,6 +118,19 @@ class Product
       }
   }
   /**
+   *    \brief    Definit le prix de vente
+   *    \return   void
+   */
+  function SetSellPrice($price, $base_type='HT')
+  {
+    $price = ereg_replace(" ","", $price);
+    $price = ereg_replace(",",".", $price);
+
+    $this->price = $price;
+    
+    $this->price_base_type = $base_type;
+  }
+  /**
    *    \brief    Insère le produit en base
    *    \param    user        Utilisateur qui effectue l'insertion
    *    \return   int     id du produit ou numero d'erreur < 0
