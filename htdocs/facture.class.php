@@ -57,18 +57,18 @@ class Facture extends CommonObject
   var $date;
   var $ref;
   var $ref_client;
-  var $type;					// 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
+  var $type;			// 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
   var $amount;
   var $remise;
   var $tva;
   var $total;
   var $note;
   var $note_public;
-  var $statut;				// 0=brouillon, 1=validé
-  var $paye;					// 1 si facture payée COMPLETEMENT, 0 sinon
-  var $fk_facture_source;		// id facture source si facture de remplacement ou avoir
-  var $close_code;			// abandon, replaced, avoir, discount_vat
-  var $close_note;			// Commentaire si mis a paye sans paiement complet
+  var $statut;			// 0=brouillon, 1=validé
+  var $paye;			// 1 si facture payée COMPLETEMENT, 0 sinon
+  var $fk_facture_source;	// id facture source si facture de remplacement ou avoir
+  var $close_code;		// abandon, replaced, avoir, discount_vat
+  var $close_note;		// Commentaire si mis a paye sans paiement complet
   var $propalid;
   var $projetid;
   var $date_lim_reglement;
@@ -87,7 +87,6 @@ class Facture extends CommonObject
 
   var $specimen;
   var $error;
-
 
   /**
    *    \brief  Constructeur de la classe
@@ -154,7 +153,7 @@ class Facture extends CommonObject
 	$this->amount            = $_facrec->amount;
 	$this->remise_absolue    = $_facrec->remise_absolue;
 	$this->remise_percent    = $_facrec->remise_percent;
-	$this->remise			 = $_facrec->remise;
+	$this->remise		 = $_facrec->remise;
       }
 
     // Definition de la date limite
@@ -1269,16 +1268,16 @@ class Facture extends CommonObject
   }
 
   /**
-   * 	\brief     	Ajoute une ligne dans le tableau products
-   * 	\param     	idproduct			Id du produit a ajouter
-   * 	\param     	qty					Quantité
-   * 	\param     	remise_percent		Remise relative effectuée sur le produit
-   * 	\param     	date_start
-   * 	\param     	date_end
-   * 	\return    	void
-   *	\remarks	$this->client doit etre chargé
-   *	\TODO	Remplacer les appels a cette fonction par generation objet Ligne 
-   *			inséré dans tableau $this->products
+     \brief   	Ajoute une ligne dans le tableau products
+     \param    	idproduct		Id du produit a ajouter
+     \param    	qty			Quantité
+     \param    	remise_percent		Remise relative effectuée sur le produit
+     \param    	date_start
+     \param    	date_end
+     \return   	void
+     \remarks	$this->client doit etre chargé
+     \TODO	Remplacer les appels a cette fonction par generation objet Ligne 
+     inséré dans tableau $this->products
    */
   function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
   {
@@ -1300,12 +1299,12 @@ class Facture extends CommonObject
 
 	$line=new FactureLigne($this->db);
 	$line->rowid = $idproduct;
-	$line->fk_product=$idproduct;
-	$line->desc=$prod->description;
+	$line->fk_product = $idproduct;
+	$line->desc = $prod->description;
 	$line->qty = $qty;
-	$line->subprice=$price;
+	$line->subprice = $price;
 	$line->remise_percent = $remise_percent;
-	$line->tva_tx=$tva_tx;
+	$line->tva_tx = $tva_tx;
 	if ($date_start) { $line->date_start = $date_start; }
 	if ($date_end)   { $line->date_end = $date_end; }
 
@@ -1325,16 +1324,16 @@ class Facture extends CommonObject
    * 		\param    	date_start      Date de debut de validité du service
    * 		\param    	date_end        Date de fin de validité du service
    * 		\param    	ventil          Code de ventilation comptable
-   * 		\param    	info_bits		Bits de type de lignes
+   * 		\param    	info_bits	Bits de type de lignes
    * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
    *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='')
+  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
   {
     global $conf;
-    dolibarr_syslog("facture.class.php::addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits)");
+    dolibarr_syslog("Facture::Addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits)");
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
     if ($this->brouillon)
@@ -1354,7 +1353,7 @@ class Facture extends CommonObject
 	// qty, pu, remise_percent et txtva
 	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+	$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $pu_ttc);
 	$total_ht  = $tabprice[0];
 	$total_tva = $tabprice[1];
 	$total_ttc = $tabprice[2];
@@ -1511,8 +1510,10 @@ class Facture extends CommonObject
    *	\brief		Supprime une ligne facture de la base
    *	\param		rowid		Id de la ligne de facture a supprimer
    */
-  function deleteline($rowid)
+  function deleteline($rowid, $user='')
   {
+    global $langs, $conf;
+
     dolibarr_syslog("Facture.class::deleteline rowid=".$rowid." ".$this->brouillon);
 
     if ($this->brouillon)
@@ -1541,7 +1542,13 @@ class Facture extends CommonObject
 	    $this->db->rollback();
 	    return -1;
 	  }
-			
+
+	// Appel des triggers
+	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	$interface=new Interfaces($this->db);
+	$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
+	// Fin appel triggers
+
 	$result=$this->update_price($this->id);
 
 	$this->db->commit();
@@ -2681,12 +2688,12 @@ class FactureLigne
 
   // From llx_facturedet
   var $rowid;
-  var $fk_facture;		// Id facture
+  var $fk_facture;	// Id facture
   var $desc;          	// Description ligne
-  var $fk_product;		// Id produit prédéfini
+  var $fk_product;	// Id produit prédéfini
 
-  var $qty;				// Quantité (exemple 2)
-  var $tva_tx;			// Taux tva produit/service (exemple 19.6)
+  var $qty;		// Quantité (exemple 2)
+  var $tva_tx;		// Taux tva produit/service (exemple 19.6)
   var $subprice;      	// P.U. HT (exemple 100)
   var $remise_percent;	// % de la remise ligne (exemple 20%)
   var $rang = 0;
@@ -2720,7 +2727,6 @@ class FactureLigne
   {
     $this->db= $DB ;
   }
-
 
   /**
    *      \brief     Recupére l'objet ligne de facture
@@ -2779,12 +2785,12 @@ class FactureLigne
 
 
   /**
-   *      \brief     	Insère l'objet ligne de facture en base
-   *		\return		int		<0 si ko, >0 si ok
+   *    \brief     	Insère l'objet ligne de facture en base
+   *	\return		int		<0 si ko, >0 si ok
    */
   function insert()
   {
-    dolibarr_syslog("FactureLigne.class::insert rang=".$this->rang);
+    dolibarr_syslog("FactureLigne::Insert rang=".$this->rang);
     $this->db->begin();
 
     $rangtouse=$this->rang;
@@ -2852,8 +2858,6 @@ class FactureLigne
 	$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
 	// Fin appel triggers
 
-
-
 	$this->db->commit();
 	return $this->rowid;
       }
@@ -2868,8 +2872,8 @@ class FactureLigne
 
 
   /**
-   *      \brief     	Mise a jour de l'objet ligne de facture en base
-   *		\return		int		<0 si ko, >0 si ok
+   *    \brief     	Mise a jour de l'objet ligne de facture en base
+   *	\return		int		<0 si ko, >0 si ok
    */
   function update()
   {
