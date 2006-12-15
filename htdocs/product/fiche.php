@@ -116,6 +116,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     {
       $mesg='<div class="error">'.$product->error.'</div>';
       $_GET["action"] = "create";
+      $_GET["canvas"] = $product->canvas;
       $_GET["type"] = $_POST["type"];
     }
 }
@@ -396,8 +397,23 @@ $html = new Form($db);
  */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
-  $product = new Product($db);
-  
+  if ( !isset($product) )
+    {
+      if ($_GET["canvas"] <> '' && file_exists('canvas/product.'.$_GET["canvas"].'.class.php') )
+	{
+	  $class = 'Product'.ucfirst($_GET["canvas"]);
+	  include_once('canvas/product.'.$_GET["canvas"].'.class.php');
+	  
+	  $product = new $class($db);
+	}
+      else
+	{
+	  $product = new Product($db);
+	}  
+    }
+
+  $product->assign_smarty_values($smarty);
+
   if ($_error == 1)
     {
       $product = $e_product;
@@ -520,6 +536,9 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   else
     {
       //RODO
+      // On assigne les valeurs meme en creation car elles sont definies si 
+      // on revient en erreur
+      //
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$_GET["canvas"].'/';
       $null = $html->load_tva("tva_tx",$conf->defaulttx,$mysoc,'');
       $smarty->assign('tva_taux_value', $html->tva_taux_value);
@@ -558,7 +577,7 @@ if ($_GET["id"] || $_GET["ref"])
       
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
       
-      $product->assign_values($smarty);
+      $product->assign_smarty_values($smarty);
     }
   else
     {
@@ -900,7 +919,6 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
   $propal = New Propal($db);
 
   print '<table width="100%" class="noborder">';
-
 
   // Propals
   if($conf->propal->enabled && $user->rights->propale->creer)
