@@ -11,7 +11,7 @@
    <td width="15%">Réf.</td>
    <td colspan="2">
     <input name="ref" size="20" value="{$prod_ref}"
-     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+     class="{$class_normal_ref}" onfocus="this.className='{$class_focus_ref}';" onblur="this.className='{$class_normal_ref}';">
   </td>
  </tr>
 
@@ -76,7 +76,7 @@
  <tr>
   <td>Prix de vente</td>
   <td>
-   <input name="price" type="text" size="7" maxlength="6" value=""
+   <input name="price" type="text" size="7" maxlength="6" value="{$prod_price}"
     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';"> TTC
   </td>
   <td>Taux TVA</td>
@@ -94,12 +94,12 @@
  <tr>
   <td width="15%">Seuil stock</td>
   <td width="35%">
-   <input name="seuil_stock_alerte" size="4" value=""
+   <input name="seuil_stock_alerte" size="4" value="{$prod_seuil_stock_alerte}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
   </td>
   <td width="15%">Emplacement Stock</td>
   <td width="35%">
-   <input name="stock_loc" size="8" value=""
+   <input name="stock_loc" size="8" value="{$prod_stock_loc}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
   </td>
  </tr>
@@ -113,7 +113,7 @@
   </td>
   <td>Poids</td>
   <td>
-   <input name="weight" size="5" value=""
+   <input name="weight" size="5" value="{$prod_weight}"
      class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">g
    <input name="weight_units" type="hidden" value="-3">
   </td>
@@ -130,7 +130,7 @@
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
  <td width="15%">Date d'application</td>
- <td width="35%">{html_select_date field_order='DMY' start_year='-10' reverse_years=True}</td>
+ <td width="35%">{html_select_date field_order='DMY' start_year='-10' reverse_years=True all_extra='class="flat"'}</td>
 </tr>
 
 <tr>
