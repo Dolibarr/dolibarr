@@ -140,11 +140,6 @@ class ProductLivreContrat extends Product
 	    $this->duree              = $result["duree"];
 	    $this->date_app           = $result["date_app"];
 
-	    // On charge le livre pour avoir le titre
-	    // ne pas utiliser FetchCanvas qui cree une boucle infinie
-	    $this->livre = new ProductLivre($this->db);
-	    $this->livre->Fetch($result["fk_cnv_livre"]);
-
 	    $this->db->free();
 	  }
       }
@@ -189,28 +184,7 @@ class ProductLivreContrat extends Product
    */
   function assign_values(&$smarty)
   {
-    $smarty->assign('prod_id',          $this->id);
-    $smarty->assign('prod_ref',         $this->ref);
-    $smarty->assign('prod_label',       $this->livre->libelle);
-    $smarty->assign('prod_note',        $this->note);
-    $smarty->assign('prod_description', $this->description);
 
-    $smarty->assign('prod_canvas',        $this->canvas);
-
-    $smarty->assign('prod_contrat_taux',     $this->taux);
-    $smarty->assign('prod_contrat_duree',    $this->duree);
-    $smarty->assign('prod_contrat_date_app', $this->date_app);
-    $smarty->assign('prod_contrat_quant',    $this->quantite);
-
-    $smarty->assign('prod_stock_reel',        $this->stock_reel);
-    $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
-    $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
-    $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
-
-    if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
-      {
-	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
-      }
   }
 }
 ?>
