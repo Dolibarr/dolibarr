@@ -46,6 +46,9 @@ class Product
   var $description;
   //! Prix de vente
   var $price;
+  //! Base de prix (ttc ou ht)
+  var $price_base_type;
+  //! Tableau des prix multiples
   var $multiprices=array();
   //! Taux de TVA
   var $tva_tx;
@@ -707,9 +710,9 @@ class Product
 
 
   /**
-   *    \brief  Modifie le prix d'un produit/service
-   *    \param  id          id du produit/service à modifier
-   *    \param  user        utilisateur qui modifie le prix
+     \brief  Modifie le prix d'un produit/service
+     \param  id          id du produit/service à modifier
+     \param  user        utilisateur qui modifie le prix
    */
   function update_price($id, $user)
   {
@@ -749,10 +752,24 @@ class Product
       {
 	if (strlen(trim($this->price)) > 0 )
 	  {
+	    if ($this->price_base_type == 'TTC')
+	      {
+		$price_ttc = $this->price;
+		$this->price = $this->price / (1 + ($this->tva_tx / 100));
+	      }
+	    else
+	      {
+		$price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	      }
+
+
 	    $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
 	    $sql .= " SET price = " . price2num($this->price);
-	    $sql .= " WHERE rowid = " . $id;
+	    $sql .= " , price_base_type='".$this->price_base_type."'";
+	    $sql .= " , price_ttc='".$price_ttc."'";
 
+	    $sql .= " WHERE rowid = " . $id;
+	    
 	    if ( $this->db->query($sql) )
 	      {
 		$this->_log_price($user);
@@ -794,7 +811,7 @@ class Product
 	return -1;
       }
     
-    $sql = "SELECT rowid, ref, label, description, note, price, tva_tx, envente,";
+    $sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_base_type, tva_tx, envente,";
     $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
     $sql.= " stock_commande, stock_loc, weight, weight_units";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
@@ -812,6 +829,8 @@ class Product
 	$this->description        = stripslashes($result["description"]);
 	$this->note               = stripslashes($result["note"]);
 	$this->price              = $result["price"];
+	$this->price_ttc          = $result["price_ttc"];
+	$this->price_base_type    = $result["price_base_type"];
 	$this->tva_tx             = $result["tva_tx"];
 	$this->type               = $result["fk_product_type"];
 	$this->nbvente            = $result["nbvente"];
