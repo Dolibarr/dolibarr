@@ -45,6 +45,3 @@ create table llx_product
   weight_units       tinyint      DEFAULT NULL,
   canvas             varchar(15)  DEFAULT ''
 )type=innodb;
-
-
-
