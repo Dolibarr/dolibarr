@@ -107,7 +107,7 @@
 
 <table class="border" width="100%">
  <tr>
- <td width="15%">Stock</td>
+ <td width="15%">Stock disponible</td>
  <td width="35%"><b>{$prod_stock_dispo}</b></td>
   <td width="15%">Seuil d'alerte stock</td>
   <td width="35%">
@@ -140,25 +140,24 @@
 <tr>
  <td width="15%">Durée du contrat :</td>
  <td width="35%">
-  <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$prod_contrat_duree}"
+  <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$livre_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
  <td width="15%">Date d'application</td>
  <td width="35%">
-  <input name="contrat_date_app" type="text" size="7" maxlength="6" value="{$prod_contrat_date_app}"
-   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+  {html_select_date field_order='DMY' start_year='-10' reverse_years=True all_extra='class="flat"'}
  </td>
 </tr>
 
 <tr>
  <td>Taux conclu</td>
  <td>
-  <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$prod_contrat_taux}"
+  <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$livre_contrat_taux}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">%
  </td>
  <td>Quantité achetée</td>
  <td>
-  <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$prod_contrat_quant}"
+  <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$livre_contrat_quant}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
 </tr>

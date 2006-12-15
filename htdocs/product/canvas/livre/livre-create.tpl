@@ -126,7 +126,7 @@
 <tr>
  <td width="15%">Durée du contrat :</td>
  <td width="35%">
-  <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$prod_contrat_duree}"
+  <input name="contrat_duree" type="text" size="7" maxlength="6" value="{$livre_contrat_duree}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
  <td width="15%">Date d'application</td>
@@ -136,12 +136,12 @@
 <tr>
  <td>Taux conclu</td>
  <td>
-  <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$prod_contrat_taux}"
+  <input name="contrat_taux" type="text" size="7" maxlength="6" value="{$livre_contrat_taux}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">%
  </td>
  <td>Quantité achetée</td>
  <td>
-  <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$prod_contrat_quant}"
+  <input name="contrat_quant" type="text" size="7" maxlength="6" value="{$livre_contrat_quant}"
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
 </tr>

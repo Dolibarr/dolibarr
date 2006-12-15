@@ -53,7 +53,7 @@
 </tr>
 <tr>
  <td>Prix de vente</td>
- <td>{$prod_pxvente}</td>
+ <td>{$prod_pxvente} TTC</td>
 
   <td width="15%">Taux TVA</td>
   <td width="35%">{$prod_tva_tx}</td>
@@ -65,10 +65,8 @@
 <table class="border" width="100%">
 
 <tr>
- <td width="15%">Stock</td>
- <td width="35%" {$smarty_stock_dispo_class}>
-   {$prod_stock_dispo}
- </td>
+ <td width="15%">Stock disponible</td>
+ <td width="35%" {$smarty_stock_dispo_class}>{$prod_stock_dispo}</td>
  <td width="15%">Seuil d'alerte</td>
  <td width="35%">{$prod_stock_alert}</td>
 </tr>
@@ -87,7 +85,7 @@
 
  <tr>
   <td>Statut</td>
-  <td colspan="3"></td>
+  <td colspan="3">{$prod_statut}</td>
  </tr>
 
 </table>
@@ -96,16 +94,16 @@
 
 <tr>
  <td width="15%">Durée du contrat : </td>
- <td width="35%">{$prod_contrat_duree}</td>
+ <td width="35%">{$livre_contrat_duree}</td>
  <td width="15%">Date d'application</td>
- <td width="35%"></td>
+ <td width="35%">{$livre_contrat_date_app|date_format:"%d %B %Y"}</td>
 </tr>
 
 <tr>
  <td>Taux conclu</td>
- <td>{$prod_contrat_taux}</td>
+ <td>{$livre_contrat_taux}</td>
  <td>Quantité achetée</td>
- <td>{$prod_contrat_quant}</td>
+ <td>{$livre_contrat_quant}</td>
 </tr>
 
 </table>

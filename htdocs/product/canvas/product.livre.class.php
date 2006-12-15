@@ -378,30 +378,31 @@ class ProductLivre extends Product
 
     $smarty->assign('prod_isbn13',           '978-'.substr($this->isbn,0,12).substr($this->ean,-1,1));
 
-    $smarty->assign('prod_tva_tx',           $this->tva_tx);
+    $smarty->assign('prod_tva_tx',            $this->tva_tx);
 
-    $smarty->assign('prod_pages',            $this->pages);
-    $smarty->assign('prod_format',           $this->format);
-    $smarty->assign('prod_pxfeuil',          $this->px_feuillet);
+    $smarty->assign('prod_pages',             $this->pages);
+    $smarty->assign('prod_format',            $this->format);
+    $smarty->assign('prod_pxfeuil',           $this->px_feuillet);
 
-    $smarty->assign('prod_pxcouv',           $this->couverture->price);
+    $smarty->assign('prod_pxcouv',            $this->couverture->price);
 
-    $smarty->assign('prod_weight',           $this->weight);
-    $smarty->assign('prod_weight_units',     $this->weight_units);
+    $smarty->assign('prod_weight',            $this->weight);
+    $smarty->assign('prod_weight_units',      $this->weight_units);
 
-    $smarty->assign('prod_pxrevient',        price($this->px_revient));
-    $smarty->assign('prod_pxvente',          price($this->price_ttc));
+    $smarty->assign('prod_pxrevient',         price($this->px_revient));
+    $smarty->assign('prod_pxvente',           price($this->price_ttc));
 
-    $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
-    $smarty->assign('prod_contrat_duree',    $this->contrat->duree);
-    $smarty->assign('prod_contrat_quant',    $this->contrat->quantite);
+    $smarty->assign('livre_contrat_taux',     $this->contrat->taux);
+    $smarty->assign('livre_contrat_duree',    $this->contrat->duree);
+    $smarty->assign('livre_contrat_quant',    $this->contrat->quantite);
+    $smarty->assign('livre_contrat_date_app', $this->contrat->date_app);
 
-    $smarty->assign('prod_stock_loc',        $this->stock_loc);
+    $smarty->assign('prod_stock_loc',         $this->stock_loc);
 
-    $smarty->assign('prod_stock_reel',       $this->stock_reel);
-    $smarty->assign('prod_stock_dispo',      ($this->stock_reel - $this->stock_in_command));
-    $smarty->assign('prod_stock_in_command', $this->stock_in_command);
-    $smarty->assign('prod_stock_alert',      $this->seuil_stock_alerte);
+    $smarty->assign('prod_stock_reel',        $this->stock_reel);
+    $smarty->assign('prod_stock_dispo',       ($this->stock_reel - $this->stock_in_command));
+    $smarty->assign('prod_stock_in_command',  $this->stock_in_command);
+    $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
 
     if ($this->status==1)
       $smarty->assign('prod_statut', 'En vente');
