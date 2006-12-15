@@ -340,6 +340,18 @@ class ProductLivre extends Product
    */
   function assign_values(&$smarty)
   {
+    if ($this->errno == 257)
+      {
+	$smarty->assign('class_normal_ref', 'error');
+	$smarty->assign('class_focus_ref',  'focuserr');
+      }
+    else
+      {
+	$smarty->assign('class_normal_ref', 'normal');
+	$smarty->assign('class_focus_ref',  'focus');
+      }
+
+
     $smarty->assign('prod_id',          $this->id);
     $smarty->assign('prod_ref',         $this->ref);
     $smarty->assign('prod_label',       $this->libelle);
