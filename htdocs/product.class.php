@@ -250,6 +250,7 @@ class Product
     $this->libelle = trim($this->libelle);
     $this->description = trim($this->description);
     $this->note = trim($this->note);
+    $this->stock_loc = trim($this->stock_loc);
     $this->new_weight = price2num($this->new_weight);
     $this->new_weight_units = trim($this->new_weight_units);
 
