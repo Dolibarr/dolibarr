@@ -56,11 +56,10 @@ class ProductLivreContrat extends Product
    *    \brief      Creation
    *    \param      id          Id livre
    */
-  function CreateCanvas($user,$livre_id,$datas)
+  function Create($user,$livre_id,$datas)
   {
     $this->db->begin();
-
-    $id = $this->create($user);
+    $id = parent::Create($user);
 
     if ($id > 0)
       {
@@ -158,6 +157,8 @@ class ProductLivreContrat extends Product
    */
   function UpdateCanvas($datas)
   {
+    dolibarr_syslog("ProductLivreContrat::UpdateCanvas");
+
     $taux   = str_replace(',','.',abs(trim($datas["contrat_taux"])));
     $quant  = trim($datas["contrat_quant"]);
     $duree  = trim($datas["contrat_duree"]);
