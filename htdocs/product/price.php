@@ -56,8 +56,8 @@ if ($_POST["action"] == 'update_price' &&
   
   $result = $product->fetch($_GET["id"]);
 
-  $product->SetSellprice($_POST["price"]);
-  $product->price_base_type = $_POST["price_base_type"];
+  $product->SetSellprice($_POST["price"], $_POST["price_base_type"]);
+
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
     {
