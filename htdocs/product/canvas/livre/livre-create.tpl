@@ -4,6 +4,7 @@
 <input type="hidden" name="action" value="add">
 <input type="hidden" name="type" value="0">
 <input type="hidden" name="canvas" value="livre">
+<input type="hidden" name="price_base_type" value="TTC">
 
 <table class="border" width="100%">
  <tr>
@@ -81,9 +82,7 @@
   <td>Taux TVA</td>
   <td>
    <select class="flat" name="tva_tx">
-    <option value="0">0%</option>
-    <option value="5.5">5.5%</option>
-    <option value="19.6" selected="true">19.6%</option>
+    {html_options values=$tva_taux_value output=$tva_taux_libelle selected="5.5"}
    </select>
   </td>
  </tr>
@@ -106,11 +105,17 @@
  </tr>
  <tr>
   <td>Statut</td>
-  <td colspan="3">
+  <td>
    <select class="flat" name="statut">
     <option value="1" selected="true">En vente</option>
     <option value="0">Hors vente</option>
    </select>
+  </td>
+  <td>Poids</td>
+  <td>
+   <input name="weight" size="5" value=""
+     class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">g
+   <input name="weight_units" type="hidden" value="-3">
   </td>
  </tr>
 </table>

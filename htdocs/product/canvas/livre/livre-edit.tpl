@@ -4,6 +4,7 @@
 <input type="hidden" name="action" value="update">
 <input type="hidden" name="id" value="{$prod_id}">
 <input type="hidden" name="canvas" value="{$prod_canvas}">
+<input type="hidden" name="price_base_type" value="TTC">
 
 <table class="border" width="100%">
  <tr>
@@ -92,7 +93,7 @@
 <table class="border" width="100%">
  <tr>
   <td width="15%">Prix de vente</td>
-  <td width="35%">{$prod_pxvente}</td>
+  <td width="35%">{$prod_pxvente} TTC</td>
   <td width="15%">Taux TVA</td>
   <td width="35%">
    <select class="flat" name="tva_tx">
@@ -185,14 +186,5 @@
 
 </table>
 </form>
-<!-- CUT HERE -->
-
-
-
-
-
-
-
-
 
 <!-- END SMARTY TEMPLATE -->
