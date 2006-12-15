@@ -940,7 +940,7 @@ class Product
    *      \param      filter      filtre
    *      \return     int         <0 si ko, >0 si ok
    */
-  function load_previous_next_ref($filtre='')
+  function load_previous_next_ref($filter='')
   {
     $sql = "SELECT MAX(ref)";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
