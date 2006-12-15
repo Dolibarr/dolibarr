@@ -60,12 +60,12 @@
  <td>Prix au feuillet</td>
  <td>
   <input name="px_feuillet" type="text" size="7" maxlength="6" value="{$prod_pxfeuil}"
-   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';"> HT
  </td>
  <td>Prix couverture</td>
  <td>
   <input name="px_couverture" type="text" size="7" maxlength="6" value="{$prod_pxcouv}"
-   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';"> HT
  </td>
 </tr>
 <tr>
@@ -77,7 +77,7 @@
   <td>Prix de vente</td>
   <td>
    <input name="price" type="text" size="7" maxlength="6" value=""
-    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';"> TTC
   </td>
   <td>Taux TVA</td>
   <td>
