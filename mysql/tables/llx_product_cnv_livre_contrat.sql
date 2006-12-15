@@ -29,7 +29,7 @@ create table llx_product_cnv_livre_contrat
   taux               float(3,2),  -- taux contractuel
 
   date_app           datetime,  -- date d'application
-  duree              varchar(5) -- duree du contrat
+  duree              varchar(50) -- duree du contrat
   
 )type=innodb;
 
