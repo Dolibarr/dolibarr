@@ -48,8 +48,8 @@ $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
 /*
-*
-*/
+ *
+ */
 if ($_GET["action"] == 'fastappro')
 {
   $product = new Product($db);
@@ -184,50 +184,49 @@ if ($_POST["action"] == 'update' &&
 // clone d'un produit
 if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 {
-	$db->begin();
-
-	$product = new Product($db);
-	$originalId = $_GET["id"];
-	if ($product->fetch($_GET["id"]) > 0)
+  $db->begin();
+  
+  $product = new Product($db);
+  $originalId = $_GET["id"];
+  if ($product->fetch($_GET["id"]) > 0)
+    {
+      $product->ref = "Clone ".$product->ref;
+      $product->status = 0;
+      $product->id = null;
+      
+      if ($product->check())
 	{
-		$product->ref = "Clone ".$product->ref;
-		$product->status = 0;
-		$product->id = null;
-
-		if ($product->check())
-		{
-			$id = $product->create($user);
-			if ($id > 0)
-			{
-				// $product->clone_fournisseurs($originalId, $id);
-
-				$db->commit();
-
-				Header("Location: fiche.php?id=$id");
-				$db->close();
-				exit;
-			}
-			else	if ($id == -3)
-			{
-				$db->rollback();
-
-				$_error = 1;
-				$_GET["action"] = "";
-				dolibarr_print_error($product->db);
-			}
-			else
-			{
-				$db->rollback();
-				dolibarr_print_error($product->db);
-			}
-		}
+	  $id = $product->create($user);
+	  if ($id > 0)
+	    {
+	      // $product->clone_fournisseurs($originalId, $id);
+	      
+	      $db->commit();
+	      
+	      Header("Location: fiche.php?id=$id");
+	      $db->close();
+	      exit;
+	    }
+	  else	if ($id == -3)
+	    {
+	      $db->rollback();
+	      
+	      $_error = 1;
+	      $_GET["action"] = "";
+	      dolibarr_print_error($product->db);
+	    }
+	  else
+	    {
+	      $db->rollback();
+	      dolibarr_print_error($product->db);
+	    }
 	}
-	else
-	{
-		$db->rollback();
-
-		dolibarr_print_error($product->db);
-	}
+    }
+  else
+    {
+      $db->rollback();      
+      dolibarr_print_error($product->db);
+    }
 }
 
 /*
@@ -235,166 +234,166 @@ if ($_GET["action"] == 'clone' && $user->rights->produit->creer)
 */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->produit->supprimer)
 {
-	$product = new Product($db);
-	$product->fetch($_GET["id"]);
-	$result = $product->delete($_GET["id"]);
-
-	if ($result == 0)
-	{
-		llxHeader();
-		print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
-		llxFooter();
-		exit ;
-	}
-	else
-	{
-		$reload = 0;
-		$_GET["action"]='';
-	}
+  $product = new Product($db);
+  $product->fetch($_GET["id"]);
+  $result = $product->delete($_GET["id"]);
+  
+  if ($result == 0)
+    {
+      llxHeader();
+      print '<div class="ok">'.$langs->trans("ProductDeleted",$product->ref).'</div>';
+      llxFooter();
+      exit ;
+    }
+  else
+    {
+      $reload = 0;
+      $_GET["action"]='';
+    }
 }
 
 
 /*
-* Ajout du produit dans une propal
-*/
+ * Ajout du produit dans une propal
+ */
 if ($_POST["action"] == 'addinpropal')
 {
-	$propal = New Propal($db);
-	$result=$propal->fetch($_POST["propalid"]);
-	if ($result <= 0)
-	{
-		dolibarr_print_error($db,$propal->error);
-		exit;
-	}
-
-	$soc = new Societe($db);
-	$soc->fetch($propal->socid,$user);
-
-	$prod = new Product($db, $_GET['id']);
-	$result=$prod->fetch($_GET['id']);
-	if ($result <= 0)
-	{
-		dolibarr_print_error($db,$prod->error);
-		exit;
-	}
-
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
-	{
-		$pu = $prod->multiprices[$soc->price_level];
-	}
-	else
-	{
-		$pu=$prod->price;
-	}
-
-	$desc = $prod->description;
-	$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
-
-	$result = $propal->addline($propal->id,
-	$desc,
-	$pu,
-	$_POST["qty"],
-	$tva_tx,
-	$prod->id,
-	$_POST["remise_percent"]);
-	if ($result > 0)
-	{
-		Header("Location: ../comm/propal.php?propalid=".$propal->id);
-		return;
-	}
-
-	$mesg = $langs->trans("ErrorUnknown").": $result";
+  $propal = New Propal($db);
+  $result=$propal->fetch($_POST["propalid"]);
+  if ($result <= 0)
+    {
+      dolibarr_print_error($db,$propal->error);
+      exit;
+    }
+  
+  $soc = new Societe($db);
+  $soc->fetch($propal->socid,$user);
+  
+  $prod = new Product($db, $_GET['id']);
+  $result=$prod->fetch($_GET['id']);
+  if ($result <= 0)
+    {
+      dolibarr_print_error($db,$prod->error);
+      exit;
+    }
+  
+  // multiprix
+  if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    {
+      $pu = $prod->multiprices[$soc->price_level];
+    }
+  else
+    {
+      $pu=$prod->price;
+    }
+  
+  $desc = $prod->description;
+  $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+  
+  $result = $propal->addline($propal->id,
+			     $desc,
+			     $pu,
+			     $_POST["qty"],
+			     $tva_tx,
+			     $prod->id,
+			     $_POST["remise_percent"]);
+  if ($result > 0)
+    {
+      Header("Location: ../comm/propal.php?propalid=".$propal->id);
+      return;
+    }
+  
+  $mesg = $langs->trans("ErrorUnknown").": $result";
 }
 
 /*
-* Ajout du produit dans une commande
-*/
+ * Ajout du produit dans une commande
+ */
 if ($_POST["action"] == 'addincommande')
 {
-	$product = new Product($db);
-	$result = $product->fetch($_GET["id"]);
+  $product = new Product($db);
+  $result = $product->fetch($_GET["id"]);
+  
+  $commande = New Commande($db);
+  $commande->fetch($_POST["commandeid"]);
+  
+  $soc = new Societe($db);
+  $soc->fetch($commande->socid,$user);
+  
+  // multiprix
+  if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    {
+      $pu = $product->multiprices[$soc->price_level];
+    }
+  else
+    {
+      $pu=$product->price;
+    }
+  
+  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
+  
+  $result =  $commande->addline($commande->id,
+				$product->description,
+				$pu,
+				$_POST["qty"],
+				$tva_tx,
+				$product->id,
+				$_POST["remise_percent"]);
 
-	$commande = New Commande($db);
-	$commande->fetch($_POST["commandeid"]);
-
-	$soc = new Societe($db);
-	$soc->fetch($commande->socid,$user);
-
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
-	{
-		$pu = $product->multiprices[$soc->price_level];
-	}
-	else
-	{
-		$pu=$product->price;
-	}
-
-	$tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
-
-	$result =  $commande->addline($commande->id,
-	$product->description,
-	$pu,
-	$_POST["qty"],
-	$tva_tx,
-	$product->id,
-	$_POST["remise_percent"]);
-
-	Header("Location: ../commande/fiche.php?id=".$commande->id);
-	exit;
+  Header("Location: ../commande/fiche.php?id=".$commande->id);
+  exit;
 }
 
 /*
-* Ajout du produit dans une facture
-*/
+ * Ajout du produit dans une facture
+ */
 if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
-	$product = new Product($db);
-	$result = $product->fetch($_GET["id"]);
+  $product = new Product($db);
+  $result = $product->fetch($_GET["id"]);
 
-	$facture = New Facture($db);
-	$facture->fetch($_POST["factureid"]);
-
-	$soc = new Societe($db);
-	$soc->fetch($facture->socid,$user);
-
-	// multiprix
-	if ($conf->global->PRODUIT_MULTIPRICES == 1)
-	{
-		$pu = $product->multiprices[$soc->price_level];
-	}
-	else
-	{
-		$pu=$product->price;
-	}
-
-	$tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
-
-	$facture->addline($facture->id,
-	$product->description,
-	$pu,
-	$_POST["qty"],
-	$tva_tx,
-	$product->id,
-	$_POST["remise_percent"]);
-
-	Header("Location: ../compta/facture.php?facid=".$facture->id);
-	exit;
+  $facture = New Facture($db);
+  $facture->fetch($_POST["factureid"]);
+  
+  $soc = new Societe($db);
+  $soc->fetch($facture->socid,$user);
+  
+  // multiprix
+  if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    {
+      $pu = $product->multiprices[$soc->price_level];
+    }
+  else
+    {
+      $pu=$product->price;
+    }
+  
+  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
+  
+  $facture->addline($facture->id,
+		    $product->description,
+		    $pu,
+		    $_POST["qty"],
+		    $tva_tx,
+		    $product->id,
+		    $_POST["remise_percent"]);
+  
+  Header("Location: ../compta/facture.php?facid=".$facture->id);
+  exit;
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
 {
-	$action = '';
-	Header("Location: fiche.php?id=".$_POST["id"]);
-	exit;
+  $action = '';
+  Header("Location: fiche.php?id=".$_POST["id"]);
+  exit;
 }
 
 $html = new Form($db);
 
 /*
-* Action création du produit
-*/
+ * Action création du produit
+ */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
   $product = new Product($db);
@@ -553,7 +552,6 @@ if ($_GET["id"] || $_GET["ref"])
     {
       $class = 'Product'.ucfirst($product->canvas);
       include_once('canvas/product.'.$product->canvas.'.class.php');
-      
       $product = new $class($db);
       
       $result = $product->FetchCanvas($_GET["id"]);
@@ -588,7 +586,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  print($mesg);
 	  
-	  $product->load_previous_next_ref();
+	  $product->load_previous_next_ref($product->next_prev_filter);
 	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
 	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
 	}
