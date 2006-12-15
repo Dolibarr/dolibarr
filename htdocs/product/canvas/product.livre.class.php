@@ -90,13 +90,10 @@ class ProductLivre extends Product
     $this->db->begin();
 
     $id = parent::Create($user);
-    //$id = $this->create($user);
-
 
     $this->pages         = abs(trim($datas["pages"]));
     $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
     $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
-    $this->px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
     $this->stock_loc     = trim($datas["stock_loc"]);
 
     if ($id > 0)
