@@ -42,10 +42,8 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire)
 accessforbidden();
 
-
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
-
 
 /*
  * Actions
@@ -58,7 +56,7 @@ if ($_POST["action"] == 'update_price' &&
   
   $result = $product->fetch($_GET["id"]);
 
-  $product->price = ereg_replace(" ","",$_POST["price"]);
+  $product->SetSellprice($_POST["price"]);
   $product->price_base_type = $_POST["price_base_type"];
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
