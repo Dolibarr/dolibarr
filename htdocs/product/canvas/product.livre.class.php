@@ -62,6 +62,7 @@ class ProductLivre extends Product
     $this->menus[3][0] = DOL_URL_ROOT."/product/liste.php?canvas=livrecouverture";
     $this->menus[3][1] = 'ListCover';
     */
+    $this->next_prev_filter = "canvas='livre'";
   }
 
   function GetListeTitre()
