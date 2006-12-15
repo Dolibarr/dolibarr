@@ -400,7 +400,7 @@ class ProductLivre extends Product
     $sql.= ' p.duration, p.envente as statut, p.stock_loc';
     $sql.= ',pl.pages';
     $sql.= ',SUM(fd.qty) as ventes';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p,'.MAIN_DB_PREFIX.'product_cnv_livre as pl';  
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'product_cnv_livre as pl,'.MAIN_DB_PREFIX.'product as p';  
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON fd.fk_product = p.rowid';
     $sql .= " WHERE p.rowid=pl.rowid ";
 
