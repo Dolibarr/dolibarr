@@ -475,6 +475,8 @@ ALTER TABLE llx_categorie_product ADD PRIMARY KEY (fk_categorie, fk_product);
 
 alter table llx_product modify label varchar(255) NOT NULL;
 alter table llx_product modify description text;
+ALTER TABLE llx_product ADD COLUMN price_base_type varchar(3) DEFAULT ('HT') AFTER price;
+ALTER TABLE llx_product ADD COLUMN price_ttc float(12,4) DEFAULT 0 AFTER price_base_type;
 alter table llx_product_det modify label varchar(255) NOT NULL;
 alter table llx_product_det modify description text;
 
