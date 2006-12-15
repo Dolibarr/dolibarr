@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006 Auguria SARL <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -203,7 +204,8 @@ class ProductLivre extends Product
 
     if ($result >= 0)
       {
-	$sql = "SELECT rowid,isbn,ean,pages,px_feuillet,fk_couverture,format,fk_contrat";
+	$sql = "SELECT rowid,isbn,ean,pages,fk_couverture,format,fk_contrat";
+	$sql.= ",px_feuillet,px_revient,px_couverture";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre";
 	if ($id) $sql.= " WHERE rowid = '".$id."'";
 	if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -219,6 +221,8 @@ class ProductLivre extends Product
 	    $this->pages              = $result["pages"];
 	    $this->format             = $result["format"];
 	    $this->px_feuillet        = $result["px_feuillet"];
+	    $this->px_revient         = $result["px_revient"];
+	    $this->px_couverture      = $result["px_couverture"];
 	    $this->couverture_id      = $result["fk_couverture"];
 
 	    $this->db->free();
@@ -256,21 +260,26 @@ class ProductLivre extends Product
     $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
     $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
 
-    $this->px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
+    $price_ht = $this->price / (1 + ($this->tva_tx / 100));
+
+    $contrat_taux = str_replace(',','.',abs(trim($datas["contrat_taux"])));
+
+    $this->px_revient = $this->_calculate_prix_revient($this->pages, $this->px_couverture, $this->px_feuillet, $price_ht, $contrat_taux);
 
     $this->stock_loc     = trim($datas["stock_loc"]);
     $format        = trim($datas["format"]);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre ";
-    $sql .= " SET isbn = '$isbn'";
-    $sql .= " , ean = '$ean'";
-    $sql .= " , pages         = '".$this->pages."'";
-    $sql .= " , px_feuillet   = '".$this->px_feuillet."'";
-    $sql .= " , px_revient    = '".$this->px_revient."'";
-    $sql .= " , fk_couverture = '".$this->couverture->id."'";
-    $sql .= " , fk_contrat    = '".$this->contrat->id."'";
-    $sql .= " , format        = '$format'";
-    $sql .= " WHERE rowid = " . $this->id;
+    $sql.= " SET isbn = '$isbn'";
+    $sql.= " , ean = '$ean'";
+    $sql.= " , pages         = '".$this->pages."'";
+    $sql.= " , px_feuillet   = '".$this->px_feuillet."'";
+    $sql.= " , px_revient    = '".ereg_replace(",",".",$this->px_revient)."'";
+    $sql.= " , px_couverture = '".ereg_replace(",",".",$this->px_couverture)."'";
+    $sql.= " , fk_couverture = '".$this->couverture->id."'";
+    $sql.= " , fk_contrat    = '".$this->contrat->id."'";
+    $sql.= " , format        = '$format'";
+    $sql.= " WHERE rowid = " . $this->id;
 
     if ( $this->db->query($sql) )
       {
@@ -290,12 +299,14 @@ class ProductLivre extends Product
    *    \param      pages     Nombre de pages
    *    \param      couv      Prix de la couverture
    *    \param      feuil     Prix d'un feuillet
-   *    \param      quant     Nombre de drois achetes
-   *    \note       source http://fr.wikipedia.org/wiki/ISBN
+   *    \param      price_ht  Prix public HT
+   *    \param      taux      Taux du contrat
    */
-  function _calculate_prix_revient($pages, $couv, $feuil, $quant)
+  function _calculate_prix_revient($pages, $couv, $feuil, $price_ht, $taux)
   {
-    $cost = ( ($pages / 2 * $feuil) + $couv ) * $quant;
+    dolibarr_syslog("ProductLivre::UpdateCanvas $pages, $couv, $feuil, $price_ht, $taux");
+
+    $cost = ($pages / 2 * $feuil) + $couv + ($price_ht * $taux / 100);
 
     return $cost;
   }
@@ -384,7 +395,7 @@ class ProductLivre extends Product
     $smarty->assign('prod_format',            $this->format);
     $smarty->assign('prod_pxfeuil',           $this->px_feuillet);
 
-    $smarty->assign('prod_pxcouv',            $this->couverture->price);
+    $smarty->assign('prod_pxcouv',            $this->px_couverture);
 
     $smarty->assign('prod_weight',            $this->weight);
     $smarty->assign('prod_weight_units',      $this->weight_units);
