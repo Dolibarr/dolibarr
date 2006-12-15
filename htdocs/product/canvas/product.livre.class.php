@@ -91,6 +91,13 @@ class ProductLivre extends Product
     $id = parent::Create($user);
     //$id = $this->create($user);
 
+
+    $this->pages         = abs(trim($datas["pages"]));
+    $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
+    $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
+    $this->px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
+    $this->stock_loc     = trim($datas["stock_loc"]);
+
     if ($id > 0)
       {
 	$error = 0;
@@ -229,6 +236,8 @@ class ProductLivre extends Product
    */
   function UpdateCanvas($datas)
   {
+    dolibarr_syslog("ProductLivre::UpdateCanvas");
+
     $isbna = trim($datas["isbna"]);
     $isbnb = trim($datas["isbnb"]);
 
@@ -243,21 +252,21 @@ class ProductLivre extends Product
 
     $ean = $ean . $this->calculate_ean_key($ean);
 
-    $pages         = abs(trim($datas["pages"]));
-    $px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
-    $px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
+    $this->pages         = abs(trim($datas["pages"]));
+    $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
+    $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
 
-    $px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
+    $this->px_revient = $this->_calculate_prix_revient($pages, $px_couverture, $px_feuillet, $quant);
 
-    $stock_loc     = trim($datas["stock_loc"]);
+    $this->stock_loc     = trim($datas["stock_loc"]);
     $format        = trim($datas["format"]);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product_cnv_livre ";
     $sql .= " SET isbn = '$isbn'";
     $sql .= " , ean = '$ean'";
-    $sql .= " , pages         = '$pages'";
-    $sql .= " , px_feuillet   = '$px_feuillet'";
-    $sql .= " , px_revient    = '$px_revient'";
+    $sql .= " , pages         = '".$this->pages."'";
+    $sql .= " , px_feuillet   = '".$this->px_feuillet."'";
+    $sql .= " , px_revient    = '".$this->px_revient."'";
     $sql .= " , fk_couverture = '".$this->couverture->id."'";
     $sql .= " , fk_contrat    = '".$this->contrat->id."'";
     $sql .= " , format        = '$format'";
@@ -338,7 +347,7 @@ class ProductLivre extends Product
    *    \brief      Assigne les valeurs pour les templates Smarty
    *    \param      smarty     Instance de smarty
    */
-  function assign_values(&$smarty)
+  function assign_smarty_values(&$smarty)
   {
     if ($this->errno == 257)
       {
@@ -350,7 +359,6 @@ class ProductLivre extends Product
 	$smarty->assign('class_normal_ref', 'normal');
 	$smarty->assign('class_focus_ref',  'focus');
       }
-
 
     $smarty->assign('prod_id',          $this->id);
     $smarty->assign('prod_ref',         $this->ref);
@@ -382,11 +390,11 @@ class ProductLivre extends Product
     $smarty->assign('prod_weight_units',     $this->weight_units);
 
     $smarty->assign('prod_pxrevient',        price($this->px_revient));
-    $smarty->assign('prod_pxvente',          price($this->price));
+    $smarty->assign('prod_pxvente',          price($this->price_ttc));
 
     $smarty->assign('prod_contrat_taux',     $this->contrat->taux);
-    $smarty->assign('prod_contrat_duree',    $this->contrat_duree);
-    $smarty->assign('prod_contrat_quant',    $this->contrat_quantite);
+    $smarty->assign('prod_contrat_duree',    $this->contrat->duree);
+    $smarty->assign('prod_contrat_quant',    $this->contrat->quantite);
 
     $smarty->assign('prod_stock_loc',        $this->stock_loc);
 
@@ -394,6 +402,9 @@ class ProductLivre extends Product
     $smarty->assign('prod_stock_dispo',      ($this->stock_reel - $this->stock_in_command));
     $smarty->assign('prod_stock_in_command', $this->stock_in_command);
     $smarty->assign('prod_stock_alert',      $this->seuil_stock_alerte);
+
+    if ($this->status==1)
+      $smarty->assign('prod_statut', 'En vente');
 
     if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
       {
