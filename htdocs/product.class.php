@@ -945,7 +945,7 @@ class Product
     $sql = "SELECT MAX(ref)";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     $sql.= " WHERE ref < '".addslashes($this->ref)."'";
-    if ($filter) $sql.=" AND ".$filter;
+    if (isset($filter)) $sql.=" AND ".$filter;
     $result = $this->db->query($sql) ;
     if (! $result)
       {
@@ -958,7 +958,7 @@ class Product
     $sql = "SELECT MIN(ref)";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     $sql.= " WHERE ref > '".addslashes($this->ref)."'";
-    if ($filter) $sql.=" AND ".$filter;
+    if (isset($filter)) $sql.=" AND ".$filter;
     $result = $this->db->query($sql) ;
     if (! $result)
       {
