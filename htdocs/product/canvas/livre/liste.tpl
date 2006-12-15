@@ -16,7 +16,6 @@
   </a>
   </td>
 
-
   <td class="liste_titre">N3
   <a href="liste.php?sortfield=p.label&amp;sortorder=asc&amp;canvas=livre&amp;fourn_id=&amp;snom=&amp;sref=">
   <img src="/theme/eldy/img/1downarrow.png" border="0" alt="A-Z" title="A-Z">
@@ -26,22 +25,12 @@
   </a>
   </td>
 
-  <td class="liste_titre">Casier
-  </td>
-
-  <td class="liste_titre">Entrepôt
-  </td>
-
-  <td class="liste_titre">Ventes
-  </td>
-
+  <td class="liste_titre" align="center">Casier</td>
+  <td class="liste_titre" align="center">Entrepôt</td>
+  <td class="liste_titre" align="center">Ventes</td>
   <td class="liste_titre">Stock</td>
-
   <td class="liste_titre" align="center">Pages</td>
-
-  <td class="liste_titre" align="right">Prix
-  </td>
-
+  <td class="liste_titre" align="right">Prix</td>
   <td class="liste_titre" align="right">Valorisation
   </td>
 
@@ -66,8 +55,8 @@
       <td>{$datas[mysec].stock_loc}</td>
       <td><a href="fiche.php?id={$datas[mysec].id}">{$datas[mysec].ref}</a></td>
       <td>{$datas[mysec].titre}</td>
-      <td>{$datas[mysec].casier}</td>
-      <td>{$datas[mysec].entrepot}</td>
+      <td align="center">{$datas[mysec].casier}</td>
+      <td align="center">{$datas[mysec].entrepot}</td>
       <td>{$datas[mysec].ventes}</td>
       <td>{$datas[mysec].stock}</td>
       <td align="center">{$datas[mysec].pages}</td>
