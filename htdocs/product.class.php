@@ -69,7 +69,10 @@ class Product
   var $multilangs=array();
 
   var $typeprodserv;
+  //! Intitule de l'erreur
   var $error;
+  //! Numero de l'erreur
+  var $errno = 0;
   //! Canevas a utiliser si le produit n'est pas un produit generique
   var $canvas; 
   //! Nombre de piece en commande, non expedie
@@ -147,74 +150,85 @@ class Product
     $this->price = price2num($this->price);
     
     dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
-    
-    $this->db->begin();
-    
-    $sql = "SELECT count(*)";
-    $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
-    
-    $result = $this->db->query($sql) ;
-    if ($result)
-      {
-	$row = $this->db->fetch_array($result);
-	if ($row[0] == 0)
-	  {
-	    // Produit non deja existant
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-	    $sql.= " (datec, ";
-	    if ($this->ref) $sql.= "ref, ";
-	    $sql.= "fk_user_author, fk_product_type, price, canvas)";
-	    $sql.= " VALUES (now(), ";
-	    if ($this->ref) $sql.= "'".$this->ref."', ";
-	    $sql.= $user->id.", ".$this->type.", '" . $this->price . "','".$this->canvas."')";
-	    $result = $this->db->query($sql);
-	    if ( $result )
-	      {
-		$id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
-		
-		if ($id > 0)
-		  {
-		    $this->id = $id;
-		    $this->_log_price($user);
-		    if ( $this->update($id, $user) > 0)
-		      {
-			if ($this->catid > 0)
-			  {
-			    $cat = new Categorie ($this->db, $this->catid);
-			    $cat->add_product($this);
-			  }
-			$this->db->commit();
-			return $id;
-		      }
-		    else {
-		      $this->db->rollback();
-		      return -5;
-		    }
-		  }
-		else
-		  {
-		    $this->db->rollback();
-		    return -4;
-		  }
-	      }
-	    else
-	      {
-		$this->error=$this->db->error()." - sql=".$sql;
-		$this->db->rollback();
-		return -3;
-	      }
-	  }
-	else
-	  {
-	    // Produit existe deja
-	    $this->error=$langs->trans("ErrorProductAlreadyExists");
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
 
-    $this->error=$this->db->error();
-    $this->db->rollback();
+    if (strlen($this->ref) > 0)
+    {
+      $this->db->begin();
+    
+      $sql = "SELECT count(*)";
+      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
+      
+      $result = $this->db->query($sql) ;
+      if ($result)
+	{
+	  $row = $this->db->fetch_array($result);
+	  if ($row[0] == 0)
+	    {
+	      // Produit non deja existant
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
+	      $sql.= " (datec, ";
+	      if ($this->ref) $sql.= "ref, ";
+	      $sql.= "fk_user_author, fk_product_type, price, canvas)";
+	      $sql.= " VALUES (now(), ";
+	      if ($this->ref) $sql.= "'".$this->ref."', ";
+	      $sql.= $user->id.", ".$this->type.", '" . $this->price . "','".$this->canvas."')";
+	      $result = $this->db->query($sql);
+	      if ( $result )
+		{
+		  $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
+		  
+		  if ($id > 0)
+		    {
+		      $this->id = $id;
+		      $this->_log_price($user);
+		      if ( $this->update($id, $user) > 0)
+			{
+			  if ($this->catid > 0)
+			    {
+			      $cat = new Categorie ($this->db, $this->catid);
+			      $cat->add_product($this);
+			    }
+			  $this->db->commit();
+			  return $id;
+			}
+		      else {
+			$this->db->rollback();
+			return -5;
+		      }
+		    }
+		  else
+		    {
+		      $this->db->rollback();
+		      return -4;
+		    }
+		}
+	      else
+		{
+		  $this->error=$this->db->error()." - sql=".$sql;
+		  $this->db->rollback();
+		  return -3;
+		}
+	    }
+	  else
+	    {
+	      // Produit existe deja
+	      $this->error=$langs->trans("ErrorProductAlreadyExists", $this->ref);
+	      $this->errno = 257;
+	      $this->db->rollback();
+	      return -2;
+	    }
+	}
+      
+      $this->error=$this->db->error();
+      $this->db->rollback();
+    }
+    else
+      {
+	// Produit existe deja
+	$this->error=$langs->trans("ErrorProductBadRefOrLabel");
+	$this->errno = 257;
+	return -2;
+      }
     return -1;
   }
   
@@ -2401,5 +2415,9 @@ class Product
 
   }
 
+  function assign_smarty_values(&$smarty)
+  {
+
+  }
 }
 ?>
