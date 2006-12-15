@@ -1008,10 +1008,20 @@ td.hidden {
 
 #evolForm input.error {
                         font-weight: bold;
-                        border: solid 2px #FF0000;
-                        padding: 0px 0px 0px 0px;
+                        border: solid 1px #FF0000;
+                        padding: 1px 1px 1px 1px;
                         margin: 1px 1px 1px 1px;
               }
+
+#evolForm input.focuserr {
+                        font-weight: bold;
+                        background: beige;
+                        color: black;
+                        border: solid 1px #FF0000;
+                        padding: 1px 1px 1px 1px;
+                        margin: 1px 1px 1px 1px;
+              }
+
 
 #evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
                         background: beige;
