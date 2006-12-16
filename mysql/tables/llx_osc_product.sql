@@ -16,7 +16,6 @@
 -- Structure de la table `llx_osc_product`
 -- 
 
-DROP TABLE IF EXISTS `llx_osc_product`;
 CREATE TABLE IF NOT EXISTS `llx_osc_product` (
   `osc_prodid` int(11) NOT NULL default '0',
   `osc_lastmodif` datetime default NULL,
