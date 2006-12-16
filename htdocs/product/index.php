@@ -167,7 +167,7 @@ if ($result)
 }
 else
 {
-  dolibarr_print_error();
+  dolibarr_print_error($db);
 }
 
 print '</td></tr></table>';
