@@ -60,7 +60,7 @@ echo "<h2>Question</h2>";
 echo '<h4>Function</h4>';
 echo $WS_METHOD;
 echo '<h4>Request</h4>';
-echo '<pre>' . htmlspecialchars($client->request, ENT_QUOTES) . '</pre>';
+echo '<pre>' . htmlspecialchars($soapclient->request, ENT_QUOTES) . '</pre>';
 
 echo "<h2>Réponse</h2>";
 echo '<h4>Result</h4>';
@@ -68,7 +68,7 @@ echo '<pre>';
 print_r($result);
 echo '</pre>';
 echo '<h4>Response</h4>';
-echo '<pre>' . htmlspecialchars($client->response, ENT_QUOTES) . '</pre>';
+echo '<pre>' . htmlspecialchars($soapclient->response, ENT_QUOTES) . '</pre>';
 
 echo '</body>'."\n";;
 echo '</html>'."\n";;

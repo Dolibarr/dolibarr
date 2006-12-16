@@ -26,6 +26,7 @@ ErrorRecordIsUsedByChild=Failed to delete this record. This record is used by at
 ErrorWrongValue=Wrong value
 ErrorWrongValueForParameterX=Wrong value for parameter %s
 ErrorNoRequestInError=No request in error
+ErrorServiceUnavailableTryLater=Service not available or busy for the moment. Try again later.
 SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Last connexion
@@ -343,6 +344,9 @@ ExpandAll=Expand all
 UndoExpandAll=Undo expand
 Reason=Raison
 FeatureNotYetSupported=Feature not yet supported
+CloseWindow=Close window
+Question=Question
+Response=Response
 # Countries
 CountryFR=France
 CountryBE=Belgium

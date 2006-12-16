@@ -62,12 +62,12 @@ class Form
   
   
   /**
-     \brief      Affiche un texte avec picto help qui affiche un tooltip
-     \param      text				Texte à afficher
-     \param      htmltooltip     	Contenu html du tooltip
+     \brief     Affiche un texte avec picto help qui affiche un tooltip
+     \param     text				Texte à afficher
+     \param     htmltooltip     	Contenu html du tooltip
      \param		direction			1=Le picto est après, -1=le picto est avant
      \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
-     \param		string				Code html du texte.picto
+     \return	string				Code html du texte,picto
   */
   function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
     {

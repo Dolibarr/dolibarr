@@ -231,11 +231,13 @@ class Translate {
             // On remplace les tags HTML par __xx__ pour eviter traduction par htmlentities
             $newstr=ereg_replace('<','__lt__',$str);
             $newstr=ereg_replace('>','__gt__',$newstr);
+            $newstr=ereg_replace('"','__quot__',$newstr);
             // Cryptage en html de la chaine
             $newstr=htmlentities($newstr);
             // On restaure les tags HTML
             $newstr=ereg_replace('__lt__','<',$newstr);
             $newstr=ereg_replace('__gt__','>',$newstr);
+            $newstr=ereg_replace('__quot__','"',$newstr);
             return $newstr;
         }
         return $key;

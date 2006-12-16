@@ -26,6 +26,7 @@ ErrorRecordIsUsedByChild=Impossible de supprimer cet enregistrement. Ce dernier 
 ErrorWrongValue=Valeur incorrecte
 ErrorWrongValueForParameterX=Valeur incorrecte pour le paramètre %s
 ErrorNoRequestInError=Aucune requete en erreur
+ErrorServiceUnavailableTryLater=Service non disponible ou saturé actuellement. Réessayer plus tard.
 SeeAbove=Voir ci-dessus
 HomeArea=Espace accueil
 LastConnexion=Dernière connexion
@@ -345,6 +346,9 @@ ExpandAll=Tout dérouler
 UndoExpandAll=Annuler déroulement
 Reason=Raison
 FeatureNotYetSupported=Fonctionnalité pas encore supportée
+CloseWindow=Fermer fenêtre
+Question=Question
+Response=Réponse
 # Countries
 CountryFR=France
 CountryBE=Belgique

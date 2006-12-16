@@ -738,3 +738,20 @@ function parseDate(val) {
 
 // Fonction pour champ saisie en mode ajax
 function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
+
+
+
+/*=================================================================
+	Purpose:  affiche popup
+	Input:    url,title
+==================================================================*/
+function newpopup(url,title) {
+	var argv = newpopup.arguments;
+	var argc = newpopup.arguments.length;
+	tmp=url;
+	var l = (argc > 2) ? argv[2] : 600;
+	var h = (argc > 3) ? argv[3] : 400;
+	var wfeatures="directories=0,menubar=0,status=0,resizable=0,scrollbars=1,toolbar=0,width="+l+",height="+h+",left=" + eval("(screen.width - l)/2") + ",top=" + eval("(screen.height - h)/2");
+	fen=window.open(tmp,title,wfeatures);
+	return false;
+}
