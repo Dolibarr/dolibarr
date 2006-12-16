@@ -1543,13 +1543,13 @@ class Facture extends CommonObject
 	    return -1;
 	  }
 
+	$result=$this->update_price($this->id);
+
 	// Appel des triggers
 	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	$interface=new Interfaces($this->db);
 	$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
 	// Fin appel triggers
-
-	$result=$this->update_price($this->id);
 
 	$this->db->commit();
 
