@@ -20,7 +20,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -82,7 +81,7 @@ class mod_facture_neptune extends ModeleNumRefFactures
      *      \param      facture		Objet facture
      *      \return     string      Texte descripif
      */
-	function getNextValue($objsoc=0,$facture)
+	function getNextValue($objsoc,$facture)
 	{
 		global $db,$conf;
 	

@@ -36,7 +36,8 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 class mod_facture_terre extends ModeleNumRefFactures
 {
-	var $prefix='FA';
+	var $prefixinvoice='FA';
+	var $prefixcreditnote='AV';
 	var $error='';
 	
     /**     \brief      Renvoi la description du modele de numérotation
@@ -48,7 +49,7 @@ class mod_facture_terre extends ModeleNumRefFactures
 
 		$langs->load("bills");
 		
-    	return $langs->trans('TerreNumRefModelDesc1',$this->prefix);
+    	return $langs->trans('TerreNumRefModelDesc1',$this->prefixinvoice,$this->prefixcreditnote);
     }
 
     /**     \brief      Renvoi un exemple de numérotation
@@ -56,7 +57,7 @@ class mod_facture_terre extends ModeleNumRefFactures
      */
     function getExample()
     {
-        return $this->prefix."0501-0001";
+        return $this->prefixinvoice."0501-0001";
     }
 
     /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
@@ -67,41 +68,65 @@ class mod_facture_terre extends ModeleNumRefFactures
     {
         global $langs;
 
-		  $langs->load("bills");
+		$langs->load("bills");
 		  
-		  $fayymm='';
+		// Check invoice num
+		$fayymm='';
         
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$this->prefixinvoice."%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
             if ($row) $fayymm = substr($row[0],0,6);
         }
-        if (! $fayymm || eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
-        {
-            return true;
-        }
-        else
+        if ($fayymm && eregi($this->prefixinvoice.'[0-9][0-9][0-9][0-9]',$fayymm))
         {
             $this->error=$langs->trans('TerreNumRefModelError');
             return false;    
         }
+
+		// Check credit note num
+		$fayymm='';
+        
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$this->prefixcreditnote."%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $fayymm = substr($row[0],0,6);
+        }
+        if ($fayymm && eregi($this->prefixcreditnote.'[0-9][0-9][0-9][0-9]',$fayymm))
+        {
+            $this->error=$langs->trans('TerreNumRefModelError');
+            return false;    
+        }
+
+        return true;
     }
 
     /**     \brief      Renvoi prochaine valeur attribuée
+     *      \param      objsoc		Objet societe
      *      \param      facture		Objet facture
      *      \return     string      Valeur
      */
-    function getNextValue($facture)
+    function getNextValue($objsoc,$facture)
     {
         global $db;
+
+		if ($facture->type == 2) $prefix=$this->prefixcreditnote;
+		else $prefix=$this->prefixinvoice;
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         $fayymm='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+		$sql.= " WHERE facnumber like '".$prefix."%'";
+
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -115,7 +140,7 @@ class mod_facture_terre extends ModeleNumRefFactures
         }
 
         // Si champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
+        if (eregi('^'.$prefix.'[0-9][0-9][0-9][0-9]',$fayymm))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $posindice=8;
@@ -136,8 +161,8 @@ class mod_facture_terre extends ModeleNumRefFactures
         $yymm = strftime("%y%m",time());
         $num = sprintf("%04s",$max+1);
         
-        dolibarr_syslog("mod_facture_terre::getNextValue return ".$this->prefix."$yymm-$num");
-        return $this->prefix."$yymm-$num";
+        dolibarr_syslog("mod_facture_terre::getNextValue return ".$prefix."$yymm-$num");
+        return $prefix."$yymm-$num";
     }
     
     /**     \brief      Renvoie la référence de facture suivante non utilisée
@@ -147,7 +172,7 @@ class mod_facture_terre extends ModeleNumRefFactures
      */
     function getNumRef($objsoc=0,$facture)
     { 
-        return $this->getNextValue($facture);
+        return $this->getNextValue($objsoc,$facture);
     }
     
 }

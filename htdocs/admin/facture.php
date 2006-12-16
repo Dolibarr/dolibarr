@@ -241,12 +241,21 @@ while (($file = readdir($handle))!==false)
 	        }
 	        print '</td>';
 
+			$facture=new Facture($db);
+
 			// Info
 			$htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc,'');
+			$facture->type=0;
+	        $nextval=$module->getNextValue($mysoc,$facture);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	            $htmltooltip.='<b>'.$langs->trans("NextValueForInvoices").'</b>: '.$nextval.'<br>';
+	        }
+			$facture->type=2;
+	        $nextval=$module->getNextValue($mysoc,$facture);
+	        if ($nextval != $langs->trans("NotAvailable"))
+	        {
+	            $htmltooltip.='<b>'.$langs->trans("NextValueForCreditNotes").'</b>: '.$nextval;
 	        }
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);

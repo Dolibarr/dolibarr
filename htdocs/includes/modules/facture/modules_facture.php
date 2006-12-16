@@ -91,48 +91,49 @@ class ModelePDFFactures extends FPDF
    \class      ModeleNumRefFactures
    \brief      Classe mère des modèles de numérotation des références de facture
 */
-
 class ModeleNumRefFactures
 {
-  var $error='';
-
-  /**     \brief      Renvoi la description par defaut du modele de numérotation
-   *      \return     string      Texte descripif
-   */
-  function info()
-  {
-    global $langs;
-    $langs->load("bills");
-    return $langs->trans("NoDescription");
-  }
-
-  /**     \brief      Renvoi un exemple de numérotation
-   *      \return     string      Example
-   */
-  function getExample()
-  {
-    global $langs;
-    $langs->load("bills");
-    return $langs->trans("NoExample");
-  }
-
-  /**     \brief      Test si les numéros déjà en vigueur dans la base ne provoquent pas de
-   *                  de conflits qui empechera cette numérotation de fonctionner.
-   *      \return     boolean     false si conflit, true si ok
-   */
-  function canBeActivated()
-  {
-    return true;
-  }
-
-  /**     \brief      Renvoi prochaine valeur attribuée
-   *      \return     string      Valeur
-   */
-  function getNextValue()
-  {
-    global $langs;
-    return $langs->trans("NotAvailable");
-  }
+	var $error='';
+	
+	/**		\brief		Renvoi la description par defaut du modele de numérotation
+	*      	\return     string      Texte descripif
+	*/
+	function info()
+	{
+		global $langs;
+		$langs->load("bills");
+		return $langs->trans("NoDescription");
+	}
+	
+	/**     \brief     	Renvoi un exemple de numérotation
+	*		\return		string      Example
+	*/
+	function getExample()
+	{
+		global $langs;
+		$langs->load("bills");
+		return $langs->trans("NoExample");
+	}
+	
+	/**     \brief     	Test si les numéros déjà en vigueur dans la base ne provoquent pas de
+	*                  	de conflits qui empechera cette numérotation de fonctionner.
+	*      	\return		boolean     false si conflit, true si ok
+	*/
+	function canBeActivated()
+	{
+		return true;
+	}
+	
+	/**     \brief      Renvoi prochaine valeur attribuée
+	*      	\param      objsoc		Objet societe
+	*      	\param      facture		Objet facture
+	*      	\return     string      Valeur
+	*/
+	function getNextValue($objsoc,$facture)
+	{
+		global $langs;
+		return $langs->trans("NotAvailable");
+	}
 }
 
 

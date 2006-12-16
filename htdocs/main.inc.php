@@ -73,7 +73,8 @@ if (isset($dolibarr_auto_user)) $authmode=array('auto');
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
 session_name($sessionname);
 session_start();
-//dolibarr_syslog("We are in a session. Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
 
 // Si la demande du login a déjà eu lieu, on le récupère depuis la session
 // sinon appel du module qui réalise sa demande.
@@ -83,7 +84,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 {
 	// On est pas déjà authentifié, on demande le login/mot de passe
 	// A l'issu de cette demande, le login et un jeton doivent avoir été placé
-	// en session dans dol_login et dol_token et la page rappelée.
+	// en session dans dol_login et la page rappelée.
 
 	// MODE AUTO
 	if (in_array('auto',$authmode) && ! $login)
@@ -221,7 +222,7 @@ if (! isset($_SESSION["dol_login"]))
 {
     // Nouvelle session pour ce login
     $_SESSION["dol_login"]=$user->login;
-    dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"]);
+    dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
     $user->update_last_login_date();
 }
 
