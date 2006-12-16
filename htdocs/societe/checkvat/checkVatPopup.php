@@ -41,7 +41,7 @@ print '<body style="margin: 10px">';
 print '<div>';
 print '<div>';
 
-print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"));
+print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','setup');
 
 
 if (! $_REQUEST["countryCode"])
@@ -98,6 +98,7 @@ else
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
 		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font><br>';
+		print $langs->trans("VATIntraValueIsValid").': <font class="error">'.$langs->trans("No").'</font><br>';
 	}
 	else
 	{
