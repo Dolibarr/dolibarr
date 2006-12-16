@@ -252,12 +252,12 @@ class pdf_edison extends ModelePDFCommandes
 		}
         else
         {
-            $this->error=$langs->trans("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
+            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","COMMANDE_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
         }
 			
-        $this->error=$outputlangs->trans("ErrorUnknown");
+        $this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut		
 	}
