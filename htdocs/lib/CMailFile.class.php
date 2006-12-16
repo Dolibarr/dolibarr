@@ -163,7 +163,7 @@ class CMailFile
     */
     function sendfile()
     {
-        global $conf,$langs;
+        global $conf;
         
         dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
         dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
@@ -190,7 +190,7 @@ class CMailFile
 	        }
 	        if (! $res) 
 	        {
-	        	$this->error=$langs->trans("Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup");
+	        	$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
 	        	dolibarr_syslog("CMailFile::sendfile: mail end res=$res ".$this->error);
 	        }
 	        else
