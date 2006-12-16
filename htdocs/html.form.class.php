@@ -1767,8 +1767,11 @@ class Form
             print '<tr><td width="50%" valign="top">';
     
     		$max=$conf->upload;							// En Kb
-    		$maxphp=@ini_get('upload_max_filesize');	// En Mb
-    		if ($maxphp > 0) $max=min($max,$maxphp*1024);
+    		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
+			if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
+			if (eregi('k$',$maxphp)) $maxphp=$maxphp;
+			// Now $max and $maxphp are in Kb
+    		if ($maxphp > 0) $max=min($max,$maxphp);
 
             if ($conf->upload > 0)
             {
