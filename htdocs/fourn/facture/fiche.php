@@ -325,7 +325,11 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
 
-	print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
+	if($_GET['action'] == 'copy'){
+		print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" value="'.$fac_ori->ref.'" type="text"></td>';
+	}else{
+		print '<tr><td>'.$langs->trans('Ref').'</td><td><input name="facnumber" type="text"></td>';
+	}
 
 	print '<td width="50%" rowspan="4" valign="top"><textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'"></textarea></td></tr>';
 	if ($_GET['action'] == 'copy')
