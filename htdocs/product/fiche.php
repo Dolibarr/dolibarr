@@ -165,8 +165,7 @@ if ($_POST["action"] == 'update' &&
 	  $_GET["id"] = $_POST["id"];
 	  $mesg = $langs->trans("ErrorProductBadRefOrLabel");
 	}
-      
-      
+            
       // Produit spécifique
       if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
 	{
@@ -867,6 +866,11 @@ if ($_GET["id"] || $_GET["ref"])
 	  $smarty->display($product->canvas.'-edit.tpl');
 	}
     }
+}
+else
+{
+  Header("Location: index.php");
+  exit;
 }
 
 
