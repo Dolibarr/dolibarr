@@ -300,10 +300,8 @@ if(is_dir($dir))
       if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 	{
 	  $parts = explode('.',$file);
-	  $classname = 'Product'.ucfirst($parts[1]);
-	  
-	  require_once($dir.$file);
-	  
+	  $classname = 'Product'.ucfirst($parts[1]);	  
+	  require_once($dir.$file);	  
 	  $module = new $classname();
 	  
 	  $var=!$var;
@@ -312,9 +310,7 @@ if(is_dir($dir))
 	  print $module->description;
 	  
 	  print '</td><td align="center">';
-
-	  
-	  
+	  	  
 	  if (defined ("PRODUIT_SPECIAL_LIVRE") && PRODUIT_SPECIAL_LIVRE == 1)
 	    {
 	      print img_tick();
@@ -327,9 +323,7 @@ if(is_dir($dir))
 	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
 	    }
 	  
-	  print '</td>';
-	  
-	  print '</tr>';
+	  print '</td></tr>';
 	}
     }
   closedir($handle);
@@ -338,9 +332,6 @@ else
 {
   print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 }
-
-
-
 
 print '</table>';
 
