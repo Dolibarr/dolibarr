@@ -36,6 +36,7 @@ $caneditperms=($user->admin || $user->rights->user->user->creer);
 $candisableperms=($user->admin || $user->rights->user->user->supprimer);
 
 $langs->load("users");
+$langs->load("other");
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
@@ -45,17 +46,22 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
  */
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
 {
-  $editgroup = new Usergroup($db, $_GET["id"]);
-  $editgroup->fetch($_GET["id"]);
-  $editgroup->delete();
-  Header("Location: index.php");
+  if($caneditperms){
+    $editgroup = new Usergroup($db, $_GET["id"]);
+    $editgroup->fetch($_GET["id"]);
+    $editgroup->delete();
+    Header("Location: index.php");
+  }else{
+    $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+  }
 }
 
 /**
  *  Action ajout groupe
  */
-if ($_POST["action"] == 'add' && $caneditperms)
+if ($_POST["action"] == 'add')
 {
+  if($caneditperms){
     $message="";
     if (! $_POST["nom"]) {
         $message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
@@ -86,10 +92,14 @@ if ($_POST["action"] == 'add' && $caneditperms)
             $action="create";       // Go back to create page
         }
     }
+  }else{
+    $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+  }
 }
 
-if ($_POST["action"] == 'adduser' && $caneditperms)
+if ($_POST["action"] == 'adduser')
 {
+  if($caneditperms){
     if ($_POST["user"])
     {
         $edituser = new User($db, $_POST["user"]);
@@ -97,10 +107,14 @@ if ($_POST["action"] == 'adduser' && $caneditperms)
 
         Header("Location: fiche.php?id=".$_GET["id"]);
     }
+  }else{
+    $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+  }
 }
 
-if ($_GET["action"] == 'removeuser' && $caneditperms)
+if ($_GET["action"] == 'removeuser')
 {
+  if($caneditperms){
     if ($_GET["user"])
     {
         $edituser = new User($db, $_GET["user"]);
@@ -108,10 +122,14 @@ if ($_GET["action"] == 'removeuser' && $caneditperms)
 
         Header("Location: fiche.php?id=".$_GET["id"]);
     }
+  }else{
+    $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+  }
 }
 
-if ($_POST["action"] == 'update' && $caneditperms)
+if ($_POST["action"] == 'update')
 {
+  if($caneditperms){
     $message="";
 
     $db->begin();
@@ -131,7 +149,9 @@ if ($_POST["action"] == 'update' && $caneditperms)
         $message.='<div class="error">'.$editgroup->error.'</div>';
         $db->rollback;
     }
-
+  }else{
+    $message = '<div class="error">'.$langs->trans('ErrorForbidden').'</div>';
+  }
 }
 
 
@@ -176,6 +196,9 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
+
+    if ($message) { print $message."<br>"; }
+
     if ($_GET["id"] )
     {
         $group = new UserGroup($db);
