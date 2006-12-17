@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Sylvain SCATTOLINI   <sylvain@s-infoservices.com>
+ * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,358 +23,356 @@
  */
 
 /**
-        \file       htdocs/includes/modules/facture/pdf_oursin.modules.php
-        \ingroup    facture
-        \brief      Fichier de la classe permettant de générer les factures au modèle oursin
-        \author	    Sylvain SCATTOLINI basé sur un modèle de Laurent Destailleur
-        \version    $Revision$
+   \file       htdocs/includes/modules/facture/pdf_oursin.modules.php
+   \ingroup    facture
+   \brief      Fichier de la classe permettant de générer les factures au modèle oursin
+   \author	    Sylvain SCATTOLINI basé sur un modèle de Laurent Destailleur
+   \version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
-
 /**
-        \class      pdf_oursin
-        \brief      Classe permettant de générer les factures au modèle oursin
+   \class      pdf_oursin
+   \brief      Classe permettant de générer les factures au modèle oursin
 */
 
 class pdf_oursin extends ModelePDFFactures
 {
-	var $emetteur;	// Objet societe qui emet
-    var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
+  var $emetteur;	// Objet societe qui emet
+  var $marges=array("g"=>10,"h"=>5,"d"=>10,"b"=>15);
+  
+  /**
+     \brief  Constructeur
+     \param	db		handler accès base de donnée
+  */
+  function pdf_oursin($db)
+  {
+    global $conf,$langs,$mysoc;
+    
+    $langs->load("main");
+    $langs->load("bills");
+    $langs->load("products");
+    
+    $this->db = $db;
+    $this->name = "oursin";
+    $this->description = $langs->transnoentities('PDFOursinDescription');
+    
+    // Dimension page pour format A4
+    $this->type = 'pdf';
+    $this->page_largeur = 210;
+    $this->page_hauteur = 297;
+    $this->format = array($this->page_largeur,$this->page_hauteur);
+    
+    $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
+    $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
+    $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+    $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
+    if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
+      $this->franchise=1;
+    
+    // Recupere emmetteur
+    $this->emetteur=$mysoc;
+    if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
+  }
+  
+  
+  /**
+   *		\brief      Fonction générant la facture sur le disque
+   *		\param	    facid	id de la facture à générer
+   *		\return	    int     1=ok, 0=ko
+   *		\remarks    Variables utilisées
+   *		\remarks    MAIN_INFO_SOCIETE_NOM
+   *		\remarks    MAIN_INFO_SOCIETE_ADRESSE
+   *		\remarks    MAIN_INFO_SOCIETE_CP
+   *		\remarks    MAIN_INFO_SOCIETE_VILLE
+   *		\remarks    MAIN_INFO_SOCIETE_TEL
+   *		\remarks    MAIN_INFO_SOCIETE_FAX
+   *	 	\remarks    MAIN_INFO_SOCIETE_WEB
+   *      \remarks    MAIN_INFO_SOCIETE_LOGO
+   *		\remarks    MAIN_INFO_SIRET
+   *		\remarks    MAIN_INFO_SIREN
+   *		\remarks    MAIN_INFO_RCS
+   *		\remarks    MAIN_INFO_CAPITAL
+   *		\remarks    MAIN_INFO_TVAINTRA
+   */
+  function write_pdf_file($fac,$outputlangs='')
+  {
+    global $user,$langs,$conf;
+    
+    if (! is_object($outputlangs)) $outputlangs=$langs;
+    $outputlangs->load("main");
+    $outputlangs->load("companies");
+    $outputlangs->load("bills");
+    $outputlangs->load("products");
+    
+    $outputlangs->setPhpLang();
+    
+    $langs->load("main");
+    $langs->load("bills");
+    $langs->load("products");
+    
+    if ($conf->facture->dir_output)
+      {
+	// Définition de l'objet $fac (pour compatibilite ascendante)
+	if (! is_object($fac))
+	  {
+	    $id = $fac;
+	    $fac = new Facture($this->db,"",$id);
+	    $ret=$fac->fetch($id);
+	  }
+	
+	// Définition de $dir et $file
+	if ($fac->specimen)
+	  {
+	    $dir = $conf->facture->dir_output;
+	    $file = $dir . "/SPECIMEN.pdf";
+	  }
+	else
+	  {
+	    $facref = sanitize_string($fac->ref);
+	    $dir = $conf->facture->dir_output . "/" . $facref;
+	    $file = $dir . "/" . $facref . ".pdf";
+	  }
 
-
-    /**
-    	\brief  Constructeur
-        \param	db		handler accès base de donnée
-    */
-    function pdf_oursin($db)
-    {
-        global $conf,$langs,$mysoc;
-
-		  $langs->load("main");
-		  $langs->load("bills");
-		  $langs->load("products");
-
-        $this->db = $db;
-        $this->name = "oursin";
-        $this->description = $langs->trans('PDFOursinDescription');
-
-        // Dimension page pour format A4
-        $this->type = 'pdf';
-        $this->page_largeur = 210;
-        $this->page_hauteur = 297;
-        $this->format = array($this->page_largeur,$this->page_hauteur);
-
-        $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
-        $this->option_tva = 1;                     // Gere option tva FACTURE_TVAOPTION
-        $this->option_modereg = 1;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
-        $this->option_codeproduitservice = 1;      // Affiche code produit-service FACTURE_CODEPRODUITSERVICE
-        if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
-        	$this->franchise=1;
-
-        // Recupere emmetteur
-        $this->emetteur=$mysoc;
-        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
-    }
-
-
-	/**
-     *		\brief      Fonction générant la facture sur le disque
-     *		\param	    facid	id de la facture à générer
-     *		\return	    int     1=ok, 0=ko
-     *		\remarks    Variables utilisées
-	 *		\remarks    MAIN_INFO_SOCIETE_NOM
-     *		\remarks    MAIN_INFO_SOCIETE_ADRESSE
-     *		\remarks    MAIN_INFO_SOCIETE_CP
-     *		\remarks    MAIN_INFO_SOCIETE_VILLE
-     *		\remarks    MAIN_INFO_SOCIETE_TEL
-     *		\remarks    MAIN_INFO_SOCIETE_FAX
-     *	 	\remarks    MAIN_INFO_SOCIETE_WEB
-     *      \remarks    MAIN_INFO_SOCIETE_LOGO
-     *		\remarks    MAIN_INFO_SIRET
-     *		\remarks    MAIN_INFO_SIREN
-     *		\remarks    MAIN_INFO_RCS
-     *		\remarks    MAIN_INFO_CAPITAL
-     *		\remarks    MAIN_INFO_TVAINTRA
-  	 */
-	function write_pdf_file($fac,$outputlangs='')
-	{
-		global $user,$langs,$conf;
-
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("products");
-		
-		$outputlangs->setPhpLang();
-
-		$langs->load("main");
-		$langs->load("bills");
-		$langs->load("products");
-
-		if ($conf->facture->dir_output)
-		{
-			// Définition de l'objet $fac (pour compatibilite ascendante)
-        	if (! is_object($fac))
-        	{
-	            $id = $fac;
-	            $fac = new Facture($this->db,"",$id);
-	            $ret=$fac->fetch($id);
-			}
-
-			// Définition de $dir et $file
-			if ($fac->specimen)
-			{
-				$dir = $conf->facture->dir_output;
-				$file = $dir . "/SPECIMEN.pdf";
-			}
-			else
-			{
-				$facref = sanitize_string($fac->ref);
-				$dir = $conf->facture->dir_output . "/" . $facref;
-				$file = $dir . "/" . $facref . ".pdf";
-			}
-
-			if (! file_exists($dir))
-			{
-				if (create_exdir($dir) < 0)
-				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-					$langs->setPhpLang();	// On restaure langue session
-					return 0;
-				}
-			}
-
-			if (file_exists($dir))
-			{
-				// Initialisation facture vierge
-				$pdf=new FPDF('P','mm',$this->format);
-				$pdf->Open();
-				$pdf->AddPage();
-
-				$this->_pagehead($pdf, $fac);
-
-				$pdf->SetTitle($fac->ref);
-				$pdf->SetSubject($langs->trans("Invoice"));
-				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
-				$pdf->SetAuthor($user->fullname);
-
-				$pdf->SetMargins(10, 10, 10);
-				$pdf->SetAutoPageBreak(1,0);
-
-				$tab_top = $this->marges['h']+90;
-				$tab_height = 110;
-
-				$pdf->SetFillColor(220,220,220);
-				$pdf->SetFont('Arial','', 9);
-				$pdf->SetXY ($this->marges['g'], $tab_top + $this->marges['g'] );
-
-				$iniY = $pdf->GetY();
-				$curY = $pdf->GetY();
-				$nexY = $pdf->GetY();
-				$nblignes = sizeof($fac->lignes);
-
-				// Boucle sur les lignes de factures
-				for ($i = 0 ; $i < $nblignes ; $i++)
-				{
-					$curY = $nexY;
-
-					// Description produit
-					$codeproduitservice="";
-					$pdf->SetXY ($this->marges['g']+ 1, $curY );
-					if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
-						// Affiche code produit si ligne associée à un code produit
-
-						$prodser = new Product($this->db);
-
-						$prodser->fetch($fac->lignes[$i]->produit_id);
-						if ($prodser->ref) {
-							$codeproduitservice=" - ".$langs->trans("ProductCode")." ".$prodser->ref;
-						}
-					}
-					if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
-						// Affichage durée si il y en a une
-						$codeproduitservice.=" (".$langs->trans("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
-					}
-					$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
-
-					$nexY = $pdf->GetY();
-
-					// TVA
-					if ($this->franchise!=1)
-					{
-						$pdf->SetXY ($this->marges['g']+119, $curY);
-						$pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_tx, 0, 'C');
-					}
-					// Prix unitaire HT avant remise
-					$pdf->SetXY ($this->marges['g']+132, $curY);
-					$pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
-
-					// Quantit
-					$pdf->SetXY ($this->marges['g']+150, $curY);
-					$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
-
-					// Remise sur ligne
-					$pdf->SetXY ($this->marges['g']+160, $curY);
-					if ($fac->lignes[$i]->remise_percent) {
-						$pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
-					}
-
-					// Total HT
-					$pdf->SetXY ($this->marges['g']+168, $curY);
-					$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
-					$pdf->MultiCell(21, 5, $total, 0, 'R', 0);
-
-
-					if ($nexY > 200 && $i < $nblignes - 1)
-					{
-						$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
-						$pdf->AddPage();
-						$nexY = $iniY;
-						$this->_pagehead($pdf, $fac);
-						$pdf->SetTextColor(0,0,0);
-						$pdf->SetFont('Arial','', 10);
-					}
-
-				}
-				$this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
-
-				$deja_regle = $fac->getSommePaiement();
-
-				$this->_tableau_tot($pdf, $fac, $deja_regle);
-
-				if ($deja_regle) {
-					$this->_tableau_versements($pdf, $fac);
-				}
-
-				/*
-				* Mode de règlement
-				*/
-				if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
-					$pdf->SetXY ($this->marges['g'], 228);
-					$pdf->SetTextColor(200,0,0);
-					$pdf->SetFont('Arial','B',8);
-					$pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
-					$pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
-					$pdf->SetTextColor(0,0,0);
-				}
-
-				/*
-				* Propose mode règlement par CHQ
-				*/
-				if (defined("FACTURE_CHQ_NUMBER"))
-				{
-					if (FACTURE_CHQ_NUMBER > 0)
-					{
-						$account = new Account($this->db);
-						$account->fetch(FACTURE_CHQ_NUMBER);
-
-						$pdf->SetXY ($this->marges['g'], 225);
-						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $langs->trans('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->trans('SendTo').':',0,'L',0);
-						$pdf->SetXY ($this->marges['g'], 230);
-						$pdf->SetFont('Arial','',8);
-						$pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
-					}
-				}
-
-				/*
-				* Propose mode règlement par RIB
-				*/
-				if (defined("FACTURE_RIB_NUMBER"))
-				{
-					if (FACTURE_RIB_NUMBER > 0)
-					{
-						$account = new Account($this->db);
-						$account->fetch(FACTURE_RIB_NUMBER);
-
-						$cury=240;
-						$pdf->SetXY ($this->marges['g'], $cury);
-						$pdf->SetFont('Arial','B',8);
-						$pdf->MultiCell(90, 3, $langs->trans('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
-						$cury=245;
-						$pdf->SetFont('Arial','B',6);
-						$pdf->line($this->marges['g'], $cury, $this->marges['g'], $cury+10 );
-						$pdf->SetXY ($this->marges['g'], $cury);
-						$pdf->MultiCell(18, 3, $langs->trans("BankCode"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+18, $cury);
-						$pdf->MultiCell(18, 3, $langs->trans("DeskCode"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+36, $cury);
-						$pdf->MultiCell(24, 3, $langs->trans("BankAccountNumber"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
-						$pdf->SetXY ($this->marges['g']+60, $cury);
-						$pdf->MultiCell(13, 3, $langs->trans("BankAccountNumberKey"), 0, 'C', 0);
-						$pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
-
-						$pdf->SetFont('Arial','',8);
-						$pdf->SetXY ($this->marges['g'], $cury+5);
-						$pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+18, $cury+5);
-						$pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+36, $cury+5);
-						$pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
-						$pdf->SetXY ($this->marges['g']+60, $cury+5);
-						$pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
-
-						$pdf->SetXY ($this->marges['g'], $cury+15);
-						$pdf->MultiCell(90, 3, $langs->trans("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+25);
-						$pdf->MultiCell(90, 3, $langs->trans("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
-						$pdf->SetXY ($this->marges['g'], $cury+30);
-						$pdf->MultiCell(90, 3, $langs->trans("BIC").' : ' . $account->bic, 0, 'L', 0);
-					}
-				}
-
-				/*
-				* Conditions de règlements
-				*/
-				if ($fac->cond_reglement_code)
-				{
-					$pdf->SetFont('Arial','B',10);
-					$pdf->SetXY($this->marges['g'], 217);
-					$titre = $langs->trans("PaymentConditions").':';
-					$pdf->MultiCell(80, 5, $titre, 0, 'L');
-					$pdf->SetFont('Arial','',10);
-					$pdf->SetXY($this->marges['g']+44, 217);
-	                $lib_condition_paiement=$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code)?$outputlangs->trans("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
-					$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
-				}
-
-				/*
-				* Pied de page
-				*/
-				$this->_pagefoot($pdf, $fac);
-				$pdf->AliasNbPages();
-
-				$pdf->Close();
-
-				$pdf->Output($file);
-
-				$langs->setPhpLang();	// On restaure langue session
-				return 1;   // Pas d'erreur
-			}
-			else
-			{
-				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-				$langs->setPhpLang();	// On restaure langue session
-				return 0;
-			}
-		}
-		else
-		{
-			$this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
-			$langs->setPhpLang();	// On restaure langue session
-			return 0;
-		}
-		$this->error=$langs->trans("ErrorUnknown");
+	if (! file_exists($dir))
+	  {
+	    if (create_exdir($dir) < 0)
+	      {
+		$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 		$langs->setPhpLang();	// On restaure langue session
-		return 0;   // Erreur par defaut
-	}
+		return 0;
+	      }
+	  }
+
+	if (file_exists($dir))
+	  {
+	    // Initialisation facture vierge
+	    $pdf=new FPDF('P','mm',$this->format);
+	    $pdf->Open();
+	    $pdf->AddPage();
+
+	    $this->_pagehead($pdf, $fac);
+
+	    $pdf->SetTitle($fac->ref);
+	    $pdf->SetSubject($langs->transnoentities("Invoice"));
+	    $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+	    $pdf->SetAuthor($user->fullname);
+
+	    $pdf->SetMargins(10, 10, 10);
+	    $pdf->SetAutoPageBreak(1,0);
+
+	    $tab_top = $this->marges['h']+90;
+	    $tab_height = 110;
+
+	    $pdf->SetFillColor(220,220,220);
+	    $pdf->SetFont('Arial','', 9);
+	    $pdf->SetXY ($this->marges['g'], $tab_top + $this->marges['g'] );
+
+	    $iniY = $pdf->GetY();
+	    $curY = $pdf->GetY();
+	    $nexY = $pdf->GetY();
+	    $nblignes = sizeof($fac->lignes);
+
+	    // Boucle sur les lignes de factures
+	    for ($i = 0 ; $i < $nblignes ; $i++)
+	      {
+		$curY = $nexY;
+
+		// Description produit
+		$codeproduitservice="";
+		$pdf->SetXY ($this->marges['g']+ 1, $curY );
+		if (defined("FACTURE_CODEPRODUITSERVICE") && FACTURE_CODEPRODUITSERVICE) {
+		  // Affiche code produit si ligne associée à un code produit
+
+		  $prodser = new Product($this->db);
+
+		  $prodser->fetch($fac->lignes[$i]->produit_id);
+		  if ($prodser->ref) {
+		    $codeproduitservice=" - ".$langs->transnoentities("ProductCode")." ".$prodser->ref;
+		  }
+		}
+		if ($fac->lignes[$i]->date_start && $fac->lignes[$i]->date_end) {
+		  // Affichage durée si il y en a une
+		  $codeproduitservice.=" (".$langs->transnoentities("From")." ".dolibarr_print_date($fac->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($fac->lignes[$i]->date_end).")";
+		}
+		$pdf->MultiCell(108, 5, $fac->lignes[$i]->desc."$codeproduitservice", 0, 'J');
+
+		$nexY = $pdf->GetY();
+
+		// TVA
+		if ($this->franchise!=1)
+		  {
+		    $pdf->SetXY ($this->marges['g']+119, $curY);
+		    $pdf->MultiCell(10, 5, $fac->lignes[$i]->tva_tx, 0, 'C');
+		  }
+		// Prix unitaire HT avant remise
+		$pdf->SetXY ($this->marges['g']+132, $curY);
+		$pdf->MultiCell(16, 5, price($fac->lignes[$i]->subprice), 0, 'R', 0);
+
+		// Quantit
+		$pdf->SetXY ($this->marges['g']+150, $curY);
+		$pdf->MultiCell(10, 5, $fac->lignes[$i]->qty, 0, 'R');
+
+		// Remise sur ligne
+		$pdf->SetXY ($this->marges['g']+160, $curY);
+		if ($fac->lignes[$i]->remise_percent) {
+		  $pdf->MultiCell(14, 5, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+		}
+
+		// Total HT
+		$pdf->SetXY ($this->marges['g']+168, $curY);
+		$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+		$pdf->MultiCell(21, 5, $total, 0, 'R', 0);
+
+
+		if ($nexY > 200 && $i < $nblignes - 1)
+		  {
+		    $this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
+		    $pdf->AddPage();
+		    $nexY = $iniY;
+		    $this->_pagehead($pdf, $fac);
+		    $pdf->SetTextColor(0,0,0);
+		    $pdf->SetFont('Arial','', 10);
+		  }
+
+	      }
+	    $this->_tableau($pdf, $tab_top, $tab_height, $nexY, $fac);
+
+	    $deja_regle = $fac->getSommePaiement();
+
+	    $this->_tableau_tot($pdf, $fac, $deja_regle);
+
+	    if ($deja_regle) {
+	      $this->_tableau_versements($pdf, $fac);
+	    }
+
+	    /*
+	     * Mode de règlement
+	     */
+	    if ((! defined("FACTURE_CHQ_NUMBER") || ! FACTURE_CHQ_NUMBER) && (! defined("FACTURE_RIB_NUMBER") || ! FACTURE_RIB_NUMBER)) {
+	      $pdf->SetXY ($this->marges['g'], 228);
+	      $pdf->SetTextColor(200,0,0);
+	      $pdf->SetFont('Arial','B',8);
+	      $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+	      $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
+	      $pdf->SetTextColor(0,0,0);
+	    }
+
+	    /*
+	     * Propose mode règlement par CHQ
+	     */
+	    if (defined("FACTURE_CHQ_NUMBER"))
+	      {
+		if (FACTURE_CHQ_NUMBER > 0)
+		  {
+		    $account = new Account($this->db);
+		    $account->fetch(FACTURE_CHQ_NUMBER);
+
+		    $pdf->SetXY ($this->marges['g'], 225);
+		    $pdf->SetFont('Arial','B',8);
+		    $pdf->MultiCell(90, 3, $langs->transnoentities('PaymentByChequeOrderedTo').' '.$account->proprio.' '.$langs->transnoentities('SendTo').':',0,'L',0);
+		    $pdf->SetXY ($this->marges['g'], 230);
+		    $pdf->SetFont('Arial','',8);
+		    $pdf->MultiCell(80, 3, $account->adresse_proprio, 0, 'L', 0);
+		  }
+	      }
+
+	    /*
+	     * Propose mode règlement par RIB
+	     */
+	    if (defined("FACTURE_RIB_NUMBER"))
+	      {
+		if (FACTURE_RIB_NUMBER > 0)
+		  {
+		    $account = new Account($this->db);
+		    $account->fetch(FACTURE_RIB_NUMBER);
+
+		    $cury=240;
+		    $pdf->SetXY ($this->marges['g'], $cury);
+		    $pdf->SetFont('Arial','B',8);
+		    $pdf->MultiCell(90, 3, $langs->transnoentities('PaymentByTransferOnThisBankAccount').':', 0, 'L', 0);
+		    $cury=245;
+		    $pdf->SetFont('Arial','B',6);
+		    $pdf->line($this->marges['g'], $cury, $this->marges['g'], $cury+10 );
+		    $pdf->SetXY ($this->marges['g'], $cury);
+		    $pdf->MultiCell(18, 3, $langs->transnoentities("BankCode"), 0, 'C', 0);
+		    $pdf->line($this->marges['g']+18, $cury, $this->marges['g']+18, $cury+10 );
+		    $pdf->SetXY ($this->marges['g']+18, $cury);
+		    $pdf->MultiCell(18, 3, $langs->transnoentities("DeskCode"), 0, 'C', 0);
+		    $pdf->line($this->marges['g']+36, $cury, $this->marges['g']+36, $cury+10 );
+		    $pdf->SetXY ($this->marges['g']+36, $cury);
+		    $pdf->MultiCell(24, 3, $langs->transnoentities("BankAccountNumber"), 0, 'C', 0);
+		    $pdf->line($this->marges['g']+60, $cury, $this->marges['g']+60, $cury+10 );
+		    $pdf->SetXY ($this->marges['g']+60, $cury);
+		    $pdf->MultiCell(13, 3, $langs->transnoentities("BankAccountNumberKey"), 0, 'C', 0);
+		    $pdf->line($this->marges['g']+73, $cury, $this->marges['g']+73, $cury+10 );
+
+		    $pdf->SetFont('Arial','',8);
+		    $pdf->SetXY ($this->marges['g'], $cury+5);
+		    $pdf->MultiCell(18, 3, $account->code_banque, 0, 'C', 0);
+		    $pdf->SetXY ($this->marges['g']+18, $cury+5);
+		    $pdf->MultiCell(18, 3, $account->code_guichet, 0, 'C', 0);
+		    $pdf->SetXY ($this->marges['g']+36, $cury+5);
+		    $pdf->MultiCell(24, 3, $account->number, 0, 'C', 0);
+		    $pdf->SetXY ($this->marges['g']+60, $cury+5);
+		    $pdf->MultiCell(13, 3, $account->cle_rib, 0, 'C', 0);
+
+		    $pdf->SetXY ($this->marges['g'], $cury+15);
+		    $pdf->MultiCell(90, 3, $langs->transnoentities("Residence").' : ' . $account->domiciliation, 0, 'L', 0);
+		    $pdf->SetXY ($this->marges['g'], $cury+25);
+		    $pdf->MultiCell(90, 3, $langs->transnoentities("IbanPrefix").' : ' . $account->iban_prefix, 0, 'L', 0);
+		    $pdf->SetXY ($this->marges['g'], $cury+30);
+		    $pdf->MultiCell(90, 3, $langs->transnoentities("BIC").' : ' . $account->bic, 0, 'L', 0);
+		  }
+	      }
+
+	    /*
+	     * Conditions de règlements
+	     */
+	    if ($fac->cond_reglement_code)
+	      {
+		$pdf->SetFont('Arial','B',10);
+		$pdf->SetXY($this->marges['g'], 217);
+		$titre = $langs->transnoentities("PaymentConditions").':';
+		$pdf->MultiCell(80, 5, $titre, 0, 'L');
+		$pdf->SetFont('Arial','',10);
+		$pdf->SetXY($this->marges['g']+44, 217);
+		$lib_condition_paiement=$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code)?$outputlangs->transnoentities("PaymentCondition".$fac->cond_reglement_code):$fac->cond_reglement;
+		$pdf->MultiCell(80, 5, $lib_condition_paiement,0,'L');
+	      }
+
+	    /*
+	     * Pied de page
+	     */
+	    $this->_pagefoot($pdf, $fac);
+	    $pdf->AliasNbPages();
+
+	    $pdf->Close();
+
+	    $pdf->Output($file);
+
+	    $langs->setPhpLang();	// On restaure langue session
+	    return 1;   // Pas d'erreur
+	  }
+	else
+	  {
+	    $this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+	    $langs->setPhpLang();	// On restaure langue session
+	    return 0;
+	  }
+      }
+    else
+      {
+	$this->error=$langs->transnoentities("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+	$langs->setPhpLang();	// On restaure langue session
+	return 0;
+      }
+    $this->error=$langs->transnoentities("ErrorUnknown");
+    $langs->setPhpLang();	// On restaure langue session
+    return 0;   // Erreur par defaut
+  }
 
 
   /*
@@ -394,18 +393,18 @@ class pdf_oursin extends ModelePDFFactures
 
     $pdf->SetFont('Arial','',8);
     $pdf->SetXY ($tab3_posx, $tab3_top - 5);
-    $pdf->MultiCell(60, 5, $langs->trans("PaymentsAlreadyDone"), 0, 'L', 0);
+    $pdf->MultiCell(60, 5, $langs->transnoentities("PaymentsAlreadyDone"), 0, 'L', 0);
 
     $pdf->Rect($tab3_posx, $tab3_top-1, $tab3_width, $tab3_height);
 
     $pdf->SetXY ($tab3_posx, $tab3_top-1 );
-    $pdf->MultiCell(20, 4, $langs->trans("Payment"), 0, 'L', 0);
+    $pdf->MultiCell(20, 4, $langs->transnoentities("Payment"), 0, 'L', 0);
     $pdf->SetXY ($tab3_posx+21, $tab3_top-1 );
-    $pdf->MultiCell(20, 4, $langs->trans("Amount"), 0, 'L', 0);
+    $pdf->MultiCell(20, 4, $langs->transnoentities("Amount"), 0, 'L', 0);
     $pdf->SetXY ($tab3_posx+41, $tab3_top-1 );
-    $pdf->MultiCell(20, 4, $langs->trans("Type"), 0, 'L', 0);
+    $pdf->MultiCell(20, 4, $langs->transnoentities("Type"), 0, 'L', 0);
     $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
-    $pdf->MultiCell(20, 4, $langs->trans("Ref"), 0, 'L', 0);
+    $pdf->MultiCell(20, 4, $langs->transnoentities("Ref"), 0, 'L', 0);
 
     $sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
     $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
@@ -460,7 +459,7 @@ class pdf_oursin extends ModelePDFFactures
       }
     else
       {
-	$this->error=$langs->trans("ErrorSQL")." $sql";
+	$this->error=$langs->transnoentities("ErrorSQL")." $sql";
 	return 0;
       }
 
@@ -487,13 +486,13 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY ($this->marges['g'], $tab2_top + 0);
     if ($this->franchise==1)
       {
-	$pdf->MultiCell(100, $tab2_hl, $langs->trans("VATIsNotUsedForInvoice"), 0, 'L', 0);
+	$pdf->MultiCell(100, $tab2_hl, $langs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
       }
 
     // Tableau total
     $col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
     $pdf->SetXY ($col1x, $tab2_top + 0);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 0);
+    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 0);
 
     $pdf->SetXY ($col2x, $tab2_top + 0);
     $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
@@ -501,13 +500,13 @@ class pdf_oursin extends ModelePDFFactures
     if ($fac->remise > 0)
       {
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
 	$pdf->MultiCell(26, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 0);
 
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("WithDiscountTotalHT"), 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("WithDiscountTotalHT"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
 	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
@@ -520,7 +519,7 @@ class pdf_oursin extends ModelePDFFactures
       }
 
     $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 0);
+    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 0);
 
     $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
     $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
@@ -528,7 +527,7 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
     $pdf->SetTextColor(22,137,210);
     $pdf->SetFont('Arial','B', 11);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), 0, 'L', 0);
+    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), 0, 'L', 0);
 
     $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
     $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
@@ -537,7 +536,7 @@ class pdf_oursin extends ModelePDFFactures
     if ($deja_regle > 0)
       {
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
 	$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
@@ -545,7 +544,7 @@ class pdf_oursin extends ModelePDFFactures
 	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
 	$pdf->SetTextColor(22,137,210);
 	$pdf->SetFont('Arial','B', 11);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), 0, 'L', 0);
+	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), 0, 'L', 0);
 
 	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
 	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
@@ -559,19 +558,19 @@ class pdf_oursin extends ModelePDFFactures
    */
   function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $fac)
   {
-        global $langs;
-        $langs->load("main");
-        $langs->load("bills");
+    global $langs;
+    $langs->load("main");
+    $langs->load("bills");
 
     $pdf->line( $this->marges['g'], $tab_top+8, 210-$this->marges['d'], $tab_top+8 );
     $pdf->line( $this->marges['g'], $tab_top + $tab_height, 210-$this->marges['d'], $tab_top + $tab_height );
 
     $pdf->SetFont('Arial','B',10);
 
-    $pdf->Text($this->marges['g']+2,$tab_top + 5, $langs->trans("Designation"));
-    if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $langs->trans("VAT"));
-    $pdf->Text($this->marges['g']+135, $tab_top + 5,$langs->trans("PriceUHT"));
-    $pdf->Text($this->marges['g']+153, $tab_top + 5, $langs->trans("Qty"));
+    $pdf->Text($this->marges['g']+2,$tab_top + 5, $langs->transnoentities("Designation"));
+    if ($this->franchise!=1) $pdf->Text($this->marges['g']+120, $tab_top + 5, $langs->transnoentities("VAT"));
+    $pdf->Text($this->marges['g']+135, $tab_top + 5,$langs->transnoentities("PriceUHT"));
+    $pdf->Text($this->marges['g']+153, $tab_top + 5, $langs->transnoentities("Qty"));
 
     $nblignes = sizeof($fac->lignes);
     $rem=0;
@@ -584,7 +583,7 @@ class pdf_oursin extends ModelePDFFactures
       {
 	$pdf->Text($this->marges['g']+163, $tab_top + 5,'Rem.');
       }
-    $pdf->Text($this->marges['g']+175, $tab_top + 5, $langs->trans("TotalHT"));
+    $pdf->Text($this->marges['g']+175, $tab_top + 5, $langs->transnoentities("TotalHT"));
   }
 
   /*
@@ -609,19 +608,19 @@ class pdf_oursin extends ModelePDFFactures
     $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
     if ($this->emetteur->logo)
       {
-				if (is_readable($logo))
-	  			{
-	    			$taille=getimagesize($logo);
-	    			$longueur=$taille[0]/2.835;
-	    			$pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
-	  			}
-				else
-				{
-						$pdf->SetTextColor(200,0,0);
-	  				$pdf->SetFont('Arial','B',8);
-	  				$pdf->MultiCell(80, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-	  				$pdf->MultiCell(80, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
-				}
+	if (is_readable($logo))
+	  {
+	    $taille=getimagesize($logo);
+	    $longueur=$taille[0]/2.835;
+	    $pdf->Image($logo, $this->marges['g'], $this->marges['h'], 0, 24);
+	  }
+	else
+	  {
+	    $pdf->SetTextColor(200,0,0);
+	    $pdf->SetFont('Arial','B',8);
+	    $pdf->MultiCell(80, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+	    $pdf->MultiCell(80, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+	  }
       }
     else if (defined("FAC_PDF_INTITULE"))
       {
@@ -646,8 +645,8 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetXY($this->marges['g'],$posy+4);
 
     // Nom emetteur
-	$pdf->SetTextColor(0,0,60);
-	$pdf->SetFont('Arial','B',12);
+    $pdf->SetTextColor(0,0,60);
+    $pdf->SetFont('Arial','B',12);
     if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM)  // Prioritaire sur MAIN_INFO_SOCIETE_NOM
       {
 	$pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
@@ -658,32 +657,32 @@ class pdf_oursin extends ModelePDFFactures
       }
 
     // Caractéristiques emetteur
-	$pdf->SetFont('Arial','',9);
+    $pdf->SetFont('Arial','',9);
     if (defined("FAC_PDF_ADRESSE"))
       {
 	$pdf->MultiCell(80, 4, FAC_PDF_ADRESSE);
       }
     if (defined("FAC_PDF_TEL") && FAC_PDF_TEL)
       {
-            $pdf->MultiCell(80, 4, $langs->trans("Phone").": ".FAC_PDF_TEL);
+	$pdf->MultiCell(80, 4, $langs->transnoentities("Phone").": ".FAC_PDF_TEL);
       }
     if (defined("FAC_PDF_MEL") && FAC_PDF_MEL)
       {
-			$pdf->MultiCell(80, 4, $langs->trans("Email").": ".FAC_PDF_MEL);
+	$pdf->MultiCell(80, 4, $langs->transnoentities("Email").": ".FAC_PDF_MEL);
       }
     if (defined("FAC_PDF_WWW") && FAC_PDF_WWW)
       {
-			$pdf->MultiCell(80, 4, $langs->trans("Web").": ".FAC_PDF_WWW);
+	$pdf->MultiCell(80, 4, $langs->transnoentities("Web").": ".FAC_PDF_WWW);
       }
 
     $pdf->SetFont('Arial','',7);
     if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
       {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->pays_code).": ".MAIN_INFO_SIREN);
+	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->pays_code).": ".MAIN_INFO_SIREN);
       }
     elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
       {
-            $pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->pays_code).": ".MAIN_INFO_SIRET);
+	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->pays_code).": ".MAIN_INFO_SIRET);
       }
 
 
@@ -709,11 +708,11 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetFont('Arial','B',13);
     $pdf->SetXY($this->marges['g'],$posy);
     $pdf->SetTextColor(0,0,0);
-    $pdf->MultiCell(100, 10, $langs->trans("Bill").' '.$langs->trans("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y"), '' , 'L');
+    $pdf->MultiCell(100, 10, $langs->transnoentities("Bill").' '.$langs->transnoentities("Of").' '.dolibarr_print_date($fac->date,"%d %B %Y"), '' , 'L');
     $pdf->SetFont('Arial','B',11);
     $pdf->SetXY($this->marges['g'],$posy+6);
     $pdf->SetTextColor(22,137,210);
-    $pdf->MultiCell(100, 10, $langs->trans("RefBill")." : " . $fac->ref, '', 'L');
+    $pdf->MultiCell(100, 10, $langs->transnoentities("RefBill")." : " . $fac->ref, '', 'L');
     $pdf->SetTextColor(0,0,0);
 
     /*
@@ -724,7 +723,7 @@ class pdf_oursin extends ModelePDFFactures
 	$projet = New Project($fac->db);
 	$projet->fetch($fac->projetid);
 	$pdf->SetFont('Arial','',9);
-	$pdf->MultiCell(60, 4, $langs->trans("Project")." : ".$projet->title);
+	$pdf->MultiCell(60, 4, $langs->transnoentities("Project")." : ".$projet->title);
       }
 
     /*
@@ -737,7 +736,7 @@ class pdf_oursin extends ModelePDFFactures
       {
 	$objp = $fac->db->fetch_object();
 	$pdf->SetFont('Arial','',9);
-	$pdf->MultiCell(60, 4, $langs->trans("RefProposal")." : ".$objp->ref);
+	$pdf->MultiCell(60, 4, $langs->transnoentities("RefProposal")." : ".$objp->ref);
       }
 
     /*
@@ -745,7 +744,7 @@ class pdf_oursin extends ModelePDFFactures
      */
     $pdf->SetTextColor(0,0,0);
     $pdf->SetFont('Arial','',10);
-    $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+    $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
     $pdf->Text(200 - $pdf->GetStringWidth($titre), 94, $titre);
     /*
      */
@@ -767,37 +766,37 @@ class pdf_oursin extends ModelePDFFactures
     $footy=13;
     $pdf->SetFont('Arial','',8);
 
-        $ligne="";
-        if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
-            $ligne=$langs->trans('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->trans("Currency".$conf->monnaie);
-        }
-        if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN;
-        }
-        if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET;
-        }
-        if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
-            $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".MAIN_INFO_RCS;
-        }
-        if ($ligne) {
-            $pdf->SetY(-$footy);
-            $pdf->MultiCell(190, 3, $ligne, 0, 'C');
-            $footy-=3;
-        }
+    $ligne="";
+    if (defined('MAIN_INFO_CAPITAL') && MAIN_INFO_CAPITAL) {
+      $ligne=$langs->transnoentities('LimitedLiabilityCompanyCapital').' '. MAIN_INFO_CAPITAL." ".$langs->transnoentities("Currency".$conf->monnaie);
+    }
+    if (defined('MAIN_INFO_SIREN') && MAIN_INFO_SIREN) {
+      $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN;
+    }
+    if (defined('MAIN_INFO_SIRET') && MAIN_INFO_SIRET) {
+      $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET;
+    }
+    if (defined('MAIN_INFO_RCS') && MAIN_INFO_RCS) {
+      $ligne.=($ligne?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".MAIN_INFO_RCS;
+    }
+    if ($ligne) {
+      $pdf->SetY(-$footy);
+      $pdf->MultiCell(190, 3, $ligne, 0, 'C');
+      $footy-=3;
+    }
 
     // Affiche le numéro de TVA intracommunautaire
     if (MAIN_INFO_TVAINTRA == 'MAIN_INFO_TVAINTRA') {
       $pdf->SetY(-$footy);
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',8);
-      $pdf->MultiCell(190, 3, $langs->trans("ErrorVATIntraNotConfigured"),0,'L',0);
-      $pdf->MultiCell(190, 3, $langs->trans("ErrorGoToGlobalSetup"),0,'L',0);
+      $pdf->MultiCell(190, 3, $langs->transnoentities("ErrorVATIntraNotConfigured"),0,'L',0);
+      $pdf->MultiCell(190, 3, $langs->transnoentities("ErrorGoToGlobalSetup"),0,'L',0);
       $pdf->SetTextColor(0,0,0);
     }
     elseif (MAIN_INFO_TVAINTRA != '') {
       $pdf->SetY(-$footy);
-      $pdf->MultiCell(190, 3,  $langs->trans("IntracommunityVATNumber")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
+      $pdf->MultiCell(190, 3,  $langs->transnoentities("IntracommunityVATNumber")." : ".MAIN_INFO_TVAINTRA, 0, 'C');
     }
 
     $pdf->SetXY(-15,-15);
