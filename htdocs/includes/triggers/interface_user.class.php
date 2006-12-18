@@ -20,9 +20,9 @@
  */
 
 /**
-   \file       htdocs/includes/triggers/interface_demo.class.php
-   \ingroup    core
-   \brief      Fichier de demo de personalisation des actions du workflow
+   \file       htdocs/includes/triggers/interface_user.class.php
+   \ingroup    stock
+   \brief      Fichier des actions du workflow de stock utilisateurs
    \remarks    Son propre fichier d'actions peut etre créé par recopie de celui-ci:
    - Le nom du fichier doit etre interface_xxx.class.php
    - Le fichier doit rester stocké dans includes/triggers
@@ -50,7 +50,7 @@ class InterfaceUser
     
     $this->name = "User";
     $this->family = "user";
-    $this->description = "Les triggers de ce composant s'appliquent sur les utilisateurs.";
+    $this->description = "Les triggers de ce composant s'appliquent sur les utilisateurs gérant des stocks.";
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
   }

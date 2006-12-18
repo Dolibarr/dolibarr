@@ -45,7 +45,7 @@ class InterfaceNotification
     
         $this->name = "Notification";
         $this->family = "notification";
-        $this->description = "Les triggers de ce composant sont les fonctions qui gèrent les notifications du module Notification";
+        $this->description = "Les triggers de ce composant sont les fonctions qui gèrent les notifications par mail du module Notification.";
         $this->version = 'dolibarr';                        // 'experimental' or 'dolibarr' or version
     }
     

@@ -171,15 +171,15 @@ foreach ($orders as $key => $value)
     
     print '<td valign="top" width="14" align="center">';
     print $objMod->picto?img_object('',$objMod->picto):img_object('','generic');
-    print '</td><td valign="top">'.$files[$key];
-    print "</td>\n  <td valign=\"top\">";
-    print $objMod->getDesc();
-    print "</td>\n  <td valign=\"top\" align=\"center\">";
-    print $objMod->getVersion();
-    print "</td>\n  <td valign=\"top\" align=\"center\">";
-    
+    print '</td>';
+    print '<td valign="top">'.$files[$key]."</td>\n";
+    print '<td valign="top">'.$objMod->getDesc()."</td>\n";
+    print "<td valign=\"top\" align=\"center\">".$objMod->getVersion()."</td>\n";
+
     // \todo Activation trigger
+    print "<td valign=\"top\" align=\"center\">";
     $statut_trigger=1;
+    if (eregi('NORUN$',$files[$key])) $statut_trigger=0;
     
     if ($statut_trigger == 1)
     {
