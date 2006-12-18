@@ -59,3 +59,4 @@ AccountancyExport=Export comptable
 ErrorWrongAccountancyCodeForCompany=Code compta client incorrect pour %s
 SuppliersProductsSellSalesTurnover=Chiffres d'affaire générés par la vente des produits des fournisseurs
 CheckReceipt=Remise de chèques
+NewCheckReceipt=Nouvelle remise
