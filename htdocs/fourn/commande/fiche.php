@@ -198,9 +198,9 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 
 if ($_GET['action'] == 'deleteline' && $user->rights->fournisseur->commande->creer)
 {
-  $commande =	new	CommandeFournisseur($db);
+  $commande = new CommandeFournisseur($db);
   $commande->fetch($_GET['id']);
-  $result	= $commande->delete_line($_GET['lineid']);
+  $result = $commande->delete_line($_GET['lineid']);
   if ($_REQUEST['lang_id'])
     {
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
@@ -260,16 +260,13 @@ if ($_POST['action'] ==	'confirm_commande' && $_POST['confirm']	== 'yes' &&	$use
 }
 
 
-if ($_POST['action'] ==	'confirm_delete' &&	$_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->supprimer)
+if ($_POST['action'] ==	'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->commande->creer)
 {
-  if ($user->rights->commande->supprimer )
-    {
-      $commande =	new	CommandeFournisseur($db);
-      $commande->id =	$_GET['id'];
-      $commande->delete();
-      Header('Location: index.php');
-      exit;
-    }
+  $commande = new CommandeFournisseur($db);
+  $commande->id = $_GET['id'];
+  $commande->delete();
+  Header('Location: index.php');
+  exit;
 }
 
 if ($_POST["action"] ==	'livraison'	&& $user->rights->fournisseur->commande->receptionner)
