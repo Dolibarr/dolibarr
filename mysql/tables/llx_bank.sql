@@ -37,7 +37,7 @@ create table llx_bank
   num_chq         int,
   rappro          tinyint default 0,
   note            text,
-
+  fk_bordereau    integer DEFAULT 0,
 
   author          varchar(40) -- a supprimer apres migration
 )type=innodb;
