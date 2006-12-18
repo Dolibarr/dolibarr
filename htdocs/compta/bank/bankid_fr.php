@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
@@ -22,10 +22,10 @@
  */
 
 /**
-	    \file       htdocs/compta/bank/bankid_fr.php
-        \ingroup    banque
-		\brief      Fiche création compte bancaire
-		\version    $Revision$
+   \file       htdocs/compta/bank/bankid_fr.php
+   \ingroup    banque
+   \brief      Fiche création compte bancaire
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -37,7 +37,6 @@ $user->getrights('banque');
 
 if (!$user->admin && !$user->rights->banque)
   accessforbidden();
-
 
 /*
  * Actions
@@ -276,7 +275,7 @@ $form = new Form($db);
 
         }
         
-        print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
+        print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Save").'" type="submit" class="button">';
         print ' &nbsp; <input name="cancel" value="'.$langs->trans("Cancel").'" type="submit" class="button">';
         print '</td></tr>';
         print '</table>';
