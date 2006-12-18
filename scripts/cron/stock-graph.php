@@ -78,6 +78,7 @@ else
  */
 $now = time();
 $year = strftime('%Y',$now);
+$day = strftime('%j', $now);
 for ($i = 0 ; $i < strftime('%j',$now) ; $i++)
 {
   foreach ($entrepots as $key => $ent)
@@ -103,9 +104,9 @@ if ($resql)
   $i = 0;
   while ($row = $db->fetch_row($resql))
     {
+      $max_day = $row[0];
       $values[$row[2]][$row[0]] = $row[1];
       $values[0][$row[0]] += $row[1];
-
       $i++;
     }
   $db->free($resql);
@@ -114,6 +115,17 @@ else
 {
   print $sql;
 }
+
+for ($i = $max_day + 1 ; $i < ($day + 1) ; $i++)
+{
+  foreach ($entrepots as $key => $ent)
+    {
+      $values[$key][$i] = $values[$key][$max_day];
+    }
+  $values[0][$i] = $values[0][$max_day];
+}
+
+
 
 require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
 
