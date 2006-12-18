@@ -38,3 +38,4 @@ UserWarehouseAutoCreate=Créer un stock automatiquement à la création d'un utilis
 QtyDispatched=Quantité ventilée
 OrderDispatch=Ventilation commande
 DeStockReStockOnBill=Décrémente les stocks sur les factures et les incrémente sur les avoirs (incompatibles avec le destockage sur les expéditions)
+StockAvailable=Stock disponible
