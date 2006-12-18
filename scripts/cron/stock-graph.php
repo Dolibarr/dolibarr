@@ -102,6 +102,7 @@ $resql = $db->query($sql) ;
 if ($resql)
 {
   $i = 0;
+  $last_day = 0;
   while ($row = $db->fetch_row($resql))
     {
       if ($last_day > 0)
@@ -112,7 +113,7 @@ if ($resql)
 		{
 		  $values[$key][$j] = $values[$key][$last_day];
 		}
-	      $values[0][$i] = $values[0][$last_day];
+	      $values[0][$j] = $values[0][$last_day];
 	    }
 	}
       $last_day = $row[0];
