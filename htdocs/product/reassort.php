@@ -33,6 +33,7 @@ require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("products");
+$langs->load("stocks");
 
 $user->getrights('produit');
 
@@ -187,7 +188,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("StockAvailable"),"reassort.php", "p.stock_dispo","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Stock"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print "</tr>\n";
 
     // Lignes des champs de filtre
