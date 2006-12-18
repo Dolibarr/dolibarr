@@ -104,6 +104,19 @@ if ($resql)
   $i = 0;
   while ($row = $db->fetch_row($resql))
     {
+      if ($last_day > 0)
+	{
+	  for ($j = $last_day + 1 ; $j < $row[0] ; $j++)
+	    {
+	      foreach ($entrepots as $key => $ent)
+		{
+		  $values[$key][$j] = $values[$key][$last_day];
+		}
+	      $values[0][$i] = $values[0][$last_day];
+	    }
+	}
+      $last_day = $row[0];
+
       $max_day = $row[0];
       $values[$row[2]][$row[0]] = $row[1];
       $values[0][$row[0]] += $row[1];
