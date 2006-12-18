@@ -889,7 +889,15 @@ class CommandeFournisseur extends Commande
       }
 	
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE rowid =".$this->id;
-    if (! $this->db->query($sql) )
+    $sql.= " AND fk_statut = 0;";
+    if ($resql = $this->db->query($sql) )
+      {
+	if ($this->db->affected_rows($resql) <> 1)
+	  {
+	    $err++;
+	  }
+      }
+    else
       {
 	$err++;
       }
