@@ -213,6 +213,8 @@ delete from llx_const where name in ('OSC_CATALOG_URL','OSC_LANGUAGE_ID');
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 
+alter table llx_bank_url add column type enum("company","payment","member","donation","charge");
+
 update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and type='payment' and url like '%/fourn/%';
 
 alter table llx_bank_url drop index fk_bank;
@@ -438,6 +440,11 @@ alter table llx_user add column datepreviouslogin datetime after datelastlogin;
 alter table llx_user add column ldap_sid varchar(255) DEFAULT NULL;
 alter table llx_user add column statut tinyint DEFAULT 1;
 alter table llx_user add column lang varchar(6);
+
+alter table llx_user add column office_phone      varchar(20);
+alter table llx_user add column office_fax        varchar(20);
+alter table llx_user add column user_mobile       varchar(20);
+
 alter table llx_user modify login varchar(24) NOT NULL;
 alter table llx_user modify code varchar(4) NOT NULL;
 
