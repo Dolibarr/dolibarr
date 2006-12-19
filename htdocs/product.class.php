@@ -607,31 +607,42 @@ class Product
       }
     else
       {
-	// On supprimme ligne existante au cas ou
-	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
-	$sql .= "WHERE date_price = now()";
-	$sql .= " and fk_product = ".$this->id;
-	$sql .= " and fk_user_author = ".$user->id;
-	$sql .= " and price = ".price2num($this->price);
-	$sql .= " and envente = ".$this->status;
-	$sql .= " and tva_tx = ".$this->tva_tx;
+      	if ($this->price_base_type == 'TTC')
+	      {
+		      $price_ttc = $this->price;
+		      $price = $this->price / (1 + ($this->tva_tx / 100));
+	      }
+	      else
+	      {
+		       $price = $this->price;
+		       $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	      }
+	      
+	      // On supprimme ligne existante au cas ou
+      	$sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
+	      $sql .= "WHERE date_price = now()";
+	      $sql .= " and fk_product = ".$this->id;
+	      $sql .= " and fk_user_author = ".$user->id;
+	      $sql .= " and price = ".price2num($this->price);
+	      $sql .= " and envente = ".$this->status;
+	      $sql .= " and tva_tx = ".$this->tva_tx;
 
-	$this->db->query($sql);
+	      $this->db->query($sql);
 
-	// On ajoute nouveau tarif
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-	$sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
-	$sql .= ")";
+	      // On ajoute nouveau tarif
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
+	      $sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($price).",'".$price_ttc."','".$this->price_base_type."',".$this->status.",".$this->tva_tx;
+	      $sql .= ")";
 
-	if ($this->db->query($sql) )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return 0;
-	  }
+	      if ($this->db->query($sql) )
+	      {
+	        return 1;
+	      }
+	      else
+	      {
+	         dolibarr_print_error($this->db);
+	         return 0;
+	      }
       }
 
   }
