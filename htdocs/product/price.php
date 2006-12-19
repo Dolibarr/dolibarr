@@ -45,6 +45,8 @@ accessforbidden();
 $types[0] = $langs->trans("Product");
 $types[1] = $langs->trans("Service");
 
+$html = new Form($db);
+
 /*
  * Actions
  */
@@ -193,13 +195,12 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
       if ($product->price_base_type == 'TTC')
 	{
       print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
-      print '<select class="flat" name="price_base_type"><option value="HT">HT</option><option value="TTC" SELECTED>TTC</option></select>';
 	}
       else
 	{
       print '<td><input name="price" size="10" value="'.price($product->price).'">';
-      print '<select class="flat" name="price_base_type"><option value="HT" SELECTED>HT</option><option value="TTC">TTC</option></select>';
 	}
+      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
       print '</td></tr>';
     }
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';

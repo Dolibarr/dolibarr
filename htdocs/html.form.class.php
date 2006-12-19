@@ -1111,6 +1111,34 @@ class Form
     }
     
     /**
+     *      \brief      Selection HT ou TTC
+     *      \param      selected        Id présélectionné
+     *      \param      htmlname        Nom de la zone select
+     */
+    function select_PriceBaseType($selected='',$htmlname='price_base_type')
+    {
+        global $langs;
+        print '<select class="flat" name="'.$htmlname.'">';
+		$options = array(
+					'HT'=>$langs->trans("HT"),
+					'TTC'=>$langs->trans("TTC")
+					);
+        foreach($options as $id => $value)
+        {
+            if ($selected == $id)
+            {
+                print '<option value="'.$id.'" selected="true">'.$value;
+            }
+            else
+            {
+                print '<option value="'.$id.'">'.$value;
+            }
+            print '</option>';
+        }
+        print '</select>';
+    }
+    
+    /**
      *      \brief      Retourne la liste des modes de paiements possibles
      *      \param      selected        Id du mode de paiement présélectionné
      *      \param      htmlname        Nom de la zone select
