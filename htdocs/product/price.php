@@ -192,7 +192,15 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   print '<table class="border" width="100%">';
   if($conf->global->PRODUIT_MULTIPRICES == 1)
     {
-      print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td><td><input name="price" size="10" value="'.price($product->price).'">';
+      print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td>';
+      if ($product->price_base_type == 'TTC')
+	    {
+	    	print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
+	    }
+	    else
+	    {
+	    	print '<td><input name="price" size="10" value="'.price($product->price).'">';
+	    }
       print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
       print '</td></tr>';
     }
@@ -200,13 +208,13 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
     {
       print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td>';
       if ($product->price_base_type == 'TTC')
-	{
-      print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
-	}
+	    {
+        print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
+	    }
       else
-	{
-      print '<td><input name="price" size="10" value="'.price($product->price).'">';
-	}
+	    {
+         print '<td><input name="price" size="10" value="'.price($product->price).'">';
+	    }
       print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
       print '</td></tr>';
     }
@@ -223,7 +231,15 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	  print '<input type="hidden" name="action" value="update_price">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
+	  print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td>';
+	  if ($product->price_base_type == 'TTC')
+	  {
+	  	print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices_ttc["$i"]).'">';
+	  }
+	  else
+	  {
+	  	print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
+	  }
 	  print $html->select_PriceBaseType($product->price_base_type, "price_base_type_".$i);
 	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
