@@ -121,6 +121,9 @@ if ($resql)
       $max_day = $row[0];
       $values[$row[2]][$row[0]] = $row[1];
       $values[0][$row[0]] += $row[1];
+
+      $total[$row[2]] += abs($row[1]);
+      $total[0] += abs($row[1]);
       $i++;
     }
   $db->free($resql);
@@ -147,8 +150,10 @@ foreach ($entrepots as $key => $ent)
 {
   $file = $dir ."/entrepot-".$key."-".$year.".png";
   $title = "Valorisation PMP du stock de l'entrepôt (euros HT) sur l'année ".$year;
-  
-  graph_datas($file, $title, $values[$key], $legends);
+
+  if ($total[$key] > 0)
+    graph_datas($file, $title, $values[$key], $legends);
+
   if ($verbose)
     print "$file\n";
 }
@@ -159,7 +164,9 @@ foreach ($entrepots as $key => $ent)
 $file = DOL_DATA_ROOT."/graph/entrepot/entrepot-".$year.".png";
 $title = "Valorisation PMP du stock global (euros HT) sur l'année ".$year;
 
-graph_datas($file, $title, $values[0], $legends);
+if ($total[$key] > 0)
+  graph_datas($file, $title, $values[0], $legends);
+
 if ($verbose)
   print "$file\n";
 
