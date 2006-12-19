@@ -56,10 +56,12 @@ class RemiseCheque
   */
   function Fetch($id)
   {
-    $sql = "SELECT rowid, datec, fk_user_author,fk_bank_account,amount,number,statut";
+    $sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut";
     $sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque ";
-    $sql.= " WHERE rowid = $id;";
+    $sql.=",ba.label as account_label";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
+    $sql.= " WHERE bc.rowid = $id;";
 
     $resql = $this->db->query($sql);
 
@@ -71,7 +73,8 @@ class RemiseCheque
 	    $this->number         = $obj->number;
 	    $this->amount         = $obj->amount;
 	    $this->date_bordereau = $obj->date_bordereau;
-	    $this->account_id     = $obj->fk_account_id;
+	    $this->account_id     = $obj->fk_bank_account;
+	    $this->account_label  = $obj->account_label;
 	    $this->author_id      = $obj->fk_user_author;
 	    $this->statut         = $obj->statut;
 	  }
@@ -188,6 +191,59 @@ class RemiseCheque
   }
 
   /**
+     \brief  Supprime la remise en base
+     \param  user utilisateur qui effectue l'operation
+     \param  account_id Compte bancaire concerne
+   */	 
+  function Delete()
+  {
+    $this->errno = 0;
+    $this->db->begin();
+
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+    $sql .= " WHERE rowid = $this->id;";
+		
+    $resql = $this->db->query($sql);
+    if ( $resql )
+      {
+	$num = $this->db->affected_rows($resql);
+	
+	if ($num <> 1)
+	  {
+	    $this->errno = -2;
+	    dolibarr_syslog("Remisecheque::Delete Erreur Lecture ID ($this->errno)");
+	  }
+
+	if ( $this->errno === 0)
+	  {
+	    $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+	    $sql.= " SET fk_bordereau=0";
+	    $sql.= " WHERE fk_bordereau='".$this->id."';";
+	    $resql = $this->db->query($sql);	    
+	    if (!$resql)
+	      {		
+		$this->errno = -19;
+		dolibarr_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
+	      }	    
+	  }
+      }
+
+    if ($this->errno === 0)
+      {
+	$this->db->commit();
+      }
+    else
+      {
+	$this->db->rollback();
+	dolibarr_syslog("RemiseCheque::Delete ROLLBACK ($this->errno)");
+      }
+    
+    return $this->errno;
+
+
+  }
+
+  /**
      \brief  Insère la remise en base
      \param  user utilisateur qui effectue l'operation
      \param  account_id Compte bancaire concerne
@@ -205,7 +261,7 @@ class RemiseCheque
 	if (!$resql)
 	  {		
 	    $this->errno = -20;
-	    dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)");
+	    dolibarr_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
 	  }	    
       }
     return 0;
