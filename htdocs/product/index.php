@@ -106,10 +106,10 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-  $sql.= " WHERE IFNULL(c.visible,1)=1 ";
 }
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
+if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND IFNULL(c.visible,1)=1 ";
 $sql.= " ORDER BY p.datec DESC ";
 $sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
