@@ -370,6 +370,8 @@ update llx_bank_account set currency_code='EU';
 update llx_bank_account set rappro=0 where courant=2;
 
 ALTER TABLE llx_bank ADD COLUMN fk_bordereau  INTEGER DEFAULT 0;
+ALTER TABLE llx_bank ADD COLUMN banque   varchar(255);
+ALTER TABLE llx_bank ADD COLUMN emetteur varchar(255);
 
 alter table llx_accountingsystem_det rename to llx_accountingaccount;
 
