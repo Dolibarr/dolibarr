@@ -656,27 +656,48 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  // MultiPrix
 	  if($conf->global->PRODUIT_MULTIPRICES == 1)
-	    {
-	      print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td>'.price($product->price).'</td>';
-	      print '</tr>';
+	  {
+	      print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
+	      print '<td>'.price($product->price);
+	      print ' '.$langs->trans($product->price_base_type);
+	      print '</td></tr>';
 	      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-		{
-		  print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
-		  print '</tr>';
-		}
-	    }
+		    {
+		      print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+		      
+		      if ($product->multiprices_base_type["$i"] == 'TTC')
+		      {
+		   	    print '<td>'.price($product->multiprices_ttc["$i"]);
+		      }
+		      else
+		      {
+		      	print '<td>'.price($product->multiprices["$i"]);
+		      }
+		      
+		      if ($product->multiprices_base_type["$i"])
+          {
+      	    print ' '.$langs->trans($product->multiprices_base_type["$i"]);
+          }
+          else
+          {
+      	    print ' '.$langs->trans($product->price_base_type);
+          }
+		      
+		      print '</td></tr>';
+		    }
+	  }
 	  // Prix
 	  else
-	    {
+	  {
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>';
 	      if ($product->price_base_type == 'TTC')
-		{
-		  print price($product->price_ttc).' '.$langs->trans($product->price_base_type).'</td></tr>';
-		}
+		    {
+		      print price($product->price_ttc).' '.$langs->trans($product->price_base_type).'</td></tr>';
+		    }
 	      else
-		{
-		  print price($product->price).' '.$langs->trans($product->price_base_type).'</td></tr>';
-		}
+		    {
+		      print price($product->price).' '.$langs->trans($product->price_base_type).'</td></tr>';
+		    }
 	    }
 	  // Statut
 	  print '<tr><td>'.$langs->trans("Status").'</td><td>';

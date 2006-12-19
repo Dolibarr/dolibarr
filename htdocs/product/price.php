@@ -67,8 +67,11 @@ if ($_POST["action"] == 'update_price' &&
 	  {
 	    if($_POST["price_".$i])
 	    {
-	    	//$product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i]);
-	    	$product->multiprices["$i"] = $product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i]);
+	    	$price = ereg_replace(" ","", $_POST["price_".$i]);
+        $price = ereg_replace(",",".", $price);
+	    	//$product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i], $i);
+	    	$product->multiprices["$i"] = $price;
+	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
 	    }
 	    else
 	    {
@@ -128,11 +131,42 @@ print '</tr>';
 // MultiPrix
 if($conf->global->PRODUIT_MULTIPRICES == 1)
 {
-  print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td colspan="2">'.price($product->price).'</td></tr>';
+  print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
+  
+  if ($product->price_base_type == 'TTC')
+  {
+  	print '<td colspan="2">'.price($product->price_ttc);
+  }
+  else
+  {
+  	print '<td colspan="2">'.price($product->price);
+  }
+  
+  print ' '.$langs->trans($product->price_base_type);
+  print '</td></tr>';
+ 
   for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-    {
-      print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td>'.price($product->multiprices["$i"]).'</td>';
-      print '</tr>';
+  {
+      print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+
+      	if ($product->multiprices_base_type["$i"] == 'TTC')
+		    {
+		  	  print '<td>'.price($product->multiprices_ttc["$i"]);
+		    }
+		    else
+		    {
+		  	  print '<td>'.price($product->multiprices["$i"]);
+		    }
+		  
+        if ($product->multiprices_base_type["$i"])
+        {
+      	  print ' '.$langs->trans($product->multiprices_base_type["$i"]);
+        }
+        else
+        {
+      	  print ' '.$langs->trans($product->price_base_type);
+        }
+      print '</td></tr>';
     }
 }
 // Prix
@@ -191,33 +225,25 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   print '<input type="hidden" name="id" value="'.$product->id.'">';
   print '<table class="border" width="100%">';
   if($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td>';
-      if ($product->price_base_type == 'TTC')
-	    {
-	    	print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
-	    }
-	    else
-	    {
-	    	print '<td><input name="price" size="10" value="'.price($product->price).'">';
-	    }
-      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-      print '</td></tr>';
-    }
+  {
+    print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td>';
+  }
   else
-    {
-      print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td>';
-      if ($product->price_base_type == 'TTC')
-	    {
-        print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
-	    }
-      else
-	    {
-         print '<td><input name="price" size="10" value="'.price($product->price).'">';
-	    }
-      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
-      print '</td></tr>';
-    }
+  {
+  	print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td>';
+  }
+  
+  if ($product->price_base_type == 'TTC')
+  {
+	 	print '<td><input name="price" size="10" value="'.price($product->price_ttc).'">';
+	}
+	else
+	{
+	  print '<td><input name="price" size="10" value="'.price($product->price).'">';
+  }
+  print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+  print '</td></tr>';
+
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
   print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
   print '</table>';
@@ -226,39 +252,41 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   if($conf->global->PRODUIT_MULTIPRICES == 1)
     {
       for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	{
-	  print '<form action="price.php?id='.$product->id.'" method="post">';
-	  print '<input type="hidden" name="action" value="update_price">';
-	  print '<input type="hidden" name="id" value="'.$product->id.'">';
-	  print '<table class="border" width="100%">';
-	  print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td>';
-	  if ($product->price_base_type == 'TTC')
-	  {
-	  	print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices_ttc["$i"]).'">';
-	  }
-	  else
-	  {
-	  	print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
-	  }
-	  print $html->select_PriceBaseType($product->price_base_type, "price_base_type_".$i);
-	  print '</td></tr>';
-	  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
-	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
-	  print '</table>';
-	  print '</form>';
-	}
+	    {
+	      print '<form action="price.php?id='.$product->id.'" method="post">';
+	      print '<input type="hidden" name="action" value="update_price">';
+	      print '<input type="hidden" name="id" value="'.$product->id.'">';
+	      print '<table class="border" width="100%">';
+	      print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td>';
+	      
+	      if ($product->multiprices_base_type["$i"] == 'TTC')
+	      {
+	  	    print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices_ttc["$i"]).'">';
+	      }
+	      else
+	      {
+	  	    print '<td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
+	      }
+	      
+	      print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
+	      print '</td></tr>';
+	      print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
+	      print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
+	      print '</table>';
+	      print '</form>';
+	    }
     }
   
 }
 
 
 // Liste des evolutions du prix
-$sql = "SELECT p.rowid, p.price, ";
+$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type";
 if($conf->global->PRODUIT_MULTIPRICES == 1)
 {
-  $sql .= "p.price_level, ";
+  $sql .= ", p.price_level, ";
   $sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-  $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
+  $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql .= " WHERE fk_product = ".$product->id;
   $sql .= " AND p.fk_user_author = u.rowid ";
   $sql .= " ORDER BY p.price_level ASC ";
@@ -267,7 +295,7 @@ if($conf->global->PRODUIT_MULTIPRICES == 1)
 else
 {
   $sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
-  $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, llx_user as u";
+  $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql .= " WHERE fk_product = ".$product->id;
   $sql .= " AND p.fk_user_author = u.rowid ";
   $sql .= " ORDER BY p.date_price DESC ";
@@ -300,8 +328,12 @@ if ($result)
 
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
-		if($conf->global->PRODUIT_MULTIPRICES == 1)
-			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
+		    
+		    if($conf->global->PRODUIT_MULTIPRICES == 1)
+		    {
+		    	print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
+		    }
+		    
         print '<td>'.$langs->trans("Price").'</td>';
         print '<td>'.$langs->trans("ChangedBy").'</td>';
         print '</tr>';
@@ -317,12 +349,21 @@ if ($result)
             // Date
             print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
             
-			// catégorie de Prix
-			if($conf->global->PRODUIT_MULTIPRICES == 1)
-				print "<td>".$objp->price_level."</td>";
-			
-            // Prix
-            print "<td>".price($objp->price)."</td>";
+			      // catégorie de Prix
+			      if($conf->global->PRODUIT_MULTIPRICES == 1)
+			      {
+				      print "<td>".$objp->price_level."</td>";
+				      
+				      if ($objp->price_base_type == 'TTC')
+				      {
+				        print "<td>".price($objp->price_ttc);
+				      }
+				      else
+				      {
+				      	print "<td>".price($objp->price);
+				      }
+				      print " ".$langs->trans($objp->price_base_type)."</td>";
+			      }
 
             // User
             print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';

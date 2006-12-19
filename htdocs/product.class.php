@@ -46,10 +46,13 @@ class Product
   var $description;
   //! Prix de vente
   var $price;
+  var $price_ttc;
   //! Base de prix (ttc ou ht)
   var $price_base_type;
   //! Tableau des prix multiples
   var $multiprices=array();
+  var $multiprices_ttc=array();
+  var $multiprices_base_type=array();
   //! Taux de TVA
   var $tva_tx;
   //! Type 0 pour produit, 1 pour service
@@ -128,10 +131,10 @@ class Product
   { 
     $price = ereg_replace(" ","", $price);
     $price = ereg_replace(",",".", $price);
-    
-    $this->price = $price;
-    
-    $this->price_base_type = $base_type;
+
+  	$this->price = $price;
+  	$this->price_base_type = $base_type;
+
   }
   /**
    *    \brief    Insère le produit en base
@@ -519,6 +522,16 @@ class Product
 	      {
 	        if($this->multiprices["$i"] != "")
 	        {
+		       if ($this->multiprices_base_type["$i"] == 'TTC')
+	         {
+		         $price_ttc = $this->multiprices["$i"];
+		         $this->multiprices["$i"] = $this->multiprices["$i"] / (1 + ($this->tva_tx / 100));
+	         }
+	         else
+	         {
+		          $price_ttc = $this->multiprices["$i"] * (1 + ($this->tva_tx / 100));
+	         }
+
 		       // On supprimme ligne existante au cas ou
 		       $sql_multiprix = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
 		       $sql_multiprix .= "WHERE date_price = now()";
@@ -529,8 +542,8 @@ class Product
 		       $this->db->query($sql_multiprix);
 
 		       // On ajoute nouveau tarif
-		       $sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_base_type) ";
-		       $sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]).",'".$this->price_base_type["$i"]."'";
+		       $sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type) ";
+		       $sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]).",'".$price_ttc."','".$this->multiprices_base_type["$i"]."'";
 		       $sql_multiprix .= ")";
 		       if (! $this->db->query($sql_multiprix) )
 		       {
@@ -540,20 +553,31 @@ class Product
 	  }
 	if (strlen(trim($this->price)) > 0 )
 	  {
+	    if ($this->price_base_type == 'TTC')
+	    {
+		    $price_ttc = $this->price;
+		    $price = $this->price / (1 + ($this->tva_tx / 100));
+		  }
+		  else
+		  {
+		  	$price = $this->price;
+		  	$price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+		  }
+	    
 	    // On supprimme ligne existante au cas ou
 	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_price ";
 	    $sql .= "WHERE date_price = now()";
 	    $sql .= " and fk_product = ".$this->id;
 	    $sql .= " and fk_user_author = ".$user->id;
-	    $sql .= " and price = ".price2num($this->price);
+	    $sql .= " and price = ".price2num($price);
 	    $sql .= " and envente = ".$this->status;
 	    $sql .= " and tva_tx = ".$this->tva_tx;
 
 	    $this->db->query($sql);
 
 	    // On ajoute nouveau tarif
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,envente,tva_tx) ";
-	    $sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($this->price).",".$this->status.",".$this->tva_tx;
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price,price_ttc,price_base_type,envente,tva_tx) ";
+	    $sql .= " VALUES(now(),".$this->id.",".$user->id.",".price2num($price).",'".$price_ttc."','".$this->price_base_type."',".$this->status.",".$this->tva_tx;
 	    $sql .= ")";
 	    if (! $this->db->query($sql) )
 	      $queryError = true;
@@ -754,15 +778,16 @@ class Product
 	      if ($this->price_base_type == 'TTC')
 	      {
 		      $price_ttc = $this->price;
-		      $this->price = $this->price / (1 + ($this->tva_tx / 100));
+		      $price = $this->price / (1 + ($this->tva_tx / 100));
 	      }
 	      else
 	      {
+		       $price = $this->price;
 		       $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
 	      }
 	      
 	      $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
-	      $sql .= " SET price = " . price2num($this->price);
+	      $sql .= " SET price = " . price2num($price);
 	      $sql .= " , price_base_type='".$this->price_base_type."'";
 	      $sql .= " , price_ttc='".$price_ttc."'";
 	      $sql .= " WHERE rowid = " . $id;
@@ -883,11 +908,11 @@ class Product
 		    dolibarr_print_error($this->db);
 		    return -1;
 		  }
-	      }
-	    $this -> multiprices[1] = $this->price;
-	    for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	      {
-		$sql= "SELECT price, tva_tx, envente ";
+	  }
+	  $this -> multiprices[1] = $this->price;
+	  for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	  {
+		$sql= "SELECT price, price_ttc, price_base_type, tva_tx, envente ";
 		$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
 		$sql.= "where price_level=".$i." and ";
 		if ($id) $sql.= "fk_product = '".$id."' ";
@@ -897,10 +922,31 @@ class Product
 		if ( $result )
 		  {
 		    $result = $this->db->fetch_array();
+		    
+		    $this->multiprices_base_type[$i] = $result["price_base_type"];
+		    
 		    if($result["price"] != "" && $result["price"] != "0.00")
-		      $this -> multiprices[$i]=$result["price"];
+		    {
+		    	if ($result["price_base_type"] == 'TTC')
+		    	{
+		    		$this->multiprices_ttc[$i]=$result["price_ttc"];
+		    	}
+		    	else
+		    	{
+		    		$this->multiprices[$i]=$result["price"];
+		    	}
+		    }
 		    else
-		      $this -> multiprices[$i]=$this->price;
+		    {
+		    	if ($result["price_base_type"] == 'TTC')
+		    	{
+		    		$this->multiprices_ttc[$i]=$this->price_ttc;
+		    	}
+		    	else
+		    	{
+		    		$this->multiprices[$i]=$this->price;
+		    	}
+		    }
 		  }
 		else
 		  {
