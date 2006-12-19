@@ -28,6 +28,7 @@ create table llx_product_price
   date_price      datetime NOT NULL,
   price_level	    tinyint(4) NULL DEFAULT 1,
   price           double,
+  price_ttc       float(12,4) DEFAULT 0,
   price_base_type varchar(3)  DEFAULT 'HT',
   tva_tx          double NOT NULL,
   fk_user_author  integer,

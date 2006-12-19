@@ -616,5 +616,5 @@ create table llx_product_subproduct
   UNIQUE(fk_product, fk_product_subproduct)
 )type=innodb;
 
-alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price;
 alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after price;
+alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;
