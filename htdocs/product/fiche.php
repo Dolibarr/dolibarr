@@ -867,7 +867,7 @@ if ($_GET["id"] || $_GET["ref"])
 	}
     }
 }
-else
+else if (!$_GET["action"] == 'create')
 {
   Header("Location: index.php");
   exit;
