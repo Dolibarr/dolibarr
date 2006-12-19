@@ -658,7 +658,16 @@ if ($_GET["id"] || $_GET["ref"])
 	  if($conf->global->PRODUIT_MULTIPRICES == 1)
 	  {
 	      print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
-	      print '<td>'.price($product->price);
+	      
+	      if ($product->price_base_type == 'TTC')
+	      {
+	      	print '<td>'.price($product->price_ttc);
+	      }
+	      else
+	      {
+	      	print '<td>'.price($product->price);
+	      }
+	      
 	      print ' '.$langs->trans($product->price_base_type);
 	      print '</td></tr>';
 	      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
