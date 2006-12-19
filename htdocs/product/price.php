@@ -69,7 +69,6 @@ if ($_POST["action"] == 'update_price' &&
 	    {
 	    	$price = ereg_replace(" ","", $_POST["price_".$i]);
         $price = ereg_replace(",",".", $price);
-	    	//$product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i], $i);
 	    	$product->multiprices["$i"] = $price;
 	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
 	    }

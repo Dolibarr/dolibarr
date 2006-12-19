@@ -77,6 +77,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->ref                = $_POST["ref"];
   $product->libelle            = $_POST["libelle"];
   $product->price              = $_POST["price"];
+  $product->price_base_type    = $_POST["price_base_type"];
   $product->tva_tx             = $_POST["tva_tx"];
   $product->type               = $_POST["type"];
   $product->status             = $_POST["statut"];
@@ -90,15 +91,22 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->new_weight_units   = $_POST["weight_units"];
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	{
-	  if($_POST["price_".$i])
-	    $product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
-	  else
-	    $product->multiprices["$i"] = "";
-	}
-    }
+  {
+     for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	   {
+	     if($_POST["price_".$i])
+	     {
+	  	  $price = ereg_replace(" ","", $_POST["price_".$i]);
+        $price = ereg_replace(",",".", $price);
+	    	$product->multiprices["$i"] = $price;
+	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+	     }
+	     else
+	     {
+	  	   $product->multiprices["$i"] = "";
+	     }
+	   }
+  }
   
   if ( $value != $current_lang ) $e_product = $product;
   
@@ -132,7 +140,7 @@ if ($_POST["action"] == 'update' &&
       $product->ref                = $_POST["ref"];
       $product->libelle            = $_POST["libelle"];
       if ( isset( $_POST["price"] ) )
-	$product->price              = $_POST["price"];
+	    $product->price              = $_POST["price"];
       $product->tva_tx             = $_POST["tva_tx"];
       $product->description        = $_POST["desc"];
       $product->note               = $_POST["note"];
@@ -443,18 +451,27 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
       if($conf->global->PRODUIT_MULTIPRICES == 1)
-	{
-	  print '<tr><td>'.$langs->trans("SellingPrice").' 1</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
-	  for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 	    {
-	      print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'"></td></tr>';
+	      print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
+	      print '<td><input name="price" size="10" value="'.$product->price.'">';
+	      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+	      print '</td></tr>';
+	      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	      {
+	         print '<tr><td>'.$langs->trans("SellingPrice").' '.$i.'</td>';
+	         print '<td><input name="price_'.$i.'" size="10" value="'.$product->multiprices["$i"].'">';
+	         print $html->select_PriceBaseType($product->multiprices_base_type["$i"], "multiprices_base_type_".$i);
+	         print '</td></tr>';
+	      }
 	    }
-	}
-		// PRIX
+		  // PRIX
       else
-	{
-	  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td><input name="price" size="10" value="'.$product->price.'"></td></tr>';
-	}
+	    {
+	      print '<tr><td>'.$langs->trans("SellingPrice").'</td>';
+	      print '<td><input name="price" size="10" value="'.$product->price.'">';
+	      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+	      print '</td></tr>';
+	    }
       
       print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
       print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
