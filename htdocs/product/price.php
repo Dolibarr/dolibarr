@@ -62,15 +62,20 @@ if ($_POST["action"] == 'update_price' &&
 
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	{
-	  if($_POST["price_".$i])
-	    $product->multiprices["$i"]=ereg_replace(" ","",$_POST["price_".$i]);
-	  else
-	    $product->multiprices["$i"] = "";
-	}
-    }
+  {
+    for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	  {
+	    if($_POST["price_".$i])
+	    {
+	    	//$product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i]);
+	    	$product->multiprices["$i"] = $product->SetSellprice($_POST["price_".$i], $_POST["price_base_type_".$i]);
+	    }
+	    else
+	    {
+	    	$product->multiprices["$i"] = "";
+	    }
+	  }
+  }
   
   if ( $product->update_price($product->id, $user) > 0 )
     {
@@ -187,7 +192,9 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
   print '<table class="border" width="100%">';
   if($conf->global->PRODUIT_MULTIPRICES == 1)
     {
-      print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td><td><input name="price" size="10" value="'.price($product->price).'"></td></tr>';
+      print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td><td><input name="price" size="10" value="'.price($product->price).'">';
+      print $html->select_PriceBaseType($product->price_base_type, "price_base_type");
+      print '</td></tr>';
     }
   else
     {
@@ -216,8 +223,9 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 	  print '<input type="hidden" name="action" value="update_price">';
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'"></td>';
-	  print '</tr>';
+	  print '<tr><td width="15%">'.$langs->trans("SellingPrice").' '.$i.'</td><td><input name="price_'.$i.'" size="10" value="'.price($product->multiprices["$i"]).'">';
+	  print $html->select_PriceBaseType($product->price_base_type, "price_base_type_".$i);
+	  print '</td></tr>';
 	  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'">&nbsp;';
 	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 	  print '</table>';
