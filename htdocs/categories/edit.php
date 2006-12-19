@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,54 +91,42 @@ print '<form method="post" action="'.$_SERVER['PHP_SELF'].'">';
 print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 
-?>
-<table class="border" width="100%">
-	<tr>
-		<td><?php print $langs->trans("Label"); ?>&nbsp;:</td>
+print '<table class="border" width="100%">';
+print '<tr><td>';
+print $langs->trans("Label").' :</td>';
+print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$categorie->label.'" />';
+print '</tr>';
 
-		<td><input type='text' size='25' id='nom' name ='nom' value="<?php 
-				print $categorie->label; 
-			?>" />
-	</tr>
-<?php
-	print '<tr>';
-	print '<td width="25%">'.$langs->trans("Description").':</td>';
-	print '<td>';
+print '<tr>';
+print '<td width="25%">'.$langs->trans("Description").':</td>';
+print '<td>';
 
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
-		{
-	    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
-			$doleditor->Create();
-		}
-		else
-		{
-			print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
-			print $categorie->description;
-			print '</textarea>';
-		}
+if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+{
+ 	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	$doleditor=new DolEditor('description',$categorie->description,200,'dolibarr_notes');
+	$doleditor->Create();
+}
+else
+{
+	print '<textarea name="description" rows="'.ROWS_6.'" cols="50">';
+	print $categorie->description;
+	print '</textarea>';
+}
 
-	print '</td>';
-	print '</tr>';
-?>
-	
-	<tr><td><?php print $langs->trans ("AddIn"); ?></td><td>
-	<?php print $html->select_all_categories($categorie->id_mere);?>
-	</td></tr>
-	
-	<tr><td><?php print $langs->trans ("ContentsVisibleByAll"); ?></td><td>
-	<?php print $html->selectyesnonum("visible",$categorie->visible);?>
-	</td></tr>
+print '</td></tr>';
+
+print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
+print $html->select_all_categories($categorie->id_mere);
+print '</td></tr>';
+
+print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
+print $html->selectyesnonum("visible",$categorie->visible);
+print '</td></tr>';
 		
-	
-	<tr>
-		<td colspan="2" align="center"><input type="submit" class="button" value='<?php print $langs->trans ("Modify"); ?>'></td>
-	</tr>
-</table>
-</form>
-		
-	<?php
-
+print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '</td></tr>';
+print '</table></form>';
 
 print '</td></tr></table>';
 

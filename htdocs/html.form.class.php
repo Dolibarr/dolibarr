@@ -1243,7 +1243,7 @@ class Form
 
 		if ($select_name=="") $select_name="catMere";
 
-        $cat = new Categorie ($this -> db);
+    $cat = new Categorie ($this -> db);
 		$cate_arbo = $cat->get_full_arbo();
 
 		$output = '<select name="'.$select_name.'">';
@@ -1253,7 +1253,7 @@ class Form
 		{
 			foreach($cate_arbo as $key => $value)
 			{
-				if ($cate_arbo[$key]['fulllabel'] == $selected)
+				if ($cate_arbo[$key]['id'] == $selected)
 				{
 					$add = "selected='true' ";
 				}

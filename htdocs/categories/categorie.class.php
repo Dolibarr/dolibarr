@@ -90,7 +90,6 @@ class Categorie
 		{
 			$res = $this->db->fetch_array($resql);
 			$this->id_mere = $res['fk_categorie_mere'];
-
 		}
 		else
 		{
