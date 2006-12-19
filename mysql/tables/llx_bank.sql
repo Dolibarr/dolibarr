@@ -1,5 +1,5 @@
 -- ===================================================================
--- Copyright (C) 2000-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- $Id$
@@ -38,6 +38,7 @@ create table llx_bank
   rappro          tinyint default 0,
   note            text,
   fk_bordereau    integer DEFAULT 0,
-
+  banque          varchar(255),   -- banque pour les cheques
+  emetteur        varchar(255),   -- emetteur du cheque
   author          varchar(40) -- a supprimer apres migration
 )type=innodb;
