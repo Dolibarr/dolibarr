@@ -280,10 +280,10 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 
 
 // Liste des evolutions du prix
-$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type";
+$sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, ";
 if($conf->global->PRODUIT_MULTIPRICES == 1)
 {
-  $sql .= ", p.price_level, ";
+  $sql .= "p.price_level, ";
   $sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
   $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql .= " WHERE fk_product = ".$product->id;
@@ -352,6 +352,7 @@ if ($result)
 			      if($conf->global->PRODUIT_MULTIPRICES == 1)
 			      {
 				      print "<td>".$objp->price_level."</td>";
+				    }
 				      
 				      if ($objp->price_base_type == 'TTC')
 				      {
@@ -362,7 +363,6 @@ if ($result)
 				      	print "<td>".price($objp->price);
 				      }
 				      print " ".$langs->trans($objp->price_base_type)."</td>";
-			      }
 
             // User
             print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';

@@ -152,6 +152,20 @@ class Product
     if ($this->status=='') $this->status = 0;
     $this->price = price2num($this->price);
     
+    if (strlen(trim($this->price)) > 0 )
+	  {
+	      if ($this->price_base_type == 'TTC')
+	      {
+		      $price_ttc = $this->price;
+		      $price = $this->price / (1 + ($this->tva_tx / 100));
+	      }
+	      else
+	      {
+		       $price = $this->price;
+		       $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	      }
+	   }
+    
     dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
 
     if (strlen($this->ref) > 0)
@@ -163,64 +177,65 @@ class Product
       
       $result = $this->db->query($sql) ;
       if ($result)
-	{
-	  $row = $this->db->fetch_array($result);
-	  if ($row[0] == 0)
 	    {
-	      // Produit non deja existant
-	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-	      $sql.= " (datec, ";
-	      if ($this->ref) $sql.= "ref, ";
-	      $sql.= "fk_user_author, fk_product_type, price, canvas)";
-	      $sql.= " VALUES (now(), ";
-	      if ($this->ref) $sql.= "'".$this->ref."', ";
-	      $sql.= $user->id.", ".$this->type.", '" . $this->price . "','".$this->canvas."')";
-	      $result = $this->db->query($sql);
-	      if ( $result )
-		{
-		  $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
+	      $row = $this->db->fetch_array($result);
+	      if ($row[0] == 0)
+	      {
+	        // Produit non deja existant
+	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
+	        $sql.= " (datec, ";
+	        if ($this->ref) $sql.= "ref, ";
+	        $sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
+	        $sql.= " VALUES (now(), ";
+	        if ($this->ref) $sql.= "'".$this->ref."', ";
+	        $sql.= $user->id.", ".$this->type.", '" . $price . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
+	        $result = $this->db->query($sql);
+	        if ( $result )
+		      {
+		        $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
 		  
-		  if ($id > 0)
-		    {
-		      $this->id = $id;
-		      $this->_log_price($user);
-		      if ( $this->update($id, $user) > 0)
-			{
-			  if ($this->catid > 0)
-			    {
-			      $cat = new Categorie ($this->db, $this->catid);
-			      $cat->add_product($this);
-			    }
-			  $this->db->commit();
-			  return $id;
-			}
-		      else {
-			$this->db->rollback();
-			return -5;
+		        if ($id > 0)
+		        {
+		          $this->id = $id;
+		          $this->_log_price($user);
+		          if ( $this->update($id, $user) > 0)
+			        {
+			          if ($this->catid > 0)
+			          {
+			             $cat = new Categorie ($this->db, $this->catid);
+			             $cat->add_product($this);
+			          }
+			          $this->db->commit();
+			          return $id;
+			        }
+		          else
+		          {
+			           $this->db->rollback();
+			           return -5;
+		          }
+		        }
+		        else
+		        {
+		           $this->db->rollback();
+		           return -4;
+		        }
 		      }
-		    }
-		  else
-		    {
-		      $this->db->rollback();
-		      return -4;
-		    }
-		}
-	      else
-		{
-		  $this->error=$this->db->error()." - sql=".$sql;
-		  $this->db->rollback();
-		  return -3;
-		}
-	    }
-	  else
-	    {
+	        else
+		      {
+		        $this->error=$this->db->error()." - sql=".$sql;
+		        $this->db->rollback();
+		        return -3;
+		      }
+	     }
+	     else
+	     {
 	      // Produit existe deja
 	      $this->error=$langs->trans("ErrorProductAlreadyExists", $this->ref);
 	      $this->errno = 257;
 	      $this->db->rollback();
 	      return -2;
-	    }
-	}
+	     }
+	   }
       
       $this->error=$this->db->error();
       $this->db->rollback();
@@ -888,8 +903,7 @@ class Product
 	$this->db->free();
 	// multilangs
 	if( $conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-	
-	
+		
 	// multiprix
 	if($conf->global->PRODUIT_MULTIPRICES == 1)
 	  {
@@ -923,29 +937,17 @@ class Product
 		  {
 		    $result = $this->db->fetch_array();
 		    
-		    $this->multiprices_base_type[$i] = $result["price_base_type"];
-		    
 		    if($result["price"] != "" && $result["price"] != "0.00")
 		    {
-		    	if ($result["price_base_type"] == 'TTC')
-		    	{
-		    		$this->multiprices_ttc[$i]=$result["price_ttc"];
-		    	}
-		    	else
-		    	{
-		    		$this->multiprices[$i]=$result["price"];
-		    	}
+		    	$this->multiprices[$i]=$result["price"];
+		    	$this->multiprices_ttc[$i]=$result["price_ttc"];
+		    	$this->multiprices_base_type[$i] = $result["price_base_type"];
 		    }
 		    else
 		    {
-		    	if ($result["price_base_type"] == 'TTC')
-		    	{
-		    		$this->multiprices_ttc[$i]=$this->price_ttc;
-		    	}
-		    	else
-		    	{
-		    		$this->multiprices[$i]=$this->price;
-		    	}
+		    	$this->multiprices[$i]=$this->price;
+		    	$this->multiprices_ttc[$i]=$this->price_ttc;
+		    	$this->multiprices_base_type[$i] = $this->price_base_type;
 		    }
 		  }
 		else
