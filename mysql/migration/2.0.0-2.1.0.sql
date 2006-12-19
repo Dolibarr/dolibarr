@@ -615,3 +615,5 @@ create table llx_product_subproduct
   fk_product_subproduct integer NOT NULL, -- id du sous-produit
   UNIQUE(fk_product, fk_product_subproduct)
 )type=innodb;
+
+alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price;
