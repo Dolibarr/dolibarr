@@ -155,8 +155,18 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    // Authentification Apache KO ou non active, pas de mode force on demande le login
 	    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
 	
-	    $ldapdebug=true;
+	    $ldapdebug=false;
 	    if ($ldapdebug) print "DEBUG: Traces connexions LDAP<br>\n";
+	    
+	    if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
+		  {
+		    $userattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+		  }
+		  else
+		  {
+		    $userattr = $conf->global->LDAP_FIELD_LOGIN;
+		  }
+	    
 	    $params = array(
 		    'host' => $conf->global->LDAP_SERVER_HOST,
 		    'port' => $conf->global->LDAP_SERVER_PORT,
@@ -165,10 +175,10 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    'binddn' => $conf->global->LDAP_ADMIN_DN,
 		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
 
-			'debug' => $ldapdebug,
-			
-//		    'userattr' => $conf->global->LDAP_FIELD_LOGIN_SAMBA
-		    'userattr' => $conf->global->LDAP_FIELD_LOGIN,
+			  'debug' => $ldapdebug,
+		    
+		    'userattr' => $userattr,
+		    
 //		    'userfilter' => $conf->global->LDAP_FILTER_CONNECTION
 		    'userfilter' => ''
 	    );
