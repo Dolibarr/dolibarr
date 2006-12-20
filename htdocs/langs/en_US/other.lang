@@ -63,6 +63,7 @@ Weight=Weight
 WeightUnitmg=tonnes
 WeightUnitkg=kg
 WeightUnitg=g
+BugTracker=Bug tracker
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar
