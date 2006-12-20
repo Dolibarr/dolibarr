@@ -112,7 +112,7 @@ llxHeader();
 
 
 // Liste des cotisations
-$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe, b.fk_account,";
+$sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
 $sql.= " c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank as bank, c.rowid as crowid,";
 $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
@@ -142,11 +142,11 @@ if ($result)
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"","align=\"right\"",$sortfield);
     if ($conf->global->ADHERENT_BANK_USE)
     {
         print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield);
     }
+    print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"","align=\"right\"",$sortfield);
     print "</tr>\n";
 
     $var=true;
@@ -169,14 +169,15 @@ if ($result)
         print '<td>'.$cotisation->getNomUrl(1).'</td>';
         print '<td>'.dolibarr_print_date($objp->dateadh)."</td>\n";
         print '<td>'.$adherent->getNomUrl(1).'</td>';
-        print '<td align="right">'.price($objp->cotisation).'</td>';
         if ($conf->global->ADHERENT_BANK_USE)
         {
             if ($objp->fk_account)
             {
-                $acc=new Account($db);
-                $acc->fetch($objp->fk_account);
-                print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->fk_account.'">'.$acc->label.'</a></td>';
+                $accountstatic=new Account($db);
+                $accountstatic->id=$objp->fk_account;
+                $accountstatic->fetch($objp->fk_account);
+                //$accountstatic->label=$objp->label;
+                print '<td>'.$accountstatic->getNomUrl(1).'</td>';
             }
             else
             {
@@ -195,6 +196,7 @@ if ($result)
                 print "</td>\n";
             }
         }
+        print '<td align="right">'.price($objp->cotisation).'</td>';
         print "</tr>";
         $i++;
     }
@@ -204,12 +206,13 @@ if ($result)
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
-    print "<td align=\"right\">".price($total)."</td>\n";
     if ($conf->global->ADHERENT_BANK_USE)
     {
     	print '<td>&nbsp;</td>';
     }
+    print "<td align=\"right\">".price($total)."</td>\n";
     print "</tr>\n";
+    
     print "</table>";
     print "<br>\n";
 
