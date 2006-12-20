@@ -28,13 +28,18 @@
  *
  * wget "http://materiel.net/partenaire/search.php3?format=xml&nobanner=1"
  */
-// Editer les 3 valeurs suivantes en conformité avec votre installation
-$userid = 1;
-$idfourn = 10;
-$file = "/tmp/materiel.xml";
-// Supprimez le die() une fois le script configuré :-)
-die ("!\n!\n! Configurez le script avant de le lancer\n!\n!\n");
 
+$opt = getopt("f:u:i:");
+
+$userid = $opt['u'];
+$idfourn = $opt['i'];
+$file = $opt['f'];
+
+if (strlen(trim($file)) == 0 || strlen(trim($idfourn)) == 0 || strlen(trim($userid)) == 0)
+{
+  print "Usage :\n php import-product.php -f <filename> -i <id_fournisseur> -u <userid>\n";
+  exit;
+}
 /*
  *
  *
@@ -43,7 +48,9 @@ require("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/product.class.php");
 
 $user = new User($db);
-$user->id = $userid;
+$result = $user->fetch($userid);
+if ($user->id == 0)
+  die("Identifiant utilisateur incorrect : $userid\n");
 
 $depth = array();
 $index = 0;
