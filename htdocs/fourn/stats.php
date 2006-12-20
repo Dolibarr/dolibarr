@@ -45,8 +45,6 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-llxHeader();
-
 // Sécurité accés client
 $socid='';
 if ($user->societe_id > 0) 
@@ -61,11 +59,16 @@ $offset = $conf->liste_limit * $page ;
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="year";
 
+$years=array();
+$fourns=array();
+
 
 /*
- * Mode Liste
+ * Affichage liste
  *
  */
+
+llxHeader();
 
 $sql = "SELECT s.idp, s.nom, s.ville, ca.ca_genere as ca, ca.year";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
