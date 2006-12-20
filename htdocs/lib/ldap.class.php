@@ -800,10 +800,22 @@ class Ldap
       */ 	 
      function getObjectSid($ldapUser) 	 
      { 	 
-         $criteria =  $this->getUserIdentifier()."=$ldapUser"; 	 
-         $justthese = array("objectsid"); 	 
-  	 
-         $ldapSearchResult = ldap_search($this->connection, $this->people, $criteria, $justthese); 	 
+         $criteria =  '('.$this->getUserIdentifier().'='.$ldapUser.')'; 	 
+         $justthese = array("objectsid");
+         
+         // if the directory is AD, then bind first with the search user first
+        if ($this->serverType == "activedirectory")
+        {
+            $this->bindauth($this->searchUser, $this->searchPassword);
+        }	 
+
+         $ldapSearchResult = @ldap_search($this->connection, $this->people, $criteria, $justthese);
+         
+         if (!$ldapSearchResult)
+        {
+        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+        	return -1;
+        } 	 
   	 
          $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
          $ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 

@@ -131,6 +131,19 @@ else
 }
 print '</tr>';
 
+if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
+{
+	$ldap = new Ldap();
+	$result = $ldap->connect_bind();
+	if ($result > 0)
+  {
+    $userSID = $ldap->getObjectSid($fuser->login);
+  }
+  print '<tr><td width="25%" valign="top">'.$langs->trans("SID").'</td>';
+  print '<td>'.$userSID.'</td>';
+  print "</tr>\n";
+}
+
 $langs->load("admin");
 
 // LDAP DN

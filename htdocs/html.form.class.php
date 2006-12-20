@@ -49,6 +49,9 @@ class Form
   var $cache_conditions_paiements_libelle=array();
 
   var $tva_taux;
+  
+  var $samaccountname;
+  
   /**
      \brief     Constructeur
      \param     DB      handler d'accès base de donnée
@@ -2840,7 +2843,7 @@ class Form
 		$count++;
 		if ($count > 1000) return -1;	// To avoid infinite loop
 		if (! is_array($result)) return -1;
-		
+
 		foreach($result as $key => $val)
 		{
 			if ("$key" == "objectclass") continue;
@@ -2866,8 +2869,6 @@ class Form
 			else
 			{
 				print utf8_decode("$val");
-				//print $val;
-				//print "<br>\n";
 				print '</td></tr>';
 			}
 		}
