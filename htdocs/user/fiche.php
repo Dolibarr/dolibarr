@@ -332,13 +332,13 @@ if ($_POST["action"] == 'adduserldap')
 			foreach ($ldapusers as $key => $attribute)
 			{
 				$ldap_nom    = $attribute[$conf->global->LDAP_FIELD_NAME];
-				$ldap_prenom = $attribute[$conf->global->LDAP_FIELD_NAME];
+				$ldap_prenom = $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
 				$ldap_login  = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
-				$ldap_phone  = $attribute[$conf->global->LDAP_FIELD_LOGIN_PHONE];
-				$ldap_fax    = $attribute[$conf->global->LDAP_FIELD_LOGIN_FAX];
-				$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_LOGIN_MOBILE];
-				$ldap_mail   = $attribute[$conf->global->LDAP_FIELD_LOGIN_MAIL];
-				$ldap_sid    = $attribute[$conf->global->LDAP_FIELD_LOGIN_SID];
+				$ldap_phone  = $attribute[$conf->global->LDAP_FIELD_PHONE];
+				$ldap_fax    = $attribute[$conf->global->LDAP_FIELD_FAX];
+				$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
+				$ldap_mail   = $attribute[$conf->global->LDAP_FIELD_MAIL];
+				$ldap_sid    = $attribute[$conf->global->LDAP_FIELD_SID];
 			}
 		}
 	}
@@ -391,12 +391,12 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		if ($result >= 0)
 		{
 			$justthese=array($conf->global->LDAP_KEY_USERS,
-							 $conf->global->LDAP_FIELD_FULLNAME,
-							 $conf->global->LDAP_FIELD_NAME,
-							 $conf->global->LDAP_FIELD_FIRSTNAME,
-							 $conf->global->LDAP_FIELD_LOGIN_SAMBA);
+							         $conf->global->LDAP_FIELD_FULLNAME,
+							         $conf->global->LDAP_FIELD_NAME,
+							         $conf->global->LDAP_FIELD_FIRSTNAME,
+							         $conf->global->LDAP_FIELD_LOGIN_SAMBA);
 
-			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese);
+			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese, 1);
 			if (is_array($ldapusers))
 			{
 				$liste=array();

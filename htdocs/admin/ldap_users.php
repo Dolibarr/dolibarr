@@ -52,6 +52,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_KEY_USERS',$_POST["key"])) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_USER_DN',$_POST["user"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FILTER_CONNECTION',$_POST["filterconnection"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
@@ -116,6 +117,15 @@ print '</td><td>'.$langs->trans("LDAPUserDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
+// Filtre
+//Utilise pour filtrer la recherche
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFilterConnection").'</td><td>';
+print '<input size="48" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
+print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
+print '<td></td>';
+print '</tr>';
+
 print '</table>';
 print '<br>';
 print '<table class="noborder" width="100%">';
@@ -126,15 +136,6 @@ print '<td width="25%">'.$langs->trans("LDAPDolibarrMapping").'</td>';
 print '<td colspan="2">'.$langs->trans("LDAPLdapMapping").'</td>';
 print '<td align="right">'.$langs->trans("LDAPNamingAttribute").'</td>';
 print "</tr>\n";
-
-// Filtre
-/*
-$var=!$var;
-print '<tr '.$bc[$var].'><td><b>'.$langs->trans("LDAPFilterConnection").picto_required().'</b></td><td>';
-print '<input size="38" type="text" name="filterconnection" value="'.$conf->global->LDAP_FILTER_CONNECTION.'">';
-print '</td><td>'.$langs->trans("LDAPFilterConnectionExample").'</td>';
-print '</tr>';
-*/
 
 // Common name
 $var=!$var;

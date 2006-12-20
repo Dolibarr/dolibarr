@@ -719,7 +719,7 @@ class Ldap
      * username. The search criteria is a standard LDAP query - * returns all
      * users.  The $attributeArray variable contains the required user detail field names
      */
-    function getUsers($search, $userDn, $useridentifier, $attributeArray)
+    function getUsers($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
     {
 		$userslist=array();
 		
@@ -730,7 +730,15 @@ class Ldap
             $this->bindauth($this->searchUser, $this->searchPassword);
         }
 
-        $filter = '('.$useridentifier.'='.$search.')';
+        if ($activefilter == 1)
+        {
+        	$filter = $this->filter;
+        }
+        else
+        {
+        	$filter = '('.$useridentifier.'='.$search.')';
+        }
+
         $this->result = @ldap_search($this->connection, $userDn, $filter);
 
         if (!$this->result)
