@@ -773,7 +773,7 @@ class Ldap
 
     /**
      *  Converts a little-endian hex-number to one, that 'hexdec' can convert
-     *	\deprecated
+     *	Indispensable pour Active Directory
      */
     function littleEndian($hex) {
     	for ($x=strlen($hex)-2; $x >= 0; $x=$x-2) {
@@ -781,6 +781,44 @@ class Ldap
     	}
     	return $result;
     }
+    
+    
+    /**
+      * Récupère le SID de l'utilisateur 	 
+      * ldapuser. le login de l'utilisateur 	 
+      * Indispensable pour Active Directory
+      */ 	 
+     function getObjectSid($ldapUser) 	 
+     { 	 
+         $criteria =  $this->getUserIdentifier()."=$ldapUser"; 	 
+         $justthese = array("objectsid"); 	 
+  	 
+         $ldapSearchResult = ldap_search($this->connection, $this->people, $criteria, $justthese); 	 
+  	 
+         $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
+         $ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
+         $SIDText = $this->binSIDtoText($ldapBinary[0]); 	 
+         return $SIDText; 	 
+         return $ldapBinary; 	 
+     }
+     
+     /**
+      * Returns the textual SID 	 
+      * Indispensable pour Active Directory
+      */ 	 
+      function binSIDtoText($binsid) { 	 
+         $hex_sid=bin2hex($binsid); 	 
+         $rev = hexdec(substr($hex_sid,0,2));          // Get revision-part of SID 	 
+         $subcount = hexdec(substr($hex_sid,2,2));    // Get count of sub-auth entries 	 
+         $auth = hexdec(substr($hex_sid,4,12));      // SECURITY_NT_AUTHORITY 	 
+         $result = "$rev-$auth"; 	 
+         for ($x=0;$x < $subcount; $x++) { 	 
+                 $subauth[$x] = hexdec($this->littleEndian(substr($hex_sid,16+($x*8),8)));  // get all SECURITY_NT_AUTHORITY 	 
+                 $result .= "-".$subauth[$x]; 	 
+         } 	 
+         return $result; 	 
+     }
+     
 
 	/**
 	* 	\brief 		Fonction de recherche avec filtre
