@@ -56,14 +56,12 @@ class ProductLivreCouverture extends Product
    *    \brief      Creation
    *    \param      id          Id livre
    */
-  function CreateCanvas($user,$datas)
+  function Create($user,$datas)
   {
     $this->db->begin();
-
-    $id = $this->create($user);
+    $id = parent::Create($user);
 
     return $this->id;
-
   }
   /**
    *    \brief      Supression
@@ -81,11 +79,6 @@ class ProductLivreCouverture extends Product
   function FetchCanvas($id='', $ref='')
   {
     $result = $this->fetch($id,$ref);
-
-    // On charge le livre pour avoir le titre
-    // ne pas utiliser FetchCanvas qui cree une boucle infinie
-    $this->livre = new ProductLivre($this->db);
-    //$this->livre->Fetch($result["fk_cnv_livre"]);
     
     return $result;
   }
