@@ -2835,7 +2835,7 @@ class Form
 
 	function show_ldap_content($result,$level,$count,$var)
 	{
-		global $bc;
+		global $bc, $conf;
 		
 		$count++;
 		if ($count > 1000) return -1;	// To avoid infinite loop
@@ -2866,6 +2866,7 @@ class Form
 			else
 			{
 				print utf8_decode("$val");
+				//print $val;
 				//print "<br>\n";
 				print '</td></tr>';
 			}

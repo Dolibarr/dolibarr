@@ -753,18 +753,28 @@ class Ldap
         for ($i = 0; $i < $info["count"]; $i++)
         {
             $recordid=$this->ldap_utf8_decode($info[$i][$useridentifier][0]);
-			if ($recordid)
-			{
-				//print "Found record with key $useridentifier=".$recordid."<br>\n";
+			      if ($recordid)
+			      {
+				      //print "Found record with key $useridentifier=".$recordid."<br>\n";
 	            $userslist[$recordid][$useridentifier]=$recordid;
 	
 	            // Add to the array for each attribute in my list
 	            for ($j = 0; $j < count($attributeArray); $j++)
 	            {
 	            	//print " Param ".$attributeArray[$j]."=".$info[$i][$attributeArray[$j]][0]."<br>\n";
-	                $userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$attributeArray[$j]][0]);
+	            	
+	            	//permet de récupérer le SID avec Active Directory
+	            	if ($this->serverType == "activedirectory" && strtolower($attributeArray[$j]) == "objectsid")
+                {
+                	  	$objectsid = $this->getObjectSid($recordid);
+                	  	$userslist[$recordid][$attributeArray[$j]]    = $objectsid;
+                }
+                else
+                {
+                	$userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$attributeArray[$j]][0]);
+                }
 	            }
-			}
+			      }
         }
 
         asort($userslist);
