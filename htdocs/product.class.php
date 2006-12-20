@@ -787,6 +787,34 @@ class Product
 	return -1;
       }
   }
+  /**
+     \brief  Modifie le prix d'achat pour un fournisseur par la référecne du produit chez le fournisseur
+     \param  id_fourn        Id du fournisseur
+     \param  product_fourn_ref Reference du produit chez le fournisseur
+     \param  qty             Quantite pour lequel le prix est valide
+     \param  buyprice        Prix d'achat pour la quantité
+     \param  user            Objet user de l'utilisateur qui modifie
+   */
+  function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user)
+  {
+    $errno=0;
+
+    // Supprime prix courant du fournisseur pour cette quantité
+    $sql = "SELECT fk_product FROM  ".MAIN_DB_PREFIX."product_fournisseur";
+    $sql.= " WHERE fk_soc ='".$id_fourn."'";
+    $sql.= " AND ref_fourn='".$product_fourn_ref."';";
+
+    if ($this->db->query($sql))
+      {
+	if ($row = $this->db->fetch_row($resql) )
+	  {
+	    $this->id = $row[0];
+	    $errno = $this->update_buyprice($id_fourn, $qty, $buyprice, $user);
+	  }
+      }
+
+    return $errno;
+  }
 
 
   /**
