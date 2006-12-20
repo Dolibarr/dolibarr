@@ -88,7 +88,7 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 	// Effectue les vérifications des parametres
 	if ($_POST['paiementid'] <= 0)
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->trans('PaymentMode')).'</div>';
+		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('PaymentMode')).'</div>';
 		$error++;
 	}
 
@@ -98,14 +98,14 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 		// d'un paiement
 		if (! $_POST['accountid'])
 		{
-			$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->trans('AccountToCredit')).'</div>';
+			$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('AccountToCredit')).'</div>';
 			$error++;
 		}
 	}
 
 	if ($totalpaiement <= 0)
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->trans('Amount')).'</div>';
+		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('Amount')).'</div>';
 		$error++;
 	}
 }
