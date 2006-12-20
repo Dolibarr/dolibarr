@@ -50,8 +50,6 @@ class Form
 
   var $tva_taux;
   
-  var $samaccountname;
-  
   /**
      \brief     Constructeur
      \param     DB      handler d'accès base de donnée
