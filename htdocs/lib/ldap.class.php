@@ -1045,8 +1045,9 @@ class Ldap
 	*/
 	function ldap_utf8_decode($string)
 	{
-		if ($this->serverType != "activedirectory")	return utf8_decode($string);
-		else return($string);
+		//if ($this->serverType != "activedirectory")	return utf8_decode($string);
+		//else return($string);
+		return utf8_decode($string); //utile aussi avec Active Directory - Regis
 	}	
 
 }
