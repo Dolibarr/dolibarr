@@ -273,11 +273,11 @@ if ($_POST["action"] == 'add')
     }
     if (!isset($nom) || $nom=='') {
         $error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Lastname"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
     }
     if (!isset($prenom) || $prenom=='') {
         $error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Firstname"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
     }
     if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($email)) {
         $error++;
@@ -285,7 +285,7 @@ if ($_POST["action"] == 'add')
     }
     if (!isset($pass) || $pass == '' ) {
         $error++;
-        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Password"))."<br>\n";
+        $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Password"))."<br>\n";
     }
     $public=0;
     if (isset($public)) $public=1;
