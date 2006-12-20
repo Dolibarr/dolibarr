@@ -94,7 +94,7 @@ class RemiseCheque
      \param  user utilisateur qui effectue l'operation
      \param  account_id Compte bancaire concerne
    */	 
-  function create($user, $account_id)
+  function Create($user, $account_id)
   {
     $this->errno = 0;
     $this->db->begin();
@@ -122,7 +122,7 @@ class RemiseCheque
 	    $resql = $this->db->query($sql);	    
 	    if (!$resql)
 	      {		
-		$this->errno = -19;
+		$this->errno = -25;
 		dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)");
 	      }	    
 	  }
@@ -133,7 +133,7 @@ class RemiseCheque
 	    $sql = "SELECT b.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	    $sql.= " WHERE b.fk_type = 'CHQ'";
-	    $sql.= " AND b.fk_bordereau = 0";
+	    $sql.= " AND b.fk_bordereau = 0 AND b.fk_account='$account_id';";
 
 	    $resql = $this->db->query($sql);
 
@@ -169,6 +169,14 @@ class RemiseCheque
 	      }
 	  }
 
+	if ($this->id > 0 && $this->errno === 0)
+	  {
+	    if ($this->UpdateAmount() <> 0)
+	      {		
+		$this->errno = -19;
+		dolibarr_syslog("RemiseCheque::Create ERREUR ($this->errno)");
+	      }
+	  }
       }
     else
       {
@@ -239,8 +247,54 @@ class RemiseCheque
       }
     
     return $this->errno;
+  }
+  /**
+     \brief  Mets a jour le montant total
+     \return int, 0 en cas de succes
+   */	 
+  function UpdateAmount()
+  {
+    $this->errno = 0;
+    $this->db->begin();
+
+    $sql = "SELECT sum(amount) ";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank";
+    $sql.= " WHERE fk_bordereau = $this->id;";
+		
+    $resql = $this->db->query($sql);
+    if ( $resql )
+      {
+	$row = $this->db->fetch_row($resql);
+	$total = $row[0];
 
 
+	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+	$sql.= " SET amount='$total'";
+	$sql.= " WHERE rowid='".$this->id."';";
+	$resql = $this->db->query($sql);	    
+	if (!$resql)
+	  {		
+	    $this->errno = -31;
+	    dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR UPDATE ($this->errno)");
+	  }	    
+      }
+    else
+      {		
+	$this->errno = -33;
+	dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR SELECT ($this->errno)");
+      }	    
+
+    if ($this->errno === 0)
+      {
+	$this->db->commit();
+      }
+    else
+      {
+	$this->db->rollback();
+	dolibarr_syslog("RemiseCheque::UpdateAmount ROLLBACK ($this->errno)");
+      }
+    
+    return $this->errno;
   }
 
   /**
