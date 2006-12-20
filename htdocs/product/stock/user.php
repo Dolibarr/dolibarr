@@ -33,6 +33,7 @@ require("./pre.inc.php");
 
 $langs->load("products");
 $langs->load("stocks");
+$langs->load("companies");
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
@@ -90,13 +91,17 @@ $form=new Form($db);
 	  $head[$h][1] = $langs->trans("StockMovements");
 	  $h++;
 	  
-	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
-	  $head[$h][1] = $langs->trans("Info");
+	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/fiche-valo.php?id='.$entrepot->id;
+	  $head[$h][1] = $langs->trans("EnhancedValue");
 	  $h++;
-	  
+
 	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/user.php?id='.$entrepot->id;
 	  $head[$h][1] = $langs->trans("Users");
 	  $hselected=$h;
+	  $h++;
+	  
+	  $head[$h][0] = DOL_URL_ROOT.'/product/stock/info.php?id='.$entrepot->id;
+	  $head[$h][1] = $langs->trans("Info");
 	  $h++;
 
 	  dolibarr_fiche_head($head, $hselected, $langs->trans("Warehouse").': '.$entrepot->libelle);
@@ -117,6 +122,10 @@ $form=new Form($db);
 	  
 	  print '<tr><td width="25%">'.$langs->trans('Zip').'</td><td width="25%">'.$entrepot->cp.'</td>';
 	  print '<td width="25%">'.$langs->trans('Town').'</td><td width="25%">'.$entrepot->ville.'</td></tr>';
+	  
+	  print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">';
+    print $entrepot->pays;
+    print '</td></tr>';
 	  
 	  // Statut
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';

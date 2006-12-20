@@ -30,6 +30,7 @@ require("./pre.inc.php");
 
 $langs->load("products");
 $langs->load("stocks");
+$langs->load("companies");
 $mesg = '';
 
 llxHeader("","",$langs->trans("WarehouseCard"));
