@@ -733,7 +733,7 @@ class Ldap
         //permet de choisir le filtre adequat
         if ($activefilter == 1)
         {
-        	$filter = $this->filter;
+        	$filter = '('.$this->filter.')';
         }
         else
         {

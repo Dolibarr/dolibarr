@@ -567,7 +567,7 @@ LDAPLdapMapping=Mapping LDAP
 LDAPFieldLoginUnix=Login (unix)
 LDAPFieldLoginExample=Exemple : uid
 LDAPFilterConnection=Filtre de recherche
-LDAPFilterConnectionExample=Exemple : (&(objectClass=user)(objectCategory=person))
+LDAPFilterConnectionExample=Exemple : &(objectClass=user)(objectCategory=person)
 LDAPFieldLoginSamba=Login (samba, activedirectory)
 LDAPFieldLoginSambaExample=Exemple : samaccountname
 LDAPFieldFullname=Prénom Nom
