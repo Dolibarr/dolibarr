@@ -173,13 +173,13 @@ div.tmenu
 table.tmenu
 {
     padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 10px;
+    margin: 0px 0px 0px 6px;
 }
 
 a.tmenu:link
 {
   color: #234046;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
@@ -187,7 +187,7 @@ a.tmenu:link
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   border: 0px solid #b3c5cc;
   font: 12px helvetica, verdana, arial, sans-serif;
@@ -196,7 +196,7 @@ a.tmenu:visited
 a.tmenu#sel
 {
   color: #234046;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 5px 0px 5px;
   margin: 0px 0px 2px 0px;
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
@@ -209,7 +209,7 @@ a.tmenu#sel
 a.tmenu:hover
 {
   color: #234046;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   text-decoration: none;
   font: 12px helvetica, verdana, arial, sans-serif;
@@ -220,7 +220,7 @@ a.tmenu:hover
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0px 8px 0px 8px;
+  padding: 0px 5px 0px 5px;
   margin: 0px 0px 2px 0px;
   font-weight:bold;
   font-size:12px;

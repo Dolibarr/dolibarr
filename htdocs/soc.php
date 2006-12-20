@@ -318,7 +318,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 	      }
 	  }
 
-        print '<tr><td>'.$load.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
+        print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
         print '</textarea></td></tr>';
 

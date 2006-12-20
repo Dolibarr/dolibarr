@@ -98,13 +98,15 @@ class MenuTop {
         print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=home&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Home").'</a></td>';
 
 
-        // Members
-        if ($conf->adherent->enabled)
+        // Third parties
+        if (($conf->societe->enabled && $user->rights->societe->lire)
+        	|| ($conf->fournisseur->enabled && $user->rights->fournisseur->lire))
         {
-            $langs->load("members");
+            $langs->load("companies");
+            $langs->load("suppliers");
         
             $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "companies")
             {
                 $class='class="tmenu" id="sel"';
             }
@@ -113,9 +115,10 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
         
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=companies&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("ThirdParties").'</a></td>';
         }
-        
+
+
         // Products-Services
         if ($conf->produit->enabled || $conf->service->enabled)
         {
@@ -141,24 +144,6 @@ class MenuTop {
                 print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font>';
         }
 
-        // Supplier
-        if ($conf->fournisseur->enabled && $user->rights->fournisseur->lire)
-        {
-            $langs->load("suppliers");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
-        }
-
         // Commercial
         if ($conf->commercial->enabled)
         {
@@ -175,6 +160,25 @@ class MenuTop {
             }
         
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+        
+        }
+
+        // Suppliers
+        if ($conf->fournisseur->enabled)
+        {
+            $langs->load("suppliers");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
         
         }
         
@@ -311,6 +315,24 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
         }
        
+        // Members
+        if ($conf->adherent->enabled)
+        {
+            $langs->load("members");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
+        }
+        
         print '</tr></table>';
 
     }

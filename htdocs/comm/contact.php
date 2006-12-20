@@ -54,9 +54,9 @@ if ($user->societe_id > 0)
 }
 
 
-if (! $sortfield) $sortfield="p.name";
 if (! $sortorder) $sortorder="ASC";
-if ($page == -1) { $page = 0 ; }
+if (! $sortfield) $sortfield="p.name";
+if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
