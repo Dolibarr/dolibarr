@@ -730,6 +730,7 @@ class Ldap
             $this->bindauth($this->searchUser, $this->searchPassword);
         }
 
+        //permet de choisir le filtre adequat
         if ($activefilter == 1)
         {
         	$filter = $this->filter;
