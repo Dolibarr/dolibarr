@@ -29,13 +29,12 @@
  * wget "http://materiel.net/partenaire/search.php3?format=xml&nobanner=1"
  */
 
-$opt = getopt("f:u:i:");
+$opt = getopt("f:u:");
 
 $userid = $opt['u'];
-$idfourn = $opt['i'];
 $file = $opt['f'];
 
-if (strlen(trim($file)) == 0 || strlen(trim($idfourn)) == 0 || strlen(trim($userid)) == 0)
+if (strlen(trim($file)) == 0 || strlen(trim($userid)) == 0)
 {
   print "Usage :\n php import-product.php -f <filename> -i <id_fournisseur> -u <userid>\n";
   exit;
