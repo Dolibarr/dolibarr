@@ -63,8 +63,9 @@ llxHeader();
  */
 
 $sql = "SELECT s.nom as societe, s.idp as socid, s.client,";
-$sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.percent as percent,";
-$sql.= " c.code as acode, c.libelle, u.code, u.rowid as userid";
+$sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.label, a.percent as percent,";
+$sql.= " c.code as acode, c.libelle,";
+$sql.= " u.code, u.rowid as userid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -118,9 +119,9 @@ if ($resql)
 //    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','colspan="4"',$sortfield);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield);
-    print '<td>'.$langs->trans("Comments").'</td>';
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"","",$sortfield);
     print "</tr>\n";
@@ -166,12 +167,17 @@ if ($resql)
 
 //        print '<td align="center">'.dolibarr_print_date($obj->dp)."</td>\n";
 
-        // Action
+        // Action (type)
         print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
         $transcode=$langs->trans("Action".$obj->acode);
         $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
         print dolibarr_trunc($libelle,16);
         print '</a></td>';
+
+        // Titre
+        print '<td>';
+       	print $obj->label;
+        print '</td>';
 
         // Société
         print '<td>';
@@ -182,7 +188,7 @@ if ($resql)
 
         // Contact
         print '<td>';
-        if ($obj->fk_contact)
+        if ($obj->fk_contact > 0)
         {
             $cont = new Contact($db);
             $cont->fetch($obj->fk_contact);
@@ -193,9 +199,6 @@ if ($resql)
             print "&nbsp;";
         }
         print '</td>';
-
-        // Note
-        print '<td>'.dolibarr_trunc($obj->note, 16).'</td>';
 
         // Auteur
         print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
