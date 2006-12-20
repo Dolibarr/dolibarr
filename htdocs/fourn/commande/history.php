@@ -66,6 +66,10 @@ if ($_GET["id"] > 0)
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$commande->id;
 		$head[$h][1] = $langs->trans("OrderCard");
 		$h++;
+		
+		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/dispatch.php?id='.$commande->id;
+	  $head[$h][1] = $langs->trans("OrderDispatch");
+	  $h++;
 
 		$head[$h][0] = DOL_URL_ROOT.'/fourn/commande/note.php?id='.$commande->id;
 		$head[$h][1] = $langs->trans("Note");

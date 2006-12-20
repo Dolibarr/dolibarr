@@ -129,7 +129,7 @@ if ($id	> 0)
       $head[$h][1] = $langs->trans("OrderFollow");
       $h++;
       
-      $title=$langs->trans("OrderDispatch");
+      $title=$langs->trans("SupplierOrder");
       dolibarr_fiche_head($head, $a, $title);
       	
       /*
