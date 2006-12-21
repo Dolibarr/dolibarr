@@ -94,3 +94,5 @@ TransferDesc=En saisissant un virement d'un de vos comptes bancaire vers un autr
 TransferFrom=De
 TransferTo=Vers
 CheckTransmitter=Emetteur
+ValidateCheckReceipt=Valider ce bordereau de remise ?
+DeleteCheckReceipt=Supprimer ce bordereau de remise ?
