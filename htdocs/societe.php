@@ -149,7 +149,7 @@ if ($socname)
 }
 
 if (strlen($stcomm)) {
-  $sql .= " AND s.fk_stcomm=$stcomm";
+  $sql .= " AND s.fk_stcomm=".$stcomm;
 }
 
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
@@ -160,15 +160,15 @@ if (!$user->rights->commercial->client->voir && !$socid) //restriction
 if ($search_nom)
 {
 	$sql.= " AND (";
-	$sql.= "s.nom LIKE '%".$search_nom."%'";
-	$sql.= " OR s.code_client LIKE '%".$search_nom."%'";
-	$sql.= " OR s.email like '%".$search_nom."%'";
-	$sql.= " OR s.url like '%".$search_nom."%'";
+	$sql.= "s.nom LIKE '%".addslashes($search_nom)."%'";
+	$sql.= " OR s.code_client LIKE '%".addslashes($search_nom)."%'";
+	$sql.= " OR s.email like '%".addslashes($search_nom)."%'";
+	$sql.= " OR s.url like '%".addslashes($search_nom)."%'";
 	$sql.= ")";
 }
 
 if ($search_ville) {
-  $sql .= " AND s.ville LIKE '%".$search_ville."%'";
+  $sql .= " AND s.ville LIKE '%".addslashes($search_ville)."%'";
 }
 
 if ($_POST["search_siren"]) {
