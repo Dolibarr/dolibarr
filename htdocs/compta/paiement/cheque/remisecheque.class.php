@@ -308,6 +308,12 @@ class RemiseCheque
 	  }
       }
 
+    if ($this->errno === 0)
+      {
+	require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
+	$pdf = new BordereauChequeBlochet($db);
+	$pdf->write_pdf_file(DOL_DATA_ROOT.'/compta/bordereau', ($num+1) );
+      }
 
     if ($this->errno === 0)
       {
