@@ -143,7 +143,7 @@ class RemiseCheque
 	    $lines = array();
 	    $sql = "SELECT b.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	    $sql.= " WHERE b.fk_type = 'CHQ'";
+	    $sql.= " WHERE b.fk_type = 'CHQ' AND b.amount > 0";
 	    $sql.= " AND b.fk_bordereau = 0 AND b.fk_account='$account_id';";
 
 	    $resql = $this->db->query($sql);
@@ -328,6 +328,7 @@ class RemiseCheque
 
   function GeneratePdf()
   {
+    require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
     require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
     $pdf = new BordereauChequeBlochet($db);
 
@@ -354,6 +355,11 @@ class RemiseCheque
       }
     $pdf->number = $this->number;
 
+    $account = new Account($this->db);
+    $account->fetch($this->account_id);
+
+    $pdf->account = &$account;
+    
     $pdf->write_pdf_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number );
   }
 
