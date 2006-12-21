@@ -38,6 +38,8 @@ class RemiseCheque
   var $id ;
   var $num;
   var $intitule;
+  //! Numero d'erreur Plage 1024-1279
+  var $errno;
 
   /**
    *    \brief  Constructeur de la classe
@@ -70,13 +72,22 @@ class RemiseCheque
 	if ($obj = $this->db->fetch_object($resql) )
 	  {
 	    $this->id             = $obj->rowid;
-	    $this->number         = $obj->number;
 	    $this->amount         = $obj->amount;
 	    $this->date_bordereau = $obj->date_bordereau;
 	    $this->account_id     = $obj->fk_bank_account;
 	    $this->account_label  = $obj->account_label;
 	    $this->author_id      = $obj->fk_user_author;
 	    $this->statut         = $obj->statut;
+
+	    if ($this->statut == 0)
+	      {
+		$this->number         = "(PROV".$this->id.")";
+	      }
+	    else
+	      {
+		$this->number         = $obj->number;
+	      }
+
 	  }
 	$this->db->free($resql);
 
@@ -110,7 +121,7 @@ class RemiseCheque
 	
 	if ($this->id == 0)
 	  {
-	    $this->errno = -2;
+	    $this->errno = -1024;
 	    dolibarr_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)");
 	  }
 
@@ -122,7 +133,7 @@ class RemiseCheque
 	    $resql = $this->db->query($sql);	    
 	    if (!$resql)
 	      {		
-		$this->errno = -25;
+		$this->errno = -1025;
 		dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)");
 	      }	    
 	  }
@@ -147,7 +158,7 @@ class RemiseCheque
 	      }
 	    else
 	      {
-		$this->errno = -17;
+		$this->errno = -1026;
 		dolibarr_syslog("RemiseCheque::Create ERREUR SELECT ($this->errno)");
 	      }
 	  }
@@ -173,7 +184,7 @@ class RemiseCheque
 	  {
 	    if ($this->UpdateAmount() <> 0)
 	      {		
-		$this->errno = -19;
+		$this->errno = -1027;
 		dolibarr_syslog("RemiseCheque::Create ERREUR ($this->errno)");
 	      }
 	  }
@@ -230,7 +241,7 @@ class RemiseCheque
 	    $resql = $this->db->query($sql);	    
 	    if (!$resql)
 	      {		
-		$this->errno = -19;
+		$this->errno = -1028;
 		dolibarr_syslog("RemiseCheque::Delete ERREUR UPDATE ($this->errno)");
 	      }	    
 	  }
@@ -248,6 +259,69 @@ class RemiseCheque
     
     return $this->errno;
   }
+  /**
+     \brief  Supprime la remise en base
+     \param  user utilisateur qui effectue l'operation
+     \param  account_id Compte bancaire concerne
+   */	 
+  function Validate($user)
+  {
+    $this->errno = 0;
+    $this->db->begin();
+
+    $sql = "SELECT MAX(number) FROM ".MAIN_DB_PREFIX."bordereau_cheque;";
+
+    $resql = $this->db->query($sql);
+    if ( $resql )
+      {
+	$row = $this->db->fetch_row($resql);
+	$num = $row[0];
+	$this->db->free($resql);
+      }
+    else
+      {
+	$this->errno = -1034;
+	dolibarr_syslog("Remisecheque::Validate Erreur SELECT ($this->errno)");
+      }
+
+    if ($this->errno === 0)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
+	$sql.= " SET statut=1, number='".($num+1)."'";
+	$sql .= " WHERE rowid = $this->id;";
+	
+	$resql = $this->db->query($sql);
+	if ( $resql )
+	  {
+	    $num = $this->db->affected_rows($resql);
+	    
+	    if ($num <> 1)
+	      {
+		$this->errno = -1029;
+		dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+	      }
+	  }
+	else
+	  {
+	    $this->errno = -1033;
+	    dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
+	  }
+      }
+
+
+    if ($this->errno === 0)
+      {
+	$this->db->commit();
+      }
+    else
+      {
+	$this->db->rollback();
+	dolibarr_syslog("RemiseCheque::Validate ROLLBACK ($this->errno)");
+      }
+    
+    return $this->errno;
+  }
+
   /**
      \brief  Mets a jour le montant total
      \return int, 0 en cas de succes
@@ -274,13 +348,13 @@ class RemiseCheque
 	$resql = $this->db->query($sql);	    
 	if (!$resql)
 	  {		
-	    $this->errno = -31;
+	    $this->errno = -1030;
 	    dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR UPDATE ($this->errno)");
 	  }	    
       }
     else
       {		
-	$this->errno = -33;
+	$this->errno = -1031;
 	dolibarr_syslog("RemiseCheque::UpdateAmount ERREUR SELECT ($this->errno)");
       }	    
 
@@ -314,7 +388,7 @@ class RemiseCheque
 	$resql = $this->db->query($sql);	    
 	if (!$resql)
 	  {		
-	    $this->errno = -20;
+	    $this->errno = -1032;
 	    dolibarr_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
 	  }	    
       }
