@@ -75,12 +75,9 @@ class BordereauChequeBlochet
     $pdf->SetFont('Arial','',10);
     $pdf->Text(91, 16, $langs->transnoentities("Page")." : ".$page);
     
-    $pdf->SetFont('Arial','',10);
-    $pdf->Text(11,$this->tab_top + 6,'Date');
-    
-    $pdf->line(40, $this->tab_top, 40, $this->tab_top + $this->tab_height + 10);
-    $pdf->Text(42, $this->tab_top + 6, $langs->transnoentities("Bank"));
-    
+    $pdf->SetFont('Arial','',8);
+    $pdf->Text(11,$this->tab_top + 6,$langs->transnoentities("Bank"));
+        
     $pdf->line(80, $this->tab_top, 80, $this->tab_top + $this->tab_height + 10);
     $pdf->Text(82, $this->tab_top + 6, $langs->transnoentities("CheckTransmitter"));
     
@@ -93,6 +90,30 @@ class BordereauChequeBlochet
     $pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
 
     $pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
+
+
+    $pdf->Rect(9, 30, 192, 15);
+    $pdf->line(9, 38, 201, 38);
+
+    $pdf->line(40, 30, 40, 45);
+    $pdf->line(55, 38, 55, 45);
+    $pdf->line(70, 38, 70, 45);
+    $pdf->line(102, 38, 102, 45);
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(10, 35, "Titulaire");
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(42, 35, $this->account->proprio);
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(10, 43, "Compte");
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(42, 43, $this->account->code_banque);
+    $pdf->Text(57, 43, $this->account->code_guichet);
+    $pdf->Text(72, 43, $this->account->number);
+    $pdf->Text(104, 43, $this->account->cle_rib);
+
+    $pdf->SetFont('Arial','',10);
   }
   
   
