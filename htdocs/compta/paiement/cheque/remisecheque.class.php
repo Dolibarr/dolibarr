@@ -310,9 +310,7 @@ class RemiseCheque
 
     if ($this->errno === 0)
       {
-	require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
-	$pdf = new BordereauChequeBlochet($db);
-	$pdf->write_pdf_file(DOL_DATA_ROOT.'/compta/bordereau', ($num+1) );
+	$this->GeneratePdf();
       }
 
     if ($this->errno === 0)
@@ -326,6 +324,37 @@ class RemiseCheque
       }
     
     return $this->errno;
+  }
+
+  function GeneratePdf()
+  {
+    require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
+    $pdf = new BordereauChequeBlochet($db);
+
+    $sql = "SELECT b.banque, b.emetteur, b.amount ";
+    $sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
+    $sql .= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+    $sql .= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
+    $sql .= " AND bc.rowid = ".$this->id.";";
+
+    $result = $this->db->query($sql);
+    
+    if ($result)
+      {
+	$i = 0;
+	$var=True;
+	
+	while ( $objp = $this->db->fetch_object($result) )
+	  {	    
+	    $pdf->lines[$i][0] = $objp->banque;
+	    $pdf->lines[$i][1] = $objp->emetteur;
+	    $pdf->lines[$i][2] = price($objp->amount);
+	    $i++;
+	  }
+      }
+    $pdf->number = $this->number;
+
+    $pdf->write_pdf_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number );
   }
 
   /**
