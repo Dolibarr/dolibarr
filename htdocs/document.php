@@ -247,6 +247,18 @@ if ($modulepart)
         $original_file=$conf->don->dir_output.'/'.$original_file;
     }
 
+    // Wrapping pour les remises de cheques
+    if ($modulepart == 'remisecheque')
+    {
+        $user->getrights('banque');
+        if ($user->rights->banque)
+        {
+            $accessallowed=1;
+        }
+	
+        $original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
+    }
+
     // Wrapping pour les exports
     if ($modulepart == 'export')
     {
