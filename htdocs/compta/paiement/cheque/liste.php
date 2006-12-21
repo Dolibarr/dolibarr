@@ -57,26 +57,14 @@ $sortfield=$_GET["sortfield"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.rowid";
+if (! $sortfield) $sortfield="bc.rowid";
   
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
-$sql.= " p.statut, p.num_paiement,";
-$sql.= " c.code as paiement_code,"; 
+$sql = "SELECT bc.rowid, bc.number, ".$db->pdate("bc.date_bordereau") ." as dp, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c,";
-$sql.= " ".MAIN_DB_PREFIX."paiement as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-if ($socid)
-{
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-}
-$sql.= " WHERE p.fk_paiement = c.id AND c.code = 'CHQ'";
-if ($socid)
-{
-    $sql.= " AND f.fk_soc = ".$socid;
-}
+$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
+$sql.= " WHERE bc.fk_bank_account = ba.rowid";
+
 if ($_GET["search_montant"])
 {
   $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
@@ -93,14 +81,12 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
     print_barre_liste($langs->trans("CheckReceipt"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
     print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
     print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
     print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
     print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
@@ -109,7 +95,7 @@ if ($resql)
     // Lignes des champs de filtre
     print '<form method="get" action="liste.php">';
     print '<tr class="liste_titre">';
-    print '<td colspan="4">&nbsp;</td>';
+    print '<td colspan="3">&nbsp;</td>';
     print '<td align="right">';
     print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
     print '</td><td align="right">';
@@ -124,13 +110,10 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print '<td width="40"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
-	
-        print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
+        print '<td width="80"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
 
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
-        //print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-	print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
+
         print '<td>';
         if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
         else print '&nbsp;';
