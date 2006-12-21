@@ -29,8 +29,6 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
-if ($conf->banque->enabled) require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $user->getrights('banque');
 
@@ -39,7 +37,6 @@ $langs->load('banks');
 $langs->load('companies');
 
 $mesg='';
-
 
 /*
  * Actions
@@ -141,7 +138,6 @@ else
   //  $h++;      
 
   dolibarr_fiche_head($head, $hselected, $langs->trans("CheckReceipt"));
-
 
   /*
    * Confirmation de la suppression du bordereau
@@ -306,15 +302,17 @@ else
 	  $i++;
 	  $var=!$var;
 	}
-      print "</table>";
+      print "</table><br />";
     }
   else
     {
       dolibarr_print_error($db);
     }
 
-
-  
+  //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
+  $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remise->number);
+  //$gen = array('Blochet');
+  $html->show_documents("remisecheque","",$dir,'',0,0);
 }
 
 print '</div>';
