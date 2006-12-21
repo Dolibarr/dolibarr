@@ -2641,108 +2641,116 @@ class Form
         // Affiche en-tete tableau
         if ($genallowed)
         {
-            $modellist=array();
-            if ($modulepart == 'propal')
+	  $modellist=array();
+	  if ($modulepart == 'propal')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-                    $model=new ModelePDFPropales();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+		  $model=new ModelePDFPropales();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-			else if ($modulepart == 'commande')
+	  else if ($modulepart == 'commande')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-                    $model=new ModelePDFCommandes();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+		  $model=new ModelePDFCommandes();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'expedition')
+	  elseif ($modulepart == 'expedition')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
-                    $model=new ModelePDFExpedition();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
+		  $model=new ModelePDFExpedition();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'livraison')
+	  elseif ($modulepart == 'livraison')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
-                    $model=new ModelePDFDeliveryOrder();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
+		  $model=new ModelePDFDeliveryOrder();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            else if ($modulepart == 'ficheinter')
+	  else if ($modulepart == 'ficheinter')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
-                    $model=new ModelePDFFicheinter();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
+		  $model=new ModelePDFFicheinter();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'facture')
+	  elseif ($modulepart == 'facture')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-                    $model=new ModelePDFFactures();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+		  $model=new ModelePDFFactures();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            elseif ($modulepart == 'export')
+	  elseif ($modulepart == 'export')
             {
-                if (is_array($genallowed)) $modellist=$genallowed;
-                else
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
                 {
-                    include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-                    $model=new ModeleExports();
-                    $modellist=$model->liste_modeles($this->db);
+		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+		  $model=new ModeleExports();
+		  $modellist=$model->liste_modeles($this->db);
                 }
             }
-            else if ($modulepart == 'commande_fournisseur')
-  	        {
-  	            if (is_array($genallowed)) $modellist=$genallowed;
-  	            else
-  	            {
-  	                include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
-  	                $model=new ModelePDFCommandesSuppliers();
-  	                $modellist=$model->liste_modeles($this->db);
-  	            }
-  	        }
-  	        else if ($modulepart == 'facture_fournisseur')
-  	        {
-  	            if (is_array($genallowed)) $modellist=$genallowed;
-  	            else
-  	            {
-  	                include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
-  	                $model=new ModelePDFFacturesSuppliers();
-  	                $modellist=$model->liste_modeles($this->db);
-  	            }
-  	        }
-            else
+	  else if ($modulepart == 'commande_fournisseur')
+	    {
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
+		{
+		  include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
+		  $model=new ModelePDFCommandesSuppliers();
+		  $modellist=$model->liste_modeles($this->db);
+		}
+	    }
+	  else if ($modulepart == 'facture_fournisseur')
+	    {
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
+		{
+		  include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
+		  $model=new ModelePDFFacturesSuppliers();
+		  $modellist=$model->liste_modeles($this->db);
+		}
+	    }
+	  else if ($modulepart == 'remisecheque')
+	    {
+	      if (is_array($genallowed)) $modellist=$genallowed;
+	      else
+		{
+		  // ??
+		}
+	    }
+	  else
             {
-                dolibarr_print_error($this->db,'Bad value for modulepart');
-                return -1;
+	      dolibarr_print_error($this->db,'Bad value for modulepart');
+	      return -1;
             }
-
-            $headershown=1;
-
-            print '<form action="'.$urlsource.'#builddoc" method="post">';
-            print '<input type="hidden" name="action" value="builddoc">';
-
+	  
+	  $headershown=1;
+	  
+	  print '<form action="'.$urlsource.'#builddoc" method="post">';
+	  print '<input type="hidden" name="action" value="builddoc">';
+	  
             print_titre($langs->trans("Documents"));
             print '<table class="border" width="100%">';
 
