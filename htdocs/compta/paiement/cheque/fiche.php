@@ -51,7 +51,7 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
   $result = $remise->Create($user, $_GET["accountid"]);
   if ($result === 0)
     {      
-      Header("Location: index.php");
+      Header("Location: fiche.php?id=".$remise->id);
       exit;
     }
   else
@@ -67,7 +67,8 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
   $result = $remise->RemoveCheck($_GET["lineid"]);
   if ($result === 0)
     {      
-
+      Header("Location: fiche.php?id=".$remise->id);
+      exit;
     }
   else
     {
@@ -91,6 +92,21 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
     }
 }
 
+if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->banque)
+{
+  $remise = new RemiseCheque($db);
+  $remise->id = $_GET["id"];
+  $result = $remise->Validate($user);
+  if ($result == 0)
+    {
+      Header("Location: fiche.php?id=".$remise->id);
+      exit;
+    }
+  else
+    {
+      $mesg='<div class="error">'.$paiement->error.'</div>';
+    }
+}
 
 /*
  * Visualisation de la fiche
@@ -142,7 +158,7 @@ else
   if ($_GET['action'] == 'valide')
     {
       $facid = $_GET['facid'];
-      $html->form_confirm('fiche.php?id='.$paiement->id.'&amp;facid='.$facid, $langs->trans("ValidatePayment"), 'Etes-vous sûr de vouloir valider ce règlement, auncune modification n\'est possible une fois le règlement validé ?', 'confirm_valide');
+      $html->form_confirm('fiche.php?id='.$remise->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
       print '<br>';
     }
 }
@@ -158,6 +174,12 @@ if ($_GET['action'] == 'new')
 {
   $accounts = array();
   $lines = array();
+
+  print '<table class="border" width="100%">';
+  print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date(time()).'</td></tr>';
+  print '</table><br />';
+
+
   $sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
   $sql.= " b.amount, ba.label, b.emetteur"; 
   $sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
@@ -231,7 +253,7 @@ else
 
   print '</table><br />';
 
-  $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,b.banque,b.emetteur,";
+  $sql = "SELECT b.rowid,".$db->pdate("p.datep")." as dp, p.amount,b.banque,b.emetteur,";
   $sql.= " p.statut, p.num_paiement,";
   $sql.= " c.code as paiement_code,"; 
   $sql.= " ba.rowid as bid, ba.label";
@@ -250,7 +272,6 @@ else
     {
       $num = $db->num_rows($resql);
       $i = 0;
-      $total = 0;      
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
       print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
@@ -258,7 +279,7 @@ else
       print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
       print_liste_field_titre($langs->trans("Bank"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
       print_liste_field_titre($langs->trans("CheckTransmitter"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-      print "</tr>\n";
+      print "<td>&nbsp;</td></tr>\n";
       
       $var=true;
       while ( $objp = $db->fetch_object($resql) )
@@ -272,20 +293,19 @@ else
 	  print '<td align="right">'.price($objp->amount).'</td>';
 	  print '<td>'.stripslashes($objp->banque).'</td>';  
 	  print '<td>'.stripslashes($objp->emetteur).'</td>';
+	  if($remise->statut == 0)
+	    {
+	      print '<td align="right"><a href="fiche.php?id='.$remise->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+	    }
+	  else
+	    {
+	      print '<td>&nbsp;</td>';
+	    }
+
 	  print '</tr>';
-	  $total += $objp->amount;
 	  $i++;
 	  $var=!$var;
 	}
-
-      print "<tr $bc[$var]>";
-      print '<td align="center">&nbsp;</td>';
-      print '<td align="right">'.$langs->trans("Total").'</td>';
-      print '<td align="right">'.price($total).'</td>';
-      print '<td>&nbsp;</td>';  
-      print '<td>&nbsp;</td>';
-      print '</tr>';
-
       print "</table>";
     }
   else
