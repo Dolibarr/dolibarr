@@ -467,7 +467,6 @@ alter table llx_c_pays modify libelle varchar(50) NOT NULL;
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
 
 
-alter table llx_product_price add price_level tinyint(4) NULL DEFAULT 1;
 
 drop table if exists llx_sqltables;
 
@@ -629,5 +628,6 @@ create table llx_bordereau_cheque
   statut            tinyint(1) UNSIGNED DEFAULT 0
 )type=innodb;
 
+alter table llx_product_price add price_level tinyint(4) NULL DEFAULT 1;
 alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after price;
-alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;>>>>>>> 1.190
+alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;
