@@ -328,10 +328,18 @@ class RemiseCheque
     return $this->errno;
   }
 
-  function GeneratePdf()
+  /**
+     \brief  Génère le fichier PDF
+     \param model Nom du modele
+     \return int, 0 en cas de succes
+     \todo Finir la gestion multi modèle
+   */
+
+  function GeneratePdf($model='Blochet')
   {
     require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
     require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
+
     $pdf = new BordereauChequeBlochet($db);
 
     $sql = "SELECT b.banque, b.emetteur, b.amount ";
