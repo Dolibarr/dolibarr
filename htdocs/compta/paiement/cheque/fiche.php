@@ -239,10 +239,20 @@ if ($_GET['action'] == 'new')
 }
 else
 {
+
+  $remise->load_previous_next_id();
+  $previous_id = $remise->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->previous_id.'">'.img_previous().'</a>':'';
+  $next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
+
+
+
   print '<table class="border" width="100%">';
-  print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="70%">'.$remise->number.'</td></tr>';
-  print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
-  print '<tr><td width="30%">'.$langs->trans('Account').'</td><td width="70%">';
+  print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="50%">'.$remise->number.'</td><td width="20%" align="right">';
+  print $previous_id.' '.$next_id;
+  print "</td></tr>\n";
+
+  print '<tr><td width="30%">'.$langs->trans('Date').'</td><td colspan="2" width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
+  print '<tr><td width="30%">'.$langs->trans('Account').'</td><td colspan="2" width="70%">';
   print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$remise->account_id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$remise->account_label.'</a>';
 
   print '</td></tr>';

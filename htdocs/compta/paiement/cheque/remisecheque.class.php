@@ -50,6 +50,8 @@ class RemiseCheque
   function RemiseCheque($DB)
     {
       $this->db = $DB;
+      $this->next_id = 0;
+      $this->previous_id = 0;
     }  
 
   /**
@@ -435,5 +437,39 @@ class RemiseCheque
       }
     return 0;
   }
+  /**
+     \brief      Charge les propriétés ref_previous et ref_next
+     \return     int   <0 si ko, 0 si ok
+   */
+  function load_previous_next_id()
+  {
+    $this->errno = 0;
+
+    $sql = "SELECT MAX(rowid)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+    $sql.= " WHERE rowid < '".$this->id."'";
+
+    $result = $this->db->query($sql) ;
+    if (! $result)
+      {
+	$this->errno = -1035;
+      }
+    $row = $this->db->fetch_row($result);
+    $this->previous_id = $row[0];
+    
+    $sql = "SELECT MIN(rowid)";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque";
+    $sql.= " WHERE rowid > '".$this->id."'";
+    $result = $this->db->query($sql) ;
+    if (! $result)
+      {
+	$this->errno = -1035;
+      }
+    $row = $this->db->fetch_row($result);
+    $this->next_id = $row[0];
+    
+    return $this->errno;
+  }
+
 }
 ?>
