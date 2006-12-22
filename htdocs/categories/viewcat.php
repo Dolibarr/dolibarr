@@ -163,13 +163,13 @@ else
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td nowrap=\"nowrap\">";
+			print '<td nowrap="nowrap" valign="top">';
 			if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
         	else print img_object($langs->trans("ShowProduct"),"product");
 			print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
-			print "\t\t<td>".$prod->libelle."</td>\n";
-			print "\t\t<td>".$prod->description."</td>\n";
-			print "\t</tr>\n";
+			print '<td valign="top">'.$prod->libelle."</td>\n";
+			print '<td valign="top">'.$prod->description."</td>\n";
+			print "</tr>\n";
 		}
 	}
 	else
