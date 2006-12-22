@@ -47,12 +47,12 @@ print_fiche_titre($langs->trans("VATIntraCheckableOnEUSite"),'','setup');
 if (! $_REQUEST["countryCode"])
 {
 	print '<br>';
-	print $langs->transnoentities("ErrorFieldRequired",$langs->trans("Country")).'<br>';
+	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("Country")).'</font><br>';
 }
 elseif (! $_REQUEST["vatNumber"])
 {
 	print '<br>';
-	print $langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'<br>';
+	print '<font class="error">'.$langs->transnoentities("ErrorFieldRequired",$langs->trans("VATIntraShort")).'</font><br>';
 }
 else
 {
@@ -131,7 +131,7 @@ else
 print '<br>';
 print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$langs->trans("VATIntraCheckURL")).'<br>';
 print '<br>';
-print '<center><input type="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></center>';
+print '<center><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></center>';
 
 
 
