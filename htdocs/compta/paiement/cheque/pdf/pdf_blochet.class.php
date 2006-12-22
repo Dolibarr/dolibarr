@@ -66,14 +66,17 @@ class BordereauChequeBlochet
     $pdf->SetFont('Arial','B',10);
     $pdf->Text(11, 10, $title);
 
-    $pdf->SetFont('Arial','B',10);
-    $pdf->Text(91, 10, $langs->transnoentities("Numero")." : ".$this->number);
-    
-    $pdf->SetFont('Arial','B',10);
-    $pdf->Text(11, 16, $langs->transnoentities("Date")." : ".dolibarr_print_date(time(),"%d %b %Y"));
-    
     $pdf->SetFont('Arial','',10);
-    $pdf->Text(91, 16, $langs->transnoentities("Page")." : ".$page);
+    $pdf->Text(10, 19, $langs->transnoentities("Numero"));
+    
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(42, 19, $this->number);
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(10, 27, $langs->transnoentities("Date") );
+    
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(42, 27, dolibarr_print_date(time(),"%d %b %Y"));
     
     $pdf->SetFont('Arial','',8);
     $pdf->Text(11,$this->tab_top + 6,$langs->transnoentities("Bank"));
@@ -92,13 +95,17 @@ class BordereauChequeBlochet
     $pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
 
 
-    $pdf->Rect(9, 30, 192, 15);
-    $pdf->line(9, 38, 201, 38);
+    $pdf->Rect(9, 14, 192, 31);
+    $pdf->line(9, 22, 112, 22);
+    $pdf->line(9, 30, 112, 30);
+    $pdf->line(9, 38, 112, 38);
 
-    $pdf->line(40, 30, 40, 45);
+    $pdf->line(40, 14, 40, 45);
     $pdf->line(55, 38, 55, 45);
     $pdf->line(70, 38, 70, 45);
     $pdf->line(102, 38, 102, 45);
+    $pdf->line(112, 14, 112, 45);
+    //    $pdf->line(132, 30, 132, 45);
 
     $pdf->SetFont('Arial','',10);
     $pdf->Text(10, 35, "Titulaire");
@@ -112,6 +119,14 @@ class BordereauChequeBlochet
     $pdf->Text(57, 43, $this->account->code_guichet);
     $pdf->Text(72, 43, $this->account->number);
     $pdf->Text(104, 43, $this->account->cle_rib);
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(114, 19, "Signature");
+
+    $pdf->Rect(9, 47, 192, 7);
+    $pdf->line(55, 47, 55, 54);
+    $pdf->line(140, 47, 140, 54);
+    $pdf->line(180, 47, 180, 54);
 
     $pdf->SetFont('Arial','',10);
   }

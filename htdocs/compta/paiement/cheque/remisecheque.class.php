@@ -290,7 +290,7 @@ class RemiseCheque
       {
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 	$sql.= " SET statut=1, number='".($num+1)."'";
-	$sql .= " WHERE rowid = $this->id;";
+	$sql .= " WHERE rowid = $this->id AND statut=0;";
 	
 	$resql = $this->db->query($sql);
 	if ( $resql )
@@ -334,7 +334,6 @@ class RemiseCheque
      \return int, 0 en cas de succes
      \todo Finir la gestion multi modèle
    */
-
   function GeneratePdf($model='Blochet')
   {
     require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
@@ -381,20 +380,24 @@ class RemiseCheque
   {
     $this->errno = 0;
     $this->db->begin();
+    $total = 0;
 
-    $sql = "SELECT sum(amount) ";
+    $sql = "SELECT amount ";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_bordereau = $this->id;";
 		
     $resql = $this->db->query($sql);
     if ( $resql )
       {
-	$row = $this->db->fetch_row($resql);
-	$total = $row[0];
-
+	while ( $row = $this->db->fetch_row($resql) )
+	  {
+	    $total += $row[0];
+	  }
+	
+	$this->db->free($resql);
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
-	$sql.= " SET amount='$total'";
+	$sql.= " SET amount='".ereg_replace(",",".",$total)."'";
 	$sql.= " WHERE rowid='".$this->id."';";
 	$resql = $this->db->query($sql);	    
 	if (!$resql)
@@ -437,8 +440,12 @@ class RemiseCheque
 	$sql.= " SET fk_bordereau = 0 ";
 	$sql.= " WHERE rowid = '".$account_id."' AND fk_bordereau='".$this->id."';";
 	$resql = $this->db->query($sql);	    
-	if (!$resql)
-	  {		
+	if ($resql)
+	  {
+	    $this->UpdateAmount();
+	  }
+	else	
+	  {
 	    $this->errno = -1032;
 	    dolibarr_syslog("RemiseCheque::RemoveCheck ERREUR UPDATE ($this->errno)");
 	  }	    
