@@ -76,7 +76,7 @@ class BordereauChequeBlochet
     $pdf->Text(10, 27, $langs->transnoentities("Date") );
     
     $pdf->SetFont('Arial','',12);
-    $pdf->Text(42, 27, dolibarr_print_date(time(),"%d %b %Y"));
+    $pdf->Text(42, 27, dolibarr_print_date($this->date,"%d %b %Y"));
     
     $pdf->SetFont('Arial','',8);
     $pdf->Text(11,$this->tab_top + 6,$langs->transnoentities("Bank"));
@@ -85,15 +85,13 @@ class BordereauChequeBlochet
     $pdf->Text(82, $this->tab_top + 6, $langs->transnoentities("CheckTransmitter"));
     
     $pdf->line(180, $this->tab_top, 180, $this->tab_top + $this->tab_height + 10);
-
-    
+   
     $pdf->SetXY (180, $this->tab_top);
     $pdf->MultiCell(20, 10, $langs->transnoentities("Amount"), 0, 'R');
     
     $pdf->line(9, $this->tab_top + 10, 201, $this->tab_top + 10 );
 
     $pdf->Rect(9, $this->tab_top, 192, $this->tab_height + 10);
-
 
     $pdf->Rect(9, 14, 192, 31);
     $pdf->line(9, 22, 112, 22);
@@ -105,7 +103,6 @@ class BordereauChequeBlochet
     $pdf->line(70, 38, 70, 45);
     $pdf->line(102, 38, 102, 45);
     $pdf->line(112, 14, 112, 45);
-    //    $pdf->line(132, 30, 132, 45);
 
     $pdf->SetFont('Arial','',10);
     $pdf->Text(10, 35, "Titulaire");
@@ -126,7 +123,21 @@ class BordereauChequeBlochet
     $pdf->Rect(9, 47, 192, 7);
     $pdf->line(55, 47, 55, 54);
     $pdf->line(140, 47, 140, 54);
-    $pdf->line(180, 47, 180, 54);
+    $pdf->line(170, 47, 170, 54);
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(10, 52, "Nombre de chèque");
+    $pdf->SetFont('Arial','',12);
+    $pdf->Text(57, 52, $this->nbcheque);
+
+
+    $pdf->SetFont('Arial','',10);
+    $pdf->Text(148, 52, "Total");
+    $pdf->SetFont('Arial','',12);
+
+    $pdf->SetXY (170, 47);
+    $pdf->MultiCell(31, 7, price($this->amount), 0, 'C', 0);
+
 
     $pdf->SetFont('Arial','',10);
   }
@@ -140,47 +151,18 @@ class BordereauChequeBlochet
     $yp = 0;
     for ($j = 0 ; $j < sizeof($this->lines) ; $j++)
       {
-	$i = $j;
-	if ($oldprowid <> $this->lines[$j][7])
-	  {
-	    if ($yp > 200)
-	      {
-		$page++;
-		$pdf->AddPage();
-		$this->Header($pdf, $page, $pages);
-		$pdf->SetFont('Arial','', 9);
-		$yp = 0;
-	      }
-	    
-	    
-	    $pdf->SetXY (10, $this->tab_top + 10 + $yp);
-	    $pdf->MultiCell(30, $this->line_height, $this->lines[$j][0], 0, 'J', 1);
-	    
-	    $pdf->SetXY (40, $this->tab_top + 10 + $yp);
-	    $pdf->MultiCell(80, $this->line_height, $this->lines[$j][1].' '.$this->lines[$j][3], 0, 'J', 1);
-	    
-	    $pdf->SetXY (120, $this->tab_top + 10 + $yp);
-	    $pdf->MultiCell(40, $this->line_height, '', 0, 'J', 1);
-	    
-	    $pdf->SetXY (160, $this->tab_top + 10 + $yp);
-	    $pdf->MultiCell(40, $this->line_height, $this->lines[$j][4], 0, 'R', 1);
-	    $yp = $yp + 5;
-	  }
-	
-	$pdf->SetXY (80, $this->tab_top + 10 + $yp);
+	$pdf->SetXY (1, $this->tab_top + 10 + $yp);
+	$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
+
+	$pdf->SetXY (10, $this->tab_top + 10 + $yp);
 	$pdf->MultiCell(40, $this->line_height, $this->lines[$j][0], 0, 'J', 0);
 	
-	$pdf->SetXY (120, $this->tab_top + 10 + $yp);
-	$pdf->MultiCell(40, $this->line_height, $this->lines[$j][5], 0, 'J', 0);
+	$pdf->SetXY (80, $this->tab_top + 10 + $yp);
+	$pdf->MultiCell(40, $this->line_height, $this->lines[$j][1], 0, 'J', 0);
 	
 	$pdf->SetXY (160, $this->tab_top + 10 + $yp);
 	$pdf->MultiCell(40, $this->line_height, $this->lines[$j][2], 0, 'R', 0);
-	$yp = $yp + 5;
-	
-	if ($oldprowid <> $this->lines[$j][7])
-	  {
-	    $oldprowid = $this->lines[$j][7];
-	  }		
+	$yp = $yp + 5;	
       }
   }
   /**
