@@ -37,5 +37,6 @@ EnhancedValueOfWarehouses=Valorisation des stocks
 UserWarehouseAutoCreate=Créer un stock automatiquement à la création d'un utilisateur
 QtyDispatched=Quantité ventilée
 OrderDispatch=Ventilation commande
-DeStockReStockOnBill=Décrémente les stocks sur les factures et les incrémente sur les avoirs (incompatibles avec le destockage sur les expéditions)
+DeStockReStockOnBill=Décrémente/Incrémente les stocks sur les factures/avoirs (incompatibles avec le destockage sur les expéditions)
 StockAvailable=Stock disponible
+StockInstant=Stock instantanné
