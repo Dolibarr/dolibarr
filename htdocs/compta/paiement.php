@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
+ * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,10 +22,10 @@
  */
 
 /**
-        \file       htdocs/compta/paiement.php
-        \ingroup    compta
-        \brief      Page de création d'un paiement
-        \version    $Revision$
+   \file       htdocs/compta/paiement.php
+   \ingroup    compta
+   \brief      Page de création d'un paiement
+   \version    $Revision$
 */
 
 include_once('./pre.inc.php');
@@ -44,8 +44,6 @@ $sortfield = isset($_GET['sortfield'])?$_GET['sortfield']:$_POST['sortfield'];
 $sortorder = isset($_GET['sortorder'])?$_GET['sortorder']:$_POST['sortorder'];
 $page=isset($_GET['page'])?$_GET['page']:$_POST['page'];
 
-
-
 $amounts=array();
 $amountsresttopay=array();
 $addwarning=0;
@@ -55,59 +53,59 @@ $addwarning=0;
 */
 if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement')
 {
-	$error = 0;
+  $error = 0;
 
-	$datepaye = $db->idate(mktime(12, 0 , 0,
-			$_POST['remonth'],
-			$_POST['reday'],
-			$_POST['reyear']));
-	$paiement_id = 0;
-
-	// Verifie si des paiements sont supérieurs au montant facture
-	foreach ($_POST as $key => $value)
+  $datepaye = $db->idate(mktime(12, 0 , 0,
+				$_POST['remonth'],
+				$_POST['reday'],
+				$_POST['reyear']));
+  $paiement_id = 0;
+  
+  // Verifie si des paiements sont supérieurs au montant facture
+  foreach ($_POST as $key => $value)
+    {
+      if (substr($key,0,7) == 'amount_')
 	{
-		if (substr($key,0,7) == 'amount_')
-		{
-			$cursorfacid = substr($key,7);
-			$amounts[$cursorfacid] = $_POST[$key];
-			$totalpaiement = $totalpaiement + price2num($amounts[$cursorfacid]);
-			$tmpfacture=new Facture($db);
-			$tmpfacture->fetch($cursorfacid);
-			$amountsresttopay[$cursorfacid]=($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
-			if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
-			{
-				$addwarning=1;
-				$formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est supérieur au reste à payer.';
-				$formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser à créer un avoir du trop perçu lors de la fermeture de chacune des factures surpayés.';
-			}
-
-			$formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
-		}
+	  $cursorfacid = substr($key,7);
+	  $amounts[$cursorfacid] = $_POST[$key];
+	  $totalpaiement = $totalpaiement + price2num($amounts[$cursorfacid]);
+	  $tmpfacture=new Facture($db);
+	  $tmpfacture->fetch($cursorfacid);
+	  $amountsresttopay[$cursorfacid]=($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
+	  if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
+	    {
+	      $addwarning=1;
+	      $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est supérieur au reste à payer.';
+	      $formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser à créer un avoir du trop perçu lors de la fermeture de chacune des factures surpayés.';
+	    }
+	  
+	  $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
 	}
-
-	// Effectue les vérifications des parametres
-	if ($_POST['paiementid'] <= 0)
+    }
+  
+  // Effectue les vérifications des parametres
+  if ($_POST['paiementid'] <= 0)
+    {
+      $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
+      $error++;
+    }
+  
+  if ($conf->banque->enabled)
+    {
+      // Si module bank actif, un compte est obligatoire lors de la saisie
+      // d'un paiement
+      if (! $_POST['accountid'])
 	{
-		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
-		$error++;
+	  $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
+	  $error++;
 	}
-
-	if ($conf->banque->enabled)
-	{
-		// Si module bank actif, un compte est obligatoire lors de la saisie
-		// d'un paiement
-		if (! $_POST['accountid'])
-		{
-			$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('AccountToCredit')).'</div>';
-			$error++;
-		}
-	}
-
-	if ($totalpaiement <= 0)
-	{
-		$fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('Amount')).'</div>';
-		$error++;
-	}
+    }
+  
+  if ($totalpaiement <= 0)
+    {
+      $fiche_erreur_message = '<div class="error">'.$langs->transnoentities('ErrorFieldRequired',$langs->trans('Amount')).'</div>';
+      $error++;
+    }
 }
 
 /*
@@ -115,12 +113,12 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 */
 if ($_POST['action'] == 'add_paiement')
 {
-	if ($error)
-	{
-		$_POST['action']='';
-		$_GET['action'] = 'create';
-	}
-	// Le reste propre a cette action s'affiche en bas de page.
+  if ($error)
+    {
+      $_POST['action']='';
+      $_GET['action'] = 'create';
+    }
+  // Le reste propre a cette action s'affiche en bas de page.
 }
 
 /*
@@ -128,84 +126,86 @@ if ($_POST['action'] == 'add_paiement')
 */
 if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
-	if (! $error)
+  if (! $error)
+    {
+      $db->begin();
+      
+      // Creation de la ligne paiement
+      $paiement = new Paiement($db);
+      $paiement->datepaye     = $datepaye;
+      $paiement->amounts      = $amounts;   // Tableau de montant
+      $paiement->paiementid   = $_POST['paiementid'];
+      $paiement->num_paiement = $_POST['num_paiement'];
+      $paiement->note         = $_POST['comment'];
+      
+      $paiement_id = $paiement->create($user);
+      
+      if ($paiement_id > 0)
 	{
-		$db->begin();
-
-		// Creation de la ligne paiement
-		$paiement = new Paiement($db);
-		$paiement->datepaye     = $datepaye;
-		$paiement->amounts      = $amounts;   // Tableau de montant
-		$paiement->paiementid   = $_POST['paiementid'];
-		$paiement->num_paiement = $_POST['num_paiement'];
-		$paiement->note         = $_POST['comment'];
-
-		$paiement_id = $paiement->create($user);
-
-		if ($paiement_id > 0)
+	  if ($conf->banque->enabled)
+	    {
+	      // Insertion dans llx_bank
+	      $label = "(CustomerInvoicePayment)";
+	      $acc = new Account($db, $_POST['accountid']);
+	      //paiementid contient "CHQ ou VIR par exemple"
+	      $bank_line_id = $acc->addline($paiement->datepaye,
+					    $paiement->paiementid,
+					    $label,
+					    $totalpaiement,
+					    $paiement->num_paiement,
+					    '',
+					    $user,
+					    $_POST['chqemetteur'],
+					    $_POST['chqbank']);
+	      
+	      // Mise a jour fk_bank dans llx_paiement.
+	      // On connait ainsi le paiement qui a généré l'écriture bancaire
+	      if ($bank_line_id > 0)
 		{
-			if ($conf->banque->enabled)
-			{
-				// Insertion dans llx_bank
-				$label = "(CustomerInvoicePayment)";
-				$acc = new Account($db, $_POST['accountid']);
-				//paiementid contient "CHQ ou VIR par exemple"
-				$bank_line_id = $acc->addline($paiement->datepaye,
-					$paiement->paiementid,
-					$label,
-					$totalpaiement,
-					$paiement->num_paiement,
-					'',
-					$user);
-
-				// Mise a jour fk_bank dans llx_paiement.
-				// On connait ainsi le paiement qui a généré l'écriture bancaire
-				if ($bank_line_id > 0)
-				{
-					$paiement->update_fk_bank($bank_line_id);
-					// Mise a jour liens (pour chaque facture concernées par le paiement)
-					foreach ($paiement->amounts as $key => $value)
-					{
-						$facid = $key;
-						$fac = new Facture($db);
-						$fac->fetch($facid);
-						$fac->fetch_client();
-						$acc->add_url_line($bank_line_id,
-							$paiement_id,
-							DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-							'(paiement)',
-							'payment');
-						$acc->add_url_line($bank_line_id,
-							$fac->client->id,
-							DOL_URL_ROOT.'/compta/fiche.php?socid=',
-							$fac->client->nom,
-							'company');
-					}
-				}
-				else
-				{
-					$error++;
-				}
-			}
+		  $paiement->update_fk_bank($bank_line_id);
+		  // Mise a jour liens (pour chaque facture concernées par le paiement)
+		  foreach ($paiement->amounts as $key => $value)
+		    {
+		      $facid = $key;
+		      $fac = new Facture($db);
+		      $fac->fetch($facid);
+		      $fac->fetch_client();
+		      $acc->add_url_line($bank_line_id,
+					 $paiement_id,
+					 DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+					 '(paiement)',
+					 'payment');
+		      $acc->add_url_line($bank_line_id,
+					 $fac->client->id,
+					 DOL_URL_ROOT.'/compta/fiche.php?socid=',
+					 $fac->client->nom,
+					 'company');
+		    }
 		}
-		else
+	      else
 		{
-			$this->error=$paiement->error;
-			$error++;
+		  $error++;
 		}
-
-		if ($error == 0)
-		{
-			$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-			$db->commit();
-			Header('Location: '.$loc);
-			exit;
-		}
-		else
-		{
-			$db->rollback();
-		}
+	    }
 	}
+      else
+	{
+	  $this->error=$paiement->error;
+	  $error++;
+	}
+      
+      if ($error == 0)
+	{
+	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+	  $db->commit();
+	  Header('Location: '.$loc);
+	  exit;
+	}
+      else
+	{
+	  $db->rollback();
+	}
+    }
 }
 
 // Sécurité accés client
@@ -276,29 +276,38 @@ if ($_GET['action'] == 'create' || $_POST['action'] == 'confirm_paiement' || $_P
 		$html->select_types_paiements(empty($_POST['paiementid'])?'':$_POST['paiementid'],'paiementid');
 		print "</td>\n";
 
-		print '<td rowspan="3" valign="top">';
+		print '<td rowspan="5" valign="top">';
 		print '<textarea name="comment" wrap="soft" cols="60" rows="'.ROWS_4.'">'.(empty($_POST['comment'])?'':$_POST['comment']).'</textarea></td></tr>';
+
+		print '<tr>';
+		if ($conf->banque->enabled)
+		{
+		  if ($facture->type != 2) print '<td>'.$langs->trans('AccountToCredit').'</td>';
+		  if ($facture->type == 2) print '<td>'.$langs->trans('AccountToDebit').'</td>';
+		  print '<td>';
+		  $html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
+		  print '</td>';
+		}
+		else
+		{
+		  print '<td colspan="2">&nbsp;</td>';
+		}
+		print "</tr>\n";
 
 		print '<tr><td>'.$langs->trans('Numero');
 		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
 		print '</td>';
 		print '<td><input name="num_paiement" type="text" value="'.(empty($_POST['num_paiement'])?'':$_POST['num_paiement']).'"></td></tr>';
 
-		print '<tr>';
-		if ($conf->banque->enabled)
-		{
-			if ($facture->type != 2) print '<td>'.$langs->trans('AccountToCredit').'</td>';
-			if ($facture->type == 2) print '<td>'.$langs->trans('AccountToDebit').'</td>';
-			print '<td>';
-			$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
-			print '</td>';
-		}
-		else
-		{
-			print '<td colspan="2">&nbsp;</td>';
-		}
-		print "</tr>\n";
+		print '<tr><td>'.$langs->trans('CheckTransmitter');
+		print ' <em>(Emetteur du chèque)</em>';	// \todo a traduire
+		print '</td>';
+		print '<td><input name="chqemetteur" size="30" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
 
+		print '<tr><td>'.$langs->trans('Bank');
+		print ' <em>(Banque du chèque)</em>';	// \todo a traduire
+		print '</td>';
+		print '<td><input name="chqbank" size="30" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
 
 		/*
 		 * Liste factures impayées
