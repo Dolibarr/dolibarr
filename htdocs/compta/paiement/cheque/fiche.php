@@ -20,10 +20,9 @@
  */
 
 /**
-   \file       htdocs/compta/paiement/fiche.php
+   \file       htdocs/compta/paiement/cheque/fiche.php
    \ingroup    facture
-   \brief      Onglet paiement d'un paiement client
-   \remarks	Fichier presque identique a fournisseur/paiement/fiche.php
+   \brief      Onglet paiement cheque
    \version    $Revision$
 */
 
@@ -220,9 +219,9 @@ if ($_GET['action'] == 'new')
       
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td width="10%">'.$langs->trans("Date")."</td>\n";
-      print '<td width="50%">'.$langs->trans("CheckTransmitter")."</td>\n";
-      print '<td width="40%">'.$langs->trans("Bank")."</td>\n";
+      print '<td>'.$langs->trans("Date")."</td>\n";
+      print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
+      print '<td>'.$langs->trans("Bank")."</td>\n";
       print '<td align="right">'.$langs->trans("Amount")."</td>\n";
       print "</tr>\n";
       
@@ -236,7 +235,7 @@ if ($_GET['action'] == 'new')
 	  $accounts[$objp->bid] += 1;
 
 	  print "<tr $bc[$var]>";	  
-	  print '<td>'.dolibarr_print_date($value["date"]).'</td>';
+	  print '<td width="120">'.dolibarr_print_date($value["date"]).'</td>';
 	  print '<td>'.stripslashes($value["emetteur"])."</td>\n";
 	  print '<td>'.stripslashes($value["banque"])."</td>\n";
 	  print '<td align="right">'.price($value["amount"]).'</td>';
@@ -284,7 +283,7 @@ else
   $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
 
   $resql = $db->query($sql);
- 
+   
   if ($resql)
     {
       $num = $db->num_rows($resql);
@@ -295,7 +294,7 @@ else
       print '<td align="right">'.$langs->trans("Amount").'</td>';
       print "<td>&nbsp;</td></tr>\n";
       $i=1;
-      $var=true;
+      $var=false;
       while ( $objp = $db->fetch_object($resql) )
 	{
 	  $account_id = $objp->bid;
