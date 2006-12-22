@@ -357,7 +357,6 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 
 insert into llx_c_pays (rowid,code,libelle) values (30, 'SG', 'Singapoure');
 
-
 alter table llx_bank_account add column ref varchar(12) NOT NULL;
 alter table llx_bank_account add column url varchar(128);
 alter table llx_bank_account add column currency_code varchar(2) NOT NULL;
@@ -616,5 +615,19 @@ create table llx_product_subproduct
   UNIQUE(fk_product, fk_product_subproduct)
 )type=innodb;
 
+create table llx_bordereau_cheque
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  datec             datetime,
+  date_bordereau    date,
+  number            mediumint ZEROFILL,
+  amount            float(12,2),
+  nbcheque          smallint UNSIGNED DEFAULT 0,
+  fk_bank_account   integer,
+  fk_user_author    integer,
+  note              text,
+  statut            tinyint(1) UNSIGNED DEFAULT 0
+)type=innodb;
+
 alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after price;
-alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;
+alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;>>>>>>> 1.190
