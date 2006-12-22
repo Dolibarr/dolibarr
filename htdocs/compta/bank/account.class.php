@@ -190,7 +190,7 @@ class Account
      *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
      *    \return     int     rowid de l'entrée ajoutée, <0 si erreur
      */
-    function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='')
+    function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='',$emetteur='',$banque='')
     {
         dolibarr_syslog("Account::addline: date=$date, oper=$oper, label=$label, amount=$amount, num_chq=$num_chq, categorie=$categorie, user=$user");
         if ($this->rowid)
@@ -224,8 +224,10 @@ class Account
 
             $datev = $date;
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type)";
-            $sql.= " VALUES (now(), '".$date."', '$datev', '".addslashes($label)."', '" . price2num($amount) . "', '".$user->id."' ,'$num_chq', '".$this->rowid."', '$oper')";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
+            $sql.= " VALUES (now(),'".$date."','$datev','".addslashes($label)."','" . price2num($amount)."','".$user->id."','$num_chq','".$this->rowid."', '$oper'";
+	    $sql.= ",'".addslashes(trim($emetteur))."'";
+	    $sql.= ",'".addslashes(trim($banque))."');";
 
             if ($this->db->query($sql))
             {
