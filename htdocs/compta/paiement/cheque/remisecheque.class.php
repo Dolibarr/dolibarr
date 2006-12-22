@@ -60,7 +60,7 @@ class RemiseCheque
   */
   function Fetch($id)
   {
-    $sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut";
+    $sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
     $sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
     $sql.=",ba.label as account_label";
     $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
@@ -79,6 +79,7 @@ class RemiseCheque
 	    $this->account_id     = $obj->fk_bank_account;
 	    $this->account_label  = $obj->account_label;
 	    $this->author_id      = $obj->fk_user_author;
+	    $this->nbcheque       = $obj->nbcheque;
 	    $this->statut         = $obj->statut;
 
 	    if ($this->statut == 0)
@@ -146,7 +147,8 @@ class RemiseCheque
 	    $sql = "SELECT b.rowid";
 	    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	    $sql.= " WHERE b.fk_type = 'CHQ' AND b.amount > 0";
-	    $sql.= " AND b.fk_bordereau = 0 AND b.fk_account='$account_id';";
+	    $sql.= " AND b.fk_bordereau = 0 AND b.fk_account='$account_id'";
+	    $sql.= " LIMIT 40;"; // On limite a 40 pour ne générer des PDF que d'une page
 
 	    $resql = $this->db->query($sql);
 
@@ -297,7 +299,11 @@ class RemiseCheque
 	  {
 	    $num = $this->db->affected_rows($resql);
 	    
-	    if ($num <> 1)
+	    if ($num == 1)
+	      {
+		$this->statut = 1;
+	      }
+	    else
 	      {
 		$this->errno = -1029;
 		dolibarr_syslog("Remisecheque::Validate Erreur UPDATE ($this->errno)");
@@ -339,21 +345,22 @@ class RemiseCheque
     require_once(DOL_DOCUMENT_ROOT ."/compta/bank/account.class.php");
     require_once(DOL_DOCUMENT_ROOT ."/compta/paiement/cheque/pdf/pdf_blochet.class.php");
 
+    $result = $this->Fetch($this->id);
+
     $pdf = new BordereauChequeBlochet($db);
 
     $sql = "SELECT b.banque, b.emetteur, b.amount ";
-    $sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
-    $sql .= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-    $sql .= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
-    $sql .= " AND bc.rowid = ".$this->id.";";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
+    $sql.= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+    $sql.= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
+    $sql.= " AND bc.rowid = ".$this->id;
+    $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
     $result = $this->db->query($sql);
     
     if ($result)
       {
 	$i = 0;
-	$var=True;
-	
 	while ( $objp = $this->db->fetch_object($result) )
 	  {	    
 	    $pdf->lines[$i][0] = $objp->banque;
@@ -362,7 +369,10 @@ class RemiseCheque
 	    $i++;
 	  }
       }
+    $pdf->nbcheque = $this->nbcheque;
     $pdf->number = $this->number;
+    $pdf->amount = $this->amount;
+    $pdf->date   = $this->date_bordereau;
 
     $account = new Account($this->db);
     $account->fetch($this->account_id);
@@ -381,7 +391,7 @@ class RemiseCheque
     $this->errno = 0;
     $this->db->begin();
     $total = 0;
-
+    $nb = 0;
     $sql = "SELECT amount ";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank";
     $sql.= " WHERE fk_bordereau = $this->id;";
@@ -392,12 +402,14 @@ class RemiseCheque
 	while ( $row = $this->db->fetch_row($resql) )
 	  {
 	    $total += $row[0];
+	    $nb++;
 	  }
 	
 	$this->db->free($resql);
 
 	$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 	$sql.= " SET amount='".ereg_replace(",",".",$total)."'";
+	$sql.= " ,nbcheque=$nb";
 	$sql.= " WHERE rowid='".$this->id."';";
 	$resql = $this->db->query($sql);	    
 	if (!$resql)
