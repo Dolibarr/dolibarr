@@ -46,6 +46,7 @@ SystemInfo=Informations système
 SystemTools=Outils système
 SystemToolsArea=Zone des outils système
 NewBackup=Nouveau backup
+GenerateBackup=Générer sauvegarde
 Backup=Backup
 Restore=Restauration
 RunCommandSummary=Le backup sera exécuté par la commande suivante

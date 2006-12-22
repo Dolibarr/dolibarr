@@ -59,6 +59,7 @@ PurgeRunNow=Run purge now
 PurgeNothingToDelete=no directory to delete.
 PurgeNDirectoriesDeleted=<b>%s</b> files or directories deleted.
 NewBackup=New backup
+GenerateBackup=Generate backup
 Backup=Backup
 Restore=Restore
 RunCommandSummary=Backup will be done through the following command

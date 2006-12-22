@@ -542,7 +542,7 @@ print "\n";
 
 
 <center>
-    <input type="submit" class="button" value="<?php echo $langs->trans("NewBackup") ?>" id="buttonGo" /><br><br>
+    <input type="submit" class="button" value="<?php echo $langs->trans("GenerateBackup") ?>" id="buttonGo" /><br><br>
 </center>
 
 
