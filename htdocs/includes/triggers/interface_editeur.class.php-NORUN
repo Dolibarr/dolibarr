@@ -111,6 +111,7 @@ class InterfaceEditeur
 	$sql = "SELECT fd.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."product as p,".MAIN_DB_PREFIX."facturedet as fd";
 	$sql.= " WHERE fd.fk_product = p.rowid";
+	$sql.= " AND fd.special_code = 0";
 	$sql.= " AND fd.fk_facture = '".$object->fk_facture."'";
 	$sql.= " ORDER BY p.stock_loc ASC;";
 	
