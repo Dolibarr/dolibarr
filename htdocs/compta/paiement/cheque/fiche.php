@@ -191,7 +191,7 @@ if ($_GET['action'] == 'new')
   print '</table><br />';
 
   $sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
-  $sql.= " b.amount, ba.label, b.emetteur"; 
+  $sql.= " b.amount, ba.label, b.emetteur, b.banque"; 
   $sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
   $sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
   $sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
@@ -209,6 +209,7 @@ if ($_GET['action'] == 'new')
 	  $lines[$obj->bid][$i]["date"] = $obj->date;
 	  $lines[$obj->bid][$i]["amount"] = $obj->amount;
 	  $lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
+	  $lines[$obj->bid][$i]["banque"] = $obj->banque;
 	  $i++;
 	}
     }
@@ -221,6 +222,7 @@ if ($_GET['action'] == 'new')
       print '<tr class="liste_titre">';
       print '<td width="10%">'.$langs->trans("Date")."</td>\n";
       print '<td width="50%">'.$langs->trans("CheckTransmitter")."</td>\n";
+      print '<td width="40%">'.$langs->trans("Bank")."</td>\n";
       print '<td align="right">'.$langs->trans("Amount")."</td>\n";
       print "</tr>\n";
       
@@ -236,6 +238,7 @@ if ($_GET['action'] == 'new')
 	  print "<tr $bc[$var]>";	  
 	  print '<td>'.dolibarr_print_date($value["date"]).'</td>';
 	  print '<td>'.stripslashes($value["emetteur"])."</td>\n";
+	  print '<td>'.stripslashes($value["banque"])."</td>\n";
 	  print '<td align="right">'.price($value["amount"]).'</td>';
 	  print '</tr>';
 	  $i++;
@@ -272,7 +275,7 @@ else
 
   print '</table><br />';
 
-  $sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,";
+  $sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,b.banque,";
   $sql.= " ba.rowid as bid, ba.label";
   $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
   $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
@@ -287,9 +290,9 @@ else
       $num = $db->num_rows($resql);
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre"><td>#</td>';
-      print_liste_field_titre($langs->trans("CheckTransmitter"),"liste.php","p.amount","",$paramlist,'',$sortfield);
-      print_liste_field_titre($langs->trans("Bank"),"liste.php","p.amount","",$paramlist,'',$sortfield);
-      print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+      print '<td>'.$langs->trans("CheckTransmitter").'</td>';
+      print '<td>'.$langs->trans("Bank").'</td>';
+      print '<td align="right">'.$langs->trans("Amount").'</td>';
       print "<td>&nbsp;</td></tr>\n";
       $i=1;
       $var=true;
