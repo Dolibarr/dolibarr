@@ -235,10 +235,11 @@ if ($rowid > 0)
         $h=0;
         
         $head[$h][0] = $_SERVER["PHP_SELF"].'?rowid='.$adht->id;
-        $head[$h][1] = $langs->trans("MemberType").': '.$adht->libelle;
+        $head[$h][1] = $langs->trans("Card");
+        $head[$h][2] = 'card';
         $h++;
 
-        dolibarr_fiche_head($head, 0, '');
+        dolibarr_fiche_head($head, 'card', $langs->trans("MemberType"));
 
 
         print '<table class="border" width="100%">';
@@ -289,10 +290,11 @@ if ($rowid > 0)
         $h=0;
         
         $head[$h][0] = $_SERVER["PHP_SELF"].'?rowid='.$adht->id;
-        $head[$h][1] = $langs->trans("MemberType").': '.$adht->libelle;
+        $head[$h][1] = $langs->trans("Card");
+        $head[$h][2] = 'card';
         $h++;
 
-        dolibarr_fiche_head($head, 0, '');
+        dolibarr_fiche_head($head, 'card', $langs->trans("MemberType"));
 
 
         print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?rowid='.$rowid.'">';
@@ -313,12 +315,25 @@ if ($rowid > 0)
         print '</tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
-        print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
+        print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
         
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-        print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\">".$adht->mail_valid."</textarea></td></tr>";
+		if ($conf->fckeditor->enabled)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('mail_valid','',280,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
+			print '</textarea>';
+		}
+
+
+        print "</td></tr>";
         
-        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp;';
+        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
         print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
         
         print '</table>';
