@@ -42,16 +42,16 @@ $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-if (! $sortfield) $sortfield="valo_pmp";
+if (! $sortfield) $sortfield="valo";
 if (! $sortorder) $sortorder="DESC";
 $page = $_GET["page"];
 if ($page < 0) $page = 0;
 $limit = $conf->liste_limit;
 $offset = $limit * $page;
 
+
 /*
- *
- *
+ *	Affichage valorisation par entrepot
  */
 $sql  = "SELECT e.rowid as ref, e.label, e.statut, e.valo_pmp as valo";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
@@ -62,7 +62,7 @@ if ($sref)
 }
 if ($sall)
 {
-  $sql .= " AND (e.label like '%".$sall."%' OR e.description like '%".$sall."%' OR e.lieu like '%".$sall."%' OR e.address like '%".$sall."%' OR e.ville like '%".$sall."%')";
+  $sql .= " AND (e.label like '%".addslashes($sall)."%' OR e.description like '%".addslashes($sall)."%' OR e.lieu like '%".addslashes($sall)."%' OR e.address like '%".addslashes($sall)."%' OR e.ville like '%".addslashes($sall)."%')";
 }
 $sql .= " ORDER BY $sortfield $sortorder ";
 $sql .= $db->plimit($limit + 1 ,$offset);
@@ -105,7 +105,7 @@ if ($result)
 	  $i++;
 	}
 
-      print "<tr $bc[$var]>";
+      print '<tr class="liste_total">';
       print '<td colspan="2" align="right">'.$langs->trans("Total").'</td>';
       print '<td align="right">'.price($total).' '.$langs->trans('Currency'.$conf->monnaie).'</td>';
       print '<td align="right">&nbsp;</td>';

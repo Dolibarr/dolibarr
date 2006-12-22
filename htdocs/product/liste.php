@@ -114,7 +114,7 @@ if ($_GET["fourn_id"] > 0)
 $sql .= " WHERE 1=1";
 if ($sall)
 {
-  $sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+  $sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
@@ -126,7 +126,7 @@ if ($sref)
 }
 if ($snom)
 {
-  $sql .= " AND p.label like '%".$snom."%'";
+  $sql .= " AND p.label like '%".addslashes($snom)."%'";
 }
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
@@ -218,12 +218,11 @@ if ($resql)
       print "</tr>\n";
       
       // Lignes des champs de filtre
-      
       print '<tr class="liste_titre">';
-      print '<td class="liste_titre">';
+      print '<td class="liste_titre" align="left">';
       print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
       print '</td>';
-      print '<td class="liste_titre" align="right">';
+      print '<td class="liste_titre" align="left">';
       print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
       print '</td>';
       if ($conf->service->enabled && $type != 0) 

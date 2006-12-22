@@ -39,4 +39,4 @@ QtyDispatched=Quantité ventilée
 OrderDispatch=Ventilation commande
 DeStockReStockOnBill=Décrémente/Incrémente les stocks sur les factures/avoirs (incompatibles avec le destockage sur les expéditions)
 StockAvailable=Stock disponible
-StockInstant=Stock instantanné
+StockInstant=Stock actuel

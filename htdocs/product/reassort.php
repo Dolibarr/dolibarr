@@ -79,7 +79,10 @@ $title=$langs->trans("ProductsAndServices");
 
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
-$sql.= ' SUM(reel) as stock,p.stock_commande,(SUM(reel) - p.stock_commande) as stock_dispo';
+$sql.= ' p.stock_commande,';
+$sql.= ' SUM(s.reel) as stock,';
+// \TODO Bug ? On soustrait le stock commandé alors qu'il ait stocké en base en négatif. Du coup on additionne !
+$sql.= ' (SUM(s.reel) - p.stock_commande) as stock_dispo';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
 $sql.= ',' .MAIN_DB_PREFIX.'product_stock as s';
 if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
@@ -96,7 +99,7 @@ if ($_GET["fourn_id"] > 0)
 $sql .= " WHERE p.rowid = s.fk_product";
 if ($sall)
 {
-  $sql .= " AND (p.ref like '%".$sall."%' OR p.label like '%".$sall."%' OR p.description like '%".$sall."%' OR p.note like '%".$sall."%')";
+  $sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
@@ -108,7 +111,7 @@ if ($sref)
 }
 if ($snom)
 {
-  $sql .= " AND p.label like '%".$snom."%'";
+  $sql .= " AND p.label like '%".addslashes($snom)."%'";
 }
 if (isset($_GET["envente"]) && strlen($_GET["envente"]) > 0)
 {
@@ -187,7 +190,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
     print_liste_field_titre($langs->trans("StockAvailable"),"reassort.php", "p.stock_dispo","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Stock"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("StockInstant"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print "</tr>\n";
 
