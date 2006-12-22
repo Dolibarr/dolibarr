@@ -121,6 +121,7 @@ ListOfCustomersContacts=Liste des contacts clients
 ListOfProspectsContacts=Liste des contacts prospects
 ListOfSuppliersContacts=Liste des contacts fournisseurs
 ListOfCompanies=Liste des sociétés
+ListOfThirdParties=Liste des tiers
 ShowCompany=Afficher société
 ShowContact=Afficher contact
 ContactsAllShort=Tous (pas de filtre)

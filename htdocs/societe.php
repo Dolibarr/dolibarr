@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -129,7 +129,7 @@ if (isset($_POST["button_removefilter_x"]))
  *
  */
 
-$title=$langs->trans("ListOfCompanies");
+$title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.siren";
