@@ -41,7 +41,7 @@ if (! $user->admin)
 if ($file && ! $what) 
 {
    //print DOL_URL_ROOT.'/dolibarr_export.php';
-	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod"))));
+	header("Location: ".DOL_URL_ROOT.'/admin/tools/dolibarr_export.php?msg='.urlencode($langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportMethod"))));
 /*
 	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ExportMethod")).'</div>';
 	print '<br>';
