@@ -92,7 +92,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->banque)
 {
   $remise = new RemiseCheque($db);
-  $remise->id = $_GET["id"];
+  $remise->Fetch($_GET["id"]);
   $result = $remise->Validate($user);
   if ($result == 0)
     {
@@ -105,6 +105,21 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
     }
 }
 
+if ($_POST['action'] == 'builddoc' && $user->rights->banque)
+{
+  $remise = new RemiseCheque($db);
+  $result = $remise->Fetch($_GET["id"]);
+  if ($result == 0)
+    {
+      $result = $remise->GeneratePdf($_POST["model"]);
+      Header("Location: fiche.php?id=".$remise->id);
+      exit;
+    }
+  else
+    {
+      $mesg='<div class="error">'.$paiement->error.'</div>';
+    }
+}
 /*
  * Visualisation de la fiche
  */
@@ -175,15 +190,13 @@ if ($_GET['action'] == 'new')
   print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date(time()).'</td></tr>';
   print '</table><br />';
 
-
   $sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
   $sql.= " b.amount, ba.label, b.emetteur"; 
   $sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
   $sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
   $sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
   $sql.= " AND b.fk_bordereau = 0 AND b.amount > 0";
-  $sql.= " ORDER BY ba.rowid ASC, b.dateo ASC;";
-
+  $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 
   $resql = $db->query($sql);
  
@@ -239,12 +252,9 @@ if ($_GET['action'] == 'new')
 }
 else
 {
-
   $remise->load_previous_next_id();
   $previous_id = $remise->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->previous_id.'">'.img_previous().'</a>':'';
   $next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
-
-
 
   print '<table class="border" width="100%">';
   print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="50%">'.$remise->number.'</td><td width="20%" align="right">';
@@ -254,51 +264,44 @@ else
   print '<tr><td width="30%">'.$langs->trans('Date').'</td><td colspan="2" width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
   print '<tr><td width="30%">'.$langs->trans('Account').'</td><td colspan="2" width="70%">';
   print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$remise->account_id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$remise->account_label.'</a>';
+  print '</td></tr>';
 
+  print '<tr><td width="30%">'.$langs->trans('Total').'</td><td colspan="2" width="70%">';
+  print price($remise->amount);
   print '</td></tr>';
 
   print '</table><br />';
 
-  $sql = "SELECT b.rowid,".$db->pdate("p.datep")." as dp, p.amount,b.banque,b.emetteur,";
-  $sql.= " p.statut, p.num_paiement,";
-  $sql.= " c.code as paiement_code,"; 
+  $sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,";
   $sql.= " ba.rowid as bid, ba.label";
-  $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c,";
-  $sql.= " ".MAIN_DB_PREFIX."paiement as p";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-  $sql.= " WHERE p.fk_paiement = c.id AND c.code = 'CHQ'";
+  $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+  $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
+  $sql.= " WHERE b.fk_type= 'CHQ' AND b.fk_account = ba.rowid";  
   $sql.= " AND b.fk_bordereau = ".$remise->id;
-  $sql.= " AND p.statut = 1";
-  $sql.= " ORDER BY p.datep ASC;";
+  $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
 
   $resql = $db->query($sql);
  
   if ($resql)
     {
       $num = $db->num_rows($resql);
-      $i = 0;
       print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
+      print '<tr class="liste_titre"><td>#</td>';
+      print_liste_field_titre($langs->trans("CheckTransmitter"),"liste.php","p.amount","",$paramlist,'',$sortfield);
+      print_liste_field_titre($langs->trans("Bank"),"liste.php","p.amount","",$paramlist,'',$sortfield);
       print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("Bank"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-      print_liste_field_titre($langs->trans("CheckTransmitter"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
       print "<td>&nbsp;</td></tr>\n";
-      
+      $i=1;
       $var=true;
       while ( $objp = $db->fetch_object($resql) )
 	{
 	  $account_id = $objp->bid;
 	  $accounts[$objp->bid] += 1;
 
-	  print "<tr $bc[$var]>";
-	  print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
-	  print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
-	  print '<td align="right">'.price($objp->amount).'</td>';
-	  print '<td>'.stripslashes($objp->banque).'</td>';  
+	  print "<tr $bc[$var]><td>$i</td>";
 	  print '<td>'.stripslashes($objp->emetteur).'</td>';
+	  print '<td>'.stripslashes($objp->banque).'</td>';  
+	  print '<td align="right">'.price($objp->amount).'</td>';
 	  if($remise->statut == 0)
 	    {
 	      print '<td align="right"><a href="fiche.php?id='.$remise->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
@@ -307,10 +310,9 @@ else
 	    {
 	      print '<td>&nbsp;</td>';
 	    }
-
 	  print '</tr>';
-	  $i++;
 	  $var=!$var;
+	  $i++;
 	}
       print "</table><br />";
     }
@@ -319,10 +321,13 @@ else
       dolibarr_print_error($db);
     }
 
-  //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
-  $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remise->number);
-  //$gen = array('Blochet');
-  $html->show_documents("remisecheque","",$dir,'',0,0);
+  if ($remise->statut == 1)
+    {
+      //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
+      $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remise->number);
+      $gen = array('Blochet');
+      $html->show_documents("remisecheque","",$dir,'',$gen,0);
+    }
 }
 
 print '</div>';
