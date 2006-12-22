@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2000-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -151,90 +151,88 @@ function sanitize_string($str)
 
 
 /**
-	\brief      Envoi des messages dolibarr dans un fichier ou dans syslog
-    	        Pour fichier:   fichier défini par SYSLOG_FILE
-        	    Pour syslog:    facility défini par SYSLOG_FACILITY
-	\param      message		    Message a tracer
-   	\param      level           Niveau de l'erreur
-   	\remarks	Cette fonction n'a un effet que si le module syslog est activé.
-            	Warning, les fonctions syslog sont buggués sous Windows et génèrent des
-               	fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
-                au lieu du loggage syslog (configuration du module).
-                Si SYSLOG_FILE_NO_ERROR défini, on ne gère pas erreur ecriture log
-	\remarks	On windows LOG_ERROR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=6
+   \brief      Envoi des messages dolibarr dans un fichier ou dans syslog
+   Pour fichier:   fichier défini par SYSLOG_FILE
+   Pour syslog:    facility défini par SYSLOG_FACILITY
+   \param      message		    Message a tracer
+   \param      level           Niveau de l'erreur
+   \remarks	Cette fonction n'a un effet que si le module syslog est activé.
+   Warning, les fonctions syslog sont buggués sous Windows et génèrent des
+   fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
+   au lieu du loggage syslog (configuration du module).
+   Si SYSLOG_FILE_NO_ERROR défini, on ne gère pas erreur ecriture log
+   \remarks	On windows LOG_ERROR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=6
 */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
-    global $conf,$user,$langs;
+  global $conf,$user,$langs;
 
-    if ($conf->syslog->enabled)
+  if ($conf->syslog->enabled)
     {
-		// Change this to LOg_DEBUG to see all messages on *nix
-	    $level_maximum = LOG_INFO;
-
-		if ($level > $level_maximum) return;
-
-        // Ajout user a la log
-        $login='???';
-        if (is_object($user) && $user->id) $login=$user->login;
-        $message=sprintf("%-8s",$login)." ".$message;
-
-        if (defined("SYSLOG_FILE") && SYSLOG_FILE)
+      // Change this to LOg_DEBUG to see all messages on *nix
+      $level_maximum = LOG_INFO;
+      
+      if ($level > $level_maximum) return;
+      
+      // Ajout user a la log
+      $login='???';
+      if (is_object($user) && $user->id) $login=$user->login;
+      $message=sprintf("%-8s",$login)." ".$message;
+      
+      if (defined("SYSLOG_FILE") && SYSLOG_FILE)
         {
-        	if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
-            else $file=fopen(SYSLOG_FILE,"a+");
-            if ($file)
+	  if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
+	  else $file=fopen(SYSLOG_FILE,"a+");
+	  if ($file)
             {
-                fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
-                fclose($file);
+	      fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
+	      fclose($file);
             }
-            elseif (! defined("SYSLOG_FILE_NO_ERROR"))
+	  elseif (! defined("SYSLOG_FILE_NO_ERROR"))
             {
-                $langs->load("main");
-                print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
+	      $langs->load("main");
+	      print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
             }
         }
-        else
+      else
         {
-			//define_syslog_variables(); déjà définit dans master.inc.php
-
-            if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
+	  //define_syslog_variables(); déjà définit dans master.inc.php
+	  
+	  if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
             {
-                $facility = MAIN_SYSLOG_FACILITY;
+	      $facility = MAIN_SYSLOG_FACILITY;
             }
-            elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
+	  elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
             {
-                // Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
-                $facility = constant(SYSLOG_FACILITY);
+	      // Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
+	      $facility = constant(SYSLOG_FACILITY);
             }
-            else
+	  else
             {
-                $facility = LOG_USER;
+	      $facility = LOG_USER;
             }
-
-            openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-
-            if (! $level)
+	  
+	  openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
+	  
+	  if (! $level)
             {
-                syslog(LOG_ERR, $message);
+	      syslog(LOG_ERR, $message);
             }
-            else
+	  else
             {
-                syslog($level, $message);
+	      syslog($level, $message);
             }
-
-            closelog();
+	  
+	  closelog();
         }
     }
 }
-
-
 /**
-		\brief      Affiche le header d'une fiche
-		\param	    links		Tableau de titre d'onglets
-		\param	    active      0=onglet non actif, 1=onglet actif
-		\param      title       Titre tabelau ("" par defaut)
-		\param      notab		0=Add tab header, 1=no tab header
+   \brief      Affiche le header d'une fiche
+   \param	    links		Tableau de titre d'onglets
+   \param	    active      0=onglet non actif, 1=onglet actif
+   \param      title       Titre tabelau ("" par defaut)
+   \param      notab		0=Add tab header, 1=no tab header
 */
 function dolibarr_fiche_head($links, $active='0', $title='', $notab=0)
 {
@@ -304,15 +302,15 @@ function dolibarr_get_const($db, $name)
 
 
 /**
-		\brief      Insertion d'une constante dans la base de données.
-		\see        dolibarr_del_const, dolibarr_get_const
-		\param	    db          Handler d'accès base
-		\param	    name		Nom de la constante
-		\param	    value		Valeur de la constante
-		\param	    type		Type de constante (chaine par défaut)
-		\param	    visible	    La constante est elle visible (0 par défaut)
-		\param	    note		Explication de la constante
-		\return     int         <0 si ko, >0 si ok
+   \brief      Insertion d'une constante dans la base de données.
+   \see        dolibarr_del_const, dolibarr_get_const
+   \param	    db          Handler d'accès base
+   \param	    name		Nom de la constante
+   \param	    value		Valeur de la constante
+   \param	    type		Type de constante (chaine par défaut)
+   \param	    visible	    La constante est elle visible (0 par défaut)
+   \param	    note		Explication de la constante
+   \return     int         <0 si ko, >0 si ok
 */
 function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $note='')
 {
@@ -348,36 +346,36 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 /**
-		\brief      Effacement d'une constante dans la base de données
-		\see        dolibarr_get_const, dolibarr_sel_const
-		\param	    db          Handler d'accès base
-		\param	    name		Nom ou rowid de la constante
-		\return     int         <0 si ko, >0 si ok
+   \brief      Effacement d'une constante dans la base de données
+   \see        dolibarr_get_const, dolibarr_sel_const
+   \param	    db          Handler d'accès base
+   \param	    name		Nom ou rowid de la constante
+   \return     int         <0 si ko, >0 si ok
 */
 function dolibarr_del_const($db, $name)
 {
-    $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
-    $resql=$db->query($sql);
-
-    if ($resql)
+  $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
+  $resql=$db->query($sql);
+  
+  if ($resql)
     {
-        return 1;
+      return 1;
     }
-    else
+  else
     {
-        return -1;
+      return -1;
     }
 }
 
 
 /**
-		\brief      Sauvegarde parametrage personnel
-		\param	    db          Handler d'accès base
-		\param	    user        Objet utilisateur
-		\param	    url         Si defini, on sauve parametre du tableau tab dont clé = (url avec sortfield, sortorder, begin et page)
-		                        Si non defini on sauve tous parametres du tableau tab
-		\param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
-		\return     int         <0 si ko, >0 si ok
+   \brief      Sauvegarde parametrage personnel
+   \param	    db          Handler d'accès base
+   \param	    user        Objet utilisateur
+   \param	    url         Si defini, on sauve parametre du tableau tab dont clé = (url avec sortfield, sortorder, begin et page)
+   Si non defini on sauve tous parametres du tableau tab
+   \param	    tab         Tableau (clé=>valeur) des paramètres à sauvegarder
+   \return     int         <0 si ko, >0 si ok
 */
 function dolibarr_set_user_page_param($db, &$user, $url='', $tab)
 {
@@ -1746,11 +1744,11 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 }
 
 /**
-		\brief  Fonction servant a afficher les fleches de navigation dans les pages de listes
-		\param	page			numéro de la page
-		\param	file			lien
-		\param	options         autres parametres d'url a propager dans les liens ("" par defaut)
-		\param	nextpage	    faut-il une page suivante
+   \brief  Fonction servant a afficher les fleches de navigation dans les pages de listes
+   \param	page			numéro de la page
+   \param	file			lien
+   \param	options         autres parametres d'url a propager dans les liens ("" par defaut)
+   \param	nextpage	    faut-il une page suivante
 */
 function print_fleche_navigation($page,$file,$options='',$nextpage)
 {
@@ -1796,13 +1794,10 @@ function price($amount, $html=0, $outlangs='')
   $cents = $datas[1];
   // On augmente au besoin
   if ($cents > 99 )
-    {
-      $decimal = 3;
-    }
+    $decimal = 3;
+
   if ($cents > 999 )
-    {
-      $decimal = 4;
-    }
+    $decimal = 4;
 
   // Formate nombre
   if ($html)
@@ -1814,33 +1809,32 @@ function price($amount, $html=0, $outlangs='')
       return number_format($amount, $decimal, $dec, $thousand);
     }
 }
-
 /**
-		\brief      Fonction qui retourne un numérique depuis un montant formaté
-		\remarks    Fonction à appeler sur montants saisi avant un insert
-		\param	    amount		montant a formater
-		\seealso	price		Fonction inverse de price2num
+   \brief      Fonction qui retourne un numérique depuis un montant formaté
+   \remarks    Fonction à appeler sur montants saisi avant un insert
+   \param	    amount		montant a formater
+   \seealso	price		Fonction inverse de price2num
 */
 function price2num($amount)
 {
-    $amount=ereg_replace(',','.',$amount);
-    $amount=ereg_replace(' ','',$amount);
-    return $amount;
+  $amount=ereg_replace(',','.',$amount);
+  $amount=ereg_replace(' ','',$amount);
+  return $amount;
 }
 
 
 /**
- *		\brief      Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
- *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
- *                  Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.
- *                  Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
- *					Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.
- *                  Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.
- *                  Sinon TVA proposée par défaut=0. Fin de règle.
- *      \param      societe_vendeuse    Objet société vendeuse
- *      \param      societe_acheteuse   Objet société acheteuse
- *      \param      taux_produit        Taux par defaut du produit vendu
- *      \return     float               Taux de tva de la ligne
+   \brief      Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+   \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
+   Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.
+   Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+   Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.
+   Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.
+   Sinon TVA proposée par défaut=0. Fin de règle.
+   \param      societe_vendeuse    Objet société vendeuse
+   \param      societe_acheteuse   Objet société acheteuse
+   \param      taux_produit        Taux par defaut du produit vendu
+   \return     float               Taux de tva de la ligne
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
@@ -1894,38 +1888,37 @@ function yn($yesno, $case=1) {
 
 
 /**
-		\brief      Fonction pour initialiser un salt pour la fonction crypt
-		\param		$type		2=>renvoi un salt pour cryptage DES
-		                        12=>renvoi un salt pour cryptage MD5
-		                        non defini=>renvoi un salt pour cryptage par defaut
-		\return		string		Chaine salt
+   \brief      Fonction pour initialiser un salt pour la fonction crypt
+   \param		$type		2=>renvoi un salt pour cryptage DES
+   12=>renvoi un salt pour cryptage MD5
+   non defini=>renvoi un salt pour cryptage par defaut
+   \return		string		Chaine salt
 */
 function makesalt($type=CRYPT_SALT_LENGTH)
 {
-	dolibarr_syslog("functions.inc::makesalt type=".$type);
-	switch($type)
-	{
-		case 12:	// 8 + 4
-			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-		case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilisé)
-			$saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
-		case 2:		// 2
-		default: 	// by default, fall back on Standard DES (should work everywhere)
-			$saltlen=2; $saltprefix=''; $saltsuffix=''; break;
-	}
-	$salt='';
-	while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
-
-	$result=$saltprefix.$salt.$saltsuffix;
-	dolibarr_syslog("functions.inc::makesalt return=".$result);
-	return $result;
+  dolibarr_syslog("functions.inc::makesalt type=".$type);
+  switch($type)
+    {
+    case 12:	// 8 + 4
+      $saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+    case 8:		// 8 + 4 (Pour compatibilite, ne devrait pas etre utilisé)
+      $saltlen=8; $saltprefix='$1$'; $saltsuffix='$'; break;
+    case 2:		// 2
+    default: 	// by default, fall back on Standard DES (should work everywhere)
+      $saltlen=2; $saltprefix=''; $saltsuffix=''; break;
+    }
+  $salt='';
+  while(strlen($salt) < $saltlen) $salt.=chr(rand(64,126));
+  
+  $result=$saltprefix.$salt.$saltsuffix;
+  dolibarr_syslog("functions.inc::makesalt return=".$result);
+  return $result;
 }
-
 /**
-		\brief  Fonction pour qui retourne le rowid d'un departement par son code
-		\param  db          handler d'accès base
-		\param	code		Code région
-		\param	pays_id		Id du pays
+   \brief  Fonction pour qui retourne le rowid d'un departement par son code
+   \param  db          handler d'accès base
+   \param	code		Code région
+   \param	pays_id		Id du pays
 */
 function departement_rowid($db,$code, $pays_id)
 {
@@ -1955,25 +1948,25 @@ function departement_rowid($db,$code, $pays_id)
 }
 
 /**
- *      \brief      Renvoi un chemin de classement répertoire en fonction d'un id
- *                  Examples: 1->"0/0/1/", 15->"0/1/5/"
- *      \param      $num        Id à décomposer
- *      \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
+   \brief      Renvoi un chemin de classement répertoire en fonction d'un id
+   \remarks    Examples: 1->"0/0/1/", 15->"0/1/5/"
+   \param      $num        Id à décomposer
+   \param      $level		Niveau de decoupage (1, 2 ou 3 niveaux)
  */
 function get_exdir($num,$level=3)
 {
-    $num = substr("000".$num, -$level);
-	if ($level == 1) return substr($num,0,1).'/';
-	if ($level == 2) return substr($num,1,1).'/'.substr($num,0,1).'/';
-	if ($level == 3) return substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
-	return '';
+  $num = substr("000".$num, -$level);
+  if ($level == 1) return substr($num,0,1).'/';
+  if ($level == 2) return substr($num,1,1).'/'.substr($num,0,1).'/';
+  if ($level == 3) return substr($num,2,1).'/'.substr($num,1,1).'/'.substr($num,0,1).'/';
+  return '';
 }
 
 /**
- *      \brief      Création de répertoire recursive
- *      \param      $dir        Répertoire à créer
- *      \return     int         < 0 si erreur, >= 0 si succès
- */
+   \brief      Création de répertoire recursive
+   \param      $dir        Répertoire à créer
+   \return     int         < 0 si erreur, >= 0 si succès
+*/
 function create_exdir($dir)
 {
     dolibarr_syslog("functions.inc.php::create_exdir: dir=$dir");
@@ -2024,103 +2017,98 @@ function create_exdir($dir)
 
 
 /**
- *		\brief		Scan a directory and return a list of files/directories
- *		\param		$path        	Starting path from which to search
- *		\param		$types        	Can be "directories", "files", or "all"
- *		\param		$recursive		Determines whether subdirectories are searched
- *		\param		$filter        	Regex for filter
- *		\param		$exludefilter  	Regex for exclude filter
- *		\param		$sortcriteria	Sort criteria ("date","size")
- *		\param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
- *		\return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
+   \brief		Scan a directory and return a list of files/directories
+   \param		$path        	Starting path from which to search
+   \param		$types        	Can be "directories", "files", or "all"
+   \param		$recursive		Determines whether subdirectories are searched
+   \param		$filter        	Regex for filter
+   \param		$exludefilter  	Regex for exclude filter
+   \param		$sortcriteria	Sort criteria ("date","size")
+   \param		$sortorder		Sort order (SORT_ASC, SORT_DESC)
+   \return		array			Array of array('name'=>xxx,'date'=>yyy,'size'=>zzz)
  */
 function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $excludefilter="", $sortcriteria="", $sortorder=SORT_ASC)
 {
-	dolibarr_syslog("functions.inc.php::dolibarr_dir_list $path");
-
-	if (! is_dir($path)) return array();
-
-	if ($dir = opendir($path))
+  dolibarr_syslog("functions.inc.php::dolibarr_dir_list $path");
+  
+  if (! is_dir($path)) return array();
+  
+  if ($dir = opendir($path))
+    {
+      $file_list = array();
+      while (false !== ($file = readdir($dir)))
 	{
-		$file_list = array();
-		while (false !== ($file = readdir($dir)))
+	  $qualified=1;
+	  
+	  // Check if file is qualified
+	  if (eregi('^\.',$file)) $qualified=0;
+	  if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
+	  
+	  if ($qualified)
+	    {
+	      // Check whether this is a file or directory and whether we're interested in that type
+	      if ((is_dir($path."/".$file)) && (($types=="directories") || ($types=="all")))
 		{
-			$qualified=1;
-
-			// Check if file is qualified
-			if (eregi('^\.',$file)) $qualified=0;
-			if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
-
-//			print "path=$path file=$file<br>\n";
-
-			if ($qualified)
-			{
-				// Check whether this is a file or directory and whether we're interested in that type
-				if ((is_dir($path."/".$file)) && (($types=="directories") || ($types=="all")))
-				{
-					// Add entry into file_list array
-					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-
-					if (! $filter || eregi($filter,$path.'/'.$file))
-					{
-						$file_list[] = array(
-	                                       "name" => $file,
-	                                       "fullname" => $path.'/'.$file,
-	                                       "date" => $filedate,
-	                                       "size" => $filesize
-	                                 	);
-					}
-
-					// if we're in a directory and we want recursive behavior, call this function again
-					if ($recursive)
-					{
-						$file_list = array_merge($file_list, dolibarr_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
-					}
-				}
-				else if (($types == "files") || ($types == "all"))
-				{
-					// Add file into file_list array
-					if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-					if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-					if (! $filter || eregi($filter,$path.'/'.$file))
-					{
-						$file_list[] = array(
-	                                       "name" => $file,
-	                                       "fullname" => $path.'/'.$file,
-	                                       "date" => $filedate,
-	                                       "size" => $filesize
-	                                 	);
-					}
-				}
-			}
+		  // Add entry into file_list array
+		  if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+		  if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+		  
+		  if (! $filter || eregi($filter,$path.'/'.$file))
+		    {
+		      $file_list[] = array(
+					   "name" => $file,
+					   "fullname" => $path.'/'.$file,
+					   "date" => $filedate,
+					   "size" => $filesize
+					   );
+		    }
+		  
+		  // if we're in a directory and we want recursive behavior, call this function again
+		  if ($recursive)
+		    {
+		      $file_list = array_merge($file_list, dolibarr_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
+		    }
 		}
-		closedir($dir);
-
-		// Obtain a list of columns
-		$myarray=array();
-		foreach ($file_list as $key => $row)
+	      else if (($types == "files") || ($types == "all"))
 		{
-			$myarray[$key]  = $row[$sortcriteria];
-		   	//$myarray2[$key]  = $row['size'];
+		  // Add file into file_list array
+		  if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+		  if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+		  if (! $filter || eregi($filter,$path.'/'.$file))
+		    {
+		      $file_list[] = array(
+					   "name" => $file,
+					   "fullname" => $path.'/'.$file,
+					   "date" => $filedate,
+					   "size" => $filesize
+					   );
+		    }
 		}
-
-		// Sort the data
-		array_multisort($myarray, $sortorder, $file_list);
-
-		return $file_list;
+	    }
 	}
-	else
+      closedir($dir);
+      
+      // Obtain a list of columns
+      $myarray=array();
+      foreach ($file_list as $key => $row)
 	{
-		return false;
+	  $myarray[$key]  = $row[$sortcriteria];
 	}
+      // Sort the data
+      array_multisort($myarray, $sortorder, $file_list);
+      
+      return $file_list;
+    }
+  else
+    {
+      return false;
+    }
 }
-
 /**
- *   \brief   Retourne le numéro de la semaine par rapport a une date
- *   \param   time   	Date au format 'timestamp'
- *   \return  int		Numéro de semaine
- */
+   \brief   Retourne le numéro de la semaine par rapport a une date
+   \param   time   	Date au format 'timestamp'
+   \return  int		Numéro de semaine
+*/
 function numero_semaine($time)
 {
     $stime = strftime( '%Y-%m-%d',$time);
@@ -2196,20 +2184,20 @@ function numero_semaine($time)
     return sprintf("%02d",$numeroSemaine);
 }
 /**
- *   \brief   Retourne le picto champ obligatoire
- *   \return  string		Chaine avec picto obligatoire
- */
+   \brief   Retourne le picto champ obligatoire
+   \return  string		Chaine avec picto obligatoire
+*/
 function picto_required()
 {
 	return '<b>*</b>';
 }
 /**
- *   \brief   Convertit une masse d'une unite vers une autre unite
- *   \param   weight    float	Masse a convertir
- *   \param   from_unit int     Unite originale en puissance de 10
- *   \param   to_unit   int     Nouvelle unite  en puissance de 10
- *   \return  float	        Masse convertie
- */
+   \brief   Convertit une masse d'une unite vers une autre unite
+   \param   weight    float	Masse a convertir
+   \param   from_unit int     Unite originale en puissance de 10
+   \param   to_unit   int     Nouvelle unite  en puissance de 10
+   \return  float	        Masse convertie
+*/
 function weight_convert($weight,&$from_unit,$to_unit)
 {
   /* Pour convertire 320 gr en Kg appeler
@@ -2236,11 +2224,11 @@ function weight_convert($weight,&$from_unit,$to_unit)
   return $weight;
 }
 /**
- *   \brief   Renvoi le texte d'une unite
- *   \param   int      Unit
- *   \return  string	      Unite
- *   \todo    gerer les autres unités de mesure comme la livre, le gallon, le litre, ...
- */
+   \brief   Renvoi le texte d'une unite
+   \param   int      Unit
+   \return  string	      Unite
+   \todo    gerer les autres unités de mesure comme la livre, le gallon, le litre, ...
+*/
 function weight_units_string($unit)
 {
   /* Note Rodo aux dev :)
@@ -2248,12 +2236,10 @@ function weight_units_string($unit)
    * cela surchagerait inutilement d'une requete supplémentaire
    * pour quelque chose qui est somme toute peu variable
    */
-
   $weight_string[3] = 'Tonnes';
   $weight_string[0] = 'kg';
   $weight_string[-3] = 'g';
   $weight_string[-6] = 'mg';
-
 
   return $weight_string[$unit];
 }
