@@ -37,6 +37,10 @@ $html=new Form($db);
 
 
 
+/*
+* Affichage page
+*/
+
 llxHeader();
 
 print_fiche_titre($langs->trans("Backup"),'','setup');
@@ -52,9 +56,8 @@ if ($_GET["msg"])
 	print "\n";
 }
 
-$result=$html->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
-if ($result) print '<br><br>';
 
+print_titre($langs->trans("NewBackup")).'<br>';
 
 ?>
 
@@ -100,8 +103,6 @@ function show_checked_option() {
 </script>
 
 <fieldset id="fieldsetexport">
-<legend><?php echo $langs->trans("NewBackup"); ?>
-</legend>
 
 
 <!-- LDR -->
@@ -180,10 +181,10 @@ function show_checked_option() {
 
 
 <fieldset id="mysql_options">
-    <legend>Parametres export MySQL</legend>
+    <legend>Parametres de l'export MySQL</legend>
 
     <div class="formelementrow">
-        Path commande mysqldump:<br />
+        Chemin complet de la commande mysqldump:<br />
         <input type="text" name="mysqldump" size="80"
             value="<?php echo $conf->global->SYSTEMTOOLS_MYSQLDUMP ?>" />
     </div>
@@ -501,9 +502,12 @@ echo $file;
 
 <br><br>
 
-    <div class="formelementrow">
-        Compression :
 <?php
+
+print '<div class="formelementrow">';
+print "\n";
+
+print $langs->trans("Compression").': &nbsp; ';
 
 $compression=array(
 	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
@@ -528,6 +532,9 @@ foreach($compression as $key => $val)
 	}	
 	print ' &nbsp; &nbsp; ';
 }
+
+print '</div>';
+print "\n";
 
 ?>
 
@@ -570,6 +577,11 @@ if (window.parent.frames[1]) {
 
 <?php
 
-llxFooter('$Date$ - $Revision$');
 
+$result=$html->show_documents('systemtools','',DOL_DATA_ROOT.'/admin/temp',$_SERVER['PHP_SELF'],0,1);
+//if ($result) print '<br><br>';
+
+
+
+llxFooter('$Date$ - $Revision$');
 ?>
