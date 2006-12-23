@@ -75,7 +75,6 @@ class pdf_paiement
     
     $pdf->SetFont('Arial','',12);
     $pdf->Text(11, 22, $langs->transnoentities("Page")." : ".$page);
-    //      $pdf->Text(11, 22, "Page " . $page . " sur " . $pages);
     
     $pdf->SetFont('Arial','',12);
     
@@ -149,13 +148,7 @@ class pdf_paiement
 	if ($oldprowid <> $lines[$j][7])
 	  {
 	    $oldprowid = $lines[$j][7];
-	  }
-	
-	//	  if ($i < $this->line_per_page - 1)
-	//	    {
-	//	      $pdf->line(10, $this->tab_top + 10 + (($i+1) * $this->line_height), 200, $this->tab_top + 10 + (($i+1) * $this->line_height));
-	//	    }
-	
+	  }	
       }
   }
   /**
@@ -203,7 +196,6 @@ class pdf_paiement
     $sql .= " AND date_format(p.datep, '%Y%m') = " . sprintf("%04d%02d",$year,$month);
     $sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
     $result = $this->db->query($sql);
-    //      print $sql ;
     
     if ($result)
       {

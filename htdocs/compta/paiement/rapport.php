@@ -37,7 +37,7 @@ $user->getrights("facture");
 if (! $user->rights->facture->lire)
   accessforbidden();
 
-$dir = $conf->compta->dir_output;
+$dir = $conf->compta->dir_output.'/payments';
 
 $socid=0;
 if ($user->societe_id > 0) 
@@ -108,7 +108,6 @@ print '</form>';
 print '<br>';
 
 clearstatcache();
-
 
 // Affiche lien sur autres années
 $found=0;
