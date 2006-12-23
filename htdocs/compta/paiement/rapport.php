@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -20,17 +20,17 @@
  * $Source$
  */
  
-/**     \file       htdocs/compta/paiement/rapport.php
-		\ingroup    facture
-		\brief      Rapports de paiements
-		\version    $Revision$
+/**
+   \file       htdocs/compta/paiement/rapport.php
+   \ingroup    facture
+   \brief      Rapports de paiements
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/rapport/pdf_paiement.class.php");
 
 $user->getrights("facture");
-
 
 // Sécurité accés
 if (! $user->rights->facture->lire)
@@ -41,18 +41,13 @@ $dir = $conf->compta->dir_output;
 $socid=0;
 if ($user->societe_id > 0) 
 {
-    $action = '';
-    $socid = $user->societe_id;
-	$dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
+  $action = '';
+  $socid = $user->societe_id;
+  $dir = DOL_DATA_ROOT.'/private/'.$user->id.'/compta';
 }
-
-
 
 $year = $_GET["year"];
 if (! $year) { $year=date("Y"); }
-
-
-
 
 /*
  * Action générer fichier rapport paiements
@@ -64,8 +59,6 @@ if ($_POST["action"] == 'gen')
   
   $year = $_POST["reyear"];
 }
-
-
 
 llxHeader();
 
@@ -82,21 +75,19 @@ print '<input type="hidden" name="action" value="gen">';
 $cmonth = date("n", time());
 $syear = date("Y", time());
     
-
 print '<select name="remonth">';
 for ($month = 1 ; $month < 13 ; $month++)
 {
-	if ($month == $cmonth)
-	{
-		print "<option value=\"$month\" selected=\"true\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
-	}
-	else
-	{
-		print "<option value=\"$month\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
-	}
+  if ($month == $cmonth)
+    {
+      print "<option value=\"$month\" selected=\"true\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+    }
+  else
+    {
+      print "<option value=\"$month\">" . dolibarr_print_date(mktime(0,0,0,$month),"%B");
+    }
 }
 print "</select>";
-    
 print '<select name="reyear">';
 
 for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
@@ -113,7 +104,6 @@ for ($formyear = $syear - 2; $formyear < $syear +1 ; $formyear++)
 print "</select>\n";
 print '<input type="submit" class="button" value="'.$langs->trans("Create").'">';
 print '</form>';
-
 print '<br>';
 
 clearstatcache();
@@ -123,49 +113,48 @@ clearstatcache();
 $found=0;
 if (is_dir($dir))
 {
-    $handle=opendir($dir);
-    while (($file = readdir($handle))!==false)
+  $handle=opendir($dir);
+  while (($file = readdir($handle))!==false)
     {
-		if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
-		{
-			$found=1;
-			print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
-		}
+      if (is_dir($dir.'/'.$file) && ! eregi('^\.',$file))
+	{
+	  $found=1;
+	  print '<a href="rapport.php?year='.$file.'">'.$file.'</a> ';
+	}
     }
 }
 
 if ($year)
 {
-	if (is_dir($dir.'/'.$year))
+  if (is_dir($dir.'/'.$year))
+    {
+      $handle=opendir($dir.'/'.$year);
+      
+      if ($found) print '<br>';
+      print '<br>';      
+      print '<table width="100%" class="noborder">';
+      print '<tr class="liste_titre">';
+      print '<td>'.$langs->trans("Reporting").'</td>';
+      print '<td align="right">'.$langs->trans("Size").'</td>';
+      print '<td align="right">'.$langs->trans("Date").'</td>';
+      print '</tr>';
+      $var=true;
+      while (($file = readdir($handle))!==false)
 	{
-		$handle=opendir($dir.'/'.$year);
-
-		if ($found) print '<br>';
-		print '<br>';
-		
-		print '<table width="100%" class="noborder">';
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans("Reporting").'</td>';
-		print '<td align="right">'.$langs->trans("Size").'</td>';
-		print '<td align="right">'.$langs->trans("Date").'</td>';
-		print '</tr>';
-		$var=true;
-		while (($file = readdir($handle))!==false)
-		{
-			if (eregi('^payment',$file))
-			{
-				$var=!$var;
-				$tfile = $dir . '/'.$year.'/'.$file;
-				$relativepath = $year.'/'.$file;
-				print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
-				print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
-				print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"%d %b %Y %H:%M:%S").'</td></tr>';
-			}
-		}
-		print '</table>';
+	  if (eregi('^payment',$file))
+	    {
+	      $var=!$var;
+	      $tfile = $dir . '/'.$year.'/'.$file;
+	      $relativepath = $year.'/'.$file;
+	      print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
+	      print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
+	      print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"%d %b %Y %H:%M:%S").'</td></tr>';
+	    }
 	}
+      print '</table>';
+    }
 }
 $db->close();
- 
+
 llxFooter('$Date$ - $Revision$');
 ?>

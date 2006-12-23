@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-	    \file       htdocs/compta/facture/stats/index.php
-        \ingroup    facture
-		\brief      Page des stats factures
-		\version    $Revision$
+   \file       htdocs/compta/facture/stats/index.php
+   \ingroup    facture
+   \brief      Page des stats factures
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -51,61 +51,59 @@ $data = $stats->getNbByMonthWithPrevYear($year);
 create_exdir($conf->facture->dir_temp);
 
 $filename = $conf->facture->dir_temp."/nbfacture2year-".$year.".png";
-$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&file=nbfacture2year-'.$year.'.png';
+$fileurl = DOL_URL_ROOT.'/viewimage.php?modulepart=billstats&amp;file=nbfacture2year-'.$year.'.png';
 
 $px = new DolGraph();
 $mesg = $px->isGraphKo();
 if (! $mesg)
 {
     $px->SetData($data);
-	$px->SetPrecisionY(0);
+    $px->SetPrecisionY(0);
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetLegend(array($year - 1, $year));
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetShading(5);
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
+    $px->SetHorizTickIncrement(1);
+    $px->SetPrecisionY(0);
     $px->draw($filename);
 }
       
 $sql = "SELECT count(*) as nb, date_format(datef,'%Y') as dm, sum(total) as total FROM ".MAIN_DB_PREFIX."facture WHERE fk_statut > 0 ";
 if ($socid)
 {
-  $sql .= " AND fk_soc = $socid";
+  $sql .= " AND fk_soc=$socid";
 }
-$sql .= " GROUP BY dm DESC ";
+$sql.= " GROUP BY dm DESC;";
 $resql=$db->query($sql);
 if ($resql)
 {
-	$num = $db->num_rows($resql);
-	
-	print '<table class="border" width="100%">';
-	print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
-	print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
-	if ($mesg) { print $mesg; }
-	else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
-	print '</td></tr>';
-	$i = 0;
-	while ($i < $num)
-	{
-		$obj = $db->fetch_object($resql);
-		$nbproduct = $obj->nb;
-		$year = $obj->dm;
-		$total = price($obj->total);
-		print "<tr>";
-		print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.$total.'</td></tr>';
-		$i++;
-	}
-	
-	print '</table>';
-	$db->free();
+  $num = $db->num_rows($resql);
+  
+  print '<table class="border" width="100%">';
+  print '<tr><td align="center">'.$langs->trans("Year").'</td><td width="10%" align="center">'.$langs->trans("NumberOfBills").'</td><td align="center">'.$langs->trans("AmountTotal").'</td>';
+  print '<td align="center" valign="top" rowspan="'.($num + 1).'">';
+  if ($mesg) { print $mesg; }
+  else { print '<img src="'.$fileurl.'" alt="Nombre de factures par mois">'; }
+  print '</td></tr>';
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      $nbproduct = $obj->nb;
+      $year = $obj->dm;
+      $total = price($obj->total);
+      print "<tr>";
+      print '<td align="center"><a href="month.php?year='.$year.'">'.$year.'</a></td><td align="center">'.$nbproduct.'</td><td align="center">'.$total.'</td></tr>';
+
+    }
+  
+  print '</table>';
+  $db->free($resql);
 }
 else
 {
-	dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
-
 
 $db->close();
 
