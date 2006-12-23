@@ -79,7 +79,7 @@ class ComptaExportPoivre extends ComptaExport
     /*
      *
      */
-    function Export($linec, $linep, $id=0)
+    function Export($dir, $linec, $linep, $id=0)
     {
         $error = 0;
 
@@ -151,9 +151,9 @@ class ComptaExportPoivre extends ComptaExport
 
         if (!$error)
         {
-            dolibarr_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
+	  dolibarr_syslog("ComptaExportPoivre::Export ref : ".$this->ref);
 
-            $fxname = DOL_DATA_ROOT."/compta/export/".$this->ref.".xls";
+            $fxname = $dir . "/".$this->ref.".xls";
 
             $workbook = &new writeexcel_workbook($fxname);
 
