@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@
  */
 
 /**
-        \file        htdocs/compta/resultat/clientfourn.php
-        \brief       Page reporting resultat
-        \version     $Revision$
+   \file        htdocs/compta/resultat/clientfourn.php
+   \brief       Page reporting resultat
+   \version     $Revision$
 */
 
 require("./pre.inc.php");
@@ -52,18 +52,18 @@ $html=new Form($db);
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
     $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+    $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&amp;modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&amp;modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
     $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
     $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
+    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&amp;modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&amp;modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -112,7 +112,7 @@ if ($result) {
         $objp = $db->fetch_object($result);
         $var=!$var;
             
-        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<tr $bc[$var]><td>&nbsp;</td>";
         print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=$objp->idp\">$objp->nom</td>\n";
         
         if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
@@ -148,7 +148,7 @@ if ($modecompta != 'CREANCES-DETTES') {
                 $objp = $db->fetch_object($result);
                 $var=!$var;
                     
-                print "<tr $bc[$var]><td>&nbsp</td>";
+                print "<tr $bc[$var]><td>&nbsp;</td>";
                 print "<td>".$langs->trans("Bills")." ".$langs->trans("Other")." (anciens paiements liés à aucune facture)\n";
                 
                 if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
@@ -169,7 +169,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 if ($total_ttc == 0)
 {
     $var=!$var;
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print '<td colspan="3">'.$langs->trans("None").'</td>';
     print '</tr>';
 }
@@ -218,7 +218,7 @@ if ($result) {
       $objp = $db->fetch_object($result);
       $var=!$var;
             
-      print "<tr $bc[$var]><td>&nbsp</td>";
+      print "<tr $bc[$var]><td>&nbsp;</td>";
       print "<td>".$langs->trans("Bills")." <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
       
       if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
@@ -234,7 +234,7 @@ if ($result) {
   }
   else {
     $var=!$var;
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print '<td colspan="3">'.$langs->trans("None").'</td>';
     print '</tr>';
   }
@@ -288,7 +288,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dolibarr_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToPay")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -326,7 +326,7 @@ if ($modecompta == 'CREANCES-DETTES')
     } else {
         dolibarr_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATToCollect")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -366,7 +366,7 @@ else
     } else {
         dolibarr_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATPayed")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -404,7 +404,7 @@ else
     } else {
         dolibarr_print_error($db);
     }
-    print "<tr $bc[$var]><td>&nbsp</td>";
+    print "<tr $bc[$var]><td>&nbsp;</td>";
     print "<td>".$langs->trans("VATCollected")."</td>\n";
     if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($amount)."</td>\n";
     print "<td align=\"right\">".price($amount)."</td>\n";
@@ -457,7 +457,7 @@ if ($result) {
         $subtotal_ttc = $subtotal_ttc + $obj->amount;
     
         $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<tr $bc[$var]><td>&nbsp;</td>";
         print '<td>'.$obj->nom.'</td>';
         if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
         print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -466,7 +466,7 @@ if ($result) {
       }
     }
     else {
-        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<tr $bc[$var]><td>&nbsp;</td>";
         print '<td colspan="3">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
@@ -520,7 +520,7 @@ if ($result) {
         $subtotal_ttc = $subtotal_ttc + $obj->amount;
         
         $var = !$var;
-        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<tr $bc[$var]><td>&nbsp;</td>";
         print '<td>'.$obj->nom.'</td>';
         if ($modecompta == 'CREANCES-DETTES') print '<td align="right">'.price(-$obj->amount).'</td>';
         print '<td align="right">'.price(-$obj->amount).'</td>';
@@ -529,7 +529,7 @@ if ($result) {
         }
     }
     else {
-        print "<tr $bc[$var]><td>&nbsp</td>";
+        print "<tr $bc[$var]><td>&nbsp;</td>";
         print '<td colspan="3">'.$langs->trans("None").'</td>';
         print '</tr>';
     }
