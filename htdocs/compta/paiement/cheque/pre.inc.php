@@ -41,12 +41,10 @@ function llxHeader($head = "", $title="")
   $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?action=new",$langs->trans("New"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php",$langs->trans("List"));
 
-  $menu->add("rapport.php",$langs->trans("Reportings"));
+  $menu->add(DOL_URL_ROOT."/compta/paiement/rapport.php",$langs->trans("Reportings"));
 
   $menu->add(DOL_URL_ROOT."/compta/facture.php",$langs->trans("Bills"));
   $menu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"));
-
-  $menu->add_submenu("avalider.php",$langs->trans("MenuToValid"));
 
   left_menu($menu->liste);
 }
