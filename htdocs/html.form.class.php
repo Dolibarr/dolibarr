@@ -2810,7 +2810,7 @@ class Form
             // Affiche colonne type MIME
             print '<td nowrap>'.$mimetype.'</td>';
             // Affiche nom fichier avec lien download
-	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&file='.urlencode($relativepath).'">'.$file["name"].'</a>';
+	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$file["name"].'</a>';
 			print '</td>';
             // Affiche taille fichier
             print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
@@ -2819,7 +2819,7 @@ class Form
 
 			if ($delallowed)
 			{
-            	print '<td><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&modulepart='.$modulepart.'&file='.urlencode($relativepath).'&urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
+            	print '<td><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
 			}
 
             print '</tr>';
