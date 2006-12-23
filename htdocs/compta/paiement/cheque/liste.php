@@ -83,6 +83,7 @@ if ($resql)
 
     print_barre_liste($langs->trans("CheckReceipt"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
+    print '<form method="get" action="liste.php">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
@@ -93,7 +94,6 @@ if ($resql)
     print "</tr>\n";
 
     // Lignes des champs de filtre
-    print '<form method="get" action="liste.php">';
     print '<tr class="liste_titre">';
     print '<td colspan="3">&nbsp;</td>';
     print '<td align="right">';
@@ -102,7 +102,6 @@ if ($resql)
     print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
     print '</td>';
     print "</tr>\n";
-    print '</form>';
 
     $var=true;
     while ($i < min($num,$limit))
@@ -113,7 +112,6 @@ if ($resql)
         print '<td width="80">';
 	print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
 	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
-
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
 
         print '<td>';
@@ -131,11 +129,11 @@ if ($resql)
         {
             print img_tick();
         }
-
-        print '</td></tr>';
+        print "</td></tr>\n";
         $i++;
     }
     print "</table>";
+    print "</form>\n";
 }
 else
 {
