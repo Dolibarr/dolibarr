@@ -30,10 +30,10 @@ require("./pre.inc.php");
 
 $langs->load("banks");
 
-$user->getrights("facture");
+$user->getrights("banque");
 
 // Sécurité accés client
-if (! $user->rights->facture->lire)
+if (! $user->rights->banque)
   accessforbidden();
 
 $socid=0;
@@ -51,9 +51,41 @@ llxHeader('',$langs->trans("CheckReceipt"));
 
 print_titre($langs->trans("CheckReceipt") );
 
-print '<table width="100%"><tr><td width="40%" valign="top">';
+print '<table width="100%"><tr><td width="30%" valign="top">';
 
-$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount,";
+$sql = "SELECT count(b.rowid)";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+$sql.= " WHERE b.fk_type = 'CHQ'AND b.fk_bordereau = 0";
+$sql.= " AND b.amount > 0";
+
+$resql = $db->query($sql);
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="2">'.$langs->trans("BankChecks")."</td>\n";
+print "</tr>\n";
+
+if ($resql)
+{
+  $var=true;
+  if ($row = $db->fetch_row($resql) )
+    {
+      $num = $row[0];
+    }
+  print "<tr $bc[$var]>";
+  print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
+  print '<td align="right">'.$num.'</td></tr>';
+  print "</table>\n";
+}
+else
+{
+  dolibarr_print_error($db);
+}
+
+print "</td>\n";
+print '<td width="70%" valign="top">';
+
+$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount,bc.number,";
 $sql.= " bc.statut, ba.label, ba.rowid as bid";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
@@ -64,10 +96,9 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-  $i = 0;
-
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre"><td>'.$langs->trans("Date")."</td>";
+  print '<td>'.$langs->trans("Numero").'</td>';
   print '<td>'.$langs->trans("Account").'</td>';
   print '<td align="right">'.$langs->trans("Amount").'</td>';
   print "</tr>\n";
@@ -78,82 +109,16 @@ if ($resql)
       $var=!$var;
       print "<tr $bc[$var]>\n";
       print '<td>';	
+      print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
       print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">';
       print dolibarr_print_date($objp->db,'%d/%m').'</a></td>';
-      
-      print '<td>';
-      print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
-      
+      print '<td>'.$objp->number.'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';      
       print '</td>';
       print '<td align="right">'.price($objp->amount).'</td></tr>';
-      $i++;
     }
   print "</table>";
-}
-else
-{
-  dolibarr_print_error($db);
-}
-
-print "</td>\n";
-print '<td width="60%" valign="top">';
-
-$page=$_GET["page"];
-$sortorder=$_GET["sortorder"];
-$sortfield=$_GET["sortfield"];
- 
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
-if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="p.rowid";
-  
-$sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,";
-$sql.= " c.code as paiement_code,"; 
-$sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c";
-$sql.= ",".MAIN_DB_PREFIX."bank as b";
-$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
-$sql.= " WHERE c.code = 'CHQ' AND c.code = b.fk_type AND b.fk_bordereau = 0 AND b.fk_account = ba.rowid";
-$sql.= " AND b.amount > 0";
-//$sql .= " ORDER BY $sortfield $sortorder";
-$sql .= $db->plimit( $limit+1 ,$offset);
-//print "$sql";
-
-$resql = $db->query($sql);
-
-if ($resql)
-{
-  $num = $db->num_rows($resql);
-  $i = 0;
-
-  $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
-
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Date")."</td>\n";
-  print '<td>'.$langs->trans("Account")."</td>\n";
-  print '<td align="right">'.$langs->trans("Amount")."</td>\n";
-  print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
-
-  print "</tr>\n";
-  
-  $var=true;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object($resql);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td>'.dolibarr_print_date($objp->date).'</td><td>';
-
-      if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
-      else print '&nbsp;';
-      print '</td>';
-      print '<td align="right">'.price($objp->amount).'</td>';
-      print '<td>'.$objp->emetteur.'</td>';
-      print '</tr>';
-      $i++;
-    }
-  print "</table>";
+  $db->free($resql);
 }
 else
 {

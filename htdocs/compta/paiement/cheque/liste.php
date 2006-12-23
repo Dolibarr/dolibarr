@@ -110,7 +110,9 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print '<td width="80"><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
+        print '<td width="80">';
+	print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
+	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
 
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
 
