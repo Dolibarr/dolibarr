@@ -110,9 +110,15 @@ if ($resql)
       print "<tr $bc[$var]>\n";
       print '<td>';	
       print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
-      print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">';
-      print dolibarr_print_date($objp->db,'%d/%m').'</a></td>';
-      print '<td>'.$objp->number.'</td>';
+      print dolibarr_print_date($objp->db,'%d/%m').'</td>';
+      if ($objp->statut == 1)
+	{
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
+	}
+      else
+	{
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">(PROV'.$objp->rowid.')</a></td>';
+	}
       print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';      
       print '</td>';
       print '<td align="right">'.price($objp->amount).'</td></tr>';
