@@ -25,7 +25,6 @@
    \ingroup    facture
    \brief      Rapports de paiements
    \version    $Revision$
-   \todo       Probleme de repertoire qui n'est pas bien place
 */
 
 require("./pre.inc.php");
