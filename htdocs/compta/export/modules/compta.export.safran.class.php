@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,42 +26,43 @@ require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 class ComptaExportTableur extends ComptaExport
 {
 
-    function ComptaExportTableur ()
+  function ComptaExportTableur ()
+  {
+    
+  }
+  
+  function Create()
     {
+      
+      $this->date = time();
+      
+      $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
+      
+      $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
+      
+      if (strlen(trim($this->fournisseur->email_commande)) == 0)
+        {
+	  return -3;
+        }
 
+      if (file_exists($fname))
+        {
+	  return 2;
+        }
+      else
+        {
+	  $res = $this->CreateFile($fname);
+	  $res = $res + $this->LogSql();
+	  $res = $res + $this->MailFile($fname);
+	  
+	  return $res;
+        }
     }
-
-    function Create()
+  
+  function Export($dir, $linec)
     {
-
-        $this->date = time();
-
-        $this->datef = "commande-".strftime("%d%b%y-%HH%M", $this->date);
-
-        $fname = DOL_DATA_ROOT ."/telephonie/ligne/commande/".$this->datef.".xls";
-
-        if (strlen(trim($this->fournisseur->email_commande)) == 0)
-        {
-            return -3;
-        }
-
-        if (file_exists($fname))
-        {
-            return 2;
-        }
-        else
-        {
-            $res = $this->CreateFile($fname);
-            $res = $res + $this->LogSql();
-            $res = $res + $this->MailFile($fname);
-
-            return $res;
-        }
-    }
-
-    function Export($linec)
-    {
-        $fname = "/tmp/toto.xls";
+      //$fname = $dir . "/tmp/toto.xls"; DEBUG DEBUG
+      $fname = "/tmp/toto.xls";
 
         $workbook = &new writeexcel_workbook($fname);
 
