@@ -33,8 +33,18 @@ require_once("./ComptaJournalVente.class.php");
 
 $langs->load("compta");
 
-$dir = $conf->compta->dir_output."/export/";
+$now = time();
+if (isset($_GET["year"]))
+{
+  $year = $_GET["year"];
+}
+else
+{
+  $year = strftime("%Y",$now);
+}
 
+$updir = $conf->compta->dir_output."/export/";
+$dir = $conf->compta->dir_output."/export/".$year."/";
 
 /*
  * Actions
@@ -42,34 +52,33 @@ $dir = $conf->compta->dir_output."/export/";
  
 if ($_GET["action"] == 'export')
 {
-	$modulename='Poivre';
-	
-	include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
-
-	create_exdir($dir);
-	
-	$exc = new ComptaExport($db, $user, $modulename);
-	
-	if($_GET["id"] > 0)
-	{
-		$exc->Export($_GET["id"]);
-	}
-	else
-	{
-		$exc->Export();
-	}
-	
-	/* Génération du journal des Paiements */
-	
-	$jp= new ComptaJournalPaiement($db);
-	$jp->GeneratePdf($user, $exc->id, $exc->ref);
-	
-	/* Génération du journal des Ventes */
-	
-	$jp= new ComptaJournalVente($db);
-	$jp->GeneratePdf($user, $exc->id, $exc->ref);
+  $modulename='Poivre';
+  
+  include_once DOL_DOCUMENT_ROOT.'/compta/export/modules/compta.export.class.php';
+  
+  create_exdir($dir);
+  
+  $exc = new ComptaExport($db, $user, $modulename);
+  
+  if($_GET["id"] > 0)
+    {
+      $exc->Export($_GET["id"], $dir);
+    }
+  else
+    {
+      $exc->Export(0, $dir);
+    }
+  
+  /* Génération du journal des Paiements */
+  
+  $jp= new ComptaJournalPaiement($db);
+  $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
+  
+  /* Génération du journal des Ventes */
+  
+  $jp= new ComptaJournalVente($db);
+  $jp->GeneratePdf($user, $dir, $exc->id, $exc->ref);
 }
-
 
 /*
  * Affichage page
@@ -83,7 +92,6 @@ if ($exc->error_message)
 {
    print '<div class="error">'.$exc->error_message.'</div>';
 }
-
 
 print '<table class="notopnoleftnoright" width="100%">';
 print '<tr><td valign="top" width="30%">';
@@ -117,10 +125,31 @@ $var=false;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Invoices").'</td><td align="right">'.$nbfac.'</td></tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("Payments").'</td><td align="right">'.$nbp.'</td></tr>';
-print "</table>\n";
+print "</table><br />\n";
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Year").'</td>';
+print '<td>&nbsp;</td>';
+print "</tr>\n";
+
+$handle=@opendir($updir);
+if ($handle)
+{
+  while (($file = readdir($handle))!==false)
+    {
+      if (is_readable($updir.$file) && is_dir($updir.$file) && strlen($file) == 4)
+	{
+	  $var=!$var;
+	  print '<tr '.$bc[$var].'><td><a href="index.php?year='.$file.'">'.$file.'</a><td></tr>';
+	}
+    }
+  closedir($handle);
+}
+
+print "</table>";
 
 print '</td><td valign="top" width="70%">';
-
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
@@ -131,21 +160,20 @@ print "</tr>\n";
 $handle=@opendir($dir);
 if ($handle)
 {
-	while (($file = readdir($handle))!==false)
+  while (($file = readdir($handle))!==false)
+    {
+      if (is_readable($dir.$file) && is_file($dir.$file))
 	{
-		if (is_readable($dir.$file) && is_file($dir.$file))
-		{
-			print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&file=export/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';
-	
-			print '</tr>';
-		}
+	  print '<tr><td><a href="'.DOL_URL_ROOT.'/document.php?modulepart=export_compta&amp;file=export/'.$year.'/'.$file.'&amp;type=text/plain">'.$file.'</a><td>';  
+	  print '</tr>';
 	}
+    }
+  closedir($handle);
 }
 
 print "</table>";
 
 print '</td></tr></table>';
-
 
 llxFooter('$Date$ - $Revision$');
 ?>
