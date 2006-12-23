@@ -50,29 +50,25 @@ if ($user->societe_id > 0)
 $modecompta = $conf->compta->mode;
 if ($_GET["modecompta"]) $modecompta=$_GET["modecompta"];
 
-
-
 llxHeader();
-
-
 $html=new Form($db);
 
 // Affiche en-tête du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
     $nom="Chiffre d'affaire";
-    $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&amp;modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
     $period="$year_start - $year_end";
-    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&amp;modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&amp;modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCADue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
     $nom="Chiffre d'affaire";
-    $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&amp;modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
     $period="$year_start - $year_end";
-    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&amp;modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&amp;modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCAIn");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
@@ -147,9 +143,6 @@ if ($modecompta != 'CREANCES-DETTES') {
         dolibarr_print_error($db);
     }
 }
-
-
-
 
 
 print '<table width="100%" class="noborder">';
