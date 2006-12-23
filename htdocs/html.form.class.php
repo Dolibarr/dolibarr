@@ -2574,7 +2574,7 @@ class Form
 
     // Ligne de titre
     print '<tr>';
-    print '<td valign="top" width="110px">'.$langs->trans("ReportName").'</td>';
+    print '<td valign="top" width="110">'.$langs->trans("ReportName").'</td>';
     if (! $variante) print '<td colspan="3">';
     else print '<td>';
     print $nom;
