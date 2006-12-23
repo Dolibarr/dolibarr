@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -52,8 +52,6 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $search_code=isset($_GET["search_code"])?$_GET["search_contract"]:$_POST["search_code"];
 
 
-
-
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
 if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
@@ -80,84 +78,80 @@ if (! $sortfield) $sortfield="s.nom";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit +1, $offset);
 
-
-
 /*
  * Affichage liste
  */
  
 llxHeader();
 
-
 $result = $db->query($sql);
 if ($result)
 {
-	$num = $db->num_rows($result);
-
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-
-	$i = 0;
-
-	$addu = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
-	print '<table class="liste">';
-	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
-	print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
-	print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
-	print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
-	print '<td class="liste_titre">&nbsp;</td>';
-	print "</tr>\n";
-
-	print '<form method="get" action="clients.php">';
-	print '<tr class="liste_titre">';
-	print '<td class="liste_titre" valign="right">';
-	print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($search_nom).'">';
-	print '</td><td class="liste_titre" valign="right">';
-	print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
-	print '</td><td class="liste_titre" valign="right">';
-	print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
-	print '</td><td class="liste_titre">&nbsp;</td>';
-	print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-	print "</td>";
-	print "</tr>\n";
-	print '</form>';
-
-	$var=True;
-
-	while ($i < min($num,$conf->liste_limit))
+  $num = $db->num_rows($result);
+  
+  print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
+  
+  $i = 0;
+  
+  $addu = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
+  print '<form method="get" action="clients.php">'."\n";
+  print '<table class="liste">'."\n";
+  print '<tr class="liste_titre">';
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
+  print '<td class="liste_titre">&nbsp;</td>';
+  print "</tr>\n";
+  
+  print '<tr class="liste_titre">';
+  print '<td class="liste_titre">';
+  print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($search_nom).'">';
+  print '</td><td class="liste_titre">';
+  print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
+  print '</td><td class="liste_titre">';
+  print '<input type="text" class="flat" name="search_code" value="'.$search_code.'" size="10">';
+  print '</td><td class="liste_titre">&nbsp;</td>';
+  print '<td class="liste_titre" align="center"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
+  print "</tr>\n";
+  
+  $var=True;
+  
+  while ($i < min($num,$conf->liste_limit))
+    {
+      $obj = $db->fetch_object($result);
+      
+      $var=!$var;
+      
+      print "<tr $bc[$var]>";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+      print img_object($langs->trans("ShowCustomer"),"company");
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '<td>'.$obj->ville.'</td>';
+      print '<td>'.$obj->code_client.'</td>';
+      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="center">';
+      if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
-		$obj = $db->fetch_object($result);
-
-		$var=!$var;
-
-		print "<tr $bc[$var]>";
-		print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
-		print img_object($langs->trans("ShowCustomer"),"company");
-		print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
-		print '<td>'.$obj->ville.'</td>';
-		print '<td>'.$obj->code_client.'</td>';
-		print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
-		print '<td align="center">';
-		if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
-		{
-			print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
-			print img_folder();
-			print '</a>';
-		}
-		else
-		{
-			print "&nbsp;";
-		}
-		print "</td></tr>\n";
-		$i++;
+	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+	  print img_folder();
+	  print '</a>';
 	}
-	print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
-	print "</table>";
-	$db->free($result);
+      else
+	{
+	  print "&nbsp;";
+	}
+      print "</td></tr>\n";
+      $i++;
+    }
+  //print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
+  print "</table>\n";
+  print "</form>\n";
+  $db->free($result);
 }
 else
 {
-	dolibarr_print_error($db);
+  dolibarr_print_error($db);
 }
 
 $db->close();
