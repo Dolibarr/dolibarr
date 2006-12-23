@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 
 $langs->load("compta");
+$langs->load("bills");
 
 llxHeader('','Compta - Ventilation');
 
