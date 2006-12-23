@@ -278,7 +278,7 @@ class MenuTop {
 
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
         }
-
+       
         // Members
         if ($conf->adherent->enabled)
         {

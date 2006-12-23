@@ -391,6 +391,10 @@ class MenuLeft {
 
 
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
+
+					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("CheckReceipt"),1,$user->rights->facture->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?action=new",$langs->trans("New"),2,$user->rights->facture->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php",$langs->trans("List"),2,$user->rights->facture->lire);
 				}
 
 				// Propal
