@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,11 +31,10 @@ class ComptaJournalVente  {
     }
 
 
-  function GeneratePdf($user, $excid, $excref)
+  function GeneratePdf($user, $dir, $excid, $excref)
     {
       $date = strftime("%Y%m",time());
 
-      $dir = DOL_DATA_ROOT."/compta/export/";
       $file = $dir . "JournalVente".$excref . ".pdf";
 
       if (file_exists($dir))

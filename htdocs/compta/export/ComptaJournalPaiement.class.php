@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,233 +26,232 @@ require_once(DOL_DOCUMENT_ROOT.'/compta/export/ComptaJournalPdf.class.php');
 class ComptaJournalPaiement  {
 
   function ComptaJournalPaiement ($db=0)
-    { 
-      $this->db = $db;
+  { 
+    $this->db = $db;
     }
-
-
-  function GeneratePdf($user, $excid, $excref)
-    {
-      $date = strftime("%Y%m",time());
-
-      $dir = DOL_DATA_ROOT."/compta/export/";
-      $file = $dir . "JournalPaiement".$excref . ".pdf";
-
-      $grand_total_debit = 0;
-      $grand_total_credit = 0;
-
-      if (file_exists($dir))
-	{
-	  $this->pdf = new ComptaJournalPdf('P','mm','A4');
-
-	  $this->pdf->AliasNbPages();
-
-	  $this->pdf->Open();
-	  $this->pdf->AddPage();
+  
+  
+  function GeneratePdf($user, $dir, $excid, $excref)
+  {
+    $date = strftime("%Y%m",time());
+    
+    $file = $dir . "JournalPaiement".$excref . ".pdf";
+    
+    $grand_total_debit = 0;
+    $grand_total_credit = 0;
+    
+    if (file_exists($dir))
+      {
+	$this->pdf = new ComptaJournalPdf('P','mm','A4');
+	
+	$this->pdf->AliasNbPages();
+	
+	$this->pdf->Open();
+	$this->pdf->AddPage();
+	
+	$this->tab_top = 90;
+	$this->tab_height = 90;
+	
+	$this->pdf->SetTitle("Journal des paiements");
+	$this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
+	$this->pdf->SetAuthor($user->fullname);
 	  
-	  $this->tab_top = 90;
-	  $this->tab_height = 90;
+	$this->pdf->SetMargins(10, 10, 10);
+	$this->pdf->SetAutoPageBreak(1,10);
 	  
-	  $this->pdf->SetTitle("Journal des paiements");
-	  $this->pdf->SetCreator("Dolibarr ".DOL_VERSION);
-	  $this->pdf->SetAuthor($user->fullname);
+	/*
+	 *
+	 */  
 	  
-	  $this->pdf->SetMargins(10, 10, 10);
-	  $this->pdf->SetAutoPageBreak(1,10);
+	$this->pdf->SetFillColor(220,220,220);
 	  
-	  /*
-	   *
-	   */  
+	$this->pdf->SetFont('Arial','', 9);
 	  
-	  $this->pdf->SetFillColor(220,220,220);
-	  
-	  $this->pdf->SetFont('Arial','', 9);
-	  
-	  $this->pdf->SetXY (10, 10 );
-	  $nexY = $this->pdf->GetY();
+	$this->pdf->SetXY (10, 10 );
+	$nexY = $this->pdf->GetY();
 	    
-	  $sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.statut";
-	  $sql .= ", pf.amount";
-	  $sql .= ", c.libelle, p.num_paiement";
-	  $sql .= ", f.facnumber, f.increment";
-	  $sql .= " , s.nom";
-	  $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
-	  $sql .= " , ".MAIN_DB_PREFIX."c_paiement as c";
-	  $sql .= " , ".MAIN_DB_PREFIX."paiement_facture as pf";
-	  $sql .= " , ".MAIN_DB_PREFIX."facture as f";
-	  $sql .= " , ".MAIN_DB_PREFIX."societe as s";
-	  $sql .= " WHERE p.fk_paiement = c.id";
-	  $sql .= " AND pf.fk_paiement = p.rowid";
-	  $sql .= " AND f.fk_soc = s.idp";
-	  $sql .= " AND p.statut = 1 ";
-	  $sql .= " AND pf.fk_facture = f.rowid";
-	  $sql .= " AND p.fk_export_compta = ".$excid;
+	$sql = "SELECT p.rowid,".$this->db->pdate("p.datep")." as dp, p.statut";
+	$sql .= ", pf.amount";
+	$sql .= ", c.libelle, p.num_paiement";
+	$sql .= ", f.facnumber, f.increment";
+	$sql .= " , s.nom";
+	$sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
+	$sql .= " , ".MAIN_DB_PREFIX."c_paiement as c";
+	$sql .= " , ".MAIN_DB_PREFIX."paiement_facture as pf";
+	$sql .= " , ".MAIN_DB_PREFIX."facture as f";
+	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE p.fk_paiement = c.id";
+	$sql .= " AND pf.fk_paiement = p.rowid";
+	$sql .= " AND f.fk_soc = s.idp";
+	$sql .= " AND p.statut = 1 ";
+	$sql .= " AND pf.fk_facture = f.rowid";
+	$sql .= " AND p.fk_export_compta = ".$excid;
 
-	  $sql .= " ORDER BY date_format(p.datep,'%Y%m%d') ASC, s.nom ASC";
+	$sql .= " ORDER BY date_format(p.datep,'%Y%m%d') ASC, s.nom ASC";
 
-	  $oldate = '';
+	$oldate = '';
 
-	  $resql = $this->db->query($sql);
+	$resql = $this->db->query($sql);
 
-	  if ($resql)
-	    {
-	      $num = $this->db->num_rows($resql);
-	      $i = 0; 
-	      $var = True;
-	      $journ = 'CE';	      
-	      $this->hligne = 5;
+	if ($resql)
+	  {
+	    $num = $this->db->num_rows($resql);
+	    $i = 0; 
+	    $var = True;
+	    $journ = 'CE';	      
+	    $this->hligne = 5;
 
-	      while ($i < $num)
-		{
-		  $obj = $this->db->fetch_object($resql);
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object($resql);
 
-		  if ($oldate <> strftime("%d%m%Y",$obj->dp))
-		    {
+		if ($oldate <> strftime("%d%m%Y",$obj->dp))
+		  {
 
-		      if ($oldate <> '')
-			{
-			  $this->pdf->SetFont('Arial','B',9);
+		    if ($oldate <> '')
+		      {
+			$this->pdf->SetFont('Arial','B',9);
 
-			  $this->pdf->cell(143,$this->hligne,'');
+			$this->pdf->cell(143,$this->hligne,'');
 
-			  $this->pdf->cell(16,$this->hligne,'Total : ',0,0,'R');
-			  $this->pdf->cell(18,$this->hligne,$total_debit,0,0,'R');
-			  $this->pdf->cell(18,$this->hligne,$total_credit,0,0,'R');
-			  $this->pdf->ln();
-			}
+			$this->pdf->cell(16,$this->hligne,'Total : ',0,0,'R');
+			$this->pdf->cell(18,$this->hligne,$total_debit,0,0,'R');
+			$this->pdf->cell(18,$this->hligne,$total_credit,0,0,'R');
+			$this->pdf->ln();
+		      }
 
-		      $journal = "Journal $journ du ".strftime('%A, %e %B %G',$obj->dp);
-		      $total_credit = 0 ;
-		      $total_debit = 0 ;
-		      $this->pdf->SetFont('Arial','B',10);
+		    $journal = "Journal $journ du ".strftime('%A, %e %B %G',$obj->dp);
+		    $total_credit = 0 ;
+		    $total_debit = 0 ;
+		    $this->pdf->SetFont('Arial','B',10);
 
-		      $this->pdf->cell(10,$this->hligne,"$journal");
-		      $this->pdf->ln();
+		    $this->pdf->cell(10,$this->hligne,"$journal");
+		    $this->pdf->ln();
 
-		      $this->pdf->SetFont('Arial','',9);
+		    $this->pdf->SetFont('Arial','',9);
 
-		      $this->pdf->cell(16,$this->hligne,'Date');
+		    $this->pdf->cell(16,$this->hligne,'Date');
 
-		      $this->pdf->cell(20,$this->hligne,'N Facture');
+		    $this->pdf->cell(20,$this->hligne,'N Facture');
 
-		      $this->pdf->cell(20,$this->hligne,'Tiers');
+		    $this->pdf->cell(20,$this->hligne,'Tiers');
 
-		      $this->pdf->cell(87,$this->hligne,'Libellé');
+		    $this->pdf->cell(87,$this->hligne,'Libellé');
 
-		      $this->pdf->cell(16,$this->hligne,'Echeance',0,0,'R');
+		    $this->pdf->cell(16,$this->hligne,'Echeance',0,0,'R');
 
-		      $this->pdf->cell(18,$this->hligne,'Débit',0,0,'R');
+		    $this->pdf->cell(18,$this->hligne,'Débit',0,0,'R');
 
-		      $this->pdf->cell(18,$this->hligne,'Crédit',0,0,'R');
-		      $this->pdf->ln();
+		    $this->pdf->cell(18,$this->hligne,'Crédit',0,0,'R');
+		    $this->pdf->ln();
 
-		      $oldate = strftime("%d%m%Y",$obj->dp);
-		    }
+		    $oldate = strftime("%d%m%Y",$obj->dp);
+		  }
 
-		  /*
-		   *
-		   */
-		  $socnom = $obj->nom;
-		  $libelle = $obj->libelle;
+		/*
+		 *
+		 */
+		$socnom = $obj->nom;
+		$libelle = $obj->libelle;
 
-		  if (strlen($obj->nom) > 31)
+		if (strlen($obj->nom) > 31)
 		  {
 		    $socnom = substr($obj->nom, 0 , 31);
 		  }
 
-		  $this->pdf->SetFont('Arial','',9);
+		$this->pdf->SetFont('Arial','',9);
 
-		  if ($obj->amount >= 0)
-		    {
-		      $credit = '';
-		      $debit = abs($obj->amount);
-		      $total_debit = $total_debit + $debit;
-		      $grand_total_debit = $grand_total_debit + $debit;
-		    }
-		  else
-		    {
-		      $credit = abs($obj->amount);
-		      $debit = '';
-		      $total_credit = $total_credit + $credit;
-		      $grand_total_credit = $grand_total_credit + $credit;
-		      $libelle = "Rejet Prélèvement";
-		    }
+		if ($obj->amount >= 0)
+		  {
+		    $credit = '';
+		    $debit = abs($obj->amount);
+		    $total_debit = $total_debit + $debit;
+		    $grand_total_debit = $grand_total_debit + $debit;
+		  }
+		else
+		  {
+		    $credit = abs($obj->amount);
+		    $debit = '';
+		    $total_credit = $total_credit + $credit;
+		    $grand_total_credit = $grand_total_credit + $credit;
+		    $libelle = "Rejet Prélèvement";
+		  }
 
-		  $s = $socnom . ' '.$libelle;
+		$s = $socnom . ' '.$libelle;
 
-		  $facnumber = $obj->facnumber;
-		  if (strlen(trim($obj->increment)) > 0)
-		    {
-		      $facnumber = $obj->increment;
-		    }
-
-
-		  $this->_print_ligne($obj->dp, $facnumber, '41100000', $s, $credit, $debit);
-
-		  if ($obj->amount >= 0)
-		    {
-		      $credit = abs($obj->amount);
-		      $debit = '';
-		      $total_credit = $total_credit + $credit;
-		      $grand_total_credit = $grand_total_credit + $credit;
-		    }
-		  else
-		    {
-		      $credit = '';
-		      $debit = abs($obj->amount);
-		      $total_debit = $total_debit + $debit;
-		      $grand_total_debit = $grand_total_debit + $debit;
-		    }
+		$facnumber = $obj->facnumber;
+		if (strlen(trim($obj->increment)) > 0)
+		  {
+		    $facnumber = $obj->increment;
+		  }
 
 
-		  $s = $socnom . ' '.$libelle;
-		  $this->_print_ligne($obj->dp, $facnumber, '5122000', $s, $credit, $debit);
+		$this->_print_ligne($obj->dp, $facnumber, '41100000', $s, $credit, $debit);
 
-		  $i++; 
-		}
+		if ($obj->amount >= 0)
+		  {
+		    $credit = abs($obj->amount);
+		    $debit = '';
+		    $total_credit = $total_credit + $credit;
+		    $grand_total_credit = $grand_total_credit + $credit;
+		  }
+		else
+		  {
+		    $credit = '';
+		    $debit = abs($obj->amount);
+		    $total_debit = $total_debit + $debit;
+		    $grand_total_debit = $grand_total_debit + $debit;
+		  }
 
-	      $this->pdf->SetFont('Arial','B',9);
+
+		$s = $socnom . ' '.$libelle;
+		$this->_print_ligne($obj->dp, $facnumber, '5122000', $s, $credit, $debit);
+
+		$i++; 
+	      }
+
+	    $this->pdf->SetFont('Arial','B',9);
 	      
-	      $this->pdf->cell(143,$this->hligne,'');
+	    $this->pdf->cell(143,$this->hligne,'');
 	      
-	      $this->pdf->cell(16,$this->hligne,'Total : ',0,0,'R');
-	      $this->pdf->cell(18,$this->hligne,$total_debit,0,0,'R');
-	      $this->pdf->cell(18,$this->hligne,$total_credit,0,0,'R');
-	      $this->pdf->ln();
-	      /*
-	       *
-	       */	  	      
-	      $this->pdf->cell(143,$this->hligne,'');
+	    $this->pdf->cell(16,$this->hligne,'Total : ',0,0,'R');
+	    $this->pdf->cell(18,$this->hligne,$total_debit,0,0,'R');
+	    $this->pdf->cell(18,$this->hligne,$total_credit,0,0,'R');
+	    $this->pdf->ln();
+	    /*
+	     *
+	     */	  	      
+	    $this->pdf->cell(143,$this->hligne,'');
 	      
-	      $this->pdf->cell(16,$this->hligne,'Grand Total : ',0,0,'R');
-	      $this->pdf->cell(18,$this->hligne,$grand_total_debit,0,0,'R');
-	      $this->pdf->cell(18,$this->hligne,$grand_total_credit,0,0,'R');
-	      $this->pdf->ln();
+	    $this->pdf->cell(16,$this->hligne,'Grand Total : ',0,0,'R');
+	    $this->pdf->cell(18,$this->hligne,$grand_total_debit,0,0,'R');
+	    $this->pdf->cell(18,$this->hligne,$grand_total_credit,0,0,'R');
+	    $this->pdf->ln();
 
-	      /*
-	       *
-	       *
-	       */
+	    /*
+	     *
+	     *
+	     */
 
-	      $this->pdf->Close();
+	    $this->pdf->Close();
 	      
-	      $this->pdf->Output($file);
+	    $this->pdf->Output($file);
 
 
-	      return 1;
-	    }
-	  else
-	    {
-	      $this->error="";
-	      return 0;
-	    }
-	}
-      else
-	{
-	  $this->error="Erreur: FAC_OUTPUTDIR non défini !";
-	  return 0;
-	}
-    }
+	    return 1;
+	  }
+	else
+	  {
+	    $this->error="";
+	    return 0;
+	  }
+      }
+    else
+      {
+	$this->error="Erreur: FAC_OUTPUTDIR non défini !";
+	return 0;
+      }
+  }
   /*
    *
    *
@@ -260,7 +259,6 @@ class ComptaJournalPaiement  {
    */
   Function _print_ligne($a, $b, $c, $d, $e, $f)
   {
-
     $this->pdf->cell(16,$this->hligne, strftime('%d%m%y',$a));
     $this->pdf->cell(20,$this->hligne, $b);
     $this->pdf->cell(20,$this->hligne, $c);
