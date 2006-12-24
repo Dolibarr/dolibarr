@@ -149,7 +149,7 @@ if ($account > 0)
 
 	// Fabrication tableau 1
 	$file= $conf->banque->dir_temp."/solde.$account.$year.$month.png";
-	$title=$langs->trans("Balance").' '.$langs->trans("Month").': '.$month.' '.$langs->trans("Year").': '.$year;
+	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
@@ -158,8 +158,8 @@ if ($account > 0)
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->transnoentities("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -247,7 +247,7 @@ if ($account > 0)
 
 	// Fabrication tableau 2
 	$file= $conf->banque->dir_temp."/solde.$account.$year.png";
-	$title=$langs->trans("Balance").' '.$langs->trans("Year").': '.$year;
+	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
@@ -256,8 +256,8 @@ if ($account > 0)
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->transnoentities("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -329,7 +329,7 @@ if ($account > 0)
 
 	// Fabrication tableau 3
 	$file= $conf->banque->dir_temp."/solde.$account.png";
-	$title=$langs->trans("Balance");
+	$title=$langs->transnoentities("Balance");
 	$graph_datas=array();
 	foreach($datas as $i => $val)
 	{
@@ -338,8 +338,8 @@ if ($account > 0)
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    if ($acct->min_desired) $px->SetLegend(array($langs->trans("Balance"),$langs->trans("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->trans("Balance")));
+    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+    else $px->SetLegend(array($langs->transnoentities("Balance")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -409,7 +409,7 @@ if ($account > 0)
 
 	// Fabrication tableau 4
 	$file= $conf->banque->dir_temp."/mouvement.$account.$year.png";
-	$title=$langs->trans("Movements").' '.$langs->trans("Year").': '.$year;
+	$title=$langs->transnoentities("Movements").' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($data_credit as $i => $val)
 	{
@@ -417,7 +417,7 @@ if ($account > 0)
     }
 	$px = new DolGraph();
     $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->trans("Credit"),$langs->trans("Debit")));
+    $px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
