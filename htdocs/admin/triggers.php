@@ -129,7 +129,6 @@ $files = array();
 $modules = array();
 $orders = array();
 $i = 0;
-$j = 0;
 while (($file = readdir($handle))!==false)
 {
     if (is_readable($dir.$file) && ereg('^interface_(.*)\.class\.php',$file,$reg))
@@ -137,14 +136,20 @@ while (($file = readdir($handle))!==false)
         $modName = 'Interface'.ucfirst($reg[1]);
         if ($modName)
         {
-            include_once($dir.$file);
-            $objMod = new $modName($db);
-
-            $modules[$i] = $modName;
-            $files[$i] = $file;
-            $orders[$i] = "$objMod->family";   // Tri par famille
-            $j++;
-            $i++;
+	        if (in_array($modName,$modules))
+			{
+        		print "Error: Un fichier triggers du nom de '$modName' est deja chargé. Supprimer le doublon.";
+			}
+			else
+			{
+	            include_once($dir.$file);
+	            $objMod = new $modName($db);
+	
+	            $modules[$i] = $modName;
+	            $files[$i] = $file;
+	            $orders[$i] = "$objMod->family";   // Tri par famille
+	            $i++;
+			}
         }
     }
 }
