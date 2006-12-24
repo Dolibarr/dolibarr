@@ -98,10 +98,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
         $pdf->SetDrawColor(128,128,128);
 
 		$pdf->SetFont('Arial','', 14);
-		$pdf->Text($posx, 16, $outputlangs->trans("SendingSheet"));	// Bordereau expedition
-		$pdf->Text($posx, 22, $outputlangs->trans("Ref") ." : ".$this->expe->ref);
-		$pdf->Text($posx, 28, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y"));
-		$pdf->Text($posx, 34, $outputlangs->trans("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
+		$pdf->Text($posx, 16, $outputlangs->transnoentities("SendingSheet"));	// Bordereau expedition
+		$pdf->Text($posx, 22, $outputlangs->transnoentities("Ref") ." : ".$this->expe->ref);
+		$pdf->Text($posx, 28, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->date,"%d %b %Y"));
+		$pdf->Text($posx, 34, $outputlangs->transnoentities("Page")." : ".$pdf->PageNo() ."/{nb}", 0);
 	
 		if ($this->barcode->enabled)
 		{
@@ -109,9 +109,9 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 		}
 		
 		$pdf->SetFont('Arial','', 14);
-		$pdf->Text($posx, 48, $outputlangs->trans("Order"));
-		$pdf->Text($posx, 54, $outputlangs->trans("Ref") ." : ".$this->expe->commande->ref);
-		$pdf->Text($posx, 60, $outputlangs->trans("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
+		$pdf->Text($posx, 48, $outputlangs->transnoentities("Order"));
+		$pdf->Text($posx, 54, $outputlangs->transnoentities("Ref") ." : ".$this->expe->commande->ref);
+		$pdf->Text($posx, 60, $outputlangs->transnoentities("Date")." : ".dolibarr_print_date($this->expe->commande->date,"%d %b %Y"));
 	}
 	
 
@@ -154,7 +154,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			{
 				if (create_exdir($dir) < 0)
 				{
-					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
@@ -170,7 +170,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->AddPage();
 			
 				$pdf->SetTitle($this->expe->ref);
-				$pdf->SetSubject($langs->trans("Sending"));
+				$pdf->SetSubject($langs->transnoentities("Sending"));
 				$pdf->SetCreator("Dolibarr ".DOL_VERSION);
 				//$this->pdf->SetAuthor($user->fullname);
 			
@@ -198,10 +198,10 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
 				$pdf->SetFont('Arial','', 10);
 				$curY = $this->tableau_top + 5;
-				$pdf->Text(12,  $curY+2, $outputlangs->trans("Description"));
-				$pdf->Text(160, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(12,  $curY+2, $outputlangs->transnoentities("Description"));
+				$pdf->Text(160, $curY, $outputlangs->transnoentities("Qty"));
 				$pdf->Text(160, $curY+4, "Commandée");
-				$pdf->Text(186, $curY, $outputlangs->trans("Qty"));
+				$pdf->Text(186, $curY, $outputlangs->transnoentities("Qty"));
 				$pdf->Text(186, $curY+4, "Livrée");
 
 				$this->expe->fetch_lignes();
@@ -232,9 +232,9 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 						{
 							$prefix_prodserv = "";
                         	if($prodser->type == 0)
-                        		$prefix_prodserv = $outputlangs->trans("Product")." ";
+                        		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
                         	if($prodser->type == 1)
-                        		$prefix_prodserv = $outputlangs->trans("Service")." ";
+                        		$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
 
                             $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
                         }
@@ -271,18 +271,18 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 			}
             else
             {
-                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
 		}
         else
         {
-            $this->error=$outputlangs->trans("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
         }
-        $this->error=$outputlangs->trans("ErrorUnknown");
+        $this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
 	}

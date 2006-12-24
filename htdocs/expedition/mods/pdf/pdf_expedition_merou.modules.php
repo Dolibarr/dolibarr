@@ -134,7 +134,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			{
 				if (create_exdir($dir) < 0)
 				{
-					$this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 					return 0;
 				}
 			}
@@ -148,7 +148,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				$pdf->AddPage();
 				//Generation de l entete du fichier
 				$pdf->SetTitle($this->expe->ref);
-				$pdf->SetSubject($langs->trans("Sending"));
+				$pdf->SetSubject($langs->transnoentities("Sending"));
 				$pdf->SetCreator("EXPRESSIV Dolibarr ".DOL_VERSION);
 				$pdf->SetAuthor($user->fullname);
 				$pdf->SetMargins(10, 10, 10);
@@ -222,18 +222,18 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			}
             else
             {
-                $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
+                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
 		}
         else
         {
-            $this->error=$outputlangs->trans("ErrorConstantNotDefined","EXP_OUTPUTDIR");
+            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","EXP_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
         }
-        $this->error=$outputlangs->trans("ErrorUnknown");
+        $this->error=$outputlangs->transnoentities("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
 
@@ -257,11 +257,11 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->MultiCell(10,5,"LR",0,'C',1);
 		$pdf->line(30, $tab_top, 30, $tab_top + $tab_height);
 		$pdf->SetXY(30,$tab_top);
-		$pdf->MultiCell(20,5,$langs->trans("Ref"),0,'C',1);
+		$pdf->MultiCell(20,5,$langs->transnoentities("Ref"),0,'C',1);
 		$pdf->SetXY(50,$tab_top);
-		$pdf->MultiCell(130,5,$langs->trans("Description"),0,'L',1);
+		$pdf->MultiCell(130,5,$langs->transnoentities("Description"),0,'L',1);
 		$pdf->SetXY(180,$tab_top);
-		$pdf->MultiCell(20,5,$langs->trans("Quantity"),0,'L',1);
+		$pdf->MultiCell(20,5,$langs->transnoentities("Quantity"),0,'L',1);
 		$pdf->Rect(10, $tab_top, 190, $tab_height);
 	}
 
@@ -306,8 +306,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
             {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) 
@@ -321,7 +321,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY(60,7);
 		$pdf->SetFont('Arial','B',14);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->trans("SendingSheet"), '' , 'L');	// Bordereau expedition
+		$pdf->MultiCell(0, 8, $langs->transnoentities("SendingSheet"), '' , 'L');	// Bordereau expedition
 		//Num Expedition
 		$Yoff = $Yoff+7;
 		$Xoff = 140;
@@ -329,7 +329,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->trans("RefSending").': '.$exp->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->transnoentities("RefSending").': '.$exp->ref, '' , 'L');
 		//$this->Code39($Xoff+43, $Yoff+1, $this->expe->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);
 		//Num Commande
 		$Yoff = $Yoff+4;
@@ -337,7 +337,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 		$pdf->SetXY($Xoff,$Yoff);
 		$pdf->SetFont('Arial','',8);
 		$pdf->SetTextColor(0,0,0);
-		$pdf->MultiCell(0, 8, $langs->trans("RefOrder").': '.$exp->commande->ref, '' , 'L');
+		$pdf->MultiCell(0, 8, $langs->transnoentities("RefOrder").': '.$exp->commande->ref, '' , 'L');
 
 		$Xoff = 115;
 		//$this->Code39($Xoff+43, $Yoff+1, $exp->commande->ref,$ext = true, $cks = false, $w = 0.4, $h = 4, $wide = true);

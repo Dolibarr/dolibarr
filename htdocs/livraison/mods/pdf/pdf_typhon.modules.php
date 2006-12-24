@@ -152,7 +152,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             {
                 if (create_exdir($dir) < 0)
                 {
-					          $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					          $this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
 				
@@ -168,7 +168,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 $pdf->SetDrawColor(128,128,128);
 
                 $pdf->SetTitle($delivery->ref);
-                $pdf->SetSubject($langs->trans("DeliveryOrder"));
+                $pdf->SetSubject($langs->transnoentities("DeliveryOrder"));
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
@@ -215,7 +215,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                         $prodser->fetch($lignesdelivery[$i]->fk_product);
                         if ($prodser->ref)
                         {
-                            $libelleproduitservice=$langs->trans("Product")." ".$prodser->ref." - ".$libelleproduitservice;
+                            $libelleproduitservice=$langs->transnoentities("Product")." ".$prodser->ref." - ".$libelleproduitservice;
                         }
 
                         // Ajoute description du produit
@@ -231,7 +231,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     if ($lignesdelivery[$i]->date_start && $lignesdelivery[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->trans("From")." ".dolibarr_print_date($lignesdelivery[$i]->date_start)." ".$langs->trans("to")." ".dolibarr_print_date($lignesdelivery[$i]->date_end).")";
+                        $libelleproduitservice.="\n(".$langs->transnoentities("From")." ".dolibarr_print_date($lignesdelivery[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($lignesdelivery[$i]->date_end).")";
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
@@ -320,8 +320,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                     $pdf->SetXY ($this->marge_gauche, 228);
                     $pdf->SetTextColor(200,0,0);
                     $pdf->SetFont('Arial','B',8);
-                    $pdf->MultiCell(90, 3, $langs->trans("ErrorNoPaiementModeConfigured"),0,'L',0);
-                    $pdf->MultiCell(90, 3, $langs->trans("ErrorCreateBankAccount"),0,'L',0);
+                    $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorNoPaiementModeConfigured"),0,'L',0);
+                    $pdf->MultiCell(90, 3, $langs->transnoentities("ErrorCreateBankAccount"),0,'L',0);
                     $pdf->SetTextColor(0,0,0);
                 }
 */
@@ -428,16 +428,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             }
             else
             {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+                $this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
                 return 0;
             }
         }
         else
         {
-            $this->error=$langs->trans("ErrorConstantNotDefined","PROP_OUTPUTDIR");
+            $this->error=$langs->transnoentities("ErrorConstantNotDefined","PROP_OUTPUTDIR");
             return 0;
         }
-        $this->error=$langs->trans("ErrorUnknown");
+        $this->error=$langs->transnoentities("ErrorUnknown");
         return 0;   // Erreur par defaut
     }
 
@@ -472,7 +472,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         // Total HT
         $pdf->SetFillColor(256,256,256);
         $pdf->SetXY ($col1x, $tab2_top + 0);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalHT"), 0, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
         $pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ht +$delivery->remise), 0, 'R', 1);
@@ -481,7 +481,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         if ($delivery->remise > 0)
         {
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("GlobalDiscount"), 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
             $pdf->MultiCell($largcol2, $tab2_hl, "-".$delivery->remise_percent."%", 0, 'R', 1);
@@ -509,8 +509,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 
                 $index++;
             	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$langs->trans("NonPercuRecuperable").")" : '' ; 
-                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
+                $tvacompl = ( (float)$tvakey < 0 ) ? " (".$langs->transnoentities("NonPercuRecuperable").")" : '' ; 
+                $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
     
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
                 $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval * abs((float)$tvakey) / 100 ), 0, 'R', 1);
@@ -520,7 +520,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         {
             $index++;
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalVAT"), 0, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 1);
     
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_tva), 0, 'R', 1);
@@ -532,7 +532,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
         $pdf->SetTextColor(0,0,60);
         $pdf->SetFillColor(224,224,224);
-        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("TotalTTC"), $useborder, 'L', 1);
+        $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), $useborder, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
         $pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ttc), $useborder, 'R', 1);
@@ -544,7 +544,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             $index++;
             
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("AlreadyPayed"), 0, 'L', 0);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($deja_regle), 0, 'R', 0);
@@ -553,7 +553,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             $pdf->SetTextColor(0,0,60);
             //$pdf->SetFont('Arial','B', 9);
             $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->trans("RemainderToPay"), $useborder, 'L', 1);
+            $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), $useborder, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
             $pdf->MultiCell($largcol2, $tab2_hl, price($delivery->total_ttc - $deja_regle), $useborder, 'R', 1);
@@ -578,7 +578,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         // Montants exprimés en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
-        //$titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+        //$titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
         //$pdf->Text($this->page_largeur - $this->marge_droite - $pdf->GetStringWidth($titre), $tab_top-1, $titre);
 
         $pdf->SetDrawColor(128,128,128);
@@ -591,25 +591,25 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetFont('Arial','',10);
 
         $pdf->SetXY ($this->posxdesc-1, $tab_top+2);
-        $pdf->MultiCell(108,2, $langs->trans("Designation"),'','L');
+        $pdf->MultiCell(108,2, $langs->transnoentities("Designation"),'','L');
 /*
         $pdf->line($this->posxtva-1, $tab_top, $this->posxtva-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxtva-1, $tab_top+2);
-        $pdf->MultiCell(12,2, $langs->trans("VAT"),'','C');
+        $pdf->MultiCell(12,2, $langs->transnoentities("VAT"),'','C');
 
         $pdf->line($this->posxup-1, $tab_top, $this->posxup-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxup-1, $tab_top+2);
-        $pdf->MultiCell(18,2, $langs->trans("PriceUHT"),'','C');
+        $pdf->MultiCell(18,2, $langs->transnoentities("PriceUHT"),'','C');
 */
         $pdf->line($this->posxqty-1, $tab_top, $this->posxqty-1, $tab_top + $tab_height);
         $pdf->SetXY ($this->posxqty-1, $tab_top+2);
-        $pdf->MultiCell(11,2, $langs->trans("Qty"),'','C');
+        $pdf->MultiCell(11,2, $langs->transnoentities("Qty"),'','C');
 /*
         $pdf->line($this->posxdiscount-1, $tab_top, $this->posxdiscount-1, $tab_top + $tab_height);
         if ($this->atleastonediscount)
         {
             $pdf->SetXY ($this->posxdiscount-1, $tab_top+2);
-            $pdf->MultiCell(16,2, $langs->trans("ReductionShort"),'','C');
+            $pdf->MultiCell(16,2, $langs->transnoentities("ReductionShort"),'','C');
         }
 
         if ($this->atleastonediscount)
@@ -617,7 +617,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             $pdf->line($this->postotalht, $tab_top, $this->postotalht, $tab_top + $tab_height);
         }
         $pdf->SetXY ($this->postotalht-1, $tab_top+2);
-        $pdf->MultiCell(23,2, $langs->trans("TotalHT"),'','C');
+        $pdf->MultiCell(23,2, $langs->transnoentities("TotalHT"),'','C');
 */
     }
 
@@ -655,8 +655,8 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             {
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
             }
         }
         else if(defined("MAIN_INFO_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) 
@@ -667,13 +667,13 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetFont('Arial','B',13);
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("DeliveryOrder")." ".$delivery->ref, '' , 'R');
+        $pdf->MultiCell(100, 4, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
         
         $posy+=6;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->trans("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
 
         if ($showadress)
         {
@@ -683,7 +683,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY($this->marge_gauche,$posy-5);
-        $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
+        $pdf->MultiCell(66,5, $langs->transnoentities("BillFrom").":");
 
 
         $pdf->SetXY($this->marge_gauche,$posy);
@@ -708,17 +708,17 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         $carac_emetteur .= "\n";
         // Tel
-        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".FAC_PDF_TEL;
-        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Phone").": ".$mysoc->tel;
+        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Phone").": ".FAC_PDF_TEL;
+        elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Phone").": ".$mysoc->tel;
         // Fax
-        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".FAC_PDF_FAX;
-        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Fax").": ".$mysoc->fax;
+        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Fax").": ".FAC_PDF_FAX;
+        elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Fax").": ".$mysoc->fax;
         // EMail
-		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".FAC_PDF_MEL;
-        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Email").": ".$mysoc->email;
+		if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Email").": ".FAC_PDF_MEL;
+        elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Email").": ".$mysoc->email;
         // Web
-		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".FAC_PDF_WWW;
-        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->trans("Web").": ".$mysoc->url;
+		if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Web").": ".FAC_PDF_WWW;
+        elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$langs->transnoentities("Web").": ".$mysoc->url;
 
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY($this->marge_gauche+2,$posy+8);
@@ -729,7 +729,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
+        $pdf->MultiCell(80,5, $langs->transnoentities("BillTo").":");
 		//
 		$client = new Societe($this->db);
      	$client->fetch($delivery->socid);
@@ -747,7 +747,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 		// Caractéristiques client
         $carac_client=$delivery->client->adresse;
         $carac_client.="\n".$delivery->client->cp . " " . $delivery->client->ville."\n";
-		if ($delivery->client->tva_intra) $carac_client.="\n".$langs->trans("VATIntraShort").': '.$delivery->client->tva_intra;
+		if ($delivery->client->tva_intra) $carac_client.="\n".$langs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+8);
         $pdf->MultiCell(86,4, $carac_client);
@@ -776,7 +776,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         if ($conf->global->MAIN_INFO_CAPITAL)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->trans("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->trans("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$langs->transnoentities("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$langs->transnoentities("Currency".$conf->monnaie);
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
@@ -799,7 +799,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         if ($conf->global->MAIN_INFO_TVAINTRA != '')
         {
-            $ligne2.=($ligne2?" - ":"").$langs->trans("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$langs->transnoentities("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
         }
 
         $pdf->SetFont('Arial','',8);
