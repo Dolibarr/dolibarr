@@ -53,7 +53,7 @@ $offset = $limit * $page;
 /*
  *	Affichage valorisation par entrepot
  */
-$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.valo_pmp as valo";
+$sql  = "SELECT e.rowid as ref, e.label, e.statut, e.lieu, e.valo_pmp as valo";
 $sql .= " FROM ".MAIN_DB_PREFIX."entrepot as e";
 $sql .= " WHERE 1=1 ";
 if ($sref)
