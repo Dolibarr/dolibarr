@@ -1267,50 +1267,53 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-     \brief   	Ajoute une ligne dans le tableau products
-     \param    	idproduct		Id du produit a ajouter
-     \param    	qty			Quantité
-     \param    	remise_percent		Remise relative effectuée sur le produit
-     \param    	date_start
-     \param    	date_end
-     \return   	void
-     \remarks	$this->client doit etre chargé
-     \TODO	Remplacer les appels a cette fonction par generation objet Ligne 
-     inséré dans tableau $this->products
-   */
-  function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
-  {
-    global $conf, $mysoc;
+	/**
+		\brief   	Ajoute une ligne dans le tableau products
+		\param    	idproduct		Id du produit a ajouter
+		\param    	qty			Quantit
+		\param    	remise_percent		Remise relative effectuée sur le produit
+		\param    	date_start
+		\param    	date_end
+		\return   	void
+		\remarks	$this->client doit etre charg
+		\TODO		Remplacer les appels a cette fonction par generation objet Ligne
+					inséré dans tableau $this->products
+	*/
+	function add_product($idproduct, $qty, $remise_percent, $date_start='', $date_end='')
+	{
+		global $conf, $mysoc;
+	
+		// Nettoyage parametres
+		if (! $qty) $qty = 1;
+	
+		dolibarr_syslog("Facture.class::add_product $idproduct, $qty, $remise_percent, $date_start, $date_end");
 
-    if (! $qty) $qty = 1;
-		
-    if ($idproduct > 0)
-      {
-	$prod=new Product($this->db);
-	$prod->fetch($idproduct);
-			
-	$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
-	// multiprix
-	if($conf->global->PRODUIT_MULTIPRICES == 1)
-	  $price = $prod->multiprices[$this->client->price_level];
-	else
-	  $price = $prod->price;
-
-	$line=new FactureLigne($this->db);
-	$line->rowid = $idproduct;
-	$line->fk_product = $idproduct;
-	$line->desc = $prod->description;
-	$line->qty = $qty;
-	$line->subprice = $price;
-	$line->remise_percent = $remise_percent;
-	$line->tva_tx = $tva_tx;
-	if ($date_start) { $line->date_start = $date_start; }
-	if ($date_end)   { $line->date_end = $date_end; }
-
-	$this->products[]=$line;
-      }
-  }
+		if ($idproduct > 0)
+		{
+			$prod=new Product($this->db);
+			$prod->fetch($idproduct);
+	
+			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
+			// multiprix
+			if($conf->global->PRODUIT_MULTIPRICES == 1)
+			$price = $prod->multiprices[$this->client->price_level];
+			else
+			$price = $prod->price;
+	
+			$line=new FactureLigne($this->db);
+			$line->rowid = $idproduct;
+			$line->fk_product = $idproduct;
+			$line->desc = $prod->description;
+			$line->qty = $qty;
+			$line->subprice = $price;
+			$line->remise_percent = $remise_percent;
+			$line->tva_tx = $tva_tx;
+			if ($date_start) { $line->date_start = $date_start; }
+			if ($date_end)   { $line->date_end = $date_end; }
+	
+			$this->products[]=$line;
+		}
+	}
 
   /**
    * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)

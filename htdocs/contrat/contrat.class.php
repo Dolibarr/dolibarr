@@ -330,19 +330,19 @@ class Contrat extends CommonObject
      */
     function fetch_lignes()
     {
-        dolibarr_syslog("Contrat.class.php::fetch_lignes");
         $this->lignes = array();
     
         // Selectionne les lignes contrats liées à un produit
         $sql = "SELECT p.label, p.description as product_desc, p.ref,";
         $sql.= " d.rowid, d.statut, d.description, d.price_ht, d.tva_tx, d.qty, d.remise_percent, d.subprice,";
-        $sql.= " d.info_bits, d.fk_product";
+        $sql.= " d.info_bits, d.fk_product,";
         $sql.= " d.date_ouverture_prevue, d.date_ouverture,";
         $sql.= " d.date_fin_validite, d.date_cloture";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as d, ".MAIN_DB_PREFIX."product as p";
         $sql.= " WHERE d.fk_contrat = ".$this->id ." AND d.fk_product = p.rowid";
         $sql.= " ORDER by d.rowid ASC";
         
+        dolibarr_syslog("Contrat.class.php::fetch_lignes sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
