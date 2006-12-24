@@ -35,62 +35,70 @@
 
 class Interfaces
 {
-  //! Repertoire contenant les definitions des triggers
-  var $dir;
-
-  /**
-   *   \brief      Constructeur.
-   *   \param      DB      handler d'accès base
-   */
-  function Interfaces($DB)
-  {
-    $this->db = $DB ;
-    $this->dir = DOL_DOCUMENT_ROOT . "/includes/triggers";
-  }
-  
-  /**
-   *   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-   *               Cette fonction déclenche tous les triggers trouvés
-   *   \param      action      Code de l'evenement
-   *   \param      object      Objet concern
-   *   \param      user        Objet user
-   *   \param      lang        Objet lang
-   *   \param      conf        Objet conf
-   *   \return     int         Nbre de triggers déclenchés si pas d'erreurs. Nb en erreur sinon.
-   */
-  function run_triggers($action,$object,$user,$lang,$conf)
-  {
-    
-    $handle=opendir($this->dir);
-    $modules = array();
-    $nbok = $nbko = 0;
-    
-    while (($file = readdir($handle))!==false)
-      {
-	if (is_readable($this->dir."/".$file) && eregi('interface_(.*).class.php$',$file,$reg))
-	  {
-	    $modName = "Interface".ucfirst($reg[1]);
-	    //print "file=$file"; print "modName=$modName"; exit;
-	    if ($modName)
-	      {
-		include_once($this->dir."/".$file);
-		$objMod = new $modName($this->db);
-		if ($objMod)
-		  {
-		    if ($objMod->run_trigger($action,$object,$user,$lang,$conf) > 0)
-		      {
-			$nbok++;
-		      }
-		    else
-		      {
-			$nbko++;
-		      }
-		  }
-	      }
-	  }
-      }
-    if ($nbko) return $nbko;
-    return $nbok;
-  }  
+	var $dir;		// Repertoire contenant les fichiers triggers
+	
+	/**
+	*   \brief      Constructeur.
+	*   \param      DB      handler d'accès base
+	*/
+	function Interfaces($DB)
+	{
+		$this->db = $DB ;
+		$this->dir = DOL_DOCUMENT_ROOT . "/includes/triggers";
+	}
+	
+	/**
+	*   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
+	*               Cette fonction déclenche tous les triggers trouvés
+	*   \param      action      Code de l'evenement
+	*   \param      object      Objet concern
+	*   \param      user        Objet user
+	*   \param      lang        Objet lang
+	*   \param      conf        Objet conf
+	*   \return     int         Nbre de triggers déclenchés si pas d'erreurs. Nb en erreur sinon.
+	*/
+	function run_triggers($action,$object,$user,$lang,$conf)
+	{
+	
+		$handle=opendir($this->dir);
+		$modules = array();
+		$nbok = $nbko = 0;
+	
+		while (($file = readdir($handle))!==false)
+		{
+			if (is_readable($this->dir."/".$file) && eregi('interface_(.*).class.php$',$file,$reg))
+			{
+				$modName = "Interface".ucfirst($reg[1]);
+				//print "file=$file"; print "modName=$modName"; exit;
+				if ($modName)
+				{
+					if (in_array($modName,$modules))
+					{
+						dolibarr_syslog("Error: Trigger file with name '$modName' already launched. Remove duplicate file.");
+					}
+					else
+					{
+						include_once($this->dir."/".$file);
+						$objMod = new $modName($this->db);
+						if ($objMod)
+						{
+				            $modules[$i] = $modName;
+							if ($objMod->run_trigger($action,$object,$user,$lang,$conf) > 0)
+							{
+								$nbok++;
+							}
+							else
+							{
+								$nbko++;
+							}
+							$i++;
+						}
+					}
+				}
+			}
+		}
+		if ($nbko) return $nbko;
+		return $nbok;
+	} 
 }
 ?>

@@ -651,7 +651,8 @@ class User
 			{
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
 				$result=$this->db->query($sql);
-	
+				
+				dolibarr_syslog("User.class::create sql=".$sql);
 				if ($result)
 				{
 					$table =  "".MAIN_DB_PREFIX."user";
@@ -666,7 +667,7 @@ class User
 					}
 	
 					// Update minor fields
-					if ($this->update() < 0)
+					if ($this->update(1) < 0)
 					{
 						$this->error=$this->db->error();
 						$this->db->rollback();

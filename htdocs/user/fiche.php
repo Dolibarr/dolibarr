@@ -166,7 +166,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 	      $db->rollback();
 	      
 	      //$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-	      $message='<div class="error">'.$edituser->error.$id.'</div>';
+	      $message='<div class="error">'.$edituser->error.'</div>';
 	      
 	      $action="create";       // Go back to create page
 	    }
