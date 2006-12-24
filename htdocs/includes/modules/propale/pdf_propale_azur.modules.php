@@ -251,7 +251,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
 					{
 						// Affichage durée si il y en a une
-						$libelleproduitservice.="\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")";
+						$libelleproduitservice.=_dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")",0);
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
