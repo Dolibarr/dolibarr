@@ -145,6 +145,24 @@ class MenuTop {
 */
         }
 
+        // Suppliers
+        if ($conf->fournisseur->enabled)
+        {
+            $langs->load("suppliers");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+//            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
+        }
+        
         // Commercial
         if ($conf->commercial->enabled)
         {
@@ -164,24 +182,6 @@ class MenuTop {
         
         }
 
-        // Suppliers
-        if ($conf->fournisseur->enabled)
-        {
-            $langs->load("suppliers");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "suppliers")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-//            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
-        }
-        
         // Financial
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled
         	|| $conf->commande->enabled || $conf->facture->enabled)

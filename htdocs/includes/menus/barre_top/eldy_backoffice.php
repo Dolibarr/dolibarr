@@ -144,25 +144,6 @@ class MenuTop {
                 print '<td class="tmenu"><font class="tmenudisabled">'.$chaine.'</font>';
         }
 
-        // Commercial
-        if ($conf->commercial->enabled)
-        {
-            $langs->load("commercial");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
-        
-        }
-
         // Suppliers
         if ($conf->fournisseur->enabled)
         {
@@ -182,6 +163,25 @@ class MenuTop {
         
         }
         
+        // Commercial
+        if ($conf->commercial->enabled)
+        {
+            $langs->load("commercial");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "commercial")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+        
+        }
+
         // Financial
         if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled
         	|| $conf->commande->enabled || $conf->facture->enabled)
