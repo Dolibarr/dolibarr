@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -103,7 +103,7 @@ if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 
-$head=product_prepare_head($product);
+$head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
 dolibarr_fiche_head($head, 'price', $titre);
 

@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -74,7 +74,7 @@ if ($_GET["id"] || $_GET["ref"])
         	rmdir(DOL_DOCUMENT_ROOT."/document/produits");
 
 
-		$head=product_prepare_head($product);
+		$head=product_prepare_head($product, $user);
 		$titre=$langs->trans("CardProduct".$product->type);
 		dolibarr_fiche_head($head, 'stats', $titre);
 

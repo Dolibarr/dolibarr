@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
@@ -109,7 +109,7 @@ if ($_GET["id"] || $_GET["ref"])
 
     if ($result > 0)
     {
-		$head=product_prepare_head($product);
+      $head=product_prepare_head($product, $user);
         $titre=$langs->trans("CardProduct".$product->type);
         dolibarr_fiche_head($head, 'stock', $titre);
 
