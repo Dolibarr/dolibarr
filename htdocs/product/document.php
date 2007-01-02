@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
@@ -99,7 +99,7 @@ if ($product->id)
 		dol_delete_file($file);
 	}
 
-	$head=product_prepare_head($product);
+	$head=product_prepare_head($product, $user);
 	$titre=$langs->trans("CardProduct".$product->type);
 	dolibarr_fiche_head($head, 'documents', $titre);
 

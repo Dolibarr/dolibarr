@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -54,7 +54,7 @@ if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
 
 
-$head=product_prepare_head($product);
+$head=product_prepare_head($product, $user);
 $titre=$langs->trans("CardProduct".$product->type);
 dolibarr_fiche_head($head, 'barcode', $titre);
 
