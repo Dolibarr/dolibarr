@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -53,6 +53,35 @@ class mod_commande_ivoire extends ModeleNumRefCommandes
   function info()
     {
       return "Renvoie le numéro sous la forme numérique C0M1,COM2,COM3,...<br><b>OBSOLETE, NE PLUS UTILISER CAR BUGGUE. Sera supprimé dans prochaines versions</b>";
+    }
+
+
+    /**     \brief      Renvoi prochaine valeur attribuée
+     *      \return     string      Valeur
+     */
+    function getNextValue()
+    {
+      global $db;
+      
+      $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."commande WHERE fk_statut <> 0";
+      
+      if ( $db->query($sql) ) 
+	{
+	  $row = $db->fetch_row(0);
+	  
+	  $num = $row[0];
+	}
+      
+      
+      return 'COM'.($num+1);
+    }
+
+  /**     \brief      Renvoi un exemple de numérotation
+   *      \return     string      Example
+   */
+    function getExample()
+    {
+        return "COM12";
     }
 
 
