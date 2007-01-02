@@ -164,32 +164,32 @@ if ($_GET["id"] || $_GET["ref"])
         
 
         // Nbre de commande clients en cours
-		if ($conf->commande->enabled)
-		{
-			$result=$product->load_stats_commande(0,'1');
-	        if ($result < 0) dolibarr_print_error($db,$product->error);
-	        print '<tr><td>'.$langs->trans("CustomersOrdersRunning").'</td>';
-			print '<td>';
-			print $product->stats_commande['qty'];
-			$result=$product->load_stats_commande(0,'0');
-	        if ($result < 0) dolibarr_print_error($db,$product->error);
-			print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
-	        print '</td></tr>';
-		}
+	if ($conf->commande->enabled)
+	  {
+	    $result=$product->load_stats_commande(0,'2');
+	    if ($result < 0) dolibarr_print_error($db,$product->error);
+	    print '<tr><td>'.$langs->trans("CustomersOrdersRunning").'</td>';
+	    print '<td>';
+	    print $product->stats_commande['qty'];
+	    $result=$product->load_stats_commande(0,'0');
+	    if ($result < 0) dolibarr_print_error($db,$product->error);
+	    print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+	    print '</td></tr>';
+	  }
 		        
         // Nbre de commande fournisseurs en cours
-		if ($conf->fournisseur->enabled)
-		{
-			$result=$product->load_stats_commande_fournisseur(0,'3');
-	        if ($result < 0) dolibarr_print_error($db,$product->error);
-	        print '<tr><td>'.$langs->trans("SuppliersOrdersRunning").'</td>';
-			print '<td>';
-			print $product->stats_commande_fournisseur['qty'];
-			$result=$product->load_stats_commande_fournisseur(0,'0,1,2');
-	        if ($result < 0) dolibarr_print_error($db,$product->error);
-			print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
-	        print '</td></tr>';
-		}
+	if ($conf->fournisseur->enabled)
+	  {
+	    $result=$product->load_stats_commande_fournisseur(0,'3');
+	    if ($result < 0) dolibarr_print_error($db,$product->error);
+	    print '<tr><td>'.$langs->trans("SuppliersOrdersRunning").'</td>';
+	    print '<td>';
+	    print $product->stats_commande_fournisseur['qty'];
+	    $result=$product->load_stats_commande_fournisseur(0,'0,1,2');
+	    if ($result < 0) dolibarr_print_error($db,$product->error);
+	    print ' ('.$langs->trans("DraftOrWaitingApproved").': '.$product->stats_commande_fournisseur['qty'].')';
+	    print '</td></tr>';
+	  }
                 
         print "</table>";
 
