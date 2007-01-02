@@ -52,7 +52,7 @@ class Commande extends CommonObject
   var $ref_client;
   var $contactid;
   var $projet_id;
-  var $statut;
+  var $statut;		// -1=Annulee, 0=Brouillon, 1=Validée, 2=Acceptée, 3=Reçue (facturee ou non)
   var $facturee;
   var $brouillon;
   var $cond_reglement_id;
