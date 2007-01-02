@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -1108,7 +1108,7 @@ class Product
       {
 	$sql.= " AND c.fk_soc = ".$socid;
       }
-    if ($filtrestatut)
+    if (isset($filtrestatut))
       {
 	$sql.= " AND c.fk_statut = ".$filtrestatut;
       }
