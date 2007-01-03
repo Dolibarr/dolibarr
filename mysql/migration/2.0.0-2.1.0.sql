@@ -631,3 +631,5 @@ create table llx_bordereau_cheque
 alter table llx_product_price add price_level tinyint(4) NULL DEFAULT 1;
 alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after price;
 alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;
+
+ALTER TABLE llx_document_model ADD UNIQUE uk_document_model (nom,type);
