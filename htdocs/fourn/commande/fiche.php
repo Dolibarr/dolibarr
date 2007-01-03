@@ -673,7 +673,7 @@ else
 		    {
 		      print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
 		      print "<tr $bc[$var]>";
-		      print '<td><textarea name="eldesc" cols="60" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
+		      print '<td><textarea name="desc" cols="60" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
 		      print '<input type="hidden"	name="action" value="updateligne">';
 		      print '<input type="hidden"	name="elrowid" value="'.$_GET["rowid"].'">';
 		      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
