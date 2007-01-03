@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -165,7 +165,7 @@ class MenuLeft {
 			}
 
 			/*
-			* Menu SOCIETES
+			* Menu TIERS
 			*/
 			if ($mainmenu == 'companies')
 			{
@@ -598,9 +598,9 @@ class MenuLeft {
 					{
 						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 					}
-				    $newmenu->add_submenu(DOL_URL_ROOT."/fourn/liste.php",$langs->trans("List"));
+				    $newmenu->add_submenu(DOL_URL_ROOT."/fourn/liste.php",$langs->trans("List"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
-			    	$newmenu->add_submenu(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"));
+			    	$newmenu->add_submenu(DOL_URL_ROOT."/fourn/stats.php",$langs->trans("Statistics"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 				}
 
 				if ($conf->facture->enabled)
