@@ -413,7 +413,15 @@ class ProductLivre extends Product
     $smarty->assign('prod_stock_alert',       $this->seuil_stock_alerte);
 
     if ($this->status==1)
-      $smarty->assign('prod_statut', 'En vente');
+      {
+	$smarty->assign('prod_statut', 'En vente');
+      }
+    else
+      {
+	$smarty->assign('prod_statut', 'Hors vente');
+      }
+
+
 
     if ($this->seuil_stock_alerte > ($this->stock_reel - $this->stock_in_command) && $this->status == 1)
       {
