@@ -127,7 +127,7 @@ if ($user->societe_id == 0)
                       $conf->telephonie->enabled && $user->rights->telephonie->lire);
     // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
     $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
-                    DOL_DOCUMENT_ROOT."/client.class.php",
+                    DOL_DOCUMENT_ROOT."/prospect.class.php",
                     DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php",
                     DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
                     DOL_DOCUMENT_ROOT."/product.class.php",
@@ -135,7 +135,7 @@ if ($user->societe_id == 0)
                     DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
     // Nom des classes qui contiennent la methode load_state_board pour chaque ligne
     $classes=array('Client',
-                   'Client',
+                   'Prospect',
                    'Fournisseur',
                    'Adherent',
                    'Product',
@@ -184,6 +184,7 @@ if ($user->societe_id == 0)
             if (! is_object($boardloaded[$classe]))
             {
                 include_once($includes[$key]);
+
                 $board=new $classe($db);
                 $board->load_state_board($user);
                 $boardloaded[$classe]=$board;

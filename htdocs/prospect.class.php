@@ -65,7 +65,7 @@ class Prospect extends Societe
     {
         global $conf, $user;
         
-        $this->nb=array();
+        $this->nb=array("customers" => 0,"prospects" => 0);
 
         $sql = "SELECT count(s.idp) as nb, s.client";
         if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
