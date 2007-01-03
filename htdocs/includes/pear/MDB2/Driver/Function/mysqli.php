@@ -45,7 +45,8 @@
 // $Id$
 //
 
-require_once 'MDB2/Driver/Function/Common.php';
+//require_once 'MDB2/Driver/Function/Common.php';
+require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2/Driver/Function/Common.php";
 
 /**
  * MDB2 MySQLi driver for the function modules

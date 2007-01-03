@@ -44,7 +44,8 @@
 //
 // $Id$
 
-require_once 'MDB2/LOB.php';
+//require_once 'MDB2/LOB.php';
+require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2/LOB.php";
 
 /**
  * @package  MDB2

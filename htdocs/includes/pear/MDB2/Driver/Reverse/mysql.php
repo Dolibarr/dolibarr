@@ -45,7 +45,8 @@
 // $Id$
 //
 
-require_once 'MDB2/Driver/Reverse/Common.php';
+//require_once 'MDB2/Driver/Reverse/Common.php';
+require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2/Driver/Reverse/Common.php";
 
 /**
  * MDB2 MySQL driver for the schema reverse engineering module
