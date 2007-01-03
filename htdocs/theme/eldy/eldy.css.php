@@ -137,7 +137,10 @@ div.fiche
 {
     top: 28px;
     left: auto;
-    position: absolute;
+<?php
+	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+?>
     float: top;
     display: block;
     margin-right: 6px;
