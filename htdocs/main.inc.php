@@ -66,9 +66,11 @@ $bc[1]="class=\"pair\"";
 // plusieurs modes sont indiqués.
 // Exemple: array('http','dolibarr');
 // Exemple: array('ldap');
+
 //$authmode=array('ldap');
+//$authmode=array('http','dolibarr_mdb2');
 $authmode=array('http','dolibarr');
-//$authmode=array('ldap');
+
 if (isset($dolibarr_auto_user)) $authmode=array('auto');
 
 $sessionname="DOLSESSID_".$dolibarr_main_db_name;
@@ -124,6 +126,57 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    );
 
 	    $aDol = new DOLIAuth("DB", $params, "dol_loginfunction");
+	    $aDol->setSessionName($sessionname);
+    	$aDol->start();
+	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
+	    if ($result)
+	    {
+	        // Authentification Auth OK, on va chercher le login
+			$login=$aDol->getUsername();
+	        dolibarr_syslog ("Authentification ok (en mode Pear Base Dolibarr)");
+		}
+		else
+		{
+	        if (isset($_POST["loginfunction"]))
+	        {
+	            // Echec authentification
+	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr) pour '".$_POST["username"]."'");
+	        }
+	        else 
+	        {
+	            // Non authentifie
+	            //dolibarr_syslog("Authentification non realise");
+	        }
+	        exit;
+        }
+	}
+	
+		// MODE DOLIBARR MDB2
+		// Ajout du mode MDB2 pour test uniquement
+	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
+	{
+    	require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+
+    	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
+
+		if ($conf->password_encrypted)
+		{
+			$cryptType = "md5";
+		}
+		else
+		{
+			$cryptType = "none";
+		}
+	    
+	    $params = array(
+		    "dsn" => $pear,
+		    "table" => MAIN_DB_PREFIX."user",
+		    "usernamecol" => "login",
+		    "passwordcol" => "pass",
+		    "cryptType" => $cryptType,
+	    );
+
+	    $aDol = new DOLIAuth("MDB2", $params, "dol_loginfunction");
 	    $aDol->setSessionName($sessionname);
     	$aDol->start();
 	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
