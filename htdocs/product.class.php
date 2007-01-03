@@ -1108,11 +1108,12 @@ class Product
       {
 	$sql.= " AND c.fk_soc = ".$socid;
       }
-    if (isset($filtrestatut))
+
+    if ($filtrestatut <> '')
       {
 	$sql.= " AND c.fk_statut = ".$filtrestatut;
       }
-    
+
     $result = $this->db->query($sql) ;
     if ( $result )
       {
