@@ -65,8 +65,8 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
     
     $i = 0;
     $this->db = $DB;
-    
-    dolibarr_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe);
+
+    dolibarr_syslog("mod_codecompta_aquarium::get_code search code for type=".$type." company=".$societe->nom);
     
     // Regle gestion compte compta
     $codetouse='';
