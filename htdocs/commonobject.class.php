@@ -26,9 +26,11 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+
 
 /**
-        \class 		CommonObject
+		\class 		CommonObject
         \brief 		Classe mere pour héritage des classes metiers
 */
 
