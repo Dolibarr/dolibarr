@@ -405,6 +405,8 @@ if ($conf->global->MAIN_SHOW_WORKBOARD == 1)
   // Nbre factures clients (à payer)
   if ($conf->facture->enabled && $user->rights->facture->lire)
     {
+      $langs->load("bills");
+      
       include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
       $board=new Facture($db);
       $board->load_board($user);
