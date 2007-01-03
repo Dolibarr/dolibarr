@@ -127,8 +127,7 @@
   <td>Statut</td>
   <td colspan="3">
    <select class="flat" name="statut">
-    <option value="1" selected="true">En vente</option>
-    <option value="0">Hors vente</option>
+    {html_options values=$prod_statuts_id output=$prod_statuts_value selected="$prod_statut_id"}
    </select>
   </td>
  </tr>
