@@ -145,7 +145,7 @@
  </td>
  <td width="15%">Date d'application</td>
  <td width="35%">
-  {html_select_date field_order='DMY' start_year='-10' reverse_years=True all_extra='class="flat"'}
+  {html_select_date field_order='DMY' start_year='-10' time=$livre_contrat_date_app reverse_years=True all_extra='class="flat"'}
  </td>
 </tr>
 
