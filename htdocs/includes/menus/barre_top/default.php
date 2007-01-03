@@ -144,7 +144,8 @@ class MenuTop {
         }
 
         // Compta/tréso (sert pour banque, tva, entités à facturer...)
-        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled)
+        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
+        	|| $conf->commande->enabled || $conf->facture->enabled)
         {
 //            if ($user->rights->compta->general->lire || $user->rights->comptaexpert->general->lire)
 //            {

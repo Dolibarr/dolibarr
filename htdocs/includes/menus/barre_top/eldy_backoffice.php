@@ -183,7 +183,7 @@ class MenuTop {
         }
 
         // Financial
-        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled || $conf->caisse->enabled
+        if ($conf->compta->enabled || $conf->comptaexpert->enabled || $conf->banque->enabled
         	|| $conf->commande->enabled || $conf->facture->enabled)
         {
             $langs->load("compta");

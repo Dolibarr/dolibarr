@@ -32,7 +32,8 @@
 require ("./main.inc.php");
 $user->getrights();
 
-function llxHeader($head = "") {
+function llxHeader($head = "")
+{
     global $user, $conf, $langs;
 
     top_menu($head);
@@ -56,7 +57,7 @@ function llxHeader($head = "") {
         $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
 
-    if ($conf->commercial->enabled  && $user->rights->commercial->lire)
+    if ($conf->commercial->enabled && $user->rights->commercial->lire)
     {
         $langs->load("commercial");
         $menu->add(DOL_URL_ROOT."/comm/index.php",$langs->trans("Commercial"));
@@ -71,12 +72,8 @@ function llxHeader($head = "") {
         }
     }
 
-// L'espace compta/tréso doit toujours etre actif car c'est un espace partagé
-// par de nombreux modules (banque, facture, commande à facturer, etc...) indépendemment
-// de l'utilisation de la compta ou non. C'est au sein de cet espace que chaque sous fonction
-// est protégé par le droit qui va bien du module concerné.
-//    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
-//    {
+    if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+    {
         $langs->load("compta");
         $menu->add(DOL_URL_ROOT."/compta/index.php", $langs->trans("MenuFinancial"));
 
@@ -84,7 +81,7 @@ function llxHeader($head = "") {
             $langs->load("bills");
             $menu->add_submenu(DOL_URL_ROOT."/compta/facture.php", $langs->trans("Bills"));
         }
-//    }
+    }
 
     if ($conf->fichinter->enabled  && $user->rights->ficheinter->lire)
     {
