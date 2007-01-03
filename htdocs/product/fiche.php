@@ -622,8 +622,8 @@ if ($_GET["id"] || $_GET["ref"])
 	  print($mesg);
 	  
 	  $product->load_previous_next_ref($product->next_prev_filter);
-	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
+	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($product->ref_previous).'">'.img_previous().'</a>':'';
+	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($product->ref_next).'">'.img_next().'</a>':'';
 	}
       if ($_GET["action"] <> 'edit' && $product->canvas <> '')
 	{
