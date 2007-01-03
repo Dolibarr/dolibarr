@@ -81,12 +81,12 @@ class modFacture extends DolibarrModules
     	
         $this->const[$r][0] = "FACTURE_ADDON_PDF";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "bulot";
+        $this->const[$r][2] = "crabe";
     	$r++;
     
         $this->const[$r][0] = "FACTURE_ADDON";
         $this->const[$r][1] = "chaine";
-        $this->const[$r][2] = "pluton";
+        $this->const[$r][2] = "terre";
     	$r++;
     
         $this->const[$r][0] = "FAC_FORCE_DATE_VALIDATION";
@@ -215,7 +215,10 @@ class modFacture extends DolibarrModules
         // Dir
         $this->dirs[0] = $conf->facture->dir_output;
     
-        $sql = array();
+	    $sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES('".$this->const[0][2]."','invoice')",
+			 );
     
         return $this->_init($sql);
     }
