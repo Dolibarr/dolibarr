@@ -451,7 +451,7 @@ print "<td>Proposer paiement par chèque à l'ordre et adresse de</td>";
 print "<td>";
 print '<select name="chq">';
 print '<option value="0">'.$langs->trans("DoNotSuggestPaymentMode").'</option>';
-print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="true"':'').'>'.$langs->trans("Company").' ('.$mysoc->nom.')</option>';
+print '<option value="-1"'.($conf->global->FACTURE_CHQ_NUMBER?' selected="true"':'').'>'.$langs->trans("MenuCompanySetup").' ('.($mysoc->nom?$mysoc->nom:$langs->trans("NotDefined")).')</option>';
 
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
