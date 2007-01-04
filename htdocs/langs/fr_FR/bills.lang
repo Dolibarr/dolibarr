@@ -212,12 +212,10 @@ PaymentTypeCB=Carte bancaire
 PaymentTypeShortCB=Carte bancaire
 PaymentTypeCHQ=Chèque
 PaymentTypeShortCHQ=Chèque
-
-PaymentTypeTYP=TIP
-PaymentTypeShortTYP=TIP
+PaymentTypeTIP=TIP
+PaymentTypeShortTIP=TIP
 PaymentTypeVAD=Paiement en ligne
 PaymentTypeShortVAD=Paiement en ligne
-
 BankDetails=Coordonnées bancaires
 BankCode=Code banque
 DeskCode=Code guichet
