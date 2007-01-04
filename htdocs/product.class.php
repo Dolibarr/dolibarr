@@ -265,24 +265,24 @@ class Product
     dolibarr_syslog("Product::".$func." ERRNO (".$this->errno.")");
   }
 
-  
-
-  function error($errno)
+  /**
+     \brief      Retourne le texte de l'erreur
+  */
+  function error()
   {
-
     $errs[257] = "ErrorProductAlreadyExists";
     $errs[262] = "ErrorProductBadRefOrLabel";
 
-    return $errs[$errno];
+    return $errs[$this->errno];
   }
 
-
+  
   /**
-   *    \brief      Mise à jour du produit en base
-   *    \param      id          id du produit
-   *    \param      user        utilisateur qui effectue l'insertion
-   *    \return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
-   */
+     \brief      Mise à jour du produit en base
+     \param      id          id du produit
+     \param      user        utilisateur qui effectue l'insertion
+     \return     int         1 si ok, -1 si ref deja existante, -2 autre erreur
+  */
   function update($id, $user)
   {
     global $langs, $conf;
