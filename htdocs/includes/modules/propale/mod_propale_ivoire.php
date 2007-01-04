@@ -73,7 +73,12 @@ class mod_propale_ivoire extends ModeleNumRefPropales
         global $db;
     
     // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
-        $pryy = 'PR'.strftime("%y",time());
+
+        $current_year = strftime("%y",time());
+        $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        
+        $pryy = 'PR'.$current_year;
+        
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= " WHERE ref like '${pryy}%'";
@@ -82,7 +87,14 @@ class mod_propale_ivoire extends ModeleNumRefPropales
         {
             $row = $db->fetch_row($resql);
             $pryy='';
-            if ($row) $pryy = substr($row[0],0,4);
+            if ($row)
+            {
+            	$pryy = substr($row[0],0,4);
+            }
+            else
+            {
+            	$pryy = 'PR'.$last_year;
+            }
         }
     
         // Si au moins un champ respectant le modèle a été trouvée
