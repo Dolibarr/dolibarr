@@ -92,7 +92,7 @@ class Auth_Container_MDB2 extends Auth_Container
         if (is_array($dsn)) {
             $this->_parseOptions($dsn);
             if (empty($this->options['dsn'])) {
-                PEAR::raiseError('No connection parameters specified!');
+                DOLIPEAR::raiseError('No connection parameters specified!');
             }
         } else {
             $this->options['dsn'] = $dsn;
@@ -116,9 +116,9 @@ class Auth_Container_MDB2 extends Auth_Container
         } elseif (is_subclass_of($dsn, 'MDB2_Driver_Common')) {
             $this->db = $dsn;
         } elseif (is_object($dsn) && MDB2::isError($dsn)) {
-            return PEAR::raiseError($dsn->getMessage(), $dsn->code);
+            return DOLIPEAR::raiseError($dsn->getMessage(), $dsn->code);
         } else {
-            return PEAR::raiseError('The given dsn was not valid in file ' . __FILE__ . ' at line ' . __LINE__,
+            return DOLIPEAR::raiseError('The given dsn was not valid in file ' . __FILE__ . ' at line ' . __LINE__,
                                     41,
                                     PEAR_ERROR_RETURN,
                                     null,
@@ -127,8 +127,8 @@ class Auth_Container_MDB2 extends Auth_Container
 
         }
 
-        if (MDB2::isError($this->db) || PEAR::isError($this->db)) {
-            return PEAR::raiseError($this->db->getMessage(), $this->db->code);
+        if (MDB2::isError($this->db) || DOLIPEAR::isError($this->db)) {
+            return DOLIPEAR::raiseError($this->db->getMessage(), $this->db->code);
         }
         return true;
     }
@@ -268,7 +268,7 @@ class Auth_Container_MDB2 extends Auth_Container
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         //Check if db_fields contains a *, if so assume all columns are selected
@@ -291,8 +291,8 @@ class Auth_Container_MDB2 extends Auth_Container
                          );
 
         $res = $this->db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
-        if (MDB2::isError($res) || PEAR::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->getCode());
+        if (MDB2::isError($res) || DOLIPEAR::isError($res)) {
+            return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         }
         if (!is_array($res)) {
             $this->activeUser = '';
@@ -344,7 +344,7 @@ class Auth_Container_MDB2 extends Auth_Container
     {
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         $retVal = array();
@@ -368,7 +368,7 @@ class Auth_Container_MDB2 extends Auth_Container
 
         $res = $this->db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
         if (MDB2::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->getCode());
+            return DOLIPEAR::raiseError($res->getMessage(), $res->getCode());
         } else {
             foreach ($res as $user) {
                 $user['username'] = $user[$this->options['usernamecol']];
@@ -397,7 +397,7 @@ class Auth_Container_MDB2 extends Auth_Container
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         if (isset($this->options['cryptType']) && $this->options['cryptType'] == 'none') {
@@ -433,7 +433,7 @@ class Auth_Container_MDB2 extends Auth_Container
         $res = $this->query($query);
 
         if (MDB2::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->code);
+            return DOLIPEAR::raiseError($res->getMessage(), $res->code);
         }
         return true;
     }
@@ -454,7 +454,7 @@ class Auth_Container_MDB2 extends Auth_Container
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         $query = sprintf("DELETE FROM %s WHERE %s = %s",
@@ -466,7 +466,7 @@ class Auth_Container_MDB2 extends Auth_Container
         $res = $this->query($query);
 
         if (MDB2::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->code);
+            return DOLIPEAR::raiseError($res->getMessage(), $res->code);
         }
         return true;
     }
@@ -485,7 +485,7 @@ class Auth_Container_MDB2 extends Auth_Container
         // Prepare for a database query
         $err = $this->_prepare();
         if ($err !== true) {
-            return PEAR::raiseError($err->getMessage(), $err->getCode());
+            return DOLIPEAR::raiseError($err->getMessage(), $err->getCode());
         }
 
         if (isset($this->options['cryptType']) && $this->options['cryptType'] == 'none') {
@@ -509,7 +509,7 @@ class Auth_Container_MDB2 extends Auth_Container
         $res = $this->query($query);
 
         if (MDB2::isError($res)) {
-            return PEAR::raiseError($res->getMessage(), $res->code);
+            return DOLIPEAR::raiseError($res->getMessage(), $res->code);
         }
         return true;
     }

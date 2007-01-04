@@ -546,7 +546,7 @@ class MDB2
 
     /**
      * This method is used to communicate an error and invoke error
-     * callbacks etc.  Basically a wrapper for DOLIDOLIPEAR::raiseError
+     * callbacks etc.  Basically a wrapper for DOLIPEAR::raiseError
      * without the message string.
      *
      * @param   mixed   int error code
