@@ -208,28 +208,28 @@ class Product
 			  }
 			else
 			  {
-			    $this->errno = 260;
+			    $this->_setErrNo("Create",260);
 			  }
 		      }
 		    else
 		      {
-			$this->errno = 259;
+			$this->_setErrNo("Create",259);
 		      }
 		  }
 		else
 		  {
-		    $this->errno = 258;
+		    $this->_setErrNo("Create",258);
 		  }
 	      }
 	    else
 	      {
 		// Produit existe deja
-		$this->errno = 257;
+	    $this->_setErrNo("Create",257);
 	      }
 	  }
 	else
 	  {
-	    $this->errno = 263;
+	    $this->_setErrNo("Create",263);
 	  }
 
 	/* 
@@ -250,13 +250,23 @@ class Product
       }
     else
       {
-	$this->errno = 262;
+	$this->_setErrNo("Create",262);
+
 	return -2;
       }
     
     return -1;
   }
   
+  
+  function _setErrNo($func, $num)
+  {
+    $this->errno = $num;
+    dolibarr_syslog("Product::".$func." ERRNO (".$this->errno.")");
+  }
+
+  
+
   function error($errno)
   {
 
