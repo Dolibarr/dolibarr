@@ -158,8 +158,11 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
+            
+            if ($user->rights->fournisseur->lire)
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
         
         }
         
@@ -177,8 +180,11 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+            
+            if ($user->rights->commercial->lire)
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font>';
         
         }
 
@@ -197,8 +203,11 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+            
+            if ($user->rights->compta->lire || $user->rights->comptaexpert->lire)
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font>';
         }
 
         // Projets
@@ -215,8 +224,11 @@ class MenuTop {
             {
                 $class = 'class="tmenu"';
             }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
+            
+            if ($user->rights->projet->lire)
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/projet/index.php?mainmenu=project&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Projects").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Projects").'</font>';
         }
 
         // Tools
@@ -234,9 +246,12 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            //print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
+            if ($user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire)
+            		//print '<a '.$class.' href="'.DOL_URL_ROOT.'/comm/mailing/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            		//print '<a '.$class.' href="'.DOL_URL_ROOT.'/societe.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a>';
+            		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/index.php?mainmenu=tools&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Tools").'</a></td>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Tools").'</font>';
         }
         
         // OSCommerce 1
