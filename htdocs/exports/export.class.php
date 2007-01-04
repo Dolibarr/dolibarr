@@ -61,7 +61,7 @@ class Export
     {
         global $langs;
         
-        dolibarr_syslog("Export::load_arrays user=$user filter=$filter");
+        dolibarr_syslog("Export::load_arrays user=".$user->id." filter=".$filter);
 
         $dir=DOL_DOCUMENT_ROOT."/includes/modules";
         $handle=opendir($dir);
