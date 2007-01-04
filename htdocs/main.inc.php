@@ -737,26 +737,4 @@ function llxFooter($foot='',$limitIEbug=1)
     print "</html>\n";
 }
 
-
-/****************************************************************
-*	Error handler for PHP 5.2
-*	This make Dolibarr working in PHP 5.2+ when some code do print "$object" and $object is an object.
-*/
-/****************************************************************
-function compatibilityErrorHandler($errno, $errstr, $errfile, $errline)
-{
-  switch ($errno) {
-  case E_RECOVERABLE_ERROR:
-    break;
-  default:
-    echo "Unknown error type: [$errno] $errstr<br />\n";
-    break;
-  }
-}
-if (defined("E_RECOVERABLE_ERROR"))	// set to the user defined error handler
-{
-	$old_error_handler = set_error_handler("compatibilityErrorHandler",E_RECOVERABLE_ERROR);
-}
-****************************************************************/
-
 ?>
