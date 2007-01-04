@@ -159,10 +159,10 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            if ($user->rights->fournisseur->lire)
+            //if ($user->rights->fournisseur->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
-            else
-            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
+            //else
+            		//print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
         
         }
         
