@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
@@ -23,70 +23,73 @@
  */
 
 /**
-        \file       htdocs/compta/bank/account.class.php
-        \ingroup    banque
-        \brief      Fichier de la classe des comptes bancaires
-        \version    $Revision$
+   \file       htdocs/compta/bank/account.class.php
+   \ingroup    banque
+   \brief      Fichier de la classe des comptes bancaires
+   \version    $Revision$
 */
 
 
 /**
-        \class      Account
-        \brief      Classe permettant la gestion des comptes bancaires
+   \class      Account
+   \brief      Classe permettant la gestion des comptes bancaires
 */
-
 class Account
 {
-    var $rowid;
-
-    var $ref;
-    var $label;
-    var $type;
-    var $bank;
-    var $clos;
-    var $rappro;
-    var $url;
+  var $rowid;
+  var $ref;
+  var $label;
+  var $type;
+  var $bank;
+  var $clos;
+  var $rappro;
+  var $url;
+  //! Code banque dans le RIB
+  var $code_banque;
+  //! Code guichet dans le RIB
+  var $code_guichet;
+  //! Numero du compte dans le RIB
+  var $number;
+  //! Cle de controle du RIB
+  var $cle_rib;
+  //! Numero BIC du compte
+  var $bic;
+  //! Prefix IBAN a utiliser pour creer la cle IBAN International Bank Account Number
+  var $iban_prefix;
+  var $proprio;
+  var $adresse_proprio;
+  var $type_lib=array();
+  
+  var $account_number;
+  
+  var $currency_code;
+  var $min_allowed;
+  var $min_desired;
+  var $comment;
+  
+	
+  /**
+   *  Constructeur
+   */
+  function Account($DB, $rowid=0)
+  {
+    global $langs;
     
-    var $code_banque;
-    var $code_guichet;
-    var $number;
-    var $cle_rib;
-    var $bic;
-    var $iban_prefix;
-    var $proprio;
-    var $adresse_proprio;
-    var $type_lib=array();
-
-	var $account_number;
-
-	var $currency_code;
-	var $min_allowed;
-	var $min_desired;
-	var $comment;
-	
-	
-    /**
-     *  Constructeur
-     */
-    function Account($DB, $rowid=0)
-    {
-        global $langs;
-
-        $this->db = $DB;
-        $this->rowid = $rowid;
-
-        $this->clos = 0;
-        $this->solde = 0;
-
-        $this->type_lib[0]=$langs->trans("BankType0");
-        $this->type_lib[1]=$langs->trans("BankType1");
-        $this->type_lib[2]=$langs->trans("BankType2");
-
-        $this->status[0]=$langs->trans("StatusAccountOpened");
-        $this->status[1]=$langs->trans("StatusAccountClosed");
-
-        return 1;
-    }
+    $this->db = $DB;
+    $this->rowid = $rowid;
+    
+    $this->clos = 0;
+    $this->solde = 0;
+    
+    $this->type_lib[0]=$langs->trans("BankType0");
+    $this->type_lib[1]=$langs->trans("BankType1");
+    $this->type_lib[2]=$langs->trans("BankType2");
+    
+    $this->status[0]=$langs->trans("StatusAccountOpened");
+    $this->status[1]=$langs->trans("StatusAccountClosed");
+    
+    return 1;
+  }
 
     /**
      *      \brief      Efface une entree dans la table ".MAIN_DB_PREFIX."bank
@@ -186,34 +189,34 @@ class Account
         }
     }
 
-    /**
-     *    \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-     *    \return     int     rowid de l'entrée ajoutée, <0 si erreur
-     */
-    function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='',$emetteur='',$banque='')
-    {
-        dolibarr_syslog("Account::addline: date=$date, oper=$oper, label=$label, amount=$amount, num_chq=$num_chq, categorie=$categorie, user=$user");
-        if ($this->rowid)
-        {
-            $this->db->begin();
-
-            switch ($oper)
-            {
-                case 1:
-                $oper = 'TIP';
-                break;
-                case 2:
-                $oper = 'VIR';
-                break;
-                case 3:
-                $oper = 'PRE';
-                break;
-                case 4:
-                $oper = 'LIQ';
-                break;
-                case 5:
-                $oper = 'VAD';
-                break;
+  /**
+     \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
+     \return     int     rowid de l'entrée ajoutée, <0 si erreur
+  */
+  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='',$emetteur='',$banque='')
+  {
+    dolibarr_syslog("Account::Addline: date=".$date.", oper=".$oper.", label=".$label.", amount=".$amount.", num_chq=".$num_chq.", categorie=".$categorie.", user=".$user);
+    if ($this->rowid)
+      {
+	$this->db->begin();
+	
+	switch ($oper)
+	  {
+	  case 1:
+	    $oper = 'TIP';
+	    break;
+	  case 2:
+	    $oper = 'VIR';
+	    break;
+	  case 3:
+	    $oper = 'PRE';
+	    break;
+	  case 4:
+	    $oper = 'LIQ';
+	    break;
+	  case 5:
+	    $oper = 'VAD';
+	    break;
                 case 6:
                 $oper = 'CB';
                 break;
