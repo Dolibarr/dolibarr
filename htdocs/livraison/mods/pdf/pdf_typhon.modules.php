@@ -729,12 +729,18 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, $langs->transnoentities("BillTo").":");
-		//
-		$client = new Societe($this->db);
-     	$client->fetch($delivery->socid);
-		$delivery->client = $client;
-		// 
+        $pdf->MultiCell(80,5, $langs->transnoentities("DeliveryAddress").":");
+
+        /*
+         * if a delivery address is used, use that, else use the client address
+        */
+        if ($commande->adresse_livraison_id>0) { 
+           $client->fetch_adresse_livraison($commande->adresse_livraison_id);
+        } else {
+           $client->fetch($delivery->socid);
+        }
+	$delivery->client = $client;
+	// 
 		
         // Cadre client destinataire
         $pdf->rect(100, $posy, 100, $hautcadre);
