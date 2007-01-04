@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
@@ -22,15 +22,16 @@
  */
 
 /**
-        \file         htdocs/compta/facture/pre.inc.php
-        \ingroup      facture
-        \brief        Fichier de gestion du menu gauche du module facture
-        \version      $Revision$
+   \file         htdocs/compta/facture/pre.inc.php
+   \ingroup      facture
+   \brief        Fichier de gestion du menu gauche du module facture
+   \version      $Revision$
 */
 
 require("../../main.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
+$langs->load('bills');
 
 function llxHeader($head = "", $title="", $help_url='') {
     global $user, $conf, $langs;
