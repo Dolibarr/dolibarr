@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -944,7 +944,7 @@ class User
     {
         global $langs;
 
-        dolibarr_syslog("User.class::password user=".$user." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
+        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
 
         // Si nouveau mot de passe non communiqué, on génère par module
         if (! $password)
