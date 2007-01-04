@@ -75,7 +75,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
     // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
 
         $current_year = strftime("%y",time());
-        $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         
         $pryy = 'PR'.$current_year;
         
@@ -87,7 +87,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
         {
             $row = $db->fetch_row($resql);
             $pryy='';
-            if ($row)
+            if ($row[0]='')
             {
             	$pryy = substr($row[0],0,4);
             }
