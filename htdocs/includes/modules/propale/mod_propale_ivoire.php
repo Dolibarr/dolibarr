@@ -74,10 +74,11 @@ class mod_propale_ivoire extends ModeleNumRefPropales
     
     // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
 
+        $prefix='PR';
         $current_year = strftime("%y",time());
         $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         
-        $pryy = 'PR'.$current_year;
+        $pryy = $prefix.$current_year;
         
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
@@ -93,7 +94,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
             }
             else
             {
-            	$pryy = 'PR'.$last_year;
+            	$pryy = $prefix.$last_year;
             }
         }
     

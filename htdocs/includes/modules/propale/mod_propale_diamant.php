@@ -95,10 +95,11 @@ class mod_propale_diamant extends ModeleNumRefPropales
 
         // D'abord on récupère la valeur max (réponse immédiate car champ indéxé)
         
+        $prefix='PR';
         $current_year = strftime("%y",time());
         $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         
-        $pryy = 'PR'.$current_year;
+        $pryy = $prefix.$current_year;
 
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
@@ -115,13 +116,13 @@ class mod_propale_diamant extends ModeleNumRefPropales
             }
             else
             {
-            	$pryy = 'PR'.$last_year;
+            	$pryy = $prefix.$last_year;
             }
         }
 
         //on vérifie si il y a une année précédente
         //sinon le delta sera appliqué de nouveau sur la nouvelle année
-        $lastyy = 'PR'.$last_year;
+        $lastyy = $prefix.$last_year;
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= " WHERE ref like '${lastyy}%'";

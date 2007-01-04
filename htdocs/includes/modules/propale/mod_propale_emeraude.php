@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -111,7 +111,7 @@ class mod_propale_emeraude extends ModeleNumRefPropales
             if ($row) $pryy = substr($row[0],0,4);
         }
 
-        // Si au moins un champ respectant le modèle a été trouvée
+        // Si au moins un champ respectant le modèle a été trouvé
         if (eregi('PR[0-9][0-9]',$pryy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
