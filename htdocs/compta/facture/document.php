@@ -34,7 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/invoice.lib.php");
 
 $langs->load('propal');
-$langs->load("bills");
 $langs->load('compta');
 $langs->load('other');
 
@@ -54,25 +53,25 @@ $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action'
 // Envoi fichier
 if ($_POST["sendit"] && $conf->upload)
 {
-	$facture = new Facture($db);
-
-	if ($facture->fetch($facid))
+  $facture = new Facture($db);
+	
+  if ($facture->fetch($facid))
     {
-        $upload_dir = $conf->facture->dir_output . "/" . $facture->ref;
-        if (! is_dir($upload_dir)) create_exdir($upload_dir);
-    
-        if (is_dir($upload_dir))
+      $upload_dir = $conf->facture->dir_output . "/" . $facture->ref;
+      if (! is_dir($upload_dir)) create_exdir($upload_dir);
+      
+      if (is_dir($upload_dir))
         {
-            if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+	  if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
             {
-                $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-                //print_r($_FILES);
+	      $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	      //print_r($_FILES);
             }
-            else
+	  else
             {
-                // Echec transfert (fichier dépassant la limite ?)
-                $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-                // print_r($_FILES);
+	      // Echec transfert (fichier dépassant la limite ?)
+	      $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	      // print_r($_FILES);
             }
         }
     }
@@ -82,7 +81,7 @@ if ($_POST["sendit"] && $conf->upload)
 if ($action=='delete')
 {
   $facture = new Facture($db);
-
+  
   if ($facture->fetch($facid))
     {
       $upload_dir = $conf->facture->dir_output . "/" . $facture->ref;
@@ -157,9 +156,8 @@ if ($facid > 0)
       
       print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
       print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';      
-      print '</table>';
-      
-      print '</div>';
+      print "</table>\n";      
+      print "</div>\n";
       
       if ($mesg) { print $mesg."<br>"; }
 
@@ -175,8 +173,7 @@ if ($facid > 0)
       print '<td>'.$langs->trans("Document").'</td>';
       print '<td align="right">'.$langs->trans("Size").'</td>';
       print '<td align="center">'.$langs->trans("Date").'</td>';
-      print '<td>&nbsp;</td>';
-      print '</tr>';
+      print "<td>&nbsp;</td></tr>\n";
       
       if (is_dir($upload_dir))
         {
