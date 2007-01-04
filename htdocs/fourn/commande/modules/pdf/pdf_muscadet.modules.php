@@ -679,7 +679,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY($this->marge_gauche,$posy-5);
-        $pdf->MultiCell(66,5, $langs->trans("BillFrom").":");
+        $pdf->MultiCell(66,5, $langs->trans("BillTo").":");
 
 
         $pdf->SetXY($this->marge_gauche,$posy);
@@ -725,7 +725,7 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, $langs->trans("BillTo").":");
+        $pdf->MultiCell(80,5, $langs->trans("BillFrom").":");
 		//
 		$client = new Societe($this->db);
      	$client->fetch($com->socid);
