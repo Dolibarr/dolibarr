@@ -5,6 +5,7 @@
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1786,11 +1787,13 @@ class Facture extends CommonObject
     $resql=$this->db->query($sql);
     if ($resql)
       {
-	$obj = $this->db->fetch_object($resql);
-	if ($obj) 
+	$num = $this->db->num_rows();
+	$i = 0;
+	while ($i < $num)
 	  {
-	    // Si il y en a
-	    $idarray[]=$obj->rowid;
+	    $row = $this->db->fetch_row($i);
+	    $idarray[]=$row[0];
+	    $i++;
 	  }
       }
     else
