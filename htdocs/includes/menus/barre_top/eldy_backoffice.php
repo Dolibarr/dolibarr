@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -159,10 +160,10 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            //if ($user->rights->fournisseur->lire)
+            if ($user->rights->fournisseur->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/fourn/index.php?mainmenu=suppliers&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Suppliers").'</a></td>';
-            //else
-            		//print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
+            else
+            		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Suppliers").'</font>';
         
         }
         
@@ -181,7 +182,7 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            if ($user->rights->commercial->lire)
+            if ($user->rights->commercial->main->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/comm/index.php?mainmenu=commercial&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Commercial").'</a></td>';
             else
             		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Commercial").'</font>';
