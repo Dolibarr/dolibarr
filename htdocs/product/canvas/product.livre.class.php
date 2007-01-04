@@ -36,6 +36,8 @@ require_once(DOL_DOCUMENT_ROOT.'/product/canvas/product.livrecontrat.class.php')
 
 class ProductLivre extends Product
 {
+  //! Numero d'erreur Plage 1280-1535
+  var $errno = 0;
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler accès base de données
@@ -98,10 +100,10 @@ class ProductLivre extends Product
 
     if ($id > 0)
       {
-	$error = 0;
+	$this->errno = 0;
       }
 
-    if ( $error === 0 )
+    if ( $this->errno === 0 )
       {
 	$sql = " INSERT INTO ".MAIN_DB_PREFIX."product_cnv_livre (rowid)";
 	$sql.= " VALUES ('".$id."');";
@@ -109,15 +111,15 @@ class ProductLivre extends Product
 	$result = $this->db->query($sql) ;
 	if ($result)
 	  {
-	    $error = 0;
+	    $this->errno = 0;
 	  }
 	else
 	  {
-	    $error = -6;
+	    $this->errno = -6;
 	  }
       }
     // Creation du contrat associe
-    if ( $error === 0 )
+    if ( $this->errno === 0 )
       {
 	$this->contrat = new ProductLivreContrat($this->db);
 
@@ -139,7 +141,7 @@ class ProductLivre extends Product
 	  }
       }
     // Creation du produit couverture
-    if ( $error === 0 )
+    if ( $this->errno === 0 )
       {
 	$this->couverture = new Product($this->db);
 
@@ -161,12 +163,12 @@ class ProductLivre extends Product
 	  }
       }
 
-    if ( $error === 0 )
+    if ( $this->errno === 0 )
       {
-	$error = $this->UpdateCanvas($datas);
+	$this->errno = $this->UpdateCanvas($datas);
       }
 
-    if ( $error === 0 )
+    if ( $this->errno === 0 )
       {
 	$this->db->commit();
 	return $this->id;
@@ -281,16 +283,18 @@ class ProductLivre extends Product
 
     if ( $this->db->query($sql) )
       {
-	$error = 0;
+	$this->errno = 0;
+
+	$this->contrat->UpdateCanvas($datas);
+
+	return 0;
       }
     else
       {
-	$error = -1;
+	$this->errno = 1281;
+	return -1;
       }
-
-    $this->contrat->UpdateCanvas($datas);
-    
-    return $error;
+   
   }
   /**
    *    \brief      Calcule le prix de revient d'un livre
