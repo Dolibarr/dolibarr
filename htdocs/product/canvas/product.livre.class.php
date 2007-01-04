@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Auguria SARL <info@auguria.org>
+/* Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Auguria SARL <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -174,6 +174,7 @@ class ProductLivre extends Product
     else
       {
 	$this->db->rollback();
+	dolibarr_syslog("ProductLivre::Create ROLLBACK ERRNO (".$this->errno.")");
 	return -1;
       }
   }
