@@ -287,7 +287,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 	    }
 	  // \todo La valeur de la TVA a 0 devrait etre retournée par get_default_tva
 	  $tva_tx = ($soc->tva_assuj=='0')?0:get_default_tva($mysoc,$soc,$prod->tva_tx);
-	  $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+	  //$tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
 	}
       else
 	{
