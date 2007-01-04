@@ -572,7 +572,7 @@ class MDB2
      */
     function &raiseError($code = null, $mode = null, $options = null, $userinfo = null)
     {
-        $err =& DOLIDOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
+        $err =& DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
         return $err;
     }
 
@@ -741,7 +741,7 @@ class MDB2
             return $errorMessages;
         }
 
-        if (DOLIDOLIPEAR::isError($value)) {
+        if (DOLIPEAR::isError($value)) {
             $value = $value->getCode();
         }
 
@@ -1371,7 +1371,7 @@ class MDB2_Driver_Common extends DOLIPEAR
 
     /**
      * This method is used to communicate an error and invoke error
-     * callbacks etc.  Basically a wrapper for DOLIDOLIPEAR::raiseError
+     * callbacks etc.  Basically a wrapper for DOLIPEAR::raiseError
      * without the message string.
      *
      * @param   mixed   integer error code, or a PEAR error object (all other
@@ -1396,8 +1396,8 @@ class MDB2_Driver_Common extends DOLIPEAR
     {
         $userinfo = "[Error message: $userinfo]\n";
         // The error is yet a MDB2 error object
-        if (DOLIDOLIPEAR::isError($code)) {
-            // because we use the static DOLIDOLIPEAR::raiseError, our global
+        if (DOLIPEAR::isError($code)) {
+            // because we use the static DOLIPEAR::raiseError, our global
             // handler should be used if it is set
             if (is_null($mode) && !empty($this->_default_error_mode)) {
                 $mode    = $this->_default_error_mode;
@@ -1424,8 +1424,8 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
         }
 
-        $err =& DOLIDOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
-        if ($err->getMode() !== PEAR_ERROR_RETURN
+        $err =& DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
+        if ($err->getMode() !== DOLIPEAR_ERROR_RETURN
             && isset($this->nested_transaction_counter) && !$this->has_transaction_error) {
             $this->has_transaction_error =& $err;
         }
@@ -1718,7 +1718,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function getConnection()
     {
         $result = $this->connect();
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         return $this->connection;
@@ -1845,7 +1845,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
 
             $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-            if (DOLIDOLIPEAR::isError($err)) {
+            if (DOLIPEAR::isError($err)) {
                 return $err;
             }
 
@@ -1856,7 +1856,7 @@ class MDB2_Driver_Common extends DOLIPEAR
                     if ($class_name != $class_name_new) {
                         $class_name = $class_name_new;
                         $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-                        if (DOLIDOLIPEAR::isError($err)) {
+                        if (DOLIPEAR::isError($err)) {
                             return $err;
                         }
                     }
@@ -1902,7 +1902,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             $method = strtolower($match[2]).$match[3];
             if (!isset($this->modules[$module]) || !is_object($this->modules[$module])) {
                 $result =& $this->loadModule($module);
-                if (DOLIDOLIPEAR::isError($result)) {
+                if (DOLIPEAR::isError($result)) {
                     return $result;
                 }
             }
@@ -2089,7 +2089,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             if ($this->supports('savepoints') && $savepoint) {
                 if ($force_rollback || $this->has_transaction_error) {
                     $result = $this->rollback($savepoint);
-                    if (!DOLIDOLIPEAR::isError($result)) {
+                    if (!DOLIPEAR::isError($result)) {
                         $result = false;
                         $this->has_transaction_error = false;
                     }
@@ -2110,7 +2110,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         if ($this->in_transaction) {
             if ($force_rollback || $this->has_transaction_error) {
                 $result = $this->rollback();
-                if (!DOLIDOLIPEAR::isError($result)) {
+                if (!DOLIPEAR::isError($result)) {
                     $result = false;
                 }
             } else {
@@ -2351,12 +2351,12 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, $is_manip, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIDOLIPEAR::isError($connection)) {
+        if (DOLIPEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, $is_manip, $connection, false);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -2407,7 +2407,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         $this->last_query = $query;
         $result = $this->debug($query, 'query', array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (DOLIDOLIPEAR::isError($result)) {
+            if (DOLIPEAR::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -2456,12 +2456,12 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, true, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIDOLIPEAR::isError($connection)) {
+        if (DOLIPEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, true, $connection, $this->database_name);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -2493,12 +2493,12 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, false, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIDOLIPEAR::isError($connection)) {
+        if (DOLIPEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, false, $connection, $this->database_name);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -2531,7 +2531,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             if ($this->supports('result_introspection')) {
                 $this->loadModule('Reverse', null, true);
                 $tableInfo = $this->reverse->tableInfo($result);
-                if (DOLIDOLIPEAR::isError($tableInfo)) {
+                if (DOLIPEAR::isError($tableInfo)) {
                     return $tableInfo;
                 }
                 $types = array();
@@ -2563,7 +2563,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
             if (!empty($types)) {
                 $err = $result->setResultTypes($types);
-                if (DOLIDOLIPEAR::isError($err)) {
+                if (DOLIPEAR::isError($err)) {
                     $result->free();
                     return $err;
                 }
@@ -2664,7 +2664,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         }
 
         $col = $this->queryCol($query, $type);
-        if (DOLIDOLIPEAR::isError($col)) {
+        if (DOLIPEAR::isError($col)) {
             return $col;
         }
         if (!is_array($col) || count($col) == 0) {
@@ -2775,38 +2775,38 @@ class MDB2_Driver_Common extends DOLIPEAR
 
         $result = null;
         $in_transaction = $this->in_transaction;
-        if (!$in_transaction && DOLIDOLIPEAR::isError($result = $this->beginTransaction())) {
+        if (!$in_transaction && DOLIPEAR::isError($result = $this->beginTransaction())) {
             return $result;
         }
 
         $connection = $this->getConnection();
-        if (DOLIDOLIPEAR::isError($connection)) {
+        if (DOLIPEAR::isError($connection)) {
             return $connection;
         }
 
         $condition = ' WHERE '.implode(' AND ', $condition);
         $query = "DELETE FROM $table$condition";
         $result =& $this->_doQuery($query, true, $connection);
-        if (!DOLIDOLIPEAR::isError($result)) {
+        if (!DOLIPEAR::isError($result)) {
             $affected_rows = $this->_affectedRows($connection, $result);
             $insert = implode(', ', array_keys($values));
             $values = implode(', ', $values);
             $query = "INSERT INTO $table ($insert) VALUES ($values)";
             $result =& $this->_doQuery($query, true, $connection);
-            if (!DOLIDOLIPEAR::isError($result)) {
+            if (!DOLIPEAR::isError($result)) {
                 $affected_rows += $this->_affectedRows($connection, $result);;
             }
         }
 
         if (!$in_transaction) {
-            if (DOLIDOLIPEAR::isError($result)) {
+            if (DOLIPEAR::isError($result)) {
                 $this->rollback();
             } else {
                 $result = $this->commit();
             }
         }
 
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -2846,7 +2846,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         $this->offset = $this->limit = 0;
         $result = $this->debug($query, __FUNCTION__, array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (DOLIDOLIPEAR::isError($result)) {
+            if (DOLIPEAR::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -2876,7 +2876,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
 
             $new_pos = $this->_skipDelimitedStrings($query, $position, $p_position);
-            if (DOLIDOLIPEAR::isError($new_pos)) {
+            if (DOLIPEAR::isError($new_pos)) {
                 return $new_pos;
             }
             if ($new_pos != $position) {
@@ -2994,7 +2994,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function quote($value, $type = null, $quote = true, $escape_wildcards = false)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -3020,7 +3020,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function getDeclaration($type, $name, $field)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         return $this->datatype->getDeclaration($type, $name, $field);
@@ -3042,7 +3042,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function compareDefinition($current, $previous)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIDOLIPEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         return $this->datatype->compareDefinition($current, $previous);
@@ -3391,7 +3391,7 @@ class MDB2_Result_Common extends MDB2_Result
     function setResultTypes($types)
     {
         $load = $this->db->loadModule('Datatype', null, true);
-        if (DOLIDOLIPEAR::isError($load)) {
+        if (DOLIPEAR::isError($load)) {
             return $load;
         }
         $types = $this->db->datatype->checkResultTypes($types);
