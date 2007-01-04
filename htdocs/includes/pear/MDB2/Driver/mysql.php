@@ -190,7 +190,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
             $text = $this->escapePattern($text);
         }
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if (DOLIPEAR::::isError($connection)) {
             return $connection;
         }
         $text = @mysql_real_escape_string($text, $connection);
@@ -231,7 +231,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         }
         $query = $this->start_transaction ? 'START TRANSACTION' : 'SET AUTOCOMMIT = 1';
         $result =& $this->_doQuery($query, true);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             return $result;
         }
         $this->in_transaction = true;
@@ -278,13 +278,13 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         }
 
         $result =& $this->_doQuery('COMMIT', true);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             return $result;
         }
         if (!$this->start_transaction) {
             $query = 'SET AUTOCOMMIT = 0';
             $result =& $this->_doQuery($query, true);
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 return $result;
             }
         }
@@ -324,13 +324,13 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
 
         $query = 'ROLLBACK';
         $result =& $this->_doQuery($query, true);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             return $result;
         }
         if (!$this->start_transaction) {
             $query = 'SET AUTOCOMMIT = 0';
             $result =& $this->_doQuery($query, true);
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 return $result;
             }
         }
@@ -395,7 +395,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
             $this->disconnect(false);
         }
 
-        if (!PEAR::loadExtension($this->phptype)) {
+        if (!DOLIPEAR::::loadExtension($this->phptype)) {
             return $this->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                 'extension '.$this->phptype.' is not compiled into PHP', __FUNCTION__);
         }
@@ -440,7 +440,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
 
         if (!empty($this->dsn['charset'])) {
             $result = $this->setCharset($this->dsn['charset'], $connection);
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 return $result;
             }
         }
@@ -527,7 +527,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
     {
         if (is_null($connection)) {
             $connection = $this->getConnection();
-            if (PEAR::isError($connection)) {
+            if (DOLIPEAR::::isError($connection)) {
                 return $connection;
             }
         }
@@ -594,7 +594,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         $this->last_query = $query;
         $result = $this->debug($query, 'query', array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -606,7 +606,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
 
         if (is_null($connection)) {
             $connection = $this->getConnection();
-            if (PEAR::isError($connection)) {
+            if (DOLIPEAR::::isError($connection)) {
                 return $connection;
             }
         }
@@ -653,7 +653,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
     {
         if (is_null($connection)) {
             $connection = $this->getConnection();
-            if (PEAR::isError($connection)) {
+            if (DOLIPEAR::::isError($connection)) {
                 return $connection;
             }
         }
@@ -712,7 +712,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
     function getServerVersion($native = false)
     {
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if (DOLIPEAR::::isError($connection)) {
             return $connection;
         }
         if ($this->connected_server_info) {
@@ -783,7 +783,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         $query = $this->_modifyQuery($query, $is_manip, $limit, $offset);
         $result = $this->debug($query, __FUNCTION__, array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -810,7 +810,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
             }
             
             $new_pos = $this->_skipDelimitedStrings($query, $position, $p_position);
-            if (PEAR::isError($new_pos)) {
+            if (DOLIPEAR::::isError($new_pos)) {
                 return $new_pos;
             }
             if ($new_pos != $position) {
@@ -841,13 +841,13 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
             }
         }
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if (DOLIPEAR::::isError($connection)) {
             return $connection;
         }
         $statement_name = sprintf($this->options['statement_format'], $this->phptype, md5(time() + rand()));
         $query = "PREPARE $statement_name FROM ".$this->quote($query, 'text');
         $statement =& $this->_doQuery($query, true, $connection);
-        if (PEAR::isError($statement)) {
+        if (DOLIPEAR::::isError($statement)) {
             return $statement;
         }
 
@@ -957,13 +957,13 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         }
 
         $connection = $this->getConnection();
-        if (PEAR::isError($connection)) {
+        if (DOLIPEAR::::isError($connection)) {
             return $connection;
         }
 
         $query = "REPLACE INTO $table ($query) VALUES ($values)";
         $result =& $this->_doQuery($query, true, $connection);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             return $result;
         }
         return $this->_affectedRows($connection, $result);
@@ -991,11 +991,11 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         $this->expectError(MDB2_ERROR_NOSUCHTABLE);
         $result =& $this->_doQuery($query, true);
         $this->popExpect();
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             if ($ondemand && $result->getCode() == MDB2_ERROR_NOSUCHTABLE) {
                 $this->loadModule('Manager', null, true);
                 $result = $this->manager->createSequence($seq_name);
-                if (PEAR::isError($result)) {
+                if (DOLIPEAR::::isError($result)) {
                     return $this->raiseError($result, null, null,
                         'on demand sequence '.$seq_name.' could not be created', __FUNCTION__);
                 } else {
@@ -1008,7 +1008,7 @@ class MDB2_Driver_mysql extends MDB2_Driver_Common
         if (is_numeric($value)) {
             $query = "DELETE FROM $sequence_name WHERE $seqcol_name < $value";
             $result =& $this->_doQuery($query, true);
-            if (PEAR::isError($result)) {
+            if (DOLIPEAR::::isError($result)) {
                 $this->warnings[] = 'nextID: could not delete previous sequence table values from '.$seq_name;
             }
         }
@@ -1076,7 +1076,7 @@ class MDB2_Result_mysql extends MDB2_Result_Common
     {
         if (!is_null($rownum)) {
             $seek = $this->seek($rownum);
-            if (PEAR::isError($seek)) {
+            if (DOLIPEAR::::isError($seek)) {
                 return $seek;
             }
         }
@@ -1141,7 +1141,7 @@ class MDB2_Result_mysql extends MDB2_Result_Common
     {
         $columns = array();
         $numcols = $this->numCols();
-        if (PEAR::isError($numcols)) {
+        if (DOLIPEAR::::isError($numcols)) {
             return $numcols;
         }
         for ($column = 0; $column < $numcols; $column++) {
@@ -1250,7 +1250,7 @@ class MDB2_BufferedResult_mysql extends MDB2_Result_mysql
     function valid()
     {
         $numrows = $this->numRows();
-        if (PEAR::isError($numrows)) {
+        if (DOLIPEAR::::isError($numrows)) {
             return $numrows;
         }
         return $this->rownum < ($numrows - 1);
@@ -1315,7 +1315,7 @@ class MDB2_Statement_mysql extends MDB2_Statement_Common
         }
 
         $connection = $this->db->getConnection();
-        if (PEAR::isError($connection)) {
+        if (DOLIPEAR::::isError($connection)) {
             return $connection;
         }
 
@@ -1350,7 +1350,7 @@ class MDB2_Statement_mysql extends MDB2_Statement_Common
                 }
                 $param_query = 'SET @'.$parameter.' = '.$this->db->quote($value, $type);
                 $result = $this->db->_doQuery($param_query, true, $connection);
-                if (PEAR::isError($result)) {
+                if (DOLIPEAR::::isError($result)) {
                     return $result;
                 }
             }
@@ -1358,7 +1358,7 @@ class MDB2_Statement_mysql extends MDB2_Statement_Common
         }
 
         $result = $this->db->_doQuery($query, $this->is_manip, $connection);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::::isError($result)) {
             return $result;
         }
 
@@ -1392,7 +1392,7 @@ class MDB2_Statement_mysql extends MDB2_Statement_Common
 
         if (!is_null($this->statement)) {
             $connection = $this->db->getConnection();
-            if (PEAR::isError($connection)) {
+            if (DOLIPEAR::::isError($connection)) {
                 return $connection;
             }
             $query = 'DEALLOCATE PREPARE '.$this->statement;
