@@ -91,22 +91,22 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->new_weight_units   = $_POST["weight_units"];
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
-  {
-     for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	   {
-	     if($_POST["price_".$i])
-	     {
-	  	  $price = ereg_replace(" ","", $_POST["price_".$i]);
-        $price = ereg_replace(",",".", $price);
-	    	$product->multiprices["$i"] = $price;
+    {
+      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	{
+	  if($_POST["price_".$i])
+	    {
+	      $price = ereg_replace(" ","", $_POST["price_".$i]);
+	      $price = ereg_replace(",",".", $price);
+	      $product->multiprices["$i"] = $price;
 	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
-	     }
-	     else
-	     {
-	  	   $product->multiprices["$i"] = "";
-	     }
-	   }
-  }
+	    }
+	  else
+	    {
+	      $product->multiprices["$i"] = "";
+	    }
+	}
+    }
   
   if ( $value != $current_lang ) $e_product = $product;
   
@@ -122,7 +122,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
     }
   else
     {
-      $mesg='<div class="error">'.$product->error.'</div>';
+      $mesg='<div class="error">'.$langs->trans($product->error()).'</div>';
       $_GET["action"] = "create";
       $_GET["canvas"] = $product->canvas;
       $_GET["type"] = $_POST["type"];
