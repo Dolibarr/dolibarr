@@ -1,6 +1,8 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +104,7 @@ if ($result)
     while ($i < $num)
     {
          $obj = $db->fetch_object($result);
-         $amount[$obj->rowid] = $obj->amount_ttc;
+         $amount[$obj->rowid] += $obj->amount_ttc;
          $name[$obj->rowid] = $obj->name;
          $catotal+=$obj->amount_ttc;
          $i++;
@@ -131,7 +133,7 @@ if ($modecompta != 'CREANCES-DETTES')
         while ($i < $num)
         {
             $obj = $db->fetch_object($result);
-            $amount[$obj->rowid] = $obj->amount_ttc;
+            $amount[$obj->rowid] += $obj->amount_ttc;
             $name[$obj->rowid] = $obj->name;
             $catotal+=$obj->amount_ttc;
             $i++;
