@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,12 +29,15 @@ create table llx_product_cnv_livre
   ean                varchar(13),       -- code EAN
   format             varchar(7),        -- format de l'ouvrage
 
-  px_feuillet        float,             -- prix au feuillet
-  px_couverture      float,             -- prix de la couverture
-  px_revient         float,             -- prix de revient
+  px_feuillet        float(12,4),       -- prix au feuillet
+  px_couverture      float(12,4),       -- prix de la couverture
+  px_revient         float(12,4),       -- prix de revient
   stock_loc          varchar(5),        -- emplacement dans le stock
 
-  pages              smallint UNSIGNED  -- nombre de page
+  pages              smallint UNSIGNED, -- nombre de page
+
+  fk_couverture      integer,
+  fk_contrat         integer
 
 )type=innodb;
 
