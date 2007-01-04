@@ -205,7 +205,8 @@ class MenuTop {
                 $class = 'class="tmenu"';
             }
             
-            if ($user->rights->compta->lire || $user->rights->comptaexpert->lire)
+            if ($user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire
+            	|| $user->rights->commande->lire || $user->rights->facture->lire || $user->rights->banque->lire)
             		print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
             else
             		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font>';
