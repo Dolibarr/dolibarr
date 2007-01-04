@@ -165,7 +165,7 @@ class ProductLivre extends Product
 
     if ( $this->errno === 0 )
       {
-	$this->errno = $this->UpdateCanvas($datas);
+	$this->UpdateCanvas($datas);
       }
 
     if ( $this->errno === 0 )
@@ -240,7 +240,7 @@ class ProductLivre extends Product
    */
   function UpdateCanvas($datas)
   {
-    dolibarr_syslog("ProductLivre::UpdateCanvas");
+    dolibarr_syslog("ProductLivre::UpdateCanvas ID : ".$this->id);
 
     $isbna = trim($datas["isbna"]);
     $isbnb = trim($datas["isbnb"]);
