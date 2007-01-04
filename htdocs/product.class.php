@@ -75,6 +75,7 @@ class Product
   //! Intitule de l'erreur
   var $error;
   //! Numero de l'erreur
+  //! Numero d'erreur Plage 0256-0511
   var $errno = 0;
   //! Canevas a utiliser si le produit n'est pas un produit generique
   var $canvas; 
@@ -132,19 +133,18 @@ class Product
     $price = ereg_replace(" ","", $price);
     $price = ereg_replace(",",".", $price);
 
-  	$this->price = $price;
-  	$this->price_base_type = $base_type;
-
+    $this->price = $price;
+    $this->price_base_type = $base_type;
   }
   /**
-   *    \brief    Insère le produit en base
-   *    \param    user        Utilisateur qui effectue l'insertion
-   *    \return   int     id du produit ou numero d'erreur < 0
+     \brief    Insère le produit en base
+     \param    user        Utilisateur qui effectue l'insertion
+     \return   int     id du produit ou numero d'erreur < 0
    */
   function create($user)
   {
-    global $langs;
-    
+    $this->errno = 0;
+  
     $this->ref = trim(sanitize_string($this->ref));
     
     if ($this->tva_tx=='') $this->tva_tx = 0;
@@ -153,103 +153,120 @@ class Product
     $this->price = price2num($this->price);
     
     if (strlen(trim($this->price)) > 0 )
+      {
+	if ($this->price_base_type == 'TTC')
 	  {
-	      if ($this->price_base_type == 'TTC')
-	      {
-		      $price_ttc = $this->price;
-		      $price = $this->price / (1 + ($this->tva_tx / 100));
-	      }
-	      else
-	      {
-		       $price = $this->price;
-		       $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
-	      }
-	   }
+	    $price_ttc = $this->price;
+	    $price = $this->price / (1 + ($this->tva_tx / 100));
+	  }
+	else
+	  {
+	    $price = $this->price;
+	    $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	  }
+      }
     
     dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
 
     if (strlen($this->ref) > 0)
-    {
-      $this->db->begin();
-    
-      $sql = "SELECT count(*)";
-      $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
-      
-      $result = $this->db->query($sql) ;
-      if ($result)
-	    {
-	      $row = $this->db->fetch_array($result);
-	      if ($row[0] == 0)
+      {
+	$this->db->begin();
+	
+	$sql = "SELECT count(*)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
+	
+	$result = $this->db->query($sql) ;
+	if ($result)
+	  {
+	    $row = $this->db->fetch_array($result);
+	    if ($row[0] == 0)
 	      {
-	        // Produit non deja existant
-	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
-	        $sql.= " (datec, ";
-	        if ($this->ref) $sql.= "ref, ";
-	        $sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
-	        $sql.= " VALUES (now(), ";
-	        if ($this->ref) $sql.= "'".$this->ref."', ";
-	        $sql.= $user->id.", ".$this->type.", '" . $price . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
-	        $result = $this->db->query($sql);
-	        if ( $result )
+		// Produit non deja existant
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
+		$sql.= " (datec, ";
+		if ($this->ref) $sql.= "ref, ";
+		$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
+		$sql.= " VALUES (now(), ";
+		if ($this->ref) $sql.= "'".$this->ref."', ";
+		$sql.= $user->id.", ".$this->type.", '" . $price . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
+		$result = $this->db->query($sql);
+		if ( $result )
+		  {
+		    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
+		    
+		    if ($id > 0)
 		      {
-		        $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
-		  
-		        if ($id > 0)
-		        {
-		          $this->id = $id;
-		          $this->_log_price($user);
-		          if ( $this->update($id, $user) > 0)
-			        {
-			          if ($this->catid > 0)
-			          {
-			             $cat = new Categorie ($this->db, $this->catid);
-			             $cat->add_product($this);
-			          }
-			          $this->db->commit();
-			          return $id;
-			        }
-		          else
-		          {
-			           $this->db->rollback();
-			           return -5;
-		          }
-		        }
-		        else
-		        {
-		           $this->db->rollback();
-		           return -4;
-		        }
+			$this->id = $id;
+			$this->_log_price($user);
+			if ( $this->update($id, $user) > 0)
+			  {
+			    if ($this->catid > 0)
+			      {
+				$cat = new Categorie ($this->db, $this->catid);
+				$cat->add_product($this);
+			      }
+			  }
+			else
+			  {
+			    $this->errno = 260;
+			  }
 		      }
-	        else
+		    else
 		      {
-		        $this->error=$this->db->error()." - sql=".$sql;
-		        $this->db->rollback();
-		        return -3;
+			$this->errno = 259;
 		      }
-	     }
-	     else
-	     {
-	      // Produit existe deja
-	      $this->error=$langs->trans("ErrorProductAlreadyExists", $this->ref);
-	      $this->errno = 257;
-	      $this->db->rollback();
-	      return -2;
-	     }
-	   }
-      
-      $this->error=$this->db->error();
-      $this->db->rollback();
-    }
+		  }
+		else
+		  {
+		    $this->errno = 258;
+		  }
+	      }
+	    else
+	      {
+		// Produit existe deja
+		$this->errno = 257;
+	      }
+	  }
+	else
+	  {
+	    $this->errno = 263;
+	  }
+
+	/* 
+	 * END COMMIT
+	 */
+
+	if ($this->errno === 0)
+	  {
+	    $this->db->commit();
+	    return $id;
+	  }
+	else
+	  {
+	    $this->db->rollback();
+	    dolibarr_syslog("Product::Create ROLLBACK ERRNO (".$this->errno.")");
+	    return -1;
+	  }       
+      }
     else
       {
-	// Produit existe deja
-	$this->error=$langs->trans("ErrorProductBadRefOrLabel");
-	$this->errno = 257;
+	$this->errno = 262;
 	return -2;
       }
+    
     return -1;
   }
   
+  function error($errno)
+  {
+
+    $errs[257] = "ErrorProductAlreadyExists";
+    $errs[262] = "ErrorProductBadRefOrLabel";
+
+    return $errs[$errno];
+  }
+
+
   /**
    *    \brief      Mise à jour du produit en base
    *    \param      id          id du produit
