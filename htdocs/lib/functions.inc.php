@@ -26,38 +26,38 @@
  */
 
 /**
-	    \file       htdocs/lib/functions.inc.php
-		\brief      Ensemble de fonctions de base de dolibarr sous forme d'include
-		\author     Rodolphe Quiedeville
-		\author	    Jean-Louis Bergamo
-		\author	    Laurent Destailleur
-		\author     Sebastien Di Cintio
-		\author     Benoit Mortier
-		\version    $Revision$
-
-		Ensemble de fonctions de base de dolibarr sous forme d'include
+   \file       htdocs/lib/functions.inc.php
+   \brief      Ensemble de fonctions de base de dolibarr sous forme d'include
+   \author     Rodolphe Quiedeville
+   \author	    Jean-Louis Bergamo
+   \author	    Laurent Destailleur
+   \author     Sebastien Di Cintio
+   \author     Benoit Mortier
+   \version    $Revision$
+   
+   Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
 
 /**
-		\brief      Renvoi une version en chaine depuis une version en tableau
-		\param	    versionarray        Tableau de version (vermajeur,vermineur,autre)
-        \return     string              Chaine version
+   \brief      Renvoi une version en chaine depuis une version en tableau
+   \param	    versionarray        Tableau de version (vermajeur,vermineur,autre)
+   \return     string              Chaine version
 */
 function versiontostring($versionarray)
 {
-    $string='?';
-    if (isset($versionarray[0])) $string=$versionarray[0];
-    if (isset($versionarray[1])) $string.='.'.$versionarray[1];
-    if (isset($versionarray[2])) $string.='.'.$versionarray[2];
-    return $string;
+  $string='?';
+  if (isset($versionarray[0])) $string=$versionarray[0];
+  if (isset($versionarray[1])) $string.='.'.$versionarray[1];
+  if (isset($versionarray[2])) $string.='.'.$versionarray[2];
+  return $string;
 }
 
 /**
-		\brief      Compare 2 versions
-		\param	    versionarray1       Tableau de version (vermajeur,vermineur,autre)
-		\param	    versionarray2       Tableau de version (vermajeur,vermineur,autre)
-        \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
+   \brief      Compare 2 versions
+   \param      versionarray1       Tableau de version (vermajeur,vermineur,autre)
+   \param      versionarray2       Tableau de version (vermajeur,vermineur,autre)
+   \return     int                 <0 si versionarray1<versionarray2, 0 si =, >0 si versionarray1>versionarray2
 */
 function versioncompare($versionarray1,$versionarray2)
 {
@@ -76,19 +76,19 @@ function versioncompare($versionarray1,$versionarray2)
 
 
 /**
-		\brief      Renvoie version PHP
-        \return     array               Tableau de version (vermajeur,vermineur,autre)
+   \brief      Renvoie version PHP
+   \return     array               Tableau de version (vermajeur,vermineur,autre)
 */
 function versionphp()
 {
-    return split('\.',PHP_VERSION);
+  return split('\.',PHP_VERSION);
 }
 
 
 /**
-		\brief      Renvoi vrai si l'email est syntaxiquement valide
-		\param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
-        \return     boolean     true si email valide, false sinon
+   \brief      Renvoi vrai si l'email est syntaxiquement valide
+   \param	    address     adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+   \return     boolean     true si email valide, false sinon
 */
 function ValidEmail($address)
 {
@@ -106,9 +106,9 @@ function ValidEmail($address)
 }
 
 /**
-		\brief      Renvoi vrai si l'email a un nom de domaine qui résoud via dns
-		\param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
-        \return     boolean     true si email valide, false sinon
+   \brief      Renvoi vrai si l'email a un nom de domaine qui résoud via dns
+   \param	    mail        adresse email (Ex: "toto@titi.com", "John Do <johndo@titi.com>")
+   \return     boolean     true si email valide, false sinon
 */
 function check_mail ($mail)
 {
@@ -169,10 +169,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 
   if ($conf->syslog->enabled)
     {
-      // Change this to LOg_DEBUG to see all messages on *nix
-      $level_maximum = LOG_INFO;
-      
-      if ($level > $level_maximum) return;
+      if ($level > SYSLOG_LEVEL) return;
       
       // Ajout user a la log
       $login='???';
