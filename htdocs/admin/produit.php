@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Auguria SARL <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +139,14 @@ else if ($_POST["action"] == 'viewProdDescInForm')
   Header("Location: produit.php");
   exit;
 }
+
+else if ($_POST["action"] == 'ProductCanvasAbility')
+{
+  dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
+  Header("Location: produit.php");
+  exit;
+}
+
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
   dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
@@ -287,52 +296,65 @@ print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
 print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
 print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
+print '<form method="post" action="produit.php">';
+print '<input type="hidden" name="action" value="ProductCanvasAbility">';
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ProductCanvasAbility").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("ProductCanvasAbility",$conf->global->PRODUCT_CANVAS_ABILITY,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr></form>';
+
 require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
 $dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
 
-if(is_dir($dir))
+if ($conf->global->PRODUCT_CANVAS_ABILITY==="1")
 {
-  $handle=opendir($dir);
-  $var=true;
-  
-  while (($file = readdir($handle))!==false)
+  if(is_dir($dir) )
     {
-      if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
-	{
-	  $parts = explode('.',$file);
-	  $classname = 'Product'.ucfirst($parts[1]);	  
-	  require_once($dir.$file);	  
-	  $module = new $classname();
-	  
-	  $var=!$var;
-	  print "<tr $bc[$var]><td>";
+      $handle=opendir($dir);
+      $var=true;
   
-	  print $module->description;
-	  
-	  print '</td><td align="center">';
-	  	  
-	  if (defined ("PRODUIT_SPECIAL_LIVRE") && PRODUIT_SPECIAL_LIVRE == 1)
+      while (($file = readdir($handle))!==false)
+	{
+	  if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
 	    {
-	      print img_tick();
+	      $parts = explode('.',$file);
+	      $classname = 'Product'.ucfirst($parts[1]);	  
+	      require_once($dir.$file);	  
+	      $module = new $classname();
+	      
+	      $var=!$var;
+	      print "<tr $bc[$var]><td>";
+	      
+	      print $module->description;
+	      
 	      print '</td><td align="center">';
-	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';	      
+	      
+	      if (defined ("PRODUIT_SPECIAL_LIVRE") && PRODUIT_SPECIAL_LIVRE == 1)
+		{
+		  print img_tick();
+		  print '</td><td align="center">';
+		  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';	      
+		}
+	      else
+		{
+		  print '&nbsp;</td><td align="center">';
+		  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
+		}
+	      
+	      print '</td></tr>';
 	    }
-	  else
-	    {
-	      print '&nbsp;</td><td align="center">';
-	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
-	    }
-	  
-	  print '</td></tr>';
 	}
+      closedir($handle);
     }
-  closedir($handle);
+  else
+    {
+      print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
+    }
 }
-else
-{
-  print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
-}
-
 print '</table>';
 
 $db->close();
