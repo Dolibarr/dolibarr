@@ -377,24 +377,25 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/compta/facture.php?leftmenu=customers_bills",$langs->trans("BillsCustomers"),1,$user->rights->facture->lire);
 					if ($user->societe_id == 0)
 					{
-						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
+						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer&amp;leftmenu=customers_bills",$langs->trans("NewBill"),2,$user->rights->facture->creer);
 					}
 					if (! defined("FACTURE_DISABLE_RECUR") || ! FACTURE_DISABLE_RECUR)
 					{
-						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php",$langs->trans("Repeatable"),2,$user->rights->facture->lire);
+						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php?leftmenu=customers_bills",$langs->trans("Repeatable"),2,$user->rights->facture->lire);
 					}
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/impayees.php?leftmenu=customers_bills",$langs->trans("Unpayed"),2,$user->rights->facture->lire);
+
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/liste.php?leftmenu=customers_bills_payments",$langs->trans("Payments"),2,$user->rights->facture->lire);
 
-					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/avalider.php",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
-					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/rapport.php",$langs->trans("Reportings"),3,$user->rights->facture->lire);
+					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
+					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),3,$user->rights->facture->lire);
 
 
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/", $langs->trans("Statistics"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=customers_bills_checks",$langs->trans("CheckReceipt"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&amp;action=new",$langs->trans("NewCheckDeposit"),3,$user->rights->facture->lire);
+					if (eregi("customers_bills_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=customers_bills_checks",$langs->trans("List"),3,$user->rights->facture->lire);
 
-					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("CheckReceipt"),1,$user->rights->facture->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?action=new",$langs->trans("New"),2,$user->rights->facture->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php",$langs->trans("List"),2,$user->rights->facture->lire);
+					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
 				}
 
 				// Propal

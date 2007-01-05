@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,6 +28,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
@@ -43,13 +46,6 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-
-/*
- * Affichage
- */
-
-llxHeader('',$langs->trans("CheckReceipt"));
-
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
@@ -58,18 +54,26 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="bc.rowid";
-  
+
+$checkdepositstatic=new RemiseCheque($db);
+$accountstatic=new Account($db);
+
+
+/*
+ * Affichage
+ */
+
+llxHeader('',$langs->trans("CheckReceipt"));
+
 $sql = "SELECT bc.rowid, bc.number, ".$db->pdate("bc.date_bordereau") ." as dp, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE bc.fk_bank_account = ba.rowid";
-
 if ($_GET["search_montant"])
 {
   $sql .=" AND p.amount=".price2num($_GET["search_montant"]);
 }
-
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit( $limit+1 ,$offset);
 //print "$sql";
@@ -90,7 +94,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
     print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield);
     print "</tr>\n";
 
     // Lignes des champs de filtre
@@ -109,26 +113,34 @@ if ($resql)
         $objp = $db->fetch_object($resql);
         $var=!$var;
         print "<tr $bc[$var]>";
+
+		// Num ref cheque
         print '<td width="80">';
-	print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
-	print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
+		$checkdepositstatic->rowid=$objp->rowid;
+		$checkdepositstatic->statut=$objp->statut;
+		$checkdepositstatic->number=$objp->number;
+		print $checkdepositstatic->getNomUrl(1);
+		print '</td>';
+
+        // Date
         print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
 
+        // Banque
         print '<td>';
         if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
         else print '&nbsp;';
         print '</td>';
+        
+        // Montant
         print '<td align="right">'.price($objp->amount).'</td>';
-        print '<td align="center">';
 
+		// Statut
+        print '<td align="right">';
         if ($objp->statut == 0)
         {
             print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
         }
-        else
-        {
-            print img_tick();
-        }
+		print $checkdepositstatic->LibStatut($objp->statut,5);
         print "</td></tr>\n";
         $i++;
     }

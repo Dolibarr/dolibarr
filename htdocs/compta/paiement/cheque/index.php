@@ -27,6 +27,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("banks");
 
@@ -43,15 +45,21 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$checkdepositstatic=new RemiseCheque($db);
+$accountstatic=new Account($db);
+
+
 /*
  * Affichage
  */
 
 llxHeader('',$langs->trans("CheckReceipt"));
 
-print_titre($langs->trans("CheckReceipt") );
+print_fiche_titre($langs->trans("CheckReceipt") );
 
-print '<table width="100%"><tr><td width="30%" valign="top">';
+print '<table border="0" width="100%" class="notopnoleftnoright">';
+
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -67,12 +75,12 @@ print "</tr>\n";
 
 if ($resql)
 {
-  $var=true;
+  $var=false;
   if ($row = $db->fetch_row($resql) )
     {
       $num = $row[0];
     }
-  print "<tr $bc[$var]>";
+  print "<tr ".$bc[$var].">";
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
   print '<td align="right">'.$num.'</td></tr>';
   print "</table>\n";
@@ -82,8 +90,9 @@ else
   dolibarr_print_error($db);
 }
 
-print "</td>\n";
-print '<td width="70%" valign="top">';
+
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
+
 
 $sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount,bc.number,";
 $sql.= " bc.statut, ba.label, ba.rowid as bid";
@@ -96,35 +105,41 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Date")."</td>";
-  print '<td>'.$langs->trans("Numero").'</td>';
-  print '<td>'.$langs->trans("Account").'</td>';
-  print '<td align="right">'.$langs->trans("Amount").'</td>';
-  print "</tr>\n";
-  
-  $var=true;
-  while ( $objp = $db->fetch_object($resql) )
-    {
-      $var=!$var;
-      print "<tr $bc[$var]>\n";
-      print '<td>';	
-      print '<img src="statut'.$objp->statut.'.png" alt="Statut" width="12" height="12"> ';
-      print dolibarr_print_date($objp->db,'%d/%m').'</td>';
-      if ($objp->statut == 1)
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Date")."</td>";
+	print '<td>'.$langs->trans("Numero").'</td>';
+	print '<td>'.$langs->trans("Account").'</td>';
+	print '<td align="right">'.$langs->trans("Amount").'</td>';
+	print '<td align="right">'.$langs->trans("Status").'</td>';
+	print "</tr>\n";
+
+	$var=true;
+	while ( $objp = $db->fetch_object($resql) )
 	{
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">'.$objp->number.'</a></td>';
+		$checkdepositstatic->statut=$objp->statut;
+		$checkdepositstatic->rowid=$objp->rowid;
+		$checkdepositstatic->number=$objp->number;
+
+		$accountstatic->id=$objp->bid;
+		$accountstatic->label=$objp->label;
+
+		$var=!$var;
+		print "<tr $bc[$var]>\n";
+
+		print '<td>'.dolibarr_print_date($objp->db,'day').'</td>';
+
+		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
+
+		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+
+		print '<td align="right">'.price($objp->amount).'</td>';
+
+		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
+
+		print '</tr>';
 	}
-      else
-	{
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$objp->rowid.'">(PROV'.$objp->rowid.')</a></td>';
-	}
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';      
-      print '</td>';
-      print '<td align="right">'.price($objp->amount).'</td></tr>';
-    }
-  print "</table>";
-  $db->free($resql);
+	print "</table>";
+	$db->free($resql);
 }
 else
 {

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $langs->load("bills");
 
@@ -43,6 +45,10 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+$paymentstatic=new Paiement($db);
+$accountstatic=new Account($db);
+
 
 /*
  * Affichage
@@ -103,67 +109,76 @@ $resql = $db->query($sql);
 
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  $paramlist=($_GET["orphelins"]?"&orphelins=1":"");
-  print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
-  
-  print '<form method="get" action="liste.php">';
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
-  print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="center"',$sortfield);
-  print "</tr>\n";
-    
-  // Lignes des champs de filtre
-  
-  print '<tr class="liste_titre">';
-  print '<td colspan="4">&nbsp;</td>';  
-  print '<td align="right">';
-  print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';  
-  print '</td><td align="right">';
-  print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
-  print '</td>';
-  print "</tr>\n";
-  
-  $var=true;
-  while ($i < min($num,$limit))
-    {
-      $objp = $db->fetch_object($resql);
-      $var=!$var;
-      print "<tr $bc[$var]>";
-      print '<td width="40"><a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowPayment"),"payment").'</a>';
-      
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.$objp->rowid.'</a></td>';
-      
-      print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
-      print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
-      print '<td>';
-      if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$objp->label.'</a>';
-      else print '&nbsp;';
-      print '</td>';
-      print '<td align="right">'.price($objp->amount).'</td>';
-      print '<td align="center">';
-      
-      if ($objp->statut == 0)
-        {
-	  print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
-        }
-      else
-        {
-	  print img_tick();
-        }
-      
-      print '</td></tr>';
-      $i++;
-    }
-  print "</table>\n";
-  print "</form>\n";
+	$paramlist=($_GET["orphelins"]?"&orphelins=1":"");
+	print_barre_liste($langs->trans("ReceivedCustomersPayments"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
+
+	print '<form method="get" action="liste.php">';
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
+	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
+	print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
+	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
+	print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+	print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield);
+	print '<td>&nbsp;</td>';
+	print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<tr class="liste_titre">';
+	print '<td colspan="4">&nbsp;</td>';
+	print '<td align="right">';
+	print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
+	print '</td><td align="right" colspan="2">';
+	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+	print "</tr>\n";
+
+	$var=true;
+	while ($i < min($num,$limit))
+	{
+		$objp = $db->fetch_object($resql);
+		$var=!$var;
+		print "<tr $bc[$var]>";
+
+		print '<td width="40">';
+		$paymentstatic->rowid=$objp->rowid;
+		print $paymentstatic->getNomUrl(1);
+		print '</td>';
+
+		print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+		print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
+		print '<td>';
+		if ($objp->bid)
+		{
+			$accountstatic->id=$objp->bid;
+			$accountstatic->label=$objp->label;
+			print $accountstatic->getNomUrl(1);
+		}
+		else print '&nbsp;';
+		print '</td>';
+		print '<td align="right">'.price($objp->amount).'</td>';
+		print '<td align="right">';
+		print $paymentstatic->LibStatut($objp->statut,5);
+		print '</td>';
+
+		print '<td align="right">';
+		if ($objp->statut == 0)
+		{
+			print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("Validate").'</a>';
+		}
+		else print '&nbsp;';
+		print '</td>';
+
+		print '</tr>';
+		
+		$i++;
+	}
+	print "</table>\n";
+	print "</form>\n";
 }
 else
 {

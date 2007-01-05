@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,25 +18,24 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/compta/paiement/cheque/resimecheque.class.php
-   \ingroup    compta
-   \brief      Fichier de la classe des bordereau de remise de cheque
-   \version    $Revision$
+		\file       htdocs/compta/paiement/cheque/resimecheque.class.php
+		\ingroup    compta
+		\brief      Fichier de la classe des bordereau de remise de cheque
+		\version    $Revision$
 */
 
 /**
-   \class RemiseCheque
-   \brief Classe permettant la gestion des remises de cheque
+		\class RemiseCheque
+		\brief Classe permettant la gestion des remises de cheque
 */
 
 class RemiseCheque
 {
-  var $db ;
-  var $id ;
+  var $db;
+  var $id;
   var $num;
   var $intitule;
   //! Numero d'erreur Plage 1024-1279
@@ -47,9 +47,10 @@ class RemiseCheque
    *    \param  id          id compte (0 par defaut)
    */
 	 
-  function RemiseCheque($DB)
+  function RemiseCheque($DB,$langs='')
     {
       $this->db = $DB;
+      $this->langs = $langs;
       $this->next_id = 0;
       $this->previous_id = 0;
     }  
@@ -498,5 +499,82 @@ class RemiseCheque
     return $this->errno;
   }
 
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		option			Sur quoi pointe le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		
+		$result='';
+
+		$number=$this->number;
+		if ($this->statut == 0) $number='(PROV'.$this->rowid.')';
+
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$this->rowid.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCheckReceipt"),'payment').$lienfin.' ');
+		$result.=$lien.$number.$lienfin;
+		return $result;
+	}
+
+	/**
+	*    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	*    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\return     string		Libelle
+	*/
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+	
+	/**
+	*    	\brief      Renvoi le libellé d'un statut donne
+	*    	\param      status      Statut
+	*		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\return     string      Libellé du statut
+	*/
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		$langs->load('compta');
+		if ($mode == 0)
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 1)
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 2)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 3)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}
+		return $langs->trans('Unknown');
+	}
+  
 }
 ?>

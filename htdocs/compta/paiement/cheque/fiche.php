@@ -28,6 +28,8 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/paiement/cheque/remisecheque.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
 $user->getrights('banque');
 
@@ -131,7 +133,7 @@ if ($_GET['action'] == 'new')
 {
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?action=new';
-  $head[$h][1] = $langs->trans("NewCheckReceipt");
+  $head[$h][1] = $langs->trans("NewCheckDeposit");
   $hselected = $h;
   $h++;      
 
@@ -182,147 +184,165 @@ if ($mesg) print $mesg.'<br>';
  */
 if ($_GET['action'] == 'new')
 {
-  $accounts = array();
-  $lines = array();
-
-  print '<table class="border" width="100%">';
-  print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date(time()).'</td></tr>';
-  print '</table><br />';
-
-  $sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
-  $sql.= " b.amount, ba.label, b.emetteur, b.banque"; 
-  $sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
-  $sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
-  $sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
-  $sql.= " AND b.fk_bordereau = 0 AND b.amount > 0";
-  $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
-
-  $resql = $db->query($sql);
- 
-  if ($resql)
-    {
-      $i = 0;
-      while ( $obj = $db->fetch_object($resql) )
+	$accounts = array();
+	$lines = array();
+	
+	print '<table class="border" width="100%">';
+	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td width="70%">'.dolibarr_print_date(time()).'</td></tr>';
+	print '</table><br />';
+	
+	$sql = "SELECT ba.rowid as bid, ".$db->pdate("b.dateo")." as date,";
+	$sql.= " b.amount, ba.label, b.emetteur, b.banque";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b ";
+	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba ";
+	$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_account = ba.rowid";
+	$sql.= " AND b.fk_bordereau = 0 AND b.amount > 0";
+	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
+	
+	$resql = $db->query($sql);
+	
+	if ($resql)
 	{
-	  $accounts[$obj->bid] = $obj->label;
-	  $lines[$obj->bid][$i]["date"] = $obj->date;
-	  $lines[$obj->bid][$i]["amount"] = $obj->amount;
-	  $lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
-	  $lines[$obj->bid][$i]["banque"] = $obj->banque;
-	  $i++;
+		$i = 0;
+		while ( $obj = $db->fetch_object($resql) )
+		{
+			$accounts[$obj->bid] = $obj->label;
+			$lines[$obj->bid][$i]["date"] = $obj->date;
+			$lines[$obj->bid][$i]["amount"] = $obj->amount;
+			$lines[$obj->bid][$i]["emetteur"] = $obj->emetteur;
+			$lines[$obj->bid][$i]["banque"] = $obj->banque;
+			$i++;
+		}
+
+		if ($i == 0)
+		{
+			print $langs->trans("NoWaitingChecks").'<br>';	
+		}
 	}
-    }
-
-  foreach ($accounts as $bid => $account_label)
-    {
-      $num = $db->num_rows($resql);
-      
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("Date")."</td>\n";
-      print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
-      print '<td>'.$langs->trans("Bank")."</td>\n";
-      print '<td align="right">'.$langs->trans("Amount")."</td>\n";
-      print "</tr>\n";
-      
-      $var=true;
-
-      foreach ($lines[$bid] as $lid => $value)
+	
+	foreach ($accounts as $bid => $account_label)
 	{
-	  $var=!$var;
+		$num = $db->num_rows($resql);
 
-	  $account_id = $objp->bid;
-	  $accounts[$objp->bid] += 1;
-
-	  print "<tr $bc[$var]>";	  
-	  print '<td width="120">'.dolibarr_print_date($value["date"]).'</td>';
-	  print '<td>'.stripslashes($value["emetteur"])."</td>\n";
-	  print '<td>'.stripslashes($value["banque"])."</td>\n";
-	  print '<td align="right">'.price($value["amount"]).'</td>';
-	  print '</tr>';
-	  $i++;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("Date")."</td>\n";
+		print '<td>'.$langs->trans("CheckTransmitter")."</td>\n";
+		print '<td>'.$langs->trans("Bank")."</td>\n";
+		print '<td align="right">'.$langs->trans("Amount")."</td>\n";
+		print "</tr>\n";
+	
+		$var=true;
+	
+		foreach ($lines[$bid] as $lid => $value)
+		{
+			$var=!$var;
+	
+			$account_id = $objp->bid;
+			$accounts[$objp->bid] += 1;
+	
+			print "<tr $bc[$var]>";
+			print '<td width="120">'.dolibarr_print_date($value["date"]).'</td>';
+			print '<td>'.$value["emetteur"]."</td>\n";
+			print '<td>'.$value["banque"]."</td>\n";
+			print '<td align="right">'.price($value["amount"]).'</td>';
+			print '</tr>';
+			$i++;
+		}
+		print "</table>";
+	
+		print '<div class="tabsAction">';
+		print '<a class="tabAction" href="fiche.php?action=create&amp;accountid='.$bid.'">';
+		print $langs->trans('NewCheckDepositOn',$account_label);
+		print '</a>';
+		print '</div><br />';
 	}
-      print "</table>";
-
-      print '<div class="tabsAction">';      
-      print '<a class="tabAction" href="fiche.php?action=create&amp;accountid='.$bid.'">';
-      print $langs->trans('NewCheckReceipt');
-      print ' : '.stripslashes($account_label).'</a>';
-      print '</div><br />';
-    }
 
 }
 else
 {
-  $remise->load_previous_next_id();
-  $previous_id = $remise->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->previous_id.'">'.img_previous().'</a>':'';
-  $next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
+	$accountstatic=new Account($db);
+	
+	$accountstatic->id=$remise->account_id;
+	$accountstatic->label=$remise->account_label;
 
-  print '<table class="border" width="100%">';
-  print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="50%">'.$remise->number.'</td><td width="20%" align="right">';
-  print $previous_id.' '.$next_id;
-  print "</td></tr>\n";
+	$remise->load_previous_next_id();
+	$previous_id = $remise->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->previous_id.'">'.img_previous().'</a>':'';
+	$next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
 
-  print '<tr><td width="30%">'.$langs->trans('Date').'</td><td colspan="2" width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
-  print '<tr><td width="30%">'.$langs->trans('Account').'</td><td colspan="2" width="70%">';
-  print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$remise->account_id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$remise->account_label.'</a>';
-  print '</td></tr>';
+	print '<table class="border" width="100%">';
+	print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="50%">'.$remise->number.'</td><td width="20%" align="right">';
+	print $previous_id.' '.$next_id;
+	print "</td></tr>\n";
 
-  print '<tr><td width="30%">'.$langs->trans('Total').'</td><td colspan="2" width="70%">';
-  print price($remise->amount);
-  print '</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td colspan="2" width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
 
-  print '</table><br />';
+	print '<tr><td width="30%">'.$langs->trans('Account').'</td><td colspan="2" width="70%">';
+	print $accountstatic->getNomUrl(1);
+	print '</td></tr>';
 
-  $sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,b.banque,";
-  $sql.= " ba.rowid as bid, ba.label";
-  $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-  $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
-  $sql.= " WHERE b.fk_type= 'CHQ' AND b.fk_account = ba.rowid";  
-  $sql.= " AND b.fk_bordereau = ".$remise->id;
-  $sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
+	print '<tr><td width="30%">'.$langs->trans('Total').'</td><td colspan="2" width="70%">';
+	print price($remise->amount);
+	print '</td></tr>';
 
-  $resql = $db->query($sql);
-   
-  if ($resql)
-    {
-      $num = $db->num_rows($resql);
-      print '<table class="noborder" width="100%">';
-      print '<tr class="liste_titre"><td>#</td>';
-      print '<td>'.$langs->trans("CheckTransmitter").'</td>';
-      print '<td>'.$langs->trans("Bank").'</td>';
-      print '<td align="right">'.$langs->trans("Amount").'</td>';
-      print "<td>&nbsp;</td></tr>\n";
-      $i=1;
-      $var=false;
-      while ( $objp = $db->fetch_object($resql) )
+	print '</table><br />';
+
+	$sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,b.banque,";
+	$sql.= " ba.rowid as bid, ba.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
+	$sql.= " WHERE b.fk_type= 'CHQ' AND b.fk_account = ba.rowid";
+	$sql.= " AND b.fk_bordereau = ".$remise->id;
+	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
+
+	$resql = $db->query($sql);
+
+	if ($resql)
 	{
-	  $account_id = $objp->bid;
-	  $accounts[$objp->bid] += 1;
+		$num = $db->num_rows($resql);
 
-	  print "<tr $bc[$var]><td>$i</td>";
-	  print '<td>'.stripslashes($objp->emetteur).'</td>';
-	  print '<td>'.stripslashes($objp->banque).'</td>';  
-	  print '<td align="right">'.price($objp->amount).'</td>';
-	  if($remise->statut == 0)
-	    {
-	      print '<td align="right"><a href="fiche.php?id='.$remise->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
-	    }
-	  else
-	    {
-	      print '<td>&nbsp;</td>';
-	    }
-	  print '</tr>';
-	  $var=!$var;
-	  $i++;
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>#</td>';
+		print '<td>'.$langs->trans("CheckTransmitter").'</td>';
+		print '<td>'.$langs->trans("Bank").'</td>';
+		print '<td align="right">'.$langs->trans("Amount").'</td>';
+		print "<td>&nbsp;</td></tr>\n";
+		$i=1;
+		$var=false;
+		while ( $objp = $db->fetch_object($resql) )
+		{
+			$account_id = $objp->bid;
+			$accounts[$objp->bid] += 1;
+
+			print "<tr $bc[$var]><td>$i</td>";
+			print '<td>'.$objp->emetteur.'</td>';
+			print '<td>'.$objp->banque.'</td>';
+			print '<td align="right">'.price($objp->amount).'</td>';
+			if($remise->statut == 0)
+			{
+				print '<td align="right"><a href="fiche.php?id='.$remise->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+			}
+			else
+			{
+				print '<td>&nbsp;</td>';
+			}
+			print '</tr>';
+			$var=!$var;
+			$i++;
+		}
+		print "</table>";
 	}
-      print "</table><br />";
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+	else
+	{
+		dolibarr_print_error($db);
+	}
 
+}
+
+print '</div>';
+
+if ($_GET['action'] != 'new')
+{
   if ($remise->statut == 1)
     {
       //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
@@ -331,9 +351,6 @@ else
       $html->show_documents("remisecheque","",$dir,'',$gen,0);
     }
 }
-
-print '</div>';
-
 
 /*
  * Boutons Actions
@@ -357,6 +374,7 @@ if ($user->societe_id == 0 && $remise->statut == 0 && $_GET['action'] == '')
   
 }
 print '</div>';
+
 
 $db->close();
 
