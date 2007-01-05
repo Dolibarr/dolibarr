@@ -2183,8 +2183,9 @@ class Form
 	 *		\param	m				1=Affiche aussi les minutes
 	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
 	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
+	 *		\param	d				1=Affiche aussi les jours, mois, annees
      */
-	function select_date($set_time='', $prefix='re', $h = 0, $m = 0, $empty=0, $form_name="")
+	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)
     {
         global $conf,$langs;
     	
@@ -2224,140 +2225,145 @@ class Form
             $smin = '';
         }
 
-        /*
-         * Affiche date en popup
-         */
-		if ($conf->use_javascript && $conf->use_popup_calendar)
+        if ($d)
         {
-            //print "e".$set_time." t ".$conf->format_date_short;
-            if ($set_time > 0)
-            {
-	            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
-			}
-
-			// Calendrier popup version eldy
-			if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
-			{
-	            // Zone de saisie manuelle de la date
-	            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
-	            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
-	            print '> ';
-	            
-				// Icone calendrier
-	            print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
-	            $base=DOL_URL_ROOT.'/lib/';
-	            print ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
-
-	            print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
-	            print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-	            print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
-			}
-			else
-			{            
-				// Calendrier popup version defaut
-				if ($langs->defaultlang != "")
-			 	{
-					print '<script language="javascript" type="text/javascript">';
-					print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
-					print '</script>';
+	        /*
+	         * Affiche date en popup
+	         */
+			if ($conf->use_javascript && $conf->use_popup_calendar)
+	        {
+	            //print "e".$set_time." t ".$conf->format_date_short;
+	            if ($set_time > 0)
+	            {
+		            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 				}
-				print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
-				print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"';
-				print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
-	            print '> ';
-				print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
-	            print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
-	            print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
-				if($form_name =="")
-					print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+	
+				// Calendrier popup version eldy
+				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
+				{
+		            // Zone de saisie manuelle de la date
+		            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
+		            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+		            print '> ';
+		            
+					// Icone calendrier
+		            print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
+		            $base=DOL_URL_ROOT.'/lib/';
+		            print ' onClick="showDP(\''.$base.'\',\''.$prefix.'\',\''.$conf->format_date_short_java.'\');">'.img_object($langs->trans("SelectDate"),'calendar').'</button>';
+	
+		            print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
+		            print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+		            print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
+				}
 				else
-					print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
-			}
-        }
-        
-        /*
-         * Affiche date en select
-         */
-        if (! $conf->use_javascript || ! $conf->use_popup_calendar)
-        {
-/*          
-			if ($set_time == -1)
-            {
-                $sday = 0;
-                $smonth = 0;
-                $syear = 0;
-                $shour = 0;
-                $smin = 0;
-			}
-*/
-            // Jour
-            print '<select class="flat" name="'.$prefix.'day">';
-        
-            if ($empty || $set_time == -1)
-            {
-                print '<option value="0" selected="true">&nbsp;</option>';
-            }
-
-            for ($day = 1 ; $day <= 31; $day++)
-            {
-                if ($day == $sday)
-                {
-                    print "<option value=\"$day\" selected=\"true\">$day";
-                }
-                else
-                {
-                    print "<option value=\"$day\">$day";
-                }
-                print "</option>";
-            }
-        
-            print "</select>";
-        
-            print '<select class="flat" name="'.$prefix.'month">';
-            if ($empty || $set_time == -1)
-            {
-                print '<option value="0" selected="true">&nbsp;</option>';
-            }
-        
-            // Mois
-            for ($month = 1 ; $month <= 12 ; $month++)
-            {
-                print '<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
-                print dolibarr_print_date(mktime(1,1,1,$month,1,2000),"%b");
-                print "</option>";
-            }
-            print "</select>";
-        
-            // Année
-            if ($empty || $set_time == -1)
-            {
-                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
-            }
-            else
-            {
-                print '<select class="flat" name="'.$prefix.'year">';
-        
-                for ($year = $syear - 5; $year < $syear + 10 ; $year++)
-                {
-                    if ($year == $syear)
-                    {
-                        print "<option value=\"$year\" selected=\"true\">$year";
-                    }
-                    else
-                    {
-                        print "<option value=\"$year\">$year";
-                    }
-                    print "</option>";
-                }
-                print "</select>\n";
-            }
-        }
-
-        /*
-         * Affiche heure en select
-         */
+				{            
+					// Calendrier popup version defaut
+					if ($langs->defaultlang != "")
+				 	{
+						print '<script language="javascript" type="text/javascript">';
+						print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
+						print '</script>';
+					}
+					print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_calendar.js"></script>';
+					print '<input id="'.$prefix.'" type="text" name="'.$prefix.'" size="10" value="'.$formated_date.'"';
+					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
+		            print '> ';
+					print '<input type="hidden" id="'.$prefix.'day"   name="'.$prefix.'day"   value="'.$sday.'">'."\n";
+		            print '<input type="hidden" id="'.$prefix.'month" name="'.$prefix.'month" value="'.$smonth.'">'."\n";
+		            print '<input type="hidden" id="'.$prefix.'year"  name="'.$prefix.'year"  value="'.$syear.'">'."\n";
+					if($form_name =="")
+						print '<A HREF="javascript:showCalendar(document.forms[3].'.$prefix.')">'.img_cal().'</a>';
+					else
+						print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
+				}
+	        }
+	        
+	        /*
+	         * Affiche date en select
+	         */
+	        if (! $conf->use_javascript || ! $conf->use_popup_calendar)
+	        {
+	/*          
+				if ($set_time == -1)
+	            {
+	                $sday = 0;
+	                $smonth = 0;
+	                $syear = 0;
+	                $shour = 0;
+	                $smin = 0;
+				}
+	*/
+	            // Jour
+	            print '<select class="flat" name="'.$prefix.'day">';
+	        
+	            if ($empty || $set_time == -1)
+	            {
+	                print '<option value="0" selected="true">&nbsp;</option>';
+	            }
+	
+	            for ($day = 1 ; $day <= 31; $day++)
+	            {
+	                if ($day == $sday)
+	                {
+	                    print "<option value=\"$day\" selected=\"true\">$day";
+	                }
+	                else
+	                {
+	                    print "<option value=\"$day\">$day";
+	                }
+	                print "</option>";
+	            }
+	        
+	            print "</select>";
+	        
+	            print '<select class="flat" name="'.$prefix.'month">';
+	            if ($empty || $set_time == -1)
+	            {
+	                print '<option value="0" selected="true">&nbsp;</option>';
+	            }
+	        
+	            // Mois
+	            for ($month = 1 ; $month <= 12 ; $month++)
+	            {
+	                print '<option value="'.$month.'"'.($month == $smonth?' selected="true"':'').'>';
+	                print dolibarr_print_date(mktime(1,1,1,$month,1,2000),"%b");
+	                print "</option>";
+	            }
+	            print "</select>";
+	        
+	            // Année
+	            if ($empty || $set_time == -1)
+	            {
+	                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+	            }
+	            else
+	            {
+	                print '<select class="flat" name="'.$prefix.'year">';
+	        
+	                for ($year = $syear - 5; $year < $syear + 10 ; $year++)
+	                {
+	                    if ($year == $syear)
+	                    {
+	                        print "<option value=\"$year\" selected=\"true\">$year";
+	                    }
+	                    else
+	                    {
+	                        print "<option value=\"$year\">$year";
+	                    }
+	                    print "</option>";
+	                }
+	                print "</select>\n";
+	            }
+	        }
+		}
+		
+		if ($d && $h) print '&nbsp;';
+		
         if ($h)
         {
+	        /*
+	         * Affiche heure en select
+	         */
             print '<select class="flat" name="'.$prefix.'hour">';
     		if ($empty) print '<option value="-1">&nbsp;</option>';
             for ($hour = 0; $hour < 24; $hour++)
@@ -2379,11 +2385,11 @@ class Form
             print "H\n";
     	}
     	
-        /*
-         * Affiche min en select
-         */
         if ($m)
         {
+	        /*
+	         * Affiche min en select
+	         */
             print '<select class="flat" name="'.$prefix.'min">';
     		if ($empty) print '<option value="-1">&nbsp;</option>';
             for ($min = 0; $min < 60 ; $min++)
