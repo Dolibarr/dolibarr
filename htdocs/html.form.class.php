@@ -1,5 +1,5 @@
 <?php
-/* Copyright (c) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -117,31 +117,30 @@ class Form
      */
     function select_departement($selected='',$pays_code=0)
     {
-	    dolibarr_syslog("html.form.class::select_departement selected=$selected, pays_code=$pays_code");
+      dolibarr_syslog("Form::select_departement selected=$selected, pays_code=$pays_code",LOG_DEBUG);
 	    
-	    global $conf,$langs;
-	    $langs->load("dict");
-	    
-	    $htmlname='departement_id';
-	    
-	    // On recherche les départements/cantons/province active d'une region et pays actif
-	    $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
-	    $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
-	    $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
-	    $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
-	    if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
-	    $sql .= " ORDER BY p.code, d.code_departement";
-	    dolibarr_syslog("html.form.class::select_departement sql=$sql");
-	    
-	    $result=$this->db->query($sql);
-	    if ($result)
-	    {
-	        print '<select class="flat" name="'.$htmlname.'">';
-	        if ($pays_code) print '<option value="0">&nbsp;</option>';
-	        $num = $this->db->num_rows($result);
-	        $i = 0;
-	    	dolibarr_syslog("html.form.class::select_departement num=$num");
-	        if ($num)
+      global $conf,$langs;
+      $langs->load("dict");
+      
+      $htmlname='departement_id';
+      
+      // On recherche les départements/cantons/province active d'une region et pays actif
+      $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
+      $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
+      $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
+      $sql .= " AND d.active = 1 AND r.active = 1 AND p.active = 1";
+      if ($pays_code) $sql .= " AND p.code = '".$pays_code."'";
+      $sql .= " ORDER BY p.code, d.code_departement";
+      
+      $result=$this->db->query($sql);
+      if ($result)
+	{
+	  print '<select class="flat" name="'.$htmlname.'">';
+	  if ($pays_code) print '<option value="0">&nbsp;</option>';
+	  $num = $this->db->num_rows($result);
+	  $i = 0;
+	  dolibarr_syslog("Form::select_departement num=$num",LOG_DEBUG);
+	  if ($num)
 	        {
 	            $pays='';
 	            while ($i < $num)
@@ -658,127 +657,126 @@ class Form
     }
     
     
-    /**
-	 *      \brief      Affiche la liste déroulante des projets d'une société donnée
-	 *      \param      socid       Id société
-	 *      \param      selected    Id projet présélectionné
-	 *      \param      htmlname    Nom de la zone html
-	 *      \return     int         Nbre de projet si ok, <0 si ko
-	 */
-	function select_projects($socid, $selected='', $htmlname='projectid')
-	{
-		// On recherche les projets
-		$sql = 'SELECT p.rowid, p.title FROM ';
-		$sql.= MAIN_DB_PREFIX .'projet as p';
-		$sql.= " WHERE fk_soc='".$socid."'";
-		$sql.= " ORDER BY p.title ASC";
-
-		dolibarr_syslog("html.form.class::select_projects sql=$sql");
-
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			print '<select class="flat" name="'.$htmlname.'">';
-    		print '<option value="0">&nbsp;</option>';
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-					if (!empty($selected) && $selected == $obj->rowid)
-					{
-						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
-					}
-					else
-					{
-						print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
-					}
-					$i++;
-				}
-			}
-			print '</select>';
-			return $num;
-		}
+  /**
+     \brief      Affiche la liste déroulante des projets d'une société donnée
+     \param      socid       Id société
+     \param      selected    Id projet présélectionné
+     \param      htmlname    Nom de la zone html
+     \return     int         Nbre de projet si ok, <0 si ko
+   */
+  function select_projects($socid, $selected='', $htmlname='projectid')
+  {
+    // On recherche les projets
+    $sql = 'SELECT p.rowid, p.title FROM ';
+    $sql.= MAIN_DB_PREFIX .'projet as p';
+    $sql.= " WHERE fk_soc='".$socid."'";
+    $sql.= " ORDER BY p.title ASC";
+    
+    $resql=$this->db->query($sql);
+    if ($resql)
+      {
+	print '<select class="flat" name="'.$htmlname.'">';
+	print '<option value="0">&nbsp;</option>';
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	if ($num)
+	  {
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object($resql);
+		if (!empty($selected) && $selected == $obj->rowid)
+		  {
+		    print '<option value="'.$obj->rowid.'" selected="true">'.$obj->title.'</option>';
+		  }
 		else
-		{
-			dolibarr_print_error($this->db);
-			return -1;
-		}
-	}
-/**
-    *    \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
-    *    \param      selected        Produit présélectionné
-    *    \param      htmlname        Nom de la zone select
-    *    \param      filtretype      Pour filtre sur type de produit
-    *    \param      limit           Limite sur le nombre de lignes retournées
-    */
-    function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
-    {
-		global $langs,$conf,$user;
-		if ($conf->use_ajax && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
-		{
-			print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
-			print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
-			print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-			print '<script type="text/javascript">';
-			print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-			print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-			print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-			print '</script>';
-			print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
-		}
-		else
-		{
-			$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
-		}
-		
-	}
+		  {
+		    print '<option value="'.$obj->rowid.'">'.$obj->title.'</option>';
+		  }
+		$i++;
+	      }
+	  }
+	print '</select>';
+	$this->db->free($resql);
+	return $num;
+      }
+    else
+      {
+	dolibarr_print_error($this->db);
+	return -1;
+      }
+  }
+  /**
+     \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
+     \param      selected        Produit présélectionné
+     \param      htmlname        Nom de la zone select
+     \param      filtretype      Pour filtre sur type de produit
+     \param      limit           Limite sur le nombre de lignes retournées
+  */
+  function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
+  {
+    global $langs,$conf,$user;
+    if ($conf->use_ajax && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+      {
+	print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
+	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
+	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
+	print '<script type="text/javascript">';
+	print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
+	print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+	print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+	print '</script>';
+	print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
+      }
+    else
+      {
+	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
+      }    
+  }
 	
-    /**
-     *    \brief      Retourne la liste des produits
-     *    \param      selected        Produit présélectionné
-     *    \param      htmlname        Nom de la zone select
-     *    \param      filtretype      Pour filtre sur type de produit
-     *    \param      limit           Limite sur le nombre de lignes retournées
-     */
-    function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
-    {
-        global $langs,$conf,$user;
-    	$user->getrights("categorie");
+  /**
+     \brief      Retourne la liste des produits
+     \param      selected        Produit présélectionné
+     \param      htmlname        Nom de la zone select
+     \param      filtretype      Pour filtre sur type de produit
+     \param      limit           Limite sur le nombre de lignes retournées
+  */
+  function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
+  {
+    global $langs,$conf,$user;
+    $user->getrights("categorie");
+    
+    $sql = "SELECT ";
+    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+      {
+	$sql.="DISTINCT";	
+      }
+    $sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+      {
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+      }
+    $sql.= " WHERE p.envente = 1";
+    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+      {
+	$sql.= ' AND IFNULL(c.visible,1)=1';
+      }
+    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+    if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.ref like '%".$ajaxkeyref."%'";
+    if ($ajaxkeylabel && $ajaxkeylabel != '') $sql.=" AND p.label like '%".$ajaxkeylabel."%'";
+    $sql.= " ORDER BY p.nbvente DESC";
+    if ($limit) $sql.= " LIMIT $limit";
+    
+    dolibarr_syslog("Form::select_produits_do sql=$sql",LOG_DEBUG);
 
-        $sql = "SELECT ";
-        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-        {
-        	$sql.="DISTINCT";	
-        }
-        $sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-        {
-           	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-        }
-        $sql.= " WHERE p.envente = 1";
-        if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-        {
-        	$sql.= ' AND IFNULL(c.visible,1)=1';
-        }
-        if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-        if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.ref like '%".$ajaxkeyref."%'";
-        if ($ajaxkeylabel && $ajaxkeylabel != '') $sql.=" AND p.label like '%".$ajaxkeylabel."%'";
-        $sql.= " ORDER BY p.nbvente DESC";
-        if ($limit) $sql.= " LIMIT $limit";
-
-        dolibarr_syslog("Html.for.class::select_produits_do sql=$sql");
-		$result=$this->db->query($sql);
-		if (! $result) dolibarr_print_error($this->db);
-		
-		// Multilang : on construit une liste des traductions des produits listés
-		if ($conf->global->MAIN_MULTILANGS)
-		{
-			$sqld = "SELECT d.fk_product, d.label";
+    $result=$this->db->query($sql);
+    if (! $result) dolibarr_print_error($this->db);
+    
+    // Multilang : on construit une liste des traductions des produits listés
+    if ($conf->global->MAIN_MULTILANGS)
+      {
+	$sqld = "SELECT d.fk_product, d.label";
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.nbvente DESC";
@@ -847,83 +845,83 @@ class Form
                 print $opt;
                 $i++;
             }
-			if ($conf->use_ajax)
-            {
-//				if ($num)
-//				{
-					print '</select>';
-//    			}
-    		}
-    		else
-    		{
-					print '</select>';
-			}    			
+	    if ($conf->use_ajax)
+	      {
+		//				if ($num)
+		//				{
+		print '</select>';
+		//    			}
+	      }
+	    else
+	      {
+		print '</select>';
+	      }    			
             $this->db->free($result);
         }
         else
-        {
+	  {
             dolibarr_print_error($db);
-        }
-    }
+	  }
+  }
   
-
-    /**
-     *    	\brief      Retourne la liste des produits de fournisseurs
-     *		\param		socid			Id société (0 pour aucun filtre)
-     *    	\param      selected        Produit présélectionné
-     *    	\param      htmlname        Nom de la zone select
-     *    	\param      filtretype      Pour filtre sur type de produit
-     *    	\param      limit           Limite sur le nombre de lignes retournées
-     *    	\param      filtre          Pour filtre
-     */
-    function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
-    {
-        global $langs,$conf;
+  
+  /**
+     \brief      Retourne la liste des produits de fournisseurs
+     \param		socid			Id société (0 pour aucun filtre)
+     \param      selected        Produit présélectionné
+     \param      htmlname        Nom de la zone select
+     \param      filtretype      Pour filtre sur type de produit
+     \param      limit           Limite sur le nombre de lignes retournées
+     \param      filtre          Pour filtre
+  */
+  function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+  {
+    global $langs,$conf;
     
-        $sql = "SELECT p.rowid, p.label, p.ref, p.price, pf.price as fprice, pf.quantity, p.duration";
-        $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pf ON p.rowid = pf.fk_product";
-		$sql.= " WHERE p.envente = 1";
-        if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
-        if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-        if ($filtre) $sql.="$filtre";
-        $sql.= " ORDER BY p.ref DESC";
-    	
-    	dolibarr_syslog("html.form.class.php::select_produits_fournisseurs sql=$sql");
-    	
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            print '<select class="flat" name="'.$htmlname.'">';
-            print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+    $sql = "SELECT p.rowid, p.label, p.ref, p.price, pf.price as fprice, pf.quantity, p.duration";
+    $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pf ON p.rowid = pf.fk_product";
+    $sql.= " WHERE p.envente = 1";
+    if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
+    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+    if ($filtre) $sql.="$filtre";
+    $sql.= " ORDER BY p.ref DESC";
     
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $objp = $this->db->fetch_object($result);
-                $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-                $opt.= dolibarr_trunc($objp->label,24).' - ';
-                $opt.= $objp->fprice.$langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
-                if ($objp->quantity > 1)
-                {
-                    $opt.=" - ";
-                    $opt.= round($objp->fprice/$objp->quantity,4).$langs->trans("Currency".$conf->monnaie)."/".$langs->trans("Unit");
-                }
-                if ($objp->duration) $opt .= " - ".$objp->duration;
-                $opt .= "</option>\n";
-                print $opt;
-                $i++;
-            }
-            print '</select>';
+    dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
     
-            $this->db->free($result);
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
-    }
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	print '<select class="flat" name="'.$htmlname.'">';
+	print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
+	
+	$num = $this->db->num_rows($result);
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $objp = $this->db->fetch_object($result);
+	    $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
+	    $opt.= dolibarr_trunc($objp->label,24).' - ';
+	    $opt.= $objp->fprice.$langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
+	    if ($objp->quantity > 1)
+	      {
+		$opt.=" - ";
+		$opt.= round($objp->fprice/$objp->quantity,4).$langs->trans("Currency".$conf->monnaie)."/".$langs->trans("Unit");
+	      }
+	    if ($objp->duration) $opt .= " - ".$objp->duration;
+	    $opt .= "</option>\n";
+	    print $opt;
+	    $i++;
+	  }
+	print '</select>';
+	
+	$this->db->free($result);
+      }
+    else
+      {
+	dolibarr_print_error($db);
+      }
+  }
 
     /**
      *    \brief      Retourne la liste déroulante des adresses de livraison
@@ -980,7 +978,7 @@ class Form
 
         if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
 
-        //dolibarr_syslog('html.form.class.php::load_cache_conditions_paiements',LOG_DEBUG);
+        dolibarr_syslog('Form::load_cache_conditions_paiements',LOG_DEBUG);
 
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
@@ -1019,7 +1017,7 @@ class Form
 
         if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache déja chargé
 
-        //dolibarr_syslog('html.form.class.php::load_cache_types_paiements',LOG_DEBUG);
+        dolibarr_syslog('Form::load_cache_types_paiements',LOG_DEBUG);
 
         $sql = "SELECT id, code, libelle, type";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_paiement";
@@ -1150,7 +1148,7 @@ class Form
     {
         global $langs;
 		
-//		dolibarr_syslog("html.form.class.php::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+	dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
         
         $filterarray=array();
 		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
