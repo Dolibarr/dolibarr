@@ -101,15 +101,17 @@ class User
     return 1;
   }
   
-
-	/**
-	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
-	*	\param      login       Si défini, login a utiliser pour recherche
-	*	\return		int			<0 si ko, >0 si ok
-	*/
+  
+  /**
+     \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
+     \param      login       Si défini, login a utiliser pour recherche
+     \return		int			<0 si ko, >0 si ok
+   */
   function fetch($login='')
   {
     global $conf;
+
+    dolibarr_syslog("User::Fetch id=".$this->id." login=".$login, LOG_DEBUG);
     
     // Recupere utilisateur
     $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
@@ -130,114 +132,114 @@ class User
 	$sql .= " WHERE u.rowid = ".$this->id;
       }
     
-        dolibarr_syslog("User.class::fetch this->id=".$this->id." login=".$login);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $obj = $this->db->fetch_object($result);
-            if ($obj)
-            {
-                $this->id = $obj->rowid;
-                $this->ldap_sid = $obj->ldap_sid;
-                $this->nom = $obj->name;
-                $this->prenom = $obj->firstname;
 
-                $this->fullname = trim($this->prenom . ' ' . $this->nom);
-                $this->code = $obj->code;
-                $this->login = $obj->login;
-                $this->pass_indatabase = $obj->pass;
-                if (! $conf->password_encrypted) $this->pass = $obj->pass;
-                $this->office_phone = $obj->office_phone;
-                $this->office_fax   = $obj->office_fax;
-                $this->user_mobile  = $obj->user_mobile;
-                $this->email = $obj->email;
-                $this->admin = $obj->admin;
-                $this->contact_id = $obj->fk_socpeople;
-                $this->note = $obj->note;
-                $this->statut = $obj->statut;
-                $this->lang = $obj->lang;
-
-                $this->datec  = $obj->datec;
-                $this->datem  = $obj->datem;
-                $this->datelastlogin     = $obj->datel;
-                $this->datepreviouslogin = $obj->datep;
-
-                $this->webcal_login = $obj->webcal_login;
-                $this->societe_id = $obj->fk_societe;
-
-                if (! $this->lang) $this->lang='fr_FR';
-            }
-            $this->db->free($result);
-
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dolibarr_syslog("User.class::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
-            return -1;
-        }
-
-        // Recupere parametrage global propre à l'utilisateur
-        // \todo a stocker/recupérer en session pour eviter ce select a chaque page
-        $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-        $sql.= " WHERE fk_user = ".$this->id;
-        $sql.= " AND page = ''";
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-                $p=$obj->param;
-                if ($p) $this->conf->$p = $obj->value;
-                $i++;
-            }
-            $this->db->free($result);
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            dolibarr_syslog("User.class::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
-            return -2;
-        }
-
-        // Recupere parametrage propre à la page et à l'utilisateur
-        // \todo SCRIPT_URL non defini sur tous serveurs
-        // Paramétrage par page desactivé pour l'instant
-        if (1==2 && isset($_SERVER['SCRIPT_URL']))
-        {
-            $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-            $sql.= " WHERE fk_user = ".$this->id;
-            $sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
-            $result=$this->db->query($sql);
-            if ($result)
-            {
-                $num = $this->db->num_rows($result);
-                $i = 0;
-                $page_param_url = '';
-                $this->page_param = array();
-                while ($i < $num)
-                {
-                    $obj = $this->db->fetch_object($result);
-                    $this->page_param[$obj->param] = $obj->value;
-                    $page_param_url .= $obj->param."=".$obj->value."&amp;";
-                    $i++;
-                }
-                $this->page_param_url = $page_param_url;
-                $this->db->free($result);
-            }
-            else
-            {
-                $this->error=$this->db->error();
-                return -1;
-            }
-        }
-
-        return 1;
-    }
-
+    $result = $this->db->query($sql);
+    if ($result)
+      {
+	$obj = $this->db->fetch_object($result);
+	if ($obj)
+	  {
+	    $this->id = $obj->rowid;
+	    $this->ldap_sid = $obj->ldap_sid;
+	    $this->nom = $obj->name;
+	    $this->prenom = $obj->firstname;
+	    
+	    $this->fullname = trim($this->prenom . ' ' . $this->nom);
+	    $this->code = $obj->code;
+	    $this->login = $obj->login;
+	    $this->pass_indatabase = $obj->pass;
+	    if (! $conf->password_encrypted) $this->pass = $obj->pass;
+	    $this->office_phone = $obj->office_phone;
+	    $this->office_fax   = $obj->office_fax;
+	    $this->user_mobile  = $obj->user_mobile;
+	    $this->email = $obj->email;
+	    $this->admin = $obj->admin;
+	    $this->contact_id = $obj->fk_socpeople;
+	    $this->note = $obj->note;
+	    $this->statut = $obj->statut;
+	    $this->lang = $obj->lang;
+	    
+	    $this->datec  = $obj->datec;
+	    $this->datem  = $obj->datem;
+	    $this->datelastlogin     = $obj->datel;
+	    $this->datepreviouslogin = $obj->datep;
+	    
+	    $this->webcal_login = $obj->webcal_login;
+	    $this->societe_id = $obj->fk_societe;
+	    
+	    if (! $this->lang) $this->lang='fr_FR';
+	  }
+	$this->db->free($result);
+	
+      }
+    else
+      {
+	$this->error=$this->db->error();
+	dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
+	return -1;
+      }
+    
+    // Recupere parametrage global propre à l'utilisateur
+    // \todo a stocker/recupérer en session pour eviter ce select a chaque page
+    $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+    $sql.= " WHERE fk_user = ".$this->id;
+    $sql.= " AND page = ''";
+    $result=$this->db->query($sql);
+    if ($result)
+      {
+	$num = $this->db->num_rows($result);
+	$i = 0;
+	while ($i < $num)
+	  {
+	    $obj = $this->db->fetch_object($result);
+	    $p=$obj->param;
+	    if ($p) $this->conf->$p = $obj->value;
+	    $i++;
+	  }
+	$this->db->free($result);
+      }
+    else
+      {
+	$this->error=$this->db->error();
+	dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
+	return -2;
+      }
+    
+    // Recupere parametrage propre à la page et à l'utilisateur
+    // \todo SCRIPT_URL non defini sur tous serveurs
+    // Paramétrage par page desactivé pour l'instant
+    if (1==2 && isset($_SERVER['SCRIPT_URL']))
+      {
+	$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+	$sql.= " WHERE fk_user = ".$this->id;
+	$sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
+	$result=$this->db->query($sql);
+	if ($result)
+	  {
+	    $num = $this->db->num_rows($result);
+	    $i = 0;
+	    $page_param_url = '';
+	    $this->page_param = array();
+	    while ($i < $num)
+	      {
+		$obj = $this->db->fetch_object($result);
+		$this->page_param[$obj->param] = $obj->value;
+		$page_param_url .= $obj->param."=".$obj->value."&amp;";
+		$i++;
+	      }
+	    $this->page_param_url = $page_param_url;
+	    $this->db->free($result);
+	  }
+	else
+	  {
+	    $this->error=$this->db->error();
+	    return -1;
+	  }
+      }
+    
+    return 1;
+  }
+  
   /**
    *    \brief      Ajoute un droit a l'utilisateur
    *    \param      rid         id du droit à ajouter
@@ -247,7 +249,7 @@ class User
    */
     function addrights($rid,$allmodule='',$allperms='')
     {
-        dolibarr_syslog("User.class::addrights $rid, $allmodule, $allperms");
+        dolibarr_syslog("User::addrights $rid, $allmodule, $allperms");
         $err=0;
         $whereforadd='';
 
@@ -434,30 +436,31 @@ class User
 	}
 
 
-	/**
-	*    \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
-	*    \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
-	*/
-	function getrights($module='')
-    {
-        if ($this->all_permissions_are_loaded)
-        {
-            // Si les permissions ont déja été chargé pour ce user, on quitte
-            return;
-        }
+  /**
+     \brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
+     \param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+  */
+  function getrights($module='')
+  {
+    dolibarr_syslog('User::Getrights id='.$this->id.' module='.$module, LOG_DEBUG);
 
-        // Récupération des droits utilisateurs + récupération des droits groupes
-
-        // D'abord les droits utilisateurs
-        $sql = "SELECT r.module, r.perms, r.subperms";
-        $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
-        $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
-
-		dolibarr_syslog('User.class::getrights this->id='.$this->id.' module='.$module);
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
+    if ($this->all_permissions_are_loaded)
+      {
+	// Si les permissions ont déja été chargé pour ce user, on quitte
+	return;
+      }
+    
+    // Récupération des droits utilisateurs + récupération des droits groupes
+    
+    // D'abord les droits utilisateurs
+    $sql = "SELECT r.module, r.perms, r.subperms";
+    $sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
+    $sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+    
+    $result = $this->db->query($sql);
+    if ($result)
+      {
+	$num = $this->db->num_rows($result);
             $i = 0;
             while ($i < $num)
             {
@@ -523,9 +526,7 @@ class User
             // que les droits sont en cache (car tous chargés) pour cet instance de user
             $this->all_permissions_are_loaded=1;
         }
-
     }
-
 
     /**
      *      \brief      Change statut d'un utilisateur
@@ -533,143 +534,142 @@ class User
      */
     function setstatus($statut)
     {
-        $error=0;
-
-		$this->db->begin();
-
-        // Désactive utilisateur
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-        $sql.= " SET statut = ".$statut;
-        $sql.= " WHERE rowid = ".$this->id;
-        $result = $this->db->query($sql);
-
-        if ($result)
+      $error=0;
+      
+      $this->db->begin();
+      
+      // Désactive utilisateur
+      $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+      $sql.= " SET statut = ".$statut;
+      $sql.= " WHERE rowid = ".$this->id;
+      $result = $this->db->query($sql);
+      
+      if ($result)
         {
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
-            if ($result < 0) $error++;
-            // Fin appel triggers
+	  // Appel des triggers
+	  include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	  $interface=new Interfaces($this->db);
+	  $result=$interface->run_triggers('USER_DISABLE',$this,$user,$lang,$conf);
+	  if ($result < 0) $error++;
+	  // Fin appel triggers
         }
-
-        if ($error)
+      
+      if ($error)
         {
-  			$this->db->rollback();
-            return -$error;
+	  $this->db->rollback();
+	  return -$error;
         }
-        else
+      else
         {
-			$this->db->commit();
-            return 1;
+	  $this->db->commit();
+	  return 1;
         }
     }
-
-
-    /**
-     *    \brief      Supprime complètement un utilisateur
-     */
-    function delete()
-    {
-    	global $conf,$langs;
-    	
-    	$this->db->begin();
-
-		$this->fetch();
-		
-        // Supprime droits
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
-        if ($this->db->query($sql))
-        {
-
-        }
-
-        // Si contact, supprime lien
-        if ($this->contact_id)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
-            if ($this->db->query($sql))
-            {
+  
+  
+  /**
+   *    \brief      Supprime complètement un utilisateur
+   */
+  function delete()
+  {
+    global $conf,$langs;
     
-            }
-        }
+    $this->db->begin();
     
-        // Supprime utilisateur
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
-        $result = $this->db->query($sql);
-
+    $this->fetch();
+    
+    // Supprime droits
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
+    if ($this->db->query($sql))
+      {
+	
+      }
+    
+    // Si contact, supprime lien
+    if ($this->contact_id)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
+	if ($this->db->query($sql))
+	  {
+	    
+	  }
+      }
+    
+    // Supprime utilisateur
+    $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
+    $result = $this->db->query($sql);
+    
+    if ($result)
+      {
+	// Appel des triggers
+	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	$interface=new Interfaces($this->db);
+	$result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
+	if ($result < 0) $error++;
+	// Fin appel triggers
+	
+	$this->db->commit();
+	return 1;
+      }
+    else
+      {
+	$this->db->rollback();
+	dolibarr_print_error($this->db);
+	return -1;
+      }
+  }
+  
+  /**
+   *  \brief      Crée l'utilisateur en base
+   *  \param      user        Objet user qui demande la creation
+   *  \return     int         <0 si KO, id compte créé si OK
+   *  \todo       Verifier tous les appels à cette fonction et ajouter le param $user
+   */
+  function create($user='')
+  {
+    global $conf,$langs;
+    
+    // Nettoyage parametres
+    $this->login = trim($this->login);
+    
+    $this->db->begin();
+    
+    $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
+    $sql.= " WHERE login ='".addslashes($this->login)."'";
+    $resql=$this->db->query($sql);
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$this->db->free($resql);
+	
+	if ($num)
+	  {
+	    $this->error = $langs->trans("ErrorLoginAlreadyExists");
+	    return -6;
+	  }
+	else
+	  {
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
+	    $result=$this->db->query($sql);
+	    
+	    dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
 	    if ($result)
-	    {
-	        // Appel des triggers
-	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	        $interface=new Interfaces($this->db);
-	        $result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
-	        if ($result < 0) $error++;
-	        // Fin appel triggers
-
-	    	$this->db->commit();
-		    return 1;
-	    }
-	    else
-	    {
-	        $this->db->rollback();
-	        dolibarr_print_error($this->db);
-		    return -1;
-	    }
-    }
-
-
-    /**
-     *  \brief      Crée l'utilisateur en base
-     *  \param      user        Objet user qui demande la creation
-     *  \return     int         <0 si KO, id compte créé si OK
-     *  \todo       Verifier tous les appels à cette fonction et ajouter le param $user
-     */
-	function create($user='')
-	{
-		global $conf,$langs;
-	
-		// Nettoyage parametres
-		$this->login = trim($this->login);
-	
-		$this->db->begin();
-	
-		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE login ='".addslashes($this->login)."'";
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			$num = $this->db->num_rows($resql);
-			$this->db->free($resql);
-	
-			if ($num)
-			{
-				$this->error = $langs->trans("ErrorLoginAlreadyExists");
-				return -6;
-			}
-			else
-			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
-				$result=$this->db->query($sql);
-				
-				dolibarr_syslog("User.class::create sql=".$sql);
-				if ($result)
-				{
-					$table =  "".MAIN_DB_PREFIX."user";
-					$this->id = $this->db->last_insert_id($table);
-	
-					// Set default rights
-					if ($this->set_default_rights() < 0)
-					{
-						$this->error=$this->db->error();
-						$this->db->rollback();
-						return -5;
-					}
-	
-					// Update minor fields
-					if ($this->update(1) < 0)
-					{
-						$this->error=$this->db->error();
+	      {
+		$table =  "".MAIN_DB_PREFIX."user";
+		$this->id = $this->db->last_insert_id($table);
+		
+		// Set default rights
+		if ($this->set_default_rights() < 0)
+		  {
+		    $this->error=$this->db->error();
+		    $this->db->rollback();
+		    return -5;
+		  }
+		
+		// Update minor fields
+		if ($this->update(1) < 0)
+		  {
+		    $this->error=$this->db->error();
 						$this->db->rollback();
 						return -4;
 					}
@@ -755,7 +755,7 @@ class User
                 else
                 {
                     $this->error=$this->db->error()." - $sql";
-                    dolibarr_syslog("User.class::create_from_contact - 20 - ".$this->error);
+                    dolibarr_syslog("User::create_from_contact - 20 - ".$this->error);
 
                     $this->db->rollback();
                     return -2;
@@ -764,7 +764,7 @@ class User
             else
             {
                 $this->error=$this->db->error()." - $sql";
-                dolibarr_syslog("User.class::create_from_contact - 10 - ".$this->error);
+                dolibarr_syslog("User::create_from_contact - 10 - ".$this->error);
 
                 $this->db->rollback();
                 return -1;
@@ -773,7 +773,7 @@ class User
         else
         {
             // $this->error deja positionné
-            dolibarr_syslog("User.class::create_from_contact - 0");
+            dolibarr_syslog("User::create_from_contact - 0");
 
             $this->db->rollback();
             return $result;
@@ -838,7 +838,7 @@ class User
         $this->admin=$this->admin?$this->admin:0;
         if (!strlen($this->code)) $this->code = $this->login;
 
-        dolibarr_syslog("User.class::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
+        dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
 
 		// Mise a jour mot de passe
