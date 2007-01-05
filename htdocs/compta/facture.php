@@ -647,6 +647,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
             	$pu = $prod->multiprices[$soc->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$soc->price_level];
             }
             else
             {
