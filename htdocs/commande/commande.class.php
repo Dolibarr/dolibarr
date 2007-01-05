@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -313,8 +313,6 @@ class Commande extends CommonObject
 	
 	if ($this->db->query($sql) )
 	  {
-	    /* 
-	     * CODE SOUSPRODUITS
 	    if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1)
 	      {
 		require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
@@ -339,9 +337,6 @@ class Commande extends CommonObject
 		  }
 		
 	      }
-
-	    * CODE SOUSPRODUITS
-	    */
 	    return 1;
 	  }
 	else
@@ -359,26 +354,15 @@ class Commande extends CommonObject
   {
     if ($user->rights->commande->valider)
       {
-	$this->db->begin();
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
 	$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 	
 	if ($this->db->query($sql) )
 	  {
-	    // delete all product items from reserved stock
-	    if ($conf->stock->enabled) {
-	       foreach($this->lignes as $ligne) {
-		  $product = new Product($this->db);
-		  $product->id = $ligne->fk_product;
-		  $product->ajust_stock_commande($ligne->qty, 1);
-	       }
-	    }
-	    $this->db->commit();
 	    return 1;
 	  }
 	else
 	  {
-	    $this->db->rollback();
 	    dolibarr_print_error($this->db);
 	  }
       }
@@ -1829,16 +1813,6 @@ class Commande extends CommonObject
 	$interface=new Interfaces($this->db);
 	$result=$interface->run_triggers('ORDER_DELETE',$this,$user,$langs,$conf);
 	// Fin appel triggers
-
-	// delete all product items from reserved stock
-	if ($conf->stock->enabled) {
-	   foreach($this->lignes as $ligne) {
-	      $product = new Product($this->db);
-	      $product->id = $ligne->fk_product;
-	      $product->ajust_stock_commande($ligne->qty, 1);
-	   }
-	}
-	$this->db->commit();
 	
 	$this->db->commit();
 	return 1;
