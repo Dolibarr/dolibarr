@@ -355,6 +355,13 @@ class Expedition extends CommonObject
                                 dolibarr_syslog("expedition.class.php::valid ".$this->error);
                                 return -3;
                             }
+			    // correct the stock, since otherwise the available
+			    // stock will decrement again, since:
+			    // available = real stock - # commanded items for prod
+			    $product = new Product($this->db);
+			    $product->id = $obj->fk_product;
+			    $product->ajust_stock_commande($obj->qty, 1);
+
                             $i++;
                         }
                         
