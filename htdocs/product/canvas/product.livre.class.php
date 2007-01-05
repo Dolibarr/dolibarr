@@ -115,7 +115,7 @@ class ProductLivre extends Product
 	  }
 	else
 	  {
-	    $this->errno = -6;
+	    $this->_setErrNo(1282);
 	  }
       }
     // Creation du contrat associe
@@ -240,7 +240,7 @@ class ProductLivre extends Product
    */
   function UpdateCanvas($datas)
   {
-    dolibarr_syslog("ProductLivre::UpdateCanvas ID : ".$this->id);
+    dolibarr_syslog("ProductLivre::UpdateCanvas ID : ".$this->id, LOG_DEBUG);
 
     $isbna = trim($datas["isbna"]);
     $isbnb = trim($datas["isbnb"]);
@@ -291,22 +291,33 @@ class ProductLivre extends Product
       }
     else
       {
-	$this->errno = 1281;
+	$this->_setErrNo(1281);
 	return -1;
       }
    
   }
+
   /**
-   *    \brief      Calcule le prix de revient d'un livre
-   *    \param      pages     Nombre de pages
-   *    \param      couv      Prix de la couverture
-   *    \param      feuil     Prix d'un feuillet
-   *    \param      price_ht  Prix public HT
-   *    \param      taux      Taux du contrat
+     \brief  Definit le numero d'erreur et log dans syslog
+     \param  no numero de l'erreur
+  */
+  function _setErrNo($no)
+  {
+    $this->errno = $no;
+    dolibarr_syslog("ProductLivre::UpdateCanvas Errno : ".$this->errno, LOG_ERR);
+  }
+
+  /**
+     \brief      Calcule le prix de revient d'un livre
+     \param      pages     Nombre de pages
+     \param      couv      Prix de la couverture
+     \param      feuil     Prix d'un feuillet
+     \param      price_ht  Prix public HT
+     \param      taux      Taux du contrat
    */
   function _calculate_prix_revient($pages, $couv, $feuil, $price_ht, $taux)
   {
-    dolibarr_syslog("ProductLivre::UpdateCanvas $pages, $couv, $feuil, $price_ht, $taux");
+    dolibarr_syslog("ProductLivre::UpdateCanvas $pages, $couv, $feuil, $price_ht, $taux", LOG_DEBUG);
 
     $cost = ($pages / 2 * $feuil) + $couv + ($price_ht * $taux / 100);
 
