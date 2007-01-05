@@ -988,7 +988,11 @@ class Product
 		    return -1;
 		  }
 	  }
-	  $this -> multiprices[1] = $this->price;
+	  
+	  $this->multiprices[1] = $this->price;
+	  $this->multiprices_ttc[1] = $this->price_ttc;
+		$this->multiprices_base_type[1] = $this->price_base_type;
+		
 	  for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
 	  {
 		$sql= "SELECT price, price_ttc, price_base_type, tva_tx, envente ";
