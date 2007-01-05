@@ -670,11 +670,19 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         $pdf->SetTextColor(0,0,60);
         $pdf->MultiCell(100, 4, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref, '' , 'R');
         $pdf->SetFont('Arial','',12);
-        
-        $posy+=6;
-        $pdf->SetXY(100,$posy);
-        $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+
+	$posy+=6;
+	$pdf->SetXY(100,$posy);
+	$pdf->SetTextColor(0,0,60);
+	$pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+
+	$posy+=6;
+	$pdf->SetXY(100,$posy);
+	$pdf->SetTextColor(0,0,60);
+	$commande = new Commande ($this->db);
+	if ($commande->fetch($delivery->commande_id) >0) {
+	   $pdf->MultiCell(100, 4, $langs->transnoentities("RefOrder")." : ".$commande->ref, '' , 'R');
+	}
 
         if ($showadress)
         {
@@ -735,6 +743,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         /*
          * if a delivery address is used, use that, else use the client address
         */
+	$client = new Societe($this->db);
         if ($commande->adresse_livraison_id>0) { 
            $client->fetch_adresse_livraison($commande->adresse_livraison_id);
         } else {

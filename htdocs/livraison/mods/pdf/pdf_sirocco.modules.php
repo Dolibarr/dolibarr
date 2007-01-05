@@ -317,6 +317,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
       } else {
          $client->fetch($delivery->socid);
       }
+      $delivery->client = $client;
+
       $pdf->SetXY(102,42);
       $pdf->MultiCell(96,5, $delivery->client->nom);
       $pdf->SetFont('Arial','B',11);
@@ -327,9 +329,15 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
       
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 88, $langs->transnoentities("Date")." : " . strftime("%d %b %Y", $delivery->date));
+      $pdf->Text(11, 88, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"));
       $pdf->Text(11, 94, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref);
       
+      $pdf->SetFont('Arial','B',9);
+      $commande = new Commande ($this->db);
+      if ($commande->fetch($delivery->commande_id) >0) {
+         $pdf->Text(11, 98, $langs->transnoentities("RefOrder")." ".$commande->ref);
+      }
+
       
     }
 
