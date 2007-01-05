@@ -425,19 +425,24 @@ class Product
 
     if ($user->rights->produit->supprimer)
       {
-	$prod_use = $this->verif_prod_use($id);
-	if ($prod_use == 0)
-          {
-	    $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
-	    $sqld.= " WHERE rowid = ".$id;
-	    $result = $this->db->query($sqld);
-	    return 0;
-          }
-	else
-          {
-            $this->error .= "Impossible de supprimer le produit.\n";
-            return -1;
-          }
+	      $prod_use = $this->verif_prod_use($id);
+	      if ($prod_use == 0)
+        {
+	        $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
+	        $sqld.= " WHERE rowid = ".$id;
+	        $result = $this->db->query($sqld);
+	        
+	        $sqlc = "DELETE from ".MAIN_DB_PREFIX."product_price ";
+	        $sqlc.= " WHERE fk_product = ".$id;
+	        $result = $this->db->query($sqlc);
+	        
+	        return 0;
+        }
+	      else
+        {
+          $this->error .= "Impossible de supprimer le produit.\n";
+          return -1;
+        }
       }
   }
 
@@ -583,8 +588,8 @@ class Product
 		       $this->db->query($sql_multiprix);
 
 		       // On ajoute nouveau tarif
-		       $sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type) ";
-		       $sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]).",'".$price_ttc."','".$this->multiprices_base_type["$i"]."'";
+		       $sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type,tva_tx) ";
+		       $sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]).",'".$price_ttc."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
 		       $sql_multiprix .= ")";
 		       if (! $this->db->query($sql_multiprix) )
 		       {
