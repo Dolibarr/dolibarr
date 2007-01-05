@@ -349,6 +349,7 @@ FeatureNotYetSupported=Fonctionnalité pas encore supportée
 CloseWindow=Fermer fenêtre
 Question=Question
 Response=Réponse
+Priority=Priorité
 # Countries
 CountryFR=France
 CountryBE=Belgique

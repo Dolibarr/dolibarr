@@ -193,6 +193,8 @@ TotalVAT=Total VAT
 TotalHTAfterDiscounts=Total HT with discounts
 TotalTTCAfterDiscounts=Total TTC with discounts
 IncludedVAT=Included VAT
+TTC=TTC
+HT=HT
 VAT=VAT
 Average=Average
 Sum=Sum
@@ -347,6 +349,7 @@ FeatureNotYetSupported=Feature not yet supported
 CloseWindow=Close window
 Question=Question
 Response=Response
+Priority=Priority
 # Countries
 CountryFR=France
 CountryBE=Belgium
