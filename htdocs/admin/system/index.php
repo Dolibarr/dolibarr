@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@
  */
 
 /**
-	    \file       htdocs/admin/system/index.php
-		\brief      Page accueil infos système
-		\version    $Revision$
+   \file       htdocs/admin/system/index.php
+   \brief      Page accueil infos système
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -34,7 +34,6 @@ $langs->load("user");
 
 if (!$user->admin)
   accessforbidden();
-
 
 llxHeader();
 
@@ -78,6 +77,9 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("SmartyLibs")."</td><td>".$dolibarr_smarty_libs_dir."</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("SmartyCompile")."</td><td>".$dolibarr_smarty_compile."</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("SmartyCache")."</td><td>".$dolibarr_smarty_cache."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
