@@ -37,8 +37,8 @@ create table llx_product_cnv_livre
   pages              smallint UNSIGNED, -- nombre de page
 
   fk_couverture      integer,
-  fk_contrat         integer
-
+  fk_contrat         integer,
+  fk_auteur          integer DEFAULT 0           -- auteur lien vers llx_societe
 )type=innodb;
 
 
