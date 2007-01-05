@@ -641,17 +641,17 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
 
-	    $price_base_type = $prod->price_base_type;
+	          $price_base_type = $prod->price_base_type;
 
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-	      $pu = $prod->multiprices[$soc->price_level];
+            	$pu = $prod->multiprices[$soc->price_level];
             }
             else
             {
-	      $pu = $prod->price;
-	      $pu_ttc = $prod->price_ttc;
+            	$pu = $prod->price;
+	            $pu_ttc = $prod->price_ttc;
             }
 
             // La description de la ligne est celle saisie ou
@@ -667,9 +667,9 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         }
         else
         {
-	  $pu=$_POST['pu'];
-	  $tva_tx=$_POST['tva_tx'];
-	  $desc=$_POST['desc'];
+	        $pu=$_POST['pu'];
+	        $tva_tx=$_POST['tva_tx'];
+	        $desc=$_POST['desc'];
         }
 
 	// Insere ligne

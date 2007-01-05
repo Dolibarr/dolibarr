@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -150,36 +150,36 @@ class Product
     if ($this->tva_tx=='') $this->tva_tx = 0;
     if ($this->price=='')  $this->price = 0;
     if ($this->status=='') $this->status = 0;
-    $this->price = price2num($this->price);
+    //$this->price = price2num($this->price);
     
     if (strlen(trim($this->price)) > 0 )
-      {
-	if ($this->price_base_type == 'TTC')
-	  {
-	    $price_ttc = $this->price;
-	    $price = $this->price / (1 + ($this->tva_tx / 100));
-	  }
-	else
-	  {
-	    $price = $this->price;
-	    $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
-	  }
-      }
+    {
+	    if ($this->price_base_type == 'TTC')
+	    {
+	      $price_ttc = $this->price;
+	      $price = $this->price / (1 + ($this->tva_tx / 100));
+	    }
+	    else
+	    {
+	      $price = $this->price;
+	      $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	    }
+    }
     
     dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
 
     if (strlen($this->ref) > 0)
-      {
-	$this->db->begin();
+    {
+	    $this->db->begin();
 	
-	$sql = "SELECT count(*)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
+	    $sql = "SELECT count(*)";
+	    $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
 	
-	$result = $this->db->query($sql) ;
-	if ($result)
-	  {
-	    $row = $this->db->fetch_array($result);
-	    if ($row[0] == 0)
+	    $result = $this->db->query($sql) ;
+	    if ($result)
+	    {
+	      $row = $this->db->fetch_array($result);
+	      if ($row[0] == 0)
 	      {
 		// Produit non deja existant
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
@@ -188,8 +188,11 @@ class Product
 		$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
 		$sql.= " VALUES (now(), ";
 		if ($this->ref) $sql.= "'".$this->ref."', ";
-		$sql.= $user->id.", ".$this->type.", '" . $price . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
+		$sql.= $user->id.", ".$this->type.", '" . price2num($price) . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
 		$result = $this->db->query($sql);
+		print 'HT '.$price.'<br>';
+		print 'TTC '.$price_ttc.'<br>';
+		print $sql;
 		if ( $result )
 		  {
 		    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
