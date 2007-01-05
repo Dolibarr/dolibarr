@@ -98,14 +98,14 @@ print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlo
 print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
 print $langs->trans("SyslogLevel").': <select class="flat" name="level">';
 
-print '<option value="'.LOG_EMERG.'" '.(SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG</option>';
-print '<option value="'.LOG_ALERT.'" '.(SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT</option>';
-print '<option value="'.LOG_CRITICAL.'" '.(SYSLOG_LEVEL==LOG_CRITICAL?'SELECTED':'').'>LOG_CRITICAL</option>';
-print '<option value="'.LOG_ERROR.'" '.(SYSLOG_LEVEL==LOG_ERROR?'SELECTED':'').'>LOG_ERROR</option>';
-print '<option value="'.LOG_WARNING.'" '.(SYSLOG_LEVEL==LOG_WARNING?'SELECTED':'').'>LOG_WARNING</option>';
-print '<option value="'.LOG_NOTICE.'" '.(SYSLOG_LEVEL==LOG_NOTICE?'SELECTED':'').'>LOG_NOTICE</option>';
-print '<option value="'.LOG_INFO.'" '.(SYSLOG_LEVEL==LOG_INFO?'SELECTED':'').'>LOG_INFO</option>';
-print '<option value="'.LOG_DEBUG.'" '.(SYSLOG_LEVEL==LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG</option>';
+print '<option value="'.LOG_EMERG.'" '.(SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG ('.LOG_EMERG.')</option>';
+print '<option value="'.LOG_ALERT.'" '.(SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT ('.LOG_ALERT.')</option>';
+print '<option value="'.LOG_CRIT.'" '.(SYSLOG_LEVEL==LOG_CRIT?'SELECTED':'').'>LOG_CRIT ('.LOG_CRIT.')</option>';
+print '<option value="'.LOG_ERR.'" '.(SYSLOG_LEVEL==LOG_ERR?'SELECTED':'').'>LOG_ERR ('.LOG_ERR.')</option>';
+print '<option value="'.LOG_WARNING.'" '.(SYSLOG_LEVEL==LOG_WARNING?'SELECTED':'').'>LOG_WARNING ('.LOG_WARNING.')</option>';
+print '<option value="'.LOG_NOTICE.'" '.(SYSLOG_LEVEL==LOG_NOTICE?'SELECTED':'').'>LOG_NOTICE ('.LOG_NOTICE.')</option>';
+print '<option value="'.LOG_INFO.'" '.(SYSLOG_LEVEL==LOG_INFO?'SELECTED':'').'>LOG_INFO ('.LOG_INFO.')</option>';
+print '<option value="'.LOG_DEBUG.'" '.(SYSLOG_LEVEL==LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG ('.LOG_DEBUG.')</option>';
 print '</select></td></tr>';
 
 $var=!$var;
