@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
@@ -46,30 +46,35 @@ class Facture extends CommonObject
   var $db;
   var $element='facture';
   var $table;
-  var $tabledetail;
-	
+  var $tabledetail;	
   var $id;
-
-  var $socid;		// Id client
-  var $client;	// Objet societe client (à charger par fetch_client)
-
+  //! Id client
+  var $socid;
+  //! Objet societe client (à charger par fetch_client)
+  var $client;	
   var $number;
   var $author;
   var $date;
   var $ref;
   var $ref_client;
-  var $type;			// 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
+  //! 0=Facture normale, 1=Facture remplacement, 2=Facture avoir, 3=Facture récurrente
+  var $type;
   var $amount;
   var $remise;
   var $tva;
   var $total;
   var $note;
   var $note_public;
-  var $statut;			// 0=brouillon, 1=validé
-  var $paye;			// 1 si facture payée COMPLETEMENT, 0 sinon
-  var $fk_facture_source;	// id facture source si facture de remplacement ou avoir
-  var $close_code;		// abandon, replaced, avoir, discount_vat
-  var $close_note;		// Commentaire si mis a paye sans paiement complet
+  //! 0=brouillon, 1=validé
+  var $statut;
+  //! 1 si facture payée COMPLETEMENT, 0 sinon
+  var $paye;
+  //! id facture source si facture de remplacement ou avoir
+  var $fk_facture_source;
+  //! abandon, replaced, avoir, discount_vat
+  var $close_code;	
+  //! Commentaire si mis a paye sans paiement complet
+  var $close_note;
   var $propalid;
   var $projetid;
   var $date_lim_reglement;
@@ -78,22 +83,20 @@ class Facture extends CommonObject
   var $mode_reglement_id;
   var $mode_reglement_code;
   var $modelpdf;
-
   var $products=array();
-  var $lignes=array();
-	
-  // Pour board
+  var $lignes=array();	
+  //! Pour board
   var $nbtodo;
   var $nbtodolate;
-
   var $specimen;
   var $error;
-
+  //! Numero d'erreur de 512 à 1023
+  var $errno = 0;
   /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB         handler accès base de données
-   *    \param  socid		id societe ('' par defaut)
-   *    \param  facid      id facture ('' par defaut)
+     \brief  Constructeur de la classe
+     \param  DB         handler accès base de données
+     \param  socid		id societe ('' par defaut)
+     \param  facid      id facture ('' par defaut)
    */
   function Facture($DB, $socid='', $facid='')
   {
@@ -115,11 +118,11 @@ class Facture extends CommonObject
   }
 
   /**
-   *	\brief      Création de la facture en base
-   *	\param      user       	Object utilisateur qui crée
-   *	\return		int			<0 si ko, >0 si ok
+     \brief     Création de la facture en base
+     \param     user       	Object utilisateur qui crée
+     \return	int			<0 si ko, >0 si ok
    */
-  function create($user)
+  function Create($user)
   {
     global $langs,$conf,$mysoc;
 
@@ -132,7 +135,7 @@ class Facture extends CommonObject
     if (! $this->mode_reglement_id) $this->mode_reglement_id = 0;
     $this->brouillon = 1;
 
-    dolibarr_syslog("Facture::create");
+    dolibarr_syslog("Facture::Create");
 
     $soc = new Societe($this->db);
     $soc->fetch($this->socid);
@@ -300,10 +303,10 @@ class Facture extends CommonObject
 
 
   /**
-   *	\brief      Création de la facture en base depuis une autre
-   *	\param      user       		Object utilisateur qui crée
-   *	\return		int				<0 si ko, >0 si ok
-   */
+     \brief      Création de la facture en base depuis une autre
+     \param      user    Object utilisateur qui crée
+     \return	 int				<0 si ko, >0 si ok
+  */
   function create_clone($user,$invertdetail=0)
   {
     // Charge facture source
@@ -338,7 +341,7 @@ class Facture extends CommonObject
 	  }
       }
 				
-    dolibarr_syslog("Facture::create_clone invertdetail=$invertdetail socid=".$this->socid." nboflines=".sizeof($facture->lignes));
+    dolibarr_syslog("Facture::create_clone invertdetail=".$invertdetail." socid=".$this->socid." nboflines=".sizeof($facture->lignes));
 		
 
     $facid = $facture->create($user);
@@ -348,10 +351,10 @@ class Facture extends CommonObject
 			
 			
   /**
-   *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
-   *		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-   *		\param		option			Sur quoi pointe le lien
-   *		\return		string			Chaine avec URL
+     \brief      Renvoie nom clicable (avec eventuellement le picto)
+     \param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+     \param		option			Sur quoi pointe le lien
+     \return		string			Chaine avec URL
    */
   function getNomUrl($withpicto=0,$option='')
   {
@@ -378,14 +381,14 @@ class Facture extends CommonObject
 	
 	
   /**
-   *    \brief      Recupére l'objet facture et ses lignes de factures
-   *    \param      rowid       id de la facture a récupérer
-   *    \param      societe_id  id de societe
-   *    \return     int         >0 si ok, <0 si ko
+     \brief      Recupére l'objet facture et ses lignes de factures
+     \param      rowid       id de la facture a récupérer
+     \param      societe_id  id de societe
+     \return     int         >0 si ok, <0 si ko
    */
-  function fetch($rowid, $societe_id=0)
+  function Fetch($rowid, $societe_id=0)
   {
-    dolibarr_syslog("Facture.class::fetch rowid=$rowid, societe_id=$societe_id");
+    dolibarr_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
 
     $sql = 'SELECT f.facnumber,f.ref_client,f.type,f.fk_soc,f.amount,f.tva,f.total,f.total_ttc,f.remise_percent,f.remise_absolue,f.remise';
     $sql.= ','.$this->db->pdate('f.datef').' as df, f.fk_projet';
@@ -460,7 +463,8 @@ class Facture extends CommonObject
 		if ($resqlcomm)
 		  {
 		    $objc = $this->db->fetch_object($resqlcomm);
-		    $this->commande_ref      = $objc->ref;
+		    $this->commande_ref = $objc->ref;
+		    $this->db->free($resqlcomm);
 		  }
 	      }
 
@@ -496,8 +500,8 @@ class Facture extends CommonObject
 
 
   /**
-   *    \brief      Recupére les lignes de factures
-   *    \return     int         1 si ok, < 0 si erreur
+     \brief      Recupére les lignes de factures
+     \return     int         1 si ok, < 0 si erreur
    */
   function fetch_lines()
   {
@@ -511,7 +515,7 @@ class Facture extends CommonObject
     $sql.= ' WHERE l.fk_facture = '.$this->id;
     $sql.= ' ORDER BY l.rang';
 
-    dolibarr_syslog('Facture::fetch_lines sql='.$sql);
+    dolibarr_syslog('Facture::fetch_lines', LOG_DEBUG);
     $result = $this->db->query($sql);
     if ($result)
       {
@@ -521,7 +525,7 @@ class Facture extends CommonObject
 	  {
 	    $objp = $this->db->fetch_object($result);
 	    $faclig = new FactureLigne($this->db);
-	    $faclig->rowid			  = $objp->rowid;
+	    $faclig->rowid	      = $objp->rowid;
 	    $faclig->desc             = $objp->description;     // Description ligne
 	    $faclig->libelle          = $objp->label;           // Label produit
 	    $faclig->product_desc     = $objp->product_desc;    // Description produit
@@ -689,9 +693,9 @@ class Facture extends CommonObject
   }
 
   /**
-   * 		\brief     	Supprime la facture
-   * 		\param     	rowid      	Id de la facture à supprimer
-   *		\return		int			<0 si ko, >0 si ok
+     \brief     	Supprime la facture
+     \param     	rowid      	Id de la facture à supprimer
+     \return		int			<0 si ko, >0 si ok
    */
   function delete($rowid=0)
   {
@@ -699,7 +703,7 @@ class Facture extends CommonObject
 
     if (! $rowid) $rowid=$this->id;
 
-    dolibarr_syslog("Facture.class::delete rowid=".$rowid);
+    dolibarr_syslog("Facture::Delete rowid=".$rowid, LOG_DEBUG);
 		
     $this->db->begin();
 
@@ -787,10 +791,10 @@ class Facture extends CommonObject
 
 
   /**
-   *      \brief      Renvoi une date limite de reglement de facture en fonction des
-   *                  conditions de reglements de la facture et date de facturation
-   *      \param      cond_reglement_id   Condition de reglement à utiliser, 0=Condition actuelle de la facture
-   *      \return     date                Date limite de réglement si ok, <0 si ko
+     \brief      Renvoi une date limite de reglement de facture en fonction des
+     conditions de reglements de la facture et date de facturation
+     \param      cond_reglement_id   Condition de reglement à utiliser, 0=Condition actuelle de la facture
+     \return     date                Date limite de réglement si ok, <0 si ko
    */
   function calculate_date_lim_reglement($cond_reglement_id=0)
   {
@@ -858,7 +862,7 @@ class Facture extends CommonObject
   {
     global $conf,$langs;
 
-    dolibarr_syslog("Facture.class.php::set_payed rowid=".$this->id);
+    dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
     $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
     $sql.= ' paye=1';
     if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
@@ -889,7 +893,7 @@ class Facture extends CommonObject
   {
     global $conf,$langs;
 
-    dolibarr_syslog("Facture.class.php::set_unpayed rowid=".$this->id);
+    dolibarr_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
     $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
     $sql.= ' SET paye=0 WHERE rowid = '.$this->id;
     $resql = $this->db->query($sql);
@@ -919,17 +923,17 @@ class Facture extends CommonObject
   }
 
   /**
-   *      \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
-   *      \param      user        Objet utilisateur qui modifie
-   *		\param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
-   *		\param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
-   *      \return     int         <0 si ok, >0 si ok
-   */
+     \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
+     \param      user        Objet utilisateur qui modifie
+     \param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
+     \param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
+     \return     int         <0 si ok, >0 si ok
+  */
   function set_canceled($user,$close_code='',$close_note='')
   {
     global $conf,$langs;
 
-    dolibarr_syslog("Facture.class.php::set_canceled rowid=".$this->id);
+    dolibarr_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
 
     $this->db->begin();
 		
@@ -1226,7 +1230,7 @@ class Facture extends CommonObject
    */
   function set_draft($userid)
   {
-    dolibarr_syslog("Facture.class::set_draft rowid=".$this->id);
+    dolibarr_syslog("Facture::set_draft rowid=".$this->id, LOG_DEBUG);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
     $sql.= " WHERE rowid = ".$this->id;
@@ -1337,7 +1341,7 @@ class Facture extends CommonObject
   function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
   {
     global $conf;
-    dolibarr_syslog("Facture::Addline($facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits)");
+    dolibarr_syslog("Facture::Addline $facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
     if ($this->brouillon)
@@ -1436,7 +1440,7 @@ class Facture extends CommonObject
    */
   function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva)
   {
-    dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva");
+    dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva", LOG_DEBUG);
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
     if ($this->brouillon)
@@ -1518,7 +1522,7 @@ class Facture extends CommonObject
   {
     global $langs, $conf;
 
-    dolibarr_syslog("Facture.class::deleteline rowid=".$rowid." ".$this->brouillon);
+    dolibarr_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
 
     if ($this->brouillon)
       {
@@ -1531,7 +1535,7 @@ class Facture extends CommonObject
 	if ($result < 0)
 	  {
 	    $this->error=$this->db->error();
-	    dolibarr_syslog("Facture.class::deleteline Error ".$this->error);
+	    dolibarr_syslog("Facture::Deleteline Error ".$this->error);
 	    $this->db->rollback();
 	    return -1;
 	  }
@@ -1542,7 +1546,7 @@ class Facture extends CommonObject
 	if ($result < 0)
 	  {
 	    $this->error=$this->db->error();
-	    dolibarr_syslog("Facture.class::deleteline  Error ".$this->error);
+	    dolibarr_syslog("Facture::Deleteline  Error ".$this->error);
 	    $this->db->rollback();
 	    return -1;
 	  }
@@ -1562,9 +1566,9 @@ class Facture extends CommonObject
   }
 
   /**
-   *		\brief     	Mise à jour des sommes de la facture et calculs denormalises
-   * 		\param     	facid      	id de la facture a modifier
-   *		\return		int			<0 si ko, >0 si ok
+     \brief     	Mise à jour des sommes de la facture et calculs denormalises
+     \param     	facid      	id de la facture a modifier
+     \return		int			<0 si ko, >0 si ok
    */
   function update_price($facid)
   {
@@ -2117,7 +2121,7 @@ class Facture extends CommonObject
    */
   function cond_reglement($cond_reglement_id)
   {
-    dolibarr_syslog('Facture::cond_reglement('.$cond_reglement_id.')');
+    dolibarr_syslog('Facture::cond_reglement '.$cond_reglement_id, LOG_DEBUG);
     if ($this->statut >= 0 && $this->paye == 0)
       {
 	$datelim=$this->calculate_date_lim_reglement($cond_reglement_id);
@@ -2153,7 +2157,7 @@ class Facture extends CommonObject
    */
   function mode_reglement($mode_reglement_id)
   {
-    dolibarr_syslog('Facture::mode_reglement('.$mode_reglement_id.')');
+    dolibarr_syslog('Facture::mode_reglement('.$mode_reglement_id.')', LOG_DEBUG);
     if ($this->statut >= 0 && $this->paye == 0)
       {
 	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
@@ -2254,10 +2258,10 @@ class Facture extends CommonObject
 
 
   /**
-   *  	\brief     	Renvoi liste des factures remplacables
-   *					Statut validee + aucun paiement + non paye + pas deja remplacées
-   *		\param		socid		Id societe
-   *   	\return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
+     \brief     	Renvoi liste des factures remplacables
+     Statut validee + aucun paiement + non paye + pas deja remplacées
+     \param		socid		Id societe
+     \return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
    */
   function list_replacable_invoices($socid=0)
   {
@@ -2346,7 +2350,7 @@ class Facture extends CommonObject
    */
   function demande_prelevement($user)
   {
-    dolibarr_syslog("Facture::demande_prelevement $this->statut $this->paye $this->mode_reglement_id");
+    dolibarr_syslog("Facture::demande_prelevement", LOG_DEBUG);
 
     $soc = new Societe($this->db);
     $soc->id = $this->socid;
@@ -2692,10 +2696,12 @@ class FactureLigne
   var $db;
   var $error;
 
-  // From llx_facturedet
+  //! From llx_facturedet
   var $rowid;
-  var $fk_facture;	// Id facture
-  var $desc;          	// Description ligne
+  //! Id facture
+  var $fk_facture;
+  //! Description ligne
+  var $desc;           
   var $fk_product;	// Id produit prédéfini
 
   var $qty;		// Quantité (exemple 2)
@@ -2704,10 +2710,13 @@ class FactureLigne
   var $remise_percent;	// % de la remise ligne (exemple 20%)
   var $rang = 0;
   var $info_bits = 0;		// Bit 0:	0 si TVA normal - 1 si TVA NPR
-  // Bit 1:	0 si ligne normal - 1 si bit discount
-  var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
-  var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
-  var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
+  //! Bit 1:	0 si ligne normal - 1 si bit discount
+  //! Total HT  de la ligne toute quantité et incluant la remise ligne
+  var $total_ht;
+  //! Total TVA  de la ligne toute quantité et incluant la remise ligne
+  var $total_tva;
+  //! Total TTC de la ligne toute quantité et incluant la remise ligne
+  var $total_ttc;
 
   var $fk_code_ventilation = 0;
   var $fk_export_compta = 0;
@@ -2726,8 +2735,8 @@ class FactureLigne
 
 
   /**
-   *      \brief     Constructeur d'objets ligne de facture
-   *      \param     DB      handler d'accès base de donnée
+     \brief     Constructeur d'objets ligne de facture
+     \param     DB      handler d'accès base de donnée
    */
   function FactureLigne($DB)
   {
@@ -2735,8 +2744,8 @@ class FactureLigne
   }
 
   /**
-   *      \brief     Recupére l'objet ligne de facture
-   *      \param     rowid           id de la ligne de facture
+     \brief     Recupére l'objet ligne de facture
+     \param     rowid           id de la ligne de facture
    */
   function fetch($rowid)
   {
@@ -2796,7 +2805,7 @@ class FactureLigne
    */
   function insert()
   {
-    dolibarr_syslog("FactureLigne::Insert rang=".$this->rang);
+    dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
     $this->db->begin();
 
     $rangtouse=$this->rang;
@@ -2850,8 +2859,6 @@ class FactureLigne
     $sql.= " '".price2num($this->total_tva)."',";
     $sql.= " '".price2num($this->total_ttc)."'";
     $sql.= ')';
-
-    dolibarr_syslog("FactureLigne.class::insert sql=$sql");
 
     $resql=$this->db->query($sql);
     if ($resql)
@@ -2931,6 +2938,7 @@ class FactureLigne
   function update_total()
   {
     $this->db->begin();
+    dolibarr_syslog("FactureLigne::update_total", LOG_DEBUG);
 
     // Mise a jour ligne en base
     $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
@@ -2939,7 +2947,7 @@ class FactureLigne
     $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
     $sql.= " WHERE rowid = ".$this->rowid;
 
-    dolibarr_syslog("FactureLigne::update_total sql=$sql");
+
 
     $resql=$this->db->query($sql);
     if ($resql)
