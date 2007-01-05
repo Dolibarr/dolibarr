@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,9 +21,9 @@
  */
 
 /**
-    	\file       htdocs/admin/company.php
-		\brief      Page d'accueil de l'espace administration/configuration
-		\version    $Revision$
+   \file       htdocs/admin/company.php
+   \brief      Page d'accueil de l'espace administration/configuration
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -48,28 +48,28 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"]);
+    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"]);
     if ($_FILES["logo"]["tmp_name"])
-    {
+      {
         if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
-        {
+	  {
             $original_file=$reg[1];
-
+	    
             dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
-	        if (! is_dir($conf->societe->dir_logos))
-	        {
-	            create_exdir($conf->societe->dir_logos);
-    		}        
+	    if (! is_dir($conf->societe->dir_logos))
+	      {
+		create_exdir($conf->societe->dir_logos);
+	      }        
             if (doliMoveFileUpload($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file))
-            {
+	      {
                 dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
-            }
-			else
-            {
+	      }
+	    else
+	      {
                 $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-            }
-				
-        }
-    }
+	      }	    
+	  }
+      }
 
     dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
     dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
@@ -90,12 +90,10 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 if ($_GET["action"] == 'removelogo')
 {
-	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
-	@unlink($logofile);
-    dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
+  $logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
+  @unlink($logofile);
+  dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
 }
-
-
 
 /*
  * Affichage page
@@ -106,7 +104,6 @@ llxHeader();
 $form = new Form($db);
 $countrynotdefined='<font class="error">'.$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("SeeAbove").')</font>';
 
-
 print_fiche_titre($langs->trans("CompanyFundation"),'','setup');
 
 print $langs->trans("CompanyFundationDesc")."<br>\n";
@@ -115,12 +112,12 @@ print "<br>\n";
 if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
  || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    /**
-     * Edition des paramètres
-     */
-    if ($conf->use_javascript)
+  /**
+   * Edition des paramètres
+   */
+  if ($conf->use_javascript)
     {
-        print '
+      print '
         <script language="javascript" type="text/javascript">
         <!--
         function save_refresh()
@@ -133,93 +130,100 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
         ';
     }
     
-    print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
-    print '<input type="hidden" name="action" value="update">';
-    $var=true;
+  print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
+  print '<input type="hidden" name="action" value="update">';
+  $var=true;
+  
+  print '<table class="noborder" width="100%">';
+  print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
+  print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
+  print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
+  print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
+  print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
+  $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="save_refresh()"':''));
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
+  $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
+  print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Fax").'</td><td>';
+  print '<input name="fax" value="'. $conf->global->MAIN_INFO_SOCIETE_FAX . '"></td></tr>';
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
+  print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
+  print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
+  print '</td></tr>';
+  
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Gencod").'</td><td>';
+  print '<input name="gencod" size="40" value="'. $conf->global->MAIN_INFO_SOCIETE_GENCOD . '"></td></tr>';
+  print '</td></tr>';
 
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("CompanyInfo").'</td><td>'.$langs->trans("Value").'</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyName").'</td><td>';
-    print '<input name="nom" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_NOM . '"></td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyAddress").'</td><td>';
-    print '<textarea name="address" cols="60" rows="'.ROWS_3.'">'. $conf->global->MAIN_INFO_SOCIETE_ADRESSE . '</textarea></td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyZip").'</td><td>';
-    print '<input name="cp" value="'. $conf->global->MAIN_INFO_SOCIETE_CP . '" size="10"></td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyTown").'</td><td>';
-    print '<input name="ville" size="30" value="'. $conf->global->MAIN_INFO_SOCIETE_VILLE . '"></td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
-    $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="save_refresh()"':''));
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("CompanyCurrency").'</td><td>';
-    $form->select_currency($conf->global->MAIN_MONNAIE,"currency");
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Tel").'</td><td>';
-    print '<input name="tel" value="'. $conf->global->MAIN_INFO_SOCIETE_TEL . '"></td></tr>';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Fax").'</td><td>';
-    print '<input name="fax" value="'. $conf->global->MAIN_INFO_SOCIETE_FAX . '"></td></tr>';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Mail").'</td><td>';
-    print '<input name="mail" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_MAIL . '"></td></tr>';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Web").'</td><td>';
-    print '<input name="web" size="60" value="'. $conf->global->MAIN_INFO_SOCIETE_WEB . '"></td></tr>';
-    print '</td></tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
-    print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
-    print '<input type="file" class="flat" name="logo" size="50">';
-    print '</td><td valign="middle" align="right">';
-    if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td>'.$langs->trans("Logo").' (png,jpg)</td><td>';
+  print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
+  print '<input type="file" class="flat" name="logo" size="50">';
+  print '</td><td valign="middle" align="right">';
+  if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
     {
-        print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
+      print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
         print ' &nbsp; ';
         print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
     }
-    else
+  else
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+      print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
     }
-	print '</td></tr></table>';
-    print '</td></tr>';
+  print '</td></tr></table>';
+  print '</td></tr>';
+  
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
-    print '<textarea class="flat" name="note" cols="60" rows="'.ROWS_4.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
-    print '</td></tr>';
 
-    print '</table>';
-
-    print '<br>';
-
+  $var=!$var;
+  print '<tr '.$bc[$var].'><td valign="top">'.$langs->trans("Note").'</td><td>';
+  print '<textarea class="flat" name="note" cols="60" rows="'.ROWS_4.'">'.$conf->global->MAIN_INFO_SOCIETE_NOTE.'</textarea></td></tr>';
+  print '</td></tr>';
+  
+  print '</table>';
+  
+  print '<br>';
+    
     // Identifiants de la société (propre au pays)
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
 
     $langs->load("companies");
-
+    
     // Recupere code pays
     $code_pays=substr($langs->defaultlang,-2);    // Par defaut, pays de la localisation
     if ($conf->global->MAIN_INFO_SOCIETE_PAYS)
@@ -417,6 +421,9 @@ else
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Web").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_WEB . '</td></tr>';
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Gencod").'</td><td>' . $conf->global->MAIN_INFO_SOCIETE_GENCOD . '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("Logo").'</td><td>';
