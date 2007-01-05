@@ -135,6 +135,14 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
+        $livraision = new Livraison($db, 0, $_REQUEST['id']);
+        $livraision->fetch($_REQUEST['id']);
+
+        if ($_REQUEST['model'])
+        {
+                $livraision->set_pdf_model($user, $_REQUEST['model']);
+        }
+
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
