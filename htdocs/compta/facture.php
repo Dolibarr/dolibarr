@@ -261,34 +261,29 @@ if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->
 }
 if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
-  $fac = new Facture($db);
-  $fac->fetch($_GET['facid']);
-  $close_code=$_POST["close_code"];
-  $close_note=$_POST["close_note"];
-  if ($close_code)
-    {
-      /*
-	if ($close_code == 'other' && ! $close_note)
+	$fac = new Facture($db);
+	$fac->fetch($_GET['facid']);
+	$close_code=$_POST["close_code"];
+	$close_note=$_POST["close_note"];
+	if ($close_code)
 	{
-	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Comment")).'</div>';
+		if ($close_code == 'abandon')
+		{
+			$result = $fac->set_canceled($user,$close_code,$close_note);
+		}
+		elseif ($close_code == 'badcustomer')
+		{
+			$result = $fac->set_canceled($user,$close_code,$close_note);
+		}
+		else
+		{
+			$result = $fac->set_payed($user,$close_code,$close_note);
+		}
 	}
 	else
 	{
-      */
-      if ($close_code == 'abandon')
-	{
-	  $result = $fac->set_canceled($user,$close_code,$close_note);
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
 	}
-      else
-	{
-	  $result = $fac->set_payed($user,$close_code,$close_note);
-	}
-      //		}
-    }
-  else
-    {
-      $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
-    }
 }
 
 /*
@@ -1684,27 +1679,35 @@ else
 	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
 	      print '<br />';
 	    }
-	  if ($_GET['action'] == 'payed' && $resteapayer > 0)
-	    {
-	      // Crée un tableau formulaire
-	      //$helpescompte_avoir=$langs->trans("ConfirmClassifyPayedPartiallyAvoir");
-	      $helpescompte_vat    =$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
-	      $helpescompte_abandon=$langs->trans("ConfirmClassifyPayedPartiallyAbandon");
-	      //$reason_avoir  =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAvoir",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_avoir,1);
-	      $reason_vat    =$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_vat,1);
-	      $reason_abandon=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonAbandon",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$helpescompte_abandon,1);
-	      //$arrayreasons['avoir']       =$reason_avoir;
-	      $arrayreasons['discount_vat']=$reason_vat;
-	      $arrayreasons['abandon']     =$reason_abandon;
-	      $formquestion=array(
-				  'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
-				  array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
-				  array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
-				  );
-	      // Paiement incomplet. On demande si motif = escompte ou autre
-	      $html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
-	      print '<br />';
-	    }
+		if ($_GET['action'] == 'payed' && $resteapayer > 0)
+		{
+			// Code
+			$close[0]['code']='discount_vat';
+			$close[1]['code']='badcustomer';
+			$close[2]['code']='abandon';
+			// Help
+			$close[0]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
+			$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyBadCustomer");
+			$close[2]['label']=$langs->trans("ConfirmClassifyPayedPartiallyOther");
+			// Texte
+			$close[0]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[0]['label'],1);
+			$close[1]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[1]['label'],1);
+			$close[2]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonOther",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[2]['label'],1);
+			// arrayreasons
+			$arrayreasons[$close[0]['code']]=$close[0]['reason'];
+			$arrayreasons[$close[1]['code']]=$close[1]['reason'];
+			$arrayreasons[$close[2]['code']]=$close[2]['reason'];
+
+			// Crée un tableau formulaire
+			$formquestion=array(
+			'text' => $langs->trans("ConfirmClassifyPayedPartiallyQuestion"),
+			array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
+			array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
+			);
+			// Paiement incomplet. On demande si motif = escompte ou autre
+			$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedPartially',$fac->ref),'confirm_payed_partially',$formquestion);
+			print '<br />';
+		}
 	  
 	  /*
 	   * Confirmation du classement abandonne

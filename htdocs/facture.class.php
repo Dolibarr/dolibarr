@@ -867,7 +867,6 @@ class Facture extends CommonObject
     $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
     $sql.= ' paye=1';
     if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-    if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
     $sql.= ' WHERE rowid = '.$this->id;
 
     $resql = $this->db->query($sql);
