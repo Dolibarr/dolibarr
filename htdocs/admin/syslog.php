@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,16 +21,49 @@
  */
 
 /**
-	    \file       htdocs/admin/syslog.php
-        \ingroup    syslog
-        \brief      Page de configuration du module syslog
-		\version    $Revision$
+   \file       htdocs/admin/syslog.php
+   \ingroup    syslog
+   \brief      Page de configuration du module syslog
+   \version    $Revision$
 */
-
 require("./pre.inc.php");
 
 if (!$user->admin)
-    accessforbidden();
+  accessforbidden();
+
+/*
+ * Actions 
+ */
+$optionlogoutput=$_POST["optionlogoutput"];
+if ($optionlogoutput == "syslog") 
+{
+  if (defined($_POST["facility"])) 
+    {
+      dolibarr_del_const($db,"SYSLOG_FILE");
+      dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
+      dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
+      dolibarr_syslog("Admin Syslog: New level ".$_POST["level"]);
+      Header("Location: syslog.php");
+    } 
+  else
+    {
+      print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
+    }
+}
+if ($optionlogoutput == "file")
+{
+  $file=fopen($_POST["filename"],"a+");
+  if ($file)
+    {
+      fclose($file);
+      dolibarr_del_const($db,"SYSLOG_FACILITY");
+      dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"]);
+    }
+  else
+    {
+      print '<div class="error">'.$langs->trans("ErrorFailedToOpenFile",$_POST["filename"]).'</div>';
+    }
+}
 
 $langs->load("admin");
 $langs->load("other");
@@ -41,31 +75,6 @@ print '<br>';
 
 $def = array();
 
-/*
- * Actions 
- */
-$optionlogoutput=$_POST["optionlogoutput"];
-if ($optionlogoutput == "syslog") {
-    if (defined($_POST["facility"])) {
-        dolibarr_del_const($db,"SYSLOG_FILE");
-        dolibarr_set_const($db,"SYSLOG_FACILITY",$_POST["facility"]);
-    } else {
-        print '<div class="error">'.$langs->trans("ErrorUnknownSyslogConstant",$_POST["facility"]).'</div>';
-    }
-}
-if ($optionlogoutput == "file") {
-    $file=fopen($_POST["filename"],"a+");
-    if ($file) {
-        fclose($file);
-        dolibarr_del_const($db,"SYSLOG_FACILITY");
-        dolibarr_set_const($db,"SYSLOG_FILE",$_POST["filename"]);
-    }
-    else {
-        print '<div class="error">'.$langs->trans("ErrorFailedToOpenFile",$_POST["filename"]).'</div>';
-    }
-}
-
-
 $syslogfacility=$defaultsyslogfacility=dolibarr_get_const($db,"SYSLOG_FACILITY");
 $syslogfile=$defaultsyslogfile=dolibarr_get_const($db,"SYSLOG_FILE");
 if (! $defaultsyslogfacility) $defaultsyslogfacility='LOG_USER';
@@ -76,9 +85,9 @@ if (! $defaultsyslogfile) $defaultsyslogfile='dolibarr.log';
  */
 print_titre($langs->trans("SyslogOutput"));
 
-print '<table class="noborder" width=\"100%\">';
 print '<form action="syslog.php" method="post">';
 print '<input type="hidden" name="action" value="set">';
+print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Parameter").'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
@@ -86,13 +95,25 @@ print "</tr>\n";
 $var=true;
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlogoutput\" value=\"syslog\" ".($syslogfacility?" checked":"")."> ".$langs->trans("SyslogSyslog")."</td>";
-print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'"></td></tr>';
+print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
+print $langs->trans("SyslogLevel").': <select class="flat" name="level">';
+
+print '<option value="'.LOG_EMERG.'" '.(SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG</option>';
+print '<option value="'.LOG_ALERT.'" '.(SYSLOG_LEVEL==LOG_ALERT?'SELECTED':'').'>LOG_ALERT</option>';
+print '<option value="'.LOG_CRITICAL.'" '.(SYSLOG_LEVEL==LOG_CRITICAL?'SELECTED':'').'>LOG_CRITICAL</option>';
+print '<option value="'.LOG_ERROR.'" '.(SYSLOG_LEVEL==LOG_ERROR?'SELECTED':'').'>LOG_ERROR</option>';
+print '<option value="'.LOG_WARNING.'" '.(SYSLOG_LEVEL==LOG_WARNING?'SELECTED':'').'>LOG_WARNING</option>';
+print '<option value="'.LOG_NOTICE.'" '.(SYSLOG_LEVEL==LOG_NOTICE?'SELECTED':'').'>LOG_NOTICE</option>';
+print '<option value="'.LOG_INFO.'" '.(SYSLOG_LEVEL==LOG_INFO?'SELECTED':'').'>LOG_INFO</option>';
+print '<option value="'.LOG_DEBUG.'" '.(SYSLOG_LEVEL==LOG_DEBUG?'SELECTED':'').'>LOG_DEBUG</option>';
+print '</select></td></tr>';
+
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlogoutput\" value=\"file\"".($syslogfile?" checked":"")."> ".$langs->trans("SyslogSimpleFile")."</td>";
 print '<td colspan="2">'.$langs->trans("SyslogFilename").': <input type="text" class="flat" name="filename" size="60" value="'.$defaultsyslogfile.'"></td></tr>';
-print "</form>";
-print "</table>";
 
+print "</table>\n";
+print "</form>\n";
 
 llxFooter('$Date$ - $Revision$');
 ?>
