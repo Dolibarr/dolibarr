@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -303,8 +304,19 @@ class Expedition extends CommonObject
         {
             $this->ref = "EXP".$this->id;
     
-            // \todo Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
-            //       de décrémenter 2 fois le stock.
+            // Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
+            // de décrémenter 2 fois le stock.
+            $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."expedition where ref='".$this->ref."' AND fk_statut='1'";
+            $resql=$this->db->query($sql);
+            if ($resql)
+            {
+                $num = $this->db->num_rows($resql);
+		if ($num >0) {
+		    return 0;
+		}
+            }
+                        $num = $this->db->num_rows($resql);
+            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
             $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
