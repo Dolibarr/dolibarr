@@ -150,7 +150,6 @@ class Product
     if ($this->tva_tx=='') $this->tva_tx = 0;
     if ($this->price=='')  $this->price = 0;
     if ($this->status=='') $this->status = 0;
-    //$this->price = price2num($this->price);
     
     if (strlen(trim($this->price)) > 0 )
     {
@@ -190,9 +189,6 @@ class Product
 		if ($this->ref) $sql.= "'".$this->ref."', ";
 		$sql.= $user->id.", ".$this->type.", '" . price2num($price) . "', '".$price_ttc."', '" . $this->price_base_type . "','".$this->canvas."')";
 		$result = $this->db->query($sql);
-		print 'HT '.$price.'<br>';
-		print 'TTC '.$price_ttc.'<br>';
-		print $sql;
 		if ( $result )
 		  {
 		    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."product");
