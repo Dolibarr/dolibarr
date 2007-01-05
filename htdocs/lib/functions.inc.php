@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2000-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -1990,26 +1990,26 @@ function create_exdir($dir)
         {
         	if (! @is_dir($ccdir))
         	{
-                dolibarr_syslog("functions.inc.php::create_exdir: Directory '$ccdir' does not exists or is outside open_basedir PHP setting.");
+		  dolibarr_syslog("functions.inc.php::create_exdir: Directory '".$ccdir."' does not exists or is outside open_basedir PHP setting.");
 
-	            umask(0);
-	            if (! @mkdir($ccdir, 0755))
-	            {
-	                // Si le is_dir a renvoyé une fausse info, alors on passe ici.
-	                dolibarr_syslog("functions.inc.php::create_exdir: Fails to create directory '$ccdir' or directory already exists.");
-	                $nberr++;
-	            }
-	            else
-	            {
-	                dolibarr_syslog("functions.inc.php::create_exdir: Directory '$ccdir' created");
-					$nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
-	                $nbcreated++;
-	            }
-			}
-			else
-			{
-				$nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
-			}
+		  umask(0);
+		  if (! @mkdir($ccdir, 0755))
+		    {
+		      // Si le is_dir a renvoyé une fausse info, alors on passe ici.
+		      dolibarr_syslog("functions.inc.php::create_exdir: Fails to create directory '".$ccdir."' or directory already exists.");
+		      $nberr++;
+		    }
+		  else
+		    {
+		      dolibarr_syslog("functions.inc.php::create_exdir: Directory '".$ccdir."' created");
+		      $nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+		      $nbcreated++;
+		    }
+		}
+		else
+		  {
+		    $nberr=0;	// On remet à zéro car si on arrive ici, cela veut dire que les échecs précédents peuvent etre ignorés
+		  }
         }
     }
     return ($nberr ? -$nberr : $nbcreated);
