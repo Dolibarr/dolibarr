@@ -31,4 +31,8 @@ CustomerDiscount=De klant Korting
 Supplier=Leverancier
 CompanyList=Bedrijven lijst
 AddContact=Voeg contact toe
+JuridicalStatus=Juridische status
+JuridicalStatus200=Zelfstandige
+JuridicalStatus201=BVBA
+JuridicalStatus202=Naamloze vennootschap
 
