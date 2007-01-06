@@ -1,19 +1,332 @@
 # Dolibarr language file - nl_BE - bills
-Bill=Faktuur
-Bills=Fakturen
-ClassifyPayed=Klasseer 'Betaalde'
-ClassifyCanceled=Klasseer 'Geannuleerd'
-CreateBill=Maak Factuur
-Send=Verstuur
-SendRemind=Stuur Herinnering
-DoPaiement=Betaling uitvoeren
-BuildPDF=Maak Pdf
-RebuildPDF=Maak Pdf opnieuw
+Bill=Factuur
+Bills=Facturen
+BillsCustomers=Customers' invoices
+BillsSuppliers=Suppliers' invoices
+BillsCustomersUnpayed=Unpayed customers' invoices
+BillsCustomersUnpayedForCompany=Unpayed customers' invoices for %s
+BillsSuppliersUnpayed=Unpayed suppliers' invoices
+BillsUnpayed=Unpayed
+BillsStatistics=Invoices statistics
+InvoiceStandard=Standard invoice
+InvoiceStandardAsk=Standard invoice
+InvoiceStandardDesc=This kind of invoice is the common invoice.
+InvoiceReplacement=Replacement invoice. Must replace invoice with reference
+InvoiceReplacementAsk=Replacement invoice for invoice
+InvoiceReplacementDesc=<b>Replacement invoice</b> is used to cancel and replace completely an invoice with no paiement already recevided.<br>Reference of canceled invoice is required.
+InvoiceAvoir=Credit note
+InvoiceAvoirAsk=Credit note to correct invoice
+InvoiceAvoirDesc=The <b>credit note</b> is a negative invoice used to solve fact that an invoice has an higher amount that amount that was or will be payed (all possible reasons).
+ReplaceInvoice=Replace invoice %s
+ReplacedByInvoice=Replaced by invoice %s
+CorrectInvoice=Correct invoice %s
+NoReplacableInvoice=No replacable invoices
+NoInvoiceToCorrect=No invoice to correct
+InvoiceHasAvoir=Corrected by one or several invoices
+CardBill=Invoice card
+Invoice=Invoice
+Invoices=Invoices
+InvoiceLine=Invoice line
+InvoiceCustomer=Customer invoice
+CustomerInvoice=Customer invoice
+CustomersInvoices=Customers' invoices
+SupplierInvoice=Supplier invoice
+SuppliersInvoices=Suppliers' invoices
+SupplierBill=Supplier invoice
+SupplierBills=suppliers invoices
+BillContacts=Invoice contacts
+Payment=Payment
+Payments=Payments
+ReceivedPayments=Received payments
+ReceivedCustomersPayments=Payments received from customers
+ReceivedCustomersPaymentsToValid=Received customers payments to validate
+PaymentsReportsForYear=Payments reports for %s
+PaymentsReports=Payments reports
+PaymentsAlreadyDone=Payments already done
+PaymentMode=Payment rule
+PaymentConditions=Payment term
+PaymentConditionsShort=Payment term
+PaymentAmount=Payment amount
+PaymentHigherThanReminderToPay=Payment higher than reminder to pay
+ClassifyPayed=Classify 'Payed'
+ClassifyPayedPartially=Classify 'Payed partially'
+ClassifyCanceled=Classify 'Abandonned'
+ClassifyClosed=Classify 'Closed'
+CreateBill=Create Invoice
+AddBill=Add invoice
+DeleteBill=Delete invoice
+SearchABill=Search an invoice
+CancelBill=Cancel an invoice
+SendByMail=EMail
+SendRemindByMail=EMail reminder
+DoPaiement=Do payment
+DoPayment=Do payment
+EnterPaymentReceivedFromCustomer=Enter payment received from customer
+EnterPaymentDueToCustomer=Make payment due to customer
 VAT=BTW
+VATRate=BTW Rate
 Amount=Bedrag
-BillStatusDraft=Klad (Moet gevalideerd worden)
+TotalTTCToYourCredit=Total TTC to your credit
+BillStatus=Status factuur
+BillStatusDraft=Klad (moet gevalideerd worden)
 BillStatusPayed=Betaald
 BillStatusCanceled=Geannuleerd
-BillStatusValidated=Gevalideerd (Moet betaald worden)
-BillStatusStarted=Begonnen
+BillStatusValidated=Gevalideerd (moet betaald worden)
+BillStatusStarted=Gestart
 BillStatusNotPayed=Niet betaald
+BillStatusClosedUnpayed=Afgesloten (onbetaald)
+BillStatusClosedPayedPartially=Betaald (gedeeltelijk)
+BillShortStatusDraft=Klad
+BillShortStatusPayed=Betaald
+BillShortStatusCanceled=Geannuleerd
+BillShortStatusValidated=Gevalideerd
+BillShortStatusStarted=Gestart
+BillShortStatusNotPayed=Niet betaald
+BillShortStatusClosedUnpayed=Afgesloten
+BillShortStatusClosedPayedPartially=Betaald
+PaymentStatusToValidShort=Te valideren
+ErrorVATIntraNotConfigured=Intracommunautary VAT number not yet defined
+ErrorNoPaiementModeConfigured=No paiment mode yet defined
+ErrorCreateBankAccount=Creat a bank account then go to Setup panel of Invoice module to define paiement modes
+ErrorBillNotFound=Invoice %s does not exists
+ErrorInvoiceAlreadyReplaced=Error, you try to validate an invoice to replace invoice %s. But this one has already been replaced by invoice %s.
+ErrorDiscountAlreadyUsed=Error, discount already used
+ErrorInvoiceAvoirMustBeNegative=Error, correct invoice must have a negative amount
+ErrorInvoiceOfThisTypeMustBePositive=Error, this type of invoice must have a positive amount
+ErrorCantCancelIfReplacementInvoiceNotValidated=Error, can't cancel an invoice that has been replaced by another invoice that is still in draft status
+BillFrom=Van
+BillTo=Factureren aan
+ActionsOnBill=Acties op factuur
+NewBill=Nieuwe factuur
+Prélèvements=Prelevment
+Prélèvements=Prelevments
+LastBills=Laatste %s facturen
+LastCustomersBills=Last %s customers invoices
+LastSuppliersBills=Last %s suppliers invoices
+AllBills=All invoices
+OtherBills=Other invoices
+DraftBills=Draft invoices
+Unpayed=Unpayed
+ConfirmDeleteBill=Are you sure you want to delete this invoice ?
+ConfirmValidateBill=Are you sure you want to validate this invoice with reference <b>%s</b> ?
+ConfirmClassifyPayedBill=Are you sure you want to change invoice <b>%s</b> to status payed ?
+ConfirmCancelBill=Are you sure you want to cancel invoice <b>%s</b> ?
+ConfirmClassifyPayedPartially=Are you sure you want to change invoice <b>%s</b> to status payed ?
+ConfirmClassifyPayedPartiallyQuestion=This invoice has not been payed completely. What are reasons for you to close this invoice ?
+ConfirmClassifyPayedPartiallyReasonAvoir=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je régularise la TVA par un avoir.
+ConfirmClassifyPayedPartiallyReasonDiscountNoVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. J'accepte de perdre la TVA sur cet escompte.
+ConfirmClassifyPayedPartiallyReasonDiscountVat=Remainder to pay <b>(%s %s)</b> is a discount granted because payment was made before term. Je récupère la TVA sur cet escompte sans avoir.
+ConfirmClassifyPayedPartiallyReasonBadCustomer=Bad customer
+ConfirmClassifyPayedPartiallyReasonOther=Debit irremediably not recoverable (other reason)
+ConfirmClassifyPayedPartiallyNoVat=Ce choix est possible si votre facture était munie de la mention adéquate. (Exemple: « escompte net de taxe »)
+ConfirmClassifyPayedPartiallyVat=Ce choix est possible si votre facture était munie de la mention adéquate. (Exemple: «seule la taxe correspondant au prix effectivement payé ouvre droit à déduction»)
+ConfirmClassifyPayedPartiallyAvoir=Use this choice if all other does not suit
+ConfirmClassifyPayedPartiallyBadCustomer=This choice will be use for bad customers with no hope to be paied
+ConfirmClassifyPayedPartiallyOther=Use this choice if all other does not suit
+ConfirmCustomerPayment=Do you confirm this paiement input for <b>%s</b> %s ?
+ValidateBill=Validate invoice
+NumberOfBills=Nb of invoices
+NumberOfBillsByMonth=Nb of invoices by month
+ShowBill=Show invoice
+ShowInvoice=Show invoice
+ShowInvoiceReplace=Show replacing invoice
+ShowInvoiceAvoir=Show credit note
+ShowPayment=Show payment
+File=File
+AlreadyPayed=Already payed
+RemainderToPay=Remainder to pay
+RemainderToTake=Remainder to take
+EscompteOffered=Discount offered (payment before term)
+CreateDraft=Create draft
+SendBillRef=Send invoice %s
+SendReminderBillRef=Send invoice %s (reminder)
+StandingOrders=Standing orders
+StandingOrder=Standing order
+NoDraftBills=No draft invoices
+NoOtherDraftBills=No other draft invoices
+RefBill=Invoice ref
+ToBill=Te factureren
+RemainderToBill=Herinneringen te factureren
+SendBillByMail=Verstuur factuur via email
+SendReminderBillByMail=Verstuur herinnering via email
+RelatedCommercialProposals=Related commercial proposals
+MenuToValid=To Valid
+DateMaxPayment=Payment due before
+DateEcheance=Due date limit
+DateInvoice=Invoice date
+NoInvoice=No invoice
+ClassifyBill=Classify invoice
+NoSupplierBillsUnpayed=No suppliers invoices unpayed
+SupplierBillsToPay=Suppliers invoices to pay
+CustomerBillsUnpayed=Unpayed customers invoices
+DispenseMontantLettres=Les factures rédigées par procédés mécanographiques sont dispensées de l'arrêté en lettres
+NonPercuRecuperable=Non perçu récupérable
+SetConditions=Zet betalingsvoorwaarden
+SetMode=Set payment mode
+Billed=Gefactureerd
+RepeatableInvoice=Repeatable invoice
+RepeatableInvoices=Repeatable invoices
+Repeatable=Repeatable
+ChangeIntoRepeatableInvoice=Change into repeatable
+CreateRepeatableInvoice=Create repeatable invoice
+CreateFromRepeatableInvoice=Create from repeatable invoice
+ExportDataset_invoice_1=Customer invoices list and invoices' lines
+ProformaBill=Proforma Bill:
+Reduction=Reduction
+ReductionShort=Reduc.
+Reductions=Reductions
+ReductionsShort=Reduc.
+Discount=Discount
+Discounts=Discounts
+RelativeDiscount=Relative discount
+GlobalDiscount=Global discount
+CreditNote=Credit note
+CreditNotes=Credit notes
+NewGlobalDiscount=New discount
+NoteReason=Note/Reason
+ReasonDiscount=Reason
+AddGlobalDiscount=Add discount
+DiscountOfferedBy=Granted by
+DiscountStillRemaining=Discount still remaining
+DiscountAlreadyCounted=Discount already counted
+BillAddress=Bill address
+HelpEscompte=This discount is a discount granted to customer because its paiement was made before term.
+# PaymentConditions
+PaymentConditionShortRECEP=Immediate
+PaymentConditionRECEP=Immediate
+PaymentConditionShort30D=30 days
+PaymentCondition30D=30 days
+PaymentConditionShort30DENDMONTH=30 days end of month
+PaymentCondition30DENDMONTH=30 days end of month
+PaymentConditionShort60D=60 days
+PaymentCondition60D=60 days
+PaymentConditionShort60DENDMONTH=60 days end of month
+PaymentCondition60DENDMONTH=60 days end of month
+# PaymentType
+PaymentTypeVIR=Bank deposit
+PaymentTypeShortVIR=Bank deposit
+PaymentTypePRE=Bank's order
+PaymentTypeShortPRE=Bank's order
+PaymentTypeLIQ=Cash
+PaymentTypeShortLIQ=Cash
+PaymentTypeCB=Credit card
+PaymentTypeShortCB=Credit card
+PaymentTypeCHQ=Cheque
+PaymentTypeShortCHQ=Cheque
+
+PaymentTypeTYP=TIP
+PaymentTypeShortTYP=TIP
+PaymentTypeVAD=On line payment
+PaymentTypeShortVAD=On line payment
+
+BankDetails=Bank details
+BankCode=Bank code
+DeskCode=Desk code
+BankAccountNumber=Account number
+BankAccountNumberKey=Key
+Residence=Domiciliation
+IbanPrefix=IBAN nummer
+IBAN=IBAN
+BIC=BIC
+ExtraInfos=Extra info
+RegulatedOn=Regulated on
+ChequeNumber=Cheque N°
+ChequeOrTransferNumber=Cheque/Transfer N°
+WithDiscountTotalHT=Totaal zonder BTW met korting
+WithDiscountAmountHT=Bedrag zonder BTW met korting
+NetToBePaid=Netto te betalen
+PhoneNumber=Tel
+FullPhoneNumber=Telefoonnummer
+TeleFax=Fax
+PrettyLittleSentence=Accepte le réglement des sommes dues par chèques libellés à mon nom en ma qualité de Membre d'une Association de Gestion agréée par l'Administration Fiscale.
+IntracommunityVATNumber=Intracommunity number of VAT
+PaymentByChequeOrderedTo=Cheque payment are payable to %s send to
+PaymentByChequeOrderedToShort=Cheque payment are payable to
+SendTo=envoyé à
+PaymentByTransferOnThisBankAccount=Payment by transfer on the following bank account
+VATIsNotUsedForInvoice=* TVA non applicable art-293B du CGI
+LawApplicationPart1=Par application de la loi 80.335 du 12/05/80
+LawApplicationPart2=les marchandises demeurent la propriété du
+LawApplicationPart3=vendeur jusqu'à complet encaissement de 
+LawApplicationPart4=leurs prix.
+VATDischarged=TVA acquittée sur les débits.
+LimitedLiabilityCompanyCapital=SARL au Capital de
+UseDiscount=Use discount
+
+# oursin PDF model
+Of=du
+
+# bernique PDF model
+PDFBerniqueDescription=Factuurmodel Bernique
+
+# bigorneau PDF Model
+PDFBigorneauDescription=Factuurmodel Bigorneau
+
+# bulot PDF Model
+PDFBulotDescription=Factuurmodel Bulot
+
+# crabe PDF Model
+PDFCrabeDescription=Factuurmodel Crabe. Een volledig factuurmodel (Ondersteunt BTW optie, kortingen, betalingsvoorwaarden, etc...)
+
+# huitre PDF Model
+PDFHuitreDescription=Factuurmodel Huitre
+
+# oursin PDF Model
+PDFOursinDescription=Factuurmodel oursin
+
+# tourteau PDF Model
+PDFTourteauDescription=Factuurmodel Tourteau
+
+
+
+
+# NumRef Modules
+DefinedAndHasThisValue=Définie et vaut
+IsNotDefined=N'est pas définie
+
+# deneb
+DenebNumRefModelDesc1=Renvoie le numéro de facture sous la forme, PREF-31-12-2004-01, où PREF est le préfixe commercial de la société, et est suivi de la date (ici le 31 décembre 2004) et d'un compteur.
+DenebNumRefModelDesc2=Si la constante FACTURE_DENEB_DELTA est définie, un offset est appliqué sur le compteur
+
+# janus
+JanusNumRefModelDesc1=Renvoie le numéro de facture sous une forme spéciale F50201 pour la 1ere facture de février 2005
+
+# jupiter
+JupiterNumRefModelDesc1=Système de numérotation mensuel sous la forme F20030715, qui correspond à la 15ème facture du mois de Juillet 2003
+
+# lune
+LuneNumRefModelDesc1=Système de numérotation mensuel sous la forme F0501015, qui correspond à la 15ème facture du mois de Janvier 2005
+
+# mars
+MarsNumRefModelDesc1=Numéro de facture sous la forme, PREF-10-2004-005, qui correspond à la 5ème facture d'octobre 2004 et où PREF est le préfix de la société.
+MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
+MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
+
+# mercure
+MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d'une numérotaion double.
+
+# neptune
+NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
+NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un offset est appliqué sur le compteur
+
+# orion
+OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
+OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
+OrionNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
+OrionNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700354.
+
+# terre
+TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
+TerreNumRefModelError=Une facture commençant par $fayymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.
+
+# titan
+TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
+TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
+TitanNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
+TitanNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.
+
+# uranus
+UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre
+
+# venus
+VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
