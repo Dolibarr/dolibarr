@@ -1,0 +1,33 @@
+# Dolibarr language file - en_US - dict
+CountryFR=Frankrijk
+CountryBE=België
+CountryIT=Italië
+CountryES=Spanje
+CountryDE=Duitsland
+CountryCH=Zwitserland
+CountryGB=Groot Brittanië
+CountryIE=Ierland
+CountryCN=China
+CountryTN=Tunisië
+CountryUS=Verenigde Staten
+CountryMA=Marokko
+CountryDZ=Algerije
+CountryCA=Canada
+CountryTG=Togo
+CountryGA=Gabon
+CountryNL=Nederland
+CountryHU=Hongarije
+CountryRU=Rusland
+CountrySE=Zweden
+CountryCI=Ivoorkust
+CountrySN=Senegal
+CountryAR=Argentinië
+CountryCM=Cameroun
+CountrySA=Saudi Arabië
+CountryMC=Monaco
+CountrySG=Singapore
+##### Civilities #####
+CivilityMME=Meneer
+CivilityMR=Mevrouw
+CivilityMLE=Jufrrouw
+CivilityMTRE=Meester
