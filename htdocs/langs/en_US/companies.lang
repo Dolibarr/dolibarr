@@ -33,6 +33,7 @@ RegisteredOffice=Registered office
 Name=Name
 Lastname=Lastname
 Firstname=Firstname
+PostOrFunction=Post/Function
 UserTitle=Title
 Surname=Surname/Pseudo
 Address=Address

@@ -33,6 +33,7 @@ RegisteredOffice=Geregistreerd kantoor
 Name=Naam
 Lastname=Familienaam
 Firstname=Voorname
+PostOrFunction=Functie
 UserTitle=Titel
 Surname=Familienaam/Pseudoniem
 Address=Adres

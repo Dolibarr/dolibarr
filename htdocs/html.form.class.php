@@ -7,6 +7,7 @@
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Océbo  <marc@ocebo.com>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

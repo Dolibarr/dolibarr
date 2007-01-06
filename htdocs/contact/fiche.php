@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -293,7 +294,7 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
 		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
-		print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
+		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
 		print '<tr><td>'.$langs->trans("Address").'</td><td colspan="3"><input name="address" type="text" size="50" maxlength="80" value="'.$contact->address.'"></td>';
 
