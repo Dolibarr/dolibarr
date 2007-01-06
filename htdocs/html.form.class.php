@@ -1384,7 +1384,7 @@ class Form
                             print '<option value="'.$obj->code.'">';
                         }
                         // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-                        print $obj->code . ' - ' .($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
+                        print $obj->code . ' - ' .($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));
                         print '</option>';
                     }
                     $i++;
