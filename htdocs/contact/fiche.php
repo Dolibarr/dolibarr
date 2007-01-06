@@ -441,10 +441,10 @@ if ($user->rights->societe->contact->creer)
 		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
 		if ($contact->user_id)
 		{
-			$user=new User($db);
-			$user->id=$contact->user_id;
-			$result=$user->fetch();
-			print $user->getLoginUrl(1);
+			$dolibarr_user=new User($db);
+			$dolibarr_user->id=$contact->user_id;
+			$result=$dolibarr_user->fetch();
+			print $dolibarr_user->getLoginUrl(1);
 		}
 		else print $langs->trans("NoDolibarrAccess");
 		print '</td></tr>';
@@ -568,10 +568,10 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
 	if ($contact->user_id)
 	{
-		$user=new User($db);
-		$user->id=$contact->user_id;
-		$result=$user->fetch();
-		print $user->getLoginUrl(1);
+		$dolibarr_user=new User($db);
+		$dolibarr_user->id=$contact->user_id;
+		$result=$dolibarr_user->fetch();
+		print $dolibarr_user->getLoginUrl(1);
 	}
 	else print $langs->trans("NoDolibarrAccess");
 	print '</td></tr>';
