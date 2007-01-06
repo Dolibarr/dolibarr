@@ -354,6 +354,7 @@ class Contact
      */
     function fetch($id, $user=0)
     {
+    	global $langs;
         $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname,";
         $sql.= " c.address, c.cp, c.ville,";
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
@@ -383,9 +384,10 @@ class Contact
                 $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
-        	    $this->fk_pays        = $obj->fk_pays;
-        	    $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-        	    $this->pays           = $obj->fk_pays?$obj->pays:'';
+        	$this->fk_pays        = $obj->fk_pays;
+        	$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
+        	//$this->pays           = $obj->fk_pays?$obj->pays:'';
+        	$this->pays           = $langs->trans("Country".$obj->pays_code)?$langs->trans("Country".$obj->pays_code):'';
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
