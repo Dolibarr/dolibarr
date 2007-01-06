@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,14 +50,17 @@ class CommandeFournisseur extends Commande
     {
       $this->db = $DB;
 
-      $this->statuts[0] = "Brouillon";
-      $this->statuts[1] = "Validée";
-      $this->statuts[2] = "Approuvée";
-      $this->statuts[3] = "Commandée";
-      $this->statuts[4] = "Reçu partiellement";
-      $this->statuts[5] = "Reçu complètement";
-      $this->statuts[6] = "Annulée";
-      $this->statuts[9] = "Refusée";
+      global $langs;
+      $langs->load('orders');
+
+      $this->statuts[0] = $langs->trans('StatusOrderDraft');
+      $this->statuts[1] = $langs->trans('StatusOrderValidated');
+      $this->statuts[2] = $langs->trans('StatusOrderApproved');
+      $this->statuts[3] = $langs->trans('StatusOrderOnProcess');
+      $this->statuts[4] = $langs->trans('StatusOrderReceivedPartially');
+      $this->statuts[5] = $langs->trans('StatusOrderReceivedAll');
+      $this->statuts[6] = $langs->trans('StatusOrderCanceled');
+      $this->statuts[9] = $langs->trans('StatusOrderRefused');
 
       $this->products = array();
     }
