@@ -33,6 +33,7 @@ RegisteredOffice=Siège enregistré
 Name=Nom
 Lastname=Nom
 Firstname=Prénom
+PostOrFunction=Poste/Fonction
 UserTitle=Titre civilité
 Surname=Surnom/Pseudo
 Address=Adresse
