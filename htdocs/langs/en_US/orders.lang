@@ -103,3 +103,5 @@ OrderSource3=Phone compain
 OrderSource4=Fax campain
 OrderSource5=Commercial
 OrderSource6=Store
+QtyOrdered=Qty ordered
+AddDeliveryCostLine=Add a delivery cost line indicating the weight of the order
