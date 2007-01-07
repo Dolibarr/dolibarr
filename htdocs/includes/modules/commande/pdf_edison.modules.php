@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -113,7 +113,7 @@ class pdf_edison extends ModelePDFCommandes
 			{
 				if (create_exdir($dir) < 0)
 				{
-					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 					$langs->setPhpLang();	// On restaure langue session
 					return 0;
 				}
@@ -130,7 +130,7 @@ class pdf_edison extends ModelePDFCommandes
                 $pdf->SetDrawColor(128,128,128);
 
                 $pdf->SetTitle($com->ref);
-                $pdf->SetSubject($langs->trans("Order"));
+                $pdf->SetSubject($langs->transnoentities("Order"));
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
@@ -215,19 +215,19 @@ class pdf_edison extends ModelePDFCommandes
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 	
 				$pdf->SetXY (132, $tab2_top + 0);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("Reduction"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("Reduction"), 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
 				$pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
 	
 				$pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
 	
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($com->total_ht + $com->remise), 0, 'R', 0);
@@ -270,19 +270,19 @@ class pdf_edison extends ModelePDFCommandes
 
       $pdf->SetFont('Arial','',11);
             
-      $pdf->Text(30,$tab_top + 5,$langs->trans("Designation"));
+      $pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
       
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
+      $pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
       
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
+      $pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
       
       $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
+      $pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
       
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
+      $pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
       
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -290,7 +290,7 @@ class pdf_edison extends ModelePDFCommandes
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+      $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
     }
@@ -352,7 +352,7 @@ class pdf_edison extends ModelePDFCommandes
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $com->date));
-		$pdf->Text(11, 94, $langs->trans("Order")." ".$com->ref);
+		$pdf->Text(11, 94, $langs->transnoentities("Order")." ".$com->ref);
 	
 	
 	}
