@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,6 +44,7 @@ if ($optionlogoutput == "syslog")
       dolibarr_set_const($db,"SYSLOG_LEVEL",$_POST["level"]);
       dolibarr_syslog("Admin Syslog: New level ".$_POST["level"]);
       Header("Location: syslog.php");
+      exit;
     } 
   else
     {
@@ -67,6 +68,7 @@ if ($optionlogoutput == "file")
 
 $langs->load("admin");
 $langs->load("other");
+
 
 llxHeader();
 
@@ -96,6 +98,7 @@ $var=true;
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"140\"><input type=\"radio\" name=\"optionlogoutput\" value=\"syslog\" ".($syslogfacility?" checked":"")."> ".$langs->trans("SyslogSyslog")."</td>";
 print '<td colspan="2">'.$langs->trans("SyslogFacility").': <input type="text" class="flat" name="facility" value="'.$defaultsyslogfacility.'">';
+print ' &nbsp; ';
 print $langs->trans("SyslogLevel").': <select class="flat" name="level">';
 
 print '<option value="'.LOG_EMERG.'" '.(SYSLOG_LEVEL==LOG_EMERG?'SELECTED':'').'>LOG_EMERG ('.LOG_EMERG.')</option>';

@@ -622,6 +622,7 @@ SyslogSetup=Configuration du module Syslog
 SyslogOutput=Sortie des log
 SyslogSyslog=Syslog
 SyslogFacility=Facility
+SyslogLevel=Niveau
 SyslogSimpleFile=Fichier
 SyslogFilename=Nom et chemin du fichier
 ErrorUnknownSyslogConstant=La constante %s n'est pas une constante syslog connue
