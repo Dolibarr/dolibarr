@@ -123,7 +123,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield);
     print "</tr>\n";
     $var=true;
     while ($i < min($num,$limit))
@@ -134,7 +134,7 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
-		print '<td align="right">';
+		print '<td align="left">';
         if ($oldyear == strftime("%Y",$obj->dp) )
         {
         }
