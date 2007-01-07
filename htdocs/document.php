@@ -64,7 +64,7 @@ if ($modulepart)
     if ($modulepart == 'facture')
     {
         $user->getrights('facture');
-        if ($user->rights->facture->lire)
+        if ($user->rights->facture->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -75,7 +75,7 @@ if ($modulepart)
     if ($modulepart == 'ficheinter')
     {
         $user->getrights('ficheinter');
-        if ($user->rights->ficheinter->lire)
+        if ($user->rights->ficheinter->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -86,7 +86,7 @@ if ($modulepart)
     if ($modulepart == 'prelevement')
     {
         $user->getrights('prelevement');
-        if ($user->rights->prelevement->bons->lire)
+        if ($user->rights->prelevement->bons->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -97,7 +97,7 @@ if ($modulepart)
     if ($modulepart == 'propal')
     {
         $user->getrights('propale');
-        if ($user->rights->propale->lire)
+        if ($user->rights->propale->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -107,7 +107,7 @@ if ($modulepart)
     if ($modulepart == 'commande')
     {
         $user->getrights('commande');
-        if ($user->rights->commande->lire)
+        if ($user->rights->commande->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -118,7 +118,7 @@ if ($modulepart)
     if ($modulepart == 'commande_fournisseur')
     {
         $user->getrights('fournisseur');
-        if ($user->rights->fournisseur->commande->lire)
+        if ($user->rights->fournisseur->commande->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -129,7 +129,7 @@ if ($modulepart)
     if ($modulepart == 'facture_fournisseur')
     {
         $user->getrights('fournisseur');
-        if ($user->rights->fournisseur->facture->lire)
+        if ($user->rights->fournisseur->facture->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -140,7 +140,7 @@ if ($modulepart)
     if ($modulepart == 'facture_paiement')
     {
         $user->getrights('facture');
-        if ($user->rights->facture->lire)
+        if ($user->rights->facture->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -152,7 +152,7 @@ if ($modulepart)
     if ($modulepart == 'export_compta')
     {
         $user->getrights('compta');
-        if ($user->rights->compta->ventilation->creer)
+        if ($user->rights->compta->ventilation->creer || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -163,7 +163,7 @@ if ($modulepart)
     if ($modulepart == 'societe')
     {
         $user->getrights('societe');
-        if ($user->rights->societe->lire)
+        if ($user->rights->societe->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -174,7 +174,7 @@ if ($modulepart)
     if ($modulepart == 'expedition')
     {
         $user->getrights('expedition');
-        if ($user->rights->expedition->lire)
+        if ($user->rights->expedition->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -185,7 +185,7 @@ if ($modulepart)
     if ($modulepart == 'livraison')
     {
         $user->getrights('livraison');
-        if ($user->rights->expedition->livraison->lire)
+        if ($user->rights->expedition->livraison->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -196,7 +196,7 @@ if ($modulepart)
     if ($modulepart == 'telephonie')
     {
         $user->getrights('telephonie');
-        if ($user->rights->telephonie->lire)
+        if ($user->rights->telephonie->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -207,7 +207,7 @@ if ($modulepart)
     if ($modulepart == 'actions')
     {
         $user->getrights('commercial');
-        //if ($user->rights->commercial->actions->lire)      // Ce droit n'existe pas encore
+        //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
         //{
         $accessallowed=1;
         //}
@@ -218,7 +218,7 @@ if ($modulepart)
     if ($modulepart == 'actionsreport')
     {
         $user->getrights('commercial');
-        //if ($user->rights->commercial->actions->lire)      // Ce droit n'existe pas encore
+        //if ($user->rights->commercial->actions->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
         //{
         $accessallowed=1;
         //}
@@ -229,7 +229,7 @@ if ($modulepart)
     if ($modulepart == 'produit')
     {
         $user->getrights('produit');
-        //if ($user->rights->commercial->lire)      // Ce droit n'existe pas encore
+        //if ($user->rights->commercial->lire || eregi('^specimen',$original_file))	// Ce droit n'existe pas encore
         //{
         $accessallowed=1;
         //}
@@ -240,7 +240,7 @@ if ($modulepart)
     if ($modulepart == 'don')
     {
         $user->getrights('don');
-        if ($user->rights->don->lire)
+        if ($user->rights->don->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
@@ -251,7 +251,7 @@ if ($modulepart)
     if ($modulepart == 'remisecheque')
     {
         $user->getrights('banque');
-        if ($user->rights->banque)
+        if ($user->rights->banque || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
