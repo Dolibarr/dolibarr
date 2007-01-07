@@ -76,21 +76,20 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE ref like '".$this->prefix."%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
             if ($row) $coyymm = substr($row[0],0,6);
         }
-        if (! $coyymm || eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
-        {
-            return true;
-        }
-        else
+        if ($coyymm && ! eregi($this->prefix.'[0-9][0-9][0-9][0-9]',$coyymm))
         {
             $this->error='Une commande commençant par $coyymm existe en base et est incompatible avec cette numérotation. Supprimer la ou renommer la pour activer ce module.';
             return false;    
         }
+
+        return true;
     }
 
     /**     \brief      Renvoi prochaine valeur attribuée
@@ -104,6 +103,8 @@ class mod_commande_marbre extends ModeleNumRefCommandes
         $coyymm='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		$sql.= " WHERE ref like '".$this->prefix."%'";
+
         $resql=$db->query($sql);
         if ($resql)
         {

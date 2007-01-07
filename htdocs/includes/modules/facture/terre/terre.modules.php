@@ -82,7 +82,7 @@ class mod_facture_terre extends ModeleNumRefFactures
             $row = $db->fetch_row($resql);
             if ($row) $fayymm = substr($row[0],0,6);
         }
-        if ($fayymm && eregi($this->prefixinvoice.'[0-9][0-9][0-9][0-9]',$fayymm))
+        if ($fayymm && ! eregi($this->prefixinvoice.'[0-9][0-9][0-9][0-9]',$fayymm))
         {
             $this->error=$langs->trans('TerreNumRefModelError');
             return false;    
@@ -100,7 +100,7 @@ class mod_facture_terre extends ModeleNumRefFactures
             $row = $db->fetch_row($resql);
             if ($row) $fayymm = substr($row[0],0,6);
         }
-        if ($fayymm && eregi($this->prefixcreditnote.'[0-9][0-9][0-9][0-9]',$fayymm))
+        if ($fayymm && ! eregi($this->prefixcreditnote.'[0-9][0-9][0-9][0-9]',$fayymm))
         {
             $this->error=$langs->trans('TerreNumRefModelError');
             return false;    
