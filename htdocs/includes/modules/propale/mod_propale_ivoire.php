@@ -88,7 +88,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
         {
             $row = $db->fetch_row($resql);
             $pryy='';
-            if ($row[0]='')
+            if ($row[0]!='')
             {
             	$pryy = substr($row[0],0,4);
             }

@@ -109,9 +109,8 @@ class mod_propale_diamant extends ModeleNumRefPropales
         {
             $row = $db->fetch_row($resql);
             $pryy='';
-            if ($row[0]='')
-            {
-            	print 
+            if ($row[0]!='')
+            { 
             	$pryy = substr($row[0],0,4);
             }
             else
