@@ -517,7 +517,7 @@ delete from llx_c_tva where rowid='292' and fk_pays='5';
 delete from llx_c_tva where rowid='291' and fk_pays='29';
 delete from llx_c_tva where rowid='292' and fk_pays='29';
 delete from llx_c_tva where rowid='261' and fk_pays='26';
-delete from llx_c_tva where rowid='261' and fk_pays='26';
+delete from llx_c_tva where rowid='262' and fk_pays='26';
 delete from llx_c_tva where rowid='263' and fk_pays='26';
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (281, 28,  '10','0','VAT Rate 10',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (282, 28,   '0','0','VAT Rate 0',1);
