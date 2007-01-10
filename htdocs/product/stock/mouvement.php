@@ -68,7 +68,7 @@ $resql = $db->query($sql) ;
 
 if ($resql)
 {
-  $num = $db->num_rows($result);
+  $num = $db->num_rows($resql);
   
   if ($_GET["id"])
     {
