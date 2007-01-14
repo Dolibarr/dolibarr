@@ -310,6 +310,7 @@ class Contact
 			$birthday = (int) $this->birthday;
 			$sql .= ", birthday='".$birthday."'";
 		}
+        if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE idp=$id";
 	
 		$result = $this->db->query($sql);
