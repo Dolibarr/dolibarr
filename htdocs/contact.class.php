@@ -307,16 +307,8 @@ class Contact
 	
 		if ($this->birthday>0)
 		{
-			if (eregi('\-',$this->birthday))
-			{
-				// Si date = chaine
-				$sql .= ", birthday='".$this->birthday."'";
-			}
-			else
-			{
-				// Si date = timestamp
-				$sql .= ", birthday=".$this->db->idate($this->birthday);
-			}
+			$birthday = (int) $this->birthday;
+			$sql .= ", birthday='".$birthday."'";
 		}
 		$sql .= " WHERE idp=$id";
 	

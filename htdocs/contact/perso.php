@@ -75,14 +75,15 @@ if ($_POST["action"] == 'update')
 
     if ($_POST["birthdayyear"])
     {
-        if ($_POST["birthdayyear"]<=1970 && $_SERVER["WINDIR"])
-        {
-        // windows mktime does not support negative date timestamp so birthday is not supported for old persons
-        $contact->birthday = $_POST["birthdayyear"].'-'.$_POST["birthdaymonth"].'-'.$_POST["birthdayday"];
-        // array_push($error,"Windows ne sachant pas gérer des dates avant 1970, les dates de naissance avant cette date ne seront pas sauvegardées");
-        } else {
-            $contact->birthday     = mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
-        }
+		$birthday 	= (int) $_POST["birthdayday"];
+		$birthmonth = (int) $_POST["birthdaymonth"];
+		$birthyear 	= (int) $_POST["birthdayyear"];
+		if($birthmonth>=1 && $birthmonth<=12
+			&& $birthday>=1 && $birthday<=31
+			&& $birthyear>=1850 && $birthyear<=date('Y'))
+		{
+           	$contact->birthday     = $birthyear.$birthmonth.$birthday;
+		}
     }
 
     $contact->birthday_alert = $_POST["birthday_alert"];
