@@ -321,20 +321,35 @@ class Contact
 		// Mis a jour alerte birthday
 		if ($this->birthday_alert)
 		{
-			$sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
-			$sql.= "values (1,".$id.",".$user->id.")";
+			//check existing
+			$sql_check = "SELECT * FROM ".MAIN_DB_PREFIX."user_alert WHERE type=1 AND fk_contact=$id AND fk_user=".$user->id;
+			$result_check = $this->db->query($sql_check);
+	        if (!$result_check or ($this->db->num_rows($result_check)<1))
+    	    {
+				//insert
+				$sql = "INSERT into ".MAIN_DB_PREFIX."user_alert(type,fk_contact,fk_user) ";
+				$sql.= "values (1,".$id.",".$user->id.")";
+				$result = $this->db->query($sql);
+				if (!$result)
+				{
+					$this->error='Echec sql='.$sql;
+				}
+    	    }
+    	    else
+    	    {
+    	    	$result = true;
+    	    }
 		}
 		else
 		{
 			$sql = "DELETE from ".MAIN_DB_PREFIX."user_alert ";
 			$sql.= "where type=1 AND fk_contact=".$id." AND fk_user=".$user->id;
+			$result = $this->db->query($sql);
+			if (!$result)
+			{
+				$this->error='Echec sql='.$sql;
+			}
 		}
-		$result = $this->db->query($sql);
-		if (!$result)
-		{
-			$this->error='Echec sql='.$sql;
-		}
-	
 		return $result;
 	}
 
