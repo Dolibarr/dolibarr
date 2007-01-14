@@ -78,7 +78,7 @@ function llxHeader($head = "")
 	
 	if ($user->rights->banque->modifier)
 	{
-		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("Virements"),1,$user->rights->banque->modifier);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->modifier);
 	}
 	
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)

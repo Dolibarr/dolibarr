@@ -90,6 +90,7 @@ CustomerInvoicePayment=Paiement client
 SupplierInvoicePayment=Paiement fournisseur
 FinancialAccountJournal=Journal compte financier
 BankTransfer=Transfert bancaire
+BankTransfers=Transferts bancaire
 TransferDesc=Transférer d'un compte vers un autre. Dolibarr écrira deux enregistrements (un pour le débit du compte source et un pour le crédit du compte de destination, du même montant). Les mêmes libellé et date seront utilisés pour cette transaction
 TransferFrom=De
 TransferTo=À
