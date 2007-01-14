@@ -135,13 +135,16 @@ if ($_GET["action"] == 'create')
 		print '<textarea name="note" wrap="soft" cols="60" rows="8"></textarea></td></tr>';
 
 		print "<tr><td>".$langs->trans("Author")." :</td><td>".$user->fullname."</td></tr>";
-		print "<tr><td>Conditions de réglement :</td><td>";
 
-		print $facture->cond_reglement;
-
+		print "<tr><td>".$langs->trans("PaymentConditions")." :</td><td>";
+		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->cond_reglement_id,'none');
 		print "</td></tr>";
 
-		print "<tr><td>Projet :</td><td>";
+		print "<tr><td>".$langs->trans("PaymentMode")." :</td><td>";
+		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$facture->id,$facture->mode_reglement_id,'none');
+		print "</td></tr>";
+
+		print "<tr><td>".$langs->trans("Project")." :</td><td>";
 		if ($facture->projetid > 0)
 		{
 			$proj = new Project($db);
@@ -153,7 +156,11 @@ if ($_GET["action"] == 'create')
 
 
 		print '<br>';
-		print_titre('Services/Produits');
+		if ($conf->service->enabled) {
+		   print_titre($langs->trans("ProductsAndServices"));
+		} else {
+		   print_titre($langs->trans("Products"));
+		}
 
 		/*
 		* Lignes de factures
@@ -299,7 +306,9 @@ else
 			print "<td colspan=\"3\">";
 			print '<b><a href="../fiche.php?socid='.$soc->id.'">'.$soc->nom.'</a></b></td>';
 
-			print "<td>Conditions de réglement : " . $fac->cond_reglement ."</td></tr>";
+			print "<td>". $langs->trans("PaymentConditions") ." : ";
+			$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->cond_reglement_id,'none');
+			print "</td></tr>";
 
 			print "<tr><td>".$langs->trans("Author")."</td><td colspan=\"3\">$author->fullname</td>";
 
@@ -312,6 +321,8 @@ else
 				print '<td rowspan="4" valign="top">';
 			}
 
+			print $langs->trans("PaymentMode") ." : ";
+			$html->form_modes_reglement($_SERVER['PHP_SELF'].'?facid='.$fac->id,$fac->mode_reglement_id,'none');
 			print "</td></tr>";
 
 			print '<tr><td>'.$langs->trans("AmountHT").'</td>';

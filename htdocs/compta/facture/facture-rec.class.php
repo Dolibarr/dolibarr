@@ -96,10 +96,11 @@ class FactureRec extends Facture
             // On positionne en mode brouillon la facture
             $this->brouillon = 1;
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement) ";
+            $sql = "INSERT INTO ".MAIN_DB_PREFIX."facture_rec (titre, fk_soc, datec, amount, remise, remise_percent, note, fk_user_author,fk_projet, fk_cond_reglement, fk_mode_reglement) ";
             $sql.= " VALUES ('$this->titre', '$facsrc->socid', now(), '$facsrc->amount', '$facsrc->remise', '$facsrc->remise_percent', '".addslashes($this->note)."','$user->id',";
             $sql.= " ".($facsrc->projetid?"'".$facsrc->projetid."'":"null").", ";
-            $sql.= " '".$facsrc->cond_reglement_id."')";
+            $sql.= " '".$facsrc->cond_reglement_id."',";
+            $sql.= " '".$facsrc->mode_reglement_id."')";
             if ( $this->db->query($sql) )
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."facture_rec");
@@ -150,7 +151,7 @@ class FactureRec extends Facture
     function fetch($rowid, $societe_id=0)
     {
 
-        $sql = "SELECT f.fk_soc,f.titre,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle, c.libelle_facture, f.note, f.fk_user_author";
+        $sql = "SELECT f.fk_soc,f.titre,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle, c.libelle_facture, f.note, f.fk_user_author, f.fk_mode_reglement";
         $sql .= " FROM ".MAIN_DB_PREFIX."facture_rec as f, ".MAIN_DB_PREFIX."cond_reglement as c";
         $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
 
@@ -178,6 +179,7 @@ class FactureRec extends Facture
                 $this->socid             = $obj->fk_soc;
                 $this->statut             = $obj->fk_statut;
                 $this->date_lim_reglement     = $obj->dlr;
+                $this->mode_reglement_id      = $obj->fk_mode_reglement;
                 $this->cond_reglement_id      = $obj->crid;
                 $this->cond_reglement         = $obj->libelle;
                 $this->cond_reglement_facture = $obj->libelle_facture;
