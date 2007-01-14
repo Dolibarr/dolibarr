@@ -9,7 +9,6 @@ OrderDate=Bestellingsdatum
 NewOrder=Nieuwe bestelling
 ToOrder=Naar bestelling
 MakeOrder=Maak bestelling
-NoStockForThisProduct=Geen voorraad voor dit product
 SupplierOrder=Leverenaciersbestelling
 SuppliersOrders=Leverenaciersbestellingen
 SuppliersOrdersRunning=Huidige leverenaciersbestellingen

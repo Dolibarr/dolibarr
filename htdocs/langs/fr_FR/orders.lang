@@ -9,7 +9,6 @@ OrderDate=Date commande
 NewOrder=Nouvelle commande
 ToOrder=Passer commande
 MakeOrder=Passer commande
-NoStockForThisProduct=Pas de stock pour ce produit
 SupplierOrder=Commande fournisseur
 SuppliersOrders=Commandes fournisseurs
 SuppliersOrdersRunning=Commandes fournisseurs en cours

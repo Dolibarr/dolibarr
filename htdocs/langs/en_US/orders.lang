@@ -9,7 +9,6 @@ OrderDate=Order date
 NewOrder=New order
 ToOrder=Make order
 MakeOrder=Make order
-NoStockForThisProduct=No stock for this product
 SupplierOrder=Supplier order
 SuppliersOrders=Suppliers' orders
 SuppliersOrdersRunning=Current suppliers' orders
