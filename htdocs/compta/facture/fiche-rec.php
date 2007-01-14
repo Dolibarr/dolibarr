@@ -99,7 +99,7 @@ if ($_REQUEST["action"] == 'delete' && $user->rights->facture->supprimer)
  *	Affichage page
  */
 
-llxHeader('','Facture récurrente','ch-facture.html#s-fac-facture-rec');
+llxHeader('',$langs->trans("RepeatableInvoices"),'ch-facture.html#s-fac-facture-rec');
 
 $html = new Form($db);
 
@@ -413,7 +413,7 @@ else
 			if ($result)
 			{
 				$num = $db->num_rows($result);
-				print_barre_liste($langs->trans("RepeatableInvoice"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+				print_barre_liste($langs->trans("RepeatableInvoices"),$page,"fiche-rec.php","&socid=$socid",$sortfield,$sortorder,'',$num);
 
 				$i = 0;
 				print "<table class=\"noborder\" width=\"100%\">";
