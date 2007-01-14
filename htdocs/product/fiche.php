@@ -739,7 +739,7 @@ if ($_GET["id"] || $_GET["ref"])
 	      print '<tr><td>'.$langs->trans("Stock").'</td>';
 	      if ($product->no_stock)
 		{
-		  print "<td>".$langs->trans("NoStockDefined");
+		  print "<td>".$langs->trans("NoStockForThisProduct");
 		}
 	      else
 		{
