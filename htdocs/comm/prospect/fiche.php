@@ -285,7 +285,7 @@ if ($socid > 0)
             }
             print '</td>';
             print '<td>'.$obj->poste.'&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone;
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone;
 
 	        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	        {
@@ -294,14 +294,14 @@ if ($socid > 0)
 	        }
 			print '</a></td>';
 
-            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-            print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
         	print '<td align="center">';
         	
            	if ($user->rights->societe->contact->creer)
     		{
-        		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        		print "<a href=\"".DOL_URL_ROOT."/contact/fiche.php?action=edit&amp;id=$obj->idp\">";
         	 	print img_edit();
         	 	print '</a>';
         	}
@@ -309,7 +309,7 @@ if ($socid > 0)
         		
         	print '</td>';
 
-            print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+            print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$societe->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
             print '</a></td>';
 
