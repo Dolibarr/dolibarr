@@ -388,7 +388,7 @@ class MenuLeft {
 					{
 						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/clients.php?action=facturer",$langs->trans("NewBill"),2,$user->rights->facture->creer);
 					}
-					if (! defined("FACTURE_DISABLE_RECUR") || ! FACTURE_DISABLE_RECUR)
+					if (! $conf->global->FACTURE_DISABLE_RECUR)
 					{
 						if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/fiche-rec.php",$langs->trans("Repeatable"),2,$user->rights->facture->lire);
 					}
