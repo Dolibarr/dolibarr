@@ -24,6 +24,7 @@ NoReplacableInvoice=Pas de facture remplaçable
 NoInvoiceToCorrect=Pas de facture à corriger
 InvoiceHasAvoir=Corrigée par une ou plusieurs factures
 CardBill=Fiche facture
+PredefinedInvoices=Facture prédéfinie
 Invoice=Facture
 Invoices=Factures
 InvoiceLine=Ligne de facture
