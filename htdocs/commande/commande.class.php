@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -212,47 +212,50 @@ class Commande extends CommonObject
 	// on vérifie si la commande est en numérotation provisoire
 	$comref = substr($this->ref, 1, 4);
 	if ($comref == 'PROV')
-	  {
+	{
 	    $num = $this->getNextNumRef($soc);
-	  }
+  }
 	else
-	  {
+  {
 	    $num = $this->ref;
-	  }
+  }
 	
 	$sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='$num', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
 	$sql .= " WHERE rowid = $this->id AND fk_statut = 0";
 	
 	$resql=$this->db->query($sql);
 	if ($resql)
+  {
+	  // On efface le répertoire de pdf provisoire
+	  if ($comref == 'PROV')
 	  {
-	    // On efface le répertoire de pdf provisoire
 	    $comref = sanitize_string($this->ref);
 	    if ($conf->commande->dir_output)
-	      {
-		$dir = $conf->commande->dir_output . "/" . $comref ;
-		$file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
-		if (file_exists($file))
-		  {
-		    commande_delete_preview($this->db, $this->id, $this->ref);
+	    {
+		      $dir = $conf->commande->dir_output . "/" . $comref ;
+		      $file = $conf->commande->dir_output . "/" . $comref . "/" . $comref . ".pdf";
+		      if (file_exists($file))
+		      {
+		        commande_delete_preview($this->db, $this->id, $this->ref);
 		    
-		    if (!dol_delete_file($file))
-		      {
-			$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
-			$this->db->rollback();
-			return 0;
+		       if (!dol_delete_file($file))
+		       {
+			       $this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+			       $this->db->rollback();
+			       return 0;
+		       }
 		      }
-		  }
-		if (file_exists($dir))
-		  {
-		    if (!dol_delete_dir($dir))
+		      if (file_exists($dir))
 		      {
-			$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
-			$this->db->rollback();
-			return 0;
+		        if (!dol_delete_dir($dir))
+		        {
+			        $this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+			        $this->db->rollback();
+			        return 0;
+		        }
 		      }
-		  }
-	      }
+	     }
+	   }
 
 	    // Appel des triggers
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
