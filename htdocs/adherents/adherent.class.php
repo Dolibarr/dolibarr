@@ -412,7 +412,7 @@ class Adherent
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Adherent.class::update user=".$user." notrigger=".$notrigger);
+		dolibarr_syslog("Adherent.class::update user=".$user->id." notrigger=".$notrigger);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
