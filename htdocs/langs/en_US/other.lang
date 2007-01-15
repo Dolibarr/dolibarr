@@ -21,7 +21,6 @@ Notify_NOTIFY_VAL_FAC=Validate bill
 NbOfAttachedFiles=Number of attached files/documents
 TotalSizeOfAttachedFiles=Total size of attached files/documents
 MaxSize=Maximum size
-MaxSizeForUploadedFiles=Maximum size for uplaoded files (0 to disallow any upload)
 AttachANewFile=Attach a new file/document
 LinkedObject=Linked object
 Miscellanous=Miscellanous
