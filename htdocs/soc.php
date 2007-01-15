@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -24,10 +24,10 @@
  */
 
 /**
-*		\file       htdocs/soc.php
-*		\ingroup    societe
-*		\brief      Onglet societe d'une societe
-*		\version    $Revision$
+   \file       htdocs/soc.php
+   \ingroup    societe
+   \brief      Onglet societe d'une societe
+   \version    $Revision$
 */
 
 require("pre.inc.php");
@@ -80,90 +80,97 @@ $soc = new Societe($db);
 
 if ($_POST["getcustomercode"])
 {
-	// On défini valeur pour code_client
-	$_POST["code_client"]="aa";
+  // On défini valeur pour code_client
+  $_POST["code_client"]="aa";
 }
 
 if ($_POST["getsuppliercode"])
 {
-	// On défini valeur pour code_fournisseur
-	$_POST["code_fournisseur"]="aa";
+  // On défini valeur pour code_fournisseur
+  $_POST["code_fournisseur"]="aa";
 }
 
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
-	 && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
+    && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
-    $soc->nom                   = $_POST["nom"];
-    $soc->adresse               = $_POST["adresse"];
-    $soc->cp                    = $_POST["cp"];
-    $soc->ville                 = $_POST["ville"];
-    $soc->pays_id               = $_POST["pays_id"];
-    $soc->departement_id        = $_POST["departement_id"];
-    $soc->tel                   = $_POST["tel"];
-    $soc->fax                   = $_POST["fax"];
-    $soc->email                 = $_POST["email"];
-    $soc->url                   = $_POST["url"];
-    $soc->siren                 = $_POST["siren"];
-    $soc->siret                 = $_POST["siret"];
-    $soc->ape                   = $_POST["ape"];
-    $soc->prefix_comm           = $_POST["prefix_comm"];
-    $soc->code_client           = $_POST["code_client"];
-    $soc->code_fournisseur      = $_POST["code_fournisseur"];
-    $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
-    $soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
-    $soc->capital               = $_POST["capital"];
-
-	$soc->tva_assuj             = $_POST["assujtva_value"];
-    $soc->tva_intra_code        = $_POST["tva_intra_code"];
-    $soc->tva_intra_num         = $_POST["tva_intra_num"];
-    $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
-
-    $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
-    $soc->effectif_id           = $_POST["effectif_id"];
-    $soc->typent_id             = $_POST["typent_id"];
-    $soc->client                = $_POST["client"];
-    $soc->fournisseur           = $_POST["fournisseur"];
-    $soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
-    
-    if ($_POST["action"] == 'add')
+  $soc->nom                   = $_POST["nom"];
+  $soc->adresse               = $_POST["adresse"];
+  $soc->cp                    = $_POST["cp"];
+  $soc->ville                 = $_POST["ville"];
+  $soc->pays_id               = $_POST["pays_id"];
+  $soc->departement_id        = $_POST["departement_id"];
+  $soc->tel                   = $_POST["tel"];
+  $soc->fax                   = $_POST["fax"];
+  $soc->email                 = $_POST["email"];
+  $soc->url                   = $_POST["url"];
+  $soc->siren                 = $_POST["siren"];
+  $soc->siret                 = $_POST["siret"];
+  $soc->ape                   = $_POST["ape"];
+  $soc->prefix_comm           = $_POST["prefix_comm"];
+  $soc->code_client           = $_POST["code_client"];
+  $soc->code_fournisseur      = $_POST["code_fournisseur"];
+  $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
+  $soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
+  $soc->capital               = $_POST["capital"];
+  
+  $soc->tva_assuj             = $_POST["assujtva_value"];
+  $soc->tva_intra_code        = $_POST["tva_intra_code"];
+  $soc->tva_intra_num         = $_POST["tva_intra_num"];
+  $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+  
+  $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
+  $soc->effectif_id           = $_POST["effectif_id"];
+  $soc->typent_id             = $_POST["typent_id"];
+  $soc->client                = $_POST["client"];
+  $soc->fournisseur           = $_POST["fournisseur"];
+  $soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
+  
+  if ($_POST["action"] == 'add')
     {
-        $result = $soc->create($user);
-    
-        if ($result >= 0)
+      $result = $soc->create($user);
+      
+      if ($result >= 0)
         {
-            Header("Location: soc.php?socid=".$soc->id);
-            exit;
+	  if (  $soc->client == 1 )
+	    {
+	      Header("Location: comm/fiche.php?socid=".$soc->id);
+	    }
+	  else
+	    {
+	      Header("Location: soc.php?socid=".$soc->id);
+	    }
+	  exit;
         }
-        else
+      else
         {
-            $mesg=$soc->error;
-            $_GET["action"]='create';
+	  $mesg=$soc->error;
+	  $_GET["action"]='create';
         }
     }
-    
-    if ($_POST["action"] == 'update')
+  
+  if ($_POST["action"] == 'update')
     {
-        if ($_POST["cancel"])
+      if ($_POST["cancel"])
         {
-            Header("Location: soc.php?socid=".$socid);
-            exit;
+	  Header("Location: soc.php?socid=".$socid);
+	  exit;
         }
-        
-        $result = $soc->update($socid,$user);
-        if ($result >= 0)
+      
+      $result = $soc->update($socid,$user);
+      if ($result >= 0)
         {
-            Header("Location: soc.php?socid=".$socid);
-            exit;
-		}
-		else
-		{
-	        $soc->id = $socid;
-            $reload = 0;
-            $mesg = $soc->error;
-            $_GET["action"]= "edit";
+	  Header("Location: soc.php?socid=".$socid);
+	  exit;
+	}
+      else
+	{
+	  $soc->id = $socid;
+	  $reload = 0;
+	  $mesg = $soc->error;
+	  $_GET["action"]= "edit";
         }
     }
-
+  
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
