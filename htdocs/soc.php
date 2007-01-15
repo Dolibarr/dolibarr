@@ -137,7 +137,14 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	    }
 	  else
 	    {
-	      Header("Location: soc.php?socid=".$soc->id);
+	      if (  $soc->fournisseur == 1 )
+		{
+		  Header("Location: fourn/fiche.php?socid=".$soc->id);
+		}
+	      else
+		{
+		  Header("Location: soc.php?socid=".$soc->id);
+		}
 	    }
 	  exit;
         }
