@@ -115,7 +115,7 @@ class ComptaExport
 	      {
 		$societe=new Societe($this->db);
 		$societe->fetch($obj->idp);
-		$this->error_message.= $langs->transnoentities("ErrorWrongAccountancyCodeForCompany",$societe->getNomUrl(1));
+		$this->error_message.= $langs->transnoentities("ErrorWrongAccountancyCodeForCompany",$societe->getNomUrl(1))."<br>";
 		$error++;
 	      }
 	    
