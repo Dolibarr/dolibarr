@@ -151,9 +151,13 @@ class FactureRec extends Facture
     function fetch($rowid, $societe_id=0)
     {
 
-        $sql = "SELECT f.fk_soc,f.titre,f.amount,f.tva,f.total,f.total_ttc,f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle, c.libelle_facture, f.note, f.fk_user_author, f.fk_mode_reglement";
-        $sql .= " FROM ".MAIN_DB_PREFIX."facture_rec as f, ".MAIN_DB_PREFIX."cond_reglement as c";
-        $sql .= " WHERE f.rowid=$rowid AND c.rowid = f.fk_cond_reglement";
+        $sql = "SELECT f.fk_soc, f.titre, f.amount, f.tva, f.total, f.total_ttc";
+        $sql .= ", f.remise,f.remise_percent,f.fk_projet, c.rowid as crid, c.libelle";
+        $sql .= ", c.libelle_facture, f.note, f.fk_user_author, f.fk_cond_reglement, f.fk_mode_reglement";
+        $sql .= " FROM ".MAIN_DB_PREFIX."facture_rec as f";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."cond_reglement as c ON f.fk_cond_reglement = c.rowid";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_paiement as p ON f.fk_mode_reglement = p.id";
+        $sql .= " WHERE f.rowid=".$rowid;
 
         if ($societe_id > 0)
         {
