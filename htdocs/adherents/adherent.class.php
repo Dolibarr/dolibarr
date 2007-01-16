@@ -444,7 +444,7 @@ class Adherent
 		$sql .= ",fk_adherent_type=".$this->typeid;
 		$sql .= ",morphy="  ."'".$this->morphy."'";
 
-		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+		$sql .= ",naiss="   .($this->naiss?"'".$this->naiss."'":"null");
 		if ($this->datefin)   $sql .= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
 		if ($this->datevalid) $sql .= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
 
@@ -604,7 +604,7 @@ class Adherent
         $sql.= " ".$this->db->pdate("d.datec")." as datec,";
         $sql.= " ".$this->db->pdate("d.tms")." as datem,";
         $sql.= " ".$this->db->pdate("d.datefin")." as datefin,";
-        $sql.= " ".$this->db->pdate("d.naiss")." as datenaiss,";
+        $sql.= " d.naiss as datenaiss,";
         $sql.= " ".$this->db->pdate("d.datevalid")." as datev,";
         $sql.= " d.pays,";
         $sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";

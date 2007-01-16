@@ -135,10 +135,18 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
-	 && isset($_POST["naissmonth"])
+	 && isset($_POST["naissmonth"]) && $_POST["naissmonth"]
 	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
-		$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		#$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$naissday   = (int) $_POST["naissday"];
+  	        $naissmonth = (int) $_POST["naissmonth"];
+  	        $naissyear  = (int) $_POST["naissyear"];
+  	        if($naissmonth>=1 && $naissmonth<=12
+  	           && $naissday>=1 && $naissday<=31
+  	           && $naissyear>=1850 && $naissyear<=date('Y')) {
+			$datenaiss=$naissyear.$naissmonth.$naissday;
+		}
 	}
 
 	$adh->id          = $_POST["rowid"];
@@ -199,6 +207,14 @@ if ($_POST["action"] == 'add')
 	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
 	{
 		$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+		$naissday   = (int) $_POST["naissday"];
+  	        $naissmonth = (int) $_POST["naissmonth"];
+  	        $naissyear  = (int) $_POST["naissyear"];
+  	        if($naissmonth>=1 && $naissmonth<=12
+  	           && $naissday>=1 && $naissday<=31
+  	           && $naissyear>=1850 && $naissyear<=date('Y')) {
+			$datenaiss=$naissyear.$naissmonth.$naissday;
+		}
 	}
 	$datecotisation='';
 	if (isset($_POST["naissday"]) && isset($_POST["naissmonth"]) && isset($_POST["naissyear"]))
