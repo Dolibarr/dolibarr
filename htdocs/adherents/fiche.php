@@ -134,20 +134,18 @@ if ($_POST["action"] == 'cotisation')
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$datenaiss='';
-	if (isset($_POST["naissday"]) && $_POST["naissday"]
-	 && isset($_POST["naissmonth"]) && $_POST["naissmonth"]
-	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
-	{
-		#$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
-		$naissday   = (int) $_POST["naissday"];
-  	        $naissmonth = (int) $_POST["naissmonth"];
-  	        $naissyear  = (int) $_POST["naissyear"];
-  	        if($naissmonth>=1 && $naissmonth<=12
-  	           && $naissday>=1 && $naissday<=31
-  	           && $naissyear>=1850 && $naissyear<=date('Y')) {
-			$datenaiss=$naissyear.$naissmonth.$naissday;
+    if (!empty($_POST["naissyear"]))
+    {
+		$birthday 	= (int) $_POST["naissday"];
+		$birthmonth = (int) $_POST["naissmonth"];
+		$birthyear 	= (int) $_POST["naissyear"];
+		if($birthmonth>=1 && $birthmonth<=12
+			&& $birthday>=1 && $birthday<=31
+			&& $birthyear>=1850 && $birthyear<=date('Y'))
+		{
+           	$datenaiss     = ($birthyear*10000)+($birthmonth*100)+$birthday;
 		}
-	}
+    }
 
 	$adh->id          = $_POST["rowid"];
 	$adh->prenom      = $_POST["prenom"];
@@ -167,7 +165,6 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	$adh->phone_mobile= $_POST["phone_mobile"];
 	$adh->email       = $_POST["email"];
 	$adh->naiss       = $datenaiss;
-	$adh->date        = $datenaiss;	// A virer
 	$adh->photo       = $_POST["photo"];
 
 	$adh->typeid      = $_POST["type"];
@@ -184,7 +181,9 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	{
 		if (ereg("^options_",$key))
 		{
-			$adh->array_options[$key]=$_POST[$key];
+			//escape values from POST, at least with addslashes, to avoid obvious SQL injections
+			//(array_options is directly input in the DB in adherent.class.php::update())
+			$adh->array_options[$key]=addslashes($_POST[$key]);
 		}
 	}
 	if ($adh->update($user,0) >= 0)
@@ -202,23 +201,21 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 if ($_POST["action"] == 'add')
 {
 	$datenaiss='';
-	if (isset($_POST["naissday"]) && $_POST["naissday"]
-	 && isset($_POST["naissmonth"])
-	 && isset($_POST["naissyear"]) && $_POST["naissyear"])
-	{
-		$datenaiss=@mktime(12, 0 , 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
-		$naissday   = (int) $_POST["naissday"];
-  	        $naissmonth = (int) $_POST["naissmonth"];
-  	        $naissyear  = (int) $_POST["naissyear"];
-  	        if($naissmonth>=1 && $naissmonth<=12
-  	           && $naissday>=1 && $naissday<=31
-  	           && $naissyear>=1850 && $naissyear<=date('Y')) {
-			$datenaiss=$naissyear.$naissmonth.$naissday;
+    if ($_POST["naissyear"])
+    {
+		$birthday 	= (int) $_POST["naissday"];
+		$birthmonth = (int) $_POST["naissmonth"];
+		$birthyear 	= (int) $_POST["naissyear"];
+		if($birthmonth>=1 && $birthmonth<=12
+			&& $birthday>=1 && $birthday<=31
+			&& $birthyear>=1850 && $birthyear<=date('Y'))
+		{
+           	$datenaiss     = ($birthyear*10000)+($birthmonth*100)+$birthday;
 		}
-	}
+    }
 	$datecotisation='';
-	if (isset($_POST["naissday"]) && isset($_POST["naissmonth"]) && isset($_POST["naissyear"]))
-	{
+	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
+    {
 		$datecotisation=@mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
@@ -262,7 +259,9 @@ if ($_POST["action"] == 'add')
     $adh->morphy      = $morphy;
     foreach($_POST as $key => $value){
         if (ereg("^options_",$key)){
-            $adh->array_options[$key]=$_POST[$key];
+			//escape values from POST, at least with addslashes, to avoid obvious SQL injections
+			//(array_options is directly input in the DB in adherent.class.php::update())
+			$adh->array_options[$key]=addslashes($_POST[$key]);
         }
     }
 
