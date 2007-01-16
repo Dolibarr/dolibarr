@@ -167,7 +167,7 @@ class pdf_soleil extends ModelePDFFicheinter
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',14);
                 $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fich->date));
-                $pdf->Text(11, 94, "Fiche d'intervention : ".$fich->ref);
+                $pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fich->ref);
 
                 $pdf->SetFillColor(220,220,220);
                 $pdf->SetTextColor(0,0,0);
@@ -177,7 +177,7 @@ class pdf_soleil extends ModelePDFFicheinter
                 $tab_height = 110;
 
                 $pdf->SetXY (10, $tab_top);
-                $pdf->MultiCell(190,8,'Désignation',0,'L',0);
+                $pdf->MultiCell(190,8,$langs->trans("Description"),0,'L',0);
                 $pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
                 $pdf->Rect(10, $tab_top, 190, $tab_height);
