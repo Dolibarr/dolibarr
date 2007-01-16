@@ -443,8 +443,8 @@ class Adherent
 		$sql .= ",statut="  .$this->statut;
 		$sql .= ",fk_adherent_type=".$this->typeid;
 		$sql .= ",morphy="  ."'".$this->morphy."'";
-
-		$sql .= ",naiss="   .($this->naiss?"'".$this->naiss."'":"null");
+		$birthday = (int) $this->naiss;
+		$sql .= ",naiss="   .($birthday?"'".$birthday."'":"null");
 		if ($this->datefin)   $sql .= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
 		if ($this->datevalid) $sql .= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
 
