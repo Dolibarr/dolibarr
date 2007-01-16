@@ -578,7 +578,7 @@ if ($action == 'edit')
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    $htmls->select_YesNo($adh->public);
+    $htmls->select_YesNo($adh->public,"public");
     print "</td></tr>\n";
 
 	print '<tr><td colspan="3" align="center">';
@@ -685,7 +685,7 @@ if ($action == 'create')
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    $htmls->select_YesNo($adh->public);
+    $htmls->select_YesNo($adh->public,"public");
     print "</td></tr>\n";
 
 
