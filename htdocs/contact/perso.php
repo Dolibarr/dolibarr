@@ -141,10 +141,12 @@ if ($_GET["action"] == 'edit')
 
     print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
     $html=new Form($db);
-    if ($contact->birthday && $contact->birthday > 0)
+    if ($contact->birthday)
     {
         print $html->select_date($contact->birthday,'birthday',0,0,0,"perso");
-    } else {
+    }
+    else
+    {
         print $html->select_date(0,'birthday',0,0,1,"perso");
     }
     print '</td>';
@@ -194,7 +196,8 @@ else
     print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
-    if ($contact->birthday && $contact->birthday > 0) {
+    if ($contact->birthday)
+    {
         print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday);
 
         if ($contact->birthday_alert)
@@ -202,7 +205,8 @@ else
         else
         print ' (alerte anniversaire inactive)</td>';
     }
-    else {
+    else
+    {
         print '<tr><td>'.$langs->trans("Birthday").'</td><td colspan="3">'.$langs->trans("Unknown")."</td>";
     }
     print "</tr>";

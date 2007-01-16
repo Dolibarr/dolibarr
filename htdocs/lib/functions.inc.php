@@ -520,7 +520,8 @@ function dolibarr_print_date($time,$format='')
         {
             // Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
             // mktime si l'année est inférieur à 1970. On retourne un format fixe
-            return "$syear-$smonth-$sday";
+//            return "$syear-$smonth-$sday";
+            return strftime($format,dolibarr_mktime($shour,$smin,0,$smonth,$sday,$syear));
         }
         else
         {
@@ -562,11 +563,18 @@ function dolibarr_stringtotime($string)
 */
 function dolibarr_mktime($x,$y,$z,$month,$day,$year)
 {
+	$montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
+					  7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
+					  
 	if ($year <= 1970 && $_SERVER["WINDIR"])
 	{
-		// Gestion a faire pour windows	
-
-		return 0;
+		// Sous Windows, mktime ne fonctionne pas quand année < 1970.
+		// On utilise strtotime pour obtenir la traduction.
+		$string=$day." ".$montharray[0+$month]." ".$year;
+		$date=strtotime($string);
+		//print "x".($month)."y".(0+$month)." ".$string." ".$date."e";
+		//print "eee".$db->idate($date);
+		return $date;
 	}
  	else
  	{

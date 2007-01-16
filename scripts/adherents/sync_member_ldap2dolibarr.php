@@ -150,12 +150,12 @@ if ($result >= 0)
 			$member->photo='';
 			$member->public=1;
 			$member->statut=-1;		// Par defaut, statut brouillon
-			$member->naiss=dolibarr_mktime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
+			$member->naiss=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
 			// Cas particulier (on ne rentre jamais dans ce if)
 			if (isset($ldapuser["prnxstatus"][0]))
 			{
-				$member->datec=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
-				$member->datevalid=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
+				$member->datec=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
+				$member->datevalid=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
 				if ($ldapuser["prnxstatus"][0]==1)
 				{
 					$member->statut=1;
@@ -190,8 +190,8 @@ if ($result >= 0)
 			// YOUR OWN CODE HERE
 			//----------------------------
 			
-			$datefirst=dolibarr_mktime($ldapuser["prnxfirtscontribution"][0]);
-			$datelast=dolibarr_mktime($ldapuser["prnxlastcontribution"][0]);
+			$datefirst=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
+			$datelast=dolibarr_stringtotime($ldapuser["prnxlastcontribution"][0]);
 			if ($datefirst)
 			{
 				$crowid=$member->cotisation($datefirst, 0, 0);

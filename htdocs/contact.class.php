@@ -305,9 +305,9 @@ class Contact
 		// Mis a jour contact
 		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=".$id;
 	
-		if ($this->birthday > 0)
+		if ($this->birthday)	// <0 si avant 1970, >0 si apres 1970
 		{
-            if (eregi('\-',$this->birthday))
+            if (eregi('^[0-9]+\-',$this->birthday))
             {
                 // Si date = chaine (ne devrait pas arriver)
                 $sql .= ", birthday='".$this->birthday."'"; 	 
@@ -320,11 +320,12 @@ class Contact
 		}
         if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE idp=$id";
-	
-		$result = $this->db->query($sql);
-		if (!$result)
+
+		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);	
+		$resql = $this->db->query($sql);
+		if (! $resql)
 		{
-			$this->error='Echec sql='.$sql;
+			$this->error=$this->db->error();
 		}
 	
 		// Mis a jour alerte birthday
@@ -372,17 +373,18 @@ class Contact
     function fetch($id, $user=0)
     {
     	global $langs;
-        $sql = "SELECT c.idp, c.fk_soc, c.civilite civilite_id, c.name, c.firstname,";
+        $sql = "SELECT c.idp, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
         $sql.= " c.address, c.cp, c.ville,";
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
-        $sql.= " c.birthday as birthday, c.poste,";
-        $sql.= " c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note,";
+        $sql.= " c.birthday,";
+        $sql.= " c.poste, c.phone, c.phone_perso, c.phone_mobile, c.fax, c.email, c.jabberid, c.note,";
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.idp = u.fk_socpeople";
         $sql.= " WHERE c.idp = ". $id;
     
+    	dolibarr_syslog("Contact::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -401,10 +403,10 @@ class Contact
                 $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
-        	$this->fk_pays        = $obj->fk_pays;
-        	$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-        	//$this->pays           = $obj->fk_pays?$obj->pays:'';
-        	$this->pays           = $langs->trans("Country".$obj->pays_code)?$langs->trans("Country".$obj->pays_code):'';
+        		$this->fk_pays        = $obj->fk_pays;
+        		$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
+        		//$this->pays           = $obj->fk_pays?$obj->pays:'';
+        		$this->pays           = $langs->trans("Country".$obj->pays_code)?$langs->trans("Country".$obj->pays_code):'';
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
@@ -428,8 +430,7 @@ class Contact
                 $this->user_login     = $obj->user_login;
             }
             $this->db->free($resql);
-    
-    
+
             // Recherche le user Dolibarr lié à ce contact
             $sql = "SELECT u.rowid ";
             $sql .= " FROM ".MAIN_DB_PREFIX."user as u";

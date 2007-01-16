@@ -423,11 +423,11 @@ class DoliDb
 
 
     /**
-        \brief      Formatage (par la base de données) d'un champ de la base au format tms ou Date (YYYY-MM-DD HH:MM:SS)
-                    afin de retourner une donnée toujours au format universel date tms unix.
+        \brief      Formatage (par la base de données) d'un champ de la base au format TMS ou Date (YYYY-MM-DD HH:MM:SS)
+                    afin de retourner une donnée toujours au format universel date TMS unix.
                     Fonction à utiliser pour générer les SELECT.
-        \param	    param       Date au format text à convertir
-        \return	    date        Date au format tms.
+        \param	    param       Nom champ base de type date ou chaine 'YYYY-MM-DD HH:MM:SS'
+        \return	    date        Date au format TMS.
     */
     function pdate($param)
     {
@@ -437,8 +437,8 @@ class DoliDb
     /**
         \brief      Formatage (par PHP) d'une date au format texte pour insertion dans champ date.
                     Fonction à utiliser pour générer les INSERT.
-        \param	    param       Date tms à convertir
-        \return	    date        Date au format text YYYYMMDDHHMMSS.
+        \param	    param       Date TMS à convertir
+        \return	    date        Date au format texte YYYYMMDDHHMMSS.
     */
     function idate($param)
     {
