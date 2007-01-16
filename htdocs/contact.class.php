@@ -303,12 +303,20 @@ class Contact
 	function update_perso($id, $user=0)
 	{
 		// Mis a jour contact
-		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=$id ";
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=".$id;
 	
-		if ($this->birthday>0)
+		if ($this->birthday > 0)
 		{
-			$birthday = (int) $this->birthday;
-			$sql .= ", birthday='".$birthday."'";
+            if (eregi('\-',$this->birthday))
+            {
+                // Si date = chaine (ne devrait pas arriver)
+                $sql .= ", birthday='".$this->birthday."'"; 	 
+            } 	 
+            else 	 
+            { 	 
+                // Si date = timestamp 	 
+            	$sql .= ", birthday=".$this->db->idate($this->birthday); 	 
+            }
 		}
         if ($user) $sql .= ", fk_user_modif=".$user->id;
 		$sql .= " WHERE idp=$id";

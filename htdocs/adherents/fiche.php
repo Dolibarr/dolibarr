@@ -73,7 +73,10 @@ if ($_POST["action"] == 'cotisation')
     $reday=$_POST["reday"];
     $remonth=$_POST["remonth"];
     $reyear=$_POST["reyear"];
-	$datecotisation=@mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
+    {
+ 		$datecotisation=dolibarr_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    }
     $cotisation=$_POST["cotisation"];
 
 	$accountid=$_POST["accountid"];
@@ -134,18 +137,12 @@ if ($_POST["action"] == 'cotisation')
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$datenaiss='';
-    if (!empty($_POST["naissyear"]))
-    {
-		$birthday 	= (int) $_POST["naissday"];
-		$birthmonth = (int) $_POST["naissmonth"];
-		$birthyear 	= (int) $_POST["naissyear"];
-		if($birthmonth>=1 && $birthmonth<=12
-			&& $birthday>=1 && $birthday<=31
-			&& $birthyear>=1850 && $birthyear<=date('Y'))
-		{
-           	$datenaiss     = ($birthyear*10000)+($birthmonth*100)+$birthday;
-		}
-    }
+	if (isset($_POST["naissday"]) && $_POST["naissday"]
+		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
+		&& isset($_POST["naissyear"]) && $_POST["naissyear"])
+	{
+		$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+	}
 
 	$adh->id          = $_POST["rowid"];
 	$adh->prenom      = $_POST["prenom"];
@@ -201,22 +198,16 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 if ($_POST["action"] == 'add')
 {
 	$datenaiss='';
-    if ($_POST["naissyear"])
-    {
-		$birthday 	= (int) $_POST["naissday"];
-		$birthmonth = (int) $_POST["naissmonth"];
-		$birthyear 	= (int) $_POST["naissyear"];
-		if($birthmonth>=1 && $birthmonth<=12
-			&& $birthday>=1 && $birthday<=31
-			&& $birthyear>=1850 && $birthyear<=date('Y'))
-		{
-           	$datenaiss     = ($birthyear*10000)+($birthmonth*100)+$birthday;
-		}
-    }
+	if (isset($_POST["naissday"]) && $_POST["naissday"]
+		&& isset($_POST["naissmonth"]) && $_POST["naissmonth"]
+		&& isset($_POST["naissyear"]) && $_POST["naissyear"])
+	{
+		$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
+	}
 	$datecotisation='';
 	if (isset($_POST["reday"]) && isset($_POST["remonth"]) && isset($_POST["reyear"]))
     {
-		$datecotisation=@mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		$datecotisation=dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 	}
 
     $type=$_POST["type"];

@@ -73,17 +73,9 @@ if ($_POST["action"] == 'update')
     $contact = new Contact($db);
     $contact->id = $_POST["contactid"];
 
-    if ($_POST["birthdayyear"])
+    if ($_POST["birthdayyear"] && $_POST["birthdaymonth"] && $_POST["birthdayday"])
     {
-		$birthday 	= (int) $_POST["birthdayday"];
-		$birthmonth = (int) $_POST["birthdaymonth"];
-		$birthyear 	= (int) $_POST["birthdayyear"];
-		if($birthmonth>=1 && $birthmonth<=12
-			&& $birthday>=1 && $birthday<=31
-			&& $birthyear>=1850 && $birthyear<=date('Y'))
-		{
-           	$contact->birthday     = ($birthyear*10000)+($birthmonth*100)+$birthday;
-		}
+ 		$contact->birthday = dolibarr_mktime(0,0,0,$_POST["birthdaymonth"],$_POST["birthdayday"],$_POST["birthdayyear"]);
     }
 
     $contact->birthday_alert = $_POST["birthday_alert"];

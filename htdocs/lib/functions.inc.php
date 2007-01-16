@@ -536,16 +536,42 @@ function dolibarr_print_date($time,$format='')
 
 
 /**
-		\brief  	Retourne une date fabriqué depuis une chaine
+		\brief  	Retourne une date fabriquée depuis une chaine
 		\param		string			Date formatée en chaine (YYYYMMDD ou YYYYMMDDHHMMSS)
 		\return		date			Date
 */
-function dolibarr_mktime($string)
+function dolibarr_stringtotime($string)
 {
 	$string=eregi_replace('[^0-9]','',$string);
 	$tmp=$string.'000000';					// Si date YYYYMMDD
 	$date=mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 	return $date;
+}
+
+
+/**
+		\brief  	Retourne une date fabriquée depuis infos.
+					Remplace la fonction mktime non implémentée sous Windows si année < 1970
+		\param		x				X
+		\param		y				Y
+		\param		z				Z
+		\param		month			Mois
+		\param		day				Jour
+		\param		year			Année
+		\return		date			Date
+*/
+function dolibarr_mktime($x,$y,$z,$month,$day,$year)
+{
+	if ($year <= 1970 && $_SERVER["WINDIR"])
+	{
+		// Gestion a faire pour windows	
+
+		return 0;
+	}
+ 	else
+ 	{
+		return mktime($x,$y,$z,$month,$day,$year);
+ 	}
 }
 
 
