@@ -278,18 +278,18 @@ if ($_POST["action"] == 'add')
 
   /* Fin Verif Tarif */
 
-  $soc->nom                   = stripslashes($_POST["nom"]);
-  $soc->adresse               = stripslashes($_POST["adresse"]);
-  $soc->cp                    = stripslashes($_POST["cp"]);
-  $soc->ville                 = stripslashes($_POST["ville"]);
-  $soc->pays_id               = stripslashes($_POST["pays_id"]);
-  $soc->tel                   = stripslashes($_POST["tel"]);
-  $soc->fax                   = stripslashes($_POST["fax"]);
+  $soc->nom                   = $_POST["nom"];
+  $soc->adresse               = $_POST["adresse"];
+  $soc->cp                    = $_POST["cp"];
+  $soc->ville                 = $_POST["ville"];
+  $soc->pays_id               = $_POST["pays_id"];
+  $soc->tel                   = $_POST["tel"];
+  $soc->fax                   = $_POST["fax"];
   $soc->url                   = ereg_replace( "http://", "", $_POST["url"] );
   $soc->code_client           = $_POST["code_client"];
-  $soc->code_fournisseur      = stripslashes($_POST["code_fournisseur"]);
-  $soc->codeclient_modifiable = stripslashes($_POST["codeclient_modifiable"]);
-  $soc->codefournisseur_modifiable = stripslashes($_POST["codefournisseur_modifiable"]);
+  $soc->code_fournisseur      = $_POST["code_fournisseur"];
+  $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
+  $soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
   $soc->client                = 1;
   $soc->fournisseur           = 0;
 

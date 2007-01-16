@@ -117,7 +117,7 @@ if ($resql)
   print '<input type="text" class="flat" name="search_ref" value="'.$_GET["search_ref"].'">';
   print '</td>';
   print '<td valign="right">';
-  print '<input type="text" class="flat" name="search_label" value="'.stripslashes($_GET["search_label"]).'">';
+  print '<input type="text" class="flat" name="search_label" value="'.$_GET["search_label"].'">';
   print '</td>';
   print '<td valign="right">';
   print '<input type="text" class="flat" name="search_societe" value="'.$_GET["search_societe"].'">';

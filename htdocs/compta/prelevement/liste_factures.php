@@ -104,7 +104,7 @@ if ($result)
   print '<td class="liste_titre">';
   print '<input size="8" class="flat" type="text" name="search_fac" value="'.$_GET["search_fac"].'">';
   print '</td><td class="liste_titre">';
-  print '<input size="20" class="flat" type="text" name="search_nom" value="'.stripslashes($_GET["search_nom"]).'">';
+  print '<input size="20" class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'">';
   print '</td>';
   print '<td class="liste_titre" colspan="2" align="right"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'"></td>';
   print "</tr>\n";
