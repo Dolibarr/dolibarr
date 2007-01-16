@@ -82,7 +82,7 @@ if ($_POST["action"] == 'update')
 			&& $birthday>=1 && $birthday<=31
 			&& $birthyear>=1850 && $birthyear<=date('Y'))
 		{
-           	$contact->birthday     = $birthyear.$birthmonth.$birthday;
+           	$contact->birthday     = ($birthyear*10000)+($birthmonth*100)+$birthday;
 		}
     }
 
