@@ -597,7 +597,7 @@ class MenuLeft {
 					// Sécurité accés client
 					if ($user->societe_id == 0)
 					{
-						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php??leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
+						$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=suppliers&amp;action=create&amp;type=f",$langs->trans("NewSupplier"), 1, $user->rights->societe->creer && $user->rights->fournisseur->lire);
 					}
 				    $newmenu->add_submenu(DOL_URL_ROOT."/fourn/liste.php",$langs->trans("List"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=suppliers&amp;type=f",$langs->trans("Contacts"), 1, $user->rights->societe->lire && $user->rights->fournisseur->lire);
