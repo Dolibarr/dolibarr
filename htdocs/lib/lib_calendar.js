@@ -201,7 +201,7 @@ function showCalendar(dateField) {
     // USE THE JAVASCRIPT-GENERATED DOCUMENTS (calDocTop, calDocBottom) IN THE FRAMESET
     calDocFrameset = 
         "<HTML><HEAD><TITLE>JavaScript Calendar</TITLE></HEAD>\n" +
-        "<FRAMESET ROWS='50,*' FRAMEBORDER='0'>\n" +
+        "<FRAMESET ROWS='60,*' FRAMEBORDER='0'>\n" +
         "  <FRAME NAME='topCalFrame' SRC='javascript:parent.opener.calDocTop' SCROLLING='no'>\n" +
         "  <FRAME NAME='bottomCalFrame' SRC='javascript:parent.opener.calDocBottom' SCROLLING='no'>\n" +
         "</FRAMESET>\n";
@@ -613,8 +613,7 @@ function getMonthSelect() {
     monthSelect = "<SELECT NAME='month' onChange='parent.opener.setCurrentMonth()'>";
 
     // LOOP THROUGH MONTH ARRAY
-    for (i in monthArray) {
-        
+    for (var i=0;i<monthArray.length;i++) {
         // SHOW THE CORRECT MONTH IN THE SELECT LIST
         if (i == activeMonth) {
             monthSelect += "<OPTION SELECTED>" + monthArray[i] + "\n";
@@ -657,8 +656,7 @@ function createWeekdayList() {
     var weekdays = "<TR BGCOLOR='" + headingCellColor + "'>";
 
     // LOOP THROUGH WEEKDAY ARRAY
-    for (i in weekdayArray) {
-
+    for (var i=0;i<weekdayArray.length;i++) {
         weekdays += "<TD class='heading' align=center>" + weekdayArray[i] + "</TD>";
     }
     weekdays += "</TR>";
