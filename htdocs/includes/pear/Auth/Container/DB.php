@@ -20,9 +20,9 @@
 //
 
 //require_once 'Auth/Container.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Container.php";
+require_once PEAR_PATH."/Auth/Container.php";
 //require_once 'DB.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/DB.php";
+require_once PEAR_PATH."/DB.php";
 
 /**
  * Storage driver for fetching login data from a database

@@ -104,7 +104,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	// MODE DOLIBARR
 	if (in_array('dolibarr',$authmode) && ! $login)
 	{
-    	require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+    	require_once(PEAR_PATH."/Auth/Auth.php");
 
     	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
 
@@ -155,7 +155,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		// Ajout du mode MDB2 pour test uniquement
 	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
 	{
-    	require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+    	require_once(PEAR_PATH."/Auth/Auth.php");
 
     	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
 
@@ -206,7 +206,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	if ($conf->ldap->enabled && in_array('ldap',$authmode) && ! $login)
 	{
 	    // Authentification Apache KO ou non active, pas de mode force on demande le login
-	    require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+	    require_once(PEAR_PATH."/Auth/Auth.php");
 	
 	    #$ldapdebug=true;
 	    if ($ldapdebug) print "DEBUG: Traces connexions LDAP<br>\n";

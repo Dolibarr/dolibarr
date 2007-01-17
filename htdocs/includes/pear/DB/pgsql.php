@@ -24,7 +24,7 @@
 //
 
 //require_once 'DB/common.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/DB/common.php";
+require_once PEAR_PATH."/DB/common.php";
 
 
 class DB_pgsql extends DB_common

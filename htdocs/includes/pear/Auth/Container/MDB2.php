@@ -26,13 +26,13 @@
  * Include Auth_Container base class
  */
 //require_once 'Auth/Container.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Container.php";
+require_once PEAR_PATH."/Auth/Container.php";
 
 /**
  * Include PEAR MDB2 package
  */
 //require_once 'MDB2.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2.php";
+require_once PEAR_PATH."/MDB2.php";
 
 /**
  * Storage driver for fetching login data from a database

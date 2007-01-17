@@ -21,8 +21,8 @@
 
 // require_once 'PEAR.php';
 // require_once 'Auth/Container.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
-require_once DOL_DOCUMENT_ROOT."/includes/pear/Auth/Container.php";
+require_once PEAR_PATH."/PEAR.php";
+require_once PEAR_PATH."/Auth/Container.php";
 
 /**
  * Storage driver for fetching login data from LDAP

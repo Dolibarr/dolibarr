@@ -51,7 +51,7 @@
  */
 
 //require_once 'MDB2.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2.php";
+require_once PEAR_PATH."/MDB2.php";
 
 /**
  * MDB2_LOB: user land stream wrapper implementation for LOB support

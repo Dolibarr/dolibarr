@@ -32,7 +32,7 @@ if (!empty ($_SERVER["REMOTE_USER"]))
 
 include_once("../conf/conf.php");
 require_once("../master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/pear/Auth/Auth.php");
+require_once(PEAR_PATH."/Auth/Auth.php");
 
 
 dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);

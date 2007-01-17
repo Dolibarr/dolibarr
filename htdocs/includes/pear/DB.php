@@ -23,7 +23,7 @@
 //
 
 //require_once "PEAR.php";
-require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
+require_once PEAR_PATH."/PEAR.php";
 
 // {{{ constants
 // {{{ error codes
@@ -225,7 +225,7 @@ class DB
 
     function &factory($type)
     {
-        include_once(DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php");
+        include_once(PEAR_PATH."/DB/${type}.php");
 
         $classname = "DB_${type}";
 
@@ -274,9 +274,9 @@ class DB
         if (is_array($options) && isset($options["debug"]) &&
             $options["debug"] >= 2) {
             // expose php errors with sufficient debug level
-            include_once DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php";
+            include_once PEAR_PATH."/DB/${type}.php";
         } else {
-            include_once DOL_DOCUMENT_ROOT."/includes/pear/DB/${type}.php";
+            include_once PEAR_PATH."/DB/${type}.php";
         }
 
         $classname = "DB_${type}";

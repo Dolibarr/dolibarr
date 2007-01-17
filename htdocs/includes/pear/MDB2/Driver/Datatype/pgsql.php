@@ -45,7 +45,7 @@
 // $Id$
 
 //require_once 'MDB2/Driver/Datatype/Common.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/MDB2/Driver/Datatype/Common.php";
+require_once PEAR_PATH."/MDB2/Driver/Datatype/Common.php";
 
 /**
  * MDB2 PostGreSQL driver

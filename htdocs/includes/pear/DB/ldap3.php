@@ -24,8 +24,8 @@
 
 // require_once 'DB/common.php';
 // require_once 'DB/ldap2.php';
-require_once DOL_DOCUMENT_ROOT."/includes/pear/DB/common.php";
-require_once DOL_DOCUMENT_ROOT."/includes/pear/DB/ldap2.php";
+require_once PEAR_PATH."/DB/common.php";
+require_once PEAR_PATH."/DB/ldap2.php";
 
 /**
  * LDAP3 DB interface class

@@ -20,7 +20,7 @@
 //
 
 //require_once "PEAR.php";
-require_once DOL_DOCUMENT_ROOT."/includes/pear/PEAR.php";
+require_once PEAR_PATH."/PEAR.php";
 
 
 define("AUTH_IDLED",       -1);
@@ -188,7 +188,7 @@ class DOLIAuth {
         $storage_path = "Auth/Container/" . $driver . ".php";
         $storage_class = "Auth_Container_" . $driver;
 
-	require_once DOL_DOCUMENT_ROOT."/includes/pear/".$storage_path;
+	require_once PEAR_PATH."/".$storage_path;
 
         return new $storage_class($options);
     }
