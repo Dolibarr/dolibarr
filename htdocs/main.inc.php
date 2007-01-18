@@ -208,7 +208,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    // Authentification Apache KO ou non active, pas de mode force on demande le login
 	    require_once(PEAR_PATH."/Auth/Auth.php");
 	
-	    #$ldapdebug=true;
+	    $ldapdebug=false;
 	    if ($ldapdebug) print "DEBUG: Traces connexions LDAP<br>\n";
 	    
 	    if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
