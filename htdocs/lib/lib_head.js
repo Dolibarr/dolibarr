@@ -8,9 +8,12 @@
 
 
 
-// *****************************************
-// Pour la fonction de saisi auto des villes
-// *****************************************
+/*=================================================================
+	Purpose:  Pour la fonction de saisie auto des villes
+	Input:    postalcode,objectville
+	Author:   Eric Seigne
+	Licence:  GPL
+==================================================================*/
 
 function autofilltownfromzip_PopupPostalCode(postalcode,objectville)
 {
@@ -34,20 +37,18 @@ function autofilltownfromzip_save_refresh_create()
 
 
 
+/*=================================================================
+	Purpose:  Pour la saisie des dates par calendrier
+	Input:    base			   "/theme/eldy"
+					  dateFieldID  "dateo"			  Nom du champ
+				    format			 "dd/MM/yyyy"   Format issu de Dolibarr de SimpleDateFormat à utiliser pour retour
+==================================================================*/
 
-// *****************************************
-// Pour la saisie des dates par calendrier
-// *****************************************
-
-//	base			"/theme/eldy"
-//	dateFieldID		"dateo"			Nom du champ
-// 	format			"dd/MM/yyyy"	Format issu de Dolibarr de SimpleDateFormat à utiliser pour retour
 function showDP(base,dateFieldID,format)
 {
 	showDP.datefieldID=dateFieldID;
 
 	var dateField=getObjectFromID(dateFieldID);
-
 	
 	//check to see if another box is already showing
 	var alreadybox=getObjectFromID("DPCancel");
@@ -185,7 +186,6 @@ function dpHighlightDay(year,month,day){
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
-
 //Returns an object given an id
 function getObjectFromID(id){
 	var theObject;
@@ -196,8 +196,7 @@ function getObjectFromID(id){
 	return theObject;
 }
 
-
-// This Function returns the Top position of an object
+// This Function returns the top position of an object
 function getTop(theitem){
 	var offsetTrail = theitem;
 	var offsetTop = 0;
@@ -210,7 +209,7 @@ function getTop(theitem){
 	return offsetTop;
 }
 
-// This Function returns the Left position of an object
+// This Function returns the left position of an object
 function getLeft(theitem){
 	var offsetTrail = theitem;
 	var offsetLeft = 0;
@@ -371,14 +370,16 @@ function positiontip(e)
 	}
 }
 
-function hidetip(){
-if (ns6||ie){
-enabletip=false
-tipobj.style.visibility="hidden"
-tipobj.style.left="-1000px"
-tipobj.style.backgroundColor=''
-tipobj.style.width=''
-}
+function hidetip()
+{
+	if (ns6||ie)
+	{
+		enabletip=false
+		tipobj.style.visibility="hidden"
+		tipobj.style.left="-1000px"
+		tipobj.style.backgroundColor=''
+		tipobj.style.width=''
+	}
 }
 
 document.onmousemove=positiontip;
@@ -408,7 +409,7 @@ document.onmousemove=positiontip;
 
 // HISTORY
 // ------------------------------------------------------------------
-// May 17, 2003: Fixed bug in parseDate() for dates <1970
+// May 17, 2003:   Fixed bug in parseDate() for dates <1970
 // March 11, 2003: Added parseDate() function
 // March 11, 2003: Added "NNN" formatting option. Doesn't match up
 //                 perfectly with SimpleDateFormat formats, but 
@@ -446,43 +447,6 @@ document.onmousemove=positiontip;
 
 var MONTH_NAMES=new Array('January','February','March','April','May','June','July','August','September','October','November','December','Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec');
 var DAY_NAMES=new Array('Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday','Sun','Mon','Tue','Wed','Thu','Fri','Sat');
-function LZ(x) {return(x<0||x>9?"":"0")+x}
-
-// ------------------------------------------------------------------
-// isDate ( date_string, format_string )
-// Returns true if date string matches format of format string and
-// is a valid date. Else returns false.
-// It is recommended that you trim whitespace around the value before
-// passing it to this function, as whitespace is NOT ignored!
-// ------------------------------------------------------------------
-function isDate(val,format) {
-	var date=getDateFromFormat(val,format);
-	dt=date.getTime();
-	if (dt==0) { return false; }
-	return true;
-}
-
-// -------------------------------------------------------------------
-// compareDates(date1,date1format,date2,date2format)
-//   Compare two date strings to see which is greater.
-//   Returns:
-//   1 if date1 is greater than date2
-//   0 if date2 is greater than date1 of if they are the same
-//  -1 if either of the dates is in an invalid format
-// -------------------------------------------------------------------
-function compareDates(date1,dateformat1,date2,dateformat2) {
-	var dd1=getDateFromFormat(date1,dateformat1);
-	var dd2=getDateFromFormat(date2,dateformat2);
-	var d1=dd1.getTime();
-	var d2=dd2.getTime();
-	if (d1==0 || d2==0) {
-		return -1;
-		}
-	else if (d1 > d2) {
-		return 1;
-		}
-	return 0;
-}
 
 // ------------------------------------------------------------------
 // formatDate (date_object, format)
@@ -546,27 +510,7 @@ function formatDate(date,format) {
 	//alert(format+' -> '+result);
 	return result;
 }
-	
-// ------------------------------------------------------------------
-// Utility functions for parsing in getDateFromFormat()
-// ------------------------------------------------------------------
-function _isInteger(val) {
-	var digits="1234567890";
-	for (var i=0; i < val.length; i++) {
-		if (digits.indexOf(val.charAt(i))==-1) { return false; }
-		}
-	return true;
-}
 
-function _getInt(str,i,minlength,maxlength) {
-	for (var x=maxlength; x>=minlength; x--) {
-		var token=str.substring(i,i+x);
-		if (token.length < minlength) { return null; }
-		if (_isInteger(token)) { return token; }
-		}
-	return null;
-}
-	
 // ------------------------------------------------------------------
 // getDateFromFormat( date_string , format_string )
 //
@@ -705,45 +649,44 @@ function getDateFromFormat(val,format) {
 }
 
 // ------------------------------------------------------------------
-// parseDate( date_string [, prefer_euro_format] )
-//
-// This function takes a date string and tries to match it to a
-// number of possible date formats to get the value. It will try to
-// match against the following international formats, in this order:
-// y-M-d   MMM d, y   MMM d,y   y-MMM-d   d-MMM-y  MMM d
-// M/d/y   M-d-y      M.d.y     MMM-d     M/d      M-d
-// d/M/y   d-M-y      d.M.y     d-MMM     d/M      d-M
-// A second argument may be passed to instruct the method to search
-// for formats like d/M/y (european format) before M/d/y (American).
-// Returns a Date object or null if no patterns match.
+// Utility functions for parsing in getDateFromFormat() and formatDate()
 // ------------------------------------------------------------------
-function parseDate(val) {
-	var preferEuro=(arguments.length==2)?arguments[1]:false;
-	generalFormats=new Array('y-M-d','MMM d, y','MMM d,y','y-MMM-d','d-MMM-y','MMM d');
-	monthFirst=new Array('M/d/y','M-d-y','M.d.y','MMM-d','M/d','M-d');
-	dateFirst =new Array('d/M/y','d-M-y','d.M.y','d-MMM','d/M','d-M');
-	var checkList=new Array('generalFormats',preferEuro?'dateFirst':'monthFirst',preferEuro?'monthFirst':'dateFirst');
-	var d=null;
-	for (var i=0; i<checkList.length; i++) {
-		var l=window[checkList[i]];
-		for (var j=0; j<l.length; j++) {
-			date=getDateFromFormat(val,l[j]);
-			d=date.getTime();
-			if (d!=0) { return new Date(d); }
-			}
+function LZ(x) {return(x<0||x>9?"":"0")+x}
+function _isInteger(val) {
+	var digits="1234567890";
+	for (var i=0; i < val.length; i++) {
+		if (digits.indexOf(val.charAt(i))==-1) { return false; }
+		}
+	return true;
+}
+function _getInt(str,i,minlength,maxlength) {
+	for (var x=maxlength; x>=minlength; x--) {
+		var token=str.substring(i,i+x);
+		if (token.length < minlength) { return null; }
+		if (_isInteger(token)) { return token; }
 		}
 	return null;
 }
 
 
-// Fonction pour champ saisie en mode ajax
+
+
+
+
+/*=================================================================
+  Purpose:  Fonction pour champ saisie en mode ajax
+	Author:   Laurent Destailleur
+	Licence:  GPL
+==================================================================*/
 function publish_selvalue(obj) { $(obj.name).value = obj.options[obj.selectedIndex].value; }
 
 
 
 /*=================================================================
-	Purpose:  affiche popup
+	Purpose:  Affiche popup
 	Input:    url,title
+	Author:   Laurent Destailleur
+	Licence:  GPL
 ==================================================================*/
 function newpopup(url,title) {
 	var argv = newpopup.arguments;
