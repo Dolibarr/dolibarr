@@ -63,21 +63,15 @@ function test_sql_inject($val)
 
   return $sql_inj;
 }
-$sql_inj = 0;
-foreach ($_GET as $val)
+foreach ($_GET as $key => $val)
 {
-  $sql_inj += test_sql_inject($val);
+  if (test_sql_inject($val) > 0)
+    unset($_GET[$key]);
 }
-foreach ($_POST as $val)
+foreach ($_POST as $key => $val)
 {
-  $sql_inj += test_sql_inject($val);
-}
-
-if ($sql_inj > 0 ) 
-{
-  // Si attaque detectee on vide GET et POST
-  $_GET = array();
-  $_POST = array();
+  if (test_sql_inject($val) > 0)
+    unset($_POST[$key]);
 }
 // Fin filtre des GET et POST
 
