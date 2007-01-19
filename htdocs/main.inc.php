@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -34,7 +34,6 @@
 // est positionne A appeler avant tout.
 if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
 
-
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
@@ -51,6 +50,37 @@ if (get_magic_quotes_gpc())
    $_COOKIE  = array_map('stripslashes_deep', $_COOKIE);
    $_REQUEST = array_map('stripslashes_deep', $_REQUEST);
 }
+
+// Filtre les GET et POST pour supprimer les SQL INJECTION
+function test_sql_inject($val)
+{
+  $sql_inj = 0;
+  $sql_inj += eregi('delete[[:space:]]+from', $val);
+  $sql_inj += eregi('create[[:space:]]+table', $val);
+  $sql_inj += eregi('update.+set.+=', $val);
+  $sql_inj += eregi('insert[[:space:]]+into', $val);
+  $sql_inj += eregi('select.+from', $val);
+
+  return $sql_inj;
+}
+$sql_inj = 0;
+foreach ($_GET as $val)
+{
+  $sql_inj += test_sql_inject($val);
+}
+foreach ($_POST as $val)
+{
+  $sql_inj += test_sql_inject($val);
+}
+
+if ($sql_inj > 0 ) 
+{
+  // Si attaque detectee on vide GET et POST
+  $_GET = array();
+  $_POST = array();
+}
+// Fin filtre des GET et POST
+
 
 require_once("master.inc.php");
 
