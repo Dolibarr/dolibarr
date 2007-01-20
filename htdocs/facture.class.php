@@ -2304,8 +2304,8 @@ class Facture extends CommonObject
 
   /**
    *  	\brief     	Renvoi liste des factures qualifiables pour avoir
-   *					Statut validee + pas deja remplacées
-   *		\param		socid		Id societe
+   *				Statut >= validee + pas classé payée completement + pas classé payée partiellement + pas deja remplacée
+   *	\param		socid		Id societe
    *   	\return    	array		Tableau des factures ($id => $ref)
    */
   function list_qualified_avoir_invoices($socid=0)
@@ -2318,7 +2318,9 @@ class Facture extends CommonObject
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=1)";
-    $sql.= " WHERE f.fk_statut >= 1 AND f.paye = 0";
+    $sql.= " WHERE f.fk_statut >= 1";
+	$sql.= " AND f.paye = 0";			// Pas classé payé complètement
+	$sql.= " AND f.close_code IS NULL";	// Pas classé payé partiellement
     $sql.= " AND ff.type IS NULL";		// Renvoi vrai si pas facture de remplacement
     if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
     $sql.= " ORDER BY f.facnumber";

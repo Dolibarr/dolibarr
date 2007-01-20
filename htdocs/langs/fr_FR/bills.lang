@@ -136,6 +136,7 @@ ShowInvoiceAvoir=Afficher facture avoir
 ShowPayment=Afficher réglement
 File=Fichier
 AlreadyPayed=Déjà réglé
+Abandoned=Abandonné
 RemainderToPay=Reste à payer
 RemainderToTake=Reste à encaisser
 EscompteOffered=Escompte (réglement avant échéance)
@@ -193,6 +194,8 @@ DiscountStillRemaining=Remises fixes restant en cours
 DiscountAlreadyCounted=Remises fixes déjà appliquées
 BillAddress=Adresse de facturation
 HelpEscompte=Un <b>escompte</b> est une remise accordée, sur une facture donnée, à un client car ce dernier a réalisé son réglement bien avant l'échéance.
+HelpAbandonBadCustomer=Ce montant a été abandonné (client jugé mauvais payeur) et est considéré comme un perte exceptionnelle.
+HelpAbandonOther=Ce montant a été abandonné et est considéré comme un perte exceptionnelle.
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
 PaymentConditionRECEP=A réception de facture
