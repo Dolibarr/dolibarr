@@ -577,15 +577,17 @@ if ($action == 'edit')
 
 	// Url photo
 	print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
-	foreach($adho->attribute_label as $key=>$value)
-	{
-		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
-	}
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
     $htmls->select_YesNo($adh->public,"public");
     print "</td></tr>\n";
+
+	// Attributs supplémentaires
+	foreach($adho->attribute_label as $key=>$value)
+	{
+		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
+	}
 
 	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';

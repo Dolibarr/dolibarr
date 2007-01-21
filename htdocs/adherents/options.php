@@ -120,9 +120,12 @@ print "</table>";
  * Barre d'actions
  *
  */
-print '<div class="tabsAction">';
-print "<a class=\"tabAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
-print "</div>";
+if ($_GET["action"] != 'create') 
+{
+	print '<div class="tabsAction">';
+	print "<a class=\"tabAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print "</div>";
+}
 
 
 /* ************************************************************************** */
@@ -131,33 +134,34 @@ print "</div>";
 /*                                                                            */
 /* ************************************************************************** */
 
-if ($_GET["action"] == 'create') {
+if ($_GET["action"] == 'create')
+{
+	print "<br>";
+	
+	print_titre("Nouvel attribut");
 
-  print_titre("Nouvel attribut");
-  
-  print "<form action=\"options.php\" method=\"post\">";
-  print '<table class="border" width="100%">';
-  
-  print '<input type="hidden" name="action" value="add">';
+	print "<form action=\"options.php\" method=\"post\">";
+	print '<table class="border" width="100%">';
 
-  print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
-  print '<tr><td>'.$langs->trans("AttributeCode").' (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="40"></td></tr>';  
-  print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
-  $form->select_array('type',array('varchar'=>'chaine',
-				   'text'=>'texte',
-				   'int'=>'entier',
-				   'date'=>'date',
-				   'datetime'=>'date et heure'));
-  print '</td></tr>';
-  print '<tr><td>Taille</td><td><input type="text" name="size" size="5" value="255"></td></tr>';  
-  
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
-  print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
-  print "</form>\n";
-  print "</table>\n";
-  
-      
+	print '<input type="hidden" name="action" value="add">';
+
+	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
+	print '<tr><td>'.$langs->trans("AttributeCode").' (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="10"></td></tr>';
+	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
+	$form->select_array('type',array('varchar'=>'chaine',
+	'text'=>'texte',
+	'int'=>'entier',
+	'date'=>'date',
+	'datetime'=>'date et heure'));
+	print '</td></tr>';
+	print '<tr><td>Taille</td><td><input type="text" name="size" size="5" value="255"></td></tr>';  
+
+	print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Save").'"> &nbsp; ';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+	print "</form>\n";
+	print "</table>\n";
 } 
+
 /* ************************************************************************** */
 /*                                                                            */
 /* Edition d'un champ optionnel                                               */
