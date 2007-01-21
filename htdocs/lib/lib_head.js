@@ -76,13 +76,24 @@ function showDP(base,dateFieldID,format)
 	showDP.box.style.top=thetop + "px";
 	showDP.box.style.left=theleft + "px";
 	
-	if(dateField.value)	// Si il y avait valeur initiale dans champ
+	if (dateField.value)	// Si il y avait valeur initiale dans champ
 	{
 		selDate=getDateFromFormat(dateField.value,format);
 		if (selDate)
 		{
+			// Success to parse value in field according to format
 			year=selDate.getFullYear();
 			month=selDate.getMonth()+1;
+			day=selDate.getDate();
+			datetime=selDate.getTime();
+			ymd=formatDate(selDate,'yyyyMMdd');
+		}
+		else
+		{
+			// Failed to parse value in field according to format
+			selDate=new Date();
+			year=selDate.getFullYear();
+			month=selDate.getUTCMonth()+1;
 			day=selDate.getDate();
 			datetime=selDate.getTime();
 			ymd=formatDate(selDate,'yyyyMMdd');
@@ -386,10 +397,178 @@ document.onmousemove=positiontip;
 
 
 
+/*=================================================================
+	Function: formatDate (javascript object Date(), format)
+	Purpose:  Returns a date in the output format specified.
+              The format string can use the following tags:
+				 Field        | Tags
+				 -------------+-------------------------------
+				 Year         | yyyy (4 digits), yy (2 digits)
+				 Month        | MM (2 digits)
+				 Day of Month | dd (2 digits)
+				 Hour (1-12)  | hh (2 digits)
+				 Hour (0-23)  | HH (2 digits)
+				 Minute       | mm (2 digits)
+				 Second       | ss (2 digits)
+	Author:   Laurent Destailleur
+	Licence:  GPL
+==================================================================*/
+function formatDate(date,format)
+{
+	//alert('formatDate date='+date+' format='+format);
+	
+	// Force parametres en chaine
+	format=format+"";
+	
+	var result="";
+
+	var year=date.getYear()+""; if (year.length < 4) { year=""+(year-0+1900); }
+	var month=date.getMonth()+1;
+	var day=date.getDate();
+	var hour=date.getHours();
+	var min=date.getMinutes();
+	var seconde=date.getSeconds();
+
+	var i=0;
+	while (i < format.length)
+	{
+		c=format.charAt(i);	// Recupere char du format
+		substr="";
+		j=i;
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
+		{
+			substr += format.charAt(j++);
+		}
+
+		//alert('substr='+substr);
+		if (substr == 'yyyy')      { result=result+year; }
+		else if (substr == 'yy')   { result=result+year.substring(2,4); }
+		else if (substr == 'MM')   { result=result+(month<1||month>9?"":"0")+month; }
+		else if (substr == 'd')    { result=result+day; }
+		else if (substr == 'dd')   { result=result+(day<1||day>9?"":"0")+day; }
+		else if (substr == 'hh')   { if (hour > 12) hour-=12; result=result+(hour<1||hour>9?"":"0")+hour; }
+		else if (substr == 'HH')   { result=result+(hour<1||hour>9?"":"0")+hour; }
+		else if (substr == 'mm')   { result=result+(minute<1||minute>9?"":"0")+minute; }
+		else if (substr == 'ss')   { result=result+(seconde<1||seconde>9?"":"0")+seconde; }
+		else { result=result+substr; }
+		
+		i+=substr.length;
+	}
+
+	//alert(result);
+	return result;
+}
 
 
 /*=================================================================
-  Purpose:  Fonction pour champ saisie en mode ajax
+	Function: getDateFromFormat(date_string, format_string)
+	Purpose:  This function takes a date string and a format string.
+			  It parses the date string with format and it returns
+			  the date as a javascript Date() object.
+			  If date does not match format, it returns 0.
+              The format string can use the following tags:
+				 Field        | Tags
+				 -------------+-------------------------------
+				 Year         | yyyy (4 digits), yy (2 digits)
+				 Month        | MM (2 digits)
+				 Day of Month | dd (2 digits)
+				 Hour (1-12)  | hh (2 digits)
+				 Hour (0-23)  | HH (2 digits)
+				 Minute       | mm (2 digits)
+				 Second       | ss (2 digits)
+	Author:   Laurent Destailleur
+	Licence:  GPL
+==================================================================*/
+function getDateFromFormat(val,format)
+{
+	//alert('getDateFromFormat val='+val+' format='+format);
+
+	// Force parametres en chaine
+	val=val+"";
+	format=format+"";
+
+	var now=new Date();
+	var year=now.getYear(); if (year.length < 4) { year=""+(year-0+1900); }
+	var month=now.getMonth()+1;
+	var day=now.getDate();
+	var hour=now.getHours();
+	var minute=now.getMinutes();
+	var seconde=now.getSeconds();
+
+	var i=0;
+	while (i < format.length)
+	{
+		c=format.charAt(i);	// Recupere char du format
+		substr="";
+		j=i;
+		while ((format.charAt(j)==c) && (j < format.length))	// Recupere char successif identiques
+		{
+			substr += format.charAt(j++);
+		}
+
+		//alert('substr='+substr);
+		if (substr == "yyyy") year=getIntegerInString(val,i,4,4);
+		if (substr == "yy")   year=""+(getIntegerInString(val,i,2,2)-0+1900);
+		if (substr == "MM")   month=getIntegerInString(val,i,2,2);
+		if (substr == "M")    month=getIntegerInString(val,i,1,2);
+		if (substr == "dd")   day=getIntegerInString(val,i,1,2);
+		if (substr == "hh")   hour=getIntegerInString(val,i,1,2);
+		if (substr == "HH")   hour=getIntegerInString(val,i,1,2);
+		if (substr == "mm")   minute=getIntegerInString(val,i,1,2);
+		if (substr == "ss")   seconde=getIntegerInString(val,i,1,2);
+	
+		i+=substr.length;
+	}
+	
+	// Check if format param are ok
+	if (year==null||year<1) { return 0; }
+	if (month==null||(month<1)||(month>12)) { return 0; }
+	if (day==null||(day<1)||(day>31)) { return 0; }
+	if (hour==null||(hour<0)||(hour>24)) { return 0; }
+	if (minute==null||(minute<0)||(minute>60)) { return 0; }
+	if (seconde==null||(seconde<0)||(seconde>60)) { return 0; }
+		
+	//alert(year+' '+month+' '+day+' '+hour+' '+minute+' '+seconde);
+	var newdate=new Date(year,month-1,day,hour,minute,seconde);
+
+	return newdate;
+}
+
+/*=================================================================
+	Function: stringIsInteger(string)
+	Purpose:  Return true if string is an integer
+==================================================================*/
+function stringIsInteger(str)
+{
+	var digits="1234567890";
+	for (var i=0; i < str.length; i++)
+	{
+		if (digits.indexOf(str.charAt(i))==-1)
+		{
+			return false;
+		}
+	}
+	return true;
+}
+
+/*=================================================================
+	Function: getIntegerInString(string,pos,minlength,maxlength)
+	Purpose:  Return part of string from position i that is integer
+==================================================================*/
+function getIntegerInString(str,i,minlength,maxlength)
+{
+	for (var x=maxlength; x>=minlength; x--)
+	{
+		var substr=str.substring(i,i+x);
+		if (substr.length < minlength) { return null; }
+		if (stringIsInteger(substr)) { return substr; }
+	}
+	return null;
+}
+
+
+/*=================================================================
+	Purpose:  Fonction pour champ saisie en mode ajax
 	Author:   Laurent Destailleur
 	Licence:  GPL
 ==================================================================*/

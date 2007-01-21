@@ -141,7 +141,10 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Désactiver le calendrier popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';
-    $liste_popup_calendar=array('0'=>$langs->trans("No"),'eldy'=>$langs->trans("Yes").' (style eldy)','andre'=>$langs->trans("Yes").' (style andre)');
+    $liste_popup_calendar=array(
+		'0'=>$langs->trans("No"),
+		'eldy'=>$langs->trans("Yes").' (style eldy)',
+		'andre'=>$langs->trans("Yes").' (style andre)');
     $html->select_array('popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td></tr>';
