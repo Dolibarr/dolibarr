@@ -583,7 +583,10 @@ class Contrat extends CommonObject
         global $langs;
 		global $conf;
         
-        dolibarr_syslog("contrat.class.php::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end");
+		// Nettoyage parametres
+		if (! $txtva) $txtva=0;
+		
+        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end");
 
         if ($this->statut == 0)
         {
@@ -622,7 +625,9 @@ class Contrat extends CommonObject
             if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
             $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
             $sql.= ($fk_product>0 ? $fk_product : "null");
-            $sql.= ",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num( $remise)."'";
+            $sql.= ",".price2num($price).", '$qty', ";
+			$sql.= $txtva.",";
+			$sql.= $remise_percent.",'".price2num($subprice)."','".price2num( $remise)."'";
             if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
             if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
             $sql.= ");";
@@ -634,7 +639,8 @@ class Contrat extends CommonObject
             }
             else
             {
-                $this->error=$this->db->error();
+				$this->error=$this->db->error()." sql=".$sql;
+                dolibarr_syslog("Contrat::addline ".$this->error);
                 return -1;
             }
         }

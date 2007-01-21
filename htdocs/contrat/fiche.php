@@ -94,11 +94,11 @@ if ($_POST["mode"]=='libre')
 	$date_end_sl='';
   if ($_POST["date_start_slmonth"] && $_POST["date_start_slday"] && $_POST["date_start_slyear"])
   {
-    $date_start_sl=mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
+    $date_start_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_start_slmonth"], $_POST["date_start_slday"], $_POST["date_start_slyear"]);
   }
   if ($_POST["date_end_slmonth"] && $_POST["date_end_slday"] && $_POST["date_end_slyear"])
   {
-    $date_end_sl=mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
+    $date_end_sl=dolibarr_mktime(12, 0 , 0, $_POST["date_end_slmonth"], $_POST["date_end_slday"], $_POST["date_end_slyear"]);
   }
 }
 
@@ -109,19 +109,19 @@ $date_start_real_update='';
 $date_end_real_update='';
 if ($_POST["date_start_updatemonth"] && $_POST["date_start_updateday"] && $_POST["date_start_updateyear"])
 {
-    $date_start_update=mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
+    $date_start_update=dolibarr_mktime(12, 0 , 0, $_POST["date_start_updatemonth"], $_POST["date_start_updateday"], $_POST["date_start_updateyear"]);
 }
 if ($_POST["date_end_updatemonth"] && $_POST["date_end_updateday"] && $_POST["date_end_updateyear"])
 {
-    $date_end_update=mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
+    $date_end_update=dolibarr_mktime(12, 0 , 0, $_POST["date_end_updatemonth"], $_POST["date_end_updateday"], $_POST["date_end_updateyear"]);
 }
 if ($_POST["date_start_real_updatemonth"] && $_POST["date_start_real_updateday"] && $_POST["date_start_real_updateyear"])
 {
-    $date_start_real_update=mktime(12, 0 , 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
+    $date_start_real_update=dolibarr_mktime(12, 0 , 0, $_POST["date_start_real_updatemonth"], $_POST["date_start_real_updateday"], $_POST["date_start_real_updateyear"]);
 }
 if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && $_POST["date_end_real_updateyear"])
 {
-    $date_end_real_update=mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
+    $date_end_real_update=dolibarr_mktime(12, 0 , 0, $_POST["date_end_real_updatemonth"], $_POST["date_end_real_updateday"], $_POST["date_end_real_updateyear"]);
 }
 
 
@@ -130,7 +130,7 @@ if ($_POST["date_end_real_updatemonth"] && $_POST["date_end_real_updateday"] && 
  */
 if ($_POST["action"] == 'add')
 {
-    $datecontrat = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    $datecontrat = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
 
     $contrat = new Contrat($db);
 
@@ -189,7 +189,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
         }
         elseif ($_POST["mode"]=='libre')
         {
-        	$result = $contrat->addline(
+		$result = $contrat->addline(
                 $_POST["desc"],
                 $_POST["pu"],
                 $_POST["pqty"],
@@ -626,7 +626,7 @@ else
             print '<table width="100%" class="nobordernopadding"><tr><td>';
             print $langs->trans("Project");
             print '</td>';
-            if ($_GET["action"] != "classer") print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
+            if ($_GET["action"] != "classer" && $user->rights->projet->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=classer&amp;id='.$id.'">'.img_edit($langs->trans("SetProject")).'</a></td>';
             print '</tr></table>';
             print '</td><td colspan="3">';
             if ($_GET["action"] == "classer")
