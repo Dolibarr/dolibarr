@@ -242,19 +242,19 @@ class pdf_propale_bleu extends ModelePDFPropales
 
       $pdf->SetFont('Arial','',11);
 
-      $pdf->Text(30,$tab_top + 5,$langs->trans("Designation"));
+      $pdf->Text(30,$tab_top + 5,$langs->transnoentities("Designation"));
 
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->Text(134,$tab_top + 5,$langs->trans("VAT"));
+      $pdf->Text(134,$tab_top + 5,$langs->transnoentities("VAT"));
 
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
-      $pdf->Text(147,$tab_top + 5,$langs->trans("Qty"));
+      $pdf->Text(147,$tab_top + 5,$langs->transnoentities("Qty"));
 
       $pdf->line(156, $tab_top, 156, $tab_top + $tab_height);
-      $pdf->Text(160,$tab_top + 5,$langs->trans("PriceU"));
+      $pdf->Text(160,$tab_top + 5,$langs->transnoentities("PriceU"));
 
       $pdf->line(174, $tab_top, 174, $tab_top + $tab_height);
-      $pdf->Text(187,$tab_top + 5,$langs->trans("Total"));
+      $pdf->Text(187,$tab_top + 5,$langs->transnoentities("Total"));
 
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -262,7 +262,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+      $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
     }
@@ -287,7 +287,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 		if (defined("FAC_PDF_TEL"))
 		{
 			$pdf->SetFont('Times','',10);
-			$pdf->MultiCell(76, 5, $langs->trans("Phone")." : ".FAC_PDF_TEL);
+			$pdf->MultiCell(76, 5, $langs->transnoentities("Phone")." : ".FAC_PDF_TEL);
 		}
 		if ($this->emetteur->profid1)
 		{

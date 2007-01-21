@@ -213,19 +213,19 @@ class pdf_propale_vert extends ModelePDFPropales
 				$pdf->line(174, $tab2_top, 174, $tab2_top + $tab2_height);
 
 				$pdf->SetXY (132, $tab2_top + 0);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalHT"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalHT"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("GlobalDiscount"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("GlobalDiscount"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*2);
 				$pdf->MultiCell(42, $tab2_lh, "Total HT après remise", 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + $tab2_lh*3);
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalVAT"), 0, 'R', 0);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalVAT"), 0, 'R', 0);
 
 				$pdf->SetXY (132, $tab2_top + ($tab2_lh*4));
-				$pdf->MultiCell(42, $tab2_lh, $langs->trans("TotalTTC"), 1, 'R', 1);
+				$pdf->MultiCell(42, $tab2_lh, $langs->transnoentities("TotalTTC"), 1, 'R', 1);
 
 				$pdf->SetXY (174, $tab2_top + 0);
 				$pdf->MultiCell(26, $tab2_lh, price($propale->total_ht + $propale->remise), 0, 'R', 0);
@@ -262,30 +262,30 @@ class pdf_propale_vert extends ModelePDFPropales
       $pdf->SetFont('Arial','',10);
 
       $pdf->SetXY(10, $yt);
-      $pdf->MultiCell(30,5,$langs->trans("Ref"),0,'L');
+      $pdf->MultiCell(30,5,$langs->transnoentities("Ref"),0,'L');
 
       $pdf->SetXY(40, $yt);
-      $pdf->MultiCell(90,5,$langs->trans("Designation"),0,'L');
+      $pdf->MultiCell(90,5,$langs->transnoentities("Designation"),0,'L');
 
       $pdf->SetXY(132, $yt);
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
-      $pdf->MultiCell(10,5,$langs->trans("VAT"),0,'C');
+      $pdf->MultiCell(10,5,$langs->transnoentities("VAT"),0,'C');
 
       $pdf->line(142, $tab_top, 142, $tab_top + $tab_height);
       $pdf->SetXY(142, $yt);
-      $pdf->MultiCell(8,5,$langs->trans("Qty"),0,'C');
+      $pdf->MultiCell(8,5,$langs->transnoentities("Qty"),0,'C');
 
       $pdf->line(150, $tab_top, 150, $tab_top + $tab_height);
       $pdf->SetXY(150, $yt);
-      $pdf->MultiCell(16,5,$langs->trans("PriceU"),0,'C');
+      $pdf->MultiCell(16,5,$langs->transnoentities("PriceU"),0,'C');
 
       $pdf->line(166, $tab_top, 166, $tab_top + $tab_height);
       $pdf->SetXY(166, $yt);
-      $pdf->MultiCell(14,5,$langs->trans("ReductionShort"),0,'C');
+      $pdf->MultiCell(14,5,$langs->transnoentities("ReductionShort"),0,'C');
 
       $pdf->line(180, $tab_top, 180, $tab_top + $tab_height);
       $pdf->SetXY(180, $yt);
-      $pdf->MultiCell(20,5,$langs->trans("Total"),0,'R');
+      $pdf->MultiCell(20,5,$langs->transnoentities("Total"),0,'R');
 
       //      $pdf->Rect(10, $tab_top, 190, $nexY - $tab_top);
       $pdf->Rect(10, $tab_top, 190, $tab_height);
@@ -293,7 +293,7 @@ class pdf_propale_vert extends ModelePDFPropales
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+      $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
       $pdf->Text(200 - $pdf->GetStringWidth($titre), 98, $titre);
 
       $pdf->SetXY(10, ($tab_top + $tab_height + 6));

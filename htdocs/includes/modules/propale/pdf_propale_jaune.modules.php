@@ -242,32 +242,32 @@ class pdf_propale_jaune extends ModelePDFPropales
       $pdf->SetFont('Arial','',11);
 
       $pdf->SetXY(10,$tab_top);
-      $pdf->MultiCell(20,10,$langs->trans("Ref"),0,'C',1);
+      $pdf->MultiCell(20,10,$langs->transnoentities("Ref"),0,'C',1);
 
       $pdf->SetXY(30,$tab_top);
-      $pdf->MultiCell(102,10,$langs->trans("Designation"),0,'L',1);
+      $pdf->MultiCell(102,10,$langs->transnoentities("Designation"),0,'L',1);
 
       $pdf->line(132, $tab_top, 132, $tab_top + $tab_height);
       $pdf->SetXY(132,$tab_top);
-      $pdf->MultiCell(12, 10,$langs->trans("VAT"),0,'C',1);
+      $pdf->MultiCell(12, 10,$langs->transnoentities("VAT"),0,'C',1);
 
       $pdf->line(144, $tab_top, 144, $tab_top + $tab_height);
       $pdf->SetXY(144,$tab_top);
-      $pdf->MultiCell(10,10,$langs->trans("Qty"),0,'C',1);
+      $pdf->MultiCell(10,10,$langs->transnoentities("Qty"),0,'C',1);
 
       $pdf->line(154, $tab_top, 154, $tab_top + $tab_height);
       $pdf->SetXY(154,$tab_top);
-      $pdf->MultiCell(22,10,$langs->trans("PriceU"),0,'R',1);
+      $pdf->MultiCell(22,10,$langs->transnoentities("PriceU"),0,'R',1);
 
       $pdf->line(176, $tab_top, 176, $tab_top + $tab_height);
       $pdf->SetXY(176,$tab_top);
-      $pdf->MultiCell(24,10,$langs->trans("Total"),0,'R',1);
+      $pdf->MultiCell(24,10,$langs->transnoentities("Total"),0,'R',1);
 
       $pdf->Rect(10, $tab_top, 190, $tab_height);
 
       $pdf->SetTextColor(0,0,0);
       $pdf->SetFont('Arial','',10);
-      $titre = $langs->trans("AmountInCurrency",$langs->trans("Currency".$conf->monnaie));
+      $titre = $langs->transnoentities("AmountInCurrency",$langs->transnoentities("Currency".$conf->monnaie));
       $pdf->Text(10,280, $titre);
     }
 
