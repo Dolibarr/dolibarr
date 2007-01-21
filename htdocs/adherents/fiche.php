@@ -503,11 +503,11 @@ if ($action == 'edit')
 
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-	print '<table class="border" width="100%">';
-	
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
+
+	print '<table class="border" width="100%">';
 	
 	$htmls = new Form($db);
 
@@ -522,6 +522,7 @@ if ($action == 'edit')
 	// Prenom
 	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	$rowspan=16;
+	$rowspan+=sizeof($adho->attribute_label);
 	print '<td rowspan="'.$rowspan.'" valign="top">';
 	print '<textarea name="comment" wrap="soft" cols="70" rows="16">'.$adh->commentaire.'</textarea></td></tr>';
 	
