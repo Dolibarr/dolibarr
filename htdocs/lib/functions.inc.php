@@ -518,9 +518,6 @@ function dolibarr_print_date($time,$format='')
         $smin = $reg[5];
         if ($syear < 1970 && isset($_SERVER["WINDIR"]))
         {
-            // Le formatage ne peut etre appliqué car windows ne supporte pas la fonction
-            // mktime si l'année est inférieur à 1970. On retourne un format fixe
-//            return "$syear-$smonth-$sday";
             return strftime($format,dolibarr_mktime($shour,$smin,0,$smonth,$sday,$syear));
         }
         else
