@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -22,10 +22,10 @@
  */
 
 /**
-        \file       htdocs/docsoc.php
-        \brief      Fichier onglet documents liés à la société
-        \ingroup    societe
-        \version    $Revision$
+   \file       htdocs/docsoc.php
+   \brief      Fichier onglet documents liés à la société
+   \ingroup    societe
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -43,48 +43,47 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if ($socid == '') accessforbidden();
 if ($user->societe_id > 0)
 {
-    $action = '';
-    $socid = $user->societe_id;
+  $action = '';
+  $socid = $user->societe_id;
 }
 
 // Protection restriction commercial
 if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
 {
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
+  $sql = "SELECT sc.fk_soc, s.client";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
+  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
+  
+  if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 0) accessforbidden();
+    }
 }
 
 
 /*
  * Actions
  */
- 
 $upload_dir = $conf->societe->dir_output . "/" . $socid ;
-
+$courrier_dir = $conf->societe->dir_output . "/courrier/" . get_exdir($socid) ;
 
 // Envoie fichier
 if ( $_POST["sendit"] && $conf->upload != 0)
 {
-    if (! is_dir($upload_dir)) create_exdir($upload_dir);
-
-    if (is_dir($upload_dir))
+  if (! is_dir($upload_dir)) create_exdir($upload_dir);
+  
+  if (is_dir($upload_dir))
     {
-        if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
+      if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
         {
-            $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-            //print_r($_FILES);
+	  $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+	  //print_r($_FILES);
         }
-        else
+      else
         {
-            // Echec transfert (fichier dépassant la limite ?)
-            $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-            // print_r($_FILES);
+	  // Echec transfert (fichier dépassant la limite ?)
+	  $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+	  // print_r($_FILES);
         }
     }
 }
@@ -92,11 +91,10 @@ if ( $_POST["sendit"] && $conf->upload != 0)
 // Suppression fichier
 if ($_GET["action"]=='delete')
 {
-    $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
-    dol_delete_file($file);
-    $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
+  $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
+  dol_delete_file($file);
+  $mesg = '<div class="ok">'.$langs->trans("FileWasRemoved").'</div>';
 }
-
 
 /*
  * Affichage liste
@@ -108,68 +106,67 @@ if ($socid > 0)
 {
     $societe = new Societe($db);
     if ($societe->fetch($socid))
-    {
-		/*
-		 * Affichage onglets
-		 */
-		$head = societe_prepare_head($societe);
+      {
+	/*
+	 * Affichage onglets
+	 */
+	$head = societe_prepare_head($societe);
 	
-		dolibarr_fiche_head($head, 'document', $societe->nom);
-
-
+	dolibarr_fiche_head($head, 'document', $societe->nom);
+	
         // Construit liste des fichiers
         clearstatcache();
-
+	
         $totalsize=0;
         $filearray=array();
-
+	
         $errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($upload_dir);
-		error_reporting($errorlevel);
+	error_reporting(0);
+	$handle=opendir($upload_dir);
+	error_reporting($errorlevel);
         if ($handle)
-        {
+	  {
             $i=0;
             while (($file = readdir($handle))!==false)
-            {
+	      {
                 if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-                {
+		  {
                     $filearray[$i]=$file;
                     $totalsize+=filesize($upload_dir."/".$file);
                     $i++;
-                }
-            }
+		  }
+	      }
             closedir($handle);
-        }
+	  }
         else
-        {
-//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-        }
+	  {
+	    //            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+	  }
         
         print '<table class="border"width="100%">';
-
-		// Ref
+	
+	// Ref
         print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
 
-		// Prefix
-	    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-
-		// Nbre fichiers
-        print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-
-		//Total taille
-        print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-
+	// Prefix
+	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+	
+	// Nbre fichiers
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+	
+	//Total taille
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+	
         print '</table>';
-
+	
         print '</div>';
-
+	
         if ($mesg) { print "$mesg<br>"; }
-
-	    // Affiche formulaire upload
-		$html=new Form($db);
-		$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),0);
-
+	
+	// Affiche formulaire upload
+	$html=new Form($db);
+	$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),0);
+	
         // Affiche liste des documents existant
         print_titre($langs->trans("AttachedFiles"));
 
@@ -178,33 +175,72 @@ if ($socid > 0)
 
         $var=true;
         foreach($filearray as $key => $file)
-        {
+	  {
             if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-            {
+	      {
                 $var=!$var;
                 print "<tr $bc[$var]><td>";
                 echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
                 print "</td>\n";
-
                 print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
                 print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
-
                 print '<td align="center">';
                 echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
                 print "</td></tr>\n";
             }
         }
+        print "</table><br><br>";
+	// Courriers
+	// Les courriers sont des documents speciaux generes par des scripts
+	// Voir Rodo
+        $filearray=array();	
+        $errorlevel=error_reporting();
+	error_reporting(0);
+	$handle=opendir($courrier_dir);
+	error_reporting($errorlevel);
+        if ($handle)
+	  {
+            $i=0;
+            while (($file = readdir($handle))!==false)
+	      {
+                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+		  {
+                    $filearray[$i]=$file;
+                    $i++;
+		  }
+	      }
+            closedir($handle);
+	  }       	       
 
+        print '<table width="100%" class="noborder">';
+        print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
+
+        $var=true;
+        foreach($filearray as $key => $file)
+	  {
+            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+	      {
+                $var=!$var;
+                print "<tr $bc[$var]><td>";
+		$loc = "courrier/".get_exdir($socid);
+                echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
+                print "</td>\n";
+
+                print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
+                print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+                print "</tr>\n";
+            }
+        }
         print "</table>";
-    }
+      }
     else
-    {
-        dolibarr_print_error($db);
-    }
+      {
+	dolibarr_print_error($db);
+      }
 }
 else
 {
-    dolibarr_print_error();
+  dolibarr_print_error();
 }
 
 $db->close();
