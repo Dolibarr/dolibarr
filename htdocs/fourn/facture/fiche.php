@@ -497,7 +497,7 @@ else
 					print '<input type="hidden" name="tauxtva" value="'.$fac->lignes[$i][2].'">';
 					print '<tr '.$bc[$var].'><td><input size="30" name="label" type="text" value="'.$fac->lignes[$i][0].'"></td>';
 					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i][1]).'"></td>';
-					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i][3].'"></td>';
 					print '<td align="right" nowrap="nowrap"><input size="6" name="totalht" type="text" value="'.price($fac->lignes[$i][4]).'"></td>';
 					print '<td align="right">';
@@ -617,7 +617,7 @@ else
 			print '<table class="border" width="100%">';
 
             // Ref
-            print "<tr><td>".$langs->trans("Ref")."</td><td colspan=\"3\">".$fac->ref."</td>";
+            print '<tr><td nowrap="nowrap">'.$langs->trans("Ref").'</td><td colspan="3">'.$fac->ref.'</td>';
             print "</tr>\n";
 
             // Societe
@@ -630,7 +630,7 @@ else
 			print '</td>';
 			print '</tr>';
 
-			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
+			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
 			print dolibarr_print_date($fac->datep,'%A %d %B %Y').'</td></tr>';
 
 			print '<tr>';
@@ -754,12 +754,12 @@ else
 				print $fac->lignes[$i][0];
 				//print '</a>';
 				print '</td>';
-				print '<td align="right">'.price($fac->lignes[$i][1]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][1]).'</td>';
 				print '<td align="right">'.$fac->lignes[$i][3].'</td>';
-				print '<td align="right">'.price($fac->lignes[$i][4]).'</td>';
-				print '<td align="right">'.$fac->lignes[$i][2].' %</td>';
-				print '<td align="right">'.price($fac->lignes[$i][5]).'</td>';
-				print '<td align="right">'.price($fac->lignes[$i][6]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][4]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.$fac->lignes[$i][2].' %</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][5]).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i][6]).'</td>';
 				print '</tr>';
 			}
 			print '</table>';
