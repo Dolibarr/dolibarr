@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -274,7 +274,7 @@ if (function_exists("ldap_connect"))
 			else
 			{
 				print img_picto('','error').' ';
-				print '<font class="error">'.$langs->trans("LDAPSynchroKO");
+				print '<font class="error">'.$langs->trans("LDAPSynchroKOMayBePermissions");
 				print ': '.$ldap->error;
 				print '</font><br>';
 			}
