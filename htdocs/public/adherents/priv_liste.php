@@ -23,6 +23,9 @@
 
 require("./pre.inc.php");
 
+$langs->load("members");
+
+
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
 $page=$_GET["page"];
@@ -56,7 +59,7 @@ if ($result)
 	$i = 0;
 
 	$param="&statut=$statut&sortorder=$sortorder&sortfield=$sortfield";
-	print_barre_liste($langs->trans("ListOfMembers"), $page, "priv_liste.php", $param);
+	print_barre_liste($langs->trans("MembersList"), $page, "priv_liste.php", $param);
 	print "<table class=\"noborder\" width=\"100%\">";
 
 	print '<tr class="liste_titre">';
