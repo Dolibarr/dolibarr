@@ -555,6 +555,7 @@ LDAPTestSynchroGroup=Test group's synchronization
 LDAPTestSynchroMember=Test member's synchronization
 LDAPSynchroOK=Synchronization test successful
 LDAPSynchroKO=Failed synchronization test
+LDAPSynchroKOMayBePermissions=Failed synchronization test. Chack that connexion to server is correctly configured and allows LDAP udpates
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
 LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=%s)
