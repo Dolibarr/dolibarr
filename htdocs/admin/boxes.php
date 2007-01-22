@@ -51,12 +51,12 @@ if ($_POST["action"] == 'add')
     $resql = $db->query($sql);
     if ($resql)
     {
-	    $num = $db->num_rows($result);
+	    $num = $db->num_rows($resql);
 	    if ($num == 0)
 	    {
 	        // Si la boite n'est pas deja active
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", 0)";
-	        $result = $db->query($sql);
+	        $resql = $db->query($sql);
 	    }
 	    
 	    Header("Location: boxes.php");
