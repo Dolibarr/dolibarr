@@ -285,9 +285,16 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     {
         $contrat = new Contrat($db);
         $contrat->id = $_GET["id"];
-        $contrat->delete($user,$langs,$conf);
-        Header("Location: index.php");
-        return;
+        $result=$contrat->delete($user,$langs,$conf);
+        if ($result >= 0)
+		{
+			Header("Location: index.php");
+			return;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$contrat->error.'</div>';
+		}
     }
 }
 

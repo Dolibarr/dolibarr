@@ -544,26 +544,47 @@ class Contrat extends CommonObject
      */
     function delete($user,$langs='',$conf='')
     {
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
-        $sql.= " WHERE rowid=".$this->id;
-        
+		$this->db->begin();
+		
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."contratdet";
+        $sql.= " WHERE fk_contrat=".$this->id;
+
+		dolibarr_syslog("Contrat::delete contratdet sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
-            // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
-            // Fin appel triggers
-    
-            return 1;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-            return -1;
-        }
-    }
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."contrat";
+	        $sql.= " WHERE rowid=".$this->id;
+	        
+			dolibarr_syslog("Contrat::delete contrat sql=".$sql);
+	        $resql=$this->db->query($sql);
+	        if ($resql)
+	        {
+	            // Appel des triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('CONTRACT_DELETE',$this,$user,$langs,$conf);
+	            // Fin appel triggers
+	    
+				$this->db->commit();
+	            return 1;
+	        }
+	        else
+	        {
+	            $this->error=$this->db->error();
+				dolibarr_syslog("Contrat::delete ERROR ".$this->error);
+				$this->db->rollback();
+	            return -1;
+	        }
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Contrat::delete ERROR ".$this->error);
+			$this->db->rollback();
+			return -2;
+		}
+	}
 
     
     /**
