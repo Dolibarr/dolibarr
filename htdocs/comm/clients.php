@@ -49,7 +49,7 @@ $pagenext = $_GET["page"] + 1;
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
-$search_code=isset($_GET["search_code"])?$_GET["search_contract"]:$_POST["search_code"];
+$search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
 
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
@@ -106,7 +106,7 @@ if ($result)
   
   print '<tr class="liste_titre">';
   print '<td class="liste_titre">';
-  print '<input type="text" class="flat" name="search_nom" value="'.stripslashes($search_nom).'">';
+  print '<input type="text" class="flat" name="search_nom" value="'.$search_nom.'">';
   print '</td><td class="liste_titre">';
   print '<input type="text" class="flat" name="search_ville" value="'.$search_ville.'" size="10">';
   print '</td><td class="liste_titre">';
