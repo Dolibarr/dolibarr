@@ -98,6 +98,7 @@ if ($_GET["action"] == 'unset')
   if ($db->query($sql))
     {
       Header("Location: adherent.php");
+	  exit;
     }
 }
 
@@ -128,9 +129,9 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
 print "<tr $bc[$var] class=value><td>".$langs->trans("AdherentMailRequired").'</td><td>';
-$form->selectyesnonum('constvalue',ADHERENT_MAIL_REQUIRED);
+$form->selectyesnonum('constvalue',$conf->global->ADHERENT_MAIL_REQUIRED);
 print '</td><td align="center" width="80">';
-print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button">';
+print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
 print '</form>';
 
@@ -143,9 +144,9 @@ if ($conf->banque->enabled)
     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
     print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
     print "<tr $bc[$var] class=value><td>".$langs->trans("AddSubscriptionIntoAccount").'</td><td>';
-    $form->selectyesnonum('constvalue',ADHERENT_BANK_USE);
+    $form->selectyesnonum('constvalue',$conf->global->ADHERENT_BANK_USE);
     print '</td><td align="center" width="80">';
-    print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button">';
+    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
     print "</td></tr>\n";
     print '</form>';
 }
@@ -285,9 +286,9 @@ function form_constantes($tableau){
       print '<input type="hidden" name="action" value="update">';
       print '<input type="hidden" name="rowid" value="'.$rowid.'">';
       print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-      print '<input type="hidden" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
       
-      print "<tr $bc[$var] class=value><td>".stripslashes(nl2br($obj->note))."</td>\n";
+      print "<tr $bc[$var]><td>".nl2br($obj->note)."</td>\n";
       
       print '<td>';
       if ($obj->type == 'yesno')
@@ -298,7 +299,7 @@ function form_constantes($tableau){
 	}
       elseif ($obj->type == 'texte')
 	{
-	  print '<textarea name="constvalue" cols="35" rows="5"wrap="soft">';
+	  print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
 	  print $obj->value;
 	  print "</textarea>\n";
 	  print '</td><td>';
@@ -306,13 +307,13 @@ function form_constantes($tableau){
 	}
       else
 	{
-	  print '<input type="text" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
       print '</td><td align="center">';
       
-      print '<input type="Submit" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+      print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
 //      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
       print "</td></tr>\n";
       
