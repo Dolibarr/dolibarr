@@ -490,7 +490,7 @@ insert into llx_c_paiement (id,code,libelle,type,active) values (11,'PRO', 'Prof
 -- Pays
 --
 
-delete from llx_c_pays;
+-- delete from llx_c_pays;
 insert into llx_c_pays (rowid,code,libelle) values (0,  ''  , '-'              );
 insert into llx_c_pays (rowid,code,libelle) values (1,  'FR', 'France'         );
 insert into llx_c_pays (rowid,code,libelle) values (2,  'BE', 'Belgique'       );
