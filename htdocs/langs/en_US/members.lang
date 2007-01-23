@@ -79,6 +79,7 @@ EditType=Edit member type
 VoteAllowed=Vote allowed
 Physical=Physical
 Moral=Moral
+Reenable=Reenable
 ResiliateMember=Resiliate a member
 ConfirmResiliateMember=Are you sure you want to resiliate this member ?
 DeleteMember=Delete a member

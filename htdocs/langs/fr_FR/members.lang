@@ -79,6 +79,7 @@ EditType=Édition du type d'adhérent
 VoteAllowed=Vote autorisé
 Physical=Physique
 Moral=Morale
+Reenable=Réactiver
 ResiliateMember=Résilier un adhérent
 ConfirmResiliateMember=Etes-vous sûr de vouloir résilier cet adhérent ?
 DeleteMember=Effacer un membre
