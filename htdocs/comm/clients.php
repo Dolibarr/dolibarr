@@ -89,18 +89,19 @@ if ($result)
 {
   $num = $db->num_rows($result);
   
-  print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],'',$sortfield,$sortorder,'',$num);
+  $param = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
+
+  print_barre_liste($langs->trans("ListOfCustomers"), $page, $_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
   
   $i = 0;
   
-  $addu = "&amp;search_nom=".$search_nom."&amp;search_code=".$search_code."&amp;search_ville=".$search_ville;
   print '<form method="get" action="clients.php">'."\n";
   print '<table class="liste">'."\n";
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$addu,"",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$param,"","",$sortfield);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$param,"","",$sortfield);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$param,"","",$sortfield);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$param,"",'align="center"',$sortfield);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
   
