@@ -36,10 +36,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
 $user->getrights('propale');
 
-if (!$user->rights->propale->lire)
-	accessforbidden();
-
-
 $langs->load('companies');
 $langs->load('propal');
 $langs->load('compta');
@@ -58,6 +54,7 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
+
 // Sécurité accés client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
@@ -66,11 +63,25 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+if (!$user->rights->propale->lire) accessforbidden();
+if ($_GET['propalid'] > 0)
+{
+  $propal = new Propal($db);
+  $result=$propal->fetch($_GET['propalid']);
+  if (! $result > 0)
+    {
+      dolibarr_print_error($db,$propal->error);
+      exit;
+    }
+  if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $propal->socid <> $user->societe_id)
+    accessforbidden();
+}
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
 
 $form=new Form($db);
+
 
 /******************************************************************************/
 /*                     Actions                                                */
@@ -703,28 +714,20 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 }
 
 
+/*
+* Affichage page
+*/
+
+llxHeader('',$langs->trans('Proposal'),'Proposition');
 
 $html = new Form($db);
 
-/*
- * Affichage fiche propal en mode visu
- *
- */
 if ($_GET['propalid'] > 0)
 {
-  $propal = new Propal($db);
-  
-  $result=$propal->fetch($_GET['propalid']);
-  if (! $result > 0)
-    {
-      dolibarr_print_error($db,$propal->error);
-      exit;
-    }
-
-  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
-    accessforbidden();
-
-  llxHeader('',$langs->trans('Proposal'),'Proposition');
+	/*
+	 * Affichage fiche propal en mode visu
+	 *
+	 */
   
   if ($mesg) print "$mesg<br>";
 
@@ -733,8 +736,7 @@ if ($_GET['propalid'] > 0)
   
   $head = propal_prepare_head($propal);
   dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
-  
-  
+    
   /*
    * Confirmation de la suppression de la propale
    */
@@ -1721,8 +1723,6 @@ if ($_GET['propalid'] > 0)
 }
 else
 {
-  llxHeader('',$langs->trans('Proposal'),'Proposition');
-
   /****************************************************************************
    *                                                                          *
    *                         Mode Liste des propales                          *
