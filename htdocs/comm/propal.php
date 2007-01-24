@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne           <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -25,9 +25,9 @@
  */
 
 /**
-        \file       htdocs/comm/propal.php
-        \ingroup    propale
-        \brief      Page liste des propales (vision commercial)
+   \file       htdocs/comm/propal.php
+   \ingroup    propale
+   \brief      Page liste des propales (vision commercial)
 */
 
 require("./pre.inc.php");
@@ -62,8 +62,8 @@ $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
 {
-	$action = '';
-	$socid = $user->societe_id;
+  $action = '';
+  $socid = $user->societe_id;
 }
 
 // Nombre de ligne pour choix de produit/service prédéfinis
@@ -71,42 +71,40 @@ $NBLINES=4;
 
 $form=new Form($db);
 
-
-
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-    if ($user->rights->propale->supprimer)
+  if ($user->rights->propale->supprimer)
     {
-        $propal = new Propal($db, 0, $_GET['propalid']);
-        $propal->fetch($_GET['propalid']);
-        $propal->delete($user);
-        $propalid = 0;
-        $brouillon = 1;
+      $propal = new Propal($db, 0, $_GET['propalid']);
+      $propal->fetch($_GET['propalid']);
+      $propal->delete($user);
+      $propalid = 0;
+      $brouillon = 1;
     }
-    Header('Location: '.$_SERVER["PHP_SELF"]);
-    exit;
+  Header('Location: '.$_SERVER["PHP_SELF"]);
+  exit;
 }
 
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
-    if ($user->rights->propale->creer)
+  if ($user->rights->propale->creer)
     {
-    	$propal = new Propal($db);
-    	$propal->fetch($_GET['propalid']);
-    	$result=$propal->delete_product($_GET['ligne']);
-		if ($_REQUEST['lang_id'])
-		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-		}
-    	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+      $propal = new Propal($db);
+      $propal->fetch($_GET['propalid']);
+      $result=$propal->delete_product($_GET['ligne']);
+      if ($_REQUEST['lang_id'])
+	{
+	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+      propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
     }
-    Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
-    exit;
+  Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
+  exit;
 }
 
 if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
@@ -703,11 +701,6 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 	exit;
 }
 
-
-
-
-llxHeader('',$langs->trans('Proposal'),'Proposition');
-
 $html = new Form($db);
 
 /*
@@ -716,92 +709,97 @@ $html = new Form($db);
  */
 if ($_GET['propalid'] > 0)
 {
-	if ($mesg) print "$mesg<br>";
+  if ($mesg) print "$mesg<br>";
+  
+  $propal = new Propal($db);
+  
+  $result=$propal->fetch($_GET['propalid']);
+  if (! $result > 0)
+    {
+      dolibarr_print_error($db,$propal->error);
+      exit;
+    }
 
-	$propal = new Propal($db);
+  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
+    accessforbidden();
 
-	$result=$propal->fetch($_GET['propalid']);
-	if (! $result > 0)
-	{
-		dolibarr_print_error($db,$propal->error);
-		exit;
-	}
-
-	$societe = new Societe($db);
-	$societe->fetch($propal->socid);
-
-	$head = propal_prepare_head($propal);
-	dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
-
-
-	/*
-	* Confirmation de la suppression de la propale
-	*/
-	if ($_GET['action'] == 'delete')
-	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
-		print '<br>';
-	}
-
-	/*
-	* Confirmation de la suppression d'une ligne produit
-	*/
-	if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-		print '<br>';
-	}
-
-	/*
-	* Confirmation de la validation de la propale
-	*/
-	if ($_GET['action'] == 'validate')
-	{
-		$html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
-		print '<br>';
-	}
-
-
-	/*
-	* Fiche propal
-	*
-	*/
-
-	print '<table class="border" width="100%">';
-
-	// Ref
-	print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
-	
-	// Ref client
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
-	print '</td>';
-	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="5">';
-	if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
-	{
-		print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
-		print '<input type="hidden" name="action" value="set_ref_client">';
-		print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
-		print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-		print '</form>';
-	}
-	else
-	{
-		print $propal->ref_client;
-	}
-	print '</td>';
-	print '</tr>';
-
-	$rowspan=8;
-
-	// Société
-	print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
-	print '</tr>';
-
-	// Ligne info remises tiers
+  llxHeader('',$langs->trans('Proposal'),'Proposition');
+  
+  $societe = new Societe($db);
+  $societe->fetch($propal->socid);
+  
+  $head = propal_prepare_head($propal);
+  dolibarr_fiche_head($head, 'comm', $langs->trans('Proposal'));
+  
+  
+  /*
+   * Confirmation de la suppression de la propale
+   */
+  if ($_GET['action'] == 'delete')
+    {
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('DeleteProp'), $langs->trans('ConfirmDeleteProp'), 'confirm_delete');
+      print '<br>';
+    }
+  
+  /*
+   * Confirmation de la suppression d'une ligne produit
+   */
+  if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+    {
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+      print '<br>';
+    }
+  
+  /*
+   * Confirmation de la validation de la propale
+   */
+  if ($_GET['action'] == 'validate')
+    {
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id, $langs->trans('ValidateProp'), $langs->trans('ConfirmValidateProp'), 'confirm_validate');
+      print '<br>';
+    }
+  
+  
+  /*
+   * Fiche propal
+   *
+   */
+  
+  print '<table class="border" width="100%">';
+  
+  // Ref
+  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+  
+  // Ref client
+  print '<tr><td>';
+  print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+  print $langs->trans('RefCustomer').'</td><td align="left">';
+  print '</td>';
+  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+  print '</tr></table>';
+  print '</td><td colspan="5">';
+  if ($user->rights->propale->creer && $_GET['action'] == 'refclient')
+    {
+      print '<form action="propal.php?propalid='.$propal->id.'" method="post">';
+      print '<input type="hidden" name="action" value="set_ref_client">';
+      print '<input type="text" class="flat" size="20" name="ref_client" value="'.$propal->ref_client.'">';
+      print ' <input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+      print '</form>';
+    }
+  else
+    {
+      print $propal->ref_client;
+    }
+  print '</td>';
+  print '</tr>';
+  
+  $rowspan=8;
+  
+  // Société
+  print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
+  print '</tr>';
+  
+  // Ligne info remises tiers
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
@@ -828,12 +826,12 @@ if ($_GET['propalid'] > 0)
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
-if ($conf->expedition->enabled)
-{
-	if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $rowspan++;
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
-}
-
+	if ($conf->expedition->enabled)
+	  {
+	    if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $rowspan++;
+	    if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS) $rowspan++;
+	  }
+	
 	// Notes
 	print '<td valign="top" colspan="2" width="50%" rowspan="'.$rowspan.'">'.$langs->trans('NotePublic').' :<br>'. nl2br($propal->note_public).'</td>';
 	print '</tr>';
@@ -1720,12 +1718,14 @@ if ($conf->expedition->enabled)
 }
 else
 {
+  llxHeader('',$langs->trans('Proposal'),'Proposition');
+
   /****************************************************************************
    *                                                                          *
    *                         Mode Liste des propales                          *
    *                                                                          *
    ****************************************************************************/
-
+  
   $sortorder=$_GET['sortorder'];
   $sortfield=$_GET['sortfield'];
   $page=$_GET['page'];
