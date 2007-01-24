@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003,2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006      Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2004           Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006      Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,9 +23,9 @@
  */
 
 /**
-        \file       htdocs/compta/propal.php
-        \ingroup    propale
-        \brief      Page liste des propales (vision compta)
+   \file       htdocs/compta/propal.php
+   \ingroup    propale
+   \brief      Page liste des propales (vision compta)
 */
 
 require("./pre.inc.php");
@@ -107,7 +107,7 @@ if ( $action == 'delete' )
 
 
 
-llxHeader();
+
 
 $html = new Form($db);
 
@@ -118,40 +118,45 @@ $html = new Form($db);
  */
 if ($_GET["propalid"] > 0)
 {
-	if ($mesg) print "$mesg<br>";
+  if ($mesg) print "$mesg<br>";
 
-	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
+  $propal = new Propal($db);
+  $propal->fetch($_GET['propalid']);
+  
+  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
+    accessforbidden();
 
-	$societe = new Societe($db);
-	$societe->fetch($propal->socid);
+  llxHeader();
 
-	$head = propal_prepare_head($propal);
-	dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
+  $societe = new Societe($db);
+  $societe->fetch($propal->socid);
 
-    
-    /*
-    * Fiche propal
-    *
-    */
-    print '<table class="border" width="100%">';
+  $head = propal_prepare_head($propal);
+  dolibarr_fiche_head($head, 'compta', $langs->trans('Proposal'));
+  
+  
+  /*
+   * Fiche propal
+   *
+   */
+  print '<table class="border" width="100%">';
 
-	// Ref
-    print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+  // Ref
+  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
 
-	// Ref client
-	print '<tr><td>';
-	print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
-	print $langs->trans('RefCustomer').'</td><td align="left">';
-	print '</td>';
-	if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="5">';
-	print $propal->ref_client;
-	print '</td>';
-	print '</tr>';
+  // Ref client
+  print '<tr><td>';
+  print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+  print $langs->trans('RefCustomer').'</td><td align="left">';
+  print '</td>';
+  if ($_GET['action'] != 'refclient' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=refclient&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('Edit')).'</a></td>';
+  print '</tr></table>';
+  print '</td><td colspan="5">';
+  print $propal->ref_client;
+  print '</td>';
+  print '</tr>';
 	
-    $rowspan=8;
+  $rowspan=8;
     
     // Société
     print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';
@@ -715,6 +720,8 @@ et non globalement
     
     
 } else {
+
+  llxHeader();
 
   /**
    *
