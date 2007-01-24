@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -298,9 +298,7 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"] > 0)
     print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
     print '</td></tr>';
     print "</table>\n";
-
     print '</form>';
-
     print '</div>';
 }
 elseif ($_GET["id"] > 0)
@@ -308,11 +306,9 @@ elseif ($_GET["id"] > 0)
   /*
    * Affichage en mode visu
    */
-  llxHeader();
-
   if ($mesg) print $mesg."<br>";
   
-  dolibarr_fiche_head($head, $a, $langs->trans("InterventionCard"));
+
   
   $fichinter = new Fichinter($db);
   $result=$fichinter->fetch($_GET["id"]);
@@ -321,6 +317,13 @@ elseif ($_GET["id"] > 0)
       dolibarr_print_error($db);
       exit;
     }
+
+  if ($user->societe_id > 0 && $fichinter->socid <> $user->societe_id)
+    accessforbidden();
+
+  llxHeader();
+  dolibarr_fiche_head($head, $a, $langs->trans("InterventionCard"));
+
   $fichinter->fetch_client();
   
   print '<table class="border" width="100%">';
