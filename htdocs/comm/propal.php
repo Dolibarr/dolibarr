@@ -39,6 +39,7 @@ $user->getrights('propale');
 if (!$user->rights->propale->lire)
 	accessforbidden();
 
+
 $langs->load('companies');
 $langs->load('propal');
 $langs->load('compta');
@@ -701,6 +702,8 @@ if ($_GET['action'] == 'down' && $user->rights->propale->creer)
 	exit;
 }
 
+
+
 $html = new Form($db);
 
 /*
@@ -709,8 +712,6 @@ $html = new Form($db);
  */
 if ($_GET['propalid'] > 0)
 {
-  if ($mesg) print "$mesg<br>";
-  
   $propal = new Propal($db);
   
   $result=$propal->fetch($_GET['propalid']);
@@ -725,6 +726,8 @@ if ($_GET['propalid'] > 0)
 
   llxHeader('',$langs->trans('Proposal'),'Proposition');
   
+  if ($mesg) print "$mesg<br>";
+
   $societe = new Societe($db);
   $societe->fetch($propal->socid);
   
@@ -871,56 +874,56 @@ if ($_GET['propalid'] > 0)
 
 	// date de livraison (conditonné sur PROPALE_ADD_SHIPPING_DATE car carac à
 	// gérer par les commandes et non les propal
-if ($conf->expedition->enabled)
-{
-	if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
+	if ($conf->expedition->enabled)
 	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DateDelivery');
-		print '</td>';
-		if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-		if ($_GET['action'] == 'editdate_livraison')
+		if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
 		{
-			print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-			print '<input type="hidden" name="action" value="setdate_livraison">';
-			$html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
-			print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-			print '</form>';
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DateDelivery');
+			print '</td>';
+			if ($_GET['action'] != 'editdate_livraison' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdate_livraison&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDateLivraison'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+			if ($_GET['action'] == 'editdate_livraison')
+			{
+				print '<form name="editdate_livraison" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+				print '<input type="hidden" name="action" value="setdate_livraison">';
+				$html->select_date($propal->date_livraison,'liv_','','','',"editdate_livraison");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
+			}
+			else
+			{
+				print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
+			}
+			print '</td>';
+			print '</tr>';
 		}
-		else
+
+		// adresse de livraison
+		if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
 		{
-			print dolibarr_print_date($propal->date_livraison,'%a %d %B %Y');
+			print '<tr><td>';
+			print '<table class="nobordernopadding" width="100%"><tr><td>';
+			print $langs->trans('DeliveryAddress');
+			print '</td>';
+
+			if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$propal->socid.'&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
+			print '</tr></table>';
+			print '</td><td colspan="3">';
+
+			if ($_GET['action'] == 'editdelivery_adress')
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','propal',$propal->id);
+			}
+			else
+			{
+				$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'none','propal',$propal->id);
+			}
+			print '</td></tr>';
 		}
-		print '</td>';
-		print '</tr>';
 	}
-
-	// adresse de livraison
-	if ($conf->global->PROPALE_ADD_DELIVERY_ADDRESS)
-	{
-		print '<tr><td>';
-		print '<table class="nobordernopadding" width="100%"><tr><td>';
-		print $langs->trans('DeliveryAddress');
-		print '</td>';
-
-		if ($_GET['action'] != 'editdelivery_adress' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editdelivery_adress&amp;socid='.$propal->socid.'&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetDeliveryAddress'),1).'</a></td>';
-		print '</tr></table>';
-		print '</td><td colspan="3">';
-
-		if ($_GET['action'] == 'editdelivery_adress')
-		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'adresse_livraison_id','propal',$propal->id);
-		}
-		else
-		{
-			$html->form_adresse_livraison($_SERVER['PHP_SELF'].'?propalid='.$propal->id,$propal->adresse_livraison_id,$_GET['socid'],'none','propal',$propal->id);
-		}
-		print '</td></tr>';
-	}
-}
 
 	// Conditions et modes de réglement
 	print '<tr><td>';
