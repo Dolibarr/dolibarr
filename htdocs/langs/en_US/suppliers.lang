@@ -16,3 +16,4 @@ ChangeSupplierPrice=Change supplier price
 ErrorQtyTooLowForThisSupplier=Quantity too low for this supplier
 ErrorSupplierCountryIsNotDefined=Country for this supplier is not defined. Correct this first.
 ProductHasAlreadyReferenceInThisSupplier=This product has already a reference in this supplier
+NoRecordedSuppliers=No suppliers recorded
