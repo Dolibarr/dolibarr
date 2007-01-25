@@ -80,6 +80,8 @@ class Fichinter extends CommonObject
     {
         if (! is_numeric($this->duree)) { $this->duree = 0; }
 
+		$this->db->begin();
+		
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree";
         if ($this->projet_id) {
             $sql .=  ",fk_projet";
@@ -87,19 +89,25 @@ class Fichinter extends CommonObject
         $sql .= ") ";
         $sql .= " VALUES ($this->socid, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->note)."', $this->duree";
         if ($this->projet_id) {
-            $sql .= ", $this->projet_id";
+            $sql .= ", ".$this->projet_id;
         }
         $sql .= ")";
         $sqlok = 0;
 
+		dolibarr_syslog("Fichinter::create sql=".$sql);
         $result=$this->db->query($sql);
         if ($result)
         {
-            return $this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+			$this->db->commit();
+			return $this->id;
         }
         else
         {
-            return -1;
+            $this->error=$this->db->error();
+			dolibarr_syslog("Fichinter::create ".$this->error);
+			$this->db->rollback();
+			return -1;
         }
 
     }
@@ -289,5 +297,31 @@ class Fichinter extends CommonObject
         	if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut1');
         }
     }
+
+	/**
+	*		\brief		Positionne modele derniere generation
+	*		\param		user		Objet use qui modifie
+	*		\param		modelpdf	Nom du modele
+	*/
+	function set_pdf_model($user, $modelpdf)
+	{
+		if ($user->rights->facture->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET model_pdf = '$modelpdf'";
+			$sql .= " WHERE rowid = ".$this->id;
+
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->modelpdf=$modelpdf;
+				return 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return 0;
+			}
+		}
+	}	
 }  
 ?>

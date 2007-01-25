@@ -488,6 +488,7 @@ OrdersNumberingModules=Orders numbering modules
 OrdersModelModule=Order documents models
 HideTreadedOrders=Hide the treated orders in the list
 ##### Fiche inter #####
+FicheinterNumberingModules=Intervention numbering modules
 TemplatePDFInterventions=Intervention card documents models
 ##### Clicktodial #####
 ClickToDialSetup=Click To Dial module setup

@@ -35,11 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
-$user->getrights('facture');
-$user->getrights('propale');
-if (!$user->rights->propale->lire)
-  accessforbidden();
-
 $langs->load('companies');
 $langs->load('compta');
 $langs->load('orders');
@@ -57,6 +52,9 @@ $pagenext = $page + 1;
 
 
 // Sécurité accés client
+$user->getrights('facture');
+$user->getrights('propale');
+if (!$user->rights->propale->lire) accessforbidden();
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
 if ($user->societe_id > 0)
@@ -64,6 +62,19 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+if ($_GET['propalid'] > 0)
+{
+  $propal = new Propal($db);
+  $result=$propal->fetch($_GET['propalid']);
+  if (! $result > 0)
+    {
+      dolibarr_print_error($db,$propal->error);
+      exit;
+    }
+  if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $propal->socid <> $user->societe_id)
+    accessforbidden();
+}
+
 
 
 /******************************************************************************/
@@ -107,7 +118,7 @@ if ( $action == 'delete' )
 
 
 
-
+llxHeader();
 
 $html = new Form($db);
 
@@ -123,11 +134,6 @@ if ($_GET["propalid"] > 0)
   $propal = new Propal($db);
   $propal->fetch($_GET['propalid']);
   
-  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
-    accessforbidden();
-
-  llxHeader();
-
   $societe = new Societe($db);
   $societe->fetch($propal->socid);
 
@@ -720,8 +726,6 @@ et non globalement
     
     
 } else {
-
-  llxHeader();
 
   /**
    *

@@ -76,6 +76,17 @@ class modFicheinter  extends DolibarrModules
 
     // Constantes
     $this->const = array();
+   	$r=0;
+    	
+	$this->const[$r][0] = "FICHINTER_ADDON_PDF";
+	$this->const[$r][1] = "chaine";
+	$this->const[$r][2] = "soleil";
+	$r++;
+
+	$this->const[$r][0] = "FICHINTER_ADDON";
+	$this->const[$r][1] = "chaine";
+	$this->const[$r][2] = "pacific";
+	$r++;
 
     // Boites
     $this->boxes = array();
@@ -111,10 +122,20 @@ class modFicheinter  extends DolibarrModules
     */
   function init()
   {
-    // Permissions
-    $this->remove();
-
-    return $this->_init($sql);
+       global $conf;
+    
+        // Permissions
+        $this->remove();
+    
+        // Dir
+        $this->dirs[0] = $conf->facture->dir_output;
+    
+	    $sql = array(
+			 "DELETE FROM ".MAIN_DB_PREFIX."document_model WHERE nom = '".$this->const[0][2]."'",
+			 "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES('".$this->const[0][2]."','ficheinter')",
+			 );
+    
+        return $this->_init($sql);
   }
 
   /**

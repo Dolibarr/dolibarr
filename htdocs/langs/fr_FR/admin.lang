@@ -487,6 +487,7 @@ OrdersNumberingModules=Modules de numérotation des commandes
 OrdersModelModule=Modèles de document des commandes
 HideTreadedOrders=Cacher les commandes traitées de la liste
 ##### Fiche inter #####
+FicheinterNumberingModules=Modules de numérotation des fiches interventions
 TemplatePDFInterventions=Modèle de documents des fiches d'interventions
 ##### Clicktodial #####
 ClickToDialSetup=Configuration du module Click To Dial

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php"))
 {
   require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php");
@@ -45,21 +46,37 @@ if (!$user->rights->ficheinter->lire) accessforbidden();
 
 if ($_GET["socid"])
 {
-  $societe=new Societe($db);
-  $societe->fetch($_GET["socid"]);
+	$societe=new Societe($db);
+	$societe->fetch($_GET["socid"]);
 }
 
 // Sécurité accés client
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$action = '';
+	$socid = $user->societe_id;
+}
+if ($_GET["id"])
+{
+	$fichinter = new Fichinter($db);
+	$result=$fichinter->fetch($_GET["id"]);
+	if (! $result > 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
+	if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $fichinter->socid <> $user->societe_id) accessforbidden();
 }
 
 
 /*
  * Traitements des actions
  */
+if ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && ! $_REQUEST["id"] > 0)
+{
+	Header("Location: index.php");
+	return;
+}
 
 if ($_GET["action"] == 'valid')
 {
@@ -71,18 +88,25 @@ if ($_GET["action"] == 'valid')
 
 if ($_POST["action"] == 'add')
 {
-  $fichinter = new Fichinter($db);
-  
-  $fichinter->date = $db->idate(mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
-  $fichinter->socid = $_POST["socid"];
-  $fichinter->duree = $_POST["duree"];
-  $fichinter->projet_id = $_POST["projetidp"];
-  $fichinter->author = $user->id;
-  $fichinter->note = $_POST["note"];
-  $fichinter->ref = $_POST["ref"];
-  
-  $id = $fichinter->create();
-  $_GET["id"]=$id;      // Force raffraichissement sur fiche venant d'etre créée
+	$fichinter = new Fichinter($db);
+
+	$fichinter->date = $db->idate(dolibarr_mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
+	$fichinter->socid = $_POST["socid"];
+	$fichinter->duree = $_POST["duree"];
+	$fichinter->projet_id = $_POST["projetidp"];
+	$fichinter->author = $user->id;
+	$fichinter->note = $_POST["note"];
+	$fichinter->ref = $_POST["ref"];
+
+	$result = $fichinter->create();
+	if ($result > 0)
+	{
+		$_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre créée
+	}
+	else
+	{
+		$mesg='<div class="error">'.$fichinter->error.'</div>';
+	}
 }
 
 if ($_POST["action"] == 'update')
@@ -119,40 +143,42 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     }
 }
 
+
+
 /*
  * Affichage page
  */
 $html = new Form($db);
 
-/*
- *
- * Mode creation
- * Creation d'une nouvelle fiche d'intervention
- *
- */
+llxHeader();
+
 if ($_GET["action"] == 'create')
 {
-  llxHeader();
-  print_titre($langs->trans("AddIntervention"));
-  
-  if (! $conf->global->FICHEINTER_ADDON)
-    {
-      dolibarr_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
-      exit;
-    }
-  
-  $fix = new Fichinter($db);
-  
-  $file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
-  
-  $obj = "mod_".$conf->global->FICHEINTER_ADDON;
-  $modFicheinter = new $obj;
-  $numpr = $modFicheinter->getNextValue($societe);
-    
-  print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
-  
-  $smonth = 1;
-  $syear = date("Y", time());
+	/*
+	 * Mode creation
+	 * Creation d'une nouvelle fiche d'intervention
+	 */
+
+	print_titre($langs->trans("AddIntervention"));
+
+	if (! $conf->global->FICHEINTER_ADDON)
+	{
+		dolibarr_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
+		exit;
+	}
+
+	$fix = new Fichinter($db);
+
+	$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+
+	$obj = "mod_".$conf->global->FICHEINTER_ADDON;
+	$modFicheinter = new $obj;
+	$numpr = $modFicheinter->getNextValue($societe);
+
+	print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
+
+	$smonth = 1;
+	$syear = date("Y", time());
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
@@ -166,7 +192,7 @@ if ($_GET["action"] == 'create')
 
 	print "<tr><td>".$langs->trans("Ref")."</td>";
 	print "<td><input name=\"ref\" value=\"$numpr\"></td></tr>\n";
-	
+
 	print "<tr><td>".$langs->trans("Duration")." (".$langs->trans("days").")</td><td><input name=\"duree\"></td></tr>\n";
 
 	if ($conf->projet->enabled)
@@ -204,31 +230,31 @@ if ($_GET["action"] == 'create')
 				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create>'.$langs->trans("Add").'</a>';
 			}
 		}
-	
+		
 	}
 	print '</td></tr>';
-	
+
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print "<td>";
 
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
-    {
-	    // Editeur wysiwyg
+	{
+		// Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 		$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
 		$doleditor->Create();
-    }
-    else
-    {
+	}
+	else
+	{
 		print '<textarea name="note" wrap="soft" cols="70" rows="15"></textarea>';
-    }
+	}
 
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center">';
 	print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
 	print '</td></tr>';
-	
+
 	print '</table>';
 	print '</form>';
 }
@@ -240,12 +266,13 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"] > 0)
    * Mise a jour de la fiche d'intervention
    *
    */
-  llxHeader();
   $fichinter = new Fichinter($db);
   $fichinter->fetch($_GET["id"]);
   $fichinter->fetch_client();
   
-  dolibarr_fiche_head($head, $a, $langs->trans("EditIntervention"));
+  $head = fichinter_prepare_head($fichinter);
+
+  dolibarr_fiche_head($head, 'card', $langs->trans("EditIntervention"));
   
   
   print "<form name='update' action=\"fiche.php\" method=\"post\">";
@@ -306,10 +333,6 @@ elseif ($_GET["id"] > 0)
   /*
    * Affichage en mode visu
    */
-  if ($mesg) print $mesg."<br>";
-  
-
-  
   $fichinter = new Fichinter($db);
   $result=$fichinter->fetch($_GET["id"]);
   if (! $result > 0)
@@ -317,14 +340,14 @@ elseif ($_GET["id"] > 0)
       dolibarr_print_error($db);
       exit;
     }
-
-  if ($user->societe_id > 0 && $fichinter->socid <> $user->societe_id)
-    accessforbidden();
-
-  llxHeader();
-  dolibarr_fiche_head($head, $a, $langs->trans("InterventionCard"));
-
   $fichinter->fetch_client();
+
+  if ($mesg) print $mesg."<br>";
+
+  $head = fichinter_prepare_head($fichinter);
+  
+  dolibarr_fiche_head($head, 'card', $langs->trans("InterventionCard"));
+  
   
   print '<table class="border" width="100%">';
   
@@ -387,8 +410,8 @@ elseif ($_GET["id"] > 0)
     $filename=sanitize_string($fichinter->ref);
     $filedir=$conf->fichinter->dir_output . "/".$fichinter->ref;
     $urlsource=$_SERVER["PHP_SELF"]."?id=".$fichinter->id;
-    //$genallowed=$user->rights->fichinter->creer;
-    //$delallowed=$user->rights->fichinter->supprimer;
+    $genallowed=$user->rights->fichinter->creer;
+    $delallowed=$user->rights->fichinter->supprimer;
     $genallowed=1;
     $delallowed=0;
 
@@ -401,10 +424,6 @@ elseif ($_GET["id"] > 0)
     print "&nbsp;</td>";
     print "</tr></table>\n";
 
-}
-else
-{
-  Header("Location: index.php");
 }
 
 $db->close();
