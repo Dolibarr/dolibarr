@@ -71,7 +71,7 @@ if ($_GET['propalid'] > 0)
       dolibarr_print_error($db,$propal->error);
       exit;
     }
-  if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $propal->socid <> $user->societe_id)
+  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
     accessforbidden();
 }
 

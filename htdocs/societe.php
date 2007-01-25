@@ -128,7 +128,14 @@ if (isset($_POST["button_removefilter_x"]))
  * Mode Liste
  *
  */
-
+/*
+	REM: Regle sur droits "Voir tous les clients"
+	REM: Exemple, voir la page societe.php dans le mode liste.
+	Utilisateur interne socid=0 + Droits voir tous clients        => Voit toute société
+	Utilisateur interne socid=0 + Pas de droits voir tous clients => Ne voit que les sociétés liées comme commercial
+	Utilisateur externe socid=x + Droits voir tous clients        => Ne voit que lui meme
+	Utilisateur externe socid=x + Pas de droits voir tous clients => Ne voit que lui meme
+*/ 
 $title=$langs->trans("ListOfThirdParties");
 
 $sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";

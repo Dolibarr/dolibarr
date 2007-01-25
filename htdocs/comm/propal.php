@@ -73,7 +73,7 @@ if ($_GET['propalid'] > 0)
       dolibarr_print_error($db,$propal->error);
       exit;
     }
-  if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $propal->socid <> $user->societe_id)
+  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
     accessforbidden();
 }
 
@@ -1741,7 +1741,8 @@ else
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
-  $sql = 'SELECT s.nom, s.idp, s.client, p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
+  $sql = 'SELECT s.nom, s.idp, s.client, ';
+  $sql.= 'p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1790,7 +1791,7 @@ else
   $sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
   $sql .= $db->plimit($limit + 1,$offset);
   $result=$db->query($sql);
-
+print "xxx".$sql;
   if ($result)
     {
       $num = $db->num_rows($result);

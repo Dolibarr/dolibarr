@@ -40,9 +40,6 @@ if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/mod
 $langs->load("companies");
 $langs->load("interventions");
 
-$user->getrights("ficheinter");
-if (!$user->rights->ficheinter->lire) accessforbidden();
-
 
 if ($_GET["socid"])
 {
@@ -51,6 +48,8 @@ if ($_GET["socid"])
 }
 
 // Sécurité accés client
+$user->getrights("ficheinter");
+if (!$user->rights->ficheinter->lire) accessforbidden();
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -65,7 +64,7 @@ if ($_GET["id"])
 		dolibarr_print_error($db);
 		exit;
 	}
-	if (!$user->rights->commercial->client->voir && $user->societe_id > 0 && $fichinter->socid <> $user->societe_id) accessforbidden();
+	if ($user->societe_id > 0 && $fichinter->socid <> $user->societe_id) accessforbidden();
 }
 
 
