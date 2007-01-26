@@ -69,10 +69,24 @@ if ($_GET['propalid'] > 0)
   $propal = new Propal($db);
   $result=$propal->fetch($_GET['propalid']);
   if (! $result > 0)
-    {
+  {
       dolibarr_print_error($db,$propal->error);
       exit;
+  }
+  
+  // Protection restriction commercial
+  if (!$user->rights->commercial->client->voir)
+  {
+    $sql = "SELECT sc.fk_soc";
+    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql .= " WHERE sc.fk_soc = ".$propal->socid." AND sc.fk_user = ".$user->id;
+    if ( $db->query($sql) )
+    {
+      if ( $db->num_rows() == 0) accessforbidden();
     }
+  }
+  //fin de Protection restriction commercial
+  
   if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
     accessforbidden();
 }
