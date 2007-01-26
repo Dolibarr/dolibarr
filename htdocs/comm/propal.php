@@ -73,13 +73,15 @@ if ($_GET['propalid'] > 0)
       dolibarr_print_error($db,$propal->error);
       exit;
   }
-  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
-  {
-  	accessforbidden();
-  }
   // Protection restriction commercial
+  if ($user->societe_id > 0)
+  {
+	// Si externe, on autorise que ses propres infos
+	if ($propal->socid <> $user->societe_id) accessforbidden();
+  }
   else if (!$user->rights->commercial->client->voir)
   {
+	// Si interne et pas les droits de voir tous les clients, on autorise que si liés
   	$sql = "SELECT sc.fk_soc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql .= " WHERE sc.fk_soc = ".$propal->socid." AND sc.fk_user = ".$user->id;
@@ -91,7 +93,7 @@ if ($_GET['propalid'] > 0)
       }
     }
   }
-  //fin de Protection restriction commercial
+  // Fin de Protection restriction commercial
 }
 
 // Nombre de ligne pour choix de produit/service prédéfinis
