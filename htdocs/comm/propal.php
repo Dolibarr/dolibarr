@@ -1791,7 +1791,7 @@ else
   $sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
   $sql .= $db->plimit($limit + 1,$offset);
   $result=$db->query($sql);
-print "xxx".$sql;
+
   if ($result)
     {
       $num = $db->num_rows($result);
