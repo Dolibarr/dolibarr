@@ -406,7 +406,7 @@ if ($_GET["facid"] > 0)
 		  if ($objp->fk_product > 0)
 		    {
 		      print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-		      if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+		      if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
 		      else print img_object($langs->trans("ShowProduct"),"product");
 		      print ' '.stripslashes(nl2br($objp->description)).'</a>';
 		      if ($objp->date_start && $objp->date_end) { print " (Du ".dolibarr_print_date($objp->date_start)." au ".dolibarr_print_date($objp->date_end).")"; }

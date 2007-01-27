@@ -107,14 +107,17 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
   $commande->adresse_livraison_id = $_POST['adresse_livraison_id'];
   $commande->contactid            = $_POST['contactidp'];
 
-  $commande->add_product($_POST['idprod1'],$_POST['qty1'],$_POST['remise_percent1']);
-  $commande->add_product($_POST['idprod2'],$_POST['qty2'],$_POST['remise_percent2']);
-  $commande->add_product($_POST['idprod3'],$_POST['qty3'],$_POST['remise_percent3']);
-  $commande->add_product($_POST['idprod4'],$_POST['qty4'],$_POST['remise_percent4']);
-  $commande->add_product($_POST['idprod5'],$_POST['qty5'],$_POST['remise_percent5']);
-  $commande->add_product($_POST['idprod6'],$_POST['qty6'],$_POST['remise_percent6']);
-  $commande->add_product($_POST['idprod7'],$_POST['qty7'],$_POST['remise_percent7']);
-  $commande->add_product($_POST['idprod8'],$_POST['qty8'],$_POST['remise_percent8']);
+  $NBLINES=8;
+  for ($i = 1 ; $i <= $NBLINES ; $i++)
+  {
+  	if ($_POST['idprod'.$i])
+  	{
+  		$xid = 'idprod'.$i;
+  		$xqty = 'qty'.$i;
+  		$xremise = 'remise_percent'.$i;
+  		$commande->add_product($_POST[$xid],$_POST[$xqty],$_POST[$xremise]);
+  	}
+  }
 
   $commande_id = $commande->create($user);
 
@@ -1281,7 +1284,7 @@ else
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
 							print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br($objp->description):'';
@@ -1380,7 +1383,7 @@ else
 						if ($objp->fk_product > 0)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br($objp->product);

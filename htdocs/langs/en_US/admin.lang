@@ -331,7 +331,7 @@ NbOfDays=Nb of days
 AtEndOfMonth=At end of month
 Offset=Offset
 AlwaysActive=Always active
-UpdateRequired=Your system need to be updated. For this click on <a href="%s">Update now</a>.
+UpdateRequired=Your system needs to be updated. For this click on <a href="%s">Update now</a>.
 WebServer=Web server
 DocumentRootServer=Web server root directory
 DataRootServer=Data files directory

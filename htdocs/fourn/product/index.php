@@ -128,7 +128,7 @@ if ($resql)
 	  $var=!$var;
 	  print "<tr $bc[$var]>";
 	  print "<td><a href=\"fiche.php?id=$objp->rowid\">";
-	  if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+	  if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
 	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";

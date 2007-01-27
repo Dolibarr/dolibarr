@@ -79,11 +79,11 @@ if ($_POST["mode"]=='predefined')
 	$date_end='';
   if ($_POST["date_startmonth"] && $_POST["date_startday"] && $_POST["date_startyear"])
   {
-    $date_start=mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
+    $date_start=dolibarr_mktime(12, 0 , 0, $_POST["date_startmonth"], $_POST["date_startday"], $_POST["date_startyear"]);
   }
   if ($_POST["date_endmonth"] && $_POST["date_endday"] && $_POST["date_endyear"])
   {
-    $date_end=mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
+    $date_end=dolibarr_mktime(12, 0 , 0, $_POST["date_endmonth"], $_POST["date_endday"], $_POST["date_endyear"]);
   }
 }
 

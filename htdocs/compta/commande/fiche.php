@@ -337,7 +337,7 @@ if ($_GET["id"] > 0)
                 if ($objp->fk_product > 0)
                 {
                     print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                    if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+                    if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
                     else print img_object($langs->trans('ShowProduct'),'product');
                     print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
                     print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';

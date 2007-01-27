@@ -197,7 +197,7 @@ if ($resql)
 		{
 			$oldid = $objp->rowid;
 			print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->rowid.'">';
-			if ($objp->fk_product_type) print img_object($langs->trans("ShowService"),"service");
+			if ($objp->fk_product_type==1) print img_object($langs->trans("ShowService"),"service");
 			else print img_object($langs->trans("ShowProduct"),"product");
 			print "</a> ";
 			print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';

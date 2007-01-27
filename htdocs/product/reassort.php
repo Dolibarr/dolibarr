@@ -249,7 +249,7 @@ if ($resql)
         $var=!$var;
         print '<tr '.$bc[$var].'><td nowrap="nowrap">';
         print "<a href=\"fiche.php?id=$objp->rowid\">";
-        if ($objp->fk_product_type) 
+        if ($objp->fk_product_type==1) 
 	  {
 	    print img_object($langs->trans("ShowService"),"service");
 	  }

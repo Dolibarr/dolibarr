@@ -342,7 +342,7 @@ if ($_GET["propalid"] > 0)
                 if ($objp->fk_product > 0)
                 {
                     print '<td><a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-                    if ($objp->fk_product_type)
+                    if ($objp->fk_product_type==1)
                     print img_object($langs->trans('ShowService'),'service');
                     else
                     print img_object($langs->trans('ShowProduct'),'product');

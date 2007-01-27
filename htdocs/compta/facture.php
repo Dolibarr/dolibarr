@@ -2124,7 +2124,7 @@ else
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br(stripslashes($objp->product));
@@ -2227,7 +2227,7 @@ else
 						if ($objp->fk_product > 0)
 						{
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type) print img_object($langs->trans('ShowService'),'service');
+							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
 							print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br($objp->product);
