@@ -138,21 +138,21 @@ if ($_GET["action"] == 'create')
 {
 	print "<br>";
 	
-	print_titre("Nouvel attribut");
+	print_titre($langs->trans('NewAttribute'));
 
-	print "<form action=\"options.php\" method=\"post\">";
+	print '<form action="options.php" method="post">';
 	print '<table class="border" width="100%">';
 
 	print '<input type="hidden" name="action" value="add">';
 
 	print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40"></td></tr>';  
-	print '<tr><td>'.$langs->trans("AttributeCode").' (pas d\'espace et uniquement des carateres alphanumeriques)</td><td class="valeur"><input type="text" name="attrname" size="10"></td></tr>';
+	print '<tr><td>'.$langs->trans("AttributeCode").' ('.$langs->trans("AlphaNumOnlyCharsAndNoSpace").')</td><td class="valeur"><input type="text" name="attrname" size="10"></td></tr>';
 	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
-	$form->select_array('type',array('varchar'=>'chaine',
-	'text'=>'texte',
-	'int'=>'entier',
-	'date'=>'date',
-	'datetime'=>'date et heure'));
+	$form->select_array('type',array('varchar'=>$langs->trans('String'),
+	'text'=>$langs->trans('Text'),
+	'int'=>$langs->trans('Int'),
+	'date'=>$langs->trans('Date'),
+	'datetime'=>$langs->trans('DateAndTime')));
 	print '</td></tr>';
 	print '<tr><td>Taille</td><td><input type="text" name="size" size="5" value="255"></td></tr>';  
 
@@ -170,7 +170,7 @@ if ($_GET["action"] == 'create')
 if ($_GET["attrname"] && $_GET["action"] == 'edit')
 {
 
-  print_titre("Edition du champ ".$_GET["attrname"]);
+  print_titre($langs->trans("FieldEdition",$_GET["attrname"]));
   
   /*
    * formulaire d'edition
@@ -181,14 +181,14 @@ if ($_GET["attrname"] && $_GET["action"] == 'edit')
   print '<table class="border" width="100%">';
 
   print '<tr><td>'.$langs->trans("Label").'</td><td class="valeur"><input type="text" name="label" size="40" value="'.$adho->attribute_label[$_GET["attrname"]].'"></td></tr>';  
-  print '<tr><td>Nom de l\'attribut</td><td class="valeur">'.$_GET["attrname"].'&nbsp;</td></tr>';
+  print '<tr><td>'.$langs->trans("AttributeName").'</td><td class="valeur">'.$_GET["attrname"].'&nbsp;</td></tr>';
   list($type,$size)=preg_split('/\(|\)/',$adho->attribute_name[$_GET["attrname"]]);
   print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">';
-  $form->select_array('type',array('varchar'=>'chaine',
-				   'text'=>'texte',
-				   'int'=>'entier',
-				   'date'=>'date',
-				   'datetime'=>'date et heure'),$type);
+  $form->select_array('type',array('varchar'=>$langs->trans('String'),
+  'text'=>$langs->trans('Text'),
+  'int'=>$langs->trans('Int'),
+  'date'=>$langs->trans('Date'),
+  'datetime'=>$langs->trans('DateAndTime')),$type);
   print '</td></tr>';
 
   print '<tr><td>'.$langs->trans("Size").'</td><td class="valeur"><input type="text" name="size" size="5" value="'.$size.'"></td></tr>';  
