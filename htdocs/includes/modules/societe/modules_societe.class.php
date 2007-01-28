@@ -49,6 +49,15 @@ class ModeleThirdPartyCode
         return $langs->trans("NoDescription");
     }
 
+    /**     \brief      Renvoi nom module
+     *      \return     string      Nom du module
+     */
+    function getNom($langs)
+    {
+        return $this->nom;
+    }
+
+
     /**     \brief      Renvoi un exemple de numérotation
      *      \return     string      Example
      */

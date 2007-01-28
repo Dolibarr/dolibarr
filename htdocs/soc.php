@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -74,6 +74,7 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 // Initialisation de l'objet Societe
 $soc = new Societe($db);
 
+
 /*
  * Actions
  */
@@ -93,91 +94,94 @@ if ($_POST["getsuppliercode"])
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
-  $soc->nom                   = $_POST["nom"];
-  $soc->adresse               = $_POST["adresse"];
-  $soc->cp                    = $_POST["cp"];
-  $soc->ville                 = $_POST["ville"];
-  $soc->pays_id               = $_POST["pays_id"];
-  $soc->departement_id        = $_POST["departement_id"];
-  $soc->tel                   = $_POST["tel"];
-  $soc->fax                   = $_POST["fax"];
-  $soc->email                 = $_POST["email"];
-  $soc->url                   = $_POST["url"];
-  $soc->siren                 = $_POST["siren"];
-  $soc->siret                 = $_POST["siret"];
-  $soc->ape                   = $_POST["ape"];
-  $soc->prefix_comm           = $_POST["prefix_comm"];
-  $soc->code_client           = $_POST["code_client"];
-  $soc->code_fournisseur      = $_POST["code_fournisseur"];
-  $soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
-  $soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
-  $soc->capital               = $_POST["capital"];
-  
-  $soc->tva_assuj             = $_POST["assujtva_value"];
-  $soc->tva_intra_code        = $_POST["tva_intra_code"];
-  $soc->tva_intra_num         = $_POST["tva_intra_num"];
-  $soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
-  
-  $soc->forme_juridique_code  = $_POST["forme_juridique_code"];
-  $soc->effectif_id           = $_POST["effectif_id"];
-  $soc->typent_id             = $_POST["typent_id"];
-  $soc->client                = $_POST["client"];
-  $soc->fournisseur           = $_POST["fournisseur"];
-  $soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
-  
-  if ($_POST["action"] == 'add')
-    {
-      $result = $soc->create($user);
-      
-      if ($result >= 0)
-        {
-	  if (  $soc->client == 1 )
-	    {
-	      Header("Location: comm/fiche.php?socid=".$soc->id);
-	    }
-	  else
-	    {
-	      if (  $soc->fournisseur == 1 )
-		{
-		  Header("Location: fourn/fiche.php?socid=".$soc->id);
-		}
-	      else
-		{
-		  Header("Location: soc.php?socid=".$soc->id);
-		}
-	    }
-	  exit;
-        }
-      else
-        {
-	  $mesg=$soc->error;
-	  $_GET["action"]='create';
-        }
-    }
-  
-  if ($_POST["action"] == 'update')
-    {
-      if ($_POST["cancel"])
-        {
-	  Header("Location: soc.php?socid=".$socid);
-	  exit;
-        }
-      
-      $result = $soc->update($socid,$user);
-      if ($result >= 0)
-        {
-	  Header("Location: soc.php?socid=".$socid);
-	  exit;
-	}
-      else
+	$soc->nom                   = $_POST["nom"];
+	$soc->adresse               = $_POST["adresse"];
+	$soc->cp                    = $_POST["cp"];
+	$soc->ville                 = $_POST["ville"];
+	$soc->pays_id               = $_POST["pays_id"];
+	$soc->departement_id        = $_POST["departement_id"];
+	$soc->tel                   = $_POST["tel"];
+	$soc->fax                   = $_POST["fax"];
+	$soc->email                 = $_POST["email"];
+	$soc->url                   = $_POST["url"];
+	$soc->siren                 = $_POST["siren"];
+	$soc->siret                 = $_POST["siret"];
+	$soc->ape                   = $_POST["ape"];
+	$soc->prefix_comm           = $_POST["prefix_comm"];
+	$soc->code_client           = $_POST["code_client"];
+	$soc->code_fournisseur      = $_POST["code_fournisseur"];
+	$soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
+	$soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
+	$soc->capital               = $_POST["capital"];
+
+	$soc->tva_assuj             = $_POST["assujtva_value"];
+	$soc->tva_intra_code        = $_POST["tva_intra_code"];
+	$soc->tva_intra_num         = $_POST["tva_intra_num"];
+	$soc->tva_intra             = $_POST["tva_intra_code"] . $_POST["tva_intra_num"];
+
+	$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
+	$soc->effectif_id           = $_POST["effectif_id"];
+	$soc->typent_id             = $_POST["typent_id"];
+	$soc->client                = $_POST["client"];
+	$soc->fournisseur           = $_POST["fournisseur"];
+	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
+
+	if ($_POST["action"] == 'add')
 	{
-	  $soc->id = $socid;
-	  $reload = 0;
-	  $mesg = $soc->error;
-	  $_GET["action"]= "edit";
-        }
-    }
-  
+		$result = $soc->create($user);
+		
+		if ($result >= 0)
+		{
+			if (  $soc->client == 1 )
+			{
+				Header("Location: comm/fiche.php?socid=".$soc->id);
+				return;
+			}
+			else
+			{
+				if (  $soc->fournisseur == 1 )
+				{
+					Header("Location: fourn/fiche.php?socid=".$soc->id);
+					return;
+				}
+				else
+				{
+					Header("Location: soc.php?socid=".$soc->id);
+					return;
+				}
+			}
+			exit;
+		}
+		else
+		{
+			$mesg=$soc->error;
+			$_GET["action"]='create';
+		}
+	}
+
+	if ($_POST["action"] == 'update')
+	{
+		if ($_POST["cancel"])
+		{
+			Header("Location: soc.php?socid=".$socid);
+			exit;
+		}
+		
+		$result = $soc->update($socid,$user);
+		if ($result >= 0)
+		{
+			Header("Location: soc.php?socid=".$socid);
+			exit;
+		}
+		else
+		{
+			$soc->id = $socid;
+			$reload = 0;
+			$mesg = $soc->error;
+			$_GET["action"]= "edit";
+		}
+	}
+
 }
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
@@ -214,13 +218,32 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 	$_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
+	/*
+	*	Fiche en mode creation
+	*/
     if ($user->rights->societe->creer)
     {
-        /*
+		// Charge objet modCodeTiers
+		$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+		{
+			$module = substr($module, 0, strlen($module)-4);
+		}
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+		$modCodeClient = new $module;
+		$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+		if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+		{
+			$module = substr($module, 0, strlen($module)-4);
+		}
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+		$modCodeFournisseur = new $module;
+	
+		/*
          * Fiche societe en mode création
          */
-        $soc->fournisseur=0;
-	$soc->fournisseur_categorie = 0;
         if ($_GET["type"]=='f') { $soc->fournisseur=1; }
         if ($_GET["type"]=='c') { $soc->client=1; }
         if ($_GET["type"]=='p') { $soc->client=2; }
@@ -247,7 +270,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
 	    
-	    $soc->tva_assuj = $_POST["assujtva_value"];
+			$soc->tva_assuj = $_POST["assujtva_value"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
         }
@@ -297,11 +320,18 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
         print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
         print '</select></td>';
+
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
-        print '<table class="noborder"><tr><td>';
-        print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15"></td><td>';
-        //print '<input type="image" name="getcustomercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
+        print '<table class="nobordernopadding"><tr><td>';
+        print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+		print '</td><td>';
+		$s=$langs->trans("CustomerCodeDesc").'<br>';
+		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
+		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
+		print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
+
         print '</td></tr>';
 
         // Fournisseur
@@ -310,27 +340,33 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         $form->selectyesnonum("fournisseur",$soc->fournisseur);
         print '</td>';
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-        //print '<table class="noborder"><tr><td>';
+
+        print '<table class="nobordernopadding"><tr><td>';
         print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-	//print '</td><td>';
-        //print '<input type="image" name="getsuppliercode" value="1" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" class="noborder">';
-        //print '</td></tr></table>';
+		print '</td><td>';
+		$s=$langs->trans("SupplierCodeDesc").'<br>';
+		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
+		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		print $form->textwithhelp('',$s,1);
+        print '</td></tr></table>';
+
         print '</td></tr>';
 
-	if ($soc->fournisseur)
-	  {
-	    $load = $soc->LoadSupplierCateg();
-	    if ( $load == 0)
-	      {
-		if (sizeof($soc->SupplierCategories) > 0)
-		  {
-		    print '<tr>';
-		    print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-		    $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
-		    print '</td></tr>';
-		  }
-	      }
-	  }
+		if ($soc->fournisseur)
+		{
+			$load = $soc->LoadSupplierCateg();
+			if ( $load == 0)
+			{
+				if (sizeof($soc->SupplierCategories) > 0)
+				{
+					print '<tr>';
+					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+					$form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+					print '</td></tr>';
+				}
+			}
+		}
 
         print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
@@ -474,12 +510,29 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
     /*
      * Fiche societe en mode edition
      */
-
     print_titre($langs->trans("EditCompany"));
 
     if ($socid)
     {
-        if ($reload || ! $_POST["nom"])
+		// Charge objet modCodeTiers
+		$module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+		if (! $module) dolibarr_error('',$langs->trans("ErrorModuleThirdPartyCodeInCompanyModuleNotDefined"));
+		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+		{
+			$module = substr($module, 0, strlen($module)-4);
+		}
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+		$modCodeClient = new $module;
+		$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+		if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
+		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
+		{
+			$module = substr($module, 0, strlen($module)-4);
+		}
+		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
+		$modCodeFournisseur = new $module;
+		
+		if ($reload || ! $_POST["nom"])
         {
             $soc = new Societe($db);
             $soc->id = $socid;
@@ -560,6 +613,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
         print '</select></td>';
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
+
+        print '<table class="nobordernopadding"><tr><td>';
         if ($soc->codeclient_modifiable == 1)
         {
             print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
@@ -567,7 +622,16 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         else
         {
             print $soc->code_client;
+			print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
         }
+		print '</td><td>';
+		$s=$langs->trans("CustomerCodeDesc").'<br>';
+		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
+		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
+		print $form->textwithhelp('',$s,1);
+        print '</td></tr></table>';
+
         print '</td></tr>';
 
         // Fournisseur
@@ -576,6 +640,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         $form->selectyesnonum("fournisseur",$soc->fournisseur);
         print '</td>';
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+
+        print '<table class="nobordernopadding"><tr><td>';
         if ($soc->codefournisseur_modifiable == 1)
         {
             print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
@@ -583,7 +649,16 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         else
         {
             print $soc->code_fournisseur;
+			print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
         }
+		print '</td><td>';
+		$s=$langs->trans("SupplierCodeDesc").'<br>';
+		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
+		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		print $form->textwithhelp('',$s,1);
+        print '</td></tr></table>';
+
         print '</td></tr>';
 
 	if ($soc->fournisseur)

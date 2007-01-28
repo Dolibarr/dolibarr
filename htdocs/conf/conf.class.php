@@ -320,7 +320,7 @@ class Conf
 
 		// societe
 		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON="mod_codeclient_leopard";
+		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
 		if (! $this->global->SOCIETE_CODECOMPTA_ADDON) $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 		// Pour compatibilite ascendante:
 		if ($this->global->CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON=$this->global->CODECLIENT_ADDON;

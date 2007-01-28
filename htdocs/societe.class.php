@@ -118,15 +118,8 @@ class Societe
 
     // definit module code fournisseur
     $varfournisseur = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-	if ($varfournisseur == $varclient)	// Optimisation
-	{
-    	$this->mod_codefournisseur = $this->mod_codeclient;
-	}
-	else
-	{
-		require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varfournisseur.'.php';
-    	$this->mod_codefournisseur = new $varfournisseur;
-    }
+	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varfournisseur.'.php';
+   	$this->mod_codefournisseur = new $varfournisseur;
     $this->codefournisseur_modifiable = $this->mod_codefournisseur->code_modifiable;
 
     return 1;
@@ -145,7 +138,7 @@ class Societe
         // Nettoyage paramètres
         $this->nom=trim($this->nom);
 
-        dolibarr_syslog("societe.class.php::create ".$this->nom);
+        dolibarr_syslog("Societe::create ".$this->nom);
 
         $this->db->begin();
 
@@ -171,8 +164,8 @@ class Societe
                 	$this->add_commercial($user, $user->id);
                 }
 
-		// si le fournisseur est classe on l'ajoute
-		$this->AddFournisseurInCategory($this->fournisseur_categorie);
+				// si le fournisseur est classe on l'ajoute
+				$this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 if ($ret >= 0)
                 {
@@ -236,7 +229,7 @@ class Societe
 		{
 			// On ne vérifie le code client que si la société est un client / prospect et que le code est modifiable
 			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
-			$rescode = $this->verif_codeclient();
+			$rescode = $this->check_codeclient();
 			if ($rescode <> 0)
 			{
 				if ($rescode == -1)
@@ -254,6 +247,28 @@ class Societe
 				$result = -3;
 			}
 		}
+		if ($this->fournisseur && $this->codefournisseur_modifiable == 1)
+		{
+			// On ne vérifie le code fournisseur que si la société est un fournisseur et que le code est modifiable
+			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
+			$rescode = $this->check_codefournisseur();
+			if ($rescode <> 0)
+			{
+				if ($rescode == -1)
+				{
+					$this->error .= "La syntaxe du code fournisseur est incorrecte.\n";
+				}
+				if ($rescode == -2)
+				{
+					$this->error .= "Vous devez saisir un code fournisseur.\n";
+				}
+				if ($rescode == -3)
+				{
+					$this->error .= "Ce code fournisseur est déjà utilisé.\n";
+				}
+				$result = -3;
+			}
+		}		
 		return $result;
 	}
 
@@ -379,7 +394,7 @@ class Societe
             $sql .= " WHERE idp = '" . $id ."'";
 
         	
-	    dolibarr_syslog("Societe.class::update sql=".$sql);
+	    dolibarr_syslog("Societe::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -1409,7 +1424,7 @@ class Societe
 	 *    \brief      Verifie code client
 	 *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilis
 	 */
-	function verif_codeclient()
+	function check_codeclient()
 	{
 		global $conf;
 		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
@@ -1420,7 +1435,8 @@ class Societe
 	
 			$mod = new $var;
 	
-			return $mod->verif($this->db, $this->code_client, $this->id);
+			dolibarr_syslog("Societe::check_codeclient code_client=".$this->code_client." module=".$var);
+			return $mod->verif($this->db, $this->code_client, $this);
 		}
 		else
 		{
@@ -1428,36 +1444,23 @@ class Societe
 		}
 	}
 	
-	
-	function check_codeclient()
-	{
-		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
-		{
-			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
-	
-			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
-	
-			$mod = new $var;
-	
-			return $mod->verif($this->db, $this->code_client);
-		}
-		else
-		{
-			return 0;
-		}
-	}
-	
+	/**
+	 *    \brief      Verifie code fournisseur
+	 *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilis
+	 */
 	function check_codefournisseur()
 	{
-		if ($conf->global->CODEFOURNISSEUR_ADDON)
+		global $conf;
+		if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
 		{
-			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->CODEFOURNISSEUR_ADDON.'.php';
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
 	
-			$var = $conf->global->CODEFOURNISSEUR_ADDON;
+			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 	
 			$mod = new $var;
-	
-			return $mod->verif($this->db, $this->code_fournisseur);
+
+			dolibarr_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+			return $mod->verif($this->db, $this->code_fournisseur, $this);
 		}
 		else
 		{

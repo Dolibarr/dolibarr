@@ -22,9 +22,9 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_zebre.class.php
+        \file       htdocs/includes/modules/societe/mod_codeclient_lion.class.php
         \ingroup    societe
-        \brief      Fichier de la classe des gestion zebre des codes clients
+        \brief      Fichier de la classe des gestion lion des codes clients
         \version    $Revision$
 */
 
@@ -32,10 +32,11 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 
 /**
-        \class 		mod_codeclient_zebre
-        \brief 		Classe permettant la gestion zebre des codes tiers
+        \class 		mod_codeclient_lion
+        \brief 		Classe permettant la gestion lion des codes tiers
 */
-class mod_codeclient_zebre extends ModeleThirdPartyCode
+
+class mod_codeclient_lion extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
 	var $code_modifiable;				// Code modifiable
@@ -46,9 +47,9 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	
 	/**		\brief      Constructeur classe
 	*/
-	function mod_codeclient_zebre()
+	function mod_codeclient_lion()
 	{
-		$this->nom = "Zèbre";
+		$this->nom = "Lion";
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 0;
 		$this->code_modifiable_null = 1;
@@ -56,127 +57,41 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	}
 
 	
-	/**
-	*		\brief      Renvoie la description du module
-	*		\return     string      Texte descripif
+	/**		\brief      Renvoi la description du module
+	*      	\return     string      Texte descripif
 	*/
 	function info($langs)
 	{
-		return "Vérifie si le code client est de la forme CCCC9999. Les quatres premières lettres étant une représentation mnémotechnique, suivi du code postal en 2 chiffres et un numéro d'ordre pour la prise en compte des doublons.";
+		return "Vérifie si le code client est de la forme numérique 999 et sur au moins 3 chiffres.";
 	}
 
-	
+
 	/**		\brief      Renvoi la description du module
 	*      	\return     string      Texte descripif
 	*/
 	function getExample($langs)
 	{
-		return "ABCD7501";
+		return "001";
 	}
 
-	
+
 	/**
 	* 		\brief		Vérifie la validité du code
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code a vérifier/corriger
 	*		\param		$soc		Objet societe
+	*		\return		int			<0 si ko
 	*/
 	function verif($db, &$code, $soc)
-	{ 
+	{
 		$code = strtoupper(trim($code));
 
 		if ($this->verif_syntax($code) == 0)
-		{	  
-			$i = 1;
-
+		{	
 			$is_dispo = $this->verif_dispo($db, $code);
-
-			while ($is_dispo <> 0 && $i < 99)
-			{
-				$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				
-				$code = substr($code,0,6) . substr("00".$i, -2);
-				
-				$is_dispo = $this->verif_dispo($db, $code);
-				
-				$i++;
-			}
-
 			if ($is_dispo <> 0)
 			{
 				return -3;
-			}
-		}
-		else
-		{
-			if (strlen(trim($code)) == 0)
-			{
-				return -2;
-			}
-			else
-			{
-				return -1;
-			}
-		}
-	}
-
-	
-	/**
-	*		\brief		Renvoi une valeur correcte
-	*		\param		$db		Handler acces base
-	*		\param		$code	Code reference eventuel
-	*		\return		string	Code correcte
-	*/
-	function get_correct($db, $code)
-	{ 
-		if ($this->verif_syntax($code) == 0)
-		{	  
-			$i = 1;
-
-			$is_dispo = $this->verif_dispo($db, $code);
-
-			while ( $is_dispo <> 0 && $i < 99)
-			{
-				$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				
-				$code = substr($code,0,6) . substr("00".$i, -2);
-				
-				$is_dispo = $this->verif_dispo($db, $code);
-				
-				$i++;
-			}
-
-			return $is_dispo;
-
-		}
-		else
-		{
-			return -1;
-		}
-
-	}
-
-	
-	/**
-	*		\brief		Renvoi si un code est pris ou non
-	*		\param		$db		Handler acces base
-	*		\param		$code	Code a verifier
-	*		\return		int		0 si dispo, <0 si erreur
-	*/
-	function verif_dispo($db, $code)
-	{
-		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE code_client = '".$code."'";
-
-		if ($db->query($sql))
-		{
-			if ($db->num_rows() == 0)
-			{
-				return 0;
-			}
-			else
-			{
-				return -1;
 			}
 		}
 		else
@@ -192,24 +107,88 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		}
 	}
 
+	
+	/**
+	*		\brief		Renvoi une valeur correcte
+	*		\param		$db			Handler acces base
+	*		\param		$code		Code reference eventuel
+	*		\return		string		Code correct
+	*/
+	function get_correct($db,$code)
+	{
+		$return='001';
+		
+		$sql = "SELECT MAX(code_client) as maxval FROM ".MAIN_DB_PREFIX."societe";
+		$resql=$db->query($sql);
+		if ($resql)
+		{	
+			$obj=$db->fetch_object($resql);
+			if ($obj)
+			{
+				$newval=$obj->maxval+1;
+				$return=sprintf('%03d',$newval);
+				return $return;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
-	function verif_syntax(&$code)
+	
+	/**
+	*		\brief		Renvoi si un code est pris ou non
+	*		\param		$db		Handler acces base
+	*		\param		$code	Code a verifier
+	*		\return		int		0 si dispo, <0 si erreur
+	*/
+	function verif_dispo($db, $code)
+	{
+		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
+		$sql .= " WHERE code_client = '".$code."'";
+
+		$resql=$db->query($sql);
+		if ($resql)
+		{
+			if ($db->num_rows() == 0)
+			{
+				return 0;
+			}
+			else
+			{
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+
+	}
+
+
+	/**
+	*	\brief		Renvoi si un code respecte la syntaxe
+	*	\return		int		0 si dispo, <0 si erreur
+	*/
+	function verif_syntax($code)
 	{
 		$res = 0;
 		
-		if (strlen($code) <> 8)
+		if (strlen($code) < 3)
 		{
 			$res = -1;
 		}
 		else
 		{
-			if ($this->is_alpha(substr($code,0,4)) == 0 && $this->is_num(substr($code,4,4)) == 0 )
+			if (eregi('[0-9][0-9][0-9]+',$code))
 			{
-				$res = 0;	      
+				$res = 0;	
 			}
 			else
 			{
-				$res = -2; 
+				$res = -2;
 			}
 			
 		}
@@ -217,32 +196,16 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	}
 
 
-	function is_alpha($str)
-	{
-		$ok = 0;
-		// Je n'ai pas trouvé de fonction pour tester une chaine alpha sans les caractère accentués
-		// dommage
-		$alpha = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';      
-
-		for ($i = 0 ; $i < 4 ; $i++)
-		{
-			if (strpos($alpha, substr($str,$i, 1)) === false)
-			{
-				$ok++;
-			}
-		}
-		
-		return $ok;
-	}
-
-	
+	/**
+	*	Renvoi 0 si numerique, sinon renvoi nb de car non numerique
+	*/
 	function is_num($str)
 	{
 		$ok = 0;
 
 		$alpha = '0123456789';
 
-		for ($i = 0 ; $i < 4 ; $i++)
+		for ($i = 0 ; $i < length($str) ; $i++)
 		{
 			if (strpos($alpha, substr($str,$i, 1)) === false)
 			{

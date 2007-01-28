@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,7 +30,6 @@
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
-
 /**
         \class 		mod_codeclient_leopard
         \brief 		Classe permettant la gestion leopard des codes tiers
@@ -38,39 +37,56 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
+	/*
+	* Attention ce module est utilisé par défaut si aucun module n'a 
+	* été définit dans la configuration
+	*
+	* Le fonctionnement de celui-ci doit dont rester le plus ouvert
+	* possible
+	*/
 
-  /*
-   * Attention ce module est utilisé par défaut si aucun module n'a 
-   * été définit dans la configuration
-   *
-   * Le fonctionnement de celui-ci doit dont rester le plus ouvert
-   * possible
-   */
+	var $nom;							// Nom du modele
+	var $code_modifiable;				// Code modifiable
+	var $code_modifiable_invalide;		// Code modifiable si il est invalide
+	var $code_modifiable_null;			// Code modifiables si il est null
+	var $code_null;						// Code facultatif	
 
-  function mod_codeclient_leopard()
-  {
-    $this->nom = "Léopard";
-    $this->code_modifiable = 1;
+	
+	/**		\brief      Constructeur classe
+	*/
+	function mod_codeclient_leopard()
+	{
+		$this->nom = "Léopard";
+		$this->code_modifiable = 1;
+		$this->code_modifiable_invalide = 1;
+		$this->code_modifiable_null = 1;
+		$this->code_null = 1;
+	}
 
-    $this->code_modifiable_invalide = 1; // code modifiable si il est invalide
+	
+	/**
+	*		\brief      Renvoie la description du module
+	*		\return     string      Texte descripif
+	*/
+	function info($langs)
+	{
+		return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test.";
+	}
 
-    $this->code_modifiable_null = 1; // code modifiable si il est null
+	
+	/**
+	* 		\brief		Vérifie la validité du code
+	*		\param		$db			Handler acces base
+	*		\param		$code		Code a vérifier
+	*		\param		$soc		Objet societe
+	*/
+	function verif($db, $code, $soc)
+	{
+		$code = strtoupper(trim($code));
 
-    $this->code_null = 1;
-
-
-  }
-
-  function info($langs)
-  {
-    return "Renvoie toujours ok, pour ceux qui ne veulent pas faire de test.";
-  }
-  
-  function verif($db, $code)
-  {
-    // Renvoie toujours ok
-    return 0;
-  }
+		// Renvoie toujours ok
+		return 0;
+	}
 }
 
 ?>
