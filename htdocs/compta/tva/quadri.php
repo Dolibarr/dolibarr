@@ -287,10 +287,10 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 			'<td align="right">'.$langs->trans("Total").':</td>' .
 			'<td nowrap align="right">'.price($subtot_coll_total).'</td>' .
 			'<td nowrap align="right">'.price($subtot_coll_vat).'</td>' .
-			'<td></td>';
+			'<td></td>' .
 			'<td nowrap align="right">'.price($subtot_paye_total).'</td>' .
 			'<td nowrap align="right">'.price($subtot_paye_vat).'</td>' .
-			'<td></td>';
+			'<td></td>' .
 			'<td nowrap align="right"><b>'.price($total).'</b>' .
 			'</td>';
 	print '</tr>';
