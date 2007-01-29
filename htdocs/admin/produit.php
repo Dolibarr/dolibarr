@@ -67,18 +67,22 @@ if ($_POST["action"] == 'multiprix')
 	  // on crée la table societe_prices
 	  else
 	    {
-	      $table = MAIN_DB_PREFIX."societe_prices";
-	      $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-	      $fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
-	      $fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-	      $fields['datec'] = array('type'=>'datetime','default'=> 'null');
-	      $fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
-	      $fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-	      if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
-		{
-		  dolibarr_print_error($db);
-		  exit;
-		}
+	      /*
+	       * La table est desormais cree par un fichier SQL comme les autres tables
+	       *
+	       * $table = MAIN_DB_PREFIX."societe_prices";
+	       * $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
+	       * $fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
+	       * $fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
+	       * $fields['datec'] = array('type'=>'datetime','default'=> 'null');
+	       * $fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
+	       * $fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
+	       * if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
+	       * {
+	       * dolibarr_print_error($db);
+	       * exit;
+	       *	}
+	       */
 	    }
 	}
       dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
