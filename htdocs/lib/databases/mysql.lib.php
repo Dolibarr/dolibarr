@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
- * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -23,309 +23,315 @@
  */
 
 /**
-        \file       htdocs/lib/mysql.lib.php
-        \brief      Fichier de la classe permettant de gérer une base mysql
-        \author     Fabien Seisen
-        \author     Rodolphe Quiedeville.
-        \author     Laurent Destailleur.
-        \version    $Revision$
+   \file       htdocs/lib/mysql.lib.php
+   \brief      Fichier de la classe permettant de gérer une base mysql
+   \author     Fabien Seisen
+   \author     Rodolphe Quiedeville.
+   \author     Laurent Destailleur.
+   \version    $Revision$   
 */
 
 
 /**
-        \class      DoliDb
-        \brief      Classe permettant de gérér la database de dolibarr
+   \class      DoliDb
+   \brief      Classe de gestion de la database de dolibarr
 */
 
 class DoliDb
 {
-    var $db;                    // Handler de base
-    var $type='mysql';          // Nom du gestionnaire
-    var $forcecharset='latin1';
-	var $forcecollate='latin1_swedish_ci';
-	var $versionmin=array(3,1,0);	// Version min database
-	
-    var $results;               // Resultset de la dernière requete
+  //! Handler de base
+  var $db;
+  //! Nom du gestionnaire
+  var $type='mysql';          
+  //! Charset
+  var $forcecharset='latin1';
+  //! Collate
+  var $forcecollate='latin1_swedish_ci';
+  //! Version min database
+  var $versionmin=array(3,1,0);	
+  //! Resultset de la dernière requete  
+  var $results;
+  //! 1 si connecté, 0 sinon  
+  var $connected;             
+  //! 1 si base sélectionné, 0 sinon
+  var $database_selected; 
+  //! Nom base sélectionnée
+  var $database_name;			
+  //! 1 si une transaction est en cours, 0 sinon
+  var $transaction_opened;	
+  //! Derniere requete exécutée
+  var $lastquery;			
+  //! Derniere requete exécutée avec echec
+  var $lastqueryerror;		
+  //! Message erreur mysql
+  var $lasterror;		
+  //! Message erreur mysql
+  var $lasterrno;
+  
+  var $ok;
+  var $error;
+  
 
-    var $connected;             // 1 si connecté, 0 sinon
-    var $database_selected;     // 1 si base sélectionné, 0 sinon
-    var $database_name;			// Nom base sélectionnée
-    var $transaction_opened;	// 1 si une transaction est en cours, 0 sinon
-    var $lastquery;				// Derniere requete exécutée
-	var $lastqueryerror;		// Derniere requete exécutée avec echec
-	var $lasterror;				// Message erreur mysql
-	var $lasterrno;				// Message erreur mysql
+  // Constantes pour conversion code erreur MySql en code erreur générique
+  var $errorcode_map = array(
+			     1004 => 'DB_ERROR_CANNOT_CREATE',
+			     1005 => 'DB_ERROR_CANNOT_CREATE',
+			     1006 => 'DB_ERROR_CANNOT_CREATE',
+			     1007 => 'DB_ERROR_ALREADY_EXISTS',
+			     1008 => 'DB_ERROR_CANNOT_DROP',
+			     1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+			     1046 => 'DB_ERROR_NODBSELECTED',
+			     1048 => 'DB_ERROR_CONSTRAINT',
+			     1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
+			     1051 => 'DB_ERROR_NOSUCHTABLE',
+			     1054 => 'DB_ERROR_NOSUCHFIELD',
+			     1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
+			     1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
+			     1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
+			     1064 => 'DB_ERROR_SYNTAX',
+			     1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
+			     1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
+			     1091 => 'DB_ERROR_NOSUCHFIELD',
+			     1100 => 'DB_ERROR_NOT_LOCKED',
+			     1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
+			     1146 => 'DB_ERROR_NOSUCHTABLE',
+			     1216 => 'DB_ERROR_NO_PARENT',
+			     1217 => 'DB_ERROR_CHILD_EXISTS'
+			     );
+  
+  
+  /**
+     \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
+     \param      type		Type de base de données (mysql ou pgsql)
+     \param	    host		Addresse de la base de données
+     \param	    user		Nom de l'utilisateur autorisé
+     \param	    pass		Mot de passe
+     \param	    name		Nom de la database
+     \param	    newlink     ???
+     \return     int			1 en cas de succès, 0 sinon
+  */
+  function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
+  {
+    global $conf,$langs;
+    $this->transaction_opened=0;
+        
+    if (! function_exists("mysql_connect"))
+      {
+	$this->connected = 0;
+	$this->ok = 0;
+	$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
+	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP");
+	return $this->ok;
+      }
+    
+    if (! $host)
+      {
+	$this->connected = 0;
+	$this->ok = 0;
+	$this->error=$langs->trans("ErrorWrongHostParameter");
+	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+	return $this->ok;
+      }
+    
+    // Essai connexion serveur
+    $this->db = $this->connect($host, $user, $pass, $name, $newlink);
+    if ($this->db)
+      {
+	// Si client connecté avec charset different de celui de la base Dolibarr
+	// (La base Dolibarr a été forcée en this->forcecharset à l'install)
+	if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
+	  {
+	    $this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+	  }
+	$this->connected = 1;
+	$this->ok = 1;
+      }
+    else
+      {
+	// host, login ou password incorrect
+	$this->connected = 0;
+	$this->ok = 0;
+	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
+      }
+    
+    // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
+    if ($this->connected && $name)
+      {
+	if ($this->select_db($name))
+	  {
+	    $this->database_selected = 1;
+	    $this->database_name = $name;
+	    $this->ok = 1;
+	  }
+	else
+	  {
+	    $this->database_selected = 0;
+	    $this->database_name = '';
+	    $this->ok = 0;
+	    $this->error=$this->error();
+	    dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
+	  }
+      }
+    else
+      {
+	// Pas de selection de base demandée, ok ou ko
+	$this->database_selected = 0;
+      }
+    
+    return $this->ok;
+  }
+  
 
-    var $ok;
-    var $error;
+  /**
+     \brief      Selectionne une database.
+     \param	    database		Nom de la database
+     \return	    boolean         true si ok, false si ko
+  */
+  function select_db($database)
+  {
+    return mysql_select_db($database, $this->db);
+  }
 
+  /**
+     \brief      Connection vers le serveur
+     \param	    host		addresse de la base de données
+     \param	    login		nom de l'utilisateur autoris
+     \param	    passwd		mot de passe
+     \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+     \return		resource	handler d'accès à la base
+     \seealso	close
+  */
+  function connect($host, $login, $passwd, $name)
+  {
+    dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=$passwd, name=$name");
+    $this->db  = @mysql_connect($host, $login, $passwd);
+    return $this->db;
+  }
+    
+  /**
+     \brief          Renvoie la version du serveur
+     \return	        string      Chaine version
+  */
+  function getVersion()
+  {
+    return mysql_get_server_info($this->db);
+  }
+  
+  
+  /**
+     \brief          Renvoie la version du serveur dans un tableau
+     \return	        array  		Tableau de chaque niveau de version
+  */
+  function getVersionArray()
+  {
+    return split('\.',$this->getVersion());
+  }
+  
+    
+  /**
+     \brief      Fermeture d'une connection vers une database.
+     \return	    resource
+     \seealso	connect
+  */
+  function close()
+  {
+    return mysql_close($this->db);
+  }
+  
 
-    // Constantes pour conversion code erreur MySql en code erreur générique
-    var $errorcode_map = array(
-	    1004 => 'DB_ERROR_CANNOT_CREATE',
-	    1005 => 'DB_ERROR_CANNOT_CREATE',
-	    1006 => 'DB_ERROR_CANNOT_CREATE',
-	    1007 => 'DB_ERROR_ALREADY_EXISTS',
-	    1008 => 'DB_ERROR_CANNOT_DROP',
-	    1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
-	    1046 => 'DB_ERROR_NODBSELECTED',
-	    1048 => 'DB_ERROR_CONSTRAINT',
-	    1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
-	    1051 => 'DB_ERROR_NOSUCHTABLE',
-	    1054 => 'DB_ERROR_NOSUCHFIELD',
-	    1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
-	    1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
-	    1062 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-	    1064 => 'DB_ERROR_SYNTAX',
-	    1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
-	    1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
-	    1091 => 'DB_ERROR_NOSUCHFIELD',
-	    1100 => 'DB_ERROR_NOT_LOCKED',
-	    1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
-	    1146 => 'DB_ERROR_NOSUCHTABLE',
-	    1216 => 'DB_ERROR_NO_PARENT',
-	    1217 => 'DB_ERROR_CHILD_EXISTS'
-    );
+  /**
+     \brief      Debut d'une transaction.
+     \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+  */
+  function begin()
+  {
+    if (! $this->transaction_opened)
+      {
+	$ret=$this->query("BEGIN");
+	if ($ret) $this->transaction_opened++;
+	return $ret;
+      }
+    else
+      {
+	$this->transaction_opened++;
+	return 1;
+      }
+  }
 
+  /**
+     \brief      Validation d'une transaction
+     \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+  */
+  function commit()
+  {
+    if ($this->transaction_opened<=1)
+      {
+	$ret=$this->query("COMMIT");
+	if ($ret) $this->transaction_opened=0;
+	return $ret;
+      }
+    else
+      {
+	$this->transaction_opened--;
+	return 1;
+      }
+  }
+  
+  /**
+     \brief      Annulation d'une transaction et retour aux anciennes valeurs
+     \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
+  */
+  function rollback()
+  {    
+    dolibarr_syslog("ROLLBACK ".$this->transaction_opened, LOG_ERR);
+    
+    if ($this->transaction_opened<=1)
+      {
+	$ret=$this->query("ROLLBACK");
+	$this->transaction_opened=0;
 
-    /**
-            \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
-            \param      type		Type de base de données (mysql ou pgsql)
-            \param	    host		Addresse de la base de données
-    	    \param	    user		Nom de l'utilisateur autorisé
-            \param	    pass		Mot de passe
-            \param	    name		Nom de la database
-            \param	    newlink     ???
-            \return     int			1 en cas de succès, 0 sinon
-    */
-    function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
-    {
-        global $conf,$langs;
-        $this->transaction_opened=0;
-
-        //print "Name DB: $host,$user,$pass,$name<br>";
-
-        if (! function_exists("mysql_connect"))
-        {
-        	$this->connected = 0;
-        	$this->ok = 0;
-            $this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
-        	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP");
-            return $this->ok;
-        }
-
-        if (! $host)
-        {
-        	$this->connected = 0;
-        	$this->ok = 0;
-            $this->error=$langs->trans("ErrorWrongHostParameter");
-        	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
-            return $this->ok;
-        }
-
-        // Essai connexion serveur
-        $this->db = $this->connect($host, $user, $pass, $name, $newlink);
-        if ($this->db)
-        {
-			// Si client connecté avec charset different de celui de la base Dolibarr
-			// (La base Dolibarr a été forcée en this->forcecharset à l'install)
-			if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
-			{
-				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-            }
-            $this->connected = 1;
-            $this->ok = 1;
-        }
-        else
-        {
-            // host, login ou password incorrect
-            $this->connected = 0;
-            $this->ok = 0;
-            dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
-        }
-
-        // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
-        if ($this->connected && $name)
-        {
-            if ($this->select_db($name))
-            {
-                $this->database_selected = 1;
-                $this->database_name = $name;
-                $this->ok = 1;
-            }
-            else
-            {
-                $this->database_selected = 0;
-                $this->database_name = '';
-                $this->ok = 0;
-                $this->error=$this->error();
-                dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
-            }
-        }
-        else
-        {
-            // Pas de selection de base demandée, ok ou ko
-            $this->database_selected = 0;
-        }
-
-        return $this->ok;
-    }
-
-
-    /**
-            \brief      Selectionne une database.
-            \param	    database		Nom de la database
-            \return	    boolean         true si ok, false si ko
-    */
-    function select_db($database)
-    {
-        return mysql_select_db($database, $this->db);
-    }
-
-
-    /**
-            \brief      Connection vers le serveur
-            \param	    host		addresse de la base de données
-            \param	    login		nom de l'utilisateur autoris
-            \param	    passwd		mot de passe
-            \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-            \return		resource	handler d'accès à la base
-	        \seealso	close
-    */
-    function connect($host, $login, $passwd, $name)
-    {
-       	dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=$passwd, name=$name");
-        $this->db  = @mysql_connect($host, $login, $passwd);
-        //print "Resultat fonction connect: ".$this->db." - mysql_error=".mysql_error();
-        return $this->db;
-    }
-
-
-    /**
-            \brief          Renvoie la version du serveur
-            \return	        string      Chaine version
-    */
-    function getVersion()
-    {
-//        $resql=$this->query('SELECT VERSION()');
-//        $row=$this->fetch_row($resql);
-//        return $row[0];
-        return mysql_get_server_info($this->db);
-    }
-
-
-    /**
-            \brief          Renvoie la version du serveur dans un tableau
-            \return	        array  		Tableau de chaque niveau de version
-    */
-    function getVersionArray()
-    {
-        return split('\.',$this->getVersion());
-    }
-
-
-
-    /**
-        \brief      Fermeture d'une connection vers une database.
-        \return	    resource
-        \seealso	connect
-    */
-    function close()
-    {
-        return mysql_close($this->db);
-    }
-
-
-    /**
-        \brief      Debut d'une transaction.
-        \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
-    */
-    function begin()
-    {
-        if (! $this->transaction_opened)
-        {
-            $ret=$this->query("BEGIN");
-            if ($ret) $this->transaction_opened++;
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened++;
-            return 1;
-        }
-    }
-
-    /**
-        \brief      Validation d'une transaction
-        \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
-    */
-    function commit()
-    {
-        if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("COMMIT");
-            if ($ret) $this->transaction_opened=0;
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-        \brief      Annulation d'une transaction et retour aux anciennes valeurs
-        \return	    int         1 si annulation ok ou transaction non ouverte, 0 en cas d'erreur
-    */
-    function rollback()
-    {
-        if ($this->transaction_opened<=1)
-        {
-            $ret=$this->query("ROLLBACK");
-            $this->transaction_opened=0;
-            return $ret;
-        }
-        else
-        {
-            $this->transaction_opened--;
-            return 1;
-        }
-    }
-
-    /**
-        \brief      Effectue une requete et renvoi le resultset de réponse de la base
-        \param	    query	    Contenu de la query
-        \return	    resource    Resultset de la reponse
-    */
-    function query($query)
-    {
-        $query = trim($query);
-
-        if (! $this->database_name)
-        {
-            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
-            $ret = mysql_query($query, $this->db);
-        }
-        else
-        {
-            $ret = mysql_db_query($this->database_name, $query, $this->db);
-        }
-
-        if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
-        {
-            // Si requete utilisateur, on la sauvegarde ainsi que son resultset
-			if (! $ret)
-			{
-				$this->lastqueryerror = $query;
-            	$this->lasterror = $this->error();
-            	$this->lasterrno = $this->errno();
-            }
-            $this->lastquery=$query;
-            $this->results = $ret;
-        }
-
-        return $ret;
+	return $ret;
+      }
+    else
+      {
+	$this->transaction_opened--;
+	return 1;
+      }
+  }
+  
+  /**
+     \brief      Effectue une requete et renvoi le resultset de réponse de la base
+     \param	    query	    Contenu de la query
+     \return	    resource    Resultset de la reponse
+  */
+  function query($query)
+  {
+    $query = trim($query);
+    
+    if (! $this->database_name)
+      {
+	// Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+	$ret = mysql_query($query, $this->db);
+      }
+    else
+      {
+	$ret = mysql_db_query($this->database_name, $query, $this->db);
+      }
+    
+    if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+      {
+	// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+	if (! $ret)
+	  {
+	    $this->lastqueryerror = $query;
+	    $this->lasterror = $this->error();
+	    $this->lasterrno = $this->errno();
+	  }
+	$this->lastquery=$query;
+	$this->results = $ret;
+      }
+    
+    return $ret;
     }
 
     /**
@@ -541,88 +547,87 @@ class DoliDb
     
 
 
-	// Next function are not required. Only minor features use them.
-	//--------------------------------------------------------------
+  // Next function are not required. Only minor features use them.
+  //--------------------------------------------------------------
 
 
 
-    /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
-    */
-    function getConnectId()
-    {
-        $resql=$this->query('SELECT CONNECTION_ID()');
-        $row=$this->fetch_row($resql);
-        return $row[0];
-    }
+  /**
+     \brief          Renvoie l'id de la connection
+     \return	        string      Id connection
+  */
+  function getConnectId()
+  {
+    $resql=$this->query('SELECT CONNECTION_ID()');
+    $row=$this->fetch_row($resql);
+    return $row[0];
+  }
 
-    /**
-            \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
-            \param          databaseuser    User à autoriser
-            \return	        string          Requete sql
-    */
-    function getGrantForUserQuery($databaseuser)
-    {
-        return '';
-    }
-
-
-    /**
-        \brief      Retourne le dsn pear
-        \return     dsn
-    */
-    function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
-    {
-        return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
-    }
-
-    /**
-            \brief          Création d'une nouvelle base de donnée
-            \param	        database		nom de la database à créer
-            \return	        resource		resource définie si ok, null si ko
-            \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
-            				On force creation de la base avec le charset forcecharset
-    */
-    function DDLCreateDb($database)
-    {
-        // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
-        $sql = 'CREATE DATABASE '.$database;
-        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-        $ret=$this->query($sql);
-        if (! $ret)
-        {
-        	// On réessaie pour compatibilité avec Mysql < 5.0
-	        $sql = 'CREATE DATABASE '.$database;
-	        $ret=$this->query($sql);
-        }
-
-        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysql_error($this->db);
-        return $ret;
-    }
+  /**
+     \brief          Renvoie la commande sql qui donne les droits à user sur toutes les tables
+     \param          databaseuser    User à autoriser
+     \return	        string          Requete sql
+  */
+  function getGrantForUserQuery($databaseuser)
+  {
+    return '';
+  }
+  
+  
+  /**
+     \brief      Retourne le dsn pear
+     \return     dsn
+  */
+  function getDSN($db_type,$db_user,$db_pass,$db_host,$db_name)
+  {
+    return $db_type.'://'.$db_user.':'.$db_pass.'@'.$db_host.'/'.$db_name;
+  }
+  
+  /**
+     \brief          Création d'une nouvelle base de donnée
+     \param	        database		nom de la database à créer
+     \return	        resource		resource définie si ok, null si ko
+     \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
+     On force creation de la base avec le charset forcecharset
+  */
+  function DDLCreateDb($database)
+  {
+    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+    $sql = 'CREATE DATABASE '.$database;
+    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+    $ret=$this->query($sql);
+    if (! $ret)
+      {
+	// On réessaie pour compatibilité avec Mysql < 5.0
+	$sql = 'CREATE DATABASE '.$database;
+	$ret=$this->query($sql);
+      }
     
-    /**
-        \brief      Liste des tables dans une database.
-        \param	    database	Nom de la database
-        \return	    resource
-    */
-    function DDLListTables($database)
-    {
-        $this->results = mysql_list_tables($database, $this->db);
-        return $this->results;
-    }
-
-	/**
-		\brief      Crée une table
-		\param	    table 			Nom de la table
-		\param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
-		\param	    primary_key 	Nom du champ qui sera la clef primaire
-		\param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
-		\param	    fulltext 		Tableau des Nom de champs qui seront indexés en fulltext
-		\param	    key 			Tableau des champs clés noms => valeur
-		\param	    type 			Type de la table
-		\return	    int				<0 si KO, >=0 si OK
-    */
+    return $ret;
+  }
+  
+  /**
+     \brief      Liste des tables dans une database.
+     \param	    database	Nom de la database
+     \return	    resource
+  */
+  function DDLListTables($database)
+  {
+    $this->results = mysql_list_tables($database, $this->db);
+    return $this->results;
+  }
+  
+  /**
+     \brief      Crée une table
+     \param	    table 			Nom de la table
+     \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
+     \param	    primary_key 	Nom du champ qui sera la clef primaire
+     \param	    unique_keys 	Tableau associatifs Nom de champs qui seront clef unique => valeur
+     \param	    fulltext 		Tableau des Nom de champs qui seront indexés en fulltext
+     \param	    key 			Tableau des champs clés noms => valeur
+     \param	    type 			Type de la table
+     \return	    int				<0 si KO, >=0 si OK
+  */
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
