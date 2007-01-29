@@ -153,32 +153,32 @@ class Product
     
     if (strlen(trim($this->price)) > 0 )
     {
-	    if ($this->price_base_type == 'TTC')
-	    {
-	      $price_ttc = $this->price;
-	      $price = $this->price / (1 + ($this->tva_tx / 100));
-	    }
-	    else
-	    {
-	      $price = $this->price;
-	      $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
-	    }
+      if ($this->price_base_type == 'TTC')
+	{
+	  $price_ttc = $this->price;
+	  $price = $this->price / (1 + ($this->tva_tx / 100));
+	}
+      else
+	{
+	  $price = $this->price;
+	  $price_ttc = $this->price * (1 + ($this->tva_tx / 100));
+	}
     }
     
     dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
-
+    
     if (strlen($this->ref) > 0)
-    {
-	    $this->db->begin();
+      {
+	$this->db->begin();
 	
-	    $sql = "SELECT count(*)";
-	    $sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
+	$sql = "SELECT count(*)";
+	$sql .= " FROM ".MAIN_DB_PREFIX."product WHERE ref = '" .$this->ref."'";
 	
-	    $result = $this->db->query($sql) ;
-	    if ($result)
-	    {
-	      $row = $this->db->fetch_array($result);
-	      if ($row[0] == 0)
+	$result = $this->db->query($sql) ;
+	if ($result)
+	  {
+	    $row = $this->db->fetch_array($result);
+	    if ($row[0] == 0)
 	      {
 		// Produit non deja existant
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product ";
@@ -222,8 +222,8 @@ class Product
 	      }
 	    else
 	      {
-		// Produit existe deja
-	    $this->_setErrNo("Create",257);
+		// Le produit existe deja
+		$this->_setErrNo("Create",257);
 	      }
 	  }
 	else
@@ -257,11 +257,15 @@ class Product
     return -1;
   }
   
-  
+  /**
+     \brief      Positionne le numero d'erreur
+     \param      func Nom de la fonction
+     \param      num Numero de l'erreur
+  */
   function _setErrNo($func, $num)
   {
     $this->errno = $num;
-    dolibarr_syslog("Product::".$func." ERRNO (".$this->errno.")");
+    dolibarr_syslog("Product::".$func." - ".get_class($this) ." ERRNO (".$this->errno.")");
   }
 
   /**
