@@ -115,7 +115,7 @@ class ProductLivre extends Product
 	  }
 	else
 	  {
-	    $this->_setErrNo(1282);
+	    $this->_setErrNo("Create",1282);
 	  }
       }
     // Creation du contrat associe
@@ -291,20 +291,10 @@ class ProductLivre extends Product
       }
     else
       {
-	$this->_setErrNo(1281);
+	$this->_setErrNo("UpdateCanvas",1281);
 	return -1;
       }
    
-  }
-
-  /**
-     \brief  Definit le numero d'erreur et log dans syslog
-     \param  no numero de l'erreur
-  */
-  function _setErrNo($no)
-  {
-    $this->errno = $no;
-    dolibarr_syslog("ProductLivre::UpdateCanvas Errno : ".$this->errno, LOG_ERR);
   }
 
   /**
