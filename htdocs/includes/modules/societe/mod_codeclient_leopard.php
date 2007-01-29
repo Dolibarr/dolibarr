@@ -30,11 +30,11 @@
 
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.php");
 
+
 /**
         \class 		mod_codeclient_leopard
         \brief 		Classe permettant la gestion leopard des codes tiers
 */
-
 class mod_codeclient_leopard extends ModeleThirdPartyCode
 {
 	/*

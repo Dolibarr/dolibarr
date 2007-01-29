@@ -114,13 +114,11 @@ class Societe
     $varclient = $conf->global->SOCIETE_CODECLIENT_ADDON;
 	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varclient.'.php';
     $this->mod_codeclient = new $varclient;
-    $this->codeclient_modifiable = $this->mod_codeclient->code_modifiable;
 
     // definit module code fournisseur
     $varfournisseur = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varfournisseur.'.php';
    	$this->mod_codefournisseur = new $varfournisseur;
-    $this->codefournisseur_modifiable = $this->mod_codefournisseur->code_modifiable;
 
     return 1;
   }
@@ -214,18 +212,19 @@ class Societe
 
 	/**
 	*    \brief      Verification lors de la modification
-	*    \return     0 si ok, < 0 en cas d'erreur
+	*    \return     int		0 si OK, <0 si KO
 	*/
 	function verify()
 	{
-		$this->nom=trim($this->nom);
 		$result = 0;
+		$this->nom=trim($this->nom);
+
 		if (! $this->nom)
 		{
 			$this->error = "Le nom de la société ne peut être vide.\n";
 			$result = -2;
 		}
-		if ($this->client && $this->codeclient_modifiable == 1)
+		if ($this->client && $this->codeclient_modifiable())
 		{
 			// On ne vérifie le code client que si la société est un client / prospect et que le code est modifiable
 			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
@@ -247,7 +246,7 @@ class Societe
 				$result = -3;
 			}
 		}
-		if ($this->fournisseur && $this->codefournisseur_modifiable == 1)
+		if ($this->fournisseur && $this->codefournisseur_modifiable())
 		{
 			// On ne vérifie le code fournisseur que si la société est un fournisseur et que le code est modifiable
 			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
@@ -269,6 +268,7 @@ class Societe
 				$result = -3;
 			}
 		}		
+
 		return $result;
 	}
 
@@ -283,7 +283,7 @@ class Societe
     {
         global $langs;
 
-        dolibarr_syslog("Societe::Update");
+        dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." creation_bit=".$this->creation_bit);
 
 		// Nettoyage des paramètres
         $this->id=$id;
@@ -307,6 +307,8 @@ class Societe
         $this->tva_intra=trim($this->tva_intra);
 
         $this->capital=trim($this->capital);
+        if (strlen($this->capital) == 0) $this->capital = 0;
+
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
 
@@ -315,11 +317,6 @@ class Societe
         if ($result >= 0)
         {
             dolibarr_syslog("Societe::Update verify ok");
-        
-            if (strlen($this->capital) == 0)
-            {
-                $this->capital = 0;
-            }
         
             $this->tel = ereg_replace(" ","",$this->tel);
             $this->tel = ereg_replace("\.","",$this->tel);
@@ -331,11 +328,8 @@ class Societe
             $sql.= ",datea = now()";
             $sql.= ",address = '" . addslashes($this->adresse) ."'";
         
-            if ($this->cp)
-            { $sql .= ",cp = '" . $this->cp ."'"; }
-        
-            if ($this->ville)
-            { $sql .= ",ville = '" . addslashes($this->ville) ."'"; }
+            $sql.= ",cp = ".($this->cp?"'".$this->cp."'":"null");
+            $sql.= ",ville = ".($this->ville?"'".addslashes($this->ville)."'":"null");
         
             $sql .= ",fk_departement = '" . ($this->departement_id?$this->departement_id:'0') ."'";
             $sql .= ",fk_pays = '" . ($this->pays_id?$this->pays_id:'0') ."'";
@@ -365,7 +359,7 @@ class Societe
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
         
-            if ($this->creation_bit || $this->codeclient_modifiable)
+            if ($this->creation_bit || $this->codeclient_modifiable())
             {
                 // Attention check_codeclient peut modifier le code suivant le module utilise
                 $this->check_codeclient();
@@ -378,7 +372,7 @@ class Societe
                 $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
             }
         
-            if ($this->creation_bit || $this->codefournisseur_modifiable)
+            if ($this->creation_bit || $this->codefournisseur_modifiable())
             {
                 // Attention check_codefournisseur peut modifier le code suivant le module utilise
                 $this->check_codefournisseur();
@@ -394,14 +388,13 @@ class Societe
             $sql .= " WHERE idp = '" . $id ."'";
 
         	
-	    dolibarr_syslog("Societe::update sql=".$sql);
+			dolibarr_syslog("Societe::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
 
-		// si le fournisseur est classe on l'ajoute
-		$this->AddFournisseurInCategory($this->fournisseur_categorie);
-
+				// si le fournisseur est classe on l'ajoute
+				$this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 if ($call_trigger)
                 {
@@ -530,16 +523,6 @@ class Societe
 
 				$this->code_client = $obj->code_client;
 				$this->code_fournisseur = $obj->code_fournisseur;
-
-				if (! $this->code_client && $this->mod_codeclient->code_modifiable_null == 1)
-				{
-					$this->codeclient_modifiable = 1;
-				}
-
-				if (! $this->code_fournisseur && $this->mod_codefournisseur->code_modifiable_null == 1)
-				{
-					$this->codefournisseur_modifiable = 1;
-				}
 
 				$this->code_compta = $obj->code_compta;
 				$this->code_compta_fournisseur = $obj->code_compta_fournisseur;
@@ -1376,53 +1359,109 @@ class Societe
     }
 
 
-  /**
-   *    \brief      Affiche le rib
-   */
-  function display_rib()
-  {
-    global $langs;
+	/**
+	*    \brief      Affiche le rib
+	*/
+	function display_rib()
+	{
+		global $langs;
 
-    require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+		require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
 
-    $bac = new CompanyBankAccount($this->db, $this->id);
-    $bac->fetch();
+		$bac = new CompanyBankAccount($this->db, $this->id);
+		$bac->fetch();
 
-    if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
-    {
-        $rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." (".$bac->cle_rib.")";
-    }
-    else
-    {
-        $rib=$langs->trans("NoRIB");
-    }
-    return $rib;
-  }
-
-
-  function rib()
-  {
-    require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
-
-    $bac = new CompanyBankAccount($this->db, $this->id);
-    $bac->fetch();
-
-    $this->bank_account = $bac;
-
-    return 1;
-  }
+		if ($bac->code_banque || $bac->code_guichet || $bac->number || $bac->cle_rib)
+		{
+			$rib = $bac->code_banque." ".$bac->code_guichet." ".$bac->number." (".$bac->cle_rib.")";
+		}
+		else
+		{
+			$rib=$langs->trans("NoRIB");
+		}
+		return $rib;
+	}
 
 
-  function verif_rib()
-  {
-    $this->rib();
-    return $this->bank_account->verif();
-  }
+	function rib()
+	{
+		require_once DOL_DOCUMENT_ROOT . "/companybankaccount.class.php";
+
+		$bac = new CompanyBankAccount($this->db, $this->id);
+		$bac->fetch();
+
+		$this->bank_account = $bac;
+
+		return 1;
+	}
+
+
+	function verif_rib()
+	{
+		$this->rib();
+		return $this->bank_account->verif();
+	}
+
+
+	/**
+	 *    \brief      Verifie si un code client est modifiable dans configuration du module de controle des codes
+	 *    \return     int		0=Non, 1=Oui
+	 */
+	function codeclient_modifiable()
+	{
+		global $conf;
+		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+	
+			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+	
+			$mod = new $var;
+	
+			dolibarr_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
+			if ($mod->code_modifiable) return 1;
+			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
+			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
+			return 0;
+		}
+		else
+		{
+			return 0;
+		}
+	}
+
+
+	/**
+	 *    \brief      Verifie si un code client est modifiable dans configuration du module de controle des codes
+	 *    \return     int		0=Non, 1=Oui
+	 */
+	function codefournisseur_modifiable()
+	{
+		global $conf;
+		if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+	
+			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+	
+			$mod = new $var;
+	
+			dolibarr_syslog("Societe::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
+			if ($mod->code_modifiable) return 1;
+			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
+			if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
+			return 0;
+		}
+		else
+		{
+			return 0;
+		}
+	}
 
 
 	/**
 	 *    \brief      Verifie code client
-	 *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilis
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisé
 	 */
 	function check_codeclient()
 	{
@@ -1446,7 +1485,7 @@ class Societe
 	
 	/**
 	 *    \brief      Verifie code fournisseur
-	 *    \return     Renvoie 0 si ok, peut modifier le code client suivant le module utilis
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisé
 	 */
 	function check_codefournisseur()
 	{

@@ -35,7 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
         \class 		mod_codeclient_lion
         \brief 		Classe permettant la gestion lion des codes tiers
 */
-
 class mod_codeclient_lion extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
@@ -51,7 +50,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	{
 		$this->nom = "Lion";
 		$this->code_modifiable = 0;
-		$this->code_modifiable_invalide = 0;
+		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
 		$this->code_null = 0;
 	}
@@ -80,31 +79,45 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code a vérifier/corriger
 	*		\param		$soc		Objet societe
-	*		\return		int			<0 si ko
+	*		\return		int			<0 si KO, 0 si OK
 	*/
 	function verif($db, &$code, $soc)
 	{
+		$result=0;
 		$code = strtoupper(trim($code));
 
-		if ($this->verif_syntax($code) == 0)
-		{	
-			$is_dispo = $this->verif_dispo($db, $code);
-			if ($is_dispo <> 0)
-			{
-				return -3;
-			}
+		if (! $code && $this->code_null) 
+		{
+			$result=0;
 		}
 		else
 		{
-			if (strlen($code) == 0)
-			{
-				return -2;
+			if ($this->verif_syntax($code) >= 0)
+			{	
+				$is_dispo = $this->verif_dispo($db, $code, $soc);
+				if ($is_dispo <> 0)
+				{
+					$result=-3;
+				}
+				else
+				{
+					$result=0;
+				}
 			}
 			else
 			{
-				return -1;
+				if (strlen($code) == 0)
+				{
+					$result=-2;
+				}
+				else
+				{
+					$result=-1;
+				}
 			}
 		}
+		dolibarr_syslog("mod_codeclient_lion::verif result=".$result);
+		return $result;
 	}
 
 	
@@ -112,9 +125,9 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*		\brief		Renvoi une valeur correcte
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code reference eventuel
-	*		\return		string		Code correct
+	*		\return		string		Code correct, <0 si KO
 	*/
-	function get_correct($db,$code)
+	function get_correct($db, $code)
 	{
 		$return='001';
 		
@@ -138,20 +151,22 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 
 	
 	/**
-	*		\brief		Renvoi si un code est pris ou non
-	*		\param		$db		Handler acces base
-	*		\param		$code	Code a verifier
-	*		\return		int		0 si dispo, <0 si erreur
+	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
+	*		\param		$db			Handler acces base
+	*		\param		$code		Code a verifier
+	*		\param		$soc		Objet societe
+	*		\return		int			0 si dispo, <0 si erreur
 	*/
-	function verif_dispo($db, $code)
+	function verif_dispo($db, $code, $soc)
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE code_client = '".$code."'";
+		$sql.= " WHERE code_client = '".$code."'";
+		$sql.= " AND idp != '".$soc->id."'";
 
 		$resql=$db->query($sql);
 		if ($resql)
 		{
-			if ($db->num_rows() == 0)
+			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
 			}
@@ -170,7 +185,8 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 
 	/**
 	*	\brief		Renvoi si un code respecte la syntaxe
-	*	\return		int		0 si dispo, <0 si erreur
+	*	\param		$code		Code a verifier
+	*	\return		int			0 si OK, <0 si KO
 	*/
 	function verif_syntax($code)
 	{

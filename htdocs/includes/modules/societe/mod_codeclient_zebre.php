@@ -80,52 +80,62 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code a vérifier/corriger
 	*		\param		$soc		Objet societe
+	*		\return		int			<0 si KO, 0 si OK
 	*/
 	function verif($db, &$code, $soc)
 	{ 
+		$result=0;
 		$code = strtoupper(trim($code));
 
-		if ($this->verif_syntax($code) == 0)
-		{	  
-			$i = 1;
-
-			$is_dispo = $this->verif_dispo($db, $code);
-
-			while ($is_dispo <> 0 && $i < 99)
-			{
-				$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
-				
-				$code = substr($code,0,6) . substr("00".$i, -2);
-				
-				$is_dispo = $this->verif_dispo($db, $code);
-				
-				$i++;
-			}
-
-			if ($is_dispo <> 0)
-			{
-				return -3;
-			}
+		if (! $code && $this->code_null) 
+		{
+			$result=0;
 		}
 		else
 		{
-			if (strlen(trim($code)) == 0)
-			{
-				return -2;
+			if ($this->verif_syntax($code) == 0)
+			{	  
+				$i = 1;
+
+				$is_dispo = $this->verif_dispo($db, $code, $soc);
+				while ($is_dispo <> 0 && $i < 99)
+				{
+					$arr = "ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789";
+					
+					$code = substr($code,0,6) . substr("00".$i, -2);
+					
+					$is_dispo = $this->verif_dispo($db, $code, $soc);
+					
+					$i++;
+				}
+
+				if ($is_dispo <> 0)
+				{
+					$result=-3;
+				}
 			}
 			else
 			{
-				return -1;
+				if (strlen(trim($code)) == 0)
+				{
+					$result=-2;
+				}
+				else
+				{
+					$result=-1;
+				}
 			}
 		}
+		dolibarr_syslog("mod_codeclient_zebre::verif result=".$result);
+		return $result;
 	}
 
-	
+
 	/**
 	*		\brief		Renvoi une valeur correcte
-	*		\param		$db		Handler acces base
-	*		\param		$code	Code reference eventuel
-	*		\return		string	Code correcte
+	*		\param		$db			Handler acces base
+	*		\param		$code		Code reference eventuel
+	*		\return		string		Code correct, <0 si KO
 	*/
 	function get_correct($db, $code)
 	{ 
@@ -133,7 +143,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		{	  
 			$i = 1;
 
-			$is_dispo = $this->verif_dispo($db, $code);
+			$is_dispo = $this->verif_dispo($db, $code, $soc);
 
 			while ( $is_dispo <> 0 && $i < 99)
 			{
@@ -141,7 +151,7 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 				
 				$code = substr($code,0,6) . substr("00".$i, -2);
 				
-				$is_dispo = $this->verif_dispo($db, $code);
+				$is_dispo = $this->verif_dispo($db, $code, $soc);
 				
 				$i++;
 			}
@@ -158,19 +168,22 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 
 	
 	/**
-	*		\brief		Renvoi si un code est pris ou non
-	*		\param		$db		Handler acces base
-	*		\param		$code	Code a verifier
-	*		\return		int		0 si dispo, <0 si erreur
+	*		\brief		Renvoi si un code est pris ou non (par autre tiers)
+	*		\param		$db			Handler acces base
+	*		\param		$code		Code a verifier
+	*		\param		$soc		Objet societe
+	*		\return		int			0 si dispo, <0 si erreur
 	*/
-	function verif_dispo($db, $code)
+	function verif_dispo($db, $code, $soc)
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
-		$sql .= " WHERE code_client = '".$code."'";
+		$sql.= " WHERE code_client = '".$code."'";
+		$sql.= " AND idp != '".$soc->id."'";
 
-		if ($db->query($sql))
+		$resql=$db->query($sql);
+		if ($resql)
 		{
-			if ($db->num_rows() == 0)
+			if ($db->num_rows($resql) == 0)
 			{
 				return 0;
 			}
@@ -181,18 +194,16 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 		}
 		else
 		{
-			if (strlen($code) == 0)
-			{
-				return -2;
-			}
-			else
-			{
-				return -1;
-			}
+			return -2;
 		}
 	}
 
 
+	/**
+	*	\brief		Renvoi si un code respecte la syntaxe
+	*	\param		$code		Code a verifier
+	*	\return		int			0 si OK, <0 si KO
+	*/
 	function verif_syntax(&$code)
 	{
 		$res = 0;

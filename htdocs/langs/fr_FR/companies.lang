@@ -52,6 +52,8 @@ Web=Web
 Birthday=Date de naissance
 VATIsUsed=Assujéti à TVA
 ThirdPartyEMail=%s
+WrongCustomerCode=Code client incorrect
+WrongSupplierCode=Code fournisseur incorrect
 ##### Professionnal ID #####
 ProfId1=ID professionnel 1
 ProfId2=ID professionnel 2

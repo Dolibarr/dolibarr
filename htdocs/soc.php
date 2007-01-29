@@ -110,8 +110,6 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->prefix_comm           = $_POST["prefix_comm"];
 	$soc->code_client           = $_POST["code_client"];
 	$soc->code_fournisseur      = $_POST["code_fournisseur"];
-	$soc->codeclient_modifiable = $_POST["codeclient_modifiable"];
-	$soc->codefournisseur_modifiable = $_POST["codefournisseur_modifiable"];
 	$soc->capital               = $_POST["capital"];
 
 	$soc->tva_assuj             = $_POST["assujtva_value"];
@@ -306,8 +304,6 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<form action="soc.php" method="post" name="formsoc">';
     
         print '<input type="hidden" name="action" value="add">';
-        print '<input type="hidden" name="codeclient_modifiable" value="1">';
-        print '<input type="hidden" name="codefournisseur_modifiable" value="1">';
     
         print '<table class="border" width="100%">';
     
@@ -595,8 +591,6 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="socid" value="'.$soc->id.'">';
-        print '<input type="hidden" name="codeclient_modifiable" value="'.$soc->codeclient_modifiable.'">';
-        print '<input type="hidden" name="codefournisseur_modifiable" value="'.$soc->codefournisseur_modifiable.'">';
 
         print '<table class="border" width="100%">';
 
@@ -615,7 +609,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codeclient_modifiable == 1)
+        if ($soc->codeclient_modifiable())
         {
             print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
         }
@@ -642,7 +636,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codefournisseur_modifiable == 1)
+        if ($soc->codefournisseur_modifiable())
         {
             print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
         }
@@ -845,7 +839,7 @@ else
         print '<tr><td>';
         print $langs->trans('CustomerCode').'</td><td colspan="3">';
         print $soc->code_client;
-        if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+        if ($soc->check_codeclient() <> 0) print ' <font class="error">('.$langs->trans("WrongCustomerCode").')</font>';
         print '</td></tr>';
     }
 
@@ -853,7 +847,7 @@ else
         print '<tr><td>';
         print $langs->trans('SupplierCode').'</td><td colspan="3">';
         print $soc->code_fournisseur;
-        if ($soc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
+        if ($soc->check_codefournisseur() <> 0) print ' <font class="error">('.$langs->trans("WrongSupplierCode").')</font>';
         print '</td></tr>';
     }
     

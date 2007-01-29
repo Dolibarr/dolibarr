@@ -52,6 +52,8 @@ Web=Web
 Birthday=Birthday
 VATIsUsed=Using VAT
 ThirdPartyEMail=%s
+WrongCustomerCode=Customer code invalid
+WrongSupplierCode=Supplier code invalid
 ##### Professionnal ID #####
 ProfId1=Professional ID 1
 ProfId2=Professional ID 2
