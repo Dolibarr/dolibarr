@@ -149,7 +149,7 @@ if ($chid > 0)
 
 		print "<tr><td>".$langs->trans("Period")."</td>";
 		print "<td>";
-		if ($cha->paye==0)
+		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
 			print "<input type=\"text\" name=\"period\" value=\"".strftime("%Y%m%d",$cha->period)."\">";
 		}
@@ -197,8 +197,8 @@ if ($chid > 0)
 
 			if ($cha->paye == 0)
 			{
-				print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
-				print "<tr><td colspan=\"2\" align=\"right\">Réclamé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AlreadyPayed")." :</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
+				print "<tr><td colspan=\"2\" align=\"right\">".$langs->trans("AmountExpected")." :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 
 				$resteapayer = $cha->amount - $totalpaye;
 
@@ -216,19 +216,21 @@ if ($chid > 0)
 
 		print "</tr>";
 
-		if ($cha->paye==0)
+		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
-			print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="desc" size="40" value="'.$cha->lib.'"></td></tr>';
-			print '<tr><td>'.$langs->trans("DateDue")."</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
-			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td><b><input type=\"text\" name=\"amount\" value=\"".$cha->amount."\"></b></td></tr>";
+			print '<tr><td>'.$langs->trans("Label").'</td><td>';
+			print '<input type="text" name="desc" size="40" value="'.$cha->lib.'">';
+			print '</td></tr>';
+			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
+			print "<input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\">";
+			print "</td></tr>";
 		}
 		else {
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
 			print "<tr><td>".$langs->trans("DateDue")."</td><td>".dolibarr_print_date($cha->date_ech)."</td></tr>";
-			print '<tr><td>'.$langs->trans("AmountTTC").'</td><td><b>'.price($cha->amount).'</b></td></tr>';
 		}
-
-
+		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
+	
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
 		print '</table>';
 
@@ -245,22 +247,28 @@ if ($chid > 0)
 
 			print "<div class=\"tabsAction\">\n";
 
+			// Editer
+			if ($cha->paye == 0 && $user->rights->tax->charges->creer)
+			{
+				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Edit")."</a>";
+			}
+
 			// Emettre paiement
 			if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"../paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
+				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
 			}
 
 			// Classer 'payé'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
+				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
 			}
 
 			// Supprimer
 			if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butDelete\" href=\"charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";

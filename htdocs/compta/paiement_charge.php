@@ -33,6 +33,16 @@ include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
 /*
+ * Sécurité accés client
+ */
+if ($user->societe_id > 0) 
+{
+  $action = '';
+  $socid = $user->societe_id;
+}
+
+
+/*
  * Actions ajoute paiement
  */
 if ($_POST["action"] == 'add_paiement')
@@ -40,7 +50,7 @@ if ($_POST["action"] == 'add_paiement')
     if ($_POST["paiementtype"] > 0)
     {
 
-        $datepaye = $db->idate(mktime(12, 0 , 0,
+        $datepaye = $db->idate(dolibarr_mktime(12, 0 , 0,
         $_POST["remonth"],
         $_POST["reday"],
         $_POST["reyear"]));
@@ -93,15 +103,10 @@ if ($_POST["action"] == 'add_paiement')
                 $paiement->update_fk_bank($bank_line_id);
                 
                 // Mise a jour liens (pour chaque charge concernée par le paiement)
-                //foreach ($paiement->amounts as $key => $value)
-                //{
-                //    $chid = $key;
-                //    $fac = new Facture($db);
-                //    $fac->fetch($chid);
-                //    $fac->fetch_client();
-                //    $acc->add_url_line($bank_line_id, $paiement_id, DOL_URL_ROOT.'/compta/paiement/fiche.php?id=', "(paiement)");
-                //    $acc->add_url_line($bank_line_id, $fac->client->id, DOL_URL_ROOT.'/compta/fiche.php?socid=', $fac->client->nom);
-                //}
+                foreach ($paiement->amounts as $key => $value)
+                {
+                    $acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/sociales/charges.php?id=', $chid);
+                }
 
                 $db->commit();
 
@@ -111,29 +116,22 @@ if ($_POST["action"] == 'add_paiement')
             }
             else {
                 $db->rollback();
-                $fiche_erreur_message = "Echec de la création entrée compte: ".$db->error();
+                $mesg = "Echec de la création entrée compte: ".$db->error();
             }
         }
         else
         {
             $db->rollback();
-            $fiche_erreur_message = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
+            $mesg = "Echec de la création du paiement: paiement_id=$paiement_id ".$db->error();
         }
     }
     else
     {
-        $fiche_erreur_message = "Vous devez sélectionner un mode de paiement";
+        $mesg = "Vous devez sélectionner un mode de paiement";
     }
+	$_GET["action"]='create';
 }
 
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
 /*
  * Affichage
@@ -144,9 +142,9 @@ llxHeader();
 $html=new Form($db);
 
 
-if ($fiche_erreur_message)
+if ($mesg)
 {
-  print "<div class=\"error\">$fiche_erreur_message</div><br>";
+	print "<div class=\"error\">$mesg</div><br>";
 }
 
 
@@ -171,15 +169,15 @@ if ($_GET["action"] == 'create')
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";
 
-      print '<tr><td>'.$langs->trans("Ref").':</td><td colspan="2">';
-      print '<a href="charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
-	  print '<tr><td>'.$langs->trans("Type").":</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
-	  print "<tr><td>Période :</td><td colspan=\"2\">$charge->periode</td></tr>\n";
-	  print '<tr><td>'.$langs->trans("Label").' :</td><td colspan="2">'.$charge->lib."</td></tr>\n";
-	  print "<tr><td>Date échéance :</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
+      print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="2">';
+      print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid.'">'.$chid.'</a></td></tr>';
+	  print '<tr><td>'.$langs->trans("Type")."</td><td colspan=\"2\">$charge->type_libelle</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Period")."</td><td colspan=\"2\">$charge->periode</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$charge->lib."</td></tr>\n";
+	  print '<tr><td>'.$langs->trans("DateDue")."</td><td colspan=\"2\">".dolibarr_print_date($charge->date_ech)."</td></tr>\n";
 
-      print '<tr><td>'.$langs->trans("AmountTTC").":</td><td colspan=\"2\">".price($charge->amount).' '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
+      print '<tr><td>'.$langs->trans("AmountTTC")."</td><td colspan=\"2\"><b>".price($charge->amount).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+	  
       $sql = "SELECT sum(p.amount) as total";
       $sql.= " FROM ".MAIN_DB_PREFIX."paiementcharge as p";
       $sql.= " WHERE p.fk_charge = ".$chid;
@@ -191,31 +189,33 @@ if ($_GET["action"] == 'create')
 	    $db->free();
       }
       print '<tr><td>'.$langs->trans("AlreadyPayed").'</td><td colspan="2"><b>'.price($sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay")."</td><td colspan=\"3\"><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">".$langs->trans("Payment").'</td>';
 
 	  print "<input type=\"hidden\" name=\"chid\" value=\"$chid\">";
 	  
-	  print '<tr><td>'.$langs->trans("Date").' :</td><td>';
+	  print '<tr><td>'.$langs->trans("Date").'</td><td>';
 	  $html->select_date('','','','','',"add_paiement");
 	  print "</td>";
 	  print '<td>'.$langs->trans("Comments").'</td></tr>';
 	  
-	  print '<tr><td>'.$langs->trans("Type").'</td><td>';
+	  print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
       $html->select_types_paiements($charge->paiementtype, "paiementtype");
 	  print "</td>\n";
 
-	  print '<td rowspan="4" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="6"></textarea></td></tr>';	  
+	  print '<td rowspan="3" valign="top"><textarea name="comment" wrap="soft" cols="40" rows="'.ROWS_3.'"></textarea></td></tr>';	  
 
-	  print "<tr><td>Numéro :</td><td><input name=\"num_paiement\" type=\"text\"><br><em>Numéro du chèque / virement</em></td></tr>\n";
+		print '<tr>';
+		print '<td>'.$langs->trans('AccountToCredit').'</td>';
+		print '<td>';
+		$html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
+		print '</td></tr>';
 
-	  print '<tr><td>Compte à créditer :</td><td>';
-      $html->select_comptes($charge->accountid, "accountid", 0, "courant=1");  // Affiche liste des comptes courant
-	  print '</td></tr>';
+		print '<tr><td>'.$langs->trans('Numero');
+		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+		print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
 
-      print "<tr><td valign=\"top\">".$langs->trans("RemainderToPay").":</td><td><b>".price($total - $sumpayed).'</b> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-//      print "<tr><td valign=\"top\">Montant :</td><td><input name=\"amount\" type=\"text\"></td></tr>\n";
-	  	  
 	  /*
 	   * Autres charges impayées
 	   */
@@ -240,7 +240,8 @@ if ($_GET["action"] == 'create')
 		  print '<tr><td colspan="3">';
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
-		  print '<td>Charge</td><td align="center">Date échéance</td>';
+		  print '<td>'.$langs->trans("SocialContribution").'</td>';
+		  print '<td align="center">'.$langs->trans("DateDue").'</td>';
 		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
 		  print '<td align="right">'.$langs->trans("AlreadyPayed").'</td>';
 		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -260,7 +261,7 @@ if ($_GET["action"] == 'create')
 		      
 		      print "<tr $bc[$var]>";
 		  
-		      print '<td><a href="sociales/charge.php?id='.$objp->id.'">' . $objp->id;
+		      print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$objp->id.'">' . $objp->id;
 		      print "</a></td>\n";
 		      
 		      if ($objp->date_ech > 0 )
