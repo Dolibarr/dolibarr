@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -27,22 +27,20 @@
 */
 
 require("./pre.inc.php");
+require(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 $langs->load("compta");
 $langs->load("bills");
 
-
+// Protection
 $user->getrights('compta');
 
 if (!$user->admin && !$user->rights->tax->charges)
   accessforbidden();
 
-require("../../chargesociales.class.php");
-
-llxHeader();
-
-
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
+
+
 
 
 /* *************************************************************************** */
@@ -56,7 +54,29 @@ if ($_GET["action"] == 'payed')
 	$result = $cha->set_payed($chid);
 }
 
+/*
+ * Suppression d'une charge sociale
+ */
 
+if ($_GET["action"] == 'del' && $_POST["confirm"] == 'yes')
+{
+	$chargesociales=new ChargeSociales($db);
+	$chargesociales->id=$_GET["id"];
+	$result=$chargesociales->delete($user);
+	if ($result > 0)
+	{
+		Header("Location: index.php");
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$chargesociales->error.'</div>';
+	}
+}
+
+
+
+llxHeader();
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -69,12 +89,13 @@ if ($chid > 0)
 
 	$cha = new ChargeSociales($db);
 
+	/*
+	*   Charge
+	*/
 	if ($cha->fetch($chid) > 0)
 	{
-		/*
-		*   Charge
-		*/
-
+		if ($mesg) print $mesg.'<br>';
+	
 		//$head[0][0] = DOL_URL_ROOT.'/comm/propal.php?propalid='.$propal->id;
 		$head[0][1] = $langs->trans("SocialContribution").": $cha->id";
 		$h = 1;
@@ -88,7 +109,7 @@ if ($chid > 0)
 		*/
 		if ($_GET["action"] == 'delete')
 		{
-			$html->form_confirm("index.php?id=$cha->id&amp;action=del","Supprimer la charge sociale","Etes-vous sûr de vouloir supprimer cette charge sociale ?","confirm_delete");
+			$html->form_confirm($_SERVER["PHP_SELF"]."?id=$cha->id&amp;action=del","Supprimer la charge sociale","Etes-vous sûr de vouloir supprimer cette charge sociale ?","confirm_delete");
 			print '<br>';
 		}
 
@@ -98,7 +119,18 @@ if ($chid > 0)
 
 		print "<tr><td>".$langs->trans("Type")."</td><td>$cha->type_libelle</td><td>".$langs->trans("Payments")."</td></tr>";
 
-		print "<tr><td>".$langs->trans("Period")."</td><td>".dolibarr_print_date($cha->periode,"%Y")."</td>";
+		print "<tr><td>".$langs->trans("Period")."</td>";
+		print "<td>";
+		if ($cha->paye==0)
+		{
+			print "<input type=\"text\" name=\"period\" value=\"".strftime("%Y%m%d",$cha->period)."\">";
+		}
+		else
+		{
+			print dolibarr_print_date($cha->periode,"%Y");
+		}
+		print "</td>";
+		
 		print '<td rowspan="5" valign="top">';
 
 		/*
@@ -135,7 +167,7 @@ if ($chid > 0)
 				$i++;
 			}
 
-			if ($fac->paye == 0)
+			if ($cha->paye == 0)
 			{
 				print "<tr><td colspan=\"2\" align=\"right\">Total payé:</td><td align=\"right\"><b>".price($totalpaye)."</b></td><td>".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
 				print "<tr><td colspan=\"2\" align=\"right\">Réclamé :</td><td align=\"right\" bgcolor=\"#d0d0d0\">".price($cha->amount)."</td><td bgcolor=\"#d0d0d0\">".$langs->trans("Currency".$conf->monnaie)."</td></tr>\n";
@@ -156,10 +188,11 @@ if ($chid > 0)
 
 		print "</tr>";
 
-		if ($cha->paye==0) {
-			print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="desc" size="40" value="'.stripslashes($cha->lib).'"></td></tr>';
+		if ($cha->paye==0)
+		{
+			print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="desc" size="40" value="'.$cha->lib.'"></td></tr>';
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td><input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\"></td></tr>";
-			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td><b><input type=\"text\" name=\"amount\" value=\"$cha->amount\"></b></td></tr>";
+			print '<tr><td>'.$langs->trans("AmountTTC")."</td><td><b><input type=\"text\" name=\"amount\" value=\"".$cha->amount."\"></b></td></tr>";
 		}
 		else {
 			print '<tr><td>'.$langs->trans("Label").'</td><td>'.$cha->lib.'</td></tr>';
@@ -168,7 +201,7 @@ if ($chid > 0)
 		}
 
 
-		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut().'</td></tr>';
+		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
 		print '</table>';
 
 
@@ -208,7 +241,7 @@ if ($chid > 0)
 	else
 	{
 		/* Charge non trouvée */
-		print "Charge inexistante ou accés refusé";
+		dolibarr_print_error('',$cha->error);
 	}
 }
 

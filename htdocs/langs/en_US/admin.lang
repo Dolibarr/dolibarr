@@ -21,6 +21,7 @@ UseSearchToSelectProduct=Use a search form to choose a product (intead of using 
 NotAvailableWhenAjaxDisabled=Not available when Ajax disabled
 JavascriptDisabled=Javascript disabled
 UsePopupCalendar=Use popup for dates input
+UsePreviewTabs=Use preview tabs
 NextValue=Next value
 NextValueForInvoices=Next value (invoices)
 NextValueForCreditNotes=Next value (credit notes)

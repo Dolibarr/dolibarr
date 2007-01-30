@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,9 +39,6 @@ if (!$user->admin && ! $user->rights->tax->charges->lire)
   accessforbidden();
 
 
-llxHeader();
-
-
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page = $_GET["page"];
@@ -53,6 +50,11 @@ $offset = $limit * $page ;
 if (! $sortfield) $sortfield="c.id";
 if (! $sortorder) $sortorder="DESC";
 
+$year=$_GET["year"];
+$filtre=$_GET["filtre"];
+//if (! $year) { $year=date("Y", time()); }
+
+
 
 /*
  * Ajout d'une charge sociale
@@ -60,33 +62,38 @@ if (! $sortorder) $sortorder="DESC";
 
 if ($_POST["action"] == 'add')
 {
-  if (! $_POST["date"] || ! $_POST["periode"] || ! $_POST["amount"]) {
-    $mesg="<div class=\"error\">Erreur: Tous les champs date et montant doivent etre renseignés avec une valeur non vide.</div>";
-  }
-  else {
-
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount) ";
-      $sql .= " VALUES (".$_POST["type"].",'".addslashes($_POST["libelle"])."','".$_POST["date"]."','".$_POST["periode"]."','".$_POST["amount"]."');";
-
-      if (! $db->query($sql) )
-        {
-          dolibarr_print_error($db);
-        }
-      else {
-        $mesg="<div class=\"ok\">La charge a été ajoutée.</div>";
-      }
-  }
-}
-
-/*
- * Suppression d'une charge sociale
- */
-
-if ($_GET["action"] == 'del' && $_POST["confirm"] == 'yes')
-{
-	$chargesociales=new ChargeSociales($db);
-	$chargesociales->id=$_GET["id"];
-	$result=$chargesociales->delete($user);
+	if (! $_POST["date"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
+	}
+	elseif (! $_POST["periode"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+	}
+	elseif (! $_POST["amount"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")).'</div>';
+	}
+	else
+	{
+		$chargesociales=new ChargeSociales($db);
+		
+		$chargesociales->type=$_POST["type"];
+		$chargesociales->lib=$_POST["libelle"];
+		$chargesociales->date_ech=$_POST["date"];
+		$chargesociales->period=$_POST["period"];
+		$chargesociales->amount=$_POST["amount"];
+		
+		$result=$chargesociales->create($user);
+		if ($result > 0)
+		{
+			$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
+		}
+		else
+		{
+			$mesg='<div class="error">'.$chargesociales->error.'</div>';
+		}
+	}
 }
 
 
@@ -95,9 +102,7 @@ if ($_GET["action"] == 'del' && $_POST["confirm"] == 'yes')
  *  Affichage liste et formulaire des charges.
  */
 
-$year=$_GET["year"];
-$filtre=$_GET["filtre"];
-//if (! $year) { $year=date("Y", time()); }
+llxHeader();
 
 print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";

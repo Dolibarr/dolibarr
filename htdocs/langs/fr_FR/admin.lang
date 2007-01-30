@@ -21,6 +21,7 @@ UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choix d'un pro
 NotAvailableWhenAjaxDisabled=Non disponible quand Ajax désactivé
 JavascriptDisabled=Javascript désactivé
 UsePopupCalendar=Utiliser les popups pour la saisie des dates
+UsePreviewTabs=Afficher les onglets "Aperçu"
 NextValue=Prochaine valeur
 NextValueForInvoices=Prochaine valeur (factures)
 NextValueForCreditNotes=Prochaine valeur (avoirs)

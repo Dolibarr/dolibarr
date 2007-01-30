@@ -52,12 +52,13 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_LANG_DEFAULT",       $_POST["main_lang_default"]);
 	dolibarr_set_const($db, "MAIN_MULTILANGS",         $_POST["main_multilangs"]);
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"]);
-	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["disable_javascript"]);
-	dolibarr_set_const($db, "MAIN_DISABLE_AJAX",       $_POST["disable_ajax"]);
-	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["popup_calendar"]);
+	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"]);
+	dolibarr_set_const($db, "MAIN_DISABLE_AJAX",       $_POST["main_disable_ajax"]);
+	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"]);
+	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"]);
 	
-	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["bugtrack"]);
-	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["workboard"]);
+	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["main_show_bugtrack_link"]);
+	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["main_show_workboard"]);
 	
 	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
 	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
@@ -118,24 +119,24 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    $html->selectyesnonum('bugtrack',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
+    $html->selectyesnonum('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
-    $html->selectyesnonum('workboard',$conf->global->MAIN_SHOW_WORKBOARD);
+    $html->selectyesnonum('main_show_workboard',$conf->global->MAIN_SHOW_WORKBOARD);
     print '</td></tr>';
 
     // Désactiver javascript
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
-    $html->selectyesnonum('disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0);
+    $html->selectyesnonum('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0);
     print '</td></tr>';
     
     // Désactiver ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
-    $html->selectyesnonum('disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1);
+    $html->selectyesnonum('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1);
     print '</td></tr>';
     
     // Désactiver le calendrier popup
@@ -145,10 +146,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		'0'=>$langs->trans("No"),
 		'eldy'=>$langs->trans("Yes").' (style eldy)',
 		'andre'=>$langs->trans("Yes").' (style andre)');
-    $html->select_array('popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
+    $html->select_array('main_popup_calendar',$liste_popup_calendar,$conf->global->MAIN_POPUP_CALENDAR);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptNotDisabled").')';
     print '</td></tr>';
 
+    // Activer onglet preview
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
+    $html->selectyesnonum('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1);
+    print '</td></tr>';
+    
     print '</table><br>';
 
 
@@ -273,6 +280,11 @@ else
     if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
     else print ($conf->global->MAIN_POPUP_CALENDAR?$langs->trans("Yes").' (style '.$conf->global->MAIN_POPUP_CALENDAR.')':$langs->trans("No"));
     print "</td></tr>";
+
+    // Activer onglet preview
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
+    print yn(isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1)."</td></tr>";
 
     print '</table><br>';
 
