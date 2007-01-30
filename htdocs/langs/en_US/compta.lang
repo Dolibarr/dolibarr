@@ -63,3 +63,7 @@ NewCheckReceipt=Nouvelle remise
 NewCheckDeposit=New check deposit
 NewCheckDepositOn=New check deposit on account: %s
 NoWaitingChecks=No checks waiting for deposit.
+PaySocialContribution=Pay a social contribution
+ConfirmPaySocialContribution=Are you sure you want to classify this social contribution as payed ?
+DeleteSocialContribution=Delete a social contribution
+ConfirmDeleteSocialContribution=Are you sure you want to delete this social contribution ?
