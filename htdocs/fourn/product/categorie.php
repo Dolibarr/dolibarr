@@ -28,9 +28,6 @@ $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 /*
  * Creation de l'objet produit correspondant à l'id
  */  

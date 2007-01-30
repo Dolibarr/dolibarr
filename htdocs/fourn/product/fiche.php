@@ -40,9 +40,6 @@ $mesg = '';
 if (!$user->rights->produit->lire) accessforbidden();
 
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 /*
  *
  */
@@ -221,7 +218,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
   print '<input type="hidden" name="catid" value="'.$_REQUEST["catid"].'">'."\n";
 
-  if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
+  if ($_GET["type"]!=1) { $title=$langs->trans("NewProduct"); }
   if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
   print_fiche_titre($title);
       
@@ -251,7 +248,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
   print '</td></tr>';
   print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
  
-  if ($_GET["type"] == 0 && $conf->stock->enabled)
+  if ($_GET["type"] != 1 && $conf->stock->enabled)
     {
       print "<tr>".'<td>Seuil stock</td><td colspan="2">';
       print '<input name="seuil_stock_alerte" size="4" value="0">';
@@ -308,7 +305,7 @@ else
 	      $hselected = $h;
 	      $h++;
 	      
-	      if($product->type == 0)
+	      if($product->isproduct())
 		{
 		  if ($conf->stock->enabled)
 		    {
@@ -368,8 +365,8 @@ else
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';
 
 	      $nblignefour=2;
-	      if ($product->type == 0 && $conf->stock->enabled) $nblignefour++;
-	      if ($product->type == 1) $nblignefour++;
+	      if ($product->isproduct() && $conf->stock->enabled) $nblignefour++;
+	      if ($product->isservice()) $nblignefour++;
 		
 	      print '<td valign="middle" align="center" rowspan="'.$nblignefour.'">';
 	      $product->show_photos($conf->produit->dir_output,1,1,0);
@@ -379,7 +376,7 @@ else
 	      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 
           // Stock
-	      if ($product->type == 0 && $conf->stock->enabled)
+	      if ($product->isproduct() && $conf->stock->enabled)
 		{
 		  print '<tr><td><a href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'">'.$langs->trans("Stock").'</a></td>';
 		  if ($product->no_stock)
@@ -401,7 +398,7 @@ else
 		}
 
 	      // Duration
-	      if ($product->type == 1)
+	      if ($product->isservice())
 		{
 		  print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
 
@@ -512,7 +509,11 @@ else
 	  if (($_GET["action"] == 'edit' || $_GET["action"] == 're-edit') && $user->rights->produit->creer)
 	    {
 	      
-	      print_fiche_titre('Edition de la fiche '.$types[$product->type].' : '.$product->ref, "");
+	      if ($product->isservice()) {
+	         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Service').' : '.$product->ref, "");
+	      } else {
+	         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Product').' : '.$product->ref, "");
+	      }
 	      
 	      if ($mesg) {
         		print '<br><div class="error">'.$mesg.'</div><br>';
@@ -526,7 +527,7 @@ else
 	      print '<td>'.$langs->trans("Label").'</td><td colspan="2"><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 	      
 	      
-	      if ($product->type == 0 && $conf->stock->enabled)
+	      if ($product->isproduct() && $conf->stock->enabled)
 		{
 		  print "<tr>".'<td>Seuil stock</td><td colspan="2">';
 		  print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
@@ -541,7 +542,7 @@ else
 	      print $product->description;
 	      print "</textarea></td></tr>";
 	      
-	      if ($product->type == 1)
+	      if ($product->isservice())
 		{
 		  print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
 		  print '&nbsp; ';
@@ -580,14 +581,14 @@ else
 				print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 			}
 		
-			if ($product->type == 0 && $conf->stock->enabled)
+			if ($product->isproduct() && $conf->stock->enabled)
 			{
 				print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
 			}
 
 			print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
 		
-			if ($product->type == 0 && $user->rights->commande->creer)
+			if ($product->isproduct() && $user->rights->commande->creer)
 			{
 				$langs->load('orders');
 				print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';

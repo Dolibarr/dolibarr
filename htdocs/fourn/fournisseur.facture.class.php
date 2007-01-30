@@ -122,10 +122,10 @@ class FactureFournisseur extends Facture
 				{
 					$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 					$this->updateline($idligne,
-					$this->lignes[$i][0],
-					$this->lignes[$i][1],
-					$this->lignes[$i][2],
-					$this->lignes[$i][3]);
+					$this->lignes[$i]->description,
+					$this->lignes[$i]->pu_ht,
+					$this->lignes[$i]->tva_taux,
+					$this->lignes[$i]->qty);
 				}
 			}
 			// Mise à jour prix
@@ -206,7 +206,7 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT rowid, description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc';
+				$sql = 'SELECT rowid, description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc, fk_product';
 				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
 				$sql .= ' WHERE fk_facture_fourn='.$this->id;
 				$resql_rows = $this->db->query($sql);
@@ -219,15 +219,15 @@ class FactureFournisseur extends Facture
 						while ($i < $num_rows)
 						{
 							$obj = $this->db->fetch_object($resql_rows);
-							$this->lignes[$i][0] = $obj->description;
-							$this->lignes[$i][1] = $obj->pu_ht;
-							$this->lignes[$i][2] = $obj->tva_taux;
-							$this->lignes[$i][3] = $obj->qty;
-							$this->lignes[$i][4] = $obj->total_ht;
-							$this->lignes[$i][5] = $obj->tva;
-							$this->lignes[$i][6] = $obj->total_ttc;
-							$this->lignes[$i][7] = $obj->rowid;
-							$this->lignes[$i][8] = $obj->total_tva;
+							$this->lignes[$i]->description = $obj->description;
+							$this->lignes[$i]->pu_ht = $obj->pu_ht;
+							$this->lignes[$i]->tva_taux = $obj->tva_taux;
+							$this->lignes[$i]->qty = $obj->qty;
+							$this->lignes[$i]->total_ht = $obj->total_ht;
+							$this->lignes[$i]->tva = $obj->tva;
+							$this->lignes[$i]->total_ttc = $obj->total_ttc;
+							$this->lignes[$i]->rowid = $obj->rowid;
+							$this->lignes[$i]->total_tva = $obj->total_tva;
 							$i++;
 						}
 					}
@@ -347,8 +347,9 @@ class FactureFournisseur extends Facture
 	 * \param     pu              prix unitaire
 	 * \param     tauxtva         taux de tva
 	 * \param     qty             quantité
+	 * \param     idproduct       id produit
 	 */
-	function addline($desc, $pu, $tauxtva, $qty, $idproduct)
+	function addline($desc, $pu, $tauxtva, $qty, $idproduct=0)
 	{
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';

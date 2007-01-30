@@ -35,9 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 if (!$user->rights->produit->lire) accessforbidden();
 
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 /*
  *
  */
@@ -118,7 +115,7 @@ if ($_GET["id"])
        * Ajouter une photo
        *
        */
-      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct && $conf->upload)
+      if ($_GET["action"] == 'ajout_photo' && $user->rights->produit->creer  && $product->isproduct() && $conf->upload)
 	{
 	  print_titre($langs->trans("AddPhoto"));
 	  
@@ -202,7 +199,7 @@ if ($_GET["id"])
   
   if ($_GET["action"] == '')
     {            
-      if ( $user->rights->produit->creer && $product->isproduct && $conf->upload)
+      if ( $user->rights->produit->creer && $product->isproduct() && $conf->upload)
 	{
 	  print '<a class="tabAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
 	  print $langs->trans("AddPhoto").'</a>';

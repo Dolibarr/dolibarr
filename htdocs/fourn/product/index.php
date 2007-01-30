@@ -96,11 +96,11 @@ print '</td><td valign="top" width="70%">';
 
 
 /*
- * Derniers produits/services en vente
+ * Derniers produits en vente
  */
-$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.fk_product_type";
+$sql = "SELECT p.rowid, p.label, p.price, p.ref, p.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p ";
-$sql .= " WHERE p.fk_product_type=0";
+$sql .= " WHERE p.fk_product_type <> 1";
 $sql .= " ORDER BY p.datec DESC ";
 $sql .= $db->plimit(15 ,0);
 
@@ -112,9 +112,6 @@ if ($resql)
 
   $i = 0;
 
-  $typeprodser[0]=$langs->trans("Product");
-  $typeprodser[1]=$langs->trans("Service");
-    
   if ($num > 0)
     {
       print '<table class="noborder" width="100%">';
@@ -132,8 +129,10 @@ if ($resql)
 	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print "<td>$objp->label</td>";
-	  print "<td>".$typeprodser[$objp->fk_product_type]."</td>";
-	  print "</tr>\n";
+	  print "<td>";
+	  if ($objp->fk_product_type==1) print $langs->trans('ShowService');
+	  else print $langs->trans('ShowProduct');
+	  print "</td></tr>\n";
 	  $i++;
 	}
       $db->free($resql);
