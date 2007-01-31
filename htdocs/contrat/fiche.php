@@ -709,12 +709,12 @@ else
                         print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
                         print img_object($langs->trans("ShowService"),"service").' '.$objp->ref.'</a>';
                         print $objp->label?' - '.$objp->label:'';
-                        if ($objp->description) print '<br />'.stripslashes(nl2br($objp->description));
+                        if ($objp->description) print '<br />'.nl2br($objp->description);
                         print '</td>';
                     }
                     else
                     {
-                        print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
+                        print "<td>".nl2br($objp->description)."</td>\n";
                     }
                     // TVA
                     print '<td align="center">'.$objp->tva_tx.'%</td>';
