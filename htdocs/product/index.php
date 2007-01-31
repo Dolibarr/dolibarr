@@ -161,7 +161,10 @@ if ($result)
 	  else print img_object($langs->trans("ShowProduct"),"product");
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
-	  print '<td>'.$staticproduct->typeprodser[$objp->fk_product_type]."</td>";
+	  print "<td>";
+	  if ($objp->type==1) print $langs->trans("ShowService");
+	  else print $langs->trans("ShowProduct");
+	  print "</td>";
 	  print '<td align="right" nowrap="nowrap">';
 	  print $staticproduct->LibStatut($objp->envente,5);
 	  print "</td>";

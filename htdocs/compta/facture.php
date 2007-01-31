@@ -1608,8 +1608,10 @@ else
 		if ($mesg) print $mesg.'<br>';
 		
 		$fac = New Facture($db);
-		if ( $fac->fetch($_GET['facid'], $user->societe_id) > 0)
+		if ($fac->fetch($_GET['facid']))
 		{
+			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);
+
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
 			$absolute_discount=$soc->getCurrentDiscount();

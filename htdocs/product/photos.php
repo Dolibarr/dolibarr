@@ -45,10 +45,6 @@ $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
-
 /*
  * Actions
  */

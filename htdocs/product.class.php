@@ -2524,5 +2524,22 @@ class Product
   {
 
   }
+
+  function isproduct() {
+     if ($this->type != 1) {
+	return 1;
+     } else {
+	return 0;
+     }
+  }
+
+  function isservice() {
+     if ($this->type==1) {
+	return 1;
+     } else {
+	return 0;
+     }
+  }
+
 }
 ?>

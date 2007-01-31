@@ -47,7 +47,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
-$sql .= " WHERE p.fk_product_type = 0";
+$sql .= " WHERE p.fk_product_type <> 1";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= ' AND IFNULL(c.visible,1)=1';
@@ -65,7 +65,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
   $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 }
-$sql .= " WHERE p.envente = 0 AND p.fk_product_type = 0";
+$sql .= " WHERE p.envente = 0 AND p.fk_product_type <> '1'";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 {
   $sql.= ' AND IFNULL(c.visible,1)=1';
@@ -111,7 +111,7 @@ if ($conf->service->enabled)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
   }
-  $sql .= " WHERE p.fk_product_type = 1";
+  $sql .= " WHERE p.fk_product_type = '1'";
   if ($conf->categorie->enabled && !$user->rights->categorie->voir)
   {
     $sql.= ' AND IFNULL(c.visible,1)=1';
@@ -129,7 +129,7 @@ if ($conf->service->enabled)
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
   }
-  $sql .= " WHERE p.envente = 0 AND p.fk_product_type = 1";
+  $sql .= " WHERE p.envente = 0 AND p.fk_product_type = '1'";
   if ($conf->categorie->enabled && !$user->rights->categorie->voir)
   {
     $sql.= ' AND IFNULL(c.visible,1)=1';

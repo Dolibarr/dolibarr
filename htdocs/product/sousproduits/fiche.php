@@ -59,8 +59,6 @@ if ($action <> 're-edit')
 if (!$user->rights->produit->lire) accessforbidden();
 
 $html = new Form($db);
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
 
 // Action association d'un sousproduit
 if ($action == 'add_prod' && 
@@ -102,7 +100,8 @@ if ($action == 'add_prod' &&
 // action recherche des produits par mot-clé et/ou par catégorie
 if($action == 'search' )
 {
-	$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type';
+	#$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type';
+	$sql = 'SELECT p.rowid, p.ref, p.label, p.price';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 	if($conf->categorie->enabled && $catMere != -1)
 	{
@@ -160,8 +159,8 @@ if ($id || $ref)
 	  print "<tr>";
 	  
 	  $nblignes=6;
-	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-	  if ($product->type == 1) $nblignes++;
+	  if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+	  if ($product->isservice()) $nblignes++;
 	  
 	  // Reference
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
@@ -220,7 +219,11 @@ if ($id || $ref)
     if (($action == 'edit' || $action == 'search' || $action == 're-edit') && $user->rights->produit->creer)
     {
 
-        print_fiche_titre($langs->trans('EditAssociate').' '.$types[$product->type].' : '.$product->ref, "");
+      if ($product->isservice()) {
+         print_fiche_titre($langs->trans('EditAssociate').' '.$langs->trans('Service').' : '.$product->ref, "");
+      } else {
+         print_fiche_titre($langs->trans('EditAssociate').' '.$langs->trans('Product').' : '.$product->ref, "");
+      }
 
         if ($mesg) {
             print '<br><div class="error">'.$mesg.'</div><br>';
@@ -231,8 +234,8 @@ if ($id || $ref)
             print "<tr>";
 
             $nblignes=6;
-            if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-            if ($product->type == 1) $nblignes++;
+            if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+            if ($product->isservice()) $nblignes++;
 
             // Reference
             print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
@@ -294,6 +297,25 @@ if ($id || $ref)
 						$objp = $db->fetch_object($resql);
 						if($objp->rowid != $id)
 						{
+	  // check if a product is not already a parent product of this one
+	  $prod_arbo=new Product($db,$objp->rowid);
+	  if ($prod_arbo->type==2 || $prod_arbo->type==3) {
+	     $is_pere=0;
+             $prod_arbo->get_sousproduits_arbo ();
+             // associations sousproduits
+             $prods_arbo = $prod_arbo->get_arbo_each_prod();
+             if(sizeof($prods_arbo) > 0) {
+              foreach($prods_arbo as $key => $value) {
+                  if ($value[1]==$id) {
+		     $is_pere=1;
+                  }
+              } 
+	     }
+	     if ($is_pere==1) {
+		$i++;
+		continue;
+	     }
+	   }
 							print "\n<tr>";
 							print '<td>'.$objp->ref.'</td>';
 							print '<td>'.$objp->label.'</td>';

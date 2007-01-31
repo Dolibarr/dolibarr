@@ -101,9 +101,11 @@ if ($sall)
 {
   $sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
-if (strlen($_GET["type"]) || strlen($_POST["type"]))
+if ($type==1)
 {
-  $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
+  $sql .= " AND p.fk_product_type = '1';
+} else
+  $sql .= " AND p.fk_product_type <> '1';
 }
 if ($sref)
 {
@@ -154,8 +156,7 @@ if ($resql)
   
   if (isset($_GET["type"]) || isset($_POST["type"]))
     {
-      $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-      if ($type) { $texte = $langs->trans("Services"); }
+      if ($type==1) { $texte = $langs->trans("Services"); }
       else { $texte = $langs->trans("Products"); }
     } else {
       $texte = $langs->trans("ProductsAndServices");
@@ -189,7 +190,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield);
     print_liste_field_titre($langs->trans("StockAvailable"),"reassort.php", "p.stock_dispo","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
-    if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
+    if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("StockInstant"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield);
     print "</tr>\n";
@@ -206,7 +207,7 @@ if ($resql)
     print '<td class="liste_titre" valign="right">';
     print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
     print '</td>';
-    if ($conf->service->enabled && $type != 0) 
+    if ($conf->service->enabled && $type == 1) 
     {
       print '<td class="liste_titre">';
       print '&nbsp;';
@@ -265,7 +266,7 @@ if ($resql)
         print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
         print '<td>'.$objp->label.'</td>';
 
-        if ($conf->service->enabled && $type != 0) 
+        if ($conf->service->enabled && $type == 1) 
         {
             print '<td align="center">';
             if (eregi('([0-9]+)y',$objp->duration,$regs)) print $regs[1].' '.$langs->trans("DurationYear");

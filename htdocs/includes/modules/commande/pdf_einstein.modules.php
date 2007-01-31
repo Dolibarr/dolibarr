@@ -238,10 +238,10 @@ class pdf_einstein extends ModelePDFCommandes
                         if ($prodser->ref)
 						{
 							$prefix_prodserv = "";
-                        	if($prodser->type == 0)
-                        		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-                        	if($prodser->type == 1)
+                        	if($prodser->isservice())
                         		$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+                        	else
+                        		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 
                             $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
                         }

@@ -117,7 +117,7 @@ class box_services_vendus extends ModeleBoxes {
 					         }
     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
-                    'logo' => ($objp->fk_product_type?'object_service':'object_product'),
+                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
                     'text' => $objp->label,
                     'maxlength' => 16,
                     'url' => DOL_URL_ROOT."/contrat/fiche.php?id=".$objp->rowid);

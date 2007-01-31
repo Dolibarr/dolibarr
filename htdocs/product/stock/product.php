@@ -47,10 +47,6 @@ if (! $user->rights->produit->lire || ! $product->type == 0 || ! $conf->stock->e
 }
 
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
-
 if ($_POST["action"] == "create_stock")
 {
   $product = new Product($db);
@@ -231,7 +227,9 @@ if ($_GET["id"] || $_GET["ref"])
         print '<option value="0">'.$langs->trans("Add").'</option>';
         print '<option value="1">'.$langs->trans("Delete").'</option>';
         print '</select></td>';
-        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td></tr>';
+        print '<td width="20%">'.$langs->trans("NumberOfUnit").'</td><td width="20%"><input class="flat" name="nbpiece" size="10" value=""></td>';
+
+	print '</tr>';
         print '<tr><td colspan="5" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">&nbsp;';
         print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
         print '</table>';

@@ -116,7 +116,10 @@ if ($result)
 	  else print img_object($langs->trans("ShowProduct"),"product");
       print " ";
       print $objp->ref.'</a></td>';
-      print '<td>'.$staticproduct->typeprodser[$objp->fk_product_type].'</td>';
+      print '<td>';
+      if ($objp->type==1) print $langs->trans("ShowService");
+      else print $langs->trans("ShowProduct");
+      print '</td>';
       print '<td>'.$objp->label.'</td>';
       print '<td align="right">'.$objp->c.'</td>';
       print "</tr>\n";

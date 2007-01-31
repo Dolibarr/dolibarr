@@ -46,10 +46,6 @@ $mesg = '';
 
 if (! $user->rights->produit->lire) accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
-
 /*
  * Actions
  */
@@ -276,9 +272,10 @@ if ($_GET["id"] || $_GET["ref"])
         print '<br>';
 
 
+      if ($user->rights->fournisseur->lire) {
       // Titre liste des fournisseurs
 	  print '<table class="noborder" width="100%">';
-	  if ($product->type == 0) $nblignefour=4;
+	  if ($product->isproduct()) $nblignefour=4;
 	  else $nblignefour=4;
 	  print '<tr class="liste_titre"><td valign="top">';
 	  print $langs->trans("Suppliers").'</td>';
@@ -297,6 +294,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  $sql.= " WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
 	  $sql.= " ORDER BY lower(s.nom), pfp.quantity";
 
+	  $resql="";
 	  $resql=$db->query($sql);
 	  if ($resql)
 	    {
@@ -354,6 +352,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</table>';
 	}
     }
+}
 }
 else
 {

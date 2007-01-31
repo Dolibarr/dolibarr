@@ -40,9 +40,6 @@ $user->getrights('barcode');
 if (!$user->rights->barcode->lire)
 accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 /*
  * Affiche historique prix
  */

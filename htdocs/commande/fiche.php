@@ -57,9 +57,18 @@ if (!$user->rights->commande->lire) accessforbidden();
 $socid=0;
 if ($user->societe_id > 0)
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$socid = $user->societe_id;
 }
+if ($user->societe_id >0 && isset($_GET["id"]) && $_GET["id"]>0)
+{
+   $commande = new Commande($db);
+   $commande->fetch((int)$_GET['id']);
+   if ($user->societe_id !=  $commande->socid) {
+      accessforbidden();
+   }
+}
+
+
 
 // Récupération de l'id de projet
 $projetid = 0;
@@ -504,7 +513,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 }
 
 // Efface les fichiers
-if ($action=='remove_file')
+if ($_REQUEST['action'] == 'remove_file')
 {
   $com = new Commande($db);
 

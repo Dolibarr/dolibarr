@@ -1,7 +1,7 @@
 <?PHP
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -74,7 +74,7 @@ if (! $dolibarr_main_data_root) {
 }
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);
-
+define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''

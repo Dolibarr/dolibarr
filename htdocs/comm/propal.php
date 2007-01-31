@@ -54,7 +54,6 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
-
 // Sécurité accés client
 $socid='';
 if ($_GET["socid"]) { $socid=$_GET["socid"]; }
@@ -100,6 +99,7 @@ if ($_GET['propalid'] > 0)
 $NBLINES=4;
 
 $form=new Form($db);
+
 
 
 /******************************************************************************/
@@ -316,8 +316,11 @@ if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
     {
         $propal = new Propal($db);
         $propal->fetch($_GET['propalid']);
+	// prevent browser refresh from closing proposal several times
+	if ($propal->statut==1) {
         $propal->cloture($user, $_POST['statut'], $_POST['note']);
     }
+}
 }
 
 /*

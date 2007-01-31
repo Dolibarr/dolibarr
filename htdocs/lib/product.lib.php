@@ -57,7 +57,7 @@ function product_prepare_head($product, $user)
       $h++;
     }
   
-  if($product->type == 0)
+  if($product->isproduct())
     {
       if ($user->rights->barcode->lire)
 	{
@@ -113,7 +113,7 @@ function product_prepare_head($product, $user)
   $head[$h][2] = 'documents';
   $h++;
   
-  if($product->type == 0)	// Si produit stockable
+  if($product->isproduct())	// Si produit stockable
     {
       if ($conf->stock->enabled)
 	{

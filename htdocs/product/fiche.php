@@ -44,9 +44,6 @@ $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 /*
  *
  */
@@ -436,8 +433,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="type" value="'.$_GET["type"].'">'."\n";
       
-      if ($_GET["type"]==0) { $title=$langs->trans("NewProduct"); }
-      if ($_GET["type"]==1) { $title=$langs->trans("NewService"); }
+      if ($_GET["type"]==1) $title=$langs->trans("NewService");
+      else $title=$langs->trans("NewProduct");
       print_fiche_titre($title);
       
       print '<table class="border" width="100%">';
@@ -484,7 +481,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '</select>';
       print '</td></tr>';
       
-      if ($_GET["type"] == 0 && $conf->stock->enabled)
+      if ($_GET["type"] != 1 && $conf->stock->enabled)
 	{
 	  print '<tr><td>Seuil stock</td><td>';
 	  print '<input name="seuil_stock_alerte" size="4" value="0">';
@@ -657,8 +654,8 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  
 	  $nblignes=6;
-	  if ($product->type == 0 && $conf->stock->enabled) $nblignes++;
-	  if ($product->type == 1) $nblignes++;
+	  if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
+	  if ($product->isservice()) $nblignes++;
 	  if ($product->is_photo_available($conf->produit->dir_output))
 	    {
 	      // Photo
@@ -734,7 +731,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
 	  
 	  // Stock
-	  if ($product->type == 0 && $conf->stock->enabled)
+	  if ($product->isproduct() && $conf->stock->enabled)
 	    {
 	      print '<tr><td>'.$langs->trans("Stock").'</td>';
 	      if ($product->no_stock)
@@ -759,7 +756,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>'.nl2br($product->description).'</td></tr>';
 	  
 	  // Durée
-	  if ($product->type == 1)
+	  if ($product->isservice())
 	    {
 	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
 	      if ($product->duration_value > 1)
@@ -798,7 +795,11 @@ if ($_GET["id"] || $_GET["ref"])
    */
   if ($_GET["action"] == 'edit' && $user->rights->produit->creer)
     {
-      print_fiche_titre($langs->trans('Edit').' '.$types[$product->type].' : '.$product->ref, "");
+      if ($product->isservice()) {
+         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Service').' : '.$product->ref, "");
+      } else {
+         print_fiche_titre($langs->trans('Edit').' '.$langs->trans('Product').' : '.$product->ref, "");
+      }
       
       if ($mesg) {
 	print '<br><div class="error">'.$mesg.'</div><br>';
@@ -831,7 +832,7 @@ if ($_GET["id"] || $_GET["ref"])
 	      print '<option value="0" selected="true">'.$langs->trans("NotOnSell").'</option>';
 	    }
 	  print '</td></tr>';
-	  if ($product->type == 0 && $conf->stock->enabled)
+	  if ($product->isproduct() && $conf->stock->enabled)
 	    {
 	      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
 	      print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
@@ -860,7 +861,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print "</td></tr>";
 	  print "\n";
 
-	  if ($product->type == 1)
+	  if ($product->isservice())
 	    {
 	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
 	      print '&nbsp; ';
@@ -939,14 +940,14 @@ if ($_GET["action"] == '')
     }
 
   /*
-    if ($product->type == 0 && $user->rights->commande->creer)
+    if ($product->isproduct() && $user->rights->commande->creer)
     {
     $langs->load('orders');
     print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
     print $langs->trans("CreateCustomerOrder").'</a>';
     }
 
-    if ($product->type == 0 && $user->rights->fournisseur->commande->creer)
+    if ($product->isproduct() && $user->rights->fournisseur->commande->creer)
     {
     $langs->load('orders');
     print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';

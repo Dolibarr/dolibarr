@@ -157,7 +157,7 @@ class Adherent
 		      $this->nom,
 		      $infos,
 		      $infos,
-		      "http://".$_SERVER["SERVER_NAME"]."/",
+		      DOL_MAIN_URL_ROOT,
 		      $this->societe,
 		      $this->adresse,
 		      $this->cp,

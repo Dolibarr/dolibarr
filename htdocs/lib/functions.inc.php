@@ -1240,14 +1240,15 @@ function dol_loginfunction($notused,$pearstatus)
 /**
 		\brief      Affiche message erreur de type acces interdit et arrete le programme
 		\param		message			Force error message
+		\param		printheader		Affiche avant le header
 		\remarks    L'appel a cette fonction termine le code.
 */
-function accessforbidden($message='')
+function accessforbidden($message='',$printheader=1)
 {
   global $user, $langs;
   $langs->load("other");
 
-  llxHeader();
+  if ($printheader) llxHeader();
   print '<div class="error">';
   if (! $message) print $langs->trans("ErrorForbidden");
   else print $message;

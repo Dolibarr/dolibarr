@@ -107,7 +107,7 @@ class box_produits extends ModeleBoxes {
     
                     $this->info_box_contents[$i][0] = array(
                     'align' => 'left',
-                    'logo' => ($objp->fk_product_type?'object_service':'object_product'),
+                    'logo' => ($objp->fk_product_type==1?'object_service':'object_product'),
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
     

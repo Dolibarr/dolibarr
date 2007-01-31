@@ -39,9 +39,6 @@ $langs->load("companies");
 $langs->load("products");
 $langs->load("bills");
 
-$types[0] = $langs->trans("Product");
-$types[1] = $langs->trans("Service");
-
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -104,7 +101,7 @@ if ($_GET["id"] || $_GET["ref"])
         print '</td></tr>';
 
 	// Stock
-	if ($product->type == 0 && $conf->stock->enabled)
+	if ($product->isproduct() && $conf->stock->enabled)
 	  {
 	    print '<tr><td>'.$langs->trans("Stock").'</td>';
 	    if ($product->no_stock)

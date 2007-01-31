@@ -87,9 +87,8 @@ else
 
   if (isset($_GET["type"]) || isset($_POST["type"]))
     {
-      $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
-      if ($type) { $texte = $langs->trans("Services"); }
-      else { $texte = $langs->trans("Products"); }
+    	if ($type==1) { $texte = $langs->trans("Services"); }
+		else { $texte = $langs->trans("Products"); }
     } else {
       $texte = $langs->trans("ProductsAndServices");
     }
@@ -116,9 +115,14 @@ if ($sall)
 {
   $sql .= " AND (p.ref like '%".addslashes($sall)."%' OR p.label like '%".addslashes($sall)."%' OR p.description like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%')";
 }
+# if the type is not 1, we show all products (type = 0,2,3)
 if (strlen($_GET["type"]) || strlen($_POST["type"]))
 {
-  $sql .= " AND p.fk_product_type = ".(strlen($_GET["type"])?$_GET["type"]:$_POST["type"]);
+  if ($type==1) {
+     $sql .= " AND p.fk_product_type = '1'";
+  } else {
+     $sql .= " AND p.fk_product_type <> '1'";
+  }
 }
 if ($sref)
 {

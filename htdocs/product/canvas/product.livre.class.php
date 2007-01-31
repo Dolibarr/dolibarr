@@ -447,7 +447,7 @@ class ProductLivre extends Product
    */
   function LoadListDatas($limit, $offset, $sortfield, $sortorder)
   {
-    $sql = 'SELECT p.rowid, p.ref, p.label, pl.px_feuillet as price, p.fk_product_type,';
+    $sql = 'SELECT p.rowid, p.ref, p.label, pl.px_feuillet as price, ';
     $sql.= ' p.duration, p.envente as statut, p.stock_loc';
     $sql.= ',pl.pages';
     $sql.= ',SUM(fd.qty) as ventes';

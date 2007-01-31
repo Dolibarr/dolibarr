@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -32,8 +32,13 @@
 require_once("main.inc.php");
 
 
-// C'est un wrapper, donc header vierge
-function llxHeader() { }
+function llxHeader()
+{
+   global $user,$langs;
+   top_menu($head, $title);
+   $menu = new Menu();
+   left_menu($menu->liste);
+}
 
 
 $action = $_GET["action"];
@@ -54,8 +59,11 @@ if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; 
 
 //Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
+# find the subdirectory name as the reference
+$refname=basename(dirname($original_file)."/");
 
 $accessallowed=0;
+$sqlprotectagainstexternals='';
 if ($modulepart)
 {
     // On fait une vérification des droits et on définit le répertoire concern
@@ -69,6 +77,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->facture->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture WHERE ref='$refname'";
     }
 
     // Wrapping pour les fiches intervention
@@ -80,6 +89,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->fichinter->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour les prelevements
@@ -91,6 +101,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->prelevement->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."$modulepart WHERE ref='$refname'";
     }
 
     // Wrapping pour les propales
@@ -101,7 +112,9 @@ if ($modulepart)
         {
             $accessallowed=1;
         }
+
         $original_file=$conf->propal->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."propal WHERE ref='$refname'";
     }
 	 // Wrapping pour les commandes
     if ($modulepart == 'commande')
@@ -112,6 +125,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->commande->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande WHERE ref='$refname'";
     }
     
     // Wrapping pour les commandes fournisseurs
@@ -123,6 +137,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->fournisseur->commande->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."commande_fournisseur WHERE ref='$refname'";
     }
     
     // Wrapping pour les factures fournisseurs
@@ -134,6 +149,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->fournisseur->facture->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."facture_fourn WHERE facnumber='$refname'";
     }
 
     // Wrapping pour les rapport de paiements
@@ -146,6 +162,7 @@ if ($modulepart)
         }
         if ($user->societe_id > 0) $original_file=DOL_DATA_ROOT.'/private/'.$user->id.'/compta/'.$original_file;
         else $original_file=$conf->compta->dir_output.'/payments/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour les exports de compta
@@ -168,6 +185,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->societe->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = "SELECT idp as fk_soc FROM ".MAIN_DB_PREFIX."societe WHERE idp='$refname'";
     }
 
     // Wrapping pour les expedition
@@ -179,6 +197,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->expedition->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
     
     // Wrapping pour les bons de livraison
@@ -190,6 +209,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->livraison->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour la telephonie
@@ -201,6 +221,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->telephonie->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour les actions
@@ -212,6 +233,7 @@ if ($modulepart)
         $accessallowed=1;
         //}
         $original_file=$conf->actions->dir_output.'/'.$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
     }
 
     // Wrapping pour les actions
@@ -223,6 +245,7 @@ if ($modulepart)
         $accessallowed=1;
         //}
 		$original_file = $conf->actions->dir_temp."/".$original_file;
+		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
 	}
 
     // Wrapping pour les produits et services
@@ -234,6 +257,7 @@ if ($modulepart)
         $accessallowed=1;
         //}
         $original_file=$conf->produit->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les dons
@@ -245,6 +269,7 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=$conf->don->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les remises de cheques
@@ -257,6 +282,7 @@ if ($modulepart)
         }
 	
         $original_file=DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir(basename($original_file,".pdf")).$original_file;
+		$sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les exports
@@ -266,15 +292,17 @@ if ($modulepart)
         // le rep export qui est propre à l'utilisateur
         $accessallowed=1;
         $original_file=$conf->export->dir_temp.'/'.$user->id.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
     }
     
     // Wrapping pour l'éditeur wysiwyg
     if ($modulepart == 'editor')
     {
-        // Aucun test necessaire car on force le rep de doanwload sur
+        // Aucun test necessaire car on force le rep de download sur
         // le rep export qui est propre à l'utilisateur
         $accessallowed=1;
         $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
+		$sqlprotectagainstexternals = '';
     }
 
     // Wrapping pour les backups
@@ -285,9 +313,26 @@ if ($modulepart)
             $accessallowed=1;
         }
         $original_file=DOL_DATA_ROOT.'/admin/temp/'.$original_file;
+		$sqlprotectagainstexternals = '';
     }
 
 
+}
+
+// Basic protection (against external users only)
+if ($user->societe_id>0)
+{
+	if ($sqlprotectagainstexternals)
+	{
+		$resql = $db->query($sqlprotectagainstexternals);
+		if ($resql)
+		{
+		   $obj = $db->fetch_object($resql);
+		   $num=$db->num_rows($resql);
+		   if ($num>0 && $user->societe_id != $obj->fk_soc)
+		      $accessallowed=0;
+		}
+	}
 }
 
 // Limite accès si droits non corrects
@@ -315,7 +360,9 @@ if ($action == 'remove_file')
 	unlink($original_file);
 
 	dolibarr_syslog("document.php back to ".urldecode($urlsource));
-	Header("Location: ".urldecode($urlsource));
+
+	header("Location: ".urldecode($urlsource));
+
 	return;
 }
 else
