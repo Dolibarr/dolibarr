@@ -155,8 +155,10 @@ ALTER TABLE llx_facturedet ADD COLUMN total_ht        real AFTER price;
 ALTER TABLE llx_facturedet ADD COLUMN total_tva       real AFTER total_ht;
 ALTER TABLE llx_facturedet ADD COLUMN total_ttc       real AFTER total_tva;
 ALTER TABLE llx_facturedet ADD COLUMN info_bits		  integer DEFAULT 0 AFTER date_end;
+ALTER TABLE llx_facturedet modify fk_product integer NULL;
 
 UPDATE llx_facturedet SET info_bits=0 where (fk_remise_except IS NULL OR fk_remise_except = 0);
+UPDATE llx_facturedet SET fk_product=NULL where fk_product=0;
 
 ALTER TABLE llx_propaldet ADD COLUMN total_ht        real AFTER price;
 ALTER TABLE llx_propaldet ADD COLUMN total_tva       real AFTER total_ht;
