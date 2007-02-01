@@ -1,29 +1,29 @@
 Interface OSC et Dolibarr
 -------------------------
 
-on va l'appeler version 0.
 
-INSTALATION SUR SITE OSC :
+INSTALATION A FAIRE SUR LE SITE OSC :
 
-copier le répertoire sur le seveur web
-le répertoire lib qui  contient la librairie nusoap
-le répertoire includes : le fichier configure.php
-les fichiers ws_*
+Copier le contenu du répertoire ws_server sur le seveur web OSCommerce.
+Cela inclut le répertoire lib qui contient la librairie nusoap, le répertoire includes qui contient
+le fichier configure.php et les fichiers ws_*
 
 Configuration :
 Tout est dans le fichier configure.php sous forme de define (accès à la BDD OSC et def du langage par défaut)
 
 C'est tout !
+Votre application OSCommerce offre maintenant des web services utilisables par d'autres application (comme
+Dolibarr).
+
+
 
 TEST DE L'INSTALLATION
 
-Pour tester l'installation utiliser le client basique fourni à installer sur un serveur web avec php4.
+Ouvrir la page ws_index.html sur votre serveur OSCommerce.
 
-répertoire includes : Par défaut on pointe sur le site osc.tiris.info où j'ai mis à disposition les web services sur un environnement de test. Définir le répertoire où se trouvent les web_services (www.siteosc/webservices)
+Les liens accèdent à certaines méthodes des webservices.
+si on obtient une réponse Fault il y a un problème (en principe le message permet de trouver)!!
 
-Ouvrir la page index.html
-les liens accèdent à certaines méthodes des webservices
-si on obtient une réponse Fault il y a un problème (en principe le message perlet de trouver!!
 
 
 TEST DEPUIS DOLIBARR
