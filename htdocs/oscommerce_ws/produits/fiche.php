@@ -79,14 +79,14 @@ if ($action == '' && !$cancel) {
     {
 		  $osc_prod = new Osc_product($db, $_GET['id']);
   		  $result = $osc_prod->fetch($_GET['id']);
-  
+ 
 	  if ( !$result )
 	  {
 			$product = new Product($db);
 	    	if ($_error == 1)
 	    	{
 	       		print '<br>erreur 1</br>';
-				exit;
+			//	exit;
 	    	}
 	    	/* initialisation */
 	    	$product->ref = $osc_prod->osc_ref;
@@ -108,18 +108,18 @@ if ($action == '' && !$cancel) {
 		}
 		else {
 			$id = $product->create($user);
-	       
+       
 		    if ($id > 0)
 		    {
 	       	print "\n<div class=\"tabsAction\">\n";
-	       	print '<p>création réussie produit '.$id.' référence : '.$product->ref.'</p>';
+	       	print '<p>création réussie produit '.$id.' référence : '.$product->ref;
 				$res = $osc_prod->transcode($osc_prod->osc_id,$product->id);
-				print '<p>transcode '.$res.' | '.$product->id.' osc : '.$osc_prod->osc_id.'</p>';
+				print ' Id osc : '.$osc_prod->osc_id.'</p>';
 		    	print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 				print "\n</div><br>\n";
 				$id_entrepot = OSC_ENTREPOT;
 				$id = $product->create_stock($id_entrepot,$osc_prod->osc_stock);
-				if ($id > 0)  exit;
+//				if ($id > 0)  exit;
 		    }
 		    else
 		    {

@@ -140,18 +140,16 @@ class Osc_customer
 	function transcode($oscid, $socid)
 	{
 
-		print "entree transcode <br>";
-
 		/* suppression et insertion */
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_customer WHERE osc_custid = ".$oscid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
-			print "suppression ok ".$sql."  * ".$result;
+//			print "suppression ok ".$sql."  * ".$result;
 		}
         else
         {
-			print "suppression rate ".$sql."  * ".$result;
+//			print "suppression rate ".$sql."  * ".$result;
             dolibarr_syslog("osc_customer::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
@@ -161,11 +159,11 @@ class Osc_customer
 		$result=$this->db->query($sql);
         if ($result)
         {
-			print "insertion ok ". $sql."  ". $result;
+//			print "insertion ok ". $sql."  ". $result;
 		}
         else
         {
-			print "insertion rate ".$sql." , ".$result;
+//			print "insertion rate ".$sql." , ".$result;
             dolibarr_syslog("osc_customer::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
@@ -182,7 +180,8 @@ class Osc_customer
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs
-		return $row[0];	
+		if ($row) return $row[0];	
+		else return '';
 	}
 
 	}

@@ -28,6 +28,7 @@
 
 
 require("../clients/osc_customer.class.php");
+require("../produits/osc_product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
@@ -47,6 +48,7 @@ class Osc_order
 	var $osc_orderdate;
 	var $osc_ordertotal;
 	var $osc_orderpaymet;
+	var $osc_orderport;
 
 	var $osc_lines = array();
 
@@ -109,8 +111,9 @@ class Osc_order
 			$this->osc_custname = $obj[0][customers_name];
 			$this->osc_custid = $obj[0][customers_id];
 			$this->osc_orderdate = $obj[0][date_purchased];
-			$this->osc_ordertotal = $obj[0][value];
+			$this->osc_ordertotal = $obj[0][total];
 			$this->osc_orderpaymet = $obj[0][payment_method];
+			$this->osc_orderport = $obj[0][port];
 
 
 			for ($i=1;$i<count($obj);$i++) {
@@ -120,13 +123,14 @@ class Osc_order
 				$this->osc_lines[$i-1][products_price] = $obj[$i][products_price];
 				$this->osc_lines[$i-1][final_price] = $obj[$i][final_price];
 				$this->osc_lines[$i-1][products_tax] = $obj[$i][products_tax];
-				$this->osc_lines[$i-1][quantity] = $obj[$i][quantity];
+				$this->osc_lines[$i-1][quantity] = $obj[$i][products_quantity];
 				}
   			}
   		else {
 		    $this->error = 'Erreur '.$err ;
 			return -1;
-		} 
+		}
+//		print_r($this); 
 		return 0;
 	}
 
@@ -145,6 +149,8 @@ class Osc_order
 	    	/* initialisation */
 			$oscclient = new Osc_Customer($this->db);
 			$clientid = $oscclient->get_clientid($this->osc_custid);
+			
+			$oscproduct = new Osc_product($this->db);
 
 			$commande->socid = $clientid;
 			$commande->ref = $this->osc_orderid;
@@ -154,14 +160,15 @@ class Osc_order
 			$commande->source = 0; // à vérifier
  
 			//les lignes
-			print "<br> nombre : " . count($this->osc_lines); 
+
 			for ($i = 0; $i < sizeof($this->osc_lines);$i++) {
 				$commande->lines[$i]->libelle = $this->osc_lines[$i][products_id];
 				$commande->lines[$i]->desc = $this->osc_lines[$i][products_name];
 				$commande->lines[$i]->price = $this->osc_lines[$i][products_price];
+				$commande->lines[$i]->subprice = $this->osc_lines[$i][products_price];
 				$commande->lines[$i]->qty = $this->osc_lines[$i][quantity];
 				$commande->lines[$i]->tva_tx = $this->osc_lines[$i][products_tax];
-//				$commande->lines[$i]->fk_product;
+				$commande->lines[$i]->fk_product = $oscproduct->get_productid($this->osc_lines[$i][products_id]);
 				$commande->lines[$i]->remise_percent = 0; // à calculer avec le finalprice
 			}
 
@@ -178,18 +185,16 @@ class Osc_order
 	function transcode($osc_orderid, $doli_orderid)
 	{
 
-		print "entree transcode <br>";
-
 		/* suppression et insertion */
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_orders WHERE osc_prodid = ".$osc_orderid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
-			print "suppression ok ".$sql."  * ".$result;
+//			print "suppression ok ".$sql."  * ".$result;
 		}
         else
         {
-			print "suppression rate ".$sql."  * ".$result;
+//			print "suppression rate ".$sql."  * ".$result;
             dolibarr_syslog("osc_order::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
@@ -199,11 +204,11 @@ class Osc_order
 		$result=$this->db->query($sql);
         if ($result)
         {
-			print "insertion ok ". $sql."  ". $result;
+//			print "insertion ok ". $sql."  ". $result;
 		}
         else
         {
-			print "insertion rate ".$sql." , ".$result;
+//			print "insertion rate ".$sql." , ".$result;
             dolibarr_syslog("osc_product::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
@@ -220,7 +225,8 @@ class Osc_order
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs
-		return $row[0];	
+		if ($row) return $row[0];	
+		else return '';
 	}
 
 	}

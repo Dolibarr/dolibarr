@@ -87,7 +87,6 @@ if ($action == '' && !$cancel) {
 	  if ( !$result )
 	  {
 			$commande = $osc_order->osc2dolibarr($_GET["orderid"]);
-	//		print_r($commande);		
 		} 
 /* utilisation de la table de transco*/
 		if ($osc_order->get_orderid($osc_order->osc_orderid)>0)
@@ -95,14 +94,62 @@ if ($action == '' && !$cancel) {
 			print '<p>Cette commande existe déjà</p>';
 		}
 		else {
+// vérifier que la société est renseignée, sinon importer le client d'abord
+			if ( ! $commande->socid) 
+			{
+				$osc_cust = new Osc_customer($db, $osc_order->osc_custid);
+  		  		$result = $osc_cust->fetch($osc_order->osc_custid);
+			  if ( !$result )
+	  		  {
+				$societe = new Societe($db);
+	    		if ($_error == 1)
+	    		{
+				  	print "\n<div class=\"tabsAction\">\n";
+		    		print '<br>erreur 1</br>';
+		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+					print "\n</div><br>\n";
+		    	}
+	    	/* initialisation */
+		    	$societe->nom = $osc_cust->osc_custsoc.' '.$osc_cust->osc_custlastname;
+		    	$societe->adresse = $osc_cust->osc_cutstreet;
+		    	$societe->cp = $osc_cust->osc_custpostcode;
+		    	$societe->ville = $osc_cust->osc_custcity;
+		    	$societe->departement_id = 0;
+		    	$societe->pays_code = $osc_cust->osc_custcodecountry;
+		    	$societe->tel = $osc_cust->osc_custtel; 
+		    	$societe->fax = $osc_cust->osc_custfax; 
+		    	$societe->email = $osc_cust->osc_custmail; 
+		/* on force */
+				$societe->url = '';
+				$societe->siren = '';
+				$societe->siret = '';
+				$societe->ape = '';
+				$societe->client = 1; // mettre 0 si prospect
+
+				$cl = $societe->create($user);
+			   if ($cl == 0)
+			    {
+					$commande->socid = $societe->id;
+		    	  	print '<p>création réussie nouveau client/prospect : '.$societe->nom;
+			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
+					print ' : Id Dolibarr '.$societe->id.' , Id osc : '.$osc_cust->osc_custid.'</p>';
+			    }
+			    else
+			    {
+			    	print '<p>création impossible client : '. $osc_cust->osc_custid .'</p>';
+			    	exit;
+			    }
+				}
+			}
+			
 			$id = $commande->create($user);
-	       
+
 		    if ($id > 0)
 		    {
 				  print "\n<div class=\"tabsAction\">\n";
 		       	  print '<br>création réussie nouvelle commande '.$id;
    			     $res = $osc_order->transcode($osc_order->osc_orderid,$id);
-					  print '<p>transcode '.$res.' | '.$id.' osc : '.$osc_order->osc_orderid.'</p>';
+					  print 'pour la commande osc : '.$osc_order->osc_orderid.'</p>';
 					  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 				  print "\n</div><br>\n";
 
@@ -112,6 +159,7 @@ if ($action == '' && !$cancel) {
 		    {
 		        if ($id == -3)
 		        {
+						print ("<p>$id = -3 ".$commande->error."</p>");
 		            $_error = 1;
 		            $_GET["action"] = "create";
 		            $_GET["type"] = $_POST["type"];

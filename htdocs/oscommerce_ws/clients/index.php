@@ -22,6 +22,7 @@ require("./pre.inc.php");
 
 $langs->load("companies");
 
+
 llxHeader();
 
 
@@ -57,10 +58,14 @@ elseif (!($err = $client->getError()) )
 	$var=True;
   	$i=0;
 
+// un client osc
+	$OscClient = new Osc_Customer($db);
+	
   	if ($num > 0) {
 		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 		print '<TR class="liste_titre">';
-		print "<td>id</td>";
+		print "<td>Oscid</td>";
+		print "<td>clientId</td>";
 		print '<TD align="center">Société</TD>';
 		print "<td>Nom</td>";
 		print "<td>Ville</td>";
@@ -71,15 +76,20 @@ elseif (!($err = $client->getError()) )
 	   
 		while ($i < $num) {
       		$var=!$var;
+      		$custid = $OscClient->get_clientid($result[$i][customers_id]);
 
 		    print "<TR $bc[$var]>";
 		    print '<TD><a href="fiche.php?custid='.$result[$i][customers_id].'">'.$result[$i][customers_id]."</TD>\n";
+    		print "<td>".$custid."</td>";
     		print "<TD>".$result[$i][entry_company]."</TD>\n";
     		print "<TD>".$result[$i][entry_lastname]."</TD>\n";
     		print "<TD>".$result[$i][entry_city]."</TD>\n";
     		print '<TD align="center">'.$result[$i][countries_name]."</TD>\n";
     		print '<TD align="center">'.$result[$i][customers_telephone]."</TD>\n";
-    		print '<TD align="center"><a href="fiche.php?action=import&custid='.$result[$i][customers_id].'"'."><b>importer</b></a></TD>\n";
+    		if ($custid) $lib = "modifier";
+    		else $lib = "<u>importer</u>";
+    		 
+    		print '<TD align="center"><a href="fiche.php?action=import&custid='.$result[$i][customers_id].'"'.">".$lib."</a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}

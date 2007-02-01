@@ -57,6 +57,9 @@ elseif (!($err = $client->getError()) )
 	$var=True;
   	$i=0;
 
+// une commande osc
+	$OscOrder = new Osc_Order($db);
+	
   	if ($num > 0) {
 		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 		print '<TR class="liste_titre">';
@@ -72,15 +75,18 @@ elseif (!($err = $client->getError()) )
 		while ($i < $num) {
       		$var=!$var;
 
+				$ordid = $OscOrder->get_orderid($result[$i][orders_id]);
 		    print "<TR $bc[$var]>";
 		    print '<TD><a href="fiche.php?orderid='.$result[$i][orders_id].'">'.$result[$i][orders_id]."</TD>\n";
-    		print "<TD>  </TD>\n";
+    		print '<TD><a href="../../commande/fiche.php?id='.$ordid.'">'.$ordid."</a> </TD>\n";
     		print "<TD>".$result[$i][customers_name]."</TD>\n";
     		print "<TD>".$result[$i][date_purchased]."</TD>\n";
     		print "<TD>".$result[$i][value]."</TD>\n";
     		print '<TD align="center">'.' '.$result[$i][payment_method]."</TD>\n";
 //    		print '<TD align="center">'/*.$result[$i][customers_telephone]*/."</TD>\n";
-    		print '<TD align="center"><a href="fiche.php?action=import&orderid='.$result[$i][orders_id].'">'."<b>importer</b></a></TD>\n";
+    		if ($ordid) $lib = "modifier";
+    		else $lib = "<u>importer</u>";
+    		print '<TD align="center"><a href="fiche.php?action=import&orderid='.$result[$i][orders_id].'">'.$lib."</a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}

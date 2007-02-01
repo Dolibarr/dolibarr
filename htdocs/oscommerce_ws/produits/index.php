@@ -57,11 +57,15 @@ elseif (!($err = $client->getError()) )
 	$var=True;
   	$i=0;
 
+// un produit osc
+	$OscProd = new Osc_Product($db);
+	
   	if ($num > 0) {
 		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 		print '<TR class="liste_titre">';
 		print "<td>id</td>";
 		print "<td>Ref</td>";
+		print "<td>ProductId</td>";
 		print "<td>Titre</td>";
 		print "<td>Groupe</td>";
 		print '<td align="center">Stock</td>';
@@ -71,15 +75,19 @@ elseif (!($err = $client->getError()) )
 	   
 		while ($i < $num) {
       		$var=!$var;
+      		$prodid = $OscProd->get_productid($result[$i][OSC_id]);
 
 		    print "<TR $bc[$var]>";
 		    print '<TD><a href="fiche.php?id='.$result[$i][OSC_id].'">'.$result[$i][OSC_id]."</TD>\n";
-    		print "<TD>".$result[$i][model]."</TD>\n";
+    		print '<TD>'.$result[$i][model]."</TD>\n";
+    		print '<td><a href="../../product/fiche.php?id='.$prodid.'">'.$prodid.'</a></td>';
     		print "<TD>".$result[$i][name]."</TD>\n";
     		print "<TD>".$result[$i][manufacturer]."</TD>\n";
     		print '<TD align="center">'.$result[$i][quantity]."</TD>\n";
     		print '<TD align="center">'.$result[$i][status]."</TD>\n";
-    		print '<TD align="center"><a href="fiche.php?action=import&id='.$result[$i][OSC_id].'"'."><b>importer</b></a></TD>\n";
+    		if ($prodid) $lib = "modifier";
+    		else $lib = "<u>importer</u>";
+    		print '<TD align="center"><a href="fiche.php?action=import&id='.$result[$i][OSC_id].'"'.">".$lib."</a></TD>\n";
     		print "</TR>\n";
     		$i++;
   		}

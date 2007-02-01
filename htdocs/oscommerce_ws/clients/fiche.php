@@ -118,7 +118,10 @@ if ($action == '' && !$cancel) {
 /* utilisation de la table de transco*/
 		if ($osc_cust->get_clientid($osc_cust->osc_custid)>0)
 		{
-			print '<p>Ce client existe déjà</p>';
+			print "\n<div class=\"tabsAction\">\n";
+			print '<p>Ce client existe déjà mise à jour à prévoir</p>';
+			print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+			print "\n</div><br>\n";
 		}
 		else {
 			$id = $societe->create($user);
@@ -126,9 +129,9 @@ if ($action == '' && !$cancel) {
 		    if ($id == 0)
 		    {
 		    	print "\n<div class=\"tabsAction\">\n";
-			    	print '<p>création réussie nouveau client/prospect '.$societe->id.' nom : '.$societe->nom.'</p>';
+			    	print '<p>création réussie nouveau client/prospect : '.$societe->nom;
 			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
-					print '<p>transcode '.$res.' | '.$societe->id.' osc : '.$osc_cust->osc_custid.'</p>';
+					print ' : Id Dolibarr '.$societe->id.' , Id osc : '.$osc_cust->osc_custid.'</p>';
 		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
 				print "\n</div><br>\n";
 		    }
