@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  *
@@ -55,8 +55,9 @@ class Product
   var $multiprices_base_type=array();
   //! Taux de TVA
   var $tva_tx;
-  //! Type 0 pour produit, 1 pour service
+  //! Type 0 for regural product, 1 for service, 2 for assembly kit, 3 for stock kit
   var $type;
+  var $typestring;
   var $seuil_stock_alerte;
   //! Duree de validite du service
   var $duration_value;
@@ -95,9 +96,8 @@ class Product
     $this->status = 0;
     $this->seuil_stock_alerte = 0;
     
-    $this->typeprodser[0]=$langs->trans("Product");
-    $this->typeprodser[1]=$langs->trans("Service");
     $this->canvas = '';
+    if ($id>0) $this->fetch($id);
   }
   /**
    *    \brief      Vérifie que la référence et libellé du produit est non null
@@ -962,17 +962,6 @@ class Product
 	$this->stock_in_command   = $result["stock_commande"];
 
 	$this->label_url = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$this->id.'">'.$this->libelle.'</a>';
-	
-	if ($this->type == 0)
-	  {
-	    $this->isproduct = 1;
-	    $this->isservice = 0;
-	  }
-	else
-	  {
-	    $this->isproduct = 0;
-	    $this->isservice = 1;
-	  }
 	
 	$this->db->free();
 	// multilangs
@@ -2493,7 +2482,7 @@ class Product
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
       }
-    $sql.= " WHERE p.fk_product_type = 0";
+    $sql.= " WHERE p.fk_product_type <> 1";
     if ($conf->categorie->enabled && !$user->rights->categorie->voir)
       {
 	$sql.= " AND IFNULL(c.visible,1)=1";
