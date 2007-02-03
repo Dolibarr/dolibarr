@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copytight (C) 2004      Christophe Combelles <ccomb@free.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -442,7 +442,19 @@ function _print_lines($db,$result,$sql,$acct)
                     print $links[$key]['label'];
                 	print '</a>';
                 }
-                else {
+				else if ($links[$key]['type']=='sc') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+					//print img_object($langs->trans('ShowBill'),'bill').' ';
+					print $langs->trans("SocialContribution");
+					print '</a>';
+				}
+				else if ($links[$key]['type']=='payment_sc') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
+					//print img_object($langs->trans('ShowPayment'),'payment').' ';
+					print $langs->trans("SocialContributionPayment");
+					print '</a>';
+				}
+				else {
     			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                    	print $links[$key]['label'];
                 	print '</a>';

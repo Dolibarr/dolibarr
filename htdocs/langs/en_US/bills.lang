@@ -138,6 +138,7 @@ AlreadyPayed=Already payed
 Abandoned=Abandoned
 RemainderToPay=Remainder to pay
 RemainderToTake=Remainder to take
+AmountExpected=Amount clamed
 EscompteOffered=Discount offered (payment before term)
 CreateDraft=Create draft
 SendBillRef=Send invoice %s

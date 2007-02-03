@@ -88,6 +88,7 @@ DateConciliating=Date rapprochement
 BankLineConciliated=Ecriture rapprochée
 CustomerInvoicePayment=Règlement client
 SupplierInvoicePayment=Règlement fournisseur
+SocialContributionPayment=Règlement charge sociale
 FinancialAccountJournal=Journal de trésorerie du compte
 BankTransfer=Virement bancaire
 BankTransfers=Virements bancaire

@@ -38,7 +38,6 @@ class ChargeSociales
 
     var $id;
     var $date_ech;
-    var $date_pai;
     var $lib;
     var $type;
     var $type_libelle;
@@ -60,7 +59,7 @@ class ChargeSociales
      */
     function fetch($id)
     {
-        $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,".$this->db->pdate("cs.date_pai")." as date_pai,";
+        $sql = "SELECT cs.rowid,".$this->db->pdate("cs.date_ech")." as date_ech,";
         $sql.= " cs.libelle as lib, cs.fk_type, cs.amount, cs.paye, ".$this->db->pdate("cs.periode")." as periode,";
 		$sql.= " c.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as cs, ".MAIN_DB_PREFIX."c_chargesociales as c";
@@ -77,7 +76,6 @@ class ChargeSociales
 
                 $this->id             = $obj->rowid;
                 $this->date_ech       = $obj->date_ech;
-                $this->date_pai       = $obj->date_pai;
                 $this->lib            = $obj->lib;
                 $this->type           = $obj->fk_type;
                 $this->type_libelle   = $obj->libelle;
@@ -240,6 +238,26 @@ class ChargeSociales
 		}
 
 		return "Error, mode/status not found";
+	}
+
+
+	/**
+	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
+	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\return		string			Chaine avec URL
+	 */
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$this->id.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowBill"),'bill').$lienfin.' ');
+		$result.=$lien.$this->lib.$lienfin;
+		return $result;
 	}
 	
 }

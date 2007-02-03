@@ -187,9 +187,11 @@ print_liste_field_titre($langs->trans("Status"),"index.php","s.paye","","",'alig
 print "</tr>\n";
 
 
-$sql = "SELECT s.rowid as id, s.fk_type as type, c.libelle as type_lib, s.amount,".$db->pdate("s.date_ech")." as de, s.date_pai, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,".$db->pdate("s.date_pai")." as dp";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
-$sql .= " WHERE s.fk_type = c.id";
+$sql = "SELECT s.rowid as id, s.fk_type as type, ";
+$sql.= " s.amount,".$db->pdate("s.date_ech")." as de, s.libelle, s.paye,".$db->pdate("s.periode")." as periode,";
+$sql.= " c.libelle as type_lib";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+$sql.= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
     $sql .= " AND (";

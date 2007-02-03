@@ -30,11 +30,11 @@ include_once("./pre.inc.php");
 include_once("../chargesociales.class.php");
 include_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 
+$langs->load("bills");
+
 $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 
-/*
- * Sécurité accés client
- */
+// Sécurité accés client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -47,6 +47,13 @@ if ($user->societe_id > 0)
  */
 if ($_POST["action"] == 'add_paiement')
 {
+	if ($_POST["cancel"])
+	{
+        $loc = DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$chid;
+        Header("Location: $loc");
+		exit;
+	}
+	
     if ($_POST["paiementtype"] > 0)
     {
 
@@ -93,7 +100,8 @@ if ($_POST["action"] == 'add_paiement')
             $total = price2num($total);
 
             // Insertion dans llx_bank
-            $label = "Règlement charge";
+            $langs->load("banks");
+			$label = $langs->trans("SocialContributionPayment");
             $acc = new Account($db, $_POST["accountid"]);
             $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
 
@@ -105,7 +113,7 @@ if ($_POST["action"] == 'add_paiement')
                 // Mise a jour liens (pour chaque charge concernée par le paiement)
                 foreach ($paiement->amounts as $key => $value)
                 {
-                    $acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/sociales/charges.php?id=', $chid);
+                    $acc->add_url_line($bank_line_id, $chid, DOL_URL_ROOT.'/compta/sociales/charges.php?id=', '(socialcontribution)','sc');
                 }
 
                 $db->commit();
@@ -127,7 +135,7 @@ if ($_POST["action"] == 'add_paiement')
     }
     else
     {
-        $mesg = "Vous devez sélectionner un mode de paiement";
+        $mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
     }
 	$_GET["action"]='create';
 }
@@ -142,12 +150,6 @@ llxHeader();
 $html=new Form($db);
 
 
-if ($mesg)
-{
-	print "<div class=\"error\">$mesg</div><br>";
-}
-
-
 /*
  * Formulaire de creation d'un paiement de charge
  */
@@ -159,8 +161,13 @@ if ($_GET["action"] == 'create')
 
 	  $total = $charge->amount;
 
-	  print_titre("Emettre un paiement d'une charge");
+	  print_titre($langs->trans("DoPayment"));
       print "<br>\n";
+
+	if ($mesg)
+	{
+		print "<div class=\"error\">$mesg</div>";
+	}
 
 	  print '<form name="add_paiement" action="paiement_charge.php" method="post">';
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
@@ -216,32 +223,16 @@ if ($_GET["action"] == 'create')
 		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
 		print "<td><input name=\"num_paiement\" type=\"text\"></td></tr>\n";
 
-	  /*
-	   * Autres charges impayées
-	   */
-//	  $sql = "SELECT f.rowid as facid,f.facnumber,f.total_ttc,".$db->pdate("f.datef")." as df";
-//	  $sql .= ", sum(pf.amount) as am";
-//	  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-//	  $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON pf.fk_facture = f.rowid";
-//	  $sql .= " WHERE f.fk_soc = ".$facture->socid;
-//	  $sql .= " AND f.paye = 0";
-//	  $sql .= " AND f.fk_statut = 1";  // Statut=0 => non validée, Statut=2 => annulée
-//	  $sql .= " GROUP BY f.facnumber";  
-//
-//    $result=$db->query($sql);
-//	  if ($result)
-//	    {
-//	      $num = $db->num_rows($result);
-//	      
-//	      if ($num > 0)
-//		{
+		/*
+		* Autres charges impayées
+		*/
 		  $num = 1;
 		  $i = 0;
 		  print '<tr><td colspan="3">';
 		  print '<table class="noborder" width="100%">';
 		  print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans("SocialContribution").'</td>';
-		  print '<td align="center">'.$langs->trans("DateDue").'</td>';
+		  //print '<td>'.$langs->trans("SocialContribution").'</td>';
+		  print '<td align="left">'.$langs->trans("DateDue").'</td>';
 		  print '<td align="right">'.$langs->trans("AmountTTC").'</td>';	      
 		  print '<td align="right">'.$langs->trans("AlreadyPayed").'</td>';
 		  print '<td align="right">'.$langs->trans("RemainderToPay").'</td>';
@@ -261,12 +252,11 @@ if ($_GET["action"] == 'create')
 		      
 		      print "<tr $bc[$var]>";
 		  
-		      print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$objp->id.'">' . $objp->id;
-		      print "</a></td>\n";
+		      //print '<td>'.$charge->getNomUrl(1)."</td>\n";
 		      
-		      if ($objp->date_ech > 0 )
+		      if ($objp->date_ech > 0)
 			{
-			  print "<td align=\"center\">".dolibarr_print_date($objp->date_ech)."</td>\n";
+			  print "<td align=\"left\">".dolibarr_print_date($objp->date_ech,'day')."</td>\n";
 			}
 		      else
 			{
@@ -320,7 +310,11 @@ if ($_GET["action"] == 'create')
 	   *
 	   */
 
-	  print '<tr><td colspan="3" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+	  print '<tr><td colspan="3" align="center">';
+	  print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	  print '&nbsp; &nbsp;';
+	  print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+	  print '</td></tr>';
 	  print "</table>";
 	  print "</form>\n";	  
 //    }

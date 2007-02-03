@@ -215,7 +215,9 @@ delete from llx_const where name in ('OSC_CATALOG_URL','OSC_LANGUAGE_ID');
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 
-alter table llx_bank_url add column type enum("company","payment","member","donation","charge");
+alter table llx_bank_url add column type enum("company","payment","member","subscription","donation","sc","payment_sc");
+update llx_bank_url set type=null where type='';
+alter table llx_bank_url modify type enum("company","payment","member","subscription","donation","sc","payment_sc");
 
 update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and type='payment' and url like '%/fourn/%';
 
@@ -889,3 +891,6 @@ alter table llx_product_price add column price_ttc float(12,4) DEFAULT 0 after p
 alter table llx_product_price add column price_base_type varchar(3)  DEFAULT 'HT' after price_ttc;
 
 ALTER TABLE llx_document_model ADD UNIQUE uk_document_model (nom,type);
+
+ALTER TABLE llx_chargesociales drop column date_pai;
+

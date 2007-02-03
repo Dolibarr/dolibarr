@@ -139,6 +139,7 @@ AlreadyPayed=Déjà réglé
 Abandoned=Abandonné
 RemainderToPay=Reste à payer
 RemainderToTake=Reste à encaisser
+AmountExpected=Montant réclamé
 EscompteOffered=Escompte (réglement avant échéance)
 CreateDraft=Créer brouillon
 SendBillRef=Envoi facture %s

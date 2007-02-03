@@ -32,6 +32,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 if ($conf->facture->enabled)  require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
+if ($conf->tax->enabled) require_once(DOL_DOCUMENT_ROOT.'/chargesociales.class.php');
 
 $user->getrights(); // On a besoin des permissions sur plusieurs modules
 
@@ -179,14 +180,16 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 /**
  * Charges a payer
  */
-if ($conf->compta->enabled || $conf->comptaexpert->enabled)
+if ($conf->tax->enabled)
 {
     if ($user->societe_id == 0)
     {
+		$chargestatic=new ChargeSociales($db);
 
-        $sql = "SELECT c.rowid, c.amount, cc.libelle";
-        $sql .= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
-        $sql .= " WHERE c.fk_type = cc.id AND c.paye=0";
+        $sql = "SELECT c.rowid, c.amount, ".$db->pdate("c.date_ech")." as date_ech,";
+		$sql.= " cc.libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."chargesociales as c, ".MAIN_DB_PREFIX."c_chargesociales as cc";
+        $sql.= " WHERE c.fk_type = cc.id AND c.paye=0";
 
         $resql = $db->query($sql);
 
@@ -206,7 +209,9 @@ if ($conf->compta->enabled || $conf->comptaexpert->enabled)
                     $obj = $db->fetch_object($resql);
                     $var = !$var;
                     print "<tr $bc[$var]>";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$obj->libelle.'</td>';
+					$chargestatic->id=$obj->rowid;
+                    $chargestatic->lib=$obj->libelle;
+                    print '<td>'.$chargestatic->getNomUrl(1).'</td>';
                     print '<td align="right">'.price($obj->amount).'</td>';
                     print '</tr>';
                     $tot_ttc+=$obj->amount;
