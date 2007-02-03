@@ -36,7 +36,7 @@ function member_prepare_head($member)
 	$head = array();
 	
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$member->id;
-	$head[$h][1] = $langs->trans("Card");
+	$head[$h][1] = $langs->trans("MemberCard");
 	$head[$h][2] = 'general';
 	$h++;
 	
