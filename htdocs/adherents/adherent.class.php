@@ -188,7 +188,7 @@ class Adherent
         }
         else
         {
-            $this->error=$langs->trans("ErrorFailedToSendPassword");
+            $this->error=$langs->trans("ErrorFailedToSendMail",$from,$this->email).'. '.$mailfile->error;
             return -1;
         }
 
@@ -677,7 +677,7 @@ class Adherent
     $tab=array();
     $sql = "SELECT *";
     $sql .= " FROM ".MAIN_DB_PREFIX."adherent_options";
-    $sql .= " WHERE adhid=$rowid";
+    $sql .= " WHERE adhid=".$rowid;
 
     $result=$this->db->query( $sql);
 

@@ -83,7 +83,7 @@ if (! $result)
  */
 $head = member_prepare_head($adh);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Member").": ".$adh->fullname);
+dolibarr_fiche_head($head, 'ldap', $langs->trans("Member"));
 
 
 
@@ -96,18 +96,18 @@ print '<table class="border" width="100%">';
 print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td></tr>';
 
 // Nom
-print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
 print '</tr>';
 
 // Prenom
-print '<tr><td width="15%">'.$langs->trans("Firstname").'*</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
+print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
 print '</tr>';
 
 // Login
-print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
 
 // Type
-print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
+print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
 
 $langs->load("admin");
 

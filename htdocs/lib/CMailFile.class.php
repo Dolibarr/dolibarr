@@ -171,7 +171,7 @@ class CMailFile
         //$this->send_to_file();
 
         $errorlevel=error_reporting();
-        //error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
+        error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
 
         if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
         {

@@ -351,6 +351,7 @@ CloseWindow=Close window
 Question=Question
 Response=Response
 Priority=Priority
+SendAcknowledgementByMail=Send Ack. by mail
 # Countries
 CountryFR=France
 CountryBE=Belgium

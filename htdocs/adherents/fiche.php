@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -499,7 +499,7 @@ if ($action == 'edit')
 	 */
 	$head = member_prepare_head($adh);
 	
-	dolibarr_fiche_head($head, 'general', $langs->trans("Member").": ".$adh->fullname);
+	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
 
 
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
@@ -515,7 +515,7 @@ if ($action == 'edit')
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
 	
 	// Nom
-	print '<tr><td>'.$langs->trans("Name").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
 	// Notes
 	print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
 
@@ -632,7 +632,7 @@ if ($action == 'create')
 	// Login
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
 	
-	// Mot de pass
+	// Mot de passe
     print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->pass.'"></td></tr>';
 
 	// Type
@@ -759,13 +759,13 @@ if ($rowid && $action != 'edit')
 	 */
 	$head = member_prepare_head($adh);
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Member").": ".$adh->fullname);
+	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
 
 
     // Confirmation de la suppression de l'adhérent
     if ($action == 'delete')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_delete");
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("DeleteMember"),$langs->trans("ConfirmDeleteMember"),"confirm_delete");
         print '<br>';
     }
 
@@ -835,19 +835,22 @@ if ($rowid && $action != 'edit')
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="3">'.$adh->id.'&nbsp;</td></tr>';
 
     // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'*</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
     print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
 
     // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'*</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
     print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
     print nl2br($adh->commentaire).'&nbsp;</td></tr>';
 
     // Login
-    print '<tr><td>'.$langs->trans("Login").'*</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+
+	// Password
+	print '<tr><td>'.$langs->trans("Password").'</td><td>'.eregi_replace('.','*',$adh->pass).'</td></tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'*</td><td class="valeur">'.$adh->type."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
     
     // Morphy
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
@@ -987,154 +990,7 @@ if ($rowid && $action != 'edit')
     print '<tr>';
     print '<td valign="top" width="50%">';
     
-    
-    /*
-     * Liste des cotisations
-     *
-     */
-    $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
-    $sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank,";
-    $sql.= " ba.rowid as baid, ba.label, ba.bank";
-    $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-    $sql.= " WHERE d.rowid = c.fk_adherent AND d.rowid=".$rowid;
-    
-    $result = $db->query($sql);
-    if ($result)
-    {
-        $cotisationstatic=new Cotisation($db);
-    	$accountstatic=new Account($db);
-
-        $num = $db->num_rows($result);
-        $i = 0;
-    
-        print "<table class=\"noborder\" width=\"100%\">\n";
-    
-        print '<tr class="liste_titre">';
-        print '<td>'.$langs->trans("Ref").'</td>';
-        print '<td>'.$langs->trans("DateSubscription").'</td>';
-        print '<td align="right">'.$langs->trans("Amount").'</td>';
-        if ($conf->global->ADHERENT_BANK_USE)
-        {
-	        print '<td align="right">'.$langs->trans("Account").'</td>';
-		}
-        print "</tr>\n";
-    
-        $var=True;
-        while ($i < $num)
-        {
-            $objp = $db->fetch_object($result);
-            $var=!$var;
-            print "<tr $bc[$var]>";
-            $cotisationstatic->ref=$objp->crowid;
-            $cotisationstatic->id=$objp->crowid;
-            print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-            print "<td>".dolibarr_print_date($objp->dateadh)."</td>\n";
-            print '<td align="right">'.price($objp->cotisation).'</td>';
-            if ($conf->global->ADHERENT_BANK_USE)
-            {
-	            print '<td align="right">';
-	            if ($objp->fk_bank) 
-	            {
-	        	   	$accountstatic->label=$objp->label;
-			    	$accountstatic->id=$objp->baid;
-	            	print $accountstatic->getNomUrl(1);
-	            }
-	            else
-	            {
-	            	print '&nbsp;';	
-	            }
-	            print '</td>';
-            }
-            print "</tr>";
-            $i++;
-        }
-        print "</table>";
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-    
     print '</td><td valign="top">';
-    
-    
-    /*
-     * Ajout d'une nouvelle cotisation
-     */
-    if ($user->rights->adherent->cotisation->creer)
-    {
-        print "\n\n<!-- Form add subscription -->\n";
-        
-        print '<form name="cotisation" method="post" action="'.$_SERVER["PHP_SELF"].'">';
-        print "<table class=\"border\" width=\"100%\">\n";
-    
-        print '<tr><td>'.$langs->trans("SubscriptionEndDate");
-        print '<input type="hidden" name="action" value="cotisation">';
-        print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-        print '</td>';
-        print '<td>';
-        if ($adh->datefin)
-        {
-            if ($adh->datefin < time())
-            {
-                print dolibarr_print_date($adh->datefin)." ".img_warning($langs->trans("Late"));
-            }
-            else
-            {
-                print dolibarr_print_date($adh->datefin);
-            }
-        }
-        else
-        {
-            print $langs->trans("SubscriptionNotReceived")." ".img_warning($langs->trans("Late"));
-        }
-        print '</td>';
-        print '</tr>';
-    
-        print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
-    
-        print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
-        if ($adh->datefin > 0)
-        {
-            $html->select_date(dolibarr_time_plus_duree($adh->datefin,1,'d'),'','','','',"cotisation");
-        }
-        else
-        {
-            $html->select_date('','','','','',"cotisation");
-        }
-        print "</td></tr>";
-    
-    
-        print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-        if ($conf->global->ADHERENT_BANK_USE)
-        {
-            print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-            $html->select_types_paiements($_POST["operation"],'operation');
-            print "</td></tr>\n";
-
-            print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
-            $html->select_comptes($_POST["accountid"],'accountid',0,'',1);
-            print "</td></tr>\n";
-
-            print '<tr><td>'.$langs->trans("Numero").'</td><td>';
-            print '<input name="num_chq" type="text" size="8" value="'.$_POST["num_chq"].'">';
-            print "</td></tr>\n";
-
-            print '<tr><td>'.$langs->trans("Label").'</td>';
-            print '<td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' ';
-            print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
-        }
-
-        print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
-    
-        print '</table>';
-        print '</form>';
-        
-		print "\n<!-- End form subscription -->\n\n";
-    }
     
     print '</td></tr>';
     print '</table>';

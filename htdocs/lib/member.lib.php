@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -49,6 +49,11 @@ function member_prepare_head($member)
 		$head[$h][2] = 'ldap';
 		$h++;
 	}
+
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$member->id;
+	$head[$h][1] = $langs->trans("Subscriptions");
+	$head[$h][2] = 'subscription';
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;
 	$head[$h][1] = $langs->trans("Info");

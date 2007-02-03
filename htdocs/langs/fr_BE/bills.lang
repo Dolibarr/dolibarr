@@ -46,6 +46,7 @@ ReceivedCustomersPaymentsToValid=Paiements clients reçus à valider
 PaymentsReportsForYear=Rapports de paiements pour %s
 PaymentsReports=Rapports de paiements
 PaymentsAlreadyDone=Versements déjà effectués
+PaymentRule=Condition de réglement
 PaymentMode=Mode règlement
 PaymentConditionsShort=Conditions règlement
 ClassifyPayed=Classer 'Payée'

@@ -58,7 +58,7 @@ $adh->info($_GET["id"]);
  */
 $head = member_prepare_head($adh);
 
-dolibarr_fiche_head($head, 'info', $langs->trans("Member").": ".$adh->fullname);
+dolibarr_fiche_head($head, 'info', $langs->trans("Member"));
 
 
 print '<table width="100%"><tr><td>';
