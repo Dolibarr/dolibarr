@@ -2243,9 +2243,9 @@ class Form
 				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 				{
 		            // Zone de saisie manuelle de la date
-		            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="11" maxlength="11" value="'.$formated_date.'"';
+		            print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
 		            print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
-		            print '> ';
+		            print '>';
 		            
 					// Icone calendrier
 		            print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
@@ -2335,7 +2335,7 @@ class Form
 	            // Année
 	            if ($empty || $set_time == -1)
 	            {
-	                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+	                print '<input class="flat" type="text" size="2" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
 	            }
 	            else
 	            {

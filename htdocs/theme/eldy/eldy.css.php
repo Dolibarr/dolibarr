@@ -88,7 +88,7 @@ textarea.flat
 }
 select.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px helvetica, verdana, arial, sans-serif;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -96,10 +96,9 @@ select.flat
 
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
-	font-size: 100%;
 	border: 0px;
 	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
-	background-position : bottom;
+	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
