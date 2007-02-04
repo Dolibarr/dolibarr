@@ -84,7 +84,7 @@ class modAdherent extends DolibarrModules
         $this->const[2]= array("ADHERENT_MAIL_EDIT","texte","Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\r\n%SERVEUR%public/adherents/","Mail d'edition");
         $this->const[3] = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion sur %SERVEUR% vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
         $this->const[4] = array("ADHERENT_MAIL_NEW","texte","Merci de votre inscription. Votre adhesion devrait etre rapidement validee.^M\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFO%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\r\n%SERVEUR%public/adherents/","Mail de nouvel inscription");
-        $this->const[5] = array("ADHERENT_MAIL_VALID_SUBJECT","chaine"," Votre adh<E9>sion a ete valid<E9>e sur %SERVEUR%","sujet du mail de validation");
+        $this->const[5] = array("ADHERENT_MAIL_VALID_SUBJECT","chaine"," Votre adhesion a ete validee sur %SERVEUR%","sujet du mail de validation");
         $this->const[6] = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion sur %SERVEUR% ","sujet du mail de resiliation");
         $this->const[7] = array("ADHERENT_MAIL_NEW_SUBJECT","chaine","Bienvenue sur %SERVEUR%","Sujet du mail de nouvelle adhesion");
         $this->const[8] = array("ADHERENT_MAIL_EDIT_SUBJECT","chaine","Votre fiche a ete editee sur %SERVEUR%","Sujet du mail d'edition");
@@ -101,7 +101,7 @@ class modAdherent extends DolibarrModules
         $this->const[19] = array("ADHERENT_SPIP_SERVEUR","chaine","","serveur spip");
         $this->const[20] = array("ADHERENT_SPIP_DB","chaine","","db spip");
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
-        $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,^M\n^M\nCet email confirme que votre cotisation a ete recue\r\net enregistree","Mail de validation de cotisation");
+        $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,\r\nCet email confirme que votre cotisation a ete recue\r\net enregistree","Mail de validation de cotisation");
         $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine"," Recu de votre cotisation","sujet du mail de validation de cotisation");
         $this->const[24] = array("ADHERENT_TEXT_NEW_ADH","texte","","Texte d'entete du formulaire d'adhesion en ligne");
         $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprime sur le haut de la carte adherent");

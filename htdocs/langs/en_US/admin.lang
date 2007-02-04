@@ -531,7 +531,7 @@ LDAPServerUseTLSExample=Your LDAP server use TLS
 LDAPServerDn=Server DN
 LDAPAdminDn=Administrator DN
 LDAPAdminDnExample=Complete DN (ex: cn=adminldap,dc=society,dc=com)
-LDAPPassword=administrator password
+LDAPPassword=Administrator password
 LDAPUserDn=Users' DN
 LDAPUserDnExample=Complete DN (ex: ou=users,dc=society,dc=com)
 LDAPGroupDn=Groups' DN
@@ -559,7 +559,7 @@ LDAPTestSynchroGroup=Test group's synchronization
 LDAPTestSynchroMember=Test member's synchronization
 LDAPSynchroOK=Synchronization test successful
 LDAPSynchroKO=Failed synchronization test
-LDAPSynchroKOMayBePermissions=Failed synchronization test. Chack that connexion to server is correctly configured and allows LDAP udpates
+LDAPSynchroKOMayBePermissions=Failed synchronization test. Check that connexion to server is correctly configured and allows LDAP udpates
 LDAPTCPConnectOK=TCP connect to LDAP server successful (Server=%s, Port=%s)
 LDAPTCPConnectKO=TCP connect to LDAP server failed (Server=%s, Port=%s)
 LDAPBindOK=Connect/Authentificate to LDAP server sucessfull (Server=%s, Port=%s, Admin=%s, Password=%s)

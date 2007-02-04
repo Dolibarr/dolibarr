@@ -213,8 +213,18 @@ class Ldap
 
 				if ($this->serverType == "activedirectory")
 				{
-					$this->setReferrals();
-					$connected=2;
+					$result=$this->setReferrals();
+					if ($result)
+					{
+						//$this->bind=????	Comment positionne-t-on bind avec activedirectory ?
+						//si bind non défini, les autres fonctions échouent
+						$connected=2;
+						break;
+					}
+					else
+					{
+						$this->error=ldap_errno($this->connection).' '.ldap_error($this->connection);
+					}
 				}
 				else
 				{
@@ -656,6 +666,9 @@ class Ldap
 		$fp=fopen($file,"w");
 		if ($fp)
 		{
+			fputs($fp,"# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
+			fputs($fp,"# ldapmodify -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
+			fputs($fp,"# ldapdelete -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
 			fputs($fp, "dn: ".$dn."\n");	
 			foreach($info as $key => $value)
 			{
@@ -817,11 +830,19 @@ class Ldap
         	return -1;
         } 	 
   	 
-         $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
-         $ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
-         $SIDText = $this->binSIDtoText($ldapBinary[0]); 	 
-         return $SIDText; 	 
-         return $ldapBinary; 	 
+        $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
+        if ($entry)
+		{
+			$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
+			$SIDText = $this->binSIDtoText($ldapBinary[0]);
+			return $SIDText; 	 
+			//return $ldapBinary; 	 
+		}
+		else
+		{
+			return '?';
+		}
+
      }
      
      /**

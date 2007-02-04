@@ -61,14 +61,13 @@ if ($_GET["action"] == 'dolibarr2ldap')
 	$db->begin();
 
 	$ldap=new Ldap();
-	$ldap->connect_bind();
+	$result=$ldap->connect_bind();
 
 	$info=$fuser->_load_ldap_info();
 	$dn=$fuser->_load_ldap_dn($info);
-	
-    $ret=$ldap->update($dn,$info,$user);	// Marche en creation LDAP et mise a jour
+    $result=$ldap->update($dn,$info,$user);	// Marche en creation LDAP et mise a jour
 
-	if ($ret >= 0)
+	if ($result >= 0)
 	{
 		$message.='<div class="ok">'.$langs->trans("UserSynchronized").'</div>';
 		$db->commit();
@@ -153,6 +152,8 @@ print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$co
 print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_USERS."</td></tr>\n";
 
 // LDAP Server
+print '<tr><td>LDAP '.$langs->trans("Type").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_TYPE."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("Version").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PROTOCOLVERSION."</td></tr>\n";
 print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
 print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
 print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
@@ -199,21 +200,26 @@ if ($result > 0)
 	$info=$fuser->_load_ldap_info();
 	$dn=$fuser->_load_ldap_dn($info,1);
 	$search = "(".$fuser->_load_ldap_dn($info,2).")";
-	$result=$ldap->search($dn,$search);
-	if ($result < 0)
-	{
-		dolibarr_print_error($db,$ldap->error);
-	}
-	
+	$records=$ldap->search($dn,$search);
+
+	//print_r($records);
+
 	// Affichage arbre
-	if (sizeof($result))
+	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
 	{
-		$html=new Form($db);
-		$html->show_ldap_content($result,0,0,true);
+		if (! is_array($records))
+		{
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';	
+		}
+		else
+		{
+			$html=new Form($db);
+			$result=$html->show_ldap_content($records,0,0,true);
+		}
 	}
 	else
 	{
-		print '<tr><td colspan="2">'.$langs->trans("LDAPRecordNotFound").'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();

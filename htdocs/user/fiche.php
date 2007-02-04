@@ -729,7 +729,14 @@ else
 
             // Ref
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-            print '<td width="50%">'.$fuser->id.'</td>';
+            print '<td width="50%">';
+
+			if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+			print $fuser->id;
+			if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+			
+			print '</td>';
+			
             print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
             if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
             {

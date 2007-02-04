@@ -2259,8 +2259,8 @@ class Facture extends CommonObject
 
   /**
      \brief     	Renvoi liste des factures remplacables
-     Statut validee + aucun paiement + non paye + pas deja remplacées
-     \param		socid		Id societe
+					Statut validée + aucun paiement + non payée + pas deja remplacée
+     \param			socid		Id societe
      \return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
    */
   function list_replacable_invoices($socid=0)
@@ -2274,9 +2274,10 @@ class Facture extends CommonObject
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
-    $sql.= " WHERE f.fk_statut = 1 AND f.paye = 0 AND pf.fk_paiement IS NULL";
-    $sql.= " AND ff.fk_statut IS NULL";			// Renvoie vrai si pas de jointure
-    //$sql.= " AND IFNULL(ff.fk_statut,0) = 0";	// Renvoie vrai si pas de jointure ou si jointure vers statut à 0
+    $sql.= " WHERE f.fk_statut = 1";
+	$sql.= " AND f.paye = 0";					// Pas classée payée complètement
+	$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
+    $sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement
     if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
     $sql.= " ORDER BY f.facnumber";
 
@@ -2304,7 +2305,7 @@ class Facture extends CommonObject
 
   /**
    *  	\brief     	Renvoi liste des factures qualifiables pour avoir
-   *				Statut >= validee + pas classé payée completement + pas classé payée partiellement + pas deja remplacée
+   *				Statut >= validée + classée payée completement ou classée payée partiellement + pas deja remplacée
    *	\param		socid		Id societe
    *   	\return    	array		Tableau des factures ($id => $ref)
    */
@@ -2319,9 +2320,9 @@ class Facture extends CommonObject
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=1)";
     $sql.= " WHERE f.fk_statut >= 1";
-	$sql.= " AND f.paye = 0";			// Pas classé payé complètement
-	$sql.= " AND f.close_code IS NULL";	// Pas classé payé partiellement
-    $sql.= " AND ff.type IS NULL";		// Renvoi vrai si pas facture de remplacement
+	$sql.= " AND (f.paye = 1";				// Classée payée complètement
+	$sql.= " OR f.close_code IS NOT NULL)";	// Classée payée partiellement
+    $sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
     if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
     $sql.= " ORDER BY f.facnumber";
 
