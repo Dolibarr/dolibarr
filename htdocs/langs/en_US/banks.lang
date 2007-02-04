@@ -96,3 +96,5 @@ TransferDesc=Transfer from one account to another one, Dolibarr will write two r
 TransferFrom=From
 TransferTo=To
 CheckTransmitter=Transmitter
+DeleteTransaction=Delete transaction
+ConfirmDeleteTransaction=Are you sure you want to delete this transaction ?

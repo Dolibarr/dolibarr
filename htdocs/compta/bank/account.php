@@ -48,7 +48,7 @@ $page=isset($_GET["page"])?$_GET["page"]:0;
 * Action
 */
 
-if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]))
+if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
     if ($_POST["credit"] > 0)
     {
@@ -79,10 +79,11 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]))
         dolibarr_print_error($db,$acct->error);
     }
 }
-if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
+if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->rights->banque->modifier)
 {
-    $acct=new Account($db,$account);
-    $acct->deleteline($_GET["rowid"]);
+    $acct=new Account($db);
+	$acct->id=$account;
+    $result=$acct->deleteline($_GET["rowid"]);
 }
 
 
@@ -91,6 +92,8 @@ if ($_GET["action"] == 'del' && $account && $user->rights->banque->modifier)
 */
 
 llxHeader();
+
+$html = new Form($db);
 
 if ($account > 0)
 {
@@ -185,9 +188,14 @@ if ($account > 0)
 		$limitsql = $nbline;
 	}
 
+
+	// Onglets
+	$head=bank_prepare_head($acct);
+	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
+	
+
 	/**
-	* Formulaire de recherche
-	*
+	* Bandeau recherche
 	*/
 	$mesg='';
 
@@ -201,20 +209,23 @@ if ($account > 0)
 	{
 		$mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
-
-
-	// Onglets
-	$head=bank_prepare_head($acct);
-	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
-	
-	if (! $_GET["action"]=='addline')
+	if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
 	{
 		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
 		print_fiche_titre($titre,$mesg);
 	}
+
+	if ($_GET["action"]=='delete')
+	{
+		$text=$langs->trans('ConfirmDeleteTransaction');
+		$html->form_confirm($_SERVER['PHP_SELF'].'?account='.$acct->id.'&amp;rowid='.$_GET["rowid"],$langs->trans('DeleteTransaction'),$text,'confirm_delete');
+		print '<br />';
+	}
+
 	
 	print '<table class="notopnoleftnoright" width="100%">';
 
+	
 	/*
 	* Affiche tableau des transactions bancaires
 	*
@@ -335,7 +346,7 @@ if ($account > 0)
 	/*
 	*  Boutons actions
 	*/
-	if ($_GET["action"] != 'addline')
+	if ($_GET["action"] != 'addline' && $_GET["action"] != 'delete')
 	{
 		print '<div class="tabsAction">';
 
@@ -502,7 +513,7 @@ function _print_lines($db,$result,$sql,$acct)
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
                     print img_edit();
                     print '</a> &nbsp;';
-                    print '<a href="account.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
                     print img_delete();
                     print '</a></td>';
                 }

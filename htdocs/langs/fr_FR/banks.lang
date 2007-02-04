@@ -100,3 +100,5 @@ ValidateCheckReceipt=Valider ce bordereau de remise ?
 DeleteCheckReceipt=Supprimer ce bordereau de remise ?
 BankChecks=Chèques
 BankChecksToReceipt=Chèques à déposer
+DeleteTransaction=Supprimer la transaction
+ConfirmDeleteTransaction=Etes Vous sur de vouloir supprimer cette transaction ?
