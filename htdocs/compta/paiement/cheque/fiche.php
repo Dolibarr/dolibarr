@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -137,7 +138,7 @@ if ($_GET['action'] == 'new')
   $hselected = $h;
   $h++;      
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("CheckReceipt"));
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
 }
 else
 {
@@ -153,7 +154,7 @@ else
   //  $head[$h][1] = $langs->trans("Info");
   //  $h++;      
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("CheckReceipt"));
+  dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
 
   /*
    * Confirmation de la suppression du bordereau
@@ -271,17 +272,22 @@ else
 	$next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
 
 	print '<table class="border" width="100%">';
-	print '<tr><td width="30%">'.$langs->trans('Numero').'</td><td width="50%">'.$remise->number.'</td><td width="20%" align="right">';
-	print $previous_id.' '.$next_id;
-	print "</td></tr>\n";
+	print '<tr><td width="20%">'.$langs->trans('Numero').'</td><td colspan="2" >';
+	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+//	print '<td width="20%" align="right">';
+	print $remise->number;
+	//print $previous_id.' '.$next_id;
+	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+	print "</td>";
+	print "</tr>\n";
 
-	print '<tr><td width="30%">'.$langs->trans('Date').'</td><td colspan="2" width="70%">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
 
-	print '<tr><td width="30%">'.$langs->trans('Account').'</td><td colspan="2" width="70%">';
+	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
 
-	print '<tr><td width="30%">'.$langs->trans('Total').'</td><td colspan="2" width="70%">';
+	print '<tr><td>'.$langs->trans('Total').'</td><td colspan="2">';
 	print price($remise->amount);
 	print '</td></tr>';
 

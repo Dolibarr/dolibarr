@@ -63,7 +63,7 @@ $accountstatic=new Account($db);
  * Affichage
  */
 
-llxHeader('',$langs->trans("CheckReceipt"));
+llxHeader('',$langs->trans("ChequesReceipts"));
 
 $sql = "SELECT bc.rowid, bc.number, ".$db->pdate("bc.date_bordereau") ." as dp, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
@@ -85,7 +85,7 @@ if ($resql)
     $num = $db->num_rows($resql);
     $i = 0;
 
-    print_barre_liste($langs->trans("CheckReceipt"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
+    print_barre_liste($langs->trans("ChequesReceipts"), $page, "liste.php",$paramlist,$sortfield,$sortorder,'',$num);
 
     print '<form method="get" action="liste.php">';
     print '<table class="noborder" width="100%">';
@@ -136,10 +136,6 @@ if ($resql)
 
 		// Statut
         print '<td align="right">';
-        if ($objp->statut == 0)
-        {
-            print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("ToValidate").'</a>';
-        }
 		print $checkdepositstatic->LibStatut($objp->statut,5);
         print "</td></tr>\n";
         $i++;

@@ -323,7 +323,7 @@ class MenuLeft {
 
 
 			/*
-			* Menu COMPTA
+			* Menu COMPTA-FINANCIAL
 			*/
 			if ($mainmenu == 'accountancy')
 			{
@@ -390,14 +390,9 @@ class MenuLeft {
 					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/avalider.php?leftmenu=customers_bills_payments",$langs->trans("MenuToValid"),3,$user->rights->facture->lire);
 					if (eregi("customers_bills_payments",$leftmenu))  $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/rapport.php?leftmenu=customers_bills_payments",$langs->trans("Reportings"),3,$user->rights->facture->lire);
 
-
-					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=customers_bills_checks",$langs->trans("CheckReceipt"),2,$user->rights->facture->lire);
-					if (eregi("customers_bills_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&amp;action=new",$langs->trans("NewCheckDeposit"),3,$user->rights->facture->lire);
-					if (eregi("customers_bills_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=customers_bills_checks",$langs->trans("List"),3,$user->rights->facture->lire);
-
 					if (eregi("customers_bills",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/facture/stats/index.php?leftmenu=customers_bills", $langs->trans("Statistics"),2,$user->rights->facture->lire);
 				}
-
+				
 				// Propal
 				if ($conf->propal->enabled)
 				{
@@ -486,6 +481,15 @@ class MenuLeft {
 					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/stats.php",$langs->trans("Statistics"),1,$user->rights->prelevement->bons->lire);
 
 					if ($leftmenu=="withdraw") $newmenu->add_submenu(DOL_URL_ROOT."/compta/prelevement/config.php",$langs->trans("Setup"),1,$user->rights->prelevement->bons->configurer);
+				}
+
+				// Gestion cheques
+				if ($conf->facture->enabled)
+				{
+					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->facture->lire);
+					if (eregi("checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->facture->creer);
+					if (eregi("checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->facture->lire);
+
 				}
 
 				// Bank-Caisse
@@ -694,23 +698,30 @@ class MenuLeft {
 					$user->getrights("adherent");
 
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Members"),0,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php",$langs->trans("List"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/fiche.php?leftmenu=members&amp;action=create",$langs->trans("NewMember"),1,$user->rights->adherent->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
 
 					$langs->load("compta");
-					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=accountancy&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?statut=-1,1&amp;leftmenu=accountancy&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=accountancy",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
+					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=members&amp;mainmenu=members",$langs->trans("Subscriptions"),0,$user->rights->adherent->cotisation->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1,1&amp;mainmenu=members",$langs->trans("NewSubscription"),1,$user->rights->adherent->cotisation->creer);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/cotisations.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->cotisation->lire);
 
+					$langs->load("bills");
+					$newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/index.php?leftmenu=members_checks",$langs->trans("MenuChequeDeposits"),0,$user->rights->adherent->cotisation->lire);
+					if (eregi("members_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/fiche.php?leftmenu=members_checks&amp;action=new",$langs->trans("NewChequeDeposit"),1,$user->rights->adherent->cotisation->creer);
+					if (eregi("members_checks",$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/paiement/cheque/liste.php?leftmenu=members_checks",$langs->trans("MenuChequesReceipts"),1,$user->rights->adherent->cotisation->lire);
+
+
+					
 					if ($conf->banque->enabled)
 					{
 						$langs->load("banks");
-						$newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=accountancy",$langs->trans("Banks"),0,$user->rights->adherent->lire);
+						$newmenu->add_submenu(DOL_URL_ROOT."/compta/bank/index.php?leftmenu=members",$langs->trans("Banks"),0,$user->rights->adherent->lire);
 					}
 					
 					$newmenu->add(DOL_URL_ROOT."/adherents/index.php?leftmenu=export&amp;mainmenu=members",$langs->trans("Exports"),0,$user->rights->adherent->export);

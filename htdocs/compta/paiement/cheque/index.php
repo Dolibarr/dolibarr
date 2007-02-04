@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,9 +54,9 @@ $accountstatic=new Account($db);
  * Affichage
  */
 
-llxHeader('',$langs->trans("CheckReceipt"));
+llxHeader('',$langs->trans("ChequesArea"));
 
-print_fiche_titre($langs->trans("CheckReceipt") );
+print_fiche_titre($langs->trans("ChequesArea") );
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
@@ -82,7 +83,9 @@ if ($resql)
     }
   print "<tr ".$bc[$var].">";
   print '<td>'.$langs->trans("BankChecksToReceipt").'</td>';
-  print '<td align="right">'.$num.'</td></tr>';
+  print '<td align="right">';
+  print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?leftmenu=customers_bills_checks&action=new">'.$num.'</a>';
+  print '</td></tr>';
   print "</table>\n";
 }
 else
@@ -106,8 +109,9 @@ $resql = $db->query($sql);
 if ($resql)
 {
 	print '<table class="noborder" width="100%">';
-	print '<tr class="liste_titre"><td>'.$langs->trans("Date")."</td>";
+	print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Numero").'</td>';
+	print '<td>'.$langs->trans("Date")."</td>";
 	print '<td>'.$langs->trans("Account").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print '<td align="right">'.$langs->trans("Status").'</td>';
@@ -126,14 +130,10 @@ if ($resql)
 		$var=!$var;
 		print "<tr $bc[$var]>\n";
 
-		print '<td>'.dolibarr_print_date($objp->db,'day').'</td>';
-
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
-
+		print '<td>'.dolibarr_print_date($objp->db,'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
-
 		print '<td align="right">'.price($objp->amount).'</td>';
-
 		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
 
 		print '</tr>';

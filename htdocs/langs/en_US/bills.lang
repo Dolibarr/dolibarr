@@ -219,12 +219,10 @@ PaymentTypeCB=Credit card
 PaymentTypeShortCB=Credit card
 PaymentTypeCHQ=Cheque
 PaymentTypeShortCHQ=Cheque
-
-PaymentTypeTYP=TIP
-PaymentTypeShortTYP=TIP
+PaymentTypeTIP=TIP
+PaymentTypeShortTIP=TIP
 PaymentTypeVAD=On line payment
 PaymentTypeShortVAD=On line payment
-
 BankDetails=Bank details
 BankCode=Bank code
 DeskCode=Desk code
@@ -258,6 +256,14 @@ LawApplicationPart4=leurs prix.
 VATDischarged=TVA acquittée sur les débits.
 LimitedLiabilityCompanyCapital=SARL au Capital de
 UseDiscount=Use discount
+MenuChequeDeposits=Cheques deposits
+MenuCheques=Cheques
+MenuChequesReceipts=Cheques receipts
+NewChequeDeposit=New deposit
+ChequesReceipts=Cheques receipts
+ChequesArea=Cheques deposits area
+ChequeDeposits=Cheques deposits
+Cheques=Cheques
 
 # oursin PDF model
 Of=du

@@ -393,7 +393,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 
 
 	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+	print '<input type="submit" class="button" name="add" value="'.$langs->trans("AddSubscription").'">';
 	print ' &nbsp; &nbsp; ';
 	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
 	print '</td></tr>';

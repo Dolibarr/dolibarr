@@ -38,7 +38,7 @@ function llxHeader($head = "", $title="") {
   $menu->add("liste.php",$langs->trans("Payments"));
   $menu->add_submenu("liste.php",$langs->trans("List"));
 
-  $menu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("CheckReceipt"));
+  $menu->add(DOL_URL_ROOT."/compta/paiement/cheque/index.php",$langs->trans("MenuChequeDeposits"));
 
   $menu->add("rapport.php",$langs->trans("Reportings"));
 
