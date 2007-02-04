@@ -93,12 +93,12 @@ print '<input type="hidden" name="id" value="'.$categorie->id.'">';
 
 print '<table class="border" width="100%">';
 print '<tr><td>';
-print $langs->trans("Label").' :</td>';
+print $langs->trans("Ref").'</td>';
 print '<td><input type="text" size="25" id="nom" name ="nom" value="'.$categorie->label.'" />';
 print '</tr>';
 
 print '<tr>';
-print '<td width="25%">'.$langs->trans("Description").':</td>';
+print '<td width="25%">'.$langs->trans("Description").'</td>';
 print '<td>';
 
 if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)

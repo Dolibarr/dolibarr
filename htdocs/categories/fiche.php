@@ -129,7 +129,7 @@ if ($user->rights->categorie->creer)
 
 		print '<table class="border" width="100%" class="notopnoleftnoright">';
 		print '<tr>';
-		print '<td width="25%">'.$langs->trans("Label").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
+		print '<td width="25%">'.$langs->trans("Ref").'</td><td><input name="nom" size="25" value="'.$categorie->label.'">';
 		print'</td></tr>';
 		print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 		

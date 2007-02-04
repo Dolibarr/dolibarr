@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,11 @@ print '</td></tr>';
 print '<tr><td width="20%" class="notopnoleft">';
 print $langs->trans("Description").'</td><td>';
 print nl2br($c->description);
+print '</td></tr>';
+
+print '<tr><td width="20%" class="notopnoleft">';
+print $langs->trans("Status").'</td><td>';
+print ($c->visible ? $langs->trans("Visible") : $langs->trans("Invisible"));
 print '</td></tr>';
 
 print '</table>';
