@@ -88,7 +88,7 @@ create table llx_comfourn_facfourn
 
 alter table llx_categorie drop column fk_statut;
 alter table llx_categorie add visible tinyint DEFAULT 1 NOT NULL;
-
+ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label);
 
 alter table llx_c_actioncomm  add module varchar(16) DEFAULT NULL after libelle;
 
