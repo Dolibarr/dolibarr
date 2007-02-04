@@ -31,6 +31,7 @@ require("./pre.inc.php");
 require(DOL_DOCUMENT_ROOT."/fourn/facture/paiementfourn.class.php");
 
 $langs->load("bills");
+$langs->load("suppliers");
 $langs->load("companies");
 
 llxHeader();
@@ -45,7 +46,7 @@ $head[$h][1] = $langs->trans("Info");
 $hselected = $h;
 $h++;      
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$_GET["id"]);
+dolibarr_fiche_head($head, $hselected, $langs->trans("SupplierPayment"));
 
 
 /*

@@ -43,14 +43,17 @@ $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
 
+$mesg='';
 
+	
 /*
 * Action
 */
 
 if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user->rights->banque->modifier)
 {
-    if ($_POST["credit"] > 0)
+	
+	if ($_POST["credit"] > 0)
     {
         $amount = $_POST["credit"];
     }
@@ -59,25 +62,35 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
         $amount = - $_POST["debit"];
     }
 
-    $dateop = $_POST["dateoy"].$_POST["dateo"];
-    $operation=$_POST["operation"];
-    $label=$_POST["label"];
+    $dateop = dolibarr_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
     $operation=$_POST["operation"];
     $num_chq=$_POST["num_chq"];
+    $label=$_POST["label"];
     $cat1=$_POST["cat1"];
 
-    $acct=new Account($db,$account);
+	if (! $dateop)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Date"));
+	if (! $operation) $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Type"));
+	if (! $amount)    $mesg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+	
+	if (! $mesg)
+	{
+	    $acct=new Account($db,$account);
 
-    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
-    if ($insertid > 0)
-    {
-        Header("Location: account.php?account=" . $account);
-        exit;
-    }
-    else
-    {
-        dolibarr_print_error($db,$acct->error);
-    }
+	    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
+	    if ($insertid > 0)
+	    {
+	        Header("Location: account.php?account=" . $account);
+	        exit;
+	    }
+	    else
+	    {
+	        dolibarr_print_error($db,$acct->error);
+	    }
+	}
+	else
+	{
+		$_GET["action"]='addline';
+	}
 }
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->rights->banque->modifier)
 {
@@ -194,25 +207,28 @@ if ($account > 0)
 	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
 	
 
+	if ($mesg) print '<div class="error">'.$mesg.'</div>';
+
+	
 	/**
 	* Bandeau recherche
 	*/
-	$mesg='';
+	$navig='';
 
 	$nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
 	if ($limitsql > $viewline)
 	{
-		$mesg.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
+		$navig.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	}
-	$mesg.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
+	$navig.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
 	if ($total_lines > $limitsql )
 	{
-		$mesg.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
+		$navig.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
 	if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
 	{
 		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-		print_fiche_titre($titre,$mesg);
+		print_fiche_titre($titre,$navig);
 	}
 
 	if ($_GET["action"]=='delete')
@@ -222,15 +238,10 @@ if ($account > 0)
 		print '<br />';
 	}
 
-	
+
 	print '<table class="notopnoleftnoright" width="100%">';
 
 	
-	/*
-	* Affiche tableau des transactions bancaires
-	*
-	*/
-
 	// Formulaire de saisie d'une opération hors factures
 	if ($user->rights->banque->modifier && $_GET["action"]=='addline')
 	{
@@ -246,16 +257,21 @@ if ($account > 0)
 		print '</tr>';
 
 		print '<tr class="liste_titre">';
-		print '<td><small>YYYY MMDD</small></td><td colspan="2">'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td><td align=right>'.$langs->trans("Debit").'</td><td align=right>'.$langs->trans("Credit").'</td>';
-		print '<td colspan="2" align="center">&nbsp;';
-		print '</td></tr>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td>&nbsp;</td>';
+		print '<td>'.$langs->trans("Type").'</td>';
+		print '<td>'.$langs->trans("Description").'</td>';
+		print '<td align=right>'.$langs->trans("Debit").'</td>';
+		print '<td align=right>'.$langs->trans("Credit").'</td>';
+		print '<td colspan="2" align="center">&nbsp;</td>';
+		print '</tr>';
 
 		print '<tr '.$bc[false].'>';
-		print '<td nowrap>';
-		print '<input name="dateoy" class="flat" type="text" size="2" value="'.strftime("%Y",time()).'" maxlength="4">';
-		print '<input name="dateo" class="flat" type="text" size="2" maxlength="4"></td>';
-		print '<td colspan="2" nowrap>';
-		$html->select_types_paiements('','operation','1,2',1);
+		print '<td nowrap="nowrap" colspan="2">';
+		$html->select_date(-1,'op',0,0,0,'transaction');
+		print '</td>';
+		print '<td nowrap="nowrap">';
+		$html->select_types_paiements('','operation','1,2',1,1);
 		print '<input name="num_chq" class="flat" type="text" size="4"></td>';
 		print '<td>';
 		print '<input name="label" class="flat" type="text" size="40">';
@@ -274,6 +290,11 @@ if ($account > 0)
 
 		print "<tr class=\"noborder\"><td colspan=\"8\">&nbsp;</td></tr>\n";
 	}
+
+	/*
+	* Affiche tableau des transactions bancaires
+	*
+	*/
 
 	// Ligne de titre tableau des acritures
 	print '<tr class="liste_titre">';

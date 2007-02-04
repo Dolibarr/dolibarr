@@ -32,7 +32,7 @@
 
 
 require('./pre.inc.php');
-require('./paiementfourn.class.php');
+require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 
 $langs->load('companies');
 $langs->load('bills');
@@ -61,10 +61,10 @@ if ($action == 'add_paiement')
 {
 	$error = 0;
 
-	$datepaye = $db->idate(mktime(12, 0 , 0,
-			$_POST['remonth'],
-			$_POST['reday'],
-			$_POST['reyear']));
+	$datepaye = dolibarr_mktime(12, 0 , 0,
+					$_POST['remonth'],
+					$_POST['reday'],
+					$_POST['reyear']);
 	$paiement_id = 0;
 	$total = 0;
 	// Génère tableau des montants amounts

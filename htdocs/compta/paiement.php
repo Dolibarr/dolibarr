@@ -56,10 +56,10 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
 {
   $error = 0;
 
-  $datepaye = $db->idate(mktime(12, 0 , 0,
+  $datepaye = dolibarr_mktime(12, 0 , 0,
 				$_POST['remonth'],
 				$_POST['reday'],
-				$_POST['reyear']));
+				$_POST['reyear']);
   $paiement_id = 0;
   
   // Verifie si des paiements sont supérieurs au montant facture

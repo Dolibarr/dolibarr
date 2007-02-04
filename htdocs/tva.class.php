@@ -238,7 +238,7 @@ class Tva
                     require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
                     $acc = new Account($this->db, $this->accountid);
-                    $bank_line_id = $acc->addline($this->db->idate($this->datep), $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
+                    $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
             	  
                     // Mise a jour fk_bank dans llx_paiementtva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
                     if ($bank_line_id) {

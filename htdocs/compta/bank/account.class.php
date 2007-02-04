@@ -189,79 +189,93 @@ class Account
         }
     }
 
-  /**
-     \brief      Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
-     \return     int     rowid de l'entrée ajoutée, <0 si erreur
-  */
-  function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user='',$emetteur='',$banque='')
-  {
-    dolibarr_syslog("Account::Addline: date=".$date.", oper=".$oper.", label=".$label.", amount=".$amount.", num_chq=".$num_chq.", categorie=".$categorie.", user=".$user->id);
-    if ($this->rowid)
-      {
-	$this->db->begin();
-	
-	switch ($oper)
-	  {
-	  case 1:
-	    $oper = 'TIP';
-	    break;
-	  case 2:
-	    $oper = 'VIR';
-	    break;
-	  case 3:
-	    $oper = 'PRE';
-	    break;
-	  case 4:
-	    $oper = 'LIQ';
-	    break;
-	  case 5:
-	    $oper = 'VAD';
-	    break;
-                case 6:
-                $oper = 'CB';
-                break;
-                case 7:
-                $oper = 'CHQ';
-                break;
-            }
+	/**
+		\brief     	Ajoute une entree dans la table ".MAIN_DB_PREFIX."bank
+		\param		$date			Date TMS opération
+		\param		$oper			1,2,3,4...
+		\param		$label			Descripton
+		\param		$amount			Montant
+		\param		$num_chq		Numero cheque ou virement
+		\param		$categorie		Categorie optionnelle
+		\param		$user			Utilisateur qui crée
+		\param		$emetteur		Nom emetteur
+		\param		$banque			Banque emettrice
+		\return		int				Rowid de l'entrée ajoutée, <0 si erreur
+	*/
+	function addline($date, $oper, $label, $amount, $num_chq='', $categorie='', $user, $emetteur='',$banque='')
+	{
+		// Nettoyage parametres
+		$emetteur=trim($emetteur);
+		$banque=trim($banque);
+		
+		dolibarr_syslog("Account::Addline: date=".$date.", oper=".$oper.", label=".$label.", amount=".$amount.", num_chq=".$num_chq.", categorie=".$categorie.", user=".$user->id);
 
-            $datev = $date;
+		// Verififcation parametres
+		if (! $this->rowid)
+		{
+			$this->error="Account::addline rowid not defined";
+			return -1;
+		}
 
-            $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
-            $sql.= " VALUES (now(),'".$date."','$datev','".addslashes($label)."','" . price2num($amount)."','".$user->id."','$num_chq','".$this->rowid."', '$oper'";
-	    $sql.= ",'".addslashes(trim($emetteur))."'";
-	    $sql.= ",'".addslashes(trim($banque))."');";
+		$this->db->begin();
+			
+		switch ($oper)
+		{
+			case 1:
+				$oper = 'TIP';
+				break;
+			case 2:
+				$oper = 'VIR';
+				break;
+			case 3:
+				$oper = 'PRE';
+				break;
+			case 4:
+				$oper = 'LIQ';
+				break;
+			case 5:
+				$oper = 'VAD';
+				break;
+			case 6:
+				$oper = 'CB';
+				break;
+			case 7:
+				$oper = 'CHQ';
+				break;
+		}
 
-            if ($this->db->query($sql))
-            {
-                $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
-                if ($categorie)
-                {
-                    $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
-                    $result = $this->db->query($sql);
-                    if (! $result)
-                    {
-                        $this->db->rollback();
-                        $this->error=$this->db->error();
-                        return -3;
-                    }
-                }
-                $this->db->commit();
-                return $rowid;
-            }
-            else
-            {
-                $this->db->rollback();
-                $this->error=$this->db->error();
-                return -2;
-            }
-        }
-        else 
-        {
-            $this->error="Account::addline rowid not defined";
-            return -1;
-        }
-    }
+		$datev = $date;
+
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
+		$sql.= " VALUES (now(),'".$this->db->idate($date)."','".$this->db->idate($datev)."',";
+		$sql.= "'".addslashes($label)."','" . price2num($amount)."','".$user->id."','$num_chq','".$this->rowid."', '$oper'";
+		$sql.= ",'".addslashes($emetteur)."'";
+		$sql.= ",'".addslashes($banque)."');";
+
+		if ($this->db->query($sql))
+		{
+			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");
+			if ($categorie)
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_class (lineid, fk_categ) VALUES ('$rowid', '$categorie')";
+				$result = $this->db->query($sql);
+				if (! $result)
+				{
+					$this->db->rollback();
+					$this->error=$this->db->error();
+					return -3;
+				}
+			}
+			$this->db->commit();
+			return $rowid;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->error();
+			return -2;
+		}
+	}
 
     /*
      *      \brief          Creation du compte bancaire en base

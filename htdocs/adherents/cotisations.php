@@ -59,7 +59,7 @@ if ($_POST["action"] == '2bank' && $_POST["rowid"] !='')
         // \todo    Créer une facture et enregistrer son paiement
 
 
-        $dateop=strftime("%Y%m%d",time());
+        $dateop=time();
         $sql="SELECT cotisation FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid=".$_POST["rowid"]." ";
         $result = $db->query($sql);
         if ($result)

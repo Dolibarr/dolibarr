@@ -48,7 +48,7 @@ $mesg='';
  * Actions
  */
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 	
@@ -68,7 +68,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$db->begin();
 
@@ -129,7 +129,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Payment").": ".$paiement->
  */
 if ($_GET['action'] == 'delete')
 {
-	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), 'Etes-vous sûr de vouloir supprimer ce paiement ?', 'confirm_delete');
+	$html->form_confirm('fiche.php?id='.$paiement->id, $langs->trans("DeletePayment"), $langs->trans("ConfirmDeletePayment"), 'confirm_delete');
 	print '<br>';
 }
 
@@ -262,13 +262,18 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-}
+	if ($user->rights->facture->paiement)
+	{
+		print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
+	}
+}
 if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
-  
+	if ($user->rights->facture->paiement)
+	{
+		print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	}
 }
 print '</div>';      
 

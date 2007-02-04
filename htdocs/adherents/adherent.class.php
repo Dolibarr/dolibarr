@@ -788,7 +788,7 @@ class Adherent
 	            {
 	                $acct=new Account($this->db,$accountid);
 
-	                $dateop=strftime("%Y%m%d",time());
+	                $dateop=time();
 
 	                $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user);
 	                if ($insertid > 0)

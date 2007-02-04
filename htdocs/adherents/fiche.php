@@ -308,7 +308,7 @@ if ($_POST["action"] == 'add')
                 // insertion dans la gestion banquaire si configure pour
                 if ($global->conf->ADHERENT_BANK_USE)
                 {
-                    $dateop=strftime("%Y%m%d",time());
+                    $dateop=time();
                     $amount=$cotisation;
                     $acct=new Account($db,$_POST["accountid"]);
                     $insertid=$acct->addline($dateop, $_POST["operation"], $_POST["label"], $amount, $_POST["num_chq"], '', $user);

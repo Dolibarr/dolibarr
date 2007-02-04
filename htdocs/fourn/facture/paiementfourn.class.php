@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C)      2005 Marc Barilley / Ocebo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
  * $Source$
  */
 
-/*!
+/**
 		\file       htdocs/fourn/facture/paiementfourn.class.php
 		\ingroup    fournisseur, facture
 		\brief      Page de création de paiement factures fournisseurs
@@ -140,7 +140,7 @@ class PaiementFourn
 		if ($this->total <> 0) // On accepte les montants négatifs
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author)';
-			$sql .= ' VALUES (now(), '.$this->datepaye.', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
+			$sql .= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
 			$resql = $this->db->query($sql);
 			if ($resql)
 			{
@@ -309,6 +309,8 @@ class PaiementFourn
 	function valide()
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiementfourn SET statut = 1 WHERE rowid = '.$this->id;
+
+		dolibarr_syslog("PaiementFourn::valide sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -316,7 +318,8 @@ class PaiementFourn
 		}
 		else
 		{
-			dolibarr_syslog('Paiement::Valide Error -1');
+			$this->error='Paiement::Valide Error -1 '.$this->db->error();
+			dolibarr_syslog('PaiementFourn::valide error '.$this->error);
 			return -1;
 		}
 	}
@@ -331,6 +334,7 @@ class PaiementFourn
 		$sql .= ', '.$this->db->pdate('tms').' as tms';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn as c';
 		$sql .= ' WHERE c.rowid = '.$id;
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -397,5 +401,57 @@ class PaiementFourn
 		}
 	}
 
+	/**
+	*    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	*    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\return     string		Libelle
+	*/
+	function getLibStatut($mode=0)
+	{
+		return $this->LibStatut($this->statut,$mode);
+	}
+
+	/**
+	*    	\brief      Renvoi le libellé d'un statut donne
+	*    	\param      status      Statut
+	*		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\return     string      Libellé du statut
+	*/
+	function LibStatut($status,$mode=0)
+	{
+		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		$langs->load('compta');
+		if ($mode == 0)
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 1)
+		{
+			if ($status == 0) return $langs->trans('ToValidate');
+			if ($status == 1) return $langs->trans('Validated');
+		}
+		if ($mode == 2)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 3)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4');
+		}
+		if ($mode == 4)
+		{
+			if ($status == 0) return img_picto($langs->trans('ToValidate'),'statut1').' '.$langs->trans('ToValidate');
+			if ($status == 1) return img_picto($langs->trans('Validated'),'statut4').' '.$langs->trans('Validated');
+		}
+		if ($mode == 5)
+		{
+			if ($status == 0) return $langs->trans('ToValidate').' '.img_picto($langs->trans('ToValidate'),'statut1');
+			if ($status == 1) return $langs->trans('Validated').' '.img_picto($langs->trans('Validated'),'statut4');
+		}
+		return $langs->trans('Unknown');
+	}
 }
 ?>

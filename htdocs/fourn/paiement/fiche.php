@@ -35,10 +35,12 @@ require('./pre.inc.php');
 require(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 
 $user->getrights('facture');
+$user->getrights('fournisseur');
 
 $langs->load('bills');
 $langs->load('banks');
 $langs->load('companies');
+$langs->load("suppliers");
 
 $mesg='';
 
@@ -47,7 +49,7 @@ $mesg='';
  * Actions
  */
  
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->supprimer)
 {
 	$db->begin();
 
@@ -67,7 +69,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 	}
 }
 
-if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->fournisseur->facture->valider)
 {
 	$db->begin();
 
@@ -110,7 +112,7 @@ $head[$h][1] = $langs->trans('Info');
 $h++;
 
 
-dolibarr_fiche_head($head, $hselected, $langs->trans('Payment').': '.$paiement->ref);
+dolibarr_fiche_head($head, $hselected, $langs->trans('SupplierPayment'));
 
 /*
  * Confirmation de la suppression du paiement
@@ -162,13 +164,13 @@ if ($paiement->numero)
 	print '<tr><td valign="top">'.$langs->trans('Numero').'</td><td colspan="3">'.$paiement->numero.'</td></tr>';
 }
 print '<tr><td valign="top">'.$langs->trans('Amount').'</td><td colspan="3">'.price($paiement->montant).'&nbsp;'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+print '<tr><td valign="top">'.$langs->trans('Status').'</td><td colspan="3">'.$paiement->getLibStatut(4).'</td></tr>';
 print '<tr><td valign="top">'.$langs->trans('Note').'</td><td colspan="3">'.nl2br($paiement->note).'</td></tr>';
 print '</table>';
 
 
-/*
- *
- *
+/**
+ *	Liste des factures
  */
 $allow_delete = 1 ;
 $sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.idp';
@@ -234,15 +236,21 @@ print '</div>';
  */
 
 print '<div class="tabsAction">';
-
 if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
-}
+	if ($user->rights->fournisseur->facture->valider)
+	{
+		print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
+	}
+}
 if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['action'] == '')
 {
-	print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+	if ($user->rights->fournisseur->facture->supprimer)
+	{
+		print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+
+	}
 }
 print '</div>';
 

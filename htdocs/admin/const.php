@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -69,7 +69,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '<td>'.$langs->trans("Type").'</td>';
 print '<td>'.$langs->trans("Note").'</td>';
-print '<td>'.$langs->trans("Action").'</td>';
+print '<td align="center">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
 
 
@@ -82,21 +82,17 @@ print '<form action="const.php" method="POST">';
 print '<input type="hidden" name="action" value="add">';
 
 print "<tr $bc[$var] class=value><td><input type=\"text\" class=\"flat\" size=\"24\" name=\"constname\" value=\"\"></td>\n";
-
 print '<td>';
-print '<input type="text" class="flat" size="30" name="constvalue" value="">';
+print '<input type="text" class="flat" size="32" name="constvalue" value="">';
 print '</td><td>';
-
 $form->select_array('consttype',array('yesno','texte','chaine'),2);
 print '</td><td>';
-
-print '<input type="text" class="flat" size="15" name="constnote" value="">';
-print '</td><td>';
-
+print '<input type="text" class="flat" size="24" name="constnote" value="">';
+print '</td><td align="center">';
 print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="Button"><br>';
 print "</td>\n";
-	
 print '</tr>';
+
 print '</form>';
 
 
@@ -143,15 +139,15 @@ if ($result)
 	}
       else
 	{
-	  print '<input type="text" class="flat" size="30" name="constvalue" value="'.stripslashes($obj->value).'">';
+	  print '<input type="text" class="flat" size="32" name="constvalue" value="'.stripslashes($obj->value).'">';
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
 	}
       print '</td><td>';
 
       // Note
-      print '<input type="text" class="flat" size="15" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
-      print '</td><td>';
+      print '<input type="text" class="flat" size="24" name="constnote" value="'.stripslashes(nl2br($obj->note)).'">';
+      print '</td><td align="center">';
       print '<input type="submit" class="button" value="'.$langs->trans("Modify").'" name="button"> &nbsp; ';
       print '<a href="const.php?rowid='.$obj->rowid.'&action=delete">'.img_delete().'</a>';
       print "</td></tr>\n";

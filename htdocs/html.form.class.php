@@ -1144,12 +1144,13 @@ class Form
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
+     *      \param      empty			1=peut etre vide, 0 sinon
      */
-    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0)
+    function select_types_paiements($selected='',$htmlname='paiementtype',$filtertype='',$format=0, $empty=0)
     {
         global $langs;
 		
-	dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
+		dolibarr_syslog("Form::select_type_paiements $selected, $htmlname, $filtertype, $format",LOG_DEBUG);
         
         $filterarray=array();
 		if ($filtertype == 'CRDT')  	$filterarray=array(0,2);
@@ -1159,6 +1160,7 @@ class Form
         $this->load_cache_types_paiements();
 
         print '<select class="flat" name="'.$htmlname.'">';
+		if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements_code as $id => $code)
         {
             // On passe si on a demandé de filtrer sur des modes de paiments particulièrs
