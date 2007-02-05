@@ -1,16 +1,16 @@
 README (English)
-################################
+##################################################
 Building packages
-################################
+##################################################
 
 All sub-directories of "build" directory contains files required to build
 automatically Dolibarr packages.
-There is serval tools:
+There are serval tools:
 
 - To build full Dolibarr packages, launch the script
 > perl makepack-dolibarr.pl
 
-- To build a translaction packege, launch the script
+- To build a translaction package, launch the script
 > perl makepack-dolibarrlang.pl
 
 - To build a theme package, launch the script
@@ -26,7 +26,7 @@ Dolibarr working. It is here only to build Dolibarr packages, and those
 generated packages will not contains this "build" directory.
 
 
-We can find in "build", folowwing sub-directories:
+We can find in "build", folowing sub-directories:
 
 * deb:
 To build Debian package.
