@@ -1922,14 +1922,11 @@ class Form
             print '<input type="hidden" name="action" value="setdeliveryadress">';
             print '<table class="noborder" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-            $numaddress = $this->select_adresse_livraison($selected, $socid, $htmlname, 1);
+            $this->select_adresse_livraison($selected, $socid, $htmlname, 1);
             print '</td>';
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-            if ($numaddress==0)
-            {
-            	$langs->load("companies");
-              print ' &nbsp; <a href=/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
-            }
+            $langs->load("companies");
+            print ' &nbsp; <a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$socid.'&action=create&origin='.$origin.'&originid='.$originid.'>'.$langs->trans("AddAddress").'</a>';
             print '</td></tr></table></form>';
         }
         else
@@ -1939,7 +1936,7 @@ class Form
             	require_once(DOL_DOCUMENT_ROOT ."/comm/adresse_livraison.class.php");
             	$livraison=new AdresseLivraison($this->db);
 				      $livraison->fetch_adresse($selected);
-				      print '<a href=/comm/adresse_livraison.php?socid='.$livraison->socid.'&idl='.$livraison->idl.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
+				      print '<a href='.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$livraison->socid.'&idl='.$livraison->idl.'&action=edit&origin='.$origin.'&originid='.$originid.'>'.$livraison->label.'</a>';
             }
             else
             {
