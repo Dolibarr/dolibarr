@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@
  */
 
 /**
-	\file       htdocs/includes/modules/facture/neptune/titan.modules.php
+	\file       htdocs/includes/modules/facture/titan/titan.modules.php
 	\ingroup    facture
 	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Titan
 	\version    $Revision$

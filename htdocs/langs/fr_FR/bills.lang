@@ -345,3 +345,5 @@ UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique sim
 # venus
 VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
 
+# pluton
+PlutonNumRefModelDesc1=Modèle de numérotation paramétrable - EN PHASE DE TEST !!!
