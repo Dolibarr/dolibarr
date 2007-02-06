@@ -81,7 +81,8 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 	$operation=$_POST["operation"];
 	$label=$_POST["label"];
 	$num_chq=$_POST["num_chq"];
-
+	$emetteur_nom=$_POST["chqemetteur"];
+	$emetteur_banque=$_POST["chqbank"];
 	
 	if (! $datecotisation)
 	{
@@ -109,7 +110,7 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
     {
         $db->begin();
 
-		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq);
+		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque);
 		
         if ($crowid > 0)
         {
@@ -398,7 +399,16 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	}
 	
 	print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';
-	print '<td><input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'></td></tr>';
+	print '<td>';
+	if (! $adh->email) 
+	{
+		print $langs->trans("NoEMail");
+	}
+	else
+	{
+		print '<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'>';
+	}
+	print '</td></tr>';
 
 
 	print '<tr><td colspan="2" align="center">';

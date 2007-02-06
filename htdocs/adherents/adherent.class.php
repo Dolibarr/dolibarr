@@ -746,17 +746,22 @@ class Adherent
     		\brief      Fonction qui insère la cotisation dans la base de données
     					et eventuellement liens dans banques, mailman, etc...
     		\param	    date        	Date d'effet de la cotisation
-    		\param	    montant     	Montant cotisation
+    		\param	    montant     	Montant cotisation (accepte 0 pour les adhérents non soumis à cotisation)
     		\param		account_id		Id compte bancaire
     		\param		operation		Type operation (si Id compte bancaire fourni)
     		\param		label			Label operation (si Id compte bancaire fourni)
     		\param		num_chq			Numero cheque (si Id compte bancaire fourni)
+    		\param		emetteur_nom	Nom emetteur chèque
+    		\param		emetteur_banque	Nom banque emetteur chèque
             \return     int         	rowid de l'entrée ajoutée, <0 si erreur
     */
-    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='')
+    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='')
     {
         global $conf,$langs,$user;
 
+		// Nettoyage parametres
+		if (! $montant) $montant=0;
+		
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
@@ -790,7 +795,7 @@ class Adherent
 
 	                $dateop=time();
 
-	                $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user);
+	                $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
 	                if ($insertid > 0)
 	                {
 	        			$inserturlid=$acct->add_url_line($insertid, $this->id, DOL_URL_ROOT.'/adherents/fiche.php?rowid=', $this->getFullname(), 'member');
