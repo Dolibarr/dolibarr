@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -216,7 +216,7 @@ if ($result)
 	if ($num > $conf->liste_limit)
 	{
 	    print "<table class=\"noborder\" width=\"100%\">";
-	    print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&statut=$statut&sortorder=$sortorder&sortfield=$sortfield",$sortfield,$sortorder,'',$num);
+	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 	    print "</table><br>\n";
 	}
 	print "<br>";
