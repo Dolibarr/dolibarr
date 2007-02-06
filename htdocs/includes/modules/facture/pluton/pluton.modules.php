@@ -50,14 +50,46 @@ function info()
     	
       $texte = $langs->trans('PlutonNumRefModelDesc1')."<br>\n";
       
+      $texte.= 'Début année fiscale';
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')<br>';
       }
       else
       {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')';
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
+      
+      $texte.= 'Préfix de la facture';
+      if ($conf->global->FACTURE_NUM_PREFIX)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_PREFIX.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Nombre de chiffres sur le compteur';
+      if ($conf->global->FACTURE_NUM_QUANTIFY_METER)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_QUANTIFY_METER.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Le compteur se remet à zéro en début d\'année';
+      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
       return $texte;
     }
 
@@ -110,7 +142,7 @@ function info()
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE facnumber like '${fisc}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR == 1) $sql.= " WHERE facnumber like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
