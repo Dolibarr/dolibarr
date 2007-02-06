@@ -64,7 +64,8 @@ if ($_POST["action"] == 'add')
         }
         else
         {
-        	$mesg=$this->langs("ErrorFieldRequired",$langs->trans("Label"));
+        	$mesg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			$_GET["action"] = 'create';
         }
     }
 }
@@ -97,11 +98,11 @@ if ($_GET["action"] == 'delete')
 	Header("Location: liste.php");
 	exit;
 }
+
 if ($_GET["action"] == 'commentaire')
 {
 	$don = new Don($db);
 	$don->set_commentaire($rowid,$_POST["commentaire"]);
-	$action = "edit";
 }
 
 
@@ -136,8 +137,10 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
       
       print '<tr class="liste_titre">';
       print '<td>'.$langs->trans("Ref").'</td>';
-      print '<td>'.$langs->trans("Label").'</td><td align="center">'.$langs->trans("SubscriptionRequired").'</td>';
-      print '<td align="center">'.$langs->trans("VoteAllowed").'</td><td>&nbsp;</td>';
+      print '<td>'.$langs->trans("Label").'</td>';
+	  print '<td align="center">'.$langs->trans("SubscriptionRequired").'</td>';
+      print '<td align="center">'.$langs->trans("VoteAllowed").'</td>';
+	  print '<td>&nbsp;</td>';
       print "</tr>\n";
       
       $var=True;
@@ -189,6 +192,8 @@ if ($_GET["action"] == 'create')
   print_titre($langs->trans("NewMemberType"));
   print '<br>';
   
+  if ($mesg) print '<div class="error">'.$mesg.'</div>';
+  
   print "<form action=\"type.php\" method=\"post\">";
   print '<table class="border" width="100%">';
   
@@ -197,11 +202,11 @@ if ($_GET["action"] == 'create')
   print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
   print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-  $htmls->selectyesnonum("cotisation","");
+  $htmls->selectyesnonum("cotisation",1);
   print '</tr>';
   
   print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-  $htmls->selectyesnonum("vote","");
+  $htmls->selectyesnonum("vote",0);
   print '</tr>';
 
   print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
