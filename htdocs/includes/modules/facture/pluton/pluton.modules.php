@@ -66,7 +66,11 @@ function info()
      */
     function getExample()
     {
-        return "FA0600001";           
+    	global $conf;
+    	
+    	$prefix = $conf->global->FACTURE_NUM_PREFIX;
+    	$numExample = $prefix."0600001";
+    	return $numExample;           
     }
 
 	/**		\brief      Renvoi prochaine valeur attribuée
@@ -79,7 +83,7 @@ function info()
         global $db,$conf;
         
         // On défini l'année fiscale
-        $prefix='FA';
+        $prefix = $conf->global->FACTURE_NUM_PREFIX;
         $current_month = date("n");
         
         if (is_object($facture) && $facture->date)
@@ -101,16 +105,17 @@ function info()
         }
         
         // On récupère la valeur max (réponse immédiate car champ indéxé)
+        $numFigure = ($conf->global->FACTURE_NUM_QUANTIFY_METER - 1);
         $fisc=$prefix.$yy;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber like '${fisc}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE facnumber like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,4);
+            if ($row) $fayy = substr($row[0],0,$numFigure);
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
@@ -118,7 +123,7 @@ function info()
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $date = strftime("%Y%m", time());
-            $posindice=5;
+            $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber like '${fayy}%'";
@@ -134,9 +139,10 @@ function info()
             $max=0;
         }
         
-        $num = sprintf("%05s",$max+1);
+        $arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
+        $num = sprintf($arg,$max+1);
         
-        return  "FA$yy$num";
+        return  "$prefix$yy$num";
     }
     
   
