@@ -90,6 +90,16 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
+      $texte.= 'Un offset est appliqué sur le compteur';
+      if ($conf->global->FACTURE_NUM_DELTA)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_DELTA.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
       return $texte;
     }
 
