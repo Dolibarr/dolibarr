@@ -161,7 +161,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $con_string = "host=$host dbname=$name user=$login password=$passwd";
+        $con_string = "host=$host dbname=$name user=$login password=--hidden--";
         $this->db = pg_connect($con_string);
         if ($this->db)
         {

@@ -194,6 +194,7 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
+		dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
         $this->db  = @mysqli_connect($host, $login, $passwd);
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;

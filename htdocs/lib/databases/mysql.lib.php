@@ -193,17 +193,17 @@ class DoliDb
   }
 
   /**
-     \brief      Connection vers le serveur
+     \brief		Connection vers le serveur
      \param	    host		addresse de la base de données
      \param	    login		nom de l'utilisateur autoris
      \param	    passwd		mot de passe
      \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-     \return		resource	handler d'accès à la base
+     \return	resource	handler d'accès à la base
      \seealso	close
   */
   function connect($host, $login, $passwd, $name)
   {
-    dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=$passwd, name=$name");
+    dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
     $this->db  = @mysql_connect($host, $login, $passwd);
     return $this->db;
   }
