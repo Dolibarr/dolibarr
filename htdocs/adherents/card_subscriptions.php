@@ -41,6 +41,7 @@ $langs->load("companies");
 $langs->load("bills");
 $langs->load("members");
 $langs->load("users");
+$langs->load("mails");
 
 $user->getrights('adherent');
 
@@ -406,7 +407,11 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	}
 	else
 	{
-		print '<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'>';
+		$s1='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'>';
+		$s2=$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b><br>';
+		$s2.=$langs->trans("MailTo").': <b>'.$adh->email.'</b>';
+		//$s2.='<br>'.$langs->trans("Content").': '.nl2br($conf->global->ADHERENT_MAIL_COTIS);
+		print $html->textwithhelp($s1,$s2,1);
 	}
 	print '</td></tr>';
 

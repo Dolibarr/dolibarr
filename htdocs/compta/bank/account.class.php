@@ -247,10 +247,14 @@ class Account
 		$datev = $date;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
-		$sql.= " VALUES (now(),'".$this->db->idate($date)."','".$this->db->idate($datev)."',";
-		$sql.= "'".addslashes($label)."','" . price2num($amount)."','".$user->id."','$num_chq','".$this->rowid."', '$oper'";
-		$sql.= ",'".addslashes($emetteur)."'";
-		$sql.= ",'".addslashes($banque)."');";
+		$sql.= " VALUES (now(), '".$this->db->idate($date)."', '".$this->db->idate($datev)."', ";
+		$sql.= " '".addslashes($label)."', '" . price2num($amount)."', '".$user->id."', ";
+		$sql.= " ".($num_chq?"'".$num_chq."'":"null").", ";
+		$sql.= " '".$this->rowid."', ";
+		$sql.= " '".$oper."', ";
+		$sql.= " ".($emetteur?"'".addslashes($emetteur)."'":"null").", ";
+		$sql.= " ".($banque?"'".addslashes($banque)."'":"null");
+		$sql.= ")";
 
 		if ($this->db->query($sql))
 		{

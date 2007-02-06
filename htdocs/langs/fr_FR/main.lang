@@ -352,6 +352,7 @@ Question=Question
 Response=Réponse
 Priority=Priorité
 SendAcknowledgementByMail=Envoi A.R. par mail
+NoEMail=Pas d'email
 # Countries
 CountryFR=France
 CountryBE=Belgique
