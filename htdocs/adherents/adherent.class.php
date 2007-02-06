@@ -923,13 +923,15 @@ class Adherent
 
 
 	/**
-			\brief fonction qui ajoute l'adhérent au abonnements automatiques
-			\param	adht
+			\brief 		Fonction qui ajoute l'adhérent au abonnements automatiques
+			\param		adht
 			\remarks	mailing-list, spip, glasnost, etc...
+			\return		int		<0 si KO, >=0 si OK
 	*/
 	function add_to_abo($adht)
 	{
 		$err=0;
+
 		// mailman
 		if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
 		{
@@ -940,30 +942,35 @@ class Adherent
 			}
 		}
 	
+		// glasnost
 		if ($adht->vote == 'yes' &&
 		defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 		defined("ADHERENT_USE_GLASNOST_AUTO") && ADHERENT_USE_GLASNOST_AUTO ==1
 		)
 		{
-			if(!$this->add_to_glasnost())
+			$result=$this->add_to_glasnost();
+			if(! $result)
 			{
 				$err+=1;
 			}
 		}
+
+		// spip
 		if (
 		defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
 		defined("ADHERENT_USE_SPIP_AUTO") && ADHERENT_USE_SPIP_AUTO ==1
 		)
 		{
-			if(!$this->add_to_spip())
+			$result=$this->add_to_spip();
+			if(!$result)
 			{
 				$err+=1;
 			}
 		}
-		if ($err>0)
+		if ($err)
 		{
 			// error
-			return 0;
+			return -$err;
 		}
 		else
 		{
@@ -1016,39 +1023,41 @@ class Adherent
 
 	/**
 			\brief fonction qui donne les droits rédacteurs dans spip
+			\return		int		=0 si KO, >0 si OK
 	*/
 	function add_to_spip()
-    {
-      if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
-	  defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
-	  defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
-	  defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
-	  defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
-	  ){
-	$mdpass=md5($this->pass);
-	$htpass=crypt($this->pass,makesalt());
-	$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
-	//      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
-      $mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
-      $result = $mydb->query($query);
-
-      if ($result)
 	{
-	  $mydb->close();
-	  return 1;
-	}
-      else
-	{
-	  $this->error=$mydb->error();
-	  return 0;
-	}
-      }
-    }
+		dolibarr_syslog("Adherent::add_to_spip");
 
-/**
-		\brief fonction qui enlève les droits rédacteurs dans spip
-*/
+		if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
+				defined('ADHERENT_SPIP_SERVEUR') && ADHERENT_SPIP_SERVEUR != '' &&
+				defined('ADHERENT_SPIP_USER') && ADHERENT_SPIP_USER != '' &&
+				defined('ADHERENT_SPIP_PASS') && ADHERENT_SPIP_PASS != '' &&
+				defined('ADHERENT_SPIP_DB') && ADHERENT_SPIP_DB != ''
+				){
+			$mdpass=md5($this->pass);
+			$htpass=crypt($this->pass,makesalt());
+			$query = "INSERT INTO spip_auteurs (nom, email, login, pass, htpass, alea_futur, statut) VALUES(\"".$this->prenom." ".$this->nom."\",\"".$this->email."\",\"".$this->login."\",\"$mdpass\",\"$htpass\",FLOOR(32000*RAND()),\"1comite\")";
+			//      $mydb=new Db('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
+			$mydb=new DoliDb('mysql',ADHERENT_SPIP_SERVEUR,ADHERENT_SPIP_USER,ADHERENT_SPIP_PASS,ADHERENT_SPIP_DB);
+			$result = $mydb->query($query);
 
+			if ($result)
+			{
+				$mydb->close();
+				return 1;
+			}
+			else
+			{
+				$this->error=$mydb->error();
+				return 0;
+			}
+		}
+	}
+
+	/**
+			\brief fonction qui enlève les droits rédacteurs dans spip
+	*/
 	function del_to_spip()
     {
       if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP ==1 &&
@@ -1124,75 +1133,78 @@ class Adherent
     }
 
 
-/**
+	/**
 		\brief      Fonction qui ajoute l'utilisateur dans glasnost
-*/
-
+		\return		int		=0 si KO, >0 si OK
+	*/
 	function add_to_glasnost()
-    {
-      if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
-	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
-	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
-	  defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
-	  ){
-	// application token is not useful here
-	$applicationtoken='';
-	list($success, $response) =
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
-			       XMLRPC_prepare('getUserIdAndToken'),
-			       XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
-			       )
-			 );
-	if ($success){
-	  $userid=$response[0];
-	  $usertoken=$response[1];
-	}else{
-	  $this->error=$response['faultString'];
-	  return 0;
+	{
+		global $conf,$langs;
+
+		dolibarr_syslog("Adherent::add_to_glasnost");
+		
+		if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
+				defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
+				defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
+				defined('ADHERENT_GLASNOST_PASS') && ADHERENT_GLASNOST_PASS != ''
+				){
+			// application token is not useful here
+			$applicationtoken='';
+			list($success, $response) =
+			XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			'/RPC2',
+			'callGateway',
+			array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication"),
+			XMLRPC_prepare('getUserIdAndToken'),
+			XMLRPC_prepare(array("glasnost://".ADHERENT_GLASNOST_SERVEUR."/authentication","$applicationtoken",ADHERENT_GLASNOST_USER,ADHERENT_GLASNOST_PASS))
+			)
+			);
+			if ($success){
+				$userid=$response[0];
+				$usertoken=$response[1];
+			}else{
+				$this->error=$response['faultString'];
+				return 0;
+			}
+
+			list($success,$response)=
+			XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
+			'/RPC2',
+			'callGateway',
+			array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
+			XMLRPC_prepare('addObject'),
+			XMLRPC_prepare(array(
+			"glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
+			"$applicationtoken",
+			$usertoken,
+			array(
+			'__thingCategory__'=>'object',
+			'__thingName__'=>  'Person',
+			'firstName'=>$this->prenom,
+			'lastName'=>$this->nom,
+			'login'=>$this->login,
+			'email'=>$this->email
+			)
+			)
+			)
+			)
+			);
+			if ($success){
+				$personid=$response[0];
+			}else{
+				$this->error=$response['faultString'];
+				return 0;
+			}
+			return 1;
+		}else{
+			$this->error="Constantes de connection non definies";
+			return 0;
+		}
 	}
 
-	list($success,$response)=
-	  XMLRPC_request(ADHERENT_GLASNOST_SERVEUR.':8001',
-			 '/RPC2',
-			 'callGateway',
-			 array(XMLRPC_prepare("glasnost://".ADHERENT_GLASNOST_SERVEUR."/people"),
-			       XMLRPC_prepare('addObject'),
-			       XMLRPC_prepare(array(
-						    "glasnost://".ADHERENT_GLASNOST_SERVEUR."/people",
-						    "$applicationtoken",
-						    $usertoken,
-						    array(
-							  '__thingCategory__'=>'object',
-							  '__thingName__'=>  'Person',
-							  'firstName'=>$this->prenom,
-							  'lastName'=>$this->nom,
-							  'login'=>$this->login,
-							  'email'=>$this->email
-							  )
-						    )
-					      )
-			       )
-			 );
-	if ($success){
-	  $personid=$response[0];
-	}else{
-	  $this->error=$response['faultString'];
-	  return 0;
-	}
-	return 1;
-      }else{
-	$this->error="Constantes de connection non definies";
-	return 0;
-      }
-    }
-
-/**
-		\brief fonction qui enlève l'utilisateur de glasnost
-*/
-
+	/**
+			\brief fonction qui enlève l'utilisateur de glasnost
+	*/
 	function del_to_glasnost()
     {
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
@@ -1360,6 +1372,8 @@ class Adherent
 	{
 		global $conf,$langs;
 		
+		dolibarr_syslog("Adherent::add_to_mailman");
+
 		if (! function_exists("curl_init"))
 		{
 			$this->error=$langs->trans("ErrorFunctionNotAvailableInPHP","curl_init");
@@ -1401,7 +1415,7 @@ class Adherent
 				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
 				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-				curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 				//curl_setopt($ch, CURLOPT_POST, 0);
 				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
@@ -1469,7 +1483,7 @@ class Adherent
 	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
 	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
 	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	    curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+	    @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
 	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
 	    //curl_setopt($ch, CURLOPT_POST, 0);
 	    //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");

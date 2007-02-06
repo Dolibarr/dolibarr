@@ -378,8 +378,8 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 		$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
     }
 
-    // rajoute l'utilisateur dans les divers abonnements ..
-    if (!$adh->add_to_abo($adht))
+    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
+    if ($adh->add_to_abo($adht) < 0)
     {
         // error
         $errmsg.="Echec du rajout de l'utilisateur aux abonnements: ".$adh->error."<BR>\n";
