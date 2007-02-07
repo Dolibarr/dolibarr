@@ -85,6 +85,10 @@ $head = member_prepare_head($adh);
 
 dolibarr_fiche_head($head, 'ldap', $langs->trans("Member"));
 
+$result=$adh->load_previous_next_id($adh->next_prev_filter);
+if ($result < 0) dolibarr_print_error($db,$adh->error);
+$previous_id = $adh->id_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.urlencode($adh->id_previous).'">'.img_previous().'</a>':'';
+$next_id     = $adh->id_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.urlencode($adh->id_next).'">'.img_next().'</a>':'';
 
 
 /*
@@ -93,7 +97,12 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Member"));
 print '<table class="border" width="100%">';
 
 // Ref
-print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur">'.$adh->id.'&nbsp;</td></tr>';
+print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
+print '<td class="valeur">';
+if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+print $adh->id;
+if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+print '</td></tr>';
 
 // Nom
 print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';

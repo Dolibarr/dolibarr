@@ -1708,6 +1708,41 @@ class Adherent
     }
 
 	/**
+	*      \brief      Charge les propriétés id_previous et id_next
+	*      \param      filter      filtre
+	*      \return     int         <0 si ko, >0 si ok
+	*/
+	function load_previous_next_id($filter='')
+	{
+		$sql = "SELECT MAX(rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
+		$sql.= " WHERE rowid < '".addslashes($this->id)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->id_previous = $row[0];
+		
+		$sql = "SELECT MIN(rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
+		$sql.= " WHERE rowid > '".addslashes($this->id)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -2;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->id_next = $row[0];
+	}
+
+	
+	/**
 	 *		\brief		Initialise le membre avec valeurs fictives aléatoire
 	 */
 	function initAsSpecimen()
