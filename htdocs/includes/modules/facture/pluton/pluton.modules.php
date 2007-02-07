@@ -147,7 +147,7 @@ function info()
         }
         
         // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $numFigure = ($conf->global->FACTURE_NUM_QUANTIFY_METER - 1);
+        $numQuantify = ($conf->global->FACTURE_NUM_QUANTIFY_METER - 1);
         $fisc=$prefix.$yy;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
@@ -157,7 +157,7 @@ function info()
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,$numFigure);
+            if ($row) $fayy = substr($row[0],0,$numQuantify);
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
