@@ -488,6 +488,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 		\param	    time        Date 'timestamp' ou format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
 		\param	    format      Format d'affichage de la date
 									"%d %b %Y",
+									"%d/%m/%Y %H:%M",
 									"%d/%m/%Y %H:%M:%S",
 									"day", "daytext", "dayhour", "dayhourtext"
 		\return     string      Date formatée ou '' si time null
