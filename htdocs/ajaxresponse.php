@@ -37,6 +37,7 @@ print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://ww
 print "\n<html>";
 print "\n<body>";
 
+
 // Generation liste de produits
 if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel']) && !empty($_GET['keylabel']))
 {
@@ -44,6 +45,8 @@ if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel'])
 	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
 }
 
+
+// Generation liste des pays
 if(isset($_POST['search']) && !empty($_POST['search']))
 {
 	print 'hello world';
