@@ -1044,7 +1044,7 @@ if ($_GET['propalid'] > 0)
 
 	// Amount
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+	print '<td align="right" colspan="2"><b>'.price($propal->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
