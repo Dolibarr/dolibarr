@@ -320,36 +320,50 @@ class Form
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
-			$num = $this->db->num_rows($resql);
-			$i = 0;
-			if ($num)
+			if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
 			{
-				$foundselected=false;
-				while ($i < $num)
-				{
-					$obj = $this->db->fetch_object($resql);
-					if ($selected && $selected != '-1' && ($selected == $obj->rowid || $selected == $obj->code))
-					{
-						$foundselected=true;
-						print '<option value="'.$obj->rowid.'" selected="true">';
-					}
-					else
-					{
-						print '<option value="'.$obj->rowid.'">';
-					}
-					// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
-					if ($obj->code) { print $obj->code . ' - '; }
-					print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
-					print '</option>';
-					$i++;
-				}
+				print '<div>';
+				print '<input type="text" id="search" name="search" />';
+				print '</div>';
+				print '<div id="hint"></div>';
+				print '<script type="text/javascript">';
+				print 'new Ajax.Autocompleter(\'search\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\');';
+				print '</script>';
 			}
-			print '</select>';
-			return 0;
-		}
-		else {
-			dolibarr_print_error($this->db);
+			else
+			{
+				print '<select class="flat" name="'.$htmlname.'" '.$htmloption.'>';
+				$num = $this->db->num_rows($resql);
+			  $i = 0;
+			  if ($num)
+			  {
+				  $foundselected=false;
+				  while ($i < $num)
+				  {
+					  $obj = $this->db->fetch_object($resql);
+					  if ($selected && $selected != '-1' && ($selected == $obj->rowid || $selected == $obj->code))
+					  {
+						  $foundselected=true;
+						  print '<option value="'.$obj->rowid.'" selected="true">';
+					  }
+					  else
+					  {
+						  print '<option value="'.$obj->rowid.'">';
+					  }
+					  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+					  if ($obj->code) { print $obj->code . ' - '; }
+					  print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
+					  print '</option>';
+					  $i++;
+				  }
+			  }
+			  print '</select>';
+			  return 0;
+			 }
+		 }
+		 else
+		 {
+		 	dolibarr_print_error($this->db);
 			return 1;
 		}
 	}
@@ -717,21 +731,21 @@ class Form
   {
     global $langs,$conf,$user;
     if ($conf->use_ajax && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
-      {
-	print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
-	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
-	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	print '<script type="text/javascript">';
-	print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
-	print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-	print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-	print '</script>';
-	print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
-      }
+    {
+    	print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
+    	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
+    	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
+    	print '<script type="text/javascript">';
+    	print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
+    	print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+    	print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+    	print '</script>';
+    	print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
+    }
     else
-      {
-	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
-      }    
+    {
+    	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
+    }    
   }
 	
   /**

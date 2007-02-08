@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
         \file       htdocs/ajaxresponse.php
-        \brief      Fichier de reponse sur evenement ajax pour generation liste produits
+        \brief      Fichier de reponse sur evenement Ajax
         \version    $Revision$
 */
 
@@ -36,8 +37,33 @@ print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://ww
 print "\n<html>";
 print "\n<body>";
 
-$form = new Form($db);
-$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
+// Generation liste de produits
+if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel']) && !empty($_GET['keylabel']))
+{
+	$form = new Form($db);
+	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
+}
+
+if(isset($_POST['search']) && !empty($_POST['search']))
+{
+	print 'hello world';
+	$sql = "SELECT rowid, code, libelle, active";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
+	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $_POST['search'] . "%'";
+	$sql.= " ORDER BY code ASC;";
+	
+	$resql=$this->db->query($sql);
+	
+	if ($resql)
+	{
+		print '<ul>';
+		while($data = mysql_fetch_assoc($resql))
+		{
+			print '<li>'.stripslashes($data['libelle']).'</li>';
+		}
+		print '</ul>';
+	}
+} 
 
 print "</body>"; 
 print "</html>"; 
