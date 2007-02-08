@@ -1,8 +1,114 @@
-*V1.6.4*
+*V1.7.0* (January 19, 2007)
+
+* Cleanups for Effect.Morph
+
+* Monkeypatch Prototype 1.5.0 to incorporate [6002], fixes setStyle({opacity:0}) for IE
+
+* Fix Effect.inspect() for Prototype 1.5.0 final hash changes
+
+* Update to Prototype 1.5.0 final
+
+* New option keepBackgroundImage: true for Effect.Highlight, fixes #5037 [docwhat, tomg]
+
+* Minor tweaks for issues with application/xhtml+xml documents on Firefox, fixes #6836 [sjinks]
+
+* Fix a possible exception with Sortables, fixes #6828 [craiggwilson]
+
+* Update to Prototype 1.5.0_rc2 revision [5844] (as of Rails 1.2 RC 2)
+
+*V1.7.0 beta 2* (December 18, 2006)
+
+* Change the default setting for effects to support up to 60fps, if renderable by the browser. Add performance info to effects unit test.
+
+* Change get/setOpacity to use Prototype's new support for cross-browser opacity.
+
+* Update to Prototype 1.5.0_rc2 revision [5741], which fixes some of the reported issues with beta 1 (see Prototype's CHANGELOG for more):
+    * Opera 9, while not officially supported, should work now with Prototype and script.aculo.us
+    * Fixes issue with Safari when using Prototype's Ajax helpers with HTTP authorization
+
+* Add hash and CSS className support to Effect.Morph, fixes #6674 [Tobie]
+    Examples:
+      $(element).morph('myClass')
+      // will morph to all the properties specified
+      // in .className (in your external stylesheet).
+      // All properties which cannot be morphed (such as font-style)
+      // will be applied AfterFinish
+      $(element).morph('font-size: 10px')  // or
+      $(element).morph({fontSize: '10px'}) // will morph the font-size to 10px
+      
+*V1.7.0 beta 1* (November 21, 2006)
+
+* Add Element.morph() and Element.Methods.morph() as a shortcut to Effect.Morph
+    Example:
+      // basic Effect.Morph
+      $('error_message').morph('color:#f00;font-size:17px');
+      // fade out after a while
+      $('error_message').show().morph('font-size:17px').morph('opacity:0',{delay:4});
+
+* Update to Prototype 1.5.0_rc2 revision [5580]
+
+* Add a paramName option to the inplace editor for overriding the default parameter name of "value"
+
+* Add Effect.Transform that generates parallel executing Effect.Morph sets
+    Example:
+      // set up transformation
+      var transformation = new Effect.Transform([
+        { 'div.morphing': 'font-size:20px;padding-left:40em' },
+        { 'blah'        : 'width:480px;border-width:10px;border-right-width:20px;margin:200px;margin-bottom:-20px;font-size:30px' }
+      ],{ duration: 0.5 });
+      // play transformation (can be called more than once)
+      transformation.play();
+
+* Add Effect.Morph core effect that morphs to a given CSS style rule. Effect.Morph does take orginal styles given by CSS style rules or the style attribute into consideration when calculating the transforms. It works with all length and color based CSS properties, including margins, paddings, borders, opacity and text/background colors.
+    Example:
+      new Effect.Morph('mydiv',{
+        style: 'font-size:3em;color:#f00;border-width:2em',
+        duration: 2.0
+      });
+
+*V1.6.5* (November 8, 2006)
+
+* Update to Prototype 1.5.0_rc1 revision [5462]
+
+* Support the HTML 'for' attribute in Builder by using 'htmlFor', fixes #6472 [gjones, tdd]
+
+    var node = Builder.node('label', { htmlFor: 'myinput' });
+
+* Add support to run a specific failing unit test by clicking on the corresponding test result, fixes #6290 [leeo]
+
+* Add modifier key support to Event.simulateMouse, fixes #6391 [savetheclocktower]
+
+* Add rails-trunk update task, clean up references to MIT license
+
+* Add new 'with-last' queue position option to queue effects to occur in parallel with the last effect to start in the queue
+
+* Add new special core effect Effect.Event for one-shot events that follow timelines defined by effect queues
+
+    new Effect.Event({ afterFinish:function(){
+      // do some code here
+    }, position: 'end' });
+
+* Do some refactoring to make use of Prototype 1.5 functionalities and save LOC
+
+* Fix an possible crash of IE on Effect.SlideUp, fixes #3192 [thx nel]
+
+* Add Builder.build() to create nodes from strings containing HTML, [DHH]
+
+    var node = Builder.build("<p>this is <b>neat!</b></p>");
+
+* Add a pulses parameter to Effect.Pulsate to control the amount of pulses, fixes #6245 [leeo]
+
+    For example, Effect.Pulsate('d8', {pulses: 2}) would pulsate twice. If the option is not given, it defaults to five pulses.
+
+* Fix an issue with clicking on a slider span resulting in an exception, fixes #4707 [thx sergeykojin]
+
+* Fix an issue with Draggables when no options are supplied, fixes #6045 [thx tdd]
+
+*V1.6.4* (September 6, 2006)
 
 * Hotfix IE issues with patched Prototype V1.5.0_rc1
 
-*V1.6.3*
+*V1.6.3* (September 5, 2006)
 
 * Update Prototype to V1.5.0_rc1
 
