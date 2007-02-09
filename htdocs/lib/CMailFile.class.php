@@ -70,6 +70,7 @@ class CMailFile
             \param 	mimefilename_list   tableau des noms des fichiers attachés
             \param 	addr_cc             email cc
             \param 	addr_bcc            email bcc
+            \param 	deliveryreceipt		demande accusé réception
             \param	msgishtml			message is a html message
     */
     function CMailFile($subject,$to,$from,$msg,
