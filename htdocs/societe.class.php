@@ -52,9 +52,12 @@ class Societe
 	var $fax;
 	var $email;
 	var $url;
-	var $siren;
-	var $siret;
-	var $ape;
+
+	// 4 identifiants porfessionnels (leur utilisation depend du pays)
+	var $siren;		// IdProf1
+	var $siret;		// IdProf2
+	var $ape;		// IdProf3
+	var $idprof4;	// IdProf4
 	
 	var $prefix_comm;
 	
@@ -98,7 +101,6 @@ class Societe
     global $conf;
 	
     $this->db = $DB;
-    $this->creation_bit = 0;
 
     $this->id = $id;
     $this->client = 0;
@@ -152,9 +154,7 @@ class Societe
             {
                 $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."societe");
 
-                $this->creation_bit = 1;
-
-                $ret = $this->update($this->id,$user,0);
+                $ret = $this->update($this->id,$user,0,1,1);
                 
                 // si un commercial crée un client il lui est affecté automatiquement
                 if (!$user->rights->commercial->client->voir)
@@ -273,17 +273,19 @@ class Societe
 	}
 
     /**
-     *      \brief      Mise a jour des paramètres de la sociét
-     *      \param      id              id societe
-     *      \param      user            Utilisateur qui demande la mise à jour
-     *      \param      call_trigger    0=non, 1=oui
-     *      \return     int             <0 si ko, >=0 si ok
+     *      \brief      Mise a jour des paramètres de la société
+     *      \param      id              			id societe
+     *      \param      user            			Utilisateur qui demande la mise à jour
+     *      \param      call_trigger    			0=non, 1=oui
+	 *		\param		allowmodcodeclient			Autorise modif code client
+	 *		\param		allowmodcodefournisseur		Autorise modif code fournisseur
+     *      \return     int             			<0 si ko, >=0 si ok
      */
-    function update($id, $user='', $call_trigger=1)
+    function update($id, $user='', $call_trigger=1, $allowmodcodeclient=0, $allowmodcodefournisseur=0)
     {
         global $langs;
 
-        dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." creation_bit=".$this->creation_bit);
+        dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
 		// Nettoyage des paramètres
         $this->id=$id;
@@ -296,11 +298,16 @@ class Societe
         $this->pays_id=trim($this->pays_id);
         $this->tel=trim($this->tel);
         $this->fax=trim($this->fax);
+		$this->tel = ereg_replace(" ","",$this->tel);
+		$this->tel = ereg_replace("\.","",$this->tel);
+		$this->fax = ereg_replace(" ","",$this->fax);
+		$this->fax = ereg_replace("\.","",$this->fax);
         $this->email=trim($this->email);
         $this->url=trim($this->url);
         $this->siren=trim($this->siren);
         $this->siret=trim($this->siret);
         $this->ape=trim($this->ape);
+        $this->idprof4=trim($this->idprof4);
         $this->prefix_comm=trim($this->prefix_comm);
 
 		$this->tva_assuj=trim($this->tva_assuj);
@@ -318,11 +325,6 @@ class Societe
         {
             dolibarr_syslog("Societe::Update verify ok");
         
-            $this->tel = ereg_replace(" ","",$this->tel);
-            $this->tel = ereg_replace("\.","",$this->tel);
-            $this->fax = ereg_replace(" ","",$this->fax);
-            $this->fax = ereg_replace("\.","",$this->fax);
-        
             $sql = "UPDATE ".MAIN_DB_PREFIX."societe";
             $sql.= " SET nom = '" . addslashes($this->nom) ."'"; // Champ obligatoire
             $sql.= ",datea = now()";
@@ -339,9 +341,10 @@ class Societe
             $sql .= ",email = ".($this->email?"'".addslashes($this->email)."'":"null");
             $sql .= ",url = ".($this->url?"'".addslashes($this->url)."'":"null");
         
-            $sql .= ",siren = '". addslashes($this->siren) ."'";
-            $sql .= ",siret = '". addslashes($this->siret) ."'";
-            $sql .= ",ape   = '". addslashes($this->ape)   ."'";
+            $sql .= ",siren   = '". addslashes($this->siren)   ."'";
+            $sql .= ",siret   = '". addslashes($this->siret)   ."'";
+            $sql .= ",ape     = '". addslashes($this->ape)     ."'";
+            $sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
         
 			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
@@ -359,7 +362,7 @@ class Societe
             $sql .= ",client = " . $this->client;
             $sql .= ",fournisseur = " . $this->fournisseur;
         
-            if ($this->creation_bit || $this->codeclient_modifiable())
+            if ($allowmodcodeclient)
             {
                 // Attention check_codeclient peut modifier le code suivant le module utilise
                 $this->check_codeclient();
@@ -372,7 +375,7 @@ class Societe
                 $sql .= ", code_compta = ".($this->code_compta?"'".addslashes($this->code_compta)."'":"null");
             }
         
-            if ($this->creation_bit || $this->codefournisseur_modifiable())
+            if ($allowmodcodefournisseur)
             {
                 // Attention check_codefournisseur peut modifier le code suivant le module utilise
                 $this->check_codefournisseur();
@@ -463,8 +466,9 @@ class Societe
 		if($conf->global->PRODUIT_MULTIPRICES == 1)
 			$sql .= ', s.price_level';
 		$sql .= ','. $this->db->pdate('s.tms').' as date_update';
-		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, s.siren, client, fournisseur';
-		$sql .= ', s.siret, s.capital, s.ape, s.tva_intra, s.rubrique';
+		$sql .= ', s.tel, s.fax, s.email, s.url, s.cp, s.ville, s.note, client, fournisseur';
+		$sql .= ', s.siren, s.siret, s.ape, s.idprof4';
+		$sql .= ', s.capital, s.tva_intra, s.rubrique';
 		$sql .= ', s.fk_typent as typent_id';
 		$sql .= ', s.fk_effectif as effectif_id, e.libelle as effectif';
 		$sql .= ', s.fk_forme_juridique as forme_juridique_code, fj.libelle as forme_juridique';
@@ -519,6 +523,8 @@ class Societe
 				$this->siren     = $obj->siren;
 				$this->siret     = $obj->siret;
 				$this->ape       = $obj->ape;
+				$this->idprof4   = $obj->idprof4;
+
 				$this->capital   = $obj->capital;
 
 				$this->code_client = $obj->code_client;
@@ -1419,9 +1425,9 @@ class Societe
 			$mod = new $var;
 	
 			dolibarr_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
-			if ($mod->code_modifiable) return 1;
 			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
 			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
+			if ($mod->code_modifiable) return 1;	// A mettre en dernier
 			return 0;
 		}
 		else
@@ -1432,7 +1438,7 @@ class Societe
 
 
 	/**
-	 *    \brief      Verifie si un code client est modifiable dans configuration du module de controle des codes
+	 *    \brief      Verifie si un code fournisseur est modifiable dans configuration du module de controle des codes
 	 *    \return     int		0=Non, 1=Oui
 	 */
 	function codefournisseur_modifiable()
@@ -1447,9 +1453,9 @@ class Societe
 			$mod = new $var;
 	
 			dolibarr_syslog("Societe::codefournisseur_modifiable code_founisseur=".$this->code_fournisseur." module=".$var);
-			if ($mod->code_modifiable) return 1;
 			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
 			if ($mod->code_modifiable_invalide && $this->check_codefournisseur() < 0) return 1;
+			if ($mod->code_modifiable) return 1;	// A mettre en dernier
 			return 0;
 		}
 		else

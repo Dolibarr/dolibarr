@@ -1463,7 +1463,7 @@ class Form
         if ($idprof==1 && $soc->pays_code == 'FR') $formlength=9;
         if ($idprof==2 && $soc->pays_code == 'FR') $formlength=14;
         if ($idprof==3 && $soc->pays_code == 'FR') $formlength=4;
-        if ($idprof==4 && $soc->pays_code == 'FR') $formlength=4;
+        if ($idprof==4 && $soc->pays_code == 'FR') $formlength=12;
         print '<input type="text" name="'.$htmlname.'" size="'.($formlength+1).'" maxlength="'.$formlength.'" value="'.$selected.'">';
     }
 
