@@ -60,7 +60,7 @@ class box_factures_fourn_imp extends ModeleBoxes {
      */
     function loadBox($max=5)
     {
-        global $user, $langs, $db;
+        global $conf, $user, $langs, $db;
 
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
         $facturestatic=new FactureFournisseur($db);
@@ -71,7 +71,8 @@ class box_factures_fourn_imp extends ModeleBoxes {
         {
 
             $sql = "SELECT s.nom, s.idp,";
-            $sql.= " f.facnumber,f.amount,".$db->pdate("f.datef")." as df,";
+            $sql.= " f.facnumber,".$db->pdate("f.date_lim_reglement")." as datelimite,";
+			$sql.= " f.amount,".$db->pdate("f.datef")." as df,";
             $sql.= " f.paye, f.fk_statut, f.rowid as facid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
@@ -96,9 +97,13 @@ class box_factures_fourn_imp extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
 
+                    $late="";
+                    if ($objp->datelimite < (time() - $conf->facture->fournisseur->warning_delay)) $late=img_warning($langs->trans("Late"));
+
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => $objp->facnumber,
+					'text2'=> $late,
                     'url' => DOL_URL_ROOT."/fourn/facture/fiche.php?facid=".$objp->facid);
 
                     $this->info_box_contents[$i][1] = array('align' => 'left',
