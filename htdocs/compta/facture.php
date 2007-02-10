@@ -2361,7 +2361,7 @@ else
 					$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
 					else
 					$html->select_produits('','idprod','',$conf->produit->limit_size);
-					if (! $conf->use_ajax) print '<br>';
+					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 					print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 					print '<td>&nbsp;</td>';
 					print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';

@@ -248,7 +248,7 @@ print "<tr ".$bc[$var].">";
 print '<td width="80%">'.$langs->trans("UseSearchToSelectProduct").'</td>';
 if (! $conf->use_ajax)
 {
-  print '<td width="60" align="right" colspan="2">';
+  print '<td nowrap="nowrap" align="right" colspan="2">';
   print $langs->trans("NotAvailableWhenAjaxDisabled");	
   print "</td>";
 }

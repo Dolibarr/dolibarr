@@ -730,7 +730,7 @@ class Form
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
   {
     global $langs,$conf,$user;
-    if ($conf->use_ajax && $conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+    if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
     	print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
     	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';

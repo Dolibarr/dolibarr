@@ -340,6 +340,11 @@ class Conf
 		// conf->use_ajax
 		$this->use_ajax=0; // Pas d' Ajax par defaut
 		if (isset($this->global->MAIN_DISABLE_AJAX)) $this->use_ajax=! $this->global->MAIN_DISABLE_AJAX;
+		if ($this->global->MAIN_DISABLE_AJAX) 
+		{
+			// If no Ajax, Ajax features are disabled.
+			$this->global->PRODUIT_USE_SEARCH_TO_SELECT=0;
+		}
 
 		// conf->use_popup_calendar
 		$this->use_popup_calendar="";	// Pas de date popup par defaut

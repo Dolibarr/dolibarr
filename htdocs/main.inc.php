@@ -515,10 +515,6 @@ function top_htmlhead($head, $title="", $target="")
     if ($conf->use_javascript || $conf->use_ajax)
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-		if (file_exists(DOL_DOCUMENT_ROOT.'/lib/lib_head_perso.js'))
-		{
-			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head_perso.js"></script>';
-		}
 	}
     if ($conf->use_ajax)
     {

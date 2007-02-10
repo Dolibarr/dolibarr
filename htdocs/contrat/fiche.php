@@ -902,7 +902,7 @@ else
 				$html->select_produits('','p_idprod','',$conf->produit->limit_size,$contrat->societe->price_level);
 			else
             	$html->select_produits('','p_idprod','',$conf->produit->limit_size);
-            if (! $conf->use_ajax) print '<br>';
+            if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
             print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea>';
             print '</td>';
 
