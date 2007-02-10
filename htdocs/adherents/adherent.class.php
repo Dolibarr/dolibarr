@@ -125,8 +125,7 @@ class Adherent
 		       '/%PRENOM%/',
 		       '/%NOM%/',
 		       '/%INFOS%/',
-		       '/%INFO%/',
-		       '/%SERVEUR%/',
+		       '/%DOL_MAIN_URL_ROOT%/',
 		       '/%SOCIETE%/',
 		       '/%ADRESSE%/',
 		       '/%CP%/',
@@ -136,7 +135,7 @@ class Adherent
 		       '/%NAISS%/',
 		       '/%PHOTO%/',
 		       '/%LOGIN%/',
-		       '/%PASS%/'
+		       '/%PASSWORD%/'
 		       );
 	    $infos.= $langs->trans("Lastname").": $this->nom\n";
 	    $infos = $langs->trans("Firstname").": $this->prenom\n";
@@ -155,7 +154,6 @@ class Adherent
 	    $replace = array (
 		      $this->prenom,
 		      $this->nom,
-		      $infos,
 		      $infos,
 		      DOL_MAIN_URL_ROOT,
 		      $this->societe,
@@ -1402,18 +1400,16 @@ class Adherent
 				$patterns = array (
 				'/%LISTE%/',
 				'/%EMAIL%/',
-				'/%PASS%/',
-				'/%ADMINPW%/',
-				'/%SERVER%/'
+				'/%PASSWORD%/',
+				'/%MAILMAN_ADMINPW%/'
 				);
 				$replace = array (
 				$list,
 				$this->email,
 				$this->pass,
-				ADHERENT_MAILMAN_ADMINPW,
-				ADHERENT_MAILMAN_SERVER
+				$conf->global->ADHERENT_MAILMAN_ADMINPW
 				);
-				$curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_URL);
+				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_URL);
 
 				$ch = curl_init();
 				curl_setopt($ch, CURLOPT_URL,"$curl_url");
@@ -1448,72 +1444,72 @@ class Adherent
 	}
 
 	/**
-		\brief fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
-		\ remarks	utilie lors de la résiliation d'adhésion
+		\brief 		Fonction qui désinscrit l'utilisateur de toutes les mailing list mailman
+		\remarks	Utilise lors de la résiliation d'adhésion
 	*/
 	function del_to_mailman($listes='')
 	{
-    if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
-      {
-	if ($listes==''){
-	  $lists=explode(',',ADHERENT_MAILMAN_LISTS);
-	  if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT !=''){
-	    $lists=array_merge ($lists,explode(',',ADHERENT_MAILMAN_LISTS_COTISANT));
-	  }
-	}else{
-	  $lists=explode(',',$listes);
+		global $conf;
+		
+		if (defined("ADHERENT_MAILMAN_UNSUB_URL") && ADHERENT_MAILMAN_UNSUB_URL != '' && defined("ADHERENT_MAILMAN_LISTS") && ADHERENT_MAILMAN_LISTS != '')
+		{
+			if ($listes==''){
+				$lists=explode(',',ADHERENT_MAILMAN_LISTS);
+				if (defined("ADHERENT_MAILMAN_LISTS_COTISANT") && ADHERENT_MAILMAN_LISTS_COTISANT !=''){
+					$lists=array_merge ($lists,explode(',',ADHERENT_MAILMAN_LISTS_COTISANT));
+				}
+			}else{
+				$lists=explode(',',$listes);
+			}
+			foreach ($lists as $list)
+			{
+				// on remplace dans l'url le nom de la liste ainsi
+				// que l'email et le mot de passe
+				$patterns = array (
+				'/%LISTE%/',
+				'/%EMAIL%/',
+				'/%PASSWORD%/',
+				'/%MAILMAN_ADMINPW%/'
+				);
+				$replace = array (
+				$list,
+				$this->email,
+				$this->pass,
+				$conf->global->ADHERENT_MAILMAN_ADMINPW
+				);
+				$curl_url = preg_replace ($patterns, $replace, $conf->global->ADHERENT_MAILMAN_UNSUB_URL);
+
+				$ch = curl_init();
+				curl_setopt($ch, CURLOPT_URL,"$curl_url");
+				//curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
+				curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
+				curl_setopt($ch, CURLOPT_FAILONERROR, 1);
+				@curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
+				curl_setopt($ch, CURLOPT_TIMEOUT, 5);
+				//curl_setopt($ch, CURLOPT_POST, 0);
+				//curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
+				//--- Start buffering
+				//ob_start();
+				$result=curl_exec ($ch);
+				dolibarr_syslog($result);
+				//--- End buffering and clean output
+				//ob_end_clean();
+				if (curl_error($ch) > 0)
+				{
+					// error
+					return 0;
+				}
+				curl_close ($ch);
+
+			}
+			return 1;
+		}
+		else
+		{
+			$this->error="Constantes de connection non definies";
+			return 0;
+		}
 	}
-	foreach ($lists as $list)
-	  {
-	    // on remplace dans l'url le nom de la liste ainsi
-	    // que l'email et le mot de passe
-	    $patterns = array (
-			       '/%LISTE%/',
-			       '/%EMAIL%/',
-			       '/%PASS%/',
-			       '/%ADMINPW%/',
-			       '/%SERVER%/'
-			       );
-	    $replace = array (
-			      $list,
-			      $this->email,
-			      $this->pass,
-			      ADHERENT_MAILMAN_ADMINPW,
-			      ADHERENT_MAILMAN_SERVER
-			      );
-	    $curl_url = preg_replace ($patterns, $replace, ADHERENT_MAILMAN_UNSUB_URL);
-
-	    $ch = curl_init();
-	    curl_setopt($ch, CURLOPT_URL,"$curl_url");
-	    //curl_setopt($ch, CURLOPT_URL,"http://www.j1b.org/");
-	    curl_setopt($ch, CURLOPT_RETURNTRANSFER,1);
-	    curl_setopt($ch, CURLOPT_FAILONERROR, 1);
-	    @curl_setopt($ch, CURLOPT_FOLLOWLOCATION, 1);
-	    curl_setopt($ch, CURLOPT_TIMEOUT, 5);
-	    //curl_setopt($ch, CURLOPT_POST, 0);
-	    //curl_setopt($ch, CURLOPT_POSTFIELDS, "a=3&b=5");
-	    //--- Start buffering
-	    //ob_start();
-	    $result=curl_exec ($ch);
-	    dolibarr_syslog($result);
-	    //--- End buffering and clean output
-	    //ob_end_clean();
-	    if (curl_error($ch) > 0)
-	      {
-		// error
-		return 0;
-	      }
-	    curl_close ($ch);
-
-	  }
-	return 1;
-      }
-    else
-      {
-	$this->error="Constantes de connection non definies";
-	return 0;
-      }
-  }
 
 	/**
 	 *    \brief      Retourne le nom complet de l'adhérent

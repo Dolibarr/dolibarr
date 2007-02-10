@@ -72,13 +72,13 @@ if (! $dolibarr_main_data_root) {
     $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
     $dolibarr_main_data_root.="/documents";
 }
-define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);
-define('DOL_DATA_ROOT', $dolibarr_main_data_root);
-define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);
+define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);	// Filesystem pages php (htdocs)
+define('DOL_DATA_ROOT', $dolibarr_main_data_root);			// Filesystem donnes (documents)
+define('DOL_MAIN_URL_ROOT', $dolibarr_main_url_root);		// URL racine absolue
 $uri=eregi_replace('^http(s?)://','',$dolibarr_main_url_root);
 $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
-define('DOL_URL_ROOT', $pos);
+define('DOL_URL_ROOT', $pos);								// URL racine relative
 
 
 /*
