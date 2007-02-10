@@ -158,7 +158,7 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 --
 -- OsCommerce 1
 --
-insert into llx_const (name, value, type) values ('OSC_DB_HOST','localhost','chaine');
+insert into llx_const (name, value, type, note, visible) values ('OSC_DB_HOST','localhost','chaine', 'Host for OSC database for OSCommerce module 1', 0);
 
 --
 -- Notification

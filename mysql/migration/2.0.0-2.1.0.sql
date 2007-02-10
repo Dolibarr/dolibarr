@@ -215,6 +215,7 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_SHOW_DEVELOPMEN
 insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','0','yesno',1,'Add products\' list in first step of proposal, invoice, order creation');
 
 delete from llx_const where name in ('OSC_CATALOG_URL','OSC_LANGUAGE_ID');
+update llx_const set visible=0 where name like 'OSC_DB_%';
 
 alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
