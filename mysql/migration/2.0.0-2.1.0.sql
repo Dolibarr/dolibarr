@@ -43,7 +43,6 @@ ALTER TABLE llx_societe add cond_reglement tinyint;
 ALTER TABLE llx_societe add tva_assuj      tinyint DEFAULT '1';
 ALTER TABLE llx_societe add email          varchar(128) after url;
 
-
 ALTER TABLE llx_societe change active statut tinyint DEFAULT 0;
 
 ALTER TABLE llx_societe modify mode_reglement     tinyint NULL;
@@ -53,6 +52,11 @@ ALTER TABLE llx_societe modify fk_stcomm          tinyint        DEFAULT 0;
 ALTER TABLE llx_societe modify services           tinyint        DEFAULT 0;
 ALTER TABLE llx_societe modify client             tinyint        DEFAULT 0;
 ALTER TABLE llx_societe modify fournisseur        tinyint        DEFAULT 0;
+
+ALTER TABLE llx_societe modify siren       varchar(16);
+ALTER TABLE llx_societe modify siret       varchar(16);
+ALTER TABLE llx_societe modify ape         varchar(16);
+ALTER TABLE llx_societe add idprof4        varchar(16) after ape;
 
 ALTER TABLE llx_societe drop column id;
 
