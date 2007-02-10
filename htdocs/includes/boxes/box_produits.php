@@ -116,7 +116,7 @@ class box_produits extends ModeleBoxes {
                     'text' => price($objp->price));
 
                     $this->info_box_contents[$i][2] = array(
-                    'align' => 'center',
+                    'align' => 'right',
                     'text' => $productstatic->LibStatut($objp->envente,3));
 
                     $i++;
