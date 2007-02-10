@@ -106,7 +106,7 @@ if ($id > 0)
   $societe->fetch($commande->socid);
   
   $head = commande_prepare_head($commande);
-  dolibarr_fiche_head($head, 'documents', $langs->trans('Order'));
+  dolibarr_fiche_head($head, 'documents', $langs->trans('CustomerOrder'));
   
   // Construit liste des fichiers
   clearstatcache();
