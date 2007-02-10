@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -208,7 +208,7 @@ print '<td width="140">'.$langs->trans("Name").'</td><td>'.$langs->trans("Descri
 print '<td align="center">&nbsp;</td>';
 print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="16">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 if(is_dir($dir))
@@ -313,7 +313,7 @@ print '<td width="140">'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
-print '<td align="center" width="32" colspan="2">'.$langs->trans("Info").'</td>';
+print '<td align="center" width="32" colspan="2">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
