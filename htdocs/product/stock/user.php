@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -129,10 +129,6 @@ $form=new Form($db);
 	  
 	  // Statut
 	  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="3">'.$entrepot->getLibStatut(4).'</td></tr>';
-	  
-	  print '<tr><td valign="top"><a href="mouvement.php">'.$langs->trans("LastMovement").'</a></td><td colspan="3">';
-	  print dolibarr_print_date($row[0]);
-	  print "</td></tr>";
 	  
 	  print "</table>";
 	  

@@ -277,8 +277,8 @@ else
                 dolibarr_print_error($db);
             }
 
-            print '<tr><td valign="top"><a href="mouvement.php">'.$langs->trans("LastMovements").'</a></td><td colspan="3">';
-            print dolibarr_print_date($row[0]);
+            print '<tr><td valign="top">'.$langs->trans("LastMovement").'</td><td colspan="3">';
+            print '<a href="mouvement.php?id='.$entrepot->id.'">'.dolibarr_print_date($row[0]).'</a>';
             print "</td></tr>";
 
             print "</table>";
