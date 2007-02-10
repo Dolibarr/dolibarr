@@ -65,7 +65,10 @@ class box_factures_fourn extends ModeleBoxes {
 		include_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php");
         $facturestatic=new FactureFournisseur($db);
 
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastSupplierBills",$max));
+        $this->info_box_head = array(
+				'text' => $langs->trans("BoxTitleLastSupplierBills",$max),
+				'limit'=> strlen($text)
+			);
 
         if ($user->rights->fournisseur->facture->lire)
         {

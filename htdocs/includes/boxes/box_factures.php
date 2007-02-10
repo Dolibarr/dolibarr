@@ -63,7 +63,10 @@ class box_factures extends ModeleBoxes {
 
         $facturestatic=new Facture($db);
         
-        $this->info_box_head = array('text' => $langs->trans("BoxTitleLastCustomerBills",$max));
+        $this->info_box_head = array(
+				'text' => $langs->trans("BoxTitleLastCustomerBills",$max),
+				'limit'=> strlen($text)
+			);
         
         if ($user->rights->facture->lire)
         {
