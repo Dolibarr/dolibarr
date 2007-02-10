@@ -253,7 +253,7 @@ $constantes=array(
 		  );
 print_fiche_titre("Autres variables globales");
 
-print $langs->trans("FollowingVariablesCanBeUsed").'<br>';
+print $langs->trans("FollowingConstantsWillBeSubstituted").'<br>';
 print '%DOL_MAIN_URL_ROOT%, %ID%, %PRENOM%, %NOM%, %LOGIN%, %PASSWORD%, %SOCIETE%, %ADRESSE%, %CP%, %VILLE%, %PAYS%, %EMAIL%, %NAISS%, %PHOTO%, %TYPE%<br>';
 			   
 form_constantes($constantes);
