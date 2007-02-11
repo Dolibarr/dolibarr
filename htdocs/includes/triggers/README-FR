@@ -1,0 +1,9 @@
+Ce répertoire contient tous les triggers Dolibarr disponibles.
+
+Le nom de certain trigger se termine par -NORUN ce qui signigie que ceux-ci
+ne seront pas actifs et ne se seront jamais éxécutés.
+Si vous souhiatez les utiliser il suffit de rennommer ceux-ci en supprimant
+la partie -NORUN de leur nom.
+
+
+$Id$

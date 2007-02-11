@@ -1,8 +1,8 @@
-Ce répertoire contient tous les triggers disponibles.
+This directory contains all available Dolibarr triggers.
 
-Le nom de certain trigger se termine par -NORUN ce qui signigie que ceux-ci
-ne seront pas éxécutés, si vous souhiatez les utiliser il suffit de rennommer 
-ceux-ci en supprimant -NORUN de leur nom.
+Name of some triggers ends with -NORUN. This means that they are not enabled and will
+never be launched.
+If you want to use them, just rename the file name removing the -NORUN part in their name.
 
 
 $Id$
