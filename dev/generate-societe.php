@@ -39,7 +39,10 @@ include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
+$villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
+$prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
 
+	
 /*
  * Parametre
  */
@@ -65,8 +68,6 @@ while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0]; 
 print "Génère ".GEN_NUMBER_SOCIETE." sociétés\n";
 for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
 {
-    $villes = array("Auray","Baden","Vannes","Pirouville","Haguenau","Souffelweiersheim","Illkirch-Graffenstaden","Lauterbourg","Picauville","Sainte-Mère Eglise","Le Bono");
-
     print "Société $s\n";
     $soc = new Societe($db);
     $soc->nom = "Société num ".time()."$s";
@@ -91,7 +92,6 @@ for ($s = 0 ; $s < GEN_NUMBER_SOCIETE ; $s++)
             $contact = new Contact($db);
             $contact->socid = $soc->id;
             $contact->name = "NomFamille".$c;
-		    $prenoms = array("Joe","Marc","Steve","Laurent","Nico","Isabelle","Dorothee","Saby","Brigitte","Karine","Jose-Anne","Celine","Virginie");
             $contact->firstname = $prenoms[rand(0,sizeof($prenoms)-1)];
             if ( $contact->create($user) )
             {
