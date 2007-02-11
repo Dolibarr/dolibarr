@@ -315,6 +315,7 @@ class Form
 		$sql = "SELECT rowid, code, libelle, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 		$sql.= " WHERE active = 1";
+		if ($conf->use_ajax && $selected!='' && $conf->global->CODE_DE_TEST == 1) $sql.= " AND rowid = ".$selected;
 		$sql.= " ORDER BY code ASC;";
 	
 		$resql=$this->db->query($sql);
@@ -322,9 +323,11 @@ class Form
 		{
 			if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
 			{
+				$obj = $this->db->fetch_object($resql);
+				$pays_id = $obj->rowid?$obj->rowid:'';
 				print '<div>';
-				print '<input type="text" size="45" id="pays" name="pays" />';
-				print '<input type="hidden" name="pays_id" id="pays_id" value="" '.$htmloption.' />';
+				print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" />';
+				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" '.$htmloption.' />';
 				print '</div>';
 				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';

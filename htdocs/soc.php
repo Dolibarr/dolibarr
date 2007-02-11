@@ -380,7 +380,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
         print '<tr><td width="25%">'.$langs->trans('Country').'</td><td colspan="3">';
         $form->select_pays($soc->pays_id,'pays_id',$conf->use_javascript?' onChange="autofilltownfromzip_save_refresh_create()"':'');
-        if ($conf->use_javascript && $conf->use_javascript) print '<div id="hint"></div>';//utile pour afficher la recherche des pays avec ajax
+        if ($conf->use_javascript && $conf->use_ajax) print '<div id="hint"></div>';//utile pour afficher la recherche des pays avec ajax
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans('State').'</td><td colspan="3">';
