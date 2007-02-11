@@ -31,6 +31,7 @@ English Dolibarr changelog
 - Add Dolibarr triggers support on users creation/change.
 - Add Dolibarr triggers support on payments.
 - Add Dolibarr triggers on supplier and customers orders.
+- Webcalendar triggers for actions on Member module.
 - Support optionnal new javascript popup selector for date fields.
 - Support for several RSS boxes in external RSS module. Setup easier.
 - Can attach documents on Action, Orders, Invoices, Commercial proposals.
@@ -56,6 +57,7 @@ English Dolibarr changelog
 - Added a tool to build a module package.
 - Added a tool to build a theme package.
 - Traduction more complete.
+- Added skeletons for code examples.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
 
 
