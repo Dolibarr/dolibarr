@@ -35,7 +35,8 @@
 
 class Interfaces
 {
-	var $dir;		// Repertoire contenant les fichiers triggers
+	var $dir;				// Directory with all trigger files
+	var $errors=array();	// Array for errors
 	
 	/**
 	*   \brief      Constructeur.
@@ -49,20 +50,20 @@ class Interfaces
 	
 	/**
 	*   \brief      Fonction appelée lors du déclenchement d'un évènement Dolibarr.
-	*               Cette fonction déclenche tous les triggers trouvés
+	*               Cette fonction déclenche tous les triggers trouvés actifs.
 	*   \param      action      Code de l'evenement
 	*   \param      object      Objet concern
 	*   \param      user        Objet user
 	*   \param      lang        Objet lang
 	*   \param      conf        Objet conf
-	*   \return     int         Nbre de triggers déclenchés si pas d'erreurs. Nb en erreur sinon.
+	*   \return     int         Nb triggers déclenchés si pas d'erreurs, -Nb en erreur sinon.
 	*/
 	function run_triggers($action,$object,$user,$lang,$conf)
 	{
 	
 		$handle=opendir($this->dir);
 		$modules = array();
-		$nbok = $nbko = 0;
+		$nbtotal = $nbok = $nbko = 0;
 	
 		while (($file = readdir($handle))!==false)
 		{
@@ -83,13 +84,24 @@ class Interfaces
 						if ($objMod)
 						{
 				            $modules[$i] = $modName;
-							if ($objMod->run_trigger($action,$object,$user,$lang,$conf) > 0)
+							$result=$objMod->run_trigger($action,$object,$user,$lang,$conf);
+							if ($result > 0)
 							{
+								// Action OK
+								$nbtotal++;
 								$nbok++;
 							}
-							else
+							if ($result == 0)
 							{
+								// Aucune action faite
+								$nbtotal++;
+							}
+							if ($result < 0)
+							{
+								// Action KO
+								$nbtotal++;
 								$nbko++;
+								$this->errors[]=$objMod->error;
 							}
 							$i++;
 						}
@@ -97,8 +109,15 @@ class Interfaces
 				}
 			}
 		}
-		if ($nbko) return $nbko;
-		return $nbok;
+		if ($nbko)
+		{
+			dolibarr_syslog("Interfaces::run_triggers Found: ".$nbtotal.", Done: ".$nbok.", Failed: ".$nbko);
+			return -$nbko;
+		}
+		else
+		{
+			return $nbok;
+		}
 	} 
 }
 ?>

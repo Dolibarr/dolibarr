@@ -80,6 +80,9 @@ InvoiceCanceledInDolibarr=Invoice %s canceled in Dolibarr
 PaymentDoneInDolibarr=Payment %s done in Dolibarr
 CustomerPaymentDoneInDolibarr=Customer payment %s done in Dolibarr
 SupplierPaymentDoneInDolibarr=Supplier payment %s done in Dolibarr
+MemberValidatedInDolibarr=Member %s validated in Dolibarr
+MemberResiliatedInDolibarr=Member %s resiliated in Dolibarr
+MemberDeletedInDolibarr=Member %s deleted from Dolibarr
 ##### Export #####
 ExportsArea=Exports area
 AvailableFormats=Available formats

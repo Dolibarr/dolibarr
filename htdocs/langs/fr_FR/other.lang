@@ -80,6 +80,9 @@ InvoiceCanceledInDolibarr=Facture %s annulée dans Dolibarr
 PaymentDoneInDolibarr=Paiement %s réalisé dans Dolibarr
 CustomerPaymentDoneInDolibarr=Paiement client %s dans Dolibarr
 SupplierPaymentDoneInDolibarr=Paiement fournisseur %s dans Dolibarr
+MemberValidatedInDolibarr=Adhérent %s validé dans Dolibarr
+MemberResiliatedInDolibarr=Adhérent %s résilié dans Dolibarr
+MemberDeletedInDolibarr=Adhérent %s supprimé de Dolibarr
 ##### Export #####
 ExportsArea=Espace exports
 AvailableFormats=Formats disponibles

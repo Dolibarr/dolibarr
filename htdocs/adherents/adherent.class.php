@@ -85,6 +85,7 @@ class Adherent
 	var $array_options;
 
 	var $error;
+	var $errors=array();
 
 
 	/**
@@ -364,25 +365,25 @@ class Adherent
 					return -1;
 				}
 				
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
 	            // Appel des triggers
 	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	            $interface=new Interfaces($this->db);
 	            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
-				if ($result < 0) $error++;
+                if ($result < 0) $this->errors=$interface->errors;
 	            // Fin appel triggers
 	
-				if ($error)
+				if (sizeof($this->errors))
 				{
-					$this->error=$interface->error;
 					$this->db->rollback();
 					return -1;
 				}
 				else
 				{
 					$this->db->commit();
+					return $this->id;
 				}
-	
-				return $this->id;
 			}
 			else
 			{
@@ -486,11 +487,13 @@ class Adherent
 
 		if (! $notrigger)
 		{
-	        // Appel des triggers
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
+			// Appel des triggers
 	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	        $interface=new Interfaces($this->db);
 	        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) $this->errors=$interface->errors;
  	        // Fin appel triggers
 		}
 
@@ -503,7 +506,7 @@ class Adherent
 	/**
 			\brief 		Fonction qui supprime l'adhérent et les données associées
 			\param		rowid
-			\return		int			<0 si KO, >0 si OK
+			\return		int			<0 si KO, 0 = rien a effacer, >0 si OK
 	*/
 	function delete($rowid)
 	{
@@ -522,38 +525,50 @@ class Adherent
 			$resql=$this->db->query( $sql);
 			if ($resql)
 			{
-
-			}
-			else
-			{
-				dolibarr_print_error($this->db);
-				return -1;
-			}
-	
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-			dolibarr_syslog("Adherent.class::delete sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				if ($this->db->affected_rows($resql))
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
+				dolibarr_syslog("Adherent.class::delete sql=".$sql);
+				$resql=$this->db->query($sql);
+				if ($resql)
 				{
-			        // Appel des triggers
-			        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			        $interface=new Interfaces($this->db);
-			        $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
-					if ($result < 0) $error++;
-			        // Fin appel triggers
+					if ($this->db->affected_rows($resql))
+					{
+						$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
+						// Appel des triggers
+				        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				        $interface=new Interfaces($this->db);
+				        $result=$interface->run_triggers('MEMBER_DELETE',$this,$user,$langs,$conf);
+						if ($result < 0) $this->errors=$interface->errors;
+				        // Fin appel triggers
+
+						$this->db->commit();
+						return 1;
+					}
+					else
+					{
+						// Rien a effacer
+						$this->db->rollback();
+						return 0;
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					$this->db->rollback();
+					return -3;
 				}
 			}
 			else
 			{
-				dolibarr_print_error($this->db);
-				return -1;
+				$this->error=$this->db->error();
+				$this->db->rollback();
+				return -2;
 			}
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+			$this->db->rollback();
 			return -1;
 		}
 	
@@ -824,11 +839,18 @@ class Adherent
 	                }
 	            }
 
+				// Ajout de propriétés pour le triggers
+				$this->last_subscription_date=$dateop;
+				$this->last_subscription_date_start=$date;
+				$this->last_subscription_date_end=$datefin;
+				$this->last_subscription_amount=$montant;
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+				
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('MEMBER_SUBSCRIPTION',$this,$user,$langs,$conf);
-                if ($result < 0) $error++;
+                if ($result < 0) $this->errors=$interface->errors;
                 // Fin appel triggers
 
                	$this->db->commit();
@@ -869,11 +891,13 @@ class Adherent
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
 			$result=$interface->run_triggers('MEMBER_VALIDATE',$this,$user,$langs,$conf);
-			if ($result < 0) $error++;
+            if ($result < 0) $this->errors=$interface->errors;
 			// Fin appel triggers
 
 			$this->db->commit();
@@ -907,10 +931,13 @@ class Adherent
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
 	        // Appel des triggers
 	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 	        $interface=new Interfaces($this->db);
 	        $result=$interface->run_triggers('MEMBER_RESILIATE',$this,$user,$langs,$conf);
+            if ($result < 0) $this->errors=$interface->errors;
 	        // Fin appel triggers
 
 			$this->db->commit();

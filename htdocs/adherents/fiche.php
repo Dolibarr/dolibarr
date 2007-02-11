@@ -62,7 +62,11 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 {
     $adh->id = $rowid;
     $adh->fetch($rowid);
-    $adh->send_an_email($adh->email,"Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+    
+	if ($adh->email)
+	{
+		$result=$adh->send_an_email($adh->email,"Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+	}
 }
 
 if ($_POST["action"] == 'cotisation')
@@ -115,7 +119,7 @@ if ($_POST["action"] == 'cotisation')
             $db->commit();
 
 	        // Envoi mail
-	        if ($conf->global->ADHERENT_MAIL_COTIS)
+	        if ($adh->email && $conf->global->ADHERENT_MAIL_COTIS)
 	        {
 	            $adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
 	        }
@@ -183,14 +187,27 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 			$adh->array_options[$key]=addslashes($_POST[$key]);
 		}
 	}
-	if ($adh->update($user,0) >= 0)
+	$result=$adh->update($user,0);
+	if ($result >= 0 && ! sizeof($adh->errors))
 	{
 		Header("Location: fiche.php?rowid=".$adh->id);
 		exit;
 	}
 	else
 	{
-	    $errmsg=$adh->error;
+	    if ($adh->error)
+		{
+			$errmsg=$adh->error;
+		}
+		else
+		{
+
+		foreach($adh->errors as $error)
+			{
+				if ($errmsg) $errmsg.='<br>';
+				$errmsg.=$error;
+			}
+		}
 		$action='';
 	}
 }
@@ -363,21 +380,50 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
     $adh->id=$rowid;
-    $adh->validate($user);
     $adh->fetch($rowid);
-
+	
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-    if (isset($adht->mail_valid) && $adht->mail_valid)
-    {
-		$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
-    }
-    else
-    {
-		$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
-    }
-
+    $result=$adh->validate($user);
+	if ($result >= 0 && ! sizeof($adh->errors))
+	{
+		
+	}
+	else
+	{
+	    if ($adh->error)
+		{
+			$errmsg=$adh->error;
+		}
+		else
+		{
+			foreach($adh->errors as $error)
+			{
+				if ($errmsg) $errmsg.='<br>';
+				$errmsg.=$error;
+			}
+		}
+		$action='';
+	}
+	
+	// Envoi mail validation (selon param du type adherent sinon generique)
+    if ($adh->email)
+	{
+		if (isset($adht->mail_valid) && $adht->mail_valid)
+	    {
+			$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
+	    }
+	    else
+	    {
+			$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
+	    }
+		if ($result < 0)
+		{
+			$errmsg.=$adh->error;
+		}
+	}
+	
     // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
     if ($adh->add_to_abo($adht) < 0)
     {
@@ -396,8 +442,11 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-    $adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
-
+	if ($adh->email)
+	{
+		$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
+	}
+	
     // supprime l'utilisateur des divers abonnements ..
     if (! $adh->del_to_abo($adht))
     {

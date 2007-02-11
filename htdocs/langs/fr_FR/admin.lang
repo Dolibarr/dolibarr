@@ -460,6 +460,7 @@ WebCalAddEventOnCreateCompany=Ajouter évênement dans calendrier sur création de 
 WebCalAddEventOnStatusPropal=Ajouter évênement dans calendrier sur changement de statut des propositions commerciales
 WebCalAddEventOnStatusContract=Ajouter évênement dans calendrier sur changement de statut des contrats
 WebCalAddEventOnStatusBill=Ajouter évênement dans calendrier sur changement de statut des factures
+WebCalAddEventOnStatusMember=Ajouter évênement dans calendrier sur changement de statut des adhérents
 ##### Invoices #####
 BillsSetup=Configuration du module Factures
 BillsDate=Date des factures

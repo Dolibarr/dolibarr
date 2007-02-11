@@ -160,7 +160,7 @@ if ($_POST["action"] == 'add_action')
     	    $societe->fetch($_REQUEST["socid"]);
         	$actioncomm->societe = $societe;
        	}
-        if ($_POST["todo_webcal"] == 'on') $actioncomm->use_webcal=1;
+        if ($_POST["add_webcal"] == 'on') $actioncomm->use_webcal=1;
 
         // On crée l'action
         $idaction=$actioncomm->add($user);
@@ -800,7 +800,7 @@ function add_row_for_webcal_link()
             if (! $user->webcal_login)
             {
                 print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
-                print '<td><input type="checkbox" disabled name="todo_webcal">';
+                print '<td><input type="checkbox" disabled name="add_webcal">';
                 print ' '.$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
                 print '</td>';
                 print '</tr>';
@@ -810,12 +810,12 @@ function add_row_for_webcal_link()
             {
                 if ($conf->global->PHPWEBCALENDAR_SYNCRO == 'always')
                 {
-                    print '<input type="hidden" name="todo_webcal" value="on">';
+                    print '<input type="hidden" name="add_webcal" value="on">';
                 }
                 else
                 {
                     print '<tr><td width="25%" nowrap>'.$langs->trans("AddCalendarEntry").'</td>';
-                    print '<td><input type="checkbox" name="todo_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
+                    print '<td><input type="checkbox" name="add_webcal"'.(($conf->global->PHPWEBCALENDAR_SYNCRO=='always' || $conf->global->PHPWEBCALENDAR_SYNCRO=='yesbydefault')?' checked':'').'></td>';
                     print '</tr>';
                     $nbtr++;
                 }

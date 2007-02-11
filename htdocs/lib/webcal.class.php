@@ -78,11 +78,14 @@ class Webcal {
 {
         global $langs;
         
-        dolibarr_syslog("Webcal::add user=$user");
+        dolibarr_syslog("Webcal::add user=".$user);
 
         // Test si login webcal défini pour le user
-        if (! $user->webcal_login) {
-            $this->error=$langs->trans("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+        if (! $user->webcal_login)
+		{
+			$langs->load("other");
+            $this->error=$langs->transnoentities("ErrorWebcalLoginNotDefined","<a href=\"".DOL_URL_ROOT."/user/fiche.php?id=".$user->id."\">".$user->login."</a>");
+			dolibarr_syslog("Webcal::add ERROR ".$this->error);
             return -4; 
         }
         
@@ -109,12 +112,15 @@ class Webcal {
             $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
             $sql.= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";
 
-            if ($this->localdb->query($sql))
+			dolibarr_syslog("Webcal::add sql=".$sql);
+			$resql=$this->localdb->query($sql);
+            if ($resql)
            	{
             	$sql = "INSERT INTO webcal_entry_user (cal_id, cal_login, cal_status)";
             	$sql .= " VALUES ($cal_id, '$cal_create_by', 'A')";
             
-        		if ( $this->localdb->query($sql) )
+        		$resql=$this->localdb->query($sql);
+				if ($resql)
         		{
         		    // OK
                     $this->localdb->commit();
@@ -124,6 +130,7 @@ class Webcal {
         		{
                     $this->localdb->rollback();
         		    $this->error = $this->localdb->error() . '<br>' .$sql;
+					dolibarr_syslog("Webcal::add ERROR ".$this->error);
                     return -1;
         		}
         	}
@@ -131,6 +138,7 @@ class Webcal {
         	{
                 $this->localdb->rollback();
             	$this->error = $this->localdb->error() . '<br>' .$sql;
+				dolibarr_syslog("Webcal::add ERROR ".$this->error);
                 return -2;
         	}
         }
@@ -138,6 +146,7 @@ class Webcal {
         {
             $this->localdb->rollback();
         	$this->error = $this->localdb->error() . '<br>' .$sql;
+			dolibarr_syslog("Webcal::add ERROR ".$this->error);
             return -3;
         }
     }

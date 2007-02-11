@@ -458,9 +458,10 @@ WebCalTestKo2=Connection to server '%s' with user '%s' failed.
 WebCalErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be a Webcalendar database.
 WebCalAddEventOnCreateActions=Add calendar event on actions create
 WebCalAddEventOnCreateCompany=Add calendar event on companies create
-WebCalAddEventOnStatusPropal=Add calendar event on commercial proposal status change
-WebCalAddEventOnStatusContract=Add calendar event on contract status change
-WebCalAddEventOnStatusBill=Add calendar event on bill status change
+WebCalAddEventOnStatusPropal=Add calendar event on commercial proposals status change
+WebCalAddEventOnStatusContract=Add calendar event on contracts status change
+WebCalAddEventOnStatusBill=Add calendar event on bills status change
+WebCalAddEventOnStatusMember=Add calendar event on members status change
 ##### Invoices #####
 BillsSetup=Invoices module setup
 BillsDate=Invoices date

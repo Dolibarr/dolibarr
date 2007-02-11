@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -63,6 +63,7 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_PROPALSTATUS',trim($_POST["phpwebcalendar_propalstatus"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_CONTRACTSTATUS',trim($_POST["phpwebcalendar_contractstatus"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_BILLSTATUS',trim($_POST["phpwebcalendar_billstatus"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPWEBCALENDAR_MEMBERSTATUS',trim($_POST["phpwebcalendar_memberstatus"]),'chaine',0);
 
     if ($i >= 9)
     {
@@ -256,6 +257,18 @@ if ($conf->facture->enabled)
     print '<select name="phpwebcalendar_billstatus" class="flat">';
     print '<option value="always"'.($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
     print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_BILLSTATUS || $conf->global->PHPWEBCALENDAR_BILLSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
+    print '</select>';
+    print '</td></tr>';
+}
+if ($conf->adherent->enabled)
+{
+    $var=!$var;
+    print '<tr '.$bc[$var].'>';
+    print '<td>'.$langs->trans("WebCalAddEventOnStatusMember").'</td>';
+    print '<td>';
+    print '<select name="phpwebcalendar_memberstatus" class="flat">';
+    print '<option value="always"'.($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPWEBCALENDAR_MEMBERSTATUS || $conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("WebCalNever").'</option>';
     print '</select>';
     print '</td></tr>';
 }

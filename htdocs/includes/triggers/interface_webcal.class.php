@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -141,6 +141,7 @@ class InterfaceWebCal
             $this->desc=$libellecal;
         }
 
+		// Third parties
         elseif ($action == 'COMPANY_CREATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -157,6 +158,7 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
 
+		// Contracts
         elseif ($action == 'CONTRACT_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -191,6 +193,8 @@ class InterfaceWebCal
             $this->desc=$langs->trans("ContractClosedInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
+
+		// Proposals
         elseif ($action == 'PROPAL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
@@ -225,7 +229,8 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
         
-        elseif ($action == 'BILL_VALIDATE')
+        // Invoices
+		elseif ($action == 'BILL_VALIDATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
             $langs->load("other");
@@ -258,6 +263,7 @@ class InterfaceWebCal
             $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
+
         // Payments
         elseif ($action == 'PAYMENT_CUSTOMER_CREATE')
         {
@@ -283,6 +289,70 @@ class InterfaceWebCal
             $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
             $this->desc.="\n".$langs->trans("Author").': '.$user->code;
         }
+
+        // Members
+        elseif ($action == 'MEMBER_CREATE')
+        {
+		}
+        elseif ($action == 'MEMBER_VALIDATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("MemberValidatedInDolibarr",$object->id);
+            $this->desc=$langs->trans("MemberValidatedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        elseif ($action == 'MEMBER_SUBSCRIPTION')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("MemberSubscriptionInDolibarr",$object->id);
+            $this->desc=$langs->trans("MemberSubscriptionInDolibarr",$object->id);
+            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
+            $this->desc.="\n".$langs->trans("Amount").': '.$object->last_subscription_amount;
+            $this->desc.="\n".$langs->trans("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        elseif ($action == 'MEMBER_RESILIATE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("MemberResiliatedInDolibarr",$object->id);
+            $this->desc=$langs->trans("MemberResiliatedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+        elseif ($action == 'MEMBER_DELETE')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->trans("MemberDeletedInDolibarr",$object->id);
+            $this->desc=$langs->trans("MemberDeletedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
+            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+        }
+
 		// If not found
 /*
         else
@@ -301,11 +371,11 @@ class InterfaceWebCal
             if (! $webcal->localdb->ok)
             {
                 // Si la creation de l'objet n'as pu se connecter
-                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user.").";
-                $error.=" L'option de mise a jour Webcalendar a été ignorée.";
+                $error ="Dolibarr n'a pu se connecter à la base Webcalendar avec les identifiants définis (host=".$conf->webcal->db->host." dbname=".$conf->webcal->db->name." user=".$conf->webcal->db->user."). ";
+                $error.="La mise a jour Webcalendar a été ignorée.";
                 $this->error=$error;
     
-                dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
                 return -1;
             }
 
@@ -321,8 +391,12 @@ class InterfaceWebCal
             }
             else
             {
-                $this->error="Echec insertion dans webcal: ".$webcal->error;
-                return -1;
+                $error ="Echec insertion dans webcal: ".$webcal->error." ";
+                $error.="La mise a jour Webcalendar a été ignorée.";
+                $this->error=$error;
+
+                //dolibarr_syslog("interface_webcal.class.php: ".$this->error);
+                return -2;
             }
         }
 
