@@ -135,7 +135,7 @@ foreach ($AdherentType as $key => $adhtype)
 	print "<tr $bc[$var]>";
 	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->libelle.'</a></td>';
 	print '<td align="right">'.(isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($Adherents[$key])?$Adherents[$key]-$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($Adherents[$key]) && ($Adherents[$key]-$Cotisants[$key] > 0) ? $Adherents[$key]-$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($Cotisants[$key])?$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</td>';
 	print '<td align="right">'.(isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
