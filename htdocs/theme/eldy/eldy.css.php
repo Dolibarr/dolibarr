@@ -1044,3 +1044,32 @@ td.hidden {
 td.alerte {
  background: #FF99A9;
 }
+
+
+
+/* ============================================================================== */
+/*  Liste déroulante de l'autocompletion Ajax                                                               */
+/* ============================================================================== */
+
+div.autocomplete {
+      position:absolute;
+      width:250px;
+      background-color:white;
+      border:1px solid #888;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul {
+      list-style-type:none;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul li.selected { background-color: #ffb;}
+div.autocomplete ul li {
+      list-style-type:none;
+      display:block;
+      margin:0;
+      padding:2px;
+      height:16px;
+      cursor:pointer;
+    }

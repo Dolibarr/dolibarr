@@ -592,3 +592,21 @@ function newpopup(url,title) {
 	fen=window.open(tmp,title,wfeatures);
 	return false;
 }
+
+
+/*=================================================================
+	Purpose:  Récupère l'id d'une autcompletion Ajax
+	Input:    field,item
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+function ac_return(field, item){
+        // on met en place l'expression régulière
+        var regex = new RegExp('[0123456789]*-idcache', 'i');
+        // on l'applique au contenu
+        var idCache = regex.exec($(item).innerHTML);
+        //on récupère l'id
+        id = idCache[0].replace('-idcache', '');
+        // et on l'affecte au champ caché
+        $(field.name+'_id').value = id;
+}

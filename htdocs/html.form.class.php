@@ -323,11 +323,12 @@ class Form
 			if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
 			{
 				print '<div>';
-				print '<input type="text" id="search" name="search" />';
+				print '<input type="text" size="45" id="pays" name="pays" />';
+				print '<input type="hidden" name="pays_id" id="pays_id" value="" '.$htmloption.' />';
 				print '</div>';
-				print '<div id="hint"></div>';
+				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';
-				print 'new Ajax.Autocompleter(\'search\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\');';
+				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\',{method: \'post\',paramName: \'pays\',afterUpdateElement: ac_return});';
 				print '</script>';
 			}
 			else

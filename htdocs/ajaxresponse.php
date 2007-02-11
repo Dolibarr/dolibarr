@@ -47,22 +47,24 @@ if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel'])
 
 
 // Generation liste des pays
-if(isset($_POST['search']) && !empty($_POST['search']))
+if(isset($_POST['pays']) && !empty($_POST['pays']))
 {
-	print 'hello world';
 	$sql = "SELECT rowid, code, libelle, active";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
-	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $_POST['search'] . "%'";
-	$sql.= " ORDER BY code ASC;";
+	$sql.= " WHERE active = 1 AND libelle LIKE '%" . $_POST['pays'] . "%'";
+	$sql.= " ORDER BY libelle ASC;";
 	
-	$resql=$this->db->query($sql);
-	
+	$resql=$db->query($sql);
+
 	if ($resql)
 	{
 		print '<ul>';
 		while($data = mysql_fetch_assoc($resql))
 		{
-			print '<li>'.stripslashes($data['libelle']).'</li>';
+			print '<li>';
+			print stripslashes($data['libelle']);
+			print '<span class="informal" style="display:none">'.$data['rowid'].'-idcache</span>';
+			print '</li>';
 		}
 		print '</ul>';
 	}
