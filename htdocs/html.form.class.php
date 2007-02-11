@@ -327,11 +327,12 @@ class Form
 				$pays_id = $obj->rowid?$obj->rowid:'';
 				print '<div>';
 				print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" />';
+				print '<span id="indicator1" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
 				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" '.$htmloption.' />';
 				print '</div>';
 				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';
-				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\',{method: \'post\',paramName: \'pays\',afterUpdateElement: ac_return});';
+				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\',{method: \'post\',paramName: \'pays\',indicator: \'indicator1\',afterUpdateElement: ac_return});';
 				print '</script>';
 			}
 			else

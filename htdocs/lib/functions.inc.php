@@ -1088,6 +1088,18 @@ function img_allow($allow)
     }
 }
 
+/**
+        \brief      Affiche image gif (fonction générique)
+        \param      alt         Texte sur le alt de l'image
+        \param      picto       Nom de l'image a afficher
+        \return     string      Retourne tag img
+*/
+function img_gif($alt, $picto, $options='')
+{
+  global $conf,$langs;
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.gif" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
+}
+
 
 /**
         \brief      Affiche info admin
