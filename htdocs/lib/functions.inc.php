@@ -1311,7 +1311,7 @@ function dolibarr_print_error($db='',$msg='')
     else                              // Mode CLI
     {
 
-        print $langs->trans("ErrorInternalErrorDetected").": ".$argv[0]."\n";
+        print $langs->transnoentities("ErrorInternalErrorDetected").": ".$argv[0]."\n";
         $syslog.="pid=".getmypid();
     }
 
@@ -1327,10 +1327,10 @@ function dolibarr_print_error($db='',$msg='')
         }
         else                            // Mode CLI
         {
-            print $langs->trans("DatabaseTypeManager").":\n".$db->type."\n";
-            print $langs->trans("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
-            print $langs->trans("ReturnCodeLastAccess").":\n".$db->errno()."\n";
-            print $langs->trans("InformationLastAccess").":\n".$db->error()."\n";
+            print $langs->transnoentities("DatabaseTypeManager").":\n".$db->type."\n";
+            print $langs->transnoentities("RequestLastAccessInError").":\n".($db->lastqueryerror()?$db->lastqueryerror():$langs->trans("ErrorNoRequestInError"))."\n";
+            print $langs->transnoentities("ReturnCodeLastAccess").":\n".$db->errno()."\n";
+            print $langs->transnoentities("InformationLastAccess").":\n".$db->error()."\n";
 
         }
         $syslog.=", sql=".$db->lastquery();
@@ -1345,7 +1345,7 @@ function dolibarr_print_error($db='',$msg='')
         }
         else                            // Mode CLI
         {
-            print $langs->trans("Message").":\n".$msg."\n" ;
+            print $langs->transnoentities("Message").":\n".$msg."\n" ;
         }
         $syslog.=", msg=".$msg;
     }
