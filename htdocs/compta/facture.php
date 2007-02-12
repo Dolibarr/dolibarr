@@ -2408,9 +2408,12 @@ else
 				}
 
 				// Récurrente
-				if (! $conf->global->FACTURE_DISABLE_RECUR)
+				if (! $conf->global->FACTURE_DISABLE_RECUR && $fac->type == 0)
 				{
-					print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+					if (! $facidnext)
+					{
+						print '<a class="butAction" href="facture/fiche-rec.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans("ChangeIntoRepeatableInvoice").'</a>';
+					}
 				}
 
 				// Valider
@@ -2493,17 +2496,30 @@ else
 					}
 					else
 					{
-						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
-
-						// \todo
-						// Ajouter bouton "Annuler et Créer facture remplacement"
+						if ($facidnext)
+						{
+							print '<a class="butActionRefused">'.$langs->trans('ClassifyCanceled').'</span>';
+						}
+						else
+						{
+							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
+							// \todo
+							// Ajouter bouton "Annuler et Créer facture remplacement"
+						}
 					}
 				}
 
 				// Supprimer
 				if ($fac->is_erasable() && $user->rights->facture->supprimer && $_GET['action'] != 'delete')
 				{
-					print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					if ($facidnext)
+					{
+						print '<span class="butActionDeleteRefused">'.$langs->trans('Delete').'</span>';
+					}
+					else
+					{
+						print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					}
 				}
 
 				print '</div>';
