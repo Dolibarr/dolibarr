@@ -39,6 +39,7 @@ Glossaire
 Imports de masse
 Installation
 Installation / Mise a jour
+Interface OSCommerce
 Interfaces Dolibarr vers exterieur
 Interfaces Exterieur vers Dolibarr
 Langages
@@ -76,13 +77,13 @@ Module Proposition commerciales
 Normes développeur
 Module Stock
 OpenXtrem
+Outils et principes
 Permissions
 Premiers paramétrages
 Presse en ligne
 Presse papier
 Produits
 Produits 7.1
-Stocks Librairies externes et dépendances
 Projet
 Projet comptabilité légale
 Proposition commerciale
@@ -97,11 +98,12 @@ Roadmap 2.1.0
 Roadmap 2.3.0
 Roadmap 2.4.0
 Roadmap 2.6.0
-Règles de développement
 Régles de développement
 Rôle du chef de projet
 Salon Solutions Linux 2005
 Salon Solutions Linux 2006
+Salon Solutions Linux 2007
+Sauvegarder ses_données avant mise à jour
 Script facturation-calcul.php
 Script facturation-verif.php
 Script import-cdr.php
@@ -109,6 +111,7 @@ Script mailing-send.php
 Script prelevement-verif.php
 Services
 Sociétés
+Stocks Librairies externes et dépendances
 Suggestions utilisateurs
 Système de menus
 Système des boites
@@ -136,3 +139,4 @@ Table llx usergroup rights
 Table llx usergroup user
 Themes
 Téléphonie
+Utiliser ses données pour tester la dernière version
