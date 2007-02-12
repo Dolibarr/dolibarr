@@ -325,10 +325,22 @@ class Form
 			{
 				$obj = $this->db->fetch_object($resql);
 				$pays_id = $obj->rowid?$obj->rowid:'';
+				
+				// On applique un delai d'execution pour le bon fonctionnement
+				$mode = substr($htmloption,-9,6);
+				if ($mode == 'create')
+				{
+					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_create()\',\'500\')"';
+				}
+				else
+				{
+					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_edit()\',\'500\')"';
+				}
+				
 				print '<div>';
-				print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" />';
+				print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
 				print '<span id="indicator1" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
-				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" '.$htmloption.' />';
+				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" />';
 				print '</div>';
 				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';

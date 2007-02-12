@@ -610,3 +610,14 @@ function ac_return(field, item){
         // et on l'affecte au champ caché
         $(field.name+'_id').value = id;
 }
+
+/*=================================================================
+	Purpose:  Applique un délai avant execution
+	Input:    funct, delay
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+ function ac_delay(funct,delay) {
+ 	// délai exprimé en millisecondes avant le déclenchement de l'action
+  setTimeout(funct,delay);
+}
