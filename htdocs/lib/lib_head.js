@@ -35,6 +35,12 @@ function autofilltownfromzip_save_refresh_create()
     document.formsoc.submit();
 }
 
+function company_save_refresh()
+{
+    document.form_index.action.value="updateedit";
+    document.form_index.submit();
+}
+
 
 
 /*=================================================================

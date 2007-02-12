@@ -115,20 +115,6 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   /**
    * Edition des paramètres
    */
-  if ($conf->use_javascript)
-    {
-      print '
-        <script language="javascript" type="text/javascript">
-        <!--
-        function save_refresh()
-        {
-        	document.form_index.action.value="updateedit";
-        	document.form_index.submit();
-        }
-        -->
-        </script>
-        ';
-    }
     
   print '<form enctype="multipart/form-data" method="post" action="'.$_SERVER["PHP_SELF"].'" name="form_index">';
   print '<input type="hidden" name="action" value="update">';
@@ -155,7 +141,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   
   $var=!$var;
   print '<tr '.$bc[$var].'><td>'.$langs->trans("Country").'</td><td>';
-  $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="save_refresh()"':''));
+  $form->select_pays($conf->global->MAIN_INFO_SOCIETE_PAYS,'pays_id',($conf->use_javascript?' onChange="company_save_refresh()"':''));
   print '</td></tr>';
   
   $var=!$var;

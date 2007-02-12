@@ -327,14 +327,20 @@ class Form
 				$pays_id = $obj->rowid?$obj->rowid:'';
 				
 				// On applique un delai d'execution pour le bon fonctionnement
-				$mode = substr($htmloption,-9,6);
-				if ($mode == 'create')
+				$mode_create = substr($htmloption,-9,6);
+				$mode_edit = substr($htmloption,-7,4);
+				$mode_company = substr($htmloption,-10,7);
+				if ($mode_create == 'create')
 				{
 					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_create()\',\'500\')"';
 				}
-				else
+				else if ($mode_edit == 'edit')
 				{
 					$htmloption = 'onChange="ac_delay(\'autofilltownfromzip_save_refresh_edit()\',\'500\')"';
+				}
+				else if ($mode_company == 'refresh')
+				{
+					$htmloption = 'onChange="ac_delay(\'company_save_refresh()\',\'500\')"';
 				}
 				
 				print '<div>';
