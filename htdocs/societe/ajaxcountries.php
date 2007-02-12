@@ -37,6 +37,9 @@ print "\n<body>";
 // Generation liste des pays
 if(isset($_POST['pays']) && !empty($_POST['pays']))
 {
+	global $langs;
+	$langs->load("dict");
+	
 	$sql = "SELECT rowid, code, libelle, active";
 	$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 	$sql.= " WHERE active = 1 AND libelle LIKE '%" . utf8_decode($_POST['pays']) . "%'";
@@ -50,7 +53,8 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 		while($pays = $db->fetch_object($resql))
 		{
 			print '<li>';
-			print stripslashes($pays->libelle);
+			// Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+			print ($pays->code && $langs->trans("Country".$pays->code)!="Country".$pays->code?$langs->trans("Country".$pays->code):($pays->libelle!='-'?$pays->libelle:'&nbsp;'));
 			print '<span class="informal" style="display:none">'.$pays->rowid.'-idcache</span>';
 			print '</li>';
 		}
