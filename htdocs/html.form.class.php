@@ -332,7 +332,7 @@ class Form
 				print '</div>';
 				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';
-				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/ajaxresponse.php\',{method: \'post\',paramName: \'pays\',indicator: \'indicator1\',afterUpdateElement: ac_return});';
+				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/societe/ajaxcountries.php\',{method: \'post\',paramName: \'pays\',indicator: \'indicator1\',afterUpdateElement: ac_return});';
 				print '</script>';
 			}
 			else
@@ -741,7 +741,7 @@ class Form
     	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
     	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
     	print '<script type="text/javascript">';
-    	print 'var url = \''.DOL_URL_ROOT.'/ajaxresponse.php\';';
+    	print 'var url = \''.DOL_URL_ROOT.'/product/ajaxproducts.php\';';
     	print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
     	print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
     	print '</script>';

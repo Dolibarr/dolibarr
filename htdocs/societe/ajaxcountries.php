@@ -21,30 +21,18 @@
  */
 
 /**
-        \file       htdocs/ajaxresponse.php
+        \file       htdocs/societe/ajaxcountries.php
         \brief      Fichier de reponse sur evenement Ajax
         \version    $Revision$
 */
 
-require('./master.inc.php');
-
-$langs->load("products");
-$langs->load("main");
+require('../master.inc.php');
 
 //header("Content-type: text/html; charset=UTF-8");
 header("Content-type: text/html; charset=iso-8859-1");
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 print "\n<html>";
 print "\n<body>";
-
-
-// Generation liste de produits
-if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel']) && !empty($_GET['keylabel']))
-{
-	$form = new Form($db);
-	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
-}
-
 
 // Generation liste des pays
 if(isset($_POST['pays']) && !empty($_POST['pays']))
@@ -59,11 +47,11 @@ if(isset($_POST['pays']) && !empty($_POST['pays']))
 	if ($resql)
 	{
 		print '<ul>';
-		while($data = mysql_fetch_assoc($resql))
+		while($pays = $db->fetch_object($resql))
 		{
 			print '<li>';
-			print stripslashes($data['libelle']);
-			print '<span class="informal" style="display:none">'.$data['rowid'].'-idcache</span>';
+			print stripslashes($pays->libelle);
+			print '<span class="informal" style="display:none">'.$pays->rowid.'-idcache</span>';
 			print '</li>';
 		}
 		print '</ul>';
