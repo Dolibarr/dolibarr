@@ -509,11 +509,11 @@ if ($_GET["action"] == 'create')
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td>';
 		if ($_GET["afaire"] == 1 || $_GET["afaire"] == 2)
 		{
-			$html->select_date(-1,'ap',1,1,1,"action");
+			$html->select_date('','ap',1,1,0,"action");
 		}
 		else
 		{
-			$html->select_date(-1,'ap',1,1,1,"action");
+			$html->select_date('','ap',1,1,0,"action");
 		}
 		print '</td></tr>';
 
@@ -523,7 +523,7 @@ if ($_GET["action"] == 'create')
 		{
 			$html->select_date(-1,'ad',1,1,1,"action");
 		}
-		else
+		elseif ($_GET["afaire"] != 1)
 		{
 			$html->select_date(-1,'ad',1,1,1,"action");
 		}

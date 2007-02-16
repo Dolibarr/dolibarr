@@ -221,9 +221,9 @@ if ($socid > 0)
 
     print '<div class="tabsAction">';
 
-    print '<a class="tabAction" href="../../contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create">'.$langs->trans("AddContact").'</a>';
 
-    print '<a class="tabAction" href="../action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
+    print '<a class="tabAction" href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&socid='.$socid.'&afaire=1">'.$langs->trans("AddAction").'</a>';
 
 
     if ($conf->propal->enabled && defined("MAIN_MODULE_PROPALE") && MAIN_MODULE_PROPALE && $user->rights->propale->creer)
@@ -326,7 +326,7 @@ if ($socid > 0)
          *
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="9"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
+        print '<tr class="liste_titre"><td colspan="9"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -393,7 +393,7 @@ if ($socid > 0)
                 }
                 else
                 {
-                    print '<td><a href="../action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
                       $transcode=$langs->trans("Action".$obj->acode);
                       $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
                       print $libelle;
@@ -425,7 +425,7 @@ if ($socid > 0)
          *      Listes des actions effectuées
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="9"><a href="action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre"><td colspan="9"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
         $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.code, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
