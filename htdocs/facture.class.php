@@ -66,13 +66,14 @@ class Facture extends CommonObject
   var $total;
   var $note;
   var $note_public;
-  //! 0=brouillon, 1=validé
+  //! 0=brouillon, 1=validée, 2=classée payée partiellement ou complètement, 3=classée abandonnée
   var $statut;
-  //! 1 si facture payée COMPLETEMENT, 0 sinon
+  //! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
   var $paye;
   //! id facture source si facture de remplacement ou avoir
   var $fk_facture_source;
-  //! abandon, replaced, avoir, discount_vat
+  //! Fermeture partielle: discount_vat, bad_customer, abandon
+  //! Fermeture car abandon suite a remplacement: replaced
   var $close_code;	
   //! Commentaire si mis a paye sans paiement complet
   var $close_note;
@@ -852,399 +853,396 @@ class Facture extends CommonObject
     return $datelim;
   }
 
-  /**
-   *      \brief      Tag la facture comme payée complètement + appel trigger BILL_PAYED
-   *      \param      user        Objet utilisateur qui modifie
-   *		\param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
-   *		\param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
-   *      \return     int         <0 si ok, >0 si ok
-   */
-  function set_payed($user,$close_code='',$close_note='')
-  {
-    global $conf,$langs;
+	/**
+	*      \brief      Tag la facture comme payée complètement (close_code non renseigné) ou partiellement (close_code renseigné) + appel trigger BILL_PAYED
+	*      \param      user      	Objet utilisateur qui modifie
+	*	   \param      close_code	Code renseigné si on classe à payée complètement alors que paiement incomplet (cas ecompte par exemple)
+	*	   \param      close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet (cas ecompte par exemple)
+	*      \return     int         	<0 si ok, >0 si ok
+	*/
+	function set_payed($user,$close_code='',$close_note='')
+	{
+		global $conf,$langs;
 
-    dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-    $sql.= ' paye=1';
-    if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-    $sql.= ' WHERE rowid = '.$this->id;
+		dolibarr_syslog("Facture::set_payed rowid=".$this->id, LOG_DEBUG);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+		$sql.= ' fk_statut=2';
+		if (! $close_code) $sql.= ', paye=1';
+		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
+		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+		$sql.= ' WHERE rowid = '.$this->id;
 
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
-	// Fin appel triggers
-      }
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_PAYED',$this,$user,$langs,$conf);
+			// Fin appel triggers
+		}
 
-    return 1;
-  }
+		return 1;
+	}
 
-  /**
-   *      \brief      Tag la facture comme non payée complètement + appel trigger BILL_UNPAYED
-   *      \param      user        Objet utilisateur qui modifie
-   *      \return     int         <0 si ok, >0 si ok
-   */
-  function set_unpayed($user)
-  {
-    global $conf,$langs;
 
-    dolibarr_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
-    $sql.= ' SET paye=0 WHERE rowid = '.$this->id;
-    $resql = $this->db->query($sql);
+	/**
+	*      \brief      Tag la facture comme non payée complètement + appel trigger BILL_UNPAYED
+	*				   Fonction utilisée quand un paiement prélevement est refusé.
+	*      \param      user        Objet utilisateur qui modifie
+	*      \return     int         <0 si ok, >0 si ok
+	*/
+	function set_unpayed($user)
+	{
+		global $conf,$langs;
 
-    if ($resql)
-      {
-	$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+		dolibarr_syslog("Facture::set_unpayed rowid=".$this->id, LOG_DEBUG);
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' SET paye=0, fk_statut=1';
+		$sql.= ' WHERE rowid = '.$this->id;
+		$resql = $this->db->query($sql);
 
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
-	// Fin appel triggers
-      }
+		if ($resql)
+		{
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-    return 1;
-  }
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('BILL_UNPAYED',$this,$user,$langs,$conf);
+			// Fin appel triggers
+		}
 
-  /**
-   *    \brief     Tag la facture comme payer partiellement
-   *    \param     rowid       id de la facture à modifier
-   */
-  function set_paiement_started($rowid)
-  {
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture set fk_statut=2 WHERE rowid = '.$rowid;
-    $return = $this->db->query( $sql);
-  }
+		return 1;
+	}
 
-  /**
-     \brief      Tag la facture comme abandonnée + appel trigger BILL_CANCEL
-     \param      user        Objet utilisateur qui modifie
-     \param		close_code	Code renseigné si on classe à payée alors que paiement incomplet
-     \param		close_note	Commentaire renseigné si on classe à payée alors que paiement incomplet
-     \return     int         <0 si ok, >0 si ok
-  */
-  function set_canceled($user,$close_code='',$close_note='')
-  {
-    global $conf,$langs;
 
-    dolibarr_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
+	/**
+		\brief      Tag la facture comme abandonnée, sans paiement dessus (exemple car facture de remplacement) + appel trigger BILL_CANCEL
+		\param      user        Objet utilisateur qui modifie
+		\param		close_code	Code de fermeture
+		\param		close_note	Commentaire de fermeture
+		\return     int         <0 si ok, >0 si ok
+	*/
+	function set_canceled($user,$close_code='',$close_note='')
+	{
+		global $conf,$langs;
 
-    $this->db->begin();
+		dolibarr_syslog("Facture::set_canceled rowid=".$this->id, LOG_DEBUG);
+
+		$this->db->begin();
 		
-    $sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
-    $sql.= ' fk_statut=3';
-    if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
-    if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
-    $sql.= ' WHERE rowid = '.$this->id;
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+		$sql.= ' fk_statut=3';
+		if ($close_code) $sql.= ", close_code='".addslashes($close_code)."'";
+		if ($close_note) $sql.= ", close_note='".addslashes($close_note)."'";
+		$sql.= ' WHERE rowid = '.$this->id;
 
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	// On désaffecte de la facture les remises liées
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-	$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$this->id;
-	$resql=$this->db->query($sql);
-	if ($resql)
-	  {
-	    $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			// On désaffecte de la facture les remises liées
+			// car elles n'ont pas été utilisées vu que la facture est abandonnée.
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+			$sql.= ' SET fk_facture = NULL WHERE fk_facture = '.$this->id;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-	    // Appel des triggers
-	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	    $interface=new Interfaces($this->db);
-	    $result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
-	    // Fin appel triggers
-	
-	    $this->db->commit();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error()." sql=".$sql;
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error()." sql=".$sql;
-	$this->db->rollback();
-	return -2;
-      }
-  }
-
-  /**
-   *      \brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
-   *      \param     	rowid           Id de la facture à valider
-   *      \param     	user            Utilisateur qui valide la facture
-   *      \param     	soc             Objet societe
-   *      \param     	force_number	Référence à forcer de la facture
-   *		\return		int				<0 si ko, >0 si ok
-   */
-  function set_valid($rowid, $user, $soc, $force_number='')
-  {
-    global $conf,$langs;
-
-    $error = 0;
-    if ($this->brouillon)
-      {
-	$this->db->begin();
-
-	// Verification paramètres
-	if ($this->type == 1)		// si facture de remplacement
-	  {
-	    // Controle que facture source connue
-	    if ($this->fk_facture_source <= 0)
-	      {
-		$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
-		$this->db->rollback();
-		return -10;
-	      }
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_CANCEL',$this,$user,$langs,$conf);
+				// Fin appel triggers
 				
-	    // Charge la facture source a remplacer
-	    $facreplaced=new Facture($this->db);
-	    $result=$facreplaced->fetch($this->fk_facture_source);
-	    if ($result <= 0)
-	      {
-		$this->error=$langs->trans("ErrorBadInvoice");
-		$this->db->rollback();
-		return -11;
-	      }
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+	/**
+	*      \brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
+	*      \param     	rowid           Id de la facture à valider
+	*      \param     	user            Utilisateur qui valide la facture
+	*      \param     	soc             Objet societe
+	*      \param     	force_number	Référence à forcer de la facture
+	*		\return		int				<0 si ko, >0 si ok
+	*/
+	function set_valid($rowid, $user, $soc, $force_number='')
+	{
+		global $conf,$langs;
+
+		$error = 0;
+		if ($this->brouillon)
+		{
+			$this->db->begin();
+
+			// Verification paramètres
+			if ($this->type == 1)		// si facture de remplacement
+			{
+				// Controle que facture source connue
+				if ($this->fk_facture_source <= 0)
+				{
+					$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("InvoiceReplacement"));
+					$this->db->rollback();
+					return -10;
+				}
 				
-	    // Controle que facture source non deja remplacee par une autre
-	    $idreplacement=$facreplaced->getIdReplacingInvoice('validated');
-	    if ($idreplacement && $idreplacement != $rowid)
-	      {
-		$facreplacement=new Facture($this->db);
-		$facreplacement->fetch($idreplacement);
-		$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref,$facreplacement->ref);
-		$this->db->rollback();
-		return -12;
-	      }
+				// Charge la facture source a remplacer
+				$facreplaced=new Facture($this->db);
+				$result=$facreplaced->fetch($this->fk_facture_source);
+				if ($result <= 0)
+				{
+					$this->error=$langs->trans("ErrorBadInvoice");
+					$this->db->rollback();
+					return -11;
+				}
 				
-	    $result=$facreplaced->set_canceled($user,'replaced','');
-	    if ($result < 0)
-	      {
-		$this->error=$facreplaced->error." sql=".$sql;
-		$this->db->rollback();
-		return -13;
-	      }
-	  }
+				// Controle que facture source non deja remplacee par une autre
+				$idreplacement=$facreplaced->getIdReplacingInvoice('validated');
+				if ($idreplacement && $idreplacement != $rowid)
+				{
+					$facreplacement=new Facture($this->db);
+					$facreplacement->fetch($idreplacement);
+					$this->error=$langs->trans("ErrorInvoiceAlreadyReplaced",$facreplaced->ref,$facreplacement->ref);
+					$this->db->rollback();
+					return -12;
+				}
+				
+				$result=$facreplaced->set_canceled($user,'replaced','');
+				if ($result < 0)
+				{
+					$this->error=$facreplaced->error." sql=".$sql;
+					$this->db->rollback();
+					return -13;
+				}
+			}
 
 
-	// on vérifie si la facture est en numérotation provisoire
-	$facref = substr($this->ref, 1, 4);
+			// on vérifie si la facture est en numérotation provisoire
+			$facref = substr($this->ref, 1, 4);
 
-	if ($force_number)
-	  {
-	    $numfa = $force_number;
-	  }
-	else if ($facref == 'PROV')
-	  {
-	    $numfa = $this->getNextNumRef($soc);
-	  }
-	else
-	  {
-	    $numfa = $this->ref;
-	  }
+			if ($force_number)
+			{
+				$numfa = $force_number;
+			}
+			else if ($facref == 'PROV')
+			{
+				$numfa = $this->getNextNumRef($soc);
+			}
+			else
+			{
+				$numfa = $this->ref;
+			}
 
-	$this->update_price($this->id);
+			$this->update_price($this->id);
 
-	// Validation de la facture
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-	$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
-	if ($conf->global->FAC_FORCE_DATE_VALIDATION)
-	  {
-	    // Si l'option est activée, on force la date de facture
-	    $this->date=time();
-	    $datelim=$this->calculate_date_lim_reglement();
-	    $sql.= ', datef='.$this->db->idate($this->date);
-	    $sql.= ', date_lim_reglement='.$this->db->idate($datelim);
-	  }
-	$sql.= ' WHERE rowid = '.$rowid;
-	$resql=$this->db->query($sql);
-	if ($resql)
-	  {
-	    $this->facnumber=$numfa;
-	    dolibarr_syslog("Facture::set_valid() sql=$sql");
-	  }
-	else
-	  {
-	    dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=$sql");
-	    dolibarr_print_error($this->db);
-	    $error++;
-	  }
-
-
-	// On vérifie si la facture était une provisoire
-	if ($facref == 'PROV')
-	  {
-	    // On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
-	    // afin de ne pas perdre les fichiers attachés
-	    $facref = sanitize_string($this->ref);
-	    $snumfa = sanitize_string($numfa);
-	    $dirsource = $conf->facture->dir_output.'/'.$facref;
-	    $dirdest = $conf->facture->dir_output.'/'.$snumfa;
-	    if (file_exists($dirsource))
-	      {
-		dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
-			
-		if (@rename($dirsource, $dirdest))
-		  {
-		    dolibarr_syslog("Renommage ok");
-		    // Suppression ancien fichier PDF dans nouveau rep
-		    dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
-		  }
-	      }
-	  }
+			// Validation de la facture
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+			$sql.= " SET facnumber='".$numfa."', fk_statut = 1, fk_user_valid = ".$user->id;
+			if ($conf->global->FAC_FORCE_DATE_VALIDATION)
+			{
+				// Si l'option est activée, on force la date de facture
+				$this->date=time();
+				$datelim=$this->calculate_date_lim_reglement();
+				$sql.= ', datef='.$this->db->idate($this->date);
+				$sql.= ', date_lim_reglement='.$this->db->idate($datelim);
+			}
+			$sql.= ' WHERE rowid = '.$rowid;
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->facnumber=$numfa;
+				dolibarr_syslog("Facture::set_valid() sql=$sql");
+			}
+			else
+			{
+				dolibarr_syslog("Facture::set_valid() Echec update - 10 - sql=$sql");
+				dolibarr_print_error($this->db);
+				$error++;
+			}
 
 
-	/*
-	 *	Tope les lignes de remises fixes avec id des lignes de facture de remise
-	 */
-	// Plus necessaire car deja topé des état brouillon
-	/*
-	  foreach($this->lignes as $i => $line)
-	  {
-	  if (($this->lignes[$i]->info_bits & 2) == 2 && $this->lignes[$i]->fk_remise_except)
-	  {
-	  // Ligne de remise
-	  dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
+			// On vérifie si la facture était une provisoire
+			if ($facref == 'PROV')
+			{
+				// On renomme repertoire facture ($this->ref = ancienne ref, $numfa = nouvelle ref)
+				// afin de ne pas perdre les fichiers attachés
+				$facref = sanitize_string($this->ref);
+				$snumfa = sanitize_string($numfa);
+				$dirsource = $conf->facture->dir_output.'/'.$facref;
+				$dirdest = $conf->facture->dir_output.'/'.$snumfa;
+				if (file_exists($dirsource))
+				{
+					dolibarr_syslog("Facture::set_valid() renommage rep ".$dirsource." en ".$dirdest);
+					
+					if (@rename($dirsource, $dirdest))
+					{
+						dolibarr_syslog("Renommage ok");
+						// Suppression ancien fichier PDF dans nouveau rep
+						dol_delete_file($conf->facture->dir_output.'/'.$snumfa.'/'.$facref.'.*');
+					}
+				}
+			}
 
-	  // On recherche si ligne de remise pas deja attribuée
-	  $sql = 'SELECT fk_facture';
-	  $sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-	  $sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
-	  $sql.= ' FOR UPDATE';
-	  $resql=$this->db->query($sql);
-	  if ($resql)
-	  {
-	  $num=$this->db->num_rows($resql);
-	  if ($num >= 1)
-	  {
-	  dolibarr_syslog("Facture.class::set_valid: top ligne de remise ".$this->lignes[$i]->fk_remise_except." pour ligne de facture ".$this->lignes[$i]->rowid);
 
-	  // On met à jour ligne de remise comme utilisée
-	  $sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-	  $sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
-	  $sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
-	  $resql=$this->db->query($sql);
-	  if ($resql)
-	  {
+			/*
+		*	Tope les lignes de remises fixes avec id des lignes de facture de remise
+		*/
+			// Plus necessaire car deja topé des état brouillon
+			/*
+		foreach($this->lignes as $i => $line)
+		{
+		if (($this->lignes[$i]->info_bits & 2) == 2 && $this->lignes[$i]->fk_remise_except)
+		{
+		// Ligne de remise
+		dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
 
-	  }
-	  else
-	  {
-	  $this->error=$this->db->error().' sql='.$sql;
-	  dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-	  $error++;
-	  break;
-	  }
-	  }
-	  else
-	  {
-	  $error++;
-	  $this->error=$langs->trans("InvoiceDiscountNotAvailable");
-	  dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-	  break;
-	  }
-	  }
-	  else
-	  {
-	  $this->error=$this->db->error().' sql='.$sql;
-	  dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-	  $error++;
-	  break;
-	  }
-	  }
-	  }
-	*/						
+		// On recherche si ligne de remise pas deja attribuée
+		$sql = 'SELECT fk_facture';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
+		$sql.= ' FOR UPDATE';
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+		$num=$this->db->num_rows($resql);
+		if ($num >= 1)
+		{
+		dolibarr_syslog("Facture.class::set_valid: top ligne de remise ".$this->lignes[$i]->fk_remise_except." pour ligne de facture ".$this->lignes[$i]->rowid);
 
-	// On vérifie si la facture était une provisoire
-	if (! $error && $facref == 'PROV')
-	  {
-	    /*
-	     * Pour chaque produit, on met a jour indicateur nbvente
-	     * On crée ici une dénormalisation des données pas forcément utilisée.
-	     */
-	    $sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
-	    $sql.= ' WHERE fk_facture = '.$this->id;
-	    $sql.= ' AND fk_product > 0';
+		// On met à jour ligne de remise comme utilisée
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+		$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
+		$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
 
-	    $resql = $this->db->query($sql);
-	    if ($resql)
-	      {
-		$num = $this->db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
-		  {
-		    $obj = $this->db->fetch_object($resql);
-		    $sql = 'UPDATE '.MAIN_DB_PREFIX.'product SET nbvente=nbvente+1 WHERE rowid = '.$obj->fk_product;
-		    $resql2 = $this->db->query($sql);
-		    $i++;
-		  }
-	      }
-	    else
-	      {
-		$error++;
+		}
+		else
+		{
 		$this->error=$this->db->error().' sql='.$sql;
-	      }
-	  }
+		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
+		$error++;
+		break;
+		}
+		}
+		else
+		{
+		$error++;
+		$this->error=$langs->trans("InvoiceDiscountNotAvailable");
+		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
+		break;
+		}
+		}
+		else
+		{
+		$this->error=$this->db->error().' sql='.$sql;
+		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
+		$error++;
+		break;
+		}
+		}
+		}
+		*/						
 
-	if (! $error)
-	  {
-	    // Classe la société rattachée comme client
-	    $soc=new Societe($this->db);
-	    $soc->id = $this->socid;
-	    $result=$soc->set_as_client();
+			// On vérifie si la facture était une provisoire
+			if (! $error && $facref == 'PROV')
+			{
+				/*
+			* Pour chaque produit, on met a jour indicateur nbvente
+			* On crée ici une dénormalisation des données pas forcément utilisée.
+			*/
+				$sql = 'SELECT fk_product FROM '.MAIN_DB_PREFIX.'facturedet';
+				$sql.= ' WHERE fk_facture = '.$this->id;
+				$sql.= ' AND fk_product > 0';
 
-	    $this->ref = $numfa;
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$num = $this->db->num_rows($resql);
+					$i = 0;
+					while ($i < $num)
+					{
+						$obj = $this->db->fetch_object($resql);
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'product SET nbvente=nbvente+1 WHERE rowid = '.$obj->fk_product;
+						$resql2 = $this->db->query($sql);
+						$i++;
+					}
+				}
+				else
+				{
+					$error++;
+					$this->error=$this->db->error().' sql='.$sql;
+				}
+			}
 
-	    $this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
+			if (! $error)
+			{
+				// Classe la société rattachée comme client
+				$soc=new Societe($this->db);
+				$soc->id = $this->socid;
+				$result=$soc->set_as_client();
 
-	    // Appel des triggers
-	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	    $interface=new Interfaces($this->db);
-	    $result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
-	    // Fin appel triggers
+				$this->ref = $numfa;
 
-	    $this->db->commit();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }
-  }
+				$this->use_webcal=($conf->global->PHPWEBCALENDAR_BILLSTATUS=='always'?1:0);
 
-  /**
-   *
-   *
-   */
-  function set_draft($userid)
-  {
-    dolibarr_syslog("Facture::set_draft rowid=".$this->id, LOG_DEBUG);
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('BILL_VALIDATE',$this,$user,$langs,$conf);
+				// Fin appel triggers
 
-    $sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
-    $sql.= " WHERE rowid = ".$this->id;
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
 
-    if ($this->db->query($sql))
-      {
-	return 1;
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	return -1;
-      }
-  }
+	/**
+	*
+	*
+	*/
+	function set_draft($userid)
+	{
+		dolibarr_syslog("Facture::set_draft rowid=".$this->id, LOG_DEBUG);
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."facture SET fk_statut = 0";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		if ($this->db->query($sql))
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
 
 
   /**
@@ -1755,26 +1753,26 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-   * 	\brief     	Renvoie la sommes des paiements deja effectués
-   *	\return		Montant deja versé, <0 si ko
-   */
-  function getSommePaiement()
-  {
-    $sql = 'SELECT sum(amount) as amount';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture';
-    $sql.= ' WHERE fk_facture = '.$this->id;
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$obj = $this->db->fetch_object($resql);
-	return $obj->amount;
-      }
-    else
-      {
-	return -1;
-      }
-  }
+	/**
+	* 	\brief     	Renvoie la sommes des paiements deja effectués
+	*	\return		Montant deja versé, <0 si ko
+	*/
+	function getSommePaiement()
+	{
+		$sql = 'SELECT sum(amount) as amount';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement_facture';
+		$sql.= ' WHERE fk_facture = '.$this->id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			return $obj->amount;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
   /**
    * 	\brief     	Renvoie tableau des ids de facture avoir issus de la facture
@@ -1861,125 +1859,125 @@ class Facture extends CommonObject
   }
 
 
-  /**
-   *    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-   *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
-   *    \return     string        Libelle
-   */
-  function getLibStatut($mode=0,$alreadypayed=-1)
-  {
-    return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypayed);
-  }
+	/**
+	*    \brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
+	*    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	*    \return     string        Libelle
+	*/
+	function getLibStatut($mode=0,$alreadypayed=-1)
+	{
+		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypayed);
+	}
 
-  /**
-   *    	\brief      Renvoi le libellé d'un statut donné
-   *    	\param      paye          	Etat paye
-   *    	\param      statut        	Id statut
-   *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-   *		\param		alreadypayed	Montant deja payé
-   *    	\return     string        	Libellé du statut
-   */
-  function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1)
-  {
-    global $langs;
-    $langs->load('bills');
+	/**
+	*    	\brief      Renvoi le libellé d'un statut donné
+	*    	\param      paye          	Etat paye
+	*    	\param      statut        	Id statut
+	*    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*		\param		alreadypayed	Montant deja payé
+	*    	\return     string        	Libellé du statut
+	*/
+	function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1)
+	{
+		global $langs;
+		$langs->load('bills');
 
-    if ($mode == 0)
-      {
-	$prefix='';
-	if (! $paye)
-	  {
-	    if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-	    if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
-	    if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-	    if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
-	    return $langs->trans('Bill'.$prefix.'StatusStarted');
-	  }
-	else
-	  {
-	    return $langs->trans('Bill'.$prefix.'StatusPayed');
-	  }
-      }
-    if ($mode == 1)
-      {
-	$prefix='Short';
-	if (! $paye)
-	  {
-	    if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
-	    if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
-	    if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-	    if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
-	    return $langs->trans('Bill'.$prefix.'StatusStarted');
-	  }
-	else
-	  {
-	    return $langs->trans('Bill'.$prefix.'StatusPayed');
-	  }
-      }
-    if ($mode == 2)
-      {
-	$prefix='Short';
-	if (! $paye)
-	  {
-	    if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
-	    if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-	    if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-	    if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
-	    return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
-	  }
-	else
-	  {
-	    return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
-	  }
-      }
-    if ($mode == 3)
-      {
-	$prefix='Short';
-	if (! $paye)
-	  {
-	    if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
-	    if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
-	    if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
-	    if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1');
-	    return img_picto($langs->trans('BillStatusStarted'),'statut3');
-	  }
-	else
-	  {
-	    return img_picto($langs->trans('BillStatusPayed'),'statut6');
-	  }
-      }
-    if ($mode == 4)
-      {
-	if (! $paye)
-	  {
-	    if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
-	    if ($statut == 3 && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
-	    if ($statut == 3 && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
-	    if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('BillStatusNotPayed');
-	    return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
-	  }
-	else
-	  {
-	    return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
-	  }
-      }
-    if ($mode == 5)
-      {
-	$prefix='Short';
-	if (! $paye)
-	  {
-	    if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
-	    if ($statut == 3 && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
-	    if ($statut == 3 && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially').' '.img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
-	    if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('BillStatusNotPayed'),'statut1');
-	    return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('BillStatusStarted'),'statut3');
-	  }
-	else
-	  {
-	    return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
-	  }
-      }
-  }
+		if ($mode == 0)
+		{
+			$prefix='';
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusClosedUnpayed');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return $langs->trans('Bill'.$prefix.'StatusStarted');
+			}
+			else
+			{
+				return $langs->trans('Bill'.$prefix.'StatusPayed');
+			}
+		}
+		if ($mode == 1)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return $langs->trans('Bill'.$prefix.'StatusStarted');
+			}
+			else
+			{
+				return $langs->trans('Bill'.$prefix.'StatusPayed');
+			}
+		}
+		if ($mode == 2)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('Bill'.$prefix.'StatusDraft');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('StatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('Bill'.$prefix.'StatusNotPayed');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('Bill'.$prefix.'StatusStarted');
+			}
+			else
+			{
+				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
+			}
+		}
+		if ($mode == 3)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3');
+			}
+			else
+			{
+				return img_picto($langs->trans('BillStatusPayed'),'statut6');
+			}
+		}
+		if ($mode == 4)
+		{
+			if (! $paye)
+			{
+				if ($statut == 0) return img_picto($langs->trans('BillStatusDraft'),'statut0').' '.$langs->trans('BillStatusDraft');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return img_picto($langs->trans('BillStatusCanceled'),'statut5').' '.$langs->trans('Bill'.$prefix.'StatusCanceled');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7').' '.$langs->trans('Bill'.$prefix.'StatusClosedPayedPartially');
+				if ($alreadypayed <= 0) return img_picto($langs->trans('BillStatusNotPayed'),'statut1').' '.$langs->trans('BillStatusNotPayed');
+				return img_picto($langs->trans('BillStatusStarted'),'statut3').' '.$langs->trans('BillStatusStarted');
+			}
+			else
+			{
+				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
+			}
+		}
+		if ($mode == 5)
+		{
+			$prefix='Short';
+			if (! $paye)
+			{
+				if ($statut == 0) return $langs->trans('Bill'.$prefix.'StatusDraft').' '.img_picto($langs->trans('BillStatusDraft'),'statut0');
+				if (($statut == 3 || $statut == 2) && $alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusCanceled').' '.img_picto($langs->trans('BillStatusCanceled'),'statut5');
+				if (($statut == 3 || $statut == 2) && $alreadypayed > 0) return $langs->trans('Bill'.$prefix.'StatusClosedPayedPartially').' '.img_picto($langs->trans('BillStatusClosedPayedPartially'),'statut7');
+				if ($alreadypayed <= 0) return $langs->trans('Bill'.$prefix.'StatusNotPayed').' '.img_picto($langs->trans('BillStatusNotPayed'),'statut1');
+				return $langs->trans('Bill'.$prefix.'StatusStarted').' '.img_picto($langs->trans('BillStatusStarted'),'statut3');
+			}
+			else
+			{
+				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
+			}
+		}
+	}
 
   /**
    *      \brief      Renvoie la référence de facture suivante non utilisée en fonction du module

@@ -137,13 +137,15 @@ class Paiement
 		if ($this->total <> 0) // On accepte les montants négatifs pour les rejets de prélèvement
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_creat)';
-			$sql .= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
+			$sql .= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.addslashes($this->note).'\', '.$user->id.')';
 			$resql = $this->db->query($sql);
+
+			dolibarr_syslog("Paiement::Create sql=".$sql);
 			if ($resql)
 			{
 				$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'paiement');
 				
-				// Insere tableau des montants / factures
+				// Insere liens montants / factures
 				foreach ($this->amounts as $key => $amount)
 				{
 					$facid = $key;
@@ -152,7 +154,10 @@ class Paiement
 						$amount = price2num($amount);
 						$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiement_facture (fk_facture, fk_paiement, amount)';
 						$sql .= ' VALUES ('.$facid.','. $this->id.',\''.$amount.'\')';
-						if (! $this->db->query($sql) )
+
+						dolibarr_syslog("Paiement::Create sql=".$sql);
+						$resql=$this->db->query($sql);
+						if (! $resql)
 						{
 							dolibarr_syslog('Paiement::Create Erreur INSERT dans paiement_facture '.$facid);
 							$error++;
@@ -208,14 +213,14 @@ class Paiement
 
 		$this->db->begin();
 
-        // Vérifier si paiement porte pas sur une facture à l'état payée
+        // Vérifier si paiement porte pas sur une facture classée
         // Si c'est le cas, on refuse la suppression
-        $billsarray=$this->getBillsArray('paye=1');
+        $billsarray=$this->getBillsArray('fk_statut > 1');
         if (is_array($billsarray))
         {
             if (sizeof($billsarray))
             {
-                $this->error="Impossible de supprimer un paiement portant sur au moins une facture à l'état payé";
+                $this->error="Impossible de supprimer un paiement portant sur au moins une facture fermée";
                 $this->db->rollback();
                 return -1;
             }

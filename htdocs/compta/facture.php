@@ -267,18 +267,7 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 	$close_note=$_POST["close_note"];
 	if ($close_code)
 	{
-		if ($close_code == 'abandon')
-		{
-			$result = $fac->set_canceled($user,$close_code,$close_note);
-		}
-		elseif ($close_code == 'badcustomer')
-		{
-			$result = $fac->set_canceled($user,$close_code,$close_note);
-		}
-		else
-		{
-			$result = $fac->set_payed($user,$close_code,$close_note);
-		}
+		$result = $fac->set_payed($user,$close_code,$close_note);
 	}
 	else
 	{
