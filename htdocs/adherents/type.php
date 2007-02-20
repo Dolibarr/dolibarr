@@ -171,7 +171,11 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
      */
     print '<div class="tabsAction">';
 
-    print "<a class=\"butAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
+	// New type
+	if ($user->rights->adherent->configurer)
+	{
+		print "<a class=\"butAction\" href=\"type.php?action=create\">".$langs->trans("NewType")."</a>";
+	}
 
     print "</div>";
 
@@ -276,8 +280,13 @@ if ($rowid > 0)
          */
         print '<div class="tabsAction">';
 
-        print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
-
+		// Edit
+		if ($user->rights->adherent->configurer)
+		{
+			print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
+		}
+	
+		// Add member
 	    print "<a class=\"butAction\" href=\"fiche.php?action=create&typeid=".$adht->id."\">".$langs->trans("AddMember")."</a>";
 
         print "</div>";
