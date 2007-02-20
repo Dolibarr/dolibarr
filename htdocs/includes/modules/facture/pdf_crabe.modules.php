@@ -234,7 +234,7 @@ class pdf_crabe extends ModelePDFFactures
 							$prefix_prodserv = "";
                         	if($prodser->isservice())
                         		$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-				else
+							else
                         		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
 
                             $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
@@ -295,11 +295,10 @@ class pdf_crabe extends ModelePDFFactures
                     $total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
                     $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
-                    // Collecte des totaux par valeur de tva
-                    // dans le tableau tva["taux"]=total_tva
-                    $tvaligne=$fac->lignes[$i]->price * $fac->lignes[$i]->qty;
+                    // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+                    $tvaligne=$fac->lignes[$i]->total_tva;
                     if ($fac->remise_percent) $tvaligne-=($tvaligne*$fac->remise_percent)/100;
-                    $this->tva[ (string)$fac->lignes[$i]->tva_tx ] += $tvaligne;
+                    $this->tva[(string) $fac->lignes[$i]->tva_tx] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
@@ -678,6 +677,7 @@ class pdf_crabe extends ModelePDFFactures
 
         // Affichage des totaux de TVA par taux (conformément à réglementation)
         $pdf->SetFillColor(248,248,248);
+
         foreach( $this->tva as $tvakey => $tvaval )
         {
             if ($tvakey)    // On affiche pas taux 0
@@ -690,7 +690,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
 
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell($largcol2, $tab2_hl, price(abs($tvaval * (float)$tvakey / 100 )), 0, 'R', 1);
+                $pdf->MultiCell($largcol2, $tab2_hl, price(abs($tvaval)), 0, 'R', 1);
             }
         }
         if (! $this->atleastoneratenotnull)
@@ -819,6 +819,7 @@ class pdf_crabe extends ModelePDFFactures
      *      \param      pdf             Objet PDF
      *      \param      fac             Objet facture
      *      \param      showadress      0=non, 1=oui
+     *      \param      outputlang		Objet lang cible
      */
     function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
