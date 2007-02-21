@@ -994,7 +994,8 @@ class Commande extends CommonObject
   {
     $this->lignes = array();
     $sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-    $sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits, ';
+    $sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits,';
+	$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
     $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1019,6 +1020,9 @@ class Commande extends CommonObject
 	    $ligne->desc           = $objp->description;  // Description ligne
 	    $ligne->qty            = $objp->qty;
 	    $ligne->tva_tx         = $objp->tva_tx;
+	    $ligne->total_ht       = $objp->total_ht;
+	    $ligne->total_ttc      = $objp->total_ttc;
+	    $ligne->total_tva      = $objp->total_tva;
 	    $ligne->subprice       = $objp->subprice;
 	    $ligne->remise_percent = $objp->remise_percent;
 	    $ligne->price          = $objp->price;
