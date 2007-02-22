@@ -46,3 +46,5 @@ ContentsVisibleByAll=Le contenu sera visible par tous
 ContentsVisibleByAllShort=Contenu visible par tous
 ContentsNotVisibleByAllShort=Contenu non visible par tous
 CategoriesTree=Arbre des catégories
+DeleteCategory=Supprimer categorie
+ConfirmDeleteCategory=Etes vous sur de vouloir supprimer cette catégorie ?

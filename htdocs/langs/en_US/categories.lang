@@ -46,3 +46,5 @@ ContentsVisibleByAll=The contents will be visible by all
 ContentsVisibleByAllShort=Contents visible by all
 ContentsNotVisibleByAllShort=Contents not visible by all
 CategoriesTree=Categories tree
+DeleteCategory=Delete category
+ConfirmDeleteCategory=Are you sure you want to delete this category ?

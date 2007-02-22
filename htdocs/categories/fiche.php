@@ -63,11 +63,15 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	if($_POST['catMere'] != "-1")
 	$categorie->id_mere = $_POST['catMere'];
 
-
-	if (!$categorie->label || !$categorie->description)
+	if (! $categorie->label)
 	{
+		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 		$_GET["action"] = 'create';
-		$categorie->error = $langs->trans("ErrForgotField");
+	}
+	if (! $categorie->description)
+	{
+		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
+		$_GET["action"] = 'create';
 	}
 	if ($categorie->error =="")
 	{
