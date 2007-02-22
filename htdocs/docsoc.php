@@ -104,143 +104,144 @@ llxHeader();
 
 if ($socid > 0)
 {
-    $societe = new Societe($db);
-    if ($societe->fetch($socid))
-      {
-	/*
-	 * Affichage onglets
-	 */
-	$head = societe_prepare_head($societe);
-	
-	dolibarr_fiche_head($head, 'document', $societe->nom);
-	
-        // Construit liste des fichiers
-        clearstatcache();
-	
-        $totalsize=0;
-        $filearray=array();
-	
-        $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($upload_dir);
-	error_reporting($errorlevel);
-        if ($handle)
-	  {
-            $i=0;
-            while (($file = readdir($handle))!==false)
-	      {
-                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		  {
-                    $filearray[$i]=$file;
-                    $totalsize+=filesize($upload_dir."/".$file);
-                    $i++;
-		  }
-	      }
-            closedir($handle);
-	  }
-        else
-	  {
-	    //            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-	  }
-        
-        print '<table class="border"width="100%">';
-	
-	// Ref
-        print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+	$societe = new Societe($db);
+	if ($societe->fetch($socid))
+	{
+		/*
+		* Affichage onglets
+		*/
+		$head = societe_prepare_head($societe);
+		
+		dolibarr_fiche_head($head, 'document', $societe->nom);
+		
+		// Construit liste des fichiers
+		clearstatcache();
+		
+		$totalsize=0;
+		$filearray=array();
+		
+		$errorlevel=error_reporting();
+		error_reporting(0);
+		$handle=opendir($upload_dir);
+		error_reporting($errorlevel);
+		if ($handle)
+		{
+			$i=0;
+			while (($file = readdir($handle))!==false)
+			{
+				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$filearray[$i]=$file;
+					$totalsize+=filesize($upload_dir."/".$file);
+					$i++;
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+		}
+		
+		print '<table class="border"width="100%">';
+		
+		// Ref
+		print '<tr><td width="30%">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
 
-	// Prefix
-	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
-	
-	// Nbre fichiers
-	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-	
-	//Total taille
-	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-	
-        print '</table>';
-	
-        print '</div>';
-	
-        if ($mesg) { print "$mesg<br>"; }
-	
-	// Affiche formulaire upload
-	$html=new Form($db);
-	$html->form_attach_new_file('docsoc.php?socid='.$socid,$langs->trans("AddPhoto"),0);
-	
-        // Affiche liste des documents existant
-        print_titre($langs->trans("AttachedFiles"));
+		// Prefix
+		print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
+		
+		// Nbre fichiers
+		print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+		
+		//Total taille
+		print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
+		
+		print '</table>';
+		
+		print '</div>';
+		
+		if ($mesg) { print "$mesg<br>"; }
+		
+		// Affiche formulaire upload
+		$html=new Form($db);
+		$html->form_attach_new_file('docsoc.php?socid='.$socid);
+		
+		// Affiche liste des documents existant
+		print_titre($langs->trans("AttachedFiles"));
 
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
+		print '<table width="100%" class="noborder">';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
 
-        $var=true;
-        foreach($filearray as $key => $file)
-	  {
-            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-	      {
-                $var=!$var;
-                print "<tr $bc[$var]><td>";
-                echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
-                print "</td>\n";
-                print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-                print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
-                print '<td align="center">';
-                echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
-                print "</td></tr>\n";
-            }
-        }
-        print "</table><br><br>";
-	// Courriers
-	// Les courriers sont des documents speciaux generes par des scripts
-	// Voir Rodo
-        $filearray=array();	
-        $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($courrier_dir);
-	error_reporting($errorlevel);
-        if ($handle)
-	  {
-            $i=0;
-            while (($file = readdir($handle))!==false)
-	      {
-                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-		  {
-                    $filearray[$i]=$file;
-                    $i++;
-		  }
-	      }
-            closedir($handle);
-	  }       	       
+		$var=true;
+		foreach($filearray as $key => $file)
+		{
+			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+			{
+				$var=!$var;
+				print "<tr $bc[$var]><td>";
+				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
+				print "</td>\n";
+				print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
+				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+				print '<td align="center">';
+				echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
+				print "</td></tr>\n";
+			}
+		}
+		print "</table><br><br>";
 
-        print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
+		// Courriers
+		// Les courriers sont des documents speciaux generes par des scripts
+		// Voir Rodo
+		$filearray=array();	
+		$errorlevel=error_reporting();
+		error_reporting(0);
+		$handle=opendir($courrier_dir);
+		error_reporting($errorlevel);
+		if ($handle)
+		{
+			$i=0;
+			while (($file = readdir($handle))!==false)
+			{
+				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$filearray[$i]=$file;
+					$i++;
+				}
+			}
+			closedir($handle);
+		}       	       
 
-        $var=true;
-        foreach($filearray as $key => $file)
-	  {
-            if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-	      {
-                $var=!$var;
-                print "<tr $bc[$var]><td>";
-		$loc = "courrier/".get_exdir($socid);
-                echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
-                print "</td>\n";
+		print '<table width="100%" class="noborder">';
+		print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
 
-                print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-                print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
-                print "</tr>\n";
-            }
-        }
-        print "</table>";
-      }
-    else
-      {
-	dolibarr_print_error($db);
-      }
+		$var=true;
+		foreach($filearray as $key => $file)
+		{
+			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+			{
+				$var=!$var;
+				print "<tr $bc[$var]><td>";
+				$loc = "courrier/".get_exdir($socid);
+				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
+				print "</td>\n";
+
+				print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
+				print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+				print "</tr>\n";
+			}
+		}
+		print "</table>";
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 else
 {
-  dolibarr_print_error();
+	dolibarr_print_error();
 }
 
 $db->close();
