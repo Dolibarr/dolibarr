@@ -294,6 +294,7 @@ class pdf_einstein extends ModelePDFCommandes
                     $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+
                     $tvaligne=$com->lignes[$i]->total_tva;
                     if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
                     $this->tva[(string) $com->lignes[$i]->tva_tx] += $tvaligne;
@@ -597,6 +598,7 @@ class pdf_einstein extends ModelePDFCommandes
 
         // Affichage des totaux de TVA par taux (conformément à réglementation)
         $pdf->SetFillColor(248,248,248);
+
         foreach( $this->tva as $tvakey => $tvaval )
         {
             if ($tvakey)    // On affiche pas taux 0
