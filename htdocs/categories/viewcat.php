@@ -26,17 +26,41 @@
 
 require "./pre.inc.php";
 
-$user->getrights('categorie');
+if ($_REQUEST['id'] == "")
+{
+  dolibarr_print_error('','Missing parameter id');
+  exit();
+}
 
+// Securite
+$user->getrights('categorie');
 if (! $user->rights->categorie->lire)
 {
 	accessforbidden();
 }
 
-if ($_REQUEST['id'] == "")
+$mesg='';
+
+$c = new Categorie($db);
+$c->fetch($_REQUEST['id']);
+
+
+
+/*
+*	Actions
+*/
+
+if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 {
-  dolibarr_print_error('','Missing parameter id');
-  exit();
+	if ($c->remove() >= 0)
+	{
+		header("Location: ".DOL_URL_ROOT.'/categories/index.php');
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$c->error.'</div>';
+	}
 }
 
 
@@ -45,8 +69,10 @@ if ($_REQUEST['id'] == "")
  * Affichage fiche categorie
  */
 llxHeader ("","",$langs->trans("Categories"));
+$html=new Form($db);
 
-$c = new Categorie ($db, $_REQUEST['id']);
+if ($mesg) print $mesg.'<br>';
+
 
 $h = 0;
 $head = array();
@@ -58,6 +84,15 @@ $h++;
 
 dolibarr_fiche_head($head, 'card', $langs->trans("Category"));
 
+
+/*
+* Confirmation suppression
+*/
+if ($_GET['action'] == 'delete' && $resteapayer <= 0)
+{
+	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	print '<br />';
+}
 
 print '<table border="0" width="100%" class="border">';
 
@@ -98,7 +133,7 @@ if ($user->rights->categorie->creer)
 
 if ($user->rights->categorie->supprimer)
 {
-	print "<a class='butActionDelete' href='delete.php?id=".$c->id."'>".$langs->trans("Delete")."</a>";
+	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$c->id."'>".$langs->trans("Delete")."</a>";
 }
 
 print "</div>";
