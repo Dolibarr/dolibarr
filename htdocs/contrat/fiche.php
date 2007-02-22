@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -647,11 +647,6 @@ else
             print "</td></tr>";
         }
 
-/* Remplacer par fonction des contacts de contrat
-        // Commerciaux
-        print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
-        print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
-*/
         print "</table>";
 
         if ($contrat->brouillon == 1 && $user->rights->contrat->creer)
@@ -987,7 +982,10 @@ else
                 print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=close">'.$langs->trans("Close").'</a>';
             }
 
-            if ($contrat->statut == 0 && $user->rights->contrat->supprimer)
+            // On peut supprimer entite si
+			// - Droit de creer + mode brouillon (erreur creation)
+			// - Droit de supprimer
+			if (($user->rights->contrat->creer && $contrat->statut == 0) || $user->rights->contrat->supprimer)
             {
                 print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
             }
