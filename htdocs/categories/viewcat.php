@@ -88,7 +88,7 @@ dolibarr_fiche_head($head, 'card', $langs->trans("Category"));
 /*
 * Confirmation suppression
 */
-if ($_GET['action'] == 'delete' && $resteapayer <= 0)
+if ($_GET['action'] == 'delete')
 {
 	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 	print '<br />';
