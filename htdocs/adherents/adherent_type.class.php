@@ -41,17 +41,18 @@ class AdherentType
   var $libelle;
   var $statut;
   var $cotisation;  /**< Soumis à la cotisation */
-  var $error;
-  var $mail_valid;	/**< mail envoye lors de la validation */
-  var $commentaire; /**< commentaire */
   var $vote;		/** droit de vote ? */
+  var $commentaire; /**< commentaire */
+  var $mail_valid;	/**< mail envoye lors de la validation */
 
+  var $error;
+  var $db;
 
-/**
-		\brief AdherentType
-		\param DB				handler accès base de données
-*/
-
+  
+	/**
+			\brief AdherentType
+			\param DB				handler accès base de données
+	*/
   function AdherentType($DB)
     {
       $this->db = $DB ;

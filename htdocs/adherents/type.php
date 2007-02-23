@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -38,7 +38,9 @@ $user->getrights('adherent');
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 
 
-
+/*
+*	Actions
+*/
 if ($_POST["action"] == 'add') 
 {
 	if (! $user->rights->adherent->configurer) accessforbidden();
@@ -108,8 +110,6 @@ if ($_GET["action"] == 'commentaire')
 
 
 llxHeader();
-
-
 
 /* ************************************************************************** */
 /*                                                                            */
@@ -187,8 +187,6 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 /* Création d'un type adherent                                                */
 /*                                                                            */
 /* ************************************************************************** */
-
-
 if ($_GET["action"] == 'create')
 {
   $htmls = new Form($db);
@@ -335,15 +333,15 @@ if ($rowid > 0)
 		if ($conf->fckeditor->enabled)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('mail_valid','',280,'dolibarr_notes','',false);
+			$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false);
 			$doleditor->Create();
 		}
 		else
 		{
 			print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
+			print $adht->mail_valid;
 			print '</textarea>';
 		}
-
 
         print "</td></tr>";
         
