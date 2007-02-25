@@ -93,9 +93,11 @@ class Contact
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user)";
         $sql.= " VALUES (now(),";
-        if ($this->socid > 0) $sql.= " $this->socid,";
+        if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
-        $sql.= "'$this->name',$user->id)";
+        $sql.= "'".addslashes($this->name)."',";
+		$sql.= $user->id;
+		$sql.= ")";
 	   	dolibarr_syslog("Contact.class::create sql=".$sql);
 
         $resql=$this->db->query($sql);
@@ -156,9 +158,9 @@ class Contact
         }
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET ";
-        if ($this->socid > 0) $sql .= "  fk_soc='".addslashes($this->socid)."'";
-        if ($this->socid == -1) $sql .= "  fk_soc=null";
-        $sql .= ", civilite='".addslashes($this->civilite_id)."'";
+        if ($this->socid > 0) $sql .= "  fk_soc='".addslashes($this->socid)."',";
+        if ($this->socid == -1) $sql .= "  fk_soc=null,";
+        $sql .= "  civilite='".addslashes($this->civilite_id)."'";
         $sql .= ", name='".addslashes($this->name)."'";
         $sql .= ", firstname='".addslashes($this->firstname)."'";
         $sql .= ", address='".addslashes($this->address)."'";

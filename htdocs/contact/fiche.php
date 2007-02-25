@@ -71,9 +71,11 @@ if ($contactid && !$user->rights->commercial->client->voir)
 	}
 }
 
-if ($user->rights->societe->contact->creer)
+
+// Creation utilisateur depuis contact
+if ($user->rights->user->user->creer)
 {
-	if ($_GET["action"] == 'create_user' && $user->admin)
+	if ($_GET["action"] == 'create_user')
 	{
 		// Recuperation contact actuel
 		$contact = new Contact($db);
@@ -87,6 +89,7 @@ if ($user->rights->societe->contact->creer)
 	}
 }
 
+// Creation contact
 if ($user->rights->societe->contact->creer)
 {
   if ($_POST["action"] == 'add')
@@ -126,9 +129,12 @@ if ($user->rights->societe->contact->creer)
               Header("Location: fiche.php?id=".$id);
               exit;
         }
-
-        $error=array($contact->error);
-    }
+		else
+		{
+			$error=array($contact->error);
+			$_GET["action"] = 'create';
+		}
+	}
   }
 }
 
