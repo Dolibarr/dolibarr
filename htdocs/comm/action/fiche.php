@@ -72,8 +72,8 @@ if ($_POST["action"] == 'add_action')
                    $_POST["adday"],
                    $_POST["adyear"]);
 	// Si param incorrects, mktime renvoi false en PHP 5.1, -1 avant
-	if (! $datep > 0) $datep='';
-	if (! $datea > 0) $datea='';
+	if (! ($datep > 0)) $datep='';
+	if (! ($datea > 0)) $datea='';
 
     if ($_POST["contactid"])
     {
