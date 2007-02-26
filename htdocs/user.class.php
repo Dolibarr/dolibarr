@@ -836,7 +836,7 @@ class User
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
-        if (!strlen($this->code)) $this->code = $this->login;
+        $this->code = $this->login;
 
         dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
