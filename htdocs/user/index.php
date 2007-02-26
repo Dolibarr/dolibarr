@@ -56,7 +56,7 @@ llxHeader();
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.code, u.fk_societe, u.login, ".$db->pdate("u.datec")." as datec,";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login, ".$db->pdate("u.datec")." as datec,";
 $sql.= " u.ldap_sid, u.statut,";
 $sql.= " s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -83,7 +83,6 @@ if ($result)
     print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Code"),"index.php","u.code",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),"index.php","u.status",$param,"",'align="right"',$sortfield);
@@ -103,7 +102,6 @@ if ($result)
         print '</td>';
         print '<td>'.ucfirst($obj->name).'</td>';
         print '<td>'.ucfirst($obj->firstname).'</td>';
-        print '<td>'.$obj->code.'</td>';
         print "<td>";
         if ($obj->fk_societe)
         {
