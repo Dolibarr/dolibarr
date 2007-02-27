@@ -113,7 +113,7 @@ ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management
-Module1Name=Companies
+Module1Name=Third parties
 Module1Desc=Companies and contacts' management
 Module2Name=Commercial
 Module2Desc=Commercial management

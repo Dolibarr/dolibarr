@@ -69,77 +69,6 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 	}
 }
 
-/*
-if ($_POST["action"] == 'cotisation')
-{
-    $adh->id = $rowid;
-    $adh->fetch($rowid);
-
-    $reday=$_POST["reday"];
-    $remonth=$_POST["remonth"];
-    $reyear=$_POST["reyear"];
-    if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
-    {
- 		$datecotisation=dolibarr_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-    }
-    $cotisation=$_POST["cotisation"];
-
-	$accountid=$_POST["accountid"];
-	$operation=$_POST["operation"];
-	$label=$_POST["label"];
-	$num_chq=$_POST["num_chq"];
-
-	
-	if (! $datecotisation)
-	{
-		$errmsg=$langs->trans("BadDateFormat");
-	    $action='';
-	}
-
-    if (! $_POST["cotisation"] > 0)
-    {
-	    $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
-	    $action='';
-    }
-	if ($conf->global->ADHERENT_BANK_USE)
-	{
-		if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("FinancialAccount"));
-		if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("PaymentMode"));
-		if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->trans("Label"));
-		if ($errmsg) $action='';
-	}
-	
-    if ($action)
-    {
-        $db->begin();
-
-		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq);
-		
-        if ($crowid > 0)
-        {
-            $db->commit();
-
-	        // Envoi mail
-	        if ($adh->email && $conf->global->ADHERENT_MAIL_COTIS)
-	        {
-	            $adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
-	        }
-
-		    $_POST["cotisation"]='';
-			$_POST["accountid"]='';
-			$_POST["operation"]='';
-			$_POST["label"]='';
-			$_POST["num_chq"]='';
-        }
-        else
-        {
-            $db->rollback();
-            dolibarr_print_error($db,$adh->error);
-        }
-    }
-}
-*/
-
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$datenaiss='';
@@ -788,35 +717,6 @@ if ($action == 'create')
 
     print "</table>\n";
     print '<br>';
-
-/*
-    // Boite cotisations
-    print '<table class="border" width="100%">';
-    print "<tr><td>".$langs->trans("DateSubscription")."</td><td>\n";
-    $htmls->select_date('','','','','','add');
-    print "</td></tr>\n";
-
-    if ($conf->global->ADHERENT_BANK_USE)
-    {
-        print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-        $htmls->select_types_paiements('','operation');
-        print "</td></tr>\n";
-
-        print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
-        $htmls->select_comptes('','accountid');
-        print "</td></tr>\n";
-
-        print '<tr><td>'.$langs->trans("Numero").'</td><td>';
-        print '<input name="num_chq" type="text" size="6">';
-        print "</td></tr>\n";
-
-        print '<tr><td>'.$langs->trans("Label").'</td><td><input name="label" type="text" size="50" value="'.$langs->trans("Subscription").' " ></td></tr>';
-    }
-    print '<tr><td>'.$langs->trans("Subscription").'</td><td><input type="text" name="cotisation" size="6"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-
-    print "</table>\n";
-    print '<br>';
-*/    
 
     print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
 

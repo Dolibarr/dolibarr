@@ -6,6 +6,7 @@ EMailings=Mailings
 MailCard=Fiche mailing
 MailTargets=Destinataires
 MailRecipients=Destinataires
+MailRecipient=Destinataire
 MailTitle=Titre
 MailFrom=Émetteur
 MailReply=Réponse à

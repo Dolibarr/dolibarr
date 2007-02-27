@@ -95,9 +95,9 @@ if ($_POST["action"] == 'update')
 
 if ($_GET["action"] == 'delete')
 {
-	$adh = new Adherent($db);
-	$adh->delete($rowid);
-	Header("Location: liste.php");
+	$adht = new AdherentType($db);
+	$adht->delete($rowid);
+	Header("Location: ".$_SERVER["PHP_SELF"]);
 	exit;
 }
 
@@ -284,9 +284,15 @@ if ($rowid > 0)
 			print "<a class=\"butAction\" href=\"type.php?action=edit&amp;rowid=".$adht->id."\">".$langs->trans("Edit")."</a>";
 		}
 	
-		// Add member
+		// Add
 	    print "<a class=\"butAction\" href=\"fiche.php?action=create&typeid=".$adht->id."\">".$langs->trans("AddMember")."</a>";
 
+		// Delete
+		if ($user->rights->adherent->configurer)
+		{
+			print "<a class=\"butActionDelete\" href=\"type.php?action=delete&rowid=".$adht->id."\">".$langs->trans("DeleteType")."</a>";
+		}
+		
         print "</div>";
     }
     

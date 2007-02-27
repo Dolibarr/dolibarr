@@ -76,6 +76,7 @@ NewMemberType=Nouveau type de membre
 WelcomeEMail=Email d'accueil
 SubscriptionRequired=Soumis à cotisation
 EditType=Édition du type d'adhérent
+DeleteType=Supprimer
 VoteAllowed=Vote autorisé
 Physical=Physique
 Moral=Morale

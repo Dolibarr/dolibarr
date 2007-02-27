@@ -112,8 +112,8 @@ ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
 # Modules
 Module0Name=Utilisateurs & groupes
 Module0Desc=Gestion des utilisateurs et groupes
-Module1Name=Sociétés
-Module1Desc=Gestion des sociétés et contacts
+Module1Name=Tiers
+Module1Desc=Gestion des tiers (sociétés, particuliers) et contacts
 Module2Name=Commercial
 Module2Desc=Gestion commerciale
 Module10Name=Comptabilité

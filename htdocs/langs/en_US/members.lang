@@ -76,6 +76,7 @@ NewMemberType=New member type
 WelcomeEMail=Welcome e-mail
 SubscriptionRequired=Subscription required
 EditType=Edit member type
+DeleteType=Delete
 VoteAllowed=Vote allowed
 Physical=Physical
 Moral=Moral

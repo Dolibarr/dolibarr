@@ -93,18 +93,18 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 
 	if ($adht->cotisation)
 	{
+		if ($conf->global->ADHERENT_BANK_USE)
+		{
+			if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+			if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+			if ($errmsg) $action='addsubscription';
+		}
 	    if (! $_POST["cotisation"] > 0)
 	    {
 		    $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
 		    $action='addsubscription';
 	    }
-		if ($conf->global->ADHERENT_BANK_USE)
-		{
-			if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
-			if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-			if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-			if ($errmsg) $action='addsubscription';
-		}
 	}
 	
     if ($action=='cotisation')
