@@ -47,6 +47,7 @@ $user->getrights('adherent');
 
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
+$adht = new AdherentType($db);
 $errmsg='';
 
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
@@ -64,9 +65,8 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
     $langs->load("banks");
 	
 	$adh->id = $rowid;
-    $adh->fetch($rowid);
+    $result=$adh->fetch($rowid);
 
-	$adht = new AdherentType($db);
 	$adht->fetch($adh->typeid);
 
     $reday=$_POST["reday"];
@@ -140,12 +140,14 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 
 
 
-/*
- * 
- */
+/* ************************************************************************** */
+/*                                                                            */
+/* Mode affichage                                                             */
+/*                                                                            */
+/* ************************************************************************** */
 
 llxHeader();
-
+$html = new Form($db);
 
 if ($errmsg)
 {
@@ -153,26 +155,14 @@ if ($errmsg)
     print "\n";
 }
 
-// fetch optionals attributes and labels
-$adho->fetch_optionals();
-
-
-
-/* ************************************************************************** */
-/*                                                                            */
-/* Mode affichage                                                             */
-/*                                                                            */
-/* ************************************************************************** */
-
-$adh = new Adherent($db);
 $adh->id = $rowid;
-$adh->fetch($rowid);
-$adh->fetch_optionals($rowid);
+$result=$adh->fetch($rowid);
+$result=$adh->fetch_optionals($rowid);
 
-$adht = new AdherentType($db);
 $adht->fetch($adh->typeid);
 
-$html = new Form($db);
+// fetch optionals attributes and labels
+$adho->fetch_optionals();
 
 
 /*
@@ -211,7 +201,7 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
 
 // Type
-print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
+print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
 
 // Status
 print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
@@ -420,7 +410,7 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	{
 		$s1='<input name="sendmail" type="checkbox"'.($conf->global->ADHERENT_MAIL_COTIS?' checked="true"':'').'>';
 		$s2=$langs->trans("MailFrom").': <b>'.$conf->global->ADHERENT_MAIL_FROM.'</b><br>';
-		$s2.=$langs->trans("MailTo").': <b>'.$adh->email.'</b>';
+		$s2.=$langs->trans("MailRecipient").': <b>'.$adh->email.'</b>';
 		//$s2.='<br>'.$langs->trans("Content").': '.nl2br($conf->global->ADHERENT_MAIL_COTIS);
 		print $html->textwithhelp($s1,$s2,1);
 	}

@@ -949,7 +949,7 @@ if ($rowid && $action != 'edit')
 	print '<tr><td>'.$langs->trans("Password").'</td><td>'.eregi_replace('.','*',$adh->pass).'</td></tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
+	print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adht->getNomUrl(1)."</td></tr>\n";
     
     // Morphy
     print '<tr><td>'.$langs->trans("Person").'</td><td class="valeur">'.$adh->getmorphylib().'</td></tr>';
