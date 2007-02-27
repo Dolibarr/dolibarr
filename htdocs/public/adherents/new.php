@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- *                         Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2001-2002 Jean-Louis Bergamo   <jlb@j1b.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -23,7 +23,7 @@
 /**
         \file       htdocs/public/adherents/new.php
         \ingroup    adherent
-        \brief      Page liste des nouveaux adherents
+        \brief      formulaire exemple pour inscription publique d'un nouveau membre
         \version    $Revision$
 */
 
@@ -37,88 +37,111 @@ $errmsg='';
 $num=0;
 $error=0;
 
+
+
+/*
+* Actions
+*/
 if ($_POST["action"] == 'add') 
 {
-  // test si le login existe deja
-  $login=$_POST["login"];
-  if(!isset($_POST["login"]) || $_POST["login"]=''){
-    $error+=1;
-    $errmsg .="Login $login vide. Veuillez en positionner un<BR>\n";
-  }
-  $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
-  $result = $db->query($sql);
-  if ($result) {
-    $num = $db->num_rows();
-  }
-  if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]==''){
-    $error+=1;
-    $errmsg .="Nom et Prenom obligatoires<BR>\n";
-  }
-  if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"])){
-    $error+=1;
-    $errmsg .="Adresse Email invalide<BR>\n";
-  }
-  if ($num !=0){
-    $error+=1;
-    $errmsg .="Login ".$login." deja utilise. Veuillez en changer<BR>\n";
-  }
-  if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"]){
-    $error+=1;
-    $errmsg .="Password invalide<BR>\n";
-  }
-  if (isset($_POST["naiss"]) && $_POST["naiss"] !=''){
-    if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$_POST["naiss"])){
-      $error+=1;
-      $errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
-    }
-  }
-  if (isset($public)){
-    $public=1;
-  }else{
-    $public=0;
-  }
-  if (!$error){
-    // email a peu pres correct et le login n'existe pas
-    $adh = new Adherent($db);
-    $adh->statut      = -1;
-    $adh->public      = $_POST["public"];
-    $adh->prenom      = $_POST["prenom"];
-    $adh->nom         = $_POST["nom"];  
-    $adh->societe     = $_POST["societe"];
-    $adh->adresse     = $_POST["adresse"];
-    $adh->cp          = $_POST["cp"];
-    $adh->ville       = $_POST["ville"];
-    $adh->email       = $_POST["email"];
-    $adh->login       = $login;
-    $adh->pass        = $_POST["pass1"];
-    $adh->naiss       = $_POST["naiss"];
-    $adh->photo       = $_POST["photo"];
-    $adh->note        = $_POST["note"];
-    $adh->pays        = $_POST["pays"];
-    $adh->typeid      = $_POST["type"];
-    $adh->commentaire = $_POST["comment"];
-    $adh->morphy      = $_POST["morphy"];
-    
-    foreach($_POST as $key => $value){
-      if (ereg("^options_",$key)){
-	$adh->array_options[$key]=$_POST[$key];
-      }
-    }
-    if ($adh->create($user->id) ) 
-      {	  
-	if ($cotisation > 0)
-	  {     
-	    $adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
-	  }
-	// Envoi d'un Email de confirmation au nouvel adherent
-	$adh->send_an_email($email,$conf->adherent->email_new,$conf->adherent->email_new_subject);
-	Header("Location: new.php?action=added");
-      }
-  }
+	// test si le login existe deja
+	$login=$_POST["login"];
+	if(!isset($_POST["login"]) || $_POST["login"]=''){
+		$error+=1;
+		$errmsg .="Login $login vide. Veuillez en positionner un<BR>\n";
+	}
+	$sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."';";
+	$result = $db->query($sql);
+	if ($result) {
+		$num = $db->num_rows();
+	}
+	if (!isset($_POST["nom"]) || !isset($_POST["prenom"]) || $_POST["prenom"]=='' || $_POST["nom"]==''){
+		$error+=1;
+		$errmsg .="Nom et Prenom obligatoires<BR>\n";
+	}
+	if (!isset($_POST["email"]) || $_POST["email"] == '' || !ereg('@',$_POST["email"])){
+		$error+=1;
+		$errmsg .="Adresse Email invalide<BR>\n";
+	}
+	if ($num !=0){
+		$error+=1;
+		$errmsg .="Login ".$login." deja utilise. Veuillez en changer<BR>\n";
+	}
+	if (!isset($_POST["pass1"]) || !isset($_POST["pass2"]) || $_POST["pass1"] == '' || $_POST["pass2"] == '' || $_POST["pass1"]!=$_POST["pass2"]){
+		$error+=1;
+		$errmsg .="Password invalide<BR>\n";
+	}
+	if (isset($_POST["naiss"]) && $_POST["naiss"] !=''){
+		if (!preg_match("/^\d\d\d\d-\d\d-\d\d$/",$_POST["naiss"])){
+			$error+=1;
+			$errmsg .="Date de naissance invalide (Format AAAA-MM-JJ)<BR>\n";
+		}
+	}
+	if (isset($public)){
+		$public=1;
+	}else{
+		$public=0;
+	}
+	
+	if (! $error)
+	{
+		// email a peu pres correct et le login n'existe pas
+		$adh = new Adherent($db);
+		$adh->statut      = -1;
+		$adh->public      = $_POST["public"];
+		$adh->prenom      = $_POST["prenom"];
+		$adh->nom         = $_POST["nom"];  
+		$adh->societe     = $_POST["societe"];
+		$adh->adresse     = $_POST["adresse"];
+		$adh->cp          = $_POST["cp"];
+		$adh->ville       = $_POST["ville"];
+		$adh->email       = $_POST["email"];
+		$adh->login       = $login;
+		$adh->pass        = $_POST["pass1"];
+		$adh->naiss       = $_POST["naiss"];
+		$adh->photo       = $_POST["photo"];
+		$adh->note        = $_POST["note"];
+		$adh->pays        = $_POST["pays"];
+		$adh->typeid      = $_POST["type"];
+		$adh->commentaire = $_POST["comment"];
+		$adh->morphy      = $_POST["morphy"];
+		
+		foreach($_POST as $key => $value){
+			if (ereg("^options_",$key)){
+				$adh->array_options[$key]=$_POST[$key];
+			}
+		}
+		
+		$result=$adh->create($user->id);
+		if ($result > 0) 
+		{	  
+			if ($cotisation > 0)
+			{     
+				$adh->cotisation(mktime(12, 0 , 0, $remonth, $reday, $reyear), $cotisation);
+			}
+
+			// Envoi d'un Email de confirmation au nouvel adherent
+			$adh->send_an_email($email,$conf->adherent->email_new,$conf->adherent->email_new_subject);
+			Header("Location: new.php?action=added");
+			exit;
+		}
+	}
+}
+
+// On vient de s'inscrire avec succes
+if (isset($_GET["action"]) && $_GET["action"] == 'added' && $conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION)
+{
+	// Si conf->global->MEMBER_URL_REDIRECT_SBUSCRIPTION defini, faire redirect sur page.
+	Header("Location: ".$conf->global->MEMBER_URL_REDIRECT_SUBSCRIPTION);
+	exit;
 }
 
 
+
 llxHeaderVierge();
+$html = new Form($db);
+
+print_titre("Nouvel adhérent");
 
 
 /* ************************************************************************** */
@@ -127,28 +150,34 @@ llxHeaderVierge();
 /*                                                                            */
 /* ************************************************************************** */
 
+$adht = new AdherentType($db);
+
 // fetch optionals attributes and labels
 $adho->fetch_optionals();
 
-if (isset($action) && $action== 'added')
+if (isset($_GET["action"]) && $_GET["action"] == 'added')
 {
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  print "<tr><td><FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT></td></tr>\n";
-  print '</table>';
-}
-if ($errmsg != ''){
-  print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
-  
-  print '<th>Erreur dans le formulaire</th>';
-  print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
-  //  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
-  print '</table>';
+	// Si on a pas été redirigé
+	print '<br>';
+	print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	print "<tr><td><FONT COLOR=\"blue\">Nouvel Adhérent ajouté. En attente de validation</FONT></td></tr>\n";
+	print '</table>';
 }
 
-print_titre("Nouvel adhérent");
-if (defined("ADH_TEXT_NEW_ADH") && ADH_TEXT_NEW_ADH !=''){
-  print ADH_TEXT_NEW_ADH;
-  print "<BR>\n";
+if ($errmsg != '')
+{
+	print '<br>';
+	print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
+	print '<th>Erreur dans le formulaire</th>';
+	print "<tr><td class=\"delete\"><b>$errmsg</b></td></tr>\n";
+	//  print "<FONT COLOR=\"red\">$errmsg</FONT>\n";
+	print '</table>';
+}
+
+if (defined("ADH_TEXT_NEW_ADH") && ADH_TEXT_NEW_ADH !='')
+{
+	print ADH_TEXT_NEW_ADH;
+	print "<BR>\n";
 }
 print '<ul>';
 print '<li> Les champs Commencant par un <FONT COLOR="red">*</FONT> sont obligatoire';
@@ -160,11 +189,9 @@ print '<table cellspacing="0" border="1" width="100%" cellpadding="3">';
 
 print '<input type="hidden" name="action" value="add">';
 
-$htmls = new Form($db);
-$adht = new AdherentType($db);
 
 print '<tr><td width="15%">'.$langs->trans("Type").'</td><td width="35%">';
-$htmls->select_array("type",  $adht->liste_array());
+$html->select_array("type",  $adht->liste_array());
 print "</td>\n";
 
 print '<td width="50%" valign="top">'.$langs->trans("Comments").' :</td></tr>';
@@ -173,7 +200,7 @@ $morphys["phy"] = "Physique";
 $morphys["mor"] = "Morale";
 
 print "<tr><td>Personne</td><td>\n";
-$htmls->select_array("morphy",  $morphys);
+$html->select_array("morphy",  $morphys);
 print "</td>\n";
 
 print '<td valign="top" rowspan="14"><textarea name="comment" wrap="soft" cols="40" rows="25">'.$comment.'</textarea></td></tr>';
