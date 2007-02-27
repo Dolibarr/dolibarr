@@ -194,7 +194,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	{
 		if (isset($_POST["password"]) && $_POST["password"] !='')
 		{
-			$ret=$edituser->password($user,$password,$conf->password_encrypted,1);
+			$ret=$edituser->password($user,$password,$conf->password_encrypted,0);
 			if ($ret < 0)
 			{
 				$message.='<div class="error">'.$edituser->error.'</div>';
@@ -333,7 +333,7 @@ if ($_POST["action"] == 'add')
         {
 			if (isset($_POST['password']) && trim($_POST['password']))
 			{
-				$adh->password($user,trim($_POST['password']),$conf->password_encrypted);
+				$adh->password($user,trim($_POST['password']),0);
 			}
 
 			if ($cotisation > 0)
@@ -1023,7 +1023,7 @@ if ($rowid && $action != 'edit')
     }
     
     // Envoi fiche par mail
-    if ($adh->statut >= 1)
+    if ($adh->statut >= 1 && $adh->email)
 	{
     	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
     }

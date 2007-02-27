@@ -165,65 +165,65 @@ function sanitize_string($str)
 */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
-  global $conf,$user,$langs;
+	global $conf,$user,$langs;
 
-  if ($conf->syslog->enabled)
-    {
-      if ($level > SYSLOG_LEVEL) return;
-      
-      // Ajout user a la log
-      $login='???';
-      if (is_object($user) && $user->id) $login=$user->login;
-      $message=sprintf("%-8s",$login)." ".$message;
-      
-      if (defined("SYSLOG_FILE") && SYSLOG_FILE)
-        {
-	  if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
-	  else $file=fopen(SYSLOG_FILE,"a+");
-	  if ($file)
-            {
-	      fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
-	      fclose($file);
-            }
-	  elseif (! defined("SYSLOG_FILE_NO_ERROR"))
-            {
-	      $langs->load("main");
-	      print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
-            }
-        }
-      else
-        {
-	  //define_syslog_variables(); déjà définit dans master.inc.php
-	  
-	  if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
-            {
-	      $facility = MAIN_SYSLOG_FACILITY;
-            }
-	  elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
-            {
-	      // Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
-	      $facility = constant(SYSLOG_FACILITY);
-            }
-	  else
-            {
-	      $facility = LOG_USER;
-            }
-	  
-	  openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
-	  
-	  if (! $level)
-            {
-	      syslog(LOG_ERR, $message);
-            }
-	  else
-            {
-	      syslog($level, $message);
-            }
-	  
-	  closelog();
-        }
-    }
+	if ($conf->syslog->enabled)
+	{
+		if ($level > SYSLOG_LEVEL) return;
+		
+		// Ajout user a la log
+		$login='???';
+		if (is_object($user) && $user->id) $login=$user->login;
+		$message=sprintf("%-8s",$login)." ".$message;
+		
+		if (defined("SYSLOG_FILE") && SYSLOG_FILE)
+		{
+			if (defined("SYSLOG_FILE_NO_ERROR")) $file=@fopen(SYSLOG_FILE,"a+");
+			else $file=fopen(SYSLOG_FILE,"a+");
+			if ($file)
+			{
+				fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
+				fclose($file);
+			}
+			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
+			{
+				$langs->load("main");
+				print $langs->trans("ErrorFailedToOpenFile",SYSLOG_FILE);
+			}
+		}
+		else
+		{
+			//define_syslog_variables(); déjà définit dans master.inc.php
+			if (defined("MAIN_SYSLOG_FACILITY") && MAIN_SYSLOG_FACILITY)
+			{
+				$facility = MAIN_SYSLOG_FACILITY;
+			}
+			elseif (defined("SYSLOG_FACILITY") && SYSLOG_FACILITY && defined(SYSLOG_FACILITY))
+			{
+				// Exemple: SYSLOG_FACILITY vaut LOG_USER qui vaut 8. On a besoin de 8 dans $facility.
+				$facility = constant(SYSLOG_FACILITY);
+			}
+			else
+			{
+				$facility = LOG_USER;
+			}
+			
+			openlog("dolibarr", LOG_PID | LOG_PERROR, $facility);
+			
+			if (! $level)
+			{
+				syslog(LOG_ERR, $message);
+			}
+			else
+			{
+				syslog($level, $message);
+			}
+			
+			closelog();
+		}
+	}
 }
+
 /**
    \brief      Affiche le header d'une fiche
    \param	    links		Tableau de titre d'onglets
