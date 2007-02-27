@@ -105,7 +105,7 @@ if ($resql)
         print "<td><a href=\"".DOL_URL_ROOT."/user/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowUser"),"user")." ".$obj->firstname." ".$obj->name."</a>";
         if ($obj->admin) print img_picto($langs->trans("Administrator"),'star');
         print "</td>";
-        print "<td align=\"left\">".$obj->login.' ('.$obj->code.')</td>';
+        print "<td align=\"left\">".$obj->login.'</td>';
         print "<td>";
         if ($obj->fk_societe)
         {

@@ -348,7 +348,7 @@ class Adherent
 		$sql.= " '".addslashes($this->login)."'";
 		$sql.= ")";
 
-		dolibarr_syslog("Adherent.class::create sql=".$sql);
+		dolibarr_syslog("Adherent::create sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -373,11 +373,10 @@ class Adherent
 	            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
                 if ($result < 0) $this->errors=$interface->errors;
 	            // Fin appel triggers
-	
 				if (sizeof($this->errors))
 				{
 					$this->db->rollback();
-					return -1;
+					return -3;
 				}
 				else
 				{
@@ -389,7 +388,7 @@ class Adherent
 			{
 				$this->error='Failed to get last insert id';
 				$this->db->rollback();
-				return -1;
+				return -2;
 			}				
 		}
 		else
@@ -411,7 +410,7 @@ class Adherent
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Adherent.class::update user=".$user->id." notrigger=".$notrigger);
+		dolibarr_syslog("Adherent::update user=".$user->id." notrigger=".$notrigger);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -469,17 +468,18 @@ class Adherent
 				$attr=substr($key,8);
 				$sql.=",$attr";
 			}
-			$sql .= ") VALUES ($this->id";
+			$sql .= ") VALUES (".$this->id;
 			foreach($this->array_options as $key => $value)
 			{
 				$sql.=",'".$this->array_options[$key]."'";
 			}
-			$sql.=");";
+			$sql.=")";
 
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
 				$this->error=$this->db->error();
+				dolibarr_syslog("Adherent::update ".$this->error);
 				$this->db->rollback();
 				return -2;
 			}
@@ -516,17 +516,17 @@ class Adherent
 		// Suppression options
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
 		
-		dolibarr_syslog("Adherent.class::delete sql=".$sql);
+		dolibarr_syslog("Adherent::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE fk_adherent = ".$rowid;
-			dolibarr_syslog("Adherent.class::delete sql=".$sql);
+			dolibarr_syslog("Adherent::delete sql=".$sql);
 			$resql=$this->db->query( $sql);
 			if ($resql)
 			{
 				$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent WHERE rowid = ".$rowid;
-				dolibarr_syslog("Adherent.class::delete sql=".$sql);
+				dolibarr_syslog("Adherent::delete sql=".$sql);
 				$resql=$this->db->query($sql);
 				if ($resql)
 				{
@@ -576,6 +576,73 @@ class Adherent
 	
 	}
 
+	
+		/**
+	 *    \brief     Change le mot de passe d'un utilisateur
+	 *    \param     user             Object user de l'utilisateur qui fait la modification
+	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
+	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+	 *    \return    string           mot de passe, < 0 si erreur
+	 */
+    function password($user, $password='', $isencrypted=0)
+    {
+        global $langs;
+
+        dolibarr_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
+
+        // Si nouveau mot de passe non communiqué, on génère par module
+        if (! $password)
+        {
+        	// TODO Mettre appel au module de génération de mot de passe
+        	$password=creer_pass_aleatoire_1('');
+        	//$password=creer_pass_aleatoire_2('');
+        }
+
+		// Cryptage mot de passe
+        if ($isencrypted)
+        {
+        	// Crypte avec systeme encodage par defaut du PHP
+            //$sqlpass = crypt($password, makesalt());
+            $password_indatabase = md5($password);
+        }
+        else
+        {
+            $password_indatabase = $password;
+        }
+
+		// Mise a jour
+        $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".addslashes($password_indatabase)."'";
+        $sql.= " WHERE rowid = ".$this->id;
+
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->affected_rows())
+            {
+		        $this->pass=$password;
+		        $this->pass_indatabase=$password_indatabase;
+
+                // Appel des triggers
+                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+                $interface=new Interfaces($this->db);
+                $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$lang,$conf);
+                if ($result < 0) $this->errors=$interface->errors;
+                // Fin appel triggers
+
+                return $this->pass;
+            }
+            else {
+                return -2;
+            }
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+            return -1;
+        }
+    }
+	
+	
 	/**
 	*		\brief      Fonction qui récupére l'adhérent en donnant son login
 	*		\param	    login		login de l'adhérent
@@ -624,7 +691,7 @@ class Adherent
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
-		dolibarr_syslog("Adherent.class::fetch sql=".$sql);
+		dolibarr_syslog("Adherent::fetch sql=".$sql);
 		
         $resql=$this->db->query($sql);
         if ($resql)
@@ -780,7 +847,7 @@ class Adherent
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
         $sql .= " VALUES (".$this->id.", now(), ".$this->db->idate($date).", ".$montant.")";
 
-        dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
+        dolibarr_syslog("Adherent::cotisation sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -791,7 +858,7 @@ class Adherent
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
             $sql.= " WHERE rowid =". $this->id;
             
-            dolibarr_syslog("Adherent.class::cotisation sql=".$sql);
+            dolibarr_syslog("Adherent::cotisation sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -859,7 +926,7 @@ class Adherent
             else
             {
                 $this->error=$this->db->error();
-                dolibarr_syslog("Adherent.class::cotisation error ".$this->error);
+                dolibarr_syslog("Adherent::cotisation error ".$this->error);
                 $this->db->rollback();
                 return -2;
             }
@@ -867,7 +934,7 @@ class Adherent
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Adherent.class::cotisation error ".$this->error);
+            dolibarr_syslog("Adherent::cotisation error ".$this->error);
             $this->db->rollback();
             return -1;
         }
@@ -887,7 +954,7 @@ class Adherent
 		$sql.= " fk_user_valid=".$user->id;
 		$sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Adherent.class::validate sql=".$sql);
+		dolibarr_syslog("Adherent::validate sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

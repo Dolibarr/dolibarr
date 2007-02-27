@@ -131,45 +131,45 @@ if ($_POST["action"] == 'add' && $canadduser)
 
 	if (! $message)
 	{
-	  $edituser = new User($db);
+		$edituser = new User($db);
 
-	  $edituser->nom           = trim($_POST["nom"]);
-	  $edituser->prenom        = trim($_POST["prenom"]);
-	  $edituser->login         = trim($_POST["login"]);
-	  $edituser->admin         = trim($_POST["admin"]);
-	  $edituser->office_phone  = trim($_POST["office_phone"]);
-	  $edituser->office_fax    = trim($_POST["office_fax"]);
-	  $edituser->user_mobile   = trim($_POST["user_mobile"]);
-	  $edituser->email         = trim($_POST["email"]);
-	  $edituser->webcal_login  = trim($_POST["webcal_login"]);
-	  $edituser->note          = trim($_POST["note"]);
-	  $edituser->ldap_sid      = trim($_POST["ldap_sid"]);
-	  
-	  $db->begin();
-	  
-	  $id = $edituser->create($user);
-	  
-	  if ($id > 0)
-	    {
-	      if (isset($_POST['password']) && trim($_POST['password']))
+		$edituser->nom           = trim($_POST["nom"]);
+		$edituser->prenom        = trim($_POST["prenom"]);
+		$edituser->login         = trim($_POST["login"]);
+		$edituser->admin         = trim($_POST["admin"]);
+		$edituser->office_phone  = trim($_POST["office_phone"]);
+		$edituser->office_fax    = trim($_POST["office_fax"]);
+		$edituser->user_mobile   = trim($_POST["user_mobile"]);
+		$edituser->email         = trim($_POST["email"]);
+		$edituser->webcal_login  = trim($_POST["webcal_login"]);
+		$edituser->note          = trim($_POST["note"]);
+		$edituser->ldap_sid      = trim($_POST["ldap_sid"]);
+		
+		$db->begin();
+		
+		$id = $edituser->create($user);
+		
+		if ($id > 0)
 		{
-		  $edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
+			if (isset($_POST['password']) && trim($_POST['password']))
+			{
+				$edituser->password($user,trim($_POST['password']),$conf->password_encrypted);
+			}
+			
+			$db->commit();
+			
+			Header("Location: fiche.php?id=$id");
+			exit;
 		}
-	      
-	      $db->commit();
-	      
-	      Header("Location: fiche.php?id=$id");
-	      exit;
-	    }
-	  else
-	    {
-	      $db->rollback();
-	      
-	      //$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-	      $message='<div class="error">'.$edituser->error.'</div>';
-	      
-	      $action="create";       // Go back to create page
-	    }
+		else
+		{
+			$db->rollback();
+			
+			//$message='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+			$message='<div class="error">'.$edituser->error.'</div>';
+			
+			$action="create";       // Go back to create page
+		}
 
 	}
 }
@@ -203,72 +203,85 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 {
 	$message="";
 
-	$db->begin();
-
-	$edituser = new User($db, $_GET["id"]);
-	$edituser->fetch();
-
-	//$edituser->oldpass_indatabase = $edituser->pass_indatabase;
-
-	$edituser->nom           = trim($_POST["nom"]);
-	$edituser->prenom        = trim($_POST["prenom"]);
-	$edituser->login         = trim($_POST["login"]);
-	$edituser->pass          = trim($_POST["pass"]);
-	$edituser->admin         = trim($_POST["admin"]);
-	$edituser->office_phone  = trim($_POST["office_phone"]);
-	$edituser->office_fax    = trim($_POST["office_fax"]);
-	$edituser->user_mobile   = trim($_POST["user_mobile"]);
-	$edituser->email         = trim($_POST["email"]);
-	$edituser->note          = trim($_POST["note"]);
-	$edituser->webcal_login  = trim($_POST["webcal_login"]);
-
-	$ret=$edituser->update();
-	if ($ret < 0)
+	if (! $_POST["nom"])
 	{
-		if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
-		{
-			$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
-		}
-		else
-		{
-			$message.='<div class="error">'.$edituser->error.'</div>';
-		}
+		$message='<div class="error">'.$langs->trans("NameNotDefined").'</div>';
+		$action="edit";       // Go back to create page
 	}
-	if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='' )
+	if (! $_POST["login"])
 	{
-		$ret=$edituser->password($user,$password,$conf->password_encrypted,1);
+		$message='<div class="error">'.$langs->trans("LoginNotDefined").'</div>';
+		$action="edit";       // Go back to create page
+	}
+
+	if (! $message)
+	{
+		$db->begin();
+
+		$edituser = new User($db, $_GET["id"]);
+		$edituser->fetch();
+
+		//$edituser->oldpass_indatabase = $edituser->pass_indatabase;
+
+		$edituser->nom           = trim($_POST["nom"]);
+		$edituser->prenom        = trim($_POST["prenom"]);
+		$edituser->login         = trim($_POST["login"]);
+		$edituser->pass          = trim($_POST["pass"]);
+		$edituser->admin         = trim($_POST["admin"]);
+		$edituser->office_phone  = trim($_POST["office_phone"]);
+		$edituser->office_fax    = trim($_POST["office_fax"]);
+		$edituser->user_mobile   = trim($_POST["user_mobile"]);
+		$edituser->email         = trim($_POST["email"]);
+		$edituser->note          = trim($_POST["note"]);
+		$edituser->webcal_login  = trim($_POST["webcal_login"]);
+
+		$ret=$edituser->update();
 		if ($ret < 0)
 		{
-			$message.='<div class="error">'.$edituser->error.'</div>';
-		}
-	}
-
-	if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
-	{
-		// Si une photo est fournie avec le formulaire
-		if (! is_dir($conf->users->dir_output))
-		{
-			create_exdir($conf->users->dir_output);
-		}
-		if (is_dir($conf->users->dir_output))
-		{
-			$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
-			if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 			{
-				$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+				$message.='<div class="error">'.$langs->trans("ErrorLoginAlreadyExists",$edituser->login).'</div>';
+			}
+			else
+			{
+				$message.='<div class="error">'.$edituser->error.'</div>';
 			}
 		}
-	}
+		if ($ret >= 0 && isset($_POST["password"]) && $_POST["password"] !='')
+		{
+			$ret=$edituser->password($user,$_POST["password"],$conf->password_encrypted,1);
+			if ($ret < 0)
+			{
+				$message.='<div class="error">'.$edituser->error.'</div>';
+			}
+		}
 
-	if ($ret >= 0)
-	{
-		$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
-		$db->commit();
-	} else
-	{
-		$db->rollback();
-	}
+		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+		{
+			// Si une photo est fournie avec le formulaire
+			if (! is_dir($conf->users->dir_output))
+			{
+				create_exdir($conf->users->dir_output);
+			}
+			if (is_dir($conf->users->dir_output))
+			{
+				$newfile=$conf->users->dir_output . "/" . $edituser->id . ".jpg";
+				if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+				{
+					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+				}
+			}
+		}
 
+		if ($ret >= 0)
+		{
+			$message.='<div class="ok">'.$langs->trans("UserModified").'</div>';
+			$db->commit();
+		} else
+		{
+			$db->rollback();
+		}
+	}
 }
 
 // Action modif mot de passe
@@ -450,7 +463,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '<table class="border" width="100%">';
 	
 	// Nom
-	print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'</td>';
+	print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'*</td>';
 	print '<td>';
 	if ($ldap_nom)
 	{
@@ -478,7 +491,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 	
 	// Login
-	print '<tr><td valign="top">'.$langs->trans("Login").'</td>';
+	print '<tr><td valign="top">'.$langs->trans("Login").'*</td>';
 	print '<td>';
 	if ($ldap_login)
 	{
@@ -1100,7 +1113,7 @@ else
             print '</td></tr>';
 
             // Nom
-            print "<tr>".'<td valign="top">'.$langs->trans("Name").'</td>';
+            print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
             print '<td>';
             if ($caneditfield) print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
             else print $fuser->nom;
@@ -1114,7 +1127,7 @@ else
             print '</td></tr>';
 
             // Login
-            print "<tr>".'<td valign="top">'.$langs->trans("Login").'</td>';
+            print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
             print '<td>';
             if ($user->admin) print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
             else print $fuser->login.'<input type="hidden" name="login" value="'.$fuser->login.'">';

@@ -36,6 +36,8 @@ require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 class InterfaceLdap
 {
     var $db;
+    var $error;
+
     
     /**
      *   \brief      Constructeur.
@@ -113,7 +115,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->add($dn,$info,$user);
+	    	    $result=$ldap->add($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
         elseif ($action == 'USER_MODIFY')
@@ -127,7 +131,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
         elseif ($action == 'USER_NEW_PASSWORD')
@@ -149,7 +155,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
 
@@ -164,7 +172,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->add($dn,$info,$user);
+	    	    $result=$ldap->add($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
 		}
         elseif ($action == 'GROUP_MODIFY')
@@ -177,7 +187,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
 		}
         elseif ($action == 'GROUP_DELETE')
@@ -190,7 +202,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
 		}
 		
@@ -206,7 +220,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->add($dn,$info,$user);
+	    	    $result=$ldap->add($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
         elseif ($action == 'CONTACT_MODIFY')
@@ -220,7 +236,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
         elseif ($action == 'CONTACT_DELETE')
@@ -234,7 +252,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->delete($dn,$info,$user);
+	    	    $result=$ldap->delete($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
 			}
         }
 
@@ -250,7 +270,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->add($dn,$info,$user);
+	    	    $result=$ldap->add($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
         }
         elseif ($action == 'MEMBER_VALIDATE')
@@ -278,8 +300,14 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 				
-	    	    return $ldap->update($dn,$info,$user);
+	    	    $result=$ldap->update($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
     		}
+        }
+        elseif ($action == 'MEMBER_NEW_PASSWORD')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
@@ -299,7 +327,9 @@ class InterfaceLdap
 				$info=$object->_load_ldap_info();
 				$dn=$object->_load_ldap_dn($info);
 
-				return $ldap->delete($dn,$info,$user);
+				$result=$ldap->delete($dn,$info,$user);
+				if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+				return $result;
 			}
         }
 

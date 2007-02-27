@@ -54,7 +54,6 @@ class User
   var $nom;
   var $prenom;
   var $note;
-  var $code;
   var $email;
   var $office_tel;
   var $office_fax;
@@ -115,7 +114,7 @@ class User
     
     // Recupere utilisateur
     $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
-    $sql.= " u.code, u.admin, u.login, u.pass, u.webcal_login, u.note,";
+    $sql.= " u.admin, u.login, u.pass, u.webcal_login, u.note,";
     $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
     $sql.= " u.statut, u.lang,";
     $sql.= " ".$this->db->pdate("u.datec")." as datec,";
@@ -145,8 +144,8 @@ class User
 	    $this->prenom = $obj->firstname;
 	    
 	    $this->fullname = trim($this->prenom . ' ' . $this->nom);
-	    $this->code = $obj->code;
 	    $this->login = $obj->login;
+	    $this->code = $obj->login;	// \deprecated
 	    $this->pass_indatabase = $obj->pass;
 	    if (! $conf->password_encrypted) $this->pass = $obj->pass;
 	    $this->office_phone = $obj->office_phone;
@@ -836,7 +835,6 @@ class User
         $this->email=trim($this->email);
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
-        $this->code = $this->login;
 
         dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
@@ -870,7 +868,6 @@ class User
         $sql .= ", user_mobile = '$this->user_mobile'";
         $sql .= ", email = '".addslashes($this->email)."'";
         $sql .= ", webcal_login = '$this->webcal_login'";
-        $sql .= ", code = '$this->code'";
         $sql .= ", note = '".addslashes($this->note)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
@@ -982,7 +979,7 @@ class User
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
                 $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
-                if ($result < 0) $error++;
+                if ($result < 0) $this->errors=$interface->errors;
                 // Fin appel triggers
 
                 return $this->pass;
@@ -1391,7 +1388,6 @@ class User
 		$this->prenom='SPECIMEN';
 		$this->fullname=trim($this->prenom.' '.$this->nom);
 		$this->note='This is a note';
-		$this->code='DOSP';
 		$this->email='email@specimen.com';
 		$this->office_tel='0999999999';
 		$this->office_fax='0999999998';

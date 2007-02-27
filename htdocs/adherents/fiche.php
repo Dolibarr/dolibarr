@@ -190,6 +190,15 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	$result=$adh->update($user,0);
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
+		if (isset($_POST["password"]) && $_POST["password"] !='')
+		{
+			$ret=$edituser->password($user,$password,$conf->password_encrypted,1);
+			if ($ret < 0)
+			{
+				$message.='<div class="error">'.$edituser->error.'</div>';
+			}
+		}
+
 		Header("Location: fiche.php?rowid=".$adh->id);
 		exit;
 	}
@@ -201,8 +210,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 		}
 		else
 		{
-
-		foreach($adh->errors as $error)
+			foreach($adh->errors as $error)
 			{
 				if ($errmsg) $errmsg.='<br>';
 				$errmsg.=$error;
@@ -241,7 +249,7 @@ if ($_POST["action"] == 'add')
     $phone_mobile=$_POST["phone_mobile"];
     $email=$_POST["member_email"];
     $login=$_POST["member_login"];
-    $pass=$_POST["member_pass"];
+    $pass=$_POST["password"];
     $photo=$_POST["photo"];
     $comment=$_POST["comment"];
     $morphy=$_POST["morphy"];
@@ -284,7 +292,7 @@ if ($_POST["action"] == 'add')
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->trans("Login"))."<br>\n";
     }
     else {
-        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='$login';";
+        $sql = "SELECT login FROM ".MAIN_DB_PREFIX."adherent WHERE login='".$login."'";
         $result = $db->query($sql);
         if ($result) {
             $num = $db->num_rows($result);
@@ -315,10 +323,18 @@ if ($_POST["action"] == 'add')
 
     if (! $error)
     {
-        // Email a peu pres correct et le login n'existe pas
-        if ($adh->create($user) > 0)
+		$db->begin();
+
+		// Email a peu pres correct et le login n'existe pas
+        $result=$adh->create($user);
+		if ($result > 0)
         {
-            if ($cotisation > 0)
+			if (isset($_POST['password']) && trim($_POST['password']))
+			{
+				$adh->password($user,trim($_POST['password']),$conf->password_encrypted);
+			}
+
+			if ($cotisation > 0)
             {
                 $crowid=$adh->cotisation($datecotisation, $cotisation);
 
@@ -350,11 +366,19 @@ if ($_POST["action"] == 'add')
                     }
                 }
             }
+			
+			$db->commit();
+
             Header("Location: liste.php?statut=-1");
             exit;
         }
-        else {
-            dolibarr_print_error($db);
+        else
+		{
+			$db->rollback();
+
+			$message='<div class="error">'.$adh->error.'</div>';
+			
+			$action = 'create';   
         }
     }
     else {
@@ -682,7 +706,19 @@ if ($action == 'create')
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
 	
 	// Mot de passe
-    print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="member_pass" size="40" value="'.$adh->pass.'"></td></tr>';
+	$generated_password='';
+	if ($conf->global->USER_PASSWORD_GENERATED)
+	{
+		$nomclass="modGeneratePass".ucfirst($conf->global->USER_PASSWORD_GENERATED);
+		$nomfichier=$nomclass.".class.php";
+		//print DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomclass;
+		require_once(DOL_DOCUMENT_ROOT."/includes/modules/security/generate/".$nomfichier);
+		$genhandler=new $nomclass($db,$conf,$lang,$user);
+		$generated_password=$genhandler->getNewGeneratedPassword();
+	}
+    print '<tr><td>'.$langs->trans("Password").'*</td><td>';
+	print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+	print '</td></tr>';
 
 	// Type
     print '<tr><td>'.$langs->trans("MemberType").'*</td><td>';

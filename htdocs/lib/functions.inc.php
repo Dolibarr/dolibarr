@@ -1292,9 +1292,9 @@ function accessforbidden($message='',$printheader=1)
                     Toutefois, il faut essayer de ne l'appeler qu'au sein de pages php, les classes devant
                     renvoyer leur erreur par l'intermédiaire de leur propriété "error".
         \param      db      Handler de base utilisé
-        \param      msg     Message complémentaire à afficher
+        \param      error	Chaine erreur ou tableau de chaines erreur complémentaires à afficher
 */
-function dolibarr_print_error($db='',$msg='')
+function dolibarr_print_error($db='',$error='')
 {
     global $langs,$argv;
     $syslog = '';
@@ -1349,18 +1349,24 @@ function dolibarr_print_error($db='',$msg='')
         $syslog.=", db_error=".$db->error();
     }
 
-    if ($msg)
+    if ($error)
     {
-        if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
-        {
-            print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
-        }
-        else                            // Mode CLI
-        {
-            print $langs->transnoentities("Message").":\n".$msg."\n" ;
-        }
-        $syslog.=", msg=".$msg;
-    }
+		if (is_array($error)) $errors=$error;
+		else $errors=array($error);
+		
+		foreach($errors as $msg)
+		{
+	        if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
+	        {
+	            print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
+	        }
+	        else                            // Mode CLI
+	        {
+	            print $langs->transnoentities("Message").":\n".$msg."\n" ;
+	        }
+	        $syslog.=", msg=".$msg;
+		}
+	}
 
     dolibarr_syslog("Error $syslog");
 }
