@@ -370,6 +370,12 @@ if ($result)
 					print $langs->trans("SocialContributionPayment");
 					print '</a>';
 				}
+				else if ($links[$key]['type']=='member') {
+					print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowMember'),'user').' ';
+					print $links[$key]['label'];
+					print '</a>';
+				}
 				else {
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					print $links[$key]['label'];

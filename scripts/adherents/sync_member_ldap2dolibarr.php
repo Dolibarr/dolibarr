@@ -60,13 +60,12 @@ print "***** $script_file ($version) *****\n";
 print 'DN='.$conf->global->LDAP_MEMBER_DN."\n";
 print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 
-/*
-if (! $conf->global->LDAP_MEMBER_ACTIVE)
+if (! $conf->global->LDAP_MEMBER_DN)
 {
-	print $langs->trans("LDAPSynchronizationNotSetupInDolibarr");
-	exit 1;	
+	print $langs->trans("Error").': '.$langs->trans("LDAP setup for members not defined inside Dolibarr");
+	exit(1);	
 }
-*/
+
 
 // Charge tableau de correspondance des pays
 $hashlib2rowid=array();

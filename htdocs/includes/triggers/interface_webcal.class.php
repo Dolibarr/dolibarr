@@ -121,15 +121,15 @@ class InterfaceWebCal
             // Initialisation donnees (date,duree,texte,desc)
             if ($object->type_id == 5 && $object->contact->fullname)
             {
-                $libellecal =$langs->trans("TaskRDVWith",$object->contact->fullname)."\n";
+                $libellecal =$langs->transnoentities("TaskRDVWith",$object->contact->fullname)."\n";
                 $libellecal.=$object->note;
             }
             else
             {
                 $libellecal="";
-                if ($langs->trans("Action".$object->type_code) != "Action".$object->type_code)
+                if ($langs->transnoentities("Action".$object->type_code) != "Action".$object->type_code)
                 {
-                    $libellecal.=$langs->trans("Action".$object->type_code)."\n";
+                    $libellecal.=$langs->transnoentities("Action".$object->type_code)."\n";
                 }
                 $libellecal.=($object->label!=$libellecal?$object->label."\n":"");
                 $libellecal.=($object->note?$object->note:"");
@@ -150,12 +150,12 @@ class InterfaceWebCal
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("NewCompanyToDolibarr",$object->nom);
-            $this->desc=$langs->trans("NewCompanyToDolibarr",$object->nom);
+            $this->texte=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
+            $this->desc=$langs->transnoentities("NewCompanyToDolibarr",$object->nom);
             if ($object->prefix) $this->desc.=" (".$object->prefix.")";
-            //$this->desc.="\n".$langs->trans("Customer").': '.yn($object->client);
-            //$this->desc.="\n".$langs->trans("Supplier").': '.yn($object->fournisseur);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            //$this->desc.="\n".$langs->transnoentities("Customer").': '.yn($object->client);
+            //$this->desc.="\n".$langs->transnoentities("Supplier").': '.yn($object->fournisseur);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
 
 		// Contracts
@@ -167,9 +167,9 @@ class InterfaceWebCal
             // Initialisation donnees (date,duree,texte,desc)
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("ContractValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("ContractValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("ContractValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'CONTRACT_CANCEL')
         {
@@ -178,9 +178,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("ContractCanceledInDolibarr",$object->ref);
-            $this->desc=$langs->trans("ContractCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("ContractCanceledInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'CONTRACT_CLOSE')
         {
@@ -189,9 +189,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("ContractClosedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("ContractClosedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("ContractClosedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
 
 		// Proposals
@@ -202,9 +202,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("PropalValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("PropalValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("PropalValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'PROPAL_CLOSE_SIGNED')
         {
@@ -213,9 +213,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("PropalClosedSignedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("PropalClosedSignedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("PropalClosedSignedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'PROPAL_CLOSE_REFUSED')
         {
@@ -224,9 +224,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("PropalClosedRefusedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("PropalClosedRefusedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("PropalClosedRefusedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         
         // Invoices
@@ -237,9 +237,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("InvoiceValidatedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("InvoiceValidatedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'BILL_PAYED')
         {
@@ -248,9 +248,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoicePayedInDolibarr",$object->ref);
-            $this->desc=$langs->trans("InvoicePayedInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("InvoicePayedInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'BILL_CANCELED')
         {
@@ -259,9 +259,9 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
-            $this->desc=$langs->trans("InvoiceCanceledInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("InvoiceCanceledInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
 
         // Payments
@@ -272,10 +272,10 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("CustomerPaymentDoneInDolibarr",$object->ref);
-            $this->desc=$langs->trans("CustomerPaymentDoneInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("CustomerPaymentDoneInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("CustomerPaymentDoneInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("AmountTTC").': '.$object->total;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'PAYMENT_SUPPLIER_CREATE')
         {
@@ -284,10 +284,10 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("SupplierPaymentDoneInDolibarr",$object->ref);
-            $this->desc=$langs->trans("SupplierPaymentDoneInDolibarr",$object->ref);
-            $this->desc.="\n".$langs->trans("AmountTTC").': '.$object->total;
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("SupplierPaymentDoneInDolibarr",$object->ref);
+            $this->desc=$langs->transnoentities("SupplierPaymentDoneInDolibarr",$object->ref);
+            $this->desc.="\n".$langs->transnoentities("AmountTTC").': '.$object->total;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
 
         // Members
@@ -302,11 +302,11 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("MemberValidatedInDolibarr",$object->id);
-            $this->desc=$langs->trans("MemberValidatedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
-            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
+            $this->desc=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
         {
@@ -316,13 +316,13 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("MemberSubscriptionInDolibarr",$object->id);
-            $this->desc=$langs->trans("MemberSubscriptionInDolibarr",$object->id);
-            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
-            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
-            $this->desc.="\n".$langs->trans("Amount").': '.$object->last_subscription_amount;
-            $this->desc.="\n".$langs->trans("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
+            $this->desc=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
+            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
+            $this->desc.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'MEMBER_RESILIATE')
         {
@@ -332,11 +332,11 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("MemberResiliatedInDolibarr",$object->id);
-            $this->desc=$langs->trans("MemberResiliatedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
-            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
+            $this->desc=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
         elseif ($action == 'MEMBER_DELETE')
         {
@@ -346,11 +346,11 @@ class InterfaceWebCal
 
             $this->date=time();
             $this->duree=0;
-            $this->texte=$langs->trans("MemberDeletedInDolibarr",$object->id);
-            $this->desc=$langs->trans("MemberDeletedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->trans("Name").': '.$object->fullname;
-            $this->desc.="\n".$langs->trans("Type").': '.$object->type;
-            $this->desc.="\n".$langs->trans("Author").': '.$user->code;
+            $this->texte=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
+            $this->desc=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->code;
         }
 
 		// If not found
