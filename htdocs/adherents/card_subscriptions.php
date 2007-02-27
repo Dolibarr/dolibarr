@@ -268,7 +268,7 @@ print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td>';
 print '<td>'.$langs->trans("DateSubscription").'</td>';
 print '<td align="right">'.$langs->trans("Amount").'</td>';
-if ($conf->global->ADHERENT_BANK_USE)
+if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 {
 	print '<td align="right">'.$langs->trans("Account").'</td>';
 }
@@ -285,7 +285,7 @@ while ($i < $num)
 	print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
 	print "<td>".dolibarr_print_date($objp->dateadh,'day')."</td>\n";
 	print '<td align="right">'.price($objp->cotisation).'</td>';
-	if ($conf->global->ADHERENT_BANK_USE)
+	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 	{
 		print '<td align="right">';
 		if ($objp->fk_bank) 
