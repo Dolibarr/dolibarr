@@ -200,6 +200,19 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerDn").'</td><td>';
 print '<input size="25" type="text" name="dn" value="'.$conf->global->LDAP_SERVER_DN.'">';
 print '</td><td>'.$langs->trans("LDAPServerDnExample").'</td></tr>';
 
+// Utiliser TLS
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
+$arraylist=array();
+$arraylist['0']=$langs->trans("No");
+$arraylist['1']=$langs->trans("Yes");
+$html->select_array('usetls',$arraylist,$conf->global->LDAP_SERVER_USE_TLS);
+print '</td><td>'.$langs->trans("LDAPServerUseTLSExample").'</td></tr>';
+
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("ForANonAnonymousAccess").'</td>';
+print "</tr>\n";
+
 // DNAdmin
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPAdminDn").'</td><td>';
@@ -218,16 +231,6 @@ else
 	print '<input size="25" type="text" name="pass" value="'.$conf->global->LDAP_ADMIN_PASS.'">';
 }
 print '</td><td>&nbsp;</td></tr>';
-
-// Utiliser TLS
-$var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPServerUseTLS").'</td><td>';
-$arraylist=array();
-$arraylist['0']=$langs->trans("No");
-$arraylist['1']=$langs->trans("Yes");
-$html->select_array('usetls',$arraylist,$conf->global->LDAP_SERVER_USE_TLS);
-print '</td><td>'.$langs->trans("LDAPServerUseTLSExample").'</td></tr>';
-
 
 
 $var=!$var;
