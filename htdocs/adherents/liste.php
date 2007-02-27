@@ -179,7 +179,7 @@ if ($result)
 	        print '<td align="center">';
             if ($objp->datefin < time() && $objp->statut > 0)
             {
-                print dolibarr_print_date($objp->datefin)." - ".$langs->trans("SubscriptionLate")." ".img_warning();
+                print dolibarr_print_date($objp->datefin)." ".img_warning($langs->trans("SubscriptionLate"));
             }
             else
             {

@@ -69,6 +69,7 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 	}
 }
 
+/*
 if ($_POST["action"] == 'cotisation')
 {
     $adh->id = $rowid;
@@ -137,6 +138,7 @@ if ($_POST["action"] == 'cotisation')
         }
     }
 }
+*/
 
 if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
@@ -376,7 +378,8 @@ if ($_POST["action"] == 'add')
 		{
 			$db->rollback();
 
-			$message='<div class="error">'.$adh->error.'</div>';
+			if ($adh->error) $errmsg=$adh->error;
+			else $errmsg=$adh->errors[0];
 			
 			$action = 'create';   
         }
@@ -786,6 +789,7 @@ if ($action == 'create')
     print "</table>\n";
     print '<br>';
 
+/*
     // Boite cotisations
     print '<table class="border" width="100%">';
     print "<tr><td>".$langs->trans("DateSubscription")."</td><td>\n";
@@ -812,7 +816,8 @@ if ($action == 'create')
 
     print "</table>\n";
     print '<br>';
-    
+*/    
+
     print '<center><input type="submit" class="button" value="'.$langs->trans("AddMember").'"></center>';
 
     print "</form>\n";

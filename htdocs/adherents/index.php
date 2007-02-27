@@ -67,10 +67,11 @@ $AdherentType=array();
 $Cotisants=array();
 
 # Liste les adherents
-$sql  = "SELECT count(*) as somme , t.rowid, t.libelle, t.cotisation, d.statut";
-$sql .= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."adherent_type as t";
-$sql .= " WHERE d.fk_adherent_type = t.rowid";
-$sql .= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
+$sql = "SELECT t.rowid, t.libelle, t.cotisation,";
+$sql.= " d.statut, count(d.rowid) as somme";
+$sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."adherent as d ON t.rowid = d.fk_adherent_type";
+$sql.= " GROUP BY t.rowid, t.libelle, t.cotisation, d.statut";
 
 $result = $db->query($sql);
 if ($result)
@@ -134,10 +135,10 @@ foreach ($AdherentType as $key => $adhtype)
 	$var=!$var;
 	print "<tr $bc[$var]>";
 	print '<td><a href="type.php?rowid='.$adhtype->id.'">'.img_object($langs->trans("ShowType"),"group").' '.$adhtype->libelle.'</a></td>';
-	print '<td align="right">'.(isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($AdherentsAValider[$key]) && $AdherentsAValider[$key] > 0?$AdherentsAValider[$key]:'').' '.$staticmember->LibStatut(-1,$adhtype->cotisation,0,3).'</td>';
 	print '<td align="right">'.(isset($Adherents[$key]) && ($Adherents[$key]-$Cotisants[$key] > 0) ? $Adherents[$key]-$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,0,3).'</td>';
-	print '<td align="right">'.(isset($Cotisants[$key])?$Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</td>';
-	print '<td align="right">'.(isset($AdherentsResilies[$key])?$AdherentsResilies[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
+	print '<td align="right">'.(isset($Cotisants[$key]) && $Cotisants[$key] > 0 ? $Cotisants[$key]:'').' '.$staticmember->LibStatut(1,$adhtype->cotisation,mktime(),3).'</td>';
+	print '<td align="right">'.(isset($AdherentsResilies[$key]) && $AdherentsResilies[$key]> 0 ?$AdherentsResilies[$key]:'').' '.$staticmember->LibStatut(0,$adhtype->cotisation,0,3).'</td>';
 	print "</tr>\n";
 	$SommeA+=isset($AdherentsAValider[$key])?$AdherentsAValider[$key]:0;
 	$SommeB+=isset($Adherents[$key])?$Adherents[$key]-$Cotisants[$key]:0;
