@@ -189,41 +189,51 @@ if (! $rowid && $_GET["action"] != 'create' && $_GET["action"] != 'edit')
 /* ************************************************************************** */
 if ($_GET["action"] == 'create')
 {
-  $htmls = new Form($db);
+	$htmls = new Form($db);
 
-  print_titre($langs->trans("NewMemberType"));
-  print '<br>';
-  
-  if ($mesg) print '<div class="error">'.$mesg.'</div>';
-  
-  print "<form action=\"type.php\" method=\"post\">";
-  print '<table class="border" width="100%">';
-  
-  print '<input type="hidden" name="action" value="add">';
+	print_titre($langs->trans("NewMemberType"));
+	print '<br>';
 
-  print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
+	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
-  print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-  $htmls->selectyesnonum("cotisation",1);
-  print '</tr>';
-  
-  print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-  $htmls->selectyesnonum("vote",0);
-  print '</tr>';
+	print "<form action=\"type.php\" method=\"post\">";
+	print '<table class="border" width="100%">';
 
-  print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
-  print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
+	print '<input type="hidden" name="action" value="add">';
 
-  print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
-  print "<textarea name=\"mail_valid\" wrap=\"soft\" cols=\"60\" rows=\"15\"></textarea></td></tr>";
+	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
-  print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp;';
-  print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
+	$htmls->selectyesnonum("cotisation",1);
+	print '</tr>';
 
-  print "</form>\n";
-  print "</table>\n";
-  
-      
+	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
+	$htmls->selectyesnonum("vote",0);
+	print '</tr>';
+
+	print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
+	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
+
+	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
+	if ($conf->fckeditor->enabled)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('mail_valid',$adht->mail_valid,280,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea class="flat" name="mail_valid" rows="15" cols="90">';
+		print $adht->mail_valid;
+		print '</textarea>';
+	}
+	print '</td></tr>';
+
+	print '<tr><td colspan="2" align="center"><input type="submit" name="button" class="button" value="'.$langs->trans("Add").'"> &nbsp;';
+	print '<input type="submit" name="button" class="button" value="'.$langs->trans("Cancel").'"></td></tr>';
+
+	print "</form>\n";
+	print "</table>\n";
 } 
 /* ************************************************************************** */
 /*                                                                            */
@@ -348,7 +358,6 @@ if ($rowid > 0)
 			print $adht->mail_valid;
 			print '</textarea>';
 		}
-
         print "</td></tr>";
         
         print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"> &nbsp; &nbsp;';
