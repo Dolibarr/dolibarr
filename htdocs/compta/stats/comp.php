@@ -265,7 +265,7 @@ function ppt ($db, $year, $socid)
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut = 1";
+  $sql .= " WHERE f.fk_statut in (1,2)";
   if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
   }
