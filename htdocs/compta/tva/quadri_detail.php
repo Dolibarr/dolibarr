@@ -130,7 +130,7 @@ function tva_paye($db, $y,$q)
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ";
         $sql.= MAIN_DB_PREFIX."facture_fourn_det as d " ;
         $sql.= " WHERE ";
-        $sql.= " f.fk_statut > 0 ";
+        $sql.= " f.fk_statut in (1,2) ";
         $sql.= " AND f.rowid = d.fk_facture_fourn ";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
         $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
