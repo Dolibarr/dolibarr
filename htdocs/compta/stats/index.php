@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -79,7 +79,7 @@ $html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$
 if ($modecompta == 'CREANCES-DETTES') { 
 	$sql  = "SELECT sum(f.total) as amount, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	$sql .= " WHERE f.fk_statut = 1";
+	$sql .= " WHERE f.fk_statut in (1,2)";
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les

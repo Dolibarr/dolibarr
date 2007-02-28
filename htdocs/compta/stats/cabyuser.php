@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,7 +77,7 @@ if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT u.rowid as rowid, u.name as name, u.firstname as firstname, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."user as u,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut = 1 AND f.fk_user_author = u.rowid";
+    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_user_author = u.rowid";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else

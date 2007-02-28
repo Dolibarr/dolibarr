@@ -1,8 +1,8 @@
 <?php
-/* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
+/* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ if ($modecompta == 'CREANCES-DETTES')
 {
     $sql = "SELECT s.idp as rowid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut = 1 AND f.fk_soc = s.idp";
+    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_soc = s.idp";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else

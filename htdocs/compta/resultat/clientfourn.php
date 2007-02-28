@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -87,7 +87,7 @@ print '<tr><td colspan="4">Facturation clients</td></tr>';
 if ($modecompta == 'CREANCES-DETTES') { 
     $sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 } else {
     /*
@@ -129,7 +129,8 @@ if ($result) {
 }
 
 // On ajoute les paiements clients anciennes version, non liés par paiement_facture
-if ($modecompta != 'CREANCES-DETTES') { 
+if ($modecompta != 'CREANCES-DETTES')
+{ 
     $sql = "SELECT 'Autres' as nom, '0' as idp, sum(p.amount) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."paiement as p";
     $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
@@ -183,10 +184,11 @@ print '</tr>';
 /*
  * Frais, factures fournisseurs.
  */
-if ($modecompta == 'CREANCES-DETTES') { 
+if ($modecompta == 'CREANCES-DETTES')
+{ 
     $sql = "SELECT s.nom, s.idp, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut = 1";
+    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
    if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
@@ -262,7 +264,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $amount=0;
     $sql = "SELECT sum(f.tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " WHERE f.fk_statut in (1,2)";
     if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
@@ -298,7 +300,7 @@ if ($modecompta == 'CREANCES-DETTES')
     $amount=0;
     $sql = "SELECT sum(f.total_tva) as amount, date_format(f.datef,'%Y-%m') as dm"; 
     $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " WHERE f.fk_statut in (1,2)";
     if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
