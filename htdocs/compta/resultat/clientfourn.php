@@ -99,6 +99,7 @@ if ($modecompta == 'CREANCES-DETTES') {
     $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }    
+if ($socid) $sql .= " AND f.fk_soc = $socid";
 $sql .= " GROUP BY nom";
 $sql .= " ORDER BY nom";
 
@@ -203,6 +204,10 @@ if ($modecompta == 'CREANCES-DETTES')
     if ($year) {
     	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
+}
+if ($socid)
+{
+  $sql .= " AND f.fk_soc = $socid";
 }
 $sql .= " GROUP BY nom, idp";
 $sql .= " ORDER BY nom, idp";
