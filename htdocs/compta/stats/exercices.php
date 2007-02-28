@@ -187,7 +187,7 @@ function ppt ($db, $year, $socid)
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut = 1";
+  $sql .= " WHERE f.fk_statut in (1,2)";
   $sql .= " AND date_format(f.datef,'%Y') = ".($year-1);
     
     if ($conf->compta->mode != 'CREANCES-DETTES') { 
@@ -205,7 +205,7 @@ function ppt ($db, $year, $socid)
   
   $sql = "SELECT sum(f.total) as sum, round(date_format(f.datef, '%m')) as dm";
   $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-  $sql .= " WHERE f.fk_statut = 1";
+  $sql .= " WHERE f.fk_statut in (1,2)";
   $sql .= " AND date_format(f.datef,'%Y') = $year ";
   if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";

@@ -49,7 +49,7 @@ print '<table width="100%"><tr><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount , date_format(f.datef,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_statut = 1";
+$sql .= " WHERE f.fk_statut in (1,2)";
 if ($conf->compta->mode != 'CREANCES-DETTES')
 { 
   $sql .= " AND f.paye = 1";
@@ -66,7 +66,7 @@ print '</td><td valign="top">';
 
 $sql = "SELECT sum(f.total) as amount, year(f.datef) as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-$sql .= " WHERE f.fk_statut = 1";
+$sql .= " WHERE f.fk_statut in (1,2)";
 if ($conf->compta->mode != 'CREANCES-DETTES') { 
 	$sql .= " AND f.paye = 1";
 }
