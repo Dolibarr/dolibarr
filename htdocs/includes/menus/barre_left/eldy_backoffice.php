@@ -434,7 +434,7 @@ class MenuLeft {
 				}
 
 				// Charges tva
-				if (($conf->compta->enabled || $conf->comptaexpert->enabled) && $conf->compta->tva && $user->societe_id == 0)
+				if ($user->rights->tax->charges->lire && $conf->compta->tva && $user->societe_id == 0)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&amp;mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->tax->charges->lire);
 					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->tax->charges->creer);
