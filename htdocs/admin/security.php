@@ -53,12 +53,16 @@ if ($_GET["action"] == 'setgeneraterule')
 if ($_GET["action"] == 'activate_encrypt')
 {
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
+    $sql = "UPDATE ".MAIN_DB_PREFIX."user as u SET u.pass = MD5(u.pass)";
+	$result = $db->query($sql);
     Header("Location: security.php");
     exit;
 }
 else if ($_GET["action"] == 'disable_encrypt')
 {
-	dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
+	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
+	//Do not allow "disable encryption" as passwords cannot be decrypted
+	//dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
     Header("Location: security.php");
     exit;
 }
@@ -187,7 +191,9 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 }
 else if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
-	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
+	//Do not allow "disable encryption" as passwords cannot be decrypted
+	//print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
 }
 
 print "</td>";
