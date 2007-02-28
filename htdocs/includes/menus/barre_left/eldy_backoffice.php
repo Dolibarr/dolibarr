@@ -204,6 +204,7 @@ class MenuLeft {
 				// Prospects
 			    if ($conf->societe->enabled && $user->rights->societe->lire)
 			    {
+					$langs->load("commercial");
 					$newmenu->add(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("Prospects"), 1, $user->rights->societe->lire);
 
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 2, $user->rights->societe->creer);
@@ -213,6 +214,7 @@ class MenuLeft {
 				// Clients
 			    if ($conf->societe->enabled && $user->rights->societe->lire)
 			    {
+					$langs->load("commercial");
 					$newmenu->add(DOL_URL_ROOT."/comm/clients.php?leftmenu=customers", $langs->trans("Customers"), 1, $user->rights->societe->lire);
 
 					$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=customers&amp;action=create&amp;type=c", $langs->trans("MenuNewCustomer"), 2, $user->rights->societe->creer);
