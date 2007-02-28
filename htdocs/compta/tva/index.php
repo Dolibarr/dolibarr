@@ -61,7 +61,7 @@ function tva_coll($db,$y,$m)
         $sql = "SELECT sum(f.tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
         $sql.= " WHERE ";
-        $sql.= " f.fk_statut = 1";
+        $sql.= " f.fk_statut in (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
         $sql.= " AND date_format(f.datef,'%m') = ".$m;
     }
@@ -116,7 +116,7 @@ function tva_paye($db, $y,$m)
         $sql = "SELECT sum(f.total_tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
         $sql.= " WHERE ";
-        $sql.= " f.fk_statut = 1";
+        $sql.= " f.fk_statut in (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = $y";
         $sql.= " AND date_format(f.datef,'%m') = $m";
     }
@@ -141,7 +141,7 @@ function tva_paye($db, $y,$m)
         $sql = "SELECT sum(f.total_tva) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
   //      $sql.= " WHERE ";
-    $sql .= " WHERE f.fk_statut = 1";
+    $sql .= " WHERE f.fk_statut in (1,2)";
 //        $sql.= " f.paye = 1";
         $sql.= " AND date_format(f.datef,'%Y') = $y";
         $sql.= " AND date_format(f.datef,'%m') = $m";

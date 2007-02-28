@@ -66,7 +66,7 @@ function tva_coll($db,$y,$q)
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ";
         $sql.= MAIN_DB_PREFIX."facturedet as d " ;
         $sql.= " WHERE ";
-        $sql.= " f.fk_statut = 1 ";
+        $sql.= " f.fk_statut in (1,2)";
         $sql.= " AND f.rowid = d.fk_facture ";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
         $sql.= " AND (date_format(f.datef,'%m') > ".(($q-1)*3)." AND date_format(f.datef,'%m') <= ".($q*3).")";
