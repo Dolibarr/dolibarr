@@ -28,6 +28,7 @@ ThirdPartyCustomers=Clients
 ThirdPartyCustomersWithIdProf12=Clients avec %s ou %s
 ThirdPartySuppliers=Fournisseurs
 ReportByCustomers=Rapport par client
+ReportByQuarter=Rapport par trimestre
 ParentCompany=Maison mère
 CivilityCode=Code civilité
 RegisteredOffice=Siège sociale

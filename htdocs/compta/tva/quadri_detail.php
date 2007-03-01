@@ -181,12 +181,9 @@ $textprevyear="<a href=\"quadri_detail.php?year=" . ($year_current-1) . "\">".im
 $textnextyear=" <a href=\"quadri_detail.php?year=" . ($year_current+1) . "\">".img_next()."</a>";
 
 print_fiche_titre($langs->trans("VAT"),"$textprevyear ".$langs->trans("Year")." $year_start $textnextyear");
-
+print '<br>';
 
 echo '<table class="noborder" width="100%">';
-echo '<tr><td colspan="3">';
-print_fiche_titre($langs->trans("VATSummary"));
-echo '</td></tr>';
 
 if ($conf->compta->mode == "CREANCES-DETTES")
 {
@@ -263,7 +260,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 			$var=!$var;
 			if(is_array($x_both[$rate]['coll']['detail'])){
 				print "<tr>";
-				print '<td class="tax_rate">'.$rate.'%</td><td colspan="3"></td>';
+				print '<td class="tax_rate">'.$langs->trans("Rate").': '.$rate.'%</td><td colspan="3"></td>';
 				print '</tr>'."\n";
 				foreach($x_both[$rate]['coll']['detail'] as $index=>$fields){
 					$var=!$var;

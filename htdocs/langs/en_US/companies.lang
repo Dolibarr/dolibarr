@@ -29,6 +29,7 @@ ThirdPartyCustomersWithIdProf12=Customers with %s or %s
 ThirdPartySuppliers=Suppliers
 ParentCompany=Parent company
 ReportByCustomers=Report by customers
+ReportByQuarter=Report by quarter
 CivilityCode=Civility code
 RegisteredOffice=Registered office
 Name=Name

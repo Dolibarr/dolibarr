@@ -440,6 +440,7 @@ class MenuLeft {
 					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->tax->charges->creer);
 					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->tax->charges->lire);
 					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/clients.php", $langs->trans("ReportByCustomers"), 1, $user->rights->tax->charges->lire);
+					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/quadri_detail.php", $langs->trans("ReportByQuarter"), 1, $user->rights->tax->charges->lire);
 				}
 
 				// Compta simple
