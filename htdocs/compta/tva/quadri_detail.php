@@ -220,6 +220,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 				//$x_both[$my_coll_rate]['coll']['links'] .= '<a href="../facture.php?facid='.$x_coll[$my_coll_rate]['facid'][$id].'" title="'.$x_coll[$my_coll_rate]['facnum'][$id].'">..'.substr($x_coll[$my_coll_rate]['facnum'][$id],-2).'</a> ';
 			}
 		}
+		// tva payed
 		foreach(array_keys($x_paye) as $my_paye_rate){
 			$x_both[$my_paye_rate]['paye']['totalht'] = $x_paye[$my_paye_rate]['totalht'];
 			$x_both[$my_paye_rate]['paye']['vat'] = $x_paye[$my_paye_rate]['vat'];
@@ -293,9 +294,10 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 		print '</tr>'."\n";
 		foreach(array_keys($x_paye) as $rate){
 			$var=!$var;
-			if(is_array($x_both[$rate]['paye']['detail'])){
+			if(is_array($x_both[$rate]['paye']['detail']))
+			{
 				print "<tr>";
-				print '<td class="tax_rate">'.$rate.'%</td><td colspan="3"></td>';
+				print '<td class="tax_rate">'.$langs->trans("Rate").': '.$rate.'%</td><td colspan="3"></td>';
 				print '</tr>'."\n";
 				foreach($x_both[$rate]['paye']['detail'] as $index=>$fields){
 					$var=!$var;
