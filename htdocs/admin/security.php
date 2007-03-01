@@ -33,6 +33,9 @@ $langs->load("admin");
 
 if (!$user->admin) accessforbidden();
 
+// Do not allow change to clear model once passwords are crypted
+$allow_disable_encryption=false;
+
 
 /*
  * Actions
@@ -52,18 +55,35 @@ if ($_GET["action"] == 'setgeneraterule')
 
 if ($_GET["action"] == 'activate_encrypt')
 {
+	$db->begin();
+	
     dolibarr_set_const($db, "DATABASE_PWD_ENCRYPTED", "1");
-    $sql = "UPDATE ".MAIN_DB_PREFIX."user as u SET u.pass = MD5(u.pass)";
+    $sql = "UPDATE ".MAIN_DB_PREFIX."user as u";
+	$sql.= " SET u.pass = MD5(u.pass)";
+	$sql.= " WHERE LENGTH(u.pass) < 32";	// Not a MD5 value
+
+	//print $sql;
 	$result = $db->query($sql);
-    Header("Location: security.php");
-    exit;
+    if ($result)
+	{
+		$db->commit();
+		Header("Location: security.php");
+	    exit;
+	}
+	else
+	{
+		dolibarr_print_error($db,'');
+	}
 }
 else if ($_GET["action"] == 'disable_encrypt')
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
 	//Do not allow "disable encryption" as passwords cannot be decrypted
-	//dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
-    Header("Location: security.php");
+	if ($allow_disable_encryption)
+	{
+		dolibarr_del_const($db, "DATABASE_PWD_ENCRYPTED");
+    }
+	Header("Location: security.php");
     exit;
 }
 
@@ -165,35 +185,41 @@ print '<br>';
 // Bon de livraison activation/desactivation
 $var=false;
 print "<form method=\"post\" action=\"security.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
+
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="2">'.$langs->trans("Encryption").'</td>';
-print '<td>&nbsp;</td>';
-print '<td align="center">'.$langs->trans("Activated").'</td>';
+print '<td>'.$langs->trans("Activated").'</td>';
+if ($conf->global->DATABASE_PWD_ENCRYPTED == 0 || $allow_disable_encryption)
+{
+	print '<td align="center">'.$langs->trans("Action").'</td>';
+}
 print '</tr>';
-print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
+
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("EncryptedPasswordInDatabase").'</td>';
 print '<td>&nbsp;</td>';
 print '<td align="center" width="20">';
-
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
 	print img_tick();
 }
-
 print '</td>';
-print '<td align="center" width="100">';
 
-if($conf->global->DATABASE_PWD_ENCRYPTED == 0)
+if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 {
+	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
+	print "</td>";
 }
-else if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
 	//Do not allow "disable encryption" as passwords cannot be decrypted
-	//print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	print "</td>";
 }
 
 print "</td>";
