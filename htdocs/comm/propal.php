@@ -664,13 +664,10 @@ if ($_POST['action'] == 'classin')
 // Conditions de règlement
 if ($_POST["action"] == 'setconditions')
 {
-	$propal = new Propal($db, $_GET["propalid"]);
-	$propal->cond_reglement_id = $_POST['cond_reglement_id'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-	$sql.= " SET fk_cond_reglement='".$_POST['cond_reglement_id']."'";
-	$sql.= " WHERE rowid='".$_GET["propalid"]."'";
-	$resql = $db->query($sql);
-	if ($resql < 0) dolibarr_print_error($db);
+	$propal = new Propal($db);
+	$propal->fetch($_REQUEST['propalid']);
+	$result = $propal->cond_reglement($_POST['cond_reglement_id']);
+	$_GET['propalid']=$_REQUEST['propalid'];
 }
 
 if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->propale->creer)
@@ -692,14 +689,10 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->propale->creer)
 // Mode de règlement
 if ($_POST["action"] == 'setmode')
 {
-	$propal = new Propal($db, $_GET["propalid"]);
-	$propal->mode_reglement_id = $_POST['mode_reglement_id'];
-	// \todo Créer une methode propal->cond_reglement
-	$sql = "UPDATE ".MAIN_DB_PREFIX."propal";
-	$sql.= " SET fk_mode_reglement='".$_POST['mode_reglement_id']."'";
-	$sql.= " WHERE rowid='".$_GET["propalid"]."'";
-	$resql = $db->query($sql);
-	if ($resql < 0) dolibarr_print_error($db);
+	$propal = new Propal($db);
+	$propal->fetch($_REQUEST['propalid']);
+	$result = $propal->mode_reglement($_POST['mode_reglement_id']);
+	$_GET['propalid']=$_REQUEST['propalid'];
 }
 
 /*
