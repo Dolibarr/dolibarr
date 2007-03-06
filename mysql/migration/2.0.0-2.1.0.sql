@@ -53,6 +53,10 @@ ALTER TABLE llx_societe modify services           tinyint        DEFAULT 0;
 ALTER TABLE llx_societe modify client             tinyint        DEFAULT 0;
 ALTER TABLE llx_societe modify fournisseur        tinyint        DEFAULT 0;
 
+ALTER TABLE llx_societe add customer_bad       tinyint        DEFAULT 0 after fournisseur;
+ALTER TABLE llx_societe add customer_rate      real           DEFAULT 0 after customer_bad;
+ALTER TABLE llx_societe add supplier_rate      real           DEFAULT 0 after customer_rate;
+
 ALTER TABLE llx_societe modify siren       varchar(16);
 ALTER TABLE llx_societe modify siret       varchar(16);
 ALTER TABLE llx_societe modify ape         varchar(16);

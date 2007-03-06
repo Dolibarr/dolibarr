@@ -259,6 +259,7 @@ if ($_POST['action'] == 'confirm_payed' && $_POST['confirm'] == 'yes' && $user->
   $fac->fetch($_GET['facid']);
   $result = $fac->set_payed($user);
 }
+// Classe à "payée partiellement"
 if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' && $user->rights->facture->paiement)
 {
 	$fac = new Facture($db);
@@ -272,6 +273,41 @@ if ($_POST['action'] == 'confirm_payed_partially' && $_POST['confirm'] == 'yes' 
 	else
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+	}
+}
+// Classe à "abandonnée"
+if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
+{
+	$fac = new Facture($db);
+	$fac->fetch($_GET['facid']);
+	$close_code=$_POST["close_code"];
+	$close_note=$_POST["close_note"];
+	if ($close_code)
+	{
+		$result = $fac->set_canceled($user,$close_code,$close_note);
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Reason")).'</div>';
+	}
+}
+// Supprimer
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+{
+	if ($user->rights->facture->supprimer)
+	{
+		$fac = new Facture($db);
+		$result = $fac->fetch($_GET['facid']);
+		$result = $fac->delete();
+		if ($result > 0)
+		{
+			Header('Location: '.$_SERVER["PHP_SELF"]);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fac->error.'</div>';
+		}
 	}
 }
 
@@ -739,34 +775,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->facture->creer && ! $conf-
     }
 }
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
-{
-	if ($user->rights->facture->supprimer)
-	{
-		$fac = new Facture($db);
-		$result = $fac->fetch($_GET['facid']);
-		$result = $fac->delete();
-		if ($result > 0)
-		{
-			Header('Location: '.$_SERVER["PHP_SELF"]);
-			exit;
-		}
-		else
-		{
-			$mesg='<div class="error">'.$fac->error.'</div>';
-		}
-	}
-}
 
-if ($_POST['action'] == 'confirm_canceled' && $_POST['confirm'] == 'yes')
-{
-	if ($user->rights->facture->supprimer)
-	{
-		$fac = new Facture($db);
-		$fac->fetch($_GET['facid']);
-		$result = $fac->set_canceled($user);
-	}
-}
 
 /*
  * Ordonnancement des lignes
@@ -1677,9 +1686,9 @@ else
 				$close[1]['code']='badcustomer';
 				$close[2]['code']='abandon';
 				// Help
-				$close[0]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyVat");
-				$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyBadCustomer");
-				$close[2]['label']=$langs->trans("ConfirmClassifyPayedPartiallyOther");
+				$close[0]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyReasonDiscountVatDesc");
+				$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");
+				$close[2]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonOtherDesc");
 				// Texte
 				$close[0]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[0]['label'],1);
 				$close[1]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[1]['label'],1);
@@ -1719,14 +1728,34 @@ else
 				}
 				else
 				{				
-					$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled');
+					// Code
+					$close[1]['code']='badcustomer';
+					$close[2]['code']='abandon';
+					// Help
+					$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");
+					$close[2]['label']=$langs->trans("ConfirmClassifyAbandonReasonOtherDesc");
+					// Texte
+					$close[1]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$fac->ref),$close[1]['label'],1);
+					$close[2]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyAbandonReasonOther"),$close[2]['label'],1);
+					// arrayreasons
+					$arrayreasons[$close[1]['code']]=$close[1]['reason'];
+					$arrayreasons[$close[2]['code']]=$close[2]['reason'];
+
+					// Crée un tableau formulaire
+					$formquestion=array(
+					'text' => $langs->trans("ConfirmCancelBillQuestion"),
+					array('type' => 'radio', 'name' => 'close_code', 'label' => $langs->trans("Reason"),  'values' => $arrayreasons),
+					array('type' => 'text',  'name' => 'close_note', 'label' => $langs->trans("Comment"), 'value' => '', 'size' => '100')
+					);
+
+					$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('CancelBill'),$langs->trans('ConfirmCancelBill',$fac->ref),'confirm_canceled',$formquestion);
 					print '<br />';
 				}
 			}
 			
 			/*
-		* Confirmation de la suppression d'une ligne produit
-		*/
+			* Confirmation de la suppression d'une ligne produit
+			*/
 			if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 			{
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;rowid='.$_GET["rowid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
@@ -1734,8 +1763,8 @@ else
 			}
 			
 			/*
-		*   Facture
-		*/
+			*   Facture
+			*/
 			print '<table class="border" width="100%">';
 			
 			// Reference
@@ -1747,7 +1776,7 @@ else
 			L'info "Reference commande client" est une carac de la commande et non de la facture.
 			Elle devrait donc etre stockée sur l'objet commande lié à la facture et non sur la facture.
 			Pour ceux qui utilisent ainsi, positionner la constante FAC_USE_CUSTOMER_ORDER_REF à 1.
-		*/
+			*/
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF)
 			{
 				print '<tr><td>';
@@ -1887,7 +1916,7 @@ else
 					// Facturé
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 					$resteapayeraffiche=$resteapayer;
-					// Escompte
+					// Payé partiellement 'escompte'
 					if ($fac->close_code == 'escompte')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
@@ -1895,16 +1924,16 @@ else
 						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 						$resteapayeraffiche=0;
 					}
-					// Abandon bad customer
-					if ($fac->close_code == 'badcustomer')
+					// Payé partiellement ou Abandon 'badcustomer'
+					if (($fac->fk_statut == 2 || $fac->fk_statut == 3) && $fac->close_code == 'badcustomer')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
 						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 						$resteapayeraffiche=0;
 					}
-					// Abandon other
-					if ($fac->close_code == 'abandon')
+					// Abandon 'abandon'
+					if (($fac->fk_statut == 2 || $fac->fk_statut == 3) && $fac->close_code == 'abandon')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonOther"),-1);

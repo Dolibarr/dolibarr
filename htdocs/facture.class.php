@@ -66,7 +66,10 @@ class Facture extends CommonObject
   var $total;
   var $note;
   var $note_public;
-  //! 0=brouillon, 1=validée, 2=classée payée partiellement ou complètement, 3=classée abandonnée
+  //! 0=brouillon,
+  //! 1=validée,
+  //! 2=classée payée partiellement (close_code='discount_vat','bad_customer') ou complètement (close_code=null),
+  //! 3=classée abandonnée (close_code='abandon')
   var $statut;
   //! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
   var $paye;
@@ -124,7 +127,7 @@ class Facture extends CommonObject
      \param     user       	Object utilisateur qui crée
      \return	int			<0 si ko, >0 si ok
    */
-  function Create($user)
+  function create($user)
   {
     global $langs,$conf,$mysoc;
 
@@ -388,7 +391,7 @@ class Facture extends CommonObject
      \param      societe_id  id de societe
      \return     int         >0 si ok, <0 si ko
    */
-  function Fetch($rowid, $societe_id=0)
+  function fetch($rowid, $societe_id=0)
   {
     dolibarr_syslog("Facture::Fetch rowid=".$rowid.", societe_id=".$societe_id, LOG_DEBUG);
 
@@ -2257,7 +2260,7 @@ class Facture extends CommonObject
 
   /**
      \brief     	Renvoi liste des factures remplacables
-					Statut validée + aucun paiement + non payée + pas deja remplacée
+					Statut validée ou abandonnée pour raison autre + non payée + aucun paiement + pas deja remplacée
      \param			socid		Id societe
      \return    	array		Tableau des factures ('id'=>id, 'ref'=>ref, 'statut'=>status)
    */
@@ -2272,7 +2275,7 @@ class Facture extends CommonObject
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON f.rowid = ff.fk_facture_source";
-    $sql.= " WHERE f.fk_statut = 1";
+    $sql.= " WHERE (f.fk_statut = 1 OR (f.fk_statut = 3 AND f.close_code = 'abandon'))";
 	$sql.= " AND f.paye = 0";					// Pas classée payée complètement
 	$sql.= " AND pf.fk_paiement IS NULL";		// Aucun paiement deja fait
     $sql.= " AND ff.fk_statut IS NULL";			// Renvoi vrai si pas facture de remplacement

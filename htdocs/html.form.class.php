@@ -1609,8 +1609,8 @@ class Form
 	    			print '<tr>';
 	    			if ($i==0) print '<td valign="top">'.$input['label'].'</td>';
 	    			else print '<td>&nbsp;</td>';
-	    			print '<td valign="top"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"></td>';
-	    			print '<td valign="top">';
+	    			print '<td valign="top" width="20"><input type="radio" class="flat" name="'.$input['name'].'" value="'.$selkey.'"></td>';
+	    			print '<td valign="top" align="left">';
 	    			print $selval;
 	    			print '</td></tr>';
 	 	   			$i++;
