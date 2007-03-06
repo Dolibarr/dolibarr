@@ -122,17 +122,24 @@ if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
 if (! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
-	if (isset($_SERVER["SCRIPT_URI"])) {	# Si défini
+	# Si défini (Ex: Apache sous Linux)
+	if (isset($_SERVER["SCRIPT_URI"])) {
 		$dolibarr_main_url_root=$_SERVER["SCRIPT_URI"];
 	}
-	else {									# SCRIPT_URI n'est pas toujours défini (Exemple: Apache 2.0.44 pour Windows)
+	# Si défini (Ex: Apache sous Caudium)
+	elseif (isset($_SERVER["SERVER_URL"]) && isset($_SERVER["DOCUMENT_URI"])) {
+		$dolibarr_main_url_root=$_SERVER["SERVER_URL"].$_SERVER["DOCUMENT_URI"];
+	}
+	# Si SCRIPT_URI, SERVER_URL, DOCUMENT_URI non défini (Ex: Apache 2.0.44 pour Windows)
+	else {										
 		$dolibarr_main_url_root="http://".$_SERVER["SERVER_NAME"].$_SERVER["SCRIPT_NAME"];
 	}
-	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-12);
 	# Nettoyage de l'URL proposée
-	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);	# Supprime le /
-	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);	# Supprime le /index.php
-	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);	# Supprime le /install
+//	$dolibarr_main_url_root = substr($dolibarr_main_url_root,0,strlen($dolibarr_main_url_root)-12);
+	$dolibarr_main_url_root = ereg_replace('\/fileconf\.php$','',$dolibarr_main_url_root);	# Supprime le /fileconf.php
+	$dolibarr_main_url_root = ereg_replace('\/$','',$dolibarr_main_url_root);				# Supprime le /
+	$dolibarr_main_url_root = ereg_replace('\/index\.php$','',$dolibarr_main_url_root);		# Supprime le /index.php
+	$dolibarr_main_url_root = ereg_replace('\/install$','',$dolibarr_main_url_root);		# Supprime le /install
 }
 
 print $dolibarr_main_url_root;

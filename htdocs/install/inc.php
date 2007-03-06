@@ -108,7 +108,7 @@ function pHeader($soutitre,$next,$action='set')
     print '<body>';
     print '<span class="titre"><a class="titre" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DolibarrSetup").'</a></span>';
 
-    print '<form action="'.$next.'.php?testget=ok" method="POST">';
+    print '<form action="'.$next.'.php" method="POST">';
     print '<input type="hidden" name="testpost" value="ok">';
     print '<input type="hidden" name="action" value="'.$action.'">';
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -64,6 +64,17 @@ if (versioncompare(versionphp(),array(4,1)) < 0)
 else
 {
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphp())."<br>\n";
+}
+
+// Check PHP support for $_POST
+if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]))
+{
+	print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("PHPSupportPOSTGETKo")."<br>\n";
+    $checksok=0;
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
 // Si session non actives
