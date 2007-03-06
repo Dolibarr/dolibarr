@@ -13,6 +13,10 @@ the script:
 Prerequite is only having Doxygen installed (Linux or Windows).
 
 
+***** Build a patch
+To build a patch between two directories, you can use the patch command:
+diff -Naur --exclude=CVS --exclude=.#  --exclude=~ --exclude=documents --exclude=phplot5 --exclude=phplot --exclude=scriptaculous --exclude=treemenu --exclude *.htm --exclude samples dolibarr_old dolibarr_new > mydiff.patch
+
 
 ***** Other developper documentation
 
