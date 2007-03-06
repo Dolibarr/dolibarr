@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <PADGEN_PML>
-	<AppVerInfo>PADGen 2.0.2.30</AppVerInfo>
+	<AppVerInfo>PADGen 3.0.1.35</AppVerInfo>
 	<CompanyName />
 	<Program_Info>
 		<Program_Name>Dolibarr</Program_Name>
 		<Program_Version>2.1</Program_Version>
-		<Program_Release_Month>07</Program_Release_Month>
-		<Program_Release_Day>14</Program_Release_Day>
-		<Program_Release_Year>2006</Program_Release_Year>
+		<Program_Release_Month>03</Program_Release_Month>
+		<Program_Release_Day>01</Program_Release_Day>
+		<Program_Release_Year>2007</Program_Release_Year>
 		<Program_Cost_Dollars />
 		<Program_Cost_Other_Code />
 		<Program_Cost_Other />
