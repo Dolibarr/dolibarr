@@ -29,6 +29,14 @@
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
 
+// Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
+// et non path absolu.
+if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
+{
+	$_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
+}
+
+
 $conffile = "../conf/conf.php";
 if (file_exists($conffile))
 {
@@ -100,7 +108,8 @@ function pHeader($soutitre,$next,$action='set')
     print '<body>';
     print '<span class="titre"><a class="titre" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DolibarrSetup").'</a></span>';
 
-    print '<form action="'.$next.'.php" method="POST">';
+    print '<form action="'.$next.'.php?testget=ok" method="POST">';
+    print '<input type="hidden" name="testpost" value="ok">';
     print '<input type="hidden" name="action" value="'.$action.'">';
 
 	print '<table class="main" width="100%"><tr><td>';

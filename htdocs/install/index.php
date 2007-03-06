@@ -33,11 +33,11 @@ include_once("../html.form.class.php");
 
 $err = 0;
 
-// Si fichier conf existe deja, on est pas sur une premiere install,
+// Si fichier conf existe deja et rempli, on est pas sur une premiere install,
 // on ne passe donc pas par la page de choix de langue
-if (file_exists($conffile))
+if (file_exists($conffile) && isset($dolibarr_main_url_root))
 {
-    header("Location: check.php");
+    header("Location: check.php?testget=ok");
     exit;
 }
 
