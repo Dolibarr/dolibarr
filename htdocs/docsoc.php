@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -89,7 +89,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
 }
 
 // Suppression fichier
-if ($_GET["action"]=='delete')
+if ($_POST['action'] == 'confirm_deletefile' && $_POST['confirm'] == 'yes')
 {
   $file = $upload_dir . "/" . urldecode($_GET["urlfile"]);
   dol_delete_file($file);
@@ -112,7 +112,18 @@ if ($socid > 0)
 		*/
 		$head = societe_prepare_head($societe);
 		
+		$html=new Form($db);
+		
 		dolibarr_fiche_head($head, 'document', $societe->nom);
+		
+		/*
+	   * Confirmation de la suppression d'une ligne produit
+	   */
+	  if ($_GET['action'] == 'delete_file')
+	  {
+	    $html->form_confirm($_SERVER["PHP_SELF"].'?socid='.$socid.'&amp;urlfile='.urldecode($_GET["urlfile"]), $langs->trans('DeleteFile'), $langs->trans('ConfirmDeleteFile'), 'confirm_deletefile');
+	    print '<br>';
+	  }
 		
 		// Construit liste des fichiers
 		clearstatcache();
@@ -164,7 +175,6 @@ if ($socid > 0)
 		if ($mesg) { print "$mesg<br>"; }
 		
 		// Affiche formulaire upload
-		$html=new Form($db);
 		$html->form_attach_new_file('docsoc.php?socid='.$socid);
 		
 		// Affiche liste des documents existant
@@ -185,7 +195,7 @@ if ($socid > 0)
 				print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
 				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
 				print '<td align="center">';
-				echo '<a href="docsoc.php?socid='.$socid.'&action=delete&urlfile='.urlencode($file).'">'.img_delete().'</a>';
+				echo '<a href="docsoc.php?socid='.$socid.'&amp;action=delete_file&urlfile='.urlencode($file).'">'.img_delete().'</a>';
 				print "</td></tr>\n";
 			}
 		}
