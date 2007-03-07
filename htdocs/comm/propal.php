@@ -161,14 +161,14 @@ if ($_POST['action'] == 'setecheance')
 {
 	$propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-	$result=$propal->set_echeance($user,@mktime(12, 1, 1, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
+	$result=$propal->set_echeance($user,dolibarr_mktime(12, 0, 0, $_POST['echmonth'], $_POST['echday'], $_POST['echyear']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 if ($_POST['action'] == 'setdate_livraison')
 {
 	$propal = new Propal($db);
     $propal->fetch($_GET['propalid']);
-	$result=$propal->set_date_livraison($user,mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
+	$result=$propal->set_date_livraison($user,dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dolibarr_print_error($db,$propal->error);
 }
 
@@ -204,8 +204,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	{
 		if ($propal->fetch($_POST['copie_propal']) > 0)
 		{
-			$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-			$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
+			$propal->datep = dolibarr_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$propal->date_livraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 			$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 			$propal->duree_validite = $_POST['duree_validite'];
 			$propal->cond_reglement_id = $_POST['cond_reglement_id'];
@@ -230,8 +230,8 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 	}
 	else
 	{
-		$propal->datep = mktime(12, 1, 1, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
-		$propal->date_livraison = mktime(12, 1, 1, $_POST['liv_month']."-".$_POST['liv_day']."-".$_POST['liv_year']);
+		$propal->datep = dolibarr_mktime(12, 0, 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$propal->date_livraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
 		$propal->adresse_livraison_id = $_POST['adresse_livraison_id'];
 		$propal->duree_validite = $_POST['duree_validite'];
 		$propal->cond_reglement_id = $_POST['cond_reglement_id'];
