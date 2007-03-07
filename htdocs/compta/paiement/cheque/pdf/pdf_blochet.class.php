@@ -179,7 +179,7 @@ class BordereauChequeBlochet
 			$pdf->MultiCell(8, $this->line_height, $j+1, 0, 'R', 0);
 
 			$pdf->SetXY (10, $this->tab_top + 10 + $yp);
-			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq, 0, 'J', 0);
+			$pdf->MultiCell(20, $this->line_height, $this->lines[$j]->num_chq?$this->lines[$j]->num_chq:'', 0, 'J', 0);
 			
 			$pdf->SetXY (30, $this->tab_top + 10 + $yp);
 			$pdf->MultiCell(70, $this->line_height, dolibarr_trunc($this->lines[$j]->bank_chq,44), 0, 'J', 0);

@@ -336,10 +336,10 @@ class RemiseCheque
   }
 
   /**
-     \brief  Génère le fichier PDF
-     \param model Nom du modele
-     \return int, 0 en cas de succes
-     \todo Finir la gestion multi modèle
+     \brief  	Génère le fichier PDF
+     \param 	model 		Nom du modele
+     \return 	int			<0 si KO, 0 si OK
+     \todo 		Finir la gestion multi modèle
    */
   function GeneratePdf($model='Blochet')
   {
@@ -350,7 +350,7 @@ class RemiseCheque
 
     $pdf = new BordereauChequeBlochet($db);
 
-    $sql = "SELECT b.banque, b.emetteur, b.amount ";
+    $sql = "SELECT b.banque, b.emetteur, b.amount, b.num_chq ";
     $sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba ";
     $sql.= " , ".MAIN_DB_PREFIX."bordereau_cheque as bc";
     $sql.= " WHERE b.fk_account = ba.rowid AND b.fk_bordereau = bc.rowid";
@@ -364,9 +364,10 @@ class RemiseCheque
 	$i = 0;
 	while ( $objp = $this->db->fetch_object($result) )
 	  {	    
-	    $pdf->lines[$i][0] = $objp->banque;
-	    $pdf->lines[$i][1] = $objp->emetteur;
-	    $pdf->lines[$i][2] = price($objp->amount);
+	    $pdf->lines[$i]->bank_chq = $objp->banque;
+	    $pdf->lines[$i]->emetteur_chq = $objp->emetteur;
+	    $pdf->lines[$i]->amount_chq = $objp->amount;
+	    $pdf->lines[$i]->num_chq = $objp->num_chq;
 	    $i++;
 	  }
       }

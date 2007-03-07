@@ -344,7 +344,7 @@ else
 
 			print "<tr $bc[$var]>";
 			print '<td align="center" width="24">'.$i.'</td>';
-			print '<td align="center">'.$objp->num_chq.'</td>';
+			print '<td align="center">'.($objp->num_chq?$objp->num_chq:'&nbsp;').'</td>';
 			print '<td>'.dolibarr_trunc($objp->emetteur,24).'</td>';
 			print '<td>'.dolibarr_trunc($objp->banque,24).'</td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
