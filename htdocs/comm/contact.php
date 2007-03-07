@@ -30,15 +30,16 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->societe->lire) accessforbidden();
-
 $langs->load("companies");
-
-llxHeader('','Contacts');
 
 $sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
 $page=$_GET["page"];
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="p.name";
+if ($page < 0) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
 
 $socid=$_GET["socid"];
 $type=$_GET["type"];
@@ -52,13 +53,11 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+if (!$user->rights->societe->lire) accessforbidden();
 
 
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="p.name";
-if ($page < 0) { $page = 0 ; }
-$limit = $conf->liste_limit;
-$offset = $limit * $page ;
+
+llxHeader('','Contacts');
 
 
 if ($type == "c")
@@ -139,18 +138,18 @@ if ($result)
 {
   $num = $db->num_rows();
   
-  print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, "contact.php", "&amp;type=$type",$sortfield,$sortorder,"",$num);
+  print_barre_liste($langs->trans("ListOfContacts").($label?" (".$label.")":""),$page, $_SERVER["PHP_SELF"], "&amp;type=$type",$sortfield,$sortorder,"",$num);
   
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin,"&amp;type=$type","",$sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin,"&amp;type=$type","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"p.name", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"p.firstname", $begin,"&amp;type=$type","",$sortfield);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom", $begin,"&amp;type=$type","",$sortfield);
   print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
   print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
   print "</tr>\n";
 
-  print '<form action="contact.php?type='.$_GET["type"].'" method="GET">';
+  print '<form action="'.$_SERVER["PHP_SELF"].'?type='.$_GET["type"].'" method="GET">';
   print '<tr class="liste_titre">';
   print '<td class="liste_titre"><input class="flat" name="search_nom" size="12" value="'.$_GET["search_nom"].'"></td>';
   print '<td class="liste_titre"><input class="flat" name="search_prenom" size="12"  value="'.$_GET["search_prenom"].'"></td>';
@@ -173,7 +172,7 @@ if ($result)
       print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
       print "<td>$obj->firstname</TD>";
       
-      print '<td><a href="contact.php?type='.$type.'&socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+      print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
       print "<a href=\"".$urlfiche."?socid=$obj->idp\">$obj->nom</a></td>\n";
       
       print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';

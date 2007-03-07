@@ -40,17 +40,27 @@ $langs->load('companies');
 
 $mesg='';
 
+$sortfield=isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
+$sortorder=isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
+$page=$_GET["page"];
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="b.emetteur";
+if ($page < 0) { $page = 0 ; }
+$limit = $conf->liste_limit;
+$offset = $limit * $page ;
+
+
 /*
  * Actions
  */
 
 if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banque)
 {	
-  $remise = new RemiseCheque($db);
-  $result = $remise->Create($user, $_GET["accountid"]);
+  $remisecheque = new RemiseCheque($db);
+  $result = $remisecheque->Create($user, $_GET["accountid"]);
   if ($result === 0)
     {      
-      Header("Location: fiche.php?id=".$remise->id);
+      Header("Location: fiche.php?id=".$remisecheque->id);
       exit;
     }
   else
@@ -61,12 +71,12 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
 
 if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $user->rights->banque)
 {	
-  $remise = new RemiseCheque($db);
-  $remise->id = $_GET["id"];
-  $result = $remise->RemoveCheck($_GET["lineid"]);
+  $remisecheque = new RemiseCheque($db);
+  $remisecheque->id = $_GET["id"];
+  $result = $remisecheque->RemoveCheck($_GET["lineid"]);
   if ($result === 0)
     {      
-      Header("Location: fiche.php?id=".$remise->id);
+      Header("Location: fiche.php?id=".$remisecheque->id);
       exit;
     }
   else
@@ -77,9 +87,9 @@ if ($_GET['action'] == 'remove' && $_GET["id"] > 0 && $_GET["lineid"] > 0 && $us
 
 if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user->rights->banque)
 {
-  $remise = new RemiseCheque($db);
-  $remise->id = $_GET["id"];
-  $result = $remise->Delete();
+  $remisecheque = new RemiseCheque($db);
+  $remisecheque->id = $_GET["id"];
+  $result = $remisecheque->Delete();
   if ($result == 0)
     {
       Header("Location: index.php");
@@ -93,12 +103,12 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes' && $user-
 
 if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user->rights->banque)
 {
-  $remise = new RemiseCheque($db);
-  $remise->Fetch($_GET["id"]);
-  $result = $remise->Validate($user);
+  $remisecheque = new RemiseCheque($db);
+  $remisecheque->Fetch($_GET["id"]);
+  $result = $remisecheque->Validate($user);
   if ($result == 0)
     {
-      Header("Location: fiche.php?id=".$remise->id);
+      Header("Location: fiche.php?id=".$remisecheque->id);
       exit;
     }
   else
@@ -109,12 +119,12 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 
 if ($_POST['action'] == 'builddoc' && $user->rights->banque)
 {
-  $remise = new RemiseCheque($db);
-  $result = $remise->Fetch($_GET["id"]);
+  $remisecheque = new RemiseCheque($db);
+  $result = $remisecheque->Fetch($_GET["id"]);
   if ($result == 0)
     {
-      $result = $remise->GeneratePdf($_POST["model"]);
-      Header("Location: fiche.php?id=".$remise->id);
+      $result = $remisecheque->GeneratePdf($_POST["model"]);
+      Header("Location: fiche.php?id=".$remisecheque->id);
       exit;
     }
   else
@@ -142,8 +152,8 @@ if ($_GET['action'] == 'new')
 }
 else
 {
-  $remise = new RemiseCheque($db);
-  $result = $remise->Fetch($_GET["id"]);
+  $remisecheque = new RemiseCheque($db);
+  $result = $remisecheque->Fetch($_GET["id"]);
 
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$_GET["id"];
@@ -161,7 +171,7 @@ else
    */
   if ($_GET['action'] == 'delete')
     {
-      $html->form_confirm('fiche.php?id='.$remise->id, $langs->trans("DeleteCheckReceipt"), 'Etes-vous sûr de vouloir supprimer ce bordereau ?', 'confirm_delete');
+      $html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), 'Etes-vous sûr de vouloir supprimer ce bordereau ?', 'confirm_delete');
       print '<br>';
     }
   
@@ -171,7 +181,7 @@ else
   if ($_GET['action'] == 'valide')
     {
       $facid = $_GET['facid'];
-      $html->form_confirm('fiche.php?id='.$remise->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
+      $html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
       print '<br>';
     }
 }
@@ -262,44 +272,49 @@ if ($_GET['action'] == 'new')
 }
 else
 {
+	$paymentstatic=new Paiement($db);
+	$accountlinestatic=new AccountLine($db);
 	$accountstatic=new Account($db);
 	
-	$accountstatic->id=$remise->account_id;
-	$accountstatic->label=$remise->account_label;
+	$accountstatic->id=$remisecheque->account_id;
+	$accountstatic->label=$remisecheque->account_label;
 
-	$remise->load_previous_next_id();
-	$previous_id = $remise->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->previous_id.'">'.img_previous().'</a>':'';
-	$next_id     = $remise->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remise->next_id.'">'.img_next().'</a>':'';
+	$remisecheque->load_previous_next_id();
+	$previous_id = $remisecheque->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->previous_id.'">'.img_previous().'</a>':'';
+	$next_id     = $remisecheque->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->next_id.'">'.img_next().'</a>':'';
 
 	print '<table class="border" width="100%">';
 	print '<tr><td width="20%">'.$langs->trans('Numero').'</td><td colspan="2" >';
 	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
 //	print '<td width="20%" align="right">';
-	print $remise->number;
+	print $remisecheque->number;
 	//print $previous_id.' '.$next_id;
 	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">'.dolibarr_print_date($remise->date_bordereau).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">'.dolibarr_print_date($remisecheque->date_bordereau).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Total').'</td><td colspan="2">';
-	print price($remise->amount);
+	print price($remisecheque->amount);
 	print '</td></tr>';
 
 	print '</table><br />';
 
-	$sql = "SELECT b.amount,b.emetteur,".$db->pdate("b.dateo")." as date,b.rowid,b.banque,";
-	$sql.= " ba.rowid as bid, ba.label";
+	
+	// Liste des cheques
+	$sql = "SELECT b.rowid,b.amount,";
+	$sql.= " b.num_chq,b.emetteur,".$db->pdate("b.dateo")." as date,b.banque,";
+	$sql.= " p.rowid as pid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
-	$sql.= " WHERE b.fk_type= 'CHQ' AND b.fk_account = ba.rowid";
-	$sql.= " AND b.fk_bordereau = ".$remise->id;
-	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
+	$sql.= " WHERE b.fk_type= 'CHQ'";
+	$sql.= " AND b.fk_bordereau = ".$remisecheque->id;
+	$sql.= " ORDER BY $sortfield $sortorder";
 
 	$resql = $db->query($sql);
 
@@ -308,10 +323,17 @@ else
 		$num = $db->num_rows($resql);
 
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td>#</td>';
-		print '<td>'.$langs->trans("CheckTransmitter").'</td>';
-		print '<td>'.$langs->trans("Bank").'</td>';
-		print '<td align="right">'.$langs->trans("Amount").'</td>';
+
+		$param="&amp;id=".$remisecheque->id;
+		print '<tr class="liste_titre">';
+		'<td>'.$langs->trans("Num").'</td>';
+		print '<td>&nbsp;</td>';
+		print_liste_field_titre($langs->trans("Num"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield);
+		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield);
+		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield);
+		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield);
+		print_liste_field_titre($langs->trans("DateOperation"),$_SERVER["PHP_SELF"],"b.dateo", "",$param,'align="center"',$sortfield);
 		print "<td>&nbsp;</td></tr>\n";
 		$i=1;
 		$var=false;
@@ -320,13 +342,27 @@ else
 			$account_id = $objp->bid;
 			$accounts[$objp->bid] += 1;
 
-			print "<tr $bc[$var]><td>$i</td>";
-			print '<td>'.$objp->emetteur.'</td>';
-			print '<td>'.$objp->banque.'</td>';
+			print "<tr $bc[$var]>";
+			print '<td align="center" width="24">'.$i.'</td>';
+			print '<td align="center">'.$objp->num_chq.'</td>';
+			print '<td>'.dolibarr_trunc($objp->emetteur,24).'</td>';
+			print '<td>'.dolibarr_trunc($objp->banque,24).'</td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
-			if($remise->statut == 0)
+			print '<td align="center">';
+			$accountlinestatic->rowid=$objp->rowid;
+			if ($accountlinestatic->rowid)
 			{
-				print '<td align="right"><a href="fiche.php?id='.$remise->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
+				print $accountlinestatic->getNomUrl(1);
+			}
+			else
+			{
+				print '&nbsp;';
+			}
+			print '</td>';
+			print '<td align="center">'.dolibarr_print_date($objp->date).'</td>';
+			if($remisecheque->statut == 0)
+			{
+				print '<td align="right"><a href="fiche.php?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';
 			}
 			else
 			{
@@ -349,10 +385,10 @@ print '</div>';
 
 if ($_GET['action'] != 'new')
 {
-  if ($remise->statut == 1)
+  if ($remisecheque->statut == 1)
     {
       //show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0);
-      $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remise->number);
+      $dir = DOL_DATA_ROOT.'/compta/bordereau/'.get_exdir($remisecheque->number);
       $gen = array('Blochet');
       $html->show_documents("remisecheque","",$dir,'',$gen,0);
     }
@@ -369,12 +405,12 @@ if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new'
   print '<a class="tabAction" href="fiche.php?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }
 
-if ($user->societe_id == 0 && $remise->statut == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
 {
   print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
-if ($user->societe_id == 0 && $remise->statut == 0 && $_GET['action'] == '')
+if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
 {
   print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
   

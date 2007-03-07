@@ -856,6 +856,19 @@ class AccountLine
 		}
 	}
 
+	function getNomUrl($withpicto=0)
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$this->rowid.'">';
+		$lienfin='</a>';
+
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTransaction"),'account').$lienfin.' ');
+		$result.=$lien.$this->rowid.$lienfin;
+		return $result;
+	}
 }
 
 ?>
