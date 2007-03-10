@@ -55,11 +55,11 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 	
 	if ($_POST["credit"] > 0)
     {
-        $amount = $_POST["credit"];
+        $amount = str_replace(',','.',$_POST["credit"]);
     }
     else
     {
-        $amount = - $_POST["debit"];
+        $amount = - str_replace(',','.',$_POST["debit"]);
     }
 
     $dateop = dolibarr_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
@@ -75,7 +75,6 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 	if (! $mesg)
 	{
 	    $acct=new Account($db,$account);
-
 	    $insertid = $acct->addline($dateop, $operation, $label, $amount, $num_chq, $cat1, $user);
 	    if ($insertid > 0)
 	    {
