@@ -56,11 +56,11 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 	
 	if ($_POST["credit"] > 0)
     {
-        $amount = str_replace(',','.',$_POST["credit"]);
+        $amount = price2num($_POST["credit"]);
     }
     else
     {
-        $amount = - str_replace(',','.',$_POST["debit"]);
+        $amount = - price2num($_POST["debit"]);
     }
 
     $dateop = dolibarr_mktime(12,0,0,$_POST["opmonth"],$_POST["opday"],$_POST["opyear"]);
