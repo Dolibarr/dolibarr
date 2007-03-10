@@ -338,6 +338,7 @@ else
                 print '<td width="25%">'.$langs->trans("Login").'</td>';
                 print '<td width="25%">'.$langs->trans("Lastname").'</td>';
                 print '<td width="25%">'.$langs->trans("Firstname").'</td>';
+                print '<td>&nbsp;</td>';
                 print "<td>&nbsp;</td></tr>\n";
                 if ($num) {
                     $var=True;
@@ -353,7 +354,8 @@ else
                         print '</td>';
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
-        
+                        print '<td>&nbsp;</td><td>';
+                                
                         if ($user->admin)
                         {
         
