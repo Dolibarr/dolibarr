@@ -760,7 +760,7 @@ if ($socid > 0)
     $sql.= " ".$db->pdate("a.datep")." as dp,";
     $sql.= " ".$db->pdate("a.datea")." as da,";
     $sql.= " a.percent,";
-    $sql.= " c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+    $sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.login, u.rowid ";
     $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
     $sql.= " AND u.rowid = a.fk_user_author";
@@ -844,7 +844,7 @@ if ($socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
+                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
 
 				// Statut
                 print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
@@ -883,7 +883,7 @@ if ($socid > 0)
     $sql.= " a.percent,";
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
-    $sql.= " u.code, u.rowid";
+    $sql.= " u.login, u.rowid";
     $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
     $sql.= " AND u.rowid = a.fk_user_author";
@@ -977,7 +977,7 @@ if ($socid > 0)
             }
 
 			// Auteur
-            print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+            print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 			// Statut
             print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';

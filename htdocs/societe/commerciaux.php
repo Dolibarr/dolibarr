@@ -222,7 +222,7 @@ if($_GET["socid"])
         $langs->load("users");
         $title=$langs->trans("ListOfUsers");
     
-        $sql = "SELECT u.rowid, u.name, u.firstname, u.code";
+        $sql = "SELECT u.rowid, u.name, u.firstname, u.login";
         $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
         $sql .= " ORDER BY u.name ASC ";
     
@@ -238,7 +238,7 @@ if($_GET["socid"])
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre">';
             print '<td>'.$langs->trans("Name").'</td>';
-            print '<td>'.$langs->trans("Code").'</td>';
+            print '<td>'.$langs->trans("Login").'</td>';
             print '<td>&nbsp;</td>';
             print "</tr>\n";
     
@@ -253,7 +253,7 @@ if($_GET["socid"])
                 print img_object($langs->trans("ShowUser"),"user").' ';
                 print stripslashes($obj->firstname)." " .stripslashes($obj->name)."\n";
                 print '</a>';
-                print '</td><td>'.$obj->code.'</td>';
+                print '</td><td>'.$obj->login.'</td>';
                 print '<td><a href="commerciaux.php?socid='.$_GET["socid"].'&amp;commid='.$obj->rowid.'">'.$langs->trans("Add").'</a></td>';
     
                 print '</tr>'."\n";

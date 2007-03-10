@@ -93,7 +93,7 @@ if ($socid > 0)
     
         $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
-        $sql.= " u.code, u.rowid as userid";
+        $sql.= " u.login, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
         $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
         $sql.= " AND f.fk_user_valid = u.rowid";
@@ -150,13 +150,13 @@ if ($socid > 0)
                 print '<td align="right">'.price($solde)."</td>\n";
 
 		// Auteur
-                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->code.'</a></td>';
+                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objf->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objf->login.'</a></td>';
 		
                 print "</tr>\n";
 		
                 // Paiements
                 $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, pf.amount, p.statut,";
-		$sql.= " p.fk_user_creat, u.code, u.rowid as userid";
+		$sql.= " p.fk_user_creat, u.login, u.rowid as userid";
                 $sql.= " FROM ".MAIN_DB_PREFIX."paiement_facture as pf,";
                 $sql.= " ".MAIN_DB_PREFIX."paiement as p";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON p.fk_user_creat = u.rowid";
@@ -185,7 +185,7 @@ if ($socid > 0)
                         print '<td align="right">'.price($solde)."</td>\n";
 
 						// Auteur
-		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->code.'</a></td>';
+		                print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
 
                         print '</tr>';
     

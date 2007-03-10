@@ -73,7 +73,7 @@ print_fiche_titre($langs->trans("Bookmarks"));
 if ($mesg) print $mesg;
 
 $sql = "SELECT b.fk_soc as idp, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
-$sql.= " u.name, u.firstname, u.code";
+$sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND (b.fk_user = ".$user->id." OR b.fk_user is NULL)";
@@ -151,7 +151,7 @@ if ($resql)
         print "</td>\n";
         
         // Auteur
-        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code."</a></td>\n";
+        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login."</a></td>\n";
 
         // Date creation
         print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";

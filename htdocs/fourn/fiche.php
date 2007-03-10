@@ -367,7 +367,7 @@ if ( $societe->fetch($socid) )
 	print '<table width="100%" class="noborder">';
 	print '<tr class="liste_titre"><td colspan="10"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td></tr>';
 
-	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.code, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
+	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
 	$sql .= " WHERE a.fk_soc = ".$societe->id;
 	$sql .= " AND u.rowid = a.fk_user_author";
@@ -450,7 +450,7 @@ if ( $societe->fetch($socid) )
 			}
 
 			// Auteur
-			print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->code.'</a></td>';
+			print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
 			print "</tr>\n";
 			$i++;
 		}
@@ -470,7 +470,7 @@ if ( $societe->fetch($socid) )
 	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da,";
 	$sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
 	$sql.= " c.code as acode, c.libelle,";
-	$sql.= " u.code, u.rowid";
+	$sql.= " u.login, u.rowid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
 	$sql.= " WHERE a.fk_soc = ".$societe->id;
 	$sql.= " AND u.rowid = a.fk_user_author";
@@ -558,7 +558,7 @@ if ( $societe->fetch($socid) )
 			}
 
 			// Auteur
-			print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+			print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print "</tr>\n";
 			$i++;
 		}

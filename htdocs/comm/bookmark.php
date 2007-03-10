@@ -92,7 +92,7 @@ if ($_GET["action"] == 'delete')
 
 print_fiche_titre($langs->trans("Bookmarks"));
  
-$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname, u.code";
+$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_soc = s.idp AND b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;

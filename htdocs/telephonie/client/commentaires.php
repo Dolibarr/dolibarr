@@ -135,7 +135,7 @@ if ($_GET["id"])
       
       /* Commentaires */
       
-      $sql = "SELECT c.commentaire, u.firstname, u.name, u.code, c.rowid, c.fk_user";
+      $sql = "SELECT c.commentaire, u.firstname, u.name, u.login, c.rowid, c.fk_user";
       $sql .= " , ".$db->pdate("c.datec") ." as datec";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
@@ -156,7 +156,7 @@ if ($_GET["id"])
 	      print "<tr $bc[$var]><td>".strftime("%d/%m/%y %H:%M",$obj->datec);
 	      print "</td>\n";
 	      print '<td>'.nl2br(stripslashes($obj->commentaire))."</td>\n";
-	      print '<td align="center">'.$obj->code."</td>\n";
+	      print '<td align="center">'.$obj->login."</td>\n";
 	      print '<td align="center">&nbsp;';
 	      if ($obj->fk_user == $user->id)
 		{

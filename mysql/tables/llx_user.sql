@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,7 +31,6 @@ create table llx_user
   pass              varchar(32),
   name              varchar(50),
   firstname         varchar(50),
-  code              varchar(4) NOT NULL,
   office_phone      varchar(20),
   office_fax        varchar(20),
   user_mobile       varchar(20),

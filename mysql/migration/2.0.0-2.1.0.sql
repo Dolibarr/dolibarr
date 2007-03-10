@@ -715,10 +715,9 @@ alter table llx_user add column office_fax        varchar(20);
 alter table llx_user add column user_mobile       varchar(20);
 
 alter table llx_user modify login varchar(24) NOT NULL;
-alter table llx_user modify code varchar(4) NOT NULL;
+alter table llx_user drop code;
 
 ALTER TABLE llx_user ADD UNIQUE uk_user_login (login);
-ALTER TABLE llx_user ADD UNIQUE uk_user_code (code);
 
 
 alter table llx_boxes add column fk_user integer;

@@ -65,7 +65,7 @@ llxHeader();
 $sql = "SELECT s.nom as societe, s.idp as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
-$sql.= " u.code, u.rowid as userid";
+$sql.= " u.login, u.rowid as userid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -122,7 +122,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Contact"),$_SERVER["PHP_SELF"],"a.fk_contact",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.code",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield);
     print "</tr>\n";
     $var=true;
@@ -201,7 +201,7 @@ if ($resql)
         print '</td>';
 
         // Auteur
-        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+        print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
         // Status/Percent
         print '<td align="right">'.$actionstatic->LibStatut($obj->percent,5).'</td>';

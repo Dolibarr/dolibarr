@@ -174,7 +174,7 @@ $offset = $conf->liste_limit * $page ;
  */
 
 $sql = "SELECT d.rowid as grille, d.libelle as tarif_desc, d.type_tarif";
-$sql .= " , u.code, u.name, u.firstname";
+$sql .= " , u.login, u.name, u.firstname";
 $sql .= " , r.pread, r.pwrite";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
 $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";

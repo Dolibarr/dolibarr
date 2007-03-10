@@ -620,7 +620,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	// Recherche histo sur actioncomm
 	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.note, a.percent as percent,";
 	$sql.= " c.code as acode, c.libelle,";
-	$sql.= " u.rowid as user_id, u.code";
+	$sql.= " u.rowid as user_id, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
 	$sql.= " WHERE fk_contact = ".$contact->id;
 	$sql.= " AND u.rowid = a.fk_user_author";
@@ -638,7 +638,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 			$obj = $db->fetch_object($resql);
 			$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
 			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-			'userid'=>$obj->user_id,'code'=>$obj->code);
+			'userid'=>$obj->user_id,'login'=>$obj->login);
 			$numaction++;
 			$i++;
 		}
@@ -651,7 +651,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	// Recherche histo sur mailing
 	$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percent,";
 	$sql.= " 'AC_EMAILING' as acode,";
-	$sql.= " u.rowid as user_id, u.code";
+	$sql.= " u.rowid as user_id, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u ";
 	$sql.= " WHERE mc.email = '".addslashes($contact->email)."'";
 	$sql.= " AND mc.statut = 1";
@@ -670,7 +670,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 			$obj = $db->fetch_object($resql);
 			$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
 			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
-			'userid'=>$obj->user_id,'code'=>$obj->code);
+			'userid'=>$obj->user_id,'login'=>$obj->login);
 			$numaction++;
 			$i++;
 		}
@@ -724,9 +724,9 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 		// Author
 		print '<td>';
-		if ($histo[$key]['code'])
+		if ($histo[$key]['login'])
 		{
-			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$histo[$key]['userid'].'">'.img_object($langs->trans("ShowUser"),'user').' '.$histo[$key]['code'].'</a>';
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$histo[$key]['userid'].'">'.img_object($langs->trans("ShowUser"),'user').' '.$histo[$key]['login'].'</a>';
 		}
 		else print "&nbsp;";
 		print "</td>";

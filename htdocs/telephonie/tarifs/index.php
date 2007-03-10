@@ -73,7 +73,7 @@ $offset = $conf->liste_limit * $page ;
 $sql = "SELECT d.rowid as grille, d.libelle as tarif_desc, d.type_tarif";
 $sql .= " , t.libelle as tarif, t.rowid as tarif_id";
 $sql .= " , m.temporel, m.fixe";
-$sql .= " , u.code";
+$sql .= " , u.login";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
 $sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
 $sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_montant as m";
@@ -155,7 +155,7 @@ if ($resql)
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
       print '<td align="center">'.$obj->type_tarif."</td>\n";
-      print '<td align="center">'.$obj->code."</td>\n";
+      print '<td align="center">'.$obj->login."</td>\n";
       print "</tr>\n";
       $i++;
     }

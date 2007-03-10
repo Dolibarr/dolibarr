@@ -176,7 +176,7 @@ if ($_socid > 0)
      * Liste remises fixes restant en cours
      */
     $sql  = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description,";
-    $sql.= " u.code, u.rowid as user_id";
+    $sql.= " u.login, u.rowid as user_id";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."user as u";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
     $sql.= " AND u.rowid = rc.fk_user AND rc.fk_facture IS NULL";
@@ -205,7 +205,7 @@ if ($_socid > 0)
             print '<td>'.dolibarr_print_date($obj->dc).'</td>';
             print '<td>'.$obj->description.'</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</td>';
+            print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</td>';
 			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</td>';
             else print '<td>&nbsp;</td>';
             print '</tr>';
@@ -225,7 +225,7 @@ if ($_socid > 0)
      * Liste ristournes appliquées
      */
     $sql = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture,";
-    $sql.= " u.code, u.rowid as user_id,";
+    $sql.= " u.login, u.rowid as user_id,";
     $sql.= " f.rowid, f.facnumber";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql.= " , ".MAIN_DB_PREFIX."user as u";
@@ -262,7 +262,7 @@ if ($_socid > 0)
             print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td>'.$obj->description.'</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="center">'.$obj->code.'</td>';
+            print '<td align="center">'.$obj->login.'</td>';
             print '<td>&nbsp;</td>';
             print '</tr>';
             $i++;

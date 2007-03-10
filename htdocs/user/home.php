@@ -80,7 +80,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
  */
 $max=10;
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.code, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.login, u.fk_societe, ".$db->pdate("u.datec")." as datec,";
 $sql.= " u.ldap_sid, s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe=s.idp";

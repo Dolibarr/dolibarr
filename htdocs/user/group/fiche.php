@@ -274,7 +274,7 @@ else
             // On sélectionne les users qui ne sont pas déjà dans le groupe
             $uss = array();
     
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code, u.admin";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
             #      $sql .= " LEFT JOIN llx_usergroup_user ug ON u.rowid = ug.fk_user";
             #      $sql .= " WHERE ug.fk_usergroup IS NULL";
@@ -318,7 +318,7 @@ else
             /*
              * Membres du groupe
              */
-            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.code, u.admin";
+            $sql = "SELECT u.rowid, u.login, u.name, u.firstname, u.admin";
             $sql.= " FROM ".MAIN_DB_PREFIX."user as u,";
             $sql.= " ".MAIN_DB_PREFIX."usergroup_user as ug";
             $sql.= " WHERE ug.fk_user = u.rowid";
@@ -338,7 +338,6 @@ else
                 print '<td width="25%">'.$langs->trans("Login").'</td>';
                 print '<td width="25%">'.$langs->trans("Lastname").'</td>';
                 print '<td width="25%">'.$langs->trans("Firstname").'</td>';
-                print '<td>'.$langs->trans("Code").'</td>';
                 print "<td>&nbsp;</td></tr>\n";
                 if ($num) {
                     $var=True;
@@ -354,7 +353,6 @@ else
                         print '</td>';
                         print '<td>'.ucfirst(stripslashes($obj->name)).'</td>';
                         print '<td>'.ucfirst(stripslashes($obj->firstname)).'</td>';
-                        print '<td>'.$obj->code.'</td><td>';
         
                         if ($user->admin)
                         {

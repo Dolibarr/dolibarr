@@ -171,7 +171,7 @@ if ($_GET["facid"] > 0)
         $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
         $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
         $sql .= " , pfd.amount";
-        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.code";
+        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         $sql .= " , ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE fk_facture = ".$fac->id;
@@ -227,7 +227,7 @@ if ($_GET["facid"] > 0)
                 print '<td align="center">En attente de traitement</td>';
                 print '<td align="center">'.price($obj->amount).'</td>';
                 print '<td align="center">-</td>';
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
                 print '<td>&nbsp;</td>';
                 print '<td>';
                 print '<a href="prelevement.php?facid='.$fac->id.'&amp;action=delete&amp;did='.$obj->rowid.'">';
@@ -247,7 +247,7 @@ if ($_GET["facid"] > 0)
         $sql = "SELECT pfd.rowid, pfd.traite,".$db->pdate("pfd.date_demande")." as date_demande";
         $sql .= " ,".$db->pdate("pfd.date_traite")." as date_traite";
         $sql .= " , pfd.fk_prelevement_bons, pfd.amount";
-        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.code";
+        $sql .= " , u.rowid as user_id, u.name, u.firstname, u.login";
         $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
         $sql .= " , ".MAIN_DB_PREFIX."user as u";
         $sql .= " WHERE fk_facture = ".$fac->id;
@@ -278,7 +278,7 @@ if ($_GET["facid"] > 0)
                 print '<a href="'.DOL_URL_ROOT.'/compta/prelevement/fiche.php?id='.$obj->fk_prelevement_bons;
                 print '">'.$obj->fk_prelevement_bons."</a></td>\n";
 
-                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+                print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
                 print '<td>&nbsp;</td>';
                 print '<td>&nbsp;</td>';

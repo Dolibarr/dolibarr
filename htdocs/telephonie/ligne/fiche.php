@@ -662,7 +662,7 @@ else
 		}
 
 	      $sql = "SELECT ".$db->pdate("l.tms").", l.statut, l.fk_user";
-	      $sql .= ", u.code, u.code, l.comment, l.fk_fournisseur";
+	      $sql .= ", u.login, l.comment, l.fk_fournisseur";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut as l";
 	      $sql .= ",".MAIN_DB_PREFIX."user as u";
 	      $sql .= " WHERE u.rowid = l.fk_user AND l.fk_ligne = ".$ligne->id;

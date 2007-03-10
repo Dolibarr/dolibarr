@@ -129,7 +129,7 @@ if ($_GET["id"] > 0)
 		print '<td align="center">'.$langs->trans("Author").'</td>';
 		print '</tr>';
 
-		$sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.rowid, u.code, u.firstname, u.name";
+		$sql = "SELECT l.fk_statut, ".$db->pdate("l.datelog") ."as dl, u.rowid, u.login, u.firstname, u.name";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur_log as l ";
 		$sql .= " , ".MAIN_DB_PREFIX."user as u ";
 		$sql .= " WHERE l.fk_commande = ".$commande->id." AND u.rowid = l.fk_user";
@@ -156,7 +156,7 @@ if ($_GET["id"] > 0)
 
 				// User
 				print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">';
-				print img_object($langs->trans("ShowUser"),'user').' '.$obj->code.'</a></td>';
+				print img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
 				print '</tr>';
 

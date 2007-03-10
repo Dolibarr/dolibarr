@@ -66,7 +66,7 @@ if ($_POST["search_user"])
 {
     $sql.= " AND (u.name like '%".$_POST["search_user"]."%' OR u.firstname like '%".$_POST["search_user"]."%')";
 }
-if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.code like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
+if ($sall) $sql.= " AND (u.login like '%".$sall."%' OR u.name like '%".$sall."%' OR u.firstname like '%".$sall."%' OR u.email like '%".$sall."%' OR u.note like '%".$sall."%')";
 if ($sortfield) $sql.=" ORDER BY $sortfield $sortorder";
 
 $result = $db->query($sql);

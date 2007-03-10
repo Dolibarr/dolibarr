@@ -1,6 +1,7 @@
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007 Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,5 +24,3 @@
 
 
 ALTER TABLE llx_user ADD UNIQUE uk_user_login (login);
-ALTER TABLE llx_user ADD UNIQUE uk_user_code (code);
-

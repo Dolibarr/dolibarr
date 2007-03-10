@@ -69,7 +69,7 @@ if ($_GET["id"] > 0)
       
       /* Liste des tâches */
       
-      $sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.code";
+      $sql = "SELECT t.task_date, t.task_duration, t.fk_user, u.login";
       $sql .= " FROM ".MAIN_DB_PREFIX."projet_task_time as t";
       $sql .= " , ".MAIN_DB_PREFIX."user as u";
       $sql .= " WHERE t.fk_task =".$task->id;

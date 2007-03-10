@@ -267,7 +267,7 @@ if ($_GET["id"])
 
 	  /* Tarifs */
 	  
-	  $sql = "SELECT t.rowid , t.libelle, tc.temporel, tc.fixe, u.code, tc.rowid, u.code";
+	  $sql = "SELECT t.rowid , t.libelle, tc.temporel, tc.fixe, u.login, tc.rowid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif as t";
 	  $sql .= "," . MAIN_DB_PREFIX."telephonie_tarif_client as tc";
 	  $sql .= "," . MAIN_DB_PREFIX."societe as s";
@@ -304,7 +304,7 @@ if ($_GET["id"])
 			  print '<td align="center"><a href="'.DOL_URL_ROOT.'/telephonie/client/tarifs.php?action=delete&amp;tid='.$obj->rowid.'&amp;id='.$soc->id.'">';
 		      print img_delete()."</a></td>\n";
 			}
-		      print '<td align="center">'.$obj->code."</td>\n";
+		      print '<td align="center">'.$obj->login."</td>\n";
 		      print '</tr>';
 
 		      $i++;

@@ -125,13 +125,12 @@ if ($_GET["id"])
 
   $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
   $sql .= ", p.rem_pour_prev, p.rem_pour_autr, p.mode_paiement";
-  $sql .= ", u.name, u.firstname, uu.code";
+  $sql .= ", u.name, u.firstname, u.login";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   $sql .= " , ".MAIN_DB_PREFIX."user as u";
-  $sql .= " , ".MAIN_DB_PREFIX."user as uu";
   
   $sql .= " WHERE p.fk_commercial =u.rowid";
   $sql .= " AND p.fk_user =uu.rowid";
@@ -179,7 +178,7 @@ if ($_GET["id"])
 	    {
 	      print '<td align="center">Autre</td>';
 	    }
-	  print '<td align="center">'.$obj->code.'</td>';
+	  print '<td align="center">'.$obj->login.'</td>';
 
 	  print "</tr>\n";
 	  $i++;
