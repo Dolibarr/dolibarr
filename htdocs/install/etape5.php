@@ -100,6 +100,8 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
         {
 			$conf->setValues($db);
 
+// todo: a supprimer ou modifier car le champs code n'existe plus
+/*
 			$code=0;
 			
 			// Recherche du code AD99 le plus élevé.
@@ -121,11 +123,11 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 
 			$code++;
 			$code=sprintf("%02d",$code);
-			
-            $sql = "INSERT INTO llx_user(datec,login,pass,admin,name,code) VALUES (now()";
+*/			
+            $sql = "INSERT INTO llx_user(datec,login,pass,admin,name) VALUES (now()";
             $sql.= ",'".$_POST["login"]."'";
             $sql.= ",'".($conf->password_encrypted?md5($_POST["pass"]):$_POST["pass"])."'";
-            $sql.= ",1,'Administrateur','AD".$code."')";
+            $sql.= ",1,'Administrateur')";
 	    	//print "sql=".$sql." ".mysql_errno($db->db);
 	        $resql=$db->query($sql);
 	        if ($resql)
