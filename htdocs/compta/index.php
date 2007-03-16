@@ -121,12 +121,13 @@ if ($conf->facture->enabled)
  */
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
-  $sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type, s.nom, s.idp";
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  $sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
+	$sql.= " s.nom, s.idp";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 
   if ($socid)
     {
@@ -140,7 +141,9 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
       $num = $db->num_rows($resql);
       if ($num)
         {
-	  print '<table class="noborder" width="100%">';
+		$companystatic=new Societe($db);
+
+		print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre">';
 	  print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
 	  $i = 0;
@@ -156,15 +159,20 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      $facturestatic->type=$obj->type;
 	      print $facturestatic->getNomUrl(1,'');
 	      print '</td>';
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,16).'</a></td>';
+	      print '<td>';
+		  $companystatic->id=$obj->idp;
+		  $companystatic->nom=$obj->nom;
+		  $companystatic->client=1;
+		  print $companystatic->getNomUrl(1,'',16);
+			print '</td>';
 	      print '<td align="right">'.price($obj->total_ttc).'</td>';
 	      print '</tr>';
 	      $tot_ttc+=$obj->total_ttc;
 	      $i++;
             }
 
-	  print '<tr class="liste_total"><td colspan="2" align="left">'.$langs->trans("Total").'</td>';
-	  print '<td align="right">'.price($tot_ttc).'</td>';
+	  print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+	  print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 	  print '</tr>';
 
 	  print "</table><br>";
@@ -276,6 +284,121 @@ else
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
+// Derniers clients
+if ($user->rights->societe->lire)
+{
+	$langs->load("boxes");
+	$max=5;
+
+	$sql = "SELECT s.nom, s.idp, ".$db->pdate("s.datec")." as dc";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.client = 1";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($user->societe_id > 0)
+	{
+		$sql .= " AND s.idp = $user->societe_id";
+	}
+	$sql .= " ORDER BY s.datec DESC ";
+	$sql .= $db->plimit($max, 0);
+
+	$result = $db->query($sql);
+
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+
+		$i = 0;
+
+		if ($num)
+		{
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastCustomers",min($max,$num)).'</td>';
+			print '<td align="right">'.$langs->trans("Date").'</td>';
+			print '</tr>';
+			$var = True;
+			$total_ttc = $totalam = $total = 0;
+
+			$customerstatic=new Client($db);
+			$var=true;
+			while ($i < $num && $i < $max)
+			{
+				$objp = $db->fetch_object($result);
+				$customerstatic->id=$objp->idp;
+				$customerstatic->nom=$objp->nom;
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+				print '<td align="right">'.dolibarr_print_date($objp->dc,'day').'</td>';
+				print '</tr>';
+
+				$i++;
+			}
+			
+			print '</table><br>';
+		}
+	}
+}
+
+
+// Derniers fournisseurs
+if ($user->rights->societe->lire)
+{
+	$langs->load("boxes");
+	$max=5;
+
+	$sql = "SELECT s.nom, s.idp, ".$db->pdate("s.datec")." as dc";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql .= " WHERE s.fournisseur = 1";
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($user->societe_id > 0)
+	{
+		$sql .= " AND s.idp = $user->societe_id";
+	}
+	$sql .= " ORDER BY s.datec DESC ";
+	$sql .= $db->plimit($max, 0);
+
+	$result = $db->query($sql);
+
+	if ($result)
+	{
+		$num = $db->num_rows($result);
+
+		$i = 0;
+
+		if ($num)
+		{
+			print '<table class="noborder" width="100%">';
+			print '<tr class="liste_titre"><td>'.$langs->trans("BoxTitleLastSuppliers",min($max,$num)).'</td>';
+			print '<td align="right">'.$langs->trans("Date").'</td>';
+			print '</tr>';
+			$var = True;
+			$total_ttc = $totalam = $total = 0;
+
+			$customerstatic=new Client($db);
+			$var=true;
+			while ($i < $num && $i < $max)
+			{
+				$objp = $db->fetch_object($result);
+				$customerstatic->id=$objp->idp;
+				$customerstatic->nom=$objp->nom;
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td>'.$customerstatic->getNomUrl(1).'</td>';
+				print '<td align="right">'.dolibarr_print_date($objp->dc,'day').'</td>';
+				print '</tr>';
+
+				$i++;
+			}
+			
+			print '</table><br>';
+		}
+	}
+}
+	
 /*
  * Commandes à facturer
  */
@@ -396,28 +519,26 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 			print '</tr>';
 			$var = True;
 			$total_ttc = $totalam = $total = 0;
-			while ($i < $num)
+			while ($i < $num && $i < $conf->liste_limit)
 			{
 				$obj = $db->fetch_object($resql);
 
-				if ($i < $conf->liste_limit)
-				{
-					$var=!$var;
-					print '<tr '.$bc[$var].'>';
-					print '<td nowrap>';
-					$facturestatic->ref=$obj->facnumber;
-					$facturestatic->id=$obj->rowid;
-					$facturestatic->type=$obj->type;
-					print $facturestatic->getNomUrl(1,'');
-					if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
-					print '</td>';
-					print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
-					if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
-					print '<td align="right">'.price($obj->total_ttc).'</td>';
-					print '<td align="right">'.price($obj->am).'</td>';
-					print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
-					print '</tr>';
-				}
+				$var=!$var;
+				print '<tr '.$bc[$var].'>';
+				print '<td nowrap>';
+				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->id=$obj->rowid;
+				$facturestatic->type=$obj->type;
+				print $facturestatic->getNomUrl(1,'');
+				if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				print '</td>';
+				print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right">'.price($obj->am).'</td>';
+				print '<td>'.$facstatic->LibStatut($obj->paye,$obj->fk_statut,3,$obj->am).'</td>';
+				print '</tr>';
+
 				$total_ttc +=  $obj->total_ttc;
 				$total += $obj->total;
 				$totalam +=  $obj->am;
