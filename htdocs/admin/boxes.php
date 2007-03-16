@@ -45,20 +45,31 @@ $boxes = array();
 
 if ($_POST["action"] == 'add')
 {
-    $sql = "SELECT rowid";
+	$sql = "SELECT rowid";
     $sql.= " FROM ".MAIN_DB_PREFIX."boxes";
     $sql.= " WHERE fk_user=0 AND box_id=".$_POST["boxid"]." AND position=".$_POST["pos"];
     $resql = $db->query($sql);
-    if ($resql)
+    dolibarr_syslog("boxes.php::search if box active sql=".$sql);
+	if ($resql)
     {
 	    $num = $db->num_rows($resql);
 	    if ($num == 0)
 	    {
-	        // Si la boite n'est pas deja active
+			$db->begin();
+
+			// Si la boite n'est pas deja active
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", 0)";
+			dolibarr_syslog("boxes.php::activation boite sql=".$sql);
 	        $resql = $db->query($sql);
-	    }
-	    
+
+		    // Remove all personalized setup when a box is activated or disabled
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
+		    $sql.= " WHERE param like 'MAIN_BOXES_%'";
+		    $resql = $db->query($sql);
+
+			$db->commit();
+		}
+		
 	    Header("Location: boxes.php");
 	    exit;
 	}
@@ -76,6 +87,7 @@ if ($_GET["action"] == 'delete')
     $sql.= " WHERE rowid=".$_GET["rowid"];
     $resql = $db->query($sql);
 
+    // Remove all personalized setup when a box is activated or disabled
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
     $sql.= " WHERE param like 'MAIN_BOXES_%'";
     $resql = $db->query($sql);
