@@ -1098,7 +1098,7 @@ class Societe
 	 *		\param		option			Sur quoi pointe le lien
 	 *		\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='',$maxlen=0)
 	{
 		global $langs;
 		
@@ -1127,7 +1127,7 @@ class Societe
 		}
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany"),'company').$lienfin.' ');
-		$result.=$lien.$this->nom.$lienfin;
+		$result.=$lien.($maxlen?dolibarr_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 		return $result;
 	}
 

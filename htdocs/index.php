@@ -465,7 +465,7 @@ if ($conf->global->MAIN_SHOW_WORKBOARD == 1)
       $board->load_board($user);
 
       $var=!$var;
-      print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("MenuChequeDeposits"),"payment").'</td><td>'.$langs->trans("MenuChequeDeposits").'</td>';
+      print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("BankChecksToReceipt"),"payment").'</td><td>'.$langs->trans("BankChecksToReceipt").'</td>';
       print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">'.$board->nbtodo.'</a></td>';
       print '<td align="right">';
       print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">';

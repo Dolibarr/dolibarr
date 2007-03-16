@@ -335,6 +335,43 @@ class RemiseCheque
     return $this->errno;
   }
 
+  
+      /**
+     *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
+     *      \param      user        Objet user
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function load_board($user)
+    {
+        global $conf;
+        
+        if ($user->societe_id) return -1;   // protection pour eviter appel par utilisateur externe
+
+        $this->nbtodo=$this->nbtodolate=0;
+		$sql = "SELECT b.rowid,".$this->db->pdate("b.datev")." as datefin";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+		$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_bordereau = 0";
+		$sql.= " AND b.amount > 0";
+
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            while ($obj=$this->db->fetch_object($resql))
+            {
+                $this->nbtodo++;
+                if ($obj->datefin < (time() - $conf->bank->cheque->warning_delay)) $this->nbtodolate++;
+            }
+            return 1;
+        }
+        else 
+        {
+            dolibarr_print_error($this->db);
+            $this->error=$this->db->error();
+            return -1;
+        }
+    }
+	
+	
   /**
      \brief  	Génère le fichier PDF
      \param 	model 		Nom du modele

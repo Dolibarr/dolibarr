@@ -64,7 +64,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 $sql = "SELECT count(b.rowid)";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-$sql.= " WHERE b.fk_type = 'CHQ'AND b.fk_bordereau = 0";
+$sql.= " WHERE b.fk_type = 'CHQ' AND b.fk_bordereau = 0";
 $sql.= " AND b.amount > 0";
 
 $resql = $db->query($sql);
