@@ -455,6 +455,32 @@ if ($conf->global->MAIN_SHOW_WORKBOARD == 1)
     print "\n";
     }
 
+	  // Nbre ecritures à rapprocher
+  if ($conf->banque->enabled && $user->rights->banque->lire && ! $user->societe_id)
+    {
+      $langs->load("banks");
+
+      include_once(DOL_DOCUMENT_ROOT."/compta/paiement/cheque/remisecheque.class.php");
+      $board=new RemiseCheque($db);
+      $board->load_board($user);
+
+      $var=!$var;
+      print '<tr '.$bc[$var].'><td width="16">'.img_object($langs->trans("MenuChequeDeposits"),"payment").'</td><td>'.$langs->trans("MenuChequeDeposits").'</td>';
+      print '<td align="right"><a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">'.$board->nbtodo.'</a></td>';
+      print '<td align="right">';
+      print '<a href="'.DOL_URL_ROOT.'/compta/paiement/cheque/index.php?leftmenu=checks&mainmenu=accountancy">';
+      print $board->nbtodolate;
+      print '</a></td><td nowrap align="right">';
+      print ' (>'.ceil($conf->bank->cheque->warning_delay/60/60/24).' '.$langs->trans("days").')';
+      print '</td>';
+      print '<td>';
+      if ($board->nbtodolate > 0) print img_picto($langs->trans("Late"),"warning");
+      else print '&nbsp;';
+      print '</td>';
+      print '</tr>';
+    print "\n";
+    }
+	
   // Nbre adhérent valides (attente cotisation)
   if ($conf->adherent->enabled && $user->rights->adherent->lire && ! $user->societe_id)
     {
