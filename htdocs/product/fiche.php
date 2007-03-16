@@ -934,9 +934,11 @@ if ($_GET["action"] == '')
 {
   if ( $user->rights->produit->creer)
     {
-      print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+      if ($product->no_button_edit <> 1)
+	print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
-      print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+      if ($product->no_button_copy <> 1)
+	print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
     }
 
   /*
@@ -956,7 +958,7 @@ if ($_GET["action"] == '')
   */
 
   $product_is_used = $product->verif_prod_use($product->id);
-  if ($user->rights->produit->supprimer && ! $product_is_used)
+  if ($user->rights->produit->supprimer && ! $product_is_used && $product->no_button_delete <> 1)
     {
       print '<a class="butActionDelete" href="fiche.php?action=delete&amp;id='.$product->id.'">'.$langs->trans("Delete").'</a>';
     }
