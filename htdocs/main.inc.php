@@ -471,8 +471,10 @@ function top_htmlhead($head, $title="", $target="")
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 //    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-    print "\n<html>";
-
+    print "\n";
+	print "<html>\n";
+	print "<head>\n";
+	
     print $langs->lang_header();
     print $head;
 
@@ -569,7 +571,11 @@ function top_menu($head, $title="", $target="")
     print '<div class="tmenu">'."\n";
 
     // Charge le gestionnaire des entrees de menu du haut
-    require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
+	if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu))
+	{
+		$conf->top_menu='eldy_backoffice.php';
+	}
+	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_top/".$conf->top_menu);
     $menutop = new MenuTop($db);
     $menutop->atarget=$target;
 
@@ -619,7 +625,11 @@ function left_menu($menu_array, $help_url='', $form_search='')
 
 
     // Autres entrees du menu par le gestionnaire
-    require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
+    if (! file_exists(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu))
+	{
+		$conf->left_menu='eldy_backoffice.php';
+	}
+	require_once(DOL_DOCUMENT_ROOT ."/includes/menus/barre_left/".$conf->left_menu);
     $menu=new MenuLeft($db,$menu_array);
     $menu->showmenu();
 

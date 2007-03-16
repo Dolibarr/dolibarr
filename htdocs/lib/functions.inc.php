@@ -1136,7 +1136,11 @@ function dol_loginfunction($notused,$pearstatus)
     // Ce DTD est OK
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
 
-    print "\n<html><head><title>Dolibarr Authentification</title>\n";
+    print "\n";
+	print "<html>\n";
+	print "<head>\n";
+    print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+	print "<title>Dolibarr Authentification</title>\n";
 
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 

@@ -312,7 +312,7 @@ class Translate {
         if (! $charset) $charset="iso-8859-1";
     
         //header("Content-Type: text/html; charset=$charset");
-        $texte = "<head>\n<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
+        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
     
         return $texte;
     }
