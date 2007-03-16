@@ -23,6 +23,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once("../includes/configure.php");
 require_once("../clients/osc_customer.class.php");
+require_once("../produits/osc_product.class.php");
 
 llxHeader();
 
@@ -35,14 +36,22 @@ if ($action == '' && !$cancel) {
 
   if ( !$result)
     { 
+    $osc_prod = new Osc_Product($db);
       print '<div class="titre">Fiche commande OSC : '.$osc_order->osc_orderid.'</div><br>';
 
       print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
       print '<tr></tr><td width="20%">client OSC</td><td width="80%">'.$osc_order->osc_custid.'</td></tr>';
       print '<tr></tr><td width="20%">Nom client</td><td width="80%">'.$osc_order->osc_custname.'</td></tr>';
-      print '<tr></tr><td width="20%">Montant</td><td width="80%">'.$osc_order->osc_ordertotal.'</td></tr>';
+      print '<tr></tr><td width="20%">Montant</td><td width="80%">'.convert_price($osc_order->osc_ordertotal).'</td></tr>';
       print '<tr></tr><td width="20%">Date commande</td><td width="80%">'.$osc_order->osc_orderdate.'</td></tr>';
       print '<tr></tr><td width="20%">Méthode de paiement</td><td width="80%">'.$osc_order->osc_orderpaymet.'</td></tr>';
+      print "</table>";
+      print '<table border="1" width="100%" cellspacing="0" cellpadding="4">';
+      // les articles 
+      for ($l=0;$l < sizeof($osc_order->osc_lines); $l++)
+      {
+      	print '<tr><td>'.$osc_order->osc_lines[$l]["products_id"].'</td><td>'.$osc_prod->get_productid($osc_order->osc_lines[$l]["products_id"]).'</td><td>'.$osc_order->osc_lines[$l]["products_name"].'</td><td>'.convert_price($osc_order->osc_lines[$l]["products_price"]).'</td><td>'.$osc_order->osc_lines[$l]["quantity"].'</td></tr>';
+      }	
       print "</table>";
 
 	/* ************************************************************************** */
@@ -87,7 +96,8 @@ if ($action == '' && !$cancel) {
 	  if ( !$result )
 	  {
 			$commande = $osc_order->osc2dolibarr($_GET["orderid"]);
-		} 
+		}
+
 /* utilisation de la table de transco*/
 		if ($osc_order->get_orderid($osc_order->osc_orderid)>0)
 		{
@@ -141,8 +151,19 @@ if ($action == '' && !$cancel) {
 			    }
 				}
 			}
-			
-			$id = $commande->create($user);
+// vérifier l'existence des produits commandés
+			$osc_product = new Osc_Product($db);
+			$err = 0;
+
+			for ($lig = 0; $lig < sizeof($commande->lines); $lig++)
+			{
+				if (! $commande->lines[$lig]->fk_product) $err ++;
+			}			
+			if ($err > 0) {
+				print ("<p> Des produits de la commande sont inexistants</p>");
+				$id =-9;
+			}
+			else $id = $commande->create($user);
 
 		    if ($id > 0)
 		    {
@@ -150,7 +171,7 @@ if ($action == '' && !$cancel) {
 		       	  print '<br>création réussie nouvelle commande '.$id;
    			     $res = $osc_order->transcode($osc_order->osc_orderid,$id);
 					  print 'pour la commande osc : '.$osc_order->osc_orderid.'</p>';
-					  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+					  print '<p><a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
 				  print "\n</div><br>\n";
 
 				if ($id > 0)  exit;
@@ -182,6 +203,7 @@ if ($action == '' && !$cancel) {
 					}
 					else print '<br>update impossible $id : '.$id.' </br>';
 				}
+			  print '<p><a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
 		    }
 		 }
  

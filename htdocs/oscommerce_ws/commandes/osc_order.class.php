@@ -30,7 +30,7 @@
 require("../clients/osc_customer.class.php");
 require("../produits/osc_product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
-
+require_once("../includes/configure.php");
 
 
 /**
@@ -49,6 +49,7 @@ class Osc_order
 	var $osc_ordertotal;
 	var $osc_orderpaymet;
 	var $osc_orderport;
+	var $osc_orderstatus;
 
 	var $osc_lines = array();
 
@@ -154,7 +155,8 @@ class Osc_order
 
 			$commande->socid = $clientid;
 			$commande->ref = $this->osc_orderid;
-			$commande->date = $this->orderdate;
+			$commande->date = $this->osc_orderdate;
+			$commande->date_commande = $this->osc_orderdate;
 			/* on force */
 			$commande->statut = 0; //à voir
 			$commande->source = 0; // à vérifier
@@ -164,19 +166,31 @@ class Osc_order
 			for ($i = 0; $i < sizeof($this->osc_lines);$i++) {
 				$commande->lines[$i]->libelle = $this->osc_lines[$i][products_id];
 				$commande->lines[$i]->desc = $this->osc_lines[$i][products_name];
-				$commande->lines[$i]->price = $this->osc_lines[$i][products_price];
-				$commande->lines[$i]->subprice = $this->osc_lines[$i][products_price];
+				$commande->lines[$i]->price = convert_price($this->osc_lines[$i][products_price]);
+				$commande->lines[$i]->subprice = convert_price($this->osc_lines[$i][products_price]);
 				$commande->lines[$i]->qty = $this->osc_lines[$i][quantity];
 				$commande->lines[$i]->tva_tx = $this->osc_lines[$i][products_tax];
 				$commande->lines[$i]->fk_product = $oscproduct->get_productid($this->osc_lines[$i][products_id]);
 				$commande->lines[$i]->remise_percent = 0; // à calculer avec le finalprice
 			}
+			// les frais de port
+			$fp = sizeof($this->osc_lines);
+			$commande->lines[$fp]->libelle = "Frais de port";
+			$commande->lines[$fp]->desc = "Frais de port";
+			$commande->lines[$fp]->price = convert_price($this->osc_orderport);
+			$commande->lines[$fp]->subprice = convert_price($this->osc_orderport);
+			$commande->lines[$fp]->qty = 1;
+			$commande->lines[$fp]->tva_tx = 0;
+			$commande->lines[$fp]->fk_product = FK_PORT;
+			$commande->lines[$fp]->remise_percent = 0;
 
 		return $commande;
 		} 
 
 	}
-	/**
+
+
+/**
 *      \brief      Mise à jour de la table de transition
 *      \param      oscid      Id du produit dans OsC 
 *	   \param	   prodid	  champ référence 	

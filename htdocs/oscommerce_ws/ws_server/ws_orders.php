@@ -28,9 +28,6 @@ require_once('./includes/configure.php');
 
 // Create the soap Object
 $s = new soap_server;
-$ns='oscommerce';
-$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
-$s->wsdl->schemaTargetNamespace=$ns;
 
 // Register the methods available for clients
 $s->register('get_CAmensuel');
@@ -48,17 +45,18 @@ function get_CAmensuel() {
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
 //la requête
-	$sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois";
+	$sql = "SELECT sum(t.value) as value, MONTH(o.date_purchased) as mois, YEAR(o.date_purchased) as an";
 	$sql .= " FROM orders_total as t";
 	$sql .= " JOIN orders as o ON o.orders_id = t.orders_id";
-	$sql .= " WHERE t.class = 'ot_subtotal' AND YEAR(o.date_purchased) = YEAR(now()) ";
-	$sql .= " GROUP BY mois ORDER BY mois";
+	$sql .= " WHERE t.class = 'ot_subtotal' ";
+//AND YEAR(o.date_purchased) = YEAR(now()) ";
+	$sql .= " GROUP BY an, mois ORDER BY an desc ,mois desc limit 1,12";
  
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
 
 		switch ($numrows = mysql_numrows($resquer)) {
 		case 0 : 
-			return new soap_fault("Server", "MySQL 4", "produit inexistant");
+			return new soap_fault("Server", "MySQL 4", $sql);
 			break;
 		default :
 			$i = 0;
@@ -118,7 +116,7 @@ function get_lastOrderClients($id='',$name='',$limit='') {
 	$sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
 	$sql .= " FROM orders_total as t JOIN orders as o on o.orders_id = t.orders_id ";
 	$sql .= " JOIN orders_status as s on o.orders_status = s.orders_status_id and s.language_id = 1";
-	$sql .= " WHERE t.class = 'ot_subtotal' order by o.date_purchased desc";
+	$sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status < 5 order by o.date_purchased desc";
 	if ($limit > 0) $sql .= " LIMIT ".$limit;
  
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
@@ -151,19 +149,26 @@ function get_Order($orderid="0")
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
 //on recherche la commande
-$sql = "SELECT o.orders_id, o.customers_name, o.customers_id, o.date_purchased, t.value, o.payment_method ";
+/*$sql = "SELECT o.orders_id, o.customers_name, o.customers_id, o.date_purchased, t.value, o.payment_method ";
 $sql .= " FROM orders_total as t JOIN orders as o on o.orders_id = t.orders_id ";
 $sql .= " WHERE t.class = 'ot_subtotal'";
-if ($orderid > 0) $sql .=  " and o.orders_id = ".$orderid;
+*/
+$sql = "SELECT o.orders_id, o.customers_name, o.customers_id, o.date_purchased, o.payment_method, t.value as total, sum(p.value) as port, s.orders_status_name as statut  ";
+$sql .= " FROM orders as o ";
+$sql .= " JOIN orders_total as t on o.orders_id = t.orders_id and t.class = 'ot_subtotal' ";
+$sql .= " JOIN orders_total as p on o.orders_id = p.orders_id and (p.class = 'ot_shipping' OR p.class = 'ot_fixed_payment_chg') ";   
+$sql .= " JOIN orders_status as s on o.orders_status = s.orders_status_id and s.language_id = 1";
+$sql .= " WHERE o.orders_status < 5 "; // élimine les commandes annulées, remboursées
+if ($orderid > 0) $sql .=  " AND o.orders_id = ".$orderid;
+$sql .= " GROUP BY p.orders_id ";
 $sql .= " ORDER BY o.date_purchased desc";
-
  
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
 	$result ='';
 
 		switch ($numrows = mysql_numrows($resquer)) {
 		case 0 : 
-			return new soap_fault("Server", "MySQL 4", "commande inexistante");
+			return new soap_fault("Server", "MySQL 4", "commande inexistante ".$sql);
 			break;
 		default :
 			$i = 0;

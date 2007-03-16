@@ -69,6 +69,7 @@ elseif (!($err = $client->getError()) )
 		print "<td>Date</td>";
 		print "<td>Montant</td>";
 		print '<td align="center">Paiement</td>';
+		print '<td align="center">Statut</td>';
 		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
 	   
@@ -81,9 +82,10 @@ elseif (!($err = $client->getError()) )
     		print '<TD><a href="../../commande/fiche.php?id='.$ordid.'">'.$ordid."</a> </TD>\n";
     		print "<TD>".$result[$i][customers_name]."</TD>\n";
     		print "<TD>".$result[$i][date_purchased]."</TD>\n";
-    		print "<TD>".$result[$i][value]."</TD>\n";
+			$tot = convert_price($result[$i][total]) + convert_price($result[$i][port]);
+    		print "<TD>".$tot."</TD>\n";
     		print '<TD align="center">'.' '.$result[$i][payment_method]."</TD>\n";
-//    		print '<TD align="center">'/*.$result[$i][customers_telephone]*/."</TD>\n";
+    		print '<TD align="center">'.$result[$i][statut]."</TD>\n";
     		if ($ordid) $lib = "modifier";
     		else $lib = "<u>importer</u>";
     		print '<TD align="center"><a href="fiche.php?action=import&orderid='.$result[$i][orders_id].'">'.$lib."</a></TD>\n";

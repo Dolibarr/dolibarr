@@ -116,6 +116,35 @@ class Osc_product
 		return 0;
 	}
 
+// renvoie un objet commande dolibarr
+	function osc2dolibarr($osc_productid)
+	{
+
+	  $result = $this->fetch($osc_productid);
+	  if ( !$result )
+	  {
+	  		$product = new Product($this->db);
+	    	if ($_error == 1)
+	    	{
+	      	print '<br>erreur 1</br>';
+				return '';
+	    	}
+	    	/* initialisation */
+	    		$product->ref = $this->osc_ref;
+	    		$product->libelle = $this->osc_name;
+	    		$product->description = $this->osc_desc;
+	    		$product->price = convert_price($this->osc_price);
+	    		$product->tva_tx = $this->osc_tva;
+	    		$product->type = 0;
+	    		$product->seuil_stock_alerte = 0; /* on force */
+	/* on force */
+				$product->catid = 0; /* à voir avec la gestion des catégories */
+				$product->status = 1; /* en vente */
+
+		 return $product; 		  
+	  }
+
+	}
 /**
 *      \brief      Mise à jour de la table de transition
 *      \param      oscid      Id du produit dans OsC 
@@ -157,7 +186,7 @@ class Osc_product
 		}
 	return 0;	
      }
-// converti le client osc en client dolibarr
+// converti le produit osc en produit dolibarr
 
 	function get_productid($osc_product)
 	{

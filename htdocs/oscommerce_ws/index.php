@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 
 $langs->load("boutique");
+$langs->load("orders");
 
 
 llxHeader("",$langs->trans("OSCOmmerceShop"));
@@ -60,13 +61,15 @@ $client = new soapclient(OSCWS_DIR."ws_orders.php");
 print_titre($langs->trans('SalesTurnover'));
 
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Description").'</td>';
+print '<tr class="liste_titre"><td>'.$langs->trans("année").'</td>';
+print '<td>'.$langs->trans("mois").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
 // Call the WebService and store its result in $result.
 $result = $client->call("get_CAmensuel",$parameters );
 if ($client->fault) {
   dolibarr_print_error('',"Erreur de connection ");
+  print_r($client->faultstring);
 }
 elseif (!($err = $client->getError()) )
 {
@@ -80,8 +83,9 @@ elseif (!($err = $client->getError()) )
 		{
       	$var=!$var;
       	print "<tr $bc[$var]>";
-      	print '<td align="left">'.$result[$i][mois].'</td>';
-      	print '<td align="right">'.price($result[$i][value]).'</td>';
+      	print '<td align="left">'.$result[$i][an].'</td>';
+		print '<td align="left">'.$result[$i][mois].'</td>';
+      	print '<td align="right">'.convert_price($result[$i][value]).'</td>';
 
       	print "</tr>\n";
       	$i++;
@@ -127,7 +131,7 @@ elseif (!($err = $client->getError()) ) {
       while ($i < $num) {
       	$var=!$var;
       	print "<tr $bc[$var]>";
- 	    print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+ 	    print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
 	  	$i++;
 	  }
     }
@@ -163,10 +167,10 @@ elseif (!($err = $client->getError()) ) {
  	  $num = min($num,OSC_MAXNBCOM);
 
       while ($i < $num) {
-		  print "<tr $bc[$var]>";
-		  print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
-		  $i++;
 		  $var=!$var;
+		  print "<tr $bc[$var]>";
+		  print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+		  $i++;
 		}
   }
 }
@@ -201,7 +205,7 @@ elseif (!($err = $client->getError()) ) {
 
       while ($i < $num)	{
 		print "<tr $bc[$var]>";
-		print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
+		print '<td>'.$result[$i][orders_id].'</td><td>'.$result[$i][customers_name].'</td><td>'.convert_price($result[$i][value]).'</td><td>'.$result[$i][payment_method].'</td></tr>';
 	  	$i++;
 		$var=!$var;
 		}
@@ -240,7 +244,7 @@ elseif (!($err = $client->getError()) ) {
 
       while ($i < $num)	{
 		print "<tr $bc[$var]>";
-	  	print "<td>".$result[$i][date_purchased]."</td><td>".$result[$i][customers_name]."</td><td>".$result[$i][delivery_country]."</td><td>".price($result[$i][value])."</td><td>".$result[$i][payment_method]."</td><td>".$result[$i][orders_id]."</td><td>".$result[$i][statut]."</td></tr>";
+	  	print "<td>".$result[$i][date_purchased]."</td><td>".$result[$i][customers_name]."</td><td>".$result[$i][delivery_country]."</td><td>".convert_price($result[$i][value])."</td><td>".$result[$i][payment_method]."</td><td>".$result[$i][orders_id]."</td><td>".$result[$i][statut]."</td></tr>";
 	  	$i++;
 		$var=!$var;
 		}

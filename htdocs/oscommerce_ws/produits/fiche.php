@@ -88,17 +88,7 @@ if ($action == '' && !$cancel) {
 	       		print '<br>erreur 1</br>';
 			//	exit;
 	    	}
-	    	/* initialisation */
-	    	$product->ref = $osc_prod->osc_ref;
-	    	$product->libelle = $osc_prod->osc_name;
-	    	$product->description = $osc_prod->osc_desc;
-	    	$product->price = $osc_prod->osc_price;
-	    	$product->tva_tx = $osc_prod->osc_tva;
-	    	$product->type = 0;
-	    	$product->seuil_stock_alerte = 0; /* on force */
-	/* on force */
-			$product->catid = 0; /* à voir avec la gestion des catégories */
-			$product->status = 1; /* en vente */
+	    	$product = $osc_prod->osc2dolibarr($_GET['id']);
 		 } 
 
 /* utilisation de la table de transco*/
@@ -106,7 +96,8 @@ if ($action == '' && !$cancel) {
 		{
 			print '<p>Ce produit existe déjà</p>';
 		}
-		else {
+		else 
+		{
 			$id = $product->create($user);
        
 		    if ($id > 0)
@@ -129,31 +120,36 @@ if ($action == '' && !$cancel) {
 		            $_GET["action"] = "create";
 		            $_GET["type"] = $_POST["type"];
 		        }
-				if ($id == -2)
-				{
-				/* la référence existe on fait un update */
-				 $product_control = new Product($db);
-				 if ($_error == 1)
-		    	 {
-		       		print '<br>erreur 1</br>';
-					exit;
-		    	 }
-			     $id = $product_control->fetch($ref = $osc_prod->osc_ref);
+				  if ($id == -2)
+				  {
+				  /* la référence existe on fait un update */
+				 		$product_control = new Product($db);
+				 		if ($_error == 1)
+		    	 		{
+		       			print '<br>erreur 1</br>';
+						//	exit;
+		    	 		}
+			     		$id = $product_control->fetch($ref = $osc_prod->osc_ref);
 					
-					if ($id > 0) 
-					{ 
-						$id = $product->update($id, $user);
-						if ($id > 0) {
-							$id_entrepot = 1;
-							$id = $product->correct_stock($id_entrepot,$osc_prod->osc_stock);
+						if ($id > 0) 
+						{ 
+							$id = $product->update($id, $user);
+							if ($id > 0) 
+							{
+								$id_entrepot = 1;
+								$id = $product->correct_stock($user, $id_entrepot,$osc_prod->osc_stock, 0);
+							}
+							else print '<br>Erreur update '.$product->error().'</br>';
 						}
-						else print '<br>Erreur update '.$id.'</br>';
+						else print '<br>update impossible $id : '.$product_control->error().' </br>';
 					}
-					else print '<br>update impossible $id : '.$id.' </br>';
-				}
-		    }
-		 }
- 
+		        if ($id == -1)
+			     {
+						print '<p>erreur'.$product->error().'</p>';
+					}
+				print '<p><a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
+			}
+		}
     }
 
 llxFooter('$Date$ - $Revision$');
