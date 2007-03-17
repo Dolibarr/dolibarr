@@ -77,36 +77,35 @@ FCKConfig.FloatingPanelsZIndex = 10000 ;
 FCKConfig.ToolbarLocation = 'In' ;
 
 FCKConfig.ToolbarSets["dolibarr_mailings"] = [
-        ['FitWindow','Source','DocProps'],
+        ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Flash','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
 FCKConfig.ToolbarSets["dolibarr_notes"] = [
-        ['FitWindow','Source','DocProps'],
+        ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
         ['Undo','Redo','-','Find','Replace','-','SelectAll'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Flash','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
 FCKConfig.ToolbarSets["dolibarr_details"] = [
-        ['FitWindow','Source','DocProps'],
-        ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
-        ['Undo','Redo','-','Find','Replace','-','SelectAll'],
+        ['FitWindow','Source'],
+        ['Cut','Copy','Paste','-','Preview'],
+        ['Undo','Redo'],
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
-        ['OrderedList','UnorderedList','-','Outdent','Indent',],
+        ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor'],
-        ['Smiley','SpecialChar','UniversalKey'],
+        ['SpecialChar','UniversalKey'],
         ['FontName','FontSize']
 ] ;
 
@@ -165,8 +164,8 @@ FCKConfig.FlashDlgHideAdvanced	= false ;
 // inline when creating the editor instance. In that cases you must set the 
 // values of LinkBrowserURL, ImageBrowserURL and so on.
 // Custom implementations should just ignore it.
-var _FileBrowserLanguage	= 'asp' ;	// asp | aspx | cfm | lasso | perl | php | py
-var _QuickUploadLanguage	= 'asp' ;	// asp | aspx | cfm | lasso | php
+var _FileBrowserLanguage	= 'php' ;	// asp | aspx | cfm | lasso | perl | php | py
+var _QuickUploadLanguage	= 'php' ;	// asp | aspx | cfm | lasso | php
 
 // Don't care about the following line. It just calculates the correct connector 
 // extension to use for the default File Browser (Perl uses "cgi").

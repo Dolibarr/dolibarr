@@ -52,7 +52,6 @@ body
 
 .TB_ToolbarSet
 {
-	padding: 1px;
 	border-top: #efefde 1px outset;
 	border-bottom: #efefde 1px outset;
 }
@@ -71,7 +70,7 @@ body
 .TB_Separator
 {
     width: 1px;
-    height: 21px;
+    height: 18px;
     margin: 2px;
     background-color: #C6C3BD;
 }
@@ -83,7 +82,7 @@ body
     margin-right: 2px;
     width: 3px;
     background-repeat: no-repeat;
-    height: 27px;
+    height: 20px;
     background-position: center center;
 }
 
@@ -123,7 +122,7 @@ body
 
 .TB_Break
 {
-	height: 27px;
+	height: 24px;
 }
 
 /*
@@ -184,9 +183,7 @@ body
     overflow: hidden;
     width: 16px;
     height: 16px;
-    margin: 3px;
-    margin-top: 4px;
-    margin-bottom: 2px;
+    margin: 2px;
     background-repeat: no-repeat;
 }
 
@@ -197,7 +194,7 @@ body
 .TB_Button_Off_Over TABLE .TB_Button_Image,
 .TB_Button_Disabled TABLE .TB_Button_Image
 {
-    margin-top: 3px;
+    margin-top: 2px;
 }
 
 .TB_Button_Image img
