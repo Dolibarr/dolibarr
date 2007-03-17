@@ -60,7 +60,6 @@ SearchABill=Rechercher une facture
 CancelBill=Annuler une facture
 SendByMail=E-mail
 SendRemindByMail=Rappel e-mail
-DoPaiement=Effectuer paiement
 DoPayment=Émettre paiement
 EnterPaymentReceivedFromCustomer=Entrer le paiement reçu du client
 EnterPaymentDueToCustomer=Faire le paiement dû au client

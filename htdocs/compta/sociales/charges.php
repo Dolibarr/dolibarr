@@ -256,7 +256,7 @@ if ($chid > 0)
 			// Emettre paiement
 			if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPaiement")."</a>";
+				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
 			// Classer 'payé'

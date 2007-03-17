@@ -19,7 +19,6 @@ DeleteBill=Apagar conta
 SearchABill=Procurar uma conta
 Send=Enviar
 SendRemind=Enviar lembrete
-DoPaiement=Efectuar pagamento
 DoPayment=Efectuar pagamento
 BuildPDF=Criar PDF
 RebuildPDF=Refazer PDF

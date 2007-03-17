@@ -59,7 +59,6 @@ SearchABill=Zoek een factuur
 CancelBill=Annuleer een factuur
 SendByMail=EMail
 SendRemindByMail=EMail herinnering
-DoPaiement=Doe betaling
 DoPayment=Doe betaling
 EnterPaymentReceivedFromCustomer=Voeg betaling in ontvangen van klant
 EnterPaymentDueToCustomer=Make payment due to customer

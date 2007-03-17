@@ -787,7 +787,7 @@ else
 
 		if ($fac->statut == 1 && $fac->paye == 0  && $user->societe_id == 0)
 		{
-			print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaiement').'</a>';
+			print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
 		}
 
 		if ($fac->statut == 1 && price($resteapayer) <= 0 && $fac->paye == 0  && $user->societe_id == 0)

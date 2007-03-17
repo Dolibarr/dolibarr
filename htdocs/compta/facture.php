@@ -2463,7 +2463,7 @@ else
 				{
 					if ($facidnext)
 					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendByMail').'</span>';
+						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendByMail').'</span>';
 					}
 					else
 					{
@@ -2476,7 +2476,7 @@ else
 				{
 					if ($facidnext)
 					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('SendRemindByMail').'</span>';
+						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('SendRemindByMail').'</span>';
 					}
 					else
 					{
@@ -2485,21 +2485,29 @@ else
 				}
 
 				// Emettre paiement
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+				if ($fac->type != 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
 				{
 					if ($facidnext)
 					{
-						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoie").'">'.$langs->trans('DoPaiement').'</span>';
+						print '<span class="butActionRefused" alt="'.$langs->trans("DisabledBecauseReplacedInvoice").'">'.$langs->trans('DoPayment').'</span>';
 					}
 					else
 					{
-						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaiement').'</a>';
+						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPayment').'</a>';
 					}
 				}
 
+				// Emettre remboursement
+/* Pas encore géré
+				if ($fac->type == 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+				{
+					print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+				}
+*/
+
 				// Classer 'payé'
-				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement
-						&& $resteapayer <= 0)
+				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
+					(($fac->type != 2 && $resteapayer <= 0) || ($fac->type == 2 && $resteapayer >= 0)) )
 				{
 					print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayed').'</a>';
 				}
