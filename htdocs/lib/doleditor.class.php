@@ -52,37 +52,37 @@ class DolEditor
     */
     function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false)
     {
-		global $conf,$langs;
-		
-        dolibarr_syslog("DolEditor::DolEditor");
+    	global $conf,$langs;
+    	
+    	dolibarr_syslog("DolEditor::DolEditor");
 
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
     	$this->editor = new FCKeditor($htmlname);
-		$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
+    	$this->editor->BasePath = DOL_URL_ROOT.'/includes/fckeditor/' ;
     	$this->editor->Value	= $content;
-		$this->editor->Height   = $height;
-		$this->editor->ToolbarSet = $toolbarname;
-		$this->editor->Config['AutoDetectLanguage'] = 'true';
-		$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
-		$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
-
-		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart=fckeditor&file=';
-		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/fckeditor/' ;
-
-		if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
-		{
-			$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
-			$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
+    	$this->editor->Height   = $height;
+    	$this->editor->ToolbarSet = $toolbarname;
+    	$this->editor->Config['AutoDetectLanguage'] = 'true';
+    	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
+    	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
+    	
+    	$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart=fckeditor&file=';
+    	$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/fckeditor/' ;
+    	
+    	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
+    	{
+    		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
+    		$this->editor->Config['SkinPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/';
 //			if ($langs->origlang!='auto')
 //			{
 //			}
-		}
-		else
-		{
+		  }
+		  else
+		  {
 //			if ($langs->origlang!='auto')
 //			{
 //			}
-		}
+		  }
     }
 
 
