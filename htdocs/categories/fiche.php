@@ -68,11 +68,12 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
 		$_GET["action"] = 'create';
 	}
-	if (! $categorie->description)
+	else if (! $categorie->description)
 	{
 		$categorie->error = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 		$_GET["action"] = 'create';
 	}
+	
 	if ($categorie->error =="")
 	{
 		if ($categorie->create() > 0)
@@ -127,8 +128,7 @@ if ($user->rights->categorie->creer)
 		{
 			print '<input type="hidden" name="idprodorigin" value='.$idprodorigin.'>';
 		}
-		print '<input type="hidden" name="nom" value="'.$nom.'">';
-		print '<input type="hidden" name="description" value="'.$description.'">';
+
 		print_fiche_titre($langs->trans("CreateCat"));
 
 		print '<table class="border" width="100%" class="notopnoleftnoright">';
