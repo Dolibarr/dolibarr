@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: eu.js
  * 	Basque language file.
@@ -131,7 +139,7 @@ SelectionFieldProp	: "Hautespen Eremuaren Ezaugarriak",
 TextareaProp		: "Testu-arearen Ezaugarriak",
 FormProp			: "Formularioaren Ezaugarriak",
 
-FontFormats			: "Arrunta;Formateatua;Helbidea;Izenburua 1;Izenburua 2;Izenburua 3;Izenburua 4;Izenburua 5;Izenburua 6;Paragrafoa (DIV)",
+FontFormats			: "Arrunta;Formateatua;Helbidea;Izenburua 1;Izenburua 2;Izenburua 3;Izenburua 4;Izenburua 5;Izenburua 6;Paragrafoa (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "XHTML Prozesatzen. Itxaron mesedez...",
@@ -226,7 +234,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Aingura bat hautatu",
 DlgLnkAnchorByName	: "Aingura izenagatik",
 DlgLnkAnchorById	: "Elementuaren ID-gatik",
-DlgLnkNoAnchors		: "<Ez daude aingurak eskuragarri dokumentuan>",
+DlgLnkNoAnchors		: "<Ez daude aingurak eskuragarri dokumentuan>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "ePosta Helbidea",
 DlgLnkEMailSubject	: "Mezuaren Gaia",
 DlgLnkEMailBody		: "Mezuaren Gorputza",
@@ -259,6 +267,7 @@ DlgLnkPopTop		: "Goiko Posizioa",
 DlnLnkMsgNoUrl		: "Mesedez URL esteka idatzi",
 DlnLnkMsgNoEMail	: "Mesedez ePosta helbidea idatzi",
 DlnLnkMsgNoAnchor	: "Mesedez aingura bat aukeratu",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Kolore Aukeraketa",
@@ -375,8 +384,11 @@ DlgSpellManyChanges		: "Zuzenketa ortografikoa bukatuta: %1 hitz aldatu dira",
 IeSpellDownload			: "Zuzentzaile ortografikoa ez dago instalatuta. Deskargatu nahi duzu?",
 
 // Button Dialog
-DlgButtonText	: "Testua (Balorea)",
-DlgButtonType	: "Mota",
+DlgButtonText		: "Testua (Balorea)",
+DlgButtonType		: "Mota",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Izena",
@@ -425,6 +437,7 @@ DlgHiddenValue	: "Balorea",
 // Bulleted List Dialog
 BulletedListProp	: "Buletdun Zerrendaren Ezarpenak",
 NumberedListProp	: "Zenbakidun Zerrendaren Ezarpenak",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Mota",
 DlgLstTypeCircle	: "Zirkulua",
 DlgLstTypeDisc		: "Diskoa",
@@ -447,6 +460,15 @@ DlgDocLangDirLTR	: "Ezkerretik eskumara (LTR)",
 DlgDocLangDirRTL	: "Eskumatik ezkerrera (RTL)",
 DlgDocLangCode		: "Hizkuntzaren Kodea",
 DlgDocCharSet		: "Karaktere Multzoaren Kodeketa",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Beste Karaktere Multzoaren Kodeketa",
 
 DlgDocDocType		: "Document Type Goiburua",
@@ -476,12 +498,12 @@ DlgTemplatesTitle	: "Eduki Txantiloiak",
 DlgTemplatesSelMsg	: "Mesedez txantiloia aukeratu editorean kargatzeko<br>(orain dauden edukiak galduko dira):",
 DlgTemplatesLoading	: "Txantiloiak kargatzen. Itxaron mesedez...",
 DlgTemplatesNoTpl	: "(Ez dago definitutako txantiloirik)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "Honi buruz",
 DlgAboutBrowserInfoTab	: "Nabigatzailearen Informazioa",
 DlgAboutLicenseTab	: "Lizentzia",
 DlgAboutVersion		: "bertsioa",
-DlgAboutLicense		: "GNU Lesser General Public License Lizentziapean",
 DlgAboutInfo		: "Informazio gehiago eskuratzeko hona joan"
-}
+};

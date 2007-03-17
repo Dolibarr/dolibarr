@@ -1,20 +1,28 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: ro.js
  * 	Romanian language file.
  * 
  * File Authors:
- * 		Adrian Nicoara
+ * 		Adrian Nicoara (nicoara@users.sourceforge.net)
  * 		Ionut Traian Popa
  */
 
@@ -131,7 +139,7 @@ SelectionFieldProp	: "Proprietăţi câmp selecţie (Selection Field)",
 TextareaProp		: "Proprietăţi suprafaţă text (Textarea)",
 FormProp			: "Proprietăţi formular (Form)",
 
-FontFormats			: "Normal;Formatat;Adresa;Titlu 1;Titlu 2;Titlu 3;Titlu 4;Titlu 5;Titlu 6;Paragraf (DIV)",
+FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Normal (DIV)",		//REVIEW : Check _getfontformat.html	//MISSING
 
 // Alerts and Messages
 ProcessingXHTML		: "Procesăm XHTML. Vă rugăm aşteptaţi...",
@@ -226,7 +234,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Selectaţi o ancoră",
 DlgLnkAnchorByName	: "după numele ancorei",
 DlgLnkAnchorById	: "după Id-ul elementului",
-DlgLnkNoAnchors		: "<Nicio ancoră disponibilă în document>",
+DlgLnkNoAnchors		: "<Nicio ancoră disponibilă în document>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Adresă de e-mail",
 DlgLnkEMailSubject	: "Subiectul mesajului",
 DlgLnkEMailBody		: "Conţinutul mesajului",
@@ -259,6 +267,7 @@ DlgLnkPopTop		: "Poziţia la dreapta",
 DlnLnkMsgNoUrl		: "Vă rugăm să scrieţi URL-ul",
 DlnLnkMsgNoEMail	: "Vă rugăm să scrieţi adresa de e-mail",
 DlnLnkMsgNoAnchor	: "Vă rugăm să selectaţi o ancoră",
+DlnLnkMsgInvPopName	: "Numele 'popup'-ului trebuie să înceapă cu un caracter alfabetic şi trebuie să nu conţină spaţii",
 
 // Color Dialog
 DlgColorTitle		: "Selectează culoare",
@@ -375,8 +384,11 @@ DlgSpellManyChanges		: "Verificarea textului terminată: 1% cuvinte modificate",
 IeSpellDownload			: "Unealta pentru verificat textul (Spell checker) neinstalată. Doriţi să o descărcaţi acum?",
 
 // Button Dialog
-DlgButtonText	: "Text (Valoare)",
-DlgButtonType	: "Tip",
+DlgButtonText		: "Text (Valoare)",
+DlgButtonType		: "Tip",
+DlgButtonTypeBtn	: "Button",
+DlgButtonTypeSbm	: "Submit",
+DlgButtonTypeRst	: "Reset",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nume",
@@ -425,6 +437,7 @@ DlgHiddenValue	: "Valoare",
 // Bulleted List Dialog
 BulletedListProp	: "Proprietăţile listei punctate (Bulleted List)",
 NumberedListProp	: "Proprietăţile listei numerotate (Numbered List)",
+DlgLstStart			: "Start",
 DlgLstType			: "Tip",
 DlgLstTypeCircle	: "Cerc",
 DlgLstTypeDisc		: "Disc",
@@ -447,6 +460,15 @@ DlgDocLangDirLTR	: "stânga-dreapta (LTR)",
 DlgDocLangDirRTL	: "dreapta-stânga (RTL)",
 DlgDocLangCode		: "Codul limbii",
 DlgDocCharSet		: "Encoding setului de caractere",
+DlgDocCharSetCE		: "Central european",
+DlgDocCharSetCT		: "Chinezesc tradiţional (Big5)",
+DlgDocCharSetCR		: "Chirilic",
+DlgDocCharSetGR		: "Grecesc",
+DlgDocCharSetJP		: "Japonez",
+DlgDocCharSetKR		: "Corean",
+DlgDocCharSetTR		: "Turcesc",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Vest european",
 DlgDocCharSetOther	: "Alt encoding al setului de caractere",
 
 DlgDocDocType		: "Document Type Heading",
@@ -476,12 +498,12 @@ DlgTemplatesTitle	: "Template-uri (şabloane) de conţinut",
 DlgTemplatesSelMsg	: "Vă rugăm selectaţi template-ul (şablonul) ce se va deschide în editor<br>(conţinutul actual va fi pierdut):",
 DlgTemplatesLoading	: "Se încarcă lista cu template-uri (şabloane). Vă rugăm aşteptaţi...",
 DlgTemplatesNoTpl	: "(Niciun template (şablon) definit)",
+DlgTemplatesReplace	: "Înlocuieşte cuprinsul actual",
 
 // About Dialog
 DlgAboutAboutTab	: "Despre",
 DlgAboutBrowserInfoTab	: "Informaţii browser",
 DlgAboutLicenseTab	: "Licenţă",
 DlgAboutVersion		: "versiune",
-DlgAboutLicense		: "Licenţiat sub termenii GNU Lesser General Public License",
 DlgAboutInfo		: "Pentru informaţii amănunţite, vizitaţi"
-}
+};

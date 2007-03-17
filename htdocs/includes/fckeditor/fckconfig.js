@@ -1,26 +1,41 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fckconfig.js
  * 	Editor configuration settings.
- * 	See the documentation for more info.
+ * 	
+ * 	Follow this link for more information:
+ * 	http://wiki.fckeditor.net/Developer%27s_Guide/Configuration/Configurations_Settings
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
  */
+
+// Disable the custom Enter Key Handler (this configuration will be removed in
+// version 2.5).
+FCKConfig.DisableEnterKeyHandler = false ;
 
 FCKConfig.CustomConfigurationsPath = '' ;
 
 FCKConfig.EditorAreaCSS = FCKConfig.BasePath + 'css/fck_editorarea.css' ;
+FCKConfig.ToolbarComboPreviewCSS = '' ;
 
 FCKConfig.DocType = '' ;
 
@@ -52,6 +67,10 @@ FCKConfig.ProcessHTMLEntities	= true ;
 FCKConfig.IncludeLatinEntities	= true ;
 FCKConfig.IncludeGreekEntities	= true ;
 
+FCKConfig.ProcessNumericEntities = false ;
+
+FCKConfig.AdditionalNumericEntities = ''  ;		// Single Quote: "'"
+
 FCKConfig.FillEmptyBlocks	= true ;
 
 FCKConfig.FormatSource		= false ;
@@ -67,12 +86,14 @@ FCKConfig.ForceSimpleAmpersand	= false ;
 FCKConfig.TabSpaces		= 0 ;
 FCKConfig.ShowBorders	= true ;
 FCKConfig.SourcePopup	= false ;
-FCKConfig.UseBROnCarriageReturn	= true ;	// IE only.
 FCKConfig.ToolbarStartExpanded	= false ;
 FCKConfig.ToolbarCanCollapse	= true ;
 FCKConfig.IgnoreEmptyParagraphValue = true ;
 FCKConfig.PreserveSessionOnFileBrowser = false ;
 FCKConfig.FloatingPanelsZIndex = 10000 ;
+
+FCKConfig.TemplateReplaceAll = true ;
+FCKConfig.TemplateReplaceCheckbox = true ;
 
 FCKConfig.ToolbarLocation = 'In' ;
 
@@ -83,9 +104,10 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar'],
         ['FontName','FontSize']
 ] ;
+
 FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
@@ -93,9 +115,10 @@ FCKConfig.ToolbarSets["dolibarr_notes"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar','UniversalKey'],
+        ['Link','Unlink','Anchor','Image','Table','Rule','SpecialChar'],
         ['FontName','FontSize']
 ] ;
+
 FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['FitWindow','Source'],
         ['Cut','Copy','Paste','-','Preview'],
@@ -103,8 +126,7 @@ FCKConfig.ToolbarSets["dolibarr_details"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor'],
-        ['SpecialChar','UniversalKey'],
+        ['SpecialChar'],
         ['FontName','FontSize']
 ] ;
 
@@ -118,7 +140,7 @@ FCKConfig.ToolbarSets["Default"] = [
 	['OrderedList','UnorderedList','-','Outdent','Indent'],
 	['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
 	['Link','Unlink','Anchor'],
-	['Image','Flash','Table','Rule','Smiley','SpecialChar','PageBreak','UniversalKey'],
+	['Image','Flash','Table','Rule','Smiley','SpecialChar','PageBreak'],
 	'/',
 	['Style','FontFormat','FontName','FontSize'],
 	['TextColor','BGColor'],
@@ -127,6 +149,27 @@ FCKConfig.ToolbarSets["Default"] = [
 
 FCKConfig.ToolbarSets["Basic"] = [
 	['Bold','Italic','-','OrderedList','UnorderedList','-','Link','Unlink','-','About']
+] ;
+
+FCKConfig.EnterMode = 'p' ;			// p | div | br
+FCKConfig.ShiftEnterMode = 'br' ;	// p | div | br
+
+FCKConfig.Keystrokes = [
+	[ CTRL + 65 /*A*/, true ],
+	[ CTRL + 67 /*C*/, true ],
+	[ CTRL + 88 /*X*/, true ],
+	[ CTRL + 86 /*V*/, 'Paste' ],
+	[ SHIFT + 45 /*INS*/, 'Paste' ],
+	[ CTRL + 90 /*Z*/, 'Undo' ],
+	[ CTRL + 89 /*Y*/, 'Redo' ],
+	[ CTRL + SHIFT + 90 /*Z*/, 'Redo' ],
+	[ CTRL + 76 /*L*/, 'Link' ],
+	[ CTRL + 66 /*B*/, 'Bold' ],
+	[ CTRL + 73 /*I*/, 'Italic' ],
+	[ CTRL + 85 /*U*/, 'Underline' ],
+	[ CTRL + ALT + 83 /*S*/, 'Save' ],
+	[ CTRL + ALT + 13 /*ENTER*/, 'FitWindow' ],
+	[ CTRL + 9 /*TAB*/, 'Source' ]
 ] ;
 
 FCKConfig.ContextMenu = ['Generic','Link','Anchor','Image','Flash','Select','Textarea','Checkbox','Radio','TextField','HiddenField','ImageButton','Button','BulletedList','NumberedList','Table','Form'] ;
@@ -141,7 +184,8 @@ FCKConfig.StylesXmlPath		= FCKConfig.EditorPath + 'fckstyles.xml' ;
 FCKConfig.TemplatesXmlPath	= FCKConfig.EditorPath + 'fcktemplates.xml' ;
 
 FCKConfig.SpellChecker			= 'ieSpell' ;	// 'ieSpell' | 'SpellerPages'
-FCKConfig.IeSpellDownloadUrl	= 'http://iespell.huhbw.com/ieSpellSetup220647.exe' ;
+FCKConfig.IeSpellDownloadUrl	= 'http://wcarchive.cdrom.com/pub/simtelnet/handheld/webbrow1/ieSpellSetup240428.exe' ;
+FCKConfig.SpellerPagesServerScript = 'server-scripts/spellchecker.php' ;	// Available extension: .php .cfm .pl
 
 FCKConfig.MaxUndoLevels = 15 ;
 
@@ -155,6 +199,15 @@ FCKConfig.ImageDlgHideLink		= false ;
 FCKConfig.ImageDlgHideAdvanced	= false ;
 
 FCKConfig.FlashDlgHideAdvanced	= false ;
+
+FCKConfig.ProtectedTags = '' ;
+
+// This will be applied to the body element of the editor
+FCKConfig.BodyId = '' ;
+FCKConfig.BodyClass = '' ;
+
+// The option switches between trying to keep the html structure or do the changes so the content looks like it was in Word
+FCKConfig.CleanWordKeepsStructure = false ;
 
 // The following value defines which File Browser connector and Quick Upload 
 // "uploader" to use. It is valid for the default implementaion and it is here
@@ -188,11 +241,11 @@ FCKConfig.FlashBrowserWindowHeight = FCKConfig.ScreenHeight * 0.7 ;	//70% ;
 FCKConfig.LinkUpload = false ;
 FCKConfig.LinkUploadURL = FCKConfig.BasePath + 'filemanager/upload/' + _QuickUploadLanguage + '/upload.' + _QuickUploadLanguage ;
 FCKConfig.LinkUploadAllowedExtensions	= "" ;			// empty for all
-FCKConfig.LinkUploadDeniedExtensions	= ".(php|php3|php5|phtml|asp|aspx|ascx|jsp|cfm|cfc|pl|bat|exe|dll|reg|cgi)$" ;	// empty for no one
+FCKConfig.LinkUploadDeniedExtensions	= ".(html|htm|php|php2|php3|php4|php5|phtml|pwml|inc|asp|aspx|ascx|jsp|cfm|cfc|pl|bat|exe|com|dll|vbs|js|reg|cgi|htaccess|asis)$" ;	// empty for no one
 
 FCKConfig.ImageUpload = false ;
 FCKConfig.ImageUploadURL = FCKConfig.BasePath + 'filemanager/upload/' + _QuickUploadLanguage + '/upload.' + _QuickUploadLanguage + '?Type=Image' ;
-FCKConfig.ImageUploadAllowedExtensions	= ".(jpg|gif|jpeg|png)$" ;		// empty for all
+FCKConfig.ImageUploadAllowedExtensions	= ".(jpg|gif|jpeg|png|bmp)$" ;		// empty for all
 FCKConfig.ImageUploadDeniedExtensions	= "" ;							// empty for no one
 
 FCKConfig.FlashUpload = false ;

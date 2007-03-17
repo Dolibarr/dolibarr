@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: nl.js
  * 	Dutch language file.
@@ -16,6 +24,7 @@
  * File Authors:
  * 		Bram Crins (bcrins@realdesign.nl)
  * 		Aaron van Geffen (aaron@aaronweb.net)
+ * 		John van der Kamp (j.vdkamp@connectux.com)
  */
 
 var FCKLang =
@@ -39,15 +48,15 @@ Print				: "Printen",
 SelectAll			: "Alles selecteren",
 RemoveFormat		: "Opmaak verwijderen",
 InsertLinkLbl		: "Link",
-InsertLink			: "Invoegen/Wijzigen link",
-RemoveLink			: "Verwijderen link",
+InsertLink			: "Link invoegen/wijzigen",
+RemoveLink			: "Link verwijderen",
 Anchor				: "Interne link",
 InsertImageLbl		: "Afbeelding",
-InsertImage			: "Invoegen/Wijzigen afbeelding",
+InsertImage			: "Afbeelding invoegen/wijzigen",
 InsertFlashLbl		: "Flash",
-InsertFlash			: "Invoegen/Wijzigen Flash",
+InsertFlash			: "Flash invoegen/wijzigen",
 InsertTableLbl		: "Tabel",
-InsertTable			: "Invoegen/Wijzigen tabel",
+InsertTable			: "Tabel invoegen/wijzigen",
 InsertLineLbl		: "Lijn",
 InsertLine			: "Invoegen horizontale lijn",
 InsertSpecialCharLbl: "Speciale tekens",
@@ -65,14 +74,14 @@ LeftJustify			: "Links uitlijnen",
 CenterJustify		: "Centreren",
 RightJustify		: "Rechts uitlijnen",
 BlockJustify		: "Uitvullen",
-DecreaseIndent		: "Oplopenend",
-IncreaseIndent		: "Aflopend",
+DecreaseIndent		: "Inspringen verkleinen",
+IncreaseIndent		: "Inspringen vergroten",
 Undo				: "Ongedaan maken",
-Redo				: "Opnieuw",
+Redo				: "Opnieuw uitvoeren",
 NumberedListLbl		: "Genummerde lijst",
-NumberedList		: "Invoegen/Verwijderen genummerde lijst",
+NumberedList		: "Genummerde lijst invoegen/verwijderen",
 BulletedListLbl		: "Opsomming",
-BulletedList		: "Invoegen/Verwijderen opsomming",
+BulletedList		: "Opsomming invoegen/verwijderen",
 ShowTableBorders	: "Randen tabel weergeven",
 ShowDetails			: "Details weergeven",
 Style				: "Stijl",
@@ -131,10 +140,10 @@ SelectionFieldProp	: "Eigenschappen selectieveld",
 TextareaProp		: "Eigenschappen tekstvak",
 FormProp			: "Eigenschappen formulier",
 
-FontFormats			: "Normaal;Met opmaak;Adres;Kop 1;Kop 2;Kop 3;Kop 4;Kop 5;Kop 6",
+FontFormats			: "Normaal;Met opmaak;Adres;Kop 1;Kop 2;Kop 3;Kop 4;Kop 5;Kop 6;Normaal (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
-ProcessingXHTML		: "Verwerken XHTML. Even geduld aub...",
+ProcessingXHTML		: "Bezig met verwerken XHTML. Even geduld aub...",
 Done				: "Klaar",
 PasteWordConfirm	: "De tekst die je plakte lijkt gekopieerd uit te zijn Word. Wil je de tekst opschonen voordat deze geplakt wordt?",
 NotCompatiblePaste	: "Deze opdracht is beschikbaar voor Internet Explorer versie 5.5 of hoger. Wil je plakken zonder op te schonen?",
@@ -162,7 +171,7 @@ DlgGenId			: "Kenmerk",
 DlgGenLangDir		: "Schrijfrichting",
 DlgGenLangDirLtr	: "Links naar rechts (LTR)",
 DlgGenLangDirRtl	: "Rechts naar links (RTL)",
-DlgGenLangCode		: "Codetaal",
+DlgGenLangCode		: "Taalcode",
 DlgGenAccessKey		: "Toegangstoets",
 DlgGenName			: "Naam",
 DlgGenTabIndex		: "Tabvolgorde",
@@ -226,7 +235,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Kies een interne link",
 DlgLnkAnchorByName	: "Op naam interne link",
 DlgLnkAnchorById	: "Op kenmerk interne link",
-DlgLnkNoAnchors		: "<Geen interne links in document gevonden.>",
+DlgLnkNoAnchors		: "(Geen interne links in document gevonden)",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "E-mailadres",
 DlgLnkEMailSubject	: "Onderwerp bericht",
 DlgLnkEMailBody		: "Inhoud bericht",
@@ -259,6 +268,7 @@ DlgLnkPopTop		: "Positie boven",
 DlnLnkMsgNoUrl		: "Geef de link van de URL",
 DlnLnkMsgNoEMail	: "Geef een e-mailadres",
 DlnLnkMsgNoAnchor	: "Selecteer een interne link",
+DlnLnkMsgInvPopName	: "De naam van de popup moet met een alfa-numerieke waarde beginnen, en mag geen spaties bevatten.",
 
 // Color Dialog
 DlgColorTitle		: "Selecteer kleur",
@@ -375,8 +385,11 @@ DlgSpellManyChanges		: "Klaar met spellingscontrole: %1 woorden aangepast",
 IeSpellDownload			: "De spellingscontrole niet geïnstalleerd. Wil je deze nu downloaden?",
 
 // Button Dialog
-DlgButtonText	: "Tekst (waarde)",
-DlgButtonType	: "Soort",
+DlgButtonText		: "Tekst (waarde)",
+DlgButtonType		: "Soort",
+DlgButtonTypeBtn	: "Knop",
+DlgButtonTypeSbm	: "Versturen",
+DlgButtonTypeRst	: "Leegmaken",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Naam",
@@ -425,6 +438,7 @@ DlgHiddenValue	: "Waarde",
 // Bulleted List Dialog
 BulletedListProp	: "Eigenschappen opsommingslijst",
 NumberedListProp	: "Eigenschappen genummerde opsommingslijst",
+DlgLstStart			: "Start",
 DlgLstType			: "Soort",
 DlgLstTypeCircle	: "Cirkel",
 DlgLstTypeDisc		: "Schijf",
@@ -447,6 +461,15 @@ DlgDocLangDirLTR	: "Links naar rechts",
 DlgDocLangDirRTL	: "Rechts naar links",
 DlgDocLangCode		: "Taalcode",
 DlgDocCharSet		: "Karakterset-encoding",
+DlgDocCharSetCE		: "Centraal Europees",
+DlgDocCharSetCT		: "Traditioneel Chinees (Big5)",
+DlgDocCharSetCR		: "Cyriliaans",
+DlgDocCharSetGR		: "Grieks",
+DlgDocCharSetJP		: "Japans",
+DlgDocCharSetKR		: "Koreaans",
+DlgDocCharSetTR		: "Turks",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "West europees",
 DlgDocCharSetOther	: "Andere karakterset-encoding",
 
 DlgDocDocType		: "Opschrift documentsoort",
@@ -476,12 +499,12 @@ DlgTemplatesTitle	: "Inhoud sjabonen",
 DlgTemplatesSelMsg	: "Selecteer het sjabloon dat in de editor geopend moet worden (de actuele inhoud gaat verloren):",
 DlgTemplatesLoading	: "Bezig met laden sjabonen. Even geduld alstublieft...",
 DlgTemplatesNoTpl	: "(Geen sjablonen gedefinieerd)",
+DlgTemplatesReplace	: "Vervang de huidige inhoud",
 
 // About Dialog
 DlgAboutAboutTab	: "Over",
 DlgAboutBrowserInfoTab	: "Browserinformatie",
 DlgAboutLicenseTab	: "Licentie",
 DlgAboutVersion		: "Versie",
-DlgAboutLicense		: "Gelicenceerd onder de condities van het GNU Lesser General Public License",
 DlgAboutInfo		: "Voor meer informatie ga naar "
-}
+};

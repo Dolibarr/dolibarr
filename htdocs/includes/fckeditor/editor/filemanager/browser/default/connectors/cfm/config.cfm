@@ -6,7 +6,7 @@
 	// SECURITY: You must explicitly enable this "connector". (Set enabled to "true")
 	config.enabled = false;
 
-	config.userFilesPath = "/UserFiles/";
+	config.userFilesPath = "/userfiles/";
 
 	config.serverPath = ""; // use this to force the server path if FCKeditor is not running directly off the root of the application or the FCKeditor directory in the URL is a virtual directory or a symbolic link / junction
 
@@ -15,7 +15,7 @@
 
 	// config.allowedExtensions["File"] = "doc,rtf,pdf,ppt,pps,xls,csv,vnd,zip";
 	config.allowedExtensions["File"] = "";
-	config.deniedExtensions["File"] = "php,php2,php3,php4,php5,phtml,pwml,inc,asp,aspx,ascx,jsp,cfm,cfc,pl,bat,exe,com,dll,vbs,js,reg,cgi";
+	config.deniedExtensions["File"] = "html,htm,php,php2,php3,php4,php5,phtml,pwml,inc,asp,aspx,ascx,jsp,cfm,cfc,pl,bat,exe,com,dll,vbs,js,reg,cgi,htaccess,asis";
 
 	config.allowedExtensions["Image"] = "png,gif,jpg,jpeg,bmp";
 	config.deniedExtensions["Image"] = "";

@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: ja.js
  * 	Japanese language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "選択フィールド プロパティ",
 TextareaProp		: "テキストエリア プロパティ",
 FormProp			: "フォーム プロパティ",
 
-FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Paragraph (DIV)",
+FontFormats			: "標準;書式付き;アドレス;見出し 1;見出し 2;見出し 3;見出し 4;見出し 5;見出し 6;標準 (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "XHTML処理中. しばらくお待ちください...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "アンカーを選択",
 DlgLnkAnchorByName	: "アンカー名",
 DlgLnkAnchorById	: "エレメントID",
-DlgLnkNoAnchors		: "<ドキュメントにおいて利用可能なアンカーはありません。>",
+DlgLnkNoAnchors		: "<ドキュメントにおいて利用可能なアンカーはありません。>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "E-Mail アドレス",
 DlgLnkEMailSubject	: "件名",
 DlgLnkEMailBody		: "本文",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "上端からの座標で指定",
 DlnLnkMsgNoUrl		: "リンクURLを入力してください。",
 DlnLnkMsgNoEMail	: "メールアドレスを入力してください。",
 DlnLnkMsgNoAnchor	: "アンカーを選択してください。",
+DlnLnkMsgInvPopName	: "ポップ・アップ名は英字で始まる文字で指定してくだい。ポップ・アップ名にスペースは含めません",
 
 // Color Dialog
 DlgColorTitle		: "色選択",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "スペルチェック完了: %1 語句変更されまし
 IeSpellDownload			: "スペルチェッカーがインストールされていません。今すぐダウンロードしますか?",
 
 // Button Dialog
-DlgButtonText	: "テキスト (値)",
-DlgButtonType	: "タイプ",
+DlgButtonText		: "テキスト (値)",
+DlgButtonType		: "タイプ",
+DlgButtonTypeBtn	: "ボタン",
+DlgButtonTypeSbm	: "送信",
+DlgButtonTypeRst	: "リセット",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "名前",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "値",
 // Bulleted List Dialog
 BulletedListProp	: "箇条書き プロパティ",
 NumberedListProp	: "段落番号 プロパティ",
+DlgLstStart			: "開始文字",
 DlgLstType			: "タイプ",
 DlgLstTypeCircle	: "白丸",
 DlgLstTypeDisc		: "黒丸",
@@ -442,10 +455,19 @@ DlgDocMetaTab		: "メタデータ",
 
 DlgDocPageTitle		: "ページタイトル",
 DlgDocLangDir		: "言語文字表記の方向",
-DlgDocLangDirLTR	: "左から右に文字表記します(LTR)",
-DlgDocLangDirRTL	: "右から左に文字表記します(RTL)",
+DlgDocLangDirLTR	: "左から右に表記(LTR)",
+DlgDocLangDirRTL	: "右から左に表記(RTL)",
 DlgDocLangCode		: "言語コード",
 DlgDocCharSet		: "文字セット符号化",
+DlgDocCharSetCE		: "Central European",
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",
+DlgDocCharSetCR		: "Cyrillic",
+DlgDocCharSetGR		: "Greek",
+DlgDocCharSetJP		: "Japanese",
+DlgDocCharSetKR		: "Korean",
+DlgDocCharSetTR		: "Turkish",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Western European",
 DlgDocCharSetOther	: "他の文字セット符号化",
 
 DlgDocDocType		: "文書タイプヘッダー",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "テンプレート内容",
 DlgTemplatesSelMsg	: "エディターで使用するテンプレートを選択してください。<br>(現在のエディタの内容は失われます):",
 DlgTemplatesLoading	: "テンプレート一覧読み込み中. しばらくお待ちください...",
 DlgTemplatesNoTpl	: "(テンプレートが定義されていません)",
+DlgTemplatesReplace	: "現在のエディタの内容と置換えをします",
 
 // About Dialog
 DlgAboutAboutTab	: "バージョン情報",
 DlgAboutBrowserInfoTab	: "ブラウザ情報",
 DlgAboutLicenseTab	: "ライセンス",
 DlgAboutVersion		: "バージョン",
-DlgAboutLicense		: "Licensed under the terms of the GNU Lesser General Public License",
 DlgAboutInfo		: "より詳しい情報はこちらで"
-}
+};

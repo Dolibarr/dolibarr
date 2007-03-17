@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: uk.js
  * 	Ukrainian language file.
@@ -85,8 +93,8 @@ Find				: "Пошук",
 Replace				: "Заміна",
 SpellCheck			: "Перевірити орфографію",
 UniversalKeyboard	: "Універсальна клавіатура",
-PageBreakLbl		: "Page Break",	//MISSING
-PageBreak			: "Insert Page Break",	//MISSING
+PageBreakLbl		: "Розривши сторінки",
+PageBreak			: "Вставити розривши сторінки",
 
 Form			: "Форма",
 Checkbox		: "Флагова кнопка",
@@ -98,13 +106,13 @@ Button			: "Кнопка",
 SelectionField	: "Список",
 ImageButton		: "Кнопка із зображенням",
 
-FitWindow		: "Maximize the editor size",	//MISSING
+FitWindow		: "Розвернути вікно редактора",
 
 // Context Menu
 EditLink			: "Вставити посилання",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
+CellCM				: "Осередок",
+RowCM				: "Рядок",
+ColumnCM			: "Колонка",
 InsertRow			: "Вставити строку",
 DeleteRows			: "Видалити строки",
 InsertColumn		: "Вставити колонку",
@@ -113,7 +121,7 @@ InsertCell			: "Вставити комірку",
 DeleteCells			: "Видалити комірки",
 MergeCells			: "Об'єднати комірки",
 SplitCell			: "Роз'єднати комірку",
-TableDelete			: "Delete Table",	//MISSING
+TableDelete			: "Видалити таблицю",
 CellProperties		: "Властивості комірки",
 TableProperties		: "Властивості таблиці",
 ImageProperties		: "Властивості зображення",
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Властивості списку",
 TextareaProp		: "Властивості текстової області",
 FormProp			: "Властивості форми",
 
-FontFormats			: "Нормальний;Форматований;Адреса;Заголовок 1;Заголовок 2;Заголовок 3;Заголовок 4;Заголовок 5;Заголовок 6",
+FontFormats			: "Нормальний;Форматований;Адреса;Заголовок 1;Заголовок 2;Заголовок 3;Заголовок 4;Заголовок 5;Заголовок 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Обробка XHTML. Зачекайте, будь ласка...",
@@ -141,9 +149,9 @@ UnknownToolbarItem	: "Невідомий елемент панелі інстр�
 UnknownCommand		: "Невідоме ім'я команди \"%1\"",
 NotImplemented		: "Команда не реалізована",
 UnknownToolbarSet	: "Панель інструментів \"%1\" не існує",
-NoActiveX			: "Your browser's security settings could limit some features of the editor. You must enable the option \"Run ActiveX controls and plug-ins\". You may experience errors and notice missing features.",	//MISSING
-BrowseServerBlocked : "The resources browser could not be opened. Make sure that all popup blockers are disabled.",	//MISSING
-DialogBlocked		: "It was not possible to open the dialog window. Make sure all popup blockers are disabled.",	//MISSING
+NoActiveX			: "Настройки безпеки вашого браузера можуть обмежувати деякі властивості редактора. Ви повинні включити опцію \"Запускати елементи управління ACTIVEX і плугіни\". Ви можете бачити помилки і помічати відсутність можливостей.",
+BrowseServerBlocked : "Ресурси браузера не можуть бути відкриті. Перевірте що блокування спливаючих вікон вимкнені.",
+DialogBlocked		: "Не можливо відкрити вікно діалогу. Перевірте що блокування спливаючих вікон вимкнені.",
 
 // Dialogs
 DlgBtnOK			: "ОК",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Оберіть якір",
 DlgLnkAnchorByName	: "За ім'ям якоря",
 DlgLnkAnchorById	: "За ідентифікатором елемента",
-DlgLnkNoAnchors		: "<Немає якорів доступних в цьому документі>",
+DlgLnkNoAnchors		: "<Немає якорів доступних в цьому документі>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Адреса ел. пошти",
 DlgLnkEMailSubject	: "Тема листа",
 DlgLnkEMailBody		: "Тіло повідомлення",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Позиція зверху",
 DlnLnkMsgNoUrl		: "Будь ласка, занесіть URL посилання",
 DlnLnkMsgNoEMail	: "Будь ласка, занесіть адрес эл. почты",
 DlnLnkMsgNoAnchor	: "Будь ласка, оберіть якір",
+DlnLnkMsgInvPopName	: "Назва спливаючого вікна повинна починатися букви і не може містити пропусків",
 
 // Color Dialog
 DlgColorTitle		: "Оберіть колір",
@@ -287,8 +296,8 @@ DlgTableWidthPc		: "відсотків",
 DlgTableHeight		: "Висота",
 DlgTableCellSpace	: "Проміжок (spacing)",
 DlgTableCellPad		: "Відступ (padding)",
-DlgTableCaption		: "Заголовок (Caption)",
-DlgTableSummary		: "Summary",	//MISSING
+DlgTableCaption		: "Заголовок",
+DlgTableSummary		: "Резюме",
 
 // Table Cell Dialog
 DlgCellTitle		: "Властивості комірки",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Перевірку орфографії завершен
 IeSpellDownload			: "Модуль перевірки орфографії не встановлено. Бажаєтн завантажити його зараз?",
 
 // Button Dialog
-DlgButtonText	: "Текст (Значення)",
-DlgButtonType	: "Тип",
+DlgButtonText		: "Текст (Значення)",
+DlgButtonType		: "Тип",
+DlgButtonTypeBtn	: "Кнопка",
+DlgButtonTypeSbm	: "Відправити",
+DlgButtonTypeRst	: "Скинути",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Ім'я",
@@ -424,13 +436,14 @@ DlgHiddenValue	: "Значення",
 // Bulleted List Dialog
 BulletedListProp	: "Властивості маркованого списка",
 NumberedListProp	: "Властивості нумерованного списка",
+DlgLstStart			: "Початок",
 DlgLstType			: "Тип",
 DlgLstTypeCircle	: "Коло",
-DlgLstTypeDisc		: "Disc",	//MISSING
+DlgLstTypeDisc		: "Диск",
 DlgLstTypeSquare	: "Квадрат",
 DlgLstTypeNumbers	: "Номери (1, 2, 3)",
 DlgLstTypeLCase		: "Літери нижнього регістра(a, b, c)",
-DlgLstTypeUCase		: "Літери ВЕРХНЬОГО РЕГІСТРА (A, B, C)",
+DlgLstTypeUCase		: "Букви верхнього регістра (A, B, C)",
 DlgLstTypeSRoman	: "Малі римські літери (i, ii, iii)",
 DlgLstTypeLRoman	: "Великі римські літери (I, II, III)",
 
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Зліва на право (LTR)",
 DlgDocLangDirRTL	: "Зправа на лево (RTL)",
 DlgDocLangCode		: "Код мови",
 DlgDocCharSet		: "Кодування набору символів",
+DlgDocCharSetCE		: "Центрально-європейська",
+DlgDocCharSetCT		: "Китайська традиційна (Big5)",
+DlgDocCharSetCR		: "Кирилиця",
+DlgDocCharSetGR		: "Грецька",
+DlgDocCharSetJP		: "Японська",
+DlgDocCharSetKR		: "Корейська",
+DlgDocCharSetTR		: "Турецька",
+DlgDocCharSetUN		: "Юнікод (UTF-8)",
+DlgDocCharSetWE		: "Західно-европейская",
 DlgDocCharSetOther	: "Інше кодування набору символів",
 
 DlgDocDocType		: "Заголовок типу документу",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Шаблони змісту",
 DlgTemplatesSelMsg	: "Оберіть, будь ласка, шаблон для відкриття в редакторі<br>(поточний зміст буде втрачено):",
 DlgTemplatesLoading	: "Завантаження списку шаблонів. Зачекайте, будь ласка...",
 DlgTemplatesNoTpl	: "(Не визначено жодного шаблону)",
+DlgTemplatesReplace	: "Замінити поточний вміст",
 
 // About Dialog
 DlgAboutAboutTab	: "Про програму",
 DlgAboutBrowserInfoTab	: "Інформація браузера",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Ліцензія",
 DlgAboutVersion		: "Версія",
-DlgAboutLicense		: "Ліцензовано згідно умовам GNU Lesser General Public License",
 DlgAboutInfo		: "Додаткову інформацію дивіться на "
-}
+};

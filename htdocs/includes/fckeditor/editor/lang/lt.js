@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: lt.js
  * 	Lithuanian language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Atrankos lauko savybės",
 TextareaProp		: "Teksto srities savybės",
 FormProp			: "Formos savybės",
 
-FontFormats			: "Normalus;Formuotas;Kreipinio;Antraštinis 1;Antraštinis 2;Antraštinis 3;Antraštinis 4;Antraštinis 5;Antraštinis 6",
+FontFormats			: "Normalus;Formuotas;Kreipinio;Antraštinis 1;Antraštinis 2;Antraštinis 3;Antraštinis 4;Antraštinis 5;Antraštinis 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Apdorojamas XHTML. Prašome palaukti...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Pasirinkite žymę",
 DlgLnkAnchorByName	: "Pagal žymės vardą",
 DlgLnkAnchorById	: "Pagal žymės Id",
-DlgLnkNoAnchors		: "<Šiame dokumente žymių nėra>",
+DlgLnkNoAnchors		: "<Šiame dokumente žymių nėra>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "El.pašto adresas",
 DlgLnkEMailSubject	: "Žinutės tema",
 DlgLnkEMailBody		: "Žinutės turinys",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Viršutinė pozicija",
 DlnLnkMsgNoUrl		: "Prašome įvesti nuorodos URL",
 DlnLnkMsgNoEMail	: "Prašome įvesti el.pašto adresą",
 DlnLnkMsgNoAnchor	: "Prašome pasirinkti žymę",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Pasirinkite spalvą",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Rašybos tikrinimas baigtas: Pakeista %1 žodžių",
 IeSpellDownload			: "Rašybos tikrinimas neinstaliuotas. Ar Jūs norite jį dabar atsisiųsti?",
 
 // Button Dialog
-DlgButtonText	: "Tekstas (Reikšmė)",
-DlgButtonType	: "Tipas",
+DlgButtonText		: "Tekstas (Reikšmė)",
+DlgButtonType		: "Tipas",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Vardas",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Reikšmė",
 // Bulleted List Dialog
 BulletedListProp	: "Suženklinto sąrašo savybės",
 NumberedListProp	: "Numeruoto sąrašo savybės",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Tipas",
 DlgLstTypeCircle	: "Apskritimas",
 DlgLstTypeDisc		: "Diskas",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Iš kairės į dešinę (LTR)",
 DlgDocLangDirRTL	: "Iš dešinės į kairę (RTL)",
 DlgDocLangCode		: "Kalbos kodas",
 DlgDocCharSet		: "Simbolių kodavimo lentelė",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Kita simbolių kodavimo lentelė",
 
 DlgDocDocType		: "Dokumento tipo antraštė",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Turinio šablonai",
 DlgTemplatesSelMsg	: "Pasirinkite norimą šabloną<br>(<b>Dėmesio!</b> esamas turinys bus prarastas):",
 DlgTemplatesLoading	: "Įkeliamas šablonų sąrašas. Prašome palaukti...",
 DlgTemplatesNoTpl	: "(Šablonų sąrašas tuščias)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "Apie",
 DlgAboutBrowserInfoTab	: "Naršyklės informacija",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "versija",
-DlgAboutLicense		: "Licencijuota pagal GNU mažesnės atsakomybės pagrindinės viešos licencijos sąlygas",
 DlgAboutInfo		: "Papildomą informaciją galima gauti"
-}
+};

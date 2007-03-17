@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: et.js
  * 	Estonian language file.
@@ -131,7 +139,7 @@ SelectionFieldProp	: "Valiklahtri omadused",
 TextareaProp		: "Tekstiala omadused",
 FormProp			: "Vormi omadused",
 
-FontFormats			: "Tavaline;Vormindatud;Aadress;Pealkiri 1;Pealkiri 2;Pealkiri 3;Pealkiri 4;Pealkiri 5;Pealkiri 6",
+FontFormats			: "Tavaline;Vormindatud;Aadress;Pealkiri 1;Pealkiri 2;Pealkiri 3;Pealkiri 4;Pealkiri 5;Pealkiri 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Töötlen XHTML. Palun oota...",
@@ -226,7 +234,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Vali ankur",
 DlgLnkAnchorByName	: "Ankru nime järgi",
 DlgLnkAnchorById	: "Elemendi id järgi",
-DlgLnkNoAnchors		: "<Selles dokumendis ei ole ankruid>",
+DlgLnkNoAnchors		: "<Selles dokumendis ei ole ankruid>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "E-posti aadress",
 DlgLnkEMailSubject	: "Sõnumi teema",
 DlgLnkEMailBody		: "Sõnumi tekst",
@@ -259,6 +267,7 @@ DlgLnkPopTop		: "Ülemine asukoht",
 DlnLnkMsgNoUrl		: "Palun kirjuta lingi URL",
 DlnLnkMsgNoEMail	: "Palun kirjuta E-Posti aadress",
 DlnLnkMsgNoAnchor	: "Palun vali ankur",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Vali värv",
@@ -375,8 +384,11 @@ DlgSpellManyChanges		: "Õigekirja kontroll sooritatud: %1 sõna muudetud",
 IeSpellDownload			: "Õigekirja kontrollija ei ole installeeritud. Soovid sa selle alla laadida?",
 
 // Button Dialog
-DlgButtonText	: "Tekst (väärtus)",
-DlgButtonType	: "Tüüp",
+DlgButtonText		: "Tekst (väärtus)",
+DlgButtonType		: "Tüüp",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nimi",
@@ -425,6 +437,7 @@ DlgHiddenValue	: "Väärtus",
 // Bulleted List Dialog
 BulletedListProp	: "Täpitud loetelu omadused",
 NumberedListProp	: "Nummerdatud loetelu omadused",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Tüüp",
 DlgLstTypeCircle	: "Ring",
 DlgLstTypeDisc		: "Ketas",
@@ -447,6 +460,15 @@ DlgDocLangDirLTR	: "Vasakult paremale (LTR)",
 DlgDocLangDirRTL	: "Paremalt vasakule (RTL)",
 DlgDocLangCode		: "Keele kood",
 DlgDocCharSet		: "Märgistiku kodeering",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Ülejäänud märgistike kodeeringud",
 
 DlgDocDocType		: "Dokumendi tüüppäis",
@@ -476,12 +498,12 @@ DlgTemplatesTitle	: "Sisu šabloonid",
 DlgTemplatesSelMsg	: "Palun vali šabloon, et avada see redaktoris<br />(praegune sisu läheb kaotsi):",
 DlgTemplatesLoading	: "Laen šabloonide nimekirja. Palun oota...",
 DlgTemplatesNoTpl	: "(Ühtegi šablooni ei ole defineeritud)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "Teave",
 DlgAboutBrowserInfoTab	: "Interneti sirvija info",
 DlgAboutLicenseTab	: "Litsents",
 DlgAboutVersion		: "versioon",
-DlgAboutLicense		: "Litsenseeritud GNU Lesser General Public License litsentsiga",
 DlgAboutInfo		: "Täpsema info saamiseks mine"
-}
+};

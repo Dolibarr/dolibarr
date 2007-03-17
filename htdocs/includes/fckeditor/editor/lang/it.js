@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: it.js
  * 	Italian language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Proprietà menu di selezione",
 TextareaProp		: "Proprietà area di testo",
 FormProp			: "Proprietà modulo",
 
-FontFormats			: "Normale;Formattato;Indirizzo;Titolo 1;Titolo 2;Titolo 3;Titolo 4;Titolo 5;Titolo 6;Paragrafo (DIV)",
+FontFormats			: "Normale;Formattato;Indirizzo;Titolo 1;Titolo 2;Titolo 3;Titolo 4;Titolo 5;Titolo 6;Paragrafo (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Elaborazione XHTML in corso. Attendere prego...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Scegli Ancora",
 DlgLnkAnchorByName	: "Per Nome",
 DlgLnkAnchorById	: "Per id elemento",
-DlgLnkNoAnchors		: "<Nessuna ancora disponibile nel documento>",
+DlgLnkNoAnchors		: "<Nessuna ancora disponibile nel documento>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Indirizzo E-Mail",
 DlgLnkEMailSubject	: "Oggetto del messaggio",
 DlgLnkEMailBody		: "Corpo del messaggio",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Posizione dall'alto",
 DlnLnkMsgNoUrl		: "Devi inserire l'URL del collegamento",
 DlnLnkMsgNoEMail	: "Devi inserire un'indirizzo e-mail",
 DlnLnkMsgNoAnchor	: "Devi selezionare un'ancora",
+DlnLnkMsgInvPopName	: "Il nome del popup deve iniziare con una lettera, e non può contenere spazi",
 
 // Color Dialog
 DlgColorTitle		: "Seleziona colore",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Controllo ortografico completato: %1 parole cambiate",
 IeSpellDownload			: "Contollo ortografico non installato. Lo vuoi scaricare ora?",
 
 // Button Dialog
-DlgButtonText	: "Testo (Value)",
-DlgButtonType	: "Tipo",
+DlgButtonText		: "Testo (Value)",
+DlgButtonType		: "Tipo",
+DlgButtonTypeBtn	: "Bottone",
+DlgButtonTypeSbm	: "Invio",
+DlgButtonTypeRst	: "Annulla",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nome",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Valore",
 // Bulleted List Dialog
 BulletedListProp	: "Proprietà lista puntata",
 NumberedListProp	: "Proprietà lista numerata",
+DlgLstStart			: "Inizio",
 DlgLstType			: "Tipo",
 DlgLstTypeCircle	: "Tondo",
 DlgLstTypeDisc		: "Disco",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Da Sinistra a Destra (LTR)",
 DlgDocLangDirRTL	: "Da Destra a Sinistra (RTL)",
 DlgDocLangCode		: "Codice Lingua",
 DlgDocCharSet		: "Set di caretteri",
+DlgDocCharSetCE		: "Europa Centrale",
+DlgDocCharSetCT		: "Cinese Tradizionale (Big5)",
+DlgDocCharSetCR		: "Cirillico",
+DlgDocCharSetGR		: "Greco",
+DlgDocCharSetJP		: "Giapponese",
+DlgDocCharSetKR		: "Coreano",
+DlgDocCharSetTR		: "Turco",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Europa Occidentale",
 DlgDocCharSetOther	: "Altro set di caretteri",
 
 DlgDocDocType		: "Intestazione DocType",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Contenuto dei modelli",
 DlgTemplatesSelMsg	: "Seleziona il modello da aprire nell'editor<br />(il contenuto attuale verrà eliminato):",
 DlgTemplatesLoading	: "Caricamento modelli in corso. Attendere prego...",
 DlgTemplatesNoTpl	: "(Nessun modello definito)",
+DlgTemplatesReplace	: "Cancella il contenuto corrente",
 
 // About Dialog
 DlgAboutAboutTab	: "Informazioni",
 DlgAboutBrowserInfoTab	: "Informazioni Browser",
 DlgAboutLicenseTab	: "Licenza",
 DlgAboutVersion		: "versione",
-DlgAboutLicense		: "Rilasciato sotto la licensa GNU Lesser General Public License",
-DlgAboutInfo		: "Localizzazione in Italiano realizzata da Simone Chiaretta<br /><a target=\"_blank\" href=\"http://www.piyosailing.com/S/\">www.piyosailing.com</a><br /><br />Per maggiori informazioni visitare"
-}
+DlgAboutInfo		: "Per maggiori informazioni visitare"
+};

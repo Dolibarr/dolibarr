@@ -4,22 +4,30 @@ Option Explicit
 Response.Buffer = True
 %>
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: upload.asp
  * 	This is the "File Uploader" for ASP.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
 -->
 <!--#include file="config.asp"-->
 <!--#include file="io.asp"-->
@@ -72,6 +80,10 @@ Else
 	If ( Right( sServerDir, 1 ) <> "\" ) Then
 		sServerDir = sServerDir & "\"
 	End If
+	
+	If ( ConfigUseFileType = True ) Then
+		sServerDir = sServerDir & resourceType & "\"
+	End If 
 
 	Dim oFSO
 	Set oFSO = Server.CreateObject( "Scripting.FileSystemObject" )
@@ -98,8 +110,12 @@ Else
 			Exit Do
 		End If
 	Loop
-	Response.Write( sFilePath )
-	sFileUrl = ConfigUserFilesPath & sFileName
+
+	If ( ConfigUseFileType = True ) Then
+		sFileUrl = ConfigUserFilesPath & resourceType & "/" & sFileName
+	Else
+		sFileUrl = ConfigUserFilesPath & sFileName
+	End If
 
 	SendResults sErrorNumber, sFileUrl, sFileName, ""
 	

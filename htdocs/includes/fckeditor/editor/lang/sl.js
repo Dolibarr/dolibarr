@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: sl.js
  * 	Slovenian language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Lastnosti spustnega seznama",
 TextareaProp		: "Lastnosti vnosnega območja",
 FormProp			: "Lastnosti obrazca",
 
-FontFormats			: "Navaden;Oblikovan;Napis;Naslov 1;Naslov 2;Naslov 3;Naslov 4;Naslov 5;Naslov 6",
+FontFormats			: "Navaden;Oblikovan;Napis;Naslov 1;Naslov 2;Naslov 3;Naslov 4;Naslov 5;Naslov 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Obdelujem XHTML. Prosim počakajte...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Izberi zaznamek",
 DlgLnkAnchorByName	: "Po imenu zaznamka",
 DlgLnkAnchorById	: "Po ID-ju elementa",
-DlgLnkNoAnchors		: "<V tem dokumentu ni zaznamkov>",
+DlgLnkNoAnchors		: "<V tem dokumentu ni zaznamkov>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Elektronski naslov",
 DlgLnkEMailSubject	: "Predmet sporočila",
 DlgLnkEMailBody		: "Vsebina sporočila",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Lega na vrhu",
 DlnLnkMsgNoUrl		: "Vnesite URL povezave",
 DlnLnkMsgNoEMail	: "Vnesite elektronski naslov",
 DlnLnkMsgNoAnchor	: "Izberite zaznamek",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Izberite barvo",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Črkovanje je končano: Spremenjenih je bilo %1 besed",
 IeSpellDownload			: "Črkovalnik ni nameščen. Ali ga želite prenesti sedaj?",
 
 // Button Dialog
-DlgButtonText	: "Besedilo (Vrednost)",
-DlgButtonType	: "Tip",
+DlgButtonText		: "Besedilo (Vrednost)",
+DlgButtonType		: "Tip",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Ime",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Vrednost",
 // Bulleted List Dialog
 BulletedListProp	: "Lastnosti označenega seznama",
 NumberedListProp	: "Lastnosti oštevilčenega seznama",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Tip",
 DlgLstTypeCircle	: "Pikica",
 DlgLstTypeDisc		: "Kroglica",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Od leve proti desni (LTR)",
 DlgDocLangDirRTL	: "Od desne proti levi (RTL)",
 DlgDocLangCode		: "Oznaka jezika",
 DlgDocCharSet		: "Kodna tabela",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Druga kodna tabela",
 
 DlgDocDocType		: "Glava tipa dokumenta",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Vsebinske predloge",
 DlgTemplatesSelMsg	: "Izberite predlogo, ki jo želite odpreti v urejevalniku<br>(trenutna vsebina bo izgubljena):",
 DlgTemplatesLoading	: "Nalagam seznam predlog. Prosim počakajte...",
 DlgTemplatesNoTpl	: "(Ni pripravljenih predlog)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "Vizitka",
 DlgAboutBrowserInfoTab	: "Informacije o brskalniku",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "različica",
-DlgAboutLicense		: "Pravica za uporabo pod pogoji GNU Lesser General Public License",
 DlgAboutInfo		: "Za več informacij obiščite"
-}
+};

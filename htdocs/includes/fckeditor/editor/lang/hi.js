@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: hi.js
  * 	Hindi language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "चुनाव फ़ील्ड प्रॉपर्ट�
 TextareaProp		: "टेक्स्त एरिया प्रॉपर्टीज़",
 FormProp			: "फ़ॉर्म प्रॉपर्टीज़",
 
-FontFormats			: "साधारण;फ़ॉर्मैटॅड;पता;शीर्षक 1;शीर्षक 2;शीर्षक 3;शीर्षक 4;शीर्षक 5;शीर्षक 6;शीर्षक (DIV)",
+FontFormats			: "साधारण;फ़ॉर्मैटॅड;पता;शीर्षक 1;शीर्षक 2;शीर्षक 3;शीर्षक 4;शीर्षक 5;शीर्षक 6;शीर्षक (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "XHTML प्रोसॅस हो रहा है। ज़रा ठहरें...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "ऐंकर चुनें",
 DlgLnkAnchorByName	: "ऐंकर नाम से",
 DlgLnkAnchorById	: "ऍलीमॅन्ट Id से",
-DlgLnkNoAnchors		: "<डॉक्यूमॅन्ट में ऐंकर्स की संख्या>",
+DlgLnkNoAnchors		: "<डॉक्यूमॅन्ट में ऐंकर्स की संख्या>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "ई-मेल पता",
 DlgLnkEMailSubject	: "संदेश विषय",
 DlgLnkEMailBody		: "संदेश",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "दायीं तरफ",
 DlnLnkMsgNoUrl		: "लिंक URL टाइप करें",
 DlnLnkMsgNoEMail	: "ई-मेल पता टाइप करें",
 DlnLnkMsgNoAnchor	: "ऐंकर चुनें",
+DlnLnkMsgInvPopName	: "पॉप-अप का नाम अल्फाबेट से शुरू होना चाहिये और उसमें स्पेस नहीं होने चाहिए",
 
 // Color Dialog
 DlgColorTitle		: "रंग चुनें",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "वर्तनी की जाँच : %1 शब्द
 IeSpellDownload			: "स्पॅल-चॅकर इन्स्टाल नहीं किया गया है। क्या आप इसे डा‌उनलोड करना चाहेंगे?",
 
 // Button Dialog
-DlgButtonText	: "टेक्स्ट (वैल्यू)",
-DlgButtonType	: "प्रकार",
+DlgButtonText		: "टेक्स्ट (वैल्यू)",
+DlgButtonType		: "प्रकार",
+DlgButtonTypeBtn	: "बटन",
+DlgButtonTypeSbm	: "सब्मिट",
+DlgButtonTypeRst	: "रिसेट",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "नाम",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "वैल्यू",
 // Bulleted List Dialog
 BulletedListProp	: "बुलॅट सूची प्रॉपर्टीज़",
 NumberedListProp	: "अंकीय सूची प्रॉपर्टीज़",
+DlgLstStart			: "प्रारम्भ",
 DlgLstType			: "प्रकार",
 DlgLstTypeCircle	: "गोल",
 DlgLstTypeDisc		: "डिस्क",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "बायें से दायें (LTR)",
 DlgDocLangDirRTL	: "दायें से बायें (RTL)",
 DlgDocLangCode		: "भाषा कोड",
 DlgDocCharSet		: "करेक्टर सॅट ऍन्कोडिंग",
+DlgDocCharSetCE		: "मध्य यूरोपीय (Central European)",
+DlgDocCharSetCT		: "चीनी (Chinese Traditional Big5)",
+DlgDocCharSetCR		: "सिरीलिक (Cyrillic)",
+DlgDocCharSetGR		: "यवन (Greek)",
+DlgDocCharSetJP		: "जापानी (Japanese)",
+DlgDocCharSetKR		: "कोरीयन (Korean)",
+DlgDocCharSetTR		: "तुर्की (Turkish)",
+DlgDocCharSetUN		: "यूनीकोड (UTF-8)",
+DlgDocCharSetWE		: "पश्चिम यूरोपीय (Western European)",
 DlgDocCharSetOther	: "अन्य करेक्टर सॅट ऍन्कोडिंग",
 
 DlgDocDocType		: "डॉक्यूमॅन्ट प्रकार शीर्षक",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "कन्टेन्ट टॅम्प्लेट",
 DlgTemplatesSelMsg	: "ऍडिटर में ओपन करने हेतु टॅम्प्लेट चुनें(वर्तमान कन्टॅन्ट सेव नहीं होंगे):",
 DlgTemplatesLoading	: "टॅम्प्लेट सूची लोड की जा रही है। ज़रा ठहरें...",
 DlgTemplatesNoTpl	: "(कोई टॅम्प्लेट डिफ़ाइन नहीं किया गया है)",
+DlgTemplatesReplace	: "मूल शब्दों को बदलें",
 
 // About Dialog
 DlgAboutAboutTab	: "FCKEditor के बारे में",
 DlgAboutBrowserInfoTab	: "ब्राउज़र के बारे में",
 DlgAboutLicenseTab	: "लाइसैन्स",
 DlgAboutVersion		: "वर्ज़न",
-DlgAboutLicense		: "लाइसेंस :GNU LGPL",
 DlgAboutInfo		: "अधिक जानकारी के लिये यहाँ जायें:"
-}
+};

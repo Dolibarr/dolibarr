@@ -19,7 +19,6 @@ function spellChecker( textObject ) {
 //	this.popUpProps = "menu=no,width=440,height=350,top=70,left=120,resizable=yes,status=yes";	// by FredCK
 	this.popUpProps = null ;																	// by FredCK
 //	this.spellCheckScript = '/speller/server-scripts/spellchecker.php';		// by FredCK
-	this.spellCheckScript = 'server-scripts/spellchecker.php';				// by FredCK
 	//this.spellCheckScript = '/cgi-bin/spellchecker.pl';
 
 	// values used to keep track of what happened to a word
@@ -132,6 +131,7 @@ function ignoreWord() {
 		this.currentWordIndex++;
 		this._spellcheck();
 	}
+	return true;
 }
 
 function ignoreAll() {
@@ -169,6 +169,7 @@ function ignoreAll() {
 	// finally, move on
 	this.currentWordIndex++;
 	this._spellcheck();
+	return true;
 }
 
 function replaceWord() {
@@ -183,7 +184,7 @@ function replaceWord() {
 		return false;
 	}
 	if( !this.controlWin.replacementText ) {
-		return;
+		return false ;
 	}
 	var txt = this.controlWin.replacementText;
 	if( txt.value ) {
@@ -193,6 +194,7 @@ function replaceWord() {
 			this._spellcheck();
 		}
 	}
+	return true;
 }
 
 function replaceAll() {
@@ -208,7 +210,7 @@ function replaceAll() {
 		return false;
 	}
 	var txt = this.controlWin.replacementText;
-	if( !txt.value ) return;
+	if( !txt.value ) return false;
 	var newspell = new String( txt.value );
 
 	// set this word as a "replace all" word. 
@@ -232,6 +234,7 @@ function replaceAll() {
 	// finally, move on
 	this.currentWordIndex++;
 	this._spellcheck();
+	return true;
 }
 
 function terminateSpell() {
@@ -286,7 +289,7 @@ function terminateSpell() {
 function undo() {
 	// skip if this is the first word!
 	var ti = this.currentTextIndex;
-	var wi = this.currentWordIndex
+	var wi = this.currentWordIndex;
 	
 	if( this.wordWin.totalPreviousWords( ti, wi ) > 0 ) {
 		this.wordWin.removeFocus( ti, wi );
@@ -318,15 +321,16 @@ function undo() {
 			this.controlWin.disableUndo();
 		}
 	
+		var i, j, origSpell ;
 		// examine what happened to this current word.
 		switch( this.wordFlags[text_idx][idx] ) {
 			// replace all: go through this and all the future occurances of the word 
 			// and revert them all to the original spelling and clear their flags
 			case this.replAllFlag :
-				for( var i = text_idx; i < this.wordWin.textInputs.length; i++ ) {
-					for( var j = 0; j < this.wordWin.totalWords( i ); j++ ) {
+				for( i = text_idx; i < this.wordWin.textInputs.length; i++ ) {
+					for( j = 0; j < this.wordWin.totalWords( i ); j++ ) {
 						if(( i == text_idx && j >= idx ) || i > text_idx ) {
-							var origSpell = this.wordWin.originalSpellings[i][j];
+							origSpell = this.wordWin.originalSpellings[i][j];
 							if( origSpell == preReplSpell ) {
 								this._setWordText ( i, j, origSpell, undefined );
 							}
@@ -338,10 +342,10 @@ function undo() {
 			// ignore all: go through all the future occurances of the word 
 			// and clear their flags
 			case this.ignrAllFlag :
-				for( var i = text_idx; i < this.wordWin.textInputs.length; i++ ) {
-					for( var j = 0; j < this.wordWin.totalWords( i ); j++ ) {
+				for( i = text_idx; i < this.wordWin.textInputs.length; i++ ) {
+					for( j = 0; j < this.wordWin.totalWords( i ); j++ ) {
 						if(( i == text_idx && j >= idx ) || i > text_idx ) {
-							var origSpell = this.wordWin.originalSpellings[i][j];
+							origSpell = this.wordWin.originalSpellings[i][j];
 							if( origSpell == preReplSpell ) {
 								this.wordFlags[i][j] = undefined; 
 							}

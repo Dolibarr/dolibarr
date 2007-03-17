@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: cs.js
  * 	Czech language file.
@@ -132,7 +140,7 @@ SelectionFieldProp	: "Vlastnosti seznamu",
 TextareaProp		: "Vlastnosti textové oblasti",
 FormProp			: "Vlastnosti formuláře",
 
-FontFormats			: "Normální;Formátovaný;Adresa;Nadpis 1;Nadpis 2;Nadpis 3;Nadpis 4;Nadpis 5;Nadpis 6",
+FontFormats			: "Normální;Formátovaný;Adresa;Nadpis 1;Nadpis 2;Nadpis 3;Nadpis 4;Nadpis 5;Nadpis 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Probíhá zpracování XHTML. Prosím čekejte...",
@@ -227,7 +235,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Vybrat kotvu",
 DlgLnkAnchorByName	: "Podle jména kotvy",
 DlgLnkAnchorById	: "Podle Id objektu",
-DlgLnkNoAnchors		: "<Ve stránce žádná kotva není definována>",
+DlgLnkNoAnchors		: "<Ve stránce žádná kotva není definována>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "E-Mailová adresa",
 DlgLnkEMailSubject	: "Předmět zprávy",
 DlgLnkEMailBody		: "Tělo zprávy",
@@ -260,6 +268,7 @@ DlgLnkPopTop		: "Horní okraj",
 DlnLnkMsgNoUrl		: "Zadejte prosím URL odkazu",
 DlnLnkMsgNoEMail	: "Zadejte prosím e-mailovou adresu",
 DlnLnkMsgNoAnchor	: "Vyberte prosím kotvu",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Výběr barvy",
@@ -376,8 +385,11 @@ DlgSpellManyChanges		: "Kontrola pravopisu dokončena: %1 slov změněno",
 IeSpellDownload			: "Kontrola pravopisu není nainstalována. Chcete ji nyní stáhnout?",
 
 // Button Dialog
-DlgButtonText	: "Popisek",
-DlgButtonType	: "Typ",
+DlgButtonText		: "Popisek",
+DlgButtonType		: "Typ",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Název",
@@ -426,6 +438,7 @@ DlgHiddenValue	: "Hodnota",
 // Bulleted List Dialog
 BulletedListProp	: "Vlastnosti odrážek",
 NumberedListProp	: "Vlastnosti číslovaného seznamu",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Typ",
 DlgLstTypeCircle	: "Kružnice",
 DlgLstTypeDisc		: "Kruh",
@@ -448,6 +461,15 @@ DlgDocLangDirLTR	: "Zleva do prava ",
 DlgDocLangDirRTL	: "Zprava doleva",
 DlgDocLangCode		: "Kód jazyku",
 DlgDocCharSet		: "Znaková sada",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Další znaková sada",
 
 DlgDocDocType		: "Typ dokumentu",
@@ -477,12 +499,12 @@ DlgTemplatesTitle	: "Šablony obsahu",
 DlgTemplatesSelMsg	: "Prosím zvolte šablonu pro otevření v editoru<br>(aktuální obsah editoru bude ztracen):",
 DlgTemplatesLoading	: "Nahrávám přeheld šablon. Prosím čekejte...",
 DlgTemplatesNoTpl	: "(Není definována žádná šablona)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "O aplikaci",
 DlgAboutBrowserInfoTab	: "Informace o prohlížeči",
 DlgAboutLicenseTab	: "Licence",
 DlgAboutVersion		: "verze",
-DlgAboutLicense		: "Licencováno pod GNU Lesser General Public License",
 DlgAboutInfo		: "Více informací získáte na"
-}
+};

@@ -1,21 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fck_find.html
  * 	"Find" dialog window.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -70,10 +78,12 @@ function ReplaceTextNodes( parentNode, regex, replaceValue, replaceAll )
 
 function GetRegexExpr()
 {
+	var sExpr ;
+
 	if ( document.getElementById('chkWord').checked )
-		var sExpr = '\\b' + document.getElementById('txtFind').value + '\\b' ;
+		sExpr = '\\b' + document.getElementById('txtFind').value + '\\b' ;
 	else
-		var sExpr = document.getElementById('txtFind').value ;
+		sExpr = document.getElementById('txtFind').value ;
 
 	return sExpr ;
 }
@@ -131,22 +141,12 @@ function FindGecko()
 	var bWord = document.getElementById('chkWord').checked ;
 
 	// window.find( searchString, caseSensitive, backwards, wrapAround, wholeWord, searchInFrames, showDialog ) ;
-	oEditor.FCK.EditorWindow.find( document.getElementById('txtFind').value, bCase, false, false, bWord, false, false ) ;
-
-}
-
-function FindGecko()
-{
-	var bCase = document.getElementById('chkCase').checked ;
-	var bWord = document.getElementById('chkWord').checked ;
-
-	// window.find( searchString, caseSensitive, backwards, wrapAround, wholeWord, searchInFrames, showDialog ) ;
 	if ( !oEditor.FCK.EditorWindow.find( document.getElementById('txtFind').value, bCase, false, false, bWord, false, false ) )
 		alert( oEditor.FCKLang.DlgFindNotFoundMsg ) ;
 }
 	</script>
 </head>
-<body onload="OnLoad()" scroll="no" style="overflow: hidden">
+<body onload="OnLoad()" style="overflow: hidden">
 	<table cellspacing="3" cellpadding="2" width="100%" border="0">
 		<tr>
 			<td nowrap="nowrap">
@@ -168,7 +168,7 @@ function FindGecko()
 				<br />
 				<div id="divWord" style="display: none">
 					&nbsp;<input id="chkWord" tabindex="4" type="checkbox" /><label for="chkWord" fcklang="DlgReplaceWordChk">Match
-					whole word</label>
+						whole word</label>
 				</div>
 			</td>
 		</tr>

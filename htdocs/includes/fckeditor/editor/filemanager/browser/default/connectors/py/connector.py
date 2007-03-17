@@ -1,16 +1,24 @@
 #!/usr/bin/env python
 
 """
-FCKeditor - The text editor for internet
-Copyright (C) 2003-2006 Frederico Caldeira Knabben
+FCKeditor - The text editor for Internet - http://www.fckeditor.net
+Copyright (C) 2003-2007 Frederico Caldeira Knabben
 
-Licensed under the terms of the GNU Lesser General Public License:
-		http://www.opensource.org/licenses/lgpl-license.php
+== BEGIN LICENSE ==
 
-For further information visit:
-		http://www.fckeditor.net/
+Licensed under the terms of any of the following licenses at your
+choice:
 
-"Support Open Source software. What about a donation today?"
+ - GNU General Public License Version 2 or later (the "GPL")
+   http://www.gnu.org/licenses/gpl.html
+
+ - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+   http://www.gnu.org/licenses/lgpl.html
+
+ - Mozilla Public License Version 1.1 or later (the "MPL")
+   http://www.mozilla.org/MPL/MPL-1.1.html
+
+== END LICENSE ==
 
 File Name: connector.py
 	Connector for Python.
@@ -173,10 +181,10 @@ class FCKeditorConnector(object):
 				"Media": None
 				}
 		self.deniedExtensions = {
-				"File": [ "php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi" ],
-				"Image": [ "php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi" ],
-				"Flash": [ "php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi" ],
-				"Media": [ "php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi" ]
+				"File": [ "html","htm","php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi","htaccess","asis" ],
+				"Image": [ "html","htm","php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi","htaccess","asis" ],
+				"Flash": [ "html","htm","php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi","htaccess","asis" ],
+				"Media": [ "html","htm","php","php2","php3","php4","php5","phtml","pwml","inc","asp","aspx","ascx","jsp","cfm","cfc","pl","bat","exe","com","dll","vbs","js","reg","cgi","htaccess","asis" ]
 				}
 
 	"""

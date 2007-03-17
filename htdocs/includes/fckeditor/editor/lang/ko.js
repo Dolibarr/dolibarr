@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: ko.js
  * 	Korean language file.
@@ -131,7 +139,7 @@ SelectionFieldProp	: "펼침목록 속성",
 TextareaProp		: "입력영역 속성",
 FormProp			: "폼 속성",
 
-FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6",
+FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "XHTML 처리중. 잠시만 기다려주십시요.",
@@ -226,7 +234,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "책갈피 선택",
 DlgLnkAnchorByName	: "책갈피 이름",
 DlgLnkAnchorById	: "책갈피 ID",
-DlgLnkNoAnchors		: "<문서에 책갈피가 없습니다.>",
+DlgLnkNoAnchors		: "<문서에 책갈피가 없습니다.>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "이메일 주소",
 DlgLnkEMailSubject	: "제목",
 DlgLnkEMailBody		: "내용",
@@ -259,6 +267,7 @@ DlgLnkPopTop		: "윗쪽 위치",
 DlnLnkMsgNoUrl		: "링크 URL을 입력하십시요.",
 DlnLnkMsgNoEMail	: "이메일주소를 입력하십시요.",
 DlnLnkMsgNoAnchor	: "책갈피명을 입력하십시요.",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "색상 선택",
@@ -375,8 +384,11 @@ DlgSpellManyChanges		: "철자검사 완료: %1 단어가 변경되었습니다.
 IeSpellDownload			: "철자 검사기가 철치되지 않았습니다. 지금 다운로드하시겠습니까?",
 
 // Button Dialog
-DlgButtonText	: "버튼글자(값)",
-DlgButtonType	: "버튼종류",
+DlgButtonText		: "버튼글자(값)",
+DlgButtonType		: "버튼종류",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "이름",
@@ -425,6 +437,7 @@ DlgHiddenValue	: "값",
 // Bulleted List Dialog
 BulletedListProp	: "순서없는 목록 속성",
 NumberedListProp	: "순서있는 목록 속성",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "종류",
 DlgLstTypeCircle	: "원(Circle)",
 DlgLstTypeDisc		: "Disc",	//MISSING
@@ -447,6 +460,15 @@ DlgDocLangDirLTR	: "왼쪽에서 오른쪽 (LTR)",
 DlgDocLangDirRTL	: "오른쪽에서 왼쪽 (RTL)",
 DlgDocLangCode		: "언어코드",
 DlgDocCharSet		: "캐릭터셋 인코딩",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "다른 캐릭터셋 인코딩",
 
 DlgDocDocType		: "문서 헤드",
@@ -476,12 +498,12 @@ DlgTemplatesTitle	: "내용 템플릿",
 DlgTemplatesSelMsg	: "에디터에서 사용할 템플릿을 선택하십시요.<br>(지금까지 작성된 내용은 사라집니다.):",
 DlgTemplatesLoading	: "템플릿 목록을 불러오는중입니다. 잠시만 기다려주십시요.",
 DlgTemplatesNoTpl	: "(템플릿이 없습니다.)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "About",
 DlgAboutBrowserInfoTab	: "브라우저 정보",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "버전",
-DlgAboutLicense		: "Licensed under the terms of the GNU Lesser General Public License",
 DlgAboutInfo		: "For further information go to"
-}
+};

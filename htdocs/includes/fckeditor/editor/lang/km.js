@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: km.js
  * 	Khmer language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "ការកំណត់ជួរជ្រើសរើស"
 TextareaProp		: "ការកំណត់កន្លែងសរសេរអត្ថបទ",
 FormProp			: "ការកំណត់បែបបទ",
 
-FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Normal (DIV)",
+FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Normal (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "កំពុងដំណើរការ XHTML ។ សូមរងចាំ...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "ជ្រើសរើសយុថ្កា",
 DlgLnkAnchorByName	: "តាមឈ្មោះរបស់យុថ្កា",
 DlgLnkAnchorById	: "តាម Id",
-DlgLnkNoAnchors		: "<ពុំមានយុថ្កានៅក្នុងឯកសារនេះទេ>",
+DlgLnkNoAnchors		: "<ពុំមានយុថ្កានៅក្នុងឯកសារនេះទេ>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "អ៊ីមែល",
 DlgLnkEMailSubject	: "ចំណងជើងអត្ថបទ",
 DlgLnkEMailBody		: "អត្ថបទ",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "ទីតាំងខាងលើ",
 DlnLnkMsgNoUrl		: "សូមសរសេរ អាស័យដ្ឋាន URL",
 DlnLnkMsgNoEMail	: "សូមសរសេរ អាស័យដ្ឋាន អ៊ីមែល",
 DlnLnkMsgNoAnchor	: "សូមជ្រើសរើស យុថ្កា",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "ជ្រើសរើស ពណ៌",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "ការពិនិត្យអក្ខរាវិ�
 IeSpellDownload			: "ពុំមានកម្មវិធីពិនិត្យអក្ខរាវិរុទ្ធ ។ តើចង់ទាញយកពីណា?",
 
 // Button Dialog
-DlgButtonText	: "អត្ថបទ(តំលៃ)",
-DlgButtonType	: "ប្រភេទ",
+DlgButtonText		: "អត្ថបទ(តំលៃ)",
+DlgButtonType		: "ប្រភេទ",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "ឈ្មោះ",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "តំលៃ",
 // Bulleted List Dialog
 BulletedListProp	: "កំណត់បញ្ជីរង្វង់",
 NumberedListProp	: "កំណត់បញ្េជីលេខ",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "ប្រភេទ",
 DlgLstTypeCircle	: "រង្វង់",
 DlgLstTypeDisc		: "Disc",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "ពីឆ្វេងទៅស្ដាំ(LTR)",
 DlgDocLangDirRTL	: "ពីស្ដាំទៅឆ្វេង(RTL)",
 DlgDocLangCode		: "លេខកូតភាសា",
 DlgDocCharSet		: "កំណត់លេខកូតភាសា",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "កំណត់លេខកូតភាសាផ្សេងទៀត",
 
 DlgDocDocType		: "ប្រភេទក្បាលទំព័រ",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "ឯកសារគំរូ របស់អត្ថន័�
 DlgTemplatesSelMsg	: "សូមជ្រើសរើសឯកសារគំរូ ដើម្បីបើកនៅក្នុងកម្មវិធីតាក់តែងអត្ថបទ<br>(អត្ថបទនឹងបាត់បង់):",
 DlgTemplatesLoading	: "កំពុងអានបញ្ជីឯកសារគំរូ ។ សូមរងចាំ...",
 DlgTemplatesNoTpl	: "(ពុំមានឯកសារគំរូត្រូវបានកំណត់)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "អំពី",
 DlgAboutBrowserInfoTab	: "ព៌តមានកម្មវិធីរុករក",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "ជំនាន់",
-DlgAboutLicense		: "Licensed under the terms of the GNU Lesser General Public License",
 DlgAboutInfo		: "សំរាប់ព៌តមានផ្សេងទៀត សូមទាក់ទង"
-}
+};

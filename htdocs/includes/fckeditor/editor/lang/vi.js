@@ -1,17 +1,25 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: vi.js
- * 	Chinese Traditional language file.
+ * 	Vietnamese language file.
  * 
  * File Authors:
  * 		Phan Binh Giang (bbbgiang@yahoo.com)
@@ -91,7 +99,7 @@ PageBreak			: "Chèn Ngắt trang",
 
 Form			: "Biểu mẫu",
 Checkbox		: "Nút kiểm",
-RadioButton		: "Nút radio",
+RadioButton		: "Nút chọn",
 TextField		: "Trường văn bản",
 Textarea		: "Vùng văn bản",
 HiddenField		: "Trường ẩn",
@@ -124,14 +132,14 @@ AnchorProp			: "Thuộc tính Neo",
 ButtonProp			: "Thuộc tính Nút",
 CheckboxProp		: "Thuộc tính Nút kiểm",
 HiddenFieldProp		: "Thuộc tính Trường ẩn",
-RadioButtonProp		: "Thuộc tính Nút radio",
+RadioButtonProp		: "Thuộc tính Nút chọn",
 ImageButtonProp		: "Thuộc tính Nút hình ảnh",
 TextFieldProp		: "Thuộc tính Trường văn bản",
 SelectionFieldProp	: "Thuộc tính Ô chọn",
 TextareaProp		: "Thuộc tính Vùng văn bản",
 FormProp			: "Thuộc tính Biểu mẫu",
 
-FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Paragraph (DIV)",
+FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Normal (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Đang xử lý XHTML. Vui lòng đợi trong giây lát...",
@@ -226,7 +234,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Chọn một Neo",
 DlgLnkAnchorByName	: "Theo Tên Neo",
 DlgLnkAnchorById	: "Theo Định danh Element",
-DlgLnkNoAnchors		: "<Không có Neo nào trong tài liệu>",
+DlgLnkNoAnchors		: "<Không có Neo nào trong tài liệu>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Thư điện tử",
 DlgLnkEMailSubject	: "Tiêu đề Thông điệp",
 DlgLnkEMailBody		: "Nội dung Thông điệp",
@@ -259,6 +267,7 @@ DlgLnkPopTop		: "Vị trí Trên",
 DlnLnkMsgNoUrl		: "Hãy đưa vào Liên kết URL",
 DlnLnkMsgNoEMail	: "Hãy đưa vào địa chỉ thư điện tử",
 DlnLnkMsgNoAnchor	: "Hãy chọn một Neo",
+DlnLnkMsgInvPopName	: "Tên của cửa sổ Popup phải bắt đầu bằng một ký tự và không được chứa khoảng trắng",
 
 // Color Dialog
 DlgColorTitle		: "Chọn màu",
@@ -327,7 +336,7 @@ DlgFindNotFoundMsg	: "Không tìm thấy chuỗi cần tìm.",
 DlgReplaceTitle			: "Thay thế",
 DlgReplaceFindLbl		: "Tìm chuỗi:",
 DlgReplaceReplaceLbl	: "Thay bằng:",
-DlgReplaceCaseChk		: "Phân biệt chữ HOA/thường",
+DlgReplaceCaseChk		: "Phân biệt chữ hoa/thường",
 DlgReplaceReplaceBtn	: "Thay thế",
 DlgReplaceReplAllBtn	: "Thay thế Tất cả",
 DlgReplaceWordChk		: "Đúng toàn bộ từ",
@@ -368,15 +377,18 @@ DlgSpellBtnUndo			: "Phục hồi lại",
 DlgSpellNoSuggestions	: "- Không đưa ra gợi ý về từ -",
 DlgSpellProgress		: "Đang tiến hành kiểm tra chính tả...",
 DlgSpellNoMispell		: "Hoàn tất kiểm tra chính tả: Không có lỗi chính tả",
-DlgSpellNoChanges		: "Hoàn tất kiểm tra chính tả: Không từ nào được thay đổi",
+DlgSpellNoChanges		: "Hoàn tất kiểm tra chính tả: Không có từ nào được thay đổi",
 DlgSpellOneChange		: "Hoàn tất kiểm tra chính tả: Một từ đã được thay đổi",
 DlgSpellManyChanges		: "Hoàn tất kiểm tra chính tả: %1 từ đã được thay đổi",
 
 IeSpellDownload			: "Chức năng kiểm tra chính tả chưa được cài đặt. Bạn có muốn tải về ngay bây giờ?",
 
 // Button Dialog
-DlgButtonText	: "Chuỗi hiển thị (Giá trị)",
-DlgButtonType	: "Kiểu",
+DlgButtonText		: "Chuỗi hiển thị (Giá trị)",
+DlgButtonType		: "Kiểu",
+DlgButtonTypeBtn	: "Nút Bấm",
+DlgButtonTypeSbm	: "Nút Gửi",
+DlgButtonTypeRst	: "Nút Nhập lại",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Tên",
@@ -425,6 +437,7 @@ DlgHiddenValue	: "Giá trị",
 // Bulleted List Dialog
 BulletedListProp	: "Thuộc tính Danh sách không thứ tự",
 NumberedListProp	: "Thuộc tính Danh sách có thứ tự",
+DlgLstStart			: "Bắt đầu",
 DlgLstType			: "Kiểu",
 DlgLstTypeCircle	: "Hình tròn",
 DlgLstTypeDisc		: "Hình đĩa",
@@ -447,6 +460,15 @@ DlgDocLangDirLTR	: "Trái sang Phải (LTR)",
 DlgDocLangDirRTL	: "Phải sang Trái (RTL)",
 DlgDocLangCode		: "Mã Ngôn ngữ",
 DlgDocCharSet		: "Bảng mã ký tự",
+DlgDocCharSetCE		: "Trung Âu",
+DlgDocCharSetCT		: "Tiếng Trung Quốc (Big5)",
+DlgDocCharSetCR		: "Tiếng Kirin",
+DlgDocCharSetGR		: "Tiếng Hy Lạp",
+DlgDocCharSetJP		: "Tiếng Nhật",
+DlgDocCharSetKR		: "Tiếng Hàn",
+DlgDocCharSetTR		: "Tiếng Thổ Nhĩ Kỳ",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Tây Âu",
 DlgDocCharSetOther	: "Bảng mã ký tự khác",
 
 DlgDocDocType		: "Kiểu Đề mục Tài liệu",
@@ -476,12 +498,12 @@ DlgTemplatesTitle	: "Nội dung Mẫu dựng sẵn",
 DlgTemplatesSelMsg	: "Hãy chọn Mẫu dựng sẵn để mở trong trình biên tập<br>(nội dung hiện tại sẽ bị mất):",
 DlgTemplatesLoading	: "Đang nạp Danh sách Mẫu dựng sẵn. Vui lòng đợi trong giây lát...",
 DlgTemplatesNoTpl	: "(Không có Mẫu dựng sẵn nào được định nghĩa)",
+DlgTemplatesReplace	: "Thay thế nội dung hiện tại",
 
 // About Dialog
 DlgAboutAboutTab	: "Giới thiệu",
 DlgAboutBrowserInfoTab	: "Thông tin trình duyệt",
 DlgAboutLicenseTab	: "Giấy phép",
 DlgAboutVersion		: "phiên bản",
-DlgAboutLicense		: "Được cấp phép theo các điều khoản của giấy phép GNU Lesser General Public License",
 DlgAboutInfo		: "Để biết thêm thông tin, hãy truy cập"
-}
+};

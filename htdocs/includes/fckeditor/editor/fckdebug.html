@@ -1,22 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fckdebug.html
  * 	This is the Debug window.
  * 	It automatically popups if the Debug = true in the configuration file.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -39,13 +47,51 @@ window.onload = function()
 	oDiv	= oWindow.document.getElementById('divMsg') ;
 }
 
-function Output( message, color )
+function Output( message, color, noParse )
 {
+	if ( !noParse && message != null && isNaN( message ) )
+		message = message.replace(/</g, "&lt;") ;
+		
 	if ( color )
 		message = '<font color="' + color + '">' + message + '<\/font>' ;
 		
 	window.FCKMessages[ window.FCKMessages.length ] = message ;
 	StartTimer() ;
+}
+
+function OutputObject( anyObject, color )
+{
+	var message ;
+	
+	if ( anyObject != null ) 
+	{
+		message = 'Properties of: ' + anyObject + '</b><blockquote>' ;
+		
+		for (var prop in anyObject)
+		{
+			try 
+			{
+				var sVal = anyObject[ prop ] != null ? anyObject[ prop ] + '' : '[null]' ;
+				message += '<b>' + prop + '</b> : ' + sVal.replace(/</g, '&lt;') + '<br>' ;
+			} 
+			catch (e)
+			{
+				try
+				{
+					message += '<b>' + prop + '</b> : [' + typeof( anyObject[ prop ] ) + ']<br>' ;
+				}
+				catch (e)
+				{
+					message += '<b>' + prop + '</b> : [-error-]<br>' ;
+				}
+			}
+		}
+
+		message += '</blockquote><b>' ; 
+	} else
+		message = 'OutputObject : Object is "null".' ;
+		
+	Output( message, color, true ) ;
 }
 
 function StartTimer()
@@ -102,7 +148,7 @@ function Clear()
 		</tr>
 		<tr style="height: 100%">
 			<td style="border: #696969 1px solid">
-				<iframe id="xOutput" width="100%" height="100%" scrolling="auto" src="fckblank.html"
+				<iframe id="xOutput" width="100%" height="100%" scrolling="auto" src="javascript:void(0)"
 					frameborder="0"></iframe>
 			</td>
 		</tr>

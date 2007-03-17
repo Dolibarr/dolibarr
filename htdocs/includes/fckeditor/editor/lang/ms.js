@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: ms.js
  * 	Malay language file.
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Ciri-ciri Selection Field",
 TextareaProp		: "Ciri-ciri Textarea",
 FormProp			: "Ciri-ciri Borang",
 
-FontFormats			: "Normal;Telah Diformat;Alamat;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Perenggan (DIV)",
+FontFormats			: "Normal;Telah Diformat;Alamat;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Perenggan (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Memproses XHTML. Sila tunggu...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Sila pilih pautan",
 DlgLnkAnchorByName	: "dengan menggunakan nama pautan",
 DlgLnkAnchorById	: "dengan menggunakan ID elemen",
-DlgLnkNoAnchors		: "<Tiada pautan terdapat dalam dokumen ini>",
+DlgLnkNoAnchors		: "<Tiada pautan terdapat dalam dokumen ini>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Alamat E-Mail",
 DlgLnkEMailSubject	: "Subjek Mesej",
 DlgLnkEMailBody		: "Isi Kandungan Mesej",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Posisi Atas",
 DlnLnkMsgNoUrl		: "Sila taip sambungan URL",
 DlnLnkMsgNoEMail	: "Sila taip alamat e-mail",
 DlnLnkMsgNoAnchor	: "Sila pilih pautan berkenaaan",
+DlnLnkMsgInvPopName	: "The popup name must begin with an alphabetic character and must not contain spaces",	//MISSING
 
 // Color Dialog
 DlgColorTitle		: "Pilihan Warna",
@@ -339,7 +348,7 @@ PasteErrorCopy	: "Keselamatan perisian browser anda tidak membenarkan operasi sa
 PasteAsText		: "Tampal sebagai text biasa",
 PasteFromWord	: "Tampal dari perisian \"Word\"",
 
-DlgPasteMsg2	: "Please paste inside the following box using the keyboard (<STRONG>Ctrl+V</STRONG>) and hit <STRONG>OK</STRONG>.",	//MISSING
+DlgPasteMsg2	: "Please paste inside the following box using the keyboard (<strong>Ctrl+V</strong>) and hit <strong>OK</strong>.",	//MISSING
 DlgPasteIgnoreFont		: "Ignore Font Face definitions",	//MISSING
 DlgPasteRemoveStyles	: "Remove Styles definitions",	//MISSING
 DlgPasteCleanBox		: "Clean Up Box",	//MISSING
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Pemeriksaan ejaan siap: %1 perkataan diubah",
 IeSpellDownload			: "Pemeriksa ejaan tidak dipasang. Adakah anda mahu muat turun sekarang?",
 
 // Button Dialog
-DlgButtonText	: "Teks (Nilai)",
-DlgButtonType	: "Jenis",
+DlgButtonText		: "Teks (Nilai)",
+DlgButtonType		: "Jenis",
+DlgButtonTypeBtn	: "Button",	//MISSING
+DlgButtonTypeSbm	: "Submit",	//MISSING
+DlgButtonTypeRst	: "Reset",	//MISSING
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nama",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Nilai",
 // Bulleted List Dialog
 BulletedListProp	: "Ciri-ciri senarai berpeluru",
 NumberedListProp	: "Ciri-ciri senarai bernombor",
+DlgLstStart			: "Start",	//MISSING
 DlgLstType			: "Jenis",
 DlgLstTypeCircle	: "Circle",
 DlgLstTypeDisc		: "Disc",	//MISSING
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Kiri ke Kanan (LTR)",
 DlgDocLangDirRTL	: "Kanan ke Kiri (RTL)",
 DlgDocLangCode		: "Kod Bahasa",
 DlgDocCharSet		: "Enkod Set Huruf",
+DlgDocCharSetCE		: "Central European",	//MISSING
+DlgDocCharSetCT		: "Chinese Traditional (Big5)",	//MISSING
+DlgDocCharSetCR		: "Cyrillic",	//MISSING
+DlgDocCharSetGR		: "Greek",	//MISSING
+DlgDocCharSetJP		: "Japanese",	//MISSING
+DlgDocCharSetKR		: "Korean",	//MISSING
+DlgDocCharSetTR		: "Turkish",	//MISSING
+DlgDocCharSetUN		: "Unicode (UTF-8)",	//MISSING
+DlgDocCharSetWE		: "Western European",	//MISSING
 DlgDocCharSetOther	: "Enkod Set Huruf yang Lain",
 
 DlgDocDocType		: "Jenis Kepala Dokumen",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Templat Kandungan",
 DlgTemplatesSelMsg	: "Sila pilih templat untuk dibuka oleh editor<br>(kandungan sebenar akan hilang):",
 DlgTemplatesLoading	: "Senarai Templat sedang diproses. Sila Tunggu...",
 DlgTemplatesNoTpl	: "(Tiada Templat Disimpan)",
+DlgTemplatesReplace	: "Replace actual contents",	//MISSING
 
 // About Dialog
 DlgAboutAboutTab	: "Tentang",
 DlgAboutBrowserInfoTab	: "Maklumat Perisian Browser",
 DlgAboutLicenseTab	: "License",	//MISSING
 DlgAboutVersion		: "versi",
-DlgAboutLicense		: "Perlesenan dibawah terma GNU Lesser General Public License",
 DlgAboutInfo		: "Untuk maklumat lanjut sila pergi ke"
-}
+};

@@ -1,21 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: _fckviewstrips.html
  * 	Useful page that enumerates all icons in the skins strips.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
+ * 		Alfonso Martinez de Lizarrondo - Uritec (alfonso at uritec dot net)
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -40,37 +49,36 @@
 window.onload = function()
 {
 	var eImg1 = document.createElement( 'img' ) ;
-	eImg1.onreadystatechange = Img_OnReadyStateChange ;
+	eImg1.onload = Img_OnLoad ;
 	eImg1.src = 'default/fck_strip.gif' ;
 
 	var eImg2 = document.createElement( 'img' ) ;
-	eImg2.onreadystatechange = Img_OnReadyStateChange ;
+	eImg2.onload = Img_OnLoad ;
 	eImg2.src = 'office2003/fck_strip.gif' ;
 
 	var eImg3 = document.createElement( 'img' ) ;
-	eImg3.onreadystatechange = Img_OnReadyStateChange ;
+	eImg3.onload = Img_OnLoad ;
 	eImg3.src = 'silver/fck_strip.gif' ;
 }
 
 var iTotalStrips = 3 ;
 var iMaxHeight = 0 ;
 
-function Img_OnReadyStateChange()
+function Img_OnLoad()
 {
-	if ( this.readyState == 'complete' )
-	{
-		if ( iMaxHeight < this.height )
-			iMaxHeight = this.height ;
-		
-		iTotalStrips-- ;
-		
-		if ( iTotalStrips == 0 )
-			LoadIcons( iMaxHeight / 16 ) ;
-	}
+	if ( iMaxHeight < this.height )
+		iMaxHeight = this.height ;
+	
+	iTotalStrips-- ;
+	
+	if ( iTotalStrips == 0 )
+		LoadIcons( iMaxHeight / 16 ) ;
 }
 
 function LoadIcons( total )
 {
+	var xIconsTable = document.getElementById( 'xIconsTable' ) ;
+
 	for ( var i = 0 ; i < total ; i++ )
 	{
 		var eRow = xIconsTable.insertRow(-1) ;
@@ -81,17 +89,17 @@ function LoadIcons( total )
 		eCell = eRow.insertCell(-1) ;
 		eCell.align = 'center' ;
 		eCell.style.border = '#dcdcdc 1px solid' ;
-		eCell.innerHTML = '<div class="TB_Button_Image"><img src="default/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="default/fck_strip.gif" style="top:-' + ( i * 16 ) + 'px;"><\/div>' ;
 
 		eCell = eRow.insertCell(-1) ;
 		eCell.align = 'center' ;
 		eCell.style.border = '#dcdcdc 1px solid' ;
-		eCell.innerHTML = '<div class="TB_Button_Image"><img src="office2003/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="office2003/fck_strip.gif" style="top:-' + ( i * 16 ) + 'px;"><\/div>' ;
 
 		eCell = eRow.insertCell(-1) ;
 		eCell.align = 'center' ;
 		eCell.style.border = '#dcdcdc 1px solid' ;
-		eCell.innerHTML = '<div class="TB_Button_Image"><img src="silver/fck_strip.gif" style="top=-' + ( i * 16 ) + 'px;"></div>' ;
+		eCell.innerHTML = '<div class="TB_Button_Image"><img src="silver/fck_strip.gif" style="top:-' + ( i * 16 ) + 'px;"><\/div>' ;
 	}
 }
 

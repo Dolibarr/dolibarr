@@ -1,21 +1,29 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fckdialog.html
  * 	This page is used by all dialog box as the container.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 	<head>
@@ -39,9 +47,6 @@ document.write( '<title>' + sTitle + '<\/title>' ) ;
 
 function LoadInnerDialog()
 {
-	// The following value is set, so the editor can check that the dialog has been correctly opened.
-	window.setTimeout( function() { window.returnValue = true ; }, 100 ) ;
-
 	if ( window.onresize )
 		window.onresize() ;
 
@@ -99,7 +104,7 @@ function RefreshSize()
 		if ( iDiff > 0 )
 		{
 			if ( document.all )
-				window.dialogHeight = ( parseInt( window.dialogHeight ) + iDiff ) + 'px' ;
+				window.dialogHeight = ( parseInt( window.dialogHeight, 10 ) + iDiff ) + 'px' ;
 			else
 				window.resizeBy( 0, iDiff ) ;
 		}
@@ -112,11 +117,14 @@ function Ok()
 		Cancel() ;
 }
 
-function Cancel()
+function Cancel( dontFireChange )
 {
-	// All dialog windows will fire the "OnSelectionChange" event, not matter
-	// the Ok or Cancel button have being pressed.
-	window.dialogArguments.Editor.FCK.Events.FireEvent( 'OnSelectionChange' ) ;
+	if ( !dontFireChange )
+	{
+		// All dialog windows, by default, will fire the "OnSelectionChange"
+		// event, no matter the Ok or Cancel button has been pressed.
+		window.dialogArguments.Editor.FCK.Events.FireEvent( 'OnSelectionChange' ) ;
+	}
 	window.close() ;
 }
 
@@ -164,7 +172,6 @@ function AddTab( tabCode, tabText, startHidden )
 	}
 
 	oTabs[ tabCode ] = oDiv ;
-	oTabs[ tabCode ].Index = oTabs.length - 1 ;
 }
 
 function SetSelectedTab( tabCode )
@@ -208,7 +215,8 @@ function SetOnKeyDown( targetDocument )
 		{
 			case 13 :		// ENTER
 				var oTarget = e.srcElement || e.target ;
-				if ( oTarget.tagName == 'TEXTAREA' ) return ;
+				if ( oTarget.tagName == 'TEXTAREA' ) 
+					return true ;
 				Ok() ;
 				return false ;
 			case 27 :		// ESC
@@ -297,7 +305,7 @@ document.write( sTitle ) ;
 			</tr>
 			<tr>
 				<td id="FrameCell" height="100%" valign="top">
-					<iframe id="frmMain" src="fckblank.html" name="frmMain" frameborder="0" height="100%" width="100%" scrolling="auto">
+					<iframe id="frmMain" src="javascript:void(0)" name="frmMain" frameborder="0" height="100%" width="100%" scrolling="auto">
 					</iframe>
 				</td>
 			</tr>

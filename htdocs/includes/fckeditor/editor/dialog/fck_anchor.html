@@ -1,21 +1,30 @@
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN" >
 <!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fck_anchor.html
  * 	Anchor dialog window.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
+ * 		Alfonso Martinez de Lizarrondo - Uritec (alfonso at uritec dot net)
 -->
 <html>
 	<head>
@@ -27,6 +36,9 @@
 
 var oEditor	= window.parent.InnerDialogLoaded() ;
 var FCK		= oEditor.FCK ;
+var FCKBrowserInfo = oEditor.FCKBrowserInfo ;
+var FCKTools = oEditor.FCKTools ;
+var FCKRegexLib = oEditor.FCKRegexLib ;
 
 // Gets the document DOM
 var oDOM = oEditor.FCK.EditorDocument ;
@@ -40,6 +52,14 @@ if ( oFakeImage )
 		oAnchor = FCK.GetRealElement( oFakeImage ) ;
 	else
 		oFakeImage = null ;
+}
+
+//Search for a real anchor
+if ( !oFakeImage )
+{
+	oAnchor = FCK.Selection.MoveToAncestorNode( 'A' ) ;
+	if ( oAnchor )
+		FCK.Selection.SelectNode( oAnchor ) ;
 }
 
 window.onload = function()
@@ -57,24 +77,138 @@ window.onload = function()
 
 function Ok()
 {
-	if ( GetE('txtName').value.length == 0 )
+	var sNewName = GetE('txtName').value ;
+
+	// Remove any illegal character in a name attribute:
+	// A name should start with a letter, but the validator passes anyway.
+	sNewName = sNewName.replace( /[^\w-_\.:]/g, '_' ) ;
+
+	if ( sNewName.length == 0 )
 	{
+		// Remove the anchor if the user leaves the name blank
+		if ( oAnchor )	
+		{
+			RemoveAnchor() ;
+			return true ;
+		}
+
 		alert( oEditor.FCKLang.DlgAnchorErrorName ) ;
 		return false ;
 	}
 	
 	oEditor.FCKUndo.SaveUndoStep() ;
 	
-	oAnchor		= FCK.EditorDocument.createElement( 'DIV' ) ;
-	oAnchor.innerHTML = '<a name="' + GetE('txtName').value + '"><\/a>' ;
-	oAnchor = oAnchor.firstChild ;
+	if ( oAnchor )	// Modifying an existent anchor.
+	{
+		ReadjustLinksToAnchor( oAnchor.name, sNewName );
 
-	oFakeImage	= oEditor.FCKDocumentProcessor_CreateFakeImage( 'FCK__Anchor', oAnchor ) ;
-	oFakeImage.setAttribute( '_fckanchor', 'true', 0 ) ;
-	oFakeImage	= FCK.InsertElementAndGetIt( oFakeImage ) ;
+		// Buggy explorer, bad bad browser. http://alt-tag.com/blog/archives/2006/02/ie-dom-bugs/
+		// Instead of just replacing the .name for the existing anchor (in order to preserve the content), we must remove the .name
+		// and assign .name, although it won't appear until it's specially processed in fckxhtml.js
 
-//	oEditor.FCK.InsertHtml( '<a name="' + GetE('txtName').value + '"><\/a>' ) ;
+		// We remove the previous name
+		oAnchor.removeAttribute( 'name' ) ;
+		// Now we set it, but later we must process it specially
+		oAnchor.name = sNewName ;
+
+		return true ;
+	}
+
+	// Create a new anchor preserving the current selection
+	oAnchor = oEditor.FCK.CreateLink( '#' ) ;
+	if ( !oAnchor )
+	{
+		// Nothing was selected, so now just create a normal A
+		oAnchor = oEditor.FCK.CreateElement( 'a' ) ; 
+	}
+	else
+	{
+		// Remove the fake href
+		oAnchor.removeAttribute( 'href' ) ; 
+	}
+	// Set the name
+	oAnchor.name = sNewName ;
+
+	// IE does require special processing to show the Anchor's image
+	// Opera doesn't allow to select empty anchors
+	if ( FCKBrowserInfo.IsIE || FCKBrowserInfo.IsOpera )
+	{
+		if ( oAnchor.innerHTML != '' )
+		{
+			if ( FCKBrowserInfo.IsIE )
+				oAnchor.className += ' FCK__AnchorC' ;
+		}
+		else
+		{
+			// Create a fake image for both IE and Opera
+			var oImg = oEditor.FCKDocumentProcessor_CreateFakeImage( 'FCK__Anchor', oAnchor.cloneNode(true) ) ;
+			oImg.setAttribute( '_fckanchor', 'true', 0 ) ;
+			
+			oAnchor.parentNode.insertBefore( oImg, oAnchor ) ;
+			oAnchor.parentNode.removeChild( oAnchor ) ;
+		}
+
+	}
+
 	return true ;
+}
+
+// Removes the current anchor from the document
+function RemoveAnchor()
+{
+	// If it's also a link, then just remove the name and exit
+	if ( oAnchor.href.length != 0 )
+	{
+		oAnchor.removeAttribute( 'name' ) ;
+		// Remove temporary class for IE
+		if ( FCKBrowserInfo.IsIE )
+			oAnchor.className = oAnchor.className.replace( FCKRegexLib.FCK_Class, '' ) ;
+		return ;
+	}
+
+	// We need to remove the anchor
+	// If we got a fake image, then just remove it and we're done
+	if ( oFakeImage )
+	{
+		oFakeImage.parentNode.removeChild( oFakeImage ) ;
+		return ;
+	}
+	// Empty anchor, so just remove it
+	if ( oAnchor.innerHTML.length == 0 )
+	{
+		oAnchor.parentNode.removeChild( oAnchor ) ;
+		return ;
+	}
+	// Anchor with content, leave the content
+	FCKTools.RemoveOuterTags( oAnchor ) ;
+}
+
+// Checks all the links in the current page pointing to the current name and changes them to the new name
+function ReadjustLinksToAnchor( sCurrent, sNew )
+{
+	var oDoc = FCK.EditorDocument ;
+	
+	var aLinks = oDoc.getElementsByTagName( 'A' ) ;
+
+	var sReference = '#' + sCurrent ;
+	// The url of the document, so we check absolute and partial references.
+	var sFullReference = oDoc.location.href.replace( /(#.*$)/, '') ;
+	sFullReference += sReference ;
+
+	var oLink ;
+	var i = aLinks.length - 1 ;
+	while ( i >= 0 && ( oLink = aLinks[i--] ) )
+	{
+		var sHRef = oLink.getAttribute( '_fcksavedurl' ) ;
+		if ( sHRef == null )
+			sHRef = oLink.getAttribute( 'href' , 2 ) || '' ;
+
+		if ( sHRef == sReference || sHRef == sFullReference )
+		{
+			oLink.href = '#' + sNew ;
+			SetAttribute( oLink, '_fcksavedurl', '#' + sNew ) ;
+		}
+	}
 }
 
 		</script>

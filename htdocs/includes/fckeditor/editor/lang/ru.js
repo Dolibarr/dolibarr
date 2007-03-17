@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: ru.js
  * 	Russian language file.
@@ -98,13 +106,13 @@ Button			: "Кнопка",
 SelectionField	: "Список",
 ImageButton		: "Кнопка с изображением",
 
-FitWindow		: "Maximize the editor size",	//MISSING
+FitWindow		: "Развернуть окно редактора",
 
 // Context Menu
 EditLink			: "Вставить ссылку",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
+CellCM				: "Ячейка",
+RowCM				: "Строка",
+ColumnCM			: "Колонка",
 InsertRow			: "Вставить строку",
 DeleteRows			: "Удалить строки",
 InsertColumn		: "Вставить колонку",
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Свойства списка",
 TextareaProp		: "Свойства текстовой области",
 FormProp			: "Свойства формы",
 
-FontFormats			: "Нормальный;Форматированный;Адрес;Заголовок 1;Заголовок 2;Заголовок 3;Заголовок 4;Заголовок 5;Заголовок 6;Нормальный (DIV)",
+FontFormats			: "Нормальный;Форматированный;Адрес;Заголовок 1;Заголовок 2;Заголовок 3;Заголовок 4;Заголовок 5;Заголовок 6;Нормальный (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Обработка XHTML. Пожалуйста подождите...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Выберите якорь",
 DlgLnkAnchorByName	: "По имени якоря",
 DlgLnkAnchorById	: "По идентификатору элемента",
-DlgLnkNoAnchors		: "<Нет якорей доступных в этом документе>",
+DlgLnkNoAnchors		: "<Нет якорей доступных в этом документе>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Адрес эл. почты",
 DlgLnkEMailSubject	: "Заголовок сообщения",
 DlgLnkEMailBody		: "Тело сообщения",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Позиция сверху",
 DlnLnkMsgNoUrl		: "Пожалуйста введите URL ссылки",
 DlnLnkMsgNoEMail	: "Пожалуйста введите адрес эл. почты",
 DlnLnkMsgNoAnchor	: "Пожалуйста выберете якорь",
+DlnLnkMsgInvPopName	: "Название вспывающего окна должно начинаться буквы и не может содержать пробелов",
 
 // Color Dialog
 DlgColorTitle		: "Выберите цвет",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Проверка орфографии закончена
 IeSpellDownload			: "Модуль проверки орфографии не установлен. Хотите скачать его сейчас?",
 
 // Button Dialog
-DlgButtonText	: "Текст (Значение)",
-DlgButtonType	: "Тип",
+DlgButtonText		: "Текст (Значение)",
+DlgButtonType		: "Тип",
+DlgButtonTypeBtn	: "Кнопка",
+DlgButtonTypeSbm	: "Отправить",
+DlgButtonTypeRst	: "Сбросить",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Имя",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Значение",
 // Bulleted List Dialog
 BulletedListProp	: "Свойства маркированного списка",
 NumberedListProp	: "Свойства нумерованного списка",
+DlgLstStart			: "Начало",
 DlgLstType			: "Тип",
 DlgLstTypeCircle	: "Круг",
 DlgLstTypeDisc		: "Диск",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "Слева на право (LTR)",
 DlgDocLangDirRTL	: "Справа на лево (RTL)",
 DlgDocLangCode		: "Код языка",
 DlgDocCharSet		: "Кодировка набора символов",
+DlgDocCharSetCE		: "Центрально-европейская",
+DlgDocCharSetCT		: "Китайская традиционная (Big5)",
+DlgDocCharSetCR		: "Кириллица",
+DlgDocCharSetGR		: "Греческая",
+DlgDocCharSetJP		: "Японская",
+DlgDocCharSetKR		: "Корейская",
+DlgDocCharSetTR		: "Турецкая",
+DlgDocCharSetUN		: "Юникод (UTF-8)",
+DlgDocCharSetWE		: "Западно-европейская",
 DlgDocCharSetOther	: "Другая кодировка набора символов",
 
 DlgDocDocType		: "Заголовок типа документа",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Шаблоны содержимого",
 DlgTemplatesSelMsg	: "Пожалуйста выберете шаблон для открытия в редакторе<br>(текущее содержимое будет потеряно):",
 DlgTemplatesLoading	: "Загрузка списка шаблонов. Пожалуйста подождите...",
 DlgTemplatesNoTpl	: "(Ни одного шаблона не определено)",
+DlgTemplatesReplace	: "Заменить текущее содержание",
 
 // About Dialog
 DlgAboutAboutTab	: "О программе",
 DlgAboutBrowserInfoTab	: "Информация браузера",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Лицензия",
 DlgAboutVersion		: "Версия",
-DlgAboutLicense		: "Лицензировано в соответствии с условиями GNU Lesser General Public License",
 DlgAboutInfo		: "Для большей информации, посетите"
-}
+};

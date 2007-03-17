@@ -217,7 +217,7 @@ function _lastPos( txtid, idx ) {
 
 function printForHtml( n ) {
 	return n ;		// by FredCK
-	
+/*	
 	var htmlstr = n;
 	if( htmlstr.length == 1 ) {
 		// do simple case statement if it's just one character
@@ -239,6 +239,7 @@ function printForHtml( n ) {
 		htmlstr = htmlstr.replace( /\n/g, '<br/>' );
 		return htmlstr;
 	}
+*/
 }
 
 function _isWordChar( letter ) {

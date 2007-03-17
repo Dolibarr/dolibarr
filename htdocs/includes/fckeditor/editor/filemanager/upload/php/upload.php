@@ -1,21 +1,29 @@
 <?php 
 /*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: upload.php
  * 	This is the "File Uploader" for PHP.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
  */
 
 require('config.php') ;
@@ -75,11 +83,14 @@ $sFileUrl		= '' ;
 // Initializes the counter used to rename the file, if another one with the same name already exists.
 $iCounter = 0 ;
 
-// The the target directory.
+// Get the target directory.
 if ( isset( $Config['UserFilesAbsolutePath'] ) && strlen( $Config['UserFilesAbsolutePath'] ) > 0 )
 	$sServerDir = $Config['UserFilesAbsolutePath'] ;
 else 
 	$sServerDir = GetRootPath() . $Config["UserFilesPath"] ;
+
+if ( $Config['UseFileType'] )
+	$sServerDir .= $sType . '/' ;
 
 while ( true )
 {
@@ -104,7 +115,10 @@ while ( true )
 			umask( $oldumask ) ;
 		}
 		
-		$sFileUrl = $Config["UserFilesPath"] . $sFileName ;
+		if ( $Config['UseFileType'] )
+			$sFileUrl = $Config["UserFilesPath"] . $sType . '/' . $sFileName ;
+		else
+			$sFileUrl = $Config["UserFilesPath"] . $sFileName ;
 
 		break ;
 	}

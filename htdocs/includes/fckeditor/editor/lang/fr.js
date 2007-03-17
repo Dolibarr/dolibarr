@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: fr.js
  * 	French language file.
@@ -69,7 +77,7 @@ IncreaseIndent		: "Augmenter le retrait",
 Undo				: "Annuler",
 Redo				: "Refaire",
 NumberedListLbl		: "Liste numérotée",
-NumberedList		: "Insérer/supprimer la  liste numérotée",
+NumberedList		: "Insérer/supprimer la liste numérotée",
 BulletedListLbl		: "Liste à puces",
 BulletedList		: "Insérer/supprimer la liste à puces",
 ShowTableBorders	: "Afficher les bordures du tableau",
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Propriétés de la liste/du menu",
 TextareaProp		: "Propriétés de la zone de texte",
 FormProp			: "Propriétés du formulaire",
 
-FontFormats			: "Normal;Formaté;Adresse;Titre 1;Titre 2;Titre 3;Titre 4;Titre 5;Titre 6",
+FontFormats			: "Normal;Formaté;Adresse;En-tête 1;En-tête 2;En-tête 3;En-tête 4;En-tête 5;En-tête 6;Normal (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Calcul XHTML. Veuillez patienter...",
@@ -159,17 +167,17 @@ DlgAlertUrl			: "Veuillez saisir l'URL",
 DlgGenNotSet		: "<Par défaut>",
 DlgGenId			: "Id",
 DlgGenLangDir		: "Sens d'écriture",
-DlgGenLangDirLtr	: "De la gauche vers la droite (LTR)",
-DlgGenLangDirRtl	: "De la roite vers la gauche (RTL)",
+DlgGenLangDirLtr	: "De gauche à droite (LTR)",
+DlgGenLangDirRtl	: "De droite à gauche (RTL)",
 DlgGenLangCode		: "Code langue",
 DlgGenAccessKey		: "Equivalent clavier",
 DlgGenName			: "Nom",
 DlgGenTabIndex		: "Ordre de tabulation",
 DlgGenLongDescr		: "URL de description longue",
 DlgGenClass			: "Classes de feuilles de style",
-DlgGenTitle			: "Titre indicatif",
-DlgGenContType		: "Type de contenu indicatif",
-DlgGenLinkCharset	: "Encodage de caractère de la cible",
+DlgGenTitle			: "Titre",
+DlgGenContType		: "Type de contenu",
+DlgGenLinkCharset	: "Encodage de caractère",
 DlgGenStyle			: "Style",
 
 // Image Dialog
@@ -223,9 +231,9 @@ DlgLnkProto			: "Protocole",
 DlgLnkProtoOther	: "<autre>",
 DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Sélectionner une ancre",
-DlgLnkAnchorByName	: "Par nom d'ancre",
-DlgLnkAnchorById	: "Par Id d'élément",
-DlgLnkNoAnchors		: "<Pas d'ancre disponible dans le document>",
+DlgLnkAnchorByName	: "Par nom",
+DlgLnkAnchorById	: "Par id",
+DlgLnkNoAnchors		: "<Pas d'ancre disponible dans le document>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "Adresse E-Mail",
 DlgLnkEMailSubject	: "Sujet du message",
 DlgLnkEMailBody		: "Corps du message",
@@ -258,11 +266,12 @@ DlgLnkPopTop		: "Position à partir du haut",
 DlnLnkMsgNoUrl		: "Veuillez saisir l'URL",
 DlnLnkMsgNoEMail	: "Veuillez saisir l'adresse e-mail",
 DlnLnkMsgNoAnchor	: "Veuillez sélectionner une ancre",
+DlnLnkMsgInvPopName	: "Le nom de la fenêtre popup doit commencer par une lettre et ne doit pas contenir d'espace",
 
 // Color Dialog
 DlgColorTitle		: "Sélectionner",
 DlgColorBtnClear	: "Effacer",
-DlgColorHighlight	: "Mettre en exergue",
+DlgColorHighlight	: "Prévisualisation",
 DlgColorSelected	: "Sélectionné",
 
 // Smiley Dialog
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Vérification d'orthographe terminée: %1 mots modifiés
 IeSpellDownload			: "Le Correcteur n'est pas installé. Souhaitez-vous le télécharger maintenant?",
 
 // Button Dialog
-DlgButtonText	: "Texte (valeur)",
-DlgButtonType	: "Type",
+DlgButtonText		: "Texte (valeur)",
+DlgButtonType		: "Type",
+DlgButtonTypeBtn	: "Bouton",
+DlgButtonTypeSbm	: "Envoyer",
+DlgButtonTypeRst	: "Réinitialiser",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Nom",
@@ -423,7 +435,8 @@ DlgHiddenValue	: "Valeur",
 
 // Bulleted List Dialog
 BulletedListProp	: "Propriétés de liste à puces",
-NumberedListProp	: "Propriétés de numérotée",
+NumberedListProp	: "Propriétés de liste numérotée",
+DlgLstStart			: "Début",
 DlgLstType			: "Type",
 DlgLstTypeCircle	: "Cercle",
 DlgLstTypeDisc		: "Disque",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "De la gauche vers la droite (LTR)",
 DlgDocLangDirRTL	: "De la droite vers la gauche (RTL)",
 DlgDocLangCode		: "Code langue",
 DlgDocCharSet		: "Encodage de caractère",
+DlgDocCharSetCE		: "Europe Centrale",
+DlgDocCharSetCT		: "Chinois Traditionnel (Big5)",
+DlgDocCharSetCR		: "Cyrillique",
+DlgDocCharSetGR		: "Grec",
+DlgDocCharSetJP		: "Japanais",
+DlgDocCharSetKR		: "Coréen",
+DlgDocCharSetTR		: "Turc",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Occidental",
 DlgDocCharSetOther	: "Autre encodage de caractère",
 
 DlgDocDocType		: "Type de document",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Modèles de contenu",
 DlgTemplatesSelMsg	: "Veuillez sélectionner le modèle à ouvrir dans l'éditeur<br>(le contenu actuel sera remplacé):",
 DlgTemplatesLoading	: "Chargement de la liste des modèles. Veuillez patienter...",
 DlgTemplatesNoTpl	: "(Aucun modèle disponible)",
+DlgTemplatesReplace	: "Remplacer tout le contenu",
 
 // About Dialog
 DlgAboutAboutTab	: "A propos de",
 DlgAboutBrowserInfoTab	: "Navigateur",
 DlgAboutLicenseTab	: "License",
 DlgAboutVersion		: "version",
-DlgAboutLicense		: "License selon les termes de GNU Lesser General Public License",
 DlgAboutInfo		: "Pour plus d'informations, aller à"
-}
+};

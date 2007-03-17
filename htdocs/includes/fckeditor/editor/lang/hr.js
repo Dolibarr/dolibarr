@@ -1,14 +1,22 @@
 ﻿/*
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: hr.js
  * 	Croatian language file.
@@ -98,13 +106,13 @@ Button			: "Button",
 SelectionField	: "Selection Field",
 ImageButton		: "Image Button",
 
-FitWindow		: "Maximize the editor size",	//MISSING
+FitWindow		: "Povećaj veličinu editora",
 
 // Context Menu
 EditLink			: "Promijeni link",
-CellCM				: "Cell",	//MISSING
-RowCM				: "Row",	//MISSING
-ColumnCM			: "Column",	//MISSING
+CellCM				: "Ćelija",
+RowCM				: "Red",
+ColumnCM			: "Kolona",
 InsertRow			: "Ubaci red",
 DeleteRows			: "Izbriši redove",
 InsertColumn		: "Ubaci kolonu",
@@ -130,7 +138,7 @@ SelectionFieldProp	: "Selection svojstva",
 TextareaProp		: "Textarea svojstva",
 FormProp			: "Form svojstva",
 
-FontFormats			: "Normal;Formatirano;Adresa;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6",
+FontFormats			: "Normal;Formatted;Address;Heading 1;Heading 2;Heading 3;Heading 4;Heading 5;Heading 6;Normal (DIV)",		//REVIEW : Check _getfontformat.html
 
 // Alerts and Messages
 ProcessingXHTML		: "Obrađujem XHTML. Molimo pričekajte...",
@@ -225,7 +233,7 @@ DlgLnkURL			: "URL",
 DlgLnkAnchorSel		: "Odaberi sidro",
 DlgLnkAnchorByName	: "Po nazivu sidra",
 DlgLnkAnchorById	: "Po Id elementa",
-DlgLnkNoAnchors		: "<Nema dostupnih sidra>",
+DlgLnkNoAnchors		: "<Nema dostupnih sidra>",		//REVIEW : Change < and > with ( and )
 DlgLnkEMail			: "E-Mail adresa",
 DlgLnkEMailSubject	: "Naslov",
 DlgLnkEMailBody		: "Sadržaj poruke",
@@ -258,6 +266,7 @@ DlgLnkPopTop		: "Gornja pozicija",
 DlnLnkMsgNoUrl		: "Molimo upišite URL link",
 DlnLnkMsgNoEMail	: "Molimo upišite e-mail adresu",
 DlnLnkMsgNoAnchor	: "Molimo odaberite sidro",
+DlnLnkMsgInvPopName	: "Ime popup prozora mora početi sa slovom i ne smije sadržavati razmake",
 
 // Color Dialog
 DlgColorTitle		: "Odaberite boju",
@@ -374,8 +383,11 @@ DlgSpellManyChanges		: "Provjera završena: Promijenjeno %1 riječi",
 IeSpellDownload			: "Provjera pravopisa nije instalirana. Želite li skinuti provjeru pravopisa?",
 
 // Button Dialog
-DlgButtonText	: "Tekst (vrijednost)",
-DlgButtonType	: "Vrsta",
+DlgButtonText		: "Tekst (vrijednost)",
+DlgButtonType		: "Vrsta",
+DlgButtonTypeBtn	: "Gumb",
+DlgButtonTypeSbm	: "Pošalji",
+DlgButtonTypeRst	: "Poništi",
 
 // Checkbox and Radio Button Dialogs
 DlgCheckboxName		: "Ime",
@@ -424,6 +436,7 @@ DlgHiddenValue	: "Vrijednost",
 // Bulleted List Dialog
 BulletedListProp	: "Svojstva liste",
 NumberedListProp	: "Svojstva brojčane liste",
+DlgLstStart			: "Početak",
 DlgLstType			: "Vrsta",
 DlgLstTypeCircle	: "Krug",
 DlgLstTypeDisc		: "Disk",
@@ -446,6 +459,15 @@ DlgDocLangDirLTR	: "S lijeva na desno",
 DlgDocLangDirRTL	: "S desna na lijevo",
 DlgDocLangCode		: "Kôd jezika",
 DlgDocCharSet		: "Enkodiranje znakova",
+DlgDocCharSetCE		: "Središnja Europa",
+DlgDocCharSetCT		: "Tradicionalna kineska (Big5)",
+DlgDocCharSetCR		: "Ćirilica",
+DlgDocCharSetGR		: "Grčka",
+DlgDocCharSetJP		: "Japanska",
+DlgDocCharSetKR		: "Koreanska",
+DlgDocCharSetTR		: "Turska",
+DlgDocCharSetUN		: "Unicode (UTF-8)",
+DlgDocCharSetWE		: "Zapadna Europa",
 DlgDocCharSetOther	: "Ostalo enkodiranje znakova",
 
 DlgDocDocType		: "Zaglavlje vrste dokumenta",
@@ -475,12 +497,12 @@ DlgTemplatesTitle	: "Predlošci sadržaja",
 DlgTemplatesSelMsg	: "Molimo odaberite predložak koji želite otvoriti<br>(stvarni sadržaj će biti izgubljen):",
 DlgTemplatesLoading	: "Učitavam listu predložaka. Molimo pričekajte...",
 DlgTemplatesNoTpl	: "(Nema definiranih predložaka)",
+DlgTemplatesReplace	: "Zamijeni trenutne sadržaje",
 
 // About Dialog
 DlgAboutAboutTab	: "O FCKEditoru",
 DlgAboutBrowserInfoTab	: "Podaci o pretraživaču",
-DlgAboutLicenseTab	: "License",	//MISSING
+DlgAboutLicenseTab	: "Licenca",
 DlgAboutVersion		: "inačica",
-DlgAboutLicense		: "Licencirano pod uvjetima GNU Lesser General Public License",
 DlgAboutInfo		: "Za više informacija posjetite"
-}
+};

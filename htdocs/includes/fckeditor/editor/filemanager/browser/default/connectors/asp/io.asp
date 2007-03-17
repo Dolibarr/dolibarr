@@ -1,27 +1,35 @@
 ﻿<!--
- * FCKeditor - The text editor for internet
- * Copyright (C) 2003-2006 Frederico Caldeira Knabben
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
  * 
- * Licensed under the terms of the GNU Lesser General Public License:
- * 		http://www.opensource.org/licenses/lgpl-license.php
+ * == BEGIN LICENSE ==
  * 
- * For further information visit:
- * 		http://www.fckeditor.net/
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
  * 
- * "Support Open Source software. What about a donation today?"
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ * 
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ * 
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ * 
+ * == END LICENSE ==
  * 
  * File Name: io.asp
  * 	This file include IO specific functions used by the ASP Connector.
  * 
  * File Authors:
- * 		Frederico Caldeira Knabben (fredck@fckeditor.net)
+ * 		Frederico Caldeira Knabben (www.fckeditor.net)
 -->
 <%
 Function GetUrlFromPath( resourceType, folderPath )
 	If resourceType = "" Then
 		GetUrlFromPath = RemoveFromEnd( sUserFilesPath, "/" ) & folderPath
 	Else
-		GetUrlFromPath = sUserFilesPath & resourceType & folderPath
+		GetUrlFromPath = sUserFilesPath & LCase( resourceType ) & folderPath
 	End If
 End Function
 
@@ -32,7 +40,7 @@ End Function
 Function ServerMapFolder( resourceType, folderPath )
 	' Get the resource type directory.
 	Dim sResourceTypePath
-	sResourceTypePath = sUserFilesDirectory & resourceType & "\"
+	sResourceTypePath = sUserFilesDirectory & LCase( resourceType ) & "\"
 	
 	' Ensure that the directory exists.
 	CreateServerFolder sResourceTypePath
