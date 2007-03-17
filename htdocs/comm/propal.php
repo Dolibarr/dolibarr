@@ -1035,14 +1035,19 @@ if ($_GET['propalid'] > 0)
 		print '</tr>';
 	}
 
-	// Amount
+	// Amount HT
 	print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-	print '<td align="right" colspan="2"><b>'.price($propal->total_ht).'</b></td>';
+	print '<td align="right" colspan="2" nowrap><b>'.price($propal->total_ht).'</b></td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
+	// Amount VAT
+	print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td>';
+	print '<td align="right" colspan="2" nowrap>'.price($propal->total_tva).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
-	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td><td align="right" colspan="2">'.price($propal->total_ttc).'</td>';
+	
+	// Amount TTC
+	print '<tr><td height="10">'.$langs->trans('AmountTTC').'</td>';
+	print '<td align="right" colspan="2" nowrap>'.price($propal->total_ttc).'</td>';
 	print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 	// Statut
