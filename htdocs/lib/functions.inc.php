@@ -2295,4 +2295,17 @@ function weight_units_string($unit)
 
   return $weight_string[$unit];
 }
+
+/**
+   \brief   Nettoie le code HTML
+   \param   string      StringHtml
+   \return  string	    CleanString
+   \todo    nettoyer les balises html
+*/
+function clean_html($StringHtml)
+{
+  $CleanString = html_entity_decode($StringHtml);
+  return $CleanString;
+}
+
 ?>

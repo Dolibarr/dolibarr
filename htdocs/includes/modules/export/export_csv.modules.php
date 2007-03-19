@@ -131,7 +131,7 @@ class ExportCsv extends ModeleExports
         {
             $alias=$array_alias[$code];
             //print "dd".$alias;
-            $newvalue=ereg_replace(';',',',$objp->$alias);
+            $newvalue=ereg_replace(';',',',clean_html($objp->$alias));
             $newvalue=ereg_replace("\r",'',$newvalue);
             $newvalue=ereg_replace("\n",'\n',$newvalue);
             fwrite($this->handle,$newvalue.";");

@@ -148,7 +148,7 @@ class ExportExcel extends ModeleExports
         {
             $alias=$array_alias[$code];
             //print "dd".$alias;
-            $this->worksheet->write($this->row, $this->col, $objp->$alias);
+            $this->worksheet->write($this->row, $this->col, clean_html($objp->$alias));
             $this->col++;
         }
         $this->row++;
