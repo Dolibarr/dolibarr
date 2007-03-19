@@ -2678,14 +2678,15 @@ else
 			print '</td><td valign="top" width="50%">';
 
 			/*
-		* Liste des actions propres à la facture
-		*/
-			$sql = 'SELECT id, '.$db->pdate('a.datea').' as da, a.label, a.note, u.login';
-			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u ';
-			$sql .= ' WHERE a.fk_user_author = u.rowid ';
-			$sql .= ' AND a.fk_action in (9,10) ';
-			$sql .= ' AND a.fk_soc = '.$fac->socid ;
-			$sql .= ' AND a.fk_facture = '.$fac->id;
+			* Liste des actions propres à la facture
+			*/
+			$sql = 'SELECT a.id, '.$db->pdate('a.datea').' as da, a.label, a.note,';
+			$sql.= ' u.login';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a, '.MAIN_DB_PREFIX.'user as u';
+			$sql.= ' WHERE a.fk_user_author = u.rowid';
+			$sql.= ' AND a.fk_action in (9,10)';
+			$sql.= ' AND a.fk_soc = '.$fac->socid ;
+			$sql.= ' AND a.fk_facture = '.$fac->id;
 
 			$resql = $db->query($sql);
 			if ($resql)
