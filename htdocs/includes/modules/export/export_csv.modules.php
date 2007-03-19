@@ -118,7 +118,7 @@ class ExportCsv extends ModeleExports
     {
         foreach($array_selected_sorted as $code => $value)
         {
-            fwrite($this->handle,$langs->trans($array_export_fields_label[$code]).";");
+            fwrite($this->handle,$langs->transnoentities($array_export_fields_label[$code]).";");
         }
         fwrite($this->handle,"\n");
         return 0;

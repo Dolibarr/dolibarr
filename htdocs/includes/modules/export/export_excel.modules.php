@@ -133,7 +133,7 @@ class ExportExcel extends ModeleExports
         {
             $alias=$array_export_fields_label[$code];
             //print "dd".$alias;
-            $this->worksheet->write($this->row, $this->col, $langs->trans($alias));
+            $this->worksheet->write($this->row, $this->col, $langs->transnoentities($alias));
             $this->col++;
         }
         $this->row++;
