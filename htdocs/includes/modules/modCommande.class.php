@@ -172,7 +172,7 @@ class modCommande extends DolibarrModules
             else $i++;
             $this->export_sql[$r].=$key.' as '.$value;
         }
-        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd, '.MAIN_DB_PREFIX.'societe as s WHERE c.fk_soc = s.idp AND c.rowid = cd.fk_facture';
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd, '.MAIN_DB_PREFIX.'societe as s WHERE c.fk_soc = s.idp AND c.rowid = cd.fk_commande';
         $this->export_permission[$r]=array(array("commande","commande","export"));
 
   }
