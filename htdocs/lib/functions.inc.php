@@ -2300,11 +2300,20 @@ function weight_units_string($unit)
    \brief   Nettoie le code HTML
    \param   string      StringHtml
    \return  string	    CleanString
-   \todo    nettoyer les balises html
 */
 function clean_html($StringHtml)
 {
-  $CleanString = html_entity_decode($StringHtml);
+  $pattern = "<[^>]+>";
+  $temp = html_entity_decode($StringHtml);
+  $temp = ereg_replace($pattern,"",$temp);
+  // Supprime aussi les retours
+  $temp=str_replace("\n"," ",$temp);
+  // et les espaces doubles
+  while(STRPOS($temp,"  "))
+  {
+  	$temp = STR_REPLACE("  "," ",$temp);
+  }
+  $CleanString = $temp;
   return $CleanString;
 }
 
