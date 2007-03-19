@@ -2,15 +2,15 @@
 <table class="border" width="100%">
 <tr>
  <td width="15%">Référence</td>
- <td width="35%" style="font-weight: bold;">{$prod_ref}</td>
+ <td width="35%" style="font-weight: bold;">{$livre_ref}</td>
  <td width="50%" align="right">
-  {$fiche_cursor_prev}{$fiche_cursor_next}
+	&nbsp;
  </td>
 </tr>
 
 <tr>
- <td width="15%">Titre du livre</td>
- <td width="85%" colspan="2">{$prod_label}</td>
+ <td width="15%">Couverture du livre</td>
+ <td width="85%" colspan="2"><a href="fiche.php?id={$livre_id}">{$livre_label}</a></td>
 </tr>
 </table>
 
@@ -35,27 +35,5 @@
 </table>
 
 <br />
-
-<table class="border" width="100%">
- <tr>
-  <td width="50%" valign="top">Description</td>
-  <td width="50%" valign="top">Photo</td>
- </tr>
-
- <tr>
-  <td width="50%" valign="top">{$prod_description|nl2br}</td>
-  <td rowspan="3" valign="top"></td>
- </tr>
-
- <tr>
-  <td width="50%" valign="top">Note (non visible sur les factures, propals...)
- </tr>
- <tr>
-  <td width="50%" valign="top">{$prod_note|nl2br}</td>
- </tr>
-</table>
-
-
-</table>
 
 <!-- END SMARTY TEMPLATE -->

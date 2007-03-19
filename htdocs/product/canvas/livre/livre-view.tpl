@@ -44,12 +44,15 @@
  <td width="15%">Prix au feuillet</td>
  <td width="35%">{$prod_pxfeuil} HT</td>
 
- <td width="15%">Prix couverture</td>
+ <td width="15%"><a href="fiche.php?id={$livre_couverture_id}">Prix couverture</a></td>
  <td width="35%">{$prod_pxcouv} HT</td>
 </tr>
 <tr>
  <td width="15%">Prix de revient</td>
- <td colspan="3">{$prod_pxrevient} HT</td>
+ <td width="35%">{$prod_pxrevient} HT</td>
+
+ <td width="15%">Prix reliure</td>
+ <td width="35%">{$prod_pxreliure} HT</td>
 </tr>
 <tr>
  <td>Prix de vente</td>

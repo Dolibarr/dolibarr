@@ -51,6 +51,11 @@ class ProductLivreCouverture extends Product
     $this->menu_new = '';
     $this->menu_add = 0;
     $this->menu_clear = 1;
+
+    $this->no_button_copy = 1;
+    $this->no_button_edit = 1;
+    $this->no_button_delete = 1;
+
   }
   /**
    *    \brief      Creation
@@ -79,6 +84,25 @@ class ProductLivreCouverture extends Product
   function FetchCanvas($id='', $ref='')
   {
     $result = $this->fetch($id,$ref);
+
+    if ($result >= 0)
+      {
+	$sql = "SELECT p.rowid,p.ref,p.label";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre as pl,".MAIN_DB_PREFIX."product as p";
+	$sql.= " WHERE pl.rowid=p.rowid AND pl.fk_couverture = '".$id."'";
+	
+	$result = $this->db->query($sql) ;
+
+	if ( $result )
+	  {
+	    $result = $this->db->fetch_array();
+
+	    $this->livre_id           = $result["rowid"];
+	    $this->livre_ref          = $result["ref"];
+	    $this->livre_label        = stripslashes($result["label"]);
+	    $this->db->free();
+	  }
+      }
     
     return $result;
   }
@@ -96,11 +120,13 @@ class ProductLivreCouverture extends Product
    *    \brief      Assigne les valeurs pour les templates Smarty
    *    \param      smarty     Instance de smarty
    */
-  function assign_values(&$smarty)
+  function assign_smarty_values(&$smarty)
   {
     $smarty->assign('prod_id',           $this->id);
-    $smarty->assign('prod_ref',          $this->ref);
-    $smarty->assign('prod_label',        $this->livre->libelle);
+    $smarty->assign('livre_id',         $this->livre_id);
+    $smarty->assign('livre_ref',         $this->livre_ref);
+    $smarty->assign('livre_label',         $this->livre_label);
+
     $smarty->assign('prod_note',         $this->note);
     $smarty->assign('prod_description',  $this->description);
     $smarty->assign('prod_canvas',       $this->canvas);

@@ -54,6 +54,8 @@ class ProductLivre extends Product
     $this->menu_new = 'NewBook';
     $this->menu_add = 1;
     $this->menu_clear = 1;
+
+    $this->no_button_copy = 1;
     
     $this->menus[0][0] = DOL_URL_ROOT."/product/fiche.php?action=create&amp;type=0&amp;canvas=livre";
     $this->menus[0][1] = 'NewBook';
@@ -399,9 +401,11 @@ class ProductLivre extends Product
     $smarty->assign('prod_pxfeuil',           $this->px_feuillet);
 
     $smarty->assign('prod_pxcouv',            $this->px_couverture);
-
+    $smarty->assign('livre_couverture_id',    $this->couverture_id);
     $smarty->assign('prod_weight',            $this->weight);
     $smarty->assign('prod_weight_units',      $this->weight_units);
+
+    $smarty->assign('prod_pxreliure',         $this->px_reliure);
 
     $smarty->assign('prod_pxrevient',         price($this->px_revient));
     $smarty->assign('prod_pxvente',           price($this->price_ttc));
