@@ -884,7 +884,10 @@ padding: 2px;
 {
 position: absolute;
 width: 300px;
-border: 1px solid #444444;
+border-top: solid 1px #BBBBBB;
+border-left: solid 1px #BBBBBB;
+border-right: solid 1px #444444;
+border-bottom: solid 1px #444444;
 padding: 2px;
 background-color: lightyellow;
 visibility: hidden;
