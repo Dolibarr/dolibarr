@@ -70,7 +70,12 @@
 </tr>
 <tr>
  <td>Prix de revient</td>
- <td colspan="3"><i>sera calculé</i></td>
+ <td><i>sera calculé</i></td>
+ <td>Prix reliure</td>
+ <td>
+  <input name="px_reliure" type="text" size="7" maxlength="6" value="{$prod_pxreliure}"
+   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+ </td>
 </tr>
 
  <tr>
