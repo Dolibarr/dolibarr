@@ -438,7 +438,7 @@ class Facture extends CommonObject
 	    $this->paye                   = $obj->paye;
 	    $this->close_code             = $obj->close_code;
 	    $this->close_note             = $obj->close_note;
-	    $this->socid                 = $obj->fk_soc;
+	    $this->socid                  = $obj->fk_soc;
 	    $this->statut                 = $obj->fk_statut;
 	    $this->date_lim_reglement     = $obj->dlr;
 	    $this->mode_reglement_id      = $obj->fk_mode_reglement;
@@ -505,7 +505,7 @@ class Facture extends CommonObject
 
 
   /**
-     \brief      Recupére les lignes de factures
+     \brief      Recupére les lignes de factures dans this->lignes
      \return     int         1 si ok, < 0 si erreur
    */
   function fetch_lines()
@@ -530,7 +530,7 @@ class Facture extends CommonObject
 	  {
 	    $objp = $this->db->fetch_object($result);
 	    $faclig = new FactureLigne($this->db);
-	    $faclig->rowid	      = $objp->rowid;
+	    $faclig->rowid	          = $objp->rowid;
 	    $faclig->desc             = $objp->description;     // Description ligne
 	    $faclig->libelle          = $objp->label;           // Label produit
 	    $faclig->product_desc     = $objp->product_desc;    // Description produit
@@ -1339,93 +1339,92 @@ class Facture extends CommonObject
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-  function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
-  {
-    global $conf;
-    dolibarr_syslog("Facture::Addline $facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
+	{
+		dolibarr_syslog("Facture::Addline $facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
-    if ($this->brouillon)
-      {
-	$this->db->begin();
+		if ($this->brouillon)
+		{
+			$this->db->begin();
 
-	// Nettoyage paramètres
-	$remise_percent=price2num($remise_percent);
-	$qty=price2num($qty);
-	if (! $qty) $qty=1;
-	if (! $ventil) $ventil=0;
-	if (! $info_bits) $info_bits=0;
-	$pu = price2num($pu);
-	$txtva=price2num($txtva);
+			// Nettoyage paramètres
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			if (! $ventil) $ventil=0;
+			if (! $info_bits) $info_bits=0;
+			$pu = price2num($pu);
+			$txtva=price2num($txtva);
 
-	// Calcul du total TTC et de la TVA pour la ligne a partir de
-	// qty, pu, remise_percent et txtva
-	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $pu_ttc);
-	$total_ht  = $tabprice[0];
-	$total_tva = $tabprice[1];
-	$total_ttc = $tabprice[2];
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $pu_ttc);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
 
-	// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-	$price = $pu;
-	$remise = 0;
-	if ($remise_percent > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100),2);
-	    $price = ($pu - $remise);
-	  }
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
+			$price = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100),2);
+				$price = ($pu - $remise);
+			}
 
-	// Insertion ligne
-	$ligne=new FactureLigne($this->db);
+			// Insertion ligne
+			$ligne=new FactureLigne($this->db);
 
-	$ligne->fk_facture=$facid;
-	$ligne->desc=$desc;
-	$ligne->qty=$qty;
-	$ligne->txtva=$txtva;
-	$ligne->fk_product=$fk_product;
-	$ligne->remise_percent=$remise_percent;
-	$ligne->subprice=$pu;
-	$ligne->date_start=$date_start;
-	$ligne->date_end=$date_end;
-	$ligne->ventil=$ventil;
-	$ligne->rang=-1;
-	$ligne->info_bits=$info_bits;
-	$ligne->fk_remise_except=$fk_remise_except;
-	$ligne->total_ht=$total_ht;
-	$ligne->total_tva=$total_tva;
-	$ligne->total_ttc=$total_ttc;
+			$ligne->fk_facture=$facid;
+			$ligne->desc=$desc;
+			$ligne->qty=$qty;
+			$ligne->txtva=$txtva;
+			$ligne->fk_product=$fk_product;
+			$ligne->remise_percent=$remise_percent;
+			$ligne->subprice=$pu;
+			$ligne->date_start=$date_start;
+			$ligne->date_end=$date_end;
+			$ligne->ventil=$ventil;
+			$ligne->rang=-1;
+			$ligne->info_bits=$info_bits;
+			$ligne->fk_remise_except=$fk_remise_except;
+			$ligne->total_ht=$total_ht;
+			$ligne->total_tva=$total_tva;
+			$ligne->total_ttc=$total_ttc;
 
-	// A ne plus utiliser
-	$ligne->price=$price;
-	$ligne->remise=$remise;
+			// A ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
 
-	$result=$ligne->insert();
-	if ($result > 0)
-	  {
-	    // Mise a jour informations denormalisees au niveau de la facture meme
-	    $result=$this->update_price($facid);
-	    if ($result > 0)
-	      {
-		$this->db->commit();
-		return 1;
-	      }
-	    else
-	      {
-		$this->error=$this->db->error();
-		dolibarr_syslog("Error sql=$sql, error=".$this->error);
-		$this->db->rollback();
-		return -1;
-	      }
-	  }
-	else
-	  {
-	    $this->error=$ligne->error;
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-  }
+			$result=$ligne->insert();
+			if ($result > 0)
+			{
+				// Mise a jour informations denormalisees au niveau de la facture meme
+				$result=$this->update_price($facid);
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$ligne->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+	}
 
   /**
    *      \brief     Mets à jour une ligne de facture
@@ -2073,47 +2072,47 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-   *      \brief     Charge les informations de l'onglet info dans l'objet facture
-   *      \param     id       	Id de la facture a charger
-   */
-  function info($id)
-  {
-    $sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec,';
-    $sql.= ' '.$this->db->pdate('date_valid').' as datev,';
-    $sql.= ' fk_user_author, fk_user_valid';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
-    $sql.= ' WHERE c.rowid = '.$id;
+	/**
+	*      \brief     Charge les informations de l'onglet info dans l'objet facture
+	*      \param     id       	Id de la facture a charger
+	*/
+	function info($id)
+	{
+		$sql = 'SELECT c.rowid, '.$this->db->pdate('datec').' as datec,';
+		$sql.= ' '.$this->db->pdate('date_valid').' as datev,';
+		$sql.= ' fk_user_author, fk_user_valid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture as c';
+		$sql.= ' WHERE c.rowid = '.$id;
 
-    $result=$this->db->query($sql);
-    if ($result)
-      {
-	if ($this->db->num_rows($result))
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    $this->id = $obj->rowid;
-	    if ($obj->fk_user_author)
-	      {
-		$cuser = new User($this->db, $obj->fk_user_author);
-		$cuser->fetch();
-		$this->user_creation     = $cuser;
-	      }
-	    if ($obj->fk_user_valid)
-	      {
-		$vuser = new User($this->db, $obj->fk_user_valid);
-		$vuser->fetch();
-		$this->user_validation = $vuser;
-	      }
-	    $this->date_creation     = $obj->datec;
-	    $this->date_validation   = $obj->datev;
-	  }
-	$this->db->free($result);
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-  }
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+				$this->id = $obj->rowid;
+				if ($obj->fk_user_author)
+				{
+					$cuser = new User($this->db, $obj->fk_user_author);
+					$cuser->fetch();
+					$this->user_creation     = $cuser;
+				}
+				if ($obj->fk_user_valid)
+				{
+					$vuser = new User($this->db, $obj->fk_user_valid);
+					$vuser->fetch();
+					$this->user_validation = $vuser;
+				}
+				$this->date_creation     = $obj->datec;
+				$this->date_validation   = $obj->datev;
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
 
   /**
    *   \brief      Change les conditions de réglement de la facture

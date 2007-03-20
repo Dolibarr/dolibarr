@@ -171,13 +171,15 @@ class FactureFournisseur extends Facture
 		$sql.= ' s.nom as socnom, s.idp as socid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp';
+
+		dolibarr_syslog("FactureFourn::Fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$num=$this->db->num_rows($resql);
 			if ($num)
 			{
-				$obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object($resql);
 
 				$this->id            = $rowid;
 				$this->datep         = $obj->df;
@@ -206,28 +208,36 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT rowid, description, pu_ht, qty, tva_taux, tva, total_ht, total_ttc, fk_product';
-				$sql .= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det';
-				$sql .= ' WHERE fk_facture_fourn='.$this->id;
+				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.qty, f.tva_taux, f.tva,';
+				$sql.= ' f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product,';
+				$sql.= ' p.label as label, p.description as product_desc';
+				$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
+				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
+				$sql.= ' WHERE fk_facture_fourn='.$this->id;
+
+				dolibarr_syslog("FactureFourn::Fetch search lines sql=".$sql, LOG_DEBUG);
 				$resql_rows = $this->db->query($sql);
 				if ($resql_rows)
 				{
 					$num_rows = $this->db->num_rows($resql_rows);
-					$i = 0;
 					if ($num_rows)
 					{
+						$i = 0;
 						while ($i < $num_rows)
 						{
 							$obj = $this->db->fetch_object($resql_rows);
+							$this->lignes[$i]->rowid = $obj->rowid;
 							$this->lignes[$i]->description = $obj->description;
+							$this->lignes[$i]->libelle          = $obj->label;           // Label produit
+							$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description produit
 							$this->lignes[$i]->pu_ht = $obj->pu_ht;
 							$this->lignes[$i]->tva_taux = $obj->tva_taux;
 							$this->lignes[$i]->qty = $obj->qty;
-							$this->lignes[$i]->total_ht = $obj->total_ht;
 							$this->lignes[$i]->tva = $obj->tva;
-							$this->lignes[$i]->total_ttc = $obj->total_ttc;
-							$this->lignes[$i]->rowid = $obj->rowid;
+							$this->lignes[$i]->total_ht = $obj->total_ht;
 							$this->lignes[$i]->total_tva = $obj->total_tva;
+							$this->lignes[$i]->total_ttc = $obj->total_ttc;
+							$this->lignes[$i]->fk_product = $obj->fk_product;
 							$i++;
 						}
 					}
@@ -235,7 +245,7 @@ class FactureFournisseur extends Facture
 				}
 				else
 				{
-					dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.', Erreur dans fetch des lignes');
+					dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.', Erreur dans fetch des lignes');
 					$this->error=$this->db->error();
 					dolibarr_print_error($this->db);
 					return -3;
@@ -243,7 +253,7 @@ class FactureFournisseur extends Facture
 			}
 			else
 			{
-				dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
+				dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.' numrows=0 sql='.$sql);
 				$this->error='Bill with id '.$rowid.' not found sql='.$sql;
 				dolibarr_print_error($this->db);
 				return -2;
@@ -252,7 +262,7 @@ class FactureFournisseur extends Facture
 		}
 		else
 		{
-			dolibarr_syslog('Erreur FactureFournisseur::Fetch rowid='.$rowid.' Erreur dans fetch de la facture fournisseur');
+			dolibarr_syslog('FactureFournisseur::Fetch rowid='.$rowid.' Erreur dans fetch de la facture fournisseur');
 			$this->error=$this->db->error();
 			dolibarr_print_error($this->db);
 			return -1;
@@ -342,32 +352,69 @@ class FactureFournisseur extends Facture
 
 
 	/**
-	 * \brief     Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
-	 * \param     desc            description de la ligne
-	 * \param     pu              prix unitaire
-	 * \param     tauxtva         taux de tva
-	 * \param     qty             quantité
-	 * \param     idproduct       id produit
-	 */
-	function addline($desc, $pu, $tauxtva, $qty, $idproduct=0)
+	* 		\brief     	Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
+	* 		\param    	desc            Description de la ligne
+	* 		\param    	pu              Prix unitaire
+	* 		\param    	txtva           Taux de tva forcé, sinon -1
+	* 		\param    	qty             Quantité
+	*		\param    	fk_product      Id du produit/service predéfini
+	* 		\param    	remise_percent  Pourcentage de remise de la ligne
+	* 		\param    	date_start      Date de debut de validité du service
+	* 		\param    	date_end        Date de fin de validité du service
+	* 		\param    	ventil          Code de ventilation comptable
+	* 		\param    	info_bits		Bits de type de lignes
+	* 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
+	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
+	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
+	*					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
+	*/
+	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
 	{
+		dolibarr_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		$this->db->begin();
+
+		// Nettoyage paramètres
+		$txtva=price2num($txtva);
+
+		// Calcul du total TTC et de la TVA pour la ligne a partir de
+		// qty, pu, remise_percent et txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		$tabprice = calcul_price_total($qty, $pu, 0, $txtva, 0, 'HT', 0);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-			$this->updateline($idligne, $desc, $pu, $tauxtva, $qty, $idproduct);
+			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product);
 
 			// Mise a jour prix facture
-			$this->update_price($this->id);
-
-			return 1;
+			$result=$this->update_price($this->id);
+			if ($result > 0)
+			{
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Error sql=$sql, error=".$this->error);
+				$this->db->rollback();
+				return -1;
+			}
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
-			return -1;
+			$this->error=$ligne->error;
+			$this->db->rollback();
+			return -2;
 		}
 	}
 

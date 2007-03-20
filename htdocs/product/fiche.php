@@ -979,17 +979,17 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
     {
       $langs->load("propal");
 
-      print '<tr class="liste_titre"><td width="50%" valign="top">';
-      print_titre($langs->trans("AddToMyProposals")) . '</td>';
+      print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+      print $langs->trans("AddToMyProposals") . '</td>';
 
       if ($user->rights->commercial->client->voir)
 	{
-	  print '<td width="50%" valign="top">';
-	  print_titre($langs->trans("AddToOtherProposals")) . '</td>';
+	  print '<td width="50%" valign="top" class="liste_titre">';
+	  print $langs->trans("AddToOtherProposals").'</td>';
 	}
       else
 	{
-	  print '<td width="50%" valign="top">&nbsp;</td>';
+	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 	}
 
       print '</tr>';
@@ -1093,17 +1093,17 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
     {
       $langs->load("orders");
 
-      print '<tr class="liste_titre"><td width="50%" valign="top">';
-      print_titre($langs->trans("AddToMyOrders")) . '</td>';
+      print '<tr class="liste_titre"><td width="50%" valign="top" class="liste_titre">';
+      print $langs->trans("AddToMyOrders").'</td>';
 
       if ($user->rights->commercial->client->voir)
 	{
-	  print '<td width="50%" valign="top">';
-	  print_titre($langs->trans("AddToOtherOrders")) . '</td>';
+	  print '<td width="50%" valign="top" class="liste_titre">';
+	  print $langs->trans("AddToOtherOrders").'</td>';
 	}
       else
 	{
-	  print '<td width="50%" valign="top"></td>';
+	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 	}
 
       print '</tr>';
@@ -1203,19 +1203,19 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
 
       print '<tr class="liste_titre"><td width="50%" valign="top">';
-      print_titre($langs->trans("AddToMyBills"));
+      print $langs->trans("AddToMyBills").'</td>';
 
       if ($user->rights->commercial->client->voir)
 	{
-	  print '</td><td width="50%" valign="top">';
-	  print_titre($langs->trans("AddToOtherBills"));
+	  print '<td width="50%" valign="top" class="liste_titre">';
+	  print $langs->trans("AddToOtherBills").'</td>';
 	}
       else
 	{
-	  print '<td width="50%" valign="top"></td>';
+	  print '<td width="50%" valign="top" class="liste_titre">&nbsp;</td>';
 	}
 
-      print '</td></tr>';
+      print '</tr>';
 
       // Liste de Mes factures
       print '<tr><td width="50%" valign="top">';
@@ -1298,7 +1298,7 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 		    print "<tr $bc[$var]>";
 		    print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
-		    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+		    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,24)."</a></td>\n";
 		    print "<td colspan=\"2\">".$langs->trans("Qty");
 		    print '<input type="hidden" name="action" value="addinfacture">';
 		    print "</td>";

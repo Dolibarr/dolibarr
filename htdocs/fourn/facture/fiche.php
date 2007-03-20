@@ -30,8 +30,9 @@
 */
 
 require_once('./pre.inc.php');
-require_once('./paiementfourn.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fourn/facture/paiementfourn.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/fourn.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/product.class.php');
 
 
 if (!$user->rights->fournisseur->facture->lire)
@@ -74,14 +75,14 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 	}
 }
 
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes')
 {
     if ($user->rights->fournisseur->facture->creer)
     {
     	$facturefourn = new FactureFournisseur($db);
     	$facturefourn->fetch($_GET['facid']);
     	$facturefourn->deleteline($_GET['ligne_id']);
-      $_GET['action'] = 'edit';
+		$_GET['action'] = '';
     }
 }
 
@@ -111,7 +112,7 @@ if ($_POST['action'] == 'modif_libelle')
 }
 
 
-if ($_POST['action'] == 'update')
+if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 {
 	$datefacture = $db->idate(mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']));
 	$date_echeance = $db->idate(mktime(12,0,0,$_POST['echmonth'],$_POST['echday'],$_POST['echyear']));
@@ -204,12 +205,12 @@ if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->trans('Ref')).'</div>';
+		$mesg='<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Ref')).'</div>';
 		$_GET['action']='create';
 	}
 }
 
-if ($_GET['action'] == 'del_ligne' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if ($_GET['action'] == 'del_ligne')
 {
 	$facfou = new FactureFournisseur($db,'',$_GET['facid']);
 	$facfou->deleteline($_GET['ligne_id']);
@@ -217,15 +218,14 @@ if ($_GET['action'] == 'del_ligne' && !$conf->global->PRODUIT_CONFIRM_DELETE_LIN
 }
 
 // Modification d'une ligne
-if ($_GET['action'] == 'mod_ligne')
+if ($_REQUEST['action'] == 'mod_ligne')
 {
-	if ($_GET['etat'] == '1' && !$_GET['cancel']) // si on valide la modification
+	if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
 	{
 		$facfou = new FactureFournisseur($db,'',$_GET['facid']);
 
 		$facfou->updateline($_GET['ligne_id'], $_POST['label'], $_POST['puht'], $_POST['tauxtva'], $_POST['qty']);
 	}
-	$_GET['action'] = 'edit';
 }
 
 if ($_GET['action'] == 'add_ligne')
@@ -241,10 +241,18 @@ if ($_GET['action'] == 'add_ligne')
 		// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
         $label = $nv_prod->libelle;
 
-        $result=$nv_prod->get_buyprice($_POST['fourn_id'], $_POST['qty']);
+        $result=$nv_prod->get_buyprice($_POST['socid'], $_POST['qty']);
         if ($result > 0)
         {
-            $facfou->addline($label, $nv_prod->fourn_pu, $nv_prod->tva_tx, $_POST['qty'], $_POST['idprod']);
+			$societe='';
+			if ($_POST['socid'])
+			{
+				$societe=new Societe($db);
+				$societe->fetch($_POST['socid']);
+			}
+
+            $tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
+			$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $_POST['idprod']);
         }
         if ($result == -1)
         {
@@ -257,7 +265,7 @@ if ($_GET['action'] == 'add_ligne')
         $tauxtva = price2num($_POST['tauxtva']);
         if (! $_POST['label'])
         {
-        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Label")).'</div>';
+        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
         }
         else
         {
@@ -274,21 +282,21 @@ if ($_GET['action'] == 'add_ligne')
 	        }
 		}
     }
-    $_GET['action'] = 'edit';
+    $_GET['action'] = '';
 }
 
 
 
-/*********************************************************************
-*
-* Mode creation
-*
-**********************************************************************/
+/*
+*	Affichage page
+*/
+$addons='';
+llxHeader('','', $addons);
 
+
+// Mode creation
 if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 {
-	llxHeader();
-
 	print_titre($langs->trans('NewBill'));
 
 	if ($mesg) { print $mesg.'<br>'; }
@@ -402,33 +410,17 @@ else
 		/*                                                                             */
 		/* *************************************************************************** */
 
+		$productstatic = new Product($db);
+
 		$fac = new FactureFournisseur($db);
 		$fac->fetch($_GET['facid']);
 
 		$societe = new Fournisseur($db);
-		if ($societe->fetch($fac->socid))
-		{
-			$addons[0][0] = DOL_URL_ROOT.'/fourn/fiche.php?socid='.$fac->socid;
-			$addons[0][1] = $societe->nom;
-		}
+		$societe->fetch($fac->socid);
 
-		llxHeader('','', $addons);
-
-		if ($mesg) { print $mesg.'<br>'; }
-
-
-		if ($_GET['action'] == 'edit' || $_GET['action'] == 'delete_product_line')
+		if ($_GET['action'] == 'edit')
 		{
 			print_titre($langs->trans('SupplierInvoice'));
-
-			/*
-			 * Confirmation de la suppression d'une ligne produit
-			 */
-			 if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-			 {
-			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=edit&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
-			 	print '<br>';
-			 }
 
 			print '<form name="update" action="fiche.php?facid='.$fac->id.'" method="post">';
 			print '<input type="hidden" name="action" value="update">';
@@ -437,14 +429,15 @@ else
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 
 			print '<td>'.$societe->getNomUrl(1).'</td>';
-			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</tr>';
+			print '<td width="50%" valign="top">'.$langs->trans('NotePublic').'</td>';
+			print '</tr>';
 
 			print '<tr><td valign="top">'.$langs->trans('Ref').'</td><td valign="top">';
 			print '<input name="facnumber" type="text" value="'.$fac->ref.'"></td>';
 
-			$rownb=9;
+			$rownb=8;
 			print '<td rowspan="'.$rownb.'" valign="top">';
-			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_5.'">';
+			print '<textarea name="note" wrap="soft" cols="60" rows="'.ROWS_8.'">';
 			print $fac->note;
 			print '</textarea></td></tr>';
 
@@ -467,7 +460,12 @@ else
 			print '<td nowrap="nowrap">'.price($fac->total_ttc).'</td></tr>';
 
 			print '<tr><td>'.$langs->trans('Status').'</td><td>'.$fac->getLibStatut(4).'</td></tr>';
-			print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'"></td></tr>';
+			print '<tr><td colspan="2" align="center">';
+			print '<input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+			print ' &nbsp; &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+
+			print '</td></tr>';
 			print '</table>';
 			print '</form>';
 
@@ -486,96 +484,24 @@ else
 			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
 			print '<td align="right">'.$langs->trans('VATRate').'</td>';
 			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right" colspan="2">'.$langs->trans('TotalTTC').'</td><td>&nbsp;</td></tr>';
+			print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+			print '<td colspan="2">&nbsp;</td></tr>';
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
-				// Ligne en modification
-				if ($_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
-				{
-					print '<form action="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
-					print '<input type="hidden" name="tauxtva" value="'.$fac->lignes[$i]->tva_taux.'">';
-					print '<tr '.$bc[$var].'><td><input size="30" name="label" type="text" value="'.$fac->lignes[$i]->description.'"></td>';
-					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
-					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
-					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
-					print '<td align="right" nowrap="nowrap"><input size="6" name="totalht" type="text" value="'.price($fac->lignes[$i]->total_ht).'"></td>';
-					print '<td align="right">';
-					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_taux,$societe,$mysoc);
-					print '</td>';
-					print '<td align="right" nowrap="nowrap"></td>';
-					print '<td align="right" nowrap="nowrap"></td>';
-					print '<td align="center"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
-					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
-					print '</tr>';
-					print '</form>';
-				}
-				else // Affichage simple de la ligne
-				{
-					print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100))).'</td>';
-					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
-					print '<td align="right">'.$fac->lignes[$i]->tva_taux.'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
-					print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
-					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-					{
-						print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=delete_product_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
-					}
-					else
-					{
-						print '<td align="right"><a href="fiche.php?facid='.$fac->id.'&amp;action=del_ligne&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
-					}
-					print '</td></tr>';
-				}
+				// Affichage simple de la ligne
+				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100))).'</td>';
+				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
+				print '<td align="right">'.$fac->lignes[$i]->tva_taux.'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
+				print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
+				print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
+				print '</td></tr>';
 			}
-
-			/* Nouvelle ligne */
-			$var=!$var;
-			print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
-			print '<tr '.$bc[$var].'>';
-			print '<td>';
-			print '<input size="30" name="label" type="text">';
-			print '</td>';
-			print '<td align="right">';
-			print '<input size="6" name="amount" type="text">';
-			print '</td>';
-			print '<td align="right">';
-			print '<input size="6" name="amountttc" type="text">';
-			print '</td>';
-			print '<td align="right">';
-			print '<input size="1" name="qty" type="text" value="1">';
-			print '</td>';
-			print '<td align="center">-</td>';
-			print '<td align="right">';
-			$html->select_tva('tauxtva','',$societe,$mysoc);
-			print '</td><td align="center" colspan="2">';
-			print '&nbsp;';
-			print '</td><td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
-			print '</form>';
-
-            // Ajout de produits/services prédéfinis
-            if ($conf->produit->enabled)
-            {
-                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
-                print '<input type="hidden" name="fourn_id" value="'. $fac->socid .'">';
-                $var=! $var;
-                print '<tr '.$bc[$var].'>';
-                print '<td colspan="3">';
-                $html->select_produits_fournisseurs($fac->socid,'','idprod',$filtre);
-                print '</td>';
-                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '<td>&nbsp;</td>';
-                print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-                print '</tr>';
-                print '</form>';
-            }
 
             print '</table>';
 		}
@@ -588,7 +514,16 @@ else
 			$titre=$langs->trans('SupplierInvoice');
 			dolibarr_fiche_head($head, 'card', $titre);
 
+			if ($mesg) { print $mesg.'<br>'; }
 
+			/*
+			 * Confirmation de la suppression d'une ligne produit
+			 */
+			 if ($_GET['action'] == 'confirm_delete_line')
+			 {
+			 	$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;ligne_id='.$_GET["ligne_id"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+			 	print '<br>';
+			 }
 			/*
 			 * Confirmation de la validation
 			 *
@@ -737,32 +672,124 @@ else
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
 			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+			print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
 			print '<td align="right">'.$langs->trans('Qty').'</td>';
 			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
 			print '<td align="right">'.$langs->trans('VATRate').'</td>';
 			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right">'.$langs->trans('TotalTTC').'</td></tr>';
+			print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+			print '<td>&nbsp;</td>';
+			print '<td>&nbsp;</td>';
+			print '</tr>';
 			$var=1;
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
 
-				print '<tr '.$bc[$var].'>';
-
-				print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$fac->lignes[$i]->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' ';
-				print $fac->lignes[$i]->description;
-				print '</a>';
-				print '</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
-				print '<td align="right" nowrap="nowrap">'.$fac->lignes[$i]->qty.'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
-				print '<td align="right" nowrap="nowrap">'.$fac->lignes[$i]->tva_taux.' %</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
-				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
-				print '</tr>';
+				// Ligne en modification
+				if ($_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
+				{
+					print '<form action="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
+					print '<input type="hidden" name="tauxtva" value="'.$fac->lignes[$i]->tva_taux.'">';
+					print '<tr '.$bc[$var].'>';
+					print '<td><input size="30" name="label" type="text" value="'.$fac->lignes[$i]->description.'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
+					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
+					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
+					print '<td align="right" nowrap="nowrap"><input size="6" name="totalht" type="text" value="'.price($fac->lignes[$i]->total_ht).'"></td>';
+					print '<td align="right">';
+					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_taux,$societe,$mysoc);
+					print '</td>';
+					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="right" nowrap="nowrap"></td>';
+					print '<td align="center" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Save').'">';
+					print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
+					print '</tr>';
+					print '</form>';
+				}
+				else // Affichage simple de la ligne
+				{
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					if ($fac->lignes[$i]->fk_product)
+					{
+						$productstatic->id=$fac->lignes[$i]->fk_product;
+						$productstatic->type=1;
+						$productstatic->ref=$fac->lignes[$i]->libelle;
+						print $productstatic->getNomUrl(1);
+					}
+					else
+					{
+						print $fac->lignes[$i]->description;
+					}
+					print '</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100))).'</td>';
+					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
+					print '<td align="right">'.$fac->lignes[$i]->tva_taux.'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
+					print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
+					print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
+					print '</tr>';
+				}				
+				
 			}
+
+			if ($_GET['action'] != 'mod_ligne')
+			{
+				/* Nouvelle ligne */
+				$var=!$var;
+				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+				print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+				print '<input type="hidden" name="socid" value="'.$societe->id.'">';
+				print '<tr '.$bc[$var].'>';
+				print '<td>';
+				print '<input size="30" name="label" type="text">';
+				print '</td>';
+				print '<td align="right">';
+				print '<input size="6" name="amount" type="text">';
+				print '</td>';
+				print '<td align="right">';
+				print '<input size="6" name="amountttc" type="text">';
+				print '</td>';
+				print '<td align="right">';
+				print '<input size="1" name="qty" type="text" value="1">';
+				print '</td>';
+				print '<td align="center">-</td>';
+				print '<td align="right">';
+				$html->select_tva('tauxtva','',$societe,$mysoc);
+				print '</td><td align="center" colspan="2">';
+				print '&nbsp;';
+				print '</td><td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
+				print '</form>';
+
+	            // Ajout de produits/services prédéfinis
+	            if ($conf->produit->enabled)
+	            {
+	                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
+	                print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
+					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+					print '<input type="hidden" name="socid" value="'.$fac->socid.'">';
+	                $var=! $var;
+	                print '<tr '.$bc[$var].'>';
+	                print '<td colspan="3">';
+	                $html->select_produits_fournisseurs($fac->socid,'','idprod',$filtre);
+	                print '</td>';
+	                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
+	                print '<td>&nbsp;</td>';
+	                print '<td>&nbsp;</td>';
+	                print '<td>&nbsp;</td>';
+	                print '<td>&nbsp;</td>';
+	                print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+	                print '</tr>';
+	                print '</form>';
+	            }
+			}
+			
 			print '</table>';
+
 			print '</div>';
 		}
 
@@ -775,11 +802,7 @@ else
 
 		if ($fac->statut == 0 && $user->societe_id == 0)
 		{
-			if ($_GET['action'] == 'edit')
-			{
-				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'">'.$langs->trans('Cancel').'</a>';
-			}
-			else
+			if ($_GET['action'] != 'edit')
 			{
 				print '<a class="butAction" href="fiche.php?facid='.$fac->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 			}
