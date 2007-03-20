@@ -71,6 +71,8 @@ class modCommande extends DolibarrModules
     // Dépendances
     $this->depends = array("modCommercial");
     $this->requiredby = array("modExpedition");
+    $this->conflictwith = array();
+	$this->langfiles = array("orders","bills","companies");
 
     // Constantes
     $this->const = array();
