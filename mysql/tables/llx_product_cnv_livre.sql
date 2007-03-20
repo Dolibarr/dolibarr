@@ -30,6 +30,7 @@ create table llx_product_cnv_livre
   format             varchar(7),        -- format de l'ouvrage
 
   px_feuillet        float(12,4),       -- prix au feuillet
+  px_reliure         float(12,4),       -- prix de la reliure
   px_couverture      float(12,4),       -- prix de la couverture
   px_revient         float(12,4),       -- prix de revient
   stock_loc          varchar(5),        -- emplacement dans le stock
