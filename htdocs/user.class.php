@@ -148,7 +148,6 @@ class User
 	    
 	    $this->fullname = trim($this->prenom . ' ' . $this->nom);
 	    $this->login = $obj->login;
-	    $this->code = $obj->login;	// \deprecated
 	    $this->pass_indatabase = $obj->pass;
 	    if (! $conf->password_encrypted) $this->pass = $obj->pass;
 	    $this->office_phone = $obj->office_phone;

@@ -609,7 +609,8 @@ if ($_GET["facid"] > 0)
       /*
        * Liste des actions propres à la facture
        */
-      $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.label, a.note, code";
+      $sql = "SELECT id, ".$db->pdate("a.datea")." as da, a.label, a.note";
+      $sql .= ", u.login";
       $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."user as u ";
       $sql .= " WHERE a.fk_user_author = u.rowid ";
       $sql .= " AND a.fk_action in (9,10) ";
@@ -639,7 +640,7 @@ if ($_GET["facid"] > 0)
 		  print '<td>'.img_object($langs->trans("ShowTask"),"task").' '.$objp->id.'</td>';
 		  print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
 		  print '<td>'.stripslashes($objp->label).'</td>';
-		  print '<td>'.$objp->code.'</td>';
+		  print '<td>'.$objp->login.'</td>';
 		  print "</tr>\n";
 		  $i++;
 		}

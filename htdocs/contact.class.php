@@ -405,10 +405,9 @@ class Contact
                 $this->address        = $obj->address;
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
-        		$this->fk_pays        = $obj->fk_pays;
-        		$this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
-        		//$this->pays           = $obj->fk_pays?$obj->pays:'';
-        		$this->pays           = $langs->trans("Country".$obj->pays_code)?$langs->trans("Country".$obj->pays_code):'';
+                $this->fk_pays        = $obj->fk_pays;
+                $this->pays_code      = $obj->fk_pays?$obj->pays_code:'';
+                $this->pays           = $langs->trans("Country".$obj->pays_code)?$langs->trans("Country".$obj->pays_code):'';
     
                 $this->societeid      = $obj->fk_soc;
                 $this->socid          = $obj->fk_soc;
@@ -418,8 +417,7 @@ class Contact
                 $this->fax            = trim($obj->fax);
                 $this->phone_perso    = trim($obj->phone_perso);
                 $this->phone_mobile   = trim($obj->phone_mobile);
-    
-                $this->code           = $obj->code;
+
                 $this->email          = $obj->email;
                 $this->jabberid       = $obj->jabberid;
                 $this->mail           = $obj->email;
