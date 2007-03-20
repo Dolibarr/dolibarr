@@ -2856,7 +2856,7 @@ class Form
             // Affiche taille fichier
             print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
             // Affiche date fichier
-            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedir."/".$file["name"])).'</td>';
+            print '<td align="right">'.dolibarr_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{
