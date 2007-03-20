@@ -2298,14 +2298,25 @@ function weight_units_string($unit)
 }
 
 /**
-   \brief   Nettoie le code HTML
+   \brief   Decode le code html
+   \param   string      StringHtml
+   \return  string	    DecodeString
+*/
+function dol_entity_decode($StringHtml)
+{
+	$DecodeString = html_entity_decode($StringHtml);
+	return $DecodeString;
+}
+
+/**
+   \brief   Supprime le code html
    \param   string      StringHtml
    \return  string	    CleanString
 */
 function clean_html($StringHtml)
 {
   $pattern = "<[^>]+>";
-  $temp = html_entity_decode($StringHtml);
+  $temp = dol_entity_decode($StringHtml);
   $temp = ereg_replace($pattern,"",$temp);
   // Supprime aussi les retours
   $temp=str_replace("\n"," ",$temp);
