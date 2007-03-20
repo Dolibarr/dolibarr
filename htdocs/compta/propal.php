@@ -709,7 +709,7 @@ et non globalement
 	      $authoract = new User($db);
 	      $authoract->id = $objp->fk_user_author;
 	      $authoract->fetch('');
-	      print '<td>'.$authoract->code.'</td>';
+	      print '<td>'.$authoract->login.'</td>';
 	      print "</tr>\n";
 	      $i++;
 	    }
