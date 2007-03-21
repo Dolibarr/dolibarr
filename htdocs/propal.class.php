@@ -1306,6 +1306,13 @@ class Propal extends CommonObject
                 include_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
                 $commande = new Commande($this->db);
                 $result=$commande->create_from_propale($user, $this->id);
+                
+                // Ne pas passer par la commande provisoire
+                if ($conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL == 1)
+                {
+                	$commande->fetch($result);
+                	$commande->valid($user);
+                }
 
                 return $result;
             }

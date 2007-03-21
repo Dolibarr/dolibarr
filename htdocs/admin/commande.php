@@ -129,6 +129,11 @@ if ($_POST["action"] == 'sethidetreated')
   dolibarr_set_const($db, "COMMANDE_HIDE_TREATED",$_POST["hidetreated"]);
 }
 
+if ($_POST["action"] == 'setvalidorder')
+{
+  dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"]);
+}
+
 if ($_POST["action"] == 'deliverycostline')
 {
   dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
@@ -343,7 +348,7 @@ print '<td align="center" width="160">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
 
-// cacher les commandes classer facturées des listes
+// Cacher les commandes classer facturées des listes
 $var=! $var;
 
 print '<tr '.$bc[$var].'><td>';
@@ -356,8 +361,21 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</form>\n";
 print "</td></tr>\n";
 
+// Valider la commande après cloture de la propale
+// permet de na pas passer par l'option commande provisoire
+$var=! $var;
 
-// cacher les commandes classer facturées des listes
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("ValidOrderAfterPropalClosed");
+print '</td><td width="160" align="center">';
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="setvalidorder">';
+print $html->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1);
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</form>\n";
+print "</td></tr>\n";
+
+// Ajouter une ligne de frais port indiquant le poids de la commande
 $var=! $var;
 
 print '<tr '.$bc[$var].'><td>';

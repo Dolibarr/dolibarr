@@ -492,7 +492,6 @@ class Commande extends CommonObject
 		// Fin appel triggers
 		
 		$this->db->commit();
-		#$this->valid($user);
 		return $this->id;
 	      }
 	    else
