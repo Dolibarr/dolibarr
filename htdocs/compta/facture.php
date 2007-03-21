@@ -397,7 +397,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		// Si facture récurrente
 		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-		$facture->socid 		 = $_POST['socid'];
+		$facture->socid 		     = $_POST['socid'];
 		$facture->type           = $_POST['type'];
 		$facture->number         = $_POST['facnumber'];
 		$facture->date           = $datefacture;
@@ -407,8 +407,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		$facture->modelpdf       = $_POST['model'];
 
 		// Propriétés particulieres a facture recurrente
-		$facture->fac_rec = $_POST['fac_rec'];
-		$facture->type              = 3;
+		$facture->fac_rec        = $_POST['fac_rec'];
+		$facture->type           = 0;
 
 		$facid = $facture->create($user);
 	}
