@@ -904,3 +904,4 @@ ALTER TABLE llx_document_model ADD UNIQUE uk_document_model (nom,type);
 
 ALTER TABLE llx_chargesociales drop column date_pai;
 
+UPDATE llx_facture SET type=0 where type=3;
