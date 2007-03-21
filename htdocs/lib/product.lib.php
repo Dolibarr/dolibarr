@@ -123,7 +123,19 @@ function product_prepare_head($product, $user)
 	  $h++;
 	}
     }
-  
+
+  /*
+   * Onglets additionnels pour les canvas
+   */
+  if(is_array($product->onglets))
+    {
+      foreach ($product->onglets as $onglet)
+	{
+	  $head[$h] = $onglet;
+	  $h++;
+	}
+    }
+
   return $head;
 }
 
