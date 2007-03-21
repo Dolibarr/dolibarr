@@ -657,7 +657,7 @@ class Form
      *    \param      selected        Id contact pré-sélectionn
      *    \param      htmlname        Nom champ formulaire
      */
-    function select_users($selected='',$htmlname='userid')
+    function select_users($selected='',$htmlname='userid',$show_empty=0)
     {
         // On recherche les utilisateurs
         $sql = "SELECT u.rowid, u.name, u.firstname FROM ";
@@ -667,6 +667,7 @@ class Form
         if ($this->db->query($sql))
         {
             print '<select class="flat" name="'.$htmlname.'">';
+            if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
             $num = $this->db->num_rows();
             $i = 0;
             if ($num)
@@ -674,7 +675,7 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object();
-    
+                    
                     if ($selected && $selected == $obj->rowid)
                     {
                         print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';

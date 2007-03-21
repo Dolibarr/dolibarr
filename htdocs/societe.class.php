@@ -89,6 +89,8 @@ class Societe
   var $statut_commercial;
   
   var $price_level;
+  
+  var $commercial_id; //Id du commercial affecté
 
 
   /**
@@ -160,6 +162,11 @@ class Societe
                 if (!$user->rights->commercial->client->voir)
                 {
                 	$this->add_commercial($user, $user->id);
+                }
+                // Ajout du commercial affecté
+                else if ($this->commercial_id != '' && $this->commercial_id != -1)
+                {
+                	$this->add_commercial($user, $this->commercial_id);
                 }
 
 				// si le fournisseur est classe on l'ajoute

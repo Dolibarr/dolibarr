@@ -122,6 +122,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->client                = $_POST["client"];
 	$soc->fournisseur           = $_POST["fournisseur"];
 	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
+	
+	$soc->commercial_id         = $_POST["commercial_id"];
 
 	if ($_POST["action"] == 'add')
 	{
@@ -271,9 +273,11 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
 	    
-			$soc->tva_assuj = $_POST["assujtva_value"];
+			      $soc->tva_assuj = $_POST["assujtva_value"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
+            
+            $soc->commercial_id=$_POST["commercial_id"];
         }
 
         // On positionne pays_id, pays_code et libelle du pays choisi
@@ -512,6 +516,16 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		}
         print '</td>';
         print '</tr>';
+        
+    if ($user->rights->commercial->client->voir)
+    {
+    	//Affecter un commercial
+      print '<tr>';
+      print '<td>'.$langs->trans("AllocateCommercial").'</td>';
+      print '<td colspan="3">';
+      $form->select_users($soc->commercial_id,'commercial_id',1);
+      print '</td></tr>';
+    }
 
 
 
