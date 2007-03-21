@@ -490,6 +490,7 @@ OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modules de numérotation des commandes
 OrdersModelModule=Modèles de document des commandes
 HideTreadedOrders=Cacher les commandes traitées de la liste
+ValidOrderAfterPropalClosed=Valider la commande après la clôture de la propale, permet de ne pas passer par la commande provisoire
 ##### Fiche inter #####
 FicheinterNumberingModules=Modules de numérotation des fiches interventions
 TemplatePDFInterventions=Modèle de documents des fiches d'interventions

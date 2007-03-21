@@ -1075,7 +1075,7 @@ else
 	  print '</tr>';
 	  
 
-	  // Sociét
+	  // Société
 	  print '<tr><td>'.$langs->trans('Company').'</td>';
 	  print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 	  print '</tr>';
@@ -1183,7 +1183,20 @@ else
 			{
 				$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?id='.$commande->id,$commande->cond_reglement_id,'none');
 			}
-			print '</td></tr>';
+			print '</td>';
+			
+			//Note public lorsque le module expedition n'est pas activé
+			if (!$conf->projet->enabled) $nbrow--;
+			if (!$conf->expedition->enabled)
+			{
+				$nbrow--;
+				if ($conf->projet->enabled) $nbrow--;
+				print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
+				print nl2br($commande->note_public);
+				print '</td>';
+			}
+			
+			print '</tr>';
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');

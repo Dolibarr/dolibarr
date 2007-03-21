@@ -126,7 +126,7 @@ class Commande extends CommonObject
 	$this->lines[$i] = $CommLigne;
       }
 
-    $this->socid               = $propal->socid;
+    $this->socid                = $propal->socid;
     $this->projetid             = $propal->projetidp;
     $this->cond_reglement_id    = $propal->cond_reglement_id;
     $this->mode_reglement_id    = $propal->mode_reglement_id;
@@ -134,6 +134,8 @@ class Commande extends CommonObject
     $this->adresse_livraison_id = $propal->adresse_livraison_id;
     $this->contact_id           = $propal->contactid;
     $this->ref_client           = $propal->ref_client;
+    $this->note                 = $propal->note;
+    $this->note_public          = $propal->note_public;
     
     /* Définit la société comme un client */
     $soc = new Societe($this->db);
@@ -406,13 +408,14 @@ class Commande extends CommonObject
     $this->db->begin();
     
     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commande (';
-    $sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note_public, ref_client,';
+    $sql.= 'fk_soc, date_creation, fk_user_author, fk_projet, date_commande, source, note, note_public, ref_client,';
     $sql.= ' model_pdf, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison,';
     $sql.= ' remise_absolue, remise_percent)';
     $sql.= ' VALUES ('.$this->socid.', now(), '.$user->id.', '.$this->projetid.',';
     $sql.= ' '.$this->db->idate($this->date_commande).',';
     $sql.= ' '.$this->source.', ';
     $sql.= " '".addslashes($this->note)."', ";
+    $sql.= " '".addslashes($this->note_public)."', ";
     $sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
     $sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null')."',";
     $sql.= " '".$this->adresse_livraison_id."',";
@@ -454,11 +457,11 @@ class Commande extends CommonObject
 	    // Mise a jour ref
 	    $sql = 'UPDATE '.MAIN_DB_PREFIX."commande SET ref='(PROV".$this->id.")' WHERE rowid=".$this->id;
 	    if ($this->db->query($sql))
-	      {
-		if ($this->id && $this->propale_id)
-		  {
-		    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
-		    $this->db->query($sql);
+	    {
+	    	if ($this->id && $this->propale_id)
+	    	{
+	    		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_pr (fk_commande, fk_propale) VALUES ('.$this->id.','.$this->propale_id.')';
+	    		$this->db->query($sql);
 		    
 		    // On récupère les différents contact interne et externe
 		    $prop = New Propal($this->db, $this->socid, $this->propale_id);
@@ -489,6 +492,7 @@ class Commande extends CommonObject
 		// Fin appel triggers
 		
 		$this->db->commit();
+		#$this->valid($user);
 		return $this->id;
 	      }
 	    else
