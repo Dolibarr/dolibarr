@@ -141,7 +141,7 @@ class pdf_crabe extends ModelePDFFactures
             {
                 if (create_exdir($dir) < 0)
                 {
-                    $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
             }
@@ -363,18 +363,18 @@ class pdf_crabe extends ModelePDFFactures
             }
             else
             {
-                $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+                $this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
 				$langs->setPhpLang();	// On restaure langue session
                 return 0;
             }
         }
         else
         {
-            $this->error=$outputlangs->transnoentities("ErrorConstantNotDefined","FAC_OUTPUTDIR");
+            $this->error=$langs->trans("ErrorConstantNotDefined","FAC_OUTPUTDIR");
 			$langs->setPhpLang();	// On restaure langue session
             return 0;
 		}
-        $this->error=$outputlangs->transnoentities("ErrorUnknown");
+        $this->error=$langs->trans("ErrorUnknown");
 		$langs->setPhpLang();	// On restaure langue session
         return 0;   // Erreur par defaut
     }
@@ -460,7 +460,7 @@ class pdf_crabe extends ModelePDFFactures
         }
         else
         {
-            $this->error=$outputlangs->transnoentities("ErrorSQL")." $sql";
+            $this->error=$langs->trans("ErrorSQL")." $sql";
             return 0;
         }
 
