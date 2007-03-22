@@ -624,7 +624,7 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/fourn/facture/paiement.php", $langs->trans("Payments"), 1, $user->rights->fournisseur->facture->lire);
 				}
 
-				if ($conf->commande->enabled)
+				if ($conf->fournisseur->enabled)
 				{
 					$langs->load("orders");
 					$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"), 0, $user->rights->fournisseur->commande->lire);
