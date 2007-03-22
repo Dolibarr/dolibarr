@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006  Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
  * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      	Benoit Mortier          <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006  Regis Houssin           <regis.houssin@cap-networks.com>
@@ -31,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 
 $langs->load("admin");
 $langs->load("bills");
@@ -41,10 +42,37 @@ if (!$user->admin)
   accessforbidden();
 
 
-
 /*
  * Actions
  */
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$facture = new CommandeFournisseur($db);
+	$facture->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/fourn/commande/modules/pdf/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_pdf_file($facture,$langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+	}
+}
 
 if ($_GET["action"] == 'set')
 {

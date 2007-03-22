@@ -2120,6 +2120,8 @@ class Commande extends CommonObject
 	{
 		global $user,$langs;
 
+		dolibarr_syslog("Commande::initAsSpecimen");
+
 		// Charge tableau des id de société socids
 		$socids = array();
 		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
@@ -2194,244 +2196,243 @@ class Commande extends CommonObject
  *  \class      CommandeLigne
  *  \brief      Classe de gestion des lignes de commande
  */
-
 class CommandeLigne
 {
-  var $db;
-  var $error;
-  
-  // From llx_commandedet
-  var $rowid;
-  var $fk_facture;
-  var $desc;          	// Description ligne
-  var $fk_product;		// Id produit prédéfini
+	var $db;
+	var $error;
 
-  var $qty;
-  var $tva_tx;
-  var $subprice;
-  var $remise_percent;
-  var $rang = 0;
-  var $coef;
-  var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-  // Bit 1:	0 ligne normale - 1 si ligne de remise fixe
-  var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
-  var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
-  var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
-  
-  // Ne plus utiliser
-  var $remise;
-  var $price;
-  
-  // From llx_product
-  var $ref;				// Reference produit
-  var $product_libelle; 	// Label produit
-  var $product_desc;  	// Description produit
-  
-  
-  /**
-   *      \brief     Constructeur d'objets ligne de commande
-   *      \param     DB      handler d'accès base de donnée
-   */
-  function CommandeLigne($DB)
-  {
-    $this->db= $DB ;
-  }
+	// From llx_commandedet
+	var $rowid;
+	var $fk_facture;
+	var $desc;          	// Description ligne
+	var $fk_product;		// Id produit prédéfini
 
-  /**
-   *  \brief     Recupére l'objet ligne de commande
-   *  \param     rowid           id de la ligne de commande
-   */
-  function fetch($rowid)
-  {
-    $sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
-    $sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
-    $sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.coef, cd.rang,';
-    $sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
-    $sql.= ' WHERE cd.rowid = '.$rowid;
-    $result = $this->db->query($sql);
-    if ($result)
-      {
-	$objp = $this->db->fetch_object($result);
-	$this->rowid          = $objp->rowid;
-	$this->fk_propal      = $objp->fk_propal;
-	$this->desc           = $objp->description;
-	$this->qty            = $objp->qty;
-	$this->price          = $objp->price;
-	$this->subprice       = $objp->subprice;
-	$this->tva_tx         = $objp->tva_tx;
-	$this->remise         = $objp->remise;
-	$this->remise_percent = $objp->remise_percent;
-	$this->fk_remise_except = $objp->fk_remise_except;
-	$this->produit_id     = $objp->fk_product;
-	$this->info_bits      = $objp->info_bits;
-	$this->total_ht       = $objp->total_ht;
-	$this->total_tva      = $objp->total_tva;
-	$this->total_ttc      = $objp->total_ttc;
-	$this->coef           = $objp->coef;
-	$this->rang           = $objp->rang;
-	
-	$this->ref	       = $objp->product_ref;
-	$this->product_libelle = $objp->product_libelle;
-	$this->product_desc    = $objp->product_desc;
-	
-	$this->db->free($result);
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-  }
+	var $qty;
+	var $tva_tx;
+	var $subprice;
+	var $remise_percent;
+	var $rang = 0;
+	var $coef;
+	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
+	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
+	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
 
-  /**
-   *    \brief     	Supprime la ligne de commande en base
-   *	\return		int <0 si ko, 0 si ok
-   */
-  function Delete()
-  {
-    global $langs, $conf, $user;
+	// Ne plus utiliser
+	var $remise;
+	var $price;
 
-    dolibarr_syslog("CommandeLigne::Delete id=".$this->id);
+	// From llx_product
+	var $ref;				// Reference produit
+	var $product_libelle; 	// Label produit
+	var $product_desc;  	// Description produit
 
-    $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
-    if ($this->db->query($sql) )
-      {
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
-	// Fin appel triggers
 
-	return 0;
-      }
-    else
-      {
-	dolibarr_syslog("CommandeLigne::Delete id=".$this->id." ERROR SQL $sql");
-	return -1;
-      }   
-  }
+	/**
+	*      \brief     Constructeur d'objets ligne de commande
+	*      \param     DB      handler d'accès base de donnée
+	*/
+	function CommandeLigne($DB)
+	{
+		$this->db= $DB ;
+	}
 
-  /**
-   *    \brief     	Insère l'objet ligne de commande en base
-   *	\return		int		<0 si ko, >0 si ok
-   */
-  function insert()
-  {
-    global $langs, $conf, $user;
+	/**
+	*  \brief     Recupére l'objet ligne de commande
+	*  \param     rowid           id de la ligne de commande
+	*/
+	function fetch($rowid)
+	{
+		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
+		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.coef, cd.rang,';
+		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
+		$sql.= ' WHERE cd.rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->rowid          = $objp->rowid;
+			$this->fk_propal      = $objp->fk_propal;
+			$this->desc           = $objp->description;
+			$this->qty            = $objp->qty;
+			$this->price          = $objp->price;
+			$this->subprice       = $objp->subprice;
+			$this->tva_tx         = $objp->tva_tx;
+			$this->remise         = $objp->remise;
+			$this->remise_percent = $objp->remise_percent;
+			$this->fk_remise_except = $objp->fk_remise_except;
+			$this->produit_id     = $objp->fk_product;
+			$this->info_bits      = $objp->info_bits;
+			$this->total_ht       = $objp->total_ht;
+			$this->total_tva      = $objp->total_tva;
+			$this->total_ttc      = $objp->total_ttc;
+			$this->coef           = $objp->coef;
+			$this->rang           = $objp->rang;
+			
+			$this->ref	       = $objp->product_ref;
+			$this->product_libelle = $objp->product_libelle;
+			$this->product_desc    = $objp->product_desc;
+			
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
 
-    dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
-    $this->db->begin();
-    
-    $rangtouse=$this->rang;
-    if ($rangtouse == -1)
-      {
-	// Récupère rang max de la commande dans $rangmax
-	$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'commandedet';
-	$sql.= ' WHERE fk_commande ='.$this->fk_commande;
-	$resql = $this->db->query($sql);
-	if ($resql)
-	  {
-	    $obj = $this->db->fetch_object($resql);
-	    $rangtouse = $obj->max + 1;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }
-    
-    // Insertion dans base de la ligne
-    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-    $sql.= ' (fk_commande, description, price, qty, tva_tx,';
-    $sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
-    $sql.= ' rang, coef,';
-    $sql.= ' info_bits, total_ht, total_tva, total_ttc)';
-    $sql.= " VALUES (".$this->fk_commande.",";
-    $sql.= " '".addslashes($this->desc)."',";
-    $sql.= " '".price2num($this->price)."',";
-    $sql.= " '".price2num($this->qty)."',";
-    $sql.= " '".price2num($this->tva_tx)."',";
-    if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
-    else { $sql.='null,'; }
-    $sql.= " '".price2num($this->remise_percent)."',";
-    $sql.= " '".price2num($this->subprice)."',";
-    $sql.= " '".price2num($this->remise)."',";
-    if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
-    else $sql.= 'null,';
-    $sql.= ' '.$rangtouse.',';
-    if (isset($this->coef)) $sql.= ' '.$this->coef.',';
-    else $sql.= ' null,';
-    $sql.= " '".$this->info_bits."',";
-    $sql.= " '".price2num($this->total_ht)."',";
-    $sql.= " '".price2num($this->total_tva)."',";
-    $sql.= " '".price2num($this->total_ttc)."'";
-    $sql.= ')';
-    
-    dolibarr_syslog("CommandeLigne.class.php::insert sql=$sql");
-   
-    if ($this->fk_product) 
-      {
-	$product = new Product($this->db);
-	$product->id = $this->fk_product;
-	$product->ajust_stock_commande($this->qty, 0);
-      }
+	/**
+	*    \brief     	Supprime la ligne de commande en base
+	*	\return		int <0 si ko, 0 si ok
+	*/
+	function Delete()
+	{
+		global $langs, $conf, $user;
 
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
-	// Fin appel triggers
+		dolibarr_syslog("CommandeLigne::Delete id=".$this->id);
 
-	$this->db->commit();
-	return 1;	
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	dolibarr_syslog("CommandeLigne.class.php::insert Error ".$this->error);
-	$this->db->rollback();
-	return -2;
-      }
-  }
-  
-  
-  /**
-   *      \brief     	Mise a jour de l'objet ligne de commande en base
-   *		\return		int		<0 si ko, >0 si ok
-   */
-  function update_total()
-  {
-    $this->db->begin();
-    
-    // Mise a jour ligne en base
-    $sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
-    $sql.= " total_ht='".price2num($this->total_ht)."'";
-    $sql.= ",total_tva='".price2num($this->total_tva)."'";
-    $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
-    $sql.= " WHERE rowid = ".$this->rowid;
-    
-    dolibarr_syslog("CommandeLigne.class.php::update_total sql=$sql");
-    
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$this->db->commit();
-	return 1;	
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	dolibarr_syslog("CommandeLigne.class.php::update_total Error ".$this->error);
-	$this->db->rollback();
-	return -2;
-      }
-  }  
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
+		if ($this->db->query($sql) )
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
+			// Fin appel triggers
+
+			return 0;
+		}
+		else
+		{
+			dolibarr_syslog("CommandeLigne::Delete id=".$this->id." ERROR SQL $sql");
+			return -1;
+		}   
+	}
+
+	/**
+	*    \brief     	Insère l'objet ligne de commande en base
+	*	\return		int		<0 si ko, >0 si ok
+	*/
+	function insert()
+	{
+		global $langs, $conf, $user;
+
+		dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
+		$this->db->begin();
+		
+		$rangtouse=$this->rang;
+		if ($rangtouse == -1)
+		{
+			// Récupère rang max de la commande dans $rangmax
+			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'commandedet';
+			$sql.= ' WHERE fk_commande ='.$this->fk_commande;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$rangtouse = $obj->max + 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		
+		// Insertion dans base de la ligne
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
+		$sql.= ' (fk_commande, description, price, qty, tva_tx,';
+		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
+		$sql.= ' rang, coef,';
+		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
+		$sql.= " VALUES (".$this->fk_commande.",";
+		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " '".price2num($this->price)."',";
+		$sql.= " '".price2num($this->qty)."',";
+		$sql.= " '".price2num($this->tva_tx)."',";
+		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
+		else { $sql.='null,'; }
+		$sql.= " '".price2num($this->remise_percent)."',";
+		$sql.= " '".price2num($this->subprice)."',";
+		$sql.= " '".price2num($this->remise)."',";
+		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
+		else $sql.= 'null,';
+		$sql.= ' '.$rangtouse.',';
+		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
+		else $sql.= ' null,';
+		$sql.= " '".$this->info_bits."',";
+		$sql.= " '".price2num($this->total_ht)."',";
+		$sql.= " '".price2num($this->total_tva)."',";
+		$sql.= " '".price2num($this->total_ttc)."'";
+		$sql.= ')';
+		
+		dolibarr_syslog("CommandeLigne.class.php::insert sql=$sql");
+
+		if ($this->fk_product) 
+		{
+			$product = new Product($this->db);
+			$product->id = $this->fk_product;
+			$product->ajust_stock_commande($this->qty, 0);
+		}
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
+			// Fin appel triggers
+
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("CommandeLigne.class.php::insert Error ".$this->error);
+			$this->db->rollback();
+			return -2;
+		}
+	}
+
+
+	/**
+	*      \brief     	Mise a jour de l'objet ligne de commande en base
+	*		\return		int		<0 si ko, >0 si ok
+	*/
+	function update_total()
+	{
+		$this->db->begin();
+		
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."commandedet SET";
+		$sql.= " total_ht='".price2num($this->total_ht)."'";
+		$sql.= ",total_tva='".price2num($this->total_tva)."'";
+		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+		
+		dolibarr_syslog("CommandeLigne.class.php::update_total sql=$sql");
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("CommandeLigne.class.php::update_total Error ".$this->error);
+			$this->db->rollback();
+			return -2;
+		}
+	}  
 }
 
 ?>

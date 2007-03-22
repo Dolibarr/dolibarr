@@ -52,6 +52,7 @@ class pdf_einstein extends ModelePDFCommandes
 
 		$langs->load("main");
         $langs->load("bills");
+
         $this->db = $db;
         $this->name = "einstein";
         $this->description = $langs->trans('PDFEinsteinDescription');
@@ -139,7 +140,7 @@ class pdf_einstein extends ModelePDFCommandes
             {
                 if (create_exdir($dir) < 0)
                 {
-                    $this->error=$outputlangs->transnoentities("ErrorCanNotCreateDir",$dir);
+                    $this->error=$outputlangs->trans("ErrorCanNotCreateDir",$dir);
                     return 0;
                 }
             }

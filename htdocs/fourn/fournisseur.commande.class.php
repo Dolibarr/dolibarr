@@ -69,102 +69,103 @@ class CommandeFournisseur extends Commande
     /**
      * Lit une commande
      */
-  function fetch($id)
-  {
-    $sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
-    $sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
-    $sql .= " c.note, c.note_public,";
-    $sql .= " cm.libelle as methode_commande";
-    $sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
-    $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
-    $sql .= " WHERE c.rowid = ".$id;
-    
-    $resql = $this->db->query($sql) ;
-    if ($resql)
-      {
-	$obj = $this->db->fetch_object($resql);
-	
-	$this->id                  = $obj->rowid;
-	$this->ref                 = $obj->ref;
-	$this->socid               = $obj->fk_soc;
-	$this->fourn_id            = $obj->fk_soc;
-	$this->statut              = $obj->fk_statut;
-	$this->user_author_id      = $obj->fk_user_author;
-	$this->total_ht            = $obj->total_ht;
-	$this->total_tva           = $obj->tva;
-	$this->total_ttc           = $obj->total_ttc;
-	$this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
-	$this->date                = $obj->date_creation;
-	$this->remise_percent      = $obj->remise_percent;
-	$this->methode_commande_id = $obj->fk_methode_commande;
-	$this->methode_commande    = $obj->methode_commande;
-	
-	$this->source              = $obj->source;
-	$this->facturee            = $obj->facture;
-	$this->projet_id           = $obj->fk_projet;
-	$this->note                = $obj->note;
-	$this->note_public         = $obj->note_public;
-	
-	$this->db->free();
-	
-	if ($this->statut == 0) $this->brouillon = 1;
-	
-	// export pdf -----------
-	
-	$this->lignes = array();
-	$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
-	$sql.= ' p.label, p.description as product_desc, p.ref, p.rowid as prodid';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
-	$sql.= ' WHERE l.fk_commande = '.$this->id;
-	$sql.= ' ORDER BY l.rowid';
-	$result = $this->db->query($sql);
-	if ($result)
-	  {
-	    $num = $this->db->num_rows($result);
-	    $i = 0;
-	    
-	    while ($i < $num)
-	      {
-		$objp                  = $this->db->fetch_object($result);
+	function fetch($id)
+	{
+		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
+		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
+		$sql .= " c.note, c.note_public,";
+		$sql .= " cm.libelle as methode_commande";
+		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
+		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
+		$sql .= " WHERE c.rowid = ".$id;
 		
-		$ligne                 = new CommandeFournisseurLigne();
-		
-		$ligne->desc           = $objp->description;  // Description ligne
-		$ligne->qty            = $objp->qty;
-		$ligne->tva_tx         = $objp->tva_tx;
-		$ligne->subprice       = $objp->subprice;
-		$ligne->remise_percent = $objp->remise_percent;
-		$ligne->price          = $objp->price;
-		$ligne->fk_product     = $objp->fk_product;
-		
-		$ligne->libelle        = $objp->label;        // Label produit
-		$ligne->product_desc   = $objp->product_desc; // Description produit
-		$ligne->ref            = $objp->ref;
+		$resql = $this->db->query($sql) ;
+		if ($resql)
+		{
+			$obj = $this->db->fetch_object($resql);
+			
+			$this->id                  = $obj->rowid;
+			$this->ref                 = $obj->ref;
+			$this->socid               = $obj->fk_soc;
+			$this->fourn_id            = $obj->fk_soc;
+			$this->statut              = $obj->fk_statut;
+			$this->user_author_id      = $obj->fk_user_author;
+			$this->total_ht            = $obj->total_ht;
+			$this->total_tva           = $obj->tva;
+			$this->total_ttc           = $obj->total_ttc;
+			$this->date_commande       = $obj->date_commande; // date à laquelle la commande a été transmise
+			$this->date                = $obj->date_creation;
+			$this->remise_percent      = $obj->remise_percent;
+			$this->methode_commande_id = $obj->fk_methode_commande;
+			$this->methode_commande    = $obj->methode_commande;
+			
+			$this->source              = $obj->source;
+			$this->facturee            = $obj->facture;
+			$this->projet_id           = $obj->fk_projet;
+			$this->note                = $obj->note;
+			$this->note_public         = $obj->note_public;
+			
+			$this->db->free();
+			
+			if ($this->statut == 0) $this->brouillon = 1;
+			
+			// export pdf -----------
+			
+			$this->lignes = array();
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+			$sql.= ' p.label, p.description as product_desc, p.ref, p.rowid as prodid';
+			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+			$sql.= ' WHERE l.fk_commande = '.$this->id;
+			$sql.= ' ORDER BY l.rowid';
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
+				$i = 0;
+				
+				while ($i < $num)
+				{
+					$objp                  = $this->db->fetch_object($result);
+					
+					$ligne                 = new CommandeFournisseurLigne();
+					
+					$ligne->desc           = $objp->description;  // Description ligne
+					$ligne->qty            = $objp->qty;
+					$ligne->tva_tx         = $objp->tva_tx;
+					$ligne->subprice       = $objp->subprice;
+					$ligne->remise_percent = $objp->remise_percent;
+					$ligne->price          = $objp->price;
+					$ligne->fk_product     = $objp->fk_product;
+					
+					$ligne->libelle        = $objp->label;        // Label produit
+					$ligne->product_desc   = $objp->product_desc; // Description produit
+					$ligne->ref            = $objp->ref;
+					
+					$this->lignes[$i]      = $ligne;
+					//dolibarr_syslog("1 ".$ligne->desc);
+					//dolibarr_syslog("2 ".$ligne->product_desc);
+					$i++;
+				}
+				$this->db->free($result);
+				
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
+			return -1;
+		}			
+	}
 	
-		$this->lignes[$i]      = $ligne;
-		//dolibarr_syslog("1 ".$ligne->desc);
-		//dolibarr_syslog("2 ".$ligne->product_desc);
-		$i++;
-	      }
-	    $this->db->free($result);
-	
-	    return 0;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error()." sql=".$sql;
-	    dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
-	    return -1;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error()." sql=".$sql;
-	dolibarr_syslog("CommandeFournisseur::Fetch ".$this->error);
-	return -1;
-      }			
-  }
   /**
    *      \brief      Insère ligne de log
    *      \param      user        Utilisateur qui modifie la commande
@@ -1278,8 +1279,89 @@ class CommandeFournisseur extends Commande
       }
   }
 
+  
+  	/**
+	 *		\brief		Initialise la commande avec valeurs fictives aléatoire
+	 *					Sert à générer une commande pour l'aperu des modèles ou demo
+	 */
+	function initAsSpecimen()
+	{
+		global $user,$langs;
+
+		dolibarr_syslog("CommandeFournisseur::initAsSpecimen");
+
+		// Charge tableau des id de société socids
+		$socids = array();
+		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_socs = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_socs)
+			{
+				$i++;
+
+				$row = $this->db->fetch_row($resql);
+				$socids[$i] = $row[0];
+			}
+		}
+
+		// Charge tableau des produits prodids
+		$prodids = array();
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product WHERE envente=1";
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$num_prods = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num_prods)
+			{
+				$i++;
+				$row = $this->db->fetch_row($resql);
+				$prodids[$i] = $row[0];
+			}
+		}
+
+		// Initialise paramètres
+		$this->id=0;
+		$this->ref = 'SPECIMEN';
+		$this->specimen=1;
+		$socid = rand(1, $num_socs);
+		$this->socid = $socids[$socid];
+		$this->date = time();
+		$this->date_lim_reglement=$this->date+3600*24*30;
+		$this->cond_reglement_code = 'RECEP';
+		$this->mode_reglement_code = 'CHQ';
+		$this->note_public='SPECIMEN';
+		$nbp = rand(1, 9);
+		$xnbp = 0;
+		while ($xnbp < $nbp)
+		{
+			$ligne=new CommandeFournisseurLigne($this->db);
+			$ligne->desc=$langs->trans("Description")." ".$xnbp;
+			$ligne->qty=1;
+			$ligne->subprice=100;
+			$ligne->price=100;
+			$ligne->tva_tx=19.6;
+			$prodid = rand(1, $num_prods);
+			$ligne->produit_id=$prodids[$prodid];
+			$this->lignes[$xnbp]=$ligne;
+			$xnbp++;
+		}
+
+		$this->amount_ht      = $xnbp*100;
+		$this->total_ht       = $xnbp*100;
+		$this->total_tva      = $xnbp*19.6;
+		$this->total_ttc      = $xnbp*119.6;
+	}
 }
 
+
+/**
+ *  \class      CommandeFournisseurLigne
+ *  \brief      Classe de gestion des lignes de commande
+ */
 class CommandeFournisseurLigne extends CommandeLigne
 {
   // From llx_propaldet
