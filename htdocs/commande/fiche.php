@@ -442,7 +442,7 @@ if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
    */
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
-  $commande->set_draft($user->id);
+  $commande->set_draft($user);
 }
 
 /*

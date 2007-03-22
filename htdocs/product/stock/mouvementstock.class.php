@@ -53,52 +53,52 @@ class MouvementStock
         $this->db->begin();
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-	$sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
+	      $sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
         $sql.= " VALUES (now(), $fk_product, $entrepot_id, $qty, $type, $user->id";
-	$sql.= ",'".ereg_replace(",",".",$price)."');";
+	      $sql.= ",'".ereg_replace(",",".",$price)."');";
 
         if ($resql = $this->db->query($sql))
-	  {
-	    $mvid = $this->db->last_insert_id($resql);
-	  }
+	      {
+	      	$mvid = $this->db->last_insert_id($resql);
+	      }
         else
-	  {	  
-            dolibarr_syslog("MouvementStock::_Create echec insert ".$this->error);
-	    $error = -1;
-	  }
+	      {
+	      	dolibarr_syslog("MouvementStock::_Create echec insert ".$this->error);
+	        $error = -1;
+	      }
 
-	$num = 0;
+	      $num = 0;
 
-	if ($error === 0)
-	  {
+	      if ($error === 0)
+	      {
             $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_stock";
             $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
 
             if ($this->db->query($sql))
             {
-	      $num = $this->db->num_rows($resql);
-	      $this->db->free($resql);
+	            $num = $this->db->num_rows($resql);
+	            $this->db->free($resql);
             }
             else
             {
-	      dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-	      $error = -2;
+	            dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+	            $error = -2;
             }
-	  }
+	      }
 
-	if ($error === 0)
-	  {
-	    if ($num > 0)
+	      if ($error === 0)
 	      {
-		$sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty";
-		$sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
-	      }
-	    else
-	      {
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
-		$sql.= " (reel, fk_entrepot, fk_product) VALUES ";
-		$sql.= " ($qty,$entrepot_id,$fk_product);";
-	      }
+	        if ($num > 0)
+	        {
+		        $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty";
+		        $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
+	        }
+	        else
+	        {
+		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
+		        $sql.= " (reel, fk_entrepot, fk_product) VALUES ";
+		        $sql.= " ($qty,$entrepot_id,$fk_product);";
+	        }
 
             if ($this->db->query($sql))
             {
@@ -106,10 +106,10 @@ class MouvementStock
             }
             else
             {
-	      dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-	      $error = -3;
+	            dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+	            $error = -3;
             }
-	  }
+	      }
 
 
 	if ($error === 0)

@@ -258,6 +258,36 @@ class Commande extends CommonObject
 		      }
 	     }
 	   }
+	   
+	  //Si activé on décrémente le produit principal et ses composants à la validation de commande
+	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+		    {
+		    	if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+		    	{
+		    		$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+		    		$prod -> get_sousproduits_arbo ();
+		    		$prods_arbo = $prod->get_each_prod();
+		        if(sizeof($prods_arbo) > 0)
+		        {
+		    	    foreach($prods_arbo as $key => $value)
+		    	    {
+		    		    // on décompte le stock de tous les sousproduits
+		    		    $mouvS = new MouvementStock($this->db);
+		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    		    $result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+		    	    }
+		        }
+		      }
+		     $mouvP = new MouvementStock($this->db);
+		     // on décompte le stock du produit principal
+		     $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    $result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+		  }
+		}
 
 	    // Appel des triggers
 	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -284,20 +314,50 @@ class Commande extends CommonObject
    *
    *
    */
-  function set_draft($userid)
+  function set_draft($user)
   {
+  	global $conf;
+
     $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET fk_statut = 0";
-    
     $sql .= " WHERE rowid = $this->id;";
     
-    if ($this->db->query($sql) )
-      {
-	return 1;
-      }
+    if ($this->db->query($sql))
+    {
+    	//Si activé on incrémente le produit principal et ses composants à l'édition de la commande
+	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+		    {
+		    	if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+		    	{
+		    		$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+		    		$prod -> get_sousproduits_arbo ();
+		    		$prods_arbo = $prod->get_each_prod();
+		        if(sizeof($prods_arbo) > 0)
+		        {
+		    	    foreach($prods_arbo as $key => $value)
+		    	    {
+		    		    // on décompte le stock de tous les sousproduits
+		    		    $mouvS = new MouvementStock($this->db);
+		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]);
+		    	    }
+		        }
+		      }
+		     $mouvP = new MouvementStock($this->db);
+		     // on décompte le stock du produit principal
+		     $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+		  }
+		}
+    	return 1;
+    }
     else
-      {
-	dolibarr_print_error($this->db);
-      }
+    {
+    	dolibarr_print_error($this->db);
+    }
   }
   
   /**
@@ -309,68 +369,97 @@ class Commande extends CommonObject
   {
     global $conf;
     if ($user->rights->commande->valider)
-      {
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
-	$sql.= ' SET fk_statut = 3,';
-	$sql.= ' fk_user_cloture = '.$user->id.',';
-	$sql.= ' date_cloture = now()';
-	$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
+    {
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande';
+    	$sql.= ' SET fk_statut = 3,';
+    	$sql.= ' fk_user_cloture = '.$user->id.',';
+    	$sql.= ' date_cloture = now()';
+    	$sql.= " WHERE rowid = $this->id AND fk_statut > 0 ;";
 	
-	if ($this->db->query($sql) )
-	  {
-	    if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1)
-	      {
-		require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
-		for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+	if ($this->db->query($sql))
+	{
+		if($conf->stock->enabled && $conf->global->PRODUIT_SOUSPRODUITS == 1 && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+			for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
 		  {
 		    $prod = new Product($this->db, $this->lignes[$i]->fk_product);
 		    $prod -> get_sousproduits_arbo ();
 		    $prods_arbo = $prod->get_each_prod();
 		    if(sizeof($prods_arbo) > 0)
-		      {
-			foreach($prods_arbo as $key => $value)
-			  {
-			    // on décompte le stock de tous les sousproduits
-			    $mouvS = new MouvementStock($this->db);
-			    $entrepot_id = "1";
-			    $result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
-			    
-			  }
-		      }
+		    {
+		    	foreach($prods_arbo as $key => $value)
+		    	{
+		    		// on décompte le stock de tous les sousproduits
+		    		$mouvS = new MouvementStock($this->db);
+		    		$entrepot_id = "1";
+		    		$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+		    	}
+		    }
 		    // on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
 		    // $result=$mouvS->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 		  }
-		
-	      }
-	    return 1;
-	  }
+		}
+		return 1;
+	}
 	else
-	  {
-	    dolibarr_print_error($this->db);
-	    return -1;
-	  }
-      }
-  }
+	{
+		dolibarr_print_error($this->db);
+		return -1;
+	}
+ }
+}
+
   /**
    * Annule la commande
    *
    */
   function cancel($user)
   {
+  	global $conf;
     if ($user->rights->commande->valider)
-      {
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
-	$sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
+    {
+	    $sql = 'UPDATE '.MAIN_DB_PREFIX.'commande SET fk_statut = -1';
+	    $sql .= " WHERE rowid = $this->id AND fk_statut = 1 ;";
 	
-	if ($this->db->query($sql) )
-	  {
-	    return 1;
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-      }
+	    if ($this->db->query($sql) )
+	    {
+	  //Si activé on incrémente le produit principal et ses composants à l'édition de la commande
+	  if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER == 1)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+
+				for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+		    {
+		    	if ($conf->global->PRODUIT_SOUSPRODUITS == 1)
+		    	{
+		    		$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+		    		$prod -> get_sousproduits_arbo ();
+		    		$prods_arbo = $prod->get_each_prod();
+		        if(sizeof($prods_arbo) > 0)
+		        {
+		    	    foreach($prods_arbo as $key => $value)
+		    	    {
+		    		    // on décompte le stock de tous les sousproduits
+		    		    $mouvS = new MouvementStock($this->db);
+		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]);
+		    	    }
+		        }
+		      }
+		     $mouvP = new MouvementStock($this->db);
+		     // on décompte le stock du produit principal
+		     $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		    $result=$mouvP->reception($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+		  }
+		}
+	      return 1;
+	    }
+	    else
+	    {
+	      dolibarr_print_error($this->db);
+	    }
+    }
   }
   
   /**

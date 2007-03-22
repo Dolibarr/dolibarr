@@ -490,7 +490,7 @@ HideTreadedPropal=Hide the treated commercial proposals in the list
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules
 OrdersModelModule=Order documents models
-HideTreadedOrders=Hide the treated orders in the list
+HideTreadedOrders=Hide the treated or canceled orders in the list
 ValidOrderAfterPropalClosed=To validate the order after proposal closer, makes it possible not to step by the provisional order
 ##### Fiche inter #####
 FicheinterNumberingModules=Intervention numbering modules

@@ -119,10 +119,10 @@ if (!empty($sref_client))
 {
 	$sql .= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
 }
-// on ne liste pas les commandes classer facturées, elles apparaissent tout de même avec la recherche
+// on ne liste pas les commandes classer facturées et annulées, elles apparaissent tout de même avec la recherche
 if ($conf->global->COMMANDE_HIDE_TREATED && (!$sref && !$sref_client && !$snom && !$sall && (!strlen($_POST['sf_ref']) > 0)))
 {
-	$sql .= ' AND c.facture = 0';
+	$sql .= ' AND c.facture = 0 AND c.fk_statut >= 0';
 }
 
 $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;

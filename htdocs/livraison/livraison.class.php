@@ -307,7 +307,7 @@ class Livraison extends CommonObject
 					if ($resql)
 					{
 						// Si module stock géré et que expedition faite depuis un entrepot
-						if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id)
+						if (!$conf->expedition->enabled && $conf->stock->enabled && $this->entrepot_id && $conf->global->STOCK_CALCULATE_ON_SHIPMENT == 1)
 						{
 	
 							//Enregistrement d'un mouvement de stock pour chaque produit de l'expedition
