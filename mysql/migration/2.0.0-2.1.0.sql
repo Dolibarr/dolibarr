@@ -565,7 +565,7 @@ delete from llx_document_model where nom='dorade' and type='shipping';
 ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber);
 
 alter table llx_facture_rec add column remise_absolue real default 0 after remise_percent;
-alter table llx_facture_rec add column fk_mode_reglement default 0 integer after fk_cond_reglement;
+alter table llx_facture_rec add column fk_mode_reglement integer default 0 after fk_cond_reglement;
 alter table llx_facture_rec add column date_lim_reglement date after fk_mode_reglement;
 alter table llx_facture_rec add column note_public text after note;
 update llx_facture_rec set fk_mode_reglement='0' where fk_mode_reglement='NULL';
