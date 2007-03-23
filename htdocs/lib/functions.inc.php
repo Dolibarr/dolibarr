@@ -2330,7 +2330,7 @@ function clean_html($StringHtml)
 }
 
 /**
-   \brief   Convertir de l'héxadécimal en binaire
+   \brief   Convertir du binaire en héxadécimal
    \param   string      bin
    \return  string	    x
 */
