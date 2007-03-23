@@ -564,6 +564,10 @@ delete from llx_document_model where nom='dorade' and type='shipping';
 
 ALTER TABLE llx_facture ADD UNIQUE INDEX idx_facture_uk_facnumber (facnumber);
 
+alter table llx_facture_rec add column remise_absolue real default 0 after remise_percent;
+alter table llx_facture_rec add column fk_mode_reglement integer after fk_cond_reglement;
+alter table llx_facture_rec add column date_lim_reglement date after fk_mode_reglement;
+alter table llx_facture_rec add column note_public text after note;
 
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_soc (fk_soc);
 ALTER TABLE llx_facture_rec ADD INDEX idx_facture_rec_fk_user_author (fk_user_author);
