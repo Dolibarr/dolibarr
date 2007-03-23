@@ -2923,6 +2923,53 @@ class Form
 		return 1;
 	}
 	
+	    /**
+     *    \brief      Retourne la liste des modéles d'export
+     *    \param      selected          Id modéle présélectionné
+     *    \param      htmlname          Nom de la zone select
+     *    \param      type              Type des modéles recherchés
+     *    \param      useempty          Affiche valeur vide dans liste
+     */
+    function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
+    {
+    	    
+        $sql = "SELECT rowid, nom";
+        $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
+        $sql.= " WHERE type = '".$type."'";
+        $sql.= " ORDER BY rowid";
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            if ($useempty) 
+            {
+                print '<option value="-1">&nbsp;</option>';
+            }
+
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($selected == $obj->rowid)
+                {
+                    print '<option value="'.$obj->rowid.'" selected="true">';
+                }
+                else
+                {
+                    print '<option value="'.$obj->rowid.'">';
+                }
+                print $obj->nom;
+                print '</option>';
+                $i++;
+            }
+            print "</select>";
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+    }
+	
 }
 
 ?>

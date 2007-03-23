@@ -41,6 +41,11 @@ class Export
     var $array_export_fields=array();           // Tableau des liste de champ+libellé à exporter
     var $array_export_alias=array();            // Tableau des liste de champ+alias à exporter
     
+    // Création des modéles d'export
+    var $hexa;
+    var $datatoexport;
+    var $model_name;
+    
     
     /**
      *    \brief  Constructeur de la classe
@@ -204,6 +209,76 @@ class Export
             return -1;
         }
     }
+    
+  /**
+   *  \brief	Créé un modéle d'export
+   *  \param	user Objet utilisateur qui crée
+   */
+  function create($user)
+  {
+    global $conf;
+    
+    dolibarr_syslog("Export.class.php::create");
+    
+    $this->db->begin();
+    
+    $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
+    $sql.= 'nom, type, field)';
+    $sql.= " VALUES ('".$this->model_name."', '".$this->datatoexport."', '".$this->hexa."')";
+    
+    dolibarr_syslog("Export.class.php::create sql=".$sql);
+    
+    $resql=$this->db->query($sql);
+    if ($resql)
+    {
+    	$this->db->commit();
+    	return 1;
+    }
+    else
+    {
+    	dolibarr_print_error($this->db);
+    	$this->db->rollback();
+    	return -1;
+		}
+	}
+	
+	/**
+   *    \brief      Recupère de la base les caractéristiques d'un modele d'export
+   *    \param      rowid       id du modéle à récupérer
+   */
+  function fetch($id)
+  {
+    $sql = 'SELECT em.rowid, em.field, em.nom, em.type';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
+    $sql.= ' WHERE em.rowid = '.$id;
+    
+    dolibarr_syslog("Export::fetch sql=$sql");
+    
+    $result = $this->db->query($sql) ;
+    if ($result)
+    {
+    	$obj = $this->db->fetch_object($result);
+    	if ($obj)
+    	{
+    		$this->id                   = $obj->rowid;
+	      $this->hexa                 = $obj->field;
+	      $this->model_name           = $obj->nom;
+	      $this->datatoexport         = $obj->type;
+		
+	      return 1;
+	    }
+	    else
+	    {
+	      $this->error="Model not found";
+	      return -2;	
+	    }
+    }
+    else
+    {
+    	dolibarr_print_error($this->db);
+    	return -3;
+    }
+  }
     
 }
 

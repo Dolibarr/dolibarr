@@ -51,14 +51,18 @@ $entitytolang=array(
 	'member'=>'Member','member_type'=>'MemberType');
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
-$datatoexport=isset($_GET["datatoexport"])?$_GET["datatoexport"]:'';
+$datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');
 $action=isset($_GET["action"]) ? $_GET["action"] : (isset($_POST["action"])?$_POST["action"]:'');
-$step=isset($_GET["step"])?$_GET["step"]:'1';
+$step=isset($_GET["step"])? $_GET["step"] : (isset($_POST["step"])?$_POST["step"]:1);
+$export_name=isset($_POST["export_name"])? $_POST["export_name"] : '';
+$hexa=isset($_POST["hexa"])? $_POST["hexa"] : '';
+$exportmodelid=isset($_POST["exportmodelid"])? $_POST["exportmodelid"] : '';
 
 $objexport=new Export($db);
 $objexport->load_arrays($user,$datatoexport);
 
 $objmodelexport=new ModeleExports();
+$html = new Form($db);
 
 
 /*
@@ -128,6 +132,26 @@ if ($action == 'builddoc')
 	else
 	{
 //	    $mesg='<div class="ok">'.$langs->trans("FileSuccessfulyBuilt").'</div>';
+    }
+}
+
+if ($step == 2 && $action == 'add')
+{
+    $objexport->model_name = $export_name;
+    $objexport->datatoexport = $datatoexport;
+    $objexport->hexa = $hexa;
+    
+    $result = $objexport->create($user);
+}
+
+if ($step == 2 && $action == 'select_model')
+{   
+    $_SESSION["export_selected_fields"]=array();
+    $array_selected=array();
+    $result = $objexport->fetch($exportmodelid);
+    if ($result > 0)
+    {
+    	$binaire = hexbin($objexport->hexa);
     }
 }
 
@@ -229,6 +253,18 @@ if ($step == 2 && $datatoexport)
     // Lot de données à exporter
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
+    
+    // Liste déroulante des modéles d'export
+    print '<tr><td width="25%">'.$langs->trans("ExportModel").'</td>';
+    print '<form action="export.php" method="post">';
+    print '<input type="hidden" name="action" value="select_model">';
+    print '<input type="hidden" name="step" value="2">';
+    print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+    print '<td>';
+    $html->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
+    print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
+    print '</td></form></tr>';
+    
 
     print '</table>';
     print '<br>';
@@ -255,22 +291,34 @@ if ($step == 2 && $datatoexport)
 #    $this->array_export_alias[0]=$module->export_fields_alias[$r];
                                 
     $var=true;
+    $i = 0;
+    
     foreach($fieldsarray as $code=>$label)
     {
         $var=!$var;
         print "<tr $bc[$var]>";
+
+        $modelchoice = substr($binaire,$i,1);
+        $i++;
                     
         $entity=$objexport->array_export_entities[0][$code];
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
         print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-        if (isset($array_selected[$code]) && $array_selected[$code])
+        if (isset($array_selected[$code]) && $array_selected[$code] || $modelchoice == 1)
         {
             // Champ sélectionné
             print '<td>&nbsp;</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
+            if ($modelchoice == 1)
+            {
+            	$array_selected[$code]=sizeof($array_selected)+1;
+            	$_SESSION["export_selected_fields"]=$array_selected;
+            }
+            
+            $bit=1;
         }
         else
         {
@@ -278,11 +326,13 @@ if ($step == 2 && $datatoexport)
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=selectfield&field='.$code.'">'.img_right().'</a></td>';
             print '<td>&nbsp;</td>';
+            $bit=0;
         }
 
         print '</tr>';
+        $save_select.=$bit;
     }
-    
+
     print '</table>';
 
     print '</div>';
@@ -295,7 +345,18 @@ if ($step == 2 && $datatoexport)
 
     if (sizeof($array_selected))
     {
+        print '<form action="export.php" method="post">';
+        print '<input type="hidden" name="action" value="add">';
+        print '<input type="hidden" name="step" value="2">';
+        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+        print '<input type="hidden" name="hexa" value="'.$hexa.'">';
+        print '<table class="noborder" width="100%"><tr>';
+        print '<td><input name="export_name" size="20" value="">';
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '</form>';
         print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+        print '</td></tr>';
+        print '</table>';
     }
 
     print '</div>';

@@ -2329,4 +2329,32 @@ function clean_html($StringHtml)
   return $CleanString;
 }
 
+/**
+   \brief   Convertir de l'héxadécimal en binaire
+   \param   string      bin
+   \return  string	    x
+*/
+function binhex($bin, $pad=false, $upper=false){
+  $last = strlen($bin)-1;
+  for($i=0; $i<=$last; $i++){ $x += $bin[$last-$i] * pow(2,$i); }
+  $x = dechex($x);
+  if($pad){ while(strlen($x) < intval(strlen($bin))/4){ $x = "0$x"; } }
+  if($upper){ $x = strtoupper($x); }
+  return $x;
+}
+
+/**
+   \brief   Convertir de l'héxadécimal en binaire
+   \param   string      hexa
+   \return  string	    bin
+*/
+function hexbin($hexa){
+   $bin='';
+   for($i=0;$i<strlen($hexa);$i++)
+   {
+   	$bin.=str_pad(decbin(hexdec($hexa{$i})),4,'0',STR_PAD_LEFT);
+   }
+   return $bin;
+}
+
 ?>
