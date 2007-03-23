@@ -2933,7 +2933,7 @@ class Form
     function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
     {
     	    
-        $sql = "SELECT rowid, nom";
+        $sql = "SELECT rowid, label";
         $sql.= " FROM ".MAIN_DB_PREFIX."export_model";
         $sql.= " WHERE type = '".$type."'";
         $sql.= " ORDER BY rowid";
@@ -2959,7 +2959,7 @@ class Form
                 {
                     print '<option value="'.$obj->rowid.'">';
                 }
-                print $obj->nom;
+                print $obj->label;
                 print '</option>';
                 $i++;
             }

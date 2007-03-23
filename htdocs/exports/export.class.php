@@ -224,7 +224,7 @@ class Export
     $this->db->begin();
     
     $sql = 'INSERT INTO '.MAIN_DB_PREFIX.'export_model (';
-    $sql.= 'nom, type, field)';
+    $sql.= 'label, type, field)';
     $sql.= " VALUES ('".$this->model_name."', '".$this->datatoexport."', '".$this->hexa."')";
     
     dolibarr_syslog("Export.class.php::create sql=".$sql);
@@ -249,7 +249,7 @@ class Export
    */
   function fetch($id)
   {
-    $sql = 'SELECT em.rowid, em.field, em.nom, em.type';
+    $sql = 'SELECT em.rowid, em.field, em.label, em.type';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'export_model as em';
     $sql.= ' WHERE em.rowid = '.$id;
     
@@ -263,7 +263,7 @@ class Export
     	{
     		$this->id                   = $obj->rowid;
 	      $this->hexa                 = $obj->field;
-	      $this->model_name           = $obj->nom;
+	      $this->model_name           = $obj->label;
 	      $this->datatoexport         = $obj->type;
 		
 	      return 1;
