@@ -278,7 +278,7 @@ class Commande extends CommonObject
 		    		    // on décompte le stock de tous les sousproduits
 		    		    $mouvS = new MouvementStock($this->db);
 		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
-		    		    $result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+		    		    $result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
 		    	    }
 		        }
 		      }
@@ -342,7 +342,7 @@ class Commande extends CommonObject
 		    		    // on décompte le stock de tous les sousproduits
 		    		    $mouvS = new MouvementStock($this->db);
 		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
-		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]);
+		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
 		    	    }
 		        }
 		      }
@@ -393,7 +393,7 @@ class Commande extends CommonObject
 		    		// on décompte le stock de tous les sousproduits
 		    		$mouvS = new MouvementStock($this->db);
 		    		$entrepot_id = "1";
-		    		$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]);
+		    		$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
 		    	}
 		    }
 		    // on décompte pas le stock du produit principal, ça serait fait manuellement avec l'expédition
@@ -443,7 +443,7 @@ class Commande extends CommonObject
 		    		    // on décompte le stock de tous les sousproduits
 		    		    $mouvS = new MouvementStock($this->db);
 		    		    $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
-		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]);
+		    		    $result=$mouvS->reception($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
 		    	    }
 		        }
 		      }
