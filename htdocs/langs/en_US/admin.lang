@@ -70,8 +70,8 @@ BackupResult=Backup result
 BackupFileSuccessfullyCreated=Backup file successfully generated
 YouCanDownloadBackupFile=Generated files can now be downlaoded
 NoBackupFileAvailable=No backup files available.
-ToBuildBackupFileClickHere=To build a backup file, click <a href="%s">here</a>.
 ExportMethod=Export method
+ToBuildBackupFileClickHere=To build a backup file, click <a href="%s">here</a>.
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)
@@ -95,7 +95,6 @@ DolibarrProjectLeader=Project leader
 OtherDeveloppers=Other developers/contributors
 OfficialWebSite=International official web site
 OfficialWebSiteFr=French official web site
-Informations=Information
 CurrentTheme=Current theme
 CurrentTopMenuHandler=Current top menu handler
 CurrentLeftMenuHandler=Current left menu handler
@@ -333,6 +332,8 @@ AtEndOfMonth=At end of month
 Offset=Offset
 AlwaysActive=Always active
 UpdateRequired=Your system needs to be updated. For this click on <a href="%s">Update now</a>.
+Upgrade=Upgrade
+AddExtensionThemeModuleOrOther=Add extension (theme, module, ...)
 WebServer=Web server
 DocumentRootServer=Web server root directory
 DataRootServer=Data files directory
