@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,13 +18,38 @@
  *
  * $Id$
  * $Source$
- *
- *
- * Calcul le CA généré par chaque fournisseur
- *
  */
-require ("../../htdocs/master.inc.php");
 
+/**
+        \file       scripts/cron/fournisseur-calcul-ca_genere.php
+        \ingroup    fournisseur
+        \brief      Calcul le CA généré par chaque fournisseur et genere graph
+*/
+
+// Test si mode CLI
+$sapi_type = php_sapi_name();
+$script_file=__FILE__; 
+if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+/*
+if (! isset($argv[1]) || ! $argv[1]) {
+    print "Usage: $script_file now\n";   
+    exit;
+}
+*/
+
+// Recupere env dolibarr
+$version='$Revision$';
+$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+
+require_once($path."../../htdocs/master.inc.php");
+
+$error=0;
 $verbose = 0;
 
 $now = time();

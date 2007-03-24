@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,14 +18,33 @@
  *
  * $Id$
  * $Source$
- *
- *
- * Crée les graphiques pour les fournisseurs
- *
  */
-require ("../../htdocs/master.inc.php");
+
+/**
+        \file       scripts/cron/fournisseur-graph.php
+        \ingroup    fournisseur
+        \brief      Script de génération graph fournisseur
+*/
+
+// Test si mode CLI
+$sapi_type = php_sapi_name();
+$script_file=__FILE__; 
+if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];
+
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer $script_file en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+ 
+// Recupere env dolibarr
+$version='$Revision$';
+$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+
+require_once($path."../../htdocs/master.inc.php");
 require_once (DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
+
+$error=0;
 $verbose = 0;
 
 for ($i = 1 ; $i < sizeof($argv) ; $i++)
@@ -48,7 +68,7 @@ for ($i = 1 ; $i < sizeof($argv) ; $i++)
 $dir = DOL_DATA_ROOT."/graph/fournisseur";
 if (!is_dir($dir) )
 {
-  if (! @mkdir($dir,0755))
+  if (! create_exdir($dir,0755))
     {
       die ("Can't create $dir\n");
     }
