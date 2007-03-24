@@ -135,13 +135,38 @@ if ($action == 'builddoc')
     }
 }
 
-if ($step == 2 && $action == 'add')
+if ($action == 'add_export_model')
 {
-    $objexport->model_name = $export_name;
-    $objexport->datatoexport = $datatoexport;
-    $objexport->hexa = $hexa;
-    
-    $result = $objexport->create($user);
+	if ($export_name)
+	{
+		asort($array_selected);
+
+		// Set save string
+		$hexa='';
+		foreach($array_selected as $key=>$val)
+		{
+			if ($hexa) $hexa.=',';
+			$hexa.=$key;
+		}
+
+	    $objexport->model_name = $export_name;
+	    $objexport->datatoexport = $datatoexport;
+	    $objexport->hexa = $hexa;
+	    
+	    $result = $objexport->create($user);
+		if ($result >= 0)
+		{
+		    $mesg='<div class="ok">'.$langs->trans("ExportModelSaved",$objexport->model_name).'</div>';
+		}
+		else
+		{
+		    $mesg='<div class="error">'.$objexport->error.'</div>';
+		}
+	}
+	else
+	{
+	    $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("ExportModelName")).'</div>';
+	}
 }
 
 if ($step == 2 && $action == 'select_model')
@@ -151,7 +176,14 @@ if ($step == 2 && $action == 'select_model')
     $result = $objexport->fetch($exportmodelid);
     if ($result > 0)
     {
-    	$binaire = hexbin($objexport->hexa);
+		$fieldsarray=split(',',$objexport->hexa);
+		$i=1;
+		foreach($fieldsarray as $val)
+		{
+			$array_selected[$val]=$i;
+			$i++;
+		}
+		$_SESSION["export_selected_fields"]=$array_selected;
     }
 }
 
@@ -219,6 +251,9 @@ if ($step == 1 || ! $datatoexport)
     print '</table>';
     
     print '</div>';
+
+    if ($mesg) print $mesg;
+
 }
 
 if ($step == 2 && $datatoexport)
@@ -254,23 +289,23 @@ if ($step == 2 && $datatoexport)
     print '<tr><td width="25%">'.$langs->trans("DatasetToExport").'</td>';
     print '<td>'.$objexport->array_export_label[0].'</td></tr>';
     
+    print '</table>';
+    print '<br>';
+    
     // Liste déroulante des modéles d'export
-    print '<tr><td width="25%">'.$langs->trans("ExportModel").'</td>';
     print '<form action="export.php" method="post">';
     print '<input type="hidden" name="action" value="select_model">';
     print '<input type="hidden" name="step" value="2">';
     print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
-    print '<td>';
+    print '<table><tr><td>';
+    print $langs->trans("SelectExportFields");
+	print '</td><td>';
     $html->select_export_model($exportmodelid,'exportmodelid',$datatoexport,1);
     print '<input type="submit" class="button" value="'.$langs->trans("Select").'">';
-    print '</td></form></tr>';
-    
+    print '</td></tr></table>';
+    print '</form>';
+	
 
-    print '</table>';
-    print '<br>';
-    
-    print $langs->trans("SelectExportFields").'<br>';
-    
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
@@ -298,26 +333,19 @@ if ($step == 2 && $datatoexport)
         $var=!$var;
         print "<tr $bc[$var]>";
 
-        $modelchoice = substr($binaire,$i,1);
         $i++;
-                    
+
         $entity=$objexport->array_export_entities[0][$code];
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
         print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
-        if (isset($array_selected[$code]) && $array_selected[$code] || $modelchoice == 1)
+        if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
         {
             // Champ sélectionné
             print '<td>&nbsp;</td>';
             print '<td><a href="'.$_SERVER["PHP_SELF"].'?step=2&datatoexport='.$datatoexport.'&action=unselectfield&field='.$code.'">'.img_left().'</a></td>';
             print '<td>'.$langs->trans($label).' ('.$code.')</td>';
-            if ($modelchoice == 1)
-            {
-            	$array_selected[$code]=sizeof($array_selected)+1;
-            	$_SESSION["export_selected_fields"]=$array_selected;
-            }
-            
             $bit=1;
         }
         else
@@ -336,7 +364,9 @@ if ($step == 2 && $datatoexport)
     print '</table>';
 
     print '</div>';
-    
+
+    if ($mesg) print $mesg;
+
     /*
      * Barre d'action
      *
@@ -344,22 +374,12 @@ if ($step == 2 && $datatoexport)
     print '<div class="tabsAction">';
 
     if (sizeof($array_selected))
-    {
-        print '<form action="export.php" method="post">';
-        print '<input type="hidden" name="action" value="add">';
-        print '<input type="hidden" name="step" value="2">';
-        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
-        print '<input type="hidden" name="hexa" value="'.$hexa.'">';
-        print '<table class="noborder" width="100%"><tr>';
-        print '<td><input name="export_name" size="20" value="">';
-        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-        print '</form>';
-        print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
-        print '</td></tr>';
-        print '</table>';
-    }
-
+	{
+		print '<a class="butAction" href="export.php?step=3&datatoexport='.$datatoexport.'">'.$langs->trans("NextStep").'</a>';
+	}
+	
     print '</div>';
+
 }
 
 if ($step == 3 && $datatoexport)
@@ -452,10 +472,39 @@ if ($step == 3 && $datatoexport)
 
         print '</tr>';
     }
-    
-    print '</table>';
 
+    print '</table>';
+	
+	// Bouton exports profils
+	if (sizeof($array_selected))
+    {
+		print '<br>';
+        print $langs->trans("SaveExportModel");
+		
+		print '<form class="nocellnopadd" action="export.php" method="post">';
+        print '<input type="hidden" name="action" value="add_export_model">';
+        print '<input type="hidden" name="step" value="'.$step.'">';
+        print '<input type="hidden" name="datatoexport" value="'.$datatoexport.'">';
+        print '<input type="hidden" name="hexa" value="'.$hexa.'">';
+
+        print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre">';
+		print '<td>'.$langs->trans("ExportModelName").'</td>';
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+		$var=false;
+		print '<tr '.$bc[$var].'>';
+		print '<td><input name="export_name" size="32" value=""></td><td>';
+        print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+        print '</td></tr>';
+        print '</table>';
+        print '</form>';
+    }
+
+    
     print '</div>';
+
+    if ($mesg) print $mesg;
     
     /*
      * Barre d'action
@@ -469,6 +518,7 @@ if ($step == 3 && $datatoexport)
     }
 
     print '</div>';
+
 }
 
 if ($step == 4 && $datatoexport)

@@ -914,9 +914,11 @@ UPDATE llx_facture SET type=0 where type=3;
 create table llx_export_model
 (
   	rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  	label        	varchar(50) NOT NULL,
-  	type			    varchar(20) NOT NULL,
-  	field         varchar(20) NOT NULL
+  	label         varchar(50) NOT NULL,
+  	type          varchar(20) NOT NULL,
+  	field         text
 )type=innodb;
+
+ALTER table llx_export_model add fk_user		  integer DEFAULT 0 NOT NULL after rowid;
 
 ALTER TABLE llx_export_model ADD UNIQUE uk_export_model (label);
