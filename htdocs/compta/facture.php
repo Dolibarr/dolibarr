@@ -1672,8 +1672,8 @@ else
 			}
 			
 			/*
-		* Confirmation du classement payé
-		*/
+			* Confirmation du classement payé
+			*/
 			if ($_GET['action'] == 'payed' && $resteapayer <= 0)
 			{
 				$html->form_confirm($_SERVER["PHP_SELF"].'?facid='.$fac->id,$langs->trans('ClassifyPayed'),$langs->trans('ConfirmClassifyPayedBill',$fac->ref),'confirm_payed');
@@ -1682,21 +1682,28 @@ else
 			if ($_GET['action'] == 'payed' && $resteapayer > 0)
 			{
 				// Code
-				$close[0]['code']='discount_vat';
-				$close[1]['code']='badcustomer';
-				$close[2]['code']='abandon';
+				$i=0;
+				$close[$i]['code']='discount_vat';$i++;
+				$close[$i]['code']='badcustomer';$i++;
+				//$close[$i]['code']='product_returned';$i++;
+				$close[$i]['code']='abandon';$i++;
 				// Help
-				$close[0]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyReasonDiscountVatDesc");
-				$close[1]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");
-				$close[2]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonOtherDesc");
+				$i=0;
+				$close[$i]['label']=$langs->trans("HelpEscompte").'<br><br>'.$langs->trans("ConfirmClassifyPayedPartiallyReasonDiscountVatDesc");$i++;
+				$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonBadCustomerDesc");$i++;
+				//$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonProductReturned");$i++;
+				$close[$i]['label']=$langs->trans("ConfirmClassifyPayedPartiallyReasonOtherDesc");$i++;
 				// Texte
-				$close[0]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[0]['label'],1);
-				$close[1]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[1]['label'],1);
-				$close[2]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonOther",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[2]['label'],1);
-				// arrayreasons
-				$arrayreasons[$close[0]['code']]=$close[0]['reason'];
-				$arrayreasons[$close[1]['code']]=$close[1]['reason'];
-				$arrayreasons[$close[2]['code']]=$close[2]['reason'];
+				$i=0;
+				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonDiscountVat",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonBadCustomer",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				//$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonProductReturned",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				$close[$i]['reason']=$html->textwithhelp($langs->transnoentities("ConfirmClassifyPayedPartiallyReasonOther",$resteapayer,$langs->trans("Currency".$conf->monnaie)),$close[$i]['label'],1);$i++;
+				// arrayreasons[code]=reason
+				foreach($close as $key => $val)
+				{
+					$arrayreasons[$close[$key]['code']]=$close[$key]['reason'];
+				}
 
 				// Crée un tableau formulaire
 				$formquestion=array(
@@ -1916,8 +1923,9 @@ else
 					// Facturé
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 					$resteapayeraffiche=$resteapayer;
+
 					// Payé partiellement 'escompte'
-					if ($fac->close_code == 'escompte')
+					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'escompte')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
@@ -1925,15 +1933,23 @@ else
 						$resteapayeraffiche=0;
 					}
 					// Payé partiellement ou Abandon 'badcustomer'
-					if (($fac->fk_statut == 2 || $fac->fk_statut == 3) && $fac->close_code == 'badcustomer')
+					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'badcustomer')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonBadCustomer"),-1);
 						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+						//$resteapayeraffiche=0;
+					}
+					// Payé partiellement ou Abandon 'product_returned'
+					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'product_returned')
+					{
+						print '<tr><td colspan="2" align="right" nowrap="1">';
+						print $html->textwithhelp($langs->trans("ProductReturned").':',$langs->trans("HelpAbandonProductReturned"),-1);
+						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 						$resteapayeraffiche=0;
 					}
-					// Abandon 'abandon'
-					if (($fac->fk_statut == 2 || $fac->fk_statut == 3) && $fac->close_code == 'abandon')
+					// Payé partiellement ou Abandon 'abandon'
+					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'abandon')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonOther"),-1);
