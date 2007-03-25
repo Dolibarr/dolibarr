@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -34,6 +34,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
@@ -73,6 +74,7 @@ if ($_GET["projetid"])
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
+
 
 
 /*
@@ -178,9 +180,9 @@ if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->
 {
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
-	$soc = new Societe($db);
-	$soc->fetch($fac->socid);
-	$result = $fac->set_valid($fac->id, $user, $soc);
+	$fac->fetch_client();
+
+	$result = $fac->set_valid($fac->id, $user);
 	if ($result >= 0)
 	{
 		if ($_REQUEST['lang_id'])
@@ -310,6 +312,29 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 		}
 	}
 }
+
+// Convertir en reduc
+if ($_POST['action'] == 'confirm_converttoreduc' && $_POST['confirm'] == 'yes' && $user->rights->facture->creer)
+{
+	$db->begin();
+	
+	$fac = new Facture($db);
+	$fac->fetch($_GET['facid']);
+	$fac->fetch_client();
+
+	$result=$fac->set_payed($user);
+	
+	// TODO A completer	
+	$discount = new DiscountAbsolute($db);
+	$result=$discount->create($user);
+
+	$langs->load("other");
+	$mesg=$langs->trans("FeatureNotYetAvailable");
+	
+	$db->rollback();
+}
+
+
 
 /*
  * Insertion facture
@@ -620,8 +645,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
-		$soc = new Societe($db);
-		$ret=$soc->fetch($fac->socid);
+		$ret=$fac->fetch_client();
 
 		$date_start='';
 		$date_end='';
@@ -666,9 +690,9 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-            	$pu = $prod->multiprices[$soc->price_level];
-            	$pu_ttc = $prod->multiprices_ttc[$soc->price_level];
-            	$price_base_type = $prod->multiprices_base_type[$soc->price_level];
+            	$pu = $prod->multiprices[$fac->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$fac->client->price_level];
             }
             else
             {
@@ -685,7 +709,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             	$desc = $prod->description;
             }
 
-            $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+            $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
         }
         else
         {
@@ -1057,11 +1081,12 @@ if ($_GET['action'] == 'create')
 	{
 		$propal = New Propal($db);
 		$propal->fetch($_GET['propalid']);
-		$societe_id = $propal->socid;
+		$propal->fetch_client();
+
 		$projetid=$propal->projetidp;
 		$ref_client=$propal->ref_client;
 
-		$soc->fetch($societe_id);
+		$soc=$propal->client;
 		$cond_reglement_id = $propal->cond_reglement_id;
 		$mode_reglement_id = $propal->mode_reglement_id;
 		$remise_percent = $propal->remise_percent;
@@ -1071,11 +1096,12 @@ if ($_GET['action'] == 'create')
 	{
 		$commande = New Commande($db);
 		$commande->fetch($_GET['commandeid']);
-		$societe_id = $commande->socid;
-		$projetid=$commande-> projet_id;
+		$commande->fetch_client();
+
+		$projetid=$commande->projet_id;
 		$ref_client=$commande->ref_client;
 
-		$soc->fetch($societe_id);
+		$soc=$commande->client;
 		$cond_reglement_id = $commande->cond_reglement_id;
 		$mode_reglement_id = $commande->mode_reglement_id;
 		$remise_percent = $commande->remise_percent;
@@ -1085,10 +1111,11 @@ if ($_GET['action'] == 'create')
 	{
 		$contrat = New Contrat($db);
 		$contrat->fetch($_GET['contratid']);
-		$societe_id = $contrat->societe->id;
+		$contrat->fetch_client();
+
 		$projetid=$contrat->fk_projet;
 
-		$soc=$contrat->societe;
+		$soc=$contrat->client;
 		$cond_reglement_id = $soc->cond_reglement;
 		$mode_reglement_id = $soc->mod_reglement;
 		$remise_percent = $soc->remise_client;
@@ -1096,9 +1123,7 @@ if ($_GET['action'] == 'create')
 	}
 	else
 	{
-		$societe_id=$socid;
-
-		$soc->fetch($societe_id);
+		$soc->fetch($socid);
 		$cond_reglement_id = $soc->cond_reglement;
 		$mode_reglement_id = $soc->mode_reglement;
 		$remise_percent = $soc->remise_client;
@@ -1290,7 +1315,7 @@ if ($_GET['action'] == 'create')
 	{
 		$langs->load('projects');
 		print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
-		$html->select_projects($societe_id, $projetid, 'projetid');
+		$html->select_projects($soc->id, $projetid, 'projetid');
 		print '</td></tr>';
 	}
 
@@ -1633,8 +1658,18 @@ else
 			dolibarr_fiche_head($head, 'compta', $langs->trans('InvoiceCustomer'));
 			
 			/*
-		* Confirmation de la suppression de la facture
-		*/
+			* Confirmation de la conversion de l'avoir en reduc
+			*/
+			if ($_GET['action'] == 'converttoreduc')
+			{
+				$text=$langs->trans('ConfirmConvertToReduc');
+				$html->form_confirm($_SERVER['PHP_SELF'].'?facid='.$fac->id,$langs->trans('ConvertToReduc'),$text,'confirm_converttoreduc');
+				print '<br />';
+			}
+			
+			/*
+			* Confirmation de la suppression de la facture
+			*/
 			if ($_GET['action'] == 'delete')
 			{
 				$text=$langs->trans('ConfirmDeleteBill');
@@ -1643,8 +1678,8 @@ else
 			}
 			
 			/*
-		* Confirmation de la validation
-		*/
+			* Confirmation de la validation
+			*/
 			if ($_GET['action'] == 'valid')
 			{
 				// on vérifie si la facture est en numérotation provisoire
@@ -1898,12 +1933,16 @@ else
 				$i = 0;
 				print '<table class="noborder" width="100%">';
 				
+				// Liste des paiements ou remboursements
+				print '<tr class="liste_titre">';
+				print '<td>'.($fac->type == 2 ? $langs->trans("PaymentsBack") : $langs->trans('Payments')).'</td>';
+				print '<td>'.$langs->trans('Type').'</td>';
+				print '<td align="right">'.$langs->trans('Amount').'</td>';
+				print '<td>&nbsp;</td>';
+				print '</tr>';
+					
 				if ($fac->type != 2)
 				{
-					// Liste des paiements
-					print '<tr class="liste_titre"><td>'.$langs->trans('Payments').'</td><td>'.$langs->trans('Type').'</td>';
-					print '<td align="right">'.$langs->trans('Amount').'</td><td>&nbsp;</td></tr>';
-					
 					$var=True;
 					while ($i < $num)
 					{
@@ -2364,7 +2403,7 @@ else
 				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
-				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+				print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';
 				print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 				print '<td align="center" valign="middle" colspan="4"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 				print '</tr>';
@@ -2398,7 +2437,7 @@ else
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 					print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
 					print '<td>&nbsp;</td>';
-					print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+					print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';
 					print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
 					print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 					print '</tr>';
@@ -2513,13 +2552,19 @@ else
 					}
 				}
 
-				// Emettre remboursement
-/* Pas encore géré
-				if ($fac->type == 2 && $fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+				// Emettre remboursement ou Convertir en reduc
+				if ($fac->type == 2)
 				{
-					print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement)
+					{
+						print '<a class="butAction" href="paiement.php?facid='.$fac->id.'&amp;action=create">'.$langs->trans('DoPaymentBack').'</a>';
+					}
+
+					if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->creer && $fac->getSommePaiement() == 0)
+					{
+						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=converttoreduc">'.$langs->trans('ConvertToReduc').'</a>';
+					}
 				}
-*/
 
 				// Classer 'payé'
 				if ($fac->statut == 1 && $fac->paye == 0 && $user->rights->facture->paiement &&
@@ -2545,8 +2590,6 @@ else
 						else
 						{
 							print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=canceled">'.$langs->trans('ClassifyCanceled').'</a>';
-							// \todo
-							// Ajouter bouton "Annuler et Créer facture remplacement"
 						}
 					}
 				}

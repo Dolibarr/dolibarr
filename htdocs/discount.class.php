@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,7 +61,8 @@ class DiscountAbsolute
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 		$sql.= " WHERE rowid=".$rowid;
 	
-		$resql = $this->db->query($sql);
+		dolibarr_syslog("DiscountAbsolute::fetch sql=".$sql);
+ 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			if ($this->db->num_rows($resql))
@@ -91,6 +92,62 @@ class DiscountAbsolute
 			return -1;
 		}
 	}
+	
+
+    /**
+     *      \brief      Create in database
+     *      \param      user        User that create
+     *      \return     int         <0 si ko, >0 si ok
+     */
+    function create($user)
+    {
+    	global $conf, $langs;
+    	
+        // Insert request
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
+		$sql .= " (datec, fk_soc, amount_ht, fk_user, description)";
+		$sql .= " VALUES (now(),".$this->fk_soc.",'".$this->amount_ht."',".$user->id.",'".addslashes($this->desc)."')";
+
+	   	dolibarr_syslog("DiscountAbsolute::create sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+			return $rowid;
+		}
+		else
+		{
+            $this->error=$this->db->lasterror();
+            dolibarr_syslog("Skeleton_class::create ".$this->error);
+            return -1;
+		}
+    }
+
+
+				 	/*
+	*   \brief      Delete object in database
+	*	\return		int			<0 if KO, >0 if OK
+	*/
+	function delete()
+	{
+		global $conf, $langs;
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
+		$sql.= " WHERE rowid = ".$this->id." AND fk_facture IS NULL";
+
+	   	dolibarr_syslog("DiscountAbsolute::delete sql=".$sql);
+		if (! $this->db->query($sql))
+		{
+			$this->error=$this->db->lasterror().' sql='.$sql;
+			return -1;
+		}
+		else
+		{
+			return 1;
+		}
+	}
+	
+
 	
 	/**
 	*		\brief		Link the discount to a particular invoice

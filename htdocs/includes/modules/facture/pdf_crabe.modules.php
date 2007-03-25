@@ -651,7 +651,7 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalHT"), 0, 'L', 1);
 
         $pdf->SetXY ($col2x, $tab2_top + 0);
-        $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ht + $object->remise)), 0, 'R', 1);
+        $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht + $object->remise), 0, 'R', 1);
 
         // Remise globale
         if ($object->remise > 0)
@@ -666,7 +666,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("WithDiscountTotalHT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ht)), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_ht), 0, 'R', 1);
 
             $index = 2;
         }
@@ -690,7 +690,7 @@ class pdf_crabe extends ModelePDFFactures
                 $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT").' '.abs($tvakey).'%'.$tvacompl, 0, 'L', 1);
 
                 $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-                $pdf->MultiCell($largcol2, $tab2_hl, price(abs($tvaval)), 0, 'R', 1);
+                $pdf->MultiCell($largcol2, $tab2_hl, price($tvaval), 0, 'R', 1);
             }
         }
         if (! $this->atleastoneratenotnull)
@@ -700,7 +700,7 @@ class pdf_crabe extends ModelePDFFactures
             $pdf->MultiCell($col2x-$col1x, $tab2_hl, $outputlangs->transnoentities("TotalVAT"), 0, 'L', 1);
 
             $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_tva)), 0, 'R', 1);
+            $pdf->MultiCell($largcol2, $tab2_hl, price($object->total_tva), 0, 'R', 1);
         }
 
         $useborder=0;

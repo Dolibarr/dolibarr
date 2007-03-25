@@ -980,14 +980,14 @@ class Facture extends CommonObject
 	}
 
 	/**
-	*      \brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
-	*      \param     	rowid           Id de la facture à valider
-	*      \param     	user            Utilisateur qui valide la facture
-	*      \param     	soc             Objet societe
-	*      \param     	force_number	Référence à forcer de la facture
+	*      	\brief     	Tag la facture comme validée + appel trigger BILL_VALIDATE
+	*      	\param     	rowid           Id de la facture à valider
+	*      	\param     	user            Utilisateur qui valide la facture
+	*      	\param     	soc             Ne sert plus \\TODO A virer
+	*      	\param     	force_number	Référence à forcer de la facture
 	*		\return		int				<0 si ko, >0 si ok
 	*/
-	function set_valid($rowid, $user, $soc, $force_number='')
+	function set_valid($rowid, $user, $soc='', $force_number='')
 	{
 		global $conf,$langs;
 
@@ -995,6 +995,8 @@ class Facture extends CommonObject
 		if ($this->brouillon)
 		{
 			$this->db->begin();
+
+			$this->fetch_client();
 
 			// Verification paramètres
 			if ($this->type == 1)		// si facture de remplacement
@@ -1046,8 +1048,8 @@ class Facture extends CommonObject
 				$numfa = $force_number;
 			}
 			else if ($facref == 'PROV')
-			{
-				$numfa = $this->getNextNumRef($soc);
+			{	
+				$numfa = $this->getNextNumRef($this->client);
 			}
 			else
 			{
@@ -1200,9 +1202,7 @@ class Facture extends CommonObject
 			if (! $error)
 			{
 				// Classe la société rattachée comme client
-				$soc=new Societe($this->db);
-				$soc->id = $this->socid;
-				$result=$soc->set_as_client();
+				$result=$this->client->set_as_client();
 
 				$this->ref = $numfa;
 
@@ -1357,6 +1357,13 @@ class Facture extends CommonObject
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
 
+			// Si facture de type avoir, le montant est forcé négatif
+			if ($this->type == 2)
+			{
+//				$pu=-abs($pu);
+//				$txtva=-abs($txtva);
+			}
+			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker

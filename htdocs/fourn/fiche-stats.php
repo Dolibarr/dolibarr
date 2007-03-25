@@ -100,7 +100,7 @@ if ( $societe->fetch($socid) )
   
   print "</table><br />";
 
-  print '<table width="100%">';
+  print '<table class="border" width="100%">';
   print '<tr><td valign="top" width="50%">';
 
   $file = get_exdir($societe->id, 3) . "ca_genere-".$societe->id.".png";

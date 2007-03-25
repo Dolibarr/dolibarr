@@ -90,7 +90,7 @@ class Skeleton_class
             $resql=$this->update($user, 1);
             if ($resql < 0)
             {
-                $this->error=$this->db->error();
+                $this->error=$this->db->lasterror();
                 return -2;
             }
 
@@ -106,7 +106,7 @@ class Skeleton_class
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
             dolibarr_syslog("Skeleton_class::create ".$this->error);
             return -1;
         }
@@ -136,7 +136,7 @@ class Skeleton_class
         $resql = $this->db->query($sql);
         if (! $resql)
         {
-            $this->error=$this->db->error().' sql='.$sql;
+            $this->error=$this->db->lasterror().' sql='.$sql;
             return -1;
         }
 
@@ -185,7 +185,7 @@ class Skeleton_class
         }
         else
         {
-      	    $this->error="Error ".$this->db->error();
+      	    $this->error="Error ".$this->db->lasterror();
             dolibarr_syslog("Skeleton_class::fetch ".$this->error);
             return -1;
         }
@@ -204,10 +204,11 @@ class Skeleton_class
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."mytable";
 		$sql.= " WHERE rowid=".$this->id;
 	
+	   	dolibarr_syslog("Skeleton_class::delete sql=".$sql);
 		$resql = $this->db->query($sql);
 		if (! $resql)
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->lasterror().' sql='.$sql;
 			return -1;
 		}
 	

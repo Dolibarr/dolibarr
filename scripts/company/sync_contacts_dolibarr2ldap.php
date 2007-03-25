@@ -26,7 +26,7 @@
         \brief      Script de mise a jour des contacts dans LDAP depuis base Dolibarr
 */
 
-// Test si mode batch
+// Test si mode CLI
 $sapi_type = php_sapi_name();
 $script_file=__FILE__; 
 if (eregi('([^\\\/]+)$',$script_file,$reg)) $script_file=$reg[1];

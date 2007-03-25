@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -29,6 +29,8 @@
         \brief      Fichier de la classe des societes
         \version    $Revision$
 */
+
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
 
 /**
@@ -961,20 +963,19 @@ class Societe
 		
 		if ($this->id)
 		{
-			$remise = price2num($remise);
-	
-			$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
-			$sql .= " (datec, fk_soc, amount_ht, fk_user, description)";
-			$sql .= " VALUES (now(),".$this->id.",'".$remise."',".$user->id.",'".addslashes($desc)."')";
-	
-			if (! $this->db->query($sql) )
+			$discount = new DiscountAbsolute($this->db);
+			$discount->fk_soc=$this->id;
+			$discount->amount_ht=$remise;
+			$discount->desc=$desc;
+			$result=$discount->create($user);
+			if ($result > 0)
 			{
-				$this->error=$this->db->lasterror();
-				return -3;
+				return $result;
 			}
 			else
 			{
-				return $this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+				$this->error=$discount->error;
+				return -3;
 			}
 		}
 		else return 0;
@@ -989,18 +990,10 @@ class Societe
 	{
 		if ($this->id)
 		{
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
-			$sql.= " WHERE rowid = ".$id." AND fk_facture IS NULL";
-
-			if (! $this->db->query($sql))
-			{
-				$this->error=$this->db->lasterror();
-				return -1;
-			}
-			else
-			{
-				return 1;
-			}
+			$discount = new DiscountAbsolute($this->db);
+			$discount->fetch($id);
+			$result=$discount->delete();
+			return $result;
 		}
 		else return 0;
 	}

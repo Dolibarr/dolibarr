@@ -303,7 +303,7 @@ class Contrat extends CommonObject
                 $this->fk_projet         = $result["fk_projet"];
         
                 $this->socid            = $result["fk_soc"];
-                $this->societe->fetch($result["fk_soc"]);
+                $this->societe->fetch($result["fk_soc"]);	// TODO A virer car la societe doit etre chargé par appel de fetch_client()
         
                 $this->db->free($resql);
     
