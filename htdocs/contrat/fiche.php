@@ -601,7 +601,7 @@ else
         print '<td colspan="3">'.$contrat->societe->getNomUrl(1).'</td></tr>';
 
 		// Ligne info remises tiers
-        print '<tr><td>'.$langs->trans('Discount').'</td><td>';
+        print '<tr><td>'.$langs->trans('Discount').'</td><td colspan="3">';
 		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$contrat->societe->getCurrentDiscount();
