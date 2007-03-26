@@ -773,7 +773,7 @@ else
 	                    print $langs->trans("DateEndPlanned").': ';
 	                    if ($objp->date_fin) {
 	                        print dolibarr_print_date($objp->date_fin);
-	                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
+	                        if ($objp->statut == 4 && $objp->date_fin < time() - $conf->contrat->services->inactifs->warning_delay) { print " ".img_warning($langs->trans("Late")); }
 	                    }
 	                    else print $langs->trans("Unknown");
 	
