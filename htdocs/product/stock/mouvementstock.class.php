@@ -36,107 +36,151 @@
 class MouvementStock
 {
 
-    function MouvementStock($DB)
-    {
-        $this->db = $DB;
-    }
-
-    /**
-     *      \brief      Crée un mouvement en base
-     *      \return     int     <0 si ko, >0 si ok
-     */
-    function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
-    {
-      $error = 0;
-        dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+  function MouvementStock($DB)
+  {
+    $this->db = $DB;
+  }
+  
+  /**
+   *      \brief      Crée un mouvement en base
+   *      \return     int     <0 si ko, >0 si ok
+   */
+  function _create($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+  {
+    $error = 0;
+    dolibarr_syslog("MouvementStock::_Create $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
     
-        $this->db->begin();
-
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
-	      $sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
-        $sql.= " VALUES (now(), $fk_product, $entrepot_id, $qty, $type, $user->id";
-	      $sql.= ",'".ereg_replace(",",".",$price)."');";
-
-        if ($resql = $this->db->query($sql))
-	      {
-	      	$mvid = $this->db->last_insert_id($resql);
-	      }
-        else
-	      {
-	      	dolibarr_syslog("MouvementStock::_Create echec insert ".$this->error);
-	        $error = -1;
-	      }
-
-	      $num = 0;
-
-	      if ($error === 0)
-	      {
-            $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_stock";
-            $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
-
-            if ($this->db->query($sql))
+    $this->db->begin();
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."stock_mouvement";
+    $sql.= " (datem, fk_product, fk_entrepot, value, type_mouvement, fk_user_author, price)";
+    $sql.= " VALUES (now(), $fk_product, $entrepot_id, $qty, $type, $user->id";
+    $sql.= ",'".ereg_replace(",",".",$price)."');";
+    
+    if ($resql = $this->db->query($sql))
+      {
+	$mvid = $this->db->last_insert_id($resql);
+      }
+    else
+      {
+	dolibarr_syslog("MouvementStock::_Create echec insert ".$this->error);
+	$error = -1;
+      }
+    
+    $num = 0;
+    
+      if ($error === 0)
+	{
+	  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_stock";
+	  $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
+	  
+	  if ($this->db->query($sql))
             {
-	            $num = $this->db->num_rows($resql);
-	            $this->db->free($resql);
+	      $num = $this->db->num_rows($resql);
+	      $this->db->free($resql);
             }
-            else
+	  else
             {
-	            dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-	            $error = -2;
+	      dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+	      $error = -2;
             }
-	      }
-
-	      if ($error === 0)
-	      {
-	        if ($num > 0)
-	        {
-		        $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty";
-		        $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
-	        }
-	        else
-	        {
-		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
-		        $sql.= " (reel, fk_entrepot, fk_product) VALUES ";
-		        $sql.= " ($qty,$entrepot_id,$fk_product);";
-	        }
-
-            if ($this->db->query($sql))
+	}
+      
+      if ($error === 0)
+	{
+	  if ($num > 0)
+	    {
+	      $sql = "UPDATE ".MAIN_DB_PREFIX."product_stock SET reel = reel + $qty";
+	      $sql.= " WHERE fk_entrepot = $entrepot_id AND fk_product = $fk_product";
+	    }
+	  else
+	    {
+	      $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_stock";
+	      $sql.= " (reel, fk_entrepot, fk_product) VALUES ";
+	      $sql.= " ($qty,$entrepot_id,$fk_product);";
+	    }
+	  
+	  if ($this->db->query($sql))
             {
-
+	      
             }
-            else
+	  else
             {
-	            dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-	            $error = -3;
+	      dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+	      $error = -3;
             }
-	      }
+	}
+      
+      
+      if ($error === 0)
+	{
+	  $valo_mouvement = 0;
+	  $error = $this->CalculateValoPmp($mvid, $fk_product, $qty, $price, $valo_mouvement);
+	}
+      
+      if ($error === 0)
+	{
+	  $error = $this->CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement);
+	}
+      
+      if ($error === 0)
+	{
+	  $error = $this->_createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0);
+	}
 
-
-	if ($error === 0)
-	  {
-	    $valo_mouvement = 0;
-	    $error = $this->CalculateValoPmp($mvid, $fk_product, $qty, $price, $valo_mouvement);
-	  }
-
-	if ($error === 0)
-	  {
-	    $error = $this->CalculateEntrepotValoPmp($user, $entrepot_id, $valo_mouvement);
-	  }
-
-	if ($error === 0)
-	  {
-	    $this->db->commit();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    $this->error=$this->db->error() . " - $sql";
-	    dolibarr_syslog("MouvementStock::_Create ERROR : $error");
-	    dolibarr_syslog("MouvementStock::_Create ROLLBACK");
-	    return -2;
-	  }	       
+      if ($error === 0)
+	{
+	  $this->db->commit();
+	  return 1;
+	}
+      else
+	{
+	  $this->db->rollback();
+	  $this->error=$this->db->error() . " - $sql";
+	  dolibarr_syslog("MouvementStock::_Create ERROR : $error");
+	  dolibarr_syslog("MouvementStock::_Create ROLLBACK");
+	  return -2;
+	}	       
     }
+
+
+  /**
+   *      \brief      Crée un mouvement en base pour tous les sous-produits
+   *      \return     int     <0 si ko, 0 si ok
+   */
+  function _createSubProduct($user, $fk_product, $entrepot_id, $qty, $type, $price=0)
+  {
+    $error = 0;
+    dolibarr_syslog("MouvementStock::_CreateSubProduct $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
+    pids = array();
+
+    $sql = "SELECT fk_product_subproduct FROM ".MAIN_DB_PREFIX."product_subproduct";
+    $sql.= " WHERE fk_product = $fk_product;";
+	  
+    if ($this->db->query($sql))
+      {
+	while ($row = $this->db->fetch_row($resql) )
+	  {
+	    array_push($row[0]);
+	  }
+	$this->db->free($resql);
+      }
+    else
+      {
+	dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+	$error = -2;
+      }
+
+    foreach($pids as $pid)
+      {
+	$this->_create($user, $pid, $entrepot_id, $qty, $type, $price=0)
+      }
+
+    return $error;
+  }
+
+
+
     /**
      *      \brief      Crée un mouvement en base
      *      \return     int     <0 si ko, >0 si ok
