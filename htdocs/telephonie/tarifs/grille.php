@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -160,7 +160,7 @@ if ($auth_write)
 
 
 print '<br><table width="100%" class="border">';
-print '<tr><td>Personnes pouvant modifier cette grille</td></tr>';
+print '<tr><td>Personnes pouvant modifier cette grille :</td></tr>';
 
 $sql = "SELECT u.name, u.firstname";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
@@ -177,7 +177,7 @@ if ($resql)
   while ($i < $num )
     {
       $row = $db->fetch_row($resql);
-      print '<tr><td>'.$row[1] . ' '.$row[0].'</td></tr>';
+      print '<tr><td>- '.$row[1] . ' '.$row[0].'</td></tr>';
       $i++;
     }
 }
