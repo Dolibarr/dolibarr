@@ -238,7 +238,7 @@ a.login
   top: 3px;
 
   color: #234046;
-  padding: 0em 1em;
+  padding: 0px 8px;
   margin: 0px 0px 1px 0px;
   font-weight:bold;
   font-size:12px;
