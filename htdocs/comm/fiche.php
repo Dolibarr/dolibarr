@@ -182,6 +182,7 @@ llxHeader('',$langs->trans('CustomerCard'));
 $actionstatic=new ActionComm($db);
 $facturestatic=new Facture($db);
 $contactstatic = new Contact($db);
+$userstatic=new User($db);
 
 if ($socid > 0)
 {
@@ -844,7 +845,11 @@ if ($socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+                print '<td width="80" nowrap="nowrap">';
+				$userstatic->id=$obj->fk_user_author;
+				$userstatic->login=$obj->login;
+				print $userstatic->getLoginUrl(1);
+				print '</td>';
 
 				// Statut
                 print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
@@ -977,7 +982,11 @@ if ($socid > 0)
             }
 
 			// Auteur
-            print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+            print '<td nowrap="nowrap" width="80">';
+			$userstatic->id=$obj->rowid;
+			$userstatic->login=$obj->login;
+			print $userstatic->getLoginUrl(1);
+			print '</td>';
 
 			// Statut
             print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';

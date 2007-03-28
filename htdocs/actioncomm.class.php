@@ -379,11 +379,11 @@ class ActionComm
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
-	 *		\param		option			Nombre de caractères max dans libellé
+	 *		\param		maxlength		Nombre de caractères max dans libellé
 	 *		\return		string			Chaine avec URL
 	 *		\remarks	Utilise $this->id, $this->code et $this->libelle
 	 */
-	function getNomUrl($withpicto=0,$option)
+	function getNomUrl($withpicto=0,$maxlength)
 	{
 		global $langs;
 		
@@ -394,12 +394,12 @@ class ActionComm
         if ($langs->trans("Action".$this->code) != "Action".$this->code)
         {
         	$libelle=$langs->trans("Action".$this->code);
-        	$libelleshort=$langs->trans("Action".$this->code,'','','','',$option);
+        	$libelleshort=$langs->trans("Action".$this->code,'','','','',$maxlength);
         }
         else
         {
         	$libelle=$this->libelle;
-        	$libelleshort=dolibarr_trunc($this->libelle,$option);
+        	$libelleshort=dolibarr_trunc($this->libelle,$maxlength);
         }
 		
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowTask").': '.$libelle,'task').$lienfin.' ');

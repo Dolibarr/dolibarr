@@ -671,7 +671,7 @@ class Contact
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact"),'contact').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->name.' '.$this->firstname,'contact').$lienfin.' ');
 		$result.=$lien.$this->name.' '.$this->firstname.$lienfin;
 		return $result;
 	}

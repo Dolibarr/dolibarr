@@ -1126,7 +1126,7 @@ class Societe
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany"),'company').$lienfin.' ');
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowCompany").': '.$this->nom,'company').$lienfin.' ');
 		$result.=$lien.($maxlen?dolibarr_trunc($this->nom,$maxlen):$this->nom).$lienfin;
 		return $result;
 	}

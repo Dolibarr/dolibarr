@@ -80,7 +80,7 @@ if ($_GET["time"] == "today")
 }
 if ($socid) 
 {
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.idp = ".$socid;
 }
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
@@ -95,6 +95,7 @@ $resql=$db->query($sql);
 if ($resql)
 {
     $actionstatic=new ActionComm($db);
+    $societestatic=new Societe($db);
     
     $num = $db->num_rows($resql);
     $title="DoneAndToDoActions";
@@ -116,7 +117,6 @@ if ($resql)
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-//    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','colspan="4"',$sortfield);
     print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield);
@@ -134,7 +134,7 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
-		print '<td align="left">';
+		print '<td align="right" nowrap="nowrap">';
         if ($oldyear == strftime("%Y",$obj->dp) )
         {
         }
@@ -168,11 +168,12 @@ if ($resql)
 //        print '<td align="center">'.dolibarr_print_date($obj->dp)."</td>\n";
 
         // Action (type)
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task").' ';
-        $transcode=$langs->trans("Action".$obj->acode);
-        $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-        print dolibarr_trunc($libelle,16);
-        print '</a></td>';
+        print '<td>';
+		$actionstatic->id=$obj->id;
+		$actionstatic->code=$obj->acode;
+		$actionstatic->libelle=$obj->libelle;
+		print $actionstatic->getNomUrl(1,12);
+        print '</td>';
 
         // Titre
         print '<td>';
@@ -181,10 +182,11 @@ if ($resql)
 
         // Société
         print '<td>';
-        if ($obj->client == 1) $url=DOL_URL_ROOT.'/comm/fiche.php?socid=';
-        elseif ($obj->client == 2) $url=DOL_URL_ROOT.'/comm/prospect/fiche.php?id=';
-        else $url=DOL_URL_ROOT.'/soc.php?socid=';
-        print '&nbsp;<a href="'.$url.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->societe,24).'</a></td>';
+        $societestatic->rowid=$obj->socid;
+		$societestatic->client=$obj->client;
+		$societestatic->nom=$obj->societe;
+        print $societestatic->getNomUrl(1,'',16);
+		print '</td>';
 
         // Contact
         print '<td>';
