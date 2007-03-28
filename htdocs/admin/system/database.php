@@ -36,9 +36,19 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+
+  
+/*
+* Afficahge page
+*/
+  
 llxHeader();
 
 print_fiche_titre($langs->trans("DatabaseConfiguration"),'','setup');
+
+print '<br>';
+print $langs->trans("DatabaseName").' : <b>'.$dolibarr_main_db_name.'</b><br>';
+
 
 $base=0;
 $sqls = array();
