@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,9 +21,9 @@
  */
  
  /**
-    \file       htdocs/includes/boxes/box_actions.php
-    \ingroup    actions
-    \brief      Module de génération de l'affichage de la box actions
+		\file       htdocs/includes/boxes/box_actions.php
+		\ingroup    actions
+		\brief      Module de génération de l'affichage de la box actions
 */
 
 
@@ -70,6 +70,8 @@ class box_actions extends ModeleBoxes {
 		
 		if ($user->rights->commercial->main->lire)
 		{
+		$user->rights->commercial->client->voir=0;
+		
 			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.idp";
@@ -78,7 +80,8 @@ class box_actions extends ModeleBoxes {
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.idp";
-			$sql.= " WHERE percent <> 100 ";
+			$sql.= " WHERE a.fk_action = ta.id";
+			$sql.= " AND a.percent <> 100";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)
 			{
@@ -87,6 +90,7 @@ class box_actions extends ModeleBoxes {
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
 	
+			dolibarr_syslog("Box_actions::loadBox boxcode=".$boxcode." sql=".$sql);
 			$result = $db->query($sql);
 			if ($result)
 			{
