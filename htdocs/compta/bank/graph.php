@@ -148,7 +148,7 @@ if ($account > 0)
 	}
 
 	// Fabrication tableau 1
-	$file= $conf->banque->dir_temp."/solde.$account.$year.$month.png";
+	$file= $conf->banque->dir_temp."/balance.$account.$year.$month.png";
 	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -160,6 +160,7 @@ if ($account > 0)
     $px->SetData($graph_datas);
     if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
     else $px->SetLegend(array($langs->transnoentities("Balance")));
+	$px->SetLegendWidthMin(180);
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -246,7 +247,7 @@ if ($account > 0)
 	}
 
 	// Fabrication tableau 2
-	$file= $conf->banque->dir_temp."/solde.$account.$year.png";
+	$file= $conf->banque->dir_temp."/balance.$account.$year.png";
 	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -258,6 +259,7 @@ if ($account > 0)
     $px->SetData($graph_datas);
     if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
     else $px->SetLegend(array($langs->transnoentities("Balance")));
+	$px->SetLegendWidthMin(180);
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -328,7 +330,7 @@ if ($account > 0)
 	}
 
 	// Fabrication tableau 3
-	$file= $conf->banque->dir_temp."/solde.$account.png";
+	$file= $conf->banque->dir_temp."/balance.$account.png";
 	$title=$langs->transnoentities("Balance");
 	$graph_datas=array();
 	foreach($datas as $i => $val)
@@ -340,6 +342,7 @@ if ($account > 0)
     $px->SetData($graph_datas);
     if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
     else $px->SetLegend(array($langs->transnoentities("Balance")));
+	$px->SetLegendWidthMin(180);
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -408,7 +411,7 @@ if ($account > 0)
 	}
 
 	// Fabrication tableau 4
-	$file= $conf->banque->dir_temp."/mouvement.$account.$year.png";
+	$file= $conf->banque->dir_temp."/movement.$account.$year.png";
 	$title=$langs->transnoentities("Movements").' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($data_credit as $i => $val)
@@ -418,6 +421,7 @@ if ($account > 0)
 	$px = new DolGraph();
     $px->SetData($graph_datas);
     $px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+	$px->SetLegendWidthMin(180);
     $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
     $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
     $px->SetTitle($title);
@@ -438,22 +442,22 @@ if ($account > 0)
 	print '<table class="notopnoleftnoright" width="100%">';
 
     print '<tr><td align="center">';
-    $file = "mouvement.$account.$year.png";
+    $file = "movement.$account.$year.png";
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr>';
 
     print '<tr><td align="center">';
-    $file = "solde.$account.$year.$month.png";
+    $file = "balance.$account.$year.$month.png";
 	print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr>';
 
     print '<tr><td align="center">';
-    $file = "solde.$account.$year.png";
+    $file = "balance.$account.$year.png";
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr>';
     
     print '<tr><td align="center">';
-    $file = "solde.$account.png";
+    $file = "balance.$account.png";
     print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=bank&file='.$file.'" alt="" title="">';
     print '</td></tr>';
     
