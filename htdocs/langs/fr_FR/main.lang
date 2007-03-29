@@ -355,6 +355,7 @@ Response=Réponse
 Priority=Priorité
 SendAcknowledgementByMail=Envoi A.R. par mail
 NoEMail=Pas d'email
+Owner=Propriétaire
 # Countries
 CountryFR=France
 CountryBE=Belgique

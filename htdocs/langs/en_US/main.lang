@@ -355,6 +355,7 @@ Response=Response
 Priority=Priority
 SendAcknowledgementByMail=Send Ack. by mail
 NoEMail=No EMail
+Owner=Owner
 # Countries
 CountryFR=France
 CountryBE=Belgium
