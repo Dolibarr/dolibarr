@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,70 +21,71 @@
  */
 
 /**
-   \file 		htdocs/lib/price.lib.php
-   \brief 		Librairie contenant les fonctions pour calculer un prix.
-   \author 	Rodolphe Quiedeville.
-   \version 	$Revision$
-   
-   Ensemble des fonctions permettant de calculer un prix.
+		\file 		htdocs/lib/price.lib.php
+		\brief 		Librairie contenant les fonctions pour calculer un prix.
+		\author 		Rodolphe Quiedeville.
+		\version 	$Revision$
+
+		Ensemble des fonctions permettant de calculer un prix.
 */
 
 /**
-   \brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de
-   facture, propale ou autre depuis:
-   Prix unitaire, quantité, remise_percent_ligne, txtva, remise_percent_global.
-   \param 	qty
-   \param 	pu
-   \param 	remise_percent_ligne
-   \param 	txtva
-   \param 	remise_percent_global
-   \param       price_base_type indique si on calcule sur le HT ou le TTC
-   \param       pu_ttc prix de unitaire TTC
-   \return 	result[0]	total_ht
-   result[1]	total_tva
-   result[2]	total_ttc
+		\brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de
+				facture, propale, commande ou autre depuis:
+				quantité, prix unitaire, remise_percent_ligne, txtva, remise_percent_global
+		\param 	qty							Quantité
+		\param 	pu							Prix unitaire HT
+		\param 	remise_percent_ligne		Remise ligne
+		\param 	txtva						Taux tva
+		\param 	remise_percent_global		0
+		\param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
+		\param	pu_ttc 						Prix unitaire TTC
+		\return result[0,1,2]				(total_ht, total_tva, total_ttc)
 */
 function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0, $price_base_type='HT', $pu_ttc=0)
 {
-  $result=array();
+	$maxdecimalfortotal=2;
+	
+	$result=array();
 
-  if ($price_base_type =='HT')
-    {
-      // On travaille par defaut en partant du prix HT
-      $tot_sans_remise = $pu * $qty;
-      $tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
-      $tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
-      $result[0] = round($tot_avec_remise, 2);
-      $result[2] = round($tot_avec_remise * ( 1 + ($txtva / 100)), 2);
-      $result[1] = $result[2] - $result[0];
-    }
-  else
-    {
-      // On cacule à l'envers en partant du prix TTC
-      // Utilise pour les produits a prix TTC reglemente (livres, ...)
+	if ($price_base_type =='HT')
+	{
+		// On travaille par defaut en partant du prix HT
+		$tot_sans_remise = $pu * $qty;
+		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
+		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
+		$result[0] = round($tot_avec_remise, $maxdecimalfortotal);
+		$result[2] = round($tot_avec_remise * ( 1 + ($txtva / 100)), $maxdecimalfortotal);
+		$result[1] = $result[2] - $result[0];
+	}
+	else
+	{
+		// On cacule à l'envers en partant du prix TTC
+		// Utilise pour les produits a prix TTC reglemente (livres, ...)
 
-      $tot_sans_remise = $pu_ttc * $qty;
-      $tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
-      $tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
+		$tot_sans_remise = $pu_ttc * $qty;
+		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
+		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
 
-      $result[2] = round($tot_avec_remise, 2);
-      $result[0] = round($tot_avec_remise / ( 1 + ($txtva / 100)), 2);
-      $result[1] = $result[2] - $result[0];
-    }
+		$result[2] = round($tot_avec_remise, $maxdecimalfortotal);
+		$result[0] = round($tot_avec_remise / ( 1 + ($txtva / 100)), $maxdecimalfortotal);
+		$result[1] = $result[2] - $result[0];
+	}
 
-  return $result;
+	return $result;
 }
 
+
 /**
-   \brief 		Permet de calculer un prix.
-   \param 		products
-   \param 		remise_percent
-   \param 		remise_absolue
-   \return 	result[0]	total_ht
-   result[1]	total_tva
-   result[2]	total_ttc
-   result[5]	tableau des totaux par tva
-   \deprecated
+		\brief 		Permet de calculer un prix.
+		\param 		products
+		\param 		remise_percent
+		\param 		remise_absolue
+		\return 	result[0]	total_ht
+		result[1]	total_tva
+		result[2]	total_ttc
+		result[5]	tableau des totaux par tva
+		\deprecated
 */
 function calcul_price($products, $remise_percent, $remise_absolue=0)
 {

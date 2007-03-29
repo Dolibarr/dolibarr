@@ -1842,15 +1842,12 @@ function price($amount, $html=0, $outlangs='')
 
   // On pose par defaut 2 decimales
   $decimal = 2;
-  $amount = ereg_replace(',','.',$amount);
-  $datas = explode('.',$amount);
-  $cents = $datas[1];
-  // On augmente au besoin
-  if ($cents > 99 )
-    $decimal = 3;
+  $amount = ereg_replace(',','\.',$amount);
+  $datas = split('\.',$amount);
+  $decpart = $datas[1];
 
-  if ($cents > 999 )
-    $decimal = 4;
+  // On augmente au besoin si il y a plus de 2 décimales
+  if (strlen($decpart) > 2) $decimal=strlen($decpart);
 
   // Formate nombre
   if ($html)
