@@ -457,7 +457,7 @@ else
             }
             else
             {
-            	print '<textarea name="body" cols="70" rows="20">';
+            	print '<textarea class="flat" name="body" cols="70" rows="20">';
             	print $mil->body.'</textarea>';
             }
             print '</td></tr>';
