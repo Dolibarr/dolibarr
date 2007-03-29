@@ -41,7 +41,7 @@ if ($user->societe_id > 0)
 print '<table width="100%" class="noborder">';
 print '<tr><td valign="top" width="50%">';
 
-$sql = "SELECT d.libelle as tarif_desc, d.rowid";
+$sql = "SELECT d.libelle as tarif_desc, d.rowid, d.type_tarif";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
 $sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
@@ -60,7 +60,7 @@ if ($result)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print "<td>Grille</td>";
+  print "<td>Grille</td><td>Type</td>";
   print "</tr>\n";
 
   $var=True;
@@ -72,7 +72,7 @@ if ($result)
 
       print "<tr $bc[$var]>";
       print '<td><a href="grille.php?id='.$obj->rowid.'">'.$obj->tarif_desc."</a></td>\n";
-
+      print '<td>'.$obj->type_tarif."</td>\n";
       print "</tr>\n";
       $i++;
     }
@@ -87,7 +87,7 @@ else
 print '</td></tr></table>';
 
 
-//print '<br>Tableur des <a href="grille-export-achat.php">tarifs d\'achats comparés</a>';
+print '<br>Tableur des <a href="grille-export-achat.php">tarifs d\'achats comparés</a>';
 
 $db->close();
 

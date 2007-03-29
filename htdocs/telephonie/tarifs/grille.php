@@ -184,6 +184,10 @@ if ($resql)
 print '</table>';
 
 
+print '<br><table width="100%" class="border">';
+print '<tr><td>Export :</td></tr>';
+print '<tr><td>- <a href="grille-export.php?id='.$_GET["id"].'">fichier format tableur</a></td></tr>';
+print '</table>';
 
 print '</td><td valign="top" width="70%">';
 
@@ -238,8 +242,8 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Tarif","grille.php","d.libelle");
-  print_liste_field_titre("Destination","grille.php","t.libelle", "&type=".$_GET["type"]);
+  print_liste_field_titre("Grille","grille.php","d.libelle");
+  print_liste_field_titre("Tarif","grille.php","t.libelle", "&type=".$_GET["type"]);
   print_liste_field_titre("Cout / min","grille.php","temporel", "&type=".$_GET["type"]);
   print "</td>";
   print "<td>Cout fixe</td>";
