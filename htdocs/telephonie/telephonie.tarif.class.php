@@ -69,6 +69,58 @@ class TelephonieTarif {
   }
 
 
+  function CreateTarif($name, $type)
+  {
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif";
+    $sql .= "(libelle, type)";
+    $sql .= " VALUES ('".$name."','".$type."');";
+    
+    if ( $this->db->query($sql) )
+      {
+	
+      }
+    else
+      {
+	dolibarr_syslog($this->db->error());
+      }
+                  
+    return $result;
+  }
+
+  /*
+   *
+   *
+   */
+  function Fetch($id)
+  {
+    $this->id = 0;
+
+    $sql = "SELECT rowid, libelle FROM ".MAIN_DB_PREFIX."telephonie_tarif";
+    $sql .= " WHERE rowid = '".$id."';";
+    
+    $resql = $this->db->query($sql);
+
+    if ( $resql )
+      {
+	if ($row = $this->db->fetch_row($resql) )
+	  {
+	    $this->id = $row[0];
+	    $this->libelle = stripslashes($row[1]);
+	  }
+	$this->db->free($resql);
+
+	return 0;
+      }
+    else
+      {
+	return -1;
+      }                 
+  }
+  /*
+   *
+   *
+   */
   function _load_tarif($fournisseur_id, $type)
   {
     
