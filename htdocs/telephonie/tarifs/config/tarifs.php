@@ -74,7 +74,7 @@ print '</table></form>';
 print '<br> <table width="100%" class="noborder">';
 print '<tr><td valign="top" width="50%">';
 
-$sql = "SELECT tt.libelle as tarif_desc, tt.rowid";
+$sql = "SELECT tt.libelle as tarif_desc, tt.rowid, tt.type";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif as tt";
 $sql .= " ORDER BY tt.libelle;";
 
@@ -86,7 +86,7 @@ if ($result)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print "<td>Tarifs</td>";
+  print "<td>Tarifs</td><td>Type</td>";
   print "</tr>\n";
 
   $var=True;
@@ -98,7 +98,7 @@ if ($result)
 
       print "<tr $bc[$var]>";
       print '<td><a href="tarif.php?id='.$obj->rowid.'">'.$obj->tarif_desc."</a></td>\n";
-
+      print '<td>'.$obj->type."</td>\n";
       print "</tr>\n";
       $i++;
     }

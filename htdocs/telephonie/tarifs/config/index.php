@@ -117,9 +117,9 @@ if ($resql)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Tarif","index.php","d.libelle");
+  print_liste_field_titre("Grille","index.php","d.libelle");
 
-  print_liste_field_titre("Destination","index.php","t.libelle", "&type=".$_GET["type"]);
+  print_liste_field_titre("Tarif","index.php","t.libelle", "&type=".$_GET["type"]);
 
   print_liste_field_titre("Cout / min","index.php","temporel", "&type=".$_GET["type"]);
   print "</td>";

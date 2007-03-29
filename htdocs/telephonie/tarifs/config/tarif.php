@@ -23,6 +23,8 @@ require("./pre.inc.php");
 
 require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.class.php";
 require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.prefix.class.php";
+$ta = new TelephonieTarif($db,1,0);
+$ta->fetch($_GET["id"]);
 $tp = new TelephonieTarifPrefix($db);
 
 if ($_POST["action"] == 'add_prefix')
@@ -38,6 +40,7 @@ llxHeader();
  * Mode Liste
  *
  */
+print_titre($ta->libelle);
 print '<table width="100%" class="noborder"><tr><td valign="top" width="70%">';
 
 $sql = "SELECT d.libelle as tarif_desc, d.type_tarif, d.rowid";
@@ -67,7 +70,7 @@ if ($resql)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
   print '<td width="25%">Grille</td>';
-  print '<td width="30%">Destination</td>';
+  print '<td width="30%">Tarif</td>';
   print '<td width="15%">Cout / min</td>';
   print '<td width="15%">Cout fixe</td>';
   print '<td width="15%">Type</td>';
@@ -127,7 +130,7 @@ if ($resql)
   print '<tr class="liste_titre">';
 
   print '<td width="25%">Grille</td>';
-  print '<td width="30%">Destination</td>';
+  print '<td width="30%">Tarif</td>';
   print '<td width="15%">Cout / min</td>';
   print '<td width="15%">Cout fixe</td>';
   print '<td width="15%">Type</td>';
@@ -215,7 +218,7 @@ if ($tp->tarif_id > 0)
   print '<td><input type="checkbox" name="force"></td></tr>';
 }
 
-print '<tr><td align="center"><input class="button" value="'.$langs->trans("Create").'" type="submit"></td></tr>';
+print '<tr><td align="center"><input class="button" value="'.$langs->trans("Add").'" type="submit"></td></tr>';
 
 print '</table></form>';
 
@@ -238,13 +241,7 @@ if ($tp->tarif_id > 0)
  
 }
 
-
-
 print '</td></tr></table>';
-
-
-
-
 
 $db->close();
 

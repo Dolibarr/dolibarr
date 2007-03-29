@@ -68,10 +68,7 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/config/prefixs.php", "Prefixs");
 
   if ($user->rights->telephonie->tarif->permission)
-    $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/permissions.php", "Permissions");
-
-  if ($user->rights->telephonie->tarif->permission)
-    $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/config/", "Configuration");
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/config/permissions.php", "Permissions");
 
   if ($user->rights->telephonie->fournisseur->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
