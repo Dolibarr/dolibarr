@@ -122,13 +122,16 @@ if ($_POST["action"] == "set")
 	  fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
 	  fputs($fp,"\n");
 
-	  /* Preparation integration SMARTY, LAISSER en commentaire pour le moment -> Rodo
-	    fputs($fp, '$dolibarr_smarty_compile="'.$_POST["smarty_compile"].'";');
-	    fputs($fp,"\n");
+	  /* Preparation integration SMARTY */
+	  fputs($fp, '$dolibarr_smarty_libs_dir="";');
+	  fputs($fp,"\n");
 	  
-	    fputs($fp, '$dolibarr_smarty_cache="'.$_POST["smarty_cache"].'";');
-	    fputs($fp,"\n");
-	  */
+	  fputs($fp, '$dolibarr_smarty_compile="";');
+	  fputs($fp,"\n");
+
+	  fputs($fp, '$dolibarr_smarty_cache="";');
+	  fputs($fp,"\n");
+	  /* Fin Smarty*/
 	  
 	  fputs($fp, '?>');
 	  fclose($fp);
