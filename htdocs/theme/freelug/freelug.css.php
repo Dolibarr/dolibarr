@@ -1,5 +1,6 @@
+<?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net> 
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +26,27 @@
 		\version    $Revision$
 */
 
+require("../../conf/conf.php");
+
+// Define css type
+header('Content-type: text/css');
+// Important: Avoid page request by browser and dynamic build at
+// each Dolibarr page access.
+header('Cache-Control: max-age=3600, public, must-revalidate');
+
+?>
+
 /* ============================================================================== */
 /* Styles par défaut                                                              */
 /* ============================================================================== */
 
 body {
-  margin: 0px;
-  background-color: #F8F8F8;
-  background-image: url("/theme/freelug/img/background.png");
-  text-decoration: none ;
-  color: #101010;
-  font: 12px helvetica, verdana, arial, sans-serif;
+	margin: 0px;
+	background-color: #F8F8F8;
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/background.png' ?>);
+	text-decoration: none ;
+	color: #101010;
+	font: 12px helvetica, verdana, arial, sans-serif;
 }
 
 a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -75,7 +86,7 @@ textarea.flat
 }
 select.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px helvetica, verdana, arial, sans-serif;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -89,7 +100,7 @@ select.flat
 	border-right: 1px solid #aaaaaa;
 	border-top: 1px solid #dddddd;
 	border-bottom: 1px solid #aaaaaa;
-	background-image: url(/theme/freelug/img/button_bg.png);
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.png' ?>);
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
@@ -101,7 +112,7 @@ select.flat
 	border-right: 1px solid #cccccc;
 	border-top: 1px solid #aaaaaa;
 	border-bottom: 1px solid #ffffff;
-	background-image: url(/theme/freelug/img/button_bg.png);
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.xxx' ?>);
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
@@ -111,28 +122,23 @@ select.flat
 /* Styles de positionnement des zones                                             */
 /* ============================================================================== */
 
-div.body
-{
-    margin-top: 1px;
-    margin-bottom: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    display:block;
-    padding:0px;
-    font-family:arial,tahoma,verdana,helvetica;
-    font-size:12px;
-}
-
 div.vmenuplusfiche
 {
+    top: auto;
+    left: auto;
+    position: static;
     float: left;
+    display: block;
     margin-right: 6px;
 }
 
 div.vmenu
 {
-    display:block;
-    float: left;
+    top: auto;
+    left: auto;
+    position: relative;
+    float: top;
+    display: block;
     margin-top: 2px;
     margin-right: 2px;
     padding: 0px;
@@ -142,9 +148,13 @@ div.vmenu
 
 div.fiche
 {
-    position: absolute;
-    display: block;
     top: 28px;
+    left: auto;
+<?php
+	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+?>
+    display: block;
     margin-right: 6px;
     margin-top: 0px;
 }

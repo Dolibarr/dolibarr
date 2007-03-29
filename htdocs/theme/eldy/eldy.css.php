@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -98,7 +98,7 @@ select.flat
 .button  {
     font: 12px helvetica, verdana, arial, sans-serif;
 	border: 0px;
-	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -168,7 +168,7 @@ div.tmenu
     font-size: 12px;
     height: 19px;
     background: #b3c5cc;
-    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     color: #000000;
     text-decoration: none;
 }
@@ -204,7 +204,7 @@ a.tmenu#sel
   font: 12px helvetica, verdana, arial, sans-serif;
   font-weight: bold;
   background: #dee7ec;
-  background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
+  background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
@@ -292,7 +292,7 @@ div.blockvmenupair
     padding: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
-    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -308,7 +308,7 @@ div.blockvmenuimpair
     padding: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
-    background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
     background-position:top;
     background-repeat:repeat-x;
 }
@@ -666,7 +666,7 @@ width: 100%;
 
 tr.liste_titre {
 background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -675,7 +675,7 @@ white-space: nowrap;
 }
 td.liste_titre {
 background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -685,7 +685,7 @@ white-space: nowrap;
 td.liste_titre_sel
 {
 background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #F5FFFF;
 font: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
@@ -694,7 +694,7 @@ white-space: nowrap;
 }
 input.liste_titre {
 background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 border: 0px;
 }
 
@@ -753,7 +753,7 @@ border: 0px;
  */
 tr.box_titre {
 background: #7699A9;
-background-image : url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
+background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font: 12px arial, helvetica, verdana, sans-serif;
 font-weight: bold;
