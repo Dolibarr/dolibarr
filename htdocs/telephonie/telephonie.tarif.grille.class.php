@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -36,7 +36,8 @@
 
 
 class TelephonieTarifGrille {
-
+  //! Identifiant de la grille
+  var $id;
   var $_DB;
   var $tableau_tarif;
   var $prefixes;
@@ -49,8 +50,88 @@ class TelephonieTarifGrille {
   function TelephonieTarifGrille($_DB)
   {
     $this->db = $_DB;
+  }
+
+  function CreateGrille($user, $name, $type)
+  {
+
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille";
+    $sql .= "(libelle, type_tarif)";
+    $sql .= " VALUES ('".addslashes($name)."','".$type."');";
+    
+    if ( $this->db->query($sql) )
+      {
+	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'telephonie_tarif_grille');
+
+	$this->Perms($user, 2, $user->id);
+      }
+    else
+      {
+	dolibarr_syslog($this->db->error());
+      }
+                  
+    return $result;
+  }
 
 
+  function Perms($user, $perms, $user_grille)
+  {
+
+    if ($perms == 0)
+      {
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+	$sql .= " WHERE fk_user = '".$user_grille."'";
+	$sql .= " AND fk_grille = '".$this->id."';";
+	$this->db->query($sql);
+      }
+    
+    if ($perms == 1)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+	$sql .= " SET pread= 1, pwrite = 0, fk_user_creat ='".$user->id."' WHERE fk_user = '".$user_grille."'";
+	$sql .= " AND fk_grille = '".$this->id."';";
+	if ( $this->db->query($sql) )
+	  {
+	    if ($this->db->affected_rows($resql) == 0)
+	      {
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+		$sql .= " (pread,pwrite,  fk_user, fk_grille, fk_user_creat) VALUES ";
+		$sql .= " (1,0,'".$user_grille."','".$this->id."','".$user->id."');";
+		if ( $this->db->query($sql) )
+		  {
+		    
+		  }
+	      }
+	  }
+      }
+    
+    if ($perms == 2)
+      {
+	$sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+	$sql .= " SET pread= 1, pwrite = 1, fk_user_creat ='".$user->id."' WHERE fk_user = '".$user_grille."'";
+	$sql .= " AND fk_grille = '".$this->id."';";
+	if ( $this->db->query($sql) )
+	  {
+	    
+	    if ($this->db->affected_rows($resql) == 0)
+	      {
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+		$sql .= " (pread,pwrite, fk_user, fk_grille, fk_user_creat) VALUES ";
+		$sql .= " (1,1,'".$user_grille."','".$this->id."','".$user->id."');";
+		if ( $this->db->query($sql) )
+		  {
+		    
+		  }
+		else
+		  {
+		    print $sql;
+		  }
+	      }
+	    
+	  }
+      }
+       
   }
 
 
