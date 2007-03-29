@@ -24,6 +24,7 @@ create table llx_facture_fourn
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   facnumber  varchar(50) NOT NULL,
+  type		 smallint DEFAULT 0 NOT NULL,
   fk_soc     integer NOT NULL,
   datec      datetime,    -- date de creation de la facture
   datef      date,        -- date de la facture

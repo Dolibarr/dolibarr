@@ -153,6 +153,7 @@ update llx_commande set date_livraison = null where date_livraison = '1970-01-01
 ALTER TABLE llx_facture_fourn DROP INDEX facnumber;
 ALTER TABLE llx_facture_fourn ADD UNIQUE INDEX uk_facture_fourn_ref (facnumber, fk_soc);
 ALTER TABLE llx_facture_fourn ADD note_public text after note;
+alter table llx_facture_fourn add column `type` smallint DEFAULT 0 NOT NULL after facnumber;
 
 ALTER TABLE llx_facture_fourn_det ADD INDEX idx_facture_fourn_det_fk_facture (fk_facture_fourn);
 ALTER TABLE llx_facture_fourn_det ADD CONSTRAINT fk_facture_fourn_det_fk_facture FOREIGN KEY (fk_facture_fourn) REFERENCES llx_facture_fourn (rowid);

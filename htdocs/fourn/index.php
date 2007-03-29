@@ -29,6 +29,8 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.facture.class.php');
 
 if (!$user->rights->societe->lire)
   accessforbidden();
@@ -50,7 +52,9 @@ if ($user->societe_id > 0)
 * Affichage page
 */
 
-$facturestatic=new Facture($db);
+$commandestatic=new CommandeFournisseur($db);
+$facturestatic=new FactureFournisseur($db);
+$companystatic=new Societe($db);
 
 llxHeader("",$langs->trans("SuppliersArea"));
 
@@ -59,9 +63,10 @@ print_fiche_titre($langs->trans("SuppliersArea"));
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
+
 /*
  * Liste des categories
- *
+ * \TODO Il n'y a aucun écran pour les saisir !
  */
 $sql = "SELECT rowid, label";
 $sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
@@ -70,31 +75,35 @@ $sql.= " ORDER BY label ASC";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">';
-  print $langs->trans("Category");
-  print "</td></tr>\n";
-  $var=True;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  while ($obj = $db->fetch_object($resql))
-    {
-      $var=!$var;
-      print "<tr $bc[$var]>\n";
-      print '<td><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a>';
-      print '</td><td align="right">';
-      print '<a href="stats.php?cat='.$obj->rowid.'">('.$langs->trans("Stats").')</a>';
-      print "</tr>\n";
-    }
-  print "</table>\n";
+	if ($num)
+	{
+		print '<table class="liste" width="100%">';
+		print '<tr class="liste_titre"><td colspan="2">';
+		print $langs->trans("Category");
+		print "</td></tr>\n";
+		$var=True;
 
-  $db->free($resql);
+		while ($obj = $db->fetch_object($resql))
+		{
+			$var=!$var;
+			print "<tr $bc[$var]>\n";
+			print '<td><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a>';
+			print '</td><td align="right">';
+			print '<a href="stats.php?cat='.$obj->rowid.'">('.$langs->trans("Stats").')</a>';
+			print "</tr>\n";
+		}
+		print "</table>\n";
+		print "<br>\n";
+	}
+	
+	$db->free($resql);
 }
 else 
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 
@@ -112,29 +121,30 @@ $sql.= " GROUP BY cf.fk_statut";
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  print '<br/><table class="liste" width="100%">';
-  print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
-  print "</tr>\n";
-  $var=True;
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  while ($i < $num)
-    {
-      $row = $db->fetch_row($resql);
-      $var=!$var;
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre"><td>'.$langs->trans("Orders").'</td><td align="center">'.$langs->trans("Nb").'</td><td>&nbsp;</td>';
+	print "</tr>\n";
+	$var=True;
 
-      print "<tr $bc[$var]>";
-      print '<td>'.$commande->statuts[$row[1]].'</td>';
-      print '<td align="center">'.$row[0].'</td>';
-      print '<td align="center"><a href="commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+	while ($i < $num)
+	{
+		$row = $db->fetch_row($resql);
+		$var=!$var;
 
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free($resql);
+		print "<tr $bc[$var]>";
+		print '<td>'.$commande->statuts[$row[1]].'</td>';
+		print '<td align="center">'.$row[0].'</td>';
+		print '<td align="center"><a href="'.DOL_URL_ROOT.'/fourn/commande/liste.php?statut='.$row[1].'">'.$commande->LibStatut($row[1],3).'</a></td>';
+
+		print "</tr>\n";
+		$i++;
+	}
+	print "</table>";
+	print "<br>\n";
+	$db->free($resql);
 }
 else 
 {
@@ -142,14 +152,71 @@ else
 }
 
 
+/*
+ * Commandes brouillons
+ */
+if ($conf->fournisseur->enabled)
+{
+    $langs->load("orders");
+    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
+    $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+    if ($socid)
+    {
+        $sql .= " AND c.fk_soc = ".$socid;
+    }
+
+    $resql = $db->query($sql);
+    if ($resql)
+    {
+        $total = 0;
+        $num = $db->num_rows($resql);
+        if ($num)
+        {
+            print '<table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td colspan="3">'.$langs->trans("DraftOrders").'</td></tr>';
+
+            $i = 0;
+            $var = true;
+            while ($i < $num)
+            {
+                $var=!$var;
+                $obj = $db->fetch_object($resql);
+                print "<tr $bc[$var]><td nowrap>";
+				$commandestatic->id=$obj->rowid;
+				$commandestatic->ref=$obj->ref;
+				print $commandestatic->getNomUrl(1,'',16);
+				print '</td>';
+                print '<td>';
+				$companystatic->id=$obj->idp;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=0;
+				print $companystatic->getNomUrl(1,'',16);
+				print '</td>';
+                print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
+                $i++;
+                $total += $obj->total_ttc;
+            }
+            if ($total>0)
+            {
+                $var=!$var;
+                print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td colspan="2" align="right">'.price($total)."</td></tr>";
+            }
+            print "</table>";
+			print "<br>\n";
+        }
+    }
+}
+
 /**
  * Factures brouillons
  */
-if ($conf->facture->enabled && $user->rights->fournisseur->facture->lire)
+if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
 	$sql.= " s.nom, s.idp";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
 	if ($socid)
 	{
@@ -163,9 +230,7 @@ if ($conf->facture->enabled && $user->rights->fournisseur->facture->lire)
 		$num = $db->num_rows($resql);
 		if ($num)
 		{
-			$companystatic=new Societe($db);
-
-			print '<br/><table class="noborder" width="100%">';
+			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
 			$i = 0;
@@ -184,7 +249,7 @@ if ($conf->facture->enabled && $user->rights->fournisseur->facture->lire)
 				print '<td>';
 				$companystatic->id=$obj->idp;
 				$companystatic->nom=$obj->nom;
-				$companystatic->client=1;
+				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
@@ -197,7 +262,8 @@ if ($conf->facture->enabled && $user->rights->fournisseur->facture->lire)
 			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
 			print '</tr>';
 
-			print "</table><br>";
+			print "</table>";
+			print "<br>\n";
 		}
 		$db->free($resql);
 	}

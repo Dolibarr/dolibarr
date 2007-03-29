@@ -191,7 +191,7 @@ if ($conf->commande->enabled)
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)
     {
-        $sql .= " AND c.fk_soc = $socid";
+        $sql .= " AND c.fk_soc = ".$socid;
     }
 
     $resql = $db->query($sql);
@@ -289,7 +289,7 @@ $sql.= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
-    $sql .= " AND s.idp = $socid";
+    $sql .= " AND s.idp = ".$socid;
 }
 $sql .= " ORDER BY a.datep DESC, a.id DESC";
 

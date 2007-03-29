@@ -363,6 +363,31 @@ class CommandeFournisseur extends Commande
   }
 
 
+  	/**
+		\brief      Renvoie nom clicable (avec eventuellement le picto)
+		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+		\param		option			Sur quoi pointe le lien
+		\return		string			Chaine avec URL
+	*/
+	function getNomUrl($withpicto=0,$option='')
+	{
+		global $langs;
+		
+		$result='';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$this->id.'">';
+		$lienfin='</a>';
+		
+		$picto='order';
+		$label=$langs->trans("ShowOrder").': '.$this->ref;
+		
+		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
+		if ($withpicto && $withpicto != 2) $result.=' ';
+		$result.=$lien.$this->ref.$lienfin;
+		return $result;
+	}
+
+	
   /**
    *      \brief      Renvoie la référence de commande suivante non utilisée en fonction du module
    *                  de numérotation actif défini dans COMMANDE_SUPPLIER_ADDON

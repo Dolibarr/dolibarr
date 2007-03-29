@@ -374,9 +374,9 @@ class Facture extends CommonObject
     if ($this->type == 1) $picto.='r';
     if ($this->type == 2) $picto.='a';
 
-    $label=$langs->trans("ShowInvoice");
-    if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace");
-    if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir");
+    $label=$langs->trans("ShowInvoice").': '.$this->ref;
+    if ($this->type == 1) $label=$langs->trans("ShowInvoiceReplace").': '.$this->ref;
+    if ($this->type == 2) $label=$langs->trans("ShowInvoiceAvoir").': '.$this->ref;
 		
     if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
     if ($withpicto && $withpicto != 2) $result.=' ';
