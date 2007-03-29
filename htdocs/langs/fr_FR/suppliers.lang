@@ -18,3 +18,4 @@ ErrorSupplierCountryIsNotDefined=Le pays de ce fournisseur n'est pas défini. Cor
 ProductHasAlreadyReferenceInThisSupplier=Ce produit a déjà une référence chez ce fournisseur
 NoRecordedSuppliers=Pas de fournisseurs enregistrés
 SupplierPayment=Paiement fournisseur
+SuppliersArea=Espace fournisseurs

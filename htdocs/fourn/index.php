@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -37,8 +37,6 @@ $langs->load("suppliers");
 $langs->load("orders");
 $langs->load("companies");
 
-llxHeader();
-
 // Sécurité accés client
 $socid='';
 if ($user->societe_id > 0) 
@@ -46,6 +44,17 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
+
+
+/*
+* Affichage page
+*/
+
+$facturestatic=new Facture($db);
+
+llxHeader("",$langs->trans("SuppliersArea"));
+
+print_fiche_titre($langs->trans("SuppliersArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 print '<tr><td valign="top" width="30%" class="notopnoleft">';
@@ -87,6 +96,8 @@ else
 {
   dolibarr_print_error($db);
 }
+
+
 /*
  *
  */
@@ -128,6 +139,72 @@ if ($resql)
 else 
 {
   dolibarr_print_error($db);
+}
+
+
+/**
+ * Factures brouillons
+ */
+if ($conf->facture->enabled && $user->rights->fournisseur->facture->lire)
+{
+	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
+	$sql.= " s.nom, s.idp";
+	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
+	$sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+	if ($socid)
+	{
+		$sql .= " AND f.fk_soc = ".$socid;
+	}
+
+	$resql = $db->query($sql);
+
+	if ( $resql )
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
+		{
+			$companystatic=new Societe($db);
+
+			print '<br/><table class="noborder" width="100%">';
+			print '<tr class="liste_titre">';
+			print '<td colspan="3">'.$langs->trans("DraftBills").' ('.$num.')</td></tr>';
+			$i = 0;
+			$tot_ttc = 0;
+			$var = True;
+			while ($i < $num && $i < 20)
+			{
+				$obj = $db->fetch_object($resql);
+				$var=!$var;
+				print '<tr '.$bc[$var].'><td nowrap>';
+				$facturestatic->ref=$obj->facnumber;
+				$facturestatic->id=$obj->rowid;
+				$facturestatic->type=$obj->type;
+				print $facturestatic->getNomUrl(1,'');
+				print '</td>';
+				print '<td>';
+				$companystatic->id=$obj->idp;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=1;
+				print $companystatic->getNomUrl(1,'',16);
+				print '</td>';
+				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '</tr>';
+				$tot_ttc+=$obj->total_ttc;
+				$i++;
+			}
+
+			print '<tr class="liste_total"><td align="left">'.$langs->trans("Total").'</td>';
+			print '<td colspan="2" align="right">'.price($tot_ttc).'</td>';
+			print '</tr>';
+
+			print "</table><br>";
+		}
+		$db->free($resql);
+	}
+	else
+	{
+		dolibarr_print_error($db);
+	}
 }
 
 /*
