@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,7 +78,7 @@ if ($_POST["action"] == 'add')
             $_GET["action"]='create';   // Force chargement page en mode creation
         }
     } else {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("LabelBankCashAccount")).'</div>';
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
         $_GET["action"]='create';       // Force chargement page en mode creation
     }
 }
@@ -130,7 +130,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
             $_GET["action"]='edit';     // Force chargement page edition
         }
     } else {
-        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("LabelBankCashAccount")).'</div>';
+        $message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("LabelBankCashAccount")).'</div>';
         $_GET["action"]='create';       // Force chargement page en mode creation
     }
 }
@@ -219,7 +219,18 @@ if ($_GET["action"] == 'create')
 	// Comment
 	print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 	print '<td colspan="3">';
-	print '<textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea>';
+   // éditeur wysiwyg
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
+		print $mil->body.'</textarea>';
+	}
 	print '</td></tr>';
 
 	// Solde
@@ -382,8 +393,8 @@ else
         print '<td colspan="3"><input size="30" type="text" class="flat" name="label" value="'.$account->label.'"></td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("AccountType").'</td>';
-        print '<td colspan="3">'.$account->type_lib[$account->type];
-        print '<input type="hidden" name="type" value="'.$account->type.'">';
+        print '<td colspan="3">';
+		print $form->select_type_comptes_financiers($account->type,"type");
         print '</td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
@@ -435,7 +446,18 @@ else
 		// Comment
 		print '<tr><td valign="top">'.$langs->trans("Comment").'</td>';
 		print '<td colspan="3">';
-		print '<textarea cols="70" class="flat" name="account_comment">'.$account->comment.'</textarea>';
+	   // éditeur wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('account_comment',$account->comment,200,'dolibarr_notes','',false);
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea class="flat" name="account_comment" cols="70" rows="10">';
+			print $mil->body.'</textarea>';
+		}
 		print '</td></tr>';
         
         print '<tr><td align="center" colspan="4"><input value="'.$langs->trans("Modify").'" type="submit" class="button">';
