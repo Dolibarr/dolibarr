@@ -685,9 +685,8 @@ else
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
 				$var=!$var;
-
 				// Ligne en modification
-				if ($_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
+				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
 				{
 					print '<form action="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
 					print '<input type="hidden" name="tauxtva" value="'.$fac->lignes[$i]->tva_taux.'">';
@@ -737,7 +736,7 @@ else
 				
 			}
 
-			if ($_GET['action'] != 'mod_ligne')
+			if ($fac->statut == 0 && $_GET['action'] != 'mod_ligne')
 			{
 				/* Nouvelle ligne */
 				$var=!$var;
