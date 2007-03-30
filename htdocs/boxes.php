@@ -153,7 +153,7 @@ class InfoBox
      */
 	function saveboxorder($zone,$boxarray,$user)
 	{
-		dolibarr_syslog("InfoBoxes::saveboxorder zone=$zone user=$user");
+		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$user->id);
 
 		if (! is_object($user) || ! $user->id) return 0;
 
