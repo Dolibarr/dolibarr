@@ -78,7 +78,7 @@ class Webcal {
 {
         global $langs;
         
-        dolibarr_syslog("Webcal::add user=".$user);
+        dolibarr_syslog("Webcal::add user=".$user->id);
 
         // Test si login webcal défini pour le user
         if (! $user->webcal_login)
