@@ -1803,11 +1803,7 @@ else
     {
       $sql .= " AND p.ref like '%".addslashes($_POST["sf_ref"]) . "%'";
     }
-  // on ne liste pas les propales classer ayant le statut signé, facturé, non signé
-  if ($conf->global->PROPALE_HIDE_TREATED && (!$sall && empty($_GET['search_ref']) && empty($_GET['search_societe']) && empty($_GET['search_montant_ht'])))
-  {
-	  $sql .= ' AND p.fk_statut < 2';
-  }
+
   $sql .= ' ORDER BY '.$sortfield.' '.$sortorder.', p.ref DESC';
   $sql .= $db->plimit($limit + 1,$offset);
   $result=$db->query($sql);
