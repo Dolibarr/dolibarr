@@ -152,7 +152,7 @@ class MouvementStock
   {
     $error = 0;
     dolibarr_syslog("MouvementStock::_CreateSubProduct $user->id, $fk_product, $entrepot_id, $qty, $type, $price");
-    pids = array();
+    $pids = array();
 
     $sql = "SELECT fk_product_subproduct FROM ".MAIN_DB_PREFIX."product_subproduct";
     $sql.= " WHERE fk_product = $fk_product;";
