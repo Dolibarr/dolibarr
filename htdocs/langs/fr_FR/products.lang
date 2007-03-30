@@ -4,7 +4,6 @@ Products=Produits
 Services=Services
 Product=Produit
 Service=Service
-Create=Créer
 Reference=Référence
 NewProduct=Nouveau produit
 NewService=Nouveau service
