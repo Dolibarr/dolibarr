@@ -1838,13 +1838,16 @@ function price($amount, $html=0, $outlangs='')
   
   if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
   if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
-  //print "x".$langs->trans("SeparatorThousand")."x";
+  //print "dec=".$dec." thousand=".$thousand;
 
   // On pose par defaut 2 decimales
   $decimal = 2;
+  //print "xx".$amount."-";	
   $amount = ereg_replace(',','.',$amount);
-  $datas = split('.',$amount);
+  //print $amount."-";
+  $datas = split("\.",$amount);
   $decpart = $datas[1];
+  //print $datas[1]."<br>";
 
   // On augmente au besoin si il y a plus de 2 décimales
   if (strlen($decpart) > 2) $decimal=strlen($decpart);
