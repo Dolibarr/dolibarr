@@ -85,7 +85,7 @@ if ($resql)
 
       print "<tr $bc[$var]>";
 
-      print '<td><a href="grille.php?id='.$obj->rowid.'">';
+      print '<td><a href="../grille.php?id='.$obj->rowid.'">';
       print $obj->tarif_desc."</a></td>\n";
 
       print "<td>".$obj->tarif."</td>\n";
