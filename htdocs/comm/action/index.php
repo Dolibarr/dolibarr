@@ -117,7 +117,7 @@ if ($resql)
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','colspan="4"',$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
@@ -134,38 +134,37 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
-		print '<td align="right" nowrap="nowrap">';
         if ($oldyear == strftime("%Y",$obj->dp) )
         {
+        	print '<td width="30" align="center">|</td>';
         }
         else
         {
-            print strftime("%Y",$obj->dp)."-";
+            print '<td width="30" align="center">'.strftime("%Y",$obj->dp).'</td>';
             $oldyear = strftime("%Y",$obj->dp);
         }
 
         if ($oldmonth == strftime("%Y%m",$obj->dp) )
         {
+        	print '<td width="30" align="center">|</td>';
         }
         else
         {
-            print strftime("%m",$obj->dp)."-";
+            print '<td width="30" align="center">'.strftime("%b",$obj->dp).'</td>';
             $oldmonth = strftime("%Y%m",$obj->dp);
         }
 
         if ($oldday == strftime("%Y%m%d",$obj->dp) )
         {
+        	print '<td width="30" align="center">|</td>';
         }
         else
         {
-	        print strftime("%d",$obj->dp)." ";
+	        print '<td width="30" align="center">'.strftime("%d",$obj->dp).' </td>';
             $oldday = strftime("%Y%m%d",$obj->dp);
         }
 
-        print strftime("%H:%M",$obj->dp);
-        print "</td>\n";
-
-//        print '<td align="center">'.dolibarr_print_date($obj->dp)."</td>\n";
+        print '<td width="30" align="center">'.strftime("%H:%M",$obj->dp).'</td>';
 
         // Action (type)
         print '<td>';
