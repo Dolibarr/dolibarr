@@ -182,7 +182,7 @@ if ($resql)
 
         // Société
         print '<td>';
-        $societestatic->rowid=$obj->socid;
+        $societestatic->id=$obj->socid;
 		$societestatic->client=$obj->client;
 		$societestatic->nom=$obj->societe;
         print $societestatic->getNomUrl(1,'',16);
