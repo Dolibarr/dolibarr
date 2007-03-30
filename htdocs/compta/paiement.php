@@ -128,85 +128,84 @@ if ($_POST['action'] == 'add_paiement')
 if ($_POST['action'] == 'confirm_paiement' && $_POST['confirm'] == 'yes')
 {
   if (! $error)
+  {
+  	$db->begin();
+  	
+  	// Creation de la ligne paiement
+  	$paiement = new Paiement($db);
+    $paiement->datepaye     = $datepaye;
+    $paiement->amounts      = $amounts;   // Tableau de montant
+    $paiement->paiementid   = $_POST['paiementid'];
+    $paiement->num_paiement = $_POST['num_paiement'];
+    $paiement->note         = $_POST['comment'];
+      
+    $paiement_id = $paiement->create($user);
+      
+    if ($paiement_id > 0)
     {
-      $db->begin();
-      
-      // Creation de la ligne paiement
-      $paiement = new Paiement($db);
-      $paiement->datepaye     = $datepaye;
-      $paiement->amounts      = $amounts;   // Tableau de montant
-      $paiement->paiementid   = $_POST['paiementid'];
-      $paiement->num_paiement = $_POST['num_paiement'];
-      $paiement->note         = $_POST['comment'];
-      
-      $paiement_id = $paiement->create($user);
-      
-      if ($paiement_id > 0)
-	{
-	  if ($conf->banque->enabled)
+    	if ($conf->banque->enabled)
 	    {
-	      // Insertion dans llx_bank
+	    	// Insertion dans llx_bank
 	      $label = "(CustomerInvoicePayment)";
 	      $acc = new Account($db, $_POST['accountid']);
 	      //paiementid contient "CHQ ou VIR par exemple"
 	      $bank_line_id = $acc->addline($paiement->datepaye,
-					    $paiement->paiementid,
-					    $label,
-					    $totalpaiement,
-					    $paiement->num_paiement,
-					    '',
-					    $user,
-					    $_POST['chqemetteur'],
-					    $_POST['chqbank']);
+	      															$paiement->paiementid,
+	      															$label,
+	      															$totalpaiement,
+	      															$paiement->num_paiement,
+	      															'',
+	      															$user,
+	      															$_POST['chqemetteur'],
+	      															$_POST['chqbank']);
 	      
 	      // Mise a jour fk_bank dans llx_paiement.
 	      // On connait ainsi le paiement qui a généré l'écriture bancaire
 	      if ($bank_line_id > 0)
-		{
-		  $paiement->update_fk_bank($bank_line_id);
-		  // Mise a jour liens (pour chaque facture concernées par le paiement)
-		  foreach ($paiement->amounts as $key => $value)
-		    {
-		      $facid = $key;
-		      $fac = new Facture($db);
-		      $fac->fetch($facid);
-		      $fac->fetch_client();
-		      $acc->add_url_line($bank_line_id,
-					 $paiement_id,
-					 DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
-					 '(paiement)',
-					 'payment');
-		      $acc->add_url_line($bank_line_id,
-					 $fac->client->id,
-					 DOL_URL_ROOT.'/compta/fiche.php?socid=',
-					 $fac->client->nom,
-					 'company');
+	      {
+	      	$paiement->update_fk_bank($bank_line_id);
+	      	// Mise a jour liens (pour chaque facture concernées par le paiement)
+	      	foreach ($paiement->amounts as $key => $value)
+	      	{
+	      		$facid = $key;
+		        $fac = new Facture($db);
+		        $fac->fetch($facid);
+		        $fac->fetch_client();
+		        $acc->add_url_line($bank_line_id,
+		        									 $paiement_id,
+		        									 DOL_URL_ROOT.'/compta/paiement/fiche.php?id=',
+		        									 '(paiement)',
+		        									 'payment');
+		       $acc->add_url_line($bank_line_id,
+		       										$fac->client->id,
+		       										DOL_URL_ROOT.'/compta/fiche.php?socid=',
+		       										$fac->client->nom,
+		       										'company');
+		      }
 		    }
-		}
 	      else
-		{
-		  $error++;
-		}
+	      {
+	      	$error++;
+	      }
 	    }
-	}
-      else
-	{
-	  $this->error=$paiement->error;
-	  $error++;
-	}
-      
-      if ($error == 0)
-	{
-	  $loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
-	  $db->commit();
-	  Header('Location: '.$loc);
-	  exit;
-	}
-      else
-	{
-	  $db->rollback();
-	}
-    }
+	  }
+	  else
+	  {
+	  	$error++;
+	  }
+	  
+	  if ($error == 0)
+	  {
+	  	$loc = DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$paiement_id;
+	    $db->commit();
+	    Header('Location: '.$loc);
+	    exit;
+	  }
+    else
+	  {
+	    $db->rollback();
+	  }
+  }
 }
 
 // Sécurité accés client
