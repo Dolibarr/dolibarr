@@ -1811,7 +1811,7 @@ else
   if ($result)
     {
       $num = $db->num_rows($result);
-      print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
+      print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="liste" width="100%">';
       print '<tr class="liste_titre">';
