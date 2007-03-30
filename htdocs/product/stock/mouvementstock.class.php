@@ -327,7 +327,9 @@ class MouvementStock
 	  if ($qty > 0)
 	    {	      
 	      // on stock
-	      $new_pmp = ( ($qty * $price) + ($qty_stock * $price_pmp ) ) / ($qty + $qty_stock);
+	      if (($qty + $qty_stock) <> 0)
+		$new_pmp = ( ($qty * $price) + ($qty_stock * $price_pmp ) ) / ($qty + $qty_stock);
+
 	      $value_ope = $qty * $price;
 	      $new_stock_qty = $qty_stock + $qty;
 	      $new_stock_value_pmp = $stock_value_pmp + $value_ope;
