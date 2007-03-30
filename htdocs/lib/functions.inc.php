@@ -1842,8 +1842,8 @@ function price($amount, $html=0, $outlangs='')
 
   // On pose par defaut 2 decimales
   $decimal = 2;
-  $amount = ereg_replace(',','\.',$amount);
-  $datas = split('\.',$amount);
+  $amount = ereg_replace(',','.',$amount);
+  $datas = split('.',$amount);
   $decpart = $datas[1];
 
   // On augmente au besoin si il y a plus de 2 décimales
