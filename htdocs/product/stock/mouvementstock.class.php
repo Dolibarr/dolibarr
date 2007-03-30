@@ -158,23 +158,23 @@ class MouvementStock
     $sql.= " WHERE fk_product = $fk_product;";
 	  
     if ($this->db->query($sql))
-      {
-	while ($row = $this->db->fetch_row($resql) )
-	  {
-	    array_push($row[0]);
-	  }
-	$this->db->free($resql);
-      }
+    {
+    	while ($row = $this->db->fetch_row($resql) )
+    	{
+    		array_push($row[0]);
+    	}
+    	$this->db->free($resql);
+    }
     else
-      {
-	dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
-	$error = -2;
-      }
+    {
+    	dolibarr_syslog("MouvementStock::_Create echec update ".$this->error);
+    	$error = -2;
+    }
 
     foreach($pids as $pid)
-      {
-	$this->_create($user, $pid, $entrepot_id, $qty, $type, $price=0)
-      }
+    {
+    	$this->_create($user, $pid, $entrepot_id, $qty, $type, $price=0);
+    }
 
     return $error;
   }
