@@ -92,24 +92,20 @@ if ($socid)
 {
 	$sql .= ' AND s.idp = '.$socid;
 }
-if ($viewstatut <> '' && $viewstatut < 4)
+if ($viewstatut <> '')
 {
-	if ($viewstatut == 3)
+	if ($viewstatut < 4)
 	{
-		$sql .= ' AND c.fk_statut ='.$viewstatut.' AND c.facture = 0';
+		$sql .= ' AND c.fk_statut ='.$viewstatut; // brouillon, validée, en cours, annulée
+		if ($viewstatut == 3)
+		{
+			$sql .= ' AND c.facture = 0'; // à facturer
+		}
 	}
-	else
+	else if ($viewstatut == 4)
 	{
-		$sql .= ' AND c.fk_statut ='.$viewstatut;
+		$sql .= ' AND c.facture = 1'; // facturée
 	}
-}
-if ($viewstatut <> '' && $viewstatut == 4)
-{
-	$sql .= ' AND c.facture = 1';
-}
-else if (isset($_GET['afacturer']) && $_GET['afacturer'] == 1)
-{
-	$sql .= ' AND c.facture = 0';
 }
 if ($_GET['month'] > 0)
 {
