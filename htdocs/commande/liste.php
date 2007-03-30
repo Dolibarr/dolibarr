@@ -148,7 +148,7 @@ if ($resql)
 	if ($_GET['status'] == 3)
 		$title.=' - '.$langs->trans('StatusOrderToBill');
 	$num = $db->num_rows($resql);
-	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid,$sortfield,$sortorder,'',$num);
+	print_barre_liste($title, $_GET['page'], 'liste.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 	$i = 0;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
