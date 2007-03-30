@@ -124,11 +124,6 @@ if ($_GET["action"] == 'setmod')
   dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
 }
 
-if ($_POST["action"] == 'sethidetreated')
-{
-  dolibarr_set_const($db, "COMMANDE_HIDE_TREATED",$_POST["hidetreated"]);
-}
-
 if ($_POST["action"] == 'setvalidorder')
 {
   dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"]);
@@ -347,19 +342,6 @@ print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td align="center" width="160">'.$langs->trans("Value").'</td>';
 print "</tr>\n";
 $var=true;
-
-// Cacher les commandes classer facturées des listes
-$var=! $var;
-
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("HideTreadedOrders");
-print '</td><td width="160" align="center">';
-print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="sethidetreated">';
-print $html->selectyesno("hidetreated",$conf->global->COMMANDE_HIDE_TREATED,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n";
-print "</td></tr>\n";
 
 // Valider la commande après cloture de la propale
 // permet de na pas passer par l'option commande provisoire

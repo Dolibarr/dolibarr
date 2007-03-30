@@ -62,6 +62,7 @@ llxHeader();
 $begin=$_GET['begin'];
 $sortorder=$_GET['sortorder'];
 $sortfield=$_GET['sortfield'];
+$viewstatut=$_GET['viewstatut'];
 
 if (! $sortfield) $sortfield='c.rowid';
 if (! $sortorder) $sortorder='DESC';
@@ -91,6 +92,25 @@ if ($socid)
 {
 	$sql .= ' AND s.idp = '.$socid;
 }
+if ($viewstatut <> '' && $viewstatut < 4)
+{
+	if ($viewstatut == 3)
+	{
+		$sql .= ' AND c.fk_statut ='.$viewstatut.' AND c.facture = 0';
+	}
+	else
+	{
+		$sql .= ' AND c.fk_statut ='.$viewstatut;
+	}
+}
+if ($viewstatut <> '' && $viewstatut == 4)
+{
+	$sql .= ' AND c.facture = 1';
+}
+else if (isset($_GET['afacturer']) && $_GET['afacturer'] == 1)
+{
+	$sql .= ' AND c.facture = 0';
+}
 if ($_GET['month'] > 0)
 {
 	$sql .= " AND date_format(c.date_commande, '%Y-%m') = '$year-$month'";
@@ -98,14 +118,6 @@ if ($_GET['month'] > 0)
 if ($_GET['year'] > 0)
 {
 	$sql .= " AND date_format(c.date_commande, '%Y') = $year";
-}
-if (isset($_GET['status']))
-{
-	$sql .= " AND fk_statut = ".$_GET['status'];
-}
-if (isset($_GET['afacturer']) && $_GET['afacturer'] == 1)
-{
-	$sql .= ' AND c.facture = 0';
 }
 if (strlen($_POST['sf_ref']) > 0)
 {
@@ -118,11 +130,6 @@ if (!empty($snom))
 if (!empty($sref_client))
 {
 	$sql .= ' AND c.ref_client like \'%'.addslashes($sref_client).'%\'';
-}
-// on ne liste pas les commandes classer facturées et annulées, elles apparaissent tout de même avec la recherche
-if ($conf->global->COMMANDE_HIDE_TREATED && (!$sref && !$sref_client && !$snom && !$sall && (!strlen($_POST['sf_ref']) > 0)))
-{
-	$sql .= ' AND c.facture = 0 AND c.fk_statut >= 0';
 }
 
 $sql .= ' ORDER BY '.$sortfield.' '.$sortorder;
@@ -149,11 +156,11 @@ if ($resql)
 	$i = 0;
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid,'width="25%"',$sortfield);
-	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid,'width="30%"',$sortfield);
-	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid,'width="15%"',$sortfield);
-	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid, 'width="20%" align="right" colspan="2"',$sortfield);
-	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid,'width="10%" align="center"',$sortfield);
+	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield);
+	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="30%"',$sortfield);
+	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="15%"',$sortfield);
+	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right" colspan="2"',$sortfield);
+	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="10%" align="center"',$sortfield);
 	print '</tr>';
 	// Lignes des champs de filtre
 	print '<form method="get" action="liste.php">';
