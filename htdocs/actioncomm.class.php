@@ -83,6 +83,13 @@ class ActionComm
 
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
+        
+        // Régis: Si c'est un envoi de document par mail on met la date prévue à la date d'envoi (à valider)
+        // afin de ne pas avoir des 1970 dans la liste des actions
+        if ($this->type_id == 3 || $this->type_id == 8 || $this->type_id == 9 || $this->type_id == 10)
+        {
+        	$this->datep = $this->date;
+        }
 
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
