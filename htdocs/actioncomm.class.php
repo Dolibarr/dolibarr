@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -79,18 +79,9 @@ class ActionComm
     {
         global $langs,$conf;
     
-        dolibarr_syslog("ActionComm.class::add type_id=".$this->type_id." datep=".strftime("%x %X",$this->datep)." datea=".$this->datea);
-
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
         
-        // Régis: Si c'est un envoi de document par mail on met la date prévue à la date d'envoi (à valider)
-        // afin de ne pas avoir des 1970 dans la liste des actions
-        if ($this->type_id == 3 || $this->type_id == 8 || $this->type_id == 9 || $this->type_id == 10)
-        {
-        	$this->datep = $this->date;
-        }
-
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
         if ($this->datep) $sql.= "datep,";
@@ -106,22 +97,25 @@ class ActionComm
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
-        $sql.= ");";
+        $sql.= ")";
     
-        if ($this->db->query($sql) )
+        dolibarr_syslog("ActionComm.class::add sql=".$sql);
+        $resql=$this->db->query($sql);
+		if ($resql)
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
     
            // Appel des triggers
             include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
             $interface=new Interfaces($this->db);
-            $interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
+            $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
             // Fin appel triggers
     
             return $this->id;
         }
         else
         {
+			$this->error=$this->db->error();
             dolibarr_print_error($this->db);
             return -1;
         }
@@ -146,7 +140,7 @@ class ActionComm
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 	
 		dolibarr_syslog("ActionComm.class::fetch sql=".$sql);
-	
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
