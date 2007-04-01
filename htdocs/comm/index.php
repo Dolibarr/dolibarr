@@ -324,7 +324,7 @@ if ($resql)
             $customerstatic->id=$obj->idp;
             $customerstatic->nom=$obj->sname;
             $customerstatic->client=$obj->client;
-            print '<td>'.$customerstatic->getNomUrl(1,'').'</td>';
+            print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
 
 			// Date
 			print '<td width="100">'.dolibarr_print_date($obj->dp).'&nbsp;';
@@ -357,7 +357,9 @@ else
  * Dernières actions commerciales effectuées
  */
 
-$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, c.code, c.libelle, a.fk_user_author, s.nom as sname, s.idp";
+$sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, a.fk_user_author,";
+$sql.= " c.code, c.libelle,";
+$sql.= " s.idp, s.nom as sname, s.client";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -397,7 +399,10 @@ if ($resql)
 		print $libelle;
 		print '</a></td>';
 
-		print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.$obj->sname.'</a></td>';
+		$customerstatic->id=$obj->idp;
+		$customerstatic->nom=$obj->sname;
+		$customerstatic->client=$obj->client;
+		print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
 		// Date
 		print '<td width="100">'.dolibarr_print_date($obj->da);
