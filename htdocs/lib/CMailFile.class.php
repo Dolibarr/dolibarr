@@ -174,31 +174,43 @@ class CMailFile
         $errorlevel=error_reporting();
         error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
 
+		$res=false;
+		
         if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
         {
 			if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
 			if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 
-	        if ($this->errors_to)
-	        {
-	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
-	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
-	        }
-	        else
-	        {
-	            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
-	            $res = mail(getValidAddress($this->addr_to,2),$this->subject,stripslashes($this->message),$this->headers);
-	        }
-	        if (! $res) 
-	        {
-	        	$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-	        	dolibarr_syslog("CMailFile::sendfile: mail end res=$res ".$this->error);
-	        }
-	        else
-	        {
-	        	dolibarr_syslog("CMailFile::sendfile: mail end res=$res");
-	        }
-
+            $dest=getValidAddress($this->addr_to,2);
+			if (! $dest)
+			{
+				$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
+				dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
+			}
+			else
+			{
+				if ($this->errors_to)
+		        {
+					// \TODO Tester que le safe_mode est inactif car fonction mail avec ces param non dispo en safe_mode
+		            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
+					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
+		        }
+		        else
+		        {
+		            dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
+		            //dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
+					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
+		        }
+		        if (! $res) 
+		        {
+		        	$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+		        	dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
+		        }
+		        else
+		        {
+		        	dolibarr_syslog("CMailFile::sendfile: mail end success");
+		        }
+			}
 			if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
 			if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
 		}
@@ -382,9 +394,10 @@ class CMailFile
 
 /**
         \brief      Renvoie une adresse acceptée par le serveur SMTP
-        \param      adresses		Exemple: 'Jhon Doe <jhon@doe.com>' ou 'jhon@doe.com'
+        \param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
         \param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
-        \return	    string			Renvoi: '<john@doe.com>' ou 'Jhon Doe <jhon@doe.com>' ou 'john@doe.com'
+        \return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
+											Si format 2: 'john@doe.com'
 */
 function getValidAddress($adresses,$format)
 {
@@ -397,7 +410,7 @@ function getValidAddress($adresses,$format)
 	// Boucle sur chaque composant de l'adresse
 	foreach($arrayaddress as $val)
 	{
-	   	if (eregi('^(.*)<(.+)>$',trim($val),$regs))
+	   	if (eregi('^(.*)<(.*)>$',trim($val),$regs))
 	    {
 	        $name  = trim($regs[1]);
 	        $email = trim($regs[2]);
@@ -408,19 +421,25 @@ function getValidAddress($adresses,$format)
 	        $email = trim($val);
 	    }
 	
-		if ($format == 2)
+		if ($email)
 		{
-			$ret=($ret ? $ret.',' : '').$email;
-		}
-		if ($format == 1)
-		{
-			$ret=($ret ? $ret.',' : '').'<'.$email.'>';
-		}
-		if ($format == 0)
-		{
-			if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $ret=($ret ? $ret.',' : '').'<'.$email.'>';
-			elseif (! $name) $ret=($ret ? $ret.',' : '').'<'.$email.'>';
-			else $ret=($ret ? $ret.',' : '').$name.' <'.$email.'>';
+			$newemail='';
+			if ($format == 2)
+			{
+				$newemail=$email;
+			}
+			if ($format == 1)
+			{
+				$neweamil='<'.$email.'>';
+			}
+			if ($format == 0)
+			{
+				if ($conf->global->MAIN_MAIL_NO_FULL_EMAIL) $newemail='<'.$email.'>';
+				elseif (! $name) $newemail='<'.$email.'>';
+				else $newemail=$name.' <'.$email.'>';
+			}
+
+			$ret=($ret ? $ret.',' : '').$newemail;
 		}
 	}
 	
