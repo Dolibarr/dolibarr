@@ -305,7 +305,7 @@ if ($resql)
   print '<tr class="liste_titre">';
   print "<td>".$langs->trans("Company")."</td>\n";
   print "<td>".$langs->trans("SupplierCode")."</td>\n";
-  print '<td align="center">'.$langs->trans("DateCreation")."</td>\n";
+  print '<td align="right">'.$langs->trans("DateCreation")."</td>\n";
   print "</tr>\n";
 
   $var=True;
@@ -318,7 +318,7 @@ if ($resql)
       print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
       print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
       print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-      print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
+      print '<td align="right">'.dolibarr_print_date($obj->datec,'day').'</td>';
       print "</tr>\n";
     }
   print "</table>\n";

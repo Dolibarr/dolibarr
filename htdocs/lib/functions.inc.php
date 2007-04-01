@@ -1819,49 +1819,61 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 
 
 /**
-   \brief      Fonction qui retourne un montant monétaire formaté
-   \remarks    Fonction utilisée dans les pdf et les pages html
-   \param	    amount			Montant a formater
-   \param	    html			Formatage html ou pas (0 par defaut)
-   \param	    outlangs		Objet langs pour formatage
-   \seealso	price2num		Fonction inverse de price
+*		\brief      Fonction qui retourne un montant monétaire formaté
+*		\remarks    Fonction utilisée dans les pdf et les pages html
+*		\param	    amount			Montant a formater
+*		\param	    html			Formatage html ou pas (0 par defaut)
+*		\param	    outlangs		Objet langs pour formatage
+*		\return		string			Chaine avec montant formaté
+*		\seealso	price2num		Fonction inverse de price
 */
 function price($amount, $html=0, $outlangs='')
 {
-  global $langs;
+	global $langs,$conf;
 
-  // Separateurs par defaut
-  $dec='.'; $thousand=' ';
-  
-  // Si $outlangs non force, on prend langue utilisateur
-  if (! is_object($outlangs)) $outlangs=$langs;
-  
-  if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
-  if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
-  //print "dec=".$dec." thousand=".$thousand;
+	// Separateurs par defaut
+	$dec='.'; $thousand=' ';
 
-  // On pose par defaut 2 decimales
-  $decimal = 2;
-  //print "xx".$amount."-";	
-  $amount = ereg_replace(',','.',$amount);
-  //print $amount."-";
-  $datas = split("\.",$amount);
-  $decpart = $datas[1];
-  //print $datas[1]."<br>";
+	// Si $outlangs non force, on prend langue utilisateur
+	if (! is_object($outlangs)) $outlangs=$langs;
 
-  // On augmente au besoin si il y a plus de 2 décimales
-  if (strlen($decpart) > 2) $decimal=strlen($decpart);
+	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
+	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
+	//print "dec=".$dec." thousand=".$thousand;
 
-  // Formate nombre
-  if ($html)
-    {
-      return ereg_replace(' ','&nbsp;',number_format($amount, $decimal, $dec, $thousand));
-    }
-  else
-    {
-      return number_format($amount, $decimal, $dec, $thousand);
-    }
+	//print "xx".$amount."-";	
+	$amount = ereg_replace(',','.',$amount);
+	//print $amount."-";
+	$datas = split("\.",$amount);
+	$decpart = $datas[1];
+	//print $datas[1]."<br>";
+
+	// On pose par defaut 2 decimales
+	$decimal = 2;
+	$end='';
+	// On augmente au besoin si il y a plus de 2 décimales
+	if (strlen($decpart) > $decimal) $decimal=strlen($decpart);
+	// Si on depasse max
+	if ($decimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) 
+	{
+		$decimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
+		$end='...';
+	}
+	
+	// Formate nombre
+	if ($html)
+	{
+		$output=ereg_replace(' ','&nbsp;',number_format($amount, $decimal, $dec, $thousand));
+	}
+	else
+	{
+		$output=number_format($amount, $decimal, $dec, $thousand);
+	}
+	$output.=$end;
+	
+	return $output;
 }
+
 /**
    \brief      Fonction qui retourne un numérique depuis un montant formaté
    \remarks    Fonction à appeler sur montants saisi avant un insert

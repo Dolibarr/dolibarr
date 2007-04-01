@@ -904,63 +904,68 @@ class Form
   }
   
   
-  /**
-     \brief      Retourne la liste des produits de fournisseurs
-     \param		socid			Id société (0 pour aucun filtre)
-     \param      selected        Produit présélectionné
-     \param      htmlname        Nom de la zone select
-     \param      filtretype      Pour filtre sur type de produit
-     \param      limit           Limite sur le nombre de lignes retournées
-     \param      filtre          Pour filtre
-  */
-  function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
-  {
-    global $langs,$conf;
-    
-    $sql = "SELECT p.rowid, p.label, p.ref, p.price, pf.price as fprice, pf.quantity, p.duration";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pf ON p.rowid = pf.fk_product";
-    $sql.= " WHERE p.envente = 1";
-    if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
-    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-    if ($filtre) $sql.="$filtre";
-    $sql.= " ORDER BY p.ref DESC";
-    
-    dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
-    
-    $result=$this->db->query($sql);
-    if ($result)
-      {
-	print '<select class="flat" name="'.$htmlname.'">';
-	print "<option value=\"0\" selected=\"true\">&nbsp;</option>";
-	
-	$num = $this->db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $objp = $this->db->fetch_object($result);
-	    $opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
-	    $opt.= dolibarr_trunc($objp->label,24).' - ';
-	    $opt.= $objp->fprice.$langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
-	    if ($objp->quantity > 1)
-	      {
-		$opt.=" - ";
-		$opt.= round($objp->fprice/$objp->quantity,4).$langs->trans("Currency".$conf->monnaie)."/".$langs->trans("Unit");
-	      }
-	    if ($objp->duration) $opt .= " - ".$objp->duration;
-	    $opt .= "</option>\n";
-	    print $opt;
-	    $i++;
-	  }
-	print '</select>';
-	
-	$this->db->free($result);
-      }
-    else
-      {
-	dolibarr_print_error($db);
-      }
-  }
+	/**
+		\brief      Retourne la liste des produits de fournisseurs
+		\param		socid			Id société (0 pour aucun filtre)
+		\param      selected        Produit présélectionné
+		\param      htmlname        Nom de la zone select
+		\param      filtretype      Pour filtre sur type de produit
+		\param      limit           Limite sur le nombre de lignes retournées
+		\param      filtre          Pour filtre
+	*/
+	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+	{
+		global $langs,$conf;
+		
+		$sql = "SELECT p.rowid, p.label, p.ref, p.price, pf.price as fprice, pf.quantity, p.duration";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pf ON p.rowid = pf.fk_product";
+		$sql.= " WHERE p.envente = 1";
+		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
+		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+		if ($filtre) $sql.="$filtre";
+		$sql.= " ORDER BY p.ref DESC";
+		
+		dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
+		
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			if (! $selected) print '<option value="0" selected="true">&nbsp;</option>';
+			else print '<option value="0">&nbsp;</option>';
+			
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($result);
+
+				$opt = '<option value="'.$objp->rowid.'"';
+				if ($selected == $objp->rowid) $opt.= ' selected="true"';
+				$opt.= '>'.$objp->ref.' - ';
+				$opt.= dolibarr_trunc($objp->label,24).' - ';
+				$opt.= $objp->fprice.$langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
+				if ($objp->quantity > 1)
+				{
+					$opt.=" - ";
+					$opt.= round($objp->fprice/$objp->quantity,4).$langs->trans("Currency".$conf->monnaie)."/".$langs->trans("Unit");
+				}
+				if ($objp->duration) $opt .= " - ".$objp->duration;
+				$opt .= "</option>\n";
+				
+				print $opt;
+				$i++;
+			}
+			print '</select>';
+			
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	}
 
     /**
      *    \brief      Retourne la liste déroulante des adresses de livraison

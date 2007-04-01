@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006 	   Jean Heimburger   	<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -25,6 +25,7 @@
 /**
     	\file       htdocs/conf/conf.class.php
 		\brief      Fichier de la classe de stockage de la config courante
+		\remarks	La config est stockée dans le fichier conf/conf.php
 		\version    $Revision$
 */
 
@@ -447,6 +448,12 @@ class Conf
 
 		$this->format_date_short_java="dd/MM/yyyy";
 
+		// Format montant affichés
+		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN))
+		{
+			$this->global->MAIN_MAX_DECIMALS_SHOWN=5;
+		}
+		
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
 		 * (pour particuliers ou libéraux en franchise)
 		 * En attendant, valeur forcée à 1
