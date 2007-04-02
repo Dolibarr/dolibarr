@@ -90,6 +90,8 @@ var $keywords;           //keywords
 var $creator;            //creator
 var $AliasNbPages;       //alias for total number of pages
 var $PDFVersion;         //PDF version number
+var $prevFontFamily;     //store previous font family
+var $prevFontStyle;      //store previous style family
 
 		// variables pour HTML PARSER
 		
@@ -734,9 +736,12 @@ function AddFont($family,$style='',$file='')
 
 function SetFont($family,$style='',$size=0)
 {
+	// save previous values
+	$this->prevFontFamily = $this->FontFamily;
+	$this->prevFontStyle = $this->FontStyle;
+	
 	//Select a font; size given in points
 	global $fpdf_charwidths;
-
 	$family=strtolower($family);
 	if($family=='')
 		$family=$this->FontFamily;
@@ -2189,9 +2194,13 @@ function _out($s)
 						$this->SetTextColor($coul['R'],$coul['G'],$coul['B']);
 						$this->issetcolor=true;
 					}
+					
+					// convertir les noms des polices de FckEditor
+					$attr['face'] = $this->convertNameFont($attr['face']);
+					
 					if (isset($attr['face']) and in_array(strtolower($attr['face']), $this->fontlist)) {
 						$this->SetFont(strtolower($attr['face']));
-						$this->issetfont=true;
+						//$this->issetfont=true; //créait un problème de police dans le pdf
 					}
 					if (isset($attr['size'])) {
 						$headsize = intval($attr['size']);
@@ -2464,6 +2473,41 @@ function _out($s)
 		*/
 		function getScaleFactor() {
 			return $this->k;
+		}
+		
+		/**
+		* Converti les noms des polices FckEditor.
+		* @string string chaine à convertir
+		* @return string chaine convertie.
+		* @author Régis Houssin
+		*/
+		function convertNameFont($namefont)
+		{
+			if ($namefont == "Times New Roman") 
+			{
+				$name = "times";
+			}
+			else if ($namefont == "Arial")
+			{
+				$name = "helvetica";
+			}
+			else if ($namefont == "Verdana")
+			{
+				$name = "helvetica";
+			}
+			else if ($namefont == "Comic Sans MS")
+			{
+				$name = "helvetica";
+			}
+			else if ($namefont == "Courier New")
+			{
+				$name = "helvetica";
+			}
+			else if ($namefont == "Tahoma")
+			{
+				$name = "helvetica";
+			}
+			return $name;
 		}
 
 //End of class

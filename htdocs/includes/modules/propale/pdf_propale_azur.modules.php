@@ -266,6 +266,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						$pdf->MultiCell(108, 4, dol_entity_decode($libelleproduitservice), 0, 'J');
 					}
 
+					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();
 
 					// TVA
