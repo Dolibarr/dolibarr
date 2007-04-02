@@ -780,7 +780,7 @@ function SetFont($family,$style='',$size=0)
 			$this->fonts[$fontkey]=array('i'=>$i,'type'=>'core','name'=>$this->CoreFonts[$fontkey],'up'=>-100,'ut'=>50,'cw'=>$fpdf_charwidths[$fontkey]);
 		}
 		else
-			$this->Error('Undefined font: '.$family.' '.$style);
+			$this->Error('Undefined font - family: '.$family.' - style: '.$style);
 	}
 	//Select it
 	$this->FontFamily=$family;
@@ -1871,7 +1871,7 @@ function _out($s)
 		function writeHTML($html, $ln=true, $fill=0) {
 						
 			// store some variables
-			$html=strip_tags($html,"<h1><h2><h3><h4><h5><h6><b><u><i><a><img><p><br><strong><em><font><blockquote><li><ul><ol><hr><td><th><tr><table><sup><sub><small>"); //remove all unsupported tags
+			$html=strip_tags($html,"<h1><h2><h3><h4><h5><h6><b><u><i><a><img><p><br><br/><strong><em><font><blockquote><li><ul><ol><hr><td><th><tr><table><sup><sub><small>"); //remove all unsupported tags
 			//replace carriage returns, newlines and tabs
 			$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " "); 
 			$html = strtr($html, $repTable);
@@ -2190,7 +2190,7 @@ function _out($s)
 						$this->issetcolor=true;
 					}
 					if (isset($attr['face']) and in_array(strtolower($attr['face']), $this->fontlist)) {
-						$this->SetFont(strtolower($attr['FACE']));
+						$this->SetFont(strtolower($attr['face']));
 						$this->issetfont=true;
 					}
 					if (isset($attr['size'])) {
@@ -2249,9 +2249,11 @@ function _out($s)
 				}
 				case 'strong': {
 					$this->setStyle('b', false);
+					break;
 				}
 				case 'em': {
 					$this->setStyle('i', false);
+					break;
 				}
 				case 'b':
 				case 'i':
