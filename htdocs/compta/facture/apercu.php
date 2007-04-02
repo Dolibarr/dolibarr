@@ -109,6 +109,7 @@ if ($_GET["facid"] > 0)
 
 		// Remise globale
 		print '<tr><td>'.$langs->trans('GlobalDiscount').'</td>';
+/*
 		if ($fac->brouillon == 1 && $user->rights->facture->creer)
 		{
 			print '<form action="facture.php?facid='.$fac->id.'" method="post">';
@@ -119,12 +120,14 @@ if ($_GET["facid"] > 0)
 		}
 		else
 		{
+*/
 			print '<td colspan="3">'.$fac->remise_percent.'%</td>';
-		}
+//		}
 
         $nbrows=5;
         if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
-		print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
+        if ($conf->projet->enabled) $nbrows++;
+		    print '<td rowspan="'.$nbrows.'" colspan="2" valign="top">';
 
         /*
          * Documents
@@ -199,9 +202,9 @@ if ($_GET["facid"] > 0)
                     imagick_writeimages( $handle, $file .".png");
                 }
                 else
-				{
-                    $langs->load("other");
-							print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
+				        {
+                   $langs->load("other");
+							     print '<font class="error">'.$langs->trans("ErrorNoImagickReadimage").'</font>';
                 }
             }
 
