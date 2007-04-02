@@ -19,7 +19,7 @@ cp1250.map : fichier de mapping se trouvant dans le répertoire makefont
 comic.ttf : police TrueType à convertir
 comic : nom de la police de sortie, en principe le même nom que le TTF.
 
-On obtient alors les fichiers comic.pfb et comic.afm. comic.pfb
+On obtient alors les fichiers comic.pfb et comic.afm
 Copier ses 2 fichiers dans le répertoire "/dev/fpdf/tmp"
 
 ## Création du fichier php de la police ##
