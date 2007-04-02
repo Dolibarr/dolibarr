@@ -747,7 +747,7 @@ function SetFont($family,$style='',$size=0)
 		$family=$this->FontFamily;
 	if($family=='arial')
 		$family='helvetica';
-	elseif($family=='symbol' || $family=='zapfdingbats')
+	elseif($family=='symbol' || $family=='zapfdingbats' || $family=='courier')
 		$style='';
 	$style=strtoupper($style);
 	if(strpos($style,'U')!==false)
@@ -2501,7 +2501,7 @@ function _out($s)
 			}
 			else if ($namefont == "Courier New")
 			{
-				$name = "helvetica";
+				$name = "courier";
 			}
 			else if ($namefont == "Tahoma")
 			{
