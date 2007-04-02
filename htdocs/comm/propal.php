@@ -509,6 +509,10 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 		if ($ret > 0)
 		{
 			$propal->insert_discount($_POST["remise_id"]);
+			if ($result < 0)
+			{
+				$mesg='<div class="error">'.$propal->error.'</div>';
+			}
 		}
 		else
 		{
@@ -1136,7 +1140,18 @@ if ($_GET['propalid'] > 0)
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
-						if ($objp->description) print ' - '.nl2br($objp->description);
+						if ($objp->description)
+						{
+							if ($objp->description == '(CREDIT_NOTE)')
+							{
+								print ' - '.$langs->trans("CreditNote");
+								// \TODO Mettre ici lien sur ref avoir
+							}
+							else
+							{
+								print ' - '.nl2br($objp->description);
+							}
+						}
 					}
 					else
 					{
@@ -1178,9 +1193,18 @@ if ($_GET['propalid'] > 0)
 				// Icone d'edition et suppression
 				if ($propal->statut == 0  && $user->rights->propale->creer)
 				{
-					print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'#'.$objp->rowid.'">';
-					print img_edit();
-					print '</a></td>';
+					print '<td align="right">';
+					if (($objp->info_bits & 2) == 2)
+					{
+						// Ligne remise prédéfinie, on permet pas modif
+					}
+					else
+					{
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'#'.$objp->rowid.'">';
+						print img_edit();
+						print '</a>';
+					}
+					print '</td>';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
 						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_line&amp;ligne='.$objp->rowid.'">';

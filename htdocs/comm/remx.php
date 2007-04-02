@@ -1,6 +1,6 @@
 <?PHP
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,13 +22,14 @@
 
 /**
 	    \file       htdocs/comm/remx.php
-        \ingroup    commercial
+        \ingroup    commercial, invoice
 		\brief      Onglet de définition des avoirs
 		\version    $Revision$
 */
 
 require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 
 $user->getrights('propale');
 $user->getrights('commande');
@@ -52,7 +53,7 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setremise')
 {
-	if (! price2num($_POST["remise"]) > 0)
+	if (! price2num($_POST["amount_ht"]) > 0)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")).'</div>';
 	}
@@ -64,7 +65,7 @@ if ($_POST["action"] == 'setremise')
 	{
 		$soc = New Societe($db);
 		$soc->fetch($_GET["id"]);
-		$soc->set_remise_except($_POST["remise"],$user,$_POST["desc"]);
+		$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
 		
 		if ($result > 0)
 		{
@@ -97,9 +98,12 @@ if ($_GET["action"] == 'remove')
 
 
 /*
- * Fiche des remises fixes
+ * Affichage fiche des remises fixes
  */
 
+$form=new Form($db);
+$facturestatic=new Facture($db);
+ 
 llxHeader();
 
 if ($_socid > 0)
@@ -158,7 +162,11 @@ if ($_socid > 0)
 	
     print '<table class="border" width="100%">';
     print '<tr><td width="38%">'.$langs->trans("NewGlobalDiscount").'</td>';
-    print '<td><input type="text" size="5" name="remise" value="'.$_POST["remise"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<td><input type="text" size="5" name="amount_ht" value="'.$_POST["amount_ht"].'">&nbsp;'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<tr><td width="38%">'.$langs->trans("VAT").'</td>';
+    print '<td>';
+	$form->select_tva('tva_tx','0','',$mysoc,'');
+	print '</td></tr>';
     print '<tr><td>'.$langs->trans("NoteReason").'</td>';
     print '<td><input type="text" size="60" name="desc" value="'.$_POST["desc"].'"></td></tr>';
     
@@ -175,10 +183,14 @@ if ($_socid > 0)
     /*
      * Liste remises fixes restant en cours
      */
-    $sql  = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description,";
-    $sql.= " u.login, u.rowid as user_id";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc, ".MAIN_DB_PREFIX."user as u";
-    $sql.= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+	$sql.= $db->pdate("rc.datec")." as dc, rc.description,";
+    $sql.= " rc.fk_facture_source,";
+    $sql.= " u.login, u.rowid as user_id,";
+	$sql.= " fa.facnumber as ref, fa.type as type";
+    $sql.= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
+	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
     $sql.= " AND u.rowid = rc.fk_user AND rc.fk_facture IS NULL";
     $sql.= " ORDER BY rc.datec DESC";
 
@@ -187,9 +199,11 @@ if ($_socid > 0)
     {
         print_titre($langs->trans("DiscountStillRemaining"));
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
+        print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-        print '<td width="120" align="right">'.$langs->trans("Amount").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
+        print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
         print '<td align="center" width="100">'.$langs->trans("DiscountOfferedBy").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
@@ -202,10 +216,26 @@ if ($_socid > 0)
             $obj = $db->fetch_object($resql);
             $var = !$var;
             print "<tr $bc[$var]>";
-            print '<td>'.dolibarr_print_date($obj->dc).'</td>';
-            print '<td>'.$obj->description.'</td>';
+            print '<td>'.dolibarr_print_date($obj->dc,'dayhour').'</td>';
+            print '<td>';
+			if ($obj->description == '(CREDIT_NOTE)')
+			{
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+			}
+			else
+			{
+				print $obj->description;
+			}
+			print '</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</td>';
+            print '<td align="right">'.price($obj->tva_tx).'%</td>';
+            print '<td align="right">'.price($obj->amount_ttc).'</td>';
+            print '<td align="center">';
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;
+			print '</td>';
 			if ($obj->user_id == $user->id) print '<td><a href="'.$_SERVER["PHP_SELF"].'?id='.$objsoc->id.'&amp;action=remove&amp;remid='.$obj->rowid.'">'.img_delete($langs->trans("RemoveDiscount")).'</td>';
             else print '<td>&nbsp;</td>';
             print '</tr>';
@@ -224,13 +254,17 @@ if ($_socid > 0)
     /*
      * Liste ristournes appliquées
      */
-    $sql = "SELECT rc.rowid, rc.amount_ht,".$db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture,";
-    $sql.= " u.login, u.rowid as user_id,";
-    $sql.= " f.rowid, f.facnumber";
-    $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture,";
+    $sql.= " rc.fk_facture_source,";
+	$sql.= " u.login, u.rowid as user_id,";
+    $sql.= " f.rowid, f.facnumber,";
+	$sql.= " fa.facnumber as ref, fa.type as type";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " , ".MAIN_DB_PREFIX."user as u";
     $sql.= " , ".MAIN_DB_PREFIX."facturedet as fc";
-    $sql.= " , ".MAIN_DB_PREFIX."facture as f";
+    $sql.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
     $sql.= " AND rc.fk_facture = fc.rowid";
     $sql.= " AND fc.fk_facture = f.rowid";
@@ -242,10 +276,12 @@ if ($_socid > 0)
     {
         print_titre($langs->trans("DiscountAlreadyCounted"));
         print '<table class="noborder" width="100%">';
-        print '<tr class="liste_titre"><td width="80">'.$langs->trans("Date").'</td>';
-        print '<td align="left">'.$langs->trans("Bill").'</td>';
+        print '<tr class="liste_titre"><td width="120">'.$langs->trans("Date").'</td>';
         print '<td>'.$langs->trans("ReasonDiscount").'</td>';
-        print '<td width="120" align="right">'.$langs->trans("Amount").'</td>';
+        print '<td align="left">'.$langs->trans("Invoice").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("AmountHT").'</td>';
+        print '<td width="80" align="right">'.$langs->trans("VATRate").'</td>';
+        print '<td width="120" align="right">'.$langs->trans("AmountTTC").'</td>';
         print '<td align="center" width="100">'.$langs->trans("Author").'</td>';
         print '<td width="20">&nbsp;</td>';
         print '</tr>';
@@ -258,11 +294,27 @@ if ($_socid > 0)
             $obj = $db->fetch_object($resql);
             $var = !$var;
             print "<tr $bc[$var]>";
-            print '<td>'.dolibarr_print_date($obj->dc).'</td>';
+            print '<td>'.dolibarr_print_date($obj->dc,'dayhour').'</td>';
+            print '<td>';
+			if ($obj->description == '(CREDIT_NOTE)')
+			{
+				$facturestatic->id=$obj->fk_facture_source;
+				$facturestatic->ref=$obj->ref;
+				$facturestatic->type=$obj->type;
+				print $langs->trans("CreditNote").' '.$facturestatic->getNomURl(1);
+			}
+			else
+			{
+				print $obj->description;
+			}
+			print '</td>';
             print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
-            print '<td>'.$obj->description.'</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="center">'.$obj->login.'</td>';
+            print '<td align="right">'.price($obj->tva_tx).'%</td>';
+            print '<td align="right">'.price($obj->amount_ttc).'</td>';
+            print '<td align="center">';
+			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;
+			print '</td>';
             print '<td>&nbsp;</td>';
             print '</tr>';
             $i++;

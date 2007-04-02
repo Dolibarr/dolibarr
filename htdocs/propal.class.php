@@ -198,6 +198,13 @@ class Propal extends CommonObject
 
 		if ($result > 0)
 		{
+			if ($remise->fk_facture)	// Protection against multiple submission
+			{
+				$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+				$this->db->rollback();
+				return -5;
+			}
+
 			$propalligne=new PropaleLigne($this->db);
 			$propalligne->fk_propal=$this->id;
 			$propalligne->fk_remise_except=$remise->id;
@@ -212,10 +219,9 @@ class Propal extends CommonObject
 			$propalligne->rang=-1;
 			$propalligne->info_bits=2;
 
-			$tabprice=calcul_price_total($propalligne->qty, $propalligne->subprice, 0,$propalligne->tva_tx);
-			$propalligne->total_ht  = $tabprice[0];
-			$propalligne->total_tva = $tabprice[1];
-			$propalligne->total_ttc = $tabprice[2];
+			$propalligne->total_ht  = $remise->amount_ht;
+			$propalligne->total_tva = $remise->amount_tva;
+			$propalligne->total_ttc = $remise->amount_ttc;
 
 			$result=$propalligne->insert();
 			if ($result > 0)

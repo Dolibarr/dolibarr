@@ -942,7 +942,7 @@ class Societe
 	 *    	\param      desc		Motif de l'avoir
 	 *		\return		int			<0 si ko, id de la ligne de remise si ok
 	 */
-	function set_remise_except($remise, $user, $desc)
+	function set_remise_except($remise, $user, $desc, $tva_tx=0)
 	{
 		global $langs;
 		
@@ -966,6 +966,9 @@ class Societe
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
 			$discount->amount_ht=$remise;
+			$discount->amount_tva=($remise*$tva_tx/100);
+			$discount->amount_ttc=$discount->amount_ht+$discount->amount_tva;
+			$discount->tva_tx=$tva_tx;
 			$discount->desc=$desc;
 			$result=$discount->create($user);
 			if ($result > 0)

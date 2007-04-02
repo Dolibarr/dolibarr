@@ -689,17 +689,28 @@ create table llx_societe_remise_except
   description     varchar(255) NOT NULL
 )type=innodb;
 
+alter table llx_societe_remise_except ADD COLUMN amount_tva real DEFAULT 0 NOT NULL after amount_ht;
+alter table llx_societe_remise_except ADD COLUMN amount_ttc real DEFAULT 0 NOT NULL after amount_tva;
+alter table llx_societe_remise_except ADD COLUMN tva_tx real DEFAULT 0 NOT NULL after amount_ttc;
+alter table llx_societe_remise_except ADD COLUMN fk_facture_source integer after fk_user;
+
+update llx_societe_remise_except set amount_tva=0, tva_tx=0, amount_ttc = amount_ht where amount_ttc = 0;
+delete from llx_societe_remise_except WHERE amount_ht=0;
+
 -- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_societe_remise_except FROM llx_societe_remise_except LEFT JOIN llx_facturedet ON llx_societe_remise_except.fk_facture = llx_facturedet.rowid WHERE llx_facturedet.rowid IS NULL;
 
 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_facture;
+ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_facture_source;
 
 ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_user (fk_user);
 ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_soc (fk_soc);
 ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture (fk_facture);
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture_source (fk_facture_source);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc     FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture FOREIGN KEY (fk_facture) REFERENCES llx_facturedet (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture_source FOREIGN KEY (fk_facture_source) REFERENCES llx_facture (rowid);
 
 update llx_societe_remise_except set description='Remise sans description' where description is NULL or description ='';
 alter table llx_societe_remise_except modify description varchar(255) NOT NULL;

@@ -321,17 +321,64 @@ if ($_POST['action'] == 'confirm_converttoreduc' && $_POST['confirm'] == 'yes' &
 	$fac = new Facture($db);
 	$fac->fetch($_GET['facid']);
 	$fac->fetch_client();
+	$fac->fetch_lines();
 
-	$result=$fac->set_payed($user);
-	
-	// TODO A completer	
-	$discount = new DiscountAbsolute($db);
-	$result=$discount->create($user);
+	if (! $fac->paye)	// protection against multiple submit
+	{
+		// Boucle sur chaque taux de tva
+		$i=0;
+		foreach($fac->lignes as $ligne)
+		{
+			$amount_ht[$ligne->tva_tx]+=$ligne->total_ht;
+			$amount_tva[$ligne->tva_tx]+=$ligne->total_tva;
+			$amount_ttc[$ligne->tva_tx]+=$ligne->total_ttc;
+			$i++;
+		}
+		
+		// Insère une remise par famille de taux tva
+		$discount = new DiscountAbsolute($db);
+		$discount->desc='(CREDIT_NOTE)';
+		$discount->tva_tx=abs($fac->total_ttc);
+		$discount->fk_soc=$fac->socid;
+		$discount->fk_facture_source=$fac->id;
 
-	$langs->load("other");
-	$mesg=$langs->trans("FeatureNotYetAvailable");
-	
-	$db->rollback();
+		$error=0;
+		foreach($amount_ht as $tva_tx => $xxx)
+		{
+			$discount->amount_ht=abs($amount_ht[$tva_tx]);
+			$discount->amount_tva=abs($amount_tva[$tva_tx]);
+			$discount->amount_ttc=abs($amount_ttc[$tva_tx]);
+			$discount->tva_tx=abs($tva_tx);
+
+			$result=$discount->create($user);
+			if ($result < 0) 
+			{
+				$error++;
+				break;
+			}
+		}
+		
+		if (! $error)
+		{
+			// Classe facture
+			$result=$fac->set_payed($user);
+			if ($result > 0)
+			{
+				//$mesg='OK'.$discount->id;
+				$db->commit();
+			}
+			else
+			{
+				$mesg='<div class="error">'.$fac->error.'</div>';
+				$db->rollback();
+			}
+		}
+		else
+		{
+			$mesg='<div class="error">'.$discount->error.'</div>';
+			$db->rollback();
+		}
+	}
 }
 
 
@@ -2147,8 +2194,8 @@ else
 
 
 			/*
-		* Lignes de factures
-		*/
+			* Lignes de factures
+			*/
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
@@ -2223,7 +2270,18 @@ else
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$fac->socid.'">';
 								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 								print '</a>';
-								if ($objp->description) print ' - '.nl2br($objp->description);
+								if ($objp->description)
+								{
+									if ($objp->description == '(CREDIT_NOTE)')
+									{
+										print ' - '.$langs->trans("CreditNote");
+										// \TODO Mettre ici lien sur ref avoir
+									}
+									else
+									{
+										print ' - '.nl2br($objp->description);
+									}
+								}
 							}
 							else
 							{
@@ -2254,9 +2312,18 @@ else
 						// Icone d'edition et suppression
 						if ($fac->statut == 0  && $user->rights->facture->creer)
 						{
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-							print img_edit();
-							print '</a></td>';
+							print '<td align="right">';
+							if (($objp->info_bits & 2) == 2)
+							{
+								// Ligne remise prédéfinie, on permet pas modif
+							}
+							else
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+								print img_edit();
+								print '</a>';
+							}
+							print '</td>';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 							{
 								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=delete_product_line&amp;rowid='.$objp->rowid.'">';

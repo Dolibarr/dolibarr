@@ -570,90 +570,90 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-   *    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
-   *    \param     idremise			Id de la remise fixe
-   *    \return    int          		>0 si ok, <0 si ko
-   */
-  function insert_discount($idremise)
-  {
-    global $langs;
+	/**
+	*    \brief     Ajout en base d'une ligne remise fixe en ligne de facture
+	*    \param     idremise			Id de la remise fixe
+	*    \return    int          		>0 si ok, <0 si ko
+	*/
+	function insert_discount($idremise)
+	{
+		global $langs;
 
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-    include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
-    $this->db->begin();
+		$this->db->begin();
 
-    $remise=new DiscountAbsolute($this->db);
-    $result=$remise->fetch($idremise);
-    if ($result > 0)
-      {
-	if ($remise->fk_facture)
-	  {
-	    $this->error=$langs->trans("ErrorDiscountAlreadyUsed");
-	    $this->db->rollback();
-	    return -5;
-	  }
+		$remise=new DiscountAbsolute($this->db);
+		$result=$remise->fetch($idremise);
+		
+		if ($result > 0)
+		{
+			if ($remise->fk_facture)	// Protection against multiple submission
+			{
+				$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+				$this->db->rollback();
+				return -5;
+			}
 			
-	$facligne=new FactureLigne($this->db);
-	$facligne->fk_facture=$this->id;
-	$facligne->fk_remise_except=$remise->id;
-	$facligne->desc=$remise->description;   	// Description ligne
-	$facligne->tva_tx=$remise->tva_tx;
-	$facligne->subprice=-$remise->amount_ht;
-	$facligne->fk_product=0;					// Id produit prédéfini
-	$facligne->qty=1;
-	$facligne->remise_percent=0;
-	$facligne->rang=-1;
-	$facligne->info_bits=2;
+			$facligne=new FactureLigne($this->db);
+			$facligne->fk_facture=$this->id;
+			$facligne->fk_remise_except=$remise->id;
+			$facligne->desc=$remise->description;   	// Description ligne
+			$facligne->tva_tx=$remise->tva_tx;
+			$facligne->subprice=-$remise->amount_ht;
+			$facligne->fk_product=0;					// Id produit prédéfini
+			$facligne->qty=1;
+			$facligne->remise_percent=0;
+			$facligne->rang=-1;
+			$facligne->info_bits=2;
 
-	// Ne plus utiliser
-	$facligne->price=-$remise->amount_ht;
-	$facligne->remise=0;
+			// Ne plus utiliser
+			$facligne->price=-$remise->amount_ht;
+			$facligne->remise=0;
 
-	$tabprice=calcul_price_total($facligne->qty, $facligne->subprice, 0,$facligne->tva_tx);
-	$facligne->total_ht  = $tabprice[0];
-	$facligne->total_tva = $tabprice[1];
-	$facligne->total_ttc = $tabprice[2];
+			$facligne->total_ht  = $remise->amount_ht;
+			$facligne->total_tva = $remise->amount_tva;
+			$facligne->total_ttc = $remise->amount_ttc;
 
-	$lineid=$facligne->insert();
-	if ($lineid > 0)
-	  {
-	    $result=$this->update_price($this->id);
-	    if ($result > 0)
-	      {
-		// Crée lien entre remise et ligne de facture
-		$result=$remise->link_to_invoice($lineid);
-		if ($result < 0)
-		  {
-		    $this->error=$remise->error;
-		    $this->db->rollback();
-		    return -4;
-		  }
+			$lineid=$facligne->insert();
+			if ($lineid > 0)
+			{
+				$result=$this->update_price($this->id);
+				if ($result > 0)
+				{
+					// Crée lien entre remise et ligne de facture
+					$result=$remise->link_to_invoice($lineid);
+					if ($result < 0)
+					{
+						$this->error=$remise->error;
+						$this->db->rollback();
+						return -4;
+					}
 
-		$this->db->commit();
-		return 1;
-	      }
-	    else
-	      {
-		$this->error=$facligne->error;
-		$this->db->rollback();
-		return -1;
-	      }
-	  }
-	else
-	  {
-	    $this->error=$facligne->error;
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-    else
-      {
-	$this->db->rollback();
-	return -3;
-      }
-  }
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->error=$facligne->error;
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$facligne->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->db->rollback();
+			return -3;
+		}
+	}
 
 
   /**
@@ -1106,68 +1106,6 @@ class Facture extends CommonObject
 				}
 			}
 
-
-			/*
-		*	Tope les lignes de remises fixes avec id des lignes de facture de remise
-		*/
-			// Plus necessaire car deja topé des état brouillon
-			/*
-		foreach($this->lignes as $i => $line)
-		{
-		if (($this->lignes[$i]->info_bits & 2) == 2 && $this->lignes[$i]->fk_remise_except)
-		{
-		// Ligne de remise
-		dolibarr_syslog("Facture.class::set_valid: recherche si remise ".$this->lignes[$i]->fk_remise_except." toujours dispo");
-
-		// On recherche si ligne de remise pas deja attribuée
-		$sql = 'SELECT fk_facture';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
-		$sql.= ' FOR UPDATE';
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-		$num=$this->db->num_rows($resql);
-		if ($num >= 1)
-		{
-		dolibarr_syslog("Facture.class::set_valid: top ligne de remise ".$this->lignes[$i]->fk_remise_except." pour ligne de facture ".$this->lignes[$i]->rowid);
-
-		// On met à jour ligne de remise comme utilisée
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-		$sql.= ' SET fk_facture = '.$this->lignes[$i]->rowid;
-		$sql.= ' WHERE fk_facture IS NULL AND rowid ='.$this->lignes[$i]->fk_remise_except;
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-
-		}
-		else
-		{
-		$this->error=$this->db->error().' sql='.$sql;
-		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-		$error++;
-		break;
-		}
-		}
-		else
-		{
-		$error++;
-		$this->error=$langs->trans("InvoiceDiscountNotAvailable");
-		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-		break;
-		}
-		}
-		else
-		{
-		$this->error=$this->db->error().' sql='.$sql;
-		dolibarr_syslog("Facture.class::set_valid: Error ".$this->error);
-		$error++;
-		break;
-		}
-		}
-		}
-		*/						
-
 			// On vérifie si la facture était une provisoire
 			if (! $error && $facref == 'PROV')
 			{
@@ -1388,7 +1326,7 @@ class Facture extends CommonObject
 			$ligne->fk_facture=$facid;
 			$ligne->desc=$desc;
 			$ligne->qty=$qty;
-			$ligne->txtva=$txtva;
+			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
 			$ligne->subprice=$pu;
@@ -2311,8 +2249,8 @@ class Facture extends CommonObject
 
 
   /**
-   *  	\brief     	Renvoi liste des factures qualifiables pour avoir
-   *				Statut >= validée + classée payée completement ou classée payée partiellement + pas deja remplacée
+   *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
+   *				Statut >= validée + classée payée completement ou classée payée partiellement + pas deja remplacée + pas deja avoir
    *	\param		socid		Id societe
    *   	\return    	array		Tableau des factures ($id => $ref)
    */
@@ -2330,7 +2268,8 @@ class Facture extends CommonObject
 	$sql.= " AND (f.paye = 1";				// Classée payée complètement
 	$sql.= " OR f.close_code IS NOT NULL)";	// Classée payée partiellement
     $sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
-    if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
+    $sql.= " AND f.type != 2";				// Facture non avoir
+	if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
     $sql.= " ORDER BY f.facnumber";
 
     dolibarr_syslog("Facture.class::list_qualified_avoir_invoices sql=$sql");
@@ -2848,7 +2787,7 @@ class FactureLigne
     $sql.= " VALUES (".$this->fk_facture.",";
     $sql.= " '".addslashes($this->desc)."',";
     $sql.= " '".price2num($this->qty)."',";
-    $sql.= " '".price2num($this->txtva)."',";
+    $sql.= " '".price2num($this->tva_tx)."',";
     if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
     else { $sql.='null,'; }
     $sql.= " '".price2num($this->remise_percent)."',";
@@ -2870,6 +2809,7 @@ class FactureLigne
     $sql.= " '".price2num($this->total_ttc)."'";
     $sql.= ')';
 
+	dolibarr_syslog("FactureLigne::insert sql=".$sql);
     $resql=$this->db->query($sql);
     if ($resql)
       {

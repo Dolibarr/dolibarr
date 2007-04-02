@@ -35,10 +35,21 @@
 
 class DiscountAbsolute
 {
-	var $id;
 	var $db;
+	var $error;
+	
+	var $id;					// Id remise
+	var $amount_ht;				//
+	var $amount_tva;			//
+	var $amount_ttc;			//
+	var $tva_tx;				//
+	var $fk_user;				// Id utilisateur qui accorde la remise
+	var $description;			// Description libre
+	var $datec;					// Date creation
+	var $fk_facture;			// Id facture qd une remise a été utilisé
+	var $fk_facture_source;		// Id facture avoir a l'origine de la remise
 
-
+	
 	/**
 	 *    \brief  Constructeur de la classe
 	 *    \param  DB          handler accès base de données
@@ -56,7 +67,10 @@ class DiscountAbsolute
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT fk_soc, amount_ht, fk_user, fk_facture, description,";
+		$sql = "SELECT fk_soc,";
+		$sql.= " fk_user,";
+		$sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
+		$sql.= " fk_facture, fk_facture_source, description,";
 		$sql.= " ".$this->db->pdate("datec")." as datec";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
 		$sql.= " WHERE rowid=".$rowid;
@@ -72,8 +86,12 @@ class DiscountAbsolute
 				$this->id = $rowid;
 				$this->fk_soc = $obj->fk_soc;
 				$this->amount_ht = $obj->amount_ht;
+				$this->amount_tva = $obj->amount_tva;
+				$this->amount_ttc = $obj->amount_ttc;
+				$this->tva_tx = $obj->tva_tx;
 				$this->fk_user = $obj->fk_user;
 				$this->fk_facture = $obj->fk_facture;
+				$this->fk_facture_source = $obj->fk_facture_source;
 				$this->description = $obj->description;
 				$this->datec = $obj->datec;
 	
@@ -92,7 +110,7 @@ class DiscountAbsolute
 			return -1;
 		}
 	}
-	
+
 
     /**
      *      \brief      Create in database
@@ -103,22 +121,34 @@ class DiscountAbsolute
     {
     	global $conf, $langs;
     	
+		// Nettoyage parametres
+		$this->amount_ht=price2num($this->amount_ht);
+		$this->amount_tva=price2num($this->amount_tva);
+		$this->amount_ttc=price2num($this->amount_ttc);
+		$this->tva_tx=price2num($this->tva_tx);
+		
         // Insert request
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except ";
-		$sql .= " (datec, fk_soc, amount_ht, fk_user, description)";
-		$sql .= " VALUES (now(),".$this->fk_soc.",'".$this->amount_ht."',".$user->id.",'".addslashes($this->desc)."')";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql.= " (datec, fk_soc, fk_user, description,";
+		$sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
+		$sql.= " fk_facture_source";
+		$sql.= ")";
+		$sql.= " VALUES (now(),".$this->fk_soc.",".$user->id.",'".addslashes($this->desc)."',";
+		$sql.= " '".$this->amount_ht."','".$this->amount_tva."','".$this->amount_ttc."','".$this->tva_tx."',";
+		$sql.= " ".($this->fk_facture_source?"'".$this->fk_facture_source."'":"null");
+		$sql.= ")";
 
 	   	dolibarr_syslog("DiscountAbsolute::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			$rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
-			return $rowid;
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."societe_remise_except");
+			return $this->id;
 		}
 		else
 		{
-            $this->error=$this->db->lasterror();
-            dolibarr_syslog("Skeleton_class::create ".$this->error);
+            $this->error=$this->db->lasterror().' - sql='.$sql;
+            dolibarr_syslog("DiscountAbsolute::create ".$this->error);
             return -1;
 		}
     }

@@ -1,6 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -28,7 +28,11 @@ create table llx_societe_remise_except
   fk_soc          integer NOT NULL, -- client
   datec           datetime,
   amount_ht       real NOT NULL,
+  amount_tva 	  real DEFAULT 0 NOT NULL,
+  amount_ttc 	  real DEFAULT 0 NOT NULL,
+  tva_tx   	      real DEFAULT 0 NOT NULL,
   fk_user         integer NOT NULL,
-  fk_facture      integer,
+  fk_facture        integer,
+  fk_facture_source integer,
   description     varchar(255) NOT NULL
 )type=innodb;

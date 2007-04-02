@@ -555,10 +555,11 @@ class Form
         global $langs,$conf;
         
         // On recherche les societes
-        $sql = "SELECT re.rowid, re.amount_ht as amount, re.description FROM";
-        $sql.= " ".MAIN_DB_PREFIX ."societe_remise_except as re";
+        $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+		$sql.= " re.description";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
         $sql.= " WHERE fk_soc = ".$socid;
-        if ($filter) $sql.= " AND $filter";
+        if ($filter) $sql.= " AND ".$filter;
         $sql.= " ORDER BY re.description ASC";
     
         $resql=$this->db->query($sql);
@@ -573,13 +574,16 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected > 0 && $selected == $obj->rowid)
+                    $desc=dolibarr_trunc($obj->description,40);
+					if ($desc=='(CREDIT_NOTE)') $desc=$langs->trans("CreditNote");
+					
+					if ($selected > 0 && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->description,40).' ('.$obj->amount.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                        print '<option value="'.$obj->rowid.'" selected="true">'.$desc.' ('.$obj->amount_ht.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
                     }
                     else
                     {
-                        print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->description,40).' ('.$obj->amount.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                        print '<option value="'.$obj->rowid.'">'.$desc.' ('.$obj->amount_ht.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
                     }
                     $i++;
                 }
