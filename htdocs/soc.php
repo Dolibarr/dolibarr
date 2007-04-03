@@ -352,40 +352,37 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '</td></tr>';
 
         // Fournisseur
-        if (!$soc->particulier)
-        {
-        	print '<tr>';
-          print '<td>'.$langs->trans('Supplier').'</td><td>';
-          $form->selectyesnonum("fournisseur",$soc->fournisseur);
-          print '</td>';
-          print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+        print '<tr>';
+        print '<td>'.$langs->trans('Supplier').'</td><td>';
+        $form->selectyesnonum("fournisseur",$soc->fournisseur);
+        print '</td>';
+        print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+        
+        print '<table class="nobordernopadding"><tr><td>';
+        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+		    print '</td><td>';
+		    $s=$langs->trans("SupplierCodeDesc").'<br>';
+		    $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
+		    $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
+		    $s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		    print $form->textwithhelp('',$s,1);
+        print '</td></tr></table>';
 
-          print '<table class="nobordernopadding"><tr><td>';
-          print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-		      print '</td><td>';
-		      $s=$langs->trans("SupplierCodeDesc").'<br>';
-		      $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
-		      $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		      $s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
-		      print $form->textwithhelp('',$s,1);
-          print '</td></tr></table>';
+        print '</td></tr>';
 
-          print '</td></tr>';
-
-		      if ($soc->fournisseur)
-		      {
-			      $load = $soc->LoadSupplierCateg();
-			      if ( $load == 0)
-			      {
-				      if (sizeof($soc->SupplierCategories) > 0)
-				      {
-					      print '<tr>';
-					      print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					      $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
-					      print '</td></tr>';
-				      }
-			      }
-		      }
+		    if ($soc->fournisseur)
+		    {
+			    $load = $soc->LoadSupplierCateg();
+			    if ( $load == 0)
+			    {
+				    if (sizeof($soc->SupplierCategories) > 0)
+				    {
+				     print '<tr>';
+				     print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+				     $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+				     print '</td></tr>';
+				    }
+			    }
 		    }
 
         print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
