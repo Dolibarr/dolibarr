@@ -196,6 +196,7 @@ Reductions=Reductions
 ReductionsShort=Reduc.
 Discount=Discount
 Discounts=Discounts
+ShowDiscount=Show discount
 RelativeDiscount=Relative discount
 GlobalDiscount=Global discount
 CreditNote=Credit note

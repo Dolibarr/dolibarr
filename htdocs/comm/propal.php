@@ -1146,8 +1146,7 @@ if ($_GET['propalid'] > 0)
 							{
 								$discount=new DiscountAbsolute($db);
 								$discount->fetch($objp->fk_remise_except);
-								print ' - '.$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
-								// \TODO Mettre ici lien sur ref avoir en ajoutant fonction getNomUrl sur classe DiscountAbsolute
+								print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl());
 							}
 							else
 							{
