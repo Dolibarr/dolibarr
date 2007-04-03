@@ -9,6 +9,7 @@ MenuNewCompany=Nouvelle société
 MenuNewCustomer=Nouveau client
 MenuNewProspect=Nouveau prospect
 MenuNewSupplier=Nouveau fournisseur
+MenuNewPrivateIndividual=Nouveau particulier
 MenuSocGroup=Groupes
 NewCompany=Nouvelle société (prospect, client, fournisseur)
 NewThirdParty=Nouveau tiers (prospect, client, fournisseur)

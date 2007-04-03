@@ -249,6 +249,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         if ($_GET["type"]=='f') { $soc->fournisseur=1; }
         if ($_GET["type"]=='c') { $soc->client=1; }
         if ($_GET["type"]=='p') { $soc->client=2; }
+        if ($_GET["private"]==1) { $soc->particulier=1; }
         if ($_POST["nom"])
         {
             $soc->nom=$_POST["nom"];
@@ -316,6 +317,12 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
     
         print '<tr><td>'.$langs->trans('Name').'</td><td><input type="text" size="30" name="nom" value="'.$soc->nom.'"></td>';
         print '<td>'.$langs->trans('Prefix').'</td><td><input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'"></td></tr>';
+        
+        if ($soc->particulier)
+        {
+        	print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="nom" value="'.$soc->firstname.'"></td>';
+        	print '<td colspan=2>&nbsp;</td></tr>';
+        }
     
         // Client / Prospect
         print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
@@ -327,49 +334,52 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
         print '<table class="nobordernopadding"><tr><td>';
         print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
-		print '</td><td>';
-		$s=$langs->trans("CustomerCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
-		print $form->textwithhelp('',$s,1);
+		    print '</td><td>';
+		    $s=$langs->trans("CustomerCodeDesc").'<br>';
+		    $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
+		    $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
+		    $s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
+		    print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
         print '</td></tr>';
 
         // Fournisseur
-        print '<tr>';
-        print '<td>'.$langs->trans('Supplier').'</td><td>';
-        $form->selectyesnonum("fournisseur",$soc->fournisseur);
-        print '</td>';
-        print '<td>'.$langs->trans('SupplierCode').'</td><td>';
+        if (!$soc->particulier)
+        {
+        	print '<tr>';
+          print '<td>'.$langs->trans('Supplier').'</td><td>';
+          $form->selectyesnonum("fournisseur",$soc->fournisseur);
+          print '</td>';
+          print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
-        print '<table class="nobordernopadding"><tr><td>';
-        print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
-		print '</td><td>';
-		$s=$langs->trans("SupplierCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
-		print $form->textwithhelp('',$s,1);
-        print '</td></tr></table>';
+          print '<table class="nobordernopadding"><tr><td>';
+          print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+		      print '</td><td>';
+		      $s=$langs->trans("SupplierCodeDesc").'<br>';
+		      $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
+		      $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
+		      $s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		      print $form->textwithhelp('',$s,1);
+          print '</td></tr></table>';
 
-        print '</td></tr>';
+          print '</td></tr>';
 
-		if ($soc->fournisseur)
-		{
-			$load = $soc->LoadSupplierCateg();
-			if ( $load == 0)
-			{
-				if (sizeof($soc->SupplierCategories) > 0)
-				{
-					print '<tr>';
-					print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
-					$form->select_array("fournisseur_categorie",$soc->SupplierCategories);
-					print '</td></tr>';
-				}
-			}
-		}
+		      if ($soc->fournisseur)
+		      {
+			      $load = $soc->LoadSupplierCateg();
+			      if ( $load == 0)
+			      {
+				      if (sizeof($soc->SupplierCategories) > 0)
+				      {
+					      print '<tr>';
+					      print '<td>'.$langs->trans('SupplierCategory').'</td><td colspan="3">';
+					      $form->select_array("fournisseur_categorie",$soc->SupplierCategories);
+					      print '</td></tr>';
+				      }
+			      }
+		      }
+		    }
 
         print '<tr><td>'.$langs->trans('Address').'</td><td colspan="3"><textarea name="adresse" cols="40" rows="3" wrap="soft">';
         print $soc->adresse;
@@ -404,124 +414,138 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
 
-        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+        if (!$soc->particulier)
+        {
+        	print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-		if ($soc->pays_code == 'FR')
-		{
-			$maxlength1=9;
-			$maxlength2=14;
-			$maxlength3=4;
-			$maxlength4=12;
-		}
-        print '<tr><td>'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</td><td>';
-        if ($soc->pays_id)
-        {
-            if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<input type="text" name="idprof1" size="15" maxlength="'.$maxlength1.'" value="'.$soc->siren.'">';
-            else print '&nbsp;';
-        }
-        else
-        {
-            print $countrynotdefined;
-        }
-        print '</td>';
-        print '<td>'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</td><td>';
-        if ($soc->pays_id)
-        {
-            if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<input type="text" name="idprof2" size="15" maxlength="'.$maxlength2.'" value="'.$soc->siret.'">';
-            else print '&nbsp;';
-        }
-        else
-        {
-            print $countrynotdefined;
-        }
-        print '</td></tr>';
+		      if ($soc->pays_code == 'FR')
+		      {
+			      $maxlength1=9;
+			      $maxlength2=14;
+			      $maxlength3=4;
+			      $maxlength4=12;
+		      }
+          print '<tr><td>'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</td><td>';
+          if ($soc->pays_id)
+          {
+              if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<input type="text" name="idprof1" size="15" maxlength="'.$maxlength1.'" value="'.$soc->siren.'">';
+              else print '&nbsp;';
+          }
+          else
+          {
+              print $countrynotdefined;
+          }
+          print '</td>';
+          print '<td>'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</td><td>';
+          if ($soc->pays_id)
+          {
+              if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<input type="text" name="idprof2" size="15" maxlength="'.$maxlength2.'" value="'.$soc->siret.'">';
+              else print '&nbsp;';
+          }
+          else
+          {
+          	print $countrynotdefined;
+          }
+          print '</td></tr>';
         
-        print '<tr><td>'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</td><td>';
-        if ($soc->pays_id)
-        {
+          print '<tr><td>'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</td><td>';
+          if ($soc->pays_id)
+          {
             if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<input type="text" name="idprof3" size="15" maxlength="'.$maxlength3.'" value="'.$soc->ape.'">';
             else print '&nbsp;';
-        }
-        else
-        {
+          }
+          else
+          {
             print $countrynotdefined;
-        }
-        print '</td>';
-        print '<td>'.($langs->transcountry("ProfId4",$soc->pays_code) != '-'?$langs->transcountry('ProfId4',$soc->pays_code):'').'</td><td>';
-        if ($soc->pays_id)
-        {
+          }
+          print '</td>';
+          print '<td>'.($langs->transcountry("ProfId4",$soc->pays_code) != '-'?$langs->transcountry('ProfId4',$soc->pays_code):'').'</td><td>';
+          if ($soc->pays_id)
+          {
             if ($langs->transcountry("ProfId4",$soc->pays_code) != '-') print '<input type="text" name="idprof4" size="15" maxlength="'.$maxlength4.'" value="'.$soc->idprof4.'">';
             else print '&nbsp;';
-        }
-        else
-        {
+          }
+          else
+          {
             print $countrynotdefined;
-        }
-        print '</td></tr>';
+          }
+          print '</td></tr>';
 
-        // Forme juridique
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
-        print '<td colspan="3">';
-        if ($soc->pays_id)
-        {
+          // Forme juridique
+          print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
+          print '<td colspan="3">';
+          if ($soc->pays_id)
+          {
             $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
-        }
-        else
-        {
+          }
+          else
+          {
             print $countrynotdefined;
+          }
+          print '</td></tr>';
+
+          print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
+          $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+          print '</td>';
+          print '<td>'.$langs->trans("Staff").'</td><td>';
+          $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+          print '</td></tr>';
         }
-        print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id, 0, 0, 0, 1);
-        print '</td>';
-        print '<td>'.$langs->trans("Staff").'</td><td>';
-        $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
-        print '</td></tr>';
+		    // Assujeti TVA
+		    $html = new Form($db);
+		    print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
+		    if ($soc->particulier)
+		    {
+		    	print '<td colspan="3">';
+		    }
+		    else
+		    {
+		    	print '<td>';
+		    }
+		    $html->select_YesNo("1",'assujtva_value');		// Assujeti par défaut en creation
+		    print '</td>';
 
-		// Assujeti TVA
-		$html = new Form($db);
-		print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
-		$html->select_YesNo("1",'assujtva_value');		// Assujeti par défaut en creation
-		print '</td>';
-
-		// Code TVA intra
-		if ($conf->use_javascript)
-		{
-			print "\n";
-			print '<script language="JavaScript" type="text/javascript">';
-			print "function CheckVAT(a,b) {\n";
-			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,230);\n";
-			print "}\n";
-			print '</script>';
-			print "\n";
-		}
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntraShort').'</td>';
-        print '<td nowrap="nowrap">';
-        $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
-        $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
-		$s.=' ';
-		if ($conf->use_javascript)
-		{
-	        $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
-	        print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
-		}
-		else
-		{
-			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
-		}
-        print '</td>';
+		    // Code TVA intra
+		    if (!$soc->particulier)
+		    {
+		    	if ($conf->use_javascript)
+		      {
+			      print "\n";
+			      print '<script language="JavaScript" type="text/javascript">';
+			      print "function CheckVAT(a,b) {\n";
+			      print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,230);\n";
+			      print "}\n";
+			      print '</script>';
+			      print "\n";
+		      }
+          print '<td nowrap="nowrap">'.$langs->trans('VATIntraShort').'</td>';
+          print '<td nowrap="nowrap">';
+          $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
+          $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
+		      $s.=' ';
+		      if ($conf->use_javascript)
+		      {
+	          $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+	          print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+		      }
+		      else
+		      {
+			      print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+		      }
+          print '</td>';
+        }
         print '</tr>';
         
-    if ($user->rights->commercial->client->voir)
-    {
-    	//Affecter un commercial
-      print '<tr>';
-      print '<td>'.$langs->trans("AllocateCommercial").'</td>';
-      print '<td colspan="3">';
-      $form->select_users($soc->commercial_id,'commercial_id',1);
-      print '</td></tr>';
-    }
+        if ($user->rights->commercial->client->voir)
+        {
+    	    //Affecter un commercial
+          print '<tr>';
+          print '<td>'.$langs->trans("AllocateCommercial").'</td>';
+          print '<td colspan="3">';
+          $form->select_users($soc->commercial_id,'commercial_id',1);
+          print '</td></tr>';
+        }
 
 
 
