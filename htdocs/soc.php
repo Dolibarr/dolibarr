@@ -93,6 +93,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
 	$soc->nom                   = $_POST["nom"];
+	$soc->prenom                = $_POST["prenom"];
 	$soc->adresse               = $_POST["adresse"];
 	$soc->cp                    = $_POST["cp"];
 	$soc->ville                 = $_POST["ville"];
@@ -118,7 +119,14 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 	$soc->forme_juridique_code  = $_POST["forme_juridique_code"];
 	$soc->effectif_id           = $_POST["effectif_id"];
-	$soc->typent_id             = $_POST["typent_id"];
+	if ($_POST["private"] == 1)
+	{
+		$soc->typent_id             = 8; //todo prévoir autre méthode si le champs "particulier" change de rowid
+	}
+	else
+	{
+		$soc->typent_id             = $_POST["typent_id"];
+	}
 	$soc->client                = $_POST["client"];
 	$soc->fournisseur           = $_POST["fournisseur"];
 	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
@@ -253,6 +261,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         if ($_POST["nom"])
         {
             $soc->nom=$_POST["nom"];
+            $soc->prenom=$_POST["prenom"];
+            $soc->particulier=$_POST["private"];
             $soc->prefix_comm=$_POST["prefix_comm"];
             $soc->client=$_POST["client"];
             $soc->code_client=$_POST["code_client"];
@@ -319,6 +329,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '<form action="soc.php" method="post" name="formsoc">';
     
         print '<input type="hidden" name="action" value="add">';
+        print '<input type="hidden" name="private" value='.$soc->particulier.'>';
     
         print '<table class="border" width="100%">';
     
@@ -327,7 +338,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         
         if ($soc->particulier)
         {
-        	print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="nom" value="'.$soc->firstname.'"></td>';
+        	print '<tr><td>'.$langs->trans('FirstName').'</td><td><input type="text" size="30" name="prenom" value="'.$soc->firstname.'"></td>';
         	print '<td colspan=2>&nbsp;</td></tr>';
         }
     
