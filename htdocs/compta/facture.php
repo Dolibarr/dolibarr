@@ -1570,7 +1570,7 @@ if ($_GET['action'] == 'create')
 	{
 		$title=$langs->trans('Products');
 
-		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.remise_percent, pt.description, pt.info_bits,';
+		$sql = 'SELECT pt.rowid, pt.subprice, pt.tva_tx, pt.qty, pt.fk_remise_except, pt.remise_percent, pt.description, pt.info_bits,';
 		$sql.= ' p.label as product, p.ref, p.rowid as prodid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as pt';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product = p.rowid';
@@ -1642,7 +1642,20 @@ if ($_GET['action'] == 'create')
 				}
 				print "</td>\n";
 				print '<td>';
-				print dolibarr_trunc($objp->description,60);
+				if ($objp->description)
+				{
+					if ($objp->description == '(CREDIT_NOTE)')
+					{
+						$discount=new DiscountAbsolute($db);
+						$discount->fetch($objp->fk_remise_except);
+						print $langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+						// \TODO Mettre ici lien sur ref avoir en ajoutant fonction getNomUrl sur classe DiscountAbsolute
+					}
+					else
+					{
+						print dolibarr_trunc($objp->description,60);
+					}
+				}
 				print '</td>';
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice).'</td>';
