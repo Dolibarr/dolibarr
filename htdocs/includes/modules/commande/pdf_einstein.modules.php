@@ -1,24 +1,25 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-* or see http://www.gnu.org/
-*
-* $Id$
-* $Source$
-*/
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * $Id$
+ * $Source$
+ */
 
 /**
        	\file       htdocs/includes/modules/commande/pdf_einstein.modules.php
@@ -73,6 +74,7 @@ class pdf_einstein extends ModelePDFCommandes
         $this->option_condreg = 1;                 // Affiche conditions règlement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
+        $this->option_credit_note = 1;             // Gère les avoirs
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
@@ -219,7 +221,16 @@ class pdf_einstein extends ModelePDFCommandes
                     if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=_dol_htmlentities($com->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+                        if ($com->lignes[$i]->desc == '(CREDIT_NOTE)' && $com->lignes[$i]->fk_remise_except)
+                        {
+                        	$discount=new DiscountAbsolute($this->db);
+                        	$discount->fetch($com->lignes[$i]->fk_remise_except);
+                        	$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+                        }
+                        else
+                        {
+                        	$libelleproduitservice.=_dol_htmlentities($com->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+                        }
                     }
                     // Si ligne associée à un code produit
                     if ($com->lignes[$i]->fk_product)
