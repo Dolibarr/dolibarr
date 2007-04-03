@@ -299,7 +299,14 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
             $soc->pays=$obj->libelle;
         }
     
-        print_titre($langs->trans("NewCompany"));
+        if (!$soc->particulier)
+        {
+        	print_titre($langs->trans("NewCompany"));
+        }
+        else
+        {
+        	print_titre($langs->trans("NewPrivateIndividual"));
+        }
         print "<br>\n";
     
         if ($soc->error)

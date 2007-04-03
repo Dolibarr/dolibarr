@@ -14,6 +14,7 @@ MenuSocGroup=Groupes
 NewCompany=Nouvelle société (prospect, client, fournisseur)
 NewThirdParty=Nouveau tiers (prospect, client, fournisseur)
 NewSocGroup=Nouveau groupement de sociétés
+NewPrivateIndividual=Nouveau particulier (prospect, client)
 ProspectionArea=Espace prospection
 SocGroup=Groupement de sociétés
 IdCompany=Id société
