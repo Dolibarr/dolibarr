@@ -92,8 +92,17 @@ if ($_POST["getsuppliercode"])
 if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
     && ($_POST["action"] == 'add' || $_POST["action"] == 'update') && $user->rights->societe->creer)
 {
-	$soc->nom                   = $_POST["nom"];
-	$soc->prenom                = $_POST["prenom"];
+	if ($_POST["private"] == 1)
+	{
+		$soc->nom                   = $_POST["nom"].' '.$_POST["prenom"];
+		$soc->nom_particulier       = $_POST["nom"];
+		$soc->prenom                = $_POST["prenom"];
+		$soc->particulier           = $_POST["private"];
+	}
+	else
+	{
+		$soc->nom                   = $_POST["nom"];
+	}
 	$soc->adresse               = $_POST["adresse"];
 	$soc->cp                    = $_POST["cp"];
 	$soc->ville                 = $_POST["ville"];
