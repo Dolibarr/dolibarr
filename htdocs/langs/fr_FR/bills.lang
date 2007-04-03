@@ -200,6 +200,7 @@ RelativeDiscount=Remise relative
 GlobalDiscount=Remise fixe
 CreditNote=Avoir
 CreditNotes=Avoirs
+DiscountFromCreditNote=Remise issue de l'avoir %s
 NewGlobalDiscount=Nouvelle remise fixe
 NoteReason=Note/Motif
 ReasonDiscount=Motif

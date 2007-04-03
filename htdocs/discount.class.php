@@ -47,8 +47,8 @@ class DiscountAbsolute
 	var $description;			// Description libre
 	var $datec;					// Date creation
 	var $fk_facture;			// Id facture qd une remise a été utilisé
-	var $fk_facture_source;		// Id facture avoir a l'origine de la remise
-
+	var $fk_facture_source;		// Id facture avoir à l'origine de la remise
+	var $ref_facture_source;	// Ref facture avoir à l'origine de la remise
 	
 	/**
 	 *    \brief  Constructeur de la classe
@@ -67,13 +67,15 @@ class DiscountAbsolute
 	 */
 	function fetch($rowid)
 	{
-		$sql = "SELECT fk_soc,";
-		$sql.= " fk_user,";
-		$sql.= " amount_ht, amount_tva, amount_ttc, tva_tx,";
-		$sql.= " fk_facture, fk_facture_source, description,";
-		$sql.= " ".$this->db->pdate("datec")." as datec";
-		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except";
-		$sql.= " WHERE rowid=".$rowid;
+		$sql = "SELECT sr.fk_soc,";
+		$sql.= " sr.fk_user,";
+		$sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
+		$sql.= " sr.fk_facture, sr.fk_facture_source, sr.description,";
+		$sql.= " ".$this->db->pdate("sr.datec")." as datec,";
+		$sql.= " f.facnumber as ref_facture_source";
+		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
+		$sql.= " WHERE sr.rowid=".$rowid;
 	
 		dolibarr_syslog("DiscountAbsolute::fetch sql=".$sql);
  		$resql = $this->db->query($sql);
@@ -91,7 +93,8 @@ class DiscountAbsolute
 				$this->tva_tx = $obj->tva_tx;
 				$this->fk_user = $obj->fk_user;
 				$this->fk_facture = $obj->fk_facture;
-				$this->fk_facture_source = $obj->fk_facture_source;
+				$this->fk_facture_source = $obj->fk_facture_source;		// Id avoir source
+				$this->ref_facture_source = $obj->ref_facture_source;	// Ref avoir source
 				$this->description = $obj->description;
 				$this->datec = $obj->datec;
 	

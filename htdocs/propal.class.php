@@ -219,9 +219,9 @@ class Propal extends CommonObject
 			$propalligne->rang=-1;
 			$propalligne->info_bits=2;
 
-			$propalligne->total_ht  = $remise->amount_ht;
-			$propalligne->total_tva = $remise->amount_tva;
-			$propalligne->total_ttc = $remise->amount_ttc;
+			$propalligne->total_ht  = -$remise->amount_ht;
+			$propalligne->total_tva = -$remise->amount_tva;
+			$propalligne->total_ttc = -$remise->amount_ttc;
 
 			$result=$propalligne->insert();
 			if ($result > 0)
@@ -860,7 +860,7 @@ class Propal extends CommonObject
                 /*
                  * Lignes propales liées à un produit ou non
                  */
-                $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.remise_percent, d.subprice, d.fk_product,";
+                $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
                 $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.coef, d.rang,";
                 $sql.= " p.ref, p.label, p.description as product_desc";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
@@ -884,7 +884,8 @@ class Propal extends CommonObject
                         $ligne->qty            = $objp->qty;
                         $ligne->tva_tx         = $objp->tva_tx;
                         $ligne->subprice       = $objp->subprice;
-                        $ligne->remise_percent = $objp->remise_percent;
+                        $ligne->fk_remise_except = $objp->fk_remise_except;
+						$ligne->remise_percent = $objp->remise_percent;
                         $ligne->price          = $objp->price;
 
                         $ligne->info_bits      = $objp->info_bits;
@@ -2051,6 +2052,8 @@ class PropaleLigne
     var $tva_tx;
     var $subprice;
     var $remise_percent;
+	var $fk_remise_except;
+	
 	var $rang = 0;
 	var $coef;
 	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR

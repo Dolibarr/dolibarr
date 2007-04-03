@@ -2197,6 +2197,7 @@ else
 			* Lignes de factures
 			*/
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
+			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
@@ -2274,8 +2275,10 @@ else
 								{
 									if ($objp->description == '(CREDIT_NOTE)')
 									{
-										print ' - '.$langs->trans("CreditNote");
-										// \TODO Mettre ici lien sur ref avoir
+										$discount=new DiscountAbsolute($db);
+										$discount->fetch($objp->fk_remise_except);
+										print ' - '.$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+										// \TODO Mettre ici lien sur ref avoir en ajoutant fonction getNomUrl sur classe DiscountAbsolute
 									}
 									else
 									{

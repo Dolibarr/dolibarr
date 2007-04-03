@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -73,6 +73,7 @@ class pdf_propale_azur extends ModelePDFPropales
         $this->option_condreg = 1;                 // Affiche conditions règlement
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
+        $this->option_credit_note = 1;             // Gère les avoirs
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
@@ -218,7 +219,17 @@ class pdf_propale_azur extends ModelePDFPropales
 					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="\n";
-						$libelleproduitservice.=_dol_htmlentities($propale->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+
+	                    if ($propale->lignes[$i]->desc == '(CREDIT_NOTE)' && $propale->lignes[$i]->fk_remise_except)
+						{
+							$discount=new DiscountAbsolute($this->db);
+							$discount->fetch($propale->lignes[$i]->fk_remise_except);
+							$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+						}
+						else
+						{
+							$libelleproduitservice.=_dol_htmlentities($propale->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+						}
 					}
 					// Si ligne associée à un code produit
 					if ($propale->lignes[$i]->fk_product)

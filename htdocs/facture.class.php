@@ -612,9 +612,9 @@ class Facture extends CommonObject
 			$facligne->price=-$remise->amount_ht;
 			$facligne->remise=0;
 
-			$facligne->total_ht  = $remise->amount_ht;
-			$facligne->total_tva = $remise->amount_tva;
-			$facligne->total_ttc = $remise->amount_ttc;
+			$facligne->total_ht  = -$remise->amount_ht;
+			$facligne->total_tva = -$remise->amount_tva;
+			$facligne->total_ttc = -$remise->amount_ttc;
 
 			$lineid=$facligne->insert();
 			if ($lineid > 0)

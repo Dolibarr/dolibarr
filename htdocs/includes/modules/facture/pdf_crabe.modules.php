@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 *
 * This program is free software; you can redistribute it and/or modify
 * it under the terms of the GNU General Public License as published by
@@ -74,6 +74,7 @@ class pdf_crabe extends ModelePDFFactures
         $this->option_codeproduitservice = 1;      // Affiche code produit-service
         $this->option_multilang = 1;               // Dispo en plusieurs langues
         $this->option_escompte = 1;                // Affiche si il y a eu escompte
+        $this->option_credit_note = 1;             // Gère les avoirs
 
     	if (defined("FACTURE_TVAOPTION") && FACTURE_TVAOPTION == 'franchise')
       		$this->franchise=1;
@@ -216,12 +217,22 @@ class pdf_crabe extends ModelePDFFactures
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=_dol_htmlentities($fac->lignes[$i]->libelle,0);
+					$libelleproduitservice=_dol_htmlentities($fac->lignes[$i]->libelle,0);
                     if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
-                    }
+
+	                    if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
+						{
+							$discount=new DiscountAbsolute($this->db);
+							$discount->fetch($fac->lignes[$i]->fk_remise_except);
+							$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+						}
+						else
+						{
+							$libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+						}
+					}
                     // Si ligne associée à un code produit
                     if ($fac->lignes[$i]->produit_id)
                     {
