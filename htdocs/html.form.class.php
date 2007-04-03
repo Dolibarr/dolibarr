@@ -323,6 +323,7 @@ class Form
 		{
 			if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
 			{
+				$langs->load("companies");
 				$obj = $this->db->fetch_object($resql);
 				$pays_id = $obj->rowid?$obj->rowid:'';
 				
@@ -344,7 +345,14 @@ class Form
 				}
 				
 				print '<div>';
-				print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
+				if ($obj->rowid == 0)
+				{
+					print '<input type="text" size="45" id="pays" name="pays" value="'.$langs->trans("SelectCountry").'" '.$htmloption.' />';
+				}
+				else
+				{
+					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
+				}
 				print '<span id="indicator1" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
 				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" />';
 				print '</div>';
