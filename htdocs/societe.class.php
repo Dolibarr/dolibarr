@@ -44,6 +44,9 @@ class Societe
 	
 	var $id;
 	var $nom;
+	var $nom_particulier;
+	var $prenom;
+	var $particulier;
 	var $adresse;
 	var $cp;
 	var $ville;
@@ -55,7 +58,7 @@ class Societe
 	var $email;
 	var $url;
 
-	// 4 identifiants porfessionnels (leur utilisation depend du pays)
+	// 4 identifiants professionnels (leur utilisation depend du pays)
 	var $siren;		// IdProf1
 	var $siret;		// IdProf2
 	var $ape;		// IdProf3
@@ -307,10 +310,10 @@ class Societe
         $this->pays_id=trim($this->pays_id);
         $this->tel=trim($this->tel);
         $this->fax=trim($this->fax);
-		$this->tel = ereg_replace(" ","",$this->tel);
-		$this->tel = ereg_replace("\.","",$this->tel);
-		$this->fax = ereg_replace(" ","",$this->fax);
-		$this->fax = ereg_replace("\.","",$this->fax);
+		    $this->tel = ereg_replace(" ","",$this->tel);
+		    $this->tel = ereg_replace("\.","",$this->tel);
+		    $this->fax = ereg_replace(" ","",$this->fax);
+		    $this->fax = ereg_replace("\.","",$this->fax);
         $this->email=trim($this->email);
         $this->url=trim($this->url);
         $this->siren=trim($this->siren);
@@ -319,7 +322,7 @@ class Societe
         $this->idprof4=trim($this->idprof4);
         $this->prefix_comm=trim($this->prefix_comm);
 
-		$this->tva_assuj=trim($this->tva_assuj);
+		    $this->tva_assuj=trim($this->tva_assuj);
         $this->tva_intra=trim($this->tva_intra);
 
         $this->capital=trim($this->capital);
@@ -355,7 +358,7 @@ class Societe
             $sql .= ",ape     = '". addslashes($this->ape)     ."'";
             $sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
         
-			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
+			      $sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
 
             $sql .= ",capital = '" .   addslashes($this->capital) ."'";
@@ -400,13 +403,38 @@ class Societe
             $sql .= " WHERE idp = '" . $id ."'";
 
         	
-			dolibarr_syslog("Societe::update sql=".$sql);
+			      dolibarr_syslog("Societe::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
+            	
+            	//Si c'est un particulier on crée la fiche contact
+            	if ($this->particulier == 1)
+            	{
+            		require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
+            		$contact = new Contact($this->db);
+            		
+            		$contact->socid        = $id;
+            		$contact->name         = $this->nom_particulier;
+            		$contact->firstname    = $this->prenom;
+            		//$contact->civilite_id  = $_POST["civilite_id"];
+            		//$contact->poste        = $_POST["poste"];
+            		$contact->address      = $this->adresse;
+            		$contact->cp           = $this->cp;
+            		$contact->ville        = $this->ville;
+            		$contact->fk_pays      = $this->pays_id;
+            		$contact->email        = $this->email;
+            		$contact->phone_pro    = $this->tel;
+            		//$contact->phone_perso  = $_POST["phone_perso"];
+            		//$contact->phone_mobile = $_POST["phone_mobile"];
+            		$contact->fax          = $this->fax;
+            		
+            		$id =  $contact->create($user);
+            	}
 
-				// si le fournisseur est classe on l'ajoute
-				$this->AddFournisseurInCategory($this->fournisseur_categorie);
+
+				      // si le fournisseur est classe on l'ajoute
+				      $this->AddFournisseurInCategory($this->fournisseur_categorie);
 
                 if ($call_trigger)
                 {
