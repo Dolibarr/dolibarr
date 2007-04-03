@@ -403,12 +403,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
         print '<tr><td>'.$langs->trans('EMail').'</td><td><input type="text" name="email" size="32" value="'.$soc->email.'"></td>';
         print '<td>'.$langs->trans('Web').'</td><td><input type="text" name="url" size="32" value="'.$soc->url.'"></td></tr>';
-        
 
-        //print '<div id="particulier" style="display:none">';
-        //print '<div id="particulier" style="visibility: hidden">';
-
-        print '<tr><td><div id="particulier13" class="visible">'.$langs->trans('Capital').'</div></td><td colspan="3"><div id="particulier14" class="visible"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</div></td></tr>';
+        print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
 		if ($soc->pays_code == 'FR')
 		{
@@ -417,22 +413,22 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			$maxlength3=4;
 			$maxlength4=12;
 		}
-        print '<tr><td><div id="particulier10" class="visible">'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</div></td><td>';
+        print '<tr><td>'.($langs->transcountry("ProfId1",$soc->pays_code) != '-'?$langs->transcountry('ProfId1',$soc->pays_code):'').'</td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<div id="particulier11" class="visible"><input type="text" name="idprof1" size="15" maxlength="'.$maxlength1.'" value="'.$soc->siren.'"></div>';
-            else print '<div id="particulier11" class="visible">&nbsp;</div>';
+            if ($langs->transcountry("ProfId1",$soc->pays_code) != '-') print '<input type="text" name="idprof1" size="15" maxlength="'.$maxlength1.'" value="'.$soc->siren.'">';
+            else print '&nbsp;';
         }
         else
         {
             print $countrynotdefined;
         }
         print '</td>';
-        print '<td><div id="particulier8" class="visible">'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</div></td><td>';
+        print '<td>'.($langs->transcountry("ProfId2",$soc->pays_code) != '-'?$langs->transcountry('ProfId2',$soc->pays_code):'').'</td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<div id="particulier9" class="visible"><input type="text" name="idprof2" size="15" maxlength="'.$maxlength2.'" value="'.$soc->siret.'"></div>';
-            else print '<div id="particulier9" class="visible">&nbsp;</div>';
+            if ($langs->transcountry("ProfId2",$soc->pays_code) != '-') print '<input type="text" name="idprof2" size="15" maxlength="'.$maxlength2.'" value="'.$soc->siret.'">';
+            else print '&nbsp;';
         }
         else
         {
@@ -440,22 +436,22 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         }
         print '</td></tr>';
         
-        print '<tr><td><div id="particulier6" class="visible">'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</div></td><td>';
+        print '<tr><td>'.($langs->transcountry("ProfId3",$soc->pays_code) != '-'?$langs->transcountry('ProfId3',$soc->pays_code):'').'</td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<div id="particulier7" class="visible"><input type="text" name="idprof3" size="15" maxlength="'.$maxlength3.'" value="'.$soc->ape.'"></div>';
-            else print '<div id="particulier7" class="visible">&nbsp;</div>';
+            if ($langs->transcountry("ProfId3",$soc->pays_code) != '-') print '<input type="text" name="idprof3" size="15" maxlength="'.$maxlength3.'" value="'.$soc->ape.'">';
+            else print '&nbsp;';
         }
         else
         {
             print $countrynotdefined;
         }
         print '</td>';
-        print '<td><div id="particulier12" class="visible">'.($langs->transcountry("ProfId4",$soc->pays_code) != '-'?$langs->transcountry('ProfId4',$soc->pays_code):'').'</div></td><td>';
+        print '<td>'.($langs->transcountry("ProfId4",$soc->pays_code) != '-'?$langs->transcountry('ProfId4',$soc->pays_code):'').'</td><td>';
         if ($soc->pays_id)
         {
-            if ($langs->transcountry("ProfId4",$soc->pays_code) != '-') print '<div id="particulier13" class="visible"><input type="text" name="idprof4" size="15" maxlength="'.$maxlength4.'" value="'.$soc->idprof4.'"></div>';
-            else print '<div id="particulier9" class="visible">&nbsp;</div>';
+            if ($langs->transcountry("ProfId4",$soc->pays_code) != '-') print '<input type="text" name="idprof4" size="15" maxlength="'.$maxlength4.'" value="'.$soc->idprof4.'">';
+            else print '&nbsp;';
         }
         else
         {
@@ -464,8 +460,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '</td></tr>';
 
         // Forme juridique
-        print '<tr><td><div id="particulier1" class="visible">'.$langs->trans('JuridicalStatus').'</div></td>';
-        print '<td colspan="3" class="visible">';
+        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td>';
+        print '<td colspan="3">';
         if ($soc->pays_id)
         {
             $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
@@ -477,9 +473,9 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id, 0, 0, 0, 1, 'onChange="formDisplayHideId(\'particulier\', 8)"');
+        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id, 0, 0, 0, 1);
         print '</td>';
-        print '<td><div id="particulier3" class="visible">'.$langs->trans("Staff").'</div></td><td>';
+        print '<td>'.$langs->trans("Staff").'</td><td>';
         $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
         print '</td></tr>';
 
