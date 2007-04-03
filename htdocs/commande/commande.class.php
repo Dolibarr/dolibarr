@@ -1002,53 +1002,59 @@ class Commande extends CommonObject
     $result=$remise->fetch($idremise);
 
     if ($result > 0)
-      {
-	$comligne=new CommandeLigne($this->db);
-	$comligne->fk_commande=$this->id;
-	$comligne->fk_remise_except=$remise->id;
-	$comligne->desc=$remise->description;   	// Description ligne
-	$comligne->tva_tx=$remise->tva_tx;
-	$comligne->subprice=-$remise->amount_ht;
-	$comligne->price=-$remise->amount_ht;
-	$comligne->fk_product=0;					// Id produit prédéfini
-	$comligne->qty=1;
-	$comligne->remise=0;
-	$comligne->remise_percent=0;
-	$comligne->rang=-1;
-	$comligne->info_bits=2;
-
-	$tabprice=calcul_price_total($comligne->qty, $comligne->subprice, 0,$comligne->tva_tx);
-	$comligne->total_ht  = $tabprice[0];
-	$comligne->total_tva = $tabprice[1];
-	$comligne->total_ttc = $tabprice[2];
-
-	$result=$comligne->insert();
-	if ($result > 0)
-	  {
-	    $result=$this->update_price($this->id);
-	    if ($result > 0)
-	      {
-		$this->db->commit();
-		return 1;
+    {
+    	if ($remise->fk_facture)	// Protection against multiple submission
+			{
+				$this->error=$langs->trans("ErrorDiscountAlreadyUsed");
+				$this->db->rollback();
+				return -5;
+			}
+    	
+    	$comligne=new CommandeLigne($this->db);
+    	$comligne->fk_commande=$this->id;
+    	$comligne->fk_remise_except=$remise->id;
+    	$comligne->desc=$remise->description;   	// Description ligne
+    	$comligne->tva_tx=$remise->tva_tx;
+    	$comligne->subprice=-$remise->amount_ht;
+    	$comligne->price=-$remise->amount_ht;
+    	$comligne->fk_product=0;					// Id produit prédéfini
+    	$comligne->qty=1;
+    	$comligne->remise=0;
+    	$comligne->remise_percent=0;
+    	$comligne->rang=-1;
+    	$comligne->info_bits=2;
+    	
+    	$comligne->total_ht  = -$remise->amount_ht;
+			$comligne->total_tva = -$remise->amount_tva;
+			$comligne->total_ttc = -$remise->amount_ttc;
+    	
+    	$result=$comligne->insert();
+    	if ($result > 0)
+    	{
+    		$result=$this->update_price($this->id);
+    		if ($result > 0)
+    		{
+    			$this->db->commit();
+    			return 1;
 	      }
+	      else
+	      {
+	      	$this->db->rollback();	
+	      	return -1;
+	      }
+	    }
 	    else
-	      {
-		$this->db->rollback();	
-		return -1;
-	      }
+	    {
+	    	$this->error=$comligne->error;
+	    	$this->db->rollback();	
+	    	return -2;
+	    }
 	  }
-	else
-	  {
-	    $this->error=$comligne->error;
-	    $this->db->rollback();	
-	    return -2;
-	  }
-      }
     else
-      {
-	$this->db->rollback();
-	return -2;	
-      }
+    {
+    	$this->db->rollback();
+    	return -2;
+    }
   }
 	
 	
@@ -1086,8 +1092,8 @@ class Commande extends CommonObject
   {
     $this->lignes = array();
     $sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-    $sql.= ' l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits,';
-	$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
+    $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits,';
+	  $sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
     $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
     $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
@@ -1105,28 +1111,29 @@ class Commande extends CommonObject
 	    $objp = $this->db->fetch_object($result);
 
 	    $ligne = new CommandeLigne($this->db);
-	    $ligne->rowid          = $objp->rowid;
-	    $ligne->id             = $objp->rowid;				// \deprecated
-	    $ligne->fk_commande    = $objp->fk_commande;
-	    $ligne->commande_id    = $objp->fk_commande;		// \deprecated
-	    $ligne->desc           = $objp->description;  // Description ligne
-	    $ligne->qty            = $objp->qty;
-	    $ligne->tva_tx         = $objp->tva_tx;
-	    $ligne->total_ht       = $objp->total_ht;
-	    $ligne->total_ttc      = $objp->total_ttc;
-	    $ligne->total_tva      = $objp->total_tva;
-	    $ligne->subprice       = $objp->subprice;
-	    $ligne->remise_percent = $objp->remise_percent;
-	    $ligne->price          = $objp->price;
-	    $ligne->fk_product     = $objp->fk_product;
-	    $ligne->coef           = $objp->coef;
-	    $ligne->rang           = $objp->rang;
-	    $ligne->info_bits      = $objp->info_bits;
+	    $ligne->rowid            = $objp->rowid;
+	    $ligne->id               = $objp->rowid;				// \deprecated
+	    $ligne->fk_commande      = $objp->fk_commande;
+	    $ligne->commande_id      = $objp->fk_commande;		// \deprecated
+	    $ligne->desc             = $objp->description;  // Description ligne
+	    $ligne->qty              = $objp->qty;
+	    $ligne->tva_tx           = $objp->tva_tx;
+	    $ligne->total_ht         = $objp->total_ht;
+	    $ligne->total_ttc        = $objp->total_ttc;
+	    $ligne->total_tva        = $objp->total_tva;
+	    $ligne->subprice         = $objp->subprice;
+	    $ligne->fk_remise_except = $objp->fk_remise_except;
+	    $ligne->remise_percent   = $objp->remise_percent;
+	    $ligne->price            = $objp->price;
+	    $ligne->fk_product       = $objp->fk_product;
+	    $ligne->coef             = $objp->coef;
+	    $ligne->rang             = $objp->rang;
+	    $ligne->info_bits        = $objp->info_bits;
 
-	    $ligne->ref            = $objp->product_ref;
-	    $ligne->libelle        = $objp->label;	
-	    $ligne->product_desc   = $objp->product_desc; 		// Description produit
-	    $ligne->fk_product_type= $objp->fk_product_type;	// Produit ou service
+	    $ligne->ref              = $objp->product_ref;
+	    $ligne->libelle          = $objp->label;	
+	    $ligne->product_desc     = $objp->product_desc; 		// Description produit
+	    $ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
 
 	    $this->lignes[$i] = $ligne;
 	    $i++;

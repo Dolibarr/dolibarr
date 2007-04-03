@@ -1262,7 +1262,7 @@ else
 			/*
 			* Lignes de commandes
 			*/
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.info_bits,';
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -1326,7 +1326,20 @@ else
 								print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socid.'">';
 								print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 								print '</a>';
-								if ($objp->description) print ' - '.nl2br($objp->description);
+								if ($objp->description)
+								{
+									if ($objp->description == '(CREDIT_NOTE)')
+									{
+										$discount=new DiscountAbsolute($db);
+										$discount->fetch($objp->fk_remise_except);
+										print ' - '.$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+										// \TODO Mettre ici lien sur ref avoir en ajoutant fonction getNomUrl sur classe DiscountAbsolute
+									}
+									else
+									{
+										print ' - '.nl2br($objp->description);
+									}
+								}
 							}
 							else
 							{
@@ -1459,122 +1472,6 @@ else
 			{
 				dolibarr_print_error($db);
 			}
-
-			/*
-			* Lignes de remise
-			*/
-
-			// Réductions relatives (Remises-Ristournes-Rabbais)
-			/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
-			et non globalement
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremisepercent">';
-			print '<input type="hidden" name="id" value="'.$commande->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerRelativeDiscount');
-			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($soc->remise_client?$langs->trans("CompanyHasRelativeDiscount",$soc->remise_client):$langs->trans("CompanyHasNoRelativeDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editrelativediscount')
-			{
-			print '<input type="text" name="remise_percent" size="2" value="'.$commande->remise_percent.'">%';
-			}
-			else
-			{
-			print $commande->remise_percent?$commande->remise_percent.'%':'&nbsp;';
-			}
-			print '</font></td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] != 'editrelativediscount') print $commande->remise_percent?'-'.price($commande->remise_percent*$total/100):$langs->trans("DiscountNone");
-			else print '&nbsp;';
-			print '</font></td>';
-			if ($_GET['action'] != 'editrelativediscount')
-			{
-			if ($commande->brouillon && $user->rights->facture->creer)
-			{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editrelativediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetRelativeDiscount'),1).'</a></td>';
-			}
-			else
-			{
-			print '<td>&nbsp;</td>';
-			}
-			if ($commande->brouillon && $user->rights->facture->creer && $commande->remise_percent)
-			{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremisepercent&amp;rowid='.$objp->rowid.'">';
-			print img_delete();
-			print '</a></td>';
-			}
-			else
-			{
-			print '<td>&nbsp;</td>';
-			}
-			print '<td>&nbsp;</td>';
-			}
-			else
-			{
-			print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-			}
-			print '</tr>';
-			print '</form>';
-			*/
-
-			// Remise absolue
-			/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
-			$var=!$var;
-			print '<form name="updateligne" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-			print '<input type="hidden" name="action" value="setremiseabsolue">';
-			print '<input type="hidden" name="id" value="'.$commande->id.'">';
-			print '<tr class="liste_total"><td>';
-			print $langs->trans('CustomerAbsoluteDiscount');
-			if ($commande->brouillon) print ' <font style="font-weight: normal">('.($avoir_en_cours?$langs->trans("CompanyHasAbsoluteDiscount",$avoir_en_cours,$langs->trans("Currency".$conf->monnaie)):$langs->trans("CompanyHasNoAbsoluteDiscount")).')</font>';
-			print '</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '<td align="right"><font style="font-weight: normal">';
-			if ($_GET['action'] == 'editabsolutediscount')
-			{
-			print '-<input type="text" name="remise_absolue" size="2" value="'.$commande->remise_absolue.'">';
-			}
-			else
-			{
-			print $commande->remise_absolue?'-'.price($commande->remise_absolue):$langs->trans("DiscountNone");
-			}
-			print '</font></td>';
-			if ($_GET['action'] != 'editabsolutediscount')
-			{
-			if ($commande->brouillon && $user->rights->facture->creer)
-			{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editabsolutediscount&amp;id='.$commande->id.'">'.img_edit($langs->trans('SetAbsoluteDiscount'),1).'</a></td>';
-			}
-			else
-			{
-			print '<td>&nbsp;</td>';
-			}
-			if ($commande->brouillon && $user->rights->facture->creer && $commande->remise_absolue)
-			{
-			print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=setremiseabsolue&amp;rowid='.$objp->rowid.'">';
-			print img_delete();
-			print '</a></td>';
-			}
-			else
-			{
-			print '<td>&nbsp;</td>';
-			}
-			print '<td>&nbsp;</td>';
-			}
-			else
-			{
-			print '<td colspan="3"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td>';
-			}
-			print '</tr>';
-			print '</form>';
-			*/
 
 			/*
 			* Ajouter une ligne
