@@ -296,7 +296,7 @@ if ($_GET["id"] > 0)
 		/*
 		 * Lignes de commandes
 		 */
-		$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice, l.info_bits,';
+		$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 		$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 		$sql.= ' p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX."commandedet as l";
@@ -351,7 +351,19 @@ if ($_GET["id"] > 0)
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$commande->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
-						if ($objp->description) print ' - '.nl2br($objp->description);
+						if ($objp->description)
+						{
+							if ($objp->description == '(CREDIT_NOTE)')
+							{
+								$discount=new DiscountAbsolute($db);
+								$discount->fetch($objp->fk_remise_except);
+								print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+							}
+							else
+							{
+								print ' - '.nl2br($objp->description);
+							}
+						}
 					}
 					else
 					{

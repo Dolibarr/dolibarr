@@ -371,7 +371,19 @@ if ($_GET["propalid"] > 0)
 						print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$propal->socid.'">';
 						print img_object($langs->trans("ShowReduc"),'reduc').' '.$langs->trans("Discount");
 						print '</a>';
-						if ($objp->description) print ' - '.nl2br($objp->description);
+						if ($objp->description)
+						{
+							if ($objp->description == '(CREDIT_NOTE)')
+							{
+								$discount=new DiscountAbsolute($db);
+								$discount->fetch($objp->fk_remise_except);
+								print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
+							}
+							else
+							{
+								print ' - '.nl2br($objp->description);
+							}
+						}
 					}
 					else
 					{

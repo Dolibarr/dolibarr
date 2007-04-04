@@ -139,7 +139,7 @@ if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 	$_GET['facid']=$_REQUEST['facid'];
 }
 
-if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
+if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 {
 	if ($_POST["remise_id"])
 	{
