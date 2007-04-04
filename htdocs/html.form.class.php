@@ -2297,7 +2297,7 @@ class Form
 				if ("$conf->use_popup_calendar" == "eldy")	// Laisser conf->use_popup_calendar entre quote
 				{
 					// Zone de saisie manuelle de la date
-					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="9" maxlength="11" value="'.$formated_date.'"';
+					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="10" maxlength="11" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
 					print '>';
 		            
