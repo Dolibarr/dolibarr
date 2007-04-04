@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.fr>
+ * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -246,31 +247,32 @@ if ($_GET['action'] == 'add_ligne')
 
     if ($_POST['idprod'])
     {
-        $nv_prod = new Product($db);
-        $nv_prod->fetch($_POST['idprod']);
+    	$nv_prod = new Product($db);
+    	$nv_prod->fetch($_POST['idprod']);
+    	
+    	// cas spécial pour lequel on a les meme référence que le fournisseur
+    	// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
+    	$label = $nv_prod->libelle;
+    	
+    	$result=$nv_prod->get_buyprice($_POST['socid'], $_POST['qty']);
+    	if ($result > 0)
+      {
+      	$societe='';
+      	if ($_POST['socid'])
+      	{
+      		$societe=new Societe($db);
+      		$societe->fetch($_POST['socid']);
+      	}
 
-		// cas spécial pour lequel on a les meme référence que le fournisseur
-		// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-        $label = $nv_prod->libelle;
+      	$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
 
-        $result=$nv_prod->get_buyprice($_POST['socid'], $_POST['qty']);
-        if ($result > 0)
-        {
-			$societe='';
-			if ($_POST['socid'])
-			{
-				$societe=new Societe($db);
-				$societe->fetch($_POST['socid']);
-			}
-
-            $tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
-			$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $_POST['idprod']);
-        }
-        if ($result == -1)
-        {
-        	// Quantité insuffisante
-        	$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
-        }
+      	$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $_POST['idprod']);
+      }
+      if ($result == -1)
+      {
+      	// Quantité insuffisante
+        $mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
+      }
     }
     else
     {
@@ -788,8 +790,8 @@ else
 	            {
 	                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
 	                print '<input type="hidden" name="socid" value="'. $fac->socid .'">';
-					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
-					print '<input type="hidden" name="socid" value="'.$fac->socid.'">';
+	                print '<input type="hidden" name="facid" value="'.$fac->id.'">';
+	                print '<input type="hidden" name="socid" value="'.$fac->socid.'">';
 	                $var=! $var;
 	                print '<tr '.$bc[$var].'>';
 	                print '<td colspan="3">';

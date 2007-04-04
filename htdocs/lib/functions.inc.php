@@ -1912,7 +1912,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	if (! is_numeric($societe_vendeuse->tva_assuj) && $societe_vendeuse->tva_assuj=='franchise') return 0;
 
 	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_acheteuse->tva_assuj == 1)
+	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && $societe_vendeuse->tva_assuj == 1)
 	{
 	    return $taux_produit;
 	}
