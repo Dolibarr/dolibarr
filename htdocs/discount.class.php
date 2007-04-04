@@ -213,7 +213,7 @@ class DiscountAbsolute
 		\param		option			Sur quoi pointe le lien
 		\return		string			Chaine avec URL
 	*/
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto,$option='')
 	{
 		global $langs;
 		
