@@ -32,7 +32,7 @@
 		\brief      Classe permettant la gestion des clients
 */
 
-require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
 
 class Client extends Societe
