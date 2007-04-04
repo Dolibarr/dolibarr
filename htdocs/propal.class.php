@@ -786,8 +786,8 @@ class Propal extends CommonObject
         $sql.= ", p.fk_mode_reglement, cp.code as mode_reglement_code";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
+		    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.rowid='".$rowid."'";
 
@@ -822,12 +822,12 @@ class Propal extends CommonObject
                 $this->note_public          = $obj->note_public;
                 $this->statut               = $obj->fk_statut;
                 $this->statut_libelle       = $obj->statut_label;
-				$this->mode_reglement_id    = $obj->fk_mode_reglement;
-				$this->mode_reglement_code  = $obj->mode_reglement_code;
-				$this->cond_reglement_id    = $obj->fk_cond_reglement;
-				$this->cond_reglement_code  = $obj->cond_reglement_code;
-		        $this->date_livraison       = $obj->date_livraison;
-		        $this->adresse_livraison_id = $obj->fk_adresse_livraison;
+				        $this->mode_reglement_id    = $obj->fk_mode_reglement;
+				        $this->mode_reglement_code  = $obj->mode_reglement_code;
+				        $this->cond_reglement_id    = $obj->fk_cond_reglement;
+				        $this->cond_reglement_code  = $obj->cond_reglement_code;
+		            $this->date_livraison       = $obj->date_livraison;
+		            $this->adresse_livraison_id = $obj->fk_adresse_livraison;
 
                 $this->user_author_id = $obj->fk_user_author;
 
@@ -876,32 +876,32 @@ class Propal extends CommonObject
 
                     while ($i < $num)
                     {
-                        $objp                  = $this->db->fetch_object($result);
+                        $objp                    = $this->db->fetch_object($result);
 
-                        $ligne                 = new PropaleLigne($this->db);
+                        $ligne                   = new PropaleLigne($this->db);
 
-                        $ligne->desc           = $objp->description;  // Description ligne
-                        $ligne->qty            = $objp->qty;
-                        $ligne->tva_tx         = $objp->tva_tx;
-                        $ligne->subprice       = $objp->subprice;
+                        $ligne->desc             = $objp->description;  // Description ligne
+                        $ligne->qty              = $objp->qty;
+                        $ligne->tva_tx           = $objp->tva_tx;
+                        $ligne->subprice         = $objp->subprice;
                         $ligne->fk_remise_except = $objp->fk_remise_except;
-						$ligne->remise_percent = $objp->remise_percent;
-                        $ligne->price          = $objp->price;
+						            $ligne->remise_percent   = $objp->remise_percent;
+                        $ligne->price            = $objp->price;
 
-                        $ligne->info_bits      = $objp->info_bits;
-                        $ligne->total_ht       = $objp->total_ht;
-                        $ligne->total_tva      = $objp->total_tva;
-                        $ligne->total_ttc      = $objp->total_ttc;
-                        $ligne->coef           = $objp->coef;
-                        $ligne->rang           = $objp->rang;
+                        $ligne->info_bits        = $objp->info_bits;
+                        $ligne->total_ht         = $objp->total_ht;
+                        $ligne->total_tva        = $objp->total_tva;
+                        $ligne->total_ttc        = $objp->total_ttc;
+                        $ligne->coef             = $objp->coef;
+                        $ligne->rang             = $objp->rang;
 
-                        $ligne->fk_product     = $objp->fk_product;
+                        $ligne->fk_product       = $objp->fk_product;
 
-                        $ligne->libelle        = $objp->label;        // Label produit
-                        $ligne->product_desc   = $objp->product_desc; // Description produit
-                        $ligne->ref            = $objp->ref;
+                        $ligne->libelle          = $objp->label;        // Label produit
+                        $ligne->product_desc     = $objp->product_desc; // Description produit
+                        $ligne->ref              = $objp->ref;
 
-                        $this->lignes[$i]      = $ligne;
+                        $this->lignes[$i]        = $ligne;
                         //dolibarr_syslog("1 ".$ligne->fk_product);
                         //print "xx $i ".$this->lignes[$i]->fk_product;
                         $i++;

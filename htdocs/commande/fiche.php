@@ -1332,7 +1332,7 @@ else
 									{
 										$discount=new DiscountAbsolute($db);
 										$discount->fetch($objp->fk_remise_except);
-										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl());
+										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
 									}
 									else
 									{

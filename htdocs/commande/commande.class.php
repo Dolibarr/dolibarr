@@ -63,9 +63,11 @@ class Commande extends CommonObject
   var $adresse;
   var $date;				// Date commande
   var $date_livraison;	// Date livraison souhaitée
+  var $fk_remise_except;
   var $remise_percent;
   var $remise_absolue;
   var $modelpdf;
+  var $info_bits;
   
   var $lines = array();
   
@@ -114,16 +116,18 @@ class Commande extends CommonObject
     $this->source = 0;
     for ($i = 0 ; $i < sizeof($propal->lignes) ; $i++)
       {
-	$CommLigne = new CommandeLigne($this->db);
-	$CommLigne->libelle           = $propal->lignes[$i]->libelle;
-	$CommLigne->desc              = $propal->lignes[$i]->desc;
-	$CommLigne->price             = $propal->lignes[$i]->price;
-	$CommLigne->subprice          = $propal->lignes[$i]->subprice;
-	$CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
-	$CommLigne->qty               = $propal->lignes[$i]->qty;
-	$CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
-	$CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
-	$this->lines[$i] = $CommLigne;
+      	$CommLigne = new CommandeLigne($this->db);
+	      $CommLigne->libelle           = $propal->lignes[$i]->libelle;
+	      $CommLigne->desc              = $propal->lignes[$i]->desc;
+	      $CommLigne->price             = $propal->lignes[$i]->price;
+	      $CommLigne->subprice          = $propal->lignes[$i]->subprice;
+	      $CommLigne->tva_tx            = $propal->lignes[$i]->tva_tx;
+	      $CommLigne->qty               = $propal->lignes[$i]->qty;
+	      $CommLigne->fk_remise_except  = $propal->lignes[$i]->fk_remise_except;
+	      $CommLigne->remise_percent    = $propal->lignes[$i]->remise_percent;
+	      $CommLigne->fk_product        = $propal->lignes[$i]->fk_product;
+	      $CommLigne->info_bits         = $propal->lignes[$i]->info_bits;
+	      $this->lines[$i] = $CommLigne;
       }
 
     $this->socid                = $propal->socid;
@@ -477,22 +481,22 @@ class Commande extends CommonObject
     
     // Vérification paramètres
     if ($this->source < 0)
-      {
-	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
-	dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
-	return -1;
-      }
+    {
+    	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Source"));
+	    dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
+	    return -1;
+    }
     if (! $remise) $remise=0;
     if (! $this->projetid) $this->projetid = 0;
     
     $soc = new Societe($this->db);
     $result=$soc->fetch($this->socid);
     if ($result < 0)
-      {
-	$this->error="Failed to fetch company";
-	dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
-	return -2;
-      }
+    {
+    	$this->error="Failed to fetch company";
+	    dolibarr_syslog("Commande.class.php::create ".$this->error, LOG_ERR);
+	    return -2;
+    }
     
     $this->db->begin();
     
@@ -525,14 +529,16 @@ class Commande extends CommonObject
 	     */
 	    for ($i = 0 ; $i < sizeof($this->lines) ; $i++)
 	      {
-		$resql = $this->addline(
+		      $resql = $this->addline(
 					$this->id,
 					$this->lines[$i]->desc,
 					$this->lines[$i]->subprice,
 					$this->lines[$i]->qty,
 					$this->lines[$i]->tva_tx,
 					$this->lines[$i]->fk_product,
-					$this->lines[$i]->remise_percent
+					$this->lines[$i]->remise_percent,
+					$this->lines[$i]->fk_remise_except,
+					$this->lines[$i]->info_bits
 					);
 		
 		if ($resql < 0)
@@ -615,7 +621,7 @@ class Commande extends CommonObject
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-  function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+  function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $fk_remise_except=0, $info_bits=0)
   {
     dolibarr_syslog("Commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -656,6 +662,7 @@ class Commande extends CommonObject
 	$ligne->qty=$qty;
 	$ligne->tva_tx=$txtva;
 	$ligne->fk_product=$fk_product;
+	$ligne->fk_remise_except=$fk_remise_except;
 	$ligne->remise_percent=$remise_percent;
 	$ligne->subprice=$pu;
 	$ligne->rang=-1;
@@ -671,7 +678,7 @@ class Commande extends CommonObject
 	$result=$ligne->insert();			
 	if ($result > 0)
 	  {
-	    // Mise a jour informations denormalisees au niveau de la facture meme
+	    // Mise a jour informations denormalisees au niveau de la commande meme
 	    $result=$this->update_price($this->id);
 	    
 	    if ($result > 0)
