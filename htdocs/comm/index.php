@@ -231,20 +231,22 @@ if ($conf->commande->enabled)
  * Bookmark
  *
  */
-$sql = "SELECT s.idp, s.nom,b.rowid as bid";
-$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
-$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
-if ($socid)
-{ 
-  $sql .= " AND s.idp = $socid"; 
-}
-$sql .= " ORDER BY lower(s.nom) ASC";
+ if ($conf->bookmark->enabled)
+ {
+ 	$sql = "SELECT s.idp, s.nom,b.rowid as bid";
+ 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
+ 	$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
+ 	if ($socid)
+  { 
+    $sql .= " AND s.idp = $socid"; 
+  }
+  $sql .= " ORDER BY lower(s.nom) ASC";
 
-if ( $db->query($sql) )
-{
-  $num = $db->num_rows();
+  if ( $db->query($sql) )
+  {
+    $num = $db->num_rows();
 
-  if ($num)
+    if ($num)
     {
 
       $i = 0;
@@ -256,19 +258,20 @@ if ( $db->query($sql) )
       $var=true;
       
       while ($i < $num)
-	{
-	  $obj = $db->fetch_object();
-	  $var = !$var;
-	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
-	  print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
-	  print img_delete();
-	  print '</a></td>';
-	  print '</tr>';
-	  $i++;
-	}
+	    {
+	      $obj = $db->fetch_object();
+	      $var = !$var;
+	      print "<tr $bc[$var]>";
+	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	      print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
+	      print img_delete();
+	      print '</a></td>';
+	      print '</tr>';
+	      $i++;
+	    }
       print '</table>';
     }
+  }
 }
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
