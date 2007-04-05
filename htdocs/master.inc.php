@@ -185,7 +185,7 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 // require_once(FPDF_PATH . "fpdf.php");
 // dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir supprimer la ligne suivante
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDF_PATH . "fpdf.php");
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDF_PATH . "fpdi_protection.php");
 
 
 /* 

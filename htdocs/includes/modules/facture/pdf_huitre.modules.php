@@ -125,7 +125,8 @@ class pdf_huitre extends ModelePDFFactures
 	if (file_exists($dir))
 	  {
 	    // Initialisation facture vierge
-	    $pdf=new FPDF('P','mm','A4');
+	    $pdf=new FPDI_Protection('P','mm','A4');
+	    $pdf->SetProtection(array('print')); //ne permet que l'impression du document
 	    $pdf->Open();
 	    $pdf->AddPage();
 

@@ -175,7 +175,8 @@ class pdf_muscadet extends ModelePDFCommandesSuppliers
 				$nblignes = sizeof($com->lignes);
 
                 // Initialisation document vierge
-                $pdf=new FPDF('P','mm',$this->format);
+                $pdf=new FPDI_Protection('P','mm',$this->format);
+                $pdf->SetProtection(array('print')); //ne permet que l'impression du document
                 $pdf->Open();
                 $pdf->AddPage();
 

@@ -143,7 +143,8 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			if (file_exists($dir))
 			{
             	// Initialisation Bon vierge
-				$pdf = new FPDF('l','mm',$this->format);
+				$pdf = new FPDI_Protection('l','mm',$this->format);
+				$pdf->SetProtection(array('print')); //ne permet que l'impression du document
 				$pdf->Open();
 				$pdf->AddPage();
 				//Generation de l entete du fichier

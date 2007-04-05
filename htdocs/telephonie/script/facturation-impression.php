@@ -92,7 +92,8 @@ if ( $resql )
 
   dolibarr_syslog("$num factures a imprimer");
 
-  $pdf = new FPDF('P','mm','A4');
+  $pdf = new FPDI_Protection('P','mm','A4');
+  $pdf->SetProtection(array('print')); //ne permet que l'impression du document
   $pdf->Open();
   $pdf->SetMargins(10, 10, 10);
   $pdf->SetAutoPageBreak(1,0);

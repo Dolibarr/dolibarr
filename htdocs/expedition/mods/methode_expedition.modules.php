@@ -21,7 +21,7 @@
  *
  */
 
-require_once(FPDF_PATH.'fpdf.php');
+require_once(FPDF_PATH.'fpdi_protection.php');
 
 Class methode_expedition
 {
@@ -80,7 +80,8 @@ Class methode_expedition
 	  if (file_exists($dir))
 	    {
 
-	      $pdf=new FPDF('P','mm','A4');
+	      $pdf=new FPDI_Protection('P','mm','A4');
+	      $pdf->SetProtection(array('print')); //ne permet que l'impression du document
 	      $pdf->Open();
 	      $pdf->AddPage();
 

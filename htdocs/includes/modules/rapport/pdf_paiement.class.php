@@ -28,7 +28,7 @@
       \version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdf.php');
+require_once(FPDF_PATH.'fpdi_protection.php');
 
 /**	
    \class      pdf_paiement
@@ -180,7 +180,8 @@ class pdf_paiement
     $year = sprintf("%04d",$year);
     $_file = $dir . "/payments-".$month."-".$year.".pdf";
     
-    $pdf = new FPDF('P','mm','A4');
+    $pdf = new FPDI_Protection('P','mm','A4');
+    $pdf->SetProtection(array('print')); //ne permet que l'impression du document
     $pdf->Open();
     
     $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";

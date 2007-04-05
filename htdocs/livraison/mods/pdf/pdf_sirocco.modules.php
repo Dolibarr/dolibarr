@@ -107,7 +107,8 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	  if (file_exists($dir))
 	    {
 
-	      $pdf=new FPDF('P','mm',$this->format);
+	      $pdf=new FPDI_Protection('P','mm',$this->format);
+	      $pdf->SetProtection(array('print')); //ne permet que l'impression du document
 	      $pdf->Open();
 	      $pdf->AddPage();
 

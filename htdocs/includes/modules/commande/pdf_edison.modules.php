@@ -122,7 +122,7 @@ class pdf_edison extends ModelePDFCommandes
             if (file_exists($dir))
             {
 				// Initialisation document vierge
-                $pdf=new FPDF('P','mm',$this->format);
+                $pdf=new FPDI_Protection('P','mm',$this->format);
                 
                 $pdf->Open();
                 $pdf->AddPage();

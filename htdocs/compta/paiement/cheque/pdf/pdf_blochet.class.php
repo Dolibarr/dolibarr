@@ -27,7 +27,7 @@
 		\version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdf.php');
+require_once(FPDF_PATH.'fpdi_protection.php');
 
 
 /**	
@@ -220,7 +220,8 @@ class BordereauChequeBlochet
 		$year = sprintf("%04d",$year);
 		$_file = $dir . "bordereau-".$number.".pdf";
 		
-		$pdf = new FPDF('P','mm','A4');
+		$pdf = new FPDI_Protection('P','mm','A4');
+		$pdf->SetProtection(array('print')); //ne permet que l'impression du document
 		$pdf->Open();
 		
 		

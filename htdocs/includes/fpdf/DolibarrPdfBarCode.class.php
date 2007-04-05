@@ -20,7 +20,7 @@
  *
  */
 
-require_once(FPDF_PATH.'fpdf.php');
+require_once(FPDF_PATH.'fpdi_protection.php');
 
 class DolibarrPdfBarCode extends FPDF {
 
