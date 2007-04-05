@@ -53,16 +53,13 @@ if ($user->societe_id > 0)
 
 if ($_POST["action"] == 'setremise')
 {
-	if (! price2num($_POST["amount_ht"]) > 0)
+	if (price2num($_POST["amount_ht"]) > 0)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")).'</div>';
-	}
-	elseif (! $_POST["desc"]) 
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
-	}
-	else
-	{
+		if (! $_POST["desc"]) 
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
+		}
+
 		$soc = New Societe($db);
 		$soc->fetch($_GET["id"]);
 		$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
@@ -76,6 +73,10 @@ if ($_POST["action"] == 'setremise')
 		{
 			$mesg='<div class="error">'.$soc->error.'</div>';
 		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldFormat",$langs->trans("NewGlobalDiscount")).'</div>';
 	}
 }
 
