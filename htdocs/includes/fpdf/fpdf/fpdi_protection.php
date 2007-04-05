@@ -20,7 +20,7 @@
 *                                                                           *
 ****************************************************************************/
 
-require_once("fpdi.php");
+require_once(FPDF_PATH.'fpdi.php');
 
 class FPDI_Protection extends fpdi {
 	

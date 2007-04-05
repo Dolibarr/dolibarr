@@ -41,8 +41,8 @@ if (!defined ('PDF_TYPE_STREAM'))
     define ('PDF_TYPE_STREAM', 10);
 
 
-require_once("wrapper_functions.php");
-require_once("pdf_parser.php");
+require_once(FPDF_PATH.'wrapper_functions.php');
+require_once(FPDF_PATH.'pdf_parser.php');
 
 class fpdi_pdf_parser extends pdf_parser {
 

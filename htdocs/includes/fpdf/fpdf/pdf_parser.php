@@ -40,7 +40,7 @@ if (!defined ('PDF_TYPE_OBJECT'))
 if (!defined ('PDF_TYPE_STREAM'))
     define ('PDF_TYPE_STREAM', 10);
 
-require_once("pdf_context.php");
+require_once(FPDF_PATH.'pdf_context.php');
 
 class pdf_parser {
 	

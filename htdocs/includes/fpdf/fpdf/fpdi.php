@@ -31,8 +31,8 @@ define ('PDF_TYPE_STREAM', 10);
 
 ini_set('auto_detect_line_endings',1); // Strongly required!
 
-require_once("fpdf_tpl.php");
-require_once("fpdi_pdf_parser.php");
+require_once(FPDF_PATH.'fpdf_tpl.php');
+require_once(FPDF_PATH.'fpdi_pdf_parser.php');
 
 
 class fpdi extends fpdf_tpl {
