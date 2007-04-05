@@ -545,18 +545,25 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$desc=($prop->lignes[$i]->desc?$prop->lignes[$i]->desc:$prop->lignes[$i]->libelle);
 
 							$result = $facture->addline(
-							$facid,
-							$desc,
-							$prop->lignes[$i]->subprice,
-							$prop->lignes[$i]->qty,
-							$prop->lignes[$i]->tva_tx,
-							$prop->lignes[$i]->fk_product,
-							$prop->lignes[$i]->remise_percent,
-							'',
-							'',
-							0,
-							$prop->lignes[$i]->info_bits,
-							$prop->lignes[$i]->fk_remise_except);
+								$facid,
+								$desc,
+								$prop->lignes[$i]->subprice,
+								$prop->lignes[$i]->qty,
+								$prop->lignes[$i]->tva_tx,
+								$prop->lignes[$i]->fk_product,
+								$prop->lignes[$i]->remise_percent,
+								'',
+								'',
+								0,
+								$prop->lignes[$i]->info_bits,
+								$prop->lignes[$i]->fk_remise_except
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
 						}
 					}
 					else
@@ -589,18 +596,25 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
 
 							$result = $facture->addline(
-							$facid,
-							$desc,
-							$lines[$i]->subprice,
-							$lines[$i]->qty,
-							$lines[$i]->tva_tx,
-							$lines[$i]->fk_product,
-							$lines[$i]->remise_percent,
-							'',
-							'',
-							0,
-							$lines[$i]->info_bits,
-							$lines[$i]->fk_remise_except);
+								$facid,
+								$desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->fk_product,
+								$lines[$i]->remise_percent,
+								'',
+								'',
+								0,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
 						}
 					}
 					else
@@ -640,18 +654,25 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 							if ($contrat->lignes[$i]->date_fin_reel) $date_end=$contrat->lignes[$i]->date_fin_reel;
 
 							$result = $facture->addline(
-							$facid,
-							$desc,
-							$lines[$i]->subprice,
-							$lines[$i]->qty,
-							$lines[$i]->tva_tx,
-							$lines[$i]->fk_product,
-							$lines[$i]->remise_percent,
-							$date_start,
-							$date_end,
-							0,
-							$lines[$i]->info_bits,
-							$lines[$i]->fk_remise_except);
+								$facid,
+								$desc,
+								$lines[$i]->subprice,
+								$lines[$i]->qty,
+								$lines[$i]->tva_tx,
+								$lines[$i]->fk_product,
+								$lines[$i]->remise_percent,
+								$date_start,
+								$date_end,
+								0,
+								$lines[$i]->info_bits,
+								$lines[$i]->fk_remise_except
+							);
+
+							if ($result < 0)
+							{
+								$error++;
+								break;
+							}
 						}
 					}
 					else
@@ -679,6 +700,9 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	{
 		$db->rollback();
 		$_GET["action"]='create';
+		$_GET["propalid"]=$_POST["propalid"];
+		$_GET["commandeid"]=$_POST["commandeid"];
+		$_GET["contratid"]=$_POST["contratid"];
 		if (! $mesg) $mesg='<div class="error">'.$facture->error.'</div>';
 	}
 }
@@ -1314,48 +1338,6 @@ if ($_GET['action'] == 'create')
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($mode_reglement_id,'mode_reglement_id');
 	print '</td></tr>';
-
-    // Réductions relatives (Remises-Ristournes-Rabbais)
-/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
-   et non globalement
-	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
-	print '<td>';
-	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_percent" size="1" value="';
-	print $remise_percent;
-	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '">';
-	print ' %';
-	print '</td><td>'.img_info().' ';
-	$relative_discount=$soc->remise_client;
-	if ($relative_discount)
-	{
-		print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
-	}
-	else
-	{
-		print $langs->trans("CompanyHasNoRelativeDiscount");
-	}
-	print '</td></tr>';
-*/
-
-    // Réductions absolues (Remises-Ristournes-Rabbais)
-/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
-	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
-	print '<td>';
-	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '<input type="text" name="remise_absolue" size="1" value="';
-	print $remise_absolue;
-	if (! $_GET['propalid'] && ! $_GET['commandeid'] && ! $_GET['contratid']) print '">';
-	print ' '.$langs->trans("Currency".$conf->monnaie);
-	print '</td><td>'.img_info().' ';
-	if ($absolute_discount)
-	{
-		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-	}
-	else
-	{
-		print $langs->trans("CompanyHasNoAbsoluteDiscount");
-	}
-	print '</td></tr>';
-*/
 
 	// Projet
 	if ($conf->projet->enabled)

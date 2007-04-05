@@ -183,13 +183,13 @@ class DiscountAbsolute
 
 	
 	/**
-	*		\brief		Link the discount to a particular invoice
-	*		\param		rowid		Invoice id
+	*		\brief		Link the discount to a particular invoice line
+	*		\param		rowid		Invoice line id
 	*		\return		int			<0 ko, >0 ok
 	*/
 	function link_to_invoice($rowid)
 	{
-		dolibarr_syslog("Discount.class::link_to_invoice link discount ".$this->id." to invoice rowid=".$rowid);
+		dolibarr_syslog("DiscountAbsolute::link_to_invoice link discount ".$this->id." to invoice line rowid=".$rowid);
 
 		$sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
 		$sql.=" SET fk_facture = ".$rowid;
@@ -202,7 +202,7 @@ class DiscountAbsolute
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("Discount.class::link_to_invoice ".$this->error." sql=".$sql);
+			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error." sql=".$sql);
 			return -1;
 		}
 	}

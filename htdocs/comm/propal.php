@@ -1174,6 +1174,8 @@ if ($_GET['propalid'] > 0)
 				}
 				print '<td align="right">'.$objp->tva_tx.'%</td>';
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
+
+				// Qty
 				print '<td align="right">';
 				if (($objp->info_bits & 2) != 2)
 				{
