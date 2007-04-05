@@ -307,7 +307,7 @@ if ($resql)
         $var = true;
         $i = 0;
 
-	    $staticaction=new ActionComm($db);
+	      $staticaction=new ActionComm($db);
         $customerstatic=new Client($db);
 
         while ($i < $num)
@@ -389,6 +389,7 @@ if ($resql)
 	$i = 0;
 
     $staticaction=new ActionComm($db);
+    $customerstatic=new Client($db);
 
 	while ($i < $num)
 	{
