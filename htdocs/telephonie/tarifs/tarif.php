@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,8 +23,27 @@ require("./pre.inc.php");
 
 llxHeader();
 
+require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.class.php";
+$ta = new TelephonieTarif($db,1,0);
+$ta->fetch($_GET["id"]);
+
+
+$h = 0;
+$head = array();
+
+$head[$h][0] = DOL_URL_ROOT.'tarif.php?id='.$ta->id;
+$head[$h][1] = $ta->libelle;
+$head[$h][2] = 'card';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT.'tarif-log.php?id='.$ta->id;
+$head[$h][1] = $langs->trans("Historique");
+$head[$h][2] = 'history';
+$h++;
+
+dolibarr_fiche_head($head, 'card', $langs->trans("Tarif"));
+
 /*
- * Mode Liste
  *
  *
  *
@@ -57,8 +76,8 @@ if ($resql)
   
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print '<td width="25%">Tarif</td>';
-  print '<td width="30%">Destination</td>';
+  print '<td width="25%">Grille vente</td>';
+  print '<td width="30%">Tarif</td>';
   print '<td width="15%">Cout / min</td>';
   print '<td width="15%">Cout fixe</td>';
   print '<td width="15%">Type</td>';
@@ -120,8 +139,8 @@ if ($resql)
   print '<br><table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print '<td width="25%">Tarif</td>';
-  print '<td width="30%">Destination</td>';
+  print '<td width="25%">Grille achat</td>';
+  print '<td width="30%">Tarif</td>';
   print '<td width="15%">Cout / min</td>';
   print '<td width="15%">Cout fixe</td>';
   print '<td width="15%">Type</td>';
@@ -193,11 +212,7 @@ else
   print $db->error() . ' ' . $sql;
 }
 
-print '</td></tr></table>';
-
-
-
-
+print '</td></tr></table></div>';
 
 $db->close();
 
