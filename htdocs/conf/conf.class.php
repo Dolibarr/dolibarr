@@ -294,6 +294,8 @@ class Conf
 		$this->telephonie->enabled=defined("MAIN_MODULE_TELEPHONIE")?MAIN_MODULE_TELEPHONIE:0;
 		$this->telephonie->dir_output=DOL_DATA_ROOT."/telephonie";
 		$this->telephonie->dir_temp  =DOL_DATA_ROOT."/telephonie/temp";
+		// Module document
+		$this->document->enabled=defined("MAIN_MODULE_DOCUMENT")?MAIN_MODULE_DOCUMENT:0;
 		// Module energie
 		$this->energie->enabled=defined("MAIN_MODULE_ENERGIE")?MAIN_MODULE_ENERGIE:0;
 		// Module domaine
