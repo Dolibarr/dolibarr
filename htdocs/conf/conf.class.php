@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin      	<regis.houssin@cap-networks.com>
@@ -24,121 +24,121 @@
  */
 
 /**
-    	\file       htdocs/conf/conf.class.php
-		\brief      Fichier de la classe de stockage de la config courante
-		\remarks	La config est stockée dans le fichier conf/conf.php
-		\version    $Revision$
+   \file       htdocs/conf/conf.class.php
+   \brief      Fichier de la classe de stockage de la config courante
+   \remarks	La config est stockée dans le fichier conf/conf.php
+   \version    $Revision$
 */
 
 
 /**
-        \class      Conf
-		\brief      Classe de stockage de la config courante
-		\todo       Deplacer ce fichier dans htdocs/lib
+   \class      Conf
+   \brief      Classe de stockage de la config courante
+   \todo       Deplacer ce fichier dans htdocs/lib
 */
 
 class Conf
 {
     /** \public */
-    var $db;            // Objet des caractéristiques de connexions
-                        // base db->host, db->name, db->user, db->pass, db->type
-
-    var $externalrss;
-    var $commande;
-    var $ficheinter;
-    var $commercial;
-    var $societe;
-    var $expedition;
-    var $compta;
-    var $banque;
-    var $don;
-    var $caisse;
-    var $fournisseur;
-    var $adherent;
-    var $produit;
-    var $service;
-    var $stock;
-    var $boutique;
-    var $projet;
-    var $postnuke;
-    var $webcal;
-    var $mantis;
-    var $propal;
-    var $categorie;
-	var $oscommerce2;
-
-
-	/**
-	 *      \brief      Positionne toutes les variables de configuration
-	 *      \param      $db			Handler d'accès base
-	 *      \return     int         < 0 si erreur, >= 0 si succès
-	 */
-	function setValues($db)
-	{
-	    dolibarr_syslog("functions.inc.php::setValues");
-
-		// Par defaut, à oui
-		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
-
-		/*
-		 * Definition de toutes les Constantes globales d'environnement
-		 * - En constante php (\todo a virer)
-		 * - En $this->global->key=value
-		 */
-		$sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
-		$result = $db->query($sql);
-		if ($result)
-		{
-		    $numr = $db->num_rows($result);
-		    $i = 0;
-
-		    while ($i < $numr)
-		    {
-		        $objp = $db->fetch_object($result);
-		        $key=$objp->name;
-		        $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais après POST quand get_magic_quotes_gpc()==1)
-		        if ($key)
-		        {
-		        	define ("$key", $value);
-		        	$this->global->$key=$value;
-				}
-		        $i++;
-		    }
-		}
-		$db->free($result);
+  //! Objet des caractéristiques de connexions
+  var $db;            
+     
+  var $externalrss;
+  var $commande;
+  var $ficheinter;
+  var $commercial;
+  var $societe;
+  var $expedition;
+  var $compta;
+  var $banque;
+  var $don;
+  var $caisse;
+  var $fournisseur;
+  var $adherent;
+  var $produit;
+  var $service;
+  var $stock;
+  var $boutique;
+  var $projet;
+  var $postnuke;
+  var $webcal;
+  var $mantis;
+  var $propal;
+  var $categorie;
+  var $oscommerce2;
 
 
-		// On reprend parametres du fichier de config conf.php
-		// \TODO Mettre tous les param du fichier conf dans une propriété de la classe
-		$this->password_encrypted=$this->global->DATABASE_PWD_ENCRYPTED;
-
-
-		/*
-		 * Nettoyage variables des gestionnaires de menu
-		 * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
-		 */
-		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="default.php";
-		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="default.php";
-		if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="default.php";
-		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
-
-		// Variable globales LDAP
-		if (! $this->global->LDAP_KEY_USERS) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_GROUPS) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_CONTACTS) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_MEMBERS) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
-
-
-		/*
-		 * Charge l'objet de traduction et positionne langage courant global
-		 */
-		if (! $this->global->MAIN_LANG_DEFAULT) $this->global->MAIN_LANG_DEFAULT="fr_FR";
-
-		/*
-		 * Autres parametres globaux de configurations
-		 */
-		$this->users->dir_output=DOL_DATA_ROOT."/users";
-
+  /**
+   *      \brief      Positionne toutes les variables de configuration
+   *      \param      $db			Handler d'accès base
+   *      \return     int         < 0 si erreur, >= 0 si succès
+   */
+  function setValues($db)
+  {
+    dolibarr_syslog("functions.inc.php::setValues");
+    
+    // Par defaut, à oui
+    $this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
+    
+    /*
+     * Definition de toutes les Constantes globales d'environnement
+     * - En constante php (\todo a virer)
+     * - En $this->global->key=value
+     */
+    $sql = "SELECT name, value FROM ".MAIN_DB_PREFIX."const";
+    $result = $db->query($sql);
+    if ($result)
+      {
+	$numr = $db->num_rows($result);
+	$i = 0;
+	
+	while ($i < $numr)
+	  {
+	    $objp = $db->fetch_object($result);
+	    $key=$objp->name;
+	    $value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais après POST quand get_magic_quotes_gpc()==1)
+	    if ($key)
+	      {
+		define ("$key", $value);
+		$this->global->$key=$value;
+	      }
+	    $i++;
+	  }
+      }
+    $db->free($result);
+    
+    
+    // On reprend parametres du fichier de config conf.php
+    // \TODO Mettre tous les param du fichier conf dans une propriété de la classe
+    $this->password_encrypted=$this->global->DATABASE_PWD_ENCRYPTED;
+    
+    
+    /*
+     * Nettoyage variables des gestionnaires de menu
+     * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
+     */
+    if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="default.php";
+    if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="default.php";
+    if (! $this->global->MAIN_MENU_BARRELEFT) $this->global->MAIN_MENU_BARRELEFT="default.php";
+    if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
+    
+    // Variable globales LDAP
+    if (! $this->global->LDAP_KEY_USERS) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
+    if (! $this->global->LDAP_KEY_GROUPS) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
+    if (! $this->global->LDAP_KEY_CONTACTS) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
+    if (! $this->global->LDAP_KEY_MEMBERS) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
+    
+    
+    /*
+     * Charge l'objet de traduction et positionne langage courant global
+     */
+    if (! $this->global->MAIN_LANG_DEFAULT) $this->global->MAIN_LANG_DEFAULT="fr_FR";
+    
+    /*
+     * Autres parametres globaux de configurations
+     */
+    $this->users->dir_output=DOL_DATA_ROOT."/users";
+    
 		/*
 		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
 		 * conf->upload peut etre écrasée dans main.inc.php (selon user)
