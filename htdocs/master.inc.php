@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+/* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
@@ -27,9 +27,9 @@
  */
 
 /**
-        \file       htdocs/master.inc.php
-        \brief      Fichier de preparation de l'environnement Dolibarr
-        \version    $Revision$
+   \file       htdocs/master.inc.php
+   \brief      Fichier de preparation de l'environnement Dolibarr
+   \version    $Revision$
 */
 
 define('DOL_VERSION','2.1-beta');
@@ -51,15 +51,15 @@ error_reporting(E_ALL ^ E_NOTICE);
 // Test si install ok
 if (! @include_once("conf/conf.php"))
 {
-    Header("Location: install/index.php");
-    exit;
+  Header("Location: install/index.php");
+  exit;
 }
 else
 {
-    if (! isset($dolibarr_main_db_host))
+  if (! isset($dolibarr_main_db_host))
     {
-        Header("Location: install/index.php");
-        exit;
+      Header("Location: install/index.php");
+      exit;
     }
 }
 
@@ -68,9 +68,9 @@ if (! isset($dolibarr_main_db_type))
   $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 }
 if (! $dolibarr_main_data_root) {
-    // Si repertoire documents non defini, on utilise celui par defaut
-    $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
-    $dolibarr_main_data_root.="/documents";
+  // Si repertoire documents non defini, on utilise celui par defaut
+  $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
+  $dolibarr_main_data_root.="/documents";
 }
 define('DOL_DOCUMENT_ROOT', $dolibarr_main_document_root);	// Filesystem pages php (htdocs)
 define('DOL_DATA_ROOT', $dolibarr_main_data_root);			// Filesystem donnes (documents)
@@ -101,7 +101,8 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 // Detection browser
 if (isset($_SERVER["HTTP_USER_AGENT"]))
 {
-	if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
+  if (eregi('firefox',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
+  if (eregi('iceweasel',$_SERVER["HTTP_USER_AGENT"])) $conf->browser->firefox=1;
 }
 
 // Chargement des includes principaux
@@ -116,8 +117,8 @@ require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
  */
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 if (! $db->connected) {
-    dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-    exit;   
+  dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+  exit;   
 }
 
 /*
