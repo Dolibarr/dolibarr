@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -155,7 +155,7 @@ if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
 
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 AND parent = 0 ORDER BY nom ";
+  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 AND (parent = 0 OR parent IS NULL) ORDER BY nom ";
   if ( $db->query( $sql) )
     {
       $num = $db->num_rows();
