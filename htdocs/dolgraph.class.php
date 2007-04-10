@@ -367,7 +367,7 @@ class DolGraph
 		if ($phplotversion >= 5) $top_space=25;
 		$left_space=80;								// For y labels
 		$right_space=10;							// If no legend
-		if (isset($this->Legend))
+		if (isset($this->Legend) && sizeof($this->Legend))
 		{
 			foreach($this->Legend as $key => $val)
 			{
@@ -390,7 +390,7 @@ class DolGraph
 		if (isset($this->title)) $this->graph->SetTitle($this->title);
 
 		// Défini position du graphe (et legende) au sein de l'image
-		if (isset($this->Legend))
+		if (isset($this->Legend) && sizeof($this->Legend))
 		{
 			$this->graph->SetLegendPixels($this->width - $right_space+8,40,'');
 			$this->graph->SetLegend($this->Legend);
