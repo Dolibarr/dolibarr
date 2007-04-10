@@ -58,7 +58,7 @@ class DolGraph
 	var $PrecisionY=-1;
 	var $SetHorizTickIncrement=-1;
 	var $SetNumXTicks=-1;
-	var $Legend='';
+	var $Legend=array();
 	var $LegendWidthMin=0;
 	
 	var $graph;     		// Objet Graph (PHPlot ou Artichow...)
