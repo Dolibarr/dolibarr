@@ -66,7 +66,7 @@ class modEditeur extends DolibarrModules
     $this->config_page_url = array();
 
     // Dépendances
-    $this->depends = array('document');
+    $this->depends = array();
     $this->requiredby = array();
     $this->conflictwith = array();
     $this->langfiles = array("orders","bills","companies");
