@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Sebastien Di Cintio  <sdicintio@ressource-toi.org>
- * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004 Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,197 +24,224 @@
  */
 
 /**
-        \file       htdocs/includes/modules/DolibarrModules.class.php
-        \brief      Fichier de description et activation des modules Dolibarr
+   \file       htdocs/includes/modules/DolibarrModules.class.php
+   \brief      Fichier de description et activation des modules Dolibarr
 */
 
 
 /**
-        \class      DolibarrModules
-        \brief      Classe mère des classes de description et activation des modules Dolibarr
+   \class      DolibarrModules
+   \brief      Classe mère des classes de description et activation des modules Dolibarr
 */
 class DolibarrModules
 {
-    var $db;         // Handler d'accès aux bases
+  //! Handler d'accès aux bases
+  var $db;
+  //! Tableau des boites
+  var $boxes;
+  //! Tableau des constantes
+  var $const;
+  //! Tableau des droits
+  var $rights;
+  //! Tableau des documents
+  var $docs;
 
-    var $boxes;      // Tableau des boites
-    var $const;      // Tableau des constantes
-    var $rights;     // Tableau des droits
-
-    var $dbversion;
-
-
-    /**
-     *      \brief      Constructeur
-     *      \param      DB      handler d'accès base
-     */
-    function DolibarrModules($DB)
-    {
-        $this->db = $DB ;
-        $this->dbversion = "-";
-    }
+  var $dbversion;
 
 
-    /**
-     *      \brief      Fonction d'activation. Insère en base les constantes et boites du module
-     *      \param      array_sql       tableau de requete sql a exécuter à l'activation
-     *      \return     int             1 si ok, 0 si erreur
-     */
-    function _init($array_sql)
-    {
-        global $langs;
-        $err='';
-        
-        // Insère une entrée dans llx_dolibarr_modules
-        $err+=$this->_dbactive();
+  /**
+   *      \brief      Constructeur
+   *      \param      DB      handler d'accès base
+   */
+  function DolibarrModules($DB)
+  {
+    $this->db = $DB ;
+    $this->dbversion = "-";
+  }
 
-        // Insère la constante d'activation module
-        $err+=$this->_active();
 
-        // Insère les boites dans llx_boxes_def
-        $err+=$this->insert_boxes();
-        
-        // Insère les constantes associées au module dans llx_const
-        $err+=$this->insert_const();
+  /**
+   *      \brief      Fonction d'activation. Insère en base les constantes et boites du module
+   *      \param      array_sql       tableau de requete sql a exécuter à l'activation
+   *      \return     int             1 si ok, 0 si erreur
+   */
+  function _init($array_sql)
+  {
+    global $langs;
+    $err='';
+    
+    // Insère une entrée dans llx_dolibarr_modules
+    $err+=$this->_dbactive();
+    
+    // Insère la constante d'activation module
+    $err+=$this->_active();
+    
+    // Insère les boites dans llx_boxes_def
+    $err+=$this->insert_boxes();
+    
+    // Insère les constantes associées au module dans llx_const
+    $err+=$this->insert_const();
+    
+    // Insère les permissions associées au module actif dans llx_rights_def
+    $err+=$this->insert_permissions();
+    
+    // Créé les répertoires
+    if (is_array($this->dirs))
+      {
+	foreach ($this->dirs as $key => $dir)
+	  {
+	    if ($dir && ! file_exists($dir))
+	      {
+		if (create_exdir($dir) < 0)
+		  {
+		    $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
+		    dolibarr_syslog("DolibarrModules::_init error");
+		    dolibarr_syslog("ErrorCanNotCreateDir $dir");
+		  }
+	      }
+	  }
+      }
+    
+    // Exécute les requetes sql complémentaires
+    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+      {
+	$sql=$array_sql[$i];
+	$result=$this->db->query($sql);
+	if (! $result)
+	  {
+	    dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
+	    $err++;
+	  }
+      }
+    
+    // Créé les documents générables
+    if (is_array($this->docs))
+      {
+	foreach ($this->docs as $key => $doc)
+	  {
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (name,classfile,class) VALUES ";
+	    $sql .= "('".addslashes($doc[0])."','".$doc[1]."','".$doc[2]."');";
+	    
+	    $result=$this->db->query($sql);
+	    if (! $result)
+	      {
+		dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
+		$err++;
+	      }
+	    
+	  }
+      }
+    
+    
+    // Renvoi valeur de retour
+    if ($err > 0) return 0;
+    return 1;
+  }
+  
+  /**
+     \brief      Fonction de désactivation. Supprime de la base les constantes et boites du module
+     \param      array_sql       tableau de requete sql a exécuter à la désactivation
+     \return     int             1 si ok, 0 si erreur
+  */
+  function _remove($array_sql)
+  {
+    $err = 0;
+    
+    // Supprime entrée des modules
+    $err+=$this->_dbunactive();
+    
+    // Supprime la constante d'activation du module
+    $err+=$this->_unactive();
+    
+    // Supprime les droits de la liste des droits disponibles
+    $err+=$this->delete_permissions();
+    
+    // Supprime les boites de la liste des boites disponibles
+    $err+=$this->delete_boxes();
+    
+    // Supprime les documents generables
+    $err+=$this->delete_docs();
 
-        // Insère les permissions associées au module actif dans llx_rights_def
-        $err+=$this->insert_permissions();
-
-        // Créé les répertoires
-        if (is_array($this->dirs))
-        {
-            foreach ($this->dirs as $key => $dir)
-            {
-                if ($dir && ! file_exists($dir))
-                {
-                    if (create_exdir($dir) < 0)
-                    {
-                        $this->error = $langs->trans("ErrorCanNotCreateDir",$dir);
-                        dolibarr_syslog("DolibarrModules::_init error");
-                        dolibarr_syslog("ErrorCanNotCreateDir $dir");
-                    }
-                }
-            }
-        }
-
-        // Exécute les requetes sql complémentaires
-        for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
-        {
-            $sql=$array_sql[$i];
-            $result=$this->db->query($sql);
-            if (! $result)
-            {
-            	dolibarr_syslog("DolibarrModules.class::init Error sql=".$sql." - ".$this->db->error());
-                $err++;
-            }
-        }
-
-        // Renvoi valeur de retour
+    // Exécute les requetes sql complémentaires
+    for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
+      {
+	if (!$this->db->query($array_sql[$i]))
+	  {
+	    $err++;
+	  }
+      }
+    
+    // Renvoi valeur de retour
         if ($err > 0) return 0;
         return 1;
-    }
+  }
+  
 
-
-    /**     \brief      Fonction de désactivation. Supprime de la base les constantes et boites du module
-     *      \param      array_sql       tableau de requete sql a exécuter à la désactivation
-     *      \return     int             1 si ok, 0 si erreur
-     */
-    function _remove($array_sql)
-    {
-        $err = 0;
-
-        // Supprime entrée des modules
-        $err+=$this->_dbunactive();
-
-        // Supprime la constante d'activation du module
-        $err+=$this->_unactive();
-
-        // Supprime les droits de la liste des droits disponibles
-        $err+=$this->delete_permissions();
-
-        // Supprime les boites de la liste des boites disponibles
-        $err+=$this->delete_boxes();
-
-        // Exécute les requetes sql complémentaires
-        for ($i = 0 ; $i < sizeof($array_sql) ; $i++)
-        {
-            if (!$this->db->query($array_sql[$i]))
-            {
-                $err++;
-            }
-        }
-
-        // Renvoi valeur de retour
-        if ($err > 0) return 0;
-        return 1;
-    }
-
-
-    /**
-        \brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
-                    sinon le nom défini par défaut dans le module.
-        \return     string      Nom du module traduit
-    */
-    function getName()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
-        {
-            // Si traduction du nom du module existe
-            return $langs->trans("Module".$this->numero."Name");
-        }
-        else
-        {
-            // Si traduction du nom du module n'existe pas, on prend définition en dur dans module
-            return $this->name;
-        }
-    }
-
-
-    /**
-            \brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
-                        sinon la description définie par défaut dans le module.
-            \return     string      Nom du module traduit
-    */
-    function getDesc()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
-        {
-            // Si traduction de la description du module existe
-            return $langs->trans("Module".$this->numero."Desc");
-        }
-        else
-        {
-            // Si traduction de la description du module n'existe pas, on prend définition en dur dans module
-            return $this->description;
-        }
-    }
-
-
-    /**
-            \brief      Retourne la version du module.
-                        Pour les modules à l'état 'experimental', retourne la traduction de 'experimental'
-                        Pour les modules 'dolibarr', retourne la version de Dolibarr
-                        Pour les autres modules, retourne la version du module
-            \return     string      Version du module
-    */
-    function getVersion()
-    {
-        global $langs;
-        $langs->load("admin");
-
-        if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
-        elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
-        elseif ($this->version == 'dolibarr') return DOL_VERSION;
-        elseif ($this->version) return $this->version;
-        else return $langs->trans("VersionUnknown");
-    }
-
+  /**
+     \brief      Retourne le nom traduit du module si la traduction existe dans admin.lang,
+     sinon le nom défini par défaut dans le module.
+     \return     string      Nom du module traduit
+  */
+  function getName()
+  {
+    global $langs;
+    $langs->load("admin");
+    
+    if ($langs->trans("Module".$this->numero."Name") != ("Module".$this->numero."Name"))
+      {
+	// Si traduction du nom du module existe
+	return $langs->trans("Module".$this->numero."Name");
+      }
+    else
+      {
+	// Si traduction du nom du module n'existe pas, on prend définition en dur dans module
+	return $this->name;
+      }
+  }
+  
+  
+  /**
+     \brief      Retourne la description traduite du module si la traduction existe dans admin.lang,
+     sinon la description définie par défaut dans le module.
+     \return     string      Nom du module traduit
+  */
+  function getDesc()
+  {
+    global $langs;
+    $langs->load("admin");
+    
+    if ($langs->trans("Module".$this->numero."Desc") != ("Module".$this->numero."Desc"))
+      {
+	// Si traduction de la description du module existe
+	return $langs->trans("Module".$this->numero."Desc");
+      }
+    else
+      {
+	// Si traduction de la description du module n'existe pas, on prend définition en dur dans module
+	return $this->description;
+      }
+  }
+  
+  
+  /**
+     \brief      Retourne la version du module.
+     Pour les modules à l'état 'experimental', retourne la traduction de 'experimental'
+     Pour les modules 'dolibarr', retourne la version de Dolibarr
+     Pour les autres modules, retourne la version du module
+     \return     string      Version du module
+  */
+  function getVersion()
+  {
+    global $langs;
+    $langs->load("admin");
+    
+    if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+    elseif ($this->version == 'development') return $langs->trans("VersionDevelopment");
+    elseif ($this->version == 'dolibarr') return DOL_VERSION;
+    elseif ($this->version) return $this->version;
+    else return $langs->trans("VersionUnknown");
+  }
+  
 
     /**
             \brief      Retourne la version en base du module.
@@ -285,40 +312,40 @@ class DolibarrModules
     }
     
     
-    /**
-            \brief      Insère ligne module
-            \return     int         Nombre d'erreurs (0 si ok)
-     */
-    function _dbactive()
-    {
-        $err = 0;
-
-        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
-        $this->db->query($sql_del);
-
-        $sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
-        $sql .= " VALUES (";
-        $sql .= $this->numero.",1,now(),'".$this->version."')";
-
-        $this->db->query($sql);
-
-        return $err;
-    }
-
-
-    /**
-            \brief      Supprime ligne module
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function _dbunactive()
-    {
-        $err = 0;
-
-        $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
-        $this->db->query($sql_del);
-
-        return $err;
-    }
+  /**
+     \brief      Insère ligne module
+     \return     int         Nombre d'erreurs (0 si ok)
+  */
+  function _dbactive()
+  {
+    $err = 0;
+    
+    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
+    $this->db->query($sql_del);
+    
+    $sql ="INSERT INTO ".MAIN_DB_PREFIX."dolibarr_modules (numero,active,active_date,active_version)";
+    $sql .= " VALUES (";
+    $sql .= $this->numero.",1,now(),'".$this->version."')";
+    
+    $this->db->query($sql);
+    
+    return $err;
+  }
+  
+  
+  /**
+     \brief      Supprime ligne module
+     \return     int     Nombre d'erreurs (0 si ok)
+  */
+  function _dbunactive()
+  {
+    $err = 0;
+    
+    $sql_del = "DELETE FROM ".MAIN_DB_PREFIX."dolibarr_modules WHERE numero=".$this->numero.";";
+    $this->db->query($sql_del);
+    
+    return $err;
+  }
     
 
     /**
@@ -405,42 +432,70 @@ class DolibarrModules
     }
 
 
-    /**
-            \brief      Supprime les boites
-            \return     int     Nombre d'erreurs (0 si ok)
-     */
-    function delete_boxes()
-    {
-        $err=0;
-        
-        if (is_array($this->boxes))
-        {
-	        foreach ($this->boxes as $key => $value)
-	        {
-	            //$titre = $this->boxes[$key][0];
-	            $file  = $this->boxes[$key][1];
-	            //$note  = $this->boxes[$key][2];
-	            
-	            $sql = "DELETE ".MAIN_DB_PREFIX."boxes";
-	            $sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
-	            $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
-	            $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$file."'";
-				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
-				$this->db->query($sql);
-								
-	            $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
-	            $sql.= " WHERE file = '".$file."'";
-				dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
-	            if (! $this->db->query($sql))
-	            {
-	                $err++;
-	            }
-	        }
-		}
-		    
-        return $err;
-    }
-
+  
+  /**
+     \brief      Supprime les documents
+     \return     int     Nombre d'erreurs (0 si ok)
+  */
+  function delete_docs()
+  {       
+    // Créé les documents générables
+    if (is_array($this->docs))
+      {
+	foreach ($this->docs as $key => $doc)
+	  {
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_generator ";
+	    $sql .= "WHERE name= '".addslashes($doc[0])."' AND classfile='".$doc[1]."'AND class='".$doc[2]."';";
+	    
+	    $result=$this->db->query($sql);
+	    if (! $result)
+	      {
+		dolibarr_syslog("DolibarrModules.class::delete_docs Error sql=".$sql." - ".$this->db->error());
+		$err++;
+	      }
+	    
+	  }
+      }
+    return $err;
+  }
+  
+  
+  /**
+     \brief      Supprime les boites
+     \return     int     Nombre d'erreurs (0 si ok)
+  */
+  function delete_boxes()
+  {
+    $err=0;
+    
+    if (is_array($this->boxes))
+      {
+	foreach ($this->boxes as $key => $value)
+	  {
+	    //$titre = $this->boxes[$key][0];
+	    $file  = $this->boxes[$key][1];
+	    //$note  = $this->boxes[$key][2];
+	    
+	    $sql = "DELETE ".MAIN_DB_PREFIX."boxes";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."boxes, ".MAIN_DB_PREFIX."boxes_def";
+	    $sql.= " WHERE ".MAIN_DB_PREFIX."boxes.box_id = ".MAIN_DB_PREFIX."boxes_def.rowid";
+	    $sql.= " AND ".MAIN_DB_PREFIX."boxes_def.file = '".$file."'";
+	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+	    $this->db->query($sql);
+	    
+	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."boxes_def";
+	    $sql.= " WHERE file = '".$file."'";
+	    dolibarr_syslog("DolibarrModules::delete_boxes sql=".$sql);
+	    if (! $this->db->query($sql))
+	      {
+		$err++;
+	      }
+	  }
+      }
+    
+    return $err;
+  }
+  
     /**
             \brief      Insère les constantes associées au module dans llx_const
             \return     int     Nombre d'erreurs (0 si ok)
