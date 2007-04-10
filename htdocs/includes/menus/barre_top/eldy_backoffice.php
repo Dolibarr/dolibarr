@@ -212,7 +212,7 @@ class MenuTop {
             		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("MenuFinancial").'</font>';
         }
 
-        // Projets
+        // Projects
         if ($conf->projet->enabled)
         {
             $langs->load("projects");
@@ -256,7 +256,40 @@ class MenuTop {
             		print '<td class="tmenu"><font class="tmenudisabled">'.$langs->trans("Tools").'</font>';
         }
         
-        // OSCommerce 1
+        // Telephonie
+        if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
+        {
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
+        }
+
+        // Energie
+        if ($conf->energie->enabled)
+        {
+            $langs->load("energy");
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
+        }
+ 
+		// OSCommerce 1
         if ($conf->boutique->enabled)
         {
             $langs->load("shop");

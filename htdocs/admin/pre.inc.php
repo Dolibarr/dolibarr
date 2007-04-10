@@ -46,6 +46,8 @@ function llxHeader($head = "", $title="", $help_url='')
 
   $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
 
+  $menu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
+
   $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 
   $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));

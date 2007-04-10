@@ -201,7 +201,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/compta/index.php?mainmenu=accountancy&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("MenuFinancial").'</a></td>';
         }
 
-        // Projets
+        // Projects
         if ($conf->projet->enabled)
         {
             $langs->load("projects");
@@ -279,7 +279,40 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
         }
        
-        // Members
+        // Telephonie
+        if ($conf->telephonie->enabled && $user->rights->telephonie->lire)
+        {
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/telephonie\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/telephonie/index.php?mainmenu=telephonie"'.($this->atarget?" target=$this->atarget":"").'>Telephonie</a></td>';
+        }
+
+        // Energie
+        if ($conf->energie->enabled)
+        {
+            $langs->load("energy");
+            $class="";
+            if (ereg("^".DOL_URL_ROOT."\/energie\/",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/energie/index.php?mainmenu=energie"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Energy").'</a></td>';
+        }
+ 
+		// Members
         if ($conf->adherent->enabled)
         {
             $langs->load("members");

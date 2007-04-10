@@ -50,6 +50,7 @@ Box=Box
 Boxes=Boxes
 PositionByDefault=Default order
 Position=Order
+MenusDesc=Menus managers define content of the 2 menu bars (horizontal bar and vertical bar). 
 System=System
 SystemInfo=System information
 SystemTools=System tools

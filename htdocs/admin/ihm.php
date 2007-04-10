@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,7 +22,7 @@
 
 /**
         \file       htdocs/admin/ihm.php
-        \brief      Page de configuration du de l'interface homme machine
+        \brief      Page de configuration de l'interface homme machine
         \version    $Revision$
 */
 
@@ -37,8 +37,6 @@ if (!$user->admin)
 
 if (! defined("MAIN_MOTD")) define("MAIN_MOTD","");
 
-$dirtop = "../includes/menus/barre_top";
-$dirleft = "../includes/menus/barre_left";
 $dirtheme = "../theme";
 
 // Liste des zone de recherche permanantes supportées
@@ -60,12 +58,6 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_SHOW_BUGTRACK_LINK", $_POST["main_show_bugtrack_link"]);
 	dolibarr_set_const($db, "MAIN_SHOW_WORKBOARD",     $_POST["main_show_workboard"]);
 	
-	dolibarr_set_const($db, "MAIN_MENU_BARRETOP",      $_POST["main_menu_barretop"]);
-	dolibarr_set_const($db, "MAIN_MENU_BARRELEFT",     $_POST["main_menu_barreleft"]);
-	
-	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRETOP", $_POST["main_menufront_barretop"]);
-	dolibarr_set_const($db, "MAIN_MENUFRONT_BARRELEFT",$_POST["main_menufront_barreleft"]);
-	
 	dolibarr_set_const($db, "MAIN_THEME",              $_POST["main_theme"]);
 	
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_CONTACT", $_POST["main_searchform_contact"]);
@@ -76,7 +68,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 	
-	Header("Location: ihm.php?mainmenu=home&leftmenu=setup");
+	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
 	exit;
 }
 
@@ -91,7 +83,9 @@ print "<br>\n";
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-    print '<form method="post" action="ihm.php">';
+	$html=new Form($db);
+
+    print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="update">';
 
     clearstatcache();
@@ -103,7 +97,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Langue par defaut
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DefaultLanguage").'</td><td>';
-    $html=new Form($db);
     $html->select_lang($conf->global->MAIN_LANG_DEFAULT,'main_lang_default',1);
     print '</td></tr>';
 
@@ -156,40 +149,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $html->selectyesnonum('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1);
     print '</td></tr>';
     
-    print '</table><br>';
-
-
-    // Gestionnaires de menu
-    $var=true;
-
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
-    print '<td>'.$langs->trans("InternalUsers").'</td>';
-    print '<td>'.$langs->trans("ExternalUsers").'</td>';
-    print '</tr>';
-
-    // Menu top
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
-    print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENU_BARRETOP,'main_menu_barretop',$dirtop);
-    print '</td>';
-    print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRETOP,'main_menufront_barretop',$dirtop);
-    print '</td>';
-    print '</tr>';
-
-    // Menu left
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-    print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENU_BARRELEFT,'main_menu_barreleft',$dirleft);
-    print '</td>';
-    print '<td>';
-    print $html->select_menu($conf->global->MAIN_MENUFRONT_BARRELEFT,'main_menufront_barreleft',$dirleft);
-    print '</td>';
-    print '</tr>';
-
     print '</table><br>';
 
 
@@ -289,43 +248,6 @@ else
     print '</table><br>';
 
 
-    // Gestionnaires de menu
-    $var=true;
-
-    print '<table class="noborder" width="100%">';
-    print '<tr class="liste_titre"><td width="35%">'.$langs->trans("Menu").'</td>';
-    print '<td>'.$langs->trans("InternalUsers").'</td>';
-    print '<td>'.$langs->trans("ExternalUsers").'</td>';
-    print '</tr>';
-    
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("DefaultMenuTopManager").'</td>';
-    print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRETOP);
-    print $filelib;
-    print '</td>';
-    print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRETOP);
-    print $filelib;
-    print '</td>';
-    print '</tr>';
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'>';
-    print '<td>'.$langs->trans("DefaultMenuLeftManager").'</td>';
-    print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENU_BARRELEFT);
-    print $filelib;
-    print '</td>';
-    print '<td>';
-    $filelib=eregi_replace('\.php$','',$conf->global->MAIN_MENUFRONT_BARRELEFT);
-    print $filelib;
-    print '</td>';
-    print '</tr>';
-
-    print '</table><br>';
-
-
     // Themes
     show_theme(0);
     print '<br>';
@@ -353,7 +275,7 @@ else
     print '</table>';
 
     print '<div class="tabsAction">';
-    print '<a class="tabAction" href="ihm.php?action=edit">'.$langs->trans("Edit").'</a>';
+    print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
 
 }
