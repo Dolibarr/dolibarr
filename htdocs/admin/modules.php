@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
@@ -23,9 +23,9 @@
  */
  
 /**
-        \file       htdocs/admin/modules.php
-        \brief      Page de configuration et activation des modules
-        \version    $Revision$
+   \file       htdocs/admin/modules.php
+   \brief      Page de configuration et activation des modules
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -59,90 +59,91 @@ if ($_GET["action"] == 'reset' && $user->admin)
 	exit;
 }
 
-
-/**     \brief      Active un module
-        \param      value       Nom du module a activer
-        \param      withdeps    Active/désactive aussi les dépendances
+/**
+   \brief      Active un module
+   \param      value       Nom du module a activer
+   \param      withdeps    Active/désactive aussi les dépendances
 */
 function Activate($value,$withdeps=1)
 {
-    global $db, $modules, $langs;
+  global $db, $modules, $langs;
 
-    $modName = $value;
-
-    // Activation du module
-    if ($modName)
+  $modName = $value;
+  
+  // Activation du module
+  if ($modName)
     {
-        $file = $modName . ".class.php";
-        include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
-        $objMod = new $modName($db);
-
-        // Test si version PHP ok
-        $verphp=versionphp();
-        $vermin=$objMod->phpmin;
-        if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
+      $file = $modName . ".class.php";
+      include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
+      $objMod = new $modName($db);
+      
+      // Test si version PHP ok
+      $verphp=versionphp();
+      $vermin=$objMod->phpmin;
+      if (is_array($vermin) && versioncompare($verphp,$vermin) < 0)
         {
-            return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
+	  return $langs->trans("ErrorModuleRequirePHPVersion",versiontostring($vermin));
         }
-
-        $objMod->init();
+      
+      $objMod->init();
     }
-
-    if ($withdeps)
+  
+  if ($withdeps)
     {
-        // Activation des modules dont le module dépend
-        for ($i = 0; $i < sizeof($objMod->depends); $i++)
+      // Activation des modules dont le module dépend
+      for ($i = 0; $i < sizeof($objMod->depends); $i++)
         {
-            Activate($objMod->depends[$i]);
+	  Activate($objMod->depends[$i]);
         }
-    
-        // Desactivation des modules qui entrent en conflit
-        for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
-        {
-            UnActivate($objMod->conflictwith[$i],0);
-        }
+      
+      // Desactivation des modules qui entrent en conflit
+      for ($i = 0; $i < sizeof($objMod->conflictwith); $i++)
+	{
+	  UnActivate($objMod->conflictwith[$i],0);
+	}
     }
-    
-    return 0;
+  
+  return 0;
 }
 
 
-/**     \brief      Désactive un module
-        \param      value               Nom du module a désactiver
-        \param      requiredby          1=Desactive aussi modules dépendants
+/**
+   \brief      Désactive un module
+   \param      value               Nom du module a désactiver
+   \param      requiredby          1=Desactive aussi modules dépendants
 */
 function UnActivate($value,$requiredby=1)
 {
-    global $db, $modules;
-
-    $modName = $value;
-
-    // Desactivation du module
-    if ($modName)
+  global $db, $modules;
+  
+  $modName = $value;
+  
+  // Desactivation du module
+  if ($modName)
     {
-        $file = $modName . ".class.php";
-        include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
-        $objMod = new $modName($db);
-        $objMod->remove();
+      $file = $modName . ".class.php";
+      include_once(DOL_DOCUMENT_ROOT."/includes/modules/$file");
+      $objMod = new $modName($db);
+      $objMod->remove();
     }
-
-    // Desactivation des modules qui dependent de lui
-    if ($requiredby)
+  
+  // Desactivation des modules qui dependent de lui
+  if ($requiredby)
     {
-        for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
+      for ($i = 0; $i < sizeof($objMod->requiredby); $i++)
         {
-            UnActivate($objMod->requiredby[$i]);
+	  UnActivate($objMod->requiredby[$i]);
         }
     }
-    
-    return 0;
+  
+  return 0;
 }
 
 
 /*
  * Affichage page
  */
- 
+
 llxHeader("","");
 
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
@@ -151,6 +152,7 @@ print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
 if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
 if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
+if ($mode==3) print $langs->trans("ModulesJobDesc")."<br>\n";
 print "<br>\n";
 
 
@@ -158,20 +160,21 @@ $h = 0;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=0";
 $head[$h][1] = $langs->trans("ModulesCommon");
-if ($mode==0) $hselected=$h;
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=1";
 $head[$h][1] = $langs->trans("ModulesInterfaces");
-if ($mode==1) $hselected=$h;
 $h++;
 
 $head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=2";
 $head[$h][1] = $langs->trans("ModulesSpecial");
-if ($mode==2) $hselected=$h;
 $h++;
 
-dolibarr_fiche_head($head, $hselected, $langs->trans("Modules"));
+$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=3";
+$head[$h][1] = $langs->trans("ModulesJob");
+
+
+dolibarr_fiche_head($head, $mode, $langs->trans("Modules"));
 
 
 if ($mesg) print '<div class="error">'.$mesg.'</div>';
