@@ -61,6 +61,7 @@ class MenuLeft {
 		$newmenu->add(DOL_URL_ROOT."/admin/index.php?leftmenu=setup", $langs->trans("Setup"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+		$newmenu->add_submenu(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
