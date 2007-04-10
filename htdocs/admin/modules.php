@@ -149,56 +149,15 @@ llxHeader("","");
 print_fiche_titre($langs->trans("ModulesSetup"),'','setup');
 
 
-if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
-if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
-if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
-if ($mode==3) print $langs->trans("ModulesJobDesc")."<br>\n";
-print "<br>\n";
-
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=0";
-$head[$h][1] = $langs->trans("ModulesCommon");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=1";
-$head[$h][1] = $langs->trans("ModulesInterfaces");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=2";
-$head[$h][1] = $langs->trans("ModulesSpecial");
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=3";
-$head[$h][1] = $langs->trans("ModulesJob");
-
-
-dolibarr_fiche_head($head, $mode, $langs->trans("Modules"));
-
-
-if ($mesg) print '<div class="error">'.$mesg.'</div>';
-
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td>".$langs->trans("Family")."</td>\n";
-print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
-//print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
-print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
-print "  <td>".$langs->trans("SetupShort")."</td>\n";
-print "</tr>\n";
-
-
+// Recherche les modules
 $dir = DOL_DOCUMENT_ROOT . "/includes/modules/";
 
 // Charge tableaux modules, nom, numero, orders depuis répertoire dir
 $handle=opendir($dir);
-$nom = array();
+$filename = array();
 $modules = array();
 $orders = array();
+$categ = array();
 $i = 0;
 $j = 0;
 while (($file = readdir($handle))!==false)
@@ -222,8 +181,9 @@ while (($file = readdir($handle))!==false)
             }
 
             $modules[$i] = $objMod;
-            $nom[$i]     = $modName;
+            $filename[$i]= $modName;
             $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+			$categ[$objMod->special]++;					// Array of all different modules categories
             $j++;
             $i++;
         }
@@ -231,6 +191,75 @@ while (($file = readdir($handle))!==false)
 }
 
 asort($orders);
+
+
+// Affichage debut page
+
+if ($mode==0) print $langs->trans("ModulesDesc")."<br>\n";
+if ($mode==1) print $langs->trans("ModulesInterfaceDesc")."<br>\n";
+if ($mode==2) print $langs->trans("ModulesSpecialDesc")."<br>\n";
+if ($mode==3) print $langs->trans("ModulesJobDesc")."<br>\n";
+print "<br>\n";
+
+
+$h = 0;
+
+$categidx=0;
+if ($categ[$categidx])
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+	$head[$h][1] = $langs->trans("ModulesCommon");
+	$head[$h][2] = 'common';
+	$h++;
+}
+
+$categidx=1;
+if ($categ[$categidx])
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+	$head[$h][1] = $langs->trans("ModulesInterfaces");
+	$head[$h][2] = 'interfaces';
+	$h++;
+}
+
+$categidx=2;
+if ($categ[$categidx])
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
+	$head[$h][1] = $langs->trans("ModulesOther");
+	$head[$h][2] = 'other';
+	$h++;
+}
+
+$categidx=3;
+if ($categ[$categidx])
+{
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=3";
+	$head[$h][1] = $langs->trans("ModulesJob");
+	$head[$h][2] = 'functional';
+	$h++;
+}
+
+dolibarr_fiche_head($head, $mode, $langs->trans("Modules"));
+
+
+if ($mesg) print '<div class="error">'.$mesg.'</div>';
+
+print "<table class=\"noborder\" width=\"100%\">\n";
+print "<tr class=\"liste_titre\">\n";
+print "  <td>".$langs->trans("Family")."</td>\n";
+print "  <td colspan=\"2\">".$langs->trans("Module")."</td>\n";
+print "  <td>".$langs->trans("Description")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Version")."</td>\n";
+//print "  <td align=\"center\">".$langs->trans("DbVersion")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Activated")."</td>\n";
+print "  <td align=\"center\">".$langs->trans("Action")."</td>\n";
+print "  <td>".$langs->trans("SetupShort")."</td>\n";
+print "</tr>\n";
+
+
+// Affichage liste modules
+
 $var=True;
 
 $familylib=array(
@@ -248,8 +277,8 @@ foreach ($orders as $key => $value)
     $tab=split('_',$value);
     $family=$tab[0]; $numero=$tab[1];
 
-    $modName = $nom[$key];
-    $objMod  = $modules[$key];
+    $modName = $filename[$key];
+	$objMod  = $modules[$key];
 
     // On affiche pas les modules en version 'development' si
     // constante MAIN_SHOW_DEVELOPMENT_MODULES non définie
