@@ -104,3 +104,6 @@ OrderSource5=Commercial
 OrderSource6=Magasin
 QtyOrdered=Qté commandée
 AddDeliveryCostLine=Ajouter une ligne de frais port indiquant le poids de la commande
+
+# einstein PDF Model
+PDFEinsteinDescription=Modèle de propositions commerciales complet (logo...)

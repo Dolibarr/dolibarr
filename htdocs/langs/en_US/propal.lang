@@ -74,3 +74,7 @@ SetDateLivraison=Set shipping date
 CopyPropalFrom=Create commercial proposal by copying existing proposal
 CreateEmptyPropal=Create empty commercial proposals vierge or from list of products/services
 DefaultProposalDurationValidity=Default commercial proposal validity duration (in days)
+
+
+# azur PDF Model
+PDFAzurDescription=A complete proposal model (logo...)
