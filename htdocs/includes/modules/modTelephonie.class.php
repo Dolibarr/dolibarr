@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,21 +21,21 @@
  */
 
 /**
-        \defgroup   telephonie  Module telephonie
-        \brief      Module pour gérer la téléphonie
+   \defgroup   telephonie  Module telephonie
+   \brief      Module pour gérer la téléphonie
 */
 
 /**
-        \file       htdocs/includes/modules/modTelephonie.class.php
-        \ingroup    telephonie
-        \brief      Fichier de description et activation du module de Téléphonie
+   \file       htdocs/includes/modules/modTelephonie.class.php
+   \ingroup    telephonie
+   \brief      Fichier de description et activation du module de Téléphonie
 */
 
 include_once "DolibarrModules.class.php";
 
 /**
-        \class      modTelephonie
-        \brief      Classe de description et activation du module Telephonie
+   \class      modTelephonie
+   \brief      Classe de description et activation du module Telephonie
 */
 
 class modTelephonie extends DolibarrModules
@@ -114,6 +114,7 @@ class modTelephonie extends DolibarrModules
     $this->rights[4][1] = 'Configurer la telephonie'; // libelle de la permission
     $this->rights[4][2] = 'w';
     $this->rights[4][3] = 0;
+    $this->rights[4][4] = 'configurer';
 
     $this->rights[5][0] = 145;
     $this->rights[5][1] = 'Configurer les fournisseurs';
