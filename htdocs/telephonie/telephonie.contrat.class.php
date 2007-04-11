@@ -184,93 +184,92 @@ class TelephonieContrat {
    *
    */
   function fetch($id)
-    {
-      $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
-      $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
-      $sql .= ", c.isfacturable, c.mode_paiement, c.statut";
-      $sql .= ", c.fk_user_creat, ".$this->db->pdate("c.date_creat") ." as dc";
-      $sql .= ", c.grille_tarif";
-
-      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
-      $sql .= " WHERE c.rowid = ".$id;
-
-      $resql = $this->db->query($sql);
-
-      if ($resql)
-	{
-	  if ($this->db->num_rows($resql))
-	    {
-	      $obj = $this->db->fetch_object($resql);
-
-	      $this->id                 = $obj->rowid;
-	      $this->socid              = $obj->fk_soc;
-	      $this->ref                = $obj->ref;
-	      $this->remise             = $obj->remise;
-	      $this->client_comm_id     = $obj->fk_client_comm;
-	      $this->client_id          = $obj->fk_soc;
-	      $this->client_facture_id  = $obj->fk_soc_facture;
-
-	      $this->commercial_sign_id = $obj->fk_commercial_sign;
-	      $this->commercial_suiv_id = $obj->fk_commercial_suiv;
-
-	      $this->statut             = $obj->statut;
-	      $this->mode_paiement      = $obj->mode_paiement;
-	      $this->code_analytique    = $obj->code_analytique;
-
-	      $this->user_creat         = $obj->fk_user_creat;
-	      $this->date_creat         = $obj->dc;
-
-	      $this->grille_tarif_id    = $obj->grille_tarif;
-
-	      if ($obj->isfacturable == 'oui')
-		{
-		  $this->facturable        = 1;
-		}
-	      else
-		{
-		  $this->facturable        = 0;
-		}
-
-	      $this->ref_url = '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
-
-
-	      $result = 1;
-	    }
-	  else
-	    {
-	      dolibarr_syslog("TelephonieContrat::Fecth Erreur -2");
-	      $result = -2;
-	    }
-
-	  $this->db->free($resql);
-	}
-      else
-	{
-	  /* Erreur select SQL */
-	  print $this->db->error();
-	  $result = -1;
-	  dolibarr_syslog("TelephonieContrat::Fecth Erreur -1");
-	}
-
-      $sql = "SELECT libelle";
-      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille";
-      $sql .= " WHERE rowid = ".$this->grille_tarif_id;
-
-      $resql = $this->db->query($sql);
-
-      if ($resql)
-	{
-	  if ($this->db->num_rows($resql))
-	    {
-	      $obj = $this->db->fetch_object($resql);
-	      
-	      $this->grille_tarif_nom = $obj->libelle;
-	    }
-	  $this->db->free($resql);
-	}
-
-
-      return $result;
+  {
+    $sql = "SELECT c.rowid, c.ref, c.fk_client_comm, c.fk_soc, c.fk_soc_facture, c.note";
+    $sql .= ", c.fk_commercial_sign, c.fk_commercial_suiv";
+    $sql .= ", c.isfacturable, c.mode_paiement, c.statut";
+    $sql .= ", c.fk_user_creat, ".$this->db->pdate("c.date_creat") ." as dc";
+    $sql .= ", c.grille_tarif";
+    
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
+    $sql .= " WHERE c.rowid = ".$id;
+    
+    $resql = $this->db->query($sql);
+    dolibarr_syslog($sql);
+    if ($resql)
+      {
+	if ($this->db->num_rows($resql))
+	  {
+	    $obj = $this->db->fetch_object($resql);
+	    
+	    $this->id                 = $obj->rowid;
+	    $this->socid              = $obj->fk_soc;
+	    $this->ref                = $obj->ref;
+	    $this->remise             = $obj->remise;
+	    $this->client_comm_id     = $obj->fk_client_comm;
+	    $this->client_id          = $obj->fk_soc;
+	    $this->client_facture_id  = $obj->fk_soc_facture;
+	    
+	    $this->commercial_sign_id = $obj->fk_commercial_sign;
+	    $this->commercial_suiv_id = $obj->fk_commercial_suiv;
+	    
+	    $this->statut             = $obj->statut;
+	    $this->mode_paiement      = $obj->mode_paiement;
+	    $this->code_analytique    = $obj->code_analytique;
+	    
+	    $this->user_creat         = $obj->fk_user_creat;
+	    $this->date_creat         = $obj->dc;
+	    
+	    $this->grille_tarif_id    = $obj->grille_tarif;
+	    
+	    if ($obj->isfacturable == 'oui')
+	      {
+		$this->facturable        = 1;
+	      }
+	    else
+	      {
+		$this->facturable        = 0;
+	      }
+	    
+	    $this->ref_url = '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
+	    	    
+	    $result = 0;
+	  }
+	else
+	  {
+	    dolibarr_syslog("TelephonieContrat::Fecth Erreur -2");
+	    $result = -2;
+	  }
+	
+	$this->db->free($resql);
+      }
+    else
+      {
+	/* Erreur select SQL */
+	print $this->db->error();
+	$result = -1;
+	dolibarr_syslog("TelephonieContrat::Fecth Erreur -1");
+      }
+    
+    $sql = "SELECT libelle";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille";
+    $sql .= " WHERE rowid = ".$this->grille_tarif_id;
+    
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	if ($this->db->num_rows($resql))
+	  {
+	    $obj = $this->db->fetch_object($resql);
+	    
+	    $this->grille_tarif_nom = $obj->libelle;
+	  }
+	$this->db->free($resql);
+      }
+    
+    
+    return $result;
   }
   /*
    *
