@@ -1278,7 +1278,7 @@ if ($_GET['propalid'] > 0)
 				else
 				print $html->select_tva("tva_tx",$objp->tva_tx,$mysoc,$societe);
 				print '</td>';
-				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice).'"></td>';
+				print '<td align="right"><input size="6" type="text" class="flat" name="subprice" value="'.price($objp->subprice,0,'',0).'"></td>';
 				print '<td align="right">';
 				if (($objp->info_bits & 2) != 2)
 				{

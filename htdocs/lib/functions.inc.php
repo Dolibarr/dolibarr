@@ -1824,10 +1824,11 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 *		\param	    amount			Montant a formater
 *		\param	    html			Formatage html ou pas (0 par defaut)
 *		\param	    outlangs		Objet langs pour formatage
+*		\param		trunc			1=Tronque affichage si trop de décimales
 *		\return		string			Chaine avec montant formaté
 *		\seealso	price2num		Fonction inverse de price
 */
-function price($amount, $html=0, $outlangs='')
+function price($amount, $html=0, $outlangs='', $trunc=1)
 {
 	global $langs,$conf;
 
@@ -1849,25 +1850,25 @@ function price($amount, $html=0, $outlangs='')
 	//print $datas[1]."<br>";
 
 	// On pose par defaut 2 decimales
-	$decimal = 2;
+	$nbdecimal = 2;
 	$end='';
 	// On augmente au besoin si il y a plus de 2 décimales
-	if (strlen($decpart) > $decimal) $decimal=strlen($decpart);
+	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
 	// Si on depasse max
-	if ($decimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) 
+	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) 
 	{
-		$decimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
+		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
 		$end='...';
 	}
 	
 	// Formate nombre
 	if ($html)
 	{
-		$output=ereg_replace(' ','&nbsp;',number_format($amount, $decimal, $dec, $thousand));
+		$output=ereg_replace(' ','&nbsp;',number_format($amount, $nbdecimal, $dec, $thousand));
 	}
 	else
 	{
-		$output=number_format($amount, $decimal, $dec, $thousand);
+		$output=number_format($amount, $nbdecimal, $dec, $thousand);
 	}
 	$output.=$end;
 	

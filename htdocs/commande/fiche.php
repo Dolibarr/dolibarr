@@ -1441,7 +1441,7 @@ else
 						else
 						print $html->select_tva('tva_tx',$objp->tva_tx,$mysoc,$soc);
 						print '</td>';
-						print '<td align="right"><input size="5" type="text" class="flat" name="pu" value="'.price($objp->subprice).'"></td>';
+						print '<td align="right"><input size="5" type="text" class="flat" name="pu" value="'.price($objp->subprice,0,'',0).'"></td>';
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
 						{

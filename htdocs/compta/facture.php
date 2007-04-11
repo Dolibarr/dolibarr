@@ -2389,7 +2389,7 @@ else
 						else
 						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
 						print '</td>';
-						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice).'"></td>';
+						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice,0,'',0).'"></td>';
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
 						{
