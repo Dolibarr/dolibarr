@@ -57,9 +57,9 @@ if (eregi('\.jpg$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
 if (eregi('\.png$',$original_file)) 	{ $type='image/jpeg'; $attachment = true; }
 if (eregi('\.tiff$',$original_file)) 	{ $type='image/tiff'; $attachment = true; }
 
-//Suppression de la chaine de caractère ../ dans $original_file
+// Suppression de la chaine de caractère ../ dans $original_file
 $original_file = str_replace("../","/", "$original_file");
-# find the subdirectory name as the reference
+// find the subdirectory name as the reference
 $refname=basename(dirname($original_file)."/");
 
 $accessallowed=0;
@@ -335,11 +335,24 @@ if ($user->societe_id>0)
 	}
 }
 
+// Security:
 // Limite accès si droits non corrects
 if (! $accessallowed)
 {
     accessforbidden();
 }
+
+// Security:
+// On interdit les remontées de repertoire ainsi que les pipe dans 
+// les noms de fichiers.
+if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
+{
+	dolibarr_syslog("Refused to deliver file ".$original_file);
+	// Do no show plain path in shown error message
+	dolibarr_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	exit;
+}
+
 
 
 if ($action == 'remove_file')
@@ -354,7 +367,7 @@ if ($action == 'remove_file')
 
 	if (! file_exists($original_file)) 
 	{
-	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file)); 
+	    dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"])); 
 	    exit;
 	}
 	unlink($original_file);

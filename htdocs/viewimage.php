@@ -40,8 +40,6 @@ $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
 $type = urldecode($_GET["type"]);
 
-$filename = basename ($original_file);
-
 
 $accessallowed=0;
 if ($modulepart)
@@ -229,11 +227,24 @@ if ($modulepart)
 
 }
 
+// Security:
 // Limite accès si droits non corrects
 if (! $accessallowed)
 {
     accessforbidden();
 }
+
+// Security:
+// On interdit les remontées de repertoire ainsi que les pipe dans 
+// les noms de fichiers.
+if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
+{
+	dolibarr_syslog("Refused to deliver file ".$original_file);
+	// Do no show plain path in shown error message
+	dolibarr_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
+	exit;
+}
+
 
 
 // Ouvre et renvoi fichier
@@ -244,7 +255,7 @@ dolibarr_syslog("viewimage.php download $original_file $filename content-type=$t
 
 if (! file_exists($original_file))
 {
-	dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$original_file));
+	dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 	exit;
 }
 
