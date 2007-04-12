@@ -1381,18 +1381,37 @@ function dolibarr_print_error($db='',$error='')
 		\brief  Deplacer les fichiers telechargés, apres quelques controles divers
 		\param	src_file	fichier source
 		\param	dest_file	fichier de destination
-		\return int         le resultat du move_uploaded_file
+		\return int         true=Deplacement OK, false=Pas de deplacement ou KO
 */
 function doliMoveFileUpload($src_file, $dest_file)
 {
 	$file_name = $dest_file;
 
-	// On renomme les fichiers avec extentio executable car si on a mis le rep
+	// Security:
+	// On renomme les fichiers avec extention executable car si on a mis le rep
 	// documents dans un rep de la racine web (pas bien), cela permet d'executer
 	// du code a la demande.
 	if (eregi('\.php|\.pl|\.cgi$',$file_name))
 	{
 		$file_name.= '.txt';
+	}
+
+	// Security:
+	// On interdit les remontées de repertoire ainsi que les pipe dans 
+	// les noms de fichiers.
+	if (eregi('\.\.',$src_file) || eregi('[<>|]',$src_file))
+	{
+		dolibarr_syslog("Refused to deliver file ".$src_file);
+		return false;
+	}
+
+	// Security:
+	// On interdit les remontées de repertoire ainsi que les pipe dans 
+	// les noms de fichiers.
+	if (eregi('\.\.',$dest_file) || eregi('[<>|]',$dest_file))
+	{
+		dolibarr_syslog("Refused to deliver file ".$dest_file);
+		return false;
 	}
 
 	return move_uploaded_file($src_file, $file_name);
