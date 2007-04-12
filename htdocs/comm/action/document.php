@@ -96,23 +96,18 @@ llxHeader();
 
 if ($_GET["id"] > 0)
 {
-	if ( $error_msg )
-	{ 
-		echo '<div class="error">'.$error_msg.'</div><br>';
-	}
-	
 	$act = new ActionComm($db);
-    $act->fetch($_GET["id"]);
-    $res=$act->societe->fetch($act->societe->id);
-    $res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
-    $res=$act->contact->fetch($act->contact->id);
+	$act->fetch($_GET["id"]);
+	$res=$act->societe->fetch($act->societe->id);
+	$res=$act->author->fetch();     // Le paramètre est le login, hors seul l'id est chargé.
+	$res=$act->contact->fetch($act->contact->id);
 
 	$h=0;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/fiche.php?id='.$_GET["id"];
-    $head[$h][1] = $langs->trans("CardAction");
-    $hselected=$h;
-    $h++;
+	$head[$h][1] = $langs->trans("CardAction");
+	$hselected=$h;
+	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/comm/action/document.php?id='.$_GET["id"];
 	$head[$h][1] = $langs->trans('Documents');
@@ -125,131 +120,119 @@ if ($_GET["id"] > 0)
 	
 	dolibarr_fiche_head($head, $hselected, $langs->trans("Action"));
 
-    // Affichage fiche action en mode visu
-    print '<table class="border" width="100%"';
+	// Affichage fiche action en mode visu
+	print '<table class="border" width="100%"';
 
-		// Ref
-        print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
+	// Ref
+	print '<tr><td width="30%">'.$langs->trans("Ref").'</td><td colspan="3">'.$act->id.'</td></tr>';
 
-		// Type
-        print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
+	// Type
+	print '<tr><td>'.$langs->trans("Type").'</td><td colspan="3">'.$act->type.'</td></tr>';
 
-		// Libelle
-        print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
+	// Libelle
+	print '<tr><td>'.$langs->trans("Title").'</td><td colspan="3">'.$act->label.'</td></tr>';
 
-		// Societe - contact
-        print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
-        print '<td>'.$langs->trans("Contact").'</td>';
-        print '<td>';
-        if ($act->contact->id > 0)
-        {
-        	print $act->contact->getNomUrl(1);
-        }
-        else
-        {
-        	print $langs->trans("None");
-        }
-        
-        print '</td></tr>';
-        
-    // Construit liste des fichiers
-    clearstatcache();
-
-    $totalsize=0;
-    $filearray=array();
-
-    if (is_dir($upload_dir))
-    {
-        $errorlevel=error_reporting();
-    	error_reporting(0);
-    	$handle=opendir($upload_dir);
-    	error_reporting($errorlevel);
-        if ($handle)
-        {
-            $i=0;
-            while (($file = readdir($handle))!==false)
-            {
-                if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-                {
-                    $filearray[$i]=$file;
-                    $totalsize+=filesize($upload_dir."/".$file);
-                    $i++;
-                }
-            }
-            closedir($handle);
-        }
-        else
-        {
-                print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
-        }
-    }
-    
-    print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
-    print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
-    print '</table>';
-
-    print '</div>';
-
-
-    // Affiche formulaire upload
-    if ($conf->upload)
-    {
-		print_titre($langs->trans('AttachANewFile'));
-
-		print '<form name="userfile" action="document.php?id='.$act->id.'" enctype="multipart/form-data" method="POST">';
-
-        print '<table class="noborder" width="100%">';
-        print '<tr><td width="50%" valign="top">';
-
-        print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">';
-        print '<input class="flat" type="file" name="userfile" size="80">';
-        print ' &nbsp; ';
-        print '<input type="submit" class="button" value="'.$langs->trans("Add").'" name="sendit">';
-
-        print "</td></tr>";
-        print "</table>";
-
-        print '</form>';
-        print '<br>';
-    }
-    
-    $errorlevel=error_reporting();
-	error_reporting(0);
-	$handle=opendir($upload_dir);
-	error_reporting($errorlevel);
-
-	print '<table width="100%" class="noborder">';
-
-	if ($handle)
+	// Societe - contact
+	print '<tr><td>'.$langs->trans("Company").'</td><td>'.$act->societe->getNomUrl(1).'</td>';
+	print '<td>'.$langs->trans("Contact").'</td>';
+	print '<td>';
+	if ($act->contact->id > 0)
 	{
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Document').'</td>';
-		print '<td align="right">'.$langs->trans('Size').'</td>';
-		print '<td align="center">'.$langs->trans('Date').'</td>';
-		print '<td>&nbsp;</td>';
-		print '</tr>';
-		$var=true;
-		while (($file = readdir($handle))!==false)
-		{
-			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-			{
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
-				print '<td>';
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=actions&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
-				print "</td>\n";
-				print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-				print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
-				print '<td align="center">';
-				print '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
-				print "</td></tr>\n";
-			}
-		}
-		closedir($handle);
+		print $act->contact->getNomUrl(1);
 	}
+	else
+	{
+		print $langs->trans("None");
+	}
+	
+	print '</td></tr>';
+	
+	// Construit liste des fichiers
+	clearstatcache();
+
+	$totalsize=0;
+	$filearray=array();
+
+	if (is_dir($upload_dir))
+	{
+		$errorlevel=error_reporting();
+		error_reporting(0);
+		$handle=opendir($upload_dir);
+		error_reporting($errorlevel);
+		if ($handle)
+		{
+			$i=0;
+			while (($file = readdir($handle))!==false)
+			{
+				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$filearray[$i]=$file;
+					$totalsize+=filesize($upload_dir."/".$file);
+					$i++;
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
+		}
+	}
+	
+	print '<tr><td>'.$langs->trans("NbOfAttachedFiles").'</td><td colspan="3">'.sizeof($filearray).'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalSizeOfAttachedFiles").'</td><td colspan="3">'.$totalsize.' '.$langs->trans("bytes").'</td></tr>';
 	print '</table>';
 
-    print '</div>';
+	print '</div>';
+
+	if ($mesg) { print $mesg."<br>"; }
+
+	// Affiche formulaire upload
+	$html=new Form($db);
+	$html->form_attach_new_file('document.php?id='.$act->id);
+	
+	// Affiche liste des documents existant
+	print_titre($langs->trans("AttachedFiles"));
+
+	print '<table width="100%" class="noborder">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans('Document').'</td>';
+	print '<td align="right">'.$langs->trans('Size').'</td>';
+	print '<td align="center">'.$langs->trans('Date').'</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
+
+	if (is_dir($upload_dir))
+	{
+		$errorlevel=error_reporting();
+		$handle=opendir($upload_dir);
+		if ($handle)
+		{
+			$var=true;
+			while (($file = readdir($handle))!==false)
+			{
+				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+				{
+					$var=!$var;
+					print '<tr '.$bc[$var].'>';
+					print '<td>';
+					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=actions&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
+					print "</td>\n";
+					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
+					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+					print '<td align="center">';
+					print '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
+					print "</td></tr>\n";
+				}
+			}
+			closedir($handle);
+		}
+		else
+		{
+			print '<div class="error">'.$langs->trans('ErrorCantOpenDir').'<b> '.$upload_dir.'</b></div>';
+		}	  
+	}
+	print '</table>';
 }
 else
 {
