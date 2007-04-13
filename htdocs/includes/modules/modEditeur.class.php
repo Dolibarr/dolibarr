@@ -80,9 +80,10 @@ class modEditeur extends DolibarrModules
 
     // Documents
     $this->docs = array();
-    $this->docs[0][0] = 'Courrier des droits';
-    $this->docs[0][1] = 'docs/class/courrier-droit-editeur.class.php';
-    $this->docs[0][2] = 'pdf_courrier_droit_editeur';
+    $this->docs[0][0] = 1;
+    $this->docs[0][1] = 'Courrier des droits';
+    $this->docs[0][2] = 'docs/class/courrier-droit-editeur.class.php';
+    $this->docs[0][3] = 'pdf_courrier_droit_editeur';
 
     // Permissions
     $this->rights = array();

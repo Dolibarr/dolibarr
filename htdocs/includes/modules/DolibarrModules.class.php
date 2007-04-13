@@ -119,8 +119,8 @@ class DolibarrModules
       {
 	foreach ($this->docs as $key => $doc)
 	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (name,classfile,class) VALUES ";
-	    $sql .= "('".addslashes($doc[0])."','".$doc[1]."','".$doc[2]."');";
+	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_generator (rowid,name,classfile,class) VALUES ";
+	    $sql .= "(".$doc[0].",'".addslashes($doc[1])."','".$doc[2]."','".$doc[3]."');";
 	    
 	    $result=$this->db->query($sql);
 	    if (! $result)
