@@ -133,7 +133,7 @@ if ($_GET["id"])
   $sql .= " , ".MAIN_DB_PREFIX."user as u";
   
   $sql .= " WHERE p.fk_commercial =u.rowid";
-  $sql .= " AND p.fk_user =u.rowid";
+  $sql .= " AND p.fk_user =uu.rowid";
   $sql .= " AND c.fk_soc = s.idp";
   $sql .= " AND p.fk_contrat = c.rowid";
   $sql .= " AND c.rowid =".$_GET["id"];
