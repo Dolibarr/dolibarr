@@ -23,6 +23,8 @@ create table llx_document
 (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   name            varchar(255) NOT NULL,
+  file_name       varchar(255) NOT NULL,
+  file_extension  varchar(5)   NOT NULL,
   date_generation datetime     NULL,
   fk_owner        integer      NULL,
   fk_group        integer      NULL,
