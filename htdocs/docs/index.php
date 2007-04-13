@@ -56,8 +56,12 @@ if ($resql)
       $var=!$var;
       
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->name).'</a></td>';
+      print '<td>';
+      $loc = get_exdir($obj->rowid).$obj->rowid.".pdf";
+      $file = stripslashes($obj->name);
+      echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=ged&type=application/binary&file='.urlencode($loc).'">'.$file.'</a></td>';
       print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->date_generation).'</td>';
+
       print "</tr>\n";
     }
 
