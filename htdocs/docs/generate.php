@@ -37,7 +37,10 @@ if ($_GET["id"] > 0)
 {
   require_once(DOL_DOCUMENT_ROOT.'/docs/document.class.php');
   $doc = new Document($db);
-  $doc->Generate($_GET["id"]);
+  if ($doc->Generate($_GET["id"]) == 0)
+    {
+      Header("Location: index.php");
+    }
 }
 
 llxHeader();
