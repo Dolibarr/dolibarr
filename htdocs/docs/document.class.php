@@ -44,6 +44,8 @@ class Document
   */
   function Generate ($id)
   {
+    $errno = 0;
+
     dolibarr_syslog("Document::Generate id=$id", LOG_DEBUG );	
     $this->id = $id;
     
@@ -72,13 +74,35 @@ class Document
     require DOL_DOCUMENT_ROOT.'/'.$classfile;
     $obj = new $class($this->db);
 
-    $err = $obj->Generate();
+    $this->db->begin();
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document";
-    $sql.= " (name,date_generation) VALUES";
-    $sql.= " ('".$obj->name."',now());";
-
+    $sql = "DELETE FROM  ".MAIN_DB_PREFIX."document";
+    $sql.= " WHERE name='".$obj->name."';";
+    
     $resql=$this->db->query($sql);
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document";
+    $sql.= " (name,file_name,file_extension,date_generation) VALUES";
+    $sql.= " ('".$obj->name."','".$obj->file."','".$obj->extension."',now());";
+    
+    $resql=$this->db->query($sql);
+    
+    $id = $this->db->last_insert_id(MAIN_DB_PREFIX."document");
+    
+    $err = $obj->Generate($id);
+        
+    if ($err === 0)
+      {
+	$this->db->commit();
+	dolibarr_syslog("Document::Generate COMMIT", LOG_DEBUG );
+      }
+    else
+      {
+	$this->db->rollback();
+	dolibarr_syslog("Document::Generate ROLLBACK", LOG_ERR );
+      }
+    
+    return $errno;
   }
 
 }
