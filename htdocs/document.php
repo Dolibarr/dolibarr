@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
@@ -22,24 +22,22 @@
  * $Source$
  */
 
-/**    
-       \file       htdocs/document.php
-       \brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
-       \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
-       \version    $Revision$
+/**
+   \file       htdocs/document.php
+   \brief      Wrapper permettant le téléchargement de fichier de données Dolibarr
+   \remarks    L'appel est document.php?file=pathrelatifdufichier&modulepart=repfichierconcerne
+   \version    $Revision$
 */
 
 require_once("main.inc.php");
 
-
 function llxHeader()
 {
-   global $user,$langs;
-   top_menu($head, $title);
-   $menu = new Menu();
-   left_menu($menu->liste);
+  global $user,$langs;
+  top_menu($head, $title);
+  $menu = new Menu();
+  left_menu($menu->liste);
 }
-
 
 $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
@@ -258,6 +256,17 @@ if ($modulepart)
         //}
         $original_file=$conf->produit->dir_output.'/'.$original_file;
 		$sqlprotectagainstexternals = '';
+    }
+
+    // Wrapping pour les documents generaux
+    if ($modulepart == 'ged')
+    {
+        $user->getrights('document');
+        if ($user->rights->document->lire )
+        {
+	  $accessallowed=1;
+        }
+        $original_file= DOL_DATA_ROOT.'/ged/'.$original_file;
     }
 
     // Wrapping pour les dons
