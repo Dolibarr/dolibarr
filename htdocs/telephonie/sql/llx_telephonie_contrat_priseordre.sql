@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -33,8 +33,8 @@ create table llx_telephonie_contrat_priseordre (
   avance_pourcent  real,
   avance_duree     smallint,
   rem_pour_prev    real,
-  rem_pour_autr    real
-
+  rem_pour_autr    real,
+  mode_paiement    enum('vir','pre') default 'pre'
 )type=innodb;
 
 
