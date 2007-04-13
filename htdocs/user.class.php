@@ -104,142 +104,150 @@ class User
   }
   
   
-  /**
-     \brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
-     \param      login       Si défini, login a utiliser pour recherche
-     \return		int			<0 si ko, >0 si ok
-   */
-  function fetch($login='')
-  {
-    global $conf;
+	/**
+	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
+	*	\param      login       Si défini, login a utiliser pour recherche
+	*	\return		int			<0 si ko, >0 si ok
+	*/
+	function fetch($login='')
+	{
+		global $conf;
 
-    dolibarr_syslog("User::Fetch id=".$this->id." login=".$login, LOG_DEBUG);
-    
-    // Recupere utilisateur
-    $sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
-    $sql.= " u.admin, u.login, u.pass, u.webcal_login, u.note,";
-    $sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
-    $sql.= " u.statut, u.lang,";
-    $sql.= " ".$this->db->pdate("u.datec")." as datec,";
-    $sql.= " ".$this->db->pdate("u.tms")." as datem,";
-    $sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
-    $sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
-    $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-    if ($login)
-      {
-	$sql .= " WHERE u.login = '".$login."'";
-      }
-    else
-      {
-	$sql .= " WHERE u.rowid = ".$this->id;
-      }
-    
+		dolibarr_syslog("User::Fetch id=".$this->id." login=".$login, LOG_DEBUG);
+		
+		// Recupere utilisateur
+		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
+		$sql.= " u.admin, u.login, u.pass, u.webcal_login, u.note,";
+		$sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
+		$sql.= " u.statut, u.lang,";
+		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
+		$sql.= " ".$this->db->pdate("u.tms")." as datem,";
+		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
+		$sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+		if ($login)
+		{
+			$sql .= " WHERE u.login = '".$login."'";
+		}
+		else
+		{
+			$sql .= " WHERE u.rowid = ".$this->id;
+		}
+		
 
-    $result = $this->db->query($sql);
-    if ($result)
-      {
-	$obj = $this->db->fetch_object($result);
-	if ($obj)
-	  {
-	    $this->id = $obj->rowid;
-	    $this->ldap_sid = $obj->ldap_sid;
-	    $this->nom = $obj->name;
-	    $this->prenom = $obj->firstname;
-	    
-	    $this->fullname = trim($this->prenom . ' ' . $this->nom);
-	    $this->login = $obj->login;
-	    $this->pass_indatabase = $obj->pass;
-	    if (! $conf->password_encrypted) $this->pass = $obj->pass;
-	    $this->office_phone = $obj->office_phone;
-	    $this->office_fax   = $obj->office_fax;
-	    $this->user_mobile  = $obj->user_mobile;
-	    $this->email = $obj->email;
-	    $this->admin = $obj->admin;
-	    $this->contact_id = $obj->fk_socpeople;
-	    $this->note = $obj->note;
-	    $this->statut = $obj->statut;
-	    $this->lang = $obj->lang;
-	    
-	    $this->datec  = $obj->datec;
-	    $this->datem  = $obj->datem;
-	    $this->datelastlogin     = $obj->datel;
-	    $this->datepreviouslogin = $obj->datep;
-	    
-	    $this->webcal_login = $obj->webcal_login;
-	    $this->societe_id = $obj->fk_societe;
-	    
-	    if (! $this->lang) $this->lang='fr_FR';
-	  }
-	$this->db->free($result);
-	
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
-	return -1;
-      }
-    
-    // Recupere parametrage global propre à l'utilisateur
-    // \todo a stocker/recupérer en session pour eviter ce select a chaque page
-    $sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-    $sql.= " WHERE fk_user = ".$this->id;
-    $sql.= " AND page = ''";
-    $result=$this->db->query($sql);
-    if ($result)
-      {
-	$num = $this->db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    $p=$obj->param;
-	    if ($p) $this->conf->$p = $obj->value;
-	    $i++;
-	  }
-	$this->db->free($result);
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
-	return -2;
-      }
-    
-    // Recupere parametrage propre à la page et à l'utilisateur
-    // \todo SCRIPT_URL non defini sur tous serveurs
-    // Paramétrage par page desactivé pour l'instant
-    if (1==2 && isset($_SERVER['SCRIPT_URL']))
-      {
-	$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
-	$sql.= " WHERE fk_user = ".$this->id;
-	$sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
-	$result=$this->db->query($sql);
-	if ($result)
-	  {
-	    $num = $this->db->num_rows($result);
-	    $i = 0;
-	    $page_param_url = '';
-	    $this->page_param = array();
-	    while ($i < $num)
-	      {
-		$obj = $this->db->fetch_object($result);
-		$this->page_param[$obj->param] = $obj->value;
-		$page_param_url .= $obj->param."=".$obj->value."&amp;";
-		$i++;
-	      }
-	    $this->page_param_url = $page_param_url;
-	    $this->db->free($result);
-	  }
-	else
-	  {
-	    $this->error=$this->db->error();
-	    return -1;
-	  }
-      }
-    
-    return 1;
-  }
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+			if ($obj)
+			{
+				$this->id = $obj->rowid;
+				$this->ldap_sid = $obj->ldap_sid;
+				$this->nom = $obj->name;
+				$this->prenom = $obj->firstname;
+				
+				$this->fullname = trim($this->prenom . ' ' . $this->nom);
+				$this->login = $obj->login;
+				$this->pass_indatabase = $obj->pass;
+				if (! $conf->password_encrypted) $this->pass = $obj->pass;
+				$this->office_phone = $obj->office_phone;
+				$this->office_fax   = $obj->office_fax;
+				$this->user_mobile  = $obj->user_mobile;
+				$this->email = $obj->email;
+				$this->admin = $obj->admin;
+				$this->contact_id = $obj->fk_socpeople;
+				$this->note = $obj->note;
+				$this->statut = $obj->statut;
+				$this->lang = $obj->lang;
+				
+				$this->datec  = $obj->datec;
+				$this->datem  = $obj->datem;
+				$this->datelastlogin     = $obj->datel;
+				$this->datepreviouslogin = $obj->datep;
+				
+				$this->webcal_login = $obj->webcal_login;
+				$this->societe_id = $obj->fk_societe;
+				
+				if (! $this->lang) $this->lang='fr_FR';
+
+				$this->db->free($result);
+			}
+			else
+			{
+				$this->error="USERNOTFOUND";
+				dolibarr_syslog("User::fetch Error -2, fails to get user - ".$this->error." - sql=".$sql);
+
+				$this->db->free($result);
+				return -2;
+			} 			
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
+			return -1;
+		}
+		
+		// Recupere parametrage global propre à l'utilisateur
+		// \todo a stocker/recupérer en session pour eviter ce select a chaque page
+		$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+		$sql.= " WHERE fk_user = ".$this->id;
+		$sql.= " AND page = ''";
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				$p=$obj->param;
+				if ($p) $this->conf->$p = $obj->value;
+				$i++;
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
+			return -2;
+		}
+		
+		// Recupere parametrage propre à la page et à l'utilisateur
+		// \todo SCRIPT_URL non defini sur tous serveurs
+		// Paramétrage par page desactivé pour l'instant
+		if (1==2 && isset($_SERVER['SCRIPT_URL']))
+		{
+			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
+			$sql.= " WHERE fk_user = ".$this->id;
+			$sql.= " AND page='".$_SERVER['SCRIPT_URL']."'";
+			$result=$this->db->query($sql);
+			if ($result)
+			{
+				$num = $this->db->num_rows($result);
+				$i = 0;
+				$page_param_url = '';
+				$this->page_param = array();
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($result);
+					$this->page_param[$obj->param] = $obj->value;
+					$page_param_url .= $obj->param."=".$obj->value."&amp;";
+					$i++;
+				}
+				$this->page_param_url = $page_param_url;
+				$this->db->free($result);
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				return -1;
+			}
+		}
+		
+		return 1;
+	}
   
   /**
    *    \brief      Ajoute un droit a l'utilisateur
