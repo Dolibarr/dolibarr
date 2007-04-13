@@ -26,7 +26,7 @@
 */
 
 require ("../main.inc.php");
-$user->getrights();
+$user->getrights('document');
 
 function llxHeader($head = "")
 {
@@ -101,6 +101,7 @@ function llxHeader($head = "")
   if ($conf->document->enabled)
     {
       $menu->add(DOL_URL_ROOT."/docs/index.php", $langs->trans("Documents"));
+      $menu->add_submenu(DOL_URL_ROOT."/docs/generate.php", $langs->trans("Génération"));
     }
   
     

@@ -28,35 +28,46 @@
 
 require("./pre.inc.php");
 
-$langs->load("admin");
-
-if (!$user->admin)
-  accessforbidden();
-
 /*
  * 	Affichage page configuration module societe
  *
  */
-
-$form=new Form($db);
-
-
 llxHeader();
-
-print_fiche_titre($langs->trans("Documents"),'','document');
-
-print "<br>";
 
 print_titre($langs->trans("Documents"));
 
 print "<table class=\"noborder\" width=\"100%\">\n";
 print "<tr class=\"liste_titre\">\n";
 print '  <td>'.$langs->trans("Name").'</td>';
-print '  <td>'.$langs->trans("Description").'</td>';
-print '  <td>'.$langs->trans("Example").'</td>';
-print '  <td align="center">'.$langs->trans("Activated").'</td>';
-print '  <td>&nbsp;</td>';
+print '  <td>'.$langs->trans("Généré le").'</td>';
 print "</tr>\n";
+
+
+$sql = "SELECT dg.rowid,dg.name,".$db->pdate("dg.date_generation")." as date_generation";
+$sql.= " FROM ".MAIN_DB_PREFIX."document as dg";
+$sql.=" ORDER BY dg.name ASC;";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $var=True;
+  while ($obj = $db->fetch_object($resql) )
+    {      
+      $var=!$var;
+      
+      print "<tr $bc[$var]>";
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->name).'</a></td>';
+      print '<td>'.strftime("%d/%m/%Y %H:%M",$obj->date_generation).'</td>';
+      print "</tr>\n";
+    }
+
+    $db->free($resql);
+}
+else
+{
+  dolibarr_print_error($db);
+}
+
 
 
 print '</table>';
