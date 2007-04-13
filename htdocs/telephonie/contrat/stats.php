@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,6 @@ require("./pre.inc.php");
 
 llxHeader("","Téléphonie - Contrat");
 
-
 /* Affichage */
 
 if ($_GET["id"])
@@ -32,7 +31,11 @@ if ($_GET["id"])
   $client_comm = new Societe($db);
   $contrat = new TelephonieContrat($db);
 
-  $result = $contrat->fetch($_GET["id"]);
+  if ($contrat->fetch($_GET["id"]) == 0)
+    {
+      $result = 1;
+    }
+
   $client_comm->fetch($contrat->client_comm_id, $user);
 
   if (!$client_comm->perm_read)

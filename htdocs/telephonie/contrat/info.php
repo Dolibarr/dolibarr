@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@ if ($_GET["id"])
   $client_comm = new Societe($db);
   $contrat = new TelephonieContrat($db);
       
-  if ($contrat->fetch($_GET["id"]) > 0)
+  if ($contrat->fetch($_GET["id"]) == 0)
     {
       $result = 1;
       $client_comm->fetch($contrat->client_comm_id, $user);
@@ -133,7 +133,7 @@ if ($_GET["id"])
   $sql .= " , ".MAIN_DB_PREFIX."user as u";
   
   $sql .= " WHERE p.fk_commercial =u.rowid";
-  $sql .= " AND p.fk_user =uu.rowid";
+  $sql .= " AND p.fk_user =u.rowid";
   $sql .= " AND c.fk_soc = s.idp";
   $sql .= " AND p.fk_contrat = c.rowid";
   $sql .= " AND c.rowid =".$_GET["id"];

@@ -54,7 +54,7 @@ if ($_GET["id"])
   $client_comm = new Societe($db);
   $contrat = new TelephonieContrat($db);
   
-  if ($contrat->fetch($_GET["id"]) > 0)
+  if ($contrat->fetch($_GET["id"]) == 0)
     {
       $result = 1;
       $client_comm->fetch($contrat->client_comm_id, $user);
