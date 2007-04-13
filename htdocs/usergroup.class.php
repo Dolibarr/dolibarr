@@ -479,7 +479,7 @@ class UserGroup
 
 
 	/*
-	*	\brief		Retourne chaine dn dand l'annuaire LDAP
+	*	\brief		Initialise tableau info (tableau des attributs LDAP)
 	*	\return		array		Tableau info des attributs
 	*/
 	function _load_ldap_info()
@@ -487,21 +487,9 @@ class UserGroup
 		global $conf,$langs;
 		$info=array();
 		
-		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "user");
-		}
-		else
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "inetOrgPerson");
-		}
-
+		// Object classes
+		$info["objectclass"]=split(',',$conf->global->LDAP_GROUP_OBJECT_CLASS);
+		
 		// Champs
 		if ($this->nom && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->nom;
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;

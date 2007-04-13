@@ -39,7 +39,7 @@ class Ldap
     /**
      * Tableau des serveurs (IP addresses ou nom d'hôtes)
      */
-    var $server;
+    var $server=array();
     /**
      * Base DN (e.g. "dc=foo,dc=com")
      */
@@ -53,7 +53,7 @@ class Ldap
      */
     var $domain;
     /**
-     * Administrateur Ldap
+     * User administrateur Ldap
      * Active Directory ne supporte pas les connexions anonymes
      */
     var $searchUser;
@@ -112,7 +112,8 @@ class Ldap
     	global $conf;
 
         //Server
-        $this->server = array($conf->global->LDAP_SERVER_HOST, $conf->global->LDAP_SERVER_HOST_SLAVE);
+        if ($conf->global->LDAP_SERVER_HOST)       $this->server[] = $conf->global->LDAP_SERVER_HOST;
+		if ($conf->global->LDAP_SERVER_HOST_SLAVE) $this->server[] = $conf->global->LDAP_SERVER_HOST_SLAVE;
         $this->serverPort          = $conf->global->LDAP_SERVER_PORT;
         $this->ldapProtocolVersion = $conf->global->LDAP_SERVER_PROTOCOLVERSION;
         $this->dn                  = $conf->global->LDAP_SERVER_DN;
@@ -666,9 +667,17 @@ class Ldap
 		$fp=fopen($file,"w");
 		if ($fp)
 		{
-			fputs($fp,"# ldapadd -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
-			fputs($fp,"# ldapmodify -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
-			fputs($fp,"# ldapdelete -c -v -D cn=Manager,dc=my-domain,dc=com -W -f ldapinput.in\n");
+			if (ereg('^ldap',$this->server[0]))
+			{
+				$target="-H ".join(',',$this->server);
+			}
+			else
+			{
+				$target="-h ".join(',',$this->server)." -p ".$this->serverPort;
+			}
+			fputs($fp,"# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
+			fputs($fp,"# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
+			fputs($fp,"# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
 			fputs($fp, "dn: ".$dn."\n");	
 			foreach($info as $key => $value)
 			{

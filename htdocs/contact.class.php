@@ -220,28 +220,16 @@ class Contact
 
 
 	/*
-	*	\brief		Retourne chaine dn dand l'annuaire LDAP
+	*	\brief		Initialise tableau info (tableau des attributs LDAP)
 	*	\return		array		Tableau info des attributs
 	*/
 	function _load_ldap_info()
 	{
 		global $conf,$langs;
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory') 
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "user");
-		}
-		else
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "inetOrgPerson");
-		}	
-
+		// Object classes
+		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
+		
 		// Champs 
 		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
@@ -262,7 +250,7 @@ class Contact
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
 		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
 		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
-		if ($this->phone_perso) $info["homePhone"] = $this->phone_perso;
+		if ($this->phone_perso && $conf->global->LDAP_FIELD_PHONE_PERSO) $info[$conf->global->LDAP_FIELD_PHONE_PERSO] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
 		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;

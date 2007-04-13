@@ -1283,7 +1283,7 @@ class User
 
 
 	/*
-	*	\brief		Retourne chaine dn dand l'annuaire LDAP
+	*	\brief		Initialise tableau info (tableau des attributs LDAP)
 	*	\return		array		Tableau info des attributs
 	*/
 	function _load_ldap_info()
@@ -1292,27 +1292,16 @@ class User
 
 		$info=array();
 
-		if ($conf->global->LDAP_SERVER_TYPE == 'activedirectory')
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "user");
-		}
-		else
-		{
-			$info["objectclass"]=array("top",
-									   "person",
-									   "organizationalPerson",
-									   "inetOrgPerson");
-		}
-
+		// Object classes
+		$info["objectclass"]=split(',',$conf->global->LDAP_USER_OBJECT_CLASS);
+		
 		// Champs
 		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN_SAMBA) $info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
+		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD) $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypté
 		if ($this->poste) $info["title"] = $this->poste;
 		if ($this->societe_id > 0)
 		{
