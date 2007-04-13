@@ -49,14 +49,18 @@ class pdf_courrier_droit_editeur
     $this->marge_basse=10;
 
     $this->name = "Courrier des droits ".strftime("%Y", time());
+    $this->file = '1'.strftime("%Y", time()).'.pdf';
   }
 
   /**
      \brief Génère le document
-     \return int 0= ok, <> 0 = ko
+     \return int 0 = ok, <> 0 = ko
   */
-  function Generate()
+  function Generate($numero)
   {
+    $this->file = $numero.strftime("%Y", time());
+    $this->extension = "pdf";
+
     dolibarr_syslog("pdf_courrier_droit_editeur::Generate ", LOG_DEBUG );
 
     require_once(FPDF_PATH.'fpdf.php');
@@ -74,17 +78,44 @@ class pdf_courrier_droit_editeur
     //$sql .= " AND cf.fk_categorie = 2";
     
     $resql=$this->db->query($sql);
+
     if ($resql) 
       {
+	$fichref = "Droits-$year";
+	$dir_all = DOL_DATA_ROOT."/ged/" . get_exdir($numero);
+	$file_all = $dir_all . $numero . ".pdf";
+
+	$pdf_all=new FPDF('P','mm',$this->format);
+	$pdf_all->Open();
+
+
 	while ($obj = $this->db->fetch_object($resql) )
 	  {
 	    $id = $obj->idp;
 	    
 	    dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
 	    
-	    $coupdf = new pdf_courrier_editeur($this->db, $langs);
-	    $coupdf->Write($id, $year);
+	    $coupdf = new pdf_courrier_droit_editeur($this->db, $langs);
+
+	    $fichref = "Droits-$year";
+	    $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
+	    $file = $dir . $fichref . ".pdf";
+
+	    $pdf=new FPDF('P','mm',$this->format);
+	    $pdf->Open();
+
+	    $coupdf->Write($id, $dir, $year, $pdf);
+	    $coupdf->Write($id, $dir_all, $year, $pdf_all);
+	    
+	    $pdf->Close();	    
+	    $pdf->Output($file);
+	    dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
 	  }   
+	
+	$pdf_all->Close();	    
+	$pdf_all->Output($file_all);
+	dolibarr_syslog("droits-editeurs.php write $fileall", LOG_DEBUG );
+	
       }
     else
       {
@@ -99,17 +130,12 @@ class pdf_courrier_droit_editeur
      \param	    id	    id de la societe
      \return	    int     1=ok, 0=ko
   */
-  function Write($id, $year)
+  function Write($id, $dir, $year, &$pdf)
   {
     dolibarr_syslog("pdf_courrier_droit_editeur::Write $id,$year ", LOG_DEBUG );
     $soc = new Societe($this->db);
     $soc->fetch($id);
-    
-    $fichref = $year;
-
-    $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
-    $file = $dir . $fichref . ".pdf";
-	
+    	
     if (! file_exists($dir))
       {
 	if (create_exdir($dir) < 0)
@@ -122,8 +148,7 @@ class pdf_courrier_droit_editeur
     if (file_exists($dir))
       {
 	// Initialisation document vierge
-	$pdf=new FPDF('P','mm',$this->format);
-	$pdf->Open();
+
 
 	$books = array();
 	$year_data = $year - 1;
@@ -308,10 +333,8 @@ class pdf_courrier_droit_editeur
 
 	}
 		
-	$pdf->Close();
-	
-	$pdf->Output($file);
-	dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
+
+
 	return 0;
       }
     else
