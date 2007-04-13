@@ -52,6 +52,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_KEY_GROUPS',$_POST["key"])) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_GROUP_DN',$_POST["group"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_GROUP_OBJECT_CLASS',$_POST["objectclass"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
@@ -104,6 +105,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPGroupDn").picto_required().'</b></td><td>';
 print '<input size="48" type="text" name="group" value="'.$conf->global->LDAP_GROUP_DN.'">';
 print '</td><td>'.$langs->trans("LDAPGroupDnExample").'</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+// List of object class used to define attributes in structure
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPGroupObjectClassList").picto_required().'</b></td><td>';
+print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_GROUP_OBJECT_CLASS.'">';
+print '</td><td>'.$langs->trans("LDAPGroupObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 

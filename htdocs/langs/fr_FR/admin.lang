@@ -556,6 +556,14 @@ LDAPContactDn=DN des contacts Dolibarr
 LDAPContactDnExample=DN complet (ex: ou=contacts,dc=my-domain,dc=com)
 LDAPMemberDn=DN des adhérents
 LDAPMemberDnExample=DN complet (ex: ou=members,dc=society,dc=com)
+LDAPMemberObjectClassList=Liste des objectClass
+LDAPMemberObjectClassListExample=Liste des objectClass définissant les attributs d'un enregistrement (ex: top,inetOrgPerson ou top,user for active directory)
+LDAPUserObjectClassList=Liste des objectClass
+LDAPUserObjectClassListExample=Liste des objectClass définissant les attributs d'un enregistrement (ex: top,inetOrgPerson ou top,user for active directory)
+LDAPGroupObjectClassList=Liste des objectClass
+LDAPGroupObjectClassListExample=Liste des objectClass définissant les attributs d'un enregistrement (ex: top,groupOfUniqueNames)
+LDAPContactObjectClassList=Liste des objectClass
+LDAPContactObjectClassListExample=Liste des objectClass définissant les attributs d'un enregistrement (ex: top,inetOrgPerson ou top,user for active directory)
 LDAPMemberTypeDn=DN des types d'adhérents
 LDAPMemberTypeDnExample=DN complet (ex: ou=type_members,dc=society,dc=com)
 LDAPTestConnect=Tester la connexion LDAP

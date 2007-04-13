@@ -51,6 +51,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_KEY_CONTACTS',$_POST["key"])) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_CONTACT_DN',$_POST["contactdn"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_CONTACT_OBJECT_CLASS',$_POST["objectclass"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
@@ -110,6 +111,14 @@ $var=!$var;
 print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPContactDn").picto_required().'</b></td><td>';
 print '<input size="48" type="text" name="contactdn" value="'.$conf->global->LDAP_CONTACT_DN.'">';
 print '</td><td>'.$langs->trans("LDAPContactDnExample").'</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+// List of object class used to define attributes in structure
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPContactObjectClassList").picto_required().'</b></td><td>';
+print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_CONTACT_OBJECT_CLASS.'">';
+print '</td><td>'.$langs->trans("LDAPContactObjectClassListExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 

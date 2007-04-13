@@ -556,6 +556,14 @@ LDAPContactDn=Dolibarr contacts' DN
 LDAPContactDnExample=Complete DN (ex: ou=contacts,dc=society,dc=com)
 LDAPMemberDn=Dolibarr members' DN
 LDAPMemberDnExample=Complete DN (ex: ou=members,dc=society,dc=com)
+LDAPMemberObjectClassList=List of objectClass
+LDAPMemberObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
+LDAPUserObjectClassList=List of objectClass
+LDAPUserObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
+LDAPGroupObjectClassList=List of objectClass
+LDAPGroupObjectClassListExample=List of objectClass defining record attributes (ex: top,groupOfUniqueNames)
+LDAPContactObjectClassList=List of objectClass
+LDAPContactObjectClassListExample=List of objectClass defining record attributes (ex: top,inetOrgPerson or top,user for active directory)
 LDAPMemberTypeDn=Dolibarr member's type DN
 LDAPMemberTypeDnExample=Complete DN (ex: ou=type_members,dc=society,dc=com)
 LDAPTestConnect=Test LDAP connection

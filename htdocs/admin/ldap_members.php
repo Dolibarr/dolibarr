@@ -52,9 +52,11 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_KEY_MEMBERS',$_POST["key"])) $error++;
 
 	if (! dolibarr_set_const($db, 'LDAP_MEMBER_DN',$_POST["user"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_MEMBER_OBJECT_CLASS',$_POST["objectclass"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',$_POST["fieldpassword"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
@@ -121,6 +123,14 @@ print '</td><td>'.$langs->trans("LDAPMemberDnExample").'</td>';
 print '<td>&nbsp;</td>';
 print '</tr>';
 
+// List of object class used to define attributes in structure
+$var=!$var;
+print '<tr '.$bc[$var].'><td width="25%"><b>'.$langs->trans("LDAPMemberObjectClassList").picto_required().'</b></td><td>';
+print '<input size="48" type="text" name="objectclass" value="'.$conf->global->LDAP_MEMBER_OBJECT_CLASS.'">';
+print '</td><td>'.$langs->trans("LDAPMemberObjectClassListExample").'</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
 print '</table>';
 print '<br>';
 print '<table class="noborder" width="100%">';
@@ -179,6 +189,14 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLoginSamba").'</td><td>';
 print '<input size="25" type="text" name="fieldloginsamba" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'">';
 print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_LOGIN_SAMBA?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Password
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPassword").'</td><td>';
+print '<input size="25" type="text" name="fieldpassword" value="'.$conf->global->LDAP_FIELD_PASSWORD.'">';
+print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PASSWORD.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Mail
