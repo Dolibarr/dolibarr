@@ -412,7 +412,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	$sql.= " p.rowid, p.ref, p.facture, p.fk_statut, p.total_ht, p.total_ttc";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM (".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."commande AS p";
-	if ($user->rights->commercial->client->voir) $sql .= ")";
+	if ($user->rights->commercial->client->voir || $socid) $sql .= ")";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
