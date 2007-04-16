@@ -51,10 +51,11 @@ class TelephonieTarifGrille {
   {
     $this->db = $_DB;
   }
-
-  function CreateGrille($user, $name, $type)
-  {
-
+  /*
+    \brief Creation d'une nouvelle grille
+  */
+  function CreateGrille($user, $name, $type, $copy=0)
+  {    
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille";
     $sql .= "(libelle, type_tarif)";
     $sql .= " VALUES ('".addslashes($name)."','".$type."');";
@@ -70,7 +71,42 @@ class TelephonieTarifGrille {
 	dolibarr_syslog($this->db->error());
       }
                   
+    if ($copy > 0 && $type == 'vente')
+      {
+	$this->CopieGrille($user,$copy);
+      }
+
     return $result;
+  }
+
+  function CopieGrille($user, $ori)
+  {
+    $sql = "SELECT fk_tarif,temporel,fixe FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant";
+    $sql .= " WHERE fk_tarif_desc= '".$ori."'";
+	
+    $resql = $this->db->query($sql);
+	
+    if ($resql)
+      {
+	$i = 0;
+	while ($row = $this->db->fetch_row($resql) )
+	  {
+	    $tarifs[$i] = $row;
+	    $i++;
+	  }
+	$this->db->free($resql);
+      }
+    else
+      {
+	dolibarr_syslog($this->db->error());
+      }
+    
+	
+    foreach($tarifs as $tarif)
+      {
+	$this->_DBUpdateTarif($this->id, $tarif[0], $tarif[1], $tarif[2], $user);
+      }
+    
   }
 
 
