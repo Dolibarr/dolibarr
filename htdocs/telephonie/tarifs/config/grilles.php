@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -23,12 +23,11 @@ require("./pre.inc.php");
   
 if ($_POST["action"] == 'add' && $user->rights->telephonie->tarif->permission)
 {
-
   require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
 
   $obgrille = new TelephonieTarifGrille($db);
       
-  $obgrille->CreateGrille($user, $_POST["nom"], $_POST["type"]);
+  $obgrille->CreateGrille($user, $_POST["nom"], $_POST["type"], $_POST["copy"]);
 
   Header("Location: grilles.php");
 
@@ -70,31 +69,44 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-  print "<td>Grille</td><td>Type</td>";
-  print "</tr>\n";
-
-  $var=True;
-
   while ($i < $num)
     {
       $obj = $db->fetch_object($i);	
-      $var=!$var;
+      $grilles[$i][0] = $obj->rowid;
+      $grilles[$i][1] = stripslashes($obj->tarif_desc);
+      $grilles[$i][2] = $obj->type_tarif;
 
-      print "<tr $bc[$var]>";
-      print '<td><a href="../grille.php?id='.$obj->rowid.'">'.$obj->tarif_desc."</a></td>\n";
-      print '<td>'.$obj->type_tarif."</a></td>\n";
-      print "</tr>\n";
       $i++;
     }
-  print "</table>";
+
   $db->free();
 }
 else 
 {
   print $db->error() . ' ' . $sql;
 }
+
+
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre">';
+print "<td>Grille</td><td>Type</td>";
+print "</tr>\n";
+
+$var=True;
+
+foreach($grilles as $grille)
+{  
+  $var=!$var;
+  
+  print "<tr $bc[$var]>";
+  print '<td><a href="../grille.php?id='.$grille[0].'">'.$grille[1]."</a></td>\n";
+  print '<td>'.$grille[2]."</a></td>\n";
+  print "</tr>\n";
+}
+print "</table>";
+
+
+
 
 print '</td></tr></table>';
 
@@ -113,6 +125,16 @@ print '<input size="30" type="text" name="nom" value="">';
 
 print '</td></tr>';
 print "<tr><td>Type de grille</td>".'<td><select name="type"><option value="vente">vente<option value="achat">achat</select></td></tr>';
+
+print "<tr><td>Copier la grille</td>".'<td><select name="copy">';
+print '<option value="0">Grille vide</option>';
+foreach($grilles as $grille)
+{
+  if ($grille[2] == 'vente')
+    print '<option value="'.$grille[0].'">'.$grille[1]."</option>\n";
+}
+print '</select></td></tr>';
+
 print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("Create").'" type="submit"></td></tr>';
 
 print '</table></form>';
