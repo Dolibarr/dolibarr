@@ -431,6 +431,10 @@ class ProductLivre extends Product
     $smarty->assign('prod_statuts_id', array(1,0) );
     $smarty->assign('prod_statuts_value', array('En vente', 'Hors vente') );
 
+    $this->GetAvailableFormat();
+
+    $smarty->assign('livre_available_formats', $this->available_formats);
+
     if ($this->status==1)
       {
 	$smarty->assign('prod_statut', 'En vente');
@@ -527,5 +531,26 @@ class ProductLivre extends Product
 	print $sql;
       }
   }
+
+  function GetAvailableFormat()
+  {
+    $this->available_formats = array();
+
+    $sql = "SELECT rowid,value FROM ".MAIN_DB_PREFIX."const ";
+    $sql.=" WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%';";
+
+    $resql = $this->db->query($sql);
+
+    while ($obj = $this->db->fetch_object($resql) )
+      {
+	$this->available_formats[$obj->rowid] = stripslashes($obj->value);
+      }
+
+    $this->db->free($resql);
+
+    return 0;
+
+  }
+
 }
 ?>

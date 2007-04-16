@@ -58,8 +58,9 @@
   </td>
   <td>Format</td>
   <td>
-  <input name="format" size="8" maxlength="7" value="{$prod_format}"
-   class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
+   <select class="flat" name="format">
+    {html_options values=$livre_available_formats output=$livre_available_formats selected="$prod_format"}
+   </select>
   </td>
  </tr>
  <tr>
