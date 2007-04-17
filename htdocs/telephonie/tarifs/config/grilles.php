@@ -130,8 +130,7 @@ print "<tr><td>Copier la grille</td>".'<td><select name="copy">';
 print '<option value="0">Grille vide</option>';
 foreach($grilles as $grille)
 {
-  if ($grille[2] == 'vente')
-    print '<option value="'.$grille[0].'">'.$grille[1]."</option>\n";
+  print '<option value="'.$grille[0].'">'.$grille[1]."</option>\n";
 }
 print '</select></td></tr>';
 
