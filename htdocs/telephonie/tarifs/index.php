@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -135,7 +135,7 @@ if ($resql)
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
-  print '<td><input type="submit"></td>';
+  print '<td><input type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 

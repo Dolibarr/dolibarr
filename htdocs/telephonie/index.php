@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche ligne</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
-print '<td>Numéro <input name="search_ligne" size="12"><input type="submit"></td></tr>';
+print '<td>Numéro <input name="search_ligne" size="12"><input type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print '</table></form><br />';
 
 print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/contrat/liste.php">';
@@ -47,7 +47,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche contrat</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
-print '<td>Numéro <input name="search_contrat" size="12"></td></tr>';
+print '<td>Numéro <input name="search_contrat" size="12"><input type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print '</table></form><br />';
 
 print '<form method="GET" action="'.DOL_URL_ROOT.'/telephonie/client/liste.php">';
@@ -55,7 +55,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Recherche client</td>';
 print "</tr>\n";
 print "<tr $bc[1]>";
-print '<td>Nom <input name="search_client" size="12"><input type="submit"></td></tr>';
+print '<td>Nom <input name="search_client" size="12"><input type="submit" value="'.$langs->trans("Search").'"></td></tr>';
 print '</table></form>';
 
 print '<br />';

@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -144,7 +144,7 @@ print '</td><td><select name="perms">';
 print '<option value="0">Aucun</option>';
 print '<option value="1">Lecture</option>';
 print '<option value="2">Lecture/Ecriture</option>';
-print '<td><input type="submit"></td>';
+print '<td><input type="submit" value="'.$langs->trans("Search").'"></td>';
 print "</tr>\n";
 print "</form>\n";
 print "</table>\n";

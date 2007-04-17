@@ -412,7 +412,7 @@ else
 
 	  if ($contrat->fetch($_GET["id"]) == 0)
 	    {
-	      $result = 1;
+	      $result = 1; 
 	    }
 	}
 

@@ -153,7 +153,7 @@ if ($auth_write)
   print '<tr><td>Cout connexion</td>';
   print '<td><input type="text" name="fixe" value="0"></td></tr>';
   
-  print '<tr><td colspan="2"><input type="submit"></td></tr>';
+  print '<tr><td colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print '</table></form>';
   
 }
