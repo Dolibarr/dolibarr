@@ -142,7 +142,7 @@ if (! file_exists($conffile))
     print $langs->trans("YouMustCreateWithPermission",'htdocs/conf/conf.php');
     print "<br /><br />";
     
-    print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF']);
+    print $langs->trans("CorrectProblemAndReloadPage",$_SERVER['PHP_SELF'].'?testget=ok');
     $err++;
 }
 else
