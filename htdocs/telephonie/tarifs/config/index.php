@@ -135,7 +135,7 @@ if ($resql)
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
   print '<td>&nbsp;</td>';
-  print '<td><input type="submit"></td>';
+  print '<td><input type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 

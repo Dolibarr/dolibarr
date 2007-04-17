@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($resql)
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">';
   print '<td><input type="text" name="search_prefix" size="10" value="'.$_GET["search_prefix"].'"></td>';
   print '<td><input type="text" name="search_libelle" size="20" value="'.$_GET["search_libelle"].'"></td>';
-  print '<td><input type="submit"></td>';
+  print '<td><input type="submit" value="'.$langs->trans("Search").'"></td>';
   print '</form>';
   print '</tr>';
 
