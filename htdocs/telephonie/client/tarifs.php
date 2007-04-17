@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -261,7 +261,7 @@ if ($_GET["id"])
 	      
 	      print '<td align="center"><input name="temporel" type="text" value="'.$_POST["temporel"].'" "size="5"></td>';
 	      print '<td align="center"><input name="fixe" value="'.$_POST["fixe"].'" type="text" size="5"></td>';
-	      print '<td align="center"><input type="submit"></td><td>&nbsp;</td>';
+	      print '<td align="center"><input type="submit" value="'.$langs->trans("Save").'"></td><td>&nbsp;</td>';
 	      print "</tr>\n";
 	    }	  
 
