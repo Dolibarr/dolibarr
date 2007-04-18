@@ -47,9 +47,9 @@ function get_article($id='',$ref='') {
 
 //on recherche
 		$sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, p.products_price, d.products_name, d.products_description, m.manufacturers_name, m.manufacturers_id";
-		$sql .= " FROM products as p, products_description as d, manufacturers as m";
-		$sql .= " WHERE p.products_id = d.products_id AND d.language_id =" . OSC_LANGUAGE_ID;
-		$sql .= " AND p.manufacturers_id=m.manufacturers_id";
+		$sql .= " FROM products as p ";
+		$sql .= " JOIN products_description as d ON p.products_id = d.products_id "; 			$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
+		$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
       if ($id) $sql.= " AND p.products_id = ".$id;
       if ($ref) $sql.= " AND p.products_model = '".addslashes($ref)."'";
 
@@ -79,9 +79,9 @@ function get_listearticles() {
 
 //on recherche
 	$sql = "SELECT p.products_id as OSC_id, p.products_model as model, p.products_quantity as quantity, p.products_status as status, d.products_name as name, m.manufacturers_name as manufacturer, m.manufacturers_id";
-	$sql .= " FROM products as p, products_description as d, manufacturers as m";
-	$sql .= " WHERE p.products_id = d.products_id AND d.language_id =" . OSC_LANGUAGE_ID;
-	$sql .= " AND p.manufacturers_id=m.manufacturers_id";
+	$sql .= " FROM products as p";
+	$sql .= " JOIN products_description as d ON p.products_id = d.products_id "; 		 		$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
+	$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
 
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
 
