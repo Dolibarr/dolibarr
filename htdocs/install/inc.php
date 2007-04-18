@@ -2,6 +2,7 @@
 /* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004 Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004 Sebastien DiCintio   <sdicintio@ressource-toi.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +45,11 @@ if (file_exists($conffile))
 	if ($dolibarr_main_document_root)
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
-		require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 		$conf=new Conf();
+	}
+	if ($dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
+	{
+		require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 	}
 }
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
@@ -106,7 +110,7 @@ function pHeader($soutitre,$next,$action='set')
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';
     print '<body>';
-    print '<span class="titre"><a class="titre" href="'.$_SERVER["PHP_SELF"].'">'.$langs->trans("DolibarrSetup").'</a></span>';
+    print '<span class="titre">'.$langs->trans("DolibarrSetup").'</span>';
 
     print '<form action="'.$next.'.php" method="POST">';
     print '<input type="hidden" name="testpost" value="ok">';

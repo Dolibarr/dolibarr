@@ -41,6 +41,7 @@ ReturnCodeLastAccess=Return code for last database access
 InformationLastAccess=Information for last database access
 DolibarrHasDetectedError=Dolibarr has detected a technical error
 InformationToHelpDiagnose=This is information that can help to diagnose
+MoreInformation=More information
 NotePublic=Note (public)
 NotePrivate=Note (private)
 yes=yes

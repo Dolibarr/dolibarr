@@ -52,19 +52,22 @@ print "<br>\n";
 
 print $langs->trans("InstallEasy")."<br><br>\n";
 
-
 print '<b>'.$langs->trans("MiscellanousChecks")."</b>:<br>\n";
+
 
 // Check PHP version
 if (versioncompare(versionphp(),array(4,1)) < 0)
 {
-    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1')."<br>\n";
+    print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPVersionTooLow",'4.1');
     $checksok=0;
 }
 else
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphp())."<br>\n";
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPVersion")." ".versiontostring(versionphp());
 }
+print ' (<a href="phpinfo.php" target="_info">'.$langs->trans("MoreInformation").'</a>)';
+print "<br>\n";
+
 
 // Check PHP support for $_POST
 if (! isset($_GET["testget"]) && ! isset($_POST["testpost"]))
@@ -79,7 +82,8 @@ else
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportPOSTGETOk")."<br>\n";
 }
 
-// Si session non actives
+
+// Check if sessions enabled
 if (! function_exists("session_id"))
 {
     print '<img src="../theme/eldy/img/error.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportSessions")."<br>\n";
@@ -132,6 +136,8 @@ else
     // First install, on ne peut pas upgrader
     $allowupgrade=0;
 }
+
+
 
 // Si fichier absent et n'a pu etre créé
 if (! file_exists($conffile))
@@ -224,6 +230,7 @@ else
 	}
 
 }
+
 
 
 pFooter(1);	// 1 car ne doit jamais afficher bouton Suivant

@@ -41,6 +41,7 @@ ReturnCodeLastAccess=Code retour dernier acces en base
 InformationLastAccess=Information sur le dernier accès en base
 DolibarrHasDetectedError=Dolibarr a détecté une erreur technique
 InformationToHelpDiagnose=Voici les informations qui pourront aider au diagnostic
+MoreInformation=Plus d'information
 NotePublic=Note (publique)
 NotePrivate=Note (privée)
 yes=oui

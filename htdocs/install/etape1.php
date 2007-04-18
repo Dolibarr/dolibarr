@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  *
@@ -27,6 +27,8 @@
    \brief      Génère le fichier conf.php avec les informations issues de l'étape précédente
    \version    $Revision$
 */
+
+define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
 
 include_once("./inc.php");
 
@@ -181,7 +183,7 @@ if ($_POST["action"] == "set")
       if (! is_dir($main_data_dir))
         {
 	  print "<tr><td>".$langs->trans("ErrorDirDoesNotExists",$main_data_dir);
-	  print "Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci";
+	  print $langs->trans("YouMustCreateItAndAllowServerToWrite");
 	  print '</td><td>';
 	  print $langs->trans("Error");
 	  print "</td></tr>";
@@ -301,7 +303,7 @@ if ($_POST["action"] == "set")
                         {
 			  if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                             {
-			      dolibarr_syslog("Utilisateur deja existant");
+			      dolibarr_syslog("User already exists");
 			      print '<tr><td>';
 			      print $langs->trans("UserCreation").' : ';
 			      print $dolibarr_main_db_user;
@@ -310,7 +312,7 @@ if ($_POST["action"] == "set")
                             }
 			  else
                             {
-			      dolibarr_syslog("impossible de creer l'utilisateur");
+			      dolibarr_syslog("Failed to create user");
 			      print '<tr><td>';
 			      print $langs->trans("UserCreation").' : ';
 			      print $dolibarr_main_db_user;
@@ -331,9 +333,10 @@ if ($_POST["action"] == "set")
 		      print '</tr>';
 		      
 		      // Affiche aide diagnostique
-		      print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
+		      print '<tr><td colspan="2"><br>';
+			  print 'Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
 		      print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-		      print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
+		      print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
 		      print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 		      print '</td></tr>';
 		      
@@ -374,7 +377,7 @@ if ($_POST["action"] == "set")
                         {
 			  if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                             {
-			      dolibarr_syslog("Utilisateur deja existant");
+			      dolibarr_syslog("User already exists");
 			      print '<tr><td>';
 			      print $langs->trans("UserCreation").' : ';
 			      print $dolibarr_main_db_user;
@@ -383,7 +386,7 @@ if ($_POST["action"] == "set")
                             }
 			  else
                             {
-			      dolibarr_syslog("impossible de creer l'utilisateur");
+			      dolibarr_syslog("Failed to create user");
 			      print '<tr><td>';
 			      print $langs->trans("UserCreation").' : ';
 			      print $dolibarr_main_db_user;
@@ -402,9 +405,10 @@ if ($_POST["action"] == "set")
 		      print '</tr>';
 		      
 		      // Affiche aide diagnostique
-		      print '<tr><td colspan="2"><br>Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
+		      print '<tr><td colspan="2"><br>';
+			  print 'Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
 		      print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-		      print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
+		      print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
 		      print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 		      print '</td></tr>';
 		      
@@ -444,8 +448,10 @@ if ($_POST["action"] == "set")
 		  print '<td>'.$langs->trans("Error").' '.$db->errno().'</td></tr>';
 
 		  // Affiche aide diagnostique
-		  print '<tr><td colspan="2"><br>La création de la base Dolibarr "<b>'.$dolibarr_main_db_name.'</b>" a échoué.';
-		  print 'Si la base existe déjà, revenez en arrière et désactiver l\'option "Créer la base de donnée".<br>';
+		  print '<tr><td colspan="2"><br>';
+		  print $langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name).'<br>';
+		  print $langs->trans("IfDatabaseExistsGoBackAndCheckCreate");
+		  print '<br>';
 		  print '</td></tr>';
 
 		  $error++;
@@ -463,7 +469,7 @@ if ($_POST["action"] == "set")
 	    // Affiche aide diagnostique
 	    print '<tr><td colspan="2"><br>Vous avez demandé la création de la base Dolibarr "<b>'.$dolibarr_main_db_name.'</b>", mais pour cela, ';
 	    print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-	    print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects. ';
+	    print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
 	    print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 	    print '</td></tr>';
 
@@ -525,7 +531,7 @@ if ($_POST["action"] == "set")
 
 		  // Affiche aide diagnostique
 		  print '<tr><td colspan="2"><br>Vérifier que le nom de base "<b>'.$dolibarr_main_db_name.'</b>" est correct.<br>';
-		  print 'Si ce nom est correct et que cette base n\'existe pas déjà, vous devez cocher l\'option "Créer la base de donnée". ';
+		  print 'Si ce nom est correct et que cette base n\'existe pas déjà, vous devez cocher l\'option "Créer la base de donnée".<br>';
 		  print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 		  print '</td></tr>';
 
@@ -552,7 +558,8 @@ if ($_POST["action"] == "set")
             }
         }
     }
-  print '</table>';
+
+	print '</table>';
 }
 
 pFooter($error,$setuplang);

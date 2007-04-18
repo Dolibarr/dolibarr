@@ -16,9 +16,10 @@ ErrorPHPDoesNotSupportSessions=Votre installation PHP ne supporte pas les sessio
 ErrorDirDoesNotExists=Le répertoire <b>%s</b> n'existe pas ou n'est pas accessible.
 ErrorGoBackAndCorrectParameters=Revenez en arrière et corrigez les paramètres invalides.
 ErrorWrongValueForParameter=Vous avez peut-être saisi une mauvaise valeur pour le paramètre '%s'.
-ErrorFailedToCreateDatabase=Echec de création de la base '%'.
-ErrorFailedToConnectToDatabase=Echec de connection à la base '%'.
+ErrorFailedToCreateDatabase=Echec de création de la base '%s'.
+ErrorFailedToConnectToDatabase=Echec de connection à la base '%s'.
 ErrorPHPVersionTooLow=Version de PHP trop ancienne. La version %s est requise.
+IfDatabaseExistsGoBackAndCheckCreate=Si la base existe déjà, revenez en arrière et désactiver l'option "Créer la base de donnée".
 PHPVersion=Version PHP
 YouCanContinue=Vous pouvez continuer...
 License=Licence d'utilisation
@@ -96,6 +97,7 @@ CorrectProblemAndReloadPage=Corrigez le problème et <a href="%s">rechargez la pa
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base
 ServerVersion=Version du serveur de base de donnée
+YouMustCreateItAndAllowServerToWrite=Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci.
 
 #########
 # upgrade
