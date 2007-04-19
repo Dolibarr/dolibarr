@@ -202,6 +202,7 @@ insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDI
 --
 
 delete from llx_accountingaccount;
+delete from llx_accountingsystem_det;
 delete from llx_accountingsystem;
 
 insert into llx_accountingsystem (pcg_version, fk_pays, label, datec, fk_author, active) VALUES ('PCG99-ABREGE', 1, 'Plan de compte standard français abrégé', sysdate(), null, 0);
