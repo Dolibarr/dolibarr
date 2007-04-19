@@ -106,14 +106,14 @@ class modFournisseur extends DolibarrModules
 		$r=0;
 		
 		$r++;
-		$this->rights[$r][0] = 180;
+		$this->rights[$r][0] = 1181;
 		$this->rights[$r][1] = 'Consulter les fournisseurs';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
 		$this->rights[$r][4] = 'lire';
 		
 		$r++;
-		$this->rights[$r][0] = 181;
+		$this->rights[$r][0] = 1182;
 		$this->rights[$r][1] = 'Lire les commandes fournisseur';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
@@ -121,7 +121,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'lire';
 		
 		$r++;
-		$this->rights[$r][0] = 182;
+		$this->rights[$r][0] = 1183;
 		$this->rights[$r][1] = 'Créer une commande fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -129,7 +129,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		
 		$r++;
-		$this->rights[$r][0] = 183;
+		$this->rights[$r][0] = 1184;
 		$this->rights[$r][1] = 'Valider une commande fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -137,7 +137,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'valider';
 		
 		$r++;
-		$this->rights[$r][0] = 184;
+		$this->rights[$r][0] = 1185;
 		$this->rights[$r][1] = 'Approuver les commandes fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -145,7 +145,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'approuver';
 		
 		$r++;
-		$this->rights[$r][0] = 185;
+		$this->rights[$r][0] = 1186;
 		$this->rights[$r][1] = 'Commander une commande fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -153,7 +153,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'commander';
 		
 		$r++;
-		$this->rights[$r][0] = 186;
+		$this->rights[$r][0] = 1187;
 		$this->rights[$r][1] = 'Réceptionner les commandes fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -161,7 +161,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'receptionner';
 		
 		$r++;
-		$this->rights[$r][0] = 187;
+		$this->rights[$r][0] = 1188;
 		$this->rights[$r][1] = 'Clotûrer les commandes fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -169,7 +169,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'cloturer';
 		
 		$r++;
-		$this->rights[$r][0] = 188;
+		$this->rights[$r][0] = 1189;
 		$this->rights[$r][1] = 'Annuler les commandes fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -177,7 +177,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'annuler';
 		
 		$r++;
-		$this->rights[$r][0] = 231;
+		$this->rights[$r][0] = 1231;
 		$this->rights[$r][1] = 'Lire les factures fournisseur';
 		$this->rights[$r][2] = 'r';
 		$this->rights[$r][3] = 1;
@@ -185,7 +185,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'lire';
 		
 		$r++;
-		$this->rights[$r][0] = 232;
+		$this->rights[$r][0] = 1232;
 		$this->rights[$r][1] = 'Créer une facture fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -193,7 +193,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'creer';
 		
 		$r++;
-		$this->rights[$r][0] = 233;
+		$this->rights[$r][0] = 1233;
 		$this->rights[$r][1] = 'Valider une facture fournisseur';
 		$this->rights[$r][2] = 'w';
 		$this->rights[$r][3] = 0;
@@ -201,7 +201,7 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'valider';
 		
 		$r++;
-		$this->rights[$r][0] = 234;
+		$this->rights[$r][0] = 1234;
 		$this->rights[$r][1] = 'Supprimer une facture fournisseur';
 		$this->rights[$r][2] = 'd';
 		$this->rights[$r][3] = 0;
@@ -209,13 +209,13 @@ class modFournisseur extends DolibarrModules
 		$this->rights[$r][5] = 'supprimer';
 
 	    $r++;
-	    $this->rights[$r][0] = 236;
+	    $this->rights[$r][0] = 1236;
 	    $this->rights[$r][1] = 'Exporter les factures fournisseurs et attributs';
 	    $this->rights[$r][2] = 'r';
 	    $this->rights[$r][3] = 0;
 	    $this->rights[$r][4] = 'facture';
 	    $this->rights[$r][5] = 'export';
- 
+
 
         // Exports
         //--------
