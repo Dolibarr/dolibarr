@@ -96,7 +96,8 @@ class DoliDb
 			     1136 => 'DB_ERROR_VALUE_COUNT_ON_ROW',
 			     1146 => 'DB_ERROR_NOSUCHTABLE',
 			     1216 => 'DB_ERROR_NO_PARENT',
-			     1217 => 'DB_ERROR_CHILD_EXISTS'
+			     1217 => 'DB_ERROR_CHILD_EXISTS',
+			     1451 => 'DB_ERROR_CHILD_EXISTS'
 			     );
   
   
