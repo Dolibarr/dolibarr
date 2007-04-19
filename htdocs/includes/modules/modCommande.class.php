@@ -149,7 +149,7 @@ class modCommande extends DolibarrModules
     $this->rights[$r][4] = 'supprimer';
     
     $r++;
-    $this->rights[$r][0] = 1420;
+    $this->rights[$r][0] = 1421;
     $this->rights[$r][1] = 'Exporter les commandes clients et attributs';
     $this->rights[$r][2] = 'r';
     $this->rights[$r][3] = 0;
