@@ -937,9 +937,12 @@ ALTER TABLE llx_export_model ADD UNIQUE uk_export_model (label);
 
 UPDATE llx_rights_def  SET ID=ID+1001 WHERE ID BETWEEN 180 AND 189 AND module='fournisseur';
 UPDATE llx_user_rights SET fk_id=fk_id+1001 WHERE fk_id BETWEEN 180 AND 189;
+UPDATE llx_user_group_rights SET fk_id=fk_id+1001 WHERE fk_id BETWEEN 180 AND 189;
 
 UPDATE llx_rights_def  SET ID=ID+1000 WHERE ID BETWEEN 230 AND 236 AND module='fournisseur';
 UPDATE llx_user_rights SET fk_id=fk_id+1000 WHERE fk_id BETWEEN 230 AND 236;
+UPDATE llx_user_group_rights SET fk_id=fk_id+1000 WHERE fk_id BETWEEN 230 AND 236;
 
 UPDATE llx_rights_def  SET ID=ID+1 WHERE ID BETWEEN 1320 AND 1320 AND module='facture';
 UPDATE llx_user_rights SET fk_id=fk_id+1 WHERE fk_id BETWEEN 1320 AND 1320;
+UPDATE llx_user_group_rights SET fk_id=fk_id+1 WHERE fk_id BETWEEN 1320 AND 1320;
