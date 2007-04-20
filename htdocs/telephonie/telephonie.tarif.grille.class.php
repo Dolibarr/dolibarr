@@ -55,27 +55,36 @@ class TelephonieTarifGrille {
     \brief Creation d'une nouvelle grille
   */
   function CreateGrille($user, $name, $type, $copy=0)
-  {    
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille";
-    $sql .= "(libelle, type_tarif)";
-    $sql .= " VALUES ('".addslashes($name)."','".$type."');";
-    
-    if ( $this->db->query($sql) )
-      {
-	$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'telephonie_tarif_grille');
+  { 
+    $result = 0;
 
-	$this->Perms($user, 2, $user->id);
+    if (strlen(trim($name)) > 0)
+      {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_tarif_grille";
+	$sql .= "(libelle, type_tarif)";
+	$sql .= " VALUES ('".addslashes($name)."','".$type."');";
+	
+	if ( $this->db->query($sql) )
+	  {
+	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'telephonie_tarif_grille');
+	    
+	    $this->Perms($user, 2, $user->id);
+	  }
+	else
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -1;
+	  }
+	
+	if ($copy > 0 && $type == 'vente')
+	  {
+	    $this->CopieGrille($user,$copy);
+	  }
       }
     else
       {
-	dolibarr_syslog($this->db->error());
+	$result = -2;
       }
-                  
-    if ($copy > 0 && $type == 'vente')
-      {
-	$this->CopieGrille($user,$copy);
-      }
-
     return $result;
   }
 
