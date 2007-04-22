@@ -185,16 +185,11 @@ print '</form>';
 
 /*
 * \TODO
-* Fonctionnalité désactivée car à revoir différemment sous peine
-* de ne pouvoir gérer son propre module de cryptage ni aucune interface
-* avec une base extérieure. Les modifs à faire sont :
 *
-* Ajouter options:
-* - "Ne pas conserver mot de passe en clair en base"
-* qui désactive le stockage du champ pass (seul le champ pass_crypted est alors stocké)
+* Ajouter options qui désactive le stockage du champ pass (seul le champ pass_crypted est alors stocké)
 * - "Algorithme de cryptage = MD5,..."
 *
-
+*/
 print '<br>';
 
 $var=false;
@@ -212,7 +207,7 @@ if ($conf->global->DATABASE_PWD_ENCRYPTED == 0 || $allow_disable_encryption)
 print '</tr>';
 
 print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("EncryptedPasswordInDatabase").'</td>';
+print '<td>'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td>&nbsp;</td>';
 print '<td align="center" width="20">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
@@ -238,7 +233,6 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
 
 print "</td>";
 print '</tr>';
-*/
 
 print '</table>';
 print '</form>';
