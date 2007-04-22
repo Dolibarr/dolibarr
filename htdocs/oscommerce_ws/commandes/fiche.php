@@ -96,7 +96,7 @@ if ($action == '' && !$cancel) {
 	  if ( !$result )
 	  {
 			$commande = $osc_order->osc2dolibarr($_GET["orderid"]);
-		}
+	  }
 
 /* utilisation de la table de transco*/
 		if ($osc_order->get_orderid($osc_order->osc_orderid)>0)

@@ -19,14 +19,15 @@ define(NB_DECIMALS, 0);
 define(FK_PORT, 0); // l'id du service frais de port défini. 
 
 // fonctions
+
 /**
 *      \brief      assure la conversion en monnaie de dolibarr
 *      \param      oscid      Id du produit dans OsC 
 *	   \param	   prodid	  champ référence 	
 *      \return     int     <0 si ko, >0 si ok
 */
-	function convert_price($price)
-	{
-		return round($price * TX_CURRENCY, NB_DECIMALS);
-	}
+function convert_price($price)
+{
+	return round($price * TX_CURRENCY, NB_DECIMALS);
+}
 ?>

@@ -24,6 +24,16 @@ set_magic_quotes_runtime(0);
 
 require_once("./includes/configure.php");
 
+// OSC
+define('OSCADMIN', '/home/jean/projets/osc_tiaris/admin/');
+
+require(OSCADMIN.'includes/configure.php');
+require(OSCADMIN.DIR_WS_CLASSES . 'object_info.php');
+require(OSCADMIN.DIR_WS_INCLUDES . 'database_tables.php');
+require(OSCADMIN.DIR_WS_FUNCTIONS . 'database.php');
+require(OSCADMIN.DIR_WS_FUNCTIONS . 'general.php');
+
+
 // Soap Server.
 require_once('./lib/nusoap.php');
 
@@ -37,7 +47,49 @@ $s->wsdl->schemaTargetNamespace=$ns;
 // Register a method available for clients
 $s->register('get_article');
 $s->register('get_listearticles');
+$s->register('create_article');
 
+function create_article($prod)
+{
+// make a connection to the database... now
+tep_db_connect() or die('Unable to connect to database server!');
+  
+// vérifier les paramètres
+$sql_data_array = array('products_quantity' => $prod['quant'],
+                       'products_model' => $prod['ref'],
+                       'products_image' => $prod['image'],
+                       'products_price' => $prod['prix'],
+                       'products_weight' => $prod['poids'],
+                       'products_date_added' => 'now()',
+                       'products_last_modified' => '',
+                       'products_date_available' => $prod['dispo'],
+                       'products_status' => $prod['status'],
+                       'products_tax_class_id' => $prod['ttax'],
+                       'manufacturers_id' => $prod['fourn']);
+
+            tep_db_perform(TABLE_PRODUCTS, $sql_data_array);
+            $products_id = tep_db_insert_id();
+
+            $category_id = 2;
+            tep_db_query("insert into " . TABLE_PRODUCTS_TO_CATEGORIES . " (products_id, categories_id) values ('" . (int)$products_id . "', '" . (int)$category_id . "')");          
+
+          $languages = tep_get_languages();
+          for ($i=0, $n=sizeof($languages); $i<$n; $i++) {
+            $language_id = $languages[$i]['id'];
+            $sql_data_array = array('products_name' => $prod['nom'],
+                                    'products_description' => $prod['desc'],
+                                    'products_url' => $prod['url'],
+                                    'products_head_title_tag' => $prod['nom'],
+                                    'products_head_desc_tag' => $prod['desc'],
+                                    'products_head_keywords_tag' => '',
+                                 	'products_id' => $products_id,
+                                    'language_id' => $language_id
+                                    );  
+            tep_db_perform(TABLE_PRODUCTS_DESCRIPTION, $sql_data_array); 
+          }
+
+return $products_id;
+} 
 
 function get_article($id='',$ref='') {
 
