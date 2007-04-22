@@ -38,6 +38,7 @@ $user->getrights('commercial');
 $langs->load("companies");
 $langs->load("members");
 $langs->load("ldap");
+$langs->load("admin");
 
 // Protection quand utilisateur externe
 $rowid = isset($_GET["id"])?$_GET["id"]:'';
