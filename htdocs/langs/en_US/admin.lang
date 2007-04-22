@@ -92,6 +92,7 @@ AvailableOnlyIfJavascriptNotDisabled=Available only if JavaScript not disabled
 Required=Required
 Security=Security
 Passwords=Passwords
+DoNotStoreClearPassword=Do no store clear passwords in database
 Feature=Feature
 DolibarrLicense=License
 DolibarrProjectLeader=Project leader

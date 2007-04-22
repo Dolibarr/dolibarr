@@ -92,6 +92,7 @@ AvailableOnlyIfJavascriptNotDisabled=Disponible uniquement si javascript non dés
 Required=Requis
 Security=Sécurité
 Passwords=Mots de passe
+DoNotStoreClearPassword=Ne pas stocker de mot de passe en clair dans la base
 Feature=Fonction
 DolibarrLicense=Licence
 DolibarrProjectLeader=Chef de projet
