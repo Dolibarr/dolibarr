@@ -57,6 +57,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN',$_POST["fieldlogin"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_LOGIN_SAMBA',$_POST["fieldloginsamba"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD',$_POST["fieldpassword"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_PASSWORD_CRYPTED',$_POST["fieldpasswordcrypted"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
@@ -191,12 +192,20 @@ print '</td><td>'.$langs->trans("LDAPFieldLoginSambaExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_LOGIN_SAMBA.'"'.($conf->global->LDAP_KEY_MEMBERS==$conf->global->LDAP_FIELD_LOGIN_SAMBA?' checked="true"':'')."></td>";
 print '</tr>';
 
-// Password
+// Password not crypted
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPassword").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td><td>';
 print '<input size="25" type="text" name="fieldpassword" value="'.$conf->global->LDAP_FIELD_PASSWORD.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PASSWORD.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Password crypted
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td><td>';
+print '<input size="25" type="text" name="fieldpasswordcrypted" value="'.$conf->global->LDAP_FIELD_PASSWORD_CRYPTED.'">';
+print '</td><td>'.$langs->trans("LDAPFieldPasswordExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PASSWORD_CRYPTED.'"'.($conf->global->LDAP_KEY_USERS==$conf->global->LDAP_FIELD_PASSWORD_CRYPTED?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Mail

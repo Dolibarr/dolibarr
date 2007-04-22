@@ -726,6 +726,7 @@ alter table llx_user add column datepreviouslogin datetime after datelastlogin;
 alter table llx_user add column ldap_sid varchar(255) DEFAULT NULL;
 alter table llx_user add column statut tinyint DEFAULT 1;
 alter table llx_user add column lang varchar(6);
+alter table llx_user add column pass_crypted varchar(128) after pass;
 
 alter table llx_user add column office_phone      varchar(20);
 alter table llx_user add column office_fax        varchar(20);
@@ -736,6 +737,9 @@ alter table llx_user drop code;
 
 ALTER TABLE llx_user ADD UNIQUE uk_user_login (login);
 
+update llx_user set pass_crypted = MD5(pass) where pass IS NOT NULL AND pass_crypted IS NULL and length(pass) < 32;
+update llx_user set pass_crypted = pass where pass IS NOT NULL AND pass_crypted IS NULL and length(pass) = 32;
+update llx_user set pass = NULL where length(pass) = 32;
 
 alter table llx_boxes add column fk_user integer;
 

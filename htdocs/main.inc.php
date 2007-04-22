@@ -132,20 +132,23 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 
     	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
 
+		// \TODO Virer ce test et toujours faire le test sur le champ crypté
 		if ($conf->password_encrypted)
 		{
 			$cryptType = "md5";
+			$fieldtotest="pass_crypted";
 		}
 		else
 		{
 			$cryptType = "none";
+			$fieldtotest="pass";
 		}
 	    
 	    $params = array(
 		    "dsn" => $pear,
 		    "table" => MAIN_DB_PREFIX."user",
 		    "usernamecol" => "login",
-		    "passwordcol" => "pass",
+		    "passwordcol" => $fieldtotest,
 		    "cryptType" => $cryptType,
 	    );
 
@@ -186,17 +189,19 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if ($conf->password_encrypted)
 		{
 			$cryptType = "md5";
+			$fieldtotest="pass_crypted";
 		}
 		else
 		{
 			$cryptType = "none";
+			$fieldtotest="pass";
 		}
 	    
 	    $params = array(
 		    "dsn" => $pear,
 		    "table" => MAIN_DB_PREFIX."user",
 		    "usernamecol" => "login",
-		    "passwordcol" => "pass",
+		    "passwordcol" => $fieldtotest,
 		    "cryptType" => $cryptType,
 	    );
 
@@ -252,7 +257,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    'binddn' => $conf->global->LDAP_ADMIN_DN,
 		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
 
-			  'debug' => $ldapdebug,
+			'debug' => $ldapdebug,
 		    
 		    'userattr' => $userattr,
 		    
@@ -285,7 +290,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        exit;
 	    }
     }
-    
+
 	// Charge l'objet user depuis son login
 	$result=$user->fetch($login);
 	if ($result <= 0)

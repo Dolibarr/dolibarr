@@ -60,10 +60,14 @@ class User
   var $user_mobile;
   var $admin;
   var $login;
-  //! Mot de passe en clair
+
+  //! Mot de passe en clair en mémoire
   var $pass;
-  //! Mot de passe crypté en base
+  //! Mot de passe en clair en base (renseigné si DATABASE_PWD_ENCRYPTED=0)
   var $pass_indatabase;
+  //! Mot de passe crypté en base (toujours renseigné)
+  var $pass_indatabase_crypted;
+
   var $datec;
   var $datem;
   var $societe_id;
@@ -117,7 +121,8 @@ class User
 		
 		// Recupere utilisateur
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
-		$sql.= " u.admin, u.login, u.pass, u.webcal_login, u.note,";
+		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
+		$sql.= " u.pass, u.pass_crypted,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
 		$sql.= " u.statut, u.lang,";
 		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
@@ -149,7 +154,8 @@ class User
 				$this->fullname = trim($this->prenom . ' ' . $this->nom);
 				$this->login = $obj->login;
 				$this->pass_indatabase = $obj->pass;
-				if (! $conf->password_encrypted) $this->pass = $obj->pass;
+				$this->pass_indatabase_crypted = $obj->pass_crypted;
+				$this->pass = $obj->pass;
 				$this->office_phone = $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
@@ -858,18 +864,11 @@ class User
 		// Mise a jour mot de passe
         if ($this->pass)
         {
-	        if ($conf->password_encrypted)
-	        {
-	        	// On met a jour systematiquement
+       		if ($this->pass != $this->pass_indatabase &&
+				$this->pass != $this->pass_indatabase_crypted)
+       		{
+       			// Si mot de passe saisi et différent de celui en base
 				$this->password($user,$this->pass,$conf->password_encrypted);
-	        }
-	        else
-	        {
-        		if ($this->pass != $this->pass_indatabase)
-        		{
-        			// Si mot de passe saisi et différent de celui en base
-					$this->password($user,$this->pass,$conf->password_encrypted);
-				}
 			}
 		}
 
@@ -948,12 +947,12 @@ class User
 
 	/**
 	 *    \brief     Change le mot de passe d'un utilisateur
-	 *    \param     user             Object user de l'utilisateur qui fait la modification
-	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
-	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
-	 *    \return    string           mot de passe, < 0 si erreur
+	 *    \param     user             		Object user de l'utilisateur qui fait la modification
+	 *    \param     password         		Nouveau mot de passe (à générer si non communiqué)
+	 *    \param     noclearpassword		0 ou 1 s'il ne faut pas stocker le mot de passe en clair
+	 *    \return    string           		mot de passe, < 0 si erreur
 	 */
-    function password($user, $password='', $isencrypted=0)
+    function password($user, $password='', $noclearpassword=0)
     {
         global $langs;
 
@@ -967,20 +966,17 @@ class User
         	//$password=creer_pass_aleatoire_2('');
         }
 
-		// Cryptage mot de passe
-        if ($isencrypted)
-        {
-        	// Crypte avec systeme encodage par defaut du PHP
-            //$sqlpass = crypt($password, makesalt());
-            $password_indatabase = md5($password);
-        }
-        else
-        {
-            $password_indatabase = $password;
-        }
+       	// Crypte avec systeme encodage par defaut du PHP
+        //$sqlpass = crypt($password, makesalt());
+        $password_crypted = md5($password);
 
 		// Mise a jour
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET pass = '".addslashes($password_indatabase)."'";
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+		$sql.= " SET pass_crypted = '".$password_crypted."'";
+		if (! $noclearpassword)
+		{
+			$sql.= ", pass = '".$password."'";
+		}
         $sql.= " WHERE rowid = ".$this->id;
 
         $result = $this->db->query($sql);
@@ -989,7 +985,8 @@ class User
             if ($this->db->affected_rows())
             {
 		        $this->pass=$password;
-		        $this->pass_indatabase=$password_indatabase;
+		        $this->pass_indatabase=$password;
+		        $this->pass_indatabase_crypted=$password_crypted;
 
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");

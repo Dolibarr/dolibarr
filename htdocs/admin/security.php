@@ -180,9 +180,23 @@ foreach ($arrayhandler as $key => $module)
 }
 print '</table>';
 print '</form>';
+
+// Cryptage mot de passe
+
+/*
+* \TODO
+* Fonctionnalité désactivée car à revoir différemment sous peine
+* de ne pouvoir gérer son propre module de cryptage ni aucune interface
+* avec une base extérieure. Les modifs à faire sont :
+*
+* Ajouter options:
+* - "Ne pas conserver mot de passe en clair en base"
+* qui désactive le stockage du champ pass (seul le champ pass_crypted est alors stocké)
+* - "Algorithme de cryptage = MD5,..."
+*
+
 print '<br>';
 
-// Bon de livraison activation/desactivation
 $var=false;
 print "<form method=\"post\" action=\"security.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
@@ -224,6 +238,8 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
 
 print "</td>";
 print '</tr>';
+*/
+
 print '</table>';
 print '</form>';
 

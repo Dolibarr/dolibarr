@@ -29,6 +29,7 @@ create table llx_user
   tms               timestamp,
   login             varchar(24) NOT NULL,
   pass              varchar(32),
+  pass_crypted      varchar(128),
   name              varchar(50),
   firstname         varchar(50),
   office_phone      varchar(20),
