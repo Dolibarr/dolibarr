@@ -115,6 +115,22 @@ print '</tr>';
 // Login
 print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
 
+// Password not crypted
+if ($conf->global->LDAP_FIELD_PASSWORD)
+{
+	print '<tr><td>'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
+	print '<td class="valeur">'.$fuser->pass.'</td>';
+	print "</tr>\n";
+}
+
+// Password crypted
+if ($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+{
+	print '<tr><td>'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
+	print '<td class="valeur">'.$fuser->pass_crypted.'</td>';
+	print "</tr>\n";
+}
+
 // Type
 print '<tr><td>'.$langs->trans("Type").'</td><td class="valeur">'.$adh->type."</td></tr>\n";
 
