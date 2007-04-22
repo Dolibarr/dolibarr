@@ -244,9 +244,10 @@ class ChargeSociales
 	/**
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
+	 *		\param		maxlen			Longueur max libelle
 	 *		\return		string			Chaine avec URL
 	 */
-	function getNomUrl($withpicto=0)
+	function getNomUrl($withpicto=0,$maxlen=0)
 	{
 		global $langs;
 		
@@ -256,7 +257,7 @@ class ChargeSociales
 		$lienfin='</a>';
 
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowBill"),'bill').$lienfin.' ');
-		$result.=$lien.$this->lib.$lienfin;
+		$result.=$lien.($maxlen?dolibarr_trunc($this->lib,$maxlen):$this->lib).$lienfin;
 		return $result;
 	}
 	

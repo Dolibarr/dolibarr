@@ -32,6 +32,9 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/chargesociales.class.php");
 
 if (!$user->rights->banque->lire)
     accessforbidden();
@@ -105,6 +108,9 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->r
 */
 
 llxHeader();
+$societestatic=new Societe($db);
+$chargestatic=new ChargeSociales($db);
+$memberstatic=new Adherent($db);
 
 $html = new Form($db);
 
@@ -119,7 +125,7 @@ if ($account > 0)
 		$viewline = 20;
 	}
 	$acct = new Account($db);
-	$acct->fetch($account);
+	$result=$acct->fetch($account);
 
 	// Chargement des categories bancaires dans $options
 	$nbcategories=0;
@@ -148,22 +154,40 @@ if ($account > 0)
 	*
 	*
 	*/
-	$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql .= " WHERE b.fk_account=".$acct->id;
+
+	// Definition de sql_rech
 	$sql_rech="";
+	$mode_search = 0;
 	if ($_POST["req_desc"])
 	{
 		$sql_rech .= " AND b.label like '%".strtolower($_POST["req_desc"])."%'";
 		$mode_search = 1;
 	}
-	else
+	if ($_POST["req_debit"])
 	{
-		$mode_search = 0;
+		$sql_rech.=" AND amount = -".$_POST["req_debit"];
+		$mode_search = 1;
 	}
-	if ($_POST["req_debit"])  $sql_rech.=" AND amount = -".$_POST["req_debit"];
-	if ($_POST["req_credit"])  $sql_rech.=" AND amount = ".$_POST["req_credit"];
+	if ($_POST["req_credit"])
+	{
+		$sql_rech.=" AND amount = ".$_POST["req_credit"];
+		$mode_search = 1;
+	}
+	if ($_POST["thirdparty"])
+	{
+		$sql_rech.=" AND (IFNULL(s.nom,'bidon') like '%".$_POST["thirdparty"]."%')";
+		$mode_search = 1;
+	}
 
-	$sql .= $sql_rech;
+	$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."bank as b";
+	if ($mode_search)
+	{
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+	}
+	$sql.= " WHERE b.fk_account=".$acct->id;
+	$sql.= $sql_rech;
+	dolibarr_syslog("account.php count transactions - sql=".$sql);
 	$result=$db->query($sql);
 	if ($result)
 	{
@@ -200,7 +224,6 @@ if ($account > 0)
 		$page = 0;
 		$limitsql = $nbline;
 	}
-
 
 	// Onglets
 	$head=bank_prepare_head($acct);
@@ -245,22 +268,20 @@ if ($account > 0)
 	// Formulaire de saisie d'une opération hors factures
 	if ($user->rights->banque->modifier && $_GET["action"]=='addline')
 	{
-		$html=new Form($db);
-
 		print '<form method="post" action="account.php">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="vline" value="' . $vline . '">';
 		print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
 		print '<tr>';
-		print '<td align="left" colspan="8"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
+		print '<td align="left" colspan="9"><b>'.$langs->trans("AddBankRecordLong").'</b></td>';
 		print '</tr>';
 
 		print '<tr class="liste_titre">';
 		print '<td>'.$langs->trans("Date").'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td>'.$langs->trans("Type").'</td>';
-		print '<td>'.$langs->trans("Description").'</td>';
+		print '<td colspan="2">'.$langs->trans("Description").'</td>';
 		print '<td align=right>'.$langs->trans("Debit").'</td>';
 		print '<td align=right>'.$langs->trans("Credit").'</td>';
 		print '<td colspan="2" align="center">&nbsp;</td>';
@@ -273,15 +294,15 @@ if ($account > 0)
 		print '<td nowrap="nowrap">';
 		$html->select_types_paiements('','operation','1,2',1,1);
 		print '<input name="num_chq" class="flat" type="text" size="4"></td>';
-		print '<td>';
-		print '<input name="label" class="flat" type="text" size="40">';
+		print '<td colspan="2">';
+		print '<input name="label" class="flat" type="text" size="32">';
 		if ($nbcategories)
 		{
 			print '<br>'.$langs->trans("Category").': <select class="flat" name="cat1">'.$options.'</select>';
 		}
 		print '</td>';
-		print '<td align=right><input name="debit" class="flat" type="text" size="6"></td>';
-		print '<td align=right><input name="credit" class="flat" type="text" size="6"></td>';
+		print '<td align=right><input name="debit" class="flat" type="text" size="4"></td>';
+		print '<td align=right><input name="credit" class="flat" type="text" size="4"></td>';
 		print '<td colspan="2" align="center">';
 		print '<input type="submit" name="save" class="button" value="'.$langs->trans("Add").'"><br>';
 		print '<input type="submit" name="cancel" class="button" value="'.$langs->trans("Cancel").'">';
@@ -296,10 +317,15 @@ if ($account > 0)
 	*
 	*/
 
-	// Ligne de titre tableau des acritures
+	// Ligne de titre tableau des ecritures
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Date").'</td><td>'.$langs->trans("Value").'</td><td>'.$langs->trans("Type").'</td><td>'.$langs->trans("Description").'</td>';
-	print '<td align="right">'.$langs->trans("Debit").'</td><td align="right">'.$langs->trans("Credit").'</td>';
+	print '<td>'.$langs->trans("Date").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("ThirdParty").'</td>';
+	print '<td align="right">'.$langs->trans("Debit").'</td>';
+	print '<td align="right">'.$langs->trans("Credit").'</td>';
 	print '<td align="right" width="80">'.$langs->trans("BankBalance").'</td>';
 	print '<td align="center" width="60">';
 	if ($acct->type != 2 && $acct->rappro) print $langs->trans("AccountStatementShort");
@@ -312,9 +338,10 @@ if ($account > 0)
 
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">&nbsp;</td>';
-	print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="40"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="6"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="6"></td>';
+	print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="24"></td>';
+	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_POST["thirdparty"].'" size="16"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="4"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
 	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 	print "</tr>\n";
@@ -326,37 +353,248 @@ if ($account > 0)
 	*/
 
 	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
-	$sql.= " WHERE fk_account=".$acct->id;
-	if ($req_debit)  $sql .= " AND b.amount = -".$req_debit;
-	if ($req_credit) $sql .= " AND b.amount = ".$req_credit;
-	$sql.= $sql_rech;
-	if ($vue)
+	if ($mode_search)
 	{
-		if ($vue == 'credit')
-		{
-			$sql .= " AND b.amount >= 0 ";
-		}
-		else
-		{
-			$sql .= " AND b.amount < 0 ";
-		}
+		$sql.= " ,s.idp as socid, s.nom as thirdparty";
 	}
+	if ($mode_search && $conf->adherent->enabled)
+	{
+
+	}
+	if ($mode_search && $conf->tax->enabled)
+	{
+
+	}
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
+	if ($mode_search)
+	{
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+	}
+	if ($mode_search && $conf->adherent->enabled)
+	{
+		// \TODO Mettre jointure sur adherent
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+	}
+	if ($mode_search && $conf->tax->enabled)
+	{
+		// \TODO Mettre jointure sur charges sociales
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+	}
+	$sql.= " WHERE fk_account=".$acct->id;
+	$sql.= $sql_rech;
 	$sql.= " ORDER BY b.datev ASC";
 	$sql.= $db->plimit($limitsql, 0);
 
+	dolibarr_syslog("account.php get transactions - sql=".$sql);
 	$result = $db->query($sql);
 	if ($result)
 	{
-		$total = _print_lines($db, $result, $sql, $acct);
-		if ($page == 0)
+		$total = 0;
+        $time = time();
+
+	    $var=true;
+	    
+	    $num = $db->num_rows($result);
+	    $i = 0; $total = 0; $sep = 0;
+	    
+	    while ($i < $num)
+	    {
+	        $objp = $db->fetch_object($result);
+	        $total = $total + $objp->amount;
+	        if ($i >= ($nbline - $viewline))
+	        {
+	            $var=!$var;
+	    
+	            if ($objp->do > $time && !$sep)
+	            {
+	                $sep = 1 ;
+	                print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
+	                print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
+	                print "<td>&nbsp;</td>";
+	                print '</tr>';
+	            }
+	    
+	            print "<tr $bc[$var]>";
+	            print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
+	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
+	            print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
+	            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
+				if (eregi('^\((.*)\)$',$objp->label,$reg))
+				{
+					// Label générique car entre parenthèses. On l'affiche en le traduisant	
+					print $langs->trans($reg[1]);
+				}
+				else
+				{    
+	            	print $objp->label;
+	            }
+	            print '</a>';
+
+	            /*
+	             * Ajout les liens autres que tiers
+	             */
+	            $links = $acct->get_url($objp->rowid);
+	            foreach($links as $key=>$val)
+	            {
+	                if ($links[$key]['type']=='payment') {
+						print ' - ';
+	                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						{
+							// Label générique car entre parenthèses. On l'affiche en le traduisant	
+							if ($reg[1]=='paiement') $reg[1]='Payment';
+							print $langs->trans($reg[1]);
+						}
+						else
+						{    
+			            	print $links[$key]['label'];
+			            }
+		                print '</a>';
+	                }
+	                else if ($links[$key]['type']=='payment_supplier') {
+						print ' - ';
+	                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						{
+							// Label générique car entre parenthèses. On l'affiche en le traduisant	
+							if ($reg[1]=='paiement') $reg[1]='Payment';
+							print $langs->trans($reg[1]);
+						}
+						else
+						{    
+			            	print $links[$key]['label'];
+			            }
+	                	print '</a>';
+	                }
+	                else if ($links[$key]['type']=='company') {
+	                }
+					else if ($links[$key]['type']=='sc') {
+					}
+					else if ($links[$key]['type']=='payment_sc') {
+						print ' - ';
+						print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
+						//print img_object($langs->trans('ShowPayment'),'payment').' ';
+						print $langs->trans("SocialContributionPayment");
+						print '</a>';
+					}
+					else if ($links[$key]['type']=='member') {
+					}
+					else {
+						print ' - ';
+	    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
+						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						{
+							// Label générique car entre parenthèses. On l'affiche en le traduisant	
+							if ($reg[1]=='paiement') $reg[1]='Payment';
+							print $langs->trans($reg[1]);
+						}
+						else
+						{    
+			            	print $links[$key]['label'];
+			            }
+	                	print '</a>';
+	                }
+	            }
+	            print '</td>';
+
+
+	            /*
+	             * Ajout les liens tiers
+	             */
+				print '<td>';
+				foreach($links as $key=>$val)
+	            {
+	                if ($links[$key]['type']=='company') {
+	                    $societestatic->id=$links[$key]['url_id'];
+						$societestatic->nom=$links[$key]['label'];
+						print $societestatic->getNomUrl(0,'',16);
+	                }
+					else if ($links[$key]['type']=='sc') {
+	                    $chargestatic->id=$links[$key]['url_id'];
+						$chargestatic->nom=$links[$key]['label'];
+						print $chargestatic->getNomUrl(0,'',16);
+					}
+					else if ($links[$key]['type']=='member') {
+	                    $memberstatic->id=$links[$key]['url_id'];
+						$memberstatic->ref=$links[$key]['label'];
+						print $memberstatic->getNomUrl(0,'',16);
+					}
+	            }
+	            print '</td>';
+				
+	            if ($objp->amount < 0)
+	            {
+	                print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
+	            }
+	            else
+	            {
+	                print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
+	            }
+	    
+	            if ($action != 'search')
+	            {
+	                if ($total >= 0)
+	                {
+	                    print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
+	                }
+	                else
+	                {
+	                    print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
+	                }
+	            }
+	            else
+	            {
+	                print '<td align="right">-</td>';
+	            }
+	    
+	            // Relevé rappro ou lien edition
+	            if ($objp->rappro && $acct->type != 2)  // Si non compte cash
+	            {
+	                print "<td align=\"center\" nowrap>&nbsp; ";
+	                print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
+	                print "</td>";
+	            }
+	            else
+	            {
+	                if ($user->rights->banque->modifier)
+	                {
+	                    print '<td align="center">';
+	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+	                    print img_edit();
+	                    print '</a> &nbsp;';
+	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
+	                    print img_delete();
+	                    print '</a></td>';
+	                }
+	                else
+	                {
+	                    print "<td align=\"center\">&nbsp;</td>";
+	                }
+	            }
+	    
+	            print "</tr>";
+	    
+	        }
+	    
+	        $i++;
+	    }
+		
+		// Affichage total
+		if ($page == 0 && $action != 'search')
 		{
-			print '<tr class="liste_total"><td align="left" colspan="6">'.$langs->trans("CurrentBalance").'</td>';
+			print '<tr class="liste_total"><td align="left" colspan="7">'.$langs->trans("CurrentBalance").'</td>';
 			print '<td align="right" nowrap>'.price($total).'</td>';
 			print '<td>&nbsp;</td>';
 			print '</tr>';
 		}
 		$db->free($result);
+	}
+	else
+	{
+		dolibarr_print_error($db);
 	}
 
 
@@ -395,162 +633,4 @@ else
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
-
-/**
- *      \brief      Affiche ligne ecriture
- *      \param      db          Handler d'accès base
- *      \param      result      Resultset du select
- *      \param      sql         Requete sql
- *      \param      acct        Compte
- *      \return     Renvoi total solde
- */
-function _print_lines($db,$result,$sql,$acct)
-{
-    global $langs, $bc, $nbline, $viewline, $user, $page;
-    
-    $var=true;
-    $total=0;
-    
-    $num = $db->num_rows($result);
-    $i = 0; $total = 0; $sep = 0;
-    
-    while ($i < $num)
-    {
-        $objp = $db->fetch_object($result);
-        $total = $total + $objp->amount;
-        $time = time();
-        if ($i >= ($nbline - $viewline))
-        {
-            $var=!$var;
-    
-            if ($objp->do > $time && !$sep)
-            {
-                $sep = 1 ;
-                print "<tr><td align=\"right\" colspan=\"6\">&nbsp;</td>";
-                print "<td align=\"right\" nowrap><b>".price($total - $objp->amount)."</b></td>";
-                print "<td>&nbsp;</td>";
-                print '</tr>';
-            }
-    
-            print "<tr $bc[$var]>";
-            print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
-            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
-            print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
-            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
-			if (eregi('^\((.*)\)$',$objp->label,$reg))
-			{
-				// Label générique car entre parenthèses. On l'affiche en le traduisant	
-				print $langs->trans($reg[1]);
-			}
-			else
-			{    
-            	print $objp->label;
-            }
-            print '</a>';
-
-            /*
-             * Ajout les liens
-             */
-            $links = $acct->get_url($objp->rowid);
-            foreach($links as $key=>$val)
-            {
-                print ' - ';
-                if ($links[$key]['type']=='payment') {
-                    print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowPayment'),'payment').' ';
-                    print $langs->trans("Payment");
-	                print '</a>';
-                }
-                else if ($links[$key]['type']=='payment_supplier') {
-                    print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowPayment'),'payment').' ';
-                    print $langs->trans("Payment");
-                	print '</a>';
-                }
-                else if ($links[$key]['type']=='company') {
-                    print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$links[$key]['url_id'].'">';
-                    //print img_object($langs->trans('ShowCustomer'),'company').' ';
-                    print $links[$key]['label'];
-                	print '</a>';
-                }
-				else if ($links[$key]['type']=='sc') {
-					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
-					//print img_object($langs->trans('ShowBill'),'bill').' ';
-					print $langs->trans("SocialContribution");
-					print '</a>';
-				}
-				else if ($links[$key]['type']=='payment_sc') {
-					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
-					//print img_object($langs->trans('ShowPayment'),'payment').' ';
-					print $langs->trans("SocialContributionPayment");
-					print '</a>';
-				}
-				else {
-    			    print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
-                   	print $links[$key]['label'];
-                	print '</a>';
-                }
-            }
-            print '</td>';
-    
-            if ($objp->amount < 0)
-            {
-                print "<td align=\"right\" nowrap>".price($objp->amount * -1)."</td><td>&nbsp;</td>\n";
-            }
-            else
-            {
-                print "<td>&nbsp;</td><td align=\"right\" nowrap>&nbsp;".price($objp->amount)."</td>\n";
-            }
-    
-            if ($action !='search')
-            {
-                if ($total >= 0)
-                {
-                    print '<td align="right" nowrap>&nbsp;'.price($total).'</td>';
-                }
-                else
-                {
-                    print '<td align="right" class="error" nowrap>&nbsp;'.price($total).'</td>';
-                }
-            }
-            else
-            {
-                print '<td align="right">-</td>';
-            }
-    
-            // Relevé rappro ou lien edition
-            if ($objp->rappro && $acct->type != 2)  // Si non compte cash
-            {
-                print "<td align=\"center\" nowrap>&nbsp; ";
-                print "<a href=\"releve.php?num=$objp->num_releve&amp;account=$acct->id\">$objp->num_releve</a>";
-                print "</td>";
-            }
-            else
-            {
-                if ($user->rights->banque->modifier)
-                {
-                    print '<td align="center">';
-                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-                    print img_edit();
-                    print '</a> &nbsp;';
-                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
-                    print img_delete();
-                    print '</a></td>';
-                }
-                else
-                {
-                    print "<td align=\"center\">&nbsp;</td>";
-                }
-            }
-    
-            print "</tr>";
-    
-        }
-    
-        $i++;
-    }
-
-    return $total;
-}
 ?>

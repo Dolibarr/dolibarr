@@ -1128,6 +1128,7 @@ class Societe
 	 *    	\brief      Renvoie nom clicable (avec eventuellement le picto)
 	 *		\param		withpicto		Inclut le picto dans le lien
 	 *		\param		option			Sur quoi pointe le lien
+	 *		\param		maxlen			Longueur max libelle
 	 *		\return		string			Chaine avec URL
 	 */
 	function getNomUrl($withpicto=0,$option='',$maxlen=0)
