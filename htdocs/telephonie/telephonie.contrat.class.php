@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -138,6 +138,7 @@ class TelephonieContrat {
 	$sql .= ", fk_soc_facture = ".$this->client_facture;
 	$sql .= ", fk_commercial_suiv = ".$this->commercial_suiv_id;
 	$sql .= ", mode_paiement = '".$this->mode_paiement."'";
+	$sql .= ", grille_tarif = '".$this->grille_tarif_id."'";
 	$sql .= ", note =  '$this->note'";
 	
 	$sql .= " WHERE rowid = ".$this->id;
