@@ -28,6 +28,7 @@ English Dolibarr changelog
 - Can make one payment for several supplier invoices.
 - Rule to suggests passwords when creating a user are in modules
   allowing to add easily other rules.
+- Option to encrypt passwords in database (MD5).
 - Add Dolibarr triggers support on users creation/change.
 - Add Dolibarr triggers support on payments.
 - Add Dolibarr triggers on supplier and customers orders.
