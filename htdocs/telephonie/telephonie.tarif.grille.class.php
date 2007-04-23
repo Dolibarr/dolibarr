@@ -112,11 +112,13 @@ class TelephonieTarifGrille {
       {
 	dolibarr_syslog($this->db->error());
       }
-    
-	
-    foreach($tarifs as $tarif)
+
+    if (sizeof($tarifs) > 0)    
       {
-	$this->_DBUpdateTarif($this->id, $tarif[0], $tarif[1], $tarif[2], $user);
+	foreach($tarifs as $tarif)
+	  {
+	    $this->_DBUpdateTarif($this->id, $tarif[0], $tarif[1], $tarif[2], $user);
+	  }
       }
     
   }
@@ -349,7 +351,40 @@ class TelephonieTarifGrille {
     
     return $result;
   }
+  /*
+    \brief Retourne la liste des grilles
+  */
+  function GetListe($user)
+  {
+    $this->liste = array();
 
+    $sql = "SELECT d.libelle as tarif_desc, d.rowid, d.type_tarif";
+
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+    $sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
+    $sql .= " WHERE d.rowid = r.fk_grille";
+    $sql .= " AND r.fk_user =".$user->id;
+    $sql .= " AND r.pread = 1";
+    $sql .= " ORDER BY d.libelle";
+
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {
+	while ( $obj = $this->db->fetch_object($resql) )
+	  {
+
+	    $this->liste[$obj->rowid][0] = $obj->rowid;
+	    $this->liste[$obj->rowid][1] = stripslashes($obj->tarif_desc);
+	    $this->liste[$obj->rowid][2] = $obj->type_tarif;
+	  }
+	
+	$this->db->free($resql);
+      }
+    else 
+      {
+	print $this->db->error() . ' ' . $sql;
+      }
+  }
 }
 
 ?>
