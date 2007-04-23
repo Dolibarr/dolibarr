@@ -25,6 +25,7 @@ English Dolibarr changelog
 - Building a PDF document for invoices works like other modules. You
   can change model just before generating the PDF.
 - Can generate documents (PDF) for customer orders. Can send them by mail.
+- Added FPDI and FPDI_Protection (ie: PDF with password-protection)
 - Can make one payment for several supplier invoices.
 - Rule to suggests passwords when creating a user are in modules
   allowing to add easily other rules.
