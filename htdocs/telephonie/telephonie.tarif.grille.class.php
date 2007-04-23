@@ -127,7 +127,7 @@ class TelephonieTarifGrille {
   { 
     $result = 0;
 
-    if ($id > 0)
+    if ($id > 0 && $replace > 0)
       {
 	$this->db->begin();
 
@@ -146,6 +146,23 @@ class TelephonieTarifGrille {
 	    $result = -1;
 	  }
 
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille_rights";
+	$sql .= " WHERE fk_grille=$id;";
+	
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -1;
+	  }
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant";
+	$sql .= " WHERE fk_tarif_desc=$id;";
+	
+	if (! $this->db->query($sql) )
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -1;
+	  }
 
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille";
 	$sql .= " WHERE rowid=$id;";
@@ -159,6 +176,10 @@ class TelephonieTarifGrille {
 	    dolibarr_syslog($this->db->error());
 	    $result = -1;
 	  }
+
+
+
+
 
 
 	if ($result === 0 )
