@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -39,7 +39,7 @@ function llxHeader($head = "", $title="") {
   if (TELEPHONIE_MODULE_SIMULATION == 1)
     $menu->add(DOL_URL_ROOT."/telephonie/simulation/fiche.php", "Simulation");
 
-  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/liste.php", "Tarifs");
+  $menu->add(DOL_URL_ROOT."/telephonie/tarifs/", "Tarifs");
 
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
