@@ -56,13 +56,14 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel") 
   $contrat = new TelephonieContrat($db);
   $contrat->id = $_GET["id"];
 
-  $contrat->client         = $_POST["client"];
-  $contrat->client_facture = $_POST["client_facture"];
-  $contrat->fournisseur    = $_POST["fournisseur"];
-  $contrat->commercial     = $_POST["commercial"];
-  $contrat->concurrent     = $_POST["concurrent"];
-  $contrat->note           = $_POST["note"];
-  $contrat->mode_paiement  = $_POST["mode_paiement"];
+  $contrat->client          = $_POST["client"];
+  $contrat->client_facture  = $_POST["client_facture"];
+  $contrat->fournisseur     = $_POST["fournisseur"];
+  $contrat->commercial      = $_POST["commercial"];
+  $contrat->concurrent      = $_POST["concurrent"];
+  $contrat->note            = $_POST["note"];
+  $contrat->mode_paiement   = $_POST["mode_paiement"];
+  $contrat->grille_tarif_id = $_POST["grille_tarif_id"];
 
   $contrat->commercial_suiv_id  = $_POST["commercial_suiv"];
 
@@ -838,7 +839,28 @@ else
 		}
 	  
 	      print '</select></td></tr>';
-	
+	      /*
+	       *
+	       */
+	      print "\n".'<tr><td width="20%">Grille de tarif</td><td colspan="2">';
+	      print '<select name="grille_tarif_id">';
+	  
+	      require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
+
+	      $obg = new TelephonieTarifGrille($db);
+	      $obg->GetListe($user);
+
+	      foreach ($obg->liste as $grille)
+		{
+		  print '<option value="'.$grille[0] .'"';
+		  if ($grille[0] == $contrat->grille_tarif_id)
+		    {
+		      print " SELECTED";
+		    }
+		  print '>'.$grille[1];
+		}
+	  
+	      print '</select></td></tr>';
 	      /*
 	       *
 	       *
