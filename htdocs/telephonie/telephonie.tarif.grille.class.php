@@ -88,6 +88,9 @@ class TelephonieTarifGrille {
     return $result;
   }
 
+  /*
+
+  */
   function CopieGrille($user, $ori)
   {
     $sql = "SELECT fk_tarif,temporel,fixe FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant";
@@ -116,6 +119,64 @@ class TelephonieTarifGrille {
 	$this->_DBUpdateTarif($this->id, $tarif[0], $tarif[1], $tarif[2], $user);
       }
     
+  }
+  /*
+    \brief Supprime une grille de tarif
+  */
+  function RemoveGrille($user, $id, $replace)
+  { 
+    $result = 0;
+
+    if ($id > 0)
+      {
+	$this->db->begin();
+
+	$sql= "UPDATE ".MAIN_DB_PREFIX."telephonie_contrat";
+	$sql.=" SET grille_tarif='$replace'";
+	$sql.=" WHERE grille_tarif='$id';";
+	
+	if ( $this->db->query($sql) )
+	  {
+	    
+	  }
+	else
+	  {
+	    dolibarr_syslog($this->db->error());
+	    dolibarr_syslog($sql);
+	    $result = -1;
+	  }
+
+
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille";
+	$sql .= " WHERE rowid=$id;";
+	
+	if ( $this->db->query($sql) )
+	  {
+
+	  }
+	else
+	  {
+	    dolibarr_syslog($this->db->error());
+	    $result = -1;
+	  }
+
+
+	if ($result === 0 )
+	  {
+	    $this->db->commit();
+	  }
+	else
+	  {
+	    $this->db->rollback();
+	  }
+	
+      }
+    else
+      {
+	$result = -2;
+      }
+
+    return $result;
   }
 
 
