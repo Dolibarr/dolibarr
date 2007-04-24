@@ -27,6 +27,9 @@
 
 require("./pre.inc.php");
 
+$langs->load("admin");
+$langs->load("install");
+
 if (!$user->admin)
   accessforbidden();
  
@@ -42,12 +45,32 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
+print '</table>';
+print '<br>';
+
+// conf.php file
+$configfileparameters=array('dolibarr_main_url_root',
+							'dolibarr_main_document_root',
+							'dolibarr_main_data_root',
+							'dolibarr_main_db_host',
+							'dolibarr_main_db_name',
+							'dolibarr_main_db_user',
+							'dolibarr_main_db_pass',
+							'dolibarr_main_db_type'
+						);
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("ConfigurationFile").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+foreach($configfileparameters as $key)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var]."><td width=\"240\">".$key."</td>";
+	print "<td>";
+	if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
+	else print ${$key};
+	print "</td>";
+	print "</tr>\n";
+}
 print '</table>';
 print '<br>';
 
@@ -64,6 +87,18 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+print '</table>';
+print '<br>';
+
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
 print '</table>';
