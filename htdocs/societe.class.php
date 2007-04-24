@@ -208,7 +208,7 @@ class Societe
                 }
                 else
                 {
-                    dolibarr_syslog("Societe::Create echec insert sql=$sql");
+                    dolibarr_syslog("Societe::Create echec insert sql=".$sql);
                 }
                 $this->db->rollback();
                 return -2;
@@ -218,7 +218,7 @@ class Societe
         else
         {
             $this->db->rollback();
-            dolibarr_syslog("Societe::Create echec verify sql=$sql");
+            dolibarr_syslog("Societe::Create echec verify sql=".$sql);
             return -1;
         }
     }
@@ -459,8 +459,8 @@ class Societe
                 else
                 {
         
-                    $this->error = $langs->trans("Error sql=$sql");
-                    dolibarr_syslog("Societe::Update echec sql=$sql");
+                    $this->error = $langs->trans("Error sql=".$sql);
+                    dolibarr_syslog("Societe::Update echec sql=".$sql);
                     $result =  -2;
                 }
             }
@@ -925,7 +925,7 @@ class Societe
 			return -2;
 		}
 
-		dolibarr_syslog("Societe::set_remise_client $remise, $note, $user");
+		dolibarr_syslog("Societe::set_remise_client ".$remise.", ".$note.", ".$user->id);
 
 		if ($this->id)
 		{
@@ -1045,7 +1045,7 @@ class Societe
         $sql.= " AND rc.fk_facture IS NULL";
         $resql=$this->db->query($sql);
 
-		dolibarr_syslog("Societe::getCurrentDiscount sql=$sql");
+		dolibarr_syslog("Societe::getCurrentDiscount sql=".$sql);
 		
         if ($resql)
         {
