@@ -315,9 +315,19 @@ class Form
 		$sql = "SELECT rowid, code, libelle, active";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 		$sql.= " WHERE active = 1";
-		if ($conf->use_ajax && $selected!='' && $conf->global->CODE_DE_TEST == 1) $sql.= " AND rowid = ".$selected;
+		if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+		{
+			if (is_numeric($selected))
+			{
+				$sql.= " AND rowid = ".$selected;
+			}
+			else
+			{
+				$sql.= " AND code = '".$selected."'";
+			}
+		}
 		$sql.= " ORDER BY code ASC;";
-	
+
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
