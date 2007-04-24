@@ -53,7 +53,7 @@ if ($user->societe_id > 0)
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update_public' && $user->rights->facture->creer)
+if ($_POST["action"] == 'update_public' && $user->rights->propale->creer)
 {
 	$propal = new Propal($db);
 	$propal->fetch($_GET['propalid']);
