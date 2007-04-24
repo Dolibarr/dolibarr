@@ -3,6 +3,7 @@
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -197,6 +198,8 @@ class DoliDb
     {
 		dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
         $this->db  = @mysqli_connect($host, $login, $passwd);
+        //force les enregistrement en latin1 si la base est en utf8 par défaut
+        $x=$this->query('SET NAMES latin1');
         //print "Resultat fonction connect: ".$this->db;
         return $this->db;
     }
