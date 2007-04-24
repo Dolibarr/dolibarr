@@ -201,7 +201,7 @@ else
 		  $obj = $db->fetch_object($resql);
 		  $var=!$var;
 		  print "<tr $bc[$var]><td>";
-		  print strftime("%a %e %B %Y",$obj->date_releve);
+		  print dolibarr_print_date($obj->date_releve,'%a %d %B %Y');
 		  print '</td><td>'.$obj->valeur.'</td>';
 
 		  $i++;
