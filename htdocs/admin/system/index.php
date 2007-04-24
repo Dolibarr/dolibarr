@@ -31,9 +31,11 @@ include_once $dolibarr_main_document_root."/lib/databases/".$conf->db->type.".li
 
 $langs->load("admin");
 $langs->load("user");
+$langs->load("install");
 
 if (!$user->admin)
   accessforbidden();
+
 
 llxHeader();
 
@@ -66,8 +68,6 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DocumentRootServer")."</td><td>" . DOL_DOCUMENT_ROOT . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("DataRootServer")."</td><td>" . DOL_DATA_ROOT . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -77,9 +77,6 @@ print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
 print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("SmartyLibs")."</td><td>".$dolibarr_smarty_libs_dir."</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("SmartyCompile")."</td><td>".$dolibarr_smarty_compile."</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("SmartyCache")."</td><td>".$dolibarr_smarty_cache."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -88,13 +85,60 @@ print "<br>\n";
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Host")."</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
-
+print "<tr $bc[1]><td width=\"240\">".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print '</table>';
+print '<br>';
+
+// conf.php file
+$configfileparameters=array('dolibarr_main_url_root',
+							'dolibarr_main_document_root',
+							'dolibarr_main_data_root',
+							'dolibarr_main_db_host',
+							'dolibarr_main_db_name',
+							'dolibarr_main_db_user',
+							'dolibarr_main_db_pass',
+							'dolibarr_main_db_type',
+							'dolibarr_smarty_libs_dir',
+							'dolibarr_smarty_compile',
+							'dolibarr_smarty_cache'
+						);
+$configfilelib=array($langs->trans("URLRoot"),
+					$langs->trans("DocumentRootServer"),
+					$langs->trans("DataRootServer"),
+					$langs->trans("DatabaseServer"),
+					$langs->trans("DatabaseName"),
+					$langs->trans("Login"),
+					$langs->trans("Password"),
+					$langs->trans("DriverType"),
+					$langs->trans("SmartyLibs"),
+					$langs->trans("SmartyCompile"),
+					$langs->trans("SmartyCache")
+					);
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre"><td width="240">'.$langs->trans("ConfigurationFile").'</td>';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td>'.$langs->trans("Value").'</td>';
+print '</tr>'."\n";
+$i=0;
+foreach($configfileparameters as $key)
+{
+	$var=!$var;
+	print "<tr ".$bc[$var]."><td>".$configfilelib[$i].'</td><td>'.$key.'</td>';
+	print "<td>";
+	if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
+	else print ${$key};
+	print "</td>";
+	print "</tr>\n";
+	$i++;
+}
+print '</table>';
+print '<br>';
+
 
 llxFooter('$Date$ - $Revision$');
 ?>

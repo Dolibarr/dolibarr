@@ -48,32 +48,7 @@ print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("Version")."</td><td>
 print '</table>';
 print '<br>';
 
-// conf.php file
-$configfileparameters=array('dolibarr_main_url_root',
-							'dolibarr_main_document_root',
-							'dolibarr_main_data_root',
-							'dolibarr_main_db_host',
-							'dolibarr_main_db_name',
-							'dolibarr_main_db_user',
-							'dolibarr_main_db_pass',
-							'dolibarr_main_db_type'
-						);
-$var=true;
-print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("ConfigurationFile").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
-foreach($configfileparameters as $key)
-{
-	$var=!$var;
-	print "<tr ".$bc[$var]."><td width=\"240\">".$key."</td>";
-	print "<td>";
-	if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
-	else print ${$key};
-	print "</td>";
-	print "</tr>\n";
-}
-print '</table>';
-print '<br>';
-
+// Language
 $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("LanguageDolibarrParameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
