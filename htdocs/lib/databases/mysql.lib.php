@@ -208,7 +208,10 @@ class DoliDb
     dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
     $this->db  = @mysql_connect($host, $login, $passwd);
     //force les enregistrement en latin1 si la base est en utf8 par défaut
-    $x=$this->query('SET NAMES latin1');
+    // Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
+	// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
+	//$this->query('SET NAMES '.$this->forcecharset);
+    //print "Resultat fonction connect: ".$this->db;
     return $this->db;
   }
     
