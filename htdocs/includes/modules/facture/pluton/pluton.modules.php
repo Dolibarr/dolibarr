@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,6 +38,9 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 */
 class mod_facture_pluton extends ModeleNumRefFactures
 {
+	var $prefixinvoice='';
+	var $prefixcreditnote='';
+	var $error='';
 
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
@@ -60,10 +63,30 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
-      $texte.= 'Préfix de la facture';
+      $texte.= 'Utiliser le préfix commerciale des tiers';
+      if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_USE_COMPANY_PREFIX.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Préfix des factures';
       if ($conf->global->FACTURE_NUM_PREFIX)
       {
       	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_PREFIX.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Préfix des avoirs';
+      if ($conf->global->AVOIR_NUM_PREFIX)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->AVOIR_NUM_PREFIX.')<br>';
       }
       else
       {
@@ -74,6 +97,26 @@ function info()
       if ($conf->global->FACTURE_NUM_QUANTIFY_METER)
       {
       	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_QUANTIFY_METER.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Nombre de chiffres pour l\'année (1,2 ou 4)';
+      if ($conf->global->FACTURE_NUM_BIT_YEAR)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_BIT_YEAR.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
+      $texte.= 'Afficher le mois de création des factures';
+      if ($conf->global->FACTURE_VIEW_MONTH)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_VIEW_MONTH.')<br>';
       }
       else
       {
@@ -110,9 +153,31 @@ function info()
     {
     	global $conf;
     	
-    	$prefix = $conf->global->FACTURE_NUM_PREFIX;
-    	$numExample = $prefix."0600001";
-    	return $numExample;           
+    	// On récupère le préfix
+    	if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
+    	{
+    		$prefix = 'PREF';
+    	}
+    	else if ($conf->global->FACTURE_NUM_PREFIX)
+    	{
+    		$prefix = $conf->global->FACTURE_NUM_PREFIX;
+    	}
+    	
+    	// On récupère l'année en cours
+    	$numbityear = 4 - $conf->global->FACTURE_NUM_BIT_YEAR;
+    	$yy = substr(strftime("%Y",time()),$numbityear);
+    	
+    	// On récupère le mois en cours
+    	if ($conf->global->FACTURE_VIEW_MONTH) $mm = strftime("%m",time());
+    	
+    	// On récupère le nombre de chiffres du compteur
+    	$arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
+      $num = sprintf($arg,1);
+      
+      // Construction de l'exemple de numérotation
+    	$numExample = $prefix.$mm.$yy.$num;
+    	
+    	return $numExample;
     }
 
 	/**		\brief      Renvoi prochaine valeur attribuée
@@ -124,8 +189,31 @@ function info()
     {
         global $db,$conf;
         
+        $this->prefixinvoice    = $conf->global->FACTURE_NUM_PREFIX;
+        $this->prefixcreditnote = $conf->global->AVOIR_NUM_PREFIX;
+        
+        // On récupère le préfix
+        if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
+        {
+        	if ($objsoc->prefix_comm)
+        	{
+        		$prefix = $objsoc->prefix_comm;
+        	}
+        	else
+        	{
+        		$prefix = 'PREF';
+        	}
+        }
+        else if ($facture->type == 2)
+        {
+        	$prefix=$this->prefixcreditnote;
+        }
+        else
+        {
+        	$prefix=$this->prefixinvoice;
+        }
+        
         // On défini l'année fiscale
-        $prefix = $conf->global->FACTURE_NUM_PREFIX;
         $current_month = date("n");
         
         if (is_object($facture) && $facture->date)
@@ -137,13 +225,15 @@ function info()
         	$create_month = $current_month;
         }
         
+        $numbityear = 4 - $conf->global->FACTURE_NUM_BIT_YEAR;
+
         if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
-        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        	$yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
         }
         else
         {
-        	$yy = strftime("%y",time());
+        	$yy = substr(strftime("%Y",time()),$numbityear);
         }
         
         // On récupère la valeur max (réponse immédiate car champ indéxé)
