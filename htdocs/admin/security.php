@@ -238,15 +238,7 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 print "<tr ".$bc[$var].">";
-if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
-{
-	print '<td colspan="3">';
-}
-else
-{
-	print '<td colspan="2">';
-}
-print $langs->trans("DoNotStoreClearPassword").'</td>';
+print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="20">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
@@ -261,9 +253,9 @@ if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 	print "</td>";
 }
 
-print '<td align="center" width="100">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
+	print '<td align="center" width="100">';
 	if ($allow_disable_encryption)
 	{
 		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
@@ -274,9 +266,9 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 	{
 		print '-';
 	}
+	print "</td>";
 }
-	
-print "</td>";
+
 print "</td>";
 print '</tr>';
 
