@@ -89,15 +89,15 @@ else if ($_GET["action"] == 'disable_encrypt')
 
 if ($_GET["action"] == 'activate_encryptdbpassconf')
 {
-	dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 	$result = encodedecode_dbpassconf(1);
+	if ($result > 0) dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
 	Header("Location: security.php");
 	exit;
 }
 else if ($_GET["action"] == 'disable_encryptdbpassconf')
 {
-	dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
 	$result = encodedecode_dbpassconf(0);
+	if ($result > 0) dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
   Header("Location: security.php");
   exit;
 }
