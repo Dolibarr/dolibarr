@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -680,15 +680,15 @@ else
 			  print '<tr><td valign="top" width="20%">'.strftime("%d/%m/%y",$row[0]).'</td>';
 			  print '<td><img src="./graph'.$row[1].'.png">&nbsp;';
 			  print $ligne->statuts[$row[1]];
-			  if ($row[5])
+			  if (strlen($row[4]) > 0)
 			    {
-			      print '<br />'.$row[5];
+			      print '<br />'.$row[4];
 			    }
 
 			  print '</td>';
 
 			  if ($user->rights->telephonie->fournisseur->lire)
-			    print '<td>'.$ff[$row[6]].'</td>';
+			    print '<td>'.$ff[$row[5]].'</td>';
 
 			  print '<td>'. $row[3] . "</td></tr>";
 			  $i++;
