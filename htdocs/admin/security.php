@@ -262,16 +262,20 @@ if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 }
 
 print '<td align="center" width="100">';
-if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
+if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
-	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
-	//Do not allow "disable encryption" as passwords cannot be decrypted
-	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	if ($allow_disable_encryption)
+	{
+		//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
+	  //Do not allow "disable encryption" as passwords cannot be decrypted
+	  print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	}
+	else
+	{
+		print '-';
+	}
 }
-else
-{
-	print '-';
-}
+	
 print "</td>";
 print "</td>";
 print '</tr>';
