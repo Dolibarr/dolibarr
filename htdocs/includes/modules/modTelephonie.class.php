@@ -226,7 +226,7 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][5] = 'lire';
     $r++;
 
-    $this->rights[$r][0] = 281;
+    $this->rights[$r][0] = 311;
     $this->rights[$r][1] = 'Consulter les services';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
@@ -234,7 +234,7 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][5] = 'lire';
     $r++;
 
-    $this->rights[$r][0] = 282;
+    $this->rights[$r][0] = 312;
     $this->rights[$r][1] = 'Affecter des services à un contrat';
     $this->rights[$r][2] = 'w';
     $this->rights[$r][3] = 0;
