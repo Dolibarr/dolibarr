@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -56,8 +56,6 @@ $pagenext = $page + 1;
 /*
  * Mode Liste
  *
- *
- *
  */
 
 $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
@@ -75,6 +73,7 @@ if ($result)
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
+  print '<td>Id.</td>';
   print_liste_field_titre("Société","fournisseurs.php","s.nom");
   print '<td>Email de commande</td>';
   print '<td align="center">Commande possible</td>';
@@ -93,7 +92,8 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</td>\n";
+      print "<td>".$obj->rowid."</td>\n";
+      print '<td><a href="fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->nom)."</a></td>\n";
       print "<td>".$obj->email_commande."</td>\n";
       print '<td align="center">'.$langs->trans($yesno[$obj->commande_active])."</td>\n";
 
