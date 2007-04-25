@@ -238,7 +238,15 @@ print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
+if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
+{
+	print '<td colspan="3">';
+}
+else
+{
+	print '<td colspan="2">';
+}
+print $langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="20">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
