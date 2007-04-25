@@ -93,6 +93,7 @@ Required=Required
 Security=Security
 Passwords=Passwords
 DoNotStoreClearPassword=Do no store clear passwords in database
+MainDbPasswordFileConfEncrypted=Password of the database encrypted in conf.php
 Feature=Feature
 DolibarrLicense=License
 DolibarrProjectLeader=Project leader

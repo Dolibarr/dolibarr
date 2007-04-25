@@ -87,6 +87,21 @@ else if ($_GET["action"] == 'disable_encrypt')
     exit;
 }
 
+if ($_GET["action"] == 'activate_encryptdbpassconf')
+{
+	dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+	$result = encodedecode_dbpassconf(1);
+	Header("Location: security.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_encryptdbpassconf')
+{
+	dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
+	$result = encodedecode_dbpassconf(0);
+  Header("Location: security.php");
+  exit;
+}
+
 /*
  * Affichage onglet
  */
@@ -198,8 +213,8 @@ print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="2">'.$langs->trans("Encryption").'</td>';
-print '<td>'.$langs->trans("Activated").'</td>';
+print '<td colspan="3">'.$langs->trans("Encryption").'</td>';
+print '<td align="center">'.$langs->trans("Activated").'</td>';
 if ($conf->global->DATABASE_PWD_ENCRYPTED == 0 || $allow_disable_encryption)
 {
 	print '<td align="center">'.$langs->trans("Action").'</td>';
@@ -207,8 +222,7 @@ if ($conf->global->DATABASE_PWD_ENCRYPTED == 0 || $allow_disable_encryption)
 print '</tr>';
 
 print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("DoNotStoreClearPassword").'</td>';
-print '<td>&nbsp;</td>';
+print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="20">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
@@ -228,6 +242,36 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
 	//Do not allow "disable encryption" as passwords cannot be decrypted
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
+	print "</td>";
+}
+
+print "</td>";
+print '</tr>';
+
+
+// Cryptage du mot de base de la base dans conf.php
+
+print "<tr ".$bc[$var].">";
+print '<td colspan="2">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
+//print '<td>&nbsp;</td>';
+print '<td align="center" width="20">';
+if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
+{
+	print img_tick();
+}
+
+print '</td>';
+
+if ($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 0)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=activate_encryptdbpassconf">'.$langs->trans("Activate").'</a>';
+	print "</td>";
+}
+if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }
 

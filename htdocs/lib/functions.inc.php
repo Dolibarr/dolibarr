@@ -2402,4 +2402,102 @@ function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
 	return $stringtoencode;
 }
 
+/**
+   \brief   Encode\decode le mot de passe de la base de données dans le fichier de conf
+   \param   level    niveau d'encodage : 0 non encodé, 1 encodé
+*/
+function encodedecode_dbpassconf($level=0)
+{
+	global $conf;
+	
+	$config = '';
+
+	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
+	{
+		while(!feof($fp))
+		{
+			$buffer = fgets($fp,4096);
+			if (strstr($buffer,"\$dolibarr_main_db_encrypted_pass"))
+			{
+				if ($level == 0)
+				{
+					$config .= "\$dolibarr_main_db_encrypted_pass=0;\n";
+				}
+				else if ($level == 1)
+				{
+					$config .= "\$dolibarr_main_db_encrypted_pass=1;\n";
+				}
+			}
+			else if (strstr($buffer,"\$dolibarr_main_db_pass"))
+			{
+				$passwd = strstr($buffer,"$dolibarr_main_db_pass=");
+				$passwd = substr(substr($passwd,2),0,-3);
+				if ($level == 0)
+				{
+					$passwd = dolibarr_decode($passwd);
+				}
+				else if ($level == 1)
+				{
+					$passwd = dolibarr_encode($passwd);
+				}
+				$config .= "\$dolibarr_main_db_pass=\"$passwd\";\n";
+			}
+			else
+			{
+				$config .= $buffer;
+			}
+		}
+		fclose($fp);
+		
+		if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','w'))
+		{
+			fputs($fp, $config, strlen($config));
+			fclose($fp);
+			return 1;
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	else
+	{
+		return -2;
+	}
+}
+
+/**
+   \brief   Encode une chaine de caractère
+   \param   chain    chaine de caractères à encoder
+   \return  string_coded  chaine de caractères encodée
+*/
+function dolibarr_encode($chain)
+{
+        for($i=0;$i<strlen($chain);$i++)
+        {
+        	$output_tab[$i] = chr(ord(substr($chain,$i,1))+17);
+        }
+        
+        $string_coded = base64_encode(implode ("",$output_tab));
+        return $string_coded;
+}
+
+/**
+   \brief   Decode une chaine de caractère
+   \param   chain    chaine de caractères à decoder
+   \return  string_coded  chaine de caractères decodée
+*/
+function dolibarr_decode($chain)
+{
+        $chain = base64_decode($chain);
+        
+        for($i=0;$i<strlen($chain);$i++)
+        {
+        	$output_tab[$i] = chr(ord(substr($chain,$i,1))-17);
+        }
+        
+        $string_decoded = implode ("",$output_tab);
+        return $string_decoded;
+}
+
 ?>

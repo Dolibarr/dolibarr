@@ -84,7 +84,13 @@ define('DOL_URL_ROOT', $pos);								// URL racine relative
 /*
  * Creation objet $conf
  */
+
+// on décode le mot de passe de la base si besoin
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+if ($dolibarr_main_db_encrypted_pass == 1) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_pass);
+
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
+
 $conf = new Conf();
 $conf->db->host   = $dolibarr_main_db_host;
 $conf->db->name   = $dolibarr_main_db_name;
@@ -106,7 +112,6 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 }
 
 // Chargement des includes principaux
-require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
