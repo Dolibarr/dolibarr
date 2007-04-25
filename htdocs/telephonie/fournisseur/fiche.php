@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,6 +33,7 @@ if ($_POST["action"] == 'add')
 
   $fourn->nom            = $_POST["nom"];
   $fourn->email_commande = $_POST["email_commande"];
+  $fourn->methode_commande = $_POST["methode"];
 
   if ( $fourn->create($user) == 0)
     {
@@ -104,7 +105,17 @@ if ($_GET["action"] == 'create')
   print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
   print '<tr><td width="20%">Nom</td><td><input name="nom" size="30" value=""></td></tr>';
-  print '<tr><td width="20%">Email de commande</td><td><input name="email_commande" size="40" value=""> (adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
+  print '<tr><td width="20%">Email de commande</td><td><input name="email_commande" size="40" value=""></td><td>adresse email à laquelle sont envoyées les commandes de lignes</td></tr>';
+
+  $html = new Form($db);
+  
+  $arr = $fourn->array_methode();
+  
+  print '<tr><td width="20%">Méthode de commande</td>';
+  print '<td>';
+  print $html->select_array("methode",$arr,$fourn->class_commande);
+  print '</td>';
+  print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
 
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';

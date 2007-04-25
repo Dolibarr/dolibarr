@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -44,8 +44,8 @@ class FournisseurTelephonie {
   {
     $res = 0;
     $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur";
-    $sql .= " (nom, email_commande, commande_active)";
-    $sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1)";
+    $sql .= " (nom, email_commande, commande_active, class_commande)";
+    $sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."')";
 
     if (! $this->db->query($sql) )
       {
