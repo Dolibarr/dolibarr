@@ -68,6 +68,13 @@ class ProductLivre extends Product
     $this->menus[3][1] = 'ListCover';
     */
     $this->next_prev_filter = "canvas='livre'";
+
+
+    $this->onglets[0][0] = 'URL';
+    $this->onglets[0][1] = 'Editeur';
+
+    $this->onglets[1][0] = 'URL';
+    $this->onglets[1][1] = 'Editeur1';
   }
 
   function GetListeTitre()
@@ -96,9 +103,9 @@ class ProductLivre extends Product
     $id = parent::Create($user);
 
     $this->pages         = abs(trim($datas["pages"]));
-    $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
-    $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
-    $this->px_reliure    = str_replace(',','.',abs(trim($datas["px_reliure"])));
+    $this->px_feuillet   = str_replace(',','.',trim($datas["px_feuillet"]));
+    $this->px_reliure    = str_replace(',','.',trim($datas["px_reliure"]));
+    $this->px_couverture = str_replace(',','.',trim($datas["px_couverture"]));
     $this->stock_loc     = trim($datas["stock_loc"]);
 
     if ($id > 0)
@@ -261,13 +268,13 @@ class ProductLivre extends Product
     $ean = $ean . $this->calculate_ean_key($ean);
 
     $this->pages         = abs(trim($datas["pages"]));
-    $this->px_feuillet   = str_replace(',','.',abs(trim($datas["px_feuillet"])));
-    $this->px_reliure    = str_replace(',','.',abs(trim($datas["px_reliure"])));
-    $this->px_couverture = str_replace(',','.',abs(trim($datas["px_couverture"])));
+    $this->px_feuillet   = str_replace(',','.',trim($datas["px_feuillet"]));
+    $this->px_reliure    = str_replace(',','.',trim($datas["px_reliure"]));
+    $this->px_couverture = str_replace(',','.',trim($datas["px_couverture"]));
 
     $price_ht = $this->price / (1 + ($this->tva_tx / 100));
 
-    $contrat_taux = str_replace(',','.',abs(trim($datas["contrat_taux"])));
+    $contrat_taux = str_replace(',','.',trim($datas["contrat_taux"]));
 
     $this->px_revient = $this->_calculate_prix_revient($this->pages, $this->px_couverture, $this->px_feuillet, $price_ht, $this->px_reliure, $contrat_taux);
 
