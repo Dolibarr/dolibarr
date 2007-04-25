@@ -1824,7 +1824,7 @@ class Facture extends CommonObject
 	*/
 	function getLibStatut($mode=0,$alreadypayed=-1)
 	{
-		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypayed);
+		return $this->LibStatut($this->paye,$this->statut,$mode,$alreadypayed,$this->type);
 	}
 
 	/**
@@ -1833,9 +1833,10 @@ class Facture extends CommonObject
 	*    	\param      statut        	Id statut
 	*    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
 	*		\param		alreadypayed	Montant deja payé
+	*		\param		type			Type facture
 	*    	\return     string        	Libellé du statut
 	*/
-	function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1)
+	function LibStatut($paye,$statut,$mode=0,$alreadypayed=-1,$type=0)
 	{
 		global $langs;
 		$langs->load('bills');
@@ -1853,7 +1854,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return $langs->trans('Bill'.$prefix.'StatusPayed');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				else return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
 		if ($mode == 1)
@@ -1869,7 +1871,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return $langs->trans('Bill'.$prefix.'StatusPayed');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				else return $langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
 		if ($mode == 2)
@@ -1885,7 +1888,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted');
+				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('Bill'.$prefix.'StatusPayed');
 			}
 		}
 		if ($mode == 3)
@@ -1901,7 +1905,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return img_picto($langs->trans('BillStatusPayed'),'statut6');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				else return img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
 		if ($mode == 4)
@@ -1916,7 +1921,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
+				if ($type == 2) return img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6').' '.$langs->trans('BillStatusPayedBackOrConverted');
+				else return img_picto($langs->trans('BillStatusPayed'),'statut6').' '.$langs->trans('BillStatusPayed');
 			}
 		}
 		if ($mode == 5)
@@ -1932,7 +1938,8 @@ class Facture extends CommonObject
 			}
 			else
 			{
-				return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
+				if ($type == 2) return $langs->trans('Bill'.$prefix.'StatusPayedBackOrConverted').' '.img_picto($langs->trans('BillStatusPayedBackOrConverted'),'statut6');
+				else return $langs->trans('Bill'.$prefix.'StatusPayed').' '.img_picto($langs->trans('BillStatusPayed'),'statut6');
 			}
 		}
 	}

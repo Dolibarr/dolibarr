@@ -3135,7 +3135,7 @@ else
 
 					// Affiche statut de la facture
 					print '<td align="right" nowrap="nowrap">';
-					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am);
+					print $facturestatic->LibStatut($objp->paye,$objp->fk_statut,5,$objp->am,$objp->type);
 					print "</td></tr>\n";
 					$total+=$objp->total;
 					$total_ttc+=$objp->total_ttc;
