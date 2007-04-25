@@ -102,8 +102,10 @@ if ($resql)
 {
   $num = $db->num_rows($resql);
   $i = 0;
+
+  $urladd = "&amp;type=".$_GET["type"]."&amp;search_prefix=".$_GET["search_prefix"]."&amp;search_libelle=".$_GET["search_libelle"];
   
-  print_barre_liste("Prefixs", $page, "prefixs.php", "&type=".$_GET["type"], $sortfield, $sortorder, '', $num);
+  print_barre_liste("Prefixs", $page, "prefixs.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';

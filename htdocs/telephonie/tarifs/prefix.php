@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -61,15 +60,12 @@ $offset = $conf->liste_limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-
-
 /*
  * Mode Liste
  *
  *
  *
  */
-
 
 $sql = "SELECT t.libelle as tarif, p.prefix"; 
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif as t";
@@ -96,12 +92,14 @@ if ($result)
   $num = $db->num_rows();
   $i = 0;
   
-  print_barre_liste("Prefix", $page, "prefix.php", "&type=".$_GET["type"], $sortfield, $sortorder, '', $num);
+  $urladd = "&amp;type=".$_GET["type"]."&amp;search_prefix=".$_GET["search_prefix"]."&amp;search_tarif=".$_GET["search_tarif"];
+
+  print_barre_liste("Prefix", $page, "prefix.php", $urladd, $sortfield, $sortorder, '', $num);
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
 
-  print_liste_field_titre("Tarif","prefix.php","f.nom");
+  print_liste_field_titre("Tarif","prefix.php","f.nom","&amp;search_prefix=");
 
   print_liste_field_titre("Prefix","prefix.php","libelle", "&type=".$_GET["type"]);
   print '<td>&nbsp;</td>';
@@ -111,8 +109,8 @@ if ($result)
   print '<tr class="liste_titre">';
   print '<form action="prefix.php" method="GET">';
   print '<input type="hidden" name="type" value="'.$_GET["type"].'">';
-  print '<td><input type="text" name="search_tarif" size="20" value="'.$_GET["search_tarif"].'"></td>';
-  print '<td><input type="text" name="search_prefix" size="8" value="'.$_GET["search_prefix"].'"></td>';
+  print '<td width="75%"><input type="text" name="search_tarif" size="20" value="'.$_GET["search_tarif"].'"></td>';
+  print '<td width="25%"><input type="text" name="search_prefix" size="8" value="'.$_GET["search_prefix"].'"></td>';
 
   print '<td><input type="submit"></td>';
   print '</form>';
