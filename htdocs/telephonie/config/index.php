@@ -61,7 +61,7 @@ print '<form method="post" action="index.php?action=set">';
 print '<table class="noborder" cellpadding="3" cellspacing="0" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>Nom</td>';
-print '<td>Valeur</td><td>&nbsp;</td><td>&nbsp;</td>';
+print '<td>Valeur</td><td>&nbsp;</td><td>Constante</td>';
 print "</tr>\n";
 
 
@@ -70,12 +70,12 @@ print 'Marge minimale</td><td align="center">';
 print '<input type="hidden" name="nom1" value="TELEPHONIE_MARGE_MINI">';
 print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >';
 
-print '</td><td><input type="submit"></td></tr>';
+print '</td><td><input type="submit"></td><td>TELEPHONIE_MARGE_MINI</td></tr>';
 
 print '<tr class="pair"><td>';
 print 'Compte de ventilation</td><td align="center">';
 print TELEPHONIE_COMPTE_VENTILATION;
-print '</td><td>-</td><td>TELEPHONIE_EMAIL_FACTURATION_EMAIL</td></tr>';
+print '</td><td>-</td><td>TELEPHONIE_COMPTE_VENTILATION</td></tr>';
 
 print '<tr class="pair"><td>';
 print 'Email facturation FROM</td><td align="center">';
