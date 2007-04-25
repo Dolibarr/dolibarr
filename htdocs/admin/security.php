@@ -100,7 +100,7 @@ if ($_GET["action"] == 'activate_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg='<div class="error">'.$langs->trans('ConfigFilesIsReadOnly').'</div>';
+		$mesg='<div class="error">'.$langs->trans('ConfigFileIsInReadOnly').'</div>';
 	}
 }
 else if ($_GET["action"] == 'disable_encryptdbpassconf')
@@ -114,7 +114,7 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$langs->trans('ConfigFilesIsReadOnly').'</div>';
+		$mesg = '<div class="error">'.$langs->trans('ConfigFileIsInReadOnly').'</div>';
 	}
 }
 
