@@ -2408,8 +2408,6 @@ function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
 */
 function encodedecode_dbpassconf($level=0)
 {
-	global $conf;
-	
 	$config = '';
 
 	if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','r'))
