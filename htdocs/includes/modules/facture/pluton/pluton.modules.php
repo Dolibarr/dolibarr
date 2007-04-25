@@ -143,6 +143,16 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
+      $texte.= 'La numérotation des avoirs s\'incrémente avec les factures';
+      if ($conf->global->AVOIR_NUM_WITH_INVOICE)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->AVOIR_NUM_WITH_INVOICE.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
       return $texte;
     }
 
@@ -206,7 +216,15 @@ function info()
         }
         else if ($facture->type == 2)
         {
-        	$prefix=$this->prefixcreditnote;
+        	// Les avoirs peuvent suivre la numérotation des factures
+        	if ($conf->global->AVOIR_NUM_WITH_INVOICE)
+        	{
+        		$prefix = $this->prefixinvoice;
+        	}
+        	else
+        	{
+        		$prefix=$this->prefixcreditnote;
+        	}
         }
         else
         {
@@ -235,26 +253,26 @@ function info()
         {
         	$yy = substr(strftime("%Y",time()),$numbityear);
         }
-        
+
         // On récupère la valeur max (réponse immédiate car champ indéxé)
         $numQuantify = ($conf->global->FACTURE_NUM_QUANTIFY_METER - 1);
         $fisc=$prefix.$yy;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR == 1) $sql.= " WHERE facnumber like '${fisc}%'";
+        $sql.= " WHERE facnumber like '${prefix}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR == 1) $sql.= " AND facnumber like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
             if ($row) $fayy = substr($row[0],0,$numQuantify);
         }
-
+        	
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('FA[0-9][0-9]',$fayy))
+        if (eregi('^'.$prefix.'[0-9][0-9]',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $date = strftime("%Y%m", time());
             $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
@@ -271,10 +289,16 @@ function info()
             $max=0;
         }
         
+        // On replace le prefix de l'avoir
+        if ($conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
+        {
+        	$prefix = $this->prefixcreditnote;
+        }
+
         $arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
         $num = sprintf($arg,$max+1);
-        
-        return  "$prefix$yy$num";
+        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$num);
+        return  $prefix.$yy.$num;
     }
     
   
