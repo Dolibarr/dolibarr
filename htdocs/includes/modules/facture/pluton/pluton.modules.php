@@ -103,6 +103,16 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
+      $texte.= 'Délimiter le compteur de la date avec un tiret';
+      if ($conf->global->FACTURE_NUM_DELIMIT_METER)
+      {
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_DELIMIT_METER.')<br>';
+      }
+      else
+      {
+      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
+      }
+      
       $texte.= 'Nombre de chiffres pour l\'année (1,2 ou 4)';
       if ($conf->global->FACTURE_NUM_BIT_YEAR)
       {
@@ -180,12 +190,15 @@ function info()
     	// On récupère le mois en cours
     	if ($conf->global->FACTURE_VIEW_MONTH) $mm = strftime("%m",time());
     	
+    	// On délimite le compteur de la date avec un tiret
+    	if ($conf->global->FACTURE_NUM_DELIMIT_METER) $delimit = '-';
+    	
     	// On récupère le nombre de chiffres du compteur
     	$arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
       $num = sprintf($arg,1);
       
       // Construction de l'exemple de numérotation
-    	$numExample = $prefix.$yy.$mm.$num;
+    	$numExample = $prefix.$yy.$mm.$delimit.$num;
     	
     	return $numExample;
     }
@@ -300,10 +313,16 @@ function info()
         	$prefix = $this->prefixcreditnote;
         }
 
+        // On délimite le compteur de la date avec un tiret
+    	  if ($conf->global->FACTURE_NUM_DELIMIT_METER) $delimit = '-';
+    	  
+    	  // On détermine le nombre de chiffres du compteur
         $arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
         $num = sprintf($arg,$max+1);
-        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$mm.$num);
-        return  $prefix.$yy.$mm.$num;
+        
+        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$mm.$delimit.$num);
+        
+        return  $prefix.$yy.$mm.$delimit.$num;
     }
     
   
