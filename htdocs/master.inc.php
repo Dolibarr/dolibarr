@@ -87,7 +87,7 @@ define('DOL_URL_ROOT', $pos);								// URL racine relative
 
 // on décode le mot de passe de la base si besoin
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-if ($dolibarr_main_db_encrypted_pass == 1) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_pass);
+if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 

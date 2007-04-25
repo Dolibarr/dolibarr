@@ -2415,30 +2415,20 @@ function encodedecode_dbpassconf($level=0)
 		while(!feof($fp))
 		{
 			$buffer = fgets($fp,4096);
-			if (strstr($buffer,"\$dolibarr_main_db_encrypted_pass"))
+			
+			if (strstr($buffer,"\$dolibarr_main_db_encrypted_pass") && $level == 0)
 			{
-				if ($level == 0)
-				{
-					$config .= "\$dolibarr_main_db_encrypted_pass=0;\n";
-				}
-				else if ($level == 1)
-				{
-					$config .= "\$dolibarr_main_db_encrypted_pass=1;\n";
-				}
+				$passwd = strstr($buffer,"$dolibarr_main_db_encrypted_pass=");
+				$passwd = substr(substr($passwd,2),0,-3);
+				$passwd = dolibarr_decode($passwd);
+				$config .= "\$dolibarr_main_db_pass=\"$passwd\";\n";
 			}
-			else if (strstr($buffer,"\$dolibarr_main_db_pass"))
+			else if (strstr($buffer,"\$dolibarr_main_db_pass") && $level == 1)
 			{
 				$passwd = strstr($buffer,"$dolibarr_main_db_pass=");
 				$passwd = substr(substr($passwd,2),0,-3);
-				if ($level == 0)
-				{
-					$passwd = dolibarr_decode($passwd);
-				}
-				else if ($level == 1)
-				{
-					$passwd = dolibarr_encode($passwd);
-				}
-				$config .= "\$dolibarr_main_db_pass=\"$passwd\";\n";
+				$passwd = dolibarr_encode($passwd);
+				$config .= "\$dolibarr_main_db_encrypted_pass=\"$passwd\";\n";
 			}
 			else
 			{
