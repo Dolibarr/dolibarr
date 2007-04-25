@@ -234,10 +234,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Encryption").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';
-if ($conf->global->DATABASE_PWD_ENCRYPTED == 0 || $allow_disable_encryption)
-{
-	print '<td align="center">'.$langs->trans("Action").'</td>';
-}
+print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
 print "<tr ".$bc[$var].">";
@@ -255,15 +252,19 @@ if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
+
+print '<td align="center" width="100">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1 && $allow_disable_encryption)
 {
 	//On n'autorise pas l'annulation de l'encryption car les mots de passe ne peuvent pas être décodés
 	//Do not allow "disable encryption" as passwords cannot be decrypted
-	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_encrypt">'.$langs->trans("Disable").'</a>';
-	print "</td>";
 }
-
+else
+{
+	print '-';
+}
+print "</td>";
 print "</td>";
 print '</tr>';
 
