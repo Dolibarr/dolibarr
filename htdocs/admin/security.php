@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -270,8 +271,7 @@ print '</tr>';
 // Cryptage du mot de base de la base dans conf.php
 
 print "<tr ".$bc[$var].">";
-print '<td colspan="2">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
-//print '<td>&nbsp;</td>';
+print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="20">';
 if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
 {
