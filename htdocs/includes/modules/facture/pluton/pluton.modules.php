@@ -123,10 +123,10 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
-      $texte.= 'Le compteur se remet à zéro en début d\'année';
-      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
+      $texte.= 'Le compteur se remet à zéro en début d\'année ou chaque mois (1:année, 2:mois)';
+      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR.')<br>';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH.')<br>';
       }
       else
       {
@@ -185,7 +185,7 @@ function info()
       $num = sprintf($arg,1);
       
       // Construction de l'exemple de numérotation
-    	$numExample = $prefix.$mm.$yy.$num;
+    	$numExample = $prefix.$yy.$mm.$num;
     	
     	return $numExample;
     }
@@ -231,8 +231,8 @@ function info()
         	$prefix=$this->prefixinvoice;
         }
         
-        // On défini l'année fiscale
-        $current_month = date("n");
+        // On défini le mois du début d'année fiscale
+        $fiscal_current_month = date("n");
         
         if (is_object($facture) && $facture->date)
         {
@@ -240,12 +240,13 @@ function info()
         }
         else
         {
-        	$create_month = $current_month;
+        	$create_month = $fiscal_current_month;
         }
         
         $numbityear = 4 - $conf->global->FACTURE_NUM_BIT_YEAR;
 
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        // On change d'année fiscal si besoin
+        if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
         	$yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
         }
@@ -253,27 +254,31 @@ function info()
         {
         	$yy = substr(strftime("%Y",time()),$numbityear);
         }
+        
+        // Si besoin on récupère le mois en cours
+        if ($conf->global->FACTURE_VIEW_MONTH) $mm = strftime("%m",time());
 
         // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $numQuantify = ($conf->global->FACTURE_NUM_QUANTIFY_METER - 1);
+        $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
         $fisc=$prefix.$yy;
+        $current_month=$prefix.$yy.$mm;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $sql.= " WHERE facnumber like '${prefix}%'";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR == 1) $sql.= " AND facnumber like '${fisc}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH == 1) $sql.= " AND facnumber like '${fisc}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH == 2) $sql.= " AND facnumber like '${current_month}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,$numQuantify);
+            if ($row) $fayy = substr($row[0],0,-$posindice);
         }
-        	
+        
         // Si au moins un champ respectant le modèle a été trouvée
         if (eregi('^'.$prefix.'[0-9][0-9]',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber like '${fayy}%'";
@@ -297,8 +302,8 @@ function info()
 
         $arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
         $num = sprintf($arg,$max+1);
-        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$num);
-        return  $prefix.$yy.$num;
+        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$mm.$num);
+        return  $prefix.$yy.$mm.$num;
     }
     
   
