@@ -93,7 +93,7 @@ if ($resql)
       print "<tr $bc[$var]>";
       print "<td>".$ligne->statuts[$obj->statut]."</td>\n";
       print '<td align="right">'.$obj->cc."</td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?statut='.$obj->statut.'"><img border="0" src="./ligne/graph'.$obj->statut.'.png"></a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/liste.php?statut='.$obj->statut.'"><img border="0" alt="" src="./ligne/graph'.$obj->statut.'.png"></a></td>';
       print "</tr>\n";
       $i++;
     }
@@ -158,7 +158,7 @@ if ($user->rights->telephonie->fournisseur->lire)
       print '<tr class="liste_titre"><td>Fournisseur</td><td align="center">Nb lignes</td>';
       for ($j = -1 ; $j < 10 ; $j++)
 	{
-	  print '<td align="center"><img border="0" src="./ligne/graph'.$j.'.png"></td>';
+	  print '<td align="center"><img alt="" border="0" src="./ligne/graph'.$j.'.png"></td>';
 	}
       print "</tr>\n";
       $var=True;
