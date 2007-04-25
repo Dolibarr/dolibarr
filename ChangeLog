@@ -61,6 +61,7 @@ English Dolibarr changelog
 - Traduction more complete.
 - Added skeletons for code examples.
 - Lot of fixes after 2.0 release not fixed in 2.0.1.
+- Added more security option (ie: encrypted password in database)
 
 
 
