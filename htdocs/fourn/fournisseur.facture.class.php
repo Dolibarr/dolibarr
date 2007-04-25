@@ -209,13 +209,13 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.qty, f.tva_taux, f.tva,';
-				$sql.= ' f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product,';
-				$sql.= ' p.ref, p.label as label, p.description as product_desc,';
-				$sql.= ' pf.ref_fourn';
+				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.qty, f.tva_taux, f.tva';
+				$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product';
+				$sql.= ', p.ref, p.label as label, p.description as product_desc';
+				//$sql.= ', pf.ref_fourn';
 				$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn_det as f';
 				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON f.fk_product = p.rowid';
-				$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
+				//$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON f.fk_product = pf.fk_product';
 				$sql.= ' WHERE fk_facture_fourn='.$this->id;
 
 				dolibarr_syslog("FactureFourn::Fetch search lines sql=".$sql, LOG_DEBUG);
@@ -232,7 +232,7 @@ class FactureFournisseur extends Facture
 							$this->lignes[$i]->rowid            = $obj->rowid;
 							$this->lignes[$i]->description      = $obj->description;
 							$this->lignes[$i]->ref              = $obj->ref;             // Reference interne du produit
-							$this->lignes[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
+							//$this->lignes[$i]->ref_fourn        = $obj->ref_fourn;       // Reference fournisseur du produit
 							$this->lignes[$i]->libelle          = $obj->label;           // Label du produit
 							$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
 							$this->lignes[$i]->pu_ht            = $obj->pu_ht;

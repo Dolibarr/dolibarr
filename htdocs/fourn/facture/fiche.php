@@ -735,8 +735,10 @@ else
 					{
 						$productstatic->id=$fac->lignes[$i]->fk_product;
 						$productstatic->type=1;
-						$productstatic->ref=$fac->lignes[$i]->ref;
-						print $productstatic->getNomUrl(1).' ('.$fac->lignes[$i]->ref_fourn.') - '.$fac->lignes[$i]->libelle;
+						//$productstatic->ref=$fac->lignes[$i]->ref;
+						//print $productstatic->getNomUrl(1).' ('.$fac->lignes[$i]->ref_fourn.') - '.$fac->lignes[$i]->libelle;
+						$productstatic->ref=$fac->lignes[$i]->libelle;
+						print $productstatic->getNomUrl(1);
 					}
 					else
 					{

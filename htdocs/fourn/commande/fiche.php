@@ -610,10 +610,10 @@ else
 	  $sql = "SELECT l.ref, l.fk_product,	l.description, l.price,	l.qty";
 	  $sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql.= ", p.label";
-	  $sql.= ", pf.ref_fourn";
+	  //$sql.= ", pf.ref_fourn";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as	p ON l.fk_product =	p.rowid";
-	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as	pf ON l.fk_product =	pf.fk_product";
+	  //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as	pf ON l.fk_product =	pf.fk_product";
 	  $sql.= " WHERE l.fk_commande = ".$commande->id;
 	  $sql.= " ORDER BY l.rowid";
 	
@@ -641,7 +641,8 @@ else
 		  print "<tr $bc[$var]>";
 		  print '<td>';
 		  print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
-		  print ' ('.$objp->ref_fourn.') - '.$objp->label;
+		  //print ' ('.$objp->ref_fourn.') - '.$objp->label;
+		  print ' - '.$objp->label;
 		  if ($objp->description) print '<br>'.nl2br($objp->description);
 		  print "</td>";
 		  print '<td align="center">'.$objp->tva_tx.'%</td>';

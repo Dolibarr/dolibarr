@@ -939,11 +939,11 @@ class Form
 	{
 		global $langs,$conf;
 		
-		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-		$sql.= " pf.ref_fourn,";
-		$sql.= " pfp.price as fprice, pfp.quantity";
+		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration";
+		//$sql.= ", pf.ref_fourn";
+		$sql.= ", pfp.price as fprice, pfp.quantity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
 		$sql.= " WHERE p.envente = 1";
 		if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
@@ -968,7 +968,8 @@ class Form
 
 				$opt = '<option value="'.$objp->rowid.'"';
 				if ($selected == $objp->rowid) $opt.= ' selected="true"';
-				$opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';
+				//$opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';
+				$opt.= '>'.$objp->ref.' - ';
 				$opt.= dolibarr_trunc($objp->label,24).' - ';
 				$opt.= $objp->fprice.$langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
 				if ($objp->quantity > 1)
