@@ -2447,7 +2447,7 @@ function encodedecode_dbpassconf($level=0)
 		}
 		fclose($fp);
 		
-		if ($fp = fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','w'))
+		if ($fp = @fopen(DOL_DOCUMENT_ROOT.'/conf/conf.php','w'))
 		{
 			fputs($fp, $config, strlen($config));
 			fclose($fp);
