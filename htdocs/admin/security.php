@@ -36,6 +36,8 @@ if (!$user->admin) accessforbidden();
 // Do not allow change to clear model once passwords are crypted
 $allow_disable_encryption=false;
 
+$mesg = '';
+
 
 /*
  * Actions
@@ -90,16 +92,30 @@ else if ($_GET["action"] == 'disable_encrypt')
 if ($_GET["action"] == 'activate_encryptdbpassconf')
 {
 	$result = encodedecode_dbpassconf(1);
-	if ($result > 0) dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
-	Header("Location: security.php");
-	exit;
+	if ($result > 0)
+	{
+		dolibarr_set_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED", "1");
+		Header("Location: security.php");
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans('ConfigFilesIsReadOnly').'</div>';
+	}
 }
 else if ($_GET["action"] == 'disable_encryptdbpassconf')
 {
 	$result = encodedecode_dbpassconf(0);
-	if ($result > 0) dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
-  Header("Location: security.php");
-  exit;
+	if ($result > 0)
+	{
+		dolibarr_del_const($db, "MAIN_DATABASE_PWD_CONFIG_ENCRYPTED");
+		Header("Location: security.php");
+		exit;
+	}
+	else
+	{
+		$mesg = '<div class="error">'.$langs->trans('ConfigFilesIsReadOnly').'</div>';
+	}
 }
 
 /*
@@ -107,6 +123,8 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
  */
 
 llxHeader();
+
+if ($mesg) print "$mesg\n";
 
 print_fiche_titre($langs->trans("SecuritySetup"),'','setup');
 

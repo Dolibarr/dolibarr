@@ -94,6 +94,7 @@ Security=Sécurité
 Passwords=Mots de passe
 DoNotStoreClearPassword=Ne pas stocker de mot de passe en clair dans la base
 MainDbPasswordFileConfEncrypted=Encrypter le mot de passe de la base dans le fichier conf.php
+ConfigFilesIsReadOnly=Le fichier conf.php est lecture seule, vérifiez les droits d'écriture.
 Feature=Fonction
 DolibarrLicense=Licence
 DolibarrProjectLeader=Chef de projet
