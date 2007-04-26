@@ -2915,7 +2915,7 @@ class Form
 	}
 
 
-	function show_ldap_content($result,$level,$count,$var)
+	function show_ldap_content($result,$level,$count,$var,$hide=0)
 	{
 		global $bc, $conf;
 		
@@ -2936,18 +2936,21 @@ class Form
 			
 			if (is_array($val)) 
 			{
+				$hide=0;
 				if (! is_numeric($key)) 
 				{
 					$var=!$var;
 					print '<tr '.$bc[$var].'><td>';
 					print $key;
 					print '</td><td>';
+					if (strtolower($key) == 'userpassword') $hide=1;
 				}
-				$this->show_ldap_content($val,$level+1,$count,$var);
+				$this->show_ldap_content($val,$level+1,$count,$var,$hide);
 			}
 			else
 			{
-				print utf8_decode("$val");
+				if ($hide) print eregi_replace('.','*',utf8_decode("$val"));
+				else print utf8_decode($val);
 				print '</td></tr>';
 			}
 		}
