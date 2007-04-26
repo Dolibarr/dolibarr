@@ -144,22 +144,6 @@ if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
   print "</tr>\n";
 }
 
-// Password not crypted
-if ($conf->global->LDAP_FIELD_PASSWORD)
-{
-	print '<tr><td width="25%" valign="top">'.$langs->trans("LDAPFieldPasswordNotCrypted").'</td>';
-	print '<td>'.$fuser->pass.'</td>';
-	print "</tr>\n";
-}
-
-// Password crypted
-if ($conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
-{
-	print '<tr><td width="25%" valign="top">'.$langs->trans("LDAPFieldPasswordCrypted").'</td>';
-	print '<td>'.$fuser->pass_crypted.'</td>';
-	print "</tr>\n";
-}
-
 // LDAP DN
 print '<tr><td>LDAP '.$langs->trans("LDAPUserDn").'</td><td class="valeur">'.$conf->global->LDAP_USER_DN."</td></tr>\n";
 
@@ -193,7 +177,8 @@ if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 }
 
 print "</div>\n";
-print "<br>\n";
+
+if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap') print "<br>\n";
 
 
 

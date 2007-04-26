@@ -837,7 +837,7 @@ else
             	if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
             	else
             	{
-	            	if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase;
+	            	if ($user->admin) print $langs->trans("Crypted").': '.$fuser->pass_indatabase_crypted;
             		else print $langs->trans("Hidden");
             	}
             	print "</td>";
