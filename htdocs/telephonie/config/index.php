@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,7 +34,7 @@ if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == "set")
 {
-  for ($i = 1 ; $i < 3 ; $i++)
+  for ($i = 1 ; $i < 4 ; $i++)
     {
       dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
     }
@@ -70,7 +70,7 @@ print 'Marge minimale</td><td align="center">';
 print '<input type="hidden" name="nom1" value="TELEPHONIE_MARGE_MINI">';
 print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >';
 
-print '</td><td><input type="submit"></td><td>TELEPHONIE_MARGE_MINI</td></tr>';
+print '</td><td><input type="submit" value="'.$langs->trans('Update').'"></td><td>TELEPHONIE_MARGE_MINI</td></tr>';
 
 print '<tr class="pair"><td>';
 print 'Compte de ventilation</td><td align="center">';
@@ -166,11 +166,37 @@ if ($resql)
 }
 $form->select_array("value2",$ff,TELEPHONIE_FOURNISSEUR_DEFAUT_ID);
 
-print $ff[TELEPHONIE_FOURNISSEUR_DEFAUT_ID].'</td><td>-';
+print '</td><td>-';
 print '</td><td>TELEPHONIE_FOURNISSEUR_DEFAUT_ID</td></tr>';
 print '<input type="hidden" name="nom2" value="TELEPHONIE_FOURNISSEUR_DEFAUT_ID">';
 
+print '<tr class="pair"><td>Grille vente par défaut</td>';
 
+$gg = array();
+$gg[0] = "Aucune grille definie";
+$sql = "SELECT d.rowid,d.libelle";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+$sql .= " WHERE d.type_tarif='vente'";
+$sql .= " ORDER BY d.libelle";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $gg[$row[0]] = $row[1];
+    }
+  $db->free($resql);	
+}
+
+
+print '<td>';
+
+$form->select_array("value3",$gg,TELEPHONIE_GRILLE_VENTE_DEFAUT_ID);
+
+print '</td><td><input type="submit" value="'.$langs->trans('Update').'"></td>';
+print '<td>TELEPHONIE_GRILLE_VENTE_DEFAUT_ID</td></tr>';
+print '<input type="hidden" name="nom3" value="TELEPHONIE_GRILLE_VENTE_DEFAUT_ID">';
 
 print '</table>';
 print '</form>';
