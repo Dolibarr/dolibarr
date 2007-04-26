@@ -95,11 +95,11 @@ print 'Email facturation BCC</td><td align="center">';
 print TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 print '</td><td>-</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
 
-
+$form = new Form($db);
 
 /* ***************************************** */
 
-print '<tr class="pair"><td>Id Groupes des commerciaux</td>';
+print '<tr class="pair"><td>Groupes des commerciaux</td>';
 print '<td align="center">';
 
 print TELEPHONIE_GROUPE_COMMERCIAUX_ID.'</td><td>-';
@@ -107,7 +107,7 @@ print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
 
 /* ***************************************** */
 
-$form = new Form($db);
+
 print '<tr class="pair"><td>Fournisseur par défaut</td><td>';
 $ff = array();
 $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
@@ -122,7 +122,7 @@ if ($resql)
 }
 $form->select_array("value2",$ff,TELEPHONIE_FOURNISSEUR_DEFAUT_ID);
 
-print '</td><td>-';
+print '</td><td><input type="submit" value="'.$langs->trans('Update').'">';
 print '</td><td>TELEPHONIE_FOURNISSEUR_DEFAUT_ID</td></tr>';
 print '<input type="hidden" name="nom2" value="TELEPHONIE_FOURNISSEUR_DEFAUT_ID">';
 
