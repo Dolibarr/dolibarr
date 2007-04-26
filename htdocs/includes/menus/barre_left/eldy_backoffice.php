@@ -180,7 +180,7 @@ class MenuLeft {
 			        if ($user->rights->societe->creer)
 			        {
 			            $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?action=create", $langs->trans("MenuNewThirdParty"));
-			            $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"));
+			            if (! $conf->use_javascript) $newmenu->add_submenu(DOL_URL_ROOT."/soc.php?action=create&amp;private=1",$langs->trans("MenuNewPrivateIndividual"));
 			        }
 			
 			        if(is_dir("societe/groupe"))

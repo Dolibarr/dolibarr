@@ -1308,10 +1308,11 @@ class Societe
 
 
     /**
-     *    \brief      Renvoie la liste des libellés traduits des types actifs de sociétés
-     *    \return     array      tableau des types
+     *    	\brief      Renvoie la liste des libellés traduits des types actifs de sociétés
+     *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
+	 *    	\return     array      	tableau des typesl
      */
-    function typent_array()
+    function typent_array($mode=0)
     {
         global $langs;
 
@@ -1330,10 +1331,13 @@ class Societe
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object($result);
+				if (! $mode) $key=$objp->id;
+				else $key=$objp->code;
+
                 if ($langs->trans($objp->code) != $objp->code)
-                    $effs[$objp->id] = $langs->trans($objp->code);
+                    $effs[$key] = $langs->trans($objp->code);
                 else
-                    $effs[$objp->id] = $objp->libelle!='-'?$objp->libelle:'';
+                    $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
                 $i++;
             }
             $this->db->free($result);
@@ -1344,14 +1348,15 @@ class Societe
 
 
     /**
-     *    \brief      Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
-     *    \return     array      tableau des types d'effectifs
+     *		\brief      Renvoie la liste des types d'effectifs possibles (pas de traduction car nombre)
+     *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
+     *    	\return     array		tableau des types d'effectifs
      */
-    function effectif_array()
+    function effectif_array($mode=0)
     {
         $effs = array();
 
-        $sql = "SELECT id, libelle";
+        $sql = "SELECT id, code, libelle";
         $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
         $sql .= " ORDER BY id ASC";
         if ($this->db->query($sql))
@@ -1362,7 +1367,10 @@ class Societe
             while ($i < $num)
             {
                 $objp = $this->db->fetch_object();
-                $effs[$objp->id] = $objp->libelle!='-'?$objp->libelle:'';
+				if (! $mode) $key=$objp->id;
+				else $key=$objp->code;
+
+                $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
                 $i++;
             }
             $this->db->free();

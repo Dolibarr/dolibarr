@@ -7,6 +7,13 @@
 // \version    $Revision$
 
 
+function dolibarr_type_reload(param)
+{
+    document.formsoc.action.value="create";
+    document.formsoc.private.value=param;
+    document.formsoc.cleartype.value=1;
+    document.formsoc.submit();
+}
 
 /*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
