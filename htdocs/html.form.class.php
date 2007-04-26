@@ -107,7 +107,7 @@ class Form
     }
     
     /**
-     \brief     Affiche un texte avec picto alert qui affiche un tooltip
+     \brief     Affiche un texte avec picto warning qui affiche un tooltip
      \param     text				Texte à afficher
      \param     htmltooltip     	Contenu html du tooltip
      \param		direction			1=Le picto est après, -1=le picto est avant
