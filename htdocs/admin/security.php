@@ -226,7 +226,7 @@ print '</form>';
 */
 print '<br>';
 
-$var=false;
+$var=true;
 print "<form method=\"post\" action=\"security.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
@@ -237,6 +237,7 @@ print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
+$var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
 print '<td align="center" width="20">';
@@ -274,7 +275,7 @@ print '</tr>';
 
 
 // Cryptage du mot de base de la base dans conf.php
-
+$var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
 print '<td align="center" width="20">';
