@@ -325,22 +325,29 @@ if ($_POST["action"] == 'adduserldap')
 {
 	$selecteduser = $_POST['users'];
 
-	$justthese = array(
+	$required_fields = array(
 		$conf->global->LDAP_FIELD_NAME,
 		$conf->global->LDAP_FIELD_FIRSTNAME,
-		$conf->global->LDAP_FIELD_UID,
+		$conf->global->LDAP_FIELD_LOGIN,
 		$conf->global->LDAP_FIELD_LOGIN_SAMBA,
-		$conf->global->LDAP_FIELD_MAIL,
+		$conf->global->LDAP_FIELD_PASSWORD,
+		$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
 		$conf->global->LDAP_FIELD_PHONE,
 		$conf->global->LDAP_FIELD_FAX,
 		$conf->global->LDAP_FIELD_MOBILE,
+		$conf->global->LDAP_FIELD_MAIL,
 		$conf->global->LDAP_FIELD_SID);
 
 	$ldap = new Ldap();
 	$result = $ldap->connect_bind();
 	if ($result >= 0)
 	{
-		$ldapusers = $ldap->getUsers($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese);
+		// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+		$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+
+		$ldapusers = $ldap->getUsers($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields);
+		//print_r($ldapusers);
+
 		if (is_array($ldapusers))
 		{
 			foreach ($ldapusers as $key => $attribute)
@@ -349,6 +356,8 @@ if ($_POST["action"] == 'adduserldap')
 				$ldap_prenom = $attribute[$conf->global->LDAP_FIELD_FIRSTNAME];
 				$ldap_login  = $attribute[$conf->global->LDAP_FIELD_LOGIN];
 				$ldap_loginsmb = $attribute[$conf->global->LDAP_FIELD_LOGIN_SAMBA];
+				$ldap_pass         = $attribute[$conf->global->LDAP_FIELD_PASSWORD];
+				$ldap_pass_crypted = $attribute[$conf->global->LDAP_FIELD_PASSWORD_CRYPTED];
 				$ldap_phone  = $attribute[$conf->global->LDAP_FIELD_PHONE];
 				$ldap_fax    = $attribute[$conf->global->LDAP_FIELD_FAX];
 				$ldap_mobile = $attribute[$conf->global->LDAP_FIELD_MOBILE];
@@ -387,9 +396,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print $langs->trans("CreateInternalUserDesc");
 	print "<br>";
 	print "<br>";
-	
-	if ($message) { print $message.'<br>'; }
-	
 
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
@@ -398,48 +404,39 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		* si on est en synchro LDAP vers Dolibarr
 		*/
 
-		print "\n\n<!-- Form liste LDAP debut -->\n";
-		print '<table width="100%" class="border"><tr><td>';
-		
 		$ldap = new Ldap();
 		$result = $ldap->connect_bind();
 		if ($result >= 0)
 		{
-			$justthese=array($conf->global->LDAP_KEY_USERS,
+			$required_fields=array($conf->global->LDAP_KEY_USERS,
 							         $conf->global->LDAP_FIELD_FULLNAME,
 							         $conf->global->LDAP_FIELD_NAME,
 							         $conf->global->LDAP_FIELD_FIRSTNAME,
 							         $conf->global->LDAP_FIELD_LOGIN,
 							         $conf->global->LDAP_FIELD_LOGIN_SAMBA);
-
-			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $justthese, 1);
+			
+			// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+			$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
+			
+			// Get from LDAP database an array of results
+			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
 			if (is_array($ldapusers))
 			{
 				$liste=array();
 				foreach ($ldapusers as $key => $ldapuser)
 				{
-					$record='';
-					foreach ($justthese as $value)
+					// Define the label string for this user
+					$label='';
+					foreach ($required_fields as $value)
 					{
 						if ($value)
 						{
-							$record.=$value."=".$ldapuser[$value]." ";
+							$label.=$value."=".$ldapuser[$value]." ";
 						}
 					}
-					$liste[$key] = $record;
+					$liste[$key] = $label;
 				}
 	
-				print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
-				print '<table class="noborder"><tr><td>';
-				print $langs->trans("LDAPUsers");
-				print '</td>';
-				print '<td>';
-				print '<input type="hidden" name="action" value="adduserldap">';
-				print $html->select_array('users', $liste, '', 1);
-				print '</td><td>';
-				print '<input type="submit" class="button" value="'.$langs->trans('Add').'">';
-				print '</td></tr></table>';
-				print '</form>';
 			}
 			else
 			{
@@ -450,10 +447,33 @@ if (($action == 'create') || ($action == 'adduserldap'))
 		{
 			$message='<div class="error">'.$ldap->error.'</div>';
 		}
+	}
+	
+	if ($message) { print $message.'<br>'; }
+	
+	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+	{
+		// Si la liste des users est rempli, on affiche la liste deroulante
+		if (is_array($liste))
+		{
+			print "\n\n<!-- Form liste LDAP debut -->\n";
+	
+			print '<form name="add_user_ldap" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+			print '<table width="100%" class="border"><tr>';
+			print '<td width="160">';
+			print $langs->trans("LDAPUsers");
+			print '</td>';
+			print '<td>';
+			print '<input type="hidden" name="action" value="adduserldap">';
+			print $html->select_array('users', $liste, '', 1);
+			print '</td><td align="center">';
+			print '<input type="submit" class="button" value="'.$langs->trans('Get').'">';
+			print '</td></tr></table>';
+			print '</form>';
 
-		print "</td></tr></table>";
-		print "\n<!-- Form liste LDAP fin -->\n\n";
-		print '<br>';
+			print "\n<!-- Form liste LDAP fin -->\n\n";
+			print '<br>';
+		}
 	}
 	
 	print '<form action="fiche.php" method="post" name="createuser">';
@@ -462,8 +482,10 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	
 	print '<table class="border" width="100%">';
 	
+	print '<tr>';
+
 	// Nom
-	print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'*</td>';
+	print '<td valign="top" width="160">'.$langs->trans("Lastname").'*</td>';
 	print '<td>';
 	if ($ldap_nom)
 	{
@@ -477,7 +499,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 	
 	// Prenom
-	print '<tr><td valign="top" width="20%">'.$langs->trans("Firstname").'</td>';
+	print '<tr><td valign="top">'.$langs->trans("Firstname").'</td>';
 	print '<td>';
 	if ($ldap_prenom)
 	{
@@ -522,17 +544,26 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			$generated_password=$genhandler->getNewGeneratedPassword();
 		}
 	}
+	$password=$generated_password;
 	
 	// Mot de passe
 	print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
 	print '<td>';
 	if ($ldap_sid)
 	{
-		print 'mot de passe du domaine';
+		print 'Mot de passe du domaine';
 	}
 	else
 	{
-		print '<input size="30" maxsize="32" type="text" name="password" value="'.$generated_password.'">';
+		if ($ldap_pass)
+		{
+			print '<input type="hidden" name="password" value="'.$ldap_pass.'">';
+			print eregi_replace('.','*',$ldap_pass);
+		}
+		else
+		{
+			print '<input size="30" maxsize="32" type="text" name="password" value="'.$password.'">';
+		}
 	}
 	print '</td></tr>';
 	
@@ -1294,5 +1325,11 @@ else
 
 $db->close();
 
+function dolValidElement($element) {
+	return (trim($element) != '');
+}
+
 llxFooter('$Date$ - $Revision$');
 ?>
+
+
