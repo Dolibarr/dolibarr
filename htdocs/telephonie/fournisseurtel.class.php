@@ -19,6 +19,7 @@
  * $Source$
  *
  */
+require_once(DOL_DOCUMENT_ROOT.'/telephonie/telephonie.tarif.grille.class.php');
 
 class FournisseurTelephonie {
   var $db;
@@ -40,16 +41,31 @@ class FournisseurTelephonie {
    *
    *
    */
-  function create()
+  function create($user)
   {
     $res = 0;
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur";
-    $sql .= " (nom, email_commande, commande_active, class_commande)";
-    $sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."')";
 
-    if (! $this->db->query($sql) )
+    if ($this->grille == 0)
       {
-	$res = -1;
+	$grille = new TelephonieTarifGrille($this->db);
+
+	if ($grille->CreateGrille($user, $this->nom, 'achat') <> 0)
+	  {
+	    $res = -2;
+	  }
+	$this->grille = $grille->id;
+      }
+
+    if ($res == 0)
+      {
+	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur";
+	$sql .= " (nom, email_commande, commande_active, class_commande,fk_tarif_grille)";
+	$sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."',".$this->grille.")";
+	
+	if (! $this->db->query($sql) )
+	  {
+	    $res = -1;
+	  }
       }
     return $res;
   }
@@ -85,7 +101,7 @@ class FournisseurTelephonie {
       $this->id = $id;
 
       $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
-      $sql .= ", f.class_commande, f.commande_bloque";
+      $sql .= ", f.class_commande, f.commande_bloque, f.fk_tarif_grille";
       $sql .= ", f.num_client";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
       $sql .= " WHERE f.rowid = ".$this->id;
@@ -102,6 +118,7 @@ class FournisseurTelephonie {
 	      $this->commande_enable = $obj->commande_active;
 	      $this->class_commande  = $obj->class_commande;
 	      $this->commande_bloque = $obj->commande_bloque;
+	      $this->grille          = $obj->fk_tarif_grille;
 
 	      return 0;
 	    }

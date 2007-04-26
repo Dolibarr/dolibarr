@@ -21,6 +21,7 @@
  */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/telephonie/telephonie.tarif.grille.class.php');
 
 if (!$user->rights->telephonie->fournisseur->lire)
   accessforbidden();
@@ -53,7 +54,8 @@ if ($_POST["action"] == 'update' && $_GET["id"])
       $fourn->email_commande   = $_POST["email_commande"];
       $fourn->methode_commande = $_POST["methode"];
       $fourn->commande_bloque  = $_POST["commande_bloque"];
-      
+      $fourn->grille           = $_POST["grille"];      
+
       if ( $fourn->update($user) == 0)
 	{
 	  Header("Location: fiche.php?id=".$fourn->id);
@@ -90,6 +92,9 @@ if ($cancel == $langs->trans("Cancel"))
   $action = '';
 }
 
+$ta = new TelephonieTarifGrille($db);
+$ta->GetListe($user,'achat');
+
 /*
  * Création
  *
@@ -118,11 +123,8 @@ if ($_GET["action"] == 'create')
   print '</td>';
   print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
 
-  require DOL_DOCUMENT_ROOT.'/telephonie/telephonie.tarif.grille.class.php';
-
-  $ta = new TelephonieTarifGrille($db);
-  $ta->GetListe($user,'achat');
-
+  $ta->liste_name[0] = ' Creer une nouvelle grille';
+  asort($ta->liste_name);
   print '<tr><td width="20%">Grille de tarif</td>';
   print '<td>';
   print $html->select_array("grille",$ta->liste_name);
@@ -187,6 +189,15 @@ if ($_GET["id"] > 0)
 	print '</td>';
 	print '<td>Les commandes vers ce fournisseur sont bloquées</td></tr>';
 
+
+	
+	print '<tr><td width="20%">Grille de tarif</td>';
+	print '<td>';
+	print $html->select_array("grille",$ta->liste_name, $fourn->grille);
+	print '</td>';
+	print '<td>Grille de tarif</td></tr>';
+
+
 	print '<tr><td colspan="3" align="center"><input type="submit" value="Update"></td></tr>';
 	print '</table></form><br />';
       }
@@ -223,12 +234,15 @@ if ($_GET["id"] > 0)
 	print '<tr><td width="20%">Méthode de commande</td>';
 	print '<td>'.$fourn->class_commande.'</td>';
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
-	
-	
+	       
 	print '<tr><td width="20%">Blocage des commandes</td>';
 	print '<td>'.$art[$fourn->commande_bloque].'</td>';
 	print '<td>Les commandes sont bloquées</td></tr>';
 
+	print '<tr><td width="20%">Grille de tarif</td>';
+	print '<td>'.$ta->liste_name[$fourn->grille].'</td>';
+	print '<td>Grille de tarif</td></tr>';
+	
 	print '</table><br /></div>';
       }
   }
