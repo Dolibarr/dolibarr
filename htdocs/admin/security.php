@@ -213,7 +213,7 @@ foreach ($arrayhandler as $key => $module)
         // Affiche example
         print '<td width="60">'.$module->getExample().'</td>';
 
-        print '<td width="50" align="center">';
+        print '<td width="100" align="center">';
         if ($conf->global->USER_PASSWORD_GENERATED == $key)
         {
             $title='';
@@ -253,7 +253,7 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
-print '<td align="center" width="20">';
+print '<td align="center" width="60">';
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
 	print img_tick();
@@ -291,7 +291,7 @@ print '</tr>';
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("MainDbPasswordFileConfEncrypted").'</td>';
-print '<td align="center" width="20">';
+print '<td align="center" width="60">';
 if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
 {
 	print img_tick();
@@ -323,7 +323,7 @@ $text = $langs->trans("ProtectAndEncryptPdfFiles");
 $desc = $html->textwithwarning($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 print $desc;
 print '</td>';
-print '<td align="center" width="20">';
+print '<td align="center" width="60">';
 if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
 {
 	print img_tick();

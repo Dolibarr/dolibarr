@@ -653,6 +653,8 @@ class User
     // Nettoyage parametres
     $this->login = trim($this->login);
     
+	dolibarr_syslog("User::Create login=".$this->login.", user=".$user->id);
+	
     $this->db->begin();
     
     $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
@@ -744,7 +746,7 @@ class User
         $this->nom = $contact->nom;
         $this->prenom = $contact->prenom;
 
-        $this->login = strtolower(substr($contact->prenom, 0, 3)) . strtolower(substr($contact->nom, 0, 3));
+        $this->login = strtolower(substr($contact->prenom, 0, 4)) . strtolower(substr($contact->nom, 0, 4));
         $this->admin = 0;
 
         $this->email = $contact->email;
@@ -803,10 +805,64 @@ class User
     }
 
   /**
-   *    \brief      Affectation des permissions par défaut
-   *    \return     si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
+   *      \brief      Créé en base un utilisateur depuis l'objet adherent
+   *      \param      member	Objet adherent source
+   *      \return     int		Si erreur <0, si ok renvoie id compte créé
    */
-  function set_default_rights()
+  function create_from_member($member)
+  {
+        global $langs;
+
+        // Positionne paramètres
+        $this->nom = $member->nom;
+        $this->prenom = $member->prenom;
+
+        $this->login = $member->login;
+        $this->admin = 0;
+
+        $this->email = $member->email;
+
+        $this->db->begin();
+
+        // Crée et positionne $this->id
+        $result=$this->create();
+
+        if ($result > 0)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+            $sql.= " SET fk_member=".$member->id;
+            $sql.= " WHERE rowid=".$this->id;
+            $resql=$this->db->query($sql);
+
+            if ($resql)
+            {
+				$this->db->commit();
+				return $this->id;
+           }
+            else
+            {
+                $this->error=$this->db->error()." - ".$sql;
+                dolibarr_syslog("User::create_from_member - 1 - ".$this->error);
+
+                $this->db->rollback();
+                return -1;
+            }
+		}
+        else
+        {
+            // $this->error deja positionné
+            dolibarr_syslog("User::create_from_member - 2 - ".$this->error);
+
+            $this->db->rollback();
+            return $result;
+        }
+    }
+
+	/**
+	*    \brief      Affectation des permissions par défaut
+	*    \return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
+	*/
+	function set_default_rights()
     {
         $sql = "SELECT id FROM ".MAIN_DB_PREFIX."rights_def WHERE bydefault = 1";
 

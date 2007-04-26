@@ -81,11 +81,21 @@ if ($user->rights->user->user->creer)
 		$contact = new Contact($db);
 		$result = $contact->fetch($_GET["id"]);
 
-		// Creation user
-		$nuser = new User($db);
-		$nuser->nom = $contact->name;
-		$nuser->prenom = $contact->firstname;
-		$nuser->create_from_contact($contact);
+		if ($result > 0)
+		{
+			// Creation user
+			$nuser = new User($db);
+			$result=$nuser->create_from_contact($contact);
+
+			if ($result < 0)
+			{
+				$msg=$nuser->error;
+			}
+		}
+		else
+		{
+			$msg=$contact->error;
+		}
 	}
 }
 
@@ -445,6 +455,7 @@ if ($user->rights->societe->contact->creer)
 			print '</td></tr>';
 		}
 
+		// Login Dolibarr
 		print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td colspan="3">';
 		if ($contact->user_id)
 		{
@@ -473,6 +484,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	* Fiche en mode visualisation
 	*
 	*/
+	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 	print '<table class="border" width="100%">';
 
@@ -598,7 +610,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 			print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 		}
 
-		if (! $contact->user_id && $user->admin && $contact->socid > 0)
+		if (! $contact->user_id && $user->rights->user->user->creer && $contact->socid > 0)
 		{
 			print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 		}

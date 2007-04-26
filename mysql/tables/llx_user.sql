@@ -1,6 +1,6 @@
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 -- Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
@@ -40,8 +40,9 @@ create table llx_user
   webcal_login      varchar(25),
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
-  fk_societe        integer DEFAULT 0,
-  fk_socpeople      integer DEFAULT 0,
+  fk_societe        integer,
+  fk_socpeople      integer,
+  fk_member         integer,
   note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,

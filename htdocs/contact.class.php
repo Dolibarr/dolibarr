@@ -65,6 +65,10 @@ class Contact
     var $ref_commande;          // Nb de reference commande pour lequel il est contact
     var $ref_propal;            // Nb de reference propal pour lequel il est contact
 
+	var $user_id;
+	var $user_login;
+
+
     /**
      *      \brief      Constructeur de l'objet contact
      *      \param      DB      Habler d'accès base

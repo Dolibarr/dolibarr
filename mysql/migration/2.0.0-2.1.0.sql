@@ -732,14 +732,32 @@ alter table llx_user add column office_phone      varchar(20);
 alter table llx_user add column office_fax        varchar(20);
 alter table llx_user add column user_mobile       varchar(20);
 
+
 alter table llx_user modify login varchar(24) NOT NULL;
 alter table llx_user drop code;
 
-ALTER TABLE llx_user ADD UNIQUE uk_user_login (login);
 
 update llx_user set pass_crypted = MD5(pass) where pass IS NOT NULL AND pass_crypted IS NULL and length(pass) < 32;
 update llx_user set pass_crypted = pass where pass IS NOT NULL AND pass_crypted IS NULL and length(pass) = 32;
 update llx_user set pass = NULL where length(pass) = 32;
+
+ALTER TABLE llx_user modify fk_societe        integer;
+ALTER TABLE llx_user modify fk_socpeople      integer;
+alter table llx_user add column fk_member integer after fk_socpeople;
+
+update llx_user set fk_societe = NULL where fk_societe = 0;
+update llx_user set fk_socpeople = NULL where fk_socpeople = 0;
+update llx_user set fk_member = NULL where fk_member = 0;
+
+ALTER TABLE llx_user DROP INDEX login;
+
+ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_login (login);
+
+ALTER TABLE llx_user ADD INDEX uk_user_fk_societe   (fk_societe);
+
+ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_socpeople (fk_socpeople);
+ALTER TABLE llx_user ADD UNIQUE INDEX uk_user_fk_member    (fk_member);
+
 
 alter table llx_boxes add column fk_user integer;
 

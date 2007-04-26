@@ -47,6 +47,9 @@ class Adherent
 {
 	var $id;
 	var $db;
+	var $error;
+	var $errors=array();
+	
 	var $prenom;
 	var $nom;
 	var $fullname;
@@ -81,11 +84,13 @@ class Adherent
 	var $type;				// Libellé type adherent
 	var $need_subscription;
 
+	var $user_id;
+	var $user_login;
+
+
 	//  var $public;
 	var $array_options;
 
-	var $error;
-	var $errors=array();
 
 
 	/**
@@ -687,9 +692,11 @@ class Adherent
         $sql.= " ".$this->db->pdate("d.datevalid")." as datev,";
         $sql.= " d.pays,";
         $sql.= " p.rowid as pays_id, p.code as pays_code, p.libelle as pays_lib,";
-        $sql.= " t.libelle as type, t.cotisation as cotisation";
+        $sql.= " t.libelle as type, t.cotisation as cotisation,";
+        $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
         $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
 		dolibarr_syslog("Adherent::fetch sql=".$sql);
 		
@@ -736,6 +743,9 @@ class Adherent
                 $this->typeid         = $obj->fk_adherent_type;
                 $this->type           = $obj->type;
                 $this->need_subscription = ($obj->cotisation=='yes'?1:0);
+				
+                $this->user_id        = $obj->user_id;
+                $this->user_login     = $obj->user_login;
             }
 			return 1;
         }

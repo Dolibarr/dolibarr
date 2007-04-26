@@ -58,6 +58,33 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
  * 	Actions
  */
 
+// Creation utilisateur depuis adherent
+if ($user->rights->user->user->creer)
+{
+	if ($_GET["action"] == 'create_user')
+	{
+		// Recuperation contact actuel
+		$adh = new Adherent($db);
+		$result = $adh->fetch($_GET["rowid"]);
+		
+		if ($result > 0)
+		{
+			// Creation user
+			$nuser = new User($db);
+			$result=$nuser->create_from_member($adh);
+
+			if ($result < 0)
+			{
+				$msg=$nuser->error;
+			}
+		}
+		else
+		{
+			$msg=$adh->error;
+		}
+	}
+}
+
 if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 {
     $adh->id = $rowid;
@@ -750,6 +777,7 @@ if ($rowid && $action != 'edit')
 
 	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
 
+	if ($msg) print '<div class="error">'.$msg.'</div>';
 
 	$result=$adh->load_previous_next_id($adh->next_prev_filter);
 	if ($result < 0) dolibarr_print_error($db,$adh->error);
@@ -889,6 +917,19 @@ if ($rowid && $action != 'edit')
     
     // Status
     print '<tr><td>'.$langs->trans("Status").'</td><td class="valeur">'.$adh->getLibStatut(4).'</td></tr>';
+
+	// Login Dolibarr
+	print '<tr><td>'.$langs->trans("DolibarrLogin").'</td><td class="valeur">';
+	if ($adh->user_id)
+	{
+		$dolibarr_user=new User($db);
+		$dolibarr_user->id=$adh->user_id;
+		$result=$dolibarr_user->fetch();
+		print $dolibarr_user->getLoginUrl(1);
+	}
+	else print $langs->trans("NoDolibarrAccess");
+	print '</td></tr>';
+
     
     // Autres attributs
     foreach($adho->attribute_label as $key=>$value){
@@ -933,6 +974,15 @@ if ($rowid && $action != 'edit')
     {
         print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
     }
+
+	// Barre d'actions
+	if (! $user->societe_id)
+	{
+		if (! $adh->user_id && $user->rights->user->user->creer)
+		{
+			print '<a class="tabAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+		}
+	}
     
     // Supprimer
     if ($user->rights->adherent->supprimer)
