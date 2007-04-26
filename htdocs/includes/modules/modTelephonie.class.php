@@ -79,18 +79,6 @@ class modTelephonie extends DolibarrModules
     // Permissions
     $this->rights = array();
     $this->rights_class = 'telephonie';
-  }
-
-   /**
-    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
-    *               Définit également les répertoires de données à créer pour ce module.
-    */
-  function init()
-  {
-    global $conf;
-
-    // Permissions
-    $this->remove();
 
     $this->rights[1][0] = 141; // id de la permission
     $this->rights[1][1] = 'Consulter la telephonie'; // libelle de la permission
@@ -265,7 +253,18 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][4] = 'tarif';
     $this->rights[$r][5] = 'client_modifier';
     $r++;
+  }
 
+   /**
+    *   \brief      Fonction appelée lors de l'activation du module. Insère en base les constantes, boites, permissions du module.
+    *               Définit également les répertoires de données à créer pour ce module.
+    */
+  function init()
+  {
+    global $conf;
+
+    // Permissions
+    $this->remove();
 
     // Dir
     $this->dirs[0] = $conf->telephonie->dir_output;
