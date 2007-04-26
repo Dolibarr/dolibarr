@@ -71,7 +71,7 @@ function llxHeader($head = "", $title="") {
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/tarifs/config/permissions.php", "Permissions");
 
   if ($user->rights->telephonie->fournisseur->lire)
-    $menu->add(DOL_URL_ROOT."/telephonie/fournisseurs.php", "Fournisseurs");
+    $menu->add(DOL_URL_ROOT."/telephonie/fournisseur/", "Fournisseurs");
 
 
   left_menu($menu->liste);
