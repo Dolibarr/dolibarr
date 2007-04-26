@@ -354,9 +354,10 @@ class TelephonieTarifGrille {
   /*
     \brief Retourne la liste des grilles
   */
-  function GetListe($user)
+  function GetListe($user,$type='')
   {
     $this->liste = array();
+    $this->liste_name = array();
 
     $sql = "SELECT d.libelle as tarif_desc, d.rowid, d.type_tarif";
 
@@ -365,6 +366,10 @@ class TelephonieTarifGrille {
     $sql .= " WHERE d.rowid = r.fk_grille";
     $sql .= " AND r.fk_user =".$user->id;
     $sql .= " AND r.pread = 1";
+
+    if ($type <> '')
+      $sql .= " AND d.type_tarif = '".$type."'";
+
     $sql .= " ORDER BY d.libelle";
 
     $resql = $this->db->query($sql);
@@ -372,7 +377,7 @@ class TelephonieTarifGrille {
       {
 	while ( $obj = $this->db->fetch_object($resql) )
 	  {
-
+	    $this->liste_name[$obj->rowid] = stripslashes($obj->tarif_desc);
 	    $this->liste[$obj->rowid][0] = $obj->rowid;
 	    $this->liste[$obj->rowid][1] = stripslashes($obj->tarif_desc);
 	    $this->liste[$obj->rowid][2] = $obj->type_tarif;
