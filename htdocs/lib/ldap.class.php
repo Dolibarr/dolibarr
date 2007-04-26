@@ -735,69 +735,89 @@ class Ldap
     }
 
 
-    // 2.5 User methods ----------------------------------------------------------
     /**
-     * 2.5.1 : Returns an array containing a details of users, sorted by
-     * username. The search criteria is a standard LDAP query - * returns all
-     * users.  The $attributeArray variable contains the required user detail field names
+     * 		\brief		Returns an array containing a details of elements
+	 *		\param		$search			 	
+	 *		\param		$userDn			 	
+	 *		\param		$useridentifier 	
+	 *		\param		$attributeArray 	Variables required
+	 *		\param		$activefilter		1=utilise le champ this->filter comme filtre
+	 *
+	 * 		\remarks	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
      */
     function getUsers($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
     {
 		$userslist=array();
 		
-		dolibarr_syslog("Ldap.class::getUsers search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=".$attributeArray);
+		dolibarr_syslog("Ldap::getUsers search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
 
 	    // if the directory is AD, then bind first with the search user first
         if ($this->serverType == "activedirectory") {
             $this->bindauth($this->searchUser, $this->searchPassword);
         }
 
-        //permet de choisir le filtre adequat
+        // Define filter
         if ($activefilter == 1)
         {
-        	$filter = '('.$this->filter.')';
+        	if ($this->filter) $filter = '('.$this->filter.')';
+			else $filter='('.$useridentifier.'=*)';
         }
         else
         {
         	$filter = '('.$useridentifier.'='.$search.')';
         }
 
-        $this->result = @ldap_search($this->connection, $userDn, $filter);
-
+        if (is_array($attributeArray))
+		{
+			// Return list with required fields
+			dolibarr_syslog("Ldap::getUsers connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
+			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
+		}
+		else
+		{
+			// Return list with fields selected by default
+			dolibarr_syslog("Ldap::getUsers connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			$this->result = @ldap_search($this->connection, $userDn, $filter);
+		}
         if (!$this->result)
         {
-        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+        	$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
         	return -1;
         }
 
         $info = @ldap_get_entries($this->connection, $this->result);
+
+		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passé
+		// a ldap_search en majuscule !!!
 		//print_r($info);
-        for ($i = 0; $i < $info["count"]; $i++)
-        {
-            $recordid=$this->ldap_utf8_decode($info[$i][$useridentifier][0]);
-			      if ($recordid)
-			      {
-				      //print "Found record with key $useridentifier=".$recordid."<br>\n";
-	            $userslist[$recordid][$useridentifier]=$recordid;
-	
-	            // Add to the array for each attribute in my list
-	            for ($j = 0; $j < count($attributeArray); $j++)
-	            {
-	            	//print " Param ".$attributeArray[$j]."=".$info[$i][$attributeArray[$j]][0]."<br>\n";
-	            	
-	            	//permet de récupérer le SID avec Active Directory
-	            	if ($this->serverType == "activedirectory" && strtolower($attributeArray[$j]) == "objectsid")
-                {
-                	  	$objectsid = $this->getObjectSid($recordid);
-                	  	$userslist[$recordid][$attributeArray[$j]]    = $objectsid;
-                }
-                else
-                {
-                	$userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$attributeArray[$j]][0]);
-                }
-	            }
-			      }
-        }
+
+		for ($i = 0; $i < $info["count"]; $i++)
+		{
+			$recordid=$this->ldap_utf8_decode($info[$i][$useridentifier][0]);
+			if ($recordid)
+			{
+				//print "Found record with key $useridentifier=".$recordid."<br>\n";
+				$userslist[$recordid][$useridentifier]=$recordid;
+				
+				// Add to the array for each attribute in my list
+				for ($j = 0; $j < count($attributeArray); $j++)
+				{
+					$keyattributelower=strtolower($attributeArray[$j]);
+					//print " Param ".$attributeArray[$j]."=".$info[$i][$keyattributelower][0]."<br>\n";
+					
+					//permet de récupérer le SID avec Active Directory
+					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
+					{
+						$objectsid = $this->getObjectSid($recordid);
+						$userslist[$recordid][$attributeArray[$j]]    = $objectsid;
+					}
+					else
+					{
+						$userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$keyattributelower][0]);
+					}
+				}
+			}
+		}
 
         asort($userslist);
         return $userslist;

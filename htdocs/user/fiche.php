@@ -345,7 +345,7 @@ if ($_POST["action"] == 'adduserldap')
 		// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
 		$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 
-		$ldapusers = $ldap->getUsers($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields);
+		$ldapusers = $ldap->getRecords($selecteduser, $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields);
 		//print_r($ldapusers);
 
 		if (is_array($ldapusers))
@@ -419,7 +419,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 			$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 			
 			// Get from LDAP database an array of results
-			$ldapusers = $ldap->getUsers('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
+			$ldapusers = $ldap->getRecords('*', $conf->global->LDAP_USER_DN, $conf->global->LDAP_KEY_USERS, $required_fields, 1);
 			if (is_array($ldapusers))
 			{
 				$liste=array();
