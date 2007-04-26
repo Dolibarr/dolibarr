@@ -503,7 +503,7 @@ class pdf_huitre extends ModelePDFFactures
 	    $pdf->SetTextColor(200,0,0);
 	    $pdf->SetFont('Arial','B',8);
 	    $pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-	    $pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+	    $pdf->MultiCell(80, 3, $outputlangs->transnoentities("ErrorGoToGlobalSetup"), 0, 'L');
 	  }
       }
     else if (defined("FAC_PDF_INTITULE"))

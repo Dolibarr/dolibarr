@@ -13,7 +13,7 @@ ErrorConstantNotDefined=Paramètre %s non défini
 ErrorUnknown=Erreur inconnue
 ErrorSQL=Erreur SQL
 ErrorLogoFileNotFound=Le fichier logo '%s' n'a pas été trouvé
-ErrorGoToGlobalSetup=Allez dans la Configuration générale pour corriger
+ErrorGoToGlobalSetup=Allez dans la Configuration 'Société/Institution' pour corriger
 ErrorGoToModuleSetup=Allez dans la Configuration du module pour corriger
 ErrorFailedToSendMail=Échec de l'envoi du mail (emetteur=%s, destinataire=%s)
 ErrorAttachedFilesDisabled=La gestion des fichiers associés est désactivée sur ce serveur
