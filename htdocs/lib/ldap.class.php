@@ -232,7 +232,7 @@ class Ldap
 					// Try in auth mode
 					if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
 					{
-						dolibarr_syslog("Ldap.class::connect_bind try bindauth on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+						dolibarr_syslog("Ldap::connect_bind try bindauth on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
 						$result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
 						if ($result)
 						{
@@ -248,7 +248,7 @@ class Ldap
 					// Try in anonymous
 					if (! $this->bind)
 					{
-						dolibarr_syslog("Ldap.class::connect_bind try bind on ".$host,LOG_DEBUG);
+						dolibarr_syslog("Ldap::connect_bind try bind on ".$host,LOG_DEBUG);
 						$result=$this->bind();
 						if ($result)
 						{
@@ -268,7 +268,7 @@ class Ldap
 		}
 
 		$return=($connected ? $connected : -1);
-		dolibarr_syslog("Ldap.class::connect_bind return=".$return,LOG_DEBUG);
+		dolibarr_syslog("Ldap::connect_bind return=".$return,LOG_DEBUG);
 		return $return;
 	}
 
@@ -406,7 +406,7 @@ class Ldap
 
 		if (! $olddn) $olddn=$dn;
 
-		dolibarr_syslog("Ldap.class::update dn=".$dn." olddn=".$olddn);
+		dolibarr_syslog("Ldap::update dn=".$dn." olddn=".$olddn);
 
 		// On supprime et on insère
 		$result = $this->delete($olddn);
@@ -414,13 +414,13 @@ class Ldap
 		if ($result <= 0)
 		{
 			$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection)." ".$this->error;
-			dolibarr_syslog("Ldap.class::update ".$this->error,LOG_ERROR);
+			dolibarr_syslog("Ldap::update ".$this->error,LOG_ERROR);
 			//print_r($info);
 			return -1;
 		}
 		else
 		{
-			dolibarr_syslog("Ldap.class::update done successfully");
+			dolibarr_syslog("Ldap::update done successfully");
 			return 1;
 		}
 	}
@@ -605,7 +605,7 @@ class Ldap
 	{
 		global $conf;
 
-		dolibarr_syslog("Ldap.class::add dn=".$dn." info=".join(',',$info));
+		dolibarr_syslog("Ldap::add dn=".$dn." info=".join(',',$info));
 
 		// Encode en UTF8
 		$dn=$this->ldap_utf8_encode($dn);
@@ -621,12 +621,12 @@ class Ldap
 
 		if ($result)
 		{
-			dolibarr_syslog("Ldap.class::add successfull");
+			dolibarr_syslog("Ldap::add successfull");
 			return 1;
 		}
 		else
 		{
-			dolibarr_syslog("Ldap.class::add failed");
+			dolibarr_syslog("Ldap::add failed");
 			return -1;
 		}
 	}
@@ -640,7 +640,7 @@ class Ldap
 	{
 		global $conf;
 
-		dolibarr_syslog("Ldap.class::delete Delete LDAP entry dn=".$dn);
+		dolibarr_syslog("Ldap::delete Delete LDAP entry dn=".$dn);
 
 		// Encode en UTF8
 		$dn=$this->ldap_utf8_encode($dn);
@@ -745,11 +745,11 @@ class Ldap
 	 *
 	 * 		\remarks	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
      */
-    function getUsers($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
+    function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
     {
 		$userslist=array();
 		
-		dolibarr_syslog("Ldap::getUsers search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
+		dolibarr_syslog("Ldap::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
 
 	    // if the directory is AD, then bind first with the search user first
         if ($this->serverType == "activedirectory") {
@@ -770,13 +770,13 @@ class Ldap
         if (is_array($attributeArray))
 		{
 			// Return list with required fields
-			dolibarr_syslog("Ldap::getUsers connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
+			dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
 			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
 		}
 		else
 		{
 			// Return list with fields selected by default
-			dolibarr_syslog("Ldap::getUsers connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
 			$this->result = @ldap_search($this->connection, $userDn, $filter);
 		}
         if (!$this->result)
@@ -901,7 +901,7 @@ class Ldap
 	*/
 	function search($checkDn, $filter)
 	{
-		dolibarr_syslog("Ldap.class::search checkDn=".$checkDn." filter=".$filter);
+		dolibarr_syslog("Ldap::search checkDn=".$checkDn." filter=".$filter);
 
 		$checkDn=$this->ldap_utf8_encode($checkDn);
 		$filter=$this->ldap_utf8_encode($filter);
