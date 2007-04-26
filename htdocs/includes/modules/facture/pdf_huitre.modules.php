@@ -132,7 +132,7 @@ class pdf_huitre extends ModelePDFFactures
                {
      	           $pdfrights = array('print'); // Ne permet que l'impression du document
     	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                }
 
