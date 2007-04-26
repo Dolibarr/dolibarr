@@ -165,7 +165,7 @@ dolibarr_fiche_head($head, $hselected, $langs->trans("Security"));
 
 
 $var=false;
-$form = new Form($db);
+$html = new Form($db);
 
 
 // Choix du gestionnaire du générateur de mot de passe
@@ -318,7 +318,11 @@ print '</tr>';
 // Encryption et protection des PDF
 $var=!$var;
 print "<tr ".$bc[$var].">";
-print '<td colspan="3">'.$langs->trans("ProtectAndEncryptPdfFiles").'</td>';
+print '<td colspan="3">';
+$text = $langs->trans("ProtectAndEncryptPdfFiles");
+$desc = $html->textwithwarning($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+print $desc;
+print '</td>';
 print '<td align="center" width="20">';
 if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
 {
@@ -327,18 +331,16 @@ if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
 
 print '</td>';
 
+print '<td align="center" width="100">';
 if ($conf->global->PDF_SECURITY_ENCRYPTION == 0)
 {
-	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';
-	print "</td>";
 }
 if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
 {
-	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
-	print "</td>";
 }
+print "</td>";
 
 print "</td>";
 print '</tr>';

@@ -106,6 +106,48 @@ class Form
 		return $s;
     }
     
+    /**
+     \brief     Affiche un texte avec picto alert qui affiche un tooltip
+     \param     text				Texte à afficher
+     \param     htmltooltip     	Contenu html du tooltip
+     \param		direction			1=Le picto est après, -1=le picto est avant
+     \return	string				Code html du texte,picto
+  */
+  function textwithwarning($text,$htmltext,$direction=1)
+    {
+		global $conf;
+		
+		if (! $htmltext)
+		{
+			return $text;
+		}
+		
+		$s="";
+		
+		// Sanitize tooltip
+        $paramfortooltip ='';
+        if ($conf->use_javascript)
+        {
+        	$htmltext=ereg_replace("'","\'",$htmltext);
+            $paramfortooltip.=' onmouseover="showtip(\''.$htmltext.'\')"';
+            $paramfortooltip.=' onMouseout="hidetip()"';
+        }
+
+		$s.='<table class="nobordernopadding"><tr>';
+		if ($direction > 0)
+		{
+			if ($text) $s.='<td>'.$text.'&nbsp;</td>';
+			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_warning("default").'</td>';
+		}
+		else
+		{
+			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_warning("default").'</td>';
+			if ($text) $s.='<td>&nbsp;'.$text.'</td>';
+		}
+		$s.='</tr></table>';
+		return $s;
+    }
+    
     
     /**
      *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
