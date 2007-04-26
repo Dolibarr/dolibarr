@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,9 +21,9 @@
  */
 
 /**
-        \file       htdocs/admin/system/dolibarr.php
-        \brief      Fichier page info systemes Dolibarr
-        \version    $Revision$
+   \file       htdocs/admin/system/dolibarr.php
+   \brief      Fichier page info systemes Dolibarr
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
@@ -114,6 +115,7 @@ print '</tr>';
 $var=false;
 $sortorder=$modules_names;
 ksort($sortorder);
+$rights_ids = array();
 foreach($sortorder as $numero=>$name) 
 {
     $idperms="";
@@ -130,6 +132,7 @@ foreach($sortorder as $numero=>$name)
         foreach($modules[$numero]->rights as $rights)
         {
             $idperms.=($idperms?",":"").$rights[0];
+	    array_push($rights_ids, $rights[0]);
         }
     }
     print '<td>'.($idperms?$idperms:"&nbsp;").'</td>';
@@ -137,8 +140,13 @@ foreach($sortorder as $numero=>$name)
 }
 print '</table>';
 print '<br>';
-
+sort($rights_ids);
+foreach($rights_ids as $right_id)
+{
+  if ($old == $right_id)
+    print "Attention doublon sur la permission : $right_id<br>";
+  $old = $right_id;
+}
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
