@@ -2553,7 +2553,7 @@ else
 				}
 
 				// Valider
-				if ($fac->statut == 0 && $num_lignes > 0)
+				if ($fac->statut == 0 && $num_lignes > 0 && $fac->total_ttc >= 0)
 				{
 					if ($user->rights->facture->valider)
 					{
