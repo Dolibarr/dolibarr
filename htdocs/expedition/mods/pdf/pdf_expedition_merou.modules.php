@@ -142,9 +142,18 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 			//Si le dossier existe
 			if (file_exists($dir))
 			{
-            	// Initialisation Bon vierge
+        // Initialisation Bon vierge
 				$pdf = new FPDI_Protection('l','mm',$this->format);
-				$pdf->SetProtection(array('print')); //ne permet que l'impression du document
+						
+		    // Protection et encryption du pdf
+        if ($conf->global->PDF_SECURITY_ENCRYPTION)
+        {
+     	    $pdfrights = array('print'); // Ne permet que l'impression du document
+    	    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	    $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+        }
+
 				$pdf->Open();
 				$pdf->AddPage();
 				//Generation de l entete du fichier

@@ -119,6 +119,19 @@ else if ($_GET["action"] == 'disable_encryptdbpassconf')
 	}
 }
 
+if ($_GET["action"] == 'activate_pdfsecurity')
+{
+	dolibarr_set_const($db, "PDF_SECURITY_ENCRYPTION", "1");
+	Header("Location: security.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_pdfsecurity')
+{
+	dolibarr_del_const($db, "PDF_SECURITY_ENCRYPTION");
+	Header("Location: security.php");
+	exit;
+}
+
 /*
  * Affichage onglet
  */
@@ -296,6 +309,34 @@ if($conf->global->MAIN_DATABASE_PWD_CONFIG_ENCRYPTED == 1)
 {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=disable_encryptdbpassconf">'.$langs->trans("Disable").'</a>';
+	print "</td>";
+}
+
+print "</td>";
+print '</tr>';
+
+// Encryption et protection des PDF
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("ProtectAndEncryptPdfFiles").'</td>';
+print '<td align="center" width="20">';
+if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
+{
+	print img_tick();
+}
+
+print '</td>';
+
+if ($conf->global->PDF_SECURITY_ENCRYPTION == 0)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=activate_pdfsecurity">'.$langs->trans("Activate").'</a>';
+	print "</td>";
+}
+if($conf->global->PDF_SECURITY_ENCRYPTION == 1)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=disable_pdfsecurity">'.$langs->trans("Disable").'</a>';
 	print "</td>";
 }
 

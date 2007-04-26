@@ -58,6 +58,8 @@ class pdf_courrier_droit_editeur
   */
   function Generate($numero)
   {
+    global $conf;
+    
     $this->file = $numero.strftime("%Y", time());
     $this->extension = "pdf";
 
@@ -80,41 +82,63 @@ class pdf_courrier_droit_editeur
     $resql=$this->db->query($sql);
 
     if ($resql) 
-      {
-	$fichref = "Droits-$year";
-	$dir_all = DOL_DATA_ROOT."/ged/" . get_exdir($numero);
-	$file_all = $dir_all . $numero . ".pdf";
-
-	$pdf_all=new FPDF('P','mm',$this->format);
-	$pdf_all->Open();
-
-
-	while ($obj = $this->db->fetch_object($resql) )
-	  {
-	    $id = $obj->idp;
-	    
-	    dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
-	    
-	    $coupdf = new pdf_courrier_droit_editeur($this->db, $langs);
-
-	    $fichref = "Droits-$year";
-	    $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
-	    $file = $dir . $fichref . ".pdf";
-
-	    $pdf=new FPDF('P','mm',$this->format);
-	    $pdf->Open();
-
-	    $coupdf->Write($id, $dir, $year, $pdf);
-	    $coupdf->Write($id, $dir_all, $year, $pdf_all);
-	    
-	    $pdf->Close();	    
-	    $pdf->Output($file);
-	    dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
-	  }   
+    {
+    	$fichref = "Droits-$year";
+	    $dir_all = DOL_DATA_ROOT."/ged/" . get_exdir($numero);
+	    $file_all = $dir_all . $numero . ".pdf";
 	
-	$pdf_all->Close();	    
-	$pdf_all->Output($file_all);
-	dolibarr_syslog("droits-editeurs.php write $fileall", LOG_DEBUG );
+	    // Initialisation document vierge
+      $pdf_all=new FPDI_Protection('P','mm',$this->format);
+                               		
+	    // Protection et encryption du pdf
+      if ($conf->global->PDF_SECURITY_ENCRYPTION)
+      {
+         $pdfrights = array('print'); // Ne permet que l'impression du document
+         $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+         $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+         $pdf_all->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+      }
+	
+	    $pdf_all->Open();
+
+
+	    while ($obj = $this->db->fetch_object($resql) )
+	    {
+	      $id = $obj->idp;
+	    
+	      dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
+	    
+	      $coupdf = new pdf_courrier_droit_editeur($this->db, $langs);
+
+	      $fichref = "Droits-$year";
+	      $dir = DOL_DATA_ROOT."/societe/courrier/" . get_exdir($id);
+	      $file = $dir . $fichref . ".pdf";
+	    
+	      // Initialisation document vierge
+        $pdf=new FPDI_Protection('P','mm',$this->format);
+                        
+        // Protection et encryption du pdf
+        if ($conf->global->PDF_SECURITY_ENCRYPTION)
+        {
+     	    $pdfrights = array('print'); // Ne permet que l'impression du document
+    	    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	    $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+        }
+	    
+	      $pdf->Open();
+
+	      $coupdf->Write($id, $dir, $year, $pdf);
+	      $coupdf->Write($id, $dir_all, $year, $pdf_all);
+	    
+	      $pdf->Close();	    
+	      $pdf->Output($file);
+	      dolibarr_syslog("droits-editeurs.php write $file", LOG_DEBUG );
+	    }   
+	
+	   $pdf_all->Close();	    
+	   $pdf_all->Output($file_all);
+	   dolibarr_syslog("droits-editeurs.php write $fileall", LOG_DEBUG );
 	
       }
     else

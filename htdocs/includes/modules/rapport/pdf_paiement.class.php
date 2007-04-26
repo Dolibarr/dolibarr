@@ -181,7 +181,16 @@ class pdf_paiement
     $_file = $dir . "/payments-".$month."-".$year.".pdf";
     
     $pdf = new FPDI_Protection('P','mm','A4');
-    $pdf->SetProtection(array('print')); //ne permet que l'impression du document
+                   		
+		           // Protection et encryption du pdf
+               if ($conf->global->PDF_SECURITY_ENCRYPTION)
+               {
+     	           $pdfrights = array('print'); // Ne permet que l'impression du document
+    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	           $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+               }
+
     $pdf->Open();
     
     $sql = "SELECT ".$this->db->pdate("p.datep")." as dp, f.facnumber";

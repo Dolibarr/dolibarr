@@ -93,7 +93,16 @@ if ( $resql )
   dolibarr_syslog("$num factures a imprimer");
 
   $pdf = new FPDI_Protection('P','mm','A4');
-  $pdf->SetProtection(array('print')); //ne permet que l'impression du document
+                 		
+		           // Protection et encryption du pdf
+               if ($conf->global->PDF_SECURITY_ENCRYPTION)
+               {
+     	           $pdfrights = array('print'); // Ne permet que l'impression du document
+    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	           $pdfownerpass = ''; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+               }
+
   $pdf->Open();
   $pdf->SetMargins(10, 10, 10);
   $pdf->SetAutoPageBreak(1,0);
