@@ -34,6 +34,7 @@ if ($_POST["action"] == 'add')
   $fourn->nom            = $_POST["nom"];
   $fourn->email_commande = $_POST["email_commande"];
   $fourn->methode_commande = $_POST["methode"];
+  $fourn->grille         = $_POST["grille"];
 
   if ( $fourn->create($user) == 0)
     {
@@ -116,6 +117,17 @@ if ($_GET["action"] == 'create')
   print $html->select_array("methode",$arr,$fourn->class_commande);
   print '</td>';
   print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
+
+  require DOL_DOCUMENT_ROOT.'/telephonie/telephonie.tarif.grille.class.php';
+
+  $ta = new TelephonieTarifGrille($db);
+  $ta->GetListe($user,'achat');
+
+  print '<tr><td width="20%">Grille de tarif</td>';
+  print '<td>';
+  print $html->select_array("grille",$ta->liste_name);
+  print '</td>';
+  print '<td>Grille de tarif</td></tr>';
 
   print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>';
   print '</table>';
