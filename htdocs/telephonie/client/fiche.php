@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($_GET["id"])
 	  print '<table class="border" cellpadding="3" cellspacing="0" width="100%">';
 	  print '<tr><td width="20%">'.$langs->trans('Name').'</td><td>'.$soc->nom.'</td><td>'.$langs->trans('Code client').'</td><td>'.$soc->code_client.'</td></tr>';
 	  
-	  print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
+	  print '<tr><td valign="top">'.$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."<br>".$soc->cp." ".$soc->ville." ".$soc->pays."</td></tr>";
 	  
 	  print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel).'</td>';
 	  print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax).'</td></tr>';
@@ -184,7 +184,7 @@ if ($_GET["id"])
 
 		  $ligne = new LigneTel($db);
 
-		  print '<tr class="liste_titre"><td width="15%" valign="center">Contrat';
+		  print '<tr class="liste_titre"><td width="15%">Contrat';
 		  print '</td><td colspan="3">Agence/Filiale</td><td align="center">Nb Lignes</td>';
 		  print "</tr>\n";
 
@@ -195,7 +195,7 @@ if ($_GET["id"])
 
 		      print "<tr $bc[$var]><td>";
 
-		      print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
+		      print '<img alt="" src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
 
 		      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->rowid.'">';
 		      print img_file();
