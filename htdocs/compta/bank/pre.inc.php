@@ -46,7 +46,6 @@ function llxHeader($head = "")
 		$sql = "SELECT rowid, label, courant";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
 		$sql.= " WHERE clos = 0";
-		$sql.= " AND courant in (1,2)";
 		$resql = $db->query($sql);
 		if ($resql)
 		{
