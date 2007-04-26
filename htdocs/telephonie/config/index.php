@@ -42,6 +42,13 @@ if ($_GET["action"] == "set")
   Header("Location: index.php");
 }
 
+if ($_GET["action"] == "switch")
+{
+  dolibarr_set_const($db, $_GET["name"], $_GET["value"], $type='chaine');
+
+  Header("Location: index.php");
+}
+
 /*
  *
  *
@@ -66,9 +73,9 @@ print "</tr>\n";
 
 
 print '<tr class="pair"><td>';
-print 'Marge minimale</td><td align="center">';
+print 'Marge minimale</td><td>';
 print '<input type="hidden" name="nom1" value="TELEPHONIE_MARGE_MINI">';
-print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >';
+print '<input type="text"   name="value1" value="'.TELEPHONIE_MARGE_MINI.'" size="3" >%';
 
 print '</td><td><input type="submit" value="'.$langs->trans('Update').'"></td><td>TELEPHONIE_MARGE_MINI</td></tr>';
 
@@ -89,57 +96,6 @@ print TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC;
 print '</td><td>-</td><td>TELEPHONIE_LIGNE_COMMANDE_EMAIL_BCC</td></tr>';
 
 
-print '<tr class="pair"><td>Module ADSL</td>';
-print '<td align="center">';
-if (TELEPHONIE_MODULE_ADSL == 1)
-{
-  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=0">Changer</a>';
-}
-else
-{
-  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=1">Changer</a>';
-}
-print '</td><td>TELEPHONIE_MODULE_ADSL</td></tr>';
-
-
-print '<tr class="pair"><td>Module SIMULATION</td>';
-print '<td align="center">';
-if (TELEPHONIE_MODULE_SIMULATION == 1)
-{
-  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=0">Changer</a>';
-}
-else
-{
-  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=1">Changer</a>';
-}
-print '</td><td>TELEPHONIE_MODULE_SIMULATION</td></tr>';
-
-
-print '<tr class="pair"><td>Module GROUPES</td>';
-print '<td align="center">';
-if (TELEPHONIE_MODULE_GROUPES == 1)
-{
-  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=0">Changer</a>';
-}
-else
-{
-  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=1">Changer</a>';
-}
-print '</td><td>TELEPHONIE_MODULE_GROUPES</td></tr>';
-
-/* ***************************************** */
-
-print '<tr class="pair"><td>Module NUMDATA</td>';
-print '<td align="center">';
-if (TELEPHONIE_MODULE_NUMDATA == 1)
-{
-  print 'oui</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=0">Changer</a>';
-}
-else
-{
-  print 'non</td><td><a href="index.php?action=set&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=1">Changer</a>';
-}
-print '</td><td>TELEPHONIE_MODULE_NUMDATA</td></tr>';
 
 /* ***************************************** */
 
@@ -196,7 +152,66 @@ $form->select_array("value3",$gg,TELEPHONIE_GRILLE_VENTE_DEFAUT_ID);
 
 print '</td><td><input type="submit" value="'.$langs->trans('Update').'"></td>';
 print '<td>TELEPHONIE_GRILLE_VENTE_DEFAUT_ID</td></tr>';
-print '<input type="hidden" name="nom3" value="TELEPHONIE_GRILLE_VENTE_DEFAUT_ID">';
+print '<input type="hidden" name="nom3" value="TELEPHONIE_GRILLE_VENTE_DEFAUT_ID"></td></tr>';
+
+
+print '<tr class="liste_titre">';
+print '<td>Nom</td>';
+print '<td>Valeur</td><td>&nbsp;</td><td>Constante</td>';
+print "</tr>\n";
+
+print '<tr class="pair"><td>Module ADSL</td>';
+print '<td>';
+if (TELEPHONIE_MODULE_ADSL == 1)
+{
+  print 'oui</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_ADSL&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_ADSL</td></tr>';
+
+
+print '<tr class="pair"><td>Module SIMULATION</td>';
+print '<td>';
+if (TELEPHONIE_MODULE_SIMULATION == 1)
+{
+  print 'oui</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_SIMULATION&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_SIMULATION</td></tr>';
+
+
+print '<tr class="pair"><td>Module GROUPES</td>';
+print '<td>';
+if (TELEPHONIE_MODULE_GROUPES == 1)
+{
+  print 'oui</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_GROUPES&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_GROUPES</td></tr>';
+
+/* ***************************************** */
+
+print '<tr class="pair"><td>Module NUMDATA</td>';
+print '<td>';
+if (TELEPHONIE_MODULE_NUMDATA == 1)
+{
+  print 'oui</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=0">Changer</a>';
+}
+else
+{
+  print 'non</td><td><a href="index.php?action=switch&amp;name=TELEPHONIE_MODULE_NUMDATA&amp;value=1">Changer</a>';
+}
+print '</td><td>TELEPHONIE_MODULE_NUMDATA</td></tr>';
+
 
 print '</table>';
 print '</form>';
