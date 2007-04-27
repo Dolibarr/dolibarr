@@ -30,6 +30,7 @@ require("./pre.inc.php");
 
 $langs->load("admin");
 $langs->load("users");
+$langs->load("other");
 
 if (!$user->admin)
   accessforbidden();
