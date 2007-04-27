@@ -277,18 +277,24 @@ if(is_dir($dir))
 
 			print $module->description;
 
-			print '</td><td align="center">';
+			print '</td><td colspan="2" align="center">';
 
 			if (in_array($module->id, $mods))
 			{
-				print img_tick();
-				print '</td><td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Disable").'</a>';
+				if ($conf->global->EXPEDITION_ADDON != $name)
+				{
+					print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;module='.$name.'&amp;moduleid='.$module->id.'">';
+					print img_tick($langs->trans("Disable"));
+					print '</a>';
+				}
+				else
+				{
+					print img_tick($langs->trans("Activated"));
+				}
 
 			}
 			else
 			{
-				print '&nbsp;</td><td align="center">';
 				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=1&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Activate").'</a>';
 			}
 
@@ -296,9 +302,9 @@ if(is_dir($dir))
 
 			// Default
 			print '<td align="center">';
-			if ($conf->global->EXPEDITION_ADDON == "$name")
+			if ($conf->global->EXPEDITION_ADDON == $name)
 			{
-				print img_tick();
+				print img_tick($langs->trans("Activate"));
 			}
 			else
 			{
@@ -389,7 +395,7 @@ if(is_dir($dir))
 			if (in_array($name, $def))
 			{
 				print "<td align=\"center\">\n";
-				if ($conf->global->EXPEDITION_ADDON_PDF != "$name")
+				if ($conf->global->EXPEDITION_ADDON_PDF != $name)
 				{
 					print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
 					print img_tick($langs->trans("Disable"));
@@ -397,7 +403,7 @@ if(is_dir($dir))
 				}
 				else
 				{
-					print img_tick($langs->trans("Enabled"));
+					print img_tick($langs->trans("Activated"));
 				}
 				print "</td>";
 			}
@@ -410,7 +416,7 @@ if(is_dir($dir))
 
 			// Defaut
 			print "<td align=\"center\">";
-			if ($conf->global->EXPEDITION_ADDON_PDF == "$name")
+			if ($conf->global->EXPEDITION_ADDON_PDF == $name)
 			{
 				print img_tick($langs->trans("Default"));
 			}
