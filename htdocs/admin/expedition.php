@@ -248,7 +248,6 @@ print_fiche_titre($langs->trans("SendingMethod"),'','setup');
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="140">'.$langs->trans("Name").'</td><td>'.$langs->trans("Description").'</td>';
-print '<td align="center">&nbsp;</td>';
 print '<td align="center" width="60">'.$langs->trans("Action").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print '<td align="center" width="16">'.$langs->trans("Infos").'</td>';
@@ -277,7 +276,7 @@ if(is_dir($dir))
 
 			print $module->description;
 
-			print '</td><td colspan="2" align="center">';
+			print '</td><td align="center">';
 
 			if (in_array($module->id, $mods))
 			{
