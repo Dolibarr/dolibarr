@@ -4,7 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,13 +124,38 @@ if ($_GET["action"] == 'setdoc')
 }
 
 // \todo A quoi servent les methode d'expedition ?
-if ($_GET["action"] == 'setmethod')
+if ($_GET["action"] == 'setmethod' || $_GET["action"] == 'setmod')
 {
-	$db->begin();
-	
-    $value=$_GET["value"];
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (code,libelle,description,statut)";
-    $sql.= " VALUES ('".$_GET["value"]."','".$_GET["value"]."','',1)";
+	$module=$_GET["module"];
+  $moduleid=$_GET["moduleid"];
+  $statut=$_GET["statut"];
+  
+  $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."expedition_methode WHERE rowid = ".$moduleid;
+  $resql = $db->query($sql);
+  if ($resql && ($statut == 1 || $_GET["action"] == 'setmod'))
+  {
+  	$db->begin();
+  	
+  	$sqlu = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+  	$sqlu.= " SET statut=1";
+  	$sqlu.= " WHERE rowid=".$moduleid;
+  	$result=$db->query($sqlu);
+  	if ($result) 
+    {
+		$db->commit();
+    }
+    else
+    {
+    	$db->rollback();
+    }
+  }
+  
+  if ($statut == 1 || $_GET["action"] == 'setmod')
+  {
+  	$db->begin();
+    
+    $sql = "INSERT INTO ".MAIN_DB_PREFIX."expedition_methode (rowid,code,libelle,description,statut)";
+    $sql.= " VALUES (".$moduleid.",'".$module."','".$module."','',1)";
     $result=$db->query($sql);
     if ($result) 
     {
@@ -140,6 +165,24 @@ if ($_GET["action"] == 'setmethod')
     {
     	$db->rollback();
     }
+  }
+  else if ($statut == 0)
+  {
+  	$db->begin();
+  	
+  	$sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode";
+  	$sql.= " SET statut=0";
+  	$sql.= " WHERE rowid=".$moduleid;
+  	$result=$db->query($sql);
+  	if ($result) 
+    {
+		$db->commit();
+    }
+    else
+    {
+    	$db->rollback();
+    }
+  }
 }
 
 if ($_GET["action"] == 'setmod')
@@ -147,7 +190,7 @@ if ($_GET["action"] == 'setmod')
     // \todo Verifier si module numerotation choisi peut etre activé
     // par appel methode canBeActivated
 
-	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["value"]);
+	dolibarr_set_const($db, "EXPEDITION_ADDON",$_GET["module"]);
 }
 
 
@@ -229,7 +272,7 @@ if(is_dir($dir))
 
 			$var=!$var;
 			print "<tr $bc[$var]><td>";
-			echo $module->name;
+			print $module->name;
 			print "</td><td>\n";
 
 			print $module->description;
@@ -240,13 +283,13 @@ if(is_dir($dir))
 			{
 				print img_tick();
 				print '</td><td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=0&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Disable").'</a>';
 
 			}
 			else
 			{
 				print '&nbsp;</td><td align="center">';
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=1&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmethod&amp;statut=1&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Activate").'</a>';
 			}
 
 			print '</td>';
@@ -259,7 +302,7 @@ if(is_dir($dir))
 			}
 			else
 			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$name.'">'.$langs->trans("Default").'</a>';
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;module='.$name.'&amp;moduleid='.$module->id.'">'.$langs->trans("Default").'</a>';
 			}
 			print '</td>';
 			
