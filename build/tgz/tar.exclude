@@ -9,6 +9,7 @@ doc/install
 doc/user
 document
 documents
+htdocs/conf/conf.php
 htdocs/avoir
 htdocs/document
 htdocs/documents
@@ -32,6 +33,7 @@ scripts/lolix
 CVS
 *~
 .#*
+.htaccess
 Thumbs.db
 dolibarr*.tar.gz
 dolibarr*.tgz
