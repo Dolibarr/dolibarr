@@ -1963,7 +1963,7 @@ class Adherent
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN)      $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
 		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD)    $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypté
 		if ($this->poste && $conf->global->LDAP_FIELD_TITLE)      $info[$conf->global->LDAP_FIELD_TITLE] = $this->poste;
-		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS)  $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->adresse && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->adresse;
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)           $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
 		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)       $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
 		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)     $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays;
@@ -1975,12 +1975,13 @@ class Adherent
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
 		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'%Y%m%d%H%M%SZ');
 
-		/*
-		$info["prnxFirstContribution"]=dolibarr_print_date($this->firstsubscription_date,'%Y%m%d%H%M%SZ');
-		$info["prnxLastContribution"]=dolibarr_print_date($this->lastsubscription_date,'%Y%m%d%H%M%SZ');
-		$info["prnxLastContributionPrice"]=$this->lastsubscription_amount;
-		$info["prnxStatus"]=$this->statut;
-		*/
+		if ($_ENV["PARINUX"])
+		{
+			$info["prnxFirstContribution"]=dolibarr_print_date($this->firstsubscription_date,'%Y%m%d%H%M%SZ');
+			$info["prnxLastContribution"]=dolibarr_print_date($this->lastsubscription_date,'%Y%m%d%H%M%SZ');
+			$info["prnxLastContributionPrice"]=$this->lastsubscription_amount;
+			$info["prnxStatus"]=$this->statut;
+		}
 		
 		return $info;
 	}	
