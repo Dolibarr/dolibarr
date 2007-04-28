@@ -103,7 +103,18 @@ if ($resql)
 		$obj = $db->fetch_object($resql);
 
 		$member = new Adherent($db);
-		$member->fetch($obj->rowid);
+		$result=$member->fetch($obj->rowid);
+		if ($result < 0)
+		{
+			dolibarr_print_error($db,$member->error);
+			exit;
+		}
+		$result=$member->fetch_subscriptions();
+		if ($result < 0)
+		{
+			dolibarr_print_error($db,$member->error);
+			exit;
+		}
 		
 		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->fullname;
 
