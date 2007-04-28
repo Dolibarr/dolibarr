@@ -757,11 +757,53 @@ class Adherent
     }
 
 
-/**
+    /**
+    		\brief 		Fonction qui récupére l'adhérent en donnant son rowid
+    		\return		int			<0 si KO, >0 si OK
+    */
+    function fetch_subscriptions()
+    {
+        global $langs;
+
+        $sql = "SELECT c.rowid, c.fk_adherent, c.cotisation, c.note, c.fk_bank,";
+        $sql.= " ".$this->db->pdate("c.tms")." as datem,";
+        $sql.= " ".$this->db->pdate("c.datec")." as datec,";
+        $sql.= " ".$this->db->pdate("c.dateadh")." as dateadh";
+        $sql.= " FROM ".MAIN_DB_PREFIX."cotisation as c";
+        $sql.= " WHERE c.fk_adherent = ".$this->id;
+        $sql.= " ORDER BY c.dateadh";
+		dolibarr_syslog("Adherent::fetch_subscriptions sql=".$sql);
+		
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $i=0;
+			while ($obj = $this->db->fetch_object($resql))
+			{
+				if ($i==0) $this->firstsubscription_date=$obj->dateadh;
+				$this->lastsubscription_date=$obj->dateadh;
+				$this->lastsubscription_amount=$obj->cotisation;
+
+				// TODO Completer avec records
+
+
+
+				$i++;
+			}
+			return 1;
+        }
+        else
+        {
+            $this->error=$this->db->error();
+			return -1;
+        }
+    }
+	
+	
+	/**
 		\brief      Fonction qui récupére les données optionelles de l'adhérent
 		\param	    rowid
-*/
-
+	*/
 	function fetch_optionals($rowid)
   {
     $tab=array();
@@ -1933,6 +1975,11 @@ class Adherent
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
 		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'%Y%m%d%H%M%SZ');
 
+		$info["prnxFirstContribution"]=dolibarr_print_date($this->firstsubscription_date,'%Y%m%d%H%M%SZ');
+		$info["prnxLastContribution"]=dolibarr_print_date($this->lastsubscription_date,'%Y%m%d%H%M%SZ');
+		$info["prnxLastContributionPrice"]=$this->lastsubscription_amount;
+		$info["prnxStatus"]=$this->statut;
+		
 		return $info;
 	}	
 

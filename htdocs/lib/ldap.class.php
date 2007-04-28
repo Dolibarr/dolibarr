@@ -928,8 +928,8 @@ class Ldap
 
 
    /**
-     * \brief récupère les attributs de l'utilisateur
-     * \param $user : utilisateur ldap
+     * 		\brief 	Récupère les attributs de l'utilisateur
+     * 		\param 	$user		Utilisateur ldap à lire
      */
     function fetch($user)
     {
@@ -966,8 +966,8 @@ class Ldap
 
         	ldap_free_result($this->result);
         }
-      }
-
+	}
+	
 
     // 2.6 helper methods
 
