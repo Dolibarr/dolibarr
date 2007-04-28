@@ -53,20 +53,10 @@ function info()
     	
       $texte = $langs->trans('PlutonNumRefModelDesc1')."<br>\n";
       
-      $texte.= 'Début année fiscale';
-      if ($conf->global->SOCIETE_FISCAL_MONTH_START)
+      $texte.= 'Matrice de disposition des objets (prefix,mois,année,compteur...)';
+      if ($conf->global->FACTURE_NUM_MATRICE)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
-      $texte.= 'Utiliser le préfix commerciale des tiers';
-      if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_USE_COMPANY_PREFIX.')<br>';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_MATRICE.')<br>';
       }
       else
       {
@@ -93,40 +83,10 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
-      $texte.= 'Nombre de chiffres sur le compteur';
-      if ($conf->global->FACTURE_NUM_QUANTIFY_METER)
+      $texte.= 'Début année fiscale';
+      if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_QUANTIFY_METER.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
-      $texte.= 'Délimiter le compteur de la date avec un tiret';
-      if ($conf->global->FACTURE_NUM_DELIMIT_METER)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_DELIMIT_METER.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
-      $texte.= 'Nombre de chiffres pour l\'année (1,2 ou 4)';
-      if ($conf->global->FACTURE_NUM_BIT_YEAR)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_BIT_YEAR.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
-      $texte.= 'Afficher le mois de création des factures';
-      if ($conf->global->FACTURE_VIEW_MONTH)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_VIEW_MONTH.')<br>';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')<br>';
       }
       else
       {
