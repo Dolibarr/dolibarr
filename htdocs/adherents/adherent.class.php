@@ -1975,10 +1975,12 @@ class Adherent
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
 		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'%Y%m%d%H%M%SZ');
 
+		/*
 		$info["prnxFirstContribution"]=dolibarr_print_date($this->firstsubscription_date,'%Y%m%d%H%M%SZ');
 		$info["prnxLastContribution"]=dolibarr_print_date($this->lastsubscription_date,'%Y%m%d%H%M%SZ');
 		$info["prnxLastContributionPrice"]=$this->lastsubscription_amount;
 		$info["prnxStatus"]=$this->statut;
+		*/
 		
 		return $info;
 	}	
