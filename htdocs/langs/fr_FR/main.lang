@@ -28,6 +28,7 @@ ErrorWrongValueForParameterX=Valeur incorrecte pour le paramètre %s
 ErrorNoRequestInError=Aucune requete en erreur
 ErrorServiceUnavailableTryLater=Service non disponible ou saturé actuellement. Réessayer plus tard.
 ErrorDuplicateField=Doublon dans un champ unique
+ErrorSomeErrorWereFoundRollbackIsDone=Des erreurs ont été trouvés. On rollback les modifications.
 SeeAbove=Voir ci-dessus
 HomeArea=Espace accueil
 LastConnexion=Dernière connexion

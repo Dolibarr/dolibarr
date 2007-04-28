@@ -28,6 +28,7 @@ ErrorWrongValueForParameterX=Wrong value for parameter %s
 ErrorNoRequestInError=No request in error
 ErrorServiceUnavailableTryLater=Service not available or busy for the moment. Try again later.
 ErrorDuplicateField=Duplicate value in a unique field
+ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. We rollback changes.
 SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Last connection
