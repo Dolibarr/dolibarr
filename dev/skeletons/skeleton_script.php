@@ -45,9 +45,12 @@ require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 //require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 
 
-// Parameters
+// Main
 $version='$Revision$';
+@set_time_limit(0);
 $error=0;
+
+$langs->load("main");
 
 
 print "***** $script_file ($version) *****\n";

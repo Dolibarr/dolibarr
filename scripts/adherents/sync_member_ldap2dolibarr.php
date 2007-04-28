@@ -36,29 +36,49 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-if (! isset($argv[1]) || ! is_numeric($argv[1])) {
-    print "Usage:  $script_file id_member_type\n";   
-    exit;
-}
-$typeid=$argv[1];
 
-// Recupere env dolibarr
+// Main
 $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+@set_time_limit(0);
+$error=0;
 
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
-$error=0;
+$langs->load("main");
 
 
 if ($argv[2]) $conf->global->LDAP_SERVER_HOST=$argv[2];
 
 print "***** $script_file ($version) *****\n";
-print 'DN='.$conf->global->LDAP_MEMBER_DN."\n";
+
+if (! isset($argv[1]) || ! is_numeric($argv[1])) {
+    print "Usage:  $script_file id_member_type\n";   
+    exit;
+}
+$typeid=$argv[1];
+
+print "\n";
+print "----- Synchronize all records from LDAP database:\n";
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
 print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
+print "----- To Dolibarr database:\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+print "pass=".eregi_replace('.','*',$conf->db->pass)."\n";
+print "database=".$conf->db->name."\n";
+print "\n";
+print "Press a key to confirm...\n";
+$input = trim(fgets(STDIN));
+
 
 if (! $conf->global->LDAP_MEMBER_DN)
 {
@@ -169,11 +189,11 @@ if ($result >= 0)
 			$member->typeid=$typeid;
 
 			// Creation membre
-			print $langs->trans("MemberCreate").' no '.$key.': '.$member->fullname;
+			print $langs->trans("MemberCreate").' # '.$key.': '.$member->fullname;
 			$member_id=$member->create();
 			if ($member_id > 0)
 			{
-				print ' --> '.$member_id;
+				print ' --> Created member id='.$member_id.' login='.$member->login;
 			}
 			else
 			{
@@ -210,12 +230,12 @@ if ($result >= 0)
 		
 		if (! $error)
 		{
-			print $langs->trans("NoErrorCommitIsDone")."\n";
+			print $langs->transnoentities("NoErrorCommitIsDone")."\n";
 			$db->commit();
 		}
 		else
 		{
-			print $langs->trans("SommeErrorWereFoundRollbackIsDone",$error)."\n";
+			print $langs->transnoentities("ErrorSomeErrorWereFoundRollbackIsDone",$error)."\n";
 			$db->rollback();
 		}
 	}

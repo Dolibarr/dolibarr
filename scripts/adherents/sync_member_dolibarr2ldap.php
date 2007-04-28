@@ -36,24 +36,45 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
+
+// Main
+$version='$Revision$';
+$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
+@set_time_limit(0);
+$error=0;
+
+require_once($path."../../htdocs/master.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+
+$langs->load("main");
+
+
+print "***** $script_file ($version) *****\n";
+
 if (! isset($argv[1]) || ! $argv[1]) {
     print "Usage: $script_file now\n";   
     exit;
 }
 $now=$argv[1];
 
-// Recupere env dolibarr
-$version='$Revision$';
-$path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
-
-require_once($path."../../htdocs/master.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-
-$error=0;
-
-
-print "***** $script_file ($version) *****\n";
+print "\n";
+print "----- Synchronize all records from Dolibarr database:\n";
+print "host=".$conf->db->host."\n";
+print "port=".$conf->db->port."\n";
+print "login=".$conf->db->user."\n";
+print "pass=".eregi_replace('.','*',$conf->db->pass)."\n";
+print "database=".$conf->db->name."\n";
+print "\n";
+print "----- To LDAP database:\n";
+print "host=".$conf->global->LDAP_SERVER_HOST."\n";
+print "port=".$conf->global->LDAP_SERVER_PORT."\n";
+print "login=".$conf->global->LDAP_ADMIN_DN."\n";
+print "pass=".eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)."\n";
+print "DN target=".$conf->global->LDAP_MEMBER_DN."\n";
+print "\n";
+print "Press a key to confirm...\n";
+$input = trim(fgets(STDIN));
 
 /*
 if (! $conf->global->LDAP_MEMBER_ACTIVE)
@@ -84,7 +105,7 @@ if ($resql)
 		$member = new Adherent($db);
 		$member->fetch($obj->rowid);
 		
-		print $langs->trans("UpdateMember")." rowid=".$member->id." ".$member->fullname;
+		print $langs->transnoentities("UpdateMember")." rowid=".$member->id." ".$member->fullname;
 
 		$info=$member->_load_ldap_info();
 		$dn=$member->_load_ldap_dn($info);
@@ -92,12 +113,12 @@ if ($resql)
 		$result=$ldap->update($dn,$info,$user);
 		if ($result > 0)
 		{
-			print " - ".$langs->trans("OK");
+			print " - ".$langs->transnoentities("OK");
 		}
 		else
 		{
 			$error++;
-			print " - ".$langs->trans("KO").' - '.$ldap->error;
+			print " - ".$langs->transnoentities("KO").' - '.$ldap->error;
 		}
 		print "\n";
 
