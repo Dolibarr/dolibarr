@@ -133,10 +133,10 @@ function info()
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
       
-      $texte.= 'Le compteur se remet à zéro en début d\'année ou chaque mois (1:année, 2:mois)';
-      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH)
+      $texte.= 'Le compteur se remet à zéro en début d\'année';
+      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH.')<br>';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR.')<br>';
       }
       else
       {
@@ -274,13 +274,11 @@ function info()
         // On récupère la valeur max (réponse immédiate car champ indéxé)
         $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
         $fisc=$prefix.$yy;
-        $current_month=$prefix.$yy.$mm;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $sql.= " WHERE facnumber like '${prefix}%'";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH == 1) $sql.= " AND facnumber like '${fisc}%'";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR_OR_MONTH == 2) $sql.= " AND facnumber like '${current_month}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " AND facnumber like '${fisc}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
