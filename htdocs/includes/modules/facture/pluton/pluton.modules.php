@@ -50,40 +50,45 @@ function info()
     {
     	global $conf,$langs;
 
-		$langs->load("bills");
+		  $langs->load("bills");
+		  
+		  $form = new Form($db);
     	
       $texte = $langs->trans('PlutonNumRefModelDesc1')."<br>\n";
+      $texte.= '<table class="nobordernopadding" width="100%">';
       
-      $texte.= 'Matrice de disposition des objets (prefix,mois,année,compteur...)';
-      if ($conf->global->FACTURE_NUM_MATRICE)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_MATRICE.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
+      // Paramétrage de la matrice
+      $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,année,compteur...)</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="updateMatrice">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->FACTURE_NUM_MATRICE.'"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
       
-      $texte.= 'Préfix des factures';
-      if ($conf->global->FACTURE_NUM_PREFIX)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_PREFIX.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
+      // Paramétrage du prefix des factures
+      $texte.= '<tr><td>Préfix des factures</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="updatePrefixFacture">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
       
-      $texte.= 'Préfix des avoirs';
-      if ($conf->global->AVOIR_NUM_PREFIX)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->AVOIR_NUM_PREFIX.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
+      // Paramétrage du prefix des avoirs
+      $texte.= '<tr><td>Préfix des avoirs</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="updatePrefixAvoir">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
       
+      // On détermine un offset sur le compteur
+      $texte.= '<tr><td>Un offset est appliqué sur le compteur</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="setOffset">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
+  /*    
       $texte.= 'Début année fiscale';
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
@@ -93,37 +98,27 @@ function info()
       {
       	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
       }
+  */    
+      // On défini si le compteur se remet à zero en debut d'année
+      $texte.= '<tr><td>Le compteur se remet à zéro en début d\'année</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="setNumRestart">';
+      $texte.= '<td align="right">';
+      $texte.= $form->selectyesnonum('numrestart',$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR);
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
       
-      $texte.= 'Le compteur se remet à zéro en début d\'année';
-      if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
+      // On défini si le compteur des avoirs s'incrémente avec les factures
+      $texte.= '<tr><td>La numérotation des avoirs s\'incrémente avec les factures</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="setNumWithInvoice">';
+      $texte.= '<td align="right">';
+      $texte.= $form->selectyesnonum('numwithinvoice',$conf->global->AVOIR_NUM_WITH_INVOICE);
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
       
-      $texte.= 'Un offset est appliqué sur le compteur';
-      if ($conf->global->FACTURE_NUM_DELTA)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->FACTURE_NUM_DELTA.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
-      $texte.= 'La numérotation des avoirs s\'incrémente avec les factures';
-      if ($conf->global->AVOIR_NUM_WITH_INVOICE)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->AVOIR_NUM_WITH_INVOICE.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-      
+      $texte.= '</table><br>';
+
       return $texte;
     }
 
