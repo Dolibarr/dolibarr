@@ -125,7 +125,7 @@ if ($result)
       print '<td>';
       if ($obj->type == 'yesno')
 	{
-	  $form->selectyesnonum('constvalue',$obj->value);
+	  print $form->selectyesnonum('constvalue',$obj->value);
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
 	}

@@ -213,7 +213,7 @@ if ($_GET["action"] == 'create')
     
     print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
     $html=new Form($db);
-    $html->selectyesno("public",1,1);
+    print $html->selectyesno("public",1,1);
     print "</td></tr>\n";
     
     print "<tr>".'<td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40"></td></tr>';
@@ -293,7 +293,7 @@ if ($_GET["rowid"] && $_GET["action"] == 'edit')
     
     print "<tr><td>".$langs->trans("PublicDonation")."</td><td>";
     $html=new Form($db);
-    $html->selectyesno("public",1,1);
+    print $html->selectyesno("public",1,1);
     print "</td>";
     print "</tr>\n";
     

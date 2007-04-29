@@ -451,7 +451,7 @@ if ($_GET["id"])
             }
             elseif ($fieldlist[$field] == 'recuperableonly') {
                 print '<td>';
-                $html->selectyesno('recuperableonly','',1);
+                print $html->selectyesno('recuperableonly','',1);
                 print '</td>';
             }
             elseif ($fieldlist[$field] == 'nbjour') {
@@ -462,7 +462,7 @@ if ($_GET["id"])
             }
             elseif ($fieldlist[$field] == 'fdm') {
                 print '<td>';
-                $html->selectyesno('fdm','',1);
+                print $html->selectyesno('fdm','',1);
                 print '</td>';
             }
             elseif ($fieldlist[$field] == 'taux') {

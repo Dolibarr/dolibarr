@@ -129,7 +129,7 @@ print '<input type="hidden" name="action" value="update">';
 print '<input type="hidden" name="rowid" value="'.$rowid.'">';
 print '<input type="hidden" name="constname" value="ADHERENT_MAIL_REQUIRED">';
 print "<tr $bc[$var] class=value><td>".$langs->trans("AdherentMailRequired").'</td><td>';
-$form->selectyesnonum('constvalue',$conf->global->ADHERENT_MAIL_REQUIRED);
+print $form->selectyesnonum('constvalue',$conf->global->ADHERENT_MAIL_REQUIRED);
 print '</td><td align="center" width="80">';
 print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
 print "</td></tr>\n";
@@ -144,7 +144,7 @@ if ($conf->banque->enabled)
     print '<input type="hidden" name="rowid" value="'.$rowid.'">';
     print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
     print "<tr $bc[$var] class=value><td>".$langs->trans("AddSubscriptionIntoAccount").'</td><td>';
-    $form->selectyesnonum('constvalue',$conf->global->ADHERENT_BANK_USE);
+    print $form->selectyesnonum('constvalue',$conf->global->ADHERENT_BANK_USE);
     print '</td><td align="center" width="80">';
     print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
     print "</td></tr>\n";
@@ -297,7 +297,7 @@ function form_constantes($tableau){
       print '<td>';
       if ($obj->type == 'yesno')
 	{
-	  $form->selectyesnonum('constvalue',$obj->value);
+	  print $form->selectyesnonum('constvalue',$obj->value);
 	  print '</td><td>';
 	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
 	}

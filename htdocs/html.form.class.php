@@ -1200,7 +1200,7 @@ class Form
     function select_YesNo($selected='',$htmlname='yesno')
     {
         global $langs;
-        print '<select class="flat" name="'.$htmlname.'">';
+        $resultyesno = '<select class="flat" name="'.$htmlname.'">';
 		$options = array(
 					'-1'=>'&nbsp;',
 					'0'=>$langs->trans("No"),
@@ -1210,15 +1210,16 @@ class Form
         {
             if ($selected == $id)
             {
-                print '<option value="'.$id.'" selected="true">'.$value;
+                $resultyesno .= '<option value="'.$id.'" selected="true">'.$value;
             }
             else
             {
-                print '<option value="'.$id.'">'.$value;
+                $resultyesno .= '<option value="'.$id.'">'.$value;
             }
-            print '</option>';
+            $resultyesno .= '</option>';
         }
-        print '</select>';
+        $resultyesno .= '</select>';
+        return $resultyesno;
     }
     
     /**
@@ -2626,18 +2627,19 @@ class Form
         $no="0";
     }
 
-    print '<select class="flat" name="'.$name.'">'."\n";
+    $resultyesno = '<select class="flat" name="'.$name.'">'."\n";
     if (("$value" == 'yes') || ($value == 1))
     {
-        print '<option value="'.$yes.'" selected="true">'.$langs->trans("yes").'</option>'."\n";
-        print '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
+        $resultyesno .= '<option value="'.$yes.'" selected="true">'.$langs->trans("yes").'</option>'."\n";
+        $resultyesno .= '<option value="'.$no.'">'.$langs->trans("no").'</option>'."\n";
     }
     else
     {
-        print '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
-        print '<option value="'.$no.'" selected="true">'.$langs->trans("no").'</option>'."\n";
+        $resultyesno .= '<option value="'.$yes.'">'.$langs->trans("yes").'</option>'."\n";
+        $resultyesno .= '<option value="'.$no.'" selected="true">'.$langs->trans("no").'</option>'."\n";
     }
-    print '</select>'."\n";
+    $resultyesno .= '</select>'."\n";
+    return $resultyesno;
   }
 	
   /**
@@ -2647,7 +2649,8 @@ class Form
    */
   function selectyesnonum($name,$value='')
   {
-    $this->selectyesno($name,$value,1);
+    $resultyesno = $this->selectyesno($name,$value,1);
+    return $resultyesno;
   }
 	
   /**
@@ -3071,24 +3074,25 @@ class Form
     	                12=>"December"
     	                );
     	                
-    	print '<select class="flat" name="'.$htmlname.'">';
+    	$select_month = '<select class="flat" name="'.$htmlname.'">';
     	if ($useempty) 
       {
-        print '<option value="0">&nbsp;</option>';
+        $select_month .= '<option value="0">&nbsp;</option>';
       }
     	foreach ($month as $key => $val)
     	{
     		if ($selected == $val)
     		{
-    			print '<option val="'.$key.'" selected="true">';
+    			$select_month .= '<option val="'.$key.'" selected="true">';
     		}
     		else
     		{
-    			print '<option val="'.$key.'">';
+    			$select_month .= '<option val="'.$key.'">';
     		}
-        print $langs->trans($val);
+        $select_month .= $langs->trans($val);
       }
-      print '</select>';
+      $select_month .= '</select>';
+      return $select_month;
     }
 	
 }
