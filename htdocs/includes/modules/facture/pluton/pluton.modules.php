@@ -40,6 +40,7 @@ class mod_facture_pluton extends ModeleNumRefFactures
 {
 	var $prefixinvoice='';
 	var $prefixcreditnote='';
+	var $facturenummatrice='';
 	var $error='';
 
     /**     \brief      Renvoi la description du modele de numérotation
@@ -133,35 +134,127 @@ function info()
     {
     	global $conf;
     	
-    	// On récupère le préfix
-    	if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
-    	{
-    		$prefix = 'PREF';
-    	}
-    	else if ($conf->global->FACTURE_NUM_PREFIX)
-    	{
-    		$prefix = $conf->global->FACTURE_NUM_PREFIX;
-    	}
-    	
-    	// On récupère l'année en cours
-    	$numbityear = 4 - $conf->global->FACTURE_NUM_BIT_YEAR;
-    	$yy = substr(strftime("%Y",time()),$numbityear);
-    	
-    	// On récupère le mois en cours
-    	if ($conf->global->FACTURE_VIEW_MONTH) $mm = strftime("%m",time());
-    	
-    	// On délimite le compteur de la date avec un tiret
-    	if ($conf->global->FACTURE_NUM_DELIMIT_METER) $delimit = '-';
+    	$this->prefixinvoice     = $conf->global->FACTURE_NUM_PREFIX;
+        $this->prefixcreditnote  = $conf->global->AVOIR_NUM_PREFIX;
+        $this->facturenummatrice = $conf->global->FACTURE_NUM_MATRICE;
+        
+        if ($this->facturenummatrice != '')
+        {
+        	$resultatMatrice = Array();
+        	$numMatrice = '';
+        	
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: FA pour facture et AV pour avoir), COM : prefix du client
+        	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
+        	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
+        	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
+        	$matriceTiret    = "[-]{1}"; // on recherche si il y a des tirets de séparation
+        	
+        	$matrice         = Array('prefix'=>$matricePrefix,
+        	                         'year'=>$matriceYear,
+        	                         'month'=>$matriceMonth,
+        	                         'counter'=>$matriceCounter
+        	                         );
+        	
+        	// on détermine l'emplacement des tirets
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->facturenummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	
+        	$j = 0;
+        	
+        	// on détermine les objets de la matrice
+        	for ($i = 0; $i < count($resultTiret); $i++)
+        	{
+        		foreach($resultTiret[$i] as $idResultTiret => $valueResultTiret)
+        		{
+        			// Ajout des tirets
+        		  if ($j != $resultTiret[$i][1])
+        		  {
+        		  	$numMatrice .= '-';
+        		  	$j = $resultTiret[$i][1];
+        		  }
+        			foreach($matrice as $idMatrice => $valueMatrice)
+        			{
+        			$resultCount = eregi(''.$valueMatrice.'',$valueResultTiret,$resultatMatrice);
+        			if ($resultCount)
+        			{
+        				// On récupère le préfix utilisé
+        				if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'COM')
+        				{
+        					if ($objsoc->prefix_comm)
+        					{
+        						$prefix = $objsoc->prefix_comm;
+        					}
+        					else
+        					{
+        						$prefix = 'COM';
+        					}
+        					$numMatrice .= $prefix;
+        				}
+        				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
+        				{
+        					// Les avoirs peuvent suivre la numérotation des factures
+        					if (!$conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
+        					{
+        						$prefix = $this->prefixcreditnote;
+        					}
+        					else
+        					{
+        						$prefix = $this->prefixinvoice;
+        					}
+        					$numMatrice .= $prefix;
+        				}
+        				else if ($idMatrice == 'year')
+        				{
+        					// On récupère le nombre de chiffres pour l'année
+        					$numbityear = $resultCount;
+        					// On défini le mois du début d'année fiscale
+        					$fiscal_current_month = date("n");
+        					
+        					if (is_object($facture) && $facture->date)
+                  {
+        	          $create_month = strftime("%m",$facture->date);
+                  }
+                  else
+                  {
+        	          $create_month = $fiscal_current_month;
+                  }
+
+                  // On change d'année fiscal si besoin
+                  if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+                  {
+        	          $yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
+                  }
+                  else
+                  {
+        	          $yy = substr(strftime("%Y",time()),$numbityear);
+                  }
+        					$numMatrice .= $yy;
+        				}
+        				else if ($idMatrice == 'month')
+        				{
+        					// On récupère le mois si besoin
+        					$mm = strftime("%m",time());
+        					$numMatrice .= $mm;
+        				}
+        				else if ($idMatrice == 'counter')
+        				{
+        					// On récupère le nombre de chiffres pour le compteur
+        					$numbitcounter = $resultCount;
+        				}
+        			}
+        		}
+        	}
+        }
     	
     	// On récupère le nombre de chiffres du compteur
-    	$arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
+    	$arg = '%0'.$numbitcounter.'s';
       $num = sprintf($arg,1);
       
       // Construction de l'exemple de numérotation
-    	$numExample = $prefix.$yy.$mm.$delimit.$num;
+    	$numExample = $numMatrice.$num;
     	
     	return $numExample;
     }
+  }
 
 	/**		\brief      Renvoi prochaine valeur attribuée
 	*      	\param      objsoc      Objet société
@@ -172,73 +265,137 @@ function info()
     {
         global $db,$conf;
         
-        $this->prefixinvoice    = $conf->global->FACTURE_NUM_PREFIX;
-        $this->prefixcreditnote = $conf->global->AVOIR_NUM_PREFIX;
+        $this->prefixinvoice     = $conf->global->FACTURE_NUM_PREFIX;
+        $this->prefixcreditnote  = $conf->global->AVOIR_NUM_PREFIX;
+        $this->facturenummatrice = $conf->global->FACTURE_NUM_MATRICE;
         
-        // On récupère le préfix
-        if ($conf->global->FACTURE_USE_COMPANY_PREFIX)
+        if ($this->facturenummatrice != '')
         {
-        	if ($objsoc->prefix_comm)
+        	$resultatMatrice = Array();
+        	$numMatrice = Array();
+        	
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: FA pour facture et AV pour avoir), COM : prefix du client
+        	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
+        	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
+        	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
+        	$matriceTiret    = "[-]{1}"; // on recherche si il y a des tirets de séparation
+        	
+        	$matrice         = Array('prefix'=>$matricePrefix,
+        	                         'year'=>$matriceYear,
+        	                         'month'=>$matriceMonth,
+        	                         'counter'=>$matriceCounter
+        	                         );
+        	
+        	// on détermine l'emplacement des tirets
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->facturenummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	
+        	$j = 0;
+        	$k = 0;
+        	
+        	// on détermine les objets de la matrice
+        	for ($i = 0; $i < count($resultTiret); $i++)
         	{
-        		$prefix = $objsoc->prefix_comm;
-        	}
-        	else
-        	{
-        		$prefix = 'PREF';
-        	}
-        }
-        else if ($facture->type == 2)
-        {
-        	// Les avoirs peuvent suivre la numérotation des factures
-        	if ($conf->global->AVOIR_NUM_WITH_INVOICE)
-        	{
-        		$prefix = $this->prefixinvoice;
-        	}
-        	else
-        	{
-        		$prefix=$this->prefixcreditnote;
-        	}
-        }
-        else
-        {
-        	$prefix=$this->prefixinvoice;
-        }
-        
-        // On défini le mois du début d'année fiscale
-        $fiscal_current_month = date("n");
-        
-        if (is_object($facture) && $facture->date)
-        {
-        	$create_month = strftime("%m",$facture->date);
-        }
-        else
-        {
-        	$create_month = $fiscal_current_month;
-        }
-        
-        $numbityear = 4 - $conf->global->FACTURE_NUM_BIT_YEAR;
+        		foreach($resultTiret[$i] as $idResultTiret => $valueResultTiret)
+        		{
+        			// Ajout des tirets
+        		  if ($j != $resultTiret[$i][1])
+        		  {
+        		  	$numMatrice[$k] = '-';
+        		  	$searchLast .= '-';
+        		  	$j = $resultTiret[$i][1];
+        		  	$k++;
+        		  }
+        			foreach($matrice as $idMatrice => $valueMatrice)
+        			{
+        			$resultCount = eregi(''.$valueMatrice.'',$valueResultTiret,$resultatMatrice);
+        			if ($resultCount)
+        			{
+        				// On récupère le préfix utilisé
+        				if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'COM')
+        				{
+        					if ($objsoc->prefix_comm)
+        					{
+        						$prefix = $objsoc->prefix_comm;
+        					}
+        					else
+        					{
+        						$prefix = 'COM';
+        					}
+        					$numMatrice[$k] = '$prefix';
+        					$searchLast .= $prefix;
+        					$k++;
+        				}
+        				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
+        				{
+        					// Les avoirs peuvent suivre la numérotation des factures
+        					if (!$conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
+        					{
+        						$prefix = $this->prefixcreditnote;
+        					}
+        					else
+        					{
+        						$prefix = $this->prefixinvoice;
+        					}
+        					$numMatrice[$k] = '$prefix';
+        					$searchLast .= $prefix;
+        					$k++;
+        				}
+        				else if ($idMatrice == 'year')
+        				{
+        					// On récupère le nombre de chiffres pour l'année
+        					$numbityear = $resultCount;
+        					// On défini le mois du début d'année fiscale
+        					$fiscal_current_month = date("n");
+        					
+        					if (is_object($facture) && $facture->date)
+                  {
+        	          $create_month = strftime("%m",$facture->date);
+                  }
+                  else
+                  {
+        	          $create_month = $fiscal_current_month;
+                  }
 
-        // On change d'année fiscal si besoin
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
-        {
-        	$yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
+                  // On change d'année fiscal si besoin
+                  if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+                  {
+        	          $yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
+                  }
+                  else
+                  {
+        	          $yy = substr(strftime("%Y",time()),$numbityear);
+                  }
+        					$numMatrice[$k] = '$yy';
+        					$searchLast .= $yy;
+        					$k++;
+        				}
+        				else if ($idMatrice == 'month')
+        				{
+        					// On récupère le mois si besoin
+        					$mm = strftime("%m",time());
+        					$numMatrice[$k] = '$mm';
+        					$searchLast .= $mm;
+        					$k++;
+        				}
+        				else if ($idMatrice == 'counter')
+        				{
+        					// On récupère le nombre de chiffres pour le compteur
+        					$numbitcounter = $resultCount;
+        					$numMatrice[$k] = '$num';
+        					$k++;
+        				}
+        			}
+        		}
+        	}
         }
-        else
-        {
-        	$yy = substr(strftime("%Y",time()),$numbityear);
-        }
-        
-        // Si besoin on récupère le mois en cours
-        if ($conf->global->FACTURE_VIEW_MONTH) $mm = strftime("%m",time());
 
         // On récupère la valeur max (réponse immédiate car champ indéxé)
-        $posindice = $conf->global->FACTURE_NUM_QUANTIFY_METER;
-        $fisc=$prefix.$yy;
+        $posindice  = $numbitcounter;
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $sql.= " WHERE facnumber like '${prefix}%'";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " AND facnumber like '${fisc}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " AND facnumber like '${searchLast}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -247,7 +404,7 @@ function info()
         }
         
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$prefix.'[0-9][0-9]',$fayy))
+        if (eregi('^'.$searchLast.'',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
@@ -270,17 +427,23 @@ function info()
         {
         	$prefix = $this->prefixcreditnote;
         }
-
-        // On délimite le compteur de la date avec un tiret
-    	  if ($conf->global->FACTURE_NUM_DELIMIT_METER) $delimit = '-';
     	  
-    	  // On détermine le nombre de chiffres du compteur
-        $arg = '%0'.$conf->global->FACTURE_NUM_QUANTIFY_METER.'s';
+    	  // On applique le nombre de chiffres du compteur
+        $arg = '%0'.$numbitcounter.'s';
         $num = sprintf($arg,$max+1);
+        $numFinal = '';
         
-        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$prefix.$yy.$mm.$delimit.$num);
+        foreach($numMatrice as $objetMatrice)
+        {
+        	if ($objetMatrice == '-') $numFinal .= $objetMatrice;
+        	if ($objetMatrice == '$prefix') $numFinal .= $prefix;
+        	if ($objetMatrice == '$yy') $numFinal .= $yy;
+        	if ($objetMatrice == '$mm') $numFinal .= $mm;
+        	if ($objetMatrice == '$num') $numFinal .= $num;
+        } 
         
-        return  $prefix.$yy.$mm.$delimit.$num;
+        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$numFinal);
+        return  $numFinal;
     }
     
   
@@ -293,7 +456,7 @@ function info()
     {
         return $this->getNextValue($objsoc,$facture);
     }
-    
+  } 
 }    
 
 ?>
