@@ -62,7 +62,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updateMatrice">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->FACTURE_NUM_MATRICE.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       // Paramétrage du prefix des factures
@@ -70,7 +70,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updatePrefixFacture">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       // Paramétrage du prefix des avoirs
@@ -78,7 +78,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updatePrefixAvoir">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       // On détermine un offset sur le compteur
@@ -86,7 +86,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffset">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       // On défini si le debut d'année fiscale
@@ -95,7 +95,7 @@ function info()
       $texte.= '<input type="hidden" name="action" value="setFiscalMonth">';
       $texte.= '<td align="right">';
       $texte.= $form->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonth',1);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
    
       // On défini si le compteur se remet à zero en debut d'année
@@ -104,7 +104,7 @@ function info()
       $texte.= '<input type="hidden" name="action" value="setNumRestart">';
       $texte.= '<td align="right">';
       $texte.= $form->selectyesnonum('numrestart',$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       // On défini si le compteur des avoirs s'incrémente avec les factures
@@ -113,7 +113,7 @@ function info()
       $texte.= '<input type="hidden" name="action" value="setNumWithInvoice">';
       $texte.= '<td align="right">';
       $texte.= $form->selectyesnonum('numwithinvoice',$conf->global->AVOIR_NUM_WITH_INVOICE);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
       $texte.= '</table><br>';
