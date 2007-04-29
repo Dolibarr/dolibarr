@@ -2999,7 +2999,7 @@ class Form
 		return 1;
 	}
 	
-	    /**
+	  /**
      *    \brief      Retourne la liste des modéles d'export
      *    \param      selected          Id modéle présélectionné
      *    \param      htmlname          Nom de la zone select
@@ -3044,6 +3044,51 @@ class Form
         else {
             dolibarr_print_error($this->db);
         }
+    }
+    
+    /**
+     *    \brief      Retourne la liste des mois
+     *    \param      selected          Id mois présélectionné
+     *    \param      htmlname          Nom de la zone select
+     *    \param      useempty          Affiche valeur vide dans liste
+     */
+    function select_month($selected='',$htmlname='monthid',$useempty=0)
+    {
+    	global $langs;
+      $langs->load("main");
+      
+    	$month = array (1=>"January",
+    	                2=>"February",
+    	                3=>"March",
+    	                4=>"April",
+    	                5=>"May",
+    	                6=>"June",
+    	                7=>"July",
+    	                8=>"August",
+    	                9=>"September",
+    	                10=>"October",
+    	                11=>"November",
+    	                12=>"December"
+    	                );
+    	                
+    	print '<select class="flat" name="'.$htmlname.'">';
+    	if ($useempty) 
+      {
+        print '<option value="0">&nbsp;</option>';
+      }
+    	foreach ($month as $key => $val)
+    	{
+    		if ($selected == $val)
+    		{
+    			print '<option val="'.$key.'" selected="true">';
+    		}
+    		else
+    		{
+    			print '<option val="'.$key.'">';
+    		}
+        print $langs->trans($val);
+      }
+      print '</select>';
     }
 	
 }

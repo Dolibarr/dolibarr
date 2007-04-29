@@ -82,23 +82,22 @@ function info()
       $texte.= '</tr></form>';
       
       // On détermine un offset sur le compteur
-      $texte.= '<tr><td>Un offset est appliqué sur le compteur</td>';
+      $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffset">';
       $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
-  /*    
-      $texte.= 'Début année fiscale';
-      if ($conf->global->SOCIETE_FISCAL_MONTH_START)
-      {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')<br>';
-      }
-      else
-      {
-      	$texte.= ' ('.$langs->trans('IsNotDefined').')<br>';
-      }
-  */    
+      
+      // On défini si le debut d'année fiscale
+      $texte.= '<tr><td>Début d\'année fiscale</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="setFiscalMonth">';
+      $texte.= '<td align="right">';
+      $texte.= $form->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonth',1);
+      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("modify").'" name="Button"></td>';
+      $texte.= '</tr></form>';
+   
       // On défini si le compteur se remet à zero en debut d'année
       $texte.= '<tr><td>Le compteur se remet à zéro en début d\'année</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
