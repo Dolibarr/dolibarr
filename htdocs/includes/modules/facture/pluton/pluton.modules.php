@@ -241,7 +241,7 @@ function info()
     	
     	// On récupère le nombre de chiffres du compteur
     	$arg = '%0'.$numbitcounter.'s';
-      $num = sprintf($arg,1);
+      $num = sprintf($arg,$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA:1);
       
       // Construction de l'exemple de numérotation
     	$numExample = $numMatrice.$num;
@@ -440,7 +440,7 @@ function info()
         else if (!eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
         {
         	// on applique le delta une seule fois
-        	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA:0;
+        	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;
         }
         else
         {
