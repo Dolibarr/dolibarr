@@ -339,7 +339,7 @@ function info()
         					// On récupère le nombre de chiffres pour l'année
         					$numbityear = $resultCount;
         					// On défini le mois du début d'année fiscale
-        					$fiscal_current_month = date("n");
+        					$current_month = date("n");
         					
         					if (is_object($facture) && $facture->date)
                   {
@@ -347,11 +347,11 @@ function info()
                   }
                   else
                   {
-        	          $create_month = $fiscal_current_month;
+        	          $create_month = $current_month;
                   }
 
                   // On change d'année fiscal si besoin
-                  if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+                  if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
                   {
         	          $yy = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")+1)),$numbityear);
                   }
