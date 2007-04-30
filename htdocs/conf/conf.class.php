@@ -243,6 +243,16 @@ class Conf
 		$this->service->dir_temp  =DOL_DATA_ROOT."/produit/temp";
 		// Module stock
 		$this->stock->enabled=defined("MAIN_MODULE_STOCK")?MAIN_MODULE_STOCK:0;
+		
+		// Module droipret
+		$this->droitpret->enabled=defined("MAIN_MODULE_DROITPRET")?MAIN_MODULE_DROITPRET:0;
+		$this->droitpret->cat=defined('DROITPRET_CAT')?DROITPRET_CAT:'';
+		$this->droitpret->cat=defined('DROITPRET_MAIL')?DROITPRET_MAIL:'';
+		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
+
+		// Module menuDb
+		$this->menudb->enabled=defined("MAIN_MODULE_MENUDB")?MAIN_MODULE_MENUDB:0;
+		
 		// Module code barre
 		$this->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;
 		// Module categorie
