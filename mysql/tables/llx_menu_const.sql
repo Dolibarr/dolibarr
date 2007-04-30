@@ -1,0 +1,33 @@
+-- ========================================================================
+-- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ========================================================================
+
+
+CREATE TABLE `llx_menu_const` (
+  `rowid` int(11) NOT NULL auto_increment,
+  `fk_menu` int(11) NOT NULL,
+  `fk_constraint` int(11) NOT NULL,
+  `user` tinyint(4) NOT NULL default '2',
+  PRIMARY KEY  (`rowid`),
+  KEY `fk_menu` (`fk_menu`),
+  KEY `fk_constraint` (`fk_constraint`)
+) type=innodb;
+
