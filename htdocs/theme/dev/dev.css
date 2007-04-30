@@ -42,29 +42,38 @@ div.body
   background: #dee7ec; 
 }
 
-div.fiche
-{
-  display: block;
-  position: absolute;
-  background: #dee7ec; 
-  top: 28px;
-  margin-right: 6px;
-}
-
 div.vmenuplusfiche
 {
-    float: left; 
-    margin-right: 6px;
+    top: auto;
+    left: auto;
+    display: block;
+    margin-right: 13px;
+    margin-left: 1px;
+    margin-top: 10px;
+    
 }
 
 div.vmenu
 {
-  float: left;
-  display: block;
-  margin-right: 2px;
-  padding: 0px;
-  padding-bottom: 6px;
-  width: 160px;
+    float: left;
+    margin-right: 2px;
+    padding: 0px;
+    padding-bottom: 0px;
+    width: 160px;
+}
+
+div.fiche
+{
+    float: right top;
+    display: block;
+    
+    margin-left: 180px;
+    width:auto;
+}
+
+* html div.fiche
+{
+	width:800px;	
 }
 
 a

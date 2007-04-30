@@ -711,11 +711,6 @@ function left_menu($menu_array, $help_url='', $form_search='')
     print "\n";
     print "</div>\n";
     print "<!-- Fin left vertical menu -->\n";
-
-    print "\n";
-    print '</div>'."\n";
-    print '<div class="vmenuplusfiche">'."\n";
-    print "\n";
     
     print '<!-- fiche -->'."\n";
     print '<div class="fiche">'."\n";

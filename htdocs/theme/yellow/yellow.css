@@ -88,13 +88,17 @@ select.flat
 
 div.vmenuplusfiche
 {
-    float: left;
-    margin-right: 6px;
+    top: auto;
+    left: auto;
+    display: block;
+    margin-right: 13px;
+    margin-left: 1px;
+    margin-top: 10px;
+    
 }
 
 div.vmenu
 {
-    display:block;
     float: left;
     margin-right: 2px;
     padding: 0px;
@@ -104,13 +108,17 @@ div.vmenu
 
 div.fiche
 {
-    position: absolute;
+    float: right top;
     display: block;
-    top: 28px;
-    margin-right: 6px;
-    margin-top: 0px;
+    
+    margin-left: 180px;
+    width:auto;
 }
 
+* html div.fiche
+{
+	width:800px;	
+}
 
 /*
  *   Menu superieur et 1ere ligne tableau

@@ -113,20 +113,16 @@ div.vmenuplusfiche
 {
     top: auto;
     left: auto;
-    position: static;
-    float: left;
     display: block;
-    margin-right: 6px;
+    margin-right: 13px;
     margin-left: 1px;
+    margin-top: 10px;
+    
 }
 
 div.vmenu
 {
-    top: auto;
-    left: auto;
-    position: relative;
-    float: top;
-    display: block;
+    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -135,16 +131,16 @@ div.vmenu
 
 div.fiche
 {
-    top: 28px;
-    left: auto;
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
-?>
-    float: top;
+    float: right top;
     display: block;
-    margin-right: 6px;
-    margin-top: 0px;
+    
+    margin-left: 180px;
+    width:auto;
+}
+
+* html div.fiche
+{
+	width:800px;	
 }
 
 
