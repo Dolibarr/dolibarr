@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -183,42 +184,119 @@ else
 }
 
 
-$prods = $c->get_products ();
-if ($prods < 0)
+if($c->type == 0)
 {
-  dolibarr_print_error();
-}
-else
-{
-	print "<br>";
-	print "<table class='noborder' width='100%'>\n";
-	print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
-	
-	if (sizeof ($prods) > 0)
+
+	$prods = $c->get_type ("product","Product");
+	if ($prods < 0)
 	{
-		$i = 0;
-		$var=true;
-		foreach ($prods as $prod)
-		{
-			$i++;
-			$var=!$var;
-			print "\t<tr ".$bc[$var].">\n";
-			print '<td nowrap="nowrap" valign="top">';
-			if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
-        	else print img_object($langs->trans("ShowProduct"),"product");
-			print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
-			print '<td valign="top">'.$prod->libelle."</td>\n";
-			print '<td valign="top">'.$prod->description."</td>\n";
-			print "</tr>\n";
-		}
+	  dolibarr_print_error();
 	}
 	else
 	{
-		print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print "<tr class='liste_titre'><td colspan='3'>".$langs->trans("ProductsAndServices")."</td></tr>\n";
+		
+		if (sizeof ($prods) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($prods as $prod)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td nowrap="nowrap" valign="top">';
+				if ($prod->type == 1) print img_object($langs->trans("ShowService"),"service");
+	        	else print img_object($langs->trans("ShowProduct"),"product");
+				print " <a href='".DOL_URL_ROOT."/product/fiche.php?id=".$prod->id."'>".$prod->ref."</a></td>\n";
+				print '<td valign="top">'.$prod->libelle."</td>\n";
+				print '<td valign="top">'.$prod->description."</td>\n";
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+		}
+		print "</table>\n";
 	}
-	print "</table>\n";
 }
 
+if($c->type == 1)
+{
+	$socs = $c->get_type ("societe","Fournisseur");
+	if ($socs < 0)
+	{
+	  dolibarr_print_error();
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print "<tr class='liste_titre'><td>".$langs->trans("Suppliers")."</td></tr>\n";
+		
+		if (sizeof ($socs) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($socs as $soc)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td nowrap="nowrap" valign="top">';
+				print img_object($langs->trans("ShowSuppliers"),"company");
+				print " <a href='".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+	
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+		}
+		print "</table>\n";
+	}
+}
+
+if($c->type == 2)
+{
+	$socs = $c->get_type ("societe","Societe");
+	if ($socs < 0)
+	{
+	  dolibarr_print_error();
+	}
+	else
+	{
+		print "<br>";
+		print "<table class='noborder' width='100%'>\n";
+		print "<tr class='liste_titre'><td>".$langs->trans("Commercial")."</td></tr>\n";
+		
+		if (sizeof ($socs) > 0)
+		{
+			$i = 0;
+			$var=true;
+			foreach ($socs as $soc)
+			{
+				$i++;
+				$var=!$var;
+				print "\t<tr ".$bc[$var].">\n";
+				print '<td nowrap="nowrap" valign="top">';
+				print img_object($langs->trans("ShowCompany"),"company");
+				print " <a href='".DOL_URL_ROOT."/fourn/fiche.php?socid=".$soc->id."'>".$soc->nom."</a></td>\n";
+	
+				print "</tr>\n";
+			}
+		}
+		else
+		{
+			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+		}
+		print "</table>\n";
+	}
+}
 
 $db->close();
 

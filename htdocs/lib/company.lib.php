@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -61,6 +62,26 @@ function societe_prepare_head($objsoc)
       $head[$h][1] = $langs->trans("Supplier");
       $head[$h][2] = 'supplier';
       $h++;
+    }
+    
+      //affichage onglet catégorie
+  if ($conf->categorie->enabled)
+  	{
+   		if ($objsoc->fournisseur)
+    	{	
+    
+		      $head[$h][0] = DOL_URL_ROOT.'/fourn/categorie.php?socid='.$objsoc->id;
+		      $head[$h][1] = $langs->trans('Categories');
+		      $head[$h][2] = 'category';
+		      $h++;
+    	}
+    	else
+    	{
+ 		      $head[$h][0] = DOL_URL_ROOT.'/comm/categorie.php?socid='.$objsoc->id;
+		      $head[$h][1] = $langs->trans('Categories');
+		      $head[$h][2] = 'category';
+		      $h++;   		
+    	}
     }
   
   if ($conf->facture->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)

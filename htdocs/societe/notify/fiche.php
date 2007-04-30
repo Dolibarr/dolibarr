@@ -153,57 +153,61 @@ if ( $soc->fetch($soc->id) )
     
     print "\n";
     
-
-	print_fiche_titre($langs->trans("AddNewNotification"));
+    if(count($soc->contact_email_array()) > 0)
+    {
+		print_fiche_titre($langs->trans("AddNewNotification"));
+		
+	    print '<form action="fiche.php?socid='.$socid.'" method="post">';
 	
-    print '<form action="fiche.php?socid='.$socid.'" method="post">';
+	    // Ligne de titres
+	    print '<table width="100%" class="noborder">';
+	    print '<tr class="liste_titre">';
+	    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
+	    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
+	    print '<td>&nbsp;</td>';
+	    print '</tr>';
+	    
+	    // Charge tableau $actions
+	    $sql = "SELECT a.rowid, a.code, a.titre";
+	    $sql.= " FROM ".MAIN_DB_PREFIX."action_def as a";
+	    
+	    $resql=$db->query($sql);
+	    if ($resql)
+	    {
+	        $num = $db->num_rows($resql);
+	        $i = 0;
+	        while ($i < $num)
+	        {
+	            $obj = $db->fetch_object($resql);
+	            $libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
+	            $actions[$obj->rowid] = $libelle;
+	    
+	            $i++;
+	        }
+	        $db->free($resql);
+	    }
+	    else
+	    {
+	        dolibarr_print_error($db);
+	    }
+	    
+	    $var=false;
+	    echo count($soc->contact_email_array());
 
-    // Ligne de titres
-    print '<table width="100%" class="noborder">';
-    print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
-    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
-    print '<td>&nbsp;</td>';
-    print '</tr>';
-    
-    // Charge tableau $actions
-    $sql = "SELECT a.rowid, a.code, a.titre";
-    $sql.= " FROM ".MAIN_DB_PREFIX."action_def as a";
-    
-    $resql=$db->query($sql);
-    if ($resql)
-    {
-        $num = $db->num_rows($resql);
-        $i = 0;
-        while ($i < $num)
-        {
-            $obj = $db->fetch_object($resql);
-            $libelle=($langs->trans("Notify_".$obj->code)!="Notify_".$obj->code?$langs->trans("Notify_".$obj->code):$obj->titre);
-            $actions[$obj->rowid] = $libelle;
-    
-            $i++;
-        }
-        $db->free($resql);
-    }
-    else
-    {
-        dolibarr_print_error($db);
-    }
-    
-    $var=false;
-    print '<input type="hidden" name="action" value="add">';
-    print '<tr '.$bc[$var].'><td>';
-    $html->select_array("contactid",$soc->contact_email_array());
-    print '</td>';
-    print '<td>';
-    $html->select_array("actionid",$actions);
-    print '</td>';
-    print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-    print '</tr>';
-    print '</table>';
-
-    print '</form>';
-	print '<br>';    
+	    print '<input type="hidden" name="action" value="add">';
+	    print '<tr '.$bc[$var].'><td>';
+	    $html->select_array("contactid",$soc->contact_email_array());
+	    print '</td>';
+	    print '<td>';
+	    $html->select_array("actionid",$actions);
+	    print '</td>';
+	    print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+	    print '</tr>';
+	    print '</table>';
+	
+	    print '</form>';
+		print '<br>';  
+    }  
 
 
 	print_fiche_titre($langs->trans("ListOfActiveNotifications"));

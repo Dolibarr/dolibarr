@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -117,7 +118,7 @@ else
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("AddIn").'</td><td>';
-print $html->select_all_categories($categorie->id_mere);
+print $html->select_all_categories($categorie->type,$categorie->id_mere);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';

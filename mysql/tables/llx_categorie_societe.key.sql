@@ -1,7 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2005      Brice Davoleau    <e1davole@iu-vannes.fr>
--- Copyright (C) 2005      Matthieu Valleton <mv@seeschloss.org>
--- Copyright (C) 2005-2006 Regis Houssin     <regis.houssin@cap-networks.com>		
+-- Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,16 +15,11 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id$
--- $Source$
---
 -- ============================================================================
 
-create table llx_categorie
-(
-	rowid 		    integer AUTO_INCREMENT PRIMARY KEY,
-	label 		    VARCHAR(255),                       -- nom de la catégorie
-	description 	text,                               -- description de la catégorie
-	visible       tinyint DEFAULT 1 NOT NULL,          -- determine si les produits sont visible ou pas
-	type	        tinyint DEFAULT 1 NOT NULL          -- Type de catégorie (product, supplier, societe)
-)type=innodb;
+ALTER TABLE llx_categorie_societe ADD PRIMARY KEY (fk_categorie, fk_societe);
+ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_categorie (fk_categorie);
+ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_societe (fk_societe);
+
+ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
+ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_societe_rowid   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);

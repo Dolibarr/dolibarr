@@ -8,6 +8,7 @@
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006      Marc Barilley/Océbo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
+ * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -1350,7 +1351,7 @@ class Form
      *				du nombre choisi
      *    \param    selected    nombre de catégorie à créer
      */
-    function select_all_categories($selected='',$select_name="")
+    function select_all_categories($type,$selected='',$select_name="")
     {
         global $langs;
         $langs->load("categorie");
@@ -1358,7 +1359,7 @@ class Form
 		if ($select_name=="") $select_name="catMere";
 
     $cat = new Categorie ($this -> db);
-		$cate_arbo = $cat->get_full_arbo();
+		$cate_arbo = $cat->get_full_arbo($type);
 
 		$output = '<select name="'.$select_name.'">';
 		$output.= '<option value="-1" id="choix">&nbsp;</option>';
@@ -2868,7 +2869,7 @@ class Form
 	  
 	  print '<form action="'.$urlsource.'#builddoc" method="post">';
 	  print '<input type="hidden" name="action" value="builddoc">';
-	  
+
             print_titre($langs->trans("Documents"));
             print '<table class="border" width="100%">';
 

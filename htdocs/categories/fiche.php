@@ -2,6 +2,7 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -43,7 +44,10 @@ else
 
 if ($_REQUEST['origin'])
 {
-	$idprodorigin = $_REQUEST['origin'];
+	if($_GET['type'] == 0)$idprodorigin = $_REQUEST['origin'];
+	if($_GET['type'] == 1)$idSupplierorigin = $_REQUEST['origin'];
+	if($_GET['type'] == 2)$idCompanyorigin = $_REQUEST['origin'];
+	
 }
 
 
@@ -60,6 +64,7 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
 	$categorie->visible        = $_POST["visible"];
+	$categorie->type		   = $_POST["type"];
 	if($_POST['catMere'] != "-1")
 	$categorie->id_mere = $_POST['catMere'];
 
@@ -97,10 +102,17 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		
 		print '<div class="ok">'.$langs->trans("CategorySuccessfullyCreated",$categorie->label).'</div>';
 
-		if ($_REQUEST['idprodorigin'])
+		if ($idprodorigin)
 		{
-			$idprodorigin = $_REQUEST['idprodorigin'];
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a>';
+		}
+		if ($idSupplierorigin)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/categorie.php?socid='.$idSupplierorigin.'">'.$langs->trans("ReturnInSupplier").'</a>';
+		}
+		if ($idCompanyorigin)
+		{
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/categorie.php?socid='.$idCompanyorigin.'">'.$langs->trans("ReturnInCompany").'</a>';
 		}
 
 		print '</td></tr></table>';
@@ -121,14 +133,16 @@ if ($user->rights->categorie->creer)
 			print $categorie->error;
 			print '</div>';
 		}
-		print '<form action="fiche.php" method="post">';
+		print '<form action="fiche.php?type='.$_GET['type'].'" method="post">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="addcat" value="addcat">';
-		if ($idprodorigin)
+		print '<input type="hidden" name="type" value='.$_GET['type'].'>';
+		if ($_REQUEST['origin'])
 		{
-			print '<input type="hidden" name="idprodorigin" value='.$idprodorigin.'>';
+			print '<input type="hidden" name="origin" value='.$_REQUEST['origin'].'>';
 		}
-
+		print '<input type="hidden" name="nom" value="'.$nom.'">';
+		print '<input type="hidden" name="description" value="'.$description.'">';
 		print_fiche_titre($langs->trans("CreateCat"));
 
 		print '<table class="border" width="100%" class="notopnoleftnoright">';
@@ -152,7 +166,7 @@ if ($user->rights->categorie->creer)
 		
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans ("AddIn").'</td><td>';
-		print $html->select_all_categories();
+		print $html->select_all_categories($_GET['type']);
 		print '</td></tr>';
 		print '<tr><td>'.$langs->trans ("ContentsVisibleByAll").'</td><td>';
 		print $html->selectyesnonum("visible", 1);

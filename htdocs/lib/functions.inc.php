@@ -1250,7 +1250,12 @@ function dol_loginfunction($notused,$pearstatus)
 		}
 		print '</div></td></tr></table></center>';
 	}
-
+	if (defined("MAIN_HOME") && strlen(trim(MAIN_HOME)))
+	{
+	    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td>';
+	    print nl2br(MAIN_HOME);
+	    print '</td></tr></table><br>';
+	}
     print "\n</body>\n</html>";
 }
 

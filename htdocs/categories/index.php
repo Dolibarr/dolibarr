@@ -2,6 +2,7 @@
 /* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005 Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Patrick Raguin	   <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,6 +33,7 @@ require "./pre.inc.php";
 if (!$user->rights->categorie->lire) accessforbidden();
 
 
+
 /**
  * Affichage page accueil
  */
@@ -50,7 +52,8 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 /*
  * Zone recherche produit/service
  */
-print '<form method="post" action="index.php">';
+print '<form method="post" action="index.php?type='.$_GET['type'].'">';
+print '<input type="hidden" name="type" value="'.$_GET['type'].'">';
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td colspan="3">'.$langs->trans("Search").'</td>';
@@ -77,7 +80,7 @@ print '</td><td valign="top" width="70%">';
  */
 if($_POST['catname'] || $_REQUEST['id'])
 {
-	$cats = $c->rechercher($_REQUEST['id'],$_POST['catname']);
+	$cats = $c->rechercher($_REQUEST['id'],$_POST['catname'],$_POST['type']);
 
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("FoundCats").'</td></tr>';
@@ -101,7 +104,7 @@ print '<br>';
 
 
 // Charge tableau des categories
-$cate_arbo = $c->get_full_arbo();
+$cate_arbo = $c->get_full_arbo($_GET['type']);
 
 	
 /*
@@ -157,7 +160,6 @@ if ($conf->use_javascript)
 			$i++;
 			$nodeparent=ereg_replace('_[0-9]+$','',$cate_arbo[$key]['fullpath']);
 			if (! $nodeparent) $nodeparent=$rootnode;
-
 			// Definition du nouvel element a ajouter dans l'arbre
 			$newelement=array(
 					'text' => $cate_arbo[$key]['label'],
@@ -179,8 +181,8 @@ if ($conf->use_javascript)
 					$newelement['expanded']=false;
 				}
 			}
-			
-			//print 'x'.$cate_arbo[$key]['fullpath'].' ' expand='.$newelement['expanded'].'<br>';
+			//echo $nodeparent."|";
+			//print 'x'.$cate_arbo[$key]['fullpath'].'  expand='.$newelement['expanded'].'<br>';
 			$node[$cate_arbo[$key]['fullpath']]=&$node[$nodeparent]->addItem(new HTML_TreeNode($newelement));
 			//print 'Resultat: noeud '.$cate_arbo[$key]['fullpath']." créé<br>\n";
 		}

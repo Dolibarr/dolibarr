@@ -4,6 +4,7 @@
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +25,7 @@
  */
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
 
 
 class Categorie
@@ -34,6 +36,7 @@ class Categorie
 	var $label;
 	var $description;
 	var $statut;
+	var $type;
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
@@ -60,7 +63,7 @@ class Categorie
 	*/
 	function fetch($id)
 	{
-		$sql = "SELECT rowid, label, description, visible";
+		$sql = "SELECT rowid, label, description, visible, type";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
 
 		$resql  = $this->db->query ($sql);
@@ -73,6 +76,7 @@ class Categorie
 			$this->label		    = $res['label'];
 			$this->description	= stripslashes($res['description']);
 			$this->visible     = $res['visible'];
+			$this->type     = $res['type'];
 
 			$this->db->free($resql);
 		}
@@ -115,8 +119,8 @@ class Categorie
 			return -1;
 		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible) ";
-		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."', '".$this->visible."')";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label, description, visible,type) ";
+		$sql .= "VALUES ('".addslashes($this->label)."', '".addslashes($this->description)."', '".$this->visible."',".$this->type.")";
 
 
 		$res  = $this->db->query ($sql);
@@ -303,15 +307,15 @@ class Categorie
 	*          -1 : erreur SQL
 	*          -2 : id non renseign
 	*/
-	function add_product($prod)
+	function add_type($obj,$type)
 	{
 		if ($this->id == -1)
 		{
 			return -2;
 		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_product (fk_categorie, fk_product)";
-		$sql .= " VALUES (".$this->id.", ".$prod->id.")";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$type.")";
+		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
 		if ($this->db->query($sql))
 		{
@@ -330,11 +334,11 @@ class Categorie
 	* retour :  1 : OK
 	*          -1 : erreur SQL
 	*/
-	function del_product($prod)
+	function del_type($obj,$type)
 	{
-		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_product";
+		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_product   = ".$prod->id;
+		$sql .= " AND   fk_".$type."   = ".$obj->id;
 
 		if ($this->db->query($sql))
 		{
@@ -350,23 +354,23 @@ class Categorie
 	/**
 	* Retourne les produits de la catégorie
 	*/
-	function get_products()
+	function get_type($type,$class)
 	{
-		$sql  = "SELECT fk_product FROM ".MAIN_DB_PREFIX."categorie_product ";
+		$sql  = "SELECT fk_".$type." FROM ".MAIN_DB_PREFIX."categorie_".$type." ";
 		$sql .= "WHERE fk_categorie = ".$this->id;
 
 		$res  = $this->db->query($sql);
 
 		if ($res)
 		{
-			$prods = array();
+			$obj = array();
 			while ($rec = $this->db->fetch_array ($res))
 			{
-				$prod = new Product ($this->db, $rec['fk_product']);
-				$prod->fetch ($prod->id);
-				$prods[] = $prod;
+				$obj = new $class ($this->db, $rec['fk_'.$type]);
+				$obj->fetch ($obj->id);
+				$objs[] = $obj;
 			}
-			return $prods;
+			return $objs;
 		}
 		else
 		{
@@ -374,6 +378,10 @@ class Categorie
 			return -1;
 		}
 	}
+	
+		
+
+
 	/**
 	* Retourne les filles de la catégorie
 	*/
@@ -444,7 +452,7 @@ class Categorie
 	*						fullpath = chemin complet compose des id
 	*	\return		array	Tableau de array
 	*/
-	function get_full_arbo()
+	function get_full_arbo($type)
 	{
 		// Charge tableau des meres
 		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
@@ -468,6 +476,7 @@ class Categorie
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_association as ca";
 		$sql.= " ON c.rowid=ca.fk_categorie_mere";
+		$sql.= " WHERE c.type = ".$type;
 		$sql.= " ORDER BY c.label, c.rowid";
 		$res = $this->db->query ($sql);
 		if ($res)
@@ -476,9 +485,11 @@ class Categorie
 			$i=0;
 			while ($obj = $this->db->fetch_object($res))
 			{
+				
 				$this->cats[$obj->rowid]['id'] = $obj->rowid;
 				$this->cats[$obj->rowid]['id_mere'] = $this->motherof[$obj->rowid];
 				$this->cats[$obj->rowid]['label'] = $obj->label;
+
 				if ($obj->rowid_fille)
 				{
 					if (is_array($this->cats[$obj->rowid]['id_children']))
@@ -494,6 +505,7 @@ class Categorie
 					}
 				}				
 				$i++;
+
 			}
 		}
 		else
@@ -820,12 +832,12 @@ class Categorie
 	/**
 	* Retourne les catégories contenant le produit $id
 	*/
-	function containing ($id)
+	function containing ($id,$type)
 	{
 		$cats = array ();
 
-		$sql  = "SELECT fk_categorie FROM ".MAIN_DB_PREFIX."categorie_product ";
-		$sql .= "WHERE  fk_product = ".$id;
+		$sql  = "SELECT fk_categorie FROM ".MAIN_DB_PREFIX."categorie_".$type." ";
+		$sql .= "WHERE  fk_".$type." = ".$id;
 
 		$res = $this->db->query ($sql);
 
@@ -848,13 +860,13 @@ class Categorie
 	/**
 	* Retourne les catégories contenant le produit $ref
 	*/
-	function containing_ref ($ref)
+	function containing_ref ($ref,$type)
 	{
 		$cats = array ();
 
-		$sql = "SELECT c.fk_categorie, c.fk_product, p.rowid, p.ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_product as c, ".MAIN_DB_PREFIX."product as p";
-		$sql.= " WHERE  p.ref = '".$ref."' AND c.fk_product = p.rowid";
+		$sql = "SELECT c.fk_categorie, c.fk_".$type.", p.rowid, p.ref";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as c, ".MAIN_DB_PREFIX.$type." as p";
+		$sql.= " WHERE  p.ref = '".$ref."' AND c.fk_".$type." = p.rowid";
 
 		$res = $this->db->query ($sql);
 
@@ -873,28 +885,34 @@ class Categorie
 			return -1;
 		}
 	}
+	
+	
+	
+
+
 
 	/**
 	* 	\brief	Retourne les catégories dont l'id ou le nom correspond
 	* 			ajoute des wildcards au nom sauf si $exact = true
 	*/
-	function rechercher($id, $nom, $exact = false)
+	function rechercher($id, $nom, $type, $exact = false)
 	{
 		$cats = array ();
 
 		// Generation requete recherche
 		$sql  = "SELECT rowid FROM ".MAIN_DB_PREFIX."categorie ";
+		$sql .= "WHERE type = ".$type." ";
 		if ($nom)
 		{
 			if (! $exact)
 			{
 				$nom = '%'.str_replace ('*', '%', $nom).'%';
 			}
-			$sql.= "WHERE label LIKE '".$nom."'";
+			$sql.= "AND label LIKE '".$nom."'";
 		}
 		if ($id)
 		{
-			$sql.="WHERE rowid = '".$id."'";
+			$sql.="AND rowid = '".$id."'";
 		}
 
 		$res  = $this->db->query ($sql);

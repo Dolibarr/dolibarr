@@ -3,6 +3,7 @@
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -53,7 +54,7 @@ if ($_REQUEST["removecat"] && $user->rights->produit->creer)
 	if ($_REQUEST["id"])  $result = $product->fetch($_REQUEST["id"]);
 
 	$cat = new Categorie($db,$_REQUEST["removecat"]);
-	$result=$cat->del_product($product);
+	$result=$cat->del_type($product,"product");
 }
 
 //on veut ajouter une catégorie
@@ -64,7 +65,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->pr
 	if ($_REQUEST["id"])  $result = $product->fetch($_REQUEST["id"]);
 
 	$cat = new Categorie($db,$_REQUEST["catMere"]);
-	$result=$cat->add_product($product);
+	$result=$cat->add_type($product,"product");
 	if ($result >= 0)
 	{
 		$mesg='<div class="ok">'.$langs->trans("Added").'</div>';	
@@ -144,7 +145,7 @@ if ($_GET["id"] || $_GET["ref"])
     print '<div class="tabsAction">';
     if ($user->rights->categorie->creer)
     {
-	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'">'.$langs->trans("NewCat").'</a>';
+	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$product->id.'&type=0">'.$langs->trans("NewCat").'</a>';
     }
 	print '</div>';
 
@@ -152,12 +153,12 @@ if ($_GET["id"] || $_GET["ref"])
 	// Formulaire ajout dans une categorie
 	if ($user->rights->produit->creer)
 	{
-		print '<br>';
+
 	  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>';
 	  print $langs->trans("ClassifyInCategory").' ';
-	  print $html->select_all_categories($categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+	  print $html->select_all_categories(0,$categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
 	  print '</tr>';
 	  print '</table>';
 	  print '</form>';
@@ -169,12 +170,12 @@ if ($_GET["id"] || $_GET["ref"])
 
 	if ($_GET["id"])
 	{
-		$cats = $c->containing($_REQUEST["id"]);
+		$cats = $c->containing($_REQUEST["id"],"product");
 	}
 
 	if ($_GET["ref"])
 	{
-		$cats = $c->containing_ref($_REQUEST["ref"]);
+		$cats = $c->containing_ref($_REQUEST["ref"],"product");
 	}
 
 	if (sizeof($cats) > 0)
