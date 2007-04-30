@@ -73,6 +73,10 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	print '<h2>'.$langs->trans('DataMigration').'</h2>';
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
+	
+	// on décode le mot de passe de la base si besoin
+	require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+	if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 	$conf = new Conf();// on pourrait s'en passer
 	$conf->db->type = $dolibarr_main_db_type;

@@ -76,6 +76,10 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 
     print '<table cellspacing="0" cellpadding="2" width="100%">';
     $error=0;
+    
+    // on décode le mot de passe de la base si besoin
+    require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
+    if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
     $conf->db->type = $dolibarr_main_db_type;
     $conf->db->host = $dolibarr_main_db_host;
