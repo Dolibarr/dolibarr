@@ -40,26 +40,37 @@
 
 class DoliDb
 {
-    var $db;                    // Handler de base
-    var $type='mysqli';          // Nom du gestionnaire
-    var $forcecharset='latin1';
-	var $forcecollate='latin1_swedish_ci';
-	var $versionmin=array(4,1,0);	// Version min database
-
-    var $results;               // Resultset de la dernière requete
-
-    var $connected;             // 1 si connecté, 0 sinon
-    var $database_selected;     // 1 si base sélectionné, 0 sinon
-    var $database_name;			// Nom base sélectionnée
-    var $transaction_opened;	// 1 si une transaction est en cours, 0 sinon
-    var $lastquery;				// Derniere requete exécutée
-	var $lastqueryerror;		// Derniere requete exécutée avec echec
-	var $lasterror;				// Message erreur mysql
-	var $lasterrno;				// Message erreur mysql
-
-    var $ok;
-    var $error;
-
+	//! Handler de base
+  var $db;
+  //! Nom du gestionnaire
+  var $type='mysqli';          
+  //! Charset
+  var $forcecharset='latin1';
+  //! Collate
+  var $forcecollate='latin1_swedish_ci';
+  //! Version min database
+  var $versionmin=array(4,1,0);	
+  //! Resultset de la dernière requete  
+  var $results;
+  //! 1 si connecté, 0 sinon  
+  var $connected;             
+  //! 1 si base sélectionné, 0 sinon
+  var $database_selected; 
+  //! Nom base sélectionnée
+  var $database_name;			
+  //! 1 si une transaction est en cours, 0 sinon
+  var $transaction_opened;	
+  //! Derniere requete exécutée
+  var $lastquery;			
+  //! Derniere requete exécutée avec echec
+  var $lastqueryerror;		
+  //! Message erreur mysql
+  var $lasterror;		
+  //! Message erreur mysql
+  var $lasterrno;
+  
+  var $ok;
+  var $error;
 
     // Constantes pour conversion code erreur MySql en code erreur générique
     var $errorcode_map = array(
