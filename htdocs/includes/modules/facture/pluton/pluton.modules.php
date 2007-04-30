@@ -296,6 +296,8 @@ function info()
         		  {
         		  	$numMatrice[$k] = '-';
         		  	$searchLast .= '-';
+        		  	$searchLastWithNoYear .= '-';
+        		  	$searchLastWithPreviousYear .= '-';
         		  	$j = $resultTiret[$i][1];
         		  	$k++;
         		  }
@@ -317,6 +319,8 @@ function info()
         					}
         					$numMatrice[$k] = '$prefix';
         					$searchLast .= $prefix;
+        					$searchLastWithNoYear .= $prefix;
+        					$searchLastWithPreviousYear .= $prefix;
         					$k++;
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
@@ -332,6 +336,8 @@ function info()
         					}
         					$numMatrice[$k] = '$prefix';
         					$searchLast .= $prefix;
+        					$searchLastWithNoYear .= $prefix;
+        					$searchLastWithPreviousYear .= $prefix;
         					$k++;
         				}
         				else if ($idMatrice == 'year')
@@ -361,6 +367,12 @@ function info()
                   }
         					$numMatrice[$k] = '$yy';
         					$searchLast .= $yy;
+        					for ($l = 1; $l <= $numbityear; $l++)
+        					{
+        						$searchLastWithNoYear .= '[0-9]';
+        					}
+        					$previousYear = substr(strftime("%Y",mktime(0,0,0,date("m"),date("d"),date("Y")-1)),$numbityear);
+        					$searchLastWithPreviousYear .= $previousYear;
         					$k++;
         				}
         				else if ($idMatrice == 'month')
@@ -369,6 +381,8 @@ function info()
         					$mm = strftime("%m",time());
         					$numMatrice[$k] = '$mm';
         					$searchLast .= $mm;
+        					$searchLastWithNoYear .= $mm;
+        					$searchLastWithPreviousYear .= $mm;
         					$k++;
         				}
         				else if ($idMatrice == 'counter')
@@ -388,8 +402,7 @@ function info()
         $fayy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber like '${prefix}%'";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " AND facnumber like '${searchLast}%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE facnumber like '${searchLast}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -397,8 +410,21 @@ function info()
             if ($row) $fayy = substr($row[0],0,-$posindice);
         }
         
+        //on vérifie si il y a une année précédente
+        //sinon le delta sera appliqué de nouveau sur la nouvelle année
+        $lastyy='';
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        $sql.= " WHERE facnumber like '${searchLastWithPreviousYear}%'";
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+            $row = $db->fetch_row($resql);
+            if ($row) $lastyy = substr($row[0],0,-$posindice);
+        }
+
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$searchLast.'',$fayy))
+        if (eregi('^'.$searchLastWithNoYear.'',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
@@ -411,9 +437,14 @@ function info()
                 $max = $row[0];
             }
         }
+        else if (!eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
+        {
+        	// on applique le delta une seule fois
+        	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA:0;
+        }
         else
         {
-            $max=0;
+        	$max=0;
         }
         
         // On replace le prefix de l'avoir

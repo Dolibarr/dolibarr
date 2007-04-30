@@ -127,9 +127,13 @@ class mod_facture_neptune extends ModeleNumRefFactures
                 $max = $row[0];
             }
         }
-        else if (!eregi('PR[0-9][0-9]',$lastyy))
+        else if (!eregi('FA[0-9][0-9]',$lastyy))
         {
         	$max=$conf->global->FACTURE_NEPTUNE_DELTA?$conf->global->FACTURE_NEPTUNE_DELTA:0;
+        }
+        else
+        {
+        	$max=0;
         }        
         $yy = strftime("%y",time());
         $num = sprintf("%04s",$max+1);
