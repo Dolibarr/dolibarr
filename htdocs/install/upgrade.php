@@ -33,7 +33,7 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
-$migfile='^2.0.0-2.1.0.sql$';
+$migfile='^2.1.0-2.2.0.sql$';
 $grant_query='';
 $etape = 2;
 $ok = 0;
