@@ -718,7 +718,7 @@ padding: 0px 0px;
 
 table.liste {
 border-collapse: collapse;
-width: auto;
+width: 100%;
 border:0px;
 }
 
