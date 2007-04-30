@@ -40,6 +40,7 @@ ModulesCommon=Modules standards
 ModulesInterfaces=Modules interfaces
 ModulesOther=Modules autres
 ModulesJob=Modules métiers
+ModulesSpecial=Modules spéciaux
 ParameterInDolibarr=Variable %s
 LanguageParameter=Variable langue %s
 LanguageBrowserParameter=Variable %s
@@ -383,6 +384,7 @@ DefaultSkin=Thème visuel par défaut
 MaxSizeList=Longueur maximale des listes
 DefaultMaxSizeList=Longueur maximale par défaut des listes
 MessageOfDay=Message du jour
+MessageHome=Message d'accueil
 DefaultLanguage=Langue par défaut à utiliser (code langue)
 EnableMultilangInterface=Activer l'interface multi-langage
 PermanentLeftSearchForm=Zone de recherche permanente du menu de gauche
@@ -707,3 +709,24 @@ MantisErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semb
 ##### Stock #####
 StockSetup=Configuration module stock
 UserWarehouse=Utiliser des stocks personnels aux utilisateurs
+##### DroitPret #####
+PretSetup=Configuration du module droit de prêt
+catActive=Catégorie pour laquelle le droit de prêt est activé
+mailDroitPret=Adresse mail à laquelle les déclarations sont envoyées
+##### Menu #####
+MenuDeleted=Menu supprimé
+TreeMenu=Arborescence des menus
+NewMenu=Nouveau menu
+DetailId=Identifiant du menu
+DetailTitre=Libellé du menu
+DetailMainmenu=Mainmenu auquel il appartient
+DetailUrl=URL de la page vers laquelle le menu pointe
+DetailLeftmenu=Condition d'affichage du menu
+DetailRight=Droit que l'utilisateur doit posseder
+DetailLangs=Fichier langs pour la traduction du titre
+DetailUser=Interne / externe / Tous
+DetailTarget=Cible
+DetailLevel=Niveau du menu (-1:menu top, 0:entete menu, >0 menu et sous menu)
+ModifMenu=Modification du menu
+
+
