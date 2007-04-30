@@ -65,6 +65,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_SEARCHFORM_PRODUITSERVICE",$_POST["main_searchform_produitservice"]);
 	
 	dolibarr_set_const($db, "MAIN_MOTD",               $_POST["main_motd"]);
+	dolibarr_set_const($db, "MAIN_HOME",               $_POST["main_home"]);
 	
 	$_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
 	
@@ -190,6 +191,23 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		print '<textarea name="main_motd" cols="90" rows="'.ROWS_5.'">'.$conf->global->MAIN_MOTD.'</textarea>';
 	}
 	print '</td></tr>';
+
+
+    // Message d'accueil'
+	$var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageHome").'</td><td>';
+	if ($conf->fckeditor->enabled)
+	{
+		// Editeur wysiwyg
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',true);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea name="main_home" cols="90" rows="'.ROWS_5.'">'.$conf->global->MAIN_HOME.'</textarea>';
+	}
+	print '</td></tr>';
     print '</table>';
 
     print '<br><center>';
@@ -271,6 +289,11 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
     print nl2br($conf->global->MAIN_MOTD);
+    print '</td></tr>';
+    // Message home
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageHome").'</td><td>';
+    print nl2br($conf->global->MAIN_HOME);
     print '</td></tr>';
     print '</table>';
 
