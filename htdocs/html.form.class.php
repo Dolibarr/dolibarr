@@ -1701,7 +1701,7 @@ class Form
     print '<tr class="valid">';
     print '<td class="valid">'.$question.'</td>';
     print '<td class="valid">';
-    $this->selectyesno("confirm","no");
+    print $this->selectyesno("confirm","no");
     print '</td>';
     print '<td class="valid" align="center"><input class="button" type="submit" value="'.$langs->trans("Validate").'"></td>';
     print '</tr>';
