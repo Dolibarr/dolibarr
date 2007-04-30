@@ -2,7 +2,7 @@
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,6 +167,15 @@ if ($_GET["action"] == 'delete')
     dolibarr_print_error($db);
   }
 }
+
+// défini les constantes du modèle pluton
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"]);
+if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"]);
+if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"]);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FACTURE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_WITH_INVOICE",$_POST["numwithinvoice"]);
 
 
 /*

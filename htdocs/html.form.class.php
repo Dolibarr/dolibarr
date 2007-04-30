@@ -3073,7 +3073,7 @@ class Form
     	                11=>"November",
     	                12=>"December"
     	                );
-    	                
+ 
     	$select_month = '<select class="flat" name="'.$htmlname.'">';
     	if ($useempty) 
       {
@@ -3081,13 +3081,13 @@ class Form
       }
     	foreach ($month as $key => $val)
     	{
-    		if ($selected == $val)
+    		if ($selected == $key)
     		{
-    			$select_month .= '<option val="'.$key.'" selected="true">';
+    			$select_month .= '<option value="'.$key.'" selected="true">';
     		}
     		else
     		{
-    			$select_month .= '<option val="'.$key.'">';
+    			$select_month .= '<option value="'.$key.'">';
     		}
         $select_month .= $langs->trans($val);
       }
