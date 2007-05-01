@@ -1,6 +1,6 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -77,6 +77,9 @@ print "pass=".eregi_replace('.','*',$conf->db->pass)."\n";
 print "database=".$conf->db->name."\n";
 print "\n";
 print "Press a key to confirm...\n";
+$input = trim(fgets(STDIN));
+print "Warning, this operation may result in data loss if it failed.\n";
+print "Hit Enter to continue or CTRL+C to stop...\n";
 $input = trim(fgets(STDIN));
 
 
@@ -209,16 +212,18 @@ if ($result >= 0)
 			// YOUR OWN CODE HERE
 			//----------------------------
 			
-			$datefirst=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
-			$datelast=dolibarr_stringtotime($ldapuser["prnxlastcontribution"][0]);
+			$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE][0]);
+			$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE][0]);
 			if ($datefirst)
 			{
-				$crowid=$member->cotisation($datefirst, 0, 0);
+				// Cree premiere cotisation et met a jour datefin dans adherent
+				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT][0]);
+				$crowid=$member->cotisation($datefirst, $price, 0);
 			}
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
-				$price=price2num($ldapuser["prnxlastcontributionprice"][0]);
+				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT][0]);
 				//print "xx".$datelast."-".dolibarr_time_plus_duree($datelast,-1,'y')."\n";
 				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0);
 			}
