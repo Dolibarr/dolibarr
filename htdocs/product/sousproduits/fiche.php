@@ -260,7 +260,7 @@ if ($id || $ref)
             print '</tr>';
 			print '<tr><td colspan="2"><b>'.$langs->trans("ProductToAddSearch").'</b>';
 			print '<table class="noborder">';
-			print '<tr><td><form action="./fiche.php" method="post">';
+			print '<tr><td><form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post">';
 			print $langs->trans("KeywordFilter");
 			print '</td><td><input type="text" name="key" value="'.$key.'">';
 			print '<input type="hidden" name="action" value="search">';
@@ -282,7 +282,7 @@ if ($id || $ref)
 				print '<table class="border">';
 				print '<tr>';
 				print '<td><b>'.$langs->trans("Ref").'</b></td><td><b>'.$langs->trans("Label").'</b></td><td><b>'.$langs->trans("AddDel").'</b></td><td><b>'.$langs->trans("Quantity").'</b></td>';
-				print '<form action="./fiche.php" method="post"';
+				print '<form action="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?id='.$id.'" method="post"';
 				print '<input type="hidden" name="action" value="add_prod"';
 				print '<input type="hidden" name="id" value="'.$id.'"';
 				if ($resql)
@@ -328,7 +328,8 @@ if ($id || $ref)
 								$addchecked = '';
 								$qty="1";
 							}
-							print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'"><input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
+							print '<td align="center"><input type="hidden" name="prod_id_'.$i.'" value="'.$objp->rowid.'">';
+							print '<input type="checkbox" '.$addchecked.'name="prod_id_chk'.$i.'" value="'.$objp->rowid.'"></td>';
 							print '<td align="center"><input type="text" size="3" name="prod_qty_'.$i.'" value="'.$qty.'"></td>';
 							print '</td>';
 							print '</tr>';
@@ -367,13 +368,13 @@ if ($action == '')
    
     if ( $user->rights->produit->creer)
     {
-        print '<a class="tabAction" href="./fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
     }
 
 }
 
-print "\n</div><br>\n";
+print "\n</div>\n";
 
 
 
