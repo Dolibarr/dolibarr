@@ -126,20 +126,16 @@ div.vmenuplusfiche
 {
     top: auto;
     left: auto;
-    position: static;
-    float: left;
     display: block;
     margin-right: 6px;
+    margin-left: 1px;
+    margin-top: 6px;
+    
 }
 
 div.vmenu
 {
-    top: auto;
-    left: auto;
-    position: relative;
-    float: top;
-    display: block;
-    margin-top: 2px;
+    float: left;
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -148,15 +144,16 @@ div.vmenu
 
 div.fiche
 {
-    top: 28px;
-    left: auto;
-<?php
-	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
-	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
-?>
+    float: right top;
     display: block;
-    margin-right: 6px;
-    margin-top: 0px;
+    
+    margin-left: 170px;
+    width:auto;
+}
+
+* html div.fiche
+{
+	width:800px;	
 }
 
 
@@ -166,10 +163,12 @@ div.fiche
 
 div.tmenu
 {
+    position: relative;
     float: top;
-    display:block;
+    display: block;
     white-space: nowrap;
-    border:0;
+    border-top: 1px solid #D3E5EC;
+    border-left: 0px;
     border-right: 0px solid #555555;
     border-bottom: 1px solid #8B9999;
     padding: 0px 0px 0px 0px;
@@ -203,7 +202,7 @@ a.tmenu:link
   padding: 0px 8px;
   margin: 0px 0px 6px 0px;
   border: 1px solid #dddddd;
-  font-weight:bold;
+  font-weight: bold;
   font-size:12px;
 }
 a.tmenu:visited
@@ -212,7 +211,7 @@ a.tmenu:visited
   padding: 0px 8px;
   margin: 0px 0px 6px 0px;
   border: 1px solid #dddddd;
-  font-weight:bold;
+  font-weight: bold;
   font-size:12px;
 }
 a.tmenu#sel
@@ -346,7 +345,7 @@ td.barre {
            text-decoration: none
 }
 
-td.barre_select { 
+td.barre_select {
            background: #b3cccc; 
            color: #000000 
 }
@@ -370,12 +369,11 @@ form {
 div.formsearch
 {
   display: block;
-  float: none;
   clear: right;
   background: #bbbbcc;
   top: 0px;
   left: 130px;
-  padding: 4px; 
+  padding: 4px;
   vertical-align: middle;
   margin-bottom: 10px;
 }
@@ -384,6 +382,13 @@ div.formsearch
 /* ============================================================================== */
 /* Onglets                                                                        */
 /* ============================================================================== */
+
+div.tabs {
+    top: 20px;
+    margin: 1px 0px 0px 0px;
+    padding: 0px 6px 0px 0px;
+    text-align: left;
+}
 
 div.tabBar {
     background: #dcdcd0;
@@ -394,13 +399,6 @@ div.tabBar {
     margin: 0px 0px 10px 0px;
     border: 1px solid #9999BB;
     border-top: 1px solid #9999BB;
-}
-
-div.tabs {
-    top: 20px;
-    margin: 1px 0px 0px 0px;
-    padding: 0px 6px 0px 0px;
-    text-align: left;
 }
 
 div.tabsAction {
@@ -562,7 +560,6 @@ table.noborder {
 border-collapse: collapse;
 border: 0px;
 }
-
 table.noborder td {
 border: 0px;
 padding: 1px 2px;
@@ -634,7 +631,7 @@ div.leftmenu {
  */
 .ok      { color: #114466; }
 .warning { color: #777711; }
-.error   { color: #550000; }
+.error   { color: #550000; font-weight: bold; }
 
 div.ok {
   color: #114466;
@@ -663,7 +660,7 @@ div.info {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -680,7 +677,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Lignes titre espace
  */
-div.titre { 
+div.titre {
     font: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     color: #777799; 
@@ -816,13 +813,22 @@ table.valid {
 
 
 
-td.small { 
-           font-size: 0.8em;
+td.small {
+           font-size: 10px;
            }
 
-tr.nonpayed { 
-              font-size: 0.95em; font-weight: bold;
-              }
+tr.nonpayed {
+           font-weight: bold;
+           }
+
+
+div.version {
+background: #F4F4F4;
+text-align: right;
+font-size: 9px;
+margin: 1px 0em 0em 0em;
+padding: 2px;
+}
 
 
 /* ============================================================================== */
@@ -866,7 +872,7 @@ table.dp {
 .dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
 	font-weight:bold;
 	background-color:#777799;
-	color:white; 
+	color:white;
 	font-size:11px;
 	cursor:auto;
 }
@@ -877,7 +883,7 @@ table.dp {
 	color:#FFFFFF;
 	font-weight:bold;
 	border: 1px outset black;
-	cursor:pointer;	
+	cursor:pointer;
 }
 .dpButtons:Active,.tpButtons:Active{border: 1px outset black;}
 .dpDayNames td,.dpExplanation {background-color:#D9DBE1; font-weight:bold; text-align:center; font-size:11px;}
@@ -911,7 +917,7 @@ font-size:9px;
 border-width:0px;
 color:#062342;
 vertical-align:middle;
-cursor: pointer; 
+cursor: pointer;
 }
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
@@ -933,6 +939,7 @@ td.hidden {
     display: none;
 }
 
+// Utilise dans smarty uniquement. A virer
 td.alerte {
  background: #FF99A9;
 }

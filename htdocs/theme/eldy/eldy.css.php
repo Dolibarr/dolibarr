@@ -114,9 +114,9 @@ div.vmenuplusfiche
     top: auto;
     left: auto;
     display: block;
-    margin-right: 13px;
+    margin-right: 6px;
     margin-left: 1px;
-    margin-top: 10px;
+    margin-top: 6px;
     
 }
 
@@ -134,7 +134,7 @@ div.fiche
     float: right top;
     display: block;
     
-    margin-left: 180px;
+    margin-left: 170px;
     width:auto;
 }
 
@@ -1041,6 +1041,7 @@ td.hidden {
                          margin: 1px 1px 1px 1px;
                }
 
+// Utilise dans smarty uniquement. A virer
 td.alerte {
  background: #FF99A9;
 }
