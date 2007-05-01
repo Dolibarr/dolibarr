@@ -491,7 +491,7 @@ function dolibarr_time_plus_duree($time,$duration_value,$duration_unit)
 									"%d %b %Y",
 									"%d/%m/%Y %H:%M",
 									"%d/%m/%Y %H:%M:%S",
-									"day", "daytext", "dayhour", "dayhourtext"
+									"day", "daytext", "dayhour", "dayhourldap", "dayhourtext"
 		\return     string      Date formatée ou '' si time null
 */
 function dolibarr_print_date($time,$format='')
@@ -504,6 +504,7 @@ function dolibarr_print_date($time,$format='')
     if ($format == 'day')         $format=$conf->format_date_short;
     if ($format == 'daytext')     $format=$conf->format_date_text_short;
     if ($format == 'dayhour')     $format=$conf->format_date_hour_short;
+    if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
     if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
 
     // Si date non définie, on renvoie ''

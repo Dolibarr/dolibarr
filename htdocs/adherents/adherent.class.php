@@ -87,6 +87,11 @@ class Adherent
 	var $user_id;
 	var $user_login;
 
+	// Fiels loaded by fetch_subscriptions()
+	var $fistsubscription_date;
+	var $fistsubscription_amount;
+	var $lastsubscription_date;
+	var $lastsubscription_amount;
 
 	//  var $public;
 	var $array_options;
@@ -758,7 +763,11 @@ class Adherent
 
 
     /**
-    		\brief 		Fonction qui récupére l'adhérent en donnant son rowid
+    		\brief 		Fonction qui récupére pour un adhérent les paramètres
+						firstsubscription_date
+						fistrsubscription_amount
+						lastsubscription_date
+						lastsubscription_amount
     		\return		int			<0 si KO, >0 si OK
     */
     function fetch_subscriptions()
@@ -780,13 +789,15 @@ class Adherent
             $i=0;
 			while ($obj = $this->db->fetch_object($resql))
 			{
-				if ($i==0) $this->firstsubscription_date=$obj->dateadh;
+				if ($i==0) 
+				{
+					$this->firstsubscription_date=$obj->dateadh;
+					$this->firstsubscription_amount=$obj->cotisation;
+				}
 				$this->lastsubscription_date=$obj->dateadh;
 				$this->lastsubscription_amount=$obj->cotisation;
 
 				// TODO Completer avec records
-
-
 
 				$i++;
 			}
@@ -794,7 +805,7 @@ class Adherent
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->error().' sql='.$sql;
 			return -1;
         }
     }
@@ -1921,6 +1932,11 @@ class Adherent
 		$this->typeid=1;				// Id type adherent
 		$this->type='Type adherent';	// Libellé type adherent
 		$this->need_subscription=0;
+		
+		$this->firstsubscription_date=time();
+		$this->firstsubscription_amount=10;
+		$this->lastsubscription_date=time();
+		$this->lastsubscription_amount=10;
 	}
 	
 	
@@ -1956,14 +1972,14 @@ class Adherent
 		// Object classes
 		$info["objectclass"]=split(',',$conf->global->LDAP_MEMBER_OBJECT_CLASS);
 		
-		// Champs
+		// Member
 		if ($this->fullname  && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
 		if ($this->nom && $conf->global->LDAP_FIELD_NAME)         $info[$conf->global->LDAP_FIELD_NAME] = $this->nom;
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN)      $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
 		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD)    $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypté
 		if ($this->poste && $conf->global->LDAP_FIELD_TITLE)      $info[$conf->global->LDAP_FIELD_TITLE] = $this->poste;
-		if ($this->adresse && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->adresse;
+		if ($this->adresse && $conf->global->LDAP_FIELD_ADDRESS)  $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->adresse;
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)           $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
 		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)       $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
 		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)     $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays;
@@ -1973,15 +1989,14 @@ class Adherent
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	      $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
-		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'%Y%m%d%H%M%SZ');
+		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'dayhourldap');
+		if ($this->statut && $conf->global->LDAP_FIELD_MEMBER_STATUS)  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
 
-		if ($_ENV["PARINUX"])
-		{
-			$info["prnxFirstContribution"]=dolibarr_print_date($this->firstsubscription_date,'%Y%m%d%H%M%SZ');
-			$info["prnxLastContribution"]=dolibarr_print_date($this->lastsubscription_date,'%Y%m%d%H%M%SZ');
-			$info["prnxLastContributionPrice"]=$this->lastsubscription_amount;
-			$info["prnxStatus"]=$this->statut;
-		}
+		// Subscriptions
+		if ($this->firstsubscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dolibarr_print_date($this->firstsubscription_date,'dayhourldap');
+		if ($this->firstsubscription_amount && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT) $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT] = $this->firstsubscription_amount;
+		if ($this->lastsubscription_date && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)       $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]   = dolibarr_print_date($this->lastsubscription_date,'dayhourldap');
+		if ($this->lastsubscription_amount && $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT)   $info[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT] = $this->lastsubscription_amount;
 		
 		return $info;
 	}	

@@ -653,47 +653,72 @@ class Ldap
 
 
 	/*
+	* 	\brief		Build a LDAP message
+	*	\param		dn			DN entry key
+	*	\param		info		Attributes array
+	*	\return		string		Content of file
+	*/
+	function dump_content($dn, $info)
+	{
+		$content='';
+		
+		// Create file content
+		if (ereg('^ldap',$this->server[0]))
+		{
+			$target="-H ".join(',',$this->server);
+		}
+		else
+		{
+			$target="-h ".join(',',$this->server)." -p ".$this->serverPort;
+		}
+		$content.="# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		$content.="# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		$content.="# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n";
+		$content.="dn: ".$dn."\n";	
+		foreach($info as $key => $value)
+		{
+			if (! is_array($value))
+			{
+				$content.="$key: $value\n";
+			}
+			else
+			{
+				foreach($value as $valuekey => $valuevalue)
+				{
+					$content.="$key: $valuevalue\n";
+				}
+			}
+		}
+		return $content;
+	}
+	
+	/*
 	* 	\brief		Dump a LDAP message to ldapinput.in file
 	*	\param		dn			DN entry key
 	*	\param		info		Attributes array
-	*	\return		int			<0 si KO, >0 si OK
+	*	\return		int			<0 if KO, >0 if OK
 	*/
 	function dump($dn, $info)
 	{
 		global $conf;
-		create_exdir($conf->ldap->dir_temp);
+
+		// Create content
+		$content=$this->dump_content($dn, $info);
+		
+		//Create file
+		$result=create_exdir($conf->ldap->dir_temp);
 		
 		$file=$conf->ldap->dir_temp.'/ldapinput.in';
 		$fp=fopen($file,"w");
 		if ($fp)
 		{
-			if (ereg('^ldap',$this->server[0]))
-			{
-				$target="-H ".join(',',$this->server);
-			}
-			else
-			{
-				$target="-h ".join(',',$this->server)." -p ".$this->serverPort;
-			}
-			fputs($fp,"# ldapadd $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
-			fputs($fp,"# ldapmodify $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
-			fputs($fp,"# ldapdelete $target -c -v -D ".$this->searchUser." -W -f ldapinput.in\n");
-			fputs($fp, "dn: ".$dn."\n");	
-			foreach($info as $key => $value)
-			{
-				if (! is_array($value))
-				{
-					fputs($fp, "$key: $value\n");
-				}
-				else
-				{
-					foreach($value as $valuekey => $valuevalue)
-					{
-						fputs($fp, "$key: $valuevalue\n");
-					}
-				}
-			}
+			fputs($fp, $content);
 			fclose($fp);
+			return 1;
+		}
+		else
+		{
+			return -1;
 		}
 	}
 
