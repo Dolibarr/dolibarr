@@ -67,21 +67,10 @@ function societe_prepare_head($objsoc)
       //affichage onglet catégorie
   if ($conf->categorie->enabled)
   	{
-   		if ($objsoc->fournisseur)
-    	{	
-    
-		      $head[$h][0] = DOL_URL_ROOT.'/fourn/categorie.php?socid='.$objsoc->id;
-		      $head[$h][1] = $langs->trans('Categories');
-		      $head[$h][2] = 'category';
-		      $h++;
-    	}
-    	else
-    	{
- 		      $head[$h][0] = DOL_URL_ROOT.'/comm/categorie.php?socid='.$objsoc->id;
-		      $head[$h][1] = $langs->trans('Categories');
-		      $head[$h][2] = 'category';
-		      $h++;   		
-    	}
+		$head[$h][0] = DOL_URL_ROOT.'/comm/categorie.php?socid='.$objsoc->id;
+		$head[$h][1] = $langs->trans('Categories');
+		$head[$h][2] = 'category';
+		$h++;   		
     }
   
   if ($conf->facture->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
