@@ -716,15 +716,20 @@ if ($socid > 0)
         }
         print '</td>';
         print '<td>'.$obj->poste.'&nbsp;</td>';
-        print '<td>';
 
         // Lien click to dial
         if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
         {
+            print '<td>';
             print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
             print img_phone_out("Appel émis") ;
+            print '</td><td>';
         }
-        print '</td><td>';
+        else
+        {
+        	print '<td colspan="2">';
+        }
+        
         print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
         print '<td><a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
         print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
