@@ -83,6 +83,10 @@ if ( $_POST["action"] == 'search')
     $sql.= " AND (d.prenom LIKE '%".$_POST['search']."%' OR d.nom LIKE '%".$_POST['search']."%')";
   }
 }
+if ($_GET["search_nom"])
+{
+    $sql.= " AND (d.prenom LIKE '%".$_GET["search_nom"]."%' OR d.nom LIKE '%".$_GET["search_nom"]."%')";
+}
 if ($filter == 'uptodate')
 {
     $sql.=" AND datefin >= sysdate()";
@@ -120,7 +124,8 @@ if ($result)
     }
 
     $param="";
-    if (isset($_GET["statut"])) $param.="&statut=$statut";
+    if (isset($_GET["statut"]))     $param.="&statut=$statut";
+    if (isset($_GET["search_nom"])) $param.="&search_nom=".$_GET["search_nom"];
     print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
     print "<table class=\"noborder\" width=\"100%\">";
@@ -134,6 +139,28 @@ if ($result)
     print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"","",$sortfield);
     print '<td width="60" align="center">'.$langs->trans("Action")."</td>\n";
     print "</tr>\n";
+
+	// Lignes des champs de filtre
+	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<tr class="liste_titre">';
+
+	print '<td align="left" class="liste_titre">';
+	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td class="liste_titre">&nbsp;</td>';
+
+	print '<td align="right" colspan="2" class="liste_titre">';
+	print '<input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
+	print '</td>';
+
+	print "</tr>\n";
+	print '</form>';
 
     $var=True;
     while ($i < $num && $i < $conf->liste_limit)
@@ -206,20 +233,18 @@ if ($result)
         print '<td align="center">';
         print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>&nbsp;";
         print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_disable($langs->trans("Resiliate"))."</a>";
-        print "</td>\n";
+        print "</td>";
 
-        print "</tr>";
+        print "</tr>\n";
         $i++;
     }
+
     print "</table>\n";
 
 	if ($num > $conf->liste_limit)
 	{
-	    print "<table class=\"noborder\" width=\"100%\">";
 	    print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
-	    print "</table><br>\n";
 	}
-	print "<br>";
 }
 else
 {
@@ -230,5 +255,4 @@ else
 $db->close();
 
 llxFooter('$Date$ - $Revision$');
-
 ?>
