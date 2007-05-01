@@ -383,6 +383,7 @@ DefaultSkin=Default skin theme
 MaxSizeList=Max length for list
 DefaultMaxSizeList=Default max length for list
 MessageOfDay=Message of day
+MessageLogin=Message login page
 PermanentLeftSearchForm=Permanent search form on left menu
 DefaultLanguage=Default language to use (language code)
 EnableMultilangInterface=Enable multi-langual interface

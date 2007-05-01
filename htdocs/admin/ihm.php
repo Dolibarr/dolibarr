@@ -290,9 +290,10 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageOfDay").'</td><td>';
     print nl2br($conf->global->MAIN_MOTD);
     print '</td></tr>';
-    // Message home
+    
+	// Message login
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageHome").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
     print nl2br($conf->global->MAIN_HOME);
     print '</td></tr>';
     print '</table>';
