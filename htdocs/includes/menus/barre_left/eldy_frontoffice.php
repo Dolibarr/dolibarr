@@ -594,10 +594,10 @@ class MenuLeft {
 				if ($conf->categorie->enabled)
 				{
 					$langs->load("categories");
-					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
-						if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+						if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
 					}
 					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
