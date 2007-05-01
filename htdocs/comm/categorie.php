@@ -90,6 +90,7 @@ if ($_GET["socid"] || $_GET["ref"])
 }
 
 
+
 $html = new Form($db);
 
 
@@ -98,49 +99,43 @@ $html = new Form($db);
  */
 if ($_GET["socid"] || $_GET["ref"])
 {
+	/*
+	* Affichage onglets
+	*/
+	$head = societe_prepare_head($soc);
 
-  
+	dolibarr_fiche_head($head, 'category', $soc->nom);
 
-  
-  /*
-   * Affichage onglets
-   */
-  $head = societe_prepare_head($soc);
-  
-  dolibarr_fiche_head($head, 'category', $soc->nom);
-  
 
-     print '<table width="100%" border="0">';
-    print '<tr><td valign="top">';
-    print '<table class="border" width="100%">';
+	print '<table class="border" width="100%">';
 
-    print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
-    print $soc->nom;
-    print '</td></tr>';
+	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
+	print $soc->nom;
+	print '</td></tr>';
 
-    print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
 
-    if ($soc->client)
-    {
-        print '<tr><td>';
-        print $langs->trans('CustomerCode').'</td><td colspan="3">';
-        print $soc->code_client;
-        if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
-        print '</td></tr>';
-    }
+	if ($soc->client)
+	{
+		print '<tr><td>';
+		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print $soc->code_client;
+		if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+		print '</td></tr>';
+	}
 
-    print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
 
-    print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
-    print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
-    if ($soc->pays) {
-    	print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td></tr>';
-    }
+	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+	if ($soc->pays) {
+		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td></tr>';
+	}
 
-    print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code).'</td>';
-    print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code).'</td></tr>';
+	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code).'</td>';
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code).'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\" target=\"_blank\">".$soc->url."</a>&nbsp;</td></tr>";
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\" target=\"_blank\">".$soc->url."</a>&nbsp;</td></tr>";
 
 	// Assujeti à TVA ou pas
 	print '<tr>';
@@ -149,130 +144,7 @@ if ($_GET["socid"] || $_GET["ref"])
 	print '</td>';
 	print '</tr>';
 
-	// Conditions de réglement par défaut
-	$langs->load('bills');
-	$html = new Form($db);
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-	print $langs->trans('PaymentConditions');
-	print '<td>';
-	if (($_GET['action'] != 'editconditions') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editconditions&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetConditions'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editconditions')
-	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->cond_reglement,'cond_reglement_id',-1,1);
-	}
-	else
-	{
-		$html->form_conditions_reglement($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->cond_reglement,'none');
-	}
-	print "</td>";
-	print '</tr>';
-
-	// Mode de règlement
-	print '<tr><td nowrap>';
-	print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-	print $langs->trans('PaymentMode');
-	print '<td>';
-	if (($_GET['action'] != 'editmode') && $user->rights->societe->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editmode&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetMode'),1).'</a></td>';
-	print '</tr></table>';
-	print '</td><td colspan="3">';
-	if ($_GET['action'] == 'editmode')
-	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->mode_reglement,'mode_reglement_id');
-	}
-	else
-	{
-		$html->form_modes_reglement($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->mode_reglement,'none');
-	}
-	print "</td>";
-	print '</tr>';
-
-    // Réductions relative (Remises-Ristournes-Rabbais)
-    print '<tr><td nowrap>';
-    print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-    print $langs->trans("CustomerRelativeDiscountShort");
-    print '<td><td align="right">';
-    if ($user->rights->societe->creer)
-    {
-    	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$soc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    }
-    print '</td></tr></table>';
-    print '</td><td colspan="3">'.($soc->remise_client?$soc->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
-    print '</tr>';
-    
-    // Réductions absolues (Remises-Ristournes-Rabbais)
-    print '<tr><td nowrap>';
-    print '<table width="100%" class="nobordernopadding">';
-    print '<tr><td nowrap>';
-    print $langs->trans("CustomerAbsoluteDiscountShort");
-    print '<td><td align="right">';
-    if ($user->rights->societe->creer)
-    {
-    	print '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$soc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    }
-    print '</td></tr></table>';
-    print '</td>';
-    print '<td colspan="3">';
-		$amount_discount=$soc->getcurrentDiscount();
-		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
-        if ($amount_discount > 0) print $amount_discount.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
-        else print $langs->trans("DiscountNone");
-    print '</td>';
-    print '</tr>';
-
-	// multiprix
-	if($conf->global->PRODUIT_MULTIPRICES == 1)
-	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans("PriceLevel");
-		print '<td><td align="right">';
-		if ($user->rights->societe->creer)
-		{
-			print '<a href="'.DOL_URL_ROOT.'/comm/multiprix.php?id='.$soc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-		}
-		print '</td></tr></table>';
-		print '</td><td colspan="3">'.$soc->price_level."</td>";
-		print '</tr>';
-	}
-	
-	// Adresse de livraison
-	if ($conf->expedition->enabled)
-	{
-		print '<tr><td nowrap>';
-		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
-		print $langs->trans("DeliveriesAddress");
-		print '<td><td align="right">';
-		if ($user->rights->societe->creer)
-	    {
-    		print '<a href="'.DOL_URL_ROOT.'/comm/adresse_livraison.php?socid='.$soc->id.'">'.img_edit($langs->trans("Modify")).'</a>';
-    	}
-		print '</td></tr></table>';
-		print '</td><td colspan="3">';
-
-		$sql = "SELECT count(rowid) as nb";
-	    $sql.= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison";
-	    $sql.= " WHERE fk_societe =".$soc->id;
-	
-	    $resql = $db->query($sql);
-	    if ($resql)
-	    {
-	        $num = $db->num_rows($resql);
-	        $objal = $db->fetch_object($resql);
-	        print $objal->nb?($objal->nb):$langs->trans("NoOtherDeliveryAddress");
-	    }
-	    else
-	    {
-	        dolibarr_print_error($db);
-	    }
-	    
-		print '</td>';
-		print '</tr>';
-	}	
-
-    print "</table>";
+	print '</table>';
 
 	print '</div>';
 	
@@ -280,15 +152,15 @@ if ($_GET["socid"] || $_GET["ref"])
 	if ($mesg) print($mesg);
 
 	
-    /*
-     * Barre d'actions
-     *
-     */
-    print '<div class="tabsAction">';
-    if ($user->rights->categorie->creer)
-    {
-	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$soc->id.'&type=2">'.$langs->trans("NewCat").'</a>';
-    }
+	/*
+	* Barre d'actions
+	*
+	*/
+	print '<div class="tabsAction">';
+	if ($user->rights->categorie->creer)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$soc->id.'&type=2">'.$langs->trans("NewCat").'</a>';
+	}
 	print '</div>';
 
 
@@ -296,15 +168,15 @@ if ($_GET["socid"] || $_GET["ref"])
 	if ($user->rights->societe->creer)
 	{
 		print '<br>';
-	  print '<form method="post" action="'.DOL_URL_ROOT.'/comm/categorie.php?socid='.$soc->id.'">';
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td>';
-	  print $langs->trans("ClassifyInCategory").' ';
-	  print $html->select_all_categories(2,$categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-	  print '</tr>';
-	  print '</table>';
-	  print '</form>';
-	  print '<br/>';
+		print '<form method="post" action="'.DOL_URL_ROOT.'/comm/categorie.php?socid='.$soc->id.'">';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>';
+		print $langs->trans("ClassifyInCategory").' ';
+		print $html->select_all_categories(2,$categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+		print '</tr>';
+		print '</table>';
+		print '</form>';
+		print '<br/>';
 	}
 
 
@@ -365,6 +237,7 @@ if ($_GET["socid"] || $_GET["ref"])
 	}
 	
 }
+
 $db->close();
 
 
