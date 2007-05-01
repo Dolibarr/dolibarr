@@ -19,9 +19,22 @@
  * $Source$
  */
 
-header('Content-type: text/css');
+/**
+		\file       htdocs/theme/auguria/auguria.css.php
+		\brief      Fichier de style CSS du theme Auguria
+		\version    $Revision$
+*/
 
 require("../../conf/conf.php");
+
+// Define css type
+header('Content-type: text/css');
+// Important: Avoid page request by browser and dynamic build at
+// each Dolibarr page access.
+if (! $conf->global->MAIN_ENABLE_DEVELOPMENT)
+{
+	//header('Cache-Control: max-age=3600, public, must-revalidate');
+}
 
 ?>
 
@@ -46,31 +59,31 @@ a:visited {font-weight: bold; color: #000000; text-decoration: none; }
 a:active  {font-weight: bold; color: #000000; text-decoration: none; }
 a:hover   {font-weight: bold; color: #000000; text-decoration: none; }
 input
-{ 
-     
+{
+
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 input.flat
-{ 
-    
+{
+
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    
+
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea.flat
-{ 
-    
+{
+
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -78,14 +91,14 @@ textarea.flat
 }
 select.flat
 {
-    
+
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 
 .button  {
-    
+
 	font-size: 100%;
 	border: 0px;
 	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
@@ -213,6 +226,9 @@ font.tmenudisabled
   font-size:12px;
 }
 
+
+/* Pour menu TOP auguria */
+
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -220,7 +236,7 @@ div.tmenu ul {
 	
 }
 
-div.tmenu li { 
+div.tmenu li {
 	float: left;
 	border-right: solid 1px #4F9EC9;
 	height: 22px;
@@ -231,7 +247,7 @@ div.tmenu li {
 	padding:0;
 	}
 
-div.tmenu li a{ 
+div.tmenu li a{
   	font-size: 13px;
 	color:#FFFFFF;
 	text-decoration:none;
@@ -248,7 +264,7 @@ div.tmenu li a{
 }
 
 div.tmenu li a#sel
-{ 
+{
 	background:#FFFFFF;
 	color:#4F9EC9;
 	font-weight: normal;
@@ -266,8 +282,6 @@ div.tmenu li a:hover
 	font-weight: normal;
 }
 
-
-
 div.tmenu li a:active
 {
 	color:#4F9EC9;
@@ -279,10 +293,6 @@ div.tmenu li a:link
 	
 	font-weight: normal;
 }
-
-/* ============================================================================== */
-/* Menu gauche                                                                    */
-/* ============================================================================== */
 
 .tmenu a:active
 {
@@ -297,6 +307,7 @@ div.tmenu  .tmenudisabled
   padding-right:10px;
   padding-top:3px;
 }
+
 
 /* Login */
 
@@ -332,8 +343,11 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-.menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
-font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color:#000000}
+a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color:#000000}
+a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color:#000000}
+a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color:#000000}
+font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
 
 a.vsmenu:link       { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
 a.vsmenu:visited    { font-size:11px; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
@@ -341,23 +355,19 @@ a.vsmenu:active     { font-size:11px; text-align:left; font-weight: normal; colo
 a.vsmenu:hover      { font-size:11px; text-align:left; font-weight: normal; color: RGB(94,148,181); margin: 1em 1em 1em 1em; }
 font.vsmenudisabled { font-size:11px; text-align:left; font-weight: normal; color: #757575; margin: 1em 1em 1em 1em; }
 
+a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+/* Pour menu gauche Auguria */
+
+.menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
+font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+
 a.menu_titre:link       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
 a.menu_titre:visited    { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
 a.menu_titre:active     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
 a.menu_titre:hover      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-
-a.vmenu:link        { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:visited     { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:active      { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-a.vmenu:hover       { font-size:11px; text-align:left; font-weight: bold; color:#000000}
-font.vmenudisabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
-
-a.help:link    { font: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:visited { font: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:active  { font: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.help:hover   { font: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-
-
 
 div.menu
 {
@@ -404,13 +414,7 @@ div.menu_fin {
     background-repeat:no-repeat;
 }
 
-         
 
-div.help {
-    margin-left:5px;
-    margin-top:15px;
-    text-align: center;
-}
 
 div.blockvmenuimpair a.vmenu, div.blockvmenupair a.vmenu
 {
@@ -446,23 +450,30 @@ div.blockvmenuimpair form .button, div.blockvmenupair form .button
 	color: #FFFFFF;
 }
 
-td.barre { 
+div.help
+{
+    margin-left:5px;
+    margin-top:15px;
+    text-align: center;
+}
+
+td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
 	font:;
-	color: #000000; 
+	color: #000000;
 	text-align:left;
 	text-decoration: none;
 }
 
-td.barre_select { 
-	background: #b3c5cc; 
+td.barre_select {
+	background: #b3c5cc;
 	color: #000000;
 }
 
 td.photo {
-	background: #F4F4F4; 
+	background: #F4F4F4;
 	color: #000000;
     border: 1px solid #b3c5cc;
 }
@@ -484,7 +495,7 @@ div.formsearch
   background: #d0d4d7;
   top: 0px;
   left: 130px;
-  padding: 4px; 
+  padding: 4px;
   vertical-align: middle;
   margin-bottom: 10px;
 }
@@ -514,8 +525,8 @@ div.tabBar {
     -moz-border-radius-bottomleft:6px;
     -moz-border-radius-bottomright:6px;
     border-right: 1px solid #68ACCF ;
-    border-bottom: 1px solid #68ACCF; 
-    border-left: 1px solid #68ACCF; 
+    border-bottom: 1px solid #68ACCF;
+    border-left: 1px solid #68ACCF;
     border-top: 1px solid #68ACCF;
 }
 
@@ -525,6 +536,7 @@ div.tabsAction {
     text-align: right;
 }
 
+/* onglet_inf ne sert qu'a telephonie. A virer */
 div.onglet_inf
 {
     position: relative;
@@ -536,7 +548,7 @@ div.onglet_inf
     font-weight:bold;
     font-size: 12px;
     height: 19px;
-    color: #000000; 
+    color: #000000;
     text-decoration: none;
 }
 
@@ -554,6 +566,7 @@ a.onglet_inf {
     border-left: 1px solid #D8D8D8;
     border-bottom: 1px solid #555555;
 }
+
 
 a.tabTitle {
     background: #FFFFFF;
@@ -637,69 +650,69 @@ a.tabimage {
 
 /* Nouvelle syntaxe à utiliser */
 
-a.butAction:link    { 
+a.butAction:link    {
                       font-weight: bold;
-                      background: #68ACCF; 
-                      border: 1px solid #8CACBB; 
-                      color: #FFFFFF; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: #68ACCF;
+                      border: 1px solid #8CACBB;
+                      color: #FFFFFF;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:visited {  
+a.butAction:visited {
                       font-weight: bold;
-                      background: #68ACCF; 
-                      border: 1px solid #8CACBB; 
-                      color: #FFFFFF; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: #68ACCF;
+                      border: 1px solid #8CACBB;
+                      color: #FFFFFF;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:active  {  
+a.butAction:active  {
                       font-weight: bold;
-                      background: white; 
-                      border: 1px solid #8CACBB; 
+                      background: white;
+                      border: 1px solid #8CACBB;
                       color: #6198BA;
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:hover   {  
+a.butAction:hover   {
                       font-weight: bold;
-                      background: #FFFFFF; 
-                      border: 1px solid #8CACBB; 
-                      color: #6198BA; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: #FFFFFF;
+                      border: 1px solid #8CACBB;
+                      color: #6198BA;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionRefuse    { 
+a.butActionRefuse    {
                       font-weight: bold;
-                      background: white; 
-                      border: 1px solid red; 
-                      color: #436976; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: white;
+                      border: 1px solid red;
+                      color: #436976;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionRefuse:hover { 
+a.butActionRefuse:hover {
                           font-weight: bold;
                           background: #dee7ec; }
 
 
-a.butActionDelete    { 
+a.butActionDelete    {
                       font-weight: bold;
-                      background: red; 
-                      border: 1px solid red; 
-                      color: red; 
-                      padding: 0em 0.7em; 
-                      margin: 0em 0.5em; 
-                      text-decoration: none; 
+                      background: red;
+                      border: 1px solid red;
+                      color: red;
+                      padding: 0em 0.7em;
+                      margin: 0em 0.5em;
+                      text-decoration: none;
                       white-space: nowrap; }
 
 a.butActionDelete:link    {  font-weight: bold; background: white; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
@@ -714,13 +727,13 @@ a.tabAction:link    {  font-weight: bold; background: #68ACCF; border: 1px solid
 a.tabAction:visited {  font-weight: bold; background: #68ACCF; border: 1px solid #8CACBB; color: #FFFFFF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:active  {  font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.tabAction:hover   {  font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-                             
+
 a.butDelete:link    {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:active  {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:visited {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-                      
+
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */
@@ -807,7 +820,7 @@ width: 100%;
 border:0px;
 }
 
-tr.liste_titre { 
+tr.liste_titre {
 background: #68ACCF;
 color: #FFFFFF;
 font: 12px arial, helvetica, verdana, sans-serif;
@@ -817,7 +830,7 @@ white-space: nowrap;
 
 }
 
-td.liste_titre { 
+td.liste_titre {
 background: #68ACCF;
 color: #FFFFFF;
 font: 12px arial, helvetica, verdana, sans-serif;
@@ -828,7 +841,7 @@ white-space: nowrap;
 }
 
 td.liste_titre_sel
-{ 
+{
 background: #68ACCF;
 color: #FFFFFF;
 font: 12px arial, helvetica, verdana, sans-serif;
@@ -838,20 +851,20 @@ white-space: normal;
   -moz-border-radius-topleft:6px;
   -moz-border-radius-topright:6px;
 }
-input.liste_titre { 
+input.liste_titre {
 background: #7699A9;
 background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/liste_titre.png' ?>);
 border: 0px;
 }
 
-tr.liste_total td { 
+tr.liste_total td {
 border-top: 0px solid #888888;
 background: #F4F4F4;
 font-weight: bold;
 white-space: normal;
 }
 
-th { 
+th {
 background: #7699A9;
 color: #334444;
 
@@ -863,32 +876,32 @@ border-bottom: 1px solid #FFFFFF;
 white-space: normal;
 }
 
-td.border { 
+td.border {
 border-top: 1px solid #000000;
 border-right: 1px solid #000000;
 border-bottom: 1px solid #000000;
 border-left: 1px solid #000000;
 }
 
-.pair	{ 
-background: #e6ebed; 
+.pair	{
+background: #e6ebed;
 
 border: 0px;
 }
 /*
-.pair:hover { 
+.pair:hover {
 background: #c0c4c7;
 border: 0px;
 }
 */
 
-.impair { 
+.impair {
 background: #d0d4d7;
 
 border: 0px;
 }
 /*
-.impair:hover { 
+.impair:hover {
 background: #c0c4c7;
 border: 0px;
 }
@@ -897,7 +910,7 @@ border: 0px;
 /*
  *  Boxes
  */
-tr.box_titre { 
+tr.box_titre {
 background: #68ACCF;
 color: #FFFFFF;
 font: 12px;
@@ -908,12 +921,12 @@ white-space: normal;
   -moz-border-radius-topright:6px;
 }
 
-tr.box_impair { 
+tr.box_impair {
 background: #e6ebed;
 font: 12px;
 }
 
-tr.box_pair { 
+tr.box_pair {
 background: #d0d4d7;
 font: 12px;
 }
@@ -938,7 +951,7 @@ div.warning {
 }
 
 div.error {
-  color: #550000; font-weight: bold; 
+  color: #550000; font-weight: bold;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
   border: 1px solid #8C9CAB;
@@ -949,7 +962,7 @@ div.error {
  *   Liens Payes/Non payes
  */
 
-a.normal:link { font-weight: normal } 
+a.normal:link { font-weight: normal }
 a.normal:visited { font-weight: normal }
 a.normal:active { font-weight: normal }
 a.normal:hover { font-weight: normal }
@@ -965,9 +978,9 @@ a.impayee:hover { font-weight: bold; color: #550000; }
 /*
  *  Lignes titre espace
  */
-div.titre { 
-	font-weight: bold; 
-	color: #57A2CA; 
+div.titre {
+	font-weight: bold;
+	color: #57A2CA;
 	text-decoration: none }
 
 
@@ -975,25 +988,25 @@ div.titre {
  * Formulaire confirmation
 /* ============================================================================== */
 
-td.validtitle { 
+td.validtitle {
            font-weight: bold;
            background: #EECC55;
            }
-td.valid { 
+td.valid {
            background: #EECC55;
            }
 
 
-td.small { 
+td.small {
            font-size: 10px;
            }
 
-tr.nonpayed { 
+tr.nonpayed {
            font-weight: bold;
            }
 
 
-div.version { 
+div.version {
 background: #F4F4F4;
 text-align: right;
 font-size: 9px;
@@ -1043,7 +1056,7 @@ ul.arbre ul {
 ul.arbre li {
     padding: 0;
     margin: 0;
-    list-style: none; 
+    list-style: none;
 }
 ul.arbre li li {
     margin: 0 0 0 16px;
@@ -1128,7 +1141,7 @@ div.menuFleche
 #dhtmltooltip
 {
 position: absolute;
-width: 200px;
+width: 300px;
 border: 1px solid #444444;
 padding: 2px;
 background-color: lightyellow;
@@ -1140,13 +1153,13 @@ z-index: 100;
 /* ============================================================================== */
 /* Calendar                                                                       */
 /* ============================================================================== */
-.bodyline { 
+.bodyline {
 	-moz-border-radius:8px;
-	border: 1px #E4ECEC outset; 
+	border: 1px #E4ECEC outset;
 	padding:0px;
 	margin-bottom:5px;
 }
-table.dp { 
+table.dp {
     width: 180px;
     background-color: #FFFFFF;
     border-top: solid 2px #DDDDDD;
@@ -1155,16 +1168,16 @@ table.dp {
     border-bottom: solid 1px #222222;
 }
 .dp td, .tpHour td, .tpMinute td{padding:2px; font-size:10px;}
-.dpHead,.tpHead,.tpHour td:Hover .tpHead{ 
+.dpHead,.tpHead,.tpHour td:Hover .tpHead{
 	font-weight:bold;
 	background-color:#b3c5cc;
-	color:white; 
+	color:white;
 	font-size:11px;
 	cursor:auto;
 }
 .dpButtons,.tpButtons {
 	text-align:center;
-	background-color:#617389;color:#FFFFFF; font-weight:bold; 
+	background-color:#617389;color:#FFFFFF; font-weight:bold;
 	border: 1px outset black;
 	cursor:pointer;	
 }
@@ -1197,7 +1210,7 @@ font-size:9px;
 border-width:0px;
 color:#0B63A2;
 vertical-align:middle;
-cursor: pointer; 
+cursor: pointer;
 }
 
 

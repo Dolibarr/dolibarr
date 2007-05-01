@@ -33,8 +33,10 @@ require("../../conf/conf.php");
 header('Content-type: text/css');
 // Important: Avoid page request by browser and dynamic build at
 // each Dolibarr page access.
-header('Cache-Control: max-age=3600, public, must-revalidate');
-
+if (! $conf->global->MAIN_ENABLE_DEVELOPMENT)
+{
+	header('Cache-Control: max-age=3600, public, must-revalidate');
+}
 ?>
 
 /* ============================================================================== */
@@ -225,6 +227,89 @@ font.tmenudisabled
   font-size:12px;
 }
 
+
+/* Pour menu TOP auguria */
+
+div.tmenu ul {
+	padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+	list-style: none;
+	
+}
+
+div.tmenu li {
+	float: left;
+	border-right: solid 1px #4F9EC9;
+	height: 22px;
+	position:relative;
+	liste-style:none;
+	display: block;
+	margin:0;
+	padding:0;
+	}
+
+div.tmenu li a{
+  	font-size: 13px;
+	color:#FFFFFF;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 22px;
+	display: block;
+	font-weight: normal;
+}
+
+* html div.tmenu li a{
+	width:40px;
+}
+
+div.tmenu li a#sel
+{
+	background:#FFFFFF;
+	color:#4F9EC9;
+	font-weight: normal;
+}
+div.tmenu li a:visited
+{
+	color:#FFFFFF;
+	font-weight: normal;
+}
+
+div.tmenu li a:hover
+{
+	background:#FFFFFF;
+	color:#4F9EC9;
+	font-weight: normal;
+}
+
+div.tmenu li a:active
+{
+	color:#4F9EC9;
+	font-weight: normal;
+}
+
+div.tmenu li a:link
+{
+	
+	font-weight: normal;
+}
+
+.tmenu a:active
+{
+	background:#4F9EC9;
+}
+
+div.tmenu  .tmenudisabled
+{
+  color: #757575;
+  font-size: 13px;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top:3px;
+}
+
+
 /* Login */
 
 a.login
@@ -277,8 +362,68 @@ a.help:visited      { font-size:11px; font: helvetica, verdana, arial, sans-seri
 a.help:active       { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:hover        { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
+
+
+/* Pour menu gauche Auguria */
+
+.menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
+font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+
+a.menu_titre:link       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.menu_titre:visited    { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.menu_titre:active     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.menu_titre:hover      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+
+div.menu
+{
+	margin: 0px;
+	border-spacing: 0px;
+	padding: 0px;
+	width: 165px;
+    border : 0x solid #68ACCF;	
+}
+
+
+div.menu_titre {
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
+	padding: 0px;
+	padding-top:7px;
+	padding-left:0px;
+	margin-top: 8px;
+	margin: 0px;
+	height: 21px;
+    text-align: left;
+    font-size : 12px;
+    color : #FFFFFF;
+    font-weight: bold;
+}
+
+div.menu_contenu {
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-rubrique.png' ?>);
+	margin: 0px;
+	padding: 1px;
+
+	padding-right: 6px;
+    font-size : 11px;
+    font-weight:normal;
+    color : #000000;
+    text-align: left;
+}
+
+div.menu_fin {
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
+	margin: 0px;
+	padding: 0px;	
+	height:6px;
+    width:165px;
+    background-repeat:no-repeat;
+}
+
+
+
 div.blockvmenupair
 {
+    width:158px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font: helvetica, verdana, arial, sans-serif;
@@ -295,6 +440,7 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
+    width:158px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font: helvetica, verdana, arial, sans-serif;
@@ -432,6 +578,7 @@ a.onglet_inf {
     border-left: 1px solid #D8D8D8;
     border-bottom: 1px solid #555555;
 }
+
 
 a.tabTitle {
     background: #436976;
@@ -1041,7 +1188,8 @@ td.hidden {
                          margin: 1px 1px 1px 1px;
                }
 
-// Utilise dans smarty uniquement. A virer
+
+/* Utilise dans smarty uniquement. A virer */
 td.alerte {
  background: #FF99A9;
 }
