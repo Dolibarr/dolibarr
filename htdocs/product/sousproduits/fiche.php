@@ -132,6 +132,9 @@ if ($cancel == $langs->trans("Cancel"))
 llxHeader("","",$langs->trans("CardProduct".$product->type));
 $html = new Form($db);
 
+$head=product_prepare_head($product, $user);
+$titre=$langs->trans("CardProduct".$product->type);
+dolibarr_fiche_head($head, 'subproduct', $titre);
 
 /*
  * Fiche produit
@@ -147,10 +150,6 @@ if ($id || $ref)
 	  /*
 	   *  En mode visu
 	   */
-	  $head=product_prepare_head($product, $user);
-	  $titre=$langs->trans("CardProduct".$product->type);
-	  dolibarr_fiche_head($head, 'subproduct', $titre);
-	  
 	  
 	  print($mesg);
 	  
@@ -271,7 +270,7 @@ if ($id || $ref)
       if($conf->categorie->enabled)
 			{
 			  print '<tr><td>'.$langs->trans("CategoryFilter");
-			  print '</td><td>'.$html->select_all_categories($catMere).'</td></tr>';
+			  print '</td><td>'.$html->select_all_categories(0,$catMere).'</td></tr>';
 			}
 			
 			print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
