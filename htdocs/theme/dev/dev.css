@@ -269,18 +269,6 @@ table.liste td
 }
 
 
-div.formsearch
-{
-  display: block;
-  float: none;
-  clear: right;
-  background: #dee7ec;
-  top: 0px;
-  left: 130px;
-  padding: 4px; 
-  vertical-align: middle;
-}
-
 .flat  {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;

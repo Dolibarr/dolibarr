@@ -309,23 +309,6 @@ form {
 
 
 /*
- *   Barre recherche
- */
-div.formsearch
-{
-  display: block;
-  float: none;
-  clear: right;
-  background: #ddddcc;
-  top: 0px;
-  left: 130px;
-  padding: 4px; 
-  vertical-align: middle;
-  margin-bottom: 10px;
-}
-
-
-/*
  *   Barre onglets
  */
 div.tabBar {

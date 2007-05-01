@@ -140,10 +140,6 @@ div.fiche
     width:auto;
 }
 
-* html div.fiche
-{
-	width:800px;	
-}
 
 
 /* ============================================================================== */
@@ -228,7 +224,7 @@ font.tmenudisabled
 }
 
 
-/* Pour menu TOP auguria */
+/* Pour menu top auguria */
 
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
@@ -493,23 +489,6 @@ td.photo {
 form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
-}
-
-
-/* ============================================================================== */
-/* Barre recherche                                                                */
-/* ============================================================================== */
-
-div.formsearch
-{
-  display: block;
-  clear: right;
-  background: #d0d4d7;
-  top: 0px;
-  left: 130px;
-  padding: 4px;
-  vertical-align: middle;
-  margin-bottom: 10px;
 }
 
 
@@ -928,6 +907,10 @@ font: helvetica, verdana, arial, sans-serif;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
+td.warning {	/* Utilisé par Smarty */
+  background: #FF99A9;
+}
+
 div.ok {
   color: #114466;
 }
@@ -943,7 +926,7 @@ div.error {
   border: 1px solid #8C9CAB;
 }
 
-div.info {
+div.info {	/* Info admin */
   color: #888888;
   padding: 0.2em 0.2em 0.2em 0.2em;
   margin: 0.5em 0em 0.5em 0em;
@@ -1187,12 +1170,6 @@ td.hidden {
                          padding: 1px 1px 1px 1px;
                          margin: 1px 1px 1px 1px;
                }
-
-
-/* Utilise dans smarty uniquement. A virer */
-td.alerte {
- background: #FF99A9;
-}
 
 
 

@@ -266,21 +266,6 @@ form {
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
-/*
- *   Barre recherche
- */
-div.formsearch
-{
-  display: block;
-  float: none;
-  clear: right;
-  background: #d0d4d7;
-  top: 0px;
-  left: 130px;
-  padding: 4px; 
-  vertical-align: middle;
-  margin-bottom: 10px;
-}
 
 /*
  *   Barre onglets
