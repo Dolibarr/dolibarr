@@ -10,6 +10,9 @@
 
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
 
+update llx_const set name='MAIN_ENABLE_DEVELOPMENT' where name='MAIN_SHOW_DEVELOPMENT_MODULES';
+
+
 -- Extention de la gestion des catégories
 alter table llx_categorie ADD type int not null default '0';
 
