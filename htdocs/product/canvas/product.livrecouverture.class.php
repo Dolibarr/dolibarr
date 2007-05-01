@@ -140,7 +140,7 @@ class ProductLivreCouverture extends Product
 
     if ( ($this->seuil_stock_alerte > $this->stock_dispo) && ($this->status == 1) )
       {
-	$smarty->assign('smarty_stock_dispo_class', 'class="alerte"');
+	$smarty->assign('smarty_stock_dispo_class', 'class="warning"');
       }
   }
 }

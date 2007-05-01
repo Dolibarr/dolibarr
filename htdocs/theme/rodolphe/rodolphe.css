@@ -29,11 +29,7 @@ body {
   margin-right: 0;
   margin-left: 0;
 }
-.body {
-  background: #AAA5A0; 
-  color: #000000;
-  font: 12px helvetica, verdana, arial, sans-serif;
-}
+
 
 /***** Styles par défaut *****/
 a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -69,28 +65,19 @@ select.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
 }
-
 .button  {
 	font-family: arial,verdana,helvetica, sans-serif;
 	font-size: 100%;
 	font-weight: normal;
 	border: 1px solid #bbbb99;
-	background-image : url(/theme/yellow/img/button_bg.png);
 	background-position : bottom;
 }
-
-
-div.body
+form
 {
-    margin-top: 1px;
-    margin-bottom: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    display:block;
-    padding:0px;
-    font-family:arial,tahoma,verdana,helvetica;
-    font-size:12px;
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
+
 
 div.vmenuplusfiche
 {
@@ -320,10 +307,6 @@ td.photo {
            color: #000000 
            }
 
-form {
-    padding: 0.1em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
-}
 
 
 /*

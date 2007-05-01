@@ -96,15 +96,19 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-
-.button  {
-
+.button
+{
 	font-size: 100%;
 	border: 0px;
 	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
 	background-position : bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+form
+{
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
 
 
@@ -476,11 +480,6 @@ td.photo {
 	background: #F4F4F4;
 	color: #000000;
     border: 1px solid #b3c5cc;
-}
-
-form {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
 }
 
 

@@ -55,18 +55,12 @@ select.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
 }
-
-
-div.body
+form
 {
-    margin-top: 1px;
-    margin-bottom: 0;
-    margin-right: 3px;
-    margin-left: 3px;
-    display:block;
-    padding:0px;
-    font-size:13px;
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
+
 
 div.vmenuplusfiche
 {
@@ -262,10 +256,6 @@ td.barre_select {
                   color: #000000;
                   }
 
-form {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
-}
 
 /*
  *   Barre onglets

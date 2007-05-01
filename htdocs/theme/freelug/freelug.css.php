@@ -94,7 +94,6 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-
 .button  {
 	font: 11px arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
@@ -118,6 +117,10 @@ select.flat
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.xxx' ?>);
 	background-position: bottom;
 	background-repeat: repeat-x;
+}
+form {
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
 
 
@@ -357,11 +360,6 @@ td.photo {
 	background: #FCFCFC; 
 	color: #000000;
     border: 1px solid #b3c5cc;
-}
-
-form {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
 }
 
 
