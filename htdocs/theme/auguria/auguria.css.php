@@ -148,6 +148,71 @@ div.tmenu
     height: 22px;
 }
 
+table.tmenu
+{
+    padding: 0px 0px 0px 0px;
+    margin: -2px 0px 0px 0px;
+}
+
+a.tmenu:link
+{
+  	color:#FFFFFF;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 21px;
+	display: block;
+	font-weight: normal;
+}
+
+a.tmenu:visited
+{
+  	color:#FFFFFF;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 21px;
+	display: block;
+	font-weight: normal;
+}
+
+
+a.tmenu#sel
+{
+	 color:#234046;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 21px;
+	display: block;
+	font-weight: normal;
+	background: #FFFFFF;
+}
+a.tmenu:hover
+{
+	 color:#234046;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 21px;
+	display: block;
+	font-weight: normal;
+	background: #FFFFFF;
+}
+
+font.tmenudisabled
+{
+  color: #93a5aa;
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 2px 0px;
+  font-weight:bold;
+  font-size:12px;
+}
+
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -347,19 +412,39 @@ div.help {
     text-align: center;
 }
 
-div.blockvmenupair
+div.blockvmenuimpair a.vmenu, div.blockvmenupair a.vmenu
 {
-	margin-left:20px;
-	margin-top:5px;
-	border-spacing: 0px;
-	padding: 0px;
-	width: 165px;
-	color:#000000;
+	display: block;
+	color: #FFFFFF;
+	text-align:left;
+	text-decoration: none;
+	padding: 4px;
+	margin: 0px;
+	margin-bottom: -10px;
+	background: #FFFFFF;
+    background-image: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/tmenu.jpg' ?>);
+    background-position:top;
+    background-repeat:repeat-x;
 }
 
+div.blockvmenuimpair form a.vmenu, div.blockvmenupair form a.vmenu
+{
+	display: block;
+	color: #000000;
+	text-align:left;
+	text-decoration: none;
+	padding: 4px;
+	margin: 0px;
+	background: #FFFFFF;
+	    margin-bottom: -12px;
+}
 
-
-
+div.blockvmenuimpair form .button, div.blockvmenupair form .button
+{
+	margin: 0px;
+	background: #6aabd1;
+	color: #FFFFFF;
+}
 
 td.barre { 
 	border-right: 1px solid #000000;
