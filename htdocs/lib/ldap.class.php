@@ -762,17 +762,17 @@ class Ldap
 
     /**
      * 		\brief		Returns an array containing a details of elements
-	 *		\param		$search			 	
-	 *		\param		$userDn			 	
-	 *		\param		$useridentifier 	
-	 *		\param		$attributeArray 	Variables required
+	 *		\param		$search			 	Valeur champ clé recherché, sinon '*' pour tous.
+	 *		\param		$userDn			 	DN (Ex: ou=adherents,ou=people,dc=parinux,dc=org)
+	 *		\param		$useridentifier 	Nom du champ clé (Ex: uid)
+	 *		\param		$attributeArray 	Array of fields required (Ex: sn,userPassword)
 	 *		\param		$activefilter		1=utilise le champ this->filter comme filtre
-	 *
+	 *		\return		array				Array of [id_record][ldap_field]=value
 	 * 		\remarks	ldapsearch -LLLx -hlocalhost -Dcn=admin,dc=parinux,dc=org -w password -b "ou=adherents,ou=people,dc=parinux,dc=org" userPassword
      */
     function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
     {
-		$userslist=array();
+		$fulllist=array();
 		
 		dolibarr_syslog("Ldap::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
 
@@ -822,7 +822,7 @@ class Ldap
 			if ($recordid)
 			{
 				//print "Found record with key $useridentifier=".$recordid."<br>\n";
-				$userslist[$recordid][$useridentifier]=$recordid;
+				$fulllist[$recordid][$useridentifier]=$recordid;
 				
 				// Add to the array for each attribute in my list
 				for ($j = 0; $j < count($attributeArray); $j++)
@@ -834,18 +834,18 @@ class Ldap
 					if ($this->serverType == "activedirectory" && $keyattributelower == "objectsid")
 					{
 						$objectsid = $this->getObjectSid($recordid);
-						$userslist[$recordid][$attributeArray[$j]]    = $objectsid;
+						$fulllist[$recordid][$attributeArray[$j]]    = $objectsid;
 					}
 					else
 					{
-						$userslist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$keyattributelower][0]);
+						$fulllist[$recordid][$attributeArray[$j]] = $this->ldap_utf8_decode($info[$i][$keyattributelower][0]);
 					}
 				}
 			}
 		}
 
-        asort($userslist);
-        return $userslist;
+        asort($fulllist);
+        return $fulllist;
     }
 
     /**
@@ -922,7 +922,10 @@ class Ldap
 	*	\remarks	this->connection doit etre défini donc la methode bind ou bindauth doit avoir deja été appelée
 	* 	\param 		checkDn			DN de recherche (Ex: ou=users,cn=my-domain,cn=com)
 	* 	\param 		filter			Filtre de recherche (ex: (sn=nom_personne) )
-	*	\return		array			Tableau des reponses
+	*	\return		array			Tableau des reponses (clé en minuscule-valeur)
+	*	\remarks	Ne pas utiliser pour recherche d'une liste donnée de propriétés
+	*				car conflit majuscule-minuscule. A n'utiliser que pour les pages
+	*				'Fiche LDAP' qui affiche champ lisibles par defaut.
 	*/
 	function search($checkDn, $filter)
 	{

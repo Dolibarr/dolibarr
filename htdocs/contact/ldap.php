@@ -159,17 +159,26 @@ if ($result > 0)
 	$info=$contact->_load_ldap_info();
 	$dn=$contact->_load_ldap_dn($info,1);
 	$search = "(".$contact->_load_ldap_dn($info,2).")";
-	$result=$ldap->search($dn,$search);
+	$records=$ldap->search($dn,$search);
+
+	//print_r($records);
 
 	// Affichage arbre
-	if (sizeof($result))
+	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
 	{
-		$html=new Form($db);
-		$html->show_ldap_content($result,0,0,true);
+		if (! is_array($records))
+		{
+			print '<tr '.$bc[false].'><td colspan="2"><font class="error">'.$langs->trans("ErrorFailedToReadLDAP").'</font></td></tr>';	
+		}
+		else
+		{
+			$html=new Form($db);
+			$result=$html->show_ldap_content($records,0,0,true);
+		}
 	}
 	else
 	{
-		print '<tr><td colspan="2">'.$langs->trans("LDAPRecordNotFound").'</td></tr>';
+		print '<tr '.$bc[false].'><td colspan="2">'.$langs->trans("LDAPRecordNotFound").' (dn='.$dn.' - search='.$search.')</td></tr>';
 	}
 
 	$ldap->unbind();

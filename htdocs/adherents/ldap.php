@@ -177,8 +177,10 @@ if ($result > 0)
 	$search = "(".$adh->_load_ldap_dn($info,2).")";
 	$records=$ldap->search($dn,$search);
 
+	//print_r($records);
+
 	// Affichage arbre
-	if (sizeof($records))
+	if (sizeof($records) && (! isset($records['count']) || $records['count'] > 0))
 	{
 		if (! is_array($records))
 		{
