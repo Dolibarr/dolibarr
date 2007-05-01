@@ -96,14 +96,19 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
-
-.button  {
+.button
+{
     font: 12px helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
+}
+form
+{
+    padding: 0em 0em 0em 0em;
+    margin: 0em 0em 0em 0em;
 }
 
 
@@ -360,15 +365,14 @@ a.help:hover        { font-size:11px; font: helvetica, verdana, arial, sans-seri
 
 
 
-/* Pour menu gauche Auguria */
+/* Pour menu gauche auguria */
 
-.menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
-font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
 
-a.menu_titre:link       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:visited    { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:active     { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
-a.menu_titre:hover      { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
+a.menu_titre:link         { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
+a.menu_titre:visited      { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
+a.menu_titre:active       { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
+a.menu_titre:hover        { font-size:11px; text-align:left; font-weight: bold; color: #000000; margin: 1em 1em 1em 1em; }
 
 div.menu
 {
@@ -381,7 +385,7 @@ div.menu
 
 
 div.menu_titre {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-titre-rubrique.png' ?>);
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-titre-rubrique.png' ?>);
 	padding: 0px;
 	padding-top:7px;
 	padding-left:0px;
@@ -395,7 +399,7 @@ div.menu_titre {
 }
 
 div.menu_contenu {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-rubrique.png' ?>);
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-rubrique.png' ?>);
 	margin: 0px;
 	padding: 1px;
 
@@ -407,7 +411,7 @@ div.menu_contenu {
 }
 
 div.menu_fin {
-	background: url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/bg-bas-rubrique.png' ?>);
+	background: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/bg-bas-rubrique.png' ?>);
 	margin: 0px;
 	padding: 0px;	
 	height:6px;
@@ -453,6 +457,7 @@ div.blockvmenuimpair
 
 div.help
 {
+    width:158px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
@@ -486,10 +491,6 @@ td.photo {
     border: 1px solid #b3c5cc;
 }
 
-form {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
-}
 
 
 /* ============================================================================== */
