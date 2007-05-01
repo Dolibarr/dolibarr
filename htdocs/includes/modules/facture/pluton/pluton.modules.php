@@ -470,6 +470,7 @@ function info()
         dolibarr_syslog("mod_facture_pluton::getNextValue return ".$numFinal);
         return  $numFinal;
     }
+  }
     
   
     /**     \brief      Renvoie la référence de commande suivante non utilisée
@@ -480,8 +481,7 @@ function info()
     function getNumRef($objsoc=0,$facture)
     {
         return $this->getNextValue($objsoc,$facture);
-    }
-  } 
+    } 
 }    
 
 ?>
