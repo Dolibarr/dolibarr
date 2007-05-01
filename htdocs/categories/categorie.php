@@ -3,7 +3,7 @@
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	    <patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -32,7 +32,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
@@ -50,7 +50,7 @@ $mesg = '';
 //on veut supprimer une catégorie
 if ($_REQUEST["removecat"] && $user->rights->societe->creer)
 {
-	$soc = new Fournisseur($db);
+	$soc = new Societe($db);
 	if ($_REQUEST["socid"])  $result = $soc->fetch($_REQUEST["socid"]);
 
 	$cat = new Categorie($db,$_REQUEST["removecat"]);
@@ -60,7 +60,7 @@ if ($_REQUEST["removecat"] && $user->rights->societe->creer)
 //on veut ajouter une catégorie
 if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->societe->creer)
 {
-	$soc = new Fournisseur($db);
+	$soc = new Societe($db);
 	if ($_REQUEST["socid"])  $result = $soc->fetch($_REQUEST["socid"]);
 
 	$cat = new Categorie($db,$_REQUEST["catMere"]);
@@ -83,11 +83,12 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0  && $user->rights->so
 */
 if ($_GET["socid"] || $_GET["ref"])
 {
-	$soc = new Fournisseur($db);
+	$soc = new Societe($db);
 	if ($_GET["socid"]) $result = $soc->fetch($_GET["socid"]);
 	
-	llxHeader("","",$langs->trans("CardSupplier".$soc->type));
+	llxHeader("","",$langs->trans("CardCompany".$soc->type));
 }
+
 
 
 $html = new Form($db);
@@ -98,51 +99,52 @@ $html = new Form($db);
  */
 if ($_GET["socid"] || $_GET["ref"])
 {
+	/*
+	* Affichage onglets
+	*/
+	$head = societe_prepare_head($soc);
 
-  
+	dolibarr_fiche_head($head, 'category', $soc->nom);
 
-  
-  /*
-   * Affichage onglets
-   */
-  $head = societe_prepare_head($soc);
-  
-  dolibarr_fiche_head($head, 'category', $soc->nom);
-  
 
-  print '<table width="100%">';
-  print '<tr><td valign="top" width="50%">';
-  
-  print '<table class="border" width="100%">';
-  print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$soc->nom.'</td></tr>';
-  
-  print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
-  
-  if ($soc->fournisseur)
-    {
-      print '<tr><td nowrap="nowrap">';
-      print $langs->trans('SupplierCode').'</td><td colspan="3">';
-      print $soc->code_fournisseur;
-      if ($soc->check_codefournisseur() <> 0) print ' '.$langs->trans("WrongSupplierCode");
-      print '</td></tr>';
-    }
-  
-  print '<tr><td valign="top">'.$langs->trans("Address").'</td><td colspan="3">'.nl2br($soc->adresse).'</td></tr>';
-  
-  print '<tr><td>'.$langs->trans("Zip").'</td><td>'.$soc->cp.'</td>';
-  print '<td>'.$langs->trans("Town").'</td><td>'.$soc->ville.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Country").'</td><td colspan="3">'.$soc->pays.'</td></tr>';
-  print '<tr><td>'.$langs->trans("Phone").'</td><td>'.dolibarr_print_phone($soc->tel).'&nbsp;</td><td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($soc->fax).'&nbsp;</td></tr>';
-  print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\">$soc->url</a>&nbsp;</td></tr>";
-  
-  // Assujeti à TVA ou pas
-  print '<tr>';
-  print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
-  print yn($soc->tva_assuj);
-  print '</td>';
-  print '</tr>';
-  
-  print '</table>';
+	print '<table class="border" width="100%">';
+
+	print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
+	print $soc->nom;
+	print '</td></tr>';
+
+	print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$soc->prefix_comm.'</td></tr>';
+
+	if ($soc->client)
+	{
+		print '<tr><td>';
+		print $langs->trans('CustomerCode').'</td><td colspan="3">';
+		print $soc->code_client;
+		if ($soc->check_codeclient() <> 0) print ' '.$langs->trans("WrongCustomerCode");
+		print '</td></tr>';
+	}
+
+	print "<tr><td valign=\"top\">".$langs->trans('Address')."</td><td colspan=\"3\">".nl2br($soc->adresse)."</td></tr>";
+
+	print '<tr><td>'.$langs->trans('Zip').'</td><td>'.$soc->cp."</td>";
+	print '<td>'.$langs->trans('Town').'</td><td>'.$soc->ville."</td></tr>";
+	if ($soc->pays) {
+		print '<tr><td>'.$langs->trans('Country').'</td><td colspan="3">'.$soc->pays.'</td></tr>';
+	}
+
+	print '<tr><td>'.$langs->trans('Phone').'</td><td>'.dolibarr_print_phone($soc->tel,$soc->pays_code).'</td>';
+	print '<td>'.$langs->trans('Fax').'</td><td>'.dolibarr_print_phone($soc->fax,$soc->pays_code).'</td></tr>';
+
+	print '<tr><td>'.$langs->trans("Web")."</td><td colspan=\"3\"><a href=\"http://$soc->url\" target=\"_blank\">".$soc->url."</a>&nbsp;</td></tr>";
+
+	// Assujeti à TVA ou pas
+	print '<tr>';
+	print '<td nowrap="nowrap">'.$langs->trans('VATIsUsed').'</td><td colspan="3">';
+	print yn($soc->tva_assuj);
+	print '</td>';
+	print '</tr>';
+
+	print '</table>';
 
 	print '</div>';
 	
@@ -150,15 +152,15 @@ if ($_GET["socid"] || $_GET["ref"])
 	if ($mesg) print($mesg);
 
 	
-    /*
-     * Barre d'actions
-     *
-     */
-    print '<div class="tabsAction">';
-    if ($user->rights->categorie->creer)
-    {
-	    print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$soc->id.'&type=1">'.$langs->trans("NewCat").'</a>';
-    }
+	/*
+	* Barre d'actions
+	*
+	*/
+	print '<div class="tabsAction">';
+	if ($user->rights->categorie->creer)
+	{
+		print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/fiche.php?action=create&amp;origin='.$soc->id.'&type=2">'.$langs->trans("NewCat").'</a>';
+	}
 	print '</div>';
 
 
@@ -166,15 +168,15 @@ if ($_GET["socid"] || $_GET["ref"])
 	if ($user->rights->societe->creer)
 	{
 		print '<br>';
-	  print '<form method="post" action="'.DOL_URL_ROOT.'/fourn/categorie.php?socid='.$soc->id.'">';
-	  print '<table class="noborder" width="100%">';
-	  print '<tr class="liste_titre"><td>';
-	  print $langs->trans("ClassifyInCategory").' ';
-	  print $html->select_all_categories(1,$categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
-	  print '</tr>';
-	  print '</table>';
-	  print '</form>';
-	  print '<br/>';
+		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?socid='.$soc->id.'">';
+		print '<table class="noborder" width="100%">';
+		print '<tr class="liste_titre"><td>';
+		print $langs->trans("ClassifyInCategory").' ';
+		print $html->select_all_categories(2,$categorie->id_mere).' <input type="submit" class="button" value="'.$langs->trans("Classify").'"></td>';
+		print '</tr>';
+		print '</table>';
+		print '</form>';
+		print '<br/>';
 	}
 
 
@@ -188,7 +190,7 @@ if ($_GET["socid"] || $_GET["ref"])
 
 	if (sizeof($cats) > 0)
 	{
-		print_fiche_titre($langs->trans("SupplierIsInCategories"));
+		print_fiche_titre($langs->trans("CompanyIsInCategories"));
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
 
@@ -208,7 +210,7 @@ if ($_GET["socid"] || $_GET["ref"])
 				print '<td align="right">';
 				if ($user->rights->societe->creer)
 				{
-					print "<a href= '".DOL_URL_ROOT."/fourn/categorie.php?socid=".$soc->id."&amp;removecat=".$cat->id."'>";
+					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?socid=".$soc->id."&amp;removecat=".$cat->id."'>";
 					print img_delete($langs->trans("DeleteFromCat")).' ';
 					print $langs->trans("DeleteFromCat")."</a>";
 				}
@@ -231,10 +233,11 @@ if ($_GET["socid"] || $_GET["ref"])
 
 	else
 	{
-		print $langs->trans("SupplierHasNoCategory")."<br/>";
+		print $langs->trans("CompanyHasNoCategory")."<br/>";
 	}
 	
 }
+
 $db->close();
 
 

@@ -67,7 +67,7 @@ function societe_prepare_head($objsoc)
       //affichage onglet catégorie
   if ($conf->categorie->enabled)
   	{
-		$head[$h][0] = DOL_URL_ROOT.'/comm/categorie.php?socid='.$objsoc->id;
+		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id;
 		$head[$h][1] = $langs->trans('Categories');
 		$head[$h][2] = 'category';
 		$h++;   		

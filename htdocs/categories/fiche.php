@@ -101,18 +101,15 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		print '<tr><td valign="top" class="notopnoleft" width="30%">';
 		
 		print '<div class="ok">'.$langs->trans("CategorySuccessfullyCreated",$categorie->label).'</div>';
-
+		print '<br>';
+		
 		if ($idprodorigin)
 		{
 			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a>';
 		}
-		if ($idSupplierorigin)
+		if ($idSupplierorigin || $idCompanyorigin)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/fourn/categorie.php?socid='.$idSupplierorigin.'">'.$langs->trans("ReturnInSupplier").'</a>';
-		}
-		if ($idCompanyorigin)
-		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/comm/categorie.php?socid='.$idCompanyorigin.'">'.$langs->trans("ReturnInCompany").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyorigin.'">'.$langs->trans("ReturnInCompany").'</a>';
 		}
 
 		print '</td></tr></table>';
