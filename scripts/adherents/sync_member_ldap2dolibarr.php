@@ -135,64 +135,90 @@ if ($result >= 0)
 	// On désactive la synchro Dolibarr vers LDAP
 	$conf->global->LDAP_MEMBER_ACTIVE=0;
 	
+	// Liste des champs a récupérer de LDAP
+	$required_fields = array(
+	$conf->global->LDAP_FIELD_FULLNAME,
+	$conf->global->LDAP_FIELD_LOGIN,
+	$conf->global->LDAP_FIELD_LOGIN_SAMBA,
+	$conf->global->LDAP_FIELD_PASSWORD,
+	$conf->global->LDAP_FIELD_PASSWORD_CRYPTED,
+	$conf->global->LDAP_FIELD_NAME,
+	$conf->global->LDAP_FIELD_FIRSTNAME,
+	$conf->global->LDAP_FIELD_MAIL,
+	$conf->global->LDAP_FIELD_PHONE,
+	$conf->global->LDAP_FIELD_PHONE_PERSO,
+	$conf->global->LDAP_FIELD_MOBILE,
+	$conf->global->LDAP_FIELD_FAX,
+	$conf->global->LDAP_FIELD_ADDRESS,
+	$conf->global->LDAP_FIELD_ZIP,
+	$conf->global->LDAP_FIELD_TOWN,
+	$conf->global->LDAP_FIELD_COUNTRY,
+	$conf->global->LDAP_FIELD_DESCRIPTION,
+	$conf->global->LDAP_FIELD_BIRTHDATE,
+	$conf->global->LDAP_FIELD_MEMBER_STATUS,
+
+	// Subscriptions
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE,
+	$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+	);
+
+	// Remove from required_fields all entries not configured in LDAP (empty) and duplicated
+	$required_fields=array_unique(array_values(array_filter($required_fields, "dolValidElement")));
 	
-	$ldaprecords = $ldap->search($conf->global->LDAP_MEMBER_DN, '('.$conf->global->LDAP_KEY_MEMBERS.'=*)');
+	$ldaprecords = $ldap->getRecords('*',$conf->global->LDAP_MEMBER_DN, $conf->global->LDAP_KEY_MEMBERS, $required_fields, 0);
 	if (is_array($ldaprecords))
 	{
 		$db->begin();
-		
+
+		// Warning $ldapuser a une clé en minuscule
 		foreach ($ldaprecords as $key => $ldapuser)
 		{
-			if ($key == 'count') continue;
-
 			$member = new Adherent($db);
 
 			// Propriete membre
-			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME][0];
-			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME][0];
-			$member->fullname=($ldapuser[$conf->global->LDAP_FIELD_FULLNAME][0] ? $ldapuser[$conf->global->LDAP_FIELD_FULLNAME][0] : trim($member->prenom." ".$member->nom));
-			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN][0];
-			//$member->pass;
+			$member->prenom=$ldapuser[$conf->global->LDAP_FIELD_FIRSTNAME];
+			$member->nom=$ldapuser[$conf->global->LDAP_FIELD_NAME];
+			$member->fullname=($ldapuser[$conf->global->LDAP_FIELD_FULLNAME] ? $ldapuser[$conf->global->LDAP_FIELD_FULLNAME] : trim($member->prenom." ".$member->nom));
+			$member->login=$ldapuser[$conf->global->LDAP_FIELD_LOGIN];
+			$member->pass=$ldapuser[$conf->global->LDAP_FIELD_PASSWORD];
 
 			//$member->societe;
-			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS][0];
-			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP][0];
-			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN][0];
-			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY][0];	// Pays en libelle
+			$member->adresse=$ldapuser[$conf->global->LDAP_FIELD_ADDRESS];
+			$member->cp=$ldapuser[$conf->global->LDAP_FIELD_ZIP];
+			$member->ville=$ldapuser[$conf->global->LDAP_FIELD_TOWN];
+			$member->pays=$ldapuser[$conf->global->LDAP_FIELD_COUNTRY];	// Pays en libelle
 			$member->pays_id=$countries[$hashlib2rowid[strtolower($member->pays)]]['rowid'];
 			$member->pays_code=$countries[$hashlib2rowid[strtolower($member->pays)]]['code'];
 
-			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE][0];
-			$member->phone_perso=$ldapuser[$conf->global->LDAP_FIELD_PHONE_PERSO][0];
-			$member->phone_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE][0];
-			$member->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL][0];
+			$member->phone=$ldapuser[$conf->global->LDAP_FIELD_PHONE];
+			$member->phone_perso=$ldapuser[$conf->global->LDAP_FIELD_PHONE_PERSO];
+			$member->phone_mobile=$ldapuser[$conf->global->LDAP_FIELD_MOBILE];
+			$member->email=$ldapuser[$conf->global->LDAP_FIELD_MAIL];
 
-			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION][0];
+			$member->commentaire=$ldapuser[$conf->global->LDAP_FIELD_DESCRIPTION];
 			$member->morphy='phy';
 			$member->photo='';
 			$member->public=1;
-			$member->statut=-1;		// Par defaut, statut brouillon
-			$member->naiss=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE][0]);
-			// Cas particulier (on ne rentre jamais dans ce if)
-			if (isset($ldapuser["prnxstatus"][0]))
+			$member->naiss=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_BIRTHDATE]);
+
+			$member->statut=-1;
+			if (isset($ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS]))
 			{
-				$member->datec=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
-				$member->datevalid=dolibarr_stringtotime($ldapuser["prnxfirtscontribution"][0]);
-				if ($ldapuser["prnxstatus"][0]==1)
-				{
-					$member->statut=1;
-				}
-				else
-				{
-					$member->statut=0;
-				}
+				$member->datec=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+				$member->datevalid=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+				$member->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
 			}
-			
+
+			//print_r($ldapuser);
+
 			// Propriete type membre
 			$member->typeid=$typeid;
 
 			// Creation membre
-			print $langs->trans("MemberCreate").' # '.$key.': '.$member->fullname;
+			print $langs->trans("MemberCreate").' # '.$key.': fullname='.$member->fullname;
+			print ', datec='.$member->datec;
 			$member_id=$member->create();
 			if ($member_id > 0)
 			{
@@ -207,30 +233,24 @@ if ($result >= 0)
 
 			//print_r($member);
 
-
-			//----------------------------
-			// YOUR OWN CODE HERE
-			//----------------------------
-			
-			$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE][0]);
-			$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE][0]);
+			// Insertion adhésions
+			$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+			$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
 			if ($datefirst)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
-				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT][0]);
+				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT]);
+				//print "xx".$datefirst."\n";
 				$crowid=$member->cotisation($datefirst, $price, 0);
 			}
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
-				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT][0]);
-				//print "xx".$datelast."-".dolibarr_time_plus_duree($datelast,-1,'y')."\n";
+				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
+				//print "yy".$datelast."-".dolibarr_time_plus_duree($datelast,-1,'y')."\n";
 				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0);
 			}
 			
-			//----------------------------
-			// END OF OWN CODE HERE
-			//----------------------------
 		}
 		
 		if (! $error)
@@ -258,4 +278,10 @@ else
 		
 
 return $error;
+
+
+function dolValidElement($element) {
+	return (trim($element) != '');
+}
+
 ?>
