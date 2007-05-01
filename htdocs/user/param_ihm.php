@@ -80,7 +80,7 @@ if ($_POST["action"] == 'update')
         $tabparam["MAIN_SEARCHFORM_PRODUITSERVICE"]=$_POST["main_searchform_produitservice"];
     
         dolibarr_set_user_page_param($db, $fuser, '', $tabparam);
-        
+
         $_SESSION["mainmenu"]="";   // Le gestionnaire de menu a pu changer
     
         Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_POST["id"]);
@@ -174,7 +174,7 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-    if ($fuser->id == $user->id)       // Si utilisateur édité = utilisateur courant
+    if (($fuser->id == $user->id) || $user->admin)       // Si utilisateur édité = utilisateur courant ou admin
     {
         print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
