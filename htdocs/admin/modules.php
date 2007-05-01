@@ -281,8 +281,8 @@ foreach ($orders as $key => $value)
 	$objMod  = $modules[$key];
 
     // On affiche pas les modules en version 'development' si
-    // constante MAIN_SHOW_DEVELOPMENT_MODULES non définie
-    if ($objMod->version == 'development' && ! $conf->global->MAIN_SHOW_DEVELOPMENT_MODULES)
+    // constante MAIN_ENABLE_DEVELOPMENT non définie
+    if ($objMod->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT)
     {
         continue;
     }
