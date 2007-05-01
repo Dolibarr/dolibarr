@@ -192,7 +192,6 @@ if ( $soc->fetch($soc->id) )
 	    }
 	    
 	    $var=false;
-	    echo count($soc->contact_email_array());
 
 	    print '<input type="hidden" name="action" value="add">';
 	    print '<tr '.$bc[$var].'><td>';
