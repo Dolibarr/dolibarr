@@ -313,7 +313,7 @@ if ($_GET["action"] == 'create')
             // Stock
             if ($stock < $quantite_a_livrer)
             {
-                print '<td align="center" class="alerte">'.$stock.'</td>';
+                print '<td align="center">'.$stock.' '.img_alerte().'</td>';
             }
             else
             {

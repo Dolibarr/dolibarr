@@ -742,7 +742,7 @@ if ($_GET["id"] || $_GET["ref"])
 		{
 		  if ($product->stock_reel <= $product->seuil_stock_alerte)
 		    {
-		      print '<td class="alerte">'.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
+		      print '<td>'.img_warning().' '.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
 		    }
 		  else
 		    {
