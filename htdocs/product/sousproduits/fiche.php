@@ -344,12 +344,11 @@ if ($id || $ref)
 				print '<input type="hidden" name="max_prod" value="'.$i.'">';
 				if($num > 0)
 				print '<tr><td colspan="2"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td></tr>';
-        		print '</table>';
+        print '</table>';
 			}
 			
          print '</form></td></tr>';
-         print '</table>';
-		 print '</td></tr>';
+		     print '</td></tr>';
          print '</table>';
     }
 }
