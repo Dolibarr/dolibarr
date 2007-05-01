@@ -201,7 +201,7 @@ if ($result)
   print "</tr>\n";
 
   // Lignes des champs de filtre
-  print '<form method="GET" action="clients.php">';
+  print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
   print '<tr class="liste_titre">';
 
   print '<td align="left" class="liste_titre">';
