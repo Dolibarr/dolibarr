@@ -30,7 +30,7 @@ create table llx_adherent_type
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
-  libelle          varchar(50),
+  libelle          varchar(50) NOT NULL,
   cotisation       enum('yes','no') NOT NULL DEFAULT 'yes',
   vote             enum('yes','no') NOT NULL DEFAULT 'yes',
   note             text,

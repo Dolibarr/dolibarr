@@ -13,6 +13,10 @@ ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
 update llx_const set name='MAIN_ENABLE_DEVELOPMENT' where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 
 
+delete from llx_adherent_type where libelle IS NULL;
+alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
+
+
 -- Extention de la gestion des catégories
 alter table llx_categorie ADD type int not null default '0';
 
