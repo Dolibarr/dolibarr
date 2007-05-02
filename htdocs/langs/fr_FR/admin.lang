@@ -635,6 +635,7 @@ LDAPFieldBirthdate=Date de naissance
 LDAPFieldBirthdateExample=Exemple :
 LDAPFieldSid=SID
 LDAPFieldSidExample=Exemple : objectsid
+LDAPFieldEndLastSubscription=Date fin validité adhésion
 LDAPParametersAreStillHardCoded=Les parametres LDAP sont codés en dur (dans classe contact)
 LDAPSetupNotComplete=Configuration LDAP incomplète (à compléter sur les autres onglets)
 LDAPNoUserOrPasswordProvidedAccessIsReadOnly=Administrateur ou mot de passe non renseigné. Les accès LDAP seront donc anonymes et en lecture seule.

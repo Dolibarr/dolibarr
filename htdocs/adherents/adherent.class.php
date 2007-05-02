@@ -1929,6 +1929,9 @@ class Adherent
 		$this->public=1;
 		$this->statut=1;
 
+		$this->datefin=time();
+		$this->datevalid=time();
+		
 		$this->typeid=1;				// Id type adherent
 		$this->type='Type adherent';	// Libellé type adherent
 		$this->need_subscription=0;
@@ -1991,6 +1994,7 @@ class Adherent
 		if ($this->commentaire && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->commentaire;
 		if ($this->naiss && $conf->global->LDAP_FIELD_BIRTHDATE)  $info[$conf->global->LDAP_FIELD_BIRTHDATE] = dolibarr_print_date($this->naiss,'dayhourldap');
 		if ($this->statut && $conf->global->LDAP_FIELD_MEMBER_STATUS)  $info[$conf->global->LDAP_FIELD_MEMBER_STATUS] = $this->statut;
+		if ($this->datefin && $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)  $info[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION] = dolibarr_print_date($this->datefin,'dayhourldap');
 
 		// Subscriptions
 		if ($this->firstsubscription_date && $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)     $info[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]  = dolibarr_print_date($this->firstsubscription_date,'dayhourldap');

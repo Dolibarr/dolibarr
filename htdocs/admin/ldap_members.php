@@ -72,6 +72,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_DESCRIPTION',$_POST["fielddescription"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_BIRTHDATE',$_POST["fieldbirthdate"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_STATUS',$_POST["fieldstatus"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION', $_POST["fieldendlastsubscription"])) $error++;
 
 	// Subscriptions
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE',  $_POST["fieldfirstsubscriptiondate"])) $error++;
@@ -339,6 +340,14 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldLastSubscriptionAmount").'</td><td>';
 print '<input size="25" type="text" name="fieldlastsubscriptionamount" value="'.$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT.'">';
+print '</td><td>&nbsp;</td>';
+print '<td align="right">&nbsp;</td>';
+print '</tr>';
+
+// End last subscriptions
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldEndLastSubscription").'</td><td>';
+print '<input size="25" type="text" name="fieldendlastsubscription" value="'.$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION.'">';
 print '</td><td>&nbsp;</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
