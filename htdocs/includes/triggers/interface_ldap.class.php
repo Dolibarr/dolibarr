@@ -280,6 +280,19 @@ class InterfaceLdap
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
+				# If status field is setup to be synchronized
+				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
+				{
+					$ldap=new Ldap();
+	        		$ldap->connect_bind();
+
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					
+		    	    $result=$ldap->update($dn,$info,$user);
+					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+					return $result;
+				}
 			}
         }
         elseif ($action == 'MEMBER_SUBSCRIPTION')
@@ -287,6 +300,23 @@ class InterfaceLdap
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
+				# If subscriptions fields are setup to be synchronized
+				if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE
+				|| $conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT
+				|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE
+				|| $conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT
+				|| $conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)
+				{
+					$ldap=new Ldap();
+	        		$ldap->connect_bind();
+
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					
+		    	    $result=$ldap->update($dn,$info,$user);
+					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+					return $result;
+				}
 			}
         }
         elseif ($action == 'MEMBER_MODIFY')
@@ -308,12 +338,41 @@ class InterfaceLdap
         elseif ($action == 'MEMBER_NEW_PASSWORD')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
-        }
+        	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
+        	{
+				# If password field is setup to be synchronized
+				if ($conf->global->LDAP_FIELD_PASSWORD || $conf->global->LDAP_FIELD_PASSWORD_CRYPTED)
+				{
+					$ldap=new Ldap();
+	        		$ldap->connect_bind();
+
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					
+		    	    $result=$ldap->update($dn,$info,$user);
+					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+					return $result;
+				}
+			}
+		}
         elseif ($action == 'MEMBER_RESILIATE')
         {
             dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
         	if ($conf->ldap->enabled && $conf->global->LDAP_MEMBER_ACTIVE)
         	{
+				# If status field is setup to be synchronized
+				if ($conf->global->LDAP_FIELD_MEMBER_STATUS)
+				{
+					$ldap=new Ldap();
+	        		$ldap->connect_bind();
+
+					$info=$object->_load_ldap_info();
+					$dn=$object->_load_ldap_dn($info);
+					
+		    	    $result=$ldap->update($dn,$info,$user);
+					if ($result < 0) $this->error=$langs->trans("ErrorLDAP")." ".$ldap->error;
+					return $result;
+				}
 			}
         }
         elseif ($action == 'MEMBER_DELETE')

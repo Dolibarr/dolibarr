@@ -108,7 +108,6 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 
 	// Charge objet actuel
 	$result=$adh->fetch($_POST["rowid"]);
-	$result=$adh->fetch_subscriptions($_POST["rowid"]);
 	if ($result > 0)
 	{
 		// Modifie valeures
@@ -353,6 +352,7 @@ if ($_POST["action"] == 'add')
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
+	$result=$adh->fetch($rowid);
     $result=$adh->delete($rowid);
     if ($result > 0)
     {
@@ -368,19 +368,41 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
-    $adh->id=$rowid;
-    $adh->fetch($rowid);
+	$result=$adh->fetch($rowid);
+    $result=$adh->validate($user);
 	
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-    $result=$adh->validate($user);
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
+		// Envoi mail validation (selon param du type adherent sinon generique)
+	    if ($adh->email)
+		{
+			if (isset($adht->mail_valid) && $adht->mail_valid)
+		    {
+				$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
+		    }
+		    else
+		    {
+				$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
+		    }
+			if ($result < 0)
+			{
+				$errmsg.=$adh->error;
+			}
+		}
 		
+	    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
+	    if ($adh->add_to_abo($adht) < 0)
+	    {
+	        // error
+	        $errmsg.="Echec du rajout de l'utilisateur aux abonnements mailman: ".$adh->error."<BR>\n";
+	    }		
 	}
 	else
 	{
+	    // \TODO Mettre fonction qui fabrique errmsg depuis this->error||this->errors
 	    if ($adh->error)
 		{
 			$errmsg=$adh->error;
@@ -395,102 +417,104 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 		}
 		$action='';
 	}
-	
-	// Envoi mail validation (selon param du type adherent sinon generique)
-    if ($adh->email)
-	{
-		if (isset($adht->mail_valid) && $adht->mail_valid)
-	    {
-			$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
-	    }
-	    else
-	    {
-			$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
-	    }
-		if ($result < 0)
-		{
-			$errmsg.=$adh->error;
-		}
-	}
-	
-    // Rajoute l'utilisateur dans les divers abonnements (mailman, spip, etc...)
-    if ($adh->add_to_abo($adht) < 0)
-    {
-        // error
-        $errmsg.="Echec du rajout de l'utilisateur aux abonnements: ".$adh->error."<BR>\n";
-    }
-
 }
 
 if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
-	$adh->id=$rowid;
-    $adh->resiliate($user->id);
-    $adh->fetch($rowid);
+    $result=$adh->fetch($rowid);
+    $result=$adh->resiliate($user);
 
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
 
-	if ($adh->email)
+	if ($result >= 0 && ! sizeof($adh->errors))
 	{
-		$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
+		if ($adh->email)
+		{
+			$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
+		}
+		
+	    // supprime l'utilisateur des divers abonnements ..
+	    if (! $adh->del_to_abo($adht))
+	    {
+	        // error
+	        $errmsg.="Echec de la suppression de l'utilisateur aux abonnements mailman: ".$adh->error."<BR>\n";
+	    }
 	}
-	
-    // supprime l'utilisateur des divers abonnements ..
-    if (! $adh->del_to_abo($adht))
-    {
-        // error
-        $errmsg.="echec de la suppression de l'utilisateur aux abonnements: ".$adh->error."<BR>\n";
-    }
+	else
+	{
+	    // \TODO Mettre fonction qui fabrique errmsg depuis this->error||this->errors
+		if ($adh->error)
+		{
+			$errmsg=$adh->error;
+		}
+		else
+		{
+			foreach($adh->errors as $error)
+			{
+				if ($errmsg) $errmsg.='<br>';
+				$errmsg.=$error;
+			}
+		}
+		$action='';
+	}
 }
 
 if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 {
-    $adh->id=$rowid;
-    $adh->fetch($rowid);
+    $result=$adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
-    if ($adht->vote == 'yes'){
-        define("XMLRPC_DEBUG", 1);
-        if (!$adh->add_to_glasnost()){
-            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
-        }
-        XMLRPC_debug_print();
-    }
+	if ($result >= 0 && ! sizeof($adh->errors))
+	{
+	    if ($adht->vote == 'yes'){
+	        define("XMLRPC_DEBUG", 1);
+	        if (!$adh->add_to_glasnost()){
+	            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
+	        }
+	        XMLRPC_debug_print();
+	    }
+	}
 }
 
 if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 {
-	$adh->id=$rowid;
-    $adh->fetch($rowid);
+    $result=$adh->fetch($rowid);
     $adht = new AdherentType($db);
     $adht->fetch($adh->typeid);
-    if ($adht->vote == 'yes'){
-        define("XMLRPC_DEBUG", 1);
-        if(!$adh->del_to_glasnost()){
-            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
-        }
-        XMLRPC_debug_print();
-    }
+	if ($result >= 0 && ! sizeof($adh->errors))
+	{
+	    if ($adht->vote == 'yes'){
+	        define("XMLRPC_DEBUG", 1);
+	        if(!$adh->del_to_glasnost()){
+	            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
+	        }
+	        XMLRPC_debug_print();
+	    }
+	}
 }
 
 if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
-	$adh->id=$rowid;
-    $adh->fetch($rowid);
-    if(!$adh->del_to_spip()){
-        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
-    }
+    $result=$adh->fetch($rowid);
+	if ($result >= 0 && ! sizeof($adh->errors))
+	{
+	    if(!$adh->del_to_spip()){
+	        $errmsg.="Echec de la suppression de l'utilisateur dans spip: ".$adh->error."<BR>\n";
+	    }
+	}
 }
 
 if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
- 	$adh->id=$rowid;
-    $adh->fetch($rowid);
-    if (!$adh->add_to_spip())
-    {
-        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->error."<BR>\n";
-    }
+    $result=$adh->fetch($rowid);
+	if ($result >= 0 && ! sizeof($adh->errors))
+	{
+	    if (!$adh->add_to_spip())
+	    {
+	        $errmsg.="Echec du rajout de l'utilisateur dans spip: ".$adh->error."<BR>\n";
+	    }
+	}
 }
 
 

@@ -87,7 +87,7 @@ class Adherent
 	var $user_id;
 	var $user_login;
 
-	// Fiels loaded by fetch_subscriptions()
+	// Fields loaded by fetch_subscriptions()
 	var $fistsubscription_date;
 	var $fistsubscription_amount;
 	var $lastsubscription_date;
@@ -515,13 +515,15 @@ class Adherent
 
 	/**
 			\brief 		Fonction qui supprime l'adhérent et les données associées
-			\param		rowid
-			\return		int			<0 si KO, 0 = rien a effacer, >0 si OK
+			\param		rowid		Id de l'adherent a effacer
+			\return		int			<0 si KO, 0=rien a effacer, >0 si OK
 	*/
 	function delete($rowid)
 	{
 		global $conf, $langs;
 		$result = 0;
+
+		$this->db->begin();
 
 		// Suppression options
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$rowid;
@@ -751,8 +753,16 @@ class Adherent
 				
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
+				
+				// Charge autres propriétés
+				$result=$this->fetch_subscriptions();
+
+				return $result;
             }
-			return 1;
+			else
+			{
+				return -1;
+			}
         }
         else
         {
@@ -1005,7 +1015,7 @@ class Adherent
 
 	/**
 	 *		\brief 		Fonction qui vérifie que l'utilisateur est valide
-	 *		\param		userid		userid adhérent à valider
+	 *		\param		user		user adhérent qui valide
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function validate($user)
@@ -1021,8 +1031,10 @@ class Adherent
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+			$this->statut=1;
 
+			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+			
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 			$interface=new Interfaces($this->db);
@@ -1044,10 +1056,10 @@ class Adherent
 
 	/**
 	 *		\brief 		Fonction qui résilie un adhérent
-	 *		\param		userid		userid adhérent à résilier
+	 *		\param		user		user adhérent qui résilie
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
-	function resiliate($userid)
+	function resiliate($user)
 	{
 		global $user,$langs,$conf;
 
@@ -1055,12 +1067,14 @@ class Adherent
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET ";
 		$sql .= "statut=0";
-		$sql .= ",fk_user_valid=".$userid;
+		$sql .= ",fk_user_valid=".$user->id;
 		$sql .= " WHERE rowid = ".$this->id;
 
 		$result = $this->db->query($sql);
 		if ($result)
 		{
+			$this->statut=0;
+
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
 	        // Appel des triggers
