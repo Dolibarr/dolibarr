@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -37,6 +36,10 @@
 
 class AdherentType
 {
+  var $error;
+  var $errors=array();
+  var $db;
+
   var $id;
   var $libelle;
   var $statut;
@@ -45,8 +48,6 @@ class AdherentType
   var $commentaire; /**< commentaire */
   var $mail_valid;	/**< mail envoye lors de la validation */
 
-  var $error;
-  var $db;
 
   
 	/**
@@ -83,8 +84,8 @@ class AdherentType
 	{
 		$this->statut=trim($this->statut);
 	
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (statut)";
-		$sql.= " VALUES ($this->statut)";
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_type (libelle)";
+		$sql.= " VALUES ('".addslashes($this->libelle)."')";
 
 		dolibarr_syslog("Adherent_type::create sql=".$sql);
 		$result = $this->db->query($sql);
@@ -95,6 +96,7 @@ class AdherentType
 		}
 		else
 		{
+			$this->error=$this->db->error().' sql='.$sql;
 			return -1;
 		}
 	}
@@ -108,13 +110,14 @@ class AdherentType
     {
       $this->libelle=trim($this->libelle);
 
-      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type SET ";
-      $sql .= "libelle = '".$this->libelle ."'";
-      $sql .= ",statut=".$this->statut;
-      $sql .= ",cotisation='".$this->cotisation."'";
-      $sql .= ",note='".$this->commentaire."'";
-      $sql .= ",vote='".$this->vote."'";
-      $sql .= ",mail_valid='".$this->mail_valid."'";
+      $sql = "UPDATE ".MAIN_DB_PREFIX."adherent_type ";
+	  $sql.= "SET ";
+      $sql.= "statut=".$this->statut.",";
+      $sql.= "libelle = '".addslashes($this->libelle) ."',";
+      $sql.= "cotisation='".$this->cotisation."',";
+      $sql.= "note='".addslashes($this->commentaire)."',";
+      $sql.= "vote='".$this->vote."',";
+      $sql.= "mail_valid='".addslashes($this->mail_valid)."'";
 
       $sql .= " WHERE rowid = $this->id";
 
@@ -126,7 +129,7 @@ class AdherentType
 	}
       else
 	{
-	  $error=$this->db->error();
+			$this->error=$this->db->error().' sql='.$sql;
 	  return -1;
 	}
     }

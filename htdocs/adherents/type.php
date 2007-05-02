@@ -63,6 +63,11 @@ if ($_POST["action"] == 'add')
                 Header("Location: type.php");
                 exit;
             }
+			else
+			{
+				$mesg=$adht->error;
+				$_GET["action"] = 'create';
+			}
         }
         else
         {
@@ -205,11 +210,11 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
 	print $htmls->selectyesnonum("cotisation",1);
-	print '</tr>';
+	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
 	print $htmls->selectyesnonum("vote",0);
-	print '</tr>';
+	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
 	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
@@ -336,11 +341,11 @@ if ($rowid > 0)
         
         print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
         print $htmls->selectyesnonum("cotisation",$adht->cotisation);
-        print '</tr>';
+        print '</td></tr>';
         
         print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
         print $htmls->selectyesnonum("vote",$adht->vote);
-        print '</tr>';
+        print '</td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
         print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
