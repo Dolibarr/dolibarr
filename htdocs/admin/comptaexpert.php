@@ -134,7 +134,7 @@ if ($result)
 		print '<td>';
 		if ($obj->type == 'yesno')
 		{
-			print $form->selectyesnonum('constvalue',$obj->value);
+			print $form->selectyesno('constvalue',$obj->value,1);
 		}
 		elseif ($obj->type == 'texte')
 		{

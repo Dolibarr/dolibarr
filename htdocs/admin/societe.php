@@ -222,7 +222,7 @@ $var=!$var;
 print '<tr '.$bc[$var].' class="value">';
 print '<td nowrap="nowrap">'.$langs->trans("UseXXX")."</td>\n";
 print '<td>';
-print $form->selectyesnonum('constvalue',! $conf->global->XXX);
+print $form->selectyesno('constvalue',! $conf->global->XXX,1);
 print '</td>';
 print '<td>'.$langs->trans("XXXDesc").'</td>';
 print '<td align="right">';

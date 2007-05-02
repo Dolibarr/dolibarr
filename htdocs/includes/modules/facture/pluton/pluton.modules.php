@@ -103,7 +103,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumRestart">';
       $texte.= '<td align="right">';
-      $texte.= $form->selectyesnonum('numrestart',$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR);
+      $texte.= $form->selectyesno('numrestart',$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR,1);
       $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       
@@ -112,7 +112,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumWithInvoice">';
       $texte.= '<td align="right">';
-      $texte.= $form->selectyesnonum('numwithinvoice',$conf->global->AVOIR_NUM_WITH_INVOICE);
+      $texte.= $form->selectyesno('numwithinvoice',$conf->global->AVOIR_NUM_WITH_INVOICE,1);
       $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '</tr></form>';
       

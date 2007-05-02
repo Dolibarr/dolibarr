@@ -572,7 +572,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print '<tr><td valign="top">'.$langs->trans("Administrator").'</td>';
 		print '<td>';
-		print $form->selectyesnonum('admin',0);
+		print $form->selectyesno('admin',0,1);
 		print "</td></tr>\n";
 	}
 	
@@ -1193,7 +1193,7 @@ else
                 print '<td>';
                 if ($user->admin)
                 {
-                    print $form->selectyesnonum('admin',$fuser->admin);
+                    print $form->selectyesno('admin',$fuser->admin,1);
                 }
                 else
                 {

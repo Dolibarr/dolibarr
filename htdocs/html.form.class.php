@@ -2644,17 +2644,6 @@ class Form
   }
 	
   /**
-   *    \brief      Selection de oui/non en chiffre (renvoie 1/0)
-   *    \param      name            Nom du select
-   *    \param      value           Valeur présélectionnée
-   */
-  function selectyesnonum($name,$value='')
-  {
-    $resultyesno = $this->selectyesno($name,$value,1);
-    return $resultyesno;
-  }
-	
-  /**
    *    \brief  Checkbox
    *
    */

@@ -209,11 +209,11 @@ if ($_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40"></td></tr>';  
 
 	print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-	print $htmls->selectyesnonum("cotisation",1);
+	print $htmls->selectyesno("cotisation",1,1);
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-	print $htmls->selectyesnonum("vote",0);
+	print $htmls->selectyesno("vote",0,1);
 	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
@@ -340,11 +340,11 @@ if ($rowid > 0)
         print '<tr><td>'.$langs->trans("Label").'</td><td><input type="text" name="libelle" size="40" value="'.$adht->libelle.'"></td></tr>';  
         
         print '<tr><td>'.$langs->trans("SubscriptionRequired").'</td><td>';
-        print $htmls->selectyesnonum("cotisation",$adht->cotisation);
+        print $htmls->selectyesno("cotisation",$adht->cotisation,1);
         print '</td></tr>';
         
         print '<tr><td>'.$langs->trans("VoteAllowed").'</td><td>';
-        print $htmls->selectyesnonum("vote",$adht->vote);
+        print $htmls->selectyesno("vote",$adht->vote,1);
         print '</td></tr>';
         
         print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';

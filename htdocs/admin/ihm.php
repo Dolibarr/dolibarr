@@ -108,29 +108,29 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("EnableMultilangInterface").'</td><td>';
-    print $html->selectyesnonum('main_multilangs',$conf->global->MAIN_MULTILANGS);
+    print $html->selectyesno('main_multilangs',$conf->global->MAIN_MULTILANGS,1);
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';
-    print $html->selectyesnonum('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK);
+    print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
     print '</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
-    print $html->selectyesnonum('main_show_workboard',$conf->global->MAIN_SHOW_WORKBOARD);
+    print $html->selectyesno('main_show_workboard',$conf->global->MAIN_SHOW_WORKBOARD,1);
     print '</td></tr>';
 
     // Désactiver javascript
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
-    print $html->selectyesnonum('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0);
+    print $html->selectyesno('main_disable_javascript',isset($conf->global->MAIN_DISABLE_JAVASCRIPT)?$conf->global->MAIN_DISABLE_JAVASCRIPT:0,1);
     print '</td></tr>';
     
     // Désactiver ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
-    print $html->selectyesnonum('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1);
+    print $html->selectyesno('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1,1);
     print '</td></tr>';
     
     // Désactiver le calendrier popup
@@ -147,7 +147,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Activer onglet preview
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePreviewTabs").'</td><td>';
-    print $html->selectyesnonum('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1);
+    print $html->selectyesno('main_use_preview_tabs',isset($conf->global->MAIN_USE_PREVIEW_TABS)?$conf->global->MAIN_USE_PREVIEW_TABS:1,1);
     print '</td></tr>';
     
     print '</table><br>';
@@ -166,7 +166,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     {
         $var=!$var;
         print '<tr '.$bc[$var].'><td width="35%">'.$searchformtitle[$key].'</td><td>';
-        print $html->selectyesnonum($searchform[$key],$searchformconst[$key]);
+        print $html->selectyesno($searchform[$key],$searchformconst[$key],1);
         print '</td></tr>';
     }
     print '</table>';

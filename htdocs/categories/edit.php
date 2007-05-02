@@ -122,7 +122,7 @@ print $html->select_all_categories($categorie->type,$categorie->id_mere);
 print '</td></tr>';
 
 print '<tr><td>'.$langs->trans("ContentsVisibleByAll").'</td><td>';
-print $html->selectyesnonum("visible",$categorie->visible);
+print $html->selectyesno("visible",$categorie->visible,1);
 print '</td></tr>';
 		
 print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
