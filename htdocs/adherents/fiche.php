@@ -106,75 +106,81 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 		$datenaiss=dolibarr_mktime(12, 0, 0, $_POST["naissmonth"], $_POST["naissday"], $_POST["naissyear"]);
 	}
 
-	$adh->id          = $_POST["rowid"];
-	$adh->prenom      = $_POST["prenom"];
-	$adh->nom         = $_POST["nom"];
-	$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
-	$adh->login       = $_POST["login"];
-	$adh->pass        = $_POST["pass"];
-
-	$adh->societe     = $_POST["societe"];
-	$adh->adresse     = $_POST["adresse"];
-	$adh->cp          = $_POST["cp"];
-	$adh->ville       = $_POST["ville"];
-	$adh->pays_id     = $_POST["pays"];
-
-	$adh->phone       = $_POST["phone"];
-	$adh->phone_perso = $_POST["phone_perso"];
-	$adh->phone_mobile= $_POST["phone_mobile"];
-	$adh->email       = $_POST["email"];
-	$adh->naiss       = $datenaiss;
-	$adh->photo       = $_POST["photo"];
-
-	$adh->typeid      = $_POST["type"];
-	$adh->commentaire = $_POST["comment"];
-	$adh->morphy      = $_POST["morphy"];
-
-	$adh->amount      = $_POST["amount"];
-
-	// recuperation du statut et public
-	$adh->statut      = $_POST["statut"];
-	$adh->public      = $_POST["public"];
-
-	foreach($_POST as $key => $value)
+	// Charge objet actuel
+	$result=$adh->fetch($_POST["rowid"]);
+	$result=$adh->fetch_subscriptions($_POST["rowid"]);
+	if ($result > 0)
 	{
-		if (ereg("^options_",$key))
+		// Modifie valeures
+		$adh->prenom      = $_POST["prenom"];
+		$adh->nom         = $_POST["nom"];
+		$adh->fullname    = trim($adh->prenom.' '.$adh->nom);
+		$adh->login       = $_POST["login"];
+		$adh->pass        = $_POST["pass"];
+
+		$adh->societe     = $_POST["societe"];
+		$adh->adresse     = $_POST["adresse"];
+		$adh->cp          = $_POST["cp"];
+		$adh->ville       = $_POST["ville"];
+		$adh->pays_id     = $_POST["pays"];
+
+		$adh->phone       = $_POST["phone"];
+		$adh->phone_perso = $_POST["phone_perso"];
+		$adh->phone_mobile= $_POST["phone_mobile"];
+		$adh->email       = $_POST["email"];
+		$adh->naiss       = $datenaiss;
+		$adh->photo       = $_POST["photo"];
+
+		$adh->typeid      = $_POST["type"];
+		$adh->commentaire = $_POST["comment"];
+		$adh->morphy      = $_POST["morphy"];
+
+		$adh->amount      = $_POST["amount"];
+
+		// recuperation du statut et public
+		$adh->statut      = $_POST["statut"];
+		$adh->public      = $_POST["public"];
+
+		foreach($_POST as $key => $value)
 		{
-			//escape values from POST, at least with addslashes, to avoid obvious SQL injections
-			//(array_options is directly input in the DB in adherent.class.php::update())
-			$adh->array_options[$key]=addslashes($_POST[$key]);
-		}
-	}
-	$result=$adh->update($user,0);
-	if ($result >= 0 && ! sizeof($adh->errors))
-	{
-		if (isset($_POST["password"]) && $_POST["password"] !='')
-		{
-			$ret=$edituser->password($user,$password,$conf->password_encrypted,0);
-			if ($ret < 0)
+			if (ereg("^options_",$key))
 			{
-				$message.='<div class="error">'.$edituser->error.'</div>';
+				//escape values from POST, at least with addslashes, to avoid obvious SQL injections
+				//(array_options is directly input in the DB in adherent.class.php::update())
+				$adh->array_options[$key]=addslashes($_POST[$key]);
 			}
 		}
-
-		Header("Location: fiche.php?rowid=".$adh->id);
-		exit;
-	}
-	else
-	{
-	    if ($adh->error)
+		$result=$adh->update($user,0);
+		if ($result >= 0 && ! sizeof($adh->errors))
 		{
-			$errmsg=$adh->error;
+			if (isset($_POST["password"]) && $_POST["password"] !='')
+			{
+				$ret=$edituser->password($user,$password,$conf->password_encrypted,0);
+				if ($ret < 0)
+				{
+					$message.='<div class="error">'.$edituser->error.'</div>';
+				}
+			}
+
+			Header("Location: fiche.php?rowid=".$adh->id);
+			exit;
 		}
 		else
 		{
-			foreach($adh->errors as $error)
+		    if ($adh->error)
 			{
-				if ($errmsg) $errmsg.='<br>';
-				$errmsg.=$error;
+				$errmsg=$adh->error;
 			}
+			else
+			{
+				foreach($adh->errors as $error)
+				{
+					if ($errmsg) $errmsg.='<br>';
+					$errmsg.=$error;
+				}
+			}
+			$action='';
 		}
-		$action='';
 	}
 }
 
