@@ -810,6 +810,9 @@ alter table llx_adherent add column phone            varchar(30) after email;
 alter table llx_adherent add column phone_perso      varchar(30) after phone;
 alter table llx_adherent add column phone_mobile     varchar(30) after phone_perso;
 
+delete from llx_adherent_type where libelle IS NULL;
+alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
+
 update llx_facture set fk_facture_source=null where fk_facture_source is not null and type = 0;
 update llx_facture set fk_statut=2 where paye=1;
 update llx_facture set fk_statut=2 where close_code is not null and close_code != '' and close_code != 'replaced';
