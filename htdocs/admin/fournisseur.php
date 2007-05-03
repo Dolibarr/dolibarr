@@ -1,9 +1,9 @@
 <?php
-/* Copyright (C) 2003-2004	Rodolphe Quiedeville    <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007  Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2004       Sebastien Di Cintio     <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      	Benoit Mortier          <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2006  Regis Houssin           <regis.houssin@cap-networks.com>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur     <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2006 Regis Houssin           <regis.houssin@cap-networks.com>
+ * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,13 +24,14 @@
  */
 
 /**
-    	\file       htdocs/admin/fournisseur.php
-		\ingroup    fournisseur
-		\brief      Page d'administration-configuration du module Fournisseur
-		\version    $Revision$
+   \file       htdocs/admin/fournisseur.php
+   \ingroup    fournisseur
+   \brief      Page d'administration-configuration du module Fournisseur
+   \version    $Revision$
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.commande.class.php');
 
 $langs->load("admin");
@@ -41,57 +42,56 @@ $langs->load("orders");
 if (!$user->admin)
   accessforbidden();
 
-
 /*
  * Actions
  */
 if ($_GET["action"] == 'specimen')
 {
-	$modele=$_GET["module"];
-
-	$facture = new CommandeFournisseur($db);
-	$facture->initAsSpecimen();
-
-	// Charge le modele
-	$dir = DOL_DOCUMENT_ROOT . "/fourn/commande/modules/pdf/";
-	$file = "pdf_".$modele.".modules.php";
-	if (file_exists($dir.$file))
+  $modele=$_GET["module"];
+  
+  $facture = new CommandeFournisseur($db);
+  $facture->initAsSpecimen();
+  
+  // Charge le modele
+  $dir = DOL_DOCUMENT_ROOT . "/fourn/commande/modules/pdf/";
+  $file = "pdf_".$modele.".modules.php";
+  if (file_exists($dir.$file))
+    {
+      $classname = "pdf_".$modele;
+      require_once($dir.$file);
+      
+      $obj = new $classname($db);
+      
+      if ($obj->write_pdf_file($facture,$langs) > 0)
 	{
-		$classname = "pdf_".$modele;
-		require_once($dir.$file);
-
-		$obj = new $classname($db);
-
-		if ($obj->write_pdf_file($facture,$langs) > 0)
-		{
-			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
-			return;
-		}
+	  header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
+	  return;
 	}
-	else
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
-	}
+    }
+  else
+    {
+      $mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+    }
 }
 
 if ($_GET["action"] == 'set')
 {
-	$type='supplier_order';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
-    if ($db->query($sql))
+  $type='supplier_order';
+  $sql = "INSERT INTO ".MAIN_DB_PREFIX."document_model (nom, type) VALUES ('".$_GET["value"]."','".$type."')";
+  if ($db->query($sql))
     {
-
+      
     }
 }
 
 if ($_GET["action"] == 'del')
 {
-    $type='supplier_order';
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
-    $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
-    if ($db->query($sql))
+  $type='supplier_order';
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_model";
+  $sql .= "  WHERE nom = '".$_GET["value"]."' AND type = '".$type."'";
+  if ($db->query($sql))
     {
-
+      
     }
 }
 
@@ -129,6 +129,11 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "COMMANDE_SUPPLIER_ADDON",$_GET["value"]);
 }
 
+if ($_POST["action"] == 'addcat')
+{
+  $fourn = new Fournisseur($db);
+  $fourn->CreateCategory($user,$_POST["cat"]);
+}
 
 /*
  * Affichage page
@@ -191,17 +196,17 @@ if ($handle)
             }
             print '</td>';
 
-			// Info
-			$htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	        }
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
-
+	    // Info
+	    $htmltooltip='';
+	    $nextval=$module->getNextValue($mysoc);
+	    if ($nextval != $langs->trans("NotAvailable"))
+	      {
+		$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	      }
+	    print '<td align="center">';
+	    print $html->textwithhelp('',$htmltooltip,1,0);
+	    print '</td>';
+	    
             print '</tr>';
         }
     }
@@ -256,77 +261,116 @@ $handle=opendir($dir);
 $var=true;
 while (($file = readdir($handle))!==false)
 {
-	if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+  if (eregi('\.modules\.php$',$file) && substr($file,0,4) == 'pdf_')
+    {
+      $name = substr($file, 4, strlen($file) -16);
+      $classname = substr($file, 0, strlen($file) -12);
+      
+      $var=!$var;
+      print "<tr ".$bc[$var].">\n  <td>$name";
+      print "</td>\n  <td>\n";
+      require_once($dir.$file);
+      $module = new $classname($db);
+      print $module->description;
+      print "</td>\n";
+      
+      // Activé
+      if (in_array($name, $def))
 	{
-		$name = substr($file, 4, strlen($file) -16);
-		$classname = substr($file, 0, strlen($file) -12);
-
-		$var=!$var;
-		print "<tr ".$bc[$var].">\n  <td>";
-		print "$name";
-		print "</td>\n  <td>\n";
-		require_once($dir.$file);
-		$module = new $classname($db);
-		print $module->description;
-		print "</td>\n";
-		
-		// Activé
-		if (in_array($name, $def))
-		{
-			print "<td align=\"center\">\n";
-			if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name") 
-			{
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
-				print img_tick($langs->trans("Disable"));
-				print '</a>';
-			}
-			else
-			{
-				print img_tick($langs->trans("Enabled"));
-			}
+	  print "<td align=\"center\">\n";
+	  if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF != "$name") 
+	    {
+	      print '<a href="'.$_SERVER["PHP_SELF"].'?action=del&amp;value='.$name.'">';
+	      print img_tick($langs->trans("Disable"));
+	      print '</a>';
+	    }
+	  else
+	    {
+	      print img_tick($langs->trans("Enabled"));
+	    }
 			print "</td>";
-		}
-		else
-		{
-			print "<td align=\"center\">\n";
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-			print "</td>";
-		}
-
-		// Defaut
-		print "<td align=\"center\">";
-		if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
-		{
-			print img_tick($langs->trans("Default"));
-		}
-		else
-		{
-			print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-		}
-		print '</td>';
-		
-		// Info
-    	$htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
-    	$htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
-    	$htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
-    	$htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
-    	$htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
-    	$htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
-    	print '<td align="center">';
-    	print $html->textwithhelp('',$htmltooltip,1,0);
-    	print '</td>';
-    	print '<td align="center">';
-    	print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
-    	print '</td>';
-
-		print "</tr>\n";
 	}
+      else
+	{
+	  print "<td align=\"center\">\n";
+	  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
+	  print "</td>";
+	}
+      
+      // Defaut
+      print "<td align=\"center\">";
+      if ($conf->global->COMMANDE_SUPPLIER_ADDON_PDF == "$name")
+	{
+	  print img_tick($langs->trans("Default"));
+	}
+      else
+	{
+	  print '<a href="'.$_SERVER["PHP_SELF"].'?action=setdoc&amp;value='.$name.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+	}
+      print '</td>';
+      
+      // Info
+      $htmltooltip =    '<b>'.$langs->trans("Type").'</b>: '.($module->type?$module->type:$langs->trans("Unknown"));
+      $htmltooltip.='<br><b>'.$langs->trans("Width").'</b>: '.$module->page_largeur;
+      $htmltooltip.='<br><b>'.$langs->trans("Height").'</b>: '.$module->page_hauteur;
+      $htmltooltip.='<br><br>'.$langs->trans("FeaturesSupported").':';
+      $htmltooltip.='<br><b>'.$langs->trans("Logo").'</b>: '.yn($module->option_logo);
+      $htmltooltip.='<br><b>'.$langs->trans("PaymentMode").'</b>: '.yn($module->option_modereg);
+      $htmltooltip.='<br><b>'.$langs->trans("PaymentConditions").'</b>: '.yn($module->option_condreg);
+      print '<td align="center">';
+      print $html->textwithhelp('',$htmltooltip,1,0);
+      print '</td>';
+      print '<td align="center">';
+      print '<a href="'.$_SERVER["PHP_SELF"].'?action=specimen&amp;module='.$name.'">'.img_object($langs->trans("Preview"),'order').'</a>';
+      print '</td>';
+      
+      print "</tr>\n";
+    }
 }
 closedir($handle);
 
-print '</table>';
+print '</table><br/>';
 
+print_titre($langs->trans("Categories"));
+
+$sql = "SELECT rowid, label";
+$sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
+$sql.= " ORDER BY label ASC";
+
+$resql = $db->query($sql);
+if ($resql)
+{
+  $num = $db->num_rows($resql);
+  $i = 0;
+  
+  print '<form action="fournisseur.php" method="POST"><table class="liste" width="100%">';
+  print '<input type="hidden" name="action" value="addcat">';
+  print '<tr class="liste_titre"><td>';
+  print $langs->trans("Num").'</td><td>'.$langs->trans("Name");
+  print "</td></tr>\n";
+  $var=True;
+
+  print "<tr $bc[$var]><td>&nbsp;</td>";
+  print '<td><input type="text" name="cat">&nbsp;';
+  print '<input type="submit" value="'.$langs->trans("Add").'">';
+  print "</td></tr>\n";
+
+  while ($obj = $db->fetch_object($resql))
+    {
+      $var=!$var;
+      print "<tr $bc[$var]>\n";
+      print '<td width="10%">'.$obj->rowid.'</td>';
+      print '<td width="90%"><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a></td>';
+      print "</tr>\n";
+    }
+  print "</table></form>\n";
+
+  $db->free($resql);
+}
+else 
+{
+  dolibarr_print_error($db);
+}
 
 llxFooter('$Date$ - $Revision$');
 ?>
