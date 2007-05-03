@@ -2494,4 +2494,127 @@ function dolibarr_decode($chain)
         return $string_decoded;
 }
 
+/**
+   \brief     Fonction retournant le nombre de jour fériés samedis et dimanches entre 2 dates entrées en timestamp
+   \brief     SERVANT AU CALCUL DES JOURS OUVRABLES
+   \param	    timestampStart      Timestamp de début
+   \param	    timestampEnd        Timestamp de fin
+   \return    nbFerie             Nombre de jours fériés
+   \TODO: Prévoir les jours fériés hors France.
+*/
+function num_public_holiday($timestampStart, $timestampEnd)
+{
+     
+    // Initialisation de la date de début
+    $jour = date("d", $timestampStart);
+    $mois = date("m", $timestampStart);
+    $annee = date("Y", $timestampStart);
+    $nbFerie = 0;
+    while ($timestampStart != $timestampEnd)
+    {    
+        
+         // Définition des dates fériées fixes
+        if($jour == 1 && $mois == 1) $nbFerie++; // 1er janvier
+        if($jour == 1 && $mois == 5) $nbFerie++; // 1er mai
+        if($jour == 8 && $mois == 5) $nbFerie++; // 5 mai
+        if($jour == 14 && $mois == 7) $nbFerie++; // 14 juillet
+        if($jour == 15 && $mois == 8) $nbFerie++; // 15 aout
+        if($jour == 1 && $mois == 11) $nbFerie++; // 1 novembre
+        if($jour == 11 && $mois == 11) $nbFerie++; // 11 novembre
+        if($jour == 25 && $mois == 12) $nbFerie++; // 25 décembre
+     
+          // Calcul du jour de pâques
+         $date_paques = easter_date($annee);
+         $jour_paques = date("d", $date_paques);
+         $mois_paques = date("m", $date_paques);
+         if($jour_paques == $jour && $mois_paques == $mois) $nbFerie++;
+         // Pâques
+     
+         // Calcul du jour de l ascension (38 jours après Paques)
+         $date_ascension = mktime(date("H", $date_paques),
+         date("i", $date_paques),
+         date("s", $date_paques),
+         date("m", $date_paques),
+         date("d", $date_paques) + 38,
+         date("Y", $date_paques)
+         );
+         $jour_ascension = date("d", $date_ascension);
+         $mois_ascension = date("m", $date_ascension);
+         if($jour_ascension == $jour && $mois_ascension == $mois) $nbFerie++;
+         //Ascension
+    
+         // Calcul de Pentecôte (11 jours après Paques)
+         $date_pentecote = mktime(date("H", $date_ascension),
+         date("i", $date_ascension),
+         date("s", $date_ascension),
+         date("m", $date_ascension),
+         date("d", $date_ascension) + 11,
+         date("Y", $date_ascension)
+         );
+         $jour_pentecote = date("d", $date_pentecote);
+         $mois_pentecote = date("m", $date_pentecote);
+         if($jour_pentecote == $jour && $mois_pentecote == $mois) $nbFerie++;
+         //Pentecote
+     
+         // Calul des samedis et dimanches
+        $jour_julien = unixtojd($timestampStart);
+        $jour_semaine = jddayofweek($jour_julien, 0);
+        if($jour_semaine == 0 || $jour_semaine == 6) $nbFerie++;
+         //Samedi (6) et dimanche (0)
+     
+          // Incrémentation du nombre de jour ( on avance dans la boucle)
+          $jour++;
+          $timestampStart=mktime(0,0,0,$mois,$jour,$annee);
+     
+     }
+     
+      return $nbFerie;
+     
+}
+
+/**
+   \brief     Fonction retournant le nombre de jour entre deux dates
+   \param	    timestampStart      Timestamp de début
+   \param	    timestampEnd        Timestamp de fin
+   \param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
+   \return    nbjours             Nombre de jours
+*/
+function num_between_day($timestampStart, $timestampEnd, $lastday=0)
+{
+	if ($lastday == 1)
+	{
+		$bit = 0;
+	}
+	else
+	{
+		$bit = 1;
+	}
+	$nbjours = round(($timestampEnd - $timestampStart)/(60*60*24)-$bit);
+	return $nbjours;
+}
+
+/**
+   \brief     Fonction retournant le nombre de jour entre deux dates sans les jours fériés
+   \param	    timestampStart      Timestamp de début
+   \param	    timestampEnd        Timestamp de fin
+   \param     inhour              0: sort le nombre de jour , 1: sort le nombre d'heure
+   \param     lastday             On prend en compte le dernier jour, 0: non, 1:oui
+   \return    nbjours             Nombre de jours ou d'heures
+*/
+function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
+{
+	if ($lastday == 1)
+	{
+		$bit = 1;
+	}
+	else
+	{
+		$bit = 0;
+	}
+	$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
+	if ($inhour == 1) $nbOpenDay = $nbOpenDay*24;
+	return $nbOpenDay;
+}
+
+
 ?>
