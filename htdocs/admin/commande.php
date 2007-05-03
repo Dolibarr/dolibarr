@@ -134,6 +134,13 @@ if ($_POST["action"] == 'deliverycostline')
   dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
 }
 
+// défini les constantes du modèle saphir
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_NUM_MATRICE",$_POST["matrice"]);
+if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_NUM_PREFIX",$_POST["prefixcommande"]);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+
 /*
  * Affichage page
  */
@@ -194,10 +201,12 @@ if ($handle)
                 print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
             }
             print '</td>';
+            
+      $commande = new Commande($db);
 
 			// Info
 			$htmltooltip='';
-	        $nextval=$module->getNextValue();
+	        $nextval=$module->getNextValue($mysoc,$commande);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;

@@ -29,7 +29,7 @@
     \version    $Revision$
 */
 
-include_once("modules_commande.php");
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 
 
 /**
@@ -153,7 +153,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
      */
     function commande_get_num($objsoc=0)
     {
-        return $this->getNextValue();
+        return $this->getNextValue($objsoc);
     }
 }
 ?>
