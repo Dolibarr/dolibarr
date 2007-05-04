@@ -1193,36 +1193,6 @@ class Form
         print '</select>';
     }
     
-	/**
-     *      \brief      Selection oui ou non
-     *      \param      selected        Id présélectionné
-     *      \param      htmlname        Nom de la zone select
-     */
-    function select_YesNo($selected='',$htmlname='yesno')
-    {
-        global $langs;
-        $resultyesno = '<select class="flat" name="'.$htmlname.'">';
-		$options = array(
-					'-1'=>'&nbsp;',
-					'0'=>$langs->trans("No"),
-					'1'=>$langs->trans("Yes")
-					);
-        foreach($options as $id => $value)
-        {
-            if ($selected == $id)
-            {
-                $resultyesno .= '<option value="'.$id.'" selected="true">'.$value;
-            }
-            else
-            {
-                $resultyesno .= '<option value="'.$id.'">'.$value;
-            }
-            $resultyesno .= '</option>';
-        }
-        $resultyesno .= '</select>';
-        return $resultyesno;
-    }
-    
     /**
      *      \brief      Selection HT ou TTC
      *      \param      selected        Id présélectionné

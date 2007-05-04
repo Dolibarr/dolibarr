@@ -527,7 +527,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		$html = new Form($db);
 		print '<tr><td>'.$langs->trans('VATIsUsed').'</td>';
 		print '<td>';
-		print $html->select_YesNo("1",'assujtva_value');		// Assujeti par défaut en creation
+		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par défaut en creation
 		print '</td>';
 
 		// Code TVA intra
@@ -818,7 +818,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
 		// Assujeti TVA
 		print '<tr><td>'.$langs->trans('VATIsUsed').'</td><td>';
-		print $form->select_YesNo($soc->tva_assuj,'assujtva_value');
+		print $form->selectyesno('assujtva_value',$soc->tva_assuj,1);
 		print '</td>';
 
 		// Code TVA intra

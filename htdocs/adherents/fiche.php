@@ -643,7 +643,7 @@ if ($action == 'edit')
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $htmls->select_YesNo($adh->public,"public");
+    print $htmls->selectyesno("public",$adh->public,1);
     print "</td></tr>\n";
 
 	// Attributs supplémentaires
@@ -768,7 +768,7 @@ if ($action == 'create')
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $htmls->select_YesNo($adh->public,"public");
+    print $htmls->selectyesno("public",$adh->public,1);
     print "</td></tr>\n";
 
 

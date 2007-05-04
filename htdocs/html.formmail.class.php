@@ -203,7 +203,7 @@ class FormMail
 			}
 			else
 			{
-				print $form->select_YesNo(0,'deliveryreceipt');
+				print $form->selectyesno('deliveryreceipt',0,1);
 			}
 
 			print "</td></tr>\n";
