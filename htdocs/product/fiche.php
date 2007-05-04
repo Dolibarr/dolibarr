@@ -408,7 +408,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	  $class = 'Product'.ucfirst($_GET["canvas"]);
 	  include_once('canvas/product.'.$_GET["canvas"].'.class.php');
 	  
-	  $product = new $class($db);
+	  $product = new $class($db,0,$user);
 	}
       else
 	{
