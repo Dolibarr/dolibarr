@@ -1712,7 +1712,7 @@ class Product
   /**
    *		\brief		Saisie une commande fournisseur
    *		\param		user		Objet user de celui qui demande
-   *		\param		int			<0 si ko, >0 si ok
+   *		\return		int			<0 si ko, >0 si ok
    */
   function fastappro($user)
   {

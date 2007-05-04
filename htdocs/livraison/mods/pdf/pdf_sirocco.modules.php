@@ -244,7 +244,11 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	}
     }
 
-  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+    /*
+    *   \brief      Affiche la grille des lignes de propales
+    *   \param      pdf     objet PDF
+    */
+	function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
         global $langs,$conf;
         $langs->load("main");
@@ -277,7 +281,13 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 
     }
 
-  function _pagehead(&$pdf, $delivery)
+    /*
+     *   	\brief      Affiche en-tête propale
+     *   	\param      pdf     objet PDF
+     *   	\param      fac     objet propale
+     *      \param      showadress      0=non, 1=oui
+     */
+	function _pagehead(&$pdf, $delivery)
    {
 		global $langs;
 	 $langs->load("deliveries");
