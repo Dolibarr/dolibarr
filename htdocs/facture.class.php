@@ -2666,10 +2666,9 @@ class Facture extends CommonObject
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = f.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
 		}
-		$sql.= " WHERE 1 = 1";
 		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 		{
-			$sql.= " AND IFNULL(c.visible,1)=1";
+			$sql.= " WHERE IFNULL(c.visible,1)=1";
 		}
 		$resql=$this->db->query($sql);
 		if ($resql)
