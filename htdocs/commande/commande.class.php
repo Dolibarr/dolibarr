@@ -1294,43 +1294,81 @@ class Commande extends CommonObject
 	    return 0;
 	}
   
-  /**
-   *  \brief      Supprime une ligne de la commande
-   *  \param      idligne     Id de la ligne à supprimer
-   *  \return     int         >0 si ok, <0 si ko
-   *  \todo ajouter une transaction SQL
-   */
-  function delete_line($idligne)
-  {
-    if ($this->statut == 0)
-      {
-	$sql = "SELECT fk_product, qty";
-	$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-	$sql.= " WHERE rowid = '$idligne';";
-	
-	$result = $this->db->query($sql);
-	if ($result)
-	  {
-	    while ($obj = $this->db->fetch_object($result))
-	      {
-		$product = new Product($this->db);
-		$product->id = $obj->fk_product;
-		$product->ajust_stock_commande($obj->qty, 1);
-	      }
-	    $this->db->free($result);
-	  }
+	/**
+	*  \brief      Supprime une ligne de la commande
+	*  \param      idligne     Id de la ligne à supprimer
+	*  \return     int         >0 si ok, 0 si rien à supprimer, <0 si ko
+	*/
+	function delete_line($idligne)
+	{
+		if ($this->statut == 0)
+		{
+			$this->db->begin();
+			
+			$sql = "SELECT fk_product, qty";
+			$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
+			$sql.= " WHERE rowid = '$idligne'";
+			
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$obj = $this->db->fetch_object($result);
+				
+				if ($obj)
+				{
+					$product = new Product($this->db);
+					$product->id = $obj->fk_product;
 
-	$Ligne = new CommandeLigne($this->db);
-	$Ligne->id = $idligne;
-	$Ligne->fk_commande = $this->id; // On en a besoin dans les triggers
-	$result = $Ligne->Delete();
+					$result=$product->ajust_stock_commande($obj->qty, 1);
 
-	$this->update_price();
+					// Supprime ligne
+					$ligne = new CommandeLigne($this->db);
+					$ligne->id = $idligne;
+					$ligne->fk_commande = $this->id; // On en a besoin dans les triggers
+					$result=$ligne->delete();
+		
+					if ($result > 0)
+					{
+						$result=$this->update_price();
+					
+						if ($result > 0)
+						{
+							$this->db->commit();
+							return 1;
+						}
+						else
+						{
+							$this->db->rollback();
+							$this->error=$this->db->lasterror();
+							return -1;
+						}
+					}
+					else
+					{
+						$this->db->rollback();
+						$this->error=$this->db->lasterror();
+						return -1;
+					}
+				}
+				else
+				{
+					$this->db->rollback();
+					return 0;
+				}
+			}
+			else
+			{
+				$this->db->rollback();
+				$this->error=$this->db->lasterror();
+				return -1;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
-	return $result;
-      }
-  }
-  
   /**
    * 	\brief     	Applique une remise relative
    * 	\param     	user		User qui positionne la remise
@@ -1871,6 +1909,7 @@ class Commande extends CommonObject
     global $conf, $lang;
     
     $err = 0;
+	
     $this->db->begin();
     
     $sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE fk_commande = $this->id ;";
@@ -2325,17 +2364,18 @@ class CommandeLigne
 	}
 
 	/**
-	*    \brief     	Supprime la ligne de commande en base
-	*	\return		int <0 si ko, 0 si ok
+	*    	\brief     	Supprime la ligne de commande en base
+	*		\return		int <0 si ko, >0 si ok
 	*/
-	function Delete()
+	function delete()
 	{
 		global $langs, $conf, $user;
 
-		dolibarr_syslog("CommandeLigne::Delete id=".$this->id);
-
 		$sql = 'DELETE FROM '.MAIN_DB_PREFIX."commandedet WHERE rowid='".$this->id."';";
-		if ($this->db->query($sql) )
+
+		dolibarr_syslog("CommandeLigne::delete sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
 			// Appel des triggers
 			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -2343,11 +2383,12 @@ class CommandeLigne
 			$result=$interface->run_triggers('LINEORDER_DELETE',$this,$user,$langs,$conf);
 			// Fin appel triggers
 
-			return 0;
+			return 1;
 		}
 		else
 		{
-			dolibarr_syslog("CommandeLigne::Delete id=".$this->id." ERROR SQL $sql");
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("CommandeLigne::delete ".$this->error);
 			return -1;
 		}   
 	}
