@@ -131,13 +131,18 @@ class box_actions extends ModeleBoxes {
           {
             if ($num==0 && $i==$num)
             {
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoActionsToDo"));
                 $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
             } else {
                 $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
             }
             $i++;
           }
