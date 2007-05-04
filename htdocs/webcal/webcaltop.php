@@ -17,10 +17,10 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!	\file htdocs/projet/webcaltop.php
+/**
+		\file 		htdocs/webcal/webcaltop.php
         \ingroup    webcalendar
 		\brief      Frame du haut Dolibarr pour l'affichage du calendrier
 		\author	    Laurent Destailleur

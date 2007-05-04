@@ -21,11 +21,12 @@
  */
 
 /**
-		\file       htdocs/societe/notify/pre.inc.php
-		\ingroup    product,service
+		\file       htdocs/societe/pre.inc.php
+		\ingroup    company
 		\brief      Fichier gestionnaire du menu gauche des notifications
 		\version    $Revision$
 */
+
 require ("../main.inc.php");
 
 

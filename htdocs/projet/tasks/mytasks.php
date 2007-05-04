@@ -17,14 +17,13 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
-   \file       htdocs/projet/tasks/fiche.php
-   \ingroup    projet
-   \brief      Fiche tâches d'un projet
-   \version    $Revision$
+		\file       htdocs/projet/tasks/mytasks.php
+		\ingroup    projet
+		\brief      Fiche tâches d'un projet
+		\version    $Revision$
 */
 
 require("./pre.inc.php");

@@ -15,6 +15,7 @@ htdocs/document
 htdocs/documents
 htdocs/domain
 htdocs/lolix
+htdocs/postnuke
 htdocs/telephonie
 htdocs/voyage
 htdocs/includes/jpgraph2
@@ -29,6 +30,9 @@ htdocs/includes/treemenu/imagesAlt
 htdocs/includes/treemenu/imagesAlt2
 htdocs/includes/modules/modEditeur.class.php 
 htdocs/includes/modules/modDocument.class.php 
+htdocs/includes/modules/modPostnuke.class.php 
+htdocs/includes/modules/modClickToDial.class.php 
+htdocs/includes/modules/modBookmark4u.class.php 
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 scripts/lolix

@@ -21,7 +21,7 @@
  */
 
 /**
-		\file       htdocs/theme/eldy/graph-color.php
+		\file       htdocs/theme/auguria/graph-color.php
 		\brief      Fichier de déclaration des couleurs pour les graphiques
         \ingroup    core
 		\version    $Revision$

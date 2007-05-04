@@ -17,12 +17,12 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-/*!	\file htdocs/projet/webcaltop.php
-        \ingroup    webcalendar
-		\brief      Frame du haut Dolibarr pour l'affichage du calendrier
+/**
+		\file 		htdocs/mantis/mantistop.php
+        \ingroup    mantis
+		\brief      Frame du haut Dolibarr pour l'affichage de mantis
 		\author	    Laurent Destailleur
 		\version    $Revision$
 */
