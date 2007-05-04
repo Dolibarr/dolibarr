@@ -398,7 +398,7 @@ function info()
         if (eregi('^'.$searchLastWithNoYear.'',$pryy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(ref,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."propal";
             $sql.= " WHERE ref like '${pryy}%'";
             $resql=$db->query($sql);

@@ -437,7 +437,7 @@ function info()
         if (eregi('^'.$searchLastWithNoYear.'',$fayy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,$posindice))";
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
             $sql.= " WHERE facnumber like '${fayy}%'";
             $resql=$db->query($sql);
