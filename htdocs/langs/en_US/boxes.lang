@@ -39,3 +39,4 @@ FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Last successfull 
 NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.
 NoRecordedCustomers=No recorded customers
 BoxTitleLastActionsToDo=Last %s actions to do
+NoActionsToDo=No actions to do
