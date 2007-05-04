@@ -710,7 +710,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         // Fournisseur
         print '<tr>';
         print '<td>'.$langs->trans('Supplier').'</td><td>';
-        print $form->selectyesnonum("fournisseur",$soc->fournisseur,1);
+        print $form->selectyesno("fournisseur",$soc->fournisseur,1);
         print '</td>';
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
