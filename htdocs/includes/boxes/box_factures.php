@@ -127,6 +127,7 @@ class box_factures extends ModeleBoxes {
                         $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedInvoices"));
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
