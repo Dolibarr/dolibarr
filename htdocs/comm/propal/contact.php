@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -205,14 +205,16 @@ if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
 llxHeader('', $langs->trans("Proposal"), "Propal");
 
 $html = new Form($db);
+$contactstatic=new Contact($db);
+
 
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue et edition                                                         */
 /*                                                                             */
 /* *************************************************************************** */
-if ( isset($mesg))
-	print $mesg;
+if (isset($mesg)) print $mesg;
+
 $id = $_GET["propalid"];
 if ($id > 0)
 {
@@ -397,12 +399,9 @@ if ($id > 0)
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($propal->statut >= 0)
-				print '<a href="contact.php?propalid='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
-				print img_statut($tab[$i]['status']);
-
-				if ($propal->statut >= 0)
-				print '</a>';
+				if ($propal->statut >= 0) print '<a href="contact.php?propalid='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				print $contactstatic->LibStatut($tab[$i]['status'],3);
+				if ($propal->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete

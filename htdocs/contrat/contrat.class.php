@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Destailleur Laurent  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Andre Cianfarani  <acianfa@free.fr>
+ * Copyright (C) 2004-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -1200,10 +1200,10 @@ class ContratLigne
     }
 
 	/**
-   	 *    \brief      Renvoi le libellé d'un statut donné
-   	 *    \param      statut      	id statut
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto
-   	 *    \return     string      	Libellé
+   	 *    	\brief      Renvoi le libellé d'un statut donné
+   	 *    	\param      statut      id statut
+	 *		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+   	 *    	\return     string      Libellé
    	 */
     function LibStatut($statut,$mode)
     {

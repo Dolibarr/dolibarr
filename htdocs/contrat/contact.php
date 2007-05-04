@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -187,22 +187,27 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->contrat->creer)
 	$contrat = new Contrat($db);
 	if ($contrat->fetch($_GET["id"]))
 	{
+		$db->begin();
+		
 		$contact = $contrat->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
+
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
 		$result = $contrat->update_contact($_GET["ligne"], $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
-		} else
+		}
+		else
 		{
 			dolibarr_print_error($db, "result=$result");
 			$db->rollback();
 		}
-	} else
+	}
+	else
 	{
-		dolibarr_print_error($db);
+		dolibarr_print_error($db,$contrat->error);
 	}
 }
 
@@ -225,6 +230,8 @@ if ($_GET["action"] == 'deleteline' && $user->rights->contrat->creer)
 llxHeader('', $langs->trans("ContractCard"), "Contrat");
 
 $html = new Form($db);
+$contactstatic=new Contact($db);
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -429,11 +436,9 @@ if ($id > 0)
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($contrat->statut >= 0)
-					print '<a href="'.DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
-				print img_statut($tab[$i]['status']);
-				if ($contrat->statut >= 0)
-					print '</a>';
+				if ($contrat->statut >= 0) print '<a href="'.DOL_URL_ROOT.'/contrat/contact.php?id='.$contrat->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				print $contactstatic->LibStatut($tab[$i]['status'],3);
+				if ($contrat->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)

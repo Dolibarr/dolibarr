@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -255,6 +255,9 @@ if ($id > 0)
                 print '<td width="30" align="center">'.$langs->trans("Status").'</td>';
                 print "</tr>\n";
             }
+			
+		    $contratlignestatic = new ContratLigne($db);
+
             $var=true;
             while ($i < $num)
             {
@@ -297,7 +300,9 @@ if ($id > 0)
                 print '<td>&nbsp;</td>';
 
                 // Statut
-                print '<td align="center">'.img_statut($objp->statut,$langs->trans("ServiceStatusInitial")).'</td>';
+                print '<td align="center">';
+				print $contratlignestatic->LibStatut($objp->statut,3);
+				print '</td>';
 
                 print "</tr>\n";
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -206,6 +206,8 @@ if ($_GET["action"] == 'deleteline' && $user->rights->facture->creer)
 llxHeader('', $langs->trans("Bill"), "Facture");
 
 $html = new Form($db);
+$contactstatic=new Contact($db);
+
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -391,12 +393,9 @@ if ($id > 0)
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($facture->statut >= 0)
-					print '<a href="contact.php?facid='.$facture->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
-				print img_statut($tab[$i]['status']);
-
-				if ($facture->statut >= 0)
-					print '</a>';
+				if ($facture->statut >= 0) print '<a href="contact.php?facid='.$facture->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				print $contactstatic->LibStatut($tab[$i]['status'],3);
+				if ($facture->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)

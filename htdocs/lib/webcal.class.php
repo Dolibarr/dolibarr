@@ -40,7 +40,7 @@ class Webcal {
     var $localdb;
 
     var $date;
-    var $duree = 0;     // Secondes
+    var $duree = 0;     /* Secondes */
     var $texte;
     var $desc;
     

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin  <regis.houssin@cap-networks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  *
@@ -55,7 +55,8 @@ class Contact
     var $ville;
     var $fk_pays;
     var $socid;					// fk_soc
-    
+    var $status;				// 0=brouillon, 1=4=actif, 5=inactif
+	
     var $code;
     var $email;
     var $birthday;
@@ -667,6 +668,71 @@ class Contact
 		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->name.' '.$this->firstname,'contact').$lienfin.' ');
 		$result.=$lien.$this->name.' '.$this->firstname.$lienfin;
 		return $result;
+	}
+
+
+	/**
+	 *    	\brief      Retourne le libellé du statut du contact
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string      Libellé
+	 */
+	function getLibStatut($mode)
+	{
+		return $this->LibStatut($this->status,$mode);
+	}
+
+	/**
+	 *		\brief      Renvoi le libellé d'un statut donné
+	 *    	\param      statut      Id statut
+	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	 *    	\return     string		Libellé
+	 */
+	function LibStatut($statut,$mode)
+	{
+		global $langs;
+		
+        if ($mode == 0)
+        {
+        	if ($statut==0) return $langs->trans('StatusContactDraft');
+        	if ($statut==1) return $langs->trans('StatusContactValidated');
+        	if ($statut==4) return $langs->trans('StatusContactValidated');
+        	if ($statut==5) return $langs->trans('StatusContactValidated');
+		}
+        if ($mode == 1)
+        {
+        	if ($statut==0) return $langs->trans('StatusContactDraftShort');
+        	if ($statut==1) return $langs->trans('StatusContactValidatedShort');
+        	if ($statut==4) return $langs->trans('StatusContactValidatedShort');
+        	if ($statut==5) return $langs->trans('StatusContactValidatedShort');
+        }
+        if ($mode == 2)
+        {
+        	if ($statut==0) return img_picto($langs->trans('StatusContactDraftShort'),'statut0').' '.$langs->trans('StatusContactDraft');
+        	if ($statut==1) return img_picto($langs->trans('StatusContactValidatedShort'),'statut1').' '.$langs->trans('StatusContactValidated');
+        	if ($statut==4) return img_picto($langs->trans('StatusContactValidatedShort'),'statut4').' '.$langs->trans('StatusContactValidated');
+        	if ($statut==5) return img_picto($langs->trans('StatusContactValidatedShort'),'statut5').' '.$langs->trans('StatusContactValidated');
+        }
+        if ($mode == 3)
+        {
+        	if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0');
+        	if ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1');
+        	if ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4');
+        	if ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5');
+        }
+        if ($mode == 4)
+        {
+        	if ($statut==0) return img_picto($langs->trans('StatusContactDraft'),'statut0').' '.$langs->trans('StatusContactDraft');
+        	if ($statut==1) return img_picto($langs->trans('StatusContactValidated'),'statut1').' '.$langs->trans('StatusContactValidated');
+        	if ($statut==4) return img_picto($langs->trans('StatusContactValidated'),'statut4').' '.$langs->trans('StatusContactValidated');
+        	if ($statut==5) return img_picto($langs->trans('StatusContactValidated'),'statut5').' '.$langs->trans('StatusContactValidated');
+        }
+        if ($mode == 5)
+        {
+        	if ($statut==0) return $langs->trans('StatusContactDraftShort').' '.img_picto($langs->trans('StatusContactDraftShort'),'statut0');
+        	if ($statut==1) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut1');
+        	if ($statut==4) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut4');
+        	if ($statut==5) return $langs->trans('StatusContactValidatedShort').' '.img_picto($langs->trans('StatusContactValidatedShort'),'statut5');
+        }
 	}
 
 

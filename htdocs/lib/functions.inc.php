@@ -743,24 +743,6 @@ function img_action($alt = "default", $numaction)
   return '<img align="absmiddle" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/stcomm'.$numaction.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
-/**
-        \brief      Affiche logo statut
-        \param      num         Numéro statut
-        \param      alt         Texte a afficher sur alt
-        \return     string      Retourne tag img
-		\todo		A virer et remplacer par entitestatic->LibStatut
-*/
-function img_statut($num,$alt = "default")
-{
-    global $conf,$langs;
-    if ($alt=="default") {
-        if ($num == 0) $alt=$langs->trans("Draft");
-        if ($num == 1) $alt=$langs->trans("Late");
-        if ($num == 4) $alt=$langs->trans("Running");
-        if ($num == 5) $alt=$langs->trans("Closed");
-    }
-    return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/statut'.$num.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-}
 
 /**
         \brief      Affiche logo fichier

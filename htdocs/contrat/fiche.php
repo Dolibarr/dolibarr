@@ -304,7 +304,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 llxHeader('',$langs->trans("ContractCard"),"Contrat");
 
 $html = new Form($db);
-
+$contratlignestatic=new ContratLigne($db);
 
 /*********************************************************************
  *
@@ -748,9 +748,10 @@ else
         
                     // Statut
                     print '<td align="center">';
+					// Activation desativation du contact
                     if ($contrat->statut > 0) print '<a href="'.DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id.'&amp;ligne='.$objp->rowid.'">';;
-                    print img_statut($objp->statut);
-                    if ($contrat->statut > 0) print '</a>';
+					print $contratlignestatic->LibStatut($objp->statut,3);
+					if ($contrat->statut >= 0) print '</a>';
                     print '</td>';
 
                     print "</tr>\n";
