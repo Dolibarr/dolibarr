@@ -35,9 +35,10 @@
 */
 
 /** 
-  \class      DolibarrMail
-  \brief      Classe permettant d'envoyer des attachements par mail
-  \todo       Classe en double avec CMailFile.class.php
+  \class      	DolibarrMail
+  \brief      	Classe permettant d'envoyer des attachements par mail
+  \deprecated	Utiliser CMailFile a la place car plus fiable et plus performant
+  \todo       	Classe en double avec CMailFile.class.php
 */
 
 class DolibarrMail
