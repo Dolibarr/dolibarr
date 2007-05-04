@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -321,22 +321,20 @@ class CommonObject
 
         return $result;
     }
-    
-   /** 	 
-    *      \brief      Retourne le détail d'un contact
-    *      \param      id          id du contact
-    *      \return     array       détail du contact 	 
+
+    /** 	
+    *		\brief      Charge le contact d'id $id dans this->contact
+    *		\param      contactid          Id du contact
     */
-    function fetch_contact($id) 	 
-    { 	 
-       $idcontact = $id; 	 
-       $contact = new Contact($this->db); 	 
-       $contact->fetch($idcontact); 	 
-       $this->contact = $contact; 	 
+    function fetch_contact($contactid) 	
+    { 	
+       $contact = new Contact($this->db); 	
+       $contact->fetch($contactid); 	
+       $this->contact = $contact; 	
      }
 
-    /*
-     *    \brief      Charge l'objet client depuis la base
+    /**
+     *    	\brief      Charge le tiers d'id $this->socid dans this->client
      */
     function fetch_client()
     {
@@ -345,29 +343,27 @@ class CommonObject
         $this->client = $client;
     }
 
-    /*
-     *    \brief      Charge l'objet projet depuis la base
-     *
-     */
+    /**
+    *		\brief      Charge le projet d'id $this->projet_id dans this->projet
+    */
     function fetch_projet()
     {
         $projet = new Project($this->db);
         $projet->fetch($this->projet_id);
         $this->projet = $projet;
     }
-    
-   /** 	 
-    *      \brief      Retourne le détail d'un utilisateur
-    *      \param      id          id du contact
-    *      \return     array       détail du contact 	 
+
+	/** 	
+    *		\brief      Charge le user d'id userid dans this->user
+    *		\param      userid 		Id du contact
     */
-    function fetch_user($userid) 	 
-    {	 
-       $user = new User($this->db, $userid); 	 
+    function fetch_user($userid) 	
+    {	
+       $user = new User($this->db, $userid); 	
        $user->fetch();
-       $this->user = $user; 	 
-     }
-    
+       $this->user = $user; 	
+    }
+
 }
 
 ?>
