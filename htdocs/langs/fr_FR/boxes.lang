@@ -40,3 +40,7 @@ NoRecordedBookmarks=Pas de bookmarks personnels. Cliquer ici pour en ajouter.
 NoRecordedCustomers=Pas de clients enregistrés
 BoxTitleLastActionsToDo=Les %s dernières actions à faire
 NoActionsToDo=Pas d'actions à faire
+NoRecordedOrders=Pas de commandes clients enregistrées
+NoRecordedProposals=Pas de propositions commerciales enregistrées
+NoRecordedInvoices=Pas de factures clients enregistrées
+NoUnpayedCustomerBills=Pas de factures clients impayées

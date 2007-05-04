@@ -40,3 +40,7 @@ NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add boo
 NoRecordedCustomers=No recorded customers
 BoxTitleLastActionsToDo=Last %s actions to do
 NoActionsToDo=No actions to do
+NoRecordedOrders=No recorded customer's orders
+NoRecordedProposals=No recorded proposals
+NoRecordedInvoices=No recorded customer's invoices
+NoUnpayedCustomerBills=No unpayed customer's invoices
