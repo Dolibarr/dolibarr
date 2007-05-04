@@ -20,6 +20,8 @@
  * or see http://www.gnu.org/
  */
 
+/*	\deprecated	Ce fichier semble ne plus servir. A virer */
+
 function gljDbConnect() {
   return pg_Connect($GLOBALS["DB_HOST"],
 		    $GLOBALS["DB_PORT"],

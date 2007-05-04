@@ -18,8 +18,9 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/*	\deprecated	Ce fichier semble ne plus servir. A virer */
  
 require("./pre.inc.php");
 
