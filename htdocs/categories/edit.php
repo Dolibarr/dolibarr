@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/categories/edit.php
-        \ingroup    categories
+        \ingroup    category
         \brief      Page d'edition de categorie produit
         \version    $Revision$
 */

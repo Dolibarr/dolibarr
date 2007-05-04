@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
  */
 
 /**
-		\file 		htdocs/admin/system/pre.inc.php
-		\brief      Fichier gestionnaire menu page infos système
+		\file 		htdocs/admin/tools/pre.inc.php
+		\brief      Fichier gestionnaire menu page outils
 		\version    $Revision$
 */
 

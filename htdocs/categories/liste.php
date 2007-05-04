@@ -22,7 +22,7 @@
 
 /**
         \file       htdocs/categories/liste.php
-        \ingroup    categorie
+        \ingroup    category
         \brief      Page liste des categories
 */
 

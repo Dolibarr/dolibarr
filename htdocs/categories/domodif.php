@@ -16,6 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  */
 
+/**
+		\file       htdocs/categories/domodif.php
+		\ingroup    category
+		\brief      Page de modification categorie
+		\version    $Revision$
+*/
+
 require "./pre.inc.php";
 
 if (!isset ($_REQUEST["id"]) || !isset ($_REQUEST["nom"]) || !isset ($_REQUEST["description"]))

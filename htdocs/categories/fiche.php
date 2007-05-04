@@ -24,7 +24,7 @@
 
 /**
 		\file       htdocs/categories/fiche.php
-		\ingroup    categorie
+		\ingroup    category
 		\brief      Page creation nouvelle categorie
 */
 

@@ -19,8 +19,8 @@
  */
 
 /**
-        \file       htdocs/categories/edit.php
-        \ingroup    categories
+        \file       htdocs/categories/viewcat.php
+        \ingroup    category
         \brief      Page de visualisation de categorie produit
         \version    $Revision$
 */

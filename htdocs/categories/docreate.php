@@ -20,6 +20,13 @@
  * $Source$
  */
 
+/**
+		\file       htdocs/categories/docreate.php
+		\ingroup    category
+		\brief      Page de creation categorie
+		\version    $Revision$
+*/
+
 require "./pre.inc.php";
 
 $user->getrights('categorie');

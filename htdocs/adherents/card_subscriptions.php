@@ -22,9 +22,9 @@
  */
 
 /**
-        \file       htdocs/adherents/fiche.php
+        \file       htdocs/adherents/card_subscriptions.php
         \ingroup    adherent
-        \brief      Page d'ajout, edition, suppression d'une fiche adhérent
+        \brief      Page d'ajout, edition, suppression d'une adhésion
         \version    $Revision$
 */
 

@@ -24,8 +24,8 @@
  */
 
 /**
-		\file       htdocs/product/categorie.php
-		\ingroup    product
+		\file       htdocs/categories/categorie.php
+		\ingroup    category
 		\brief      Page de l'onglet categories de produits
 		\version    $Revision$
 */

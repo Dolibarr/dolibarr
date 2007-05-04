@@ -24,7 +24,7 @@
 
 /**
         \file       htdocs/categories/index.php
-        \ingroup    categorie
+        \ingroup    category
         \brief      Page accueil espace categories
 */
 

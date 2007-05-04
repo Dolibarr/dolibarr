@@ -21,7 +21,7 @@
  */
 
 /**
-        \file       htdocs/admin/ùenus.php
+        \file       htdocs/admin/menus.php
         \brief      Page de configuration des gestionnaires de menu
         \version    $Revision$
 */
