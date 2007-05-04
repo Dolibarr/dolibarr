@@ -43,10 +43,11 @@ class ProductLivre extends Product
    *    \param      DB          Handler accès base de données
    *    \param      id          Id produit (0 par defaut)
    */
-  function ProductLivre($DB=0, $id=0)
+  function ProductLivre($DB=0, $id=0, $user=0)
   {
     $this->db = $DB;
     $this->id = $id ;
+    $this->user = $user;
     $this->canvas = "livre";
     $this->name = "livre";
     $this->description = "Gestion des livres";
@@ -386,6 +387,8 @@ class ProductLivre extends Product
 	$smarty->assign('class_normal_ref', 'normal');
 	$smarty->assign('class_focus_ref',  'focus');
       }
+
+    $smarty->assign('user',             $this->user->prenom.' '.$this->user->nom);
 
     $smarty->assign('prod_id',          $this->id);
     $smarty->assign('prod_ref',         $this->ref);
