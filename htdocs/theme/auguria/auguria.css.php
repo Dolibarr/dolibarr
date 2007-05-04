@@ -1001,9 +1001,9 @@ padding: 2px;
 /* ============================================================================== */
 
 
-/* CSS √  appliquer √  l'arbre hi√©rarchique */
+/* CSS a  appliquer a  l'arbre hierarchique */
 
-/* Lien plier /d√©plier tout */
+/* Lien plier /deplier tout */
 .arbre-switch {
     text-align: right;
     padding: 0 5px;
@@ -1043,7 +1043,7 @@ ul.arbre li {
 ul.arbre li li {
     margin: 0 0 0 16px;
 }
-/* Uniquement pour les navigateurs √  moteur gecko */
+/* Uniquement pour les navigateurs a  moteur gecko */
 ul.arbre li:last-child {
     border-left: 0;
     background: url(<?php echo $dolibarr_main_url_root.'/admin/mens/images/arbre-trait.png' ?>) no-repeat 0 0;

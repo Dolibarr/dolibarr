@@ -1200,3 +1200,121 @@ div.autocomplete ul li {
       height:16px;
       cursor:pointer;
     }
+    
+/* ============================================================================== */
+/* Admin Menu                                                                     */
+/* ============================================================================== */
+
+
+/* CSS a  appliquer a  l'arbre hierarchique */
+
+/* Lien plier /deplier tout */
+.arbre-switch {
+    text-align: right;
+    padding: 0 5px;
+    margin: 0 0 -18px 0;
+}
+
+/* Arbre */
+ul.arbre {
+    padding: 5px 10px;
+}
+/* strong : A modifier en fonction de la balise choisie */
+ul.arbre strong {
+    font-weight: normal;
+    padding: 0 0 0 20px;
+    margin: 0 0 0 -7px;
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/img/arbre-puce.png' ?>);
+    background-repeat: no-repeat;
+    background-position: 1px 50%;
+}
+ul.arbre strong.arbre-plier {
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-plier.png' ?>);
+    cursor: pointer;
+}
+ul.arbre strong.arbre-deplier {
+    background-image: url(<?php echo $dolibarr_main_url_root.'/admin/menus/images/arbre-deplier.png' ?>);
+    cursor: pointer;
+}
+ul.arbre ul {
+    padding: 0;
+    margin: 0;
+}
+ul.arbre li {
+    padding: 0;
+    margin: 0;
+    list-style: none;
+}
+ul.arbre li li {
+    margin: 0 0 0 16px;
+}
+/* Uniquement pour les navigateurs a  moteur gecko */
+ul.arbre li:last-child {
+    border-left: 0;
+    background: url(<?php echo $dolibarr_main_url_root.'/admin/mens/images/arbre-trait.png' ?>) no-repeat 0 0;
+}
+/* Classe pour masquer */
+.hide {
+    display: none;
+}
+
+img.menuNew
+{
+	display:block;
+	border:0px;
+}
+
+img.menuEdit
+{
+	border: 0px;
+	display: block;
+}
+
+img.menuDel
+{
+	display:none;
+	border: 0px;
+}
+
+div.menuNew
+{
+	margin-top:-20px;
+	margin-left:270px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+}
+
+div.menuEdit
+{
+	margin-top:-15px;
+	margin-left:250px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
+
+div.menuDel
+{
+	margin-top:-20px;
+	margin-left:290px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
+
+div.menuFleche
+{
+	margin-top:-16px;
+	margin-left:320px;
+	height:20px;
+	padding:0px;
+	width:30px;
+	position:relative;
+
+}
