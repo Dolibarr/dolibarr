@@ -417,17 +417,20 @@ function info()
             if ($row) $fayy = substr($row[0],0,-$posindice);
         }
         
-        //on vérifie si il y a une année précédente
-        //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
-        $lastyy='';
-        $sql = "SELECT MAX(facnumber)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        $sql.= " WHERE facnumber like '${searchLastWithPreviousYear}%'";
-        $resql=$db->query($sql);
-        if ($resql)
+        if ($conf->global->PROPALE_NUM_DELTA != '')
         {
+        	//on vérifie si il y a une année précédente
+          //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
+          $lastyy='';
+          $sql = "SELECT MAX(facnumber)";
+          $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+          $sql.= " WHERE facnumber like '${searchLastWithPreviousYear}%'";
+          $resql=$db->query($sql);
+          if ($resql)
+          {
             $row = $db->fetch_row($resql);
             if ($row) $lastyy = substr($row[0],0,-$posindice);
+          }
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
@@ -444,7 +447,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if (!eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
+        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;

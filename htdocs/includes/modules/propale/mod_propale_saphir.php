@@ -378,19 +378,22 @@ function info()
             if ($row) $pryy = substr($row[0],0,-$posindice);
         }
         
-        //on vérifie si il y a une année précédente
-        //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
-        $lastyy='';
-        $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-        $sql.= " WHERE ref like '${searchLastWithPreviousYear}%'";
-        $resql=$db->query($sql);
-        if ($resql)
+        if ($conf->global->PROPALE_NUM_DELTA != '')
         {
-            $row = $db->fetch_row($resql);
-            if ($row) $lastyy = substr($row[0],0,-$posindice);
+        	//on vérifie si il y a une année précédente
+        	//pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
+        	$lastyy='';
+        	$sql = "SELECT MAX(ref)";
+        	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        	$sql.= " WHERE ref like '${searchLastWithPreviousYear}%'";
+        	$resql=$db->query($sql);
+        	if ($resql)
+        	{
+        		$row = $db->fetch_row($resql);
+        		if ($row) $lastyy = substr($row[0],0,-$posindice);
+        	}
         }
-
+        	
         // Si au moins un champ respectant le modèle a été trouvée
         if (eregi('^'.$searchLastWithNoYear.'',$pryy))
         {
@@ -405,7 +408,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if (!eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
+        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA-1:0;
