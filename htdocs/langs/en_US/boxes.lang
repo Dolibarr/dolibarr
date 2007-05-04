@@ -25,7 +25,7 @@ BoxTitleLastSuppliers=Last %s recorded suppliers
 BoxTitleLastCustomers=Last %s recorded customers
 BoxTitleLastPropals=Last %s recorded proposals
 BoxTitleLastCustomerBills=Last %s customer's invoices
-BoxTitleLastSupplierBills=Les %s supplier's invoices
+BoxTitleLastSupplierBills=Last %s supplier's invoices
 BoxTitleLastProspects=Last %s recorded prospects
 BoxTitleLastProductsInContract=Last %s derniers produits/services contractés
 BoxTitleOldestUnpayedCustomerBills=Oldest %s unpayed customer's invoices
@@ -38,3 +38,4 @@ BoxMyLastBookmarks=My last %s bookmarks
 FailedToRefreshDataInfoNotUpToDate=Failed to refresh RSS flux. Last successfull refresh date: %s
 NoRecordedBookmarks=No bookmarks defined. Click <a href="%s">here</a> to add bookmarks.
 NoRecordedCustomers=No recorded customers
+BoxTitleLastActionsToDo=Last %s actions to do

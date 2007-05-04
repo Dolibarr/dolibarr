@@ -64,9 +64,9 @@ class box_actions extends ModeleBoxes {
 		global $user, $langs, $db, $conf;
 	
 		include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-        $actionstatic=new ActionComm($db);
+    $actionstatic=new ActionComm($db);
 
-		$this->info_box_head = array('text' =>$langs->trans("ActionsToDo"));
+		$this->info_box_head = array('text' => $langs->trans("BoxTitleLastActionsToDo",$max));
 		
 		if ($user->rights->commercial->main->lire)
 		{
@@ -100,7 +100,7 @@ class box_actions extends ModeleBoxes {
 	
 					if (date("U",$objp->dp)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
 	
-					$label=($langs->trans("Action".$objp->code)!=("Action".$objp->code) ? $langs->trans("Action".$objp->code) : $objp->label);
+					$label=($langs->transnoentities("Action".$objp->code)!=("Action".$objp->code) ? $langs->transnoentities("Action".$objp->code) : $objp->label);
 					
 					$this->info_box_contents[$i][0] = array('align' => 'left',
 					'nowrap' => 1,
@@ -119,12 +119,28 @@ class box_actions extends ModeleBoxes {
 					$this->info_box_contents[$i][3] = array('align' => 'right',
 					'text' => $objp->percent. "%");
 	
-                    $this->info_box_contents[$i][4] = array(
-                    'align' => 'right',
-                    'text' => $actionstatic->LibStatut($objp->percent,3));
+          $this->info_box_contents[$i][4] = array(
+          'align' => 'right',
+          'text' => $actionstatic->LibStatut($objp->percent,3));
 
 					$i++;
-				}
+					}
+					
+					$i=$num;
+          while ($i < $max)
+          {
+            if ($num==0 && $i==$num)
+            {
+                $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoActionsToDo"));
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+            } else {
+                $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+            }
+            $i++;
+          }
 			}
 			else {
 				dolibarr_print_error($db);
