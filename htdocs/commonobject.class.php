@@ -120,7 +120,7 @@ class CommonObject
 	{
         // Insertion dans la base
         $sql = "UPDATE ".MAIN_DB_PREFIX."element_contact set";
-        $sql.= " statut = $statut,";
+        $sql.= " statut = ".$statut.",";
         $sql.= " fk_c_type_contact = '".$type_contact_id ."'";
         $sql.= " where rowid = ".$rowid;
         // Retour
@@ -221,11 +221,11 @@ class CommonObject
  	function detail_contact($rowid)
     {
         $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
-        $sql.= " tc.code, tc.libelle, s.fk_soc";
-        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc, ";
-        $sql.= " ".MAIN_DB_PREFIX."socpeople as s";
+        $sql.= " tc.code, tc.libelle,";
+		$sql.= " s.fk_soc";
+        $sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.idp";	// Si contact de type external, alors il est lié à une societe
         $sql.= " WHERE ec.rowid =".$rowid;
-        $sql.= " AND ec.fk_socpeople=s.idp";
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
 
