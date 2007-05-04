@@ -124,6 +124,9 @@ if ($user->societe_id == 0)
                       $conf->adherent->enabled && $user->rights->adherent->lire,
                       $conf->produit->enabled && $user->rights->produit->lire,
                       $conf->service->enabled && $user->rights->produit->lire,
+                      $conf->propal->enabled && $user->rights->propale->lire,
+                      $conf->commande->enabled && $user->rights->commande->lire,
+                      $conf->facture->enabled && $user->rights->facture->lire,
                       $conf->telephonie->enabled && $user->rights->telephonie->lire);
     // Fichier des classes qui contiennent la methode load_state_board pour chaque ligne
     $includes=array(DOL_DOCUMENT_ROOT."/client.class.php",
@@ -132,6 +135,9 @@ if ($user->societe_id == 0)
                     DOL_DOCUMENT_ROOT."/adherents/adherent.class.php",
                     DOL_DOCUMENT_ROOT."/product.class.php",
                     DOL_DOCUMENT_ROOT."/service.class.php",
+                    DOL_DOCUMENT_ROOT."/propal.class.php",
+                    DOL_DOCUMENT_ROOT."/commande/commande.class.php",
+                    DOL_DOCUMENT_ROOT."/facture.class.php",
                     DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
     // Nom des classes qui contiennent la methode load_state_board pour chaque ligne
     $classes=array('Client',
@@ -140,6 +146,9 @@ if ($user->societe_id == 0)
                    'Adherent',
                    'Product',
                    'Service',
+				   'Propal',
+				   'Commande',
+				   'Facture',
                    'LigneTel');
     // Clé de tableau retourné par la methode load_state_bord pour chaque ligne
     $keys=array('customers',
@@ -148,6 +157,9 @@ if ($user->societe_id == 0)
                 'members',
                 'products',
                 'services',
+				'proposals',
+				'orders',
+				'invoices',
                 'sign');
     // Icon des lignes du tableau de bord
     $icons=array('company',
@@ -156,6 +168,9 @@ if ($user->societe_id == 0)
                  'user',
                  'product',
                  'service',
+				 'propal',
+				 'order',
+				 'bill',
                  'phoning');
     // Titre des lignes du tableau de bord
     $titres=array($langs->trans("Customers"),
@@ -164,6 +179,9 @@ if ($user->societe_id == 0)
                   $langs->trans("Members"),
                   $langs->trans("Products"),
                   $langs->trans("Services"),
+                  $langs->trans("Proposals"),
+                  $langs->trans("CustomersOrders"),
+                  $langs->trans("BillsCustomers"),
                   $langs->trans("Lignes de téléphonie suivis"));
     // Lien des lignes du tableau de bord
     $links=array(DOL_URL_ROOT.'/comm/clients.php',
@@ -172,6 +190,9 @@ if ($user->societe_id == 0)
                  DOL_URL_ROOT.'/adherents/liste.php?statut=1&amp;mainmenu=members',
                  DOL_URL_ROOT.'/product/liste.php?type=0&amp;mainmenu=products',
                  DOL_URL_ROOT.'/product/liste.php?type=1&amp;mainmenu=products',
+                 DOL_URL_ROOT.'/comm/propal.php?mainmenu=commercial',
+                 DOL_URL_ROOT.'/commande/liste.php?mainmenu=commercial',
+                 DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
                  DOL_URL_ROOT.'/telephonie/ligne/index.php');
    
     // Boucle et affiche chaque ligne du tableau

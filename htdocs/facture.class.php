@@ -2649,6 +2649,45 @@ class Facture extends CommonObject
     $this->total_ttc      = $xnbp*119.6;
   }
 
+  	/**
+	*      \brief      Charge indicateurs this->nb de tableau de bord
+	*      \return     int         <0 si ko, >0 si ok
+	*/
+	function load_state_board()
+	{
+		global $conf, $user;
+
+		$this->nb=array();
+
+		$sql = "SELECT count(f.rowid) as nb";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = f.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+		}
+		$sql.= " WHERE 1 = 1";
+		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+		{
+			$sql.= " AND IFNULL(c.visible,1)=1";
+		}
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			while ($obj=$this->db->fetch_object($resql))
+			{
+				$this->nb["invoices"]=$obj->nb;
+			}
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			$this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
 }
 
 

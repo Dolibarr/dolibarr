@@ -2500,8 +2500,8 @@ class Product
 	$this->error=$this->db->error();
 	return -1;
       }
-
   }
+
   /**
      \brief Affecte les valeurs smarty
      \remarks Rodolphe : pour l'instant la fonction est vide mais necessaire pour compatibilite
