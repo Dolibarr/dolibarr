@@ -20,7 +20,7 @@
 
 /**
         \file       htdocs/categories/viewcat.php
-        \ingroup    category
+        \ingroup    categories
         \brief      Page de visualisation de categorie produit
         \version    $Revision$
 */

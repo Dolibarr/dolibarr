@@ -21,13 +21,13 @@
  */
 
 /**
-        \defgroup   categorie       Module categorie
+        \defgroup   category       Module categorie
         \brief      Module pour gérer les catégories
 */
 
 /**
         \file       htdocs/includes/modules/modCategorie.class.php
-        \ingroup    categorie
+        \ingroup    category
         \brief      Fichier de description et activation du module Categorie
 */
 include_once "DolibarrModules.class.php";

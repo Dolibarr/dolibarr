@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005      Regis Houssin         <regis.houssin@cap-networks.com>
  *
@@ -23,7 +23,7 @@
  */
 
 /**
-   \file       htdocs/compta/facture/document.php
+   \file       htdocs/commande/document.php
    \ingroup    facture
    \brief      Page de gestion des documents attachées à une facture
    \version    $Revision$
