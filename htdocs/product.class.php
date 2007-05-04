@@ -32,7 +32,6 @@
 /**
    \class      Product
    \brief      Classe permettant la gestion des produits prédéfinis
-   \todo comment $typeprodserv
 */
 
 class Product
@@ -72,7 +71,6 @@ class Product
   var $stats_facture=array();
   var $multilangs=array();
 
-  var $typeprodserv;
   //! Intitule de l'erreur
   var $error;
   //! Numero de l'erreur

@@ -644,7 +644,6 @@ class User
    *  \brief      Crée l'utilisateur en base
    *  \param      user        Objet user qui demande la creation
    *  \return     int         <0 si KO, id compte créé si OK
-   *  \todo       Verifier tous les appels à cette fonction et ajouter le param $user
    */
   function create($user='')
   {
