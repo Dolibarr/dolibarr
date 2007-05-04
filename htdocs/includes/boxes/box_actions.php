@@ -70,8 +70,6 @@ class box_actions extends ModeleBoxes {
 		
 		if ($user->rights->commercial->main->lire)
 		{
-		$user->rights->commercial->client->voir=0;
-		
 			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.idp";
