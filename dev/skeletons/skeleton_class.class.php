@@ -101,7 +101,6 @@ class Skeleton_class
 			if ($result < 0) $this->errors=$interface->errors;
             // Fin appel triggers
 
-			$this->id = $newid;
             return $this->id;
         }
         else
