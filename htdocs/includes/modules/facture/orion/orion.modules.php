@@ -32,7 +32,7 @@
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 
 /**
-	\class      mod_facture_Orion
+	\class      mod_facture_orion
 	\brief      Classe du modèle de numérotation de référence de facture Orion
 */
 class mod_facture_orion extends ModeleNumRefFactures
