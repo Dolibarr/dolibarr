@@ -21,7 +21,7 @@
  */
 
 /**
-	    \file       htdocs/lib/memeber.lib.php
+	    \file       htdocs/lib/member.lib.php
 		\brief      Ensemble de fonctions de base pour les adhérents
 		\version    $Revision$
 

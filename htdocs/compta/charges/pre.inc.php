@@ -18,9 +18,16 @@
  *
  * $Id$
  * $Source$
- *
  */
+
+/**   
+      \file   	    htdocs/compta/charges/pre.inc.php
+      \ingroup      tax
+      \brief  	    Fichier gestionnaire du menu charges
+*/
+
 require("../../main.inc.php");
+
 
 function llxHeader($head = "")
 {

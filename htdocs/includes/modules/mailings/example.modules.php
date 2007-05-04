@@ -8,10 +8,22 @@
  * Code that need to be changed in this file are marked by "CHANGE THIS" tag.
  */
 
+/**
+       	\file       htdocs/includes/modules/mailings/example.modules.php
+		\ingroup    mailing
+		\brief      Example file to provide a list of recipients for mailing module
+		\version    $Revision$
+*/
+
 include_once DOL_DOCUMENT_ROOT.'/includes/modules/mailings/modules_mailings.php';
 
 
 // CHANGE THIS: Class name must be called mailing_xxx with xxx=name of your selector
+
+/**
+	    \class      mailing_example
+		\brief      Class to manage a list of personalised recipients for mailing feature
+*/
 class mailing_example extends MailingTargets
 {
     // CHANGE THIS: Put here a name not already used

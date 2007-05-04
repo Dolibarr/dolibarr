@@ -19,7 +19,13 @@
  * $Id$
  * $Source$
  */
- 
+
+/**
+        \file       htdocs/compta/param/comptes/liste.php
+        \ingroup    compta
+        \brief      Onglet de gestion de parametrages des ventilations
+        \version    $Revision$
+*/
 require("./pre.inc.php");
 
 

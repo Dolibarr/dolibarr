@@ -18,8 +18,13 @@
  *
  * $Id$
  * $Source$
- *
  */
+ 
+/**   
+      \file   	    htdocs/compta/paiement/pre.inc.php
+      \ingroup      compta
+      \brief  	    Fichier gestionnaire du menu compta paiement
+*/
 
 require("../../main.inc.php");
 

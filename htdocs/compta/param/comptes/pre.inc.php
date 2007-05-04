@@ -20,7 +20,7 @@
  * $Source$
  */
 
-/**     \file   	htdocs/compta/param/pre.inc.php
+/**     \file   	htdocs/compta/param/comptes/pre.inc.php
         \ingroup    compta
         \brief  	Fichier gestionnaire du menu paramétrage de la compta
 */

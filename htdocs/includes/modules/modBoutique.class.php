@@ -27,7 +27,7 @@
 */
 
 /**
-        \file       htdocs/includes/modules/modOSCommerce.class.php
+        \file       htdocs/includes/modules/modBoutique.class.php
         \ingroup    oscommerce
         \brief      Fichier de description et activation du module OSCommerce
 */
