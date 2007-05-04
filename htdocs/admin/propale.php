@@ -146,6 +146,13 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "PROPALE_ADDON",$_GET["value"]);
 }
 
+// défini les constantes du modèle saphir
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "PROPALE_NUM_MATRICE",$_POST["matrice"]);
+if ($_POST["action"] == 'updatePrefixPropale') dolibarr_set_const($db, "PROPALE_NUM_PREFIX",$_POST["prefixpropale"]);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "PROPALE_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "PROPALE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+
 
 /*
  * Affiche page
@@ -209,9 +216,11 @@ if ($handle)
             }
             print '</td>';
 
-			// Info
-			$htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc);
+			     $propale = new Propal($db);
+			     
+			     // Info
+			    $htmltooltip='';
+	        $nextval=$module->getNextValue($mysoc,$propale);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;

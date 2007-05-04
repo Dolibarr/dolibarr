@@ -418,7 +418,7 @@ function info()
         }
         
         //on vérifie si il y a une année précédente
-        //sinon le delta sera appliqué de nouveau sur la nouvelle année
+        //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
         $lastyy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";

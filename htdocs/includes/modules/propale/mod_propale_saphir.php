@@ -24,27 +24,27 @@
  */
 
 /**
-	\file       htdocs/includes/modules/commande/mod_commande_saphir.php
-	\ingroup    commande
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Saphir
+	\file       htdocs/includes/modules/propale/mod_propale_saphir.php
+	\ingroup    propale
+	\brief      Fichier contenant la classe du modèle de numérotation de référence de propale Saphir
 	\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
+require_once(DOL_DOCUMENT_ROOT ."/includes/modules/propale/modules_propale.php");
 
 /**
-	\class      mod_commande_saphir
-	\brief      Classe du modèle de numérotation de référence de commande Saphir
+	\class      mod_propale_saphir
+	\brief      Classe du modèle de numérotation de référence de propale Saphir
 */
-class mod_commande_saphir extends ModeleNumRefCommandes
+class mod_propale_saphir extends ModeleNumRefPropales
 {
-	var $prefixorder='';
-	var $ordernummatrice='';
+	var $prefixproposal='';
+	var $proposalnummatrice='';
 	var $error='';
 	
 	/**   \brief      Constructeur
    */
-  function mod_commande_saphir()
+  function mod_propale_saphir()
   {
     $this->nom = "Saphir";
   }
@@ -67,25 +67,25 @@ function info()
       $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,année,compteur...)</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updateMatrice">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->COMMANDE_NUM_MATRICE.'"></td>';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->PROPALE_NUM_MATRICE.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceOrderDesc"),1,1).'</td>';
+      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceProposalDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
       // Paramétrage du prefix des commandes
-      $texte.= '<tr><td>Préfix des commandes</td>';
+      $texte.= '<tr><td>Préfix des propositions commerciales</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updatePrefixCommande">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixcommande" value="'.$conf->global->COMMANDE_NUM_PREFIX.'"></td>';
+      $texte.= '<input type="hidden" name="action" value="updatePrefixPropale">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixpropale" value="'.$conf->global->PROPALE_NUM_PREFIX.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixOrderDesc"),1,1).'</td>';
+      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixProposalDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
       // On détermine un offset sur le compteur
       $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffset">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->PROPALE_NUM_DELTA.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
@@ -105,7 +105,7 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumRestart">';
       $texte.= '<td align="right">';
-      $texte.= $form->selectyesno('numrestart',$conf->global->COMMANDE_NUM_RESTART_BEGIN_YEAR,1);
+      $texte.= $form->selectyesno('numrestart',$conf->global->PROPALE_NUM_RESTART_BEGIN_YEAR,1);
       $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("NumRestartDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
@@ -122,15 +122,15 @@ function info()
     {
     	global $conf;
     	
-    	$this->prefixorder     = $conf->global->COMMANDE_NUM_PREFIX;
-      $this->ordernummatrice = $conf->global->COMMANDE_NUM_MATRICE;
+    	$this->prefixproposal     = $conf->global->PROPALE_NUM_PREFIX;
+      $this->proposalnummatrice = $conf->global->PROPALE_NUM_MATRICE;
         
-        if ($this->ordernummatrice != '')
+        if ($this->proposalnummatrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = '';
         	
-        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: C pour commande), COM : prefix du client
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: PR pour propal), COM : prefix du client
         	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
         	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
         	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
@@ -143,7 +143,7 @@ function info()
         	                         );
         	
         	// on détermine l'emplacement des tirets
-        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->ordernummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->proposalnummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
         	
         	$j = 0;
         	
@@ -178,7 +178,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					$prefix = $this->prefixorder;
+        					$prefix = $this->prefixproposal;
         					$numMatrice .= $prefix;
         				}
         				else if ($idMatrice == 'year')
@@ -218,7 +218,7 @@ function info()
     	
     	// On récupère le nombre de chiffres du compteur
     	$arg = '%0'.$numbitcounter.'s';
-      $num = sprintf($arg,$conf->global->COMMANDE_NUM_DELTA?$conf->global->COMMANDE_NUM_DELTA:1);
+      $num = sprintf($arg,$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA:1);
       
       // Construction de l'exemple de numérotation
     	$numExample = $numMatrice.$num;
@@ -229,22 +229,22 @@ function info()
 
 	/**		\brief      Renvoi prochaine valeur attribuée
 	*      	\param      objsoc      Objet société
-	*      	\param      commande		Objet commande
+	*      	\param      propale		  Objet propale
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc,$commande)
+    function getNextValue($objsoc=0,$propale)
     {
         global $db,$conf;
         
-        $this->prefixorder     = $conf->global->COMMANDE_NUM_PREFIX;
-        $this->ordernummatrice = $conf->global->COMMANDE_NUM_MATRICE;
+        $this->prefixproposal     = $conf->global->PROPALE_NUM_PREFIX;
+        $this->proposalnummatrice = $conf->global->PROPALE_NUM_MATRICE;
         
-        if ($this->ordernummatrice != '')
+        if ($this->proposalnummatrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = Array();
         	
-        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: C pour commande), COM : prefix du client
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: PR pour propale), COM : prefix du client
         	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
         	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
         	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
@@ -257,7 +257,7 @@ function info()
         	                         );
         	
         	// on détermine l'emplacement des tirets
-        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->ordernummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->proposalnummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
         	
         	$j = 0;
         	$k = 0;
@@ -301,7 +301,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					$prefix = $this->prefixorder;
+        					$prefix = $this->prefixproposal;
         					$numMatrice[$k] = '$prefix';
         					$searchLast .= $prefix;
         					$searchLastWithNoYear .= $prefix;
@@ -315,9 +315,9 @@ function info()
         					// On défini le mois du début d'année fiscale
         					$current_month = date("n");
         					
-        					if (is_object($commande) && $commande->date)
+        					if (is_object($propale) && $propale->date)
                   {
-        	          $create_month = strftime("%m",$commande->date);
+        	          $create_month = strftime("%m",$propale->date);
                   }
                   else
                   {
@@ -367,22 +367,22 @@ function info()
 
         // On récupère la valeur max (réponse immédiate car champ indéxé)
         $posindice  = $numbitcounter;
-        $comyy='';
+        $pryy='';
         $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-        if ($conf->global->COMMANDE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref like '${searchLast}%'";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+        if ($conf->global->PROPALE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref like '${searchLast}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $comyy = substr($row[0],0,-$posindice);
+            if ($row) $pryy = substr($row[0],0,-$posindice);
         }
         
         //on vérifie si il y a une année précédente
         //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
         $lastyy='';
         $sql = "SELECT MAX(ref)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+        $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         $sql.= " WHERE ref like '${searchLastWithPreviousYear}%'";
         $resql=$db->query($sql);
         if ($resql)
@@ -392,12 +392,12 @@ function info()
         }
 
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$searchLastWithNoYear.'',$comyy))
+        if (eregi('^'.$searchLastWithNoYear.'',$pryy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(ref,$posindice))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."commande";
-            $sql.= " WHERE ref like '${comyy}%'";
+            $sql.= " FROM ".MAIN_DB_PREFIX."propal";
+            $sql.= " WHERE ref like '${pryy}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -408,7 +408,7 @@ function info()
         else if (!eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
         {
         	// on applique le delta une seule fois
-        	$max=$conf->global->COMMANDE_NUM_DELTA?$conf->global->COMMANDE_NUM_DELTA-1:0;
+        	$max=$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA-1:0;
         }
         else
         {
@@ -429,21 +429,10 @@ function info()
         	if ($objetMatrice == '$num') $numFinal .= $num;
         } 
         
-        dolibarr_syslog("mod_commande_saphir::getNextValue return ".$numFinal);
+        dolibarr_syslog("mod_propale_saphir::getNextValue return ".$numFinal);
         return  $numFinal;
     }
   }
-    
-  
-    /**     \brief      Renvoie la référence de commande suivante non utilisée
-     *      \param      objsoc      Objet société
-     *      \param      commande		Objet commande
-     *      \return     string      Texte descripif
-     */
-    function commande_get_num($objsoc=0,$commande)
-    {
-        return $this->getNextValue($objsoc,$commande);
-    } 
 }    
 
 ?>
