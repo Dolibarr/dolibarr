@@ -45,50 +45,49 @@ require_once(DOL_DOCUMENT_ROOT ."/contact.class.php");
 
 class Propal extends CommonObject
 {
-    var $db;
+	var $db;
 	var $element='propal';
 
-    var $id;
+  var $id;
 
 	var $socid;		// Id client
 	var $client;		// Objet societe client (à charger par fetch_client)
 
-    var $contactid;
-    var $projetidp;
-    var $author;
-    var $ref;
-    var $ref_client;
-    var $statut;					// 0, 1, 2, 3, 4
-    var $datep;
-    var $fin_validite;
-    var $price;						// Total HT
-    var $tva;						// Total TVA
-    var $total;						// Total TTC
-    var $cond_reglement_id;
-    var $cond_reglement_code;
-    var $mode_reglement_id;
-    var $mode_reglement_code;
-    var $remise;
-    var $remise_percent;
-    var $remise_absolue;
-    var $note;
-    var $note_public;
-
+  var $contactid;
+  var $projetidp;
+  var $author;
+  var $ref;
+  var $ref_client;
+  var $statut;					// 0, 1, 2, 3, 4
+  var $datep;
+  var $fin_validite;
+  var $price;						// Total HT
+  var $tva;						// Total TVA
+  var $total;						// Total TTC
+  var $cond_reglement_id;
+  var $cond_reglement_code;
+  var $mode_reglement_id;
+  var $mode_reglement_code;
+  var $remise;
+  var $remise_percent;
+  var $remise_absolue;
+  var $note;
+  var $note_public;
 	var $date_livraison;
-    var $adresse_livraison_id;
-    var $adresse;
+  var $adresse_livraison_id;
+  var $adresse;
 
-    var $products=array();
+  var $products=array();
 
-    var $labelstatut=array();
-    var $labelstatut_short=array();
+  var $labelstatut=array();
+  var $labelstatut_short=array();
+   
+  // Pour board
+  var $nbtodo;
+  var $nbtodolate;
 
-    // Pour board
-    var $nbtodo;
-    var $nbtodolate;
-
-    var $specimen;
-    var $error;
+  var $specimen;
+  var $error;
 
 
     /**

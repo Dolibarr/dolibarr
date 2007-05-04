@@ -361,11 +361,10 @@ class CommonObject
     *      \param      id          id du contact
     *      \return     array       détail du contact 	 
     */
-    function fetch_user($id) 	 
-    { 	 
-       $iduser = $id; 	 
-       $user = new User($this->db, $iduser); 	 
-       $user->fetch(); 	 
+    function fetch_user($userid) 	 
+    {	 
+       $user = new User($this->db, $userid); 	 
+       $user->fetch();
        $this->user = $user; 	 
      }
     
