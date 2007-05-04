@@ -1,6 +1,7 @@
 <?php
-/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -97,9 +98,9 @@ class box_factures extends ModeleBoxes {
                 {
                     $objp = $db->fetch_object($result);
         
-					$picto='bill';
-					if ($objp->type == 1) $picto.='r';
-					if ($objp->type == 2) $picto.='a';
+					          $picto='bill';
+					          if ($objp->type == 1) $picto.='r';
+					          if ($objp->type == 2) $picto.='a';
                     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $picto,
@@ -115,6 +116,23 @@ class box_factures extends ModeleBoxes {
                     'align' => 'right',
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
 
+                    $i++;
+                }
+                
+                $i=$num;
+                while ($i < $max)
+                {
+                    if ($num==0 && $i==$num)
+                    {
+                        $this->info_box_contents[$i][0] = array('align' => 'center','text'=>$langs->trans("NoRecordedInvoices"));
+                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                    } else {
+                        $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                    }
                     $i++;
                 }
             }
