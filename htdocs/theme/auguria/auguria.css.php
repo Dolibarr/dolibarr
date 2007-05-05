@@ -1217,6 +1217,63 @@ cursor: pointer;
 	color: black;
 }
 
+/* ============================================================================== */
+/*  Ajax - Liste déroulante de l'autocompletion                                   */
+/* ============================================================================== */
 
+div.autocomplete {
+      position:absolute;
+      width:250px;
+      background-color:white;
+      border:1px solid #888;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul {
+      list-style-type:none;
+      margin:0px;
+      padding:0px;
+    }
+div.autocomplete ul li.selected { background-color: #D3E5EC;}
+div.autocomplete ul li {
+      list-style-type:none;
+      display:block;
+      margin:0;
+      padding:2px;
+      height:16px;
+      cursor:pointer;
+    }
 
+/* ============================================================================== */
+/*  Ajax - In place editor                                                        */
+/* ============================================================================== */
 
+form.inplaceeditor-form { /* The form */
+}
+
+form.inplaceeditor-form input[type="text"] { /* Input box */
+}
+
+form.inplaceeditor-form textarea { /* Textarea, if multiple columns */
+background: beige;
+color: black;
+}
+
+form.inplaceeditor-form input[type="submit"] { /* The submit button */
+  font-size: 100%;
+  font-weight:normal;
+	border: 0px;
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-position : bottom;
+	cursor:pointer;
+}
+
+form.inplaceeditor-form a { /* The cancel link */
+  margin-left: 5px;
+  font-size: 11px;
+	font-weight:normal;
+	border: 0px;
+	background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/button_bg.png' ?>);
+	background-position : bottom;
+	cursor:pointer;
+}
