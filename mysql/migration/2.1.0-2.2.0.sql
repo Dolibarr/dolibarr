@@ -59,26 +59,50 @@ create table `llx_droitpret_rapport` (
   PRIMARY KEY  (`rowid`)
 ) type=innodb;
 
+
 -- Gestion des menu
 drop table if exists `llx_menu_const`;
 drop table if exists `llx_menu`;
 drop table if exists `llx_menu_constraint`;
 
-create table `llx_menu` (
+CREATE TABLE `llx_menu` (
   `rowid` int(11) NOT NULL,
+  `menu_handler` varchar(16) NOT NULL default 'auguria',
+  `type` enum('top','left') NOT NULL default 'left',
   `mainmenu` varchar(100) NOT NULL,
-  `leftmenu` varchar(100) NOT NULL,
   `fk_menu` int(11) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `titre` varchar(255) NOT NULL,
-  `level` tinyint(1) NOT NULL,
-  `langs` varchar(100) NOT NULL,
-  `right` varchar(255) NOT NULL,
-  `target` varchar(100) NOT NULL,
-  `user` tinyint(4) NOT NULL default '0',
   `order` tinyint(4) NOT NULL,
+  `url` varchar(255) NOT NULL,
+  `target` varchar(100) NULL,
+  `titre` varchar(255) NOT NULL,
+  `langs` varchar(100),
+  `level` tinyint(1),
+  `leftmenu` varchar(100) NULL,
+  `right` varchar(255),
+  `user` tinyint(4) NOT NULL default '0',
   PRIMARY KEY  (`rowid`)
 ) type=innodb;
+
+create table `llx_menu_constraint` (
+  `rowid` int(11) NOT NULL,
+  `action` varchar(255) NOT NULL,
+  PRIMARY KEY  (`rowid`)
+) type=innodb;
+
+create table `llx_menu_const` (
+  `rowid` int(11) NOT NULL auto_increment,
+  `fk_menu` int(11) NOT NULL,
+  `fk_constraint` int(11) NOT NULL,
+  `user` tinyint(4) NOT NULL default '2',
+  PRIMARY KEY  (`rowid`)
+) type=innodb;
+
+ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_menu` (`fk_menu`);
+ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_constraint` (`fk_constraint`);
+
+ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_menu` FOREIGN KEY (`fk_menu`) REFERENCES `llx_menu` (`rowid`);
+ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_constraint` FOREIGN KEY (`fk_constraint`) REFERENCES `llx_menu_constraint` (`rowid`);
+
 
 -- 
 -- Contenu de la table `llx_menu`
@@ -333,13 +357,6 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (5000, 'commercial', '', 5, '/categories/index.php?leftmenu=cat&type=2', 'Categories', 0, 'commercial', '$user->rights->categorie>lire', '', 2, 9);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (5001, 'commercial', '$leftmenu=="cat"', 5000, '/categories/fiche.php?action=create&type=2', 'NewCat', 1, 'commercial', '$user->rights->categorie>creer', '', 2, 0);
 
-
-create table `llx_menu_constraint` (
-  `rowid` int(11) NOT NULL,
-  `action` varchar(255) NOT NULL,
-  PRIMARY KEY  (`rowid`)
-) type=innodb;
-
 -- 
 -- Contenu de la table `llx_menu_constraint`
 -- 
@@ -389,22 +406,9 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (43, '!((dolibarr_g
 insert into `llx_menu_constraint` (`rowid`, `action`) values (44, '$conf->droitpret->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb->enabled');
 
-
-create table `llx_menu_const` (
-  `rowid` int(11) NOT NULL auto_increment,
-  `fk_menu` int(11) NOT NULL,
-  `fk_constraint` int(11) NOT NULL,
-  `user` tinyint(4) NOT NULL default '2',
-  PRIMARY KEY  (`rowid`),
-  KEY `fk_menu` (`fk_menu`),
-  KEY `fk_constraint` (`fk_constraint`)
-) type=innodb;
-
 -- 
 -- Contenu de la table `llx_menu_const`
 -- 
-
-
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (1, 100, 1, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (2, 200, 1, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (3, 300, 1, 2);
@@ -506,9 +510,3 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (108, 5000, 26, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (109, 5001, 6, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (110, 110, 45, 2);
-
--- Contraintes pour la table `llx_menu_const`
- 
-alter table `llx_menu_const`
-  add constraint `llx_menu_const_menu` foreign key(`fk_menu`) references `llx_menu` (`rowid`) on update cascade,
-  add constraint `llx_menu_const_constraint` foreign key(`fk_constraint`) references `llx_menu_constraint` (`rowid`) on update cascade;

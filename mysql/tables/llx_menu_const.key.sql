@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,6 +22,8 @@
 -- ========================================================================
 
 
-ALTER TABLE `llx_menu_const`
-  ADD CONSTRAINT `llx_menu_const_ibfk_3` FOREIGN KEY (`fk_menu`) REFERENCES `llx_menu` (`rowid`),
-  ADD CONSTRAINT `llx_menu_const_ibfk_4` FOREIGN KEY (`fk_constraint`) REFERENCES `llx_menu_constraint` (`rowid`);
+ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_menu` (`fk_menu`);
+ALTER TABLE `llx_menu_const` ADD INDEX `idx_menu_const_fk_constraint` (`fk_constraint`);
+
+ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_menu` FOREIGN KEY (`fk_menu`) REFERENCES `llx_menu` (`rowid`);
+ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_constraint` FOREIGN KEY (`fk_constraint`) REFERENCES `llx_menu_constraint` (`rowid`);

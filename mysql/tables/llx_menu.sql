@@ -1,5 +1,6 @@
 -- ========================================================================
--- Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
+-- Copyright (C) 2007 Patrick Raguin      <patrick.raguin@gmail.com>
+-- Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,20 +21,26 @@
 --
 -- ========================================================================
 
-
 CREATE TABLE `llx_menu` (
   `rowid` int(11) NOT NULL,
-  `mainmenu` varchar(100) NOT NULL,
-  `leftmenu` varchar(100) NOT NULL,
-  `fk_menu` int(11) NOT NULL,
-  `url` varchar(255) NOT NULL,
-  `titre` varchar(255) NOT NULL,
-  `level` tinyint(1) NOT NULL,
-  `langs` varchar(100) NOT NULL,
-  `right` varchar(255) NOT NULL,
-  `target` varchar(100) NOT NULL,
-  `user` tinyint(4) NOT NULL default '0',
-  `order` tinyint(4) NOT NULL,
+
+  `menu_handler` varchar(16) NOT NULL default 'auguria',	-- Menu handler name
+  `type` enum('top','left') NOT NULL default 'left',		-- Menu top or left
+
+  `mainmenu` varchar(100) NOT NULL,				-- Name family/module (home, companies, ...)
+  `fk_menu` int(11) NOT NULL,					-- 0 or Id of mother menu line
+  `order` tinyint(4) NOT NULL,					-- Order of entry
+
+  `url` varchar(255) NOT NULL,					-- Url to go
+  `target` varchar(100) NULL,					-- Target of Url link
+
+  `titre` varchar(255) NOT NULL,				-- Key for menu translation 
+  `langs` varchar(100),							-- Lang file to load for translation
+
+  `level` tinyint(1),							-- ???
+
+  `leftmenu` varchar(100) NULL,					-- Condition to show or hide
+  `right` varchar(255),							-- Condition to show enabled or disabled
+  `user` tinyint(4) NOT NULL default '0',		-- 0 if menu for all users
   PRIMARY KEY  (`rowid`)
 ) type=innodb;
-

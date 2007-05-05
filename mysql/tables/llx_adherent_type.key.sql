@@ -21,4 +21,4 @@
 -- ============================================================================
 
 
-ALTER TABLE llx_adherent_type ADD UNIQUE uk_adherent_type_libelle(libelle);
+ALTER TABLE llx_adherent_type ADD UNIQUE uk_adherent_type_libelle (libelle);
