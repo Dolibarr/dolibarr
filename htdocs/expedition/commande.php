@@ -377,7 +377,7 @@ if ($_GET["id"] > 0)
                 $i++;
                 $var=!$var;
             }
-            $db->free();
+            $db->free($resql);
             
             if (! $num)
             {
