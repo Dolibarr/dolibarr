@@ -179,7 +179,7 @@ if ($user->societe_id == 0)
                   $langs->trans("Members"),
                   $langs->trans("Products"),
                   $langs->trans("Services"),
-                  $langs->trans("Proposals"),
+                  $langs->trans("CommercialProposals"),
                   $langs->trans("CustomersOrders"),
                   $langs->trans("BillsCustomers"),
                   $langs->trans("Lignes de téléphonie suivis"));
