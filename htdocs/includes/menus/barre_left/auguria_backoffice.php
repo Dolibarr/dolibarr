@@ -62,7 +62,7 @@ class MenuLeft {
         $this->menu_array=$menu_array;
         $this->newmenu = new Menu();
         
-        $this->menuArbo = new menudb($this->db);
+        $this->menuArbo = new menudb($this->db,'auguria','left');
  		$this->overwritemenufor = $this->menuArbo->listeMainmenu();
 
     }

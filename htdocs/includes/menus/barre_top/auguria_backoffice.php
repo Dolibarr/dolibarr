@@ -86,7 +86,7 @@ class MenuTop {
         }
 
         
-        $menuArbo = new menudb($this->db);
+        $menuArbo = new menudb($this->db,'auguria','top');
  		$tabMenu = $menuArbo->menutopCharger(0,$_SESSION['mainmenu']);
         
         print '<ul>';

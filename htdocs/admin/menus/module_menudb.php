@@ -1,5 +1,4 @@
 <?php
-
 /* Copyright (C) 2007 Patrick Raguin <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -23,18 +22,30 @@
 
 /**
 	    \file       htdocs/includes/modules/menudb/modules_menudb.php
-		\ingroup    menudb
-		\brief      Fichier contenant la classe mère d'affichage des menus'
+		\ingroup    core
+		\brief      Fichier contenant la classe mère d'affichage des menus DB
 		\version    $Revision$
 */
 
-class menuDb {
+/**
+		\class		MenuDb
+		\brief		Classe de gestion du menu DB
+*/
+class MenuDb
+{
+	var $db;
+	var $menu_handler;
+	var $type;
+	
 	var $newmenu;
 	var $mainmenu;
 	var $leftmenu;
 
-	function menuDb($db) {
+	function MenuDb($db,$menu_handler,$type)
+	{
 		$this->db = $db;
+		$this->menu_handler = $menu_handler;
+		$this->type = $type;
 	}
 
 	function menuCharger($mainmenu, $newmenu,$type_user, $leftmenu) 
@@ -46,19 +57,25 @@ class menuDb {
 		$this->newmenu = $newmenu;
 		$this->leftmenu = $leftmenu;
 
-		$sql = "SELECT m.rowid, m.titre, m.level FROM " . MAIN_DB_PREFIX . "menu as m WHERE m.mainmenu = '" . $this->mainmenu . "'";
+		$sql = "SELECT m.rowid, m.titre, m.type";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
+		$sql.= " WHERE m.mainmenu = '".$this->mainmenu."'";
+		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
 		$result = $this->db->query($sql);
 		$menuTop = $this->db->fetch_object($result);
 
 		$data[] = array ($menutop->rowid,-1,$this->mainmenu);
 
-		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.right, m.target, m.mainmenu, m.leftmenu FROM " . MAIN_DB_PREFIX . "menu as m ";
-		if($type_user == 0)$sql.= "WHERE m.user <> 1 ";
-		else $sql.= "WHERE m.user > 0 ";
-		$sql.= "ORDER BY m.order, m.rowid";
-		$res = $this->db->query($sql);
+		$sql = "SELECT m.rowid, m.fk_menu, m.url, m.titre, m.langs, m.right, m.target, m.mainmenu, m.leftmenu";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
+		$sql.= " WHERE m.menu_handler= '".$this->menu_handler."'";
+		if($type_user == 0) $sql.= " AND m.user <> 1";
+		else $sql.= " AND m.user > 0";
+		$sql.= " ORDER BY m.order, m.rowid";
 
-		if ($res) {
+		$res = $this->db->query($sql);
+		if ($res)
+		{
 			$num = $this->db->num_rows();
 
 			$i = 1;
@@ -79,6 +96,10 @@ class menuDb {
 
 			}
 
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
 		}
 
 		$this->recur($data, $menuTop->rowid, 1);
@@ -125,9 +146,11 @@ class menuDb {
 
 		$constraint = true;
 
-		$sql = "SELECT c.rowid, c.action, mc.user FROM " . MAIN_DB_PREFIX . "menu_constraint as c, " . MAIN_DB_PREFIX . "menu_const as mc WHERE mc.fk_constraint = c.rowid AND (mc.user = 0 OR mc.user = 2 ) AND mc.fk_menu = '" . $rowid . "'";
-		$result = $this->db->query($sql);
+		$sql = "SELECT c.rowid, c.action, mc.user";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "menu_constraint as c, " . MAIN_DB_PREFIX . "menu_const as mc";
+		$sql.= " WHERE mc.fk_constraint = c.rowid AND (mc.user = 0 OR mc.user = 2) AND mc.fk_menu = '" . $rowid . "'";
 
+		$result = $this->db->query($sql);
 		if ($result) 
 		{
 			//echo $sql;
@@ -141,6 +164,10 @@ class menuDb {
 				eval ($strconstraint);
 				$i++;
 			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
 		}
 
 		return $constraint;
@@ -166,16 +193,23 @@ class menuDb {
 		return $rights;
 	}
 
-	function listeMainmenu() {
-		$sql = "SELECT DISTINCT m.mainmenu FROM " . MAIN_DB_PREFIX . "menu as m";
-		$res = $this->db->query($sql);
+	function listeMainmenu()
+	{
+		$sql = "SELECT DISTINCT m.mainmenu";
+		$sql.= " FROM " . MAIN_DB_PREFIX . "menu as m";
+		$sql.= " WHERE m.menu_handler= '".$this->menu_handler."'";
 
+		$res = $this->db->query($sql);
 		if ($res) {
 			$i = 0;
 			while ($menu = $this->db->fetch_array($res)) {
 				$overwritemenufor[$i] = $menu['mainmenu'];
 				$i++;
 			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
 		}
 		
 		return $overwritemenufor;
@@ -184,18 +218,19 @@ class menuDb {
 	
 	function menutopCharger($type_user,$mainmenu)
 	{
-		
 		global $langs, $user, $conf;
 		
-		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.right FROM ".MAIN_DB_PREFIX."menu as m WHERE m.level = -1 "; 
-		if($type_user == 0)$sql.= "AND m.user <> 1 ";
-		else $sql.= "AND m.user > 0 ";
-		$sql.= "ORDER BY m.order";
-		$result = $this->db->query($sql);
+		$sql = "SELECT m.rowid, m.mainmenu, m.titre, m.url, m.langs, m.right";
+		$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+		$sql.= " WHERE m.type = 'top'"; 
+		$sql.= " AND m.menu_handler= '".$this->menu_handler."'";
+		if($type_user == 0) $sql.= " AND m.user <> 1";
+		else $sql.= " AND m.user > 0";
+		$sql.= " ORDER BY m.order";
 
+		$result = $this->db->query($sql);
 		if ($result)
 		{
-				
 			$numa = $this->db->num_rows();
 
 			$a = 0;
@@ -246,6 +281,10 @@ class menuDb {
 		        			
 				$a++;	
 			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
 		}
 		
 		return $tabMenu;
