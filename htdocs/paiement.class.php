@@ -80,11 +80,13 @@ class Paiement
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
-		if ($this->db->query($sql))
+		$result = $this->db->query($sql);
+		
+		if ($result)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($result))
 			{
-				$obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object($result);
 				$this->id             = $obj->rowid;
 				$this->ref            = $obj->rowid;
 				$this->date           = $obj->dp;
@@ -102,7 +104,7 @@ class Paiement
 			{
 				return -2;
 			}
-			$this->db->free();
+			$this->db->free($result);
 		}
 		else
 		{
@@ -335,11 +337,13 @@ class Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
-		if ($this->db->query($sql))
+		$result = $this->db->query($sql);
+		
+		if ($result)
 		{
-			if ($this->db->num_rows())
+			if ($this->db->num_rows($result))
 			{
-				$obj = $this->db->fetch_object();
+				$obj = $this->db->fetch_object($result);
 				$this->id = $obj->idp;
 				if ($obj->fk_user_creat)
 				{
@@ -356,7 +360,7 @@ class Paiement
 				$this->date_creation     = $obj->datec;
 				$this->date_modification = $obj->tms;
 			}
-			$this->db->free();
+			$this->db->free($result);
 		}
 		else
 		{
