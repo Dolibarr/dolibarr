@@ -456,7 +456,6 @@ if ($id > 0)
 
 				$i ++;
 			}
-			$db->free($result);
 		}
 		print "</table>";
 
