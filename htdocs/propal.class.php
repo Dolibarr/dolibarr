@@ -1710,11 +1710,13 @@ class Propal extends CommonObject
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as c";
     $sql.= " WHERE c.rowid = $id";
 
-    if ($this->db->query($sql))
-      {
-	if ($this->db->num_rows())
-	  {
-	    $obj = $this->db->fetch_object();
+    $result = $this->db->query($sql);
+    
+    if ($result)
+    {
+    	if ($this->db->num_rows($result))
+    	{
+	    $obj = $this->db->fetch_object($result);
 
 	    $this->id                = $obj->rowid;
 
@@ -1727,22 +1729,22 @@ class Propal extends CommonObject
 	    $this->user_creation     = $cuser;
 
 	    if ($obj->fk_user_valid)
-	      {
-		$vuser = new User($this->db, $obj->fk_user_valid);
-		$vuser->fetch();
-		$this->user_validation     = $vuser;
-	      }
+	    {
+		    $vuser = new User($this->db, $obj->fk_user_valid);
+		    $vuser->fetch();
+		    $this->user_validation     = $vuser;
+	    }
 
 	    if ($obj->fk_user_cloture)
-	      {
-		$cluser = new User($this->db, $obj->fk_user_cloture);
-		$cluser->fetch();
-		$this->user_cloture     = $cluser;
-	      }
+	    {
+		    $cluser = new User($this->db, $obj->fk_user_cloture);
+		    $cluser->fetch();
+		    $this->user_cloture     = $cluser;
+	    }
 
 
 	  }
-	$this->db->free();
+	 $this->db->free($result);
 
       }
     else
