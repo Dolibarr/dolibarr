@@ -793,9 +793,11 @@ Object.extend(Ajax.Responders, Enumerable);
 
 Ajax.Responders.register({
   onCreate: function() {
+    $('indicator').show( );
     Ajax.activeRequestCount++;
   },
   onComplete: function() {
+    $('indicator').hide( );
     Ajax.activeRequestCount--;
   }
 });

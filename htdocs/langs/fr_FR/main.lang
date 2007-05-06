@@ -111,6 +111,7 @@ Note=Note
 CurrentNote=Note actuelle
 Title=Titre
 Label=Libellé
+RefOrLabel=Réf. ou libellé
 Info=Suivi
 Family=Famille
 Description=Description

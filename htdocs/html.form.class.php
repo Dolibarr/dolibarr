@@ -406,12 +406,12 @@ class Form
 				{
 					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
 				}
-				print '<span id="indicator1" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
+				print '<span id="indicator" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
 				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" />';
 				print '</div>';
 				print '<div id="hint" class="autocomplete"></div>';
 				print '<script type="text/javascript">';
-				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/societe/ajaxcountries.php\',{method: \'post\',paramName: \'pays\',indicator: \'indicator1\',afterUpdateElement: ac_return});';
+				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/societe/ajaxcountries.php\',{method: \'post\',paramName: \'pays\',afterUpdateElement: ac_return});';
 				print '</script>';
 			}
 			else
@@ -821,13 +821,12 @@ class Form
     global $langs,$conf,$user;
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
-    	print $langs->trans("Ref").':<input type="text" size="8" name="ajkeyref'.$htmlname.'" id="ajkeyref'.$htmlname.'">&nbsp; &nbsp;';
-    	print $langs->trans("Label").':<input type="text" size="16" name="ajkeylabel'.$htmlname.'" id="ajkeylabel'.$htmlname.'">';
+    	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="'.$htmlname.'" id="'.$htmlname.'">';
+    	print '<span id="indicator" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
     	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
     	print '<script type="text/javascript">';
     	print 'var url = \''.DOL_URL_ROOT.'/product/ajaxproducts.php\';';
-    	print 'new Form.Element.Observer($("ajkeyref'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keyref="+$("ajkeyref'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-    	print 'new Form.Element.Observer($("ajkeylabel'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keylabel="+$("ajkeylabel'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
+    	print 'new Form.Element.Observer($("'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keysearch="+$("'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
     	print '</script>';
     	print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
     }
@@ -844,7 +843,7 @@ class Form
      \param      filtretype      Pour filtre sur type de produit
      \param      limit           Limite sur le nombre de lignes retournées
   */
-  function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeyref='',$ajaxkeylabel='')
+  function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
   {
     global $langs,$conf,$user;
     $user->getrights("categorie");
@@ -867,8 +866,7 @@ class Form
 	$sql.= ' AND IFNULL(c.visible,1)=1';
       }
     if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-    if ($ajaxkeyref && $ajaxkeyref != '') $sql.=" AND p.ref like '%".$ajaxkeyref."%'";
-    if ($ajaxkeylabel && $ajaxkeylabel != '') $sql.=" AND p.label like '%".$ajaxkeylabel."%'";
+    if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
     $sql.= " ORDER BY p.nbvente DESC";
     if ($limit) $sql.= " LIMIT $limit";
     

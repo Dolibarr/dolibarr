@@ -39,10 +39,10 @@ print "\n<body>";
 
 
 // Generation liste de produits
-if(isset($_GET['keyref']) && !empty($_GET['keyref']) || isset($_GET['keylabel']) && !empty($_GET['keylabel']))
+if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
 {
 	$form = new Form($db);
-	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keyref"],$_GET["keylabel"]);
+	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"]);
 }
 
 print "</body>"; 

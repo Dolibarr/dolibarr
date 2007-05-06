@@ -1,0 +1,15 @@
+If scriptaculous files are replaced by new version, following changes must be done:
+
+* Edit prototype.js to set:
+***************************
+
+Ajax.Responders.register({
+  onCreate: function() {
+    $('indicator').show( );
+    Ajax.activeRequestCount++;
+  },
+  onComplete: function() {
+    $('indicator').hide( );
+    Ajax.activeRequestCount--;
+  }
+});
