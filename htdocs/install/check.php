@@ -210,13 +210,16 @@ else
 	    }
 	    print '</td>';
 	    print '</tr>'."\n";
-	
-	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").'</b></td><td>';
+
+	    # Upgrade
+ 	    $versionfrom='2.0.0';
+	    $versionto='2.2.0';
+	    print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
 	    print $langs->trans("UpgradeDesc").'</td>';
 	    print '<td align="center">';
 	    if ($allowupgrade)
 	    {
-	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'">'.$langs->trans("Start").'</a>';
+	        print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
 	    }
 	    else
 	    {
@@ -224,7 +227,24 @@ else
 	    }
 	    print '</td>';
 	    print '</tr>'."\n";
-	    
+	   
+            # Upgrade
+            $versionfrom='2.1.0';
+            $versionto='2.2.0';
+            print '<tr><td nowrap="nowrap"><b>'.$langs->trans("Upgrade").' '.$versionfrom.' -> '.$versionto.'</b></td><td>';
+            print $langs->trans("UpgradeDesc").'</td>';
+            print '<td align="center">';
+            if ($allowupgrade)
+            {
+                print '<a href="upgrade.php?action=upgrade&amp;selectlang='.$setuplang.'&amp;versionfrom='.$versionfrom.'&amp;versionto='.$versionto.'">'.$langs->trans("Start").'</a>';
+            }
+            else
+            {
+                print $langs->trans("NotAvailable");
+            }
+            print '</td>';
+            print '</tr>'."\n";
+ 
 	    print '</table>';
 	    print "\n";
 	}

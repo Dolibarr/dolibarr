@@ -33,7 +33,6 @@ define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
-$migfile='^2.1.0-2.2.0.sql$';
 $grant_query='';
 $etape = 2;
 $ok = 0;
@@ -48,6 +47,8 @@ error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
+$versionfrom=isset($_GET["versionfrom"])?$_GET["versionfrom"]:'';
+$versionto=isset($_GET["versionto"])?$_GET["versionto"]:'';
 
 $langs->load("admin");
 $langs->load("install");
@@ -65,6 +66,12 @@ pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
 if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 {
     print '<h2>'.$langs->trans("DatabaseMigration").'</h2>';
+
+    if (! $versionfrom && ! $versionto)
+    {
+	print '<div class="error">Parameter versionfrom or version to missing.</div>';
+	exit;
+    }
 
     print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
     $error=0;
@@ -132,13 +139,39 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
         if ($choix==1) $dir = "../../mysql/migration/";
         else $dir = "../../pgsql/migration/";
 
+	$filelist=array();
         $i = 0;
         $ok = 0;
+	$from='^'.$versionfrom;
+	$to=$versionto.'\.sql$';
+
+	# Recupere list fichier
+	$filesindir=array();
         $handle=opendir($dir);
         while (($file = readdir($handle))!==false)
         {
-            if (eregi($migfile,$file))
+		if (eregi('\.sql$',$file)) $filesindir[]=$file;
+	}
+	sort($filesindir);
+
+	# Determine les fichiers sql a passer
+	foreach($filesindir as $file)
+	{
+            if (eregi($from,$file))
             {
+		$filelist[]=$file;
+
+		// Mettre from avec valeur fin de $file
+	    }
+	    else if (eregi($to,$file))
+	    {
+		$filelist[]=$file;
+	    }
+	}
+
+	# Boucle sur chaque fichier
+	foreach($filelist as $file)
+	{
                 print '<tr><td nowrap>';
                 print $langs->trans("ChoosedMigrateScript").'</td><td align="right">'.$file.'</td></tr>';
 
@@ -228,23 +261,19 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 					}
                 }
 
-            }
-
-        }
-        closedir($handle);
-
-        if ($error == 0)
-        {
-            print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-            print '<td align="right">'.$langs->trans("OK").'</td></tr>';
-            $ok = 1;
-        }
-        else
-        {
-            print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
-            print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>';
-            $ok = 0;
-        }
+        	if ($error == 0)
+        	{
+            		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+           		print '<td align="right">'.$langs->trans("OK").'</td></tr>';
+            		$ok = 1;
+        	}
+        	else
+        	{
+            		print '<tr><td>'.$langs->trans("ProcessMigrateScript").'</td>';
+            		print '<td align="right"><font class="error">'.$langs->trans("KO").'</font></td></tr>';
+            		$ok = 0;
+        	}
+	}
     }
 
     print '</table>';
