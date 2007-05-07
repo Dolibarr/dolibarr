@@ -272,9 +272,9 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		$soc->prenom=$_POST["prenom"];
 		$soc->particulier=$_REQUEST["private"];
 		$soc->prefix_comm=$_POST["prefix_comm"];
-		$soc->client=$_POST["client"];
+		$soc->client=$_POST["client"]?$_POST["client"]:$soc->client;
 		$soc->code_client=$_POST["code_client"];
-		$soc->fournisseur=$_POST["fournisseur"];
+		$soc->fournisseur=$_POST["fournisseur"]?$_POST["fournisseur"]:$soc->fournisseur;
 		$soc->code_fournisseur=$_POST["code_fournisseur"];
 		$soc->adresse=$_POST["adresse"];
 		$soc->cp=$_POST["cp"];
