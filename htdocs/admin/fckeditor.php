@@ -58,12 +58,22 @@ foreach($modules as $const => $desc)
 	if ($_GET["action"] == 'activate_'.strtolower($const))
 	{
 	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
+	    //si fckeditor est activé dans la description produit/service, on l'active dans les documents
+	    if ($const == 'PRODUCTDESC')
+	    {
+	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1");
+	    }
 	    Header("Location: fckeditor.php");
 	    exit;
 	}
 	if ($_GET["action"] == 'disable_'.strtolower($const))
 	{
 		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
+		//si fckeditor est desactivé dans les documents, on le désactive dans la description produit/service
+	    if ($const == 'DETAILS')
+	    {
+	    	dolibarr_del_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC");
+	    }
 		Header("Location: fckeditor.php");
 		exit;
 	}
