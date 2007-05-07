@@ -688,8 +688,9 @@ DeliveriesOrderAbility=Prise en charge des bons de réception client
 ##### FCKeditor #####
 ActivateFCKeditor=Activer FCKeditor pour :
 FCKeditorForCompany=Création/édition WYSIWIG des descriptions et notes des tiers
-FCKeditorForProductDescription=Création/édition WYSIWIG des notes des produits/services
-FCKeditorForDetails=Création/édition WYSIWIG des lignes details des produits (sur commandes, propales, factures, etc...)
+FCKeditorForProductDescription=Création/édition WYSIWIG des descriptions des produits/services
+FCKeditorForProductNote=Création/édition WYSIWIG des notes des produits/services
+FCKeditorForProductDetails=Création/édition WYSIWIG des lignes details des produits (sur commandes, propales, factures, etc...)
 FCKeditorForMailing=Création/édition WYSIWIG des mailings
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=La connexion a réussie mais la base ne semble pas etre une base OSCommerce.

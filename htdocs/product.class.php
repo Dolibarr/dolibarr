@@ -423,20 +423,27 @@ class Product
    */
   function delete($id)
   {
-    global $user;
+    global $conf,$user;
 
     if ($user->rights->produit->supprimer)
       {
 	      $prod_use = $this->verif_prod_use($id);
 	      if ($prod_use == 0)
         {
-	        $sqld = "DELETE from ".MAIN_DB_PREFIX."product ";
-	        $sqld.= " WHERE rowid = ".$id;
-	        $result = $this->db->query($sqld);
+	        $sqla = "DELETE from ".MAIN_DB_PREFIX."product ";
+	        $sqla.= " WHERE rowid = ".$id;
+	        $resulta = $this->db->query($sqla);
 	        
-	        $sqlc = "DELETE from ".MAIN_DB_PREFIX."product_price ";
-	        $sqlc.= " WHERE fk_product = ".$id;
-	        $result = $this->db->query($sqlc);
+	        $sqlb = "DELETE from ".MAIN_DB_PREFIX."product_price ";
+	        $sqlb.= " WHERE fk_product = ".$id;
+	        $resultb = $this->db->query($sqlb);
+	        
+	        if ($conf->global->MAIN_MULTILANGS)
+	        {
+	        	$sqlc = "DELETE from ".MAIN_DB_PREFIX."product_det ";
+	          $sqlc.= " WHERE fk_product = ".$id;
+	          $resultc = $this->db->query($sqlc);
+	        }
 	        
 	        return 0;
         }
@@ -458,48 +465,48 @@ class Product
     $current_lang = $langs->getDefaultLang();
 
     foreach ($langs_available as $value)
-      {
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_det";
-	$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+    {
+    	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product_det";
+    	$sql.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
 
-	$result = $this->db->query($sql);
+	    $result = $this->db->query($sql);
 
-	if ($value == $current_lang)
+	  if ($value == $current_lang)
 	  {
-	    if (mysql_num_rows($result)) // si aucune ligne dans la base
-	      {
-		$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
-		$sql2.= " SET label='".addslashes($this->libelle)."',";
-		$sql2.= " description='".addslashes($this->description)."',";
-		$sql2.= " note='".addslashes($this->note)."'";
-		$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
-	      }
+	    if ($this->db->num_rows($result)) // si aucune ligne dans la base
+	    {
+	    	$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+		    $sql2.= " SET label='".addslashes($this->libelle)."',";
+		    $sql2.= " description='".addslashes($this->description)."',";
+		    $sql2.= " note='".addslashes($this->note)."'";
+		    $sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+	    }
 	    else
-	      {
-		$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-		$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->libelle);
-		$sql2.= "','".addslashes($this->description);
-		$sql2.= "','".addslashes($this->note)."')";
-	      }
+	    {
+	    	$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+	    	$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->libelle);
+		    $sql2.= "','".addslashes($this->description);
+		    $sql2.= "','".addslashes($this->note)."')";
+	    }
 	    if (!$this->db->query($sql2)) return -1;
 	  }
-	else
+	  else
 	  {
-	    if (mysql_num_rows($result)) // si aucune ligne dans la base
-	      {
-		$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
-		$sql2.= " SET label='".addslashes($this->multilangs["$value"]["libelle"])."',";
-		$sql2.= " description='".addslashes($this->multilangs["$value"]["description"])."',";
-		$sql2.= " note='".addslashes($this->multilangs["$value"]["note"])."'";
-		$sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
-	      }
+	    if ($this->db->num_rows($result)) // si aucune ligne dans la base
+	    {
+	    	$sql2 = "UPDATE ".MAIN_DB_PREFIX."product_det";
+		    $sql2.= " SET label='".addslashes($this->multilangs["$value"]["libelle"])."',";
+		    $sql2.= " description='".addslashes($this->multilangs["$value"]["description"])."',";
+		    $sql2.= " note='".addslashes($this->multilangs["$value"]["note"])."'";
+		    $sql2.= " WHERE fk_product=".$this->id." AND lang='".$value."'";
+	    }
 	    else
-	      {
-		$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
-		$sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->multilangs["$value"]["libelle"]);
-		$sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
-		$sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
-	      }
+	    {
+	    	$sql2 = "INSERT INTO ".MAIN_DB_PREFIX."product_det (fk_product, lang, label, description, note)";
+		    $sql2.= " VALUES(".$this->id.",'".$value."','". addslashes($this->multilangs["$value"]["libelle"]);
+		    $sql2.= "','".addslashes($this->multilangs["$value"]["description"]);
+		    $sql2.= "','".addslashes($this->multilangs["$value"]["note"])."')";
+	    }
 
 	    // on ne sauvegarde pas des champs vides
 	    if ( $this->multilangs["$value"]["libelle"] || $this->multilangs["$value"]["description"] || $this->multilangs["$value"]["note"] )

@@ -495,7 +495,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       // Description (utilisé dans facture, propale...)
       print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
       
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
 	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	  $doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
@@ -529,7 +529,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       
       // Note (invisible sur facture, propales...)
       print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
 	{
 	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	  $doleditor=new DolEditor('note','',200,'dolibarr_notes','',false);
@@ -846,7 +846,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  // Description (utilisé dans facture, propale...)
 	  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td colspan="2">';
 	  print "\n";
-	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	    {
 	      require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	      $doleditor=new DolEditor('desc',$product->description,160,'dolibarr_notes','',false);
@@ -886,7 +886,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 	  // Note
 	  print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
 	    {
 	      require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	      $doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);

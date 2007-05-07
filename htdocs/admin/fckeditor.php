@@ -39,13 +39,15 @@ if (!$user->admin)
 $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProductDescription',
-'DETAILS' => 'FCKeditorForDetails',
+'PRODUCTNOTE' => 'FCKeditorForProductNote',
+'DETAILS' => 'FCKeditorForProductDetails',
 'MAILING' => 'FCKeditorForMailing'
 );
 // Conditions pour que l'option soit proposée
 $conditions = array(
 'SOCIETE' => $conf->societe->enabled,
 'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
+'PRODUCTNOTE' => ($conf->produit->enabled||$conf->service->enabled),
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
 'MAILING' => $conf->mailing->enabled
 );
@@ -82,13 +84,6 @@ $head[$h][0] = DOL_URL_ROOT."/admin/fckeditor.php";
 $head[$h][1] = $langs->trans("Activation");
 $hselected=$h;
 $h++;
-
-/*
-En attendant d'avoir quelquechose de gérer par cette page, je commente
-$head[$h][0] = DOL_URL_ROOT."/admin/fckeditor_cfg.php";
-$head[$h][1] = $langs->trans("Setup");
-$h++;
-*/
 
 dolibarr_fiche_head($head, $hselected, $langs->trans("ModuleSetup"));
 

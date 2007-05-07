@@ -687,8 +687,9 @@ DeliveriesOrderAbility=Products deliveries receipt ability
 ##### FCKeditor #####
 ActivateFCKeditor=Activate FCKeditor for:
 FCKeditorForCompany=WYSIWIG creation/edition of companies description and note
-FCKeditorForProductDescription=WYSIWIG creation/edition of products/services description and note
-FCKeditorForDetails=WYSIWIG creation/edition of details lines for all entities (proposals, orders, invoices, etc...)
+FCKeditorForProductDescription=WYSIWIG creation/edition of products/services description
+FCKeditorForProductNote=WYSIWIG creation/edition of products/services note
+FCKeditorForProductDetails=WYSIWIG creation/edition of details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
 ##### OSCommerce 1 #####
 OSCommerceErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't look to be an OSCommerce database.

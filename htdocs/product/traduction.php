@@ -172,8 +172,30 @@ if ($_GET["action"] == 'edit')
 		print "<br /><b><u>$key :</u></b><br />";
 		print '<table class="border" width="100%">';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Label').'</td><td><input name="libelle-'.$key.'" size="40" value="'.$product->multilangs[$key]["libelle"].'"></td></tr>';
-		print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td><textarea name="desc-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea></td></tr>';
-		print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td><textarea name="note-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea></td></tr>';
+		print '<tr><td valign="top" width="15%">'.$langs->trans('Description').'</td><td>';
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+	  {
+	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	    $doleditor=new DolEditor('desc-'.$key.'',$product->multilangs[$key]["description"],160,'dolibarr_notes','',false);
+	    $doleditor->Create();
+	  }
+    else
+	  {
+	    print '<textarea name="desc-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["description"].'</textarea>';
+	  }
+	  print '</td></tr>';
+		print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
+	  {
+	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+	    $doleditor=new DolEditor('note-'.$key.'',$product->multilangs[$key]["note"],160,'dolibarr_notes','',false);
+	    $doleditor->Create();
+	  }
+    else
+	  {
+	    print '<textarea name="note-'.$key.'" rows="3" cols="80">'.$product->multilangs[$key]["note"].'</textarea>';
+	  }
+	  print '</td></tr>';
 		print '</tr>';
 		print '</table>';
 	}
