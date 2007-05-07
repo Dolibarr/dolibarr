@@ -22,6 +22,7 @@
 
 /**
         \file       htdocs/admin/menus.php
+        \ingroup    core,menudb
         \brief      Page de configuration des gestionnaires de menu
         \version    $Revision$
 */

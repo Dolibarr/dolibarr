@@ -509,4 +509,3 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (107, 4901, 6, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (108, 5000, 26, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (109, 5001, 6, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (110, 110, 45, 2);

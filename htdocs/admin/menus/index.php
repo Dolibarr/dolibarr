@@ -28,10 +28,22 @@
  
 require("./pre.inc.php");
  
-
 if (!$user->rights->menudb->creer && ! $user->admin)
   accessforbidden();
   
+
+$menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
+$menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_top=eregi_replace('_backoffice\.php','',$menu_handler_top);
+$menu_handler_top=eregi_replace('_frontoffice\.php','',$menu_handler_top);
+$menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
+$menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
+
+$menu_handler=$menu_handler_left;
+
+/*
+* Actions
+*/
 
 if (isset($_GET["action"]) && $_GET["action"] == 'up')
 {
@@ -54,6 +66,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'up')
 	// Menu top
 	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m";
 	$sql.= " WHERE m.order = ".($precedent['order'] - 1)." AND m.type = 'top'";
+	$sql.= " AND menu_handler='".$menu_handler_top."'";
 	$result = $db->query($sql);	
 	
 	$num = $db->num_rows();
@@ -207,24 +220,21 @@ if ($_GET["action"] == 'delete')
 
 
 print '<table class="border" width="100%">';
+
+print '<tr>';
+print '<td>'.$langs->trans("MenuHandler").': <b>'.$menu_handler.'</b></td>';
+print '</tr>';
+
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenu").'</td>';
-
 print '</tr>';
+
 print '<tr>';
 print '<td>';
 	
-				
 /*************************
  *      ARBORESCENCE     *       
  *************************/	
-	
-
-/* cette fonction gère le décallage des éléments
-   suivant leur position dans l'arborescence
-*/
-
-
 
 $rangLast = 0;
 $idLast = -1;
@@ -233,6 +243,9 @@ if ($conf->use_javascript)
 	print '<script src="menu.js" type="text/javascript"></script>';
 }
 
+/* cette fonction gère le décallage des éléments
+   suivant leur position dans l'arborescence
+*/
 function affiche($tab,$rang) 
 {
 	global $rangLast, $idLast;
@@ -292,12 +305,8 @@ function affiche($tab,$rang)
 	
   	$rangLast = $rang;
   	$idLast = $tab[0];				
-	
-
-
-  
-
 }
+
 
 /*fonction récursive d'affichage de l'arbre
     $tab  :tableau des éléments
@@ -338,12 +347,15 @@ function recur($tab,$pere,$rang) {
 */
   //il faut d'abord déclarer un élément racine de l'arbre
    
- $data[] = array(0,-1,"racine");
+$data[] = array(0,-1,"racine");
 
   //puis tous les éléments enfants
   
 
-$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs FROM ".MAIN_DB_PREFIX."menu as m ORDER BY m.order, m.rowid";
+$sql = "SELECT m.rowid, m.fk_menu, m.titre, m.langs";
+$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+$sql.= " WHERE menu_handler='".$menu_handler."'";
+$sql.= " ORDER BY m.order, m.rowid";
 $res  = $db->query($sql);
 
 if ($res)

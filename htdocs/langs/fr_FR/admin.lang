@@ -724,16 +724,19 @@ TreeMenu=Arborescence des menus
 NewMenu=Nouveau menu
 MenuConf=Configuration des menus
 Menu=Sélection des menus
+MenuHandler=Gestionnaire menu
 DetailId=Identifiant du menu
+DetailMenuHandler=Nom du gestionnaire menu
+DetailType=Type de menu (top ou left)
 DetailTitre=Libellé du menu
-DetailMainmenu=Mainmenu auquel il appartient
+DetailMainmenu=Groupe auquel il appartient (obsolete)
 DetailUrl=URL de la page vers laquelle le menu pointe
-DetailLeftmenu=Condition d'affichage du menu
-DetailRight=Droit que l'utilisateur doit posseder
+DetailLeftmenu=Condition d'affichage ou non (obsolete)
+DetailRight=Condition d'affichage plein ou grisé
 DetailLangs=Fichier langs pour la traduction du titre
 DetailUser=Interne / externe / Tous
 DetailTarget=Cible
-DetailLevel=Niveau du menu (-1:menu top, 0:entete menu, >0 menu et sous menu)
+DetailLevel=Niveau (-1:menu top, 0:entete menu, >0 menu et sous menu)
 ModifMenu=Modification du menu
 
 

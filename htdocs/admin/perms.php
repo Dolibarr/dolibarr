@@ -22,6 +22,7 @@
 
 /**
     	\file       htdocs/admin/perms.php
+        \ingroup    core,menudb
 		\brief      Page d'administration/configuration des permissions par defaut
 		\version    $Revision$
 */
