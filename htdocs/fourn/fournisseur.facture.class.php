@@ -263,7 +263,6 @@ class FactureFournisseur extends Facture
 				dolibarr_print_error($this->db);
 				return -2;
 			}
-			$this->db->free($resql);
 		}
 		else
 		{

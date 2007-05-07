@@ -811,14 +811,15 @@ class Form
      \param      htmlname        Nom de la zone select
      \param      filtretype      Pour filtre sur type de produit
      \param      limit           Limite sur le nombre de lignes retournées
+     \param      price_level     Niveau de prix en fonction du client
   */
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
   {
-    global $langs,$conf,$user;
+    global $langs,$conf;
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
     	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'','ajaxworking');
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','ajaxworking');
     }
     else
     {
@@ -832,6 +833,8 @@ class Form
      \param      htmlname        Nom de la zone select
      \param      filtretype      Pour filtre sur type de produit
      \param      limit           Limite sur le nombre de lignes retournées
+     \param      price_level     Niveau de prix en fonction du client
+     \param      ajaxkeysearch   Filtre des produits si ajax est utilisé
   */
   function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
   {
@@ -896,8 +899,8 @@ class Form
 			else
 			{
 				print '<select class="flat" name="'.$htmlname.'">';
-	            print '<option value="0" selected="true">&nbsp;</option>';
-            }
+	      print '<option value="0" selected="true">&nbsp;</option>';
+      }
     
             $i = 0;
             while ($num && $i < $num)
@@ -956,17 +959,37 @@ class Form
 	  }
   }
   
+  /**
+     \brief      Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
+     \param      selected        Produit présélectionné
+     \param      htmlname        Nom de la zone select
+     \param      filtretype      Pour filtre sur type de produit
+     \param      limit           Limite sur le nombre de lignes retournées
+  */
+  function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+  {
+    global $langs,$conf;
+    if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
+    {
+    	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&type=2','ajaxworking');
+    }
+    else
+    {
+    	$this->select_produits_fournisseurs_do($socid,$selected,$htmlname,$filtretype,$filtre);
+    }    
+  }
   
 	/**
 		\brief      Retourne la liste des produits de fournisseurs
-		\param		socid			Id société (0 pour aucun filtre)
+		\param		  socid     			Id société (0 pour aucun filtre)
 		\param      selected        Produit présélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
-		\param      limit           Limite sur le nombre de lignes retournées
 		\param      filtre          Pour filtre
+		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 	*/
-	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
+	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='',$ajaxkeysearch='')
 	{
 		global $langs,$conf;
 		
@@ -980,6 +1003,7 @@ class Form
 		if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
 		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
 		if ($filtre) $sql.="$filtre";
+		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
 		$sql.= " ORDER BY p.ref DESC";
 		
 		dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
@@ -987,16 +1011,34 @@ class Form
 		$result=$this->db->query($sql);
 		if ($result)
 		{
-			print '<select class="flat" name="'.$htmlname.'">';
-			if (! $selected) print '<option value="0" selected="true">&nbsp;</option>';
-			else print '<option value="0">&nbsp;</option>';
 			
 			$num = $this->db->num_rows($result);
+			
+			if ($conf->use_ajax)
+      {
+        if (! $num)
+        {
+        	print '<select class="flat" name="'.$htmlname.'">';
+        	print '<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
+        }
+        else
+        {
+        	print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
+        	print '<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
+        }
+      }
+      else
+      {
+      	print '<select class="flat" name="'.$htmlname.'">';
+      	if (! $selected) print '<option value="0" selected="true">&nbsp;</option>';
+      	else print '<option value="0">&nbsp;</option>';
+      }
+			
 			$i = 0;
 			while ($i < $num)
 			{
 				$objp = $this->db->fetch_object($result);
-
+        	
 				$opt = '<option value="'.$objp->rowid.'"';
 				if ($selected == $objp->rowid) $opt.= ' selected="true"';
 				//$opt.= '>'.$objp->ref.' ('.$objp->ref_fourn.') - ';

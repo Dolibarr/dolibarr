@@ -612,6 +612,7 @@ else
 			$sql .= ' ORDER BY dp DESC';
 
 			$result = $db->query($sql);
+
 			if ($result)
 			{
 				$num = $db->num_rows($result);

@@ -42,7 +42,14 @@ print "\n<body>";
 if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
 {
 	$form = new Form($db);
-	$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"]);
+	if ($_GET['type'] == 1)
+	{
+		$form->select_produits_do("",$_GET["htmlname"],"","",$_GET["price_level"],$_GET["keysearch"]);
+	}
+	else if ($_GET['type'] == 2)
+	{
+		$form->select_produits_fournisseurs_do("","",$_GET["htmlname"],"","",$_GET["keysearch"]);
+	}
 }
 
 print "</body>"; 
