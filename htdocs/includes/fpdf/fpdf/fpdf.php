@@ -1889,6 +1889,7 @@ function _out($s)
 			}
 			
 			foreach($a as $key=>$element) {
+				$element = ereg_replace('&ndash;','-',$element); //remplace les &ndash; par un tiret
 				if (!preg_match($pattern, $element)) {
 					//Text
 					if($this->HREF) {
