@@ -406,13 +406,9 @@ class Form
 				{
 					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
 				}
-				print '<span id="indicator" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
-				print '<input type="hidden" name="pays_id" id="pays_id" value="'.$pays_id.'" />';
-				print '</div>';
-				print '<div id="hint" class="autocomplete"></div>';
-				print '<script type="text/javascript">';
-				print 'new Ajax.Autocompleter(\'pays\',\'hint\',\''.DOL_URL_ROOT.'/societe/ajaxcountries.php\',{method: \'post\',paramName: \'pays\',afterUpdateElement: ac_return});';
-				print '</script>';
+				
+				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','ajaxworking');
+
 			}
 			else
 			{
@@ -821,14 +817,8 @@ class Form
     global $langs,$conf,$user;
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
-    	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="'.$htmlname.'" id="'.$htmlname.'">';
-    	print '<span id="indicator" style="display: none">'.img_gif('Working...','ajaxworking').'</span>';
-    	print '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-    	print '<script type="text/javascript">';
-    	print 'var url = \''.DOL_URL_ROOT.'/product/ajaxproducts.php\';';
-    	print 'new Form.Element.Observer($("'.$htmlname.'"), 1, function(){var myAjax = new Ajax.Updater( {success: \'ajdynfield'.$htmlname.'\'}, url, {method: \'get\', parameters: "keysearch="+$("'.$htmlname.'").value+"&htmlname='.$htmlname.'&price_level='.$price_level.'"});});';
-    	print '</script>';
-    	print '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
+    	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'','ajaxworking');
     }
     else
     {

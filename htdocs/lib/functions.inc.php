@@ -2598,5 +2598,66 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 	return $nbOpenDay;
 }
 
+/**
+   \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
+   \param	    htmlname            nom et id du champ
+   \param     keysearch           nom et id complémentaire du champ de collecte
+   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
+   \param     option              champ supplémentaire de recherche dans les paramètres
+   \param     indicator           nom de l'image gif
+   \return    script              script complet
+*/
+function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='ajaxworking')
+{
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
+  $script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
+  $script.= '<script type="text/javascript">';
+  $script.= 'Ajax.Responders.register({
+               onCreate: function() {
+                 $(\'indicator'.$htmlname.'\').show( );
+               },
+               onComplete: function() {
+                 $(\'indicator'.$htmlname.'\').hide( );
+               }
+             });';
+  $script.= 'new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
+               function(){
+                  var myAjax = new Ajax.Updater( {
+                     success: \'ajdynfield'.$htmlname.'\'},
+                     \''.DOL_URL_ROOT.$url.'\', {
+                        method: \'get\',
+                        parameters: "'.$keysearch.'="+$("'.$keysearch.$htmlname.'").value+"&htmlname='.$htmlname.$option.'"
+                     });
+                   });';
+  $script.= '</script>';
+  $script.= '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
+  
+  return $script;
+}
+
+/**
+   \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
+   \param	    htmlname            nom et id du champ
+   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
+   \param     indicator           nom de l'image gif
+   \return    script              script complet
+*/
+function ajax_autocompleter($selected='',$htmlname,$url,$indicator='ajaxworking')
+{
+	$script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
+	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
+	$script.= '</div>';
+	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
+	$script.= '<script type="text/javascript">';
+	$script.= 'new Ajax.Autocompleter(\''.$htmlname.'\',\'result'.$htmlname.'\',\''.DOL_URL_ROOT.$url.'\',{
+	           method: \'post\',
+	           paramName: \''.$htmlname.'\',
+	           indicator: \'indicator'.$htmlname.'\',
+	           afterUpdateElement: ac_return
+	         });';
+	$script.= '</script>';
+	
+	return $script;
+}
 
 ?>
