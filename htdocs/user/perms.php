@@ -224,7 +224,7 @@ if ($result)
             $objMod=$modules[$obj->module];
             $picto=($objMod->picto?$objMod->picto:'generic');
 
-            if ($caneditperms && ($obj->module != 'user' || ! $fuser->admin))
+            if ($caneditperms && (! $objMod->rights_admin_allowed || ! $fuser->admin))
             {
                 // On affiche ligne pour modifier droits
                 print '<tr '. $bc[$var].'>';
@@ -245,7 +245,7 @@ if ($result)
         print '<td>'.img_object('',$picto).' '.$objMod->getName();
         print '</td>';    
 
-        if ($fuser->admin && $obj->module == 'user')
+        if ($fuser->admin && $objMod->rights_admin_allowed)
         {
             // Permission own because admin
             if ($caneditperms)

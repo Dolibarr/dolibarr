@@ -71,6 +71,21 @@ print_fiche_titre($langs->trans("Menus"),'','setup');
 print $langs->trans("MenusDesc")."<br>\n";
 print "<br>\n";
 
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][1] = $langs->trans("MenuHandlers");
+$head[$h][2] = 'handler';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][1] = $langs->trans("MenuAdmin");
+$head[$h][2] = 'editor';
+$h++;
+
+dolibarr_fiche_head($head, 'handler', $langs->trans("Menus"));
+
+
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
@@ -120,7 +135,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<input class="button" type="submit" value="'.$langs->trans("Save").'">';
     print '</center>';
 
-    print '</form><br>';
+    print '</form>';
 }
 else
 {
@@ -163,13 +178,18 @@ else
     print '</tr>';
 
     print '</table>';
+}
 
+print '</div>';
+
+
+if (! isset($_GET["action"]) || $_GET["action"] != 'edit')
+{
     print '<div class="tabsAction">';
     print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
 }
-
-
+	
 $db->close();
 
 llxFooter('$Date$ - $Revision$');

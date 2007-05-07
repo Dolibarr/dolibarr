@@ -52,6 +52,7 @@ Boxes=Boîtes
 PositionByDefault=Position par défaut
 Position=Ordre
 MenusDesc=Les gestionnaires de menu définissent le contenu des 2 barres de menus (la barre horizontale et la barre verticale). Il est possible de mettre un gestionnaire différent selon que l'utilisateur soit interne ou externe.
+MenusEditorDesc=L'éditeur de menu permet de changer le contenu des menus. Il doit être utilisé avec prudence sous peine de mettre Dolibarr en situation instable nécéssitant une réinstallation pour retrouver un menu cohérent.
 System=Système
 SystemInfo=Infos Système
 SystemTools=Outils Système
@@ -118,6 +119,8 @@ ModuleFamilyOther=Autre
 ModuleFamilyTechnic=Modules outils ou système
 ModuleFamilyExperimental=Modules expérimentaux (ne pas utiliser en production)
 ModuleFamilyFinancial=Modules financiers (Compta/trésorerie)
+MenuHandlers=Gestionnaires menu
+MenuAdmin=Edition menu
 # Modules
 Module0Name=Utilisateurs & groupes
 Module0Desc=Gestion des utilisateurs et groupes

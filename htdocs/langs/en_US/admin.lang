@@ -51,6 +51,7 @@ Boxes=Boxes
 PositionByDefault=Default order
 Position=Order
 MenusDesc=Menus managers define content of the 2 menu bars (horizontal bar and vertical bar). 
+MenusEditorDesc=The menu editor allow you to change content of menus.
 System=System
 SystemInfo=System information
 SystemTools=System tools
@@ -117,6 +118,8 @@ ModuleFamilyOther=Other
 ModuleFamilyTechnic=Tools or System Modules
 ModuleFamilyExperimental=Experimental modules
 ModuleFamilyFinancial=Financial Modules (Accountancy/Treasury)
+MenuHandlers=Menu handlers
+MenuAdmin=Menu editor
 # Modules
 Module0Name=Users & groups
 Module0Desc=Users and groups management

@@ -48,13 +48,14 @@ class modUser extends DolibarrModules
   function modUser($DB)
   {
     $this->db = $DB ;
-    $this->id = 'user';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 0 ;
+    $this->id = 'user';   		// Same value xxx than in file modXxx.class.php file
+    $this->numero = 0;
 
-    $this->family = "base";
+    $this->family = "base";		// Family for module (or "base" if core module)
     $this->name = "User";
     $this->description = "Gestion des utilisateurs (requis)";
-
+	$this->always_enabled = 1;	// Can't be disabled
+	
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
@@ -80,9 +81,10 @@ class modUser extends DolibarrModules
     $this->boxes = array();
 
     // Permissions
-    $this->rights = array();            // L'admin bénéficie toujours des droits de ce module, actif ou non
+    $this->rights = array();
     $this->rights_class = 'user';
-    $r=0;
+    $this->rights_admin_allowed = 1;	// Admin is always granted of permission (even when module is disabled)
+	$r=0;
     
     $r++;
     $this->rights[$r][0] = 251;

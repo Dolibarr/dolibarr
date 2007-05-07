@@ -26,19 +26,18 @@
 		\version    $Revision$
 */
  
+require("./pre.inc.php");
  
- require("./pre.inc.php");
- 
- 
- 
- if (!$user->rights->menudb->creer)
+
+if (!$user->rights->menudb->creer && ! $user->admin)
   accessforbidden();
   
 
 if (isset($_GET["action"]) && $_GET["action"] == 'up')
 {
 
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET["menuId"];
+	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.rowid = ".$_GET["menuId"];
 	$result = $db->query($sql);	
 	
 	$num = $db->num_rows();
@@ -52,7 +51,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'up')
 		$i++;
 	}
 	
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m WHERE m.order = ".($precedent['order'] - 1)." AND m.level = -1";
+	// Menu top
+	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.order = ".($precedent['order'] - 1)." AND m.type = 'top'";
 	$result = $db->query($sql);	
 	
 	$num = $db->num_rows();
@@ -66,9 +67,13 @@ if (isset($_GET["action"]) && $_GET["action"] == 'up')
 		$i++;
 	}
 	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.order = ".$suivant['order']." WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " SET m.order = ".$suivant['order'];
+	$sql.= " WHERE m.rowid = ".$precedent['rowid'].""; // Monte celui select
 	$db->query($sql);	
-	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.order = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
+	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " SET m.order = ".$precedent['order'];
+	$sql.= " WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
 	$db->query($sql);		
 }
 
@@ -89,7 +94,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 		$i++;
 	}
 	
-	$sql = "SELECT m.rowid, m.order FROM ".MAIN_DB_PREFIX."menu as m WHERE m.order = ".($precedent['order'] + 1)." AND m.level = -1";
+	$sql = "SELECT m.rowid, m.order";
+	$sql.= " FROM ".MAIN_DB_PREFIX."menu as m";
+	$sql.= " WHERE m.order = ".($precedent['order'] + 1)." AND type='top'";
 	$result = $db->query($sql);	
 	
 	$num = $db->num_rows();
@@ -119,14 +126,27 @@ llxHeader();
 
 
 
-print_fiche_titre($langs->trans("Admin Menu"),'','setup');
- 
-print '<br>';
+print_fiche_titre($langs->trans("Menus"),'','setup');
+
+print $langs->trans("MenusEditorDesc")."<br>\n";
+print "<br>\n";
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][1] = $langs->trans("MenuHandlers");
+$head[$h][2] = 'handler';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][1] = $langs->trans("MenuAdmin");
+$head[$h][2] = 'editor';
+$h++;
+
+dolibarr_fiche_head($head, 'editor', $langs->trans("Menus"));
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-
-
 	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
@@ -355,9 +375,6 @@ if ($res)
 	print '</tr>';
 	
 	print '</table>';
-	print '<br>';
-	
-
 
 
 print '</div>';
@@ -366,10 +383,9 @@ print '<div class="tabsAction">';
 print '<a class="butAction" href="'.DOL_URL_ROOT.'/admin/menus/edit.php?menuId=0&amp;action=create">'.$langs->trans("NewMenu").'</a>';
 print '</div>';
 
-	
 
+$db->close();
 
-	
-			
- 
+llxFooter('$Date$ - $Revision$');
 ?>
+

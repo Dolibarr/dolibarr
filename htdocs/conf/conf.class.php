@@ -251,7 +251,7 @@ class Conf
 		$this->droitpret->dir_temp=DOL_DATA_ROOT."/droitpret/temp";
 
 		// Module menuDb
-		$this->menudb->enabled=defined("MAIN_MODULE_MENUDB")?MAIN_MODULE_MENUDB:0;
+		$this->menudb->enabled=1;
 		
 		// Module code barre
 		$this->barcode->enabled=defined("MAIN_MODULE_BARCODE")?MAIN_MODULE_BARCODE:0;

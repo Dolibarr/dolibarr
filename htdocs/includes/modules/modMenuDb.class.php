@@ -47,43 +47,46 @@ class modMenuDb extends DolibarrModules
     function modMenuDb($DB)
     {
         $this->db = $DB ;
-        $this->id = 'menudb';   // Same value xxx than in file modXxx.class.php file
+        $this->id = 'menudb';   	// Same value xxx than in file modXxx.class.php file
         $this->numero = 2300 ;
     
-        $this->family = "technic";
-        $this->name = "Menu Db";
+        $this->family = "base";		// Family for module (or "base" if core module)
+        $this->name = "Menus";
         $this->description = "Administration des menus par base de données";
+
+		$this->revision = explode(' ','$Revision$');
         $this->version = '1.1-beta';                        // 'experimental' or 'dolibarr' or version
+
         $this->const_name = 'MAIN_MODULE_MENUDB';
-        $this->special = 1;
+        $this->special = 0;
+		$this->picto='group';
     
-    // Dir
-    $this->dirs = array();
+	    // Dir
+	    $this->dirs = array();
 
-    // Dépendances
-    $this->depends = array();
-    $this->requiredby = array();
+	    // Dépendances
+	    $this->depends = array();
+	    $this->requiredby = array();
 
 
-    // Constantes
-    $this->const = array();
+	    // Constantes
+	    $this->const = array();
 
-    // Boxes
-    $this->boxes = array();
+	    // Boxes
+	    $this->boxes = array();
+	    
+	    // Permissions
+		$this->rights = array();
+	    $this->rights_class = 'menudb';
+		$this->rights_admin_allowed = 1;	// Admin is always granted of permission (even when module is disabled)
+	    $r=0;
     
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'menudb';
-
-
-    $this->rights[2][0] = 2301;
-    $this->rights[2][1] = 'Créer/modifier les menus';
-    $this->rights[2][2] = 'w';
-    $this->rights[2][3] = 0;
-    $this->rights[2][4] = 'creer';
-
-    
-
+		$r++;
+	    $this->rights[$r][0] = 2301;
+	    $this->rights[$r][1] = 'Configurer les menus';
+	    $this->rights[$r][2] = 'w';
+	    $this->rights[$r][3] = 0;
+	    $this->rights[$r][4] = 'creer';
     }
 
     

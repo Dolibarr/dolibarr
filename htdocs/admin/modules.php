@@ -337,7 +337,7 @@ foreach ($orders as $key => $value)
         if ($conf->global->$const_name)
         {
             // Module actif
-            if ($family == 'base') print $langs->trans("Required");
+            if ($objMod->always_enabled) print $langs->trans("Required");
             else print "<a href=\"modules.php?id=".$objMod->numero."&amp;action=reset&amp;value=" . $modName . "&amp;mode=" . $mode . "\">" . $langs->trans("Disable") . "</a></td>\n";
 
             if ($objMod->config_page_url)
@@ -375,7 +375,7 @@ foreach ($orders as $key => $value)
         }
         else
         {
-            if ($family == 'base')
+            if ($objMod->always_enabled)
             {
                 // Ne devrait pas arriver.
             }
