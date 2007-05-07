@@ -22,7 +22,7 @@
 
 /**
 	    \file       htdocs/includes/modules/menudb/modules_menudb.php
-		\ingroup    core
+        \ingroup    menudb
 		\brief      Fichier contenant la classe mère d'affichage des menus DB
 		\version    $Revision$
 */

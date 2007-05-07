@@ -21,7 +21,7 @@
 
 /**
 		\file       htdocs/admin/menus/index.php
-		\ingroup    admin
+        \ingroup    core,menudb
 		\brief      Gestion des menus
 		\version    $Revision$
 */
