@@ -972,7 +972,7 @@ class Form
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
     	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&type=2','ajaxworking');
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type=2','ajaxworking');
     }
     else
     {

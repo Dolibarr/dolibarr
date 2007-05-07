@@ -48,7 +48,7 @@ if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
 	}
 	else if ($_GET['type'] == 2)
 	{
-		$form->select_produits_fournisseurs_do("","",$_GET["htmlname"],"","",$_GET["keysearch"]);
+		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],"","",$_GET["keysearch"]);
 	}
 }
 
