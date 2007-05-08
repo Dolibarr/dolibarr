@@ -785,6 +785,46 @@ class DoliDb
 			return 1;
 	}
 
+	/**
+			\brief      Crée un utilisateur
+			\param	    dolibarr_main_db_host 		Ip serveur
+			\param	    dolibarr_main_db_user 		Nom user à créer
+			\param	    dolibarr_main_db_pass 		Mot de passe user à créer
+			\return	    int							<0 si KO, >=0 si OK
+	*/
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass)
+	{
+		$sql = "INSERT INTO user ";
+		$sql.= "(Host,User,password,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_user',password('$dolibarr_main_db_pass')";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		$resql=$this->query($sql);
+		if (! $resql)
+		{
+			return -1;
+		}
+		
+		$sql = "INSERT INTO db ";
+		$sql.= "(Host,Db,User,Select_priv,Insert_priv,Update_priv,Delete_priv,Create_priv,Drop_priv,Index_Priv,Alter_priv)";
+		$sql.= " VALUES ('$dolibarr_main_db_host','$dolibarr_main_db_name','$dolibarr_main_db_user'";
+		$sql.= ",'Y','Y','Y','Y','Y','Y','Y','Y');";
+		
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		$resql=$this->query($sql);
+		if (! $resql)
+		{
+			return -1;
+		}
+
+		$sql="FLUSH Privileges";
+
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		$resql=$this->query($sql);
+	
+		return 1;
+	}
 }
 
 ?>

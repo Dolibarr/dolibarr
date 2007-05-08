@@ -609,6 +609,27 @@ class DoliDb
         return  $this->results;
     }
 
+	
+	/**
+			\brief      Crée un utilisateur
+			\param	    dolibarr_main_db_host 		Ip serveur
+			\param	    dolibarr_main_db_user 		Nom user à créer
+			\param	    dolibarr_main_db_pass 		Mot de passe user à créer
+			\return	    int							<0 si KO, >=0 si OK
+	*/
+	function DDLCreateUser($dolibarr_main_db_host,$dolibarr_main_db_user,$dolibarr_main_db_pass)
+	{
+		$sql = "create user \"".$dolibarr_main_db_user."\" with password '".$dolibarr_main_db_pass."'";
+
+		dolibarr_syslog("mysql.lib::DDLCreateUser sql=".$sql);
+		$resql=$this->query($sql);
+		if (! $resql)
+		{
+			return -1;
+		}
+		
+		return 1;
+	}
 }
 
 ?>
