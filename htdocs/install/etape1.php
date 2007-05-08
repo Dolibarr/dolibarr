@@ -149,15 +149,6 @@ if ($_POST["action"] == "set")
 			}
 		}
 		
-		if($dolibarr_main_db_type == "mysql")
-		{
-			$choix=1;
-		}
-		else
-		{
-			$choix=2;
-		}
-		
 		// Chargement driver acces bases
 		require_once($dolibarr_main_document_root."/lib/databases/".$dolibarr_main_db_type.".lib.php");
 		
@@ -251,15 +242,20 @@ if ($_POST["action"] == "set")
 		*/
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{
-			dolibarr_syslog("Creation de l'utilisateur: ".$dolibarr_main_db_user." choix base: ".$choix);
+			dolibarr_syslog("Creation de l'utilisateur: ".$dolibarr_main_db_user);
 
 			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
+			$databasefortest=$conf->db->name;
+			if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
+			{
+				$databasefortest='mysql';
+			}
 			
 			// Creation handler de base, verification du support et connexion
-			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,'mysql');
+			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest);
 			if ($db->error)
 			{
-				print $langs->trans("ThisPHPDoesNotSupportTypeBase",'mysql');
+				print $langs->trans("ThisPHPDoesNotSupportTypeBase",$conf->db->type);
 				$error++;
 			}
 			
