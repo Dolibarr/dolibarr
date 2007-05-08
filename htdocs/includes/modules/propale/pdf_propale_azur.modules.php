@@ -192,6 +192,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$tab_top_newpage = 50;
 				$tab_height = 110;
 				$tab_height_newpage = 150;
+				$tab_height_middlepage = 190;
 
 				// Affiche notes
 				if ($propale->note_public)
@@ -321,8 +322,13 @@ class pdf_propale_azur extends ModelePDFPropales
 					$this->tva[(string) $propale->lignes[$i]->tva_tx] += $tvaligne;
 
 					$nexY+=2;    // Passe espace entre les lignes
+					
+					//on récupère la description du produit suivant
+					$follow_descproduitservice = $propale->lignes[$i+1]->desc;
+					//on compte le nombre de ligne afin de vérifier la place disponible
+					$nblineFollowDesc = (num_lines($follow_descproduitservice)*4);
 
-          if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+          if (($nexY+$nblineFollowDesc) > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
@@ -330,7 +336,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						}
 						else
 						{
-							$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top_newpage, $tab_height_middlepage, $nexY, $outputlangs);
 						}
 
 						$this->_pagefoot($pdf,$outputlangs);
@@ -355,8 +361,8 @@ class pdf_propale_azur extends ModelePDFPropales
 				}
 				else
 				{
-					$this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
-					$bottomlasttab=$tab_top_newpage + $tab_height + 1;
+					$this->_tableau($pdf, $tab_top_newpage, $tab_height_newpage, $nexY, $outputlangs);
+					$bottomlasttab=$tab_top_newpage + $tab_height_newpage + 1;
 				}
 
                 // Affiche zone infos

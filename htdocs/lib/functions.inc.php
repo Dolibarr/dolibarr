@@ -2599,6 +2599,21 @@ function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 }
 
 /**
+   \brief     Fonction retournant le nombre de lignes dans un texte formaté
+   \param	    texte      Texte
+   \return    nblines    Nombre de lignes
+*/
+function num_lines($texte)
+{
+	$repTable = array("\t" => " ", "\n" => "<br>", "\r" => " ", "\0" => " ", "\x0B" => " "); 
+	$texte = strtr($texte, $repTable);
+	$pattern = '/(<[^>]+>)/Uu';
+	$a = preg_split($pattern, $texte, -1, PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
+	$nblines = ((count($a)+1)/2);
+	return $nblines;
+}
+
+/**
    \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
    \param	    htmlname            nom et id du champ
    \param     keysearch           nom et id complémentaire du champ de collecte
