@@ -93,6 +93,8 @@ var $PDFVersion;         //PDF version number
 var $prevFontFamily;     //store previous font family
 var $prevFontStyle;      //store previous style family
 
+var $DisplayPreferences=''; //préférences d'affichage
+
 		// variables pour HTML PARSER
 		
 		/**
@@ -1611,6 +1613,33 @@ function _putcatalog()
 		$this->_out('/PageLayout /OneColumn');
 	elseif($this->LayoutMode=='two')
 		$this->_out('/PageLayout /TwoColumnLeft');
+	
+	//Préférences d'affichage - @author Michel Poulain
+	//affiche le document en plein écran (escape pour revenir en mode normal)
+	if(is_int(strpos($this->DisplayPreferences,'FullScreen')))
+        $this->_out('/PageMode /FullScreen');
+    if($this->DisplayPreferences) {
+        $this->_out('/ViewerPreferences<<');
+        //masque la barre de menu
+        if(is_int(strpos($this->DisplayPreferences,'HideMenubar')))
+            $this->_out('/HideMenubar true');
+        //masque les barres d'outils
+        if(is_int(strpos($this->DisplayPreferences,'HideToolbar')))
+            $this->_out('/HideToolbar true');
+        //masque tous les éléments de la fenêtre (barres de défilement, contrôles de navigation, signets...)
+        if(is_int(strpos($this->DisplayPreferences,'HideWindowUI')))
+            $this->_out('/HideWindowUI true');
+        //affiche le titre du document au lieu du nom du fichier
+        if(is_int(strpos($this->DisplayPreferences,'DisplayDocTitle')))
+            $this->_out('/DisplayDocTitle true');
+        //centre la fenêtre
+        if(is_int(strpos($this->DisplayPreferences,'CenterWindow')))
+            $this->_out('/CenterWindow true');
+        //ajuste la taille de la fenêtre (lorsqu'elle n'est pas maximisée) sur celle de la page
+        if(is_int(strpos($this->DisplayPreferences,'FitWindow')))
+            $this->_out('/FitWindow true');
+        $this->_out('>>');
+    }
 }
 
 function _putheader()
@@ -1890,6 +1919,7 @@ function _out($s)
 			
 			foreach($a as $key=>$element) {
 				$element = ereg_replace('&ndash;','-',$element); //remplace les &ndash; par un tiret
+				$element = ereg_replace('&rsquo;','\'',$element); //remplace les &rsquo; par un apostrophe
 				if (!preg_match($pattern, $element)) {
 					//Text
 					if($this->HREF) {
@@ -2509,6 +2539,17 @@ function _out($s)
 				$name = "helvetica";
 			}
 			return $name;
+		}
+		
+		/**
+		* Paramétrage des préférences d'affichage.
+		* @string preference liste des préférences d'affichage (voir la fonction _putcatalog)
+		* @ex: $pdf->DisplayPreferences('HideMenubar,HideToolbar,HideWindowUI')
+		* @author Michel Poulain
+		*/
+		function DisplayPreferences($preferences)
+		{
+			$this->DisplayPreferences.=$preferences;
 		}
 
 //End of class
