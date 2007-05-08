@@ -191,6 +191,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$tab_top = 90;
 				$tab_top_newpage = 50;
 				$tab_height = 110;
+				$tab_height_newpage = 150;
 
 				// Affiche notes
 				if ($propale->note_public)
@@ -321,11 +322,11 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					$nexY+=2;    // Passe espace entre les lignes
 
-                    if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
+          if ($nexY > ($tab_top+$tab_height) && $i < ($nblignes - 1))
 					{
 						if ($pagenb == 1)
 						{
-							$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+							$this->_tableau($pdf, $tab_top, $tab_height_newpage, $nexY, $outputlangs);
 						}
 						else
 						{
