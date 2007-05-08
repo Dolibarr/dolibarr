@@ -843,21 +843,21 @@ class Form
     
     $sql = "SELECT ";
     if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-      {
-	$sql.="DISTINCT";	
-      }
+    {
+    	$sql.="DISTINCT";	
+    }
     $sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
     $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
     if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-      {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-      }
+    {
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+    }
     $sql.= " WHERE p.envente = 1";
     if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-      {
-	$sql.= ' AND IFNULL(c.visible,1)=1';
-      }
+    {
+    	$sql.= ' AND IFNULL(c.visible,1)=1';
+    }
     if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
     if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
     $sql.= " ORDER BY p.nbvente DESC";
@@ -870,21 +870,21 @@ class Form
     
     // Multilang : on construit une liste des traductions des produits listés
     if ($conf->global->MAIN_MULTILANGS)
-      {
-	$sqld = "SELECT d.fk_product, d.label";
+    {
+    	$sqld = "SELECT d.fk_product, d.label";
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.nbvente DESC";
 			$resultd = $this->db->query($sqld);
 			if ( $resultd ) $objtp = $this->db->fetch_object($resultd);
 		}
-        
-        if ($result)
-        {
-            $num = $this->db->num_rows($result);
-
-            if ($conf->use_ajax)
-            {
+		
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			
+			if ($conf->use_ajax)
+			{
 				if (! $num)
 				{
 					print '<select class="flat" name="'.$htmlname.'">';
@@ -901,11 +901,11 @@ class Form
 				print '<select class="flat" name="'.$htmlname.'">';
 	      print '<option value="0" selected="true">&nbsp;</option>';
       }
-    
-            $i = 0;
-            while ($num && $i < $num)
-            {
-                $objp = $this->db->fetch_object($result);
+      
+      $i = 0;
+      while ($num && $i < $num)
+      {
+      	$objp = $this->db->fetch_object($result);
                 
 				// Multilangs : modification des donnée si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
@@ -929,33 +929,33 @@ class Form
 						$result2 = $this->db->query($sql) ;
 						$objp2 = $this->db->fetch_object($result2);
 						if ($objp2->price)
+						{
 							$opt.= $objp2->price.' '.$langs->trans("Currency".$conf->monnaie);
+						}
 						else
+						{
 							$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+						}
 				}
 				else
-                	$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
-                if ($objp->duration) $opt.= ' - '.$objp->duration;
-                $opt.= "</option>\n";
-                print $opt;
-                $i++;
-            }
-	    if ($conf->use_ajax)
-	      {
-		//				if ($num)
-		//				{
-		print '</select>';
-		//    			}
-	      }
-	    else
-	      {
-		print '</select>';
-	      }    			
-            $this->db->free($result);
-        }
-        else
+				{
+					$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+				}
+				
+				if ($objp->duration) $opt.= ' - '.$objp->duration;
+				
+				$opt.= "</option>\n";
+        print $opt;
+        $i++;
+      }
+      
+      print '</select>';    			
+      
+      $this->db->free($result);
+    }
+    else
 	  {
-            dolibarr_print_error($db);
+	  	dolibarr_print_error($db);
 	  }
   }
   
