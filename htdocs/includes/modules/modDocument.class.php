@@ -64,7 +64,7 @@ class modDocument extends DolibarrModules
     $this->dirs[0] = DOL_DATA_ROOT."/ged";
 
     // Config pages
-    $this->config_page_url = array("document.php");
+    //$this->config_page_url = array("document.php");
 
     // Dépendances
     $this->depends = array();
