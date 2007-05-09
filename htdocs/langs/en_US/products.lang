@@ -107,3 +107,6 @@ ConfirmDeleteProductLine=Are you sure you want to delete this product line?
 NoProductMatching=No product/service match your criteria
 MatchingProducts=Matching products/services
 NoStockForThisProduct=No stock for this product
+Restock=Restock
+Weight=Weight
+ProductSpecial=Special
