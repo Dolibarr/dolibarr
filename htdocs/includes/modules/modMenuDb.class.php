@@ -20,13 +20,13 @@
  */
 
 /**
-        \defgroup   menuDb     Module menuDb
+        \defgroup   menudb		Module menu Db
         \brief      Module pour administrer les menus par bdd
 */
 
 /**
         \file       htdocs/includes/modules/modMenuBd.class.php
-        \ingroup    menuDb
+        \ingroup    menudb
         \brief      Fichier de description et activation du module menuDb
 */
 

@@ -407,7 +407,7 @@ class Form
 					print '<input type="text" size="45" id="pays" name="pays" value="'.$obj->libelle.'" '.$htmloption.' />';
 				}
 				
-				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','ajaxworking');
+				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','working');
 
 			}
 			else
@@ -819,7 +819,7 @@ class Form
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
     	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','ajaxworking');
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','working');
     }
     else
     {
@@ -972,7 +972,7 @@ class Form
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
     	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type=2','ajaxworking');
+    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&socid='.$socid.'&type=2','working');
     }
     else
     {

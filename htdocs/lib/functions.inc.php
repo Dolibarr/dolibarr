@@ -2619,10 +2619,10 @@ function num_lines($texte)
    \param     keysearch           nom et id complémentaire du champ de collecte
    \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
    \param     option              champ supplémentaire de recherche dans les paramètres
-   \param     indicator           nom de l'image gif
+   \param     indicator           nom de l'image gif sans l'extension
    \return    script              script complet
 */
-function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='ajaxworking')
+function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
   $script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
@@ -2654,10 +2654,10 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='ajaxworki
    \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
    \param	    htmlname            nom et id du champ
    \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
-   \param     indicator           nom de l'image gif
+   \param     indicator           nom de l'image gif sans l'extension
    \return    script              script complet
 */
-function ajax_autocompleter($selected='',$htmlname,$url,$indicator='ajaxworking')
+function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 {
 	$script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
 	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
