@@ -100,8 +100,21 @@ elseif ($actiontest)
         $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
         $resql=$webcal->localdb->query($sql);
         if ($resql) {
-            $mesg ="<div class=\"ok\">";
+			# Search version
+			$webcal->version='';
+			$sql="SELECT cal_value FROM webcal_config WHERE cal_setting='WEBCAL_PROGRAM_VERSION'";
+			$resql=$webcal->localdb->query($sql);
+			if ($resql) {
+				$obj=$webcal->localdb->fetch_object($resql);
+				if ($obj)
+				{
+					$webcal->version=$obj->cal_value;
+				}
+			}
+
+			$mesg ="<div class=\"ok\">";
             $mesg.=$langs->trans("WebCalTestOk",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"],$_POST["phpwebcalendar_user"]);
+            $mesg.='<br>'.$langs->trans("DetectedVersion").': '.($webcal->version?$webcal->version:$langs->trans("NotAvailable"));
             $mesg.="</div>";
         }
         else {
@@ -109,8 +122,9 @@ elseif ($actiontest)
             $mesg.=$langs->trans("WebCalErrorConnectOkButWrongDatabase");
             $mesg.="</div>";
         }
-
-        //$webcal->localdb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
+		// Ne pas fermer car la conn de webcal est la meme que dolibarr si
+		// parametre host/user/pass identique.
+        //$webcal->localdb->close();
     }
     elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
     {
