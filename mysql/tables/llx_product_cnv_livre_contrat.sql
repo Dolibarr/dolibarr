@@ -1,5 +1,5 @@
 -- ============================================================================
--- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -25,12 +25,13 @@ create table llx_product_cnv_livre_contrat
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   fk_cnv_livre       integer,
 
-  quantite           integer,   -- quantite achete
-  taux               float(3,2),  -- taux contractuel
+  quantite           integer,          -- quantite achete
+  taux               float(3,2),       -- taux contractuel
 
-  date_app           datetime,  -- date d'application
-  duree              varchar(50) -- duree du contrat
-  
+  date_app           datetime,         -- date d'application
+  duree              varchar(50),      -- duree du contrat
+  fk_user            integer,          -- utilisateur qui a saisi le contrat
+  locked             tinyint default 0 -- indique si le contrat est verrouille a la modification
 )type=innodb;
 
 
