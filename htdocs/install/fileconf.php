@@ -170,7 +170,6 @@ $dolibarr_main_db_host = "localhost";
 </td>
 
 <td class="label">
-<select name='db_type'>
 <?php
 
 $defaultype=isset($dolibarr_main_db_type)?$dolibarr_main_db_type:'mysql';
@@ -180,6 +179,7 @@ $dir=DOL_DOCUMENT_ROOT.'/lib/databases';
 $handle=opendir($dir);
 $modules = array();
 $nbok = $nbko = 0;
+$option='';
 
 while (($file = readdir($handle))!==false)
 {
@@ -187,37 +187,42 @@ while (($file = readdir($handle))!==false)
     {
         $type=$reg[1];
         $modName = 'DoliDb';
-        //print "file=$file "; print "type=$type "; print "modName=$modName";
+        
+#		print "file=$file type=$type modName=$modName<br>\n";
 
-/*
-        include_once($dir."/".$file);
-        $objMod = new $modName();
-        if ($objMod)
-        {
+#        include_once($dir."/".$file);
+#        $objMod = new $modName();
+#        if ($objMod)
+#        {
 
-        }
-*/
+#        }
+
 		// Version min de la base
-		$versionmin=array();
-		if ($type=='mysql')  $versionmin=array(3,1,0);
-		if ($type=='mysqli') $versionmin=array(4,1,0);
-		if ($type=='pgsql')  $versionmin=array(8,1,0);
+		$versionbasemin=array();
+		if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
+		if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
+		if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
 		
 		// Remarques
 		$note='';
-		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionmin).')';
-		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionmin).')';
-		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionmin).')';
+		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
+		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
 
 		// Affiche ligne dans liste
-		print '<option value="'.$type.'" '.($defaultype==$type?" selected":"").'>';
-		print $type;
-		if ($note) print ' '.$note;
-		print '</option>';
+		$option.='<option value="'.$type.'" '.($defaultype==$type?" selected":"");
+		if (! function_exists($testfunction)) $option.=' disabled="disabled"';
+		$option.='>';
+		$option.=$type.'&nbsp; &nbsp;';
+		if ($note) $option.=' '.$note;
+		if (! function_exists($testfunction)) $option.=' - '.$langs->trans("FunctionNotAvailableInThisPHP");
+		$option.='</option>';
     }
 }
 
 ?>
+<select name='db_type'>
+<?php echo $option ?>
 </select>
 &nbsp;
 </td>
