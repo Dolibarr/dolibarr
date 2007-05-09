@@ -361,6 +361,7 @@ Priority=Priorité
 SendAcknowledgementByMail=Envoi A.R. par mail
 NoEMail=Pas d'email
 Owner=Propriétaire
+DetectedVersion=Version détectée
 # Countries
 CountryFR=France
 CountryBE=Belgique

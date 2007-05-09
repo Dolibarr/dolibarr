@@ -304,7 +304,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
             $this->desc=$langs->transnoentities("MemberValidatedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
@@ -318,10 +318,24 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
             $this->desc=$langs->transnoentities("MemberSubscriptionInDolibarr",$object->id);
-            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Amount").': '.$object->last_subscription_amount;
             $this->desc.="\n".$langs->transnoentities("Period").': '.dolibarr_print_date($object->last_subscription_date_start,'day').' - '.dolibarr_print_date($object->last_subscription_date_end,'day');
+            $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
+        }
+        elseif ($action == 'MEMBER_MODIFY')
+        {
+            dolibarr_syslog("Trigger '".$this->name."' for action '$action' launched by ".__FILE__.". id=".$object->id);
+            $langs->load("other");
+            $langs->load("members");
+
+            $this->date=time();
+            $this->duree=0;
+            $this->texte=$langs->transnoentities("MemberModifiedInDolibarr",$object->id);
+            $this->desc=$langs->transnoentities("MemberModifiedInDolibarr",$object->id);
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
         elseif ($action == 'MEMBER_RESILIATE')
@@ -334,7 +348,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
             $this->desc=$langs->transnoentities("MemberResiliatedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }
@@ -348,7 +362,7 @@ class InterfaceWebCal
             $this->duree=0;
             $this->texte=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
             $this->desc=$langs->transnoentities("MemberDeletedInDolibarr",$object->id);
-            $this->desc.="\n".$langs->transnoentities("Name").': '.$object->fullname;
+            $this->desc.="\n".$langs->transnoentities("Member").': '.$object->fullname;
             $this->desc.="\n".$langs->transnoentities("Type").': '.$object->type;
             $this->desc.="\n".$langs->transnoentities("Author").': '.$user->login;
         }

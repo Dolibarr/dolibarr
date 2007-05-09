@@ -360,6 +360,7 @@ Priority=Priority
 SendAcknowledgementByMail=Send Ack. by mail
 NoEMail=No EMail
 Owner=Owner
+DetectedVersion=Detected version
 # Countries
 CountryFR=France
 CountryBE=Belgium

@@ -38,13 +38,13 @@
 class Webcal {
     
     var $localdb;
-
+    var $error;
+	var $version;		/* Version string from webcalendar. Not defined in 1.0 */
     var $date;
     var $duree = 0;     /* Secondes */
     var $texte;
     var $desc;
     
-    var $error;
 
   
     /**
@@ -103,11 +103,13 @@ class Webcal {
             $cal_mod_date = strftime('%Y%m%d', time());
             $cal_mod_time = strftime('%H%M%S', time());
             $cal_duration = round($this->duree / 60);
-            $cal_priority = 2;
-            $cal_type = "E";
-            $cal_access = "P";
-            $cal_name = $this->texte;
-            $cal_description = $this->desc;
+            $cal_priority = 2;				// Medium avec 1.0, Haute avec 1.1
+											// Rem: 1.0: 1=bas, 2=medium, 3=haut
+											//      1.1: 1=haut, 2=haut, 3=haut, 4=medium ... 9=bas
+            $cal_type = "E";				// Evenement de type "intemporel"
+            $cal_access = "P";				// Acces publique
+            $cal_name = $this->texte;		// Title for event
+            $cal_description = $this->desc;	// Desc for event
 
             $sql = "INSERT INTO webcal_entry (cal_id, cal_create_by,cal_date,cal_time,cal_mod_date, cal_mod_time,cal_duration,cal_priority,cal_type, cal_access, cal_name,cal_description)";
             $sql.= " VALUES ($cal_id, '$cal_create_by', '$cal_date', '$cal_time', '$cal_mod_date', '$cal_mod_time', $cal_duration, $cal_priority, '$cal_type', '$cal_access', '$cal_name','$cal_description')";

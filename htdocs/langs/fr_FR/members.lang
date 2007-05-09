@@ -104,3 +104,5 @@ Date=Date
 DateAndTime=Date et heure
 MemberNotOrNoMoreExpectedToSubscribe=Non soumis ou plus soumis à cotisation
 AddSubscription=Ajout adhésion
+MemberModifiedInDolibarr=Adhérent modifié dans Dolibarr
+
