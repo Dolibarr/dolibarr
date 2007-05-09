@@ -36,7 +36,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-
 // Main
 $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
@@ -46,6 +45,7 @@ $error=0;
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+
 
 $langs->load("main");
 
@@ -58,8 +58,11 @@ if (! isset($argv[1]) || ! $argv[1]) {
 }
 $now=$argv[1];
 
+print "Mails sending disabled (useless in batch mode)\n";
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
 print "\n";
 print "----- Synchronize all records from Dolibarr database:\n";
+print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";

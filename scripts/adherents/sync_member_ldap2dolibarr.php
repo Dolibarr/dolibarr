@@ -36,17 +36,18 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-
 // Main
 $version='$Revision$';
 $path=eregi_replace($script_file,'',$_SERVER["PHP_SELF"]);
 @set_time_limit(0);
 $error=0;
 
+
 require_once($path."../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
+
 
 $langs->load("main");
 
@@ -61,6 +62,8 @@ if (! isset($argv[1]) || ! is_numeric($argv[1])) {
 }
 $typeid=$argv[1];
 
+print "Mails sending disabled (useless in batch mode)\n";
+$conf->global->MAIN_DISABLE_ALL_MAILS=1;	// On bloque les mails
 print "\n";
 print "----- Synchronize all records from LDAP database:\n";
 print "host=".$conf->global->LDAP_SERVER_HOST."\n";
@@ -70,6 +73,7 @@ print "pass=".eregi_replace('.','*',$conf->global->LDAP_ADMIN_PASS)."\n";
 print "DN to extract=".$conf->global->LDAP_MEMBER_DN."\n";
 print 'Filter=('.$conf->global->LDAP_KEY_MEMBERS.'=*)'."\n";
 print "----- To Dolibarr database:\n";
+print "type=".$conf->db->type."\n";
 print "host=".$conf->db->host."\n";
 print "port=".$conf->db->port."\n";
 print "login=".$conf->db->user."\n";
@@ -156,6 +160,7 @@ if ($result >= 0)
 	$conf->global->LDAP_FIELD_DESCRIPTION,
 	$conf->global->LDAP_FIELD_BIRTHDATE,
 	$conf->global->LDAP_FIELD_MEMBER_STATUS,
+	$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION,
 
 	// Subscriptions
 	$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE,
@@ -232,10 +237,13 @@ if ($result >= 0)
 			print "\n";
 
 			//print_r($member);
-
-			// Insertion adhésions
-			$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
+			
+			// Insertion première adhésion
+			$datefirst='';
+			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)
+			{
+				$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
+			}
 			if ($datefirst)
 			{
 				// Cree premiere cotisation et met a jour datefin dans adherent
@@ -243,12 +251,23 @@ if ($result >= 0)
 				//print "xx".$datefirst."\n";
 				$crowid=$member->cotisation($datefirst, $price, 0);
 			}
+
+			// Insertion dernière adhésion
+			$datelast='';
+			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)
+			{
+				$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
+			}
+			elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)
+			{
+				$datelast=dolibarr_time_plus_duree(dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION]),-1,'y')+60*60*24;
+			}
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
 				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
-				//print "yy".$datelast."-".dolibarr_time_plus_duree($datelast,-1,'y')."\n";
-				$crowid=$member->cotisation(dolibarr_time_plus_duree($datelast,-1,'y'), $price, 0);
+				//print "yy".dolibarr_print_date($datelast)."\n";
+				$crowid=$member->cotisation($datelast, $price, 0);
 			}
 			
 		}
