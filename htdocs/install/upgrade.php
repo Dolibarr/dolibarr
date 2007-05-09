@@ -93,12 +93,13 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
         print "<tr><td nowrap>";
         print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
 		dolibarr_install_syslog($langs->trans("ServerConnection")." : $dolibarr_main_db_host ".$langs->trans("OK"));
-        $ok = 1 ;
+        $ok = 1;
     }
     else
     {
-        print "<tr><td>".$langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-		dolibarr_install_syslog($langs->trans("ErrorFailedToCreateDatabase",$dolibarr_main_db_name));
+        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
+		dolibarr_install_syslog($langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+		$ok = 0;
     }
 
     if ($ok)
@@ -108,11 +109,13 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	        print "<tr><td nowrap>";
 	        print $langs->trans("DatabaseConnection")." : ".$dolibarr_main_db_name."</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
             dolibarr_install_syslog("Database connection successfull : $dolibarr_main_db_name");
-        }
+			$ok=1;        
+		}
         else
         {
 	        print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-            $ok = 0 ;
+			dolibarr_install_syslog($langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+            $ok=0;
         }
     }
 
@@ -278,7 +281,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 
     print '</table>';
 
-    $db->close();
+    if ($db->connected) $db->close();
 }
 else
 {
