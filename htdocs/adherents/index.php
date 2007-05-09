@@ -39,6 +39,7 @@ $langs->load("members");
 llxHeader();
 
 $staticmember=new Adherent($db);
+$statictype=new AdherentType($db);
 
 print_fiche_titre($langs->trans("MembersArea"));
 
@@ -191,7 +192,7 @@ $max=5;
 
 $sql = "SELECT a.rowid, a.statut, a.nom, a.prenom,";
 $sql.= " ".$db->pdate("a.tms")." as datem,  ".$db->pdate("datefin")." as date_end_subscription,";
-$sql.= " ta.cotisation";
+$sql.= " ta.rowid as typeid, ta.libelle, ta.cotisation";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as a, ".MAIN_DB_PREFIX."adherent_type as ta";
 $sql.= " WHERE a.fk_adherent_type = ta.rowid";
 $sql.= " ORDER BY a.tms DESC";
@@ -202,7 +203,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="3">'.$langs->trans("LastMembers",$max).'</td></tr>';
+    print '<td colspan="4">'.$langs->trans("LastMembers",$max).'</td></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)
@@ -216,7 +217,10 @@ if ($resql)
             print "<tr $bc[$var]>";
             $staticmember->id=$obj->rowid;
             $staticmember->ref=trim($obj->prenom.' '.$obj->nom);
+            $statictype->id=$obj->typeid;
+            $statictype->libelle=$obj->libelle;
             print '<td>'.$staticmember->getNomUrl(1).'</td>';
+            print '<td>'.$statictype->getNomUrl(1).'</td>';
             print '<td>'.dolibarr_print_date($obj->datem,'dayhour').'</td>';
             print '<td align="right">'.$staticmember->LibStatut($obj->statut,($obj->cotisation=='yes'?1:0),$obj->date_end_subscription,5).'</td>';
             print '</tr>';
