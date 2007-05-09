@@ -2627,21 +2627,27 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
   $script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
   $script.= '<script type="text/javascript">';
-  $script.= 'Ajax.Responders.register({
-               onCreate: function() {
-                 $(\'indicator'.$htmlname.'\').show( );
-               },
-               onComplete: function() {
-                 $(\'indicator'.$htmlname.'\').hide( );
-               }
-             });';
+  $script.= 'var myIndicator'.$htmlname.' = {
+                     onCreate: function(){
+                            if($F("'.$keysearch.$htmlname.'") != \'\'){
+                                  Element.show(\'indicator'.$htmlname.'\');
+                            }
+                     },
+                     
+                     onComplete: function() {
+                            if(Ajax.activeRequestCount == 0){
+                                  Element.hide(\'indicator'.$htmlname.'\');
+                            }
+                     }
+             };';
+  $script.= 'Ajax.Responders.register(myIndicator'.$htmlname.');';
   $script.= 'new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
                function(){
                   var myAjax = new Ajax.Updater( {
                      success: \'ajdynfield'.$htmlname.'\'},
                      \''.DOL_URL_ROOT.$url.'\', {
                         method: \'get\',
-                        parameters: "'.$keysearch.'="+$("'.$keysearch.$htmlname.'").value+"&htmlname='.$htmlname.$option.'"
+                        parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option.'"
                      });
                    });';
   $script.= '</script>';
