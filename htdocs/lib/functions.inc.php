@@ -2629,7 +2629,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
   $script.= '<script type="text/javascript">';
   $script.= 'var myIndicator'.$htmlname.' = {
                      onCreate: function(){
-                            if($F("'.$keysearch.$htmlname.'") != \'\'){
+                            if($F("'.$keysearch.$htmlname.'")){
                                   Element.show(\'indicator'.$htmlname.'\');
                             }
                      },
