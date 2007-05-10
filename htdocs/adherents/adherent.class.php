@@ -925,8 +925,10 @@ class Adherent
         if ($resql)
         {
             $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
-			// datefin = date + 1 an
+
+			// datefin = date + 1 an - 1 jour
             $datefin = dolibarr_time_plus_duree($date,1,'y');
+            $datefin = dolibarr_time_plus_duree($datefin,-1,'d');
 
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
             $sql.= " WHERE rowid =". $this->id;
