@@ -61,9 +61,10 @@ define('DOL_DOCUMENT_ROOT','../');
 
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
-define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+$conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
+if (file_exists('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+else define('SYSLOG_FILE','/dolibarr_install.log');
 define('SYSLOG_FILE_NO_ERROR',1);
-
 
 
 // Forcage du parametrage PHP magic_quots_gpc (Sinon il faudrait a chaque POST, conditionner
@@ -151,7 +152,8 @@ function pFooter($nonext=0,$setuplang='')
 
 function dolibarr_install_syslog($message)
 {
-	dolibarr_syslog($message);
+	if (! defined('LOG_DEBUG')) define('LOG_DEBUG',6);
+	dolibarr_syslog($message,constant('LOG_DEBUG'));
 }
 
 ?>

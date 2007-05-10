@@ -35,17 +35,31 @@
 define('DOL_VERSION','2.2-dev');
 define('EURO',chr(128)); 
 
-// La fonction clearstatcache ne doit pas etre appelé de manière globale car ralenti.
+// La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.
 // Elle doit etre appelée uniquement par les pages qui ont besoin d'un cache fichier vidé
 // comme par exemple document.php
 //clearstatcache();     
 
-// Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
+// Definition des constantes syslog
 if (function_exists("define_syslog_variables"))
 {
     define_syslog_variables();
 }
-//error_reporting(E_ALL);
+else
+{
+	// Pour PHP sans syslog (comme sous Windows)
+	define('LOG_EMERG',0);
+	define('LOG_ALERT',1);
+	define('LOG_CRIT',2);
+	define('LOG_ERR',3);
+	define('LOG_WARNING',4);
+	define('LOG_NOTICE',5);
+	define('LOG_INFO',6);
+	define('LOG_DEBUG',7);
+}
+
+// Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
+// error_reporting(E_ALL);
 error_reporting(E_ALL ^ E_NOTICE);
 
 // Test si install ok

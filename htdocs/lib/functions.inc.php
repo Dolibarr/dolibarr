@@ -170,7 +170,8 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 
 	if ($conf->syslog->enabled)
 	{
-		if ($level > SYSLOG_LEVEL) return;
+		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled;
+		if ($level > $conf->global->SYSLOG_LEVEL) return;
 		
 		// Ajout user a la log
 		$login='???';
