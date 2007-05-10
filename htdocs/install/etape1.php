@@ -38,6 +38,9 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+dolibarr_install_syslog("etape1: Entering etape1.php page");
+
+
 pHeader($langs->trans("ConfigurationFile"),"etape2");
 
 $error = 0;
@@ -75,7 +78,7 @@ if ($_POST["action"] == "set")
 	{
 		if (! is_dir($main_dir))
 		{
-			dolibarr_install_syslog ("Repertoire '".$main_dir."' inexistant ou non accessible");
+			dolibarr_install_syslog("etape1: Repertoire '".$main_dir."' inexistant ou non accessible");
 			
 			print "<tr><td>";
 			print $langs->trans("ErrorDirDoesNotExists",$main_dir).'<br>';
@@ -162,7 +165,7 @@ if ($_POST["action"] == "set")
 	// Creation des sous-répertoires main_data_dir
 	if (! $error)
 	{
-		dolibarr_install_syslog ("Le dossier '".$main_dir."' existe");
+		dolibarr_install_syslog("etape1: Directory '".$main_dir."' exists");
 		
 		// Répertoire des documents
 		if (! is_dir($main_data_dir))
@@ -197,7 +200,7 @@ if ($_POST["action"] == "set")
 			{
 				if (is_dir($dir[$i]))
 				{
-					dolibarr_install_syslog ("Directory '".$dir[$i]."' exists");
+					dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' exists");
 				}
 				else
 				{
@@ -212,7 +215,7 @@ if ($_POST["action"] == "set")
 					}
 					else
 					{
-						dolibarr_install_syslog("Directory '".$dir[$i]."' created");
+						dolibarr_install_syslog("etape1: Directory '".$dir[$i]."' created");
 					}
 				}
 			}
@@ -242,7 +245,7 @@ if ($_POST["action"] == "set")
 		*/
 		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 		{
-			dolibarr_install_syslog("Creation de l'utilisateur: ".$dolibarr_main_db_user);
+			dolibarr_install_syslog("etape1: Creation de l'utilisateur: ".$dolibarr_main_db_user);
 
 			//print $conf->db->host." , ".$conf->db->name." , ".$conf->db->user." , ".$conf->db->pass;
 			$databasefortest=$conf->db->name;
@@ -278,7 +281,7 @@ if ($_POST["action"] == "set")
 					{
 						if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 						{
-							dolibarr_install_syslog("User already exists");
+							dolibarr_install_syslog("etape1: User already exists");
 							print '<tr><td>';
 							print $langs->trans("UserCreation").' : ';
 							print $dolibarr_main_db_user;
@@ -287,7 +290,7 @@ if ($_POST["action"] == "set")
 						}
 						else
 						{
-							dolibarr_install_syslog("Failed to create user");
+							dolibarr_install_syslog("etape1: Failed to create user");
 							print '<tr><td>';
 							print $langs->trans("UserCreation").' : ';
 							print $dolibarr_main_db_user;
@@ -326,7 +329,7 @@ if ($_POST["action"] == "set")
 		*/
 		if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
 		{
-			dolibarr_install_syslog ("Creation de la base : ".$dolibarr_main_db_name);
+			dolibarr_install_syslog("etape1: Creation de la base : ".$dolibarr_main_db_name);
 
 			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot);
 
@@ -384,7 +387,7 @@ if ($_POST["action"] == "set")
 		*/
 		if (! $error)
 		{
-			dolibarr_install_syslog("connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name);
+			dolibarr_install_syslog("etape1: connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name);
 			//print "connexion de type=".$conf->db->type." sur host=".$conf->db->host." user=".$conf->db->user." name=".$conf->db->name;
 
 			$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
@@ -394,7 +397,7 @@ if ($_POST["action"] == "set")
 				// si accès serveur ok et accès base ok, tout est ok, on ne va pas plus loin, on a même pas utilisé le compte root.
 				if ($db->database_selected == 1)
 				{
-					dolibarr_install_syslog("la connexion au serveur par le user ".$conf->db->user." est reussie");
+					dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est reussie");
 					print "<tr><td>";
 					print $langs->trans("ServerConnection")." : ";
 					print $dolibarr_main_db_host;
@@ -402,7 +405,7 @@ if ($_POST["action"] == "set")
 					print $langs->trans("OK");
 					print "</td></tr>";
 
-					dolibarr_install_syslog("la connexion a la base : ".$conf->db->name.",par le user : ".$conf->db->user." est reussie");
+					dolibarr_install_syslog("etape1: la connexion a la base : ".$conf->db->name.",par le user : ".$conf->db->user." est reussie");
 					print "<tr><td>";
 					print $langs->trans("DatabaseConnection")." : ";
 					print $dolibarr_main_db_name;
@@ -414,7 +417,7 @@ if ($_POST["action"] == "set")
 				}
 				else
 				{
-					dolibarr_install_syslog("la connection au serveur par le user ".$conf->db->user." est reussie");
+					dolibarr_install_syslog("etape1: la connection au serveur par le user ".$conf->db->user." est reussie");
 					print "<tr><td>";
 					print $langs->trans("ServerConnection")." : ";
 					print $dolibarr_main_db_host;
@@ -422,7 +425,7 @@ if ($_POST["action"] == "set")
 					print $langs->trans("OK");
 					print "</td></tr>";
 
-					dolibarr_install_syslog("la connexion a la base ".$conf->db->name.",par le user ".$conf->db->user." a échoué");
+					dolibarr_install_syslog("etape1: la connexion a la base ".$conf->db->name.",par le user ".$conf->db->user." a échoué");
 					print "<tr><td>";
 					print $langs->trans("DatabaseConnection")." : ";
 					print $dolibarr_main_db_name;
@@ -441,7 +444,7 @@ if ($_POST["action"] == "set")
 			}
 			else
 			{
-				dolibarr_install_syslog("la connection au serveur par le user ".$conf->db->user." est rate");
+				dolibarr_install_syslog("etape1: la connection au serveur par le user ".$conf->db->user." est rate");
 				print "<tr><td>";
 				print $langs->trans("ServerConnection")." : ";
 				print $dolibarr_main_db_host;

@@ -54,6 +54,7 @@ if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pqsql") $choix=2;
 
+dolibarr_install_syslog("etape2: Entering etape2.php page");
 
 
 pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
@@ -90,7 +91,7 @@ if ($_POST["action"] == "set")
         if($db->database_selected == 1)
         {
 
-            dolibarr_install_syslog("Connexion réussie à la base : $dolibarr_main_db_name");
+            dolibarr_install_syslog("etape2: Connexion réussie à la base : $dolibarr_main_db_name");
         }
         else
         {

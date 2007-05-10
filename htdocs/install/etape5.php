@@ -39,7 +39,7 @@ $langs->load("install");
 $success=0;
 
 
-dolibarr_install_syslog("Entering etape5.php page");
+dolibarr_install_syslog("etape5: Entering etape5.php page");
 
 
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")

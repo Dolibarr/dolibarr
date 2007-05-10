@@ -35,6 +35,8 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("install");
 
+dolibarr_install_syslog("licence: Entering licence.php page");
+
 
 pHeader($langs->trans("License"),"fileconf");
 

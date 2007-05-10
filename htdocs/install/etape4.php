@@ -43,6 +43,9 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
+dolibarr_install_syslog("etape4: Entering etape4.php page");
+
+
 
 pHeader($langs->trans("AdminAccountCreation"),"etape5");
 

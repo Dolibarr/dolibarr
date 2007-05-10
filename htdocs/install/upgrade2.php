@@ -62,7 +62,7 @@ if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
 
 
-dolibarr_install_syslog("Entering upgrade2.php page");
+dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");
 
 
 pHeader($langs->trans('DataMigration'),'etape5','upgrade');
@@ -96,7 +96,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	{
 		if($db->database_selected == 1)
 		{
-			dolibarr_install_syslog('Database connection successfull : '.$dolibarr_main_db_name);
+			dolibarr_install_syslog('upgrade2: Database connection successfull : '.$dolibarr_main_db_name);
 		}
 		else
 		{
@@ -627,7 +627,7 @@ function migrate_price_facture($db,$langs,$conf)
     {
 		$db->begin();
 
-		dolibarr_install_syslog("Upgrade data for invoice");
+		dolibarr_install_syslog("upgrade2: Upgrade data for invoice");
 
 	 	print '<tr><td colspan="4">';
 
@@ -671,7 +671,7 @@ function migrate_price_facture($db,$langs,$conf)
 					$facligne->total_tva = $total_tva;
 					$facligne->total_ttc = $total_ttc;
 					
-					dolibarr_install_syslog("Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+					dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
 					$facligne->update_total();
 															
@@ -733,7 +733,7 @@ function migrate_price_propal($db,$langs,$conf)
     {
 		$db->begin();
 
-		dolibarr_install_syslog("Upgrade data for propal");
+		dolibarr_install_syslog("upgrade2: Upgrade data for propal");
 
 	 	print '<tr><td colspan="4">';
 
@@ -777,7 +777,7 @@ function migrate_price_propal($db,$langs,$conf)
 					$propalligne->total_tva = $total_tva;
 					$propalligne->total_ttc = $total_ttc;
 					
-					dolibarr_install_syslog("Line $rowid: propalid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+					dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
 					$propalligne->update_total($rowid);
 
@@ -839,7 +839,7 @@ function migrate_price_commande($db,$langs,$conf)
     {
 		$db->begin();
 
-		dolibarr_install_syslog("Upgrade data for order");
+		dolibarr_install_syslog("upgrade2: Upgrade data for order");
 
 	 	print '<tr><td colspan="4">';
 
@@ -883,7 +883,7 @@ function migrate_price_commande($db,$langs,$conf)
 					$commandeligne->total_tva = $total_tva;
 					$commandeligne->total_ttc = $total_ttc;
 					
-					dolibarr_install_syslog("Line $rowid: commandeid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+					dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
 					print ". ";
 					$commandeligne->update_total($rowid);
 
