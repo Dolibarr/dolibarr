@@ -361,6 +361,7 @@ SendAcknowledgementByMail=Send Ack. by mail
 NoEMail=No EMail
 Owner=Owner
 DetectedVersion=Detected version
+FollowingConstantsWillBeSubstituted=Following constants will be substitute with corresponding value.
 # Countries
 CountryFR=France
 CountryBE=Belgium
