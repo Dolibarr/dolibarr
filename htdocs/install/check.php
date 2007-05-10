@@ -41,7 +41,7 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 
 
-dolibarr_install_syslog("Dolibarr install/upgrade process started");
+dolibarr_install_syslog("check: Dolibarr install/upgrade process started");
 
 
 pHeader($langs->trans("DolibarrWelcome"),"");   // Etape suivante = license
@@ -111,7 +111,7 @@ else
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
 {
-	dolibarr_install_syslog("conf file '$conffile' already exists");
+	dolibarr_install_syslog("check: conf file '$conffile' already exists");
     $confexists=1;
     include_once($conffile);
     
@@ -122,17 +122,30 @@ if (is_readable($conffile) && filesize($conffile) > 8)
 else
 {
     // Si non on le crée        
-	dolibarr_install_syslog("we try to creat conf file '$conffile'");
+	dolibarr_install_syslog("check: we try to creat conf file '$conffile'");
     $confexists=0;
-    $fp = @fopen($conffile, "w");
-    if ($fp)
-    {
-        @fwrite($fp, '<?php');
-        @fputs($fp,"\n");
-        @fputs($fp,"?>");
-        fclose($fp);
+
+	# First we try by copying example
+	if (copy($conffile.".example", $conffile))
+	{
+		# Success
+		dolibarr_install_syslog("check: copied file ".$conffile.".example into ".$conffile." done successfully.");
+	}
+	else
+	{
+		# If failed, we try to create an empty file
+		dolibarr_install_syslog("check: failed to copy file ".$conffile.".example into ".$conffile.". We try to create it.");
+
+		$fp = @fopen($conffile, "w");
+		if ($fp)
+		{
+			@fwrite($fp, '<?php');
+			@fputs($fp,"\n");
+			@fputs($fp,"?>");
+			fclose($fp);
+		}
     }
-    
+
     // First install, on ne peut pas upgrader
     $allowupgrade=0;
 }
