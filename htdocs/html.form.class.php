@@ -2206,24 +2206,35 @@ class Form
 
 
     /**
-     *  \brief      Selection des unites de poids
+     *  \brief      Selection des unites de mesure
      *  \param      name                Nom champ html
+     *  \param      measuring_style     Le style de mesure : weight, volume,...
      *  \param      default             Forçage de l'unite
      *  \remarks pour l'instant on ne definit pas les unites dans la base
      */
-    function select_weight_units($name='weight_units', $default='0', $adddefault=0)
+    function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
     {
 		global $langs,$conf,$mysoc;
 		$langs->load("other");
 		
-		$units[3]  = $langs->trans("WeightUnitmg");
-		$units[0]  = $langs->trans("WeightUnitkg");
-		$units[-3] = $langs->trans("WeightUnitg");
+		if ($measuring_style == 'weight')
+		{
+			$measuring_units[3] = $langs->trans("WeightUnitton");
+      $measuring_units[0] = $langs->trans("WeightUnitkg");
+      $measuring_units[-3] = $langs->trans("WeightUnitg");
+      $measuring_units[-6] = $langs->trans("WeightUnitmg");
+    }
+    else if ($measuring_style == 'volume')
+    {
+  	  $measuring_units[0] = $langs->trans("VolumeUnitm3");
+      $measuring_units[-3] = $langs->trans("VolumeUnitcm3");
+      $measuring_units[-6] = $langs->trans("VolumeUnitmm3");
+    }
 		
 		print '<select class="flat" name="'.$name.'">';
 		if ($adddefault) print '<option value="0">'.$langs->trans("Default").'</option>';
 		
-		foreach ($units as $key => $value)
+		foreach ($measuring_units as $key => $value)
 		{
 			print '<option value="'.$key.'"';
 			if ($key == $default)
@@ -2233,8 +2244,14 @@ class Form
 			print '>'.$value.'</option>';
 		}
 		print '</select>';
-    }
-
+    }  
+  
+    /**
+     *
+     *
+     *
+     *
+     */
     function load_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
     {
       global $langs,$conf,$mysoc;

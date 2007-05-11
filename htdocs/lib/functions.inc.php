@@ -2299,25 +2299,39 @@ function weight_convert($weight,&$from_unit,$to_unit)
 
   return $weight;
 }
+
 /**
    \brief   Renvoi le texte d'une unite
-   \param   int      Unit
-   \return  string	      Unite
+   \param   int                 Unit
+   \param   measuring_style     Le style de mesure : weight, volume,...
+   \return  string	            Unite
    \todo    gerer les autres unités de mesure comme la livre, le gallon, le litre, ...
 */
-function weight_units_string($unit)
+function measuring_units_string($unit,$measuring_style='')
 {
   /* Note Rodo aux dev :)
    * Ne pas insérer dans la base de données ces valeurs
    * cela surchagerait inutilement d'une requete supplémentaire
    * pour quelque chose qui est somme toute peu variable
    */
-  $weight_string[3] = 'Tonnes';
-  $weight_string[0] = 'kg';
-  $weight_string[-3] = 'g';
-  $weight_string[-6] = 'mg';
+   
+   global $langs;
+   
+  if ($measuring_style == 'weight')
+  {
+  	$measuring_units[3] = $langs->trans("WeightUnitton");
+    $measuring_units[0] = $langs->trans("WeightUnitkg");
+    $measuring_units[-3] = $langs->trans("WeightUnitg");
+    $measuring_units[-6] = $langs->trans("WeightUnitmg");
+  }
+  else if ($measuring_style == 'volume')
+  {
+  	$measuring_units[0] = $langs->trans("VolumeUnitm3");
+    $measuring_units[-3] = $langs->trans("VolumeUnitcm3");
+    $measuring_units[-6] = $langs->trans("VolumeUnitmm3");
+  }
 
-  return $weight_string[$unit];
+  return $measuring_units[$unit];
 }
 
 /**

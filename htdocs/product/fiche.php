@@ -86,6 +86,8 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   $product->canvas             = $_POST["canvas"];
   $product->new_weight         = $_POST["weight"];
   $product->new_weight_units   = $_POST["weight_units"];
+  $product->new_volume         = $_POST["volume"];
+  $product->new_volume_units   = $_POST["volume_units"];
   // MultiPrix
   if($conf->global->PRODUIT_MULTIPRICES == 1)
     {
@@ -149,6 +151,8 @@ if ($_POST["action"] == 'update' &&
       $product->canvas             = $_POST["canvas"];
       $product->new_weight         = $_POST["weight"];
       $product->new_weight_units   = $_POST["weight_units"];
+      $product->new_volume         = $_POST["volume"];
+      $product->new_volume_units   = $_POST["volume_units"];
       
       if ($product->check())
 	{
@@ -520,10 +524,14 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	}
       else
 	{
-	  // Le poids ne concerne que les produits et pas les services
+	  // Le poids et le volume ne concerne que les produits et pas les services
 	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	  print '<input name="weight" size="4" value="">';
-	  print $html->select_weight_units("weight_units");
+	  print $html->select_measuring_units("weight_units","weight");
+	  print '</td></tr>';
+	  print '<tr><td>'.$langs->trans("volume").'</td><td>';
+	  print '<input name="volume" size="4" value="">';
+	  print $html->select_measuring_units("volume_units","volume");
 	  print '</td></tr>';
 	}
       
@@ -757,32 +765,43 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  // Durée
 	  if ($product->isservice())
+	  {
+	  	print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
+	    if ($product->duration_value > 1)
 	    {
-	      print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
-	      if ($product->duration_value > 1)
-		{
-		  $dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
-		}
-	      else {
-		$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
-	      }
-	      print $langs->trans($dur[$product->duration_unit])."&nbsp;";
+	    	$dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+	    }
+	    else
+	    {
+	    	$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+	    }
+	    print $langs->trans($dur[$product->duration_unit])."&nbsp;";
 	      
-	      print '</td></tr>';
-	    }
+	    print '</td></tr>';
+	  }
 	  else
-	    {
-	      print '<tr><td>'.$langs->trans("Weight").'</td><td>';
-	      if ($product->weight != '')
-		{
-		  print $product->weight." ".weight_units_string($product->weight_units);
-		}
-	      else
-		{
-		  print '&nbsp;';
-		}
-	      print "</td></tr>\n";
-	    }
+	  {
+	    print '<tr><td>'.$langs->trans("Weight").'</td><td>';
+	    if ($product->weight != '')
+		  {
+		    print $product->weight." ".measuring_units_string($product->weight_units,"weight");
+		  }
+	    else
+		  {
+		    print '&nbsp;';
+		  }
+	    print "</td></tr>\n";
+	    print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+	    if ($product->volume != '')
+		  {
+		    print $product->volume." ".measuring_units_string($product->volume_units,"volume");
+		  }
+	    else
+		  {
+		    print '&nbsp;';
+		  }
+	    print "</td></tr>\n";
+	  }
 	  // Note
 	  print '<tr><td valign="top">'.$langs->trans("Note").'</td><td>'.nl2br($product->note).'</td></tr>';
 	  print "</table>\n";
@@ -877,10 +896,14 @@ if ($_GET["id"] || $_GET["ref"])
 	    }
 	  else
 	    {
-	      // Le poids ne concerne que les produits et pas les services
+	      // Le poids et le volume ne concerne que les produits et pas les services
 	      print '<tr><td>'.$langs->trans("Weight").'</td><td>';
 	      print '<input name="weight" size="5" value="'.$product->weight.'">';
-	      print $html->select_weight_units("weight_units",$product->weight_units);
+	      print $html->select_measuring_units("weight_units", "weight", $product->weight_units);
+	      print '</td></tr>';
+	      print '<tr><td>'.$langs->trans("Volume").'</td><td>';
+	      print '<input name="volume" size="5" value="'.$product->volume.'">';
+	      print $html->select_measuring_units("volume_units", "volume", $product->volume_units);
 	      print '</td></tr>';
 	    }
 

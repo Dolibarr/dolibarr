@@ -45,5 +45,7 @@ create table llx_product
   gencode            varchar(255) DEFAULT NULL,
   weight             float        DEFAULT NULL,
   weight_units       tinyint      DEFAULT NULL,
+  volume             float        DEFAULT NULL,
+  volume_units       tinyint      DEFAULT NULL,
   canvas             varchar(15)  DEFAULT ''
 )type=innodb;

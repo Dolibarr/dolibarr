@@ -59,9 +59,14 @@ FeaturesSupported=Fonctionnalités supportées
 Width=Largeur
 Height=Hauteur
 Weight=Poids
-WeightUnitmg=tonnes
+WeightUnitton=tonnes
 WeightUnitkg=kg
 WeightUnitg=g
+WeightUnitmg=mg
+Volume=Volume
+VolumeUnitm3=m3
+VolumeUnitcm3=cm3
+VolumeUnitmm3=mm3
 BugTracker=Bug tracker
 ##### Webcal #####
 LoginWebcal=Login Webcalendar

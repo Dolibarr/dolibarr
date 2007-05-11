@@ -65,6 +65,14 @@ class Product
   // Statut indique si le produit est en vente '1' ou non '0'
   var $status;
   
+  //! Unités de mesure
+  var $new_weight;
+  var $weight;
+  var $weight_units;
+  var $new_volume;
+  var $volume;
+  var $volume_units;
+  
   var $stats_propale=array();
   var $stats_commande=array();
   var $stats_contrat=array();
@@ -299,6 +307,8 @@ class Product
     $this->stock_loc = trim($this->stock_loc);
     $this->new_weight = price2num($this->new_weight);
     $this->new_weight_units = trim($this->new_weight_units);
+    $this->new_volume = price2num($this->new_volume);
+    $this->new_volume_units = trim($this->new_volume_units);
 
     $sql = "UPDATE ".MAIN_DB_PREFIX."product ";
     $sql .= " SET label = '" . addslashes($this->libelle) ."'";
@@ -307,6 +317,8 @@ class Product
     $sql .= ",envente = " . $this->status;
     $sql .= ",weight = " . ($this->new_weight!='' ? "'".$this->new_weight."'" : 'null');
     $sql .= ",weight_units = '" . $this->new_weight_units."'";
+    $sql .= ",volume = " . ($this->new_volume!='' ? "'".$this->new_volume."'" : 'null');
+    $sql .= ",volume_units = '" . $this->new_volume_units."'";
     $sql .= ",seuil_stock_alerte = '" . $this->seuil_stock_alerte."'";
     $sql .= ",description = '" . addslashes($this->description) ."'";
     $sql .= ",stock_loc   = '" . addslashes($this->stock_loc) ."'";
@@ -933,7 +945,7 @@ class Product
     
     $sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_base_type, tva_tx, envente,";
     $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
-    $sql.= " stock_commande, stock_loc, weight, weight_units";
+    $sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -963,6 +975,8 @@ class Product
 	$this->stock_loc          = $result["stock_loc"];
 	$this->weight             = $result["weight"];
 	$this->weight_units       = $result["weight_units"];
+	$this->volume             = $result["volume"];
+	$this->volume_units       = $result["volume_units"];
 
 	$this->stock_in_command   = $result["stock_commande"];
 
