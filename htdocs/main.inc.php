@@ -767,7 +767,7 @@ function llxFooter($foot='',$limitIEbug=1)
     }
 
     // Juste pour eviter bug IE qui reorganise mal div precedents si celui-ci absent
-    if ($limitIEbug) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
+    if ($limitIEbug && ! $conf->browser->firefox) print "\n".'<div class="tabsAction">&nbsp;</div>'."\n";
     
     print "</body>\n";
     print "</html>\n";
