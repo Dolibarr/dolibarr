@@ -41,7 +41,7 @@ my($dbh, $sth, $hsr, $sthi, $i, $sqli, $sql, $stha, $digest);
 print "Running in verbose mode level $verbose\n" if $verbose>0;
 
 my $sl = Sys::Syslog::setlogsock('unix');
-$sl = Sys::Syslog::openlog('send-newsletter.pl', 'pid', $SYSLOG_LEVEL);
+$sl = Sys::Syslog::openlog('import-csv.pl', 'pid', $SYSLOG_LEVEL);
 $sl = Sys::Syslog::syslog('info', 'Start');
 
 print "Start\n"  if $verbose>0;
@@ -153,15 +153,15 @@ __END__
 
 =head1 NAME
 
-send-newsletter.pl - 
+import-csv.pl - 
 
 =head1 SYNOPSIS
 
-send-newsletter.pl [-v]
+import-csv.pl [-v]
 
 =head1 DESCRIPTION
 
-send-newsletter.pl send newsletter from DB
+import-csv.pl import companies from a file into DB
 
 =head1 OPTIONS
 
