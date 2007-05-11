@@ -662,7 +662,8 @@ if ($socid > 0)
             print "</tr>\n";
             $i++;
         }
-        $db->free();
+
+        $db->free($result);
     }
     else
     {

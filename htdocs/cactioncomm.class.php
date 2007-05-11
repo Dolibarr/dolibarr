@@ -33,7 +33,7 @@
 	    \brief      Classe permettant la gestion des différents types d'actions commerciales
 */
 
-class CActioncomm {
+class CActionComm {
   var $db;
 
   var $id;
@@ -52,7 +52,7 @@ class CActioncomm {
    *    \brief      Constructeur
    *    \param      DB          Handler d'accès base de donnée
    */
-  function CActioncomm($DB)
+  function CActionComm($DB)
     {
       $this->db = $DB;
     }

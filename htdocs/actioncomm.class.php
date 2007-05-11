@@ -27,6 +27,8 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/cactioncomm.class.php');
+
 
 /**     \class      ActionComm
 	    \brief      Classe permettant la gestion des actions commerciales
@@ -34,12 +36,14 @@
 
 class ActionComm
 {
-    var $id;
     var $db;
+    var $error;
     
     var $type_id;
     var $type_code;
     var $type;
+	
+    var $id;
     var $label;
     var $datec;			// Date creation enregistrement (datec)
     var $datem;			// Date modif enregistrement (tms)
@@ -53,7 +57,6 @@ class ActionComm
     var $contact;
     var $note;
     var $percent;
-    var $error;
     
     /**
      *      \brief      Constructeur
@@ -82,6 +85,31 @@ class ActionComm
         if (! $this->percent)  $this->percent = 0;
         if (! $this->priority) $this->priority = 0;
         
+		$this->db->begin();
+
+		if (! $this->type_id && $this->type_code)
+		{
+			# Get id from code
+			$cactioncomm=new CActionComm($this->db);
+			$result=$cactioncomm->fetch($this->type_code);
+			if ($result)
+			{
+				$this->type_id=$cactioncomm->id;
+			}
+			else
+			{
+				$this->error=$cactioncomm->error;
+				$this->db->rollback();
+				return -1;
+			}
+		}
+		
+		if (! $this->type_id)
+		{
+			$this->error="ErrorWrongParameters";
+			return -1;
+		}
+		
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm";
         $sql.= "(datec,";
         if ($this->datep) $sql.= "datep,";
@@ -111,12 +139,13 @@ class ActionComm
             $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
             // Fin appel triggers
     
+			$this->db->commit();
             return $this->id;
         }
         else
         {
-			$this->error=$this->db->error();
-            dolibarr_print_error($this->db);
+			$this->error=$this->db->lasterror().' sql='.$sql;
+			$this->db->rollback();
             return -1;
         }
     
@@ -135,7 +164,7 @@ class ActionComm
 		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
 		$sql.= " fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande,";
-		$sql.= " c.id as type_id, c.code, c.libelle";
+		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
 	
@@ -150,7 +179,7 @@ class ActionComm
 	
 				$this->id        = $obj->id;
 				$this->type_id   = $obj->type_id;
-				$this->type_code = $obj->code;
+				$this->type_code = $obj->type_code;
 				$transcode=$langs->trans("Action".$obj->code);
 				$type_libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
 				$this->type = $type_libelle;

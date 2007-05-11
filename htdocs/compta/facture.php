@@ -961,7 +961,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						$subject = $langs->trans('Bill').' '.$fac->ref;
 					}
 
-					$actiontypeid=9;
+					$actiontypecode='AC_FAC';
 					$actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
 
 					if ($message)
@@ -975,7 +975,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				if ($_POST['action'] == 'relance')
 				{
 					$subject = 'Relance facture '.$fac->ref;
-					$actiontypeid=10;
+					$actiontypecode='AC_FAC';
 					$actionmsg='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
 					if ($message) {
 						$actionmsg.='Texte utilisé dans le corps du message:<br>';
@@ -1011,7 +1011,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
 						require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 						$actioncomm = new ActionComm($db);
-						$actioncomm->type_id     = $actiontypeid;
+						$actioncomm->type_code   = $actiontypecode;
 						$actioncomm->label       = $actionmsg2;
 						$actioncomm->note        = $actionmsg;
 						$actioncomm->date        = time();	// L'action est faite maintenant
