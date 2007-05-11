@@ -64,9 +64,9 @@ WeightUnitkg=kg
 WeightUnitg=g
 WeightUnitmg=mg
 Volume=Volume
-VolumeUnitm3=m3
-VolumeUnitcm3=cm3
-VolumeUnitmm3=mm3
+VolumeUnitm3=m<SUP>3</SUP>
+VolumeUnitcm3=cm<SUP>3</SUP>
+VolumeUnitmm3=mm<SUP>3</SUP>
 BugTracker=Bug tracker
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
