@@ -331,8 +331,6 @@ DictionnaryPaymentModes=Modes de paiements
 DictionnaryTypeContact=Types de contacts
 VATReceivedOnly=Taux special non facturé
 VATManagement=Gestion TVA
-VATIsUsed=Assujéti à TVA
-VATIsNotUsed=Non assujéti à TVA
 VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard suivante:<br>Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
 VATIsNotUsedDesc=Le taux de TVA proposé par défaut est 0. C'est le cas d'associations, particuliers ou certaines petites sociétés.
 VATIsUsedExampleFR=En France, il s'agit des sociétés ou organismes ayant choisi un régime fiscale réel (Réel simplifié ou Réel normal), régime dans lequel la TVA est déclarée.
