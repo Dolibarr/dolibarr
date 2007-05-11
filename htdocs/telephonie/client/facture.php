@@ -97,7 +97,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 	      }
 	      if ($_POST["action"] == 'relance') 	{
 		$subject = "Relance facture $fac->ref";
-		$actiontypeid=10;
+		$actiontypeid=9;
 		$actionmsg="Mail envoyé par $from à $sendto.<br>";
 		if ($message) {
 		  $actionmsg.="Texte utilisé dans le corps du message:<br>";
