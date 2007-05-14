@@ -1693,7 +1693,7 @@ function print_fiche_titre($titre, $mesg='', $picto='')
 /**
 		\brief  Effacement d'un fichier
 		\param	file			Fichier a effacer ou masque de fichier a effacer
-		\param	int				true ou false
+		\param	boolean			true if file deleted, false if error
 */
 function dol_delete_file($file)
 {
