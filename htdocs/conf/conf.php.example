@@ -93,6 +93,31 @@ $dolibarr_main_db_pass="";
 $dolibarr_main_db_type="";
 
 
+# dolibarr_main_authentication
+# This parameter contains the way authentication is done.
+# If value "ldap" is used, you must also set parameters dolibarr_main_auth_ldap_*
+# Default: dolibarr
+# Possible values: http, dolibarr, ldap
+# Examples:
+# $dolibarr_main_authentication="http";
+# $dolibarr_main_authentication="dolibarr";
+# $dolibarr_main_authentication="ldap";
+#
+
+
+# Parameters used to setup LDAP authentication.
+# Uncomment them if dolibarr_main_authentication = "ldap"
+#
+# $dolibarr_main_auth_ldap_login_attribute="loginfield";	# uid or samaccountname for active directory
+# $dolibarr_main_auth_ldap_host="127.0.0.1";
+# $dolibarr_main_auth_ldap_port="389";
+# $dolibarr_main_auth_ldap_version="3";
+# $dolibarr_main_auth_ldap_dn="ou=adherents,ou=people,dc=parinux,dc=org";
+# $dolibarr_main_auth_ldap_admin_login=""					# Required only if anonymous bind disabled
+# $dolibarr_main_auth_ldap_admin_pass="";					# Required only if anonymous bind disabled
+# $dolibarr_main_auth_ldap_debug="false";
+
+
 # Parameters not used yet
 $dolibarr_smarty_libs_dir="";
 $dolibarr_smarty_compile="";

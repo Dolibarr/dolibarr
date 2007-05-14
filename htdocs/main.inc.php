@@ -345,10 +345,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	$result=$user->fetch($login);
 	if ($result <= 0)
 	{
-		//$langs->load('main');
-		//dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login));
-		dolibarr_syslog('ErrorCantLoadUserFromDolibarrDatabase');
 		session_destroy();
+		dolibarr_syslog('User not found, connexion refused');
 
 		// On repart sur page accueil
 		session_name($sessionname);
