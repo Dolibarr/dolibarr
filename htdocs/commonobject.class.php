@@ -363,6 +363,17 @@ class CommonObject
        $user->fetch();
        $this->user = $user; 	
     }
+    
+ /**
+   *		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->adresse
+   *		\param      userid 		Id du contact
+   */
+	function fetch_adresse_livraison($deliveryaddressid)
+    {
+      $address = new Societe($this->db);
+      $address->fetch_adresse_livraison($deliveryaddressid);
+      $this->deliveryaddress = $address;
+    }
 
 }
 

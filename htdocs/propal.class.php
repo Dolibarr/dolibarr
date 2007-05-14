@@ -427,20 +427,6 @@ class Propal extends CommonObject
         }
     }
 
-
-	/**
-	*
-	*
-	*/
-	function fetch_adresse_livraison($id)
-    {
-    	$idadresse = $id;
-      $adresse = new Societe($this->db);
-      $adresse->fetch_adresse_livraison($idadresse);
-      $this->adresse = $adresse;
-    }
-
-
     /**
      *      \brief      Supprime une ligne de detail
      *      \param      idligne     Id de la ligne detail à supprimer

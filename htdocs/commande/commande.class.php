@@ -1163,20 +1163,7 @@ class Commande extends CommonObject
 	if ($ligne->fk_product_type == 0) $nb++;
       }
     return $nb;
-  }	
-	
-  /**
-   *
-   *
-   */
-	function fetch_adresse_livraison($id)
-    {
-    	$idadresse = $id;
-      $adresse = new Societe($this->db);
-      $adresse->fetch_adresse_livraison($idadresse);
-      $this->adresse = $adresse;
-    }
-
+  }
 
     /**
      *      \brief      Charge tableau avec les expéditions par ligne
