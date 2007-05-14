@@ -159,7 +159,7 @@ if ($resql)
 		print "</tr>\n";
 		$i++;
 	}
-	$db->free($result);
+	$db->free($resql);
 
 	print "</table>";
 
