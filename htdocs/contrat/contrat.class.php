@@ -90,21 +90,23 @@ class Contrat extends CommonObject
      *      \param      user        Objet User qui avtice le contrat
      *      \param      line_id     Id de la ligne de detail à activer
      *      \param      date        Date d'ouverture
-     *      \param      date_end     Date fin prévue
+     *      \param      date_end    Date fin prévue
      *      \return     int         < 0 si erreur, > 0 si ok
      */
     function active_line($user, $line_id, $date, $date_end='')
     {
         global $langs,$conf;
         
-        // statut actif : 4
+        $this->db->begin();
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET statut = 4,";
         $sql.= " date_ouverture = '".$this->db->idate($date)."',";
         if ($date_end) $sql.= " date_fin_validite = '".$this->db->idate($date_end)."',";
-        $sql.= " fk_user_ouverture = ".$user->id;
-        $sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3) ";
+        $sql.= " fk_user_ouverture = ".$user->id.",";
+		$sql.= " date_cloture = null";
+        $sql.= " WHERE rowid = ".$line_id . " AND (statut = 0 OR statut = 3 OR statut = 5)";
     
+		dolibarr_syslog("Contrat::active_line sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
@@ -114,11 +116,14 @@ class Contrat extends CommonObject
             $result=$interface->run_triggers('CONTRACT_SERVICE_ACTIVATE',$this,$user,$langs,$conf);
             // Fin appel triggers
     
+			$this->db->commit();
             return 1;
         }
         else
         {
-            $this->error=$this->db->error();
+            $this->error=$this->db->lasterror();
+			dolibarr_syslog("Contrat::active_line error ".$this->error);
+			$this->db->rollback();
             return -1;
         }
     }
@@ -1174,7 +1179,7 @@ class ContratLigne
     var $price;
     var $fk_product;
                 
-    var $statut;  
+    var $statut;  				// 4=actif, 5=clos
     var $date_debut_prevue;
     var $date_debut_reel;
     var $date_fin_prevue;
