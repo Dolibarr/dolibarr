@@ -173,6 +173,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
+		migrate_delete_old_files($db,$langs,$conf);
+		
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
     	$db->commit();
@@ -994,6 +996,19 @@ function migrate_modeles($db,$langs,$conf)
 	}
 	
 	//print $langs->trans("AlreadyDone");
+}
+
+/*
+ * Supprime fichiers obsoletes
+ */
+function migrate_delete_old_files($db,$langs,$conf)
+{
+    //print '<br>';
+    //print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
+	if (file_exists(DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php-NORUN'))
+	{
+		@dol_delete_file(DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php');
+	}
 }
 
 ?>
