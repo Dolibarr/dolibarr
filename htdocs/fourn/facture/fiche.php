@@ -683,20 +683,24 @@ else
 			 */
             print '<br>';
 			print '<table class="noborder" width="100%">';
-			print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
-			print '<td align="right">'.$langs->trans('Qty').'</td>';
-			print '<td align="right">'.$langs->trans('TotalHT').'</td>';
-			print '<td align="right">'.$langs->trans('VATRate').'</td>';
-			print '<td align="right">'.$langs->trans('VAT').'</td>';
-			print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
-			print '<td>&nbsp;</td>';
-			print '<td>&nbsp;</td>';
-			print '</tr>';
 			$var=1;
 			for ($i = 0 ; $i < sizeof($fac->lignes) ; $i++)
 			{
+				if ($i == 0)
+				{
+					print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
+					print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+					print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td align="right">'.$langs->trans('TotalHT').'</td>';
+					print '<td align="right">'.$langs->trans('VATRate').'</td>';
+					print '<td align="right">'.$langs->trans('VAT').'</td>';
+					print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					print '</tr>';
+				}
+				
 				$var=!$var;
 				// Ligne en modification
 				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
@@ -711,7 +715,7 @@ else
 					}
 					else
 					{
-						print '<input size="30" name="label" type="text" value="'.$fac->lignes[$i]->description.'">';
+						print '<textarea class="flat" cols="70" rows="'.ROWS_2.'" name="label">'.$fac->lignes[$i]->description.'</textarea>';
 					}
 					print '</td>';
 					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
@@ -743,7 +747,7 @@ else
 					}
 					else
 					{
-						print $fac->lignes[$i]->description;
+						print nl2br($fac->lignes[$i]->description);
 					}
 					print '</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
@@ -762,6 +766,18 @@ else
 
 			if ($fac->statut == 0 && $_GET['action'] != 'mod_ligne')
 			{
+				print '<tr class="liste_titre"><td>'.$langs->trans('Label').'</td>';
+				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+				print '<td align="right">'.$langs->trans('PriceUTTC').'</td>';
+				print '<td align="right">'.$langs->trans('Qty').'</td>';
+				print '<td align="right">'.$langs->trans('TotalHT').'</td>';
+				print '<td align="right">'.$langs->trans('VATRate').'</td>';
+				print '<td align="right">'.$langs->trans('VAT').'</td>';
+				print '<td align="right">'.$langs->trans('TotalTTC').'</td>';
+				print '<td>&nbsp;</td>';
+				print '<td>&nbsp;</td>';
+				print '</tr>';
+
 				/* Nouvelle ligne */
 				$var=!$var;
 				print '<form action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';
@@ -769,7 +785,7 @@ else
 				print '<input type="hidden" name="socid" value="'.$societe->id.'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				print '<input size="30" name="label" type="text">';
+				print '<textarea class="flat" cols="70" rows="'.ROWS_2.'" name="label"></textarea>';
 				print '</td>';
 				print '<td align="right">';
 				print '<input size="6" name="amount" type="text">';
