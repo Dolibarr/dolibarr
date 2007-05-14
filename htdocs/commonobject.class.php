@@ -365,7 +365,7 @@ class CommonObject
     }
     
  /**
-   *		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->adresse
+   *		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->deliveryaddress
    *		\param      userid 		Id du contact
    */
 	function fetch_adresse_livraison($deliveryaddressid)
