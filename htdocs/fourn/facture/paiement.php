@@ -164,7 +164,6 @@ if ($action == 'add_paiement')
 		}
 		else
 		{
-			$this->error=$paiement->error;
 			$error++;
 		}
 
