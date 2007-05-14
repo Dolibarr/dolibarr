@@ -153,7 +153,7 @@ if ($_GET["id"] || $_GET["ref"])
 	// Formulaire ajout dans une categorie
 	if ($user->rights->produit->creer)
 	{
-
+	  print '<br/>';
 	  print '<form method="post" action="'.DOL_URL_ROOT.'/product/categorie.php?id='.$product->id.'">';
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>';

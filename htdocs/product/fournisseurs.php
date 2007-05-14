@@ -230,22 +230,23 @@ if ($_GET["id"] || $_GET["ref"])
 					$product->fetch_fourn_data($_GET["id_fourn"]);
 					print '<input type="hidden" name="ref_fourn" value="'.$product->ref_fourn.'">';
 				} else {
-					print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="3">';
+					print '<tr><td>'.$langs->trans("Supplier").'</td><td colspan="5">';
 					$html=new Form($db);
 					$html->select_societes('','id_fourn','fournisseur=1');
 					print '</td></tr>';
-					print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-					print '<input class="flat" name="ref_fourn" size="25" value="">';
-					print '</td></tr>';
 				}
 				
-				print '<tr><td>'.$langs->trans("Qty").'</td>';
+				print '<tr><td>'.$langs->trans("Ref").'</td><td>';
+				print '<input class="flat" name="ref_fourn" size="12" value="">';
+				print '</td>';
+				print '<td>'.$langs->trans("QtyMin").'</td>';
 				$quantity = $_GET["qty"] ? $_GET["qty"] : "1";
 				print '<td><input class="flat" name="qty" size="5" value="'.$quantity.'"></td>';
-				print '<td>'.$langs->trans("Price").'</td>';
+				print '<td>'.$langs->trans("PriceHTQty").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
 				
-				print '<tr><td colspan="4" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">&nbsp;';
+				print '<tr><td colspan="6" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
+				print '&nbsp; &nbsp;';
 				print '<input class="button" type="submit" name="cancel" value="'.$langs->trans("Cancel").'"></td></tr>';
 				print '</form>';
 				print '</table>';
@@ -281,8 +282,8 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr class="liste_titre"><td valign="top">';
 				print $langs->trans("Suppliers").'</td>';
 				print '<td>'.$langs->trans("Ref").'</td>';
-				print '<td align="center">'.$langs->trans("Qty").'</td>';
-				print '<td align="right">'.$langs->trans("BuyingPrice").'</td>';
+				print '<td align="center">'.$langs->trans("QtyMin").'</td>';
+				print '<td align="right">'.$langs->trans("PriceHTQty").'</td>';
 				print '<td align="right">'.$langs->trans("UnitPrice").'</td>';
 				print '<td>&nbsp;</td>';
 				print '</tr>';

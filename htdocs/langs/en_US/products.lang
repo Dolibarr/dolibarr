@@ -110,3 +110,6 @@ NoStockForThisProduct=No stock for this product
 Restock=Restock
 Weight=Weight
 ProductSpecial=Special
+QtyMin=Quantity minimum
+PriceHTQty=Price HT for this quantity
+
