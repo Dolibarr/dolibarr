@@ -46,6 +46,7 @@ LanguageParameter=Variable langue %s
 LanguageBrowserParameter=Variable %s
 LanguageDolibarrParameter=Paramètre de langue Dolibarr
 CurrentDolibarrLanguage=Langue Dolibarr courante
+CurrentDolibarrTZ=Time Zone Dolibarr courante
 OSEnv=Environnement OS
 Box=Boîte
 Boxes=Boîtes

@@ -77,6 +77,8 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
 print '</table>';
 print '<br>';
 

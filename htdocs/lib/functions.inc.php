@@ -508,7 +508,7 @@ function dolibarr_print_date($time,$format='')
     if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
     if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
 	if (! $format) $format='%Y-%m-%d %H:%M:%S';
-	
+
     // Si date non définie, on renvoie ''
     if (! $time) return '';
 
@@ -521,6 +521,7 @@ function dolibarr_print_date($time,$format='')
         $sday = $reg[3];
         $shour = $reg[4];
         $smin = $reg[5];
+
         if ($syear < 1970 && isset($_SERVER["WINDIR"]))
         {
             return strftime($format,dolibarr_mktime($shour,$smin,0,$smonth,$sday,$syear));
