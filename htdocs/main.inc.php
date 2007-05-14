@@ -81,6 +81,12 @@ require_once("master.inc.php");
 $bc[0]="class=\"impair\"";
 $bc[1]="class=\"pair\"";
 
+// Init session
+$sessionname="DOLSESSID_".$dolibarr_main_db_name;
+session_name($sessionname);
+session_start();
+dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+
 /*
  * Phase identification
  */
@@ -88,19 +94,46 @@ $bc[1]="class=\"pair\"";
 // $authmode contient la liste des différents modes d'identification à tester
 // par ordre de préférence. Attention, rares sont les combinaisons possibles si
 // plusieurs modes sont indiqués.
-// Exemple: array('http','dolibarr');
-// Exemple: array('ldap');
+// Example: array('http','dolibarr');
+// Example: array('http','dolibarr_mdb2');
+// Example: array('ldap');
+// Example: array('forceuser');
+$authmode=array();
 
-//$authmode=array('ldap');
-//$authmode=array('http','dolibarr_mdb2');
-$authmode=array('http','dolibarr');
-
-if (isset($dolibarr_auto_user)) $authmode=array('auto');
-
-$sessionname="DOLSESSID_".$dolibarr_main_db_name;
-session_name($sessionname);
-session_start();
-dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _SESSION['dol_login']=".$_SESSION["dol_login"]);
+// Authentication mode: http
+if (! $dolibarr_main_authentication || $dolibarr_main_authentication == 'http')
+{
+	// Mode par defaut, on test http + dolibarr
+	$authmode=array('http','dolibarr');
+}
+// Authentication mode: dolibarr
+if ($dolibarr_main_authentication == 'dolibarr')
+{
+	$authmode=array('dolibarr');
+}
+// Authentication mode: dolibarr_mdb2
+if ($dolibarr_main_authentication == 'dolibarr_mdb2')
+{
+	$authmode=array('dolibarr_mdb2');
+}
+// Authentication mode: ldap
+if ($dolibarr_main_authentication == 'ldap')
+{
+	$authmode=array('ldap');
+}
+// Authentication mode: forceuser
+if ($dolibarr_main_authentication == 'forceuser' || isset($dolibarr_auto_user))
+{
+	$authmode=array('forceuser');
+	if (! isset($dolibarr_auto_user)) $dolibarr_auto_user='auto';
+}
+// No authentication mode
+if (! sizeof($authmode)) 
+{
+	$langs->load('main');
+	dolibarr_print_error('',$langs->trans("ErrorConfigParameterNotDefined",'dolibarr_main_authentication'));
+	exit;
+}
 
 // Si la demande du login a déjà eu lieu, on le récupère depuis la session
 // sinon appel du module qui réalise sa demande.
@@ -113,10 +146,10 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	// en session dans dol_login et la page rappelée.
 
 	// MODE AUTO
-	if (in_array('auto',$authmode) && ! $login)
+	if (in_array('forceuser',$authmode) && ! $login)
 	{
 		$login=$dolibarr_auto_user;
-	    dolibarr_syslog ("Authentification ok (en mode force)");
+	    dolibarr_syslog ("Authentification ok (en mode force, login=".$login.")");
 	}
 
 	// MODE HTTP (Basic)
@@ -178,8 +211,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
         }
 	}
 	
-		// MODE DOLIBARR MDB2
-		// Ajout du mode MDB2 pour test uniquement
+	// MODE DOLIBARR MDB2
+	// Ajout du mode MDB2 pour test uniquement
 	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
 	{
     	require_once(PEAR_PATH."/Auth/Auth.php");
@@ -232,38 +265,55 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	}
 
 	// MODE LDAP
-	if ($conf->ldap->enabled && in_array('ldap',$authmode) && ! $login)
+	if (in_array('ldap',$authmode) && ! $login)
 	{
-	    // Authentification Apache KO ou non active, pas de mode force on demande le login
+		// Authentification Apache KO ou non active, pas de mode force on demande le login
 	    require_once(PEAR_PATH."/Auth/Auth.php");
 	
-	    $ldapdebug=false;
-	    if ($ldapdebug) print "DEBUG: Traces connexions LDAP<br>\n";
-	    
-	    if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
-		  {
-		    $userattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
-		  }
-		  else
-		  {
-		    $userattr = $conf->global->LDAP_FIELD_LOGIN;
-		  }
-	    
+		$ldapuserattr=$dolibarr_main_auth_ldap_login_attribute;
+		$ldaphost=$dolibarr_main_auth_ldap_host;
+		$ldapport=$dolibarr_main_auth_ldap_port;
+		$ldapversion=(int) $dolibarr_main_auth_ldap_version;	// Si pas de int, PEAR LDAP plante.
+		$ldapdn=$dolibarr_main_auth_ldap_dn;
+		$ldaplogin=$dolibarr_main_auth_ldap_admin_login;
+		$ldappass=$dolibarr_main_auth_ldap_admin_pass;
+		$ldapdebug=((! $dolibarr_main_auth_ldap_debug || $dolibarr_main_auth_ldap_debug=="false")?false:true);
+		
+	    if ($ldapdebug) print "DEBUG: Logging LDAP steps<br>\n";
+
+		// Debut code pour compatibilite (prend info depuis config en base)
+		if (! $ldapuserattr && $conf->ldap->enabled)
+		{
+			if ($conf->global->LDAP_SERVER_TYPE == "activedirectory")
+			  {
+			    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN_SAMBA;
+			  }
+			  else
+			  {
+			    $ldapuserattr = $conf->global->LDAP_FIELD_LOGIN;
+			  }
+		}
+		if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
+		if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
+		if (! $ldapversion)    $ldapport=(int) $conf->global->LDAP_SERVER_PROTOCOLVERSION;
+		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
+		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
+		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
+		// Fin code pour compatiblité
+		
 	    $params = array(
-		    'host' => $conf->global->LDAP_SERVER_HOST,
-		    'port' => $conf->global->LDAP_SERVER_PORT,
-		    'version' => 3,
-		    'basedn' => $conf->global->LDAP_SERVER_DN,
-		    'binddn' => $conf->global->LDAP_ADMIN_DN,
-		    'bindpw' => $conf->global->LDAP_ADMIN_PASS,
+		    'userattr' => $ldapuserattr,
+		    'host' => $ldaphost,
+		    'port' => $ldapport,
+		    'version' => $ldapversion,
+		    'basedn' => $ldapdn,
+		    'binddn' => $ldapadminlogin,
+		    'bindpw' => $ldapadminpass,
 
 			'debug' => $ldapdebug,
-		    
-		    'userattr' => $userattr,
-		    
-//		    'userfilter' => $conf->global->LDAP_FILTER_CONNECTION
 		    'userfilter' => ''
 	    );
+		if ($ldapdebug) print "DEBUG: params=".join(',',$params)."<br>\n";
 
 	    $aDol = new DOLIAuth("LDAP", $params, "dol_loginfunction");
 	    $aDol->setSessionName($sessionname);
@@ -274,7 +324,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        // Authentification Auth OK, on va chercher le login
 			$login=$aDol->getUsername();
 	        dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
-	    }
+		}
 	    else
 	    {
 	        if (isset($_POST["loginfunction"]))
@@ -295,7 +345,17 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	$result=$user->fetch($login);
 	if ($result <= 0)
 	{
-		dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase"));
+		//$langs->load('main');
+		//dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login));
+		dolibarr_syslog('ErrorCantLoadUserFromDolibarrDatabase');
+		session_destroy();
+
+		// On repart sur page accueil
+		session_name($sessionname);
+		session_start();
+		$langs->load('main');
+		$_SESSION["loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
 }
