@@ -30,6 +30,8 @@
 
 require "./pre.inc.php";
 
+$type=$_GET['type'];
+
 if (!$user->rights->categorie->lire) accessforbidden();
 
 
@@ -41,8 +43,13 @@ if (!$user->rights->categorie->lire) accessforbidden();
 $c = new Categorie($db);
 $html = new Form($db);
 
-llxHeader("","",$langs->trans("ProductsCategoriesArea"));
-print_fiche_titre($langs->trans("ProductsCategoriesArea"));
+if (! $type)    $title=$langs->trans("ProductsCategoriesArea");
+if ($type == 1) $title=$langs->trans("ThirdPartyCategoriesArea");
+
+
+llxHeader("","",$title);
+
+print_fiche_titre($title);
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
@@ -119,12 +126,12 @@ if ($conf->use_javascript)
 	print '<td align="right">';
 	if ($_GET["expand"] != 'all')
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=all">'.$langs->trans("ExpandAll").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=all&type='.$_GET['type'].'">'.$langs->trans("ExpandAll").'</a>';
 		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder-expanded.gif">';
 	}
 	if ($_GET["expand"] && $_GET["expand"] != 'none')
 	{
-		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=none">'.$langs->trans("UndoExpandAll").'</a>';
+		print '<a href="'.$_SERVER["PHP_SELF"].'?expand=none&type='.$_GET['type'].'">'.$langs->trans("UndoExpandAll").'</a>';
 		print '</td><td width="18"><img border="0" src="'.DOL_URL_ROOT.'/includes/treemenu/images/folder.gif">';
 	}
 	print '</td>';
@@ -134,7 +141,6 @@ if ($conf->use_javascript)
 
 	if (sizeof($cate_arbo))
 	{
-	
 		require_once(DOL_DOCUMENT_ROOT.'/includes/treemenu/TreeMenu.php');
 		
 		$menu  = new HTML_TreeMenu();
