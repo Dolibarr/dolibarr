@@ -314,14 +314,16 @@ class Paiement
 	function valide()
 	{
 		$sql = 'UPDATE '.MAIN_DB_PREFIX.'paiement SET statut = 1 WHERE rowid = '.$this->id;
+
+		dolibarr_syslog('Paiement::valide sql='.$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			return 0;
+			return 1;
 		}
 		else
 		{
-			dolibarr_syslog('Paiement::Valide Error -1');
+			dolibarr_syslog('Paiement::valide Error -1');
 			return -1;
 		}
 	}
@@ -337,6 +339,7 @@ class Paiement
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'paiement as c';
 		$sql .= ' WHERE c.rowid = '.$id;
 
+		dolibarr_syslog('Paiement::info sql='.$sql);
 		$result = $this->db->query($sql);
 		
 		if ($result)
