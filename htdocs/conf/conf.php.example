@@ -113,7 +113,7 @@ $dolibarr_main_db_type="";
 # $dolibarr_main_auth_ldap_port="389";
 # $dolibarr_main_auth_ldap_version="3";
 # $dolibarr_main_auth_ldap_dn="";							# Ex: ou=users,dc=my-domain,dc=com
-# $dolibarr_main_auth_ldap_admin_login=""					# Required only if anonymous bind disabled
+# $dolibarr_main_auth_ldap_admin_login="";					# Required only if anonymous bind disabled
 # $dolibarr_main_auth_ldap_admin_pass="";					# Required only if anonymous bind disabled
 # $dolibarr_main_auth_ldap_debug="false";
 
