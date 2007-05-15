@@ -205,6 +205,8 @@ class Expedition extends CommonObject
     
         if ($result)
         {
+        	if ($this->db->num_rows($result))
+        	{
             $obj = $this->db->fetch_object($result);
     
             $this->id                   = $obj->rowid;
@@ -219,66 +221,39 @@ class Expedition extends CommonObject
             $this->date                 = $obj->date_expedition;
             $this->entrepot_id          = $obj->fk_entrepot;
             $this->adresse_livraison_id = $obj->fk_adresse_livraison;
-			$this->modelpdf             = $obj->model_pdf;
+			      $this->modelpdf             = $obj->model_pdf;
             $this->db->free($result);
     
             if ($this->statut == 0) $this->brouillon = 1;
             
-			$this->lignes = array();
-            // TODO Supprimer cette partie. L'appelant qui fetch doit
-            // en fait appeler fetch_lignes pour charges ceci.
-			$sql = "SELECT c.description, c.qty as qtycom, c.fk_product, p.label, ";
-			$sql.= " e.qty as qtyexp, e.fk_commande_ligne,";
-			$sql.= " p.ref";
-			$sql.= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
-			$sql.= " , ".MAIN_DB_PREFIX."commandedet as c";
-			$sql.= " , ".MAIN_DB_PREFIX."product as p";
-			$sql.= " WHERE e.fk_expedition = ".$this->id;
-			$sql.= " AND e.fk_commande_ligne = c.rowid";
-			$sql.= " AND c.fk_product = p.rowid";
-
-	      	$resultp = $this->db->query($sql);
-            
-            if ($resultp)
-            {
-                    $num = $this->db->num_rows($resultp);
-                    $i = 0;
-    
-                    while ($i < $num)
-                    {
-                        $objp                        = $this->db->fetch_object($resultp);
-    
-                        $ligne                       = new ExpeditionLigne($this->db);
-
-                        $ligne->commande_ligne_id    = $objp->fk_commande_ligne;
-                        $ligne->product_desc         = $objp->description;  // Description ligne
-                        $ligne->qty_expedition       = $objp->qtyexp;
-                        $ligne->qty_commande         = $objp->qtycom;
-                        $ligne->fk_product           = $objp->fk_product;
-
-                        $ligne->libelle              = $objp->label;        // Label produit
-                        $ligne->ref                  = $objp->ref;
-    
-                        $this->lignes[$i]            = $ligne;
-                        $i++;
-                    }
-                    $this->db->free($resultp);
-                }
-                else
-                {
-                    dolibarr_syslog("Propal::Fetch Erreur lecture des produits");
-                    return -1;
-                }
+			      $this->lignes = array();
     
             $file = $conf->expedition->dir_output . "/" .get_exdir($expedition->id,2) . "/" . $this->id.".pdf";
             $this->pdf_filename = $file;
+            
+            /*
+             * Lignes
+             */
+            $result=$this->fetch_lines();
+            if ($result < 0)
+            {
+            	return -3;
+            }
     
             return 1;
+          }
+          else
+          {
+          	dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+	          $this->error='Delivery with id '.$rowid.' not found sql='.$sql;
+	          return -2;
+	        }
         }
         else
         {
-            $this->error=$this->db->error();
-            return -2;
+        	dolibarr_syslog('Facture::Fetch Error rowid='.$rowid.' Erreur dans fetch de la facture');
+        	$this->error=$this->db->error();
+        	return -1;
         }
     }
 
@@ -591,17 +566,16 @@ class Expedition extends CommonObject
 	}
 
 	
-	function fetch_lignes()
+	function fetch_lines()
 	{
-		$this->lignes = array();
-	
-		$sql = "SELECT c.description, c.qty as qtycom, e.qty as qtyexp";
-		$sql .= ", c.fk_product";
-		$sql .= " FROM ".MAIN_DB_PREFIX."expeditiondet as e";
-		$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-	
-		$sql .= " WHERE e.fk_expedition = ".$this->id;
-		$sql .= " AND e.fk_commande_ligne = c.rowid";
+		$sql = "SELECT cd.rowid, cd.fk_product, cd.description, cd.qty as qty_commande";
+		$sql.= ", ed.qty as qty_expedie, ed.fk_commande_ligne";
+		$sql.= ", p.ref, p.label, p.weight, p.weight_units, p.volume, p.volume_units";
+		$sql.= " FROM (".MAIN_DB_PREFIX."commandedet as cd";
+		$sql.= ", ".MAIN_DB_PREFIX."expeditiondet as ed)";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = cd.fk_product)";
+		$sql.= " WHERE ed.fk_expedition = ".$this->id;
+		$sql.= " AND ed.fk_commande_ligne = cd.rowid";
 	
 	
 		$resql = $this->db->query($sql);
@@ -615,16 +589,28 @@ class Expedition extends CommonObject
 				$obj = $this->db->fetch_object($resql);
 	
 				$ligne->fk_product     = $obj->fk_product;
-				$ligne->qty_commande   = $obj->qtycom;
-				$ligne->qty_expedition = $obj->qtyexp;
+				$ligne->ref            = $obj->ref;
+				$ligne->libelle        = $obj->label;
 				$ligne->description    = $obj->description;
+				$ligne->qty_commande   = $obj->qty_commande;
+				$ligne->qty_expedie    = $obj->qty_expedie;
+				$ligne->weight         = $obj->weight;
+				$ligne->weight_units   = $obj->weight_units;
+				$ligne->volume         = $obj->volume;
+				$ligne->volume_units   = $obj->volume_units;
 	
 				$this->lignes[$i] = $ligne;
 				$i++;
 			}
 			$this->db->free($resql);
+			return 1;
 		}
-		return $this->lignes;
+		else
+		{
+			$this->error=$this->db->error();
+	    dolibarr_syslog('Expedition::fetch_lines: Error '.$this->error);
+	    return -3;
+	  }
 	}
   
     /**

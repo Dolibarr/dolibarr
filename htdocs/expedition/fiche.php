@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Simon TOSSER  <simon@kornog-computing.com>
+ * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2007 Régis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -429,6 +430,8 @@ else
     {
         $expedition = New Expedition($db);
         $result = $expedition->fetch($_GET["id"]);
+        $lignes = $expedition->lignes;
+        $num_prod = sizeof($lignes);
 
         if ($expedition->id > 0)
         {
@@ -485,14 +488,17 @@ else
                 $html->form_confirm("fiche.php?id=$expedition->id",$langs->trans("CancelSending"),"Etes-vous sûr de vouloir annuler cette commande ?","confirm_cancel");
                 print '<br>';
             }
-
-            /*
-            *   Commande
-            */
-            if ($commande->brouillon && $user->rights->commande->creer)
+            
+            // calcul du poids total et du volume total des produits
+            //TODO: ajouter conversion pour le poids et le volume et selection de l'unité de mesure la plus utilisée
+            $totalWeight = '';
+            $totalVolume = '';
+            for ($i = 0 ; $i < $num_prod ; $i++)
             {
-                print '<form action="fiche.php?id='.$expedition->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setremise">';
+            	$totalWeight += $lignes[$i]->weight*$lignes[$i]->qty_expedie;
+            	$weightUnit = $lignes[$i]->weight_units;
+            	$totalVolume += $lignes[$i]->volume*$lignes[$i]->qty_expedie;
+            	$volumeUnit = $lignes[$i]->volume_units;
             }
 
             print '<table class="border" width="100%">';
@@ -519,96 +525,94 @@ else
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
             print '<td colspan="3">'.dolibarr_print_date($expedition->date,"%A %d %B %Y")."</td>\n";
-   			print '</tr>';
+   			    print '</tr>';
+   			    
+   			    // Poids Total
+            print '<tr><td>'.$langs->trans("TotalWeight").'</td>';
+            print '<td colspan="3">'.$totalWeight.' '.measuring_units_string($weightUnit,"weight")."</td>\n";
+   			    print '</tr>';
+   			    
+   			    // Volume Total
+            print '<tr><td>'.$langs->trans("TotalVolume").'</td>';
+            print '<td colspan="3">'.$totalVolume.' '.measuring_units_string($volumeUnit,"weight")."</td>\n";
+   			    print '</tr>';
 
             // Statut
             print '<tr><td>'.$langs->trans("Status").'</td>';
             print '<td colspan="3">'.$expedition->getLibStatut(4)."</td>\n";
-   			print '</tr>';
+   			    print '</tr>';
 
             print "</table>\n";
 
             /*
              * Lignes produits
              */
-            echo '<br><table class="noborder" width="100%">';
-
-            $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande,";
-            $sql .= " e.fk_statut, ed.qty as qty_livre";
-            $sql .= " FROM ".MAIN_DB_PREFIX."commandedet as cd , ".MAIN_DB_PREFIX."expeditiondet as ed, ".MAIN_DB_PREFIX."expedition as e";
-            $sql .= " WHERE e.rowid = ".$expedition->id." AND e.rowid = ed.fk_expedition AND cd.rowid = ed.fk_commande_ligne";
-
-            $resql = $db->query($sql);
-
-            if ($resql)
+            print '<br><table class="noborder" width="100%">';
+            print '<tr class="liste_titre">';
+            print '<td>'.$langs->trans("Products").'</td>';
+            print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
+            if ($expedition->fk_statut <= 1)
             {
-                $num_prod = $db->num_rows($resql);
-                $i = 0;
-
-                print '<tr class="liste_titre">';
-                print '<td>'.$langs->trans("Products").'</td>';
-            	print '<td align="center">'.$langs->trans("QtyOrdered").'</td>';
-            	if ($obj->fk_statut <= 1)
-            	{
-            	   	print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
-            	}
-            	else
-            	{
-            	   	print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
-            	}
-				if ($conf->stock->enabled)
-				{
-					print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
-				}
-                print "</tr>\n";
-
-                $var=true;
-                while ($i < $num_prod)
-                {
-                    $objp = $db->fetch_object($resql);
-
-                    $var=!$var;
-                    print "<tr $bc[$var]>";
-                    if ($objp->fk_product > 0)
-                    {
-                        $product = new Product($db);
-                        $product->fetch($objp->fk_product);
-
-                        print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$product->ref.'</a> - '.$product->libelle;
-                        if ($objp->description) print '<br>'.nl2br($objp->description);
-                        print '</td>';
-                    }
-                    else
-                    {
-                        print "<td>".nl2br($objp->description)."</td>\n";
-                    }
-                    
-                    // Qte commandé
-                    print '<td align="center">'.$objp->qty_commande.'</td>';
-                    
-                    // Qte a expedier ou expedier
-                    print '<td align="center">'.$objp->qty_livre.'</td>';
-
-	            	// Entrepot source
-		            if ($conf->stock->enabled)
-		            {
-						$entrepot = new Entrepot($db);
-						$entrepot->fetch($expedition->entrepot_id);
-						print '<td align="left">'.$entrepot->getNomUrl(1).'</td>';
-					}
-		
-
-                    print "</tr>";
-
-                    $i++;
-                    $var=!$var;
-                }
-                $db->free($resql);
+             	print '<td align="center">'.$langs->trans("QtyToShip").'</td>';
             }
             else
             {
-                dolibarr_print_error($db);
+             	print '<td align="center">'.$langs->trans("QtyShipped").'</td>';
+            }
+            	
+            print '<td align="center">'.$langs->trans("Weight").'</td>';
+            print '<td align="center">'.$langs->trans("Volume").'</td>';
+            	
+            if ($conf->stock->enabled)
+            {
+              print '<td align="left">'.$langs->trans("WarehouseSource").'</td>';
+            }
+            print "</tr>\n";
+
+            $var=true;
+            
+            for ($i = 0 ; $i < $num_prod ; $i++)
+            {
+            	$var=!$var;
+              print "<tr $bc[$var]>";
+              if ($lignes[$i]->fk_product > 0)
+              {
+              	print '<td>';
+                print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$lignes[$i]->fk_product.'">'.img_object($langs->trans("ShowProduct"),"product").' '.$lignes[$i]->ref.'</a> - '.$lignes[$i]->libelle;
+                if ($lignes[$i]->description) print '<br>'.nl2br($lignes[$i]->description);
+                print '</td>';
+              }
+              else
+              {
+                print "<td>".nl2br($lignes[$i]->description)."</td>\n";
+              }
+                
+              // Qte commandé
+              print '<td align="center">'.$lignes[$i]->qty_commande.'</td>';
+                   
+              // Qte a expedier ou expedier
+              print '<td align="center">'.$lignes[$i]->qty_expedie.'</td>';
+                
+              // Poids
+              print '<td align="center">'.$lignes[$i]->weight*$lignes[$i]->qty_expedie.' '.measuring_units_string($lignes[$i]->weight_units,"weight").'</td>';
+                
+              // Volume
+              print '<td align="center">'.$lignes[$i]->volume*$lignes[$i]->qty_expedie.' '.measuring_units_string($lignes[$i]->volume_units,"volume").'</td>';
+
+	            // Entrepot source
+		          if ($conf->stock->enabled)
+		          {
+		          	$entrepot = new Entrepot($db);
+						    $entrepot->fetch($expedition->entrepot_id);
+						    print '<td align="left">'.$entrepot->getNomUrl(1).'</td>';
+					    }
+		
+
+                print "</tr>";
+
+                $i++;
+                $var=!$var;
+              }
             }
 
             print "</table>\n";
@@ -734,8 +738,9 @@ else
                 }
                 $db->free($resql);
             }
-            else {
-                dolibarr_print_error($db);
+            else
+            {
+              dolibarr_print_error($db);
             }
 
 
@@ -745,11 +750,6 @@ else
 
             print '</td></tr></table>';
 
-        }
-        else
-        {
-            dolibarr_print_error($db);
-        }
     }
     else
     {
