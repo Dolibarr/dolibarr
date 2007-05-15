@@ -1,5 +1,27 @@
 English Dolibarr changelog
 
+***** Changelog for 2.2 compared to 2.1 *****
+
+- Added more statistics on main page.
+- Added option to add message on login page.
+- Full support for LDAP authentication.
+- Management of categories for third parties.
+- Adde volume on products properties.
+- Full member synchronisation with LDAP database in
+  funcation module.
+- Better logging for install.
+- Setup process can run several migrate files if need
+  to jump several versions to upgrade.
+- Support for webcalendar 1.1 in webcalendar module.
+- Support for menu in database.
+- Better support for using Dolibarr on more WHP.
+- Removed some deprecated files.
+- New theme: Auguria
+- Removed PHP warnings.
+- Some bugs fixes.
+- Traduction more complete.
+- Better code comments for Doxygen documentation.
+
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
 
