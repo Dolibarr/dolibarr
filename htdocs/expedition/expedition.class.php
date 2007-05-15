@@ -588,6 +588,7 @@ class Expedition extends CommonObject
 				$ligne = new ExpeditionLigne($this->db);
 				$obj = $this->db->fetch_object($resql);
 	
+				$ligne->order_line_id  = $obj->fk_commande_ligne;
 				$ligne->fk_product     = $obj->fk_product;
 				$ligne->ref            = $obj->ref;
 				$ligne->libelle        = $obj->label;

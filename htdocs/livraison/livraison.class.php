@@ -417,10 +417,10 @@ class Livraison extends CommonObject
 		for ($i = 0 ; $i < sizeof($expedition->lignes) ; $i++)
 		{
 			$LivraisonLigne = new LivraisonLigne($this->db);
-			$LivraisonLigne->commande_ligne_id = $expedition->lignes[$i]->commande_ligne_id;
+			$LivraisonLigne->commande_ligne_id = $expedition->lignes[$i]->order_line_id;
 			$LivraisonLigne->libelle           = $expedition->lignes[$i]->libelle;
 			$LivraisonLigne->description       = $expedition->lignes[$i]->product_desc;
-			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_expedition;
+			$LivraisonLigne->qty               = $expedition->lignes[$i]->qty_expedie;
 			$LivraisonLigne->fk_product        = $expedition->lignes[$i]->fk_product;
 			$LivraisonLigne->ref               = $expedition->lignes[$i]->ref;
 			$this->lignes[$i] = $LivraisonLigne;
