@@ -2843,7 +2843,7 @@ class Form
 	      else
 		{
 		  include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
-		  $model=new ModelePDFCommandesSuppliers();
+		  $model=new ModelePDFSuppliersOrders();
 		  $modellist=$model->liste_modeles($this->db);
 		}
 	    }
