@@ -251,7 +251,7 @@ class Expedition extends CommonObject
         }
         else
         {
-        	dolibarr_syslog('Facture::Fetch Error rowid='.$rowid.' Erreur dans fetch de la facture');
+        	dolibarr_syslog('Expedition::Fetch Error rowid='.$rowid.' Erreur dans fetch de l\'expedition');
         	$this->error=$this->db->error();
         	return -1;
         }

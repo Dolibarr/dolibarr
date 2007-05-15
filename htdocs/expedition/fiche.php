@@ -609,8 +609,7 @@ else
 		
 
                 print "</tr>";
-
-                $i++;
+                
                 $var=!$var;
               }
             }
