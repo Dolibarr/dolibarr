@@ -24,18 +24,17 @@
 /**
      	\file       htdocs/four/commande/modules/mod_commande_fournisseur_muguet.php
 		\ingroup    commande
-		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande Muguet
+		\brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Muguet
 		\version    $Revision$
 */
 
-//require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/mod_commande_fournisseur_muguet.php");
 require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
 /**	    \class      mod_commande_fournisseur_muguet
-		\brief      Classe du modèle de numérotation de référence de commande Marbre
+		\brief      Classe du modèle de numérotation de référence de commande fournisseur Muguet
 */
 
-class mod_commande_fournisseur_muguet extends ModeleNumRefCommandesSuppliers
+class mod_commande_fournisseur_muguet extends ModeleNumRefSuppliersOrders
 {
 	var $prefix='CF';
     var $error='';

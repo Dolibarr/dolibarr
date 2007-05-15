@@ -36,11 +36,11 @@ require_once(FPDF_PATH.'fpdi_protection.php');
 
 
 /**
-            \class      ModelePDFCommandesSuppliers
-                \brief      Classe mère des modèles de commandes
+            \class      ModelePDFSuppliersorders
+                \brief      Classe mère des modèles de commandes fournisseurs
 */
 
-class ModelePDFCommandesSuppliers extends FPDF
+class ModelePDFSuppliersOrders extends FPDF
 {
     var $error='';
 
@@ -88,11 +88,11 @@ class ModelePDFCommandesSuppliers extends FPDF
 
 
 /**
-        \class      ModeleNumRefCommandesSuppliers
+        \class      ModeleNumRefSuppliersOrders
             \brief      Classe mère des modèles de numérotation des références de commandes fournisseurs
 */
 
-class ModeleNumRefCommandesSuppliers
+class ModeleNumRefSuppliersOrders
 {
     var $error='';
 
@@ -137,7 +137,7 @@ class ModeleNumRefCommandesSuppliers
 }
 
 
-function commande_supplier_pdf_create($db, $comid, $modele='',$outputlangs='')
+function supplier_order_pdf_create($db, $comid, $modele='',$outputlangs='')
 {
   global $langs;
   $langs->load("suppliers");
@@ -169,12 +169,12 @@ function commande_supplier_pdf_create($db, $comid, $modele='',$outputlangs='')
       if ($obj->write_pdf_file($comid,$outputlangs) > 0)
         {
           // on supprime l'image correspondant au preview
-           commande_supplier_delete_preview($db, $comid);
+           supplier_order_delete_preview($db, $comid);
           return 1;
         }
       else
         {
-          dolibarr_syslog("Erreur dans commande_supplier_pdf_create");
+          dolibarr_syslog("Erreur dans supplier_order_pdf_create");
           dolibarr_print_error($db,$obj->pdferror());
           return 0;
         }
@@ -185,7 +185,7 @@ function commande_supplier_pdf_create($db, $comid, $modele='',$outputlangs='')
       return 0;
     }
 }
-function commande_supplier_delete_preview($db, $propalid)
+function supplier_order_delete_preview($db, $propalid)
 {
         global $langs,$conf;
 

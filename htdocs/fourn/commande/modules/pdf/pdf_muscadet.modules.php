@@ -40,7 +40,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 		\brief      Classe permettant de générer les commandes fournisseurs au modèle Muscadet
 */
 
-class pdf_muscadet extends ModelePDFCommandesSuppliers
+class pdf_muscadet extends ModelePDFSuppliersOrders
 {
     
     /**

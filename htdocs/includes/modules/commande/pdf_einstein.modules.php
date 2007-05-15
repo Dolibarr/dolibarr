@@ -363,7 +363,7 @@ class pdf_einstein extends ModelePDFCommandes
                 }
 
 				// Affiche zone infos
-                $posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
+                $posy=$this->_tableau_info($pdf, $com, $bottomlasttab, $outputlangs);
                 // Affiche zone totaux
                 $posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
 

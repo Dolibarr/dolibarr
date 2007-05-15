@@ -109,7 +109,7 @@ class Livraison extends CommonObject
 				{
 					$commande = new Commande($this->db);
 					$commande->id = $this->commande_id;
-					$this->lignes = $commande->fetch_lignes();
+					$this->lignes = $commande->fetch_lines();
 				}
 	
 	

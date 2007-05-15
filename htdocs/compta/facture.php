@@ -590,7 +590,8 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 					$comm = New Commande($db);
 					if ( $comm->fetch($_POST['commandeid']) )
 					{
-						$lines = $comm->fetch_lignes();
+						$comm->fetch_lines();
+						$lines = $comm->lignes;
 						for ($i = 0 ; $i < sizeof($lines) ; $i++)
 						{
 							$desc=($lines[$i]->desc ? $lines[$i]->desc : $lines[$i]->libelle);
@@ -2553,7 +2554,7 @@ else
 				}
 
 				// Valider
-				if ($fac->statut == 0 && $num_lignes > 0 && $fac->total_ttc >= 0)
+				if ($fac->statut == 0 && $num_lignes > 0 && (($fac->type < 2 && $fac->total_ttc >= 0) || ($fac->type == 2 && $fac->total_ttc <= 0)))
 				{
 					if ($user->rights->facture->valider)
 					{

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2007 Rodolphe Quiedeville    <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur     <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin           <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin           <regis.houssin@cap-networks.com>
  * Copyright (C) 2004      Sebastien Di Cintio     <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier          <benoit.mortier@opensides.be>
  *
@@ -49,8 +49,8 @@ if ($_GET["action"] == 'specimen')
 {
   $modele=$_GET["module"];
   
-  $facture = new CommandeFournisseur($db);
-  $facture->initAsSpecimen();
+  $commande = new CommandeFournisseur($db);
+  $commande->initAsSpecimen();
   
   // Charge le modele
   $dir = DOL_DOCUMENT_ROOT . "/fourn/commande/modules/pdf/";
@@ -62,7 +62,7 @@ if ($_GET["action"] == 'specimen')
       
       $obj = new $classname($db);
       
-      if ($obj->write_pdf_file($facture,$langs) > 0)
+      if ($obj->write_pdf_file($commande,$langs) > 0)
 	{
 	  header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande_fournisseur&file=SPECIMEN.pdf");
 	  return;
@@ -135,6 +135,13 @@ if ($_POST["action"] == 'addcat')
   $fourn->CreateCategory($user,$_POST["cat"]);
 }
 
+// défini les constantes du modèle orchidee
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_MATRICE",$_POST["matrice"]);
+if ($_POST["action"] == 'updatePrefixCommande') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_PREFIX",$_POST["prefixcommande"]);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
+
 /*
  * Affichage page
  */
@@ -196,13 +203,15 @@ if ($handle)
             }
             print '</td>';
 
+	    $commande = new CommandeFournisseur($db);
+	    
 	    // Info
 	    $htmltooltip='';
-	    $nextval=$module->getNextValue($mysoc);
+	    $nextval=$module->getNextValue($mysoc,$commande);
 	    if ($nextval != $langs->trans("NotAvailable"))
-	      {
-		$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	      }
+	    {
+	    	$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	    }
 	    print '<td align="center">';
 	    print $html->textwithhelp('',$htmltooltip,1,0);
 	    print '</td>';

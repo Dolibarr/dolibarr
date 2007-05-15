@@ -25,11 +25,12 @@
 /** 
     \file       htdocs/fourn/commande/modules/pdf/mod_commande_fournisseur_rose.php
     \ingroup    fournisseur
-    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande Rose
+    \brief      Fichier contenant la classe du modèle de numérotation de référence de commande fournisseur Rose
     \version    $Revision$
 */
 
-include_once("modules_commandefournisseur.php");
+
+require_once(DOL_DOCUMENT_ROOT ."/fourn/commande/modules/modules_commandefournisseur.php");
 
 
 /**
@@ -37,7 +38,7 @@ include_once("modules_commandefournisseur.php");
    \brief      Classe du modèle de numérotation de référence de commande fournisseur Rose
 */
 
-class mod_commande_fournisseur_rose extends ModeleNumRefCommandesSuppliers
+class mod_commande_fournisseur_rose extends ModeleNumRefSuppliersOrders
 {
 
   /**   \brief      Constructeur

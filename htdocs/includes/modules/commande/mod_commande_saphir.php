@@ -85,7 +85,7 @@ function info()
       $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffset">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->COMMANDE_NUM_DELTA.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
@@ -378,7 +378,7 @@ function info()
             if ($row) $comyy = substr($row[0],0,-$posindice);
         }
         
-        if ($conf->global->PROPALE_NUM_DELTA != '')
+        if ($conf->global->COMMANDE_NUM_DELTA != '')
         {
         	//on vérifie si il y a une année précédente
           //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
@@ -408,7 +408,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
+        else if ($conf->global->COMMANDE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->COMMANDE_NUM_DELTA?$conf->global->COMMANDE_NUM_DELTA-1:0;

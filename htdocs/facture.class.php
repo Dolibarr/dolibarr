@@ -467,34 +467,31 @@ class Facture extends CommonObject
 	    $this->lignes                 = array();
 
 	    if ($this->commande_id)
-	      {
-		$sql = "SELECT ref";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commande";
-		$sql.= " WHERE rowid = ".$this->commande_id;
+	    {
+	    	$sql = "SELECT ref";
+		    $sql.= " FROM ".MAIN_DB_PREFIX."commande";
+		    $sql.= " WHERE rowid = ".$this->commande_id;
 
-		$resqlcomm = $this->db->query($sql);
+		    $resqlcomm = $this->db->query($sql);
 
-		if ($resqlcomm)
-		  {
-		    $objc = $this->db->fetch_object($resqlcomm);
-		    $this->commande_ref = $objc->ref;
-		    $this->db->free($resqlcomm);
-		  }
-	      }
+		    if ($resqlcomm)
+		    {
+			    $objc = $this->db->fetch_object($resqlcomm);
+		      $this->commande_ref = $objc->ref;
+		      $this->db->free($resqlcomm);
+		    }
+	    }
 
-	    if ($this->statut == 0)
-	      {
-		$this->brouillon = 1;
-	      }
+	    if ($this->statut == 0)	$this->brouillon = 1;
 
 	    /*
 	     * Lignes
 	     */
 	    $result=$this->fetch_lines();
 	    if ($result < 0)
-	      {
-		return -3;
-	      }
+	    {
+	    	return -3;
+	    }
 	    return 1;
 	  }
 	else
@@ -568,15 +565,15 @@ class Facture extends CommonObject
 	    $this->lignes[$i] = $faclig;
 	    $i++;
 	  }
-	$this->db->free($result);
-	return 1;
-      }
-    else
-      {
-	$this->error=$this->db->error();
-	dolibarr_syslog('Facture::fetch_lines: Error '.$this->error);
-	return -3;
-      }
+	  $this->db->free($result);
+	  return 1;
+   }
+   else
+   {
+   	$this->error=$this->db->error();
+	  dolibarr_syslog('Facture::fetch_lines: Error '.$this->error);
+	   return -3;
+   }
   }
 
 	/**

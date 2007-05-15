@@ -97,7 +97,7 @@ class Expedition extends CommonObject
     
                 $this->commande = new Commande($this->db);
                 $this->commande->id = $this->commande_id;
-                $this->commande->fetch_lignes();
+                $this->commande->fetch_lines();
     
                 /*
                 *  Insertion des produits dans la base

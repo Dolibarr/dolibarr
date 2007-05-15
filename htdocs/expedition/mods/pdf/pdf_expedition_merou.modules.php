@@ -182,7 +182,7 @@ Class pdf_expedition_merou extends ModelePdfExpedition
 				//Generation du tableau
 				$this->_tableau($pdf, $tab_top, $tab_height, $nexY);
 				//Recuperation des produits de la commande.
-				$this->expe->commande->fetch_lignes(1);
+				$this->expe->commande->fetch_lines(1);
 				$Produits = $this->expe->commande->lignes;
 				$nblignes = sizeof($Produits);
 				for ($i = 0 ; $i < $nblignes ; $i++){

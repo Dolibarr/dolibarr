@@ -147,7 +147,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 	      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	    }
-	  commande_supplier_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	  supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
       else
 	{
@@ -179,7 +179,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
 	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
 	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-      commande_supplier_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
+      supplier_order_pdf_create($db, $commande->id,	$commande->modelpdf, $outputlangs);
     }
   else
     {
@@ -206,7 +206,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->fournisseur->commande->cre
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-  commande_supplier_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+  supplier_order_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
   Header('Location: fiche.php?id='.$_GET['id']);
   exit;
 }
@@ -220,7 +220,7 @@ if ($_POST['action'] ==	'confirm_valid'	&& $_POST['confirm'] ==	'yes' && $user->
   $result = $commande->valid($user);
   if ($result	>= 0)
     {
-      commande_supplier_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+      supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
       Header("Location: fiche.php?id=".$_GET["id"]);
       exit;
     }
@@ -305,7 +305,7 @@ if ($_GET['action']	== 'up'	&& $user->rights->fournisseur->commande->creer)
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-  commande_supplier_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+  supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
   Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
   exit;
 }
@@ -320,7 +320,7 @@ if ($_GET['action']	== 'down' && $user->rights->fournisseur->commande->creer)
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-  commande_supplier_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+  supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
   Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
   exit;
 }
@@ -346,7 +346,7 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-  $result=commande_supplier_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
+  $result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
   if ($result	<= 0)
     {
       dolibarr_print_error($db,$result);

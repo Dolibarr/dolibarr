@@ -2582,15 +2582,18 @@ function num_public_holiday($timestampStart, $timestampEnd)
 */
 function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 {
-	if ($lastday == 1)
+	if ($timestampStart < $timestampEnd)
 	{
-		$bit = 0;
+		if ($lastday == 1)
+	  {
+		  $bit = 0;
+	  }
+	  else
+	  {
+		  $bit = 1;
+	  }
+	  $nbjours = round(($timestampEnd - $timestampStart)/(60*60*24)-$bit);
 	}
-	else
-	{
-		$bit = 1;
-	}
-	$nbjours = round(($timestampEnd - $timestampStart)/(60*60*24)-$bit);
 	return $nbjours;
 }
 
@@ -2604,16 +2607,19 @@ function num_between_day($timestampStart, $timestampEnd, $lastday=0)
 */
 function num_open_day($timestampStart, $timestampEnd,$inhour=0,$lastday=0)
 {
-	if ($lastday == 1)
+	if ($timestampStart < $timestampEnd)
 	{
-		$bit = 1;
+		if ($lastday == 1)
+	  {
+		  $bit = 1;
+	  }
+	  else
+	  {
+		  $bit = 0;
+	  }
+	  $nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
+	  if ($inhour == 1) $nbOpenDay = $nbOpenDay*24;
 	}
-	else
-	{
-		$bit = 0;
-	}
-	$nbOpenDay = num_between_day($timestampStart, $timestampEnd, $bit) - num_public_holiday($timestampStart, $timestampEnd);
-	if ($inhour == 1) $nbOpenDay = $nbOpenDay*24;
 	return $nbOpenDay;
 }
 

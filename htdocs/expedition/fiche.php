@@ -77,7 +77,7 @@ if ($_POST["action"] == 'add')
     // avec qté à livrer
     $commande = new Commande($db);
     $commande->fetch($expedition->commande_id);
-    $commande->fetch_lignes();
+    $commande->fetch_lines();
     for ($i = 0 ; $i < sizeof($commande->lignes) ; $i++)
     {
         $qty = "qtyl".$i;
@@ -271,7 +271,7 @@ if ($_GET["action"] == 'create')
 		*/
 		echo '<br><table class="noborder" width="100%">';
 
-		$lignes = $commande->fetch_lignes(1);
+		$lignes = $commande->fetch_lines(1);
 
 		/* Lecture des expeditions déjà effectuées */
 		$commande->loadExpeditions();

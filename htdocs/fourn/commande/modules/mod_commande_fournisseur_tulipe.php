@@ -37,7 +37,7 @@ include_once("modules_commandefournisseur.php");
    \brief      Classe du modèle de numérotation de référence de commande fournisseur Tulipe
 */
 
-class mod_commande_fournisseur_tulipe extends ModeleNumRefCommandesSuppliers
+class mod_commande_fournisseur_tulipe extends ModeleNumRefSuppliersOrders
 {
 	
 	/**

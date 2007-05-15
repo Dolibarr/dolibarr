@@ -897,10 +897,19 @@ class Commande extends CommonObject
    */
   function fetch($id)
   {
-    $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement,';
-    $sql.= ' '.$this->db->pdate('c.date_commande').' as date_commande, '.$this->db->pdate('c.date_livraison').' as date_livraison,';
-    $sql.= ' c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee, c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+    $sql = 'SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut';
+    $sql.= ', c.amount_ht, c.total_ht, c.total_ttc, c.tva, c.fk_cond_reglement, c.fk_mode_reglement';
+    $sql.= ', '.$this->db->pdate('c.date_commande').' as date_commande';
+    $sql.= ', '.$this->db->pdate('c.date_livraison').' as date_livraison';
+    $sql.= ', c.fk_projet, c.remise_percent, c.remise, c.remise_absolue, c.source, c.facture as facturee';
+    $sql.= ', c.note, c.note_public, c.ref_client, c.model_pdf, c.fk_adresse_livraison';
+    $sql.= ', p.code as mode_reglement_code, p.libelle as mode_reglement_libelle';
+    $sql.= ', cr.code as cond_reglement_code, cr.libelle as cond_reglement_libelle, cr.libelle_facture as cond_reglement_libelle_facture';
+    $sql.= ', cp.fk_propale';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON (c.fk_cond_reglement = cr.rowid)';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as p ON (c.fk_mode_reglement = p.id)';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'co_pr as cp ON (cp.fk_commande = c.rowid)';
     $sql.= ' WHERE c.rowid = '.$id;
     
     dolibarr_syslog("Commande::fetch sql=$sql");
@@ -911,84 +920,81 @@ class Commande extends CommonObject
 	$obj = $this->db->fetch_object($result);
 	if ($obj)
 	  {
-	    $this->id                   = $obj->rowid;
-	    $this->ref                  = $obj->ref;
-	    $this->ref_client           = $obj->ref_client;
-	    $this->socid               = $obj->fk_soc;
-	    $this->statut               = $obj->fk_statut;
-	    $this->user_author_id       = $obj->fk_user_author;
-	    $this->total_ht             = $obj->total_ht;
-	    $this->total_tva            = $obj->tva;
-	    $this->total_ttc            = $obj->total_ttc;
-	    $this->date                 = $obj->date_commande;
-	    $this->remise               = $obj->remise;
-	    $this->remise_percent       = $obj->remise_percent;
-	    $this->remise_absolue       = $obj->remise_absolue;
-	    $this->source               = $obj->source;
-	    $this->facturee             = $obj->facturee;
-	    $this->note                 = $obj->note;
-	    $this->note_public          = $obj->note_public;
-	    $this->projet_id            = $obj->fk_projet;
-	    $this->modelpdf             = $obj->model_pdf;
-	    $this->cond_reglement_id    = $obj->fk_cond_reglement;
-	    $this->mode_reglement_id    = $obj->fk_mode_reglement;
-	    $this->date_livraison       = $obj->date_livraison;
-	    $this->adresse_livraison_id = $obj->fk_adresse_livraison;
+	    $this->id                     = $obj->rowid;
+	    $this->ref                    = $obj->ref;
+	    $this->ref_client             = $obj->ref_client;
+	    $this->socid                  = $obj->fk_soc;
+	    $this->statut                 = $obj->fk_statut;
+	    $this->user_author_id         = $obj->fk_user_author;
+	    $this->total_ht               = $obj->total_ht;
+	    $this->total_tva              = $obj->tva;
+	    $this->total_ttc              = $obj->total_ttc;
+	    $this->date                   = $obj->date_commande;
+	    $this->remise                 = $obj->remise;
+	    $this->remise_percent         = $obj->remise_percent;
+	    $this->remise_absolue         = $obj->remise_absolue;
+	    $this->source                 = $obj->source;
+	    $this->facturee               = $obj->facturee;
+	    $this->note                   = $obj->note;
+	    $this->note_public            = $obj->note_public;
+	    $this->projet_id              = $obj->fk_projet;
+	    $this->modelpdf               = $obj->model_pdf;
+	    $this->mode_reglement_id      = $obj->fk_mode_reglement;
+	    $this->mode_reglement_code    = $obj->mode_reglement_code;
+	    $this->mode_reglement         = $obj->mode_reglement_libelle;
+	    $this->cond_reglement_id      = $obj->fk_cond_reglement;
+	    $this->cond_reglement_code    = $obj->cond_reglement_code;
+	    $this->cond_reglement         = $obj->cond_reglement_libelle;
+	    $this->cond_reglement_facture = $obj->cond_reglement_libelle_facture;
+	    $this->date_livraison         = $obj->date_livraison;
+	    $this->adresse_livraison_id   = $obj->fk_adresse_livraison;
+	    $this->propale_id             = $obj->fk_propale;
+	    $this->lignes                 = array();
+	    
 	    if ($this->statut == 0) $this->brouillon = 1;
 		
 	    $this->db->free();
-		
-	    if ($this->cond_reglement_id)
-	      {
-		$sql = "SELECT rowid, libelle, code";
-		$sql.= " FROM ".MAIN_DB_PREFIX."cond_reglement";
-		$sql.= " WHERE rowid = ".$this->cond_reglement_id;
-		
-		$resqlcond = $this->db->query($sql);
-		
-		if ($resqlcond)
-		  {
-		    $objc = $this->db->fetch_object($resqlcond);
-		    $this->cond_reglement      = $objc->libelle;
-		    $this->cond_reglement_code = $objc->code;
-		  }
-	      }
-		
-	    $this->lignes = $this->fetch_lignes();
-		
+	    
+	    if ($this->propale_id)
+	    {
+	    	$sqlp = "SELECT ref";
+		    $sqlp.= " FROM ".MAIN_DB_PREFIX."propal";
+		    $sqlp.= " WHERE rowid = ".$this->propale_id;
+
+		    $resqlprop = $this->db->query($sqlp);
+
+		    if ($resqlprop)
+		    {
+		      $objp = $this->db->fetch_object($resqlprop);
+		      $this->propale_ref = $objp->ref;
+		      $this->db->free($resqlprop);
+		    }
+	    }
+
 	    /*
-	     * Propale associée
+	     * Lignes
 	     */
-	    $sql = 'SELECT cp.fk_propale';
-	    $sql .= ' FROM '.MAIN_DB_PREFIX.'co_pr as cp';
-	    $sql .= ' WHERE cp.fk_commande = '.$this->id;
-	    if ($this->db->query($sql))
-	      {
-		if ($this->db->num_rows())
-		  {
-		    $obj = $this->db->fetch_object();
-		    $this->propale_id = $obj->fk_propale;
-		  }
-		return 1;
-	      }
-	    else
-	      {
-		dolibarr_print_error($this->db);
-		return -1;
-	      }
+	    $result=$this->fetch_lines();
+	    if ($result < 0)
+	    {
+	    	return -3;
+	    }
+	    return 1;
 	  }
-	else
+	  else
 	  {
-	    $this->error="Order not found";
+	    dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' numrows=0 sql='.$sql);
+	    $this->error='Order with id '.$rowid.' not found sql='.$sql;
 	    return -2;	
 	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return -3;
-      }
+	}
+	else
+  {
+  	dolibarr_syslog('Commande::Fetch Error rowid='.$rowid.' Erreur dans fetch de la commande');
+	  $this->error=$this->db->error();
+	  return -1;
   }
+}
 
 	
   /**
@@ -1095,9 +1101,8 @@ class Commande extends CommonObject
    *		\param		only_product	Ne renvoie que ligne liées à des produits physiques prédéfinis
    *		\return		array			Tableau de CommandeLigne
    */
-  function fetch_lignes($only_product=0)
+  function fetch_lines($only_product=0)
   {
-    $this->lignes = array();
     $sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
     $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits,';
 	  $sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
@@ -1110,12 +1115,12 @@ class Commande extends CommonObject
 
     $result = $this->db->query($sql);
     if ($result)
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $objp = $this->db->fetch_object($result);
+    {
+    	$num = $this->db->num_rows($result);
+	    $i = 0;
+	    while ($i < $num)
+	    {
+	      $objp = $this->db->fetch_object($result);
 
 	    $ligne = new CommandeLigne($this->db);
 	    $ligne->rowid            = $objp->rowid;
@@ -1145,14 +1150,20 @@ class Commande extends CommonObject
 	    $this->lignes[$i] = $ligne;
 	    $i++;
 	  }
-	$this->db->free();
-      }
-    return $this->lignes;
+	  $this->db->free($result);
+	  return 1;
+   }
+   else
+   {
+   	$this->error=$this->db->error();
+	  dolibarr_syslog('Commande::fetch_lines: Error '.$this->error);
+	  return -3;
+   }
   }
 
 
   /**
-   *      \brief      Renvoie nombre de lignes de type produits. Doit etre appelé après fetch_lignes
+   *      \brief      Renvoie nombre de lignes de type produits. Doit etre appelé après fetch_lines
    *		\return		int		<0 si ko, Nbre de lignes produits sinon
    */
   function getNbOfProductsLines()
