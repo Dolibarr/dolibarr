@@ -1,5 +1,4 @@
-<!--
- * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+{* Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007 Auguria SARL         <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +17,7 @@
  *
  * $Id$
  * $Source$
--->
+ *}
 <!-- BEGIN SMARTY TEMPLATE -->
 
 <form id="evolForm" action="fiche.php" method="post">
@@ -155,8 +154,8 @@
  <tr>
   <td>Auteur / Editeur</td>
   <td>
-   <select class="flat" name="auteurs">
-
+   <select class="flat" name="auteur">
+    {html_options options=$livre_available_auteurs selected=$livre_auteur_id}
    </select>
   </td>
   <td>Saisi par</td>

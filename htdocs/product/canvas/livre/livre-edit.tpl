@@ -1,3 +1,23 @@
+{* Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Auguria SARL         <info@auguria.org>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ *}
 <!-- BEGIN SMARTY TEMPLATE -->
 
 <form id="evolForm" action="fiche.php" method="post">
@@ -142,6 +162,17 @@
 <br />
 
 <table class="border" width="100%">
+
+{if $livre_contrat_locked eq '0'}
+<tr>
+ <td>Auteur / Editeur</td>
+ <td>
+   <select class="flat" name="auteur">
+    {html_options options=$livre_available_auteurs selected=$livre_auteur_id}
+   </select>
+ </td>
+ <td>Saisi par</td><td>{$livre_contrat_user_fullname}</td>
+</tr>
 <tr>
  <td width="15%">Durée du contrat :</td>
  <td width="35%">
@@ -153,7 +184,6 @@
   {html_select_date field_order='DMY' start_year='-10' time=$livre_contrat_date_app reverse_years=True all_extra='class="flat"'}
  </td>
 </tr>
-
 <tr>
  <td>Taux conclu</td>
  <td>
@@ -166,6 +196,41 @@
    class="normal" onfocus="this.className='focus';" onblur="this.className='normal';">
  </td>
 </tr>
+<tr>
+ <td>Validation du contrat</td>
+ <td>
+  <input type="checkbox" name="locked" value="locked" />
+ </td>
+ <td colspan="2">En cochant la case vous interdisez toute modifications</td>
+
+</tr>
+
+{else}
+<tr>
+ <td>Auteur / Editeur</td>
+ <td>{$livre_auteur}</td>
+ <td>Saisi par</td><td>{$livre_contrat_user_fullname}</td>
+</tr>
+<tr>
+ <td width="15%">Durée du contrat : </td>
+ <td width="35%">{$livre_contrat_duree}</td>
+ <td width="15%">Date d'application</td>
+ <td width="35%">{$livre_contrat_date_app|date_format:"%d %B %Y"}</td>
+</tr>
+<tr>
+ <td>Taux conclu</td>
+ <td>{$livre_contrat_taux} %</td>
+ <td>Quantité achetée</td>
+ <td>{$livre_contrat_quant}</td>
+</tr>
+{/if}
+
+</table>
+
+<br />
+
+<table class="border" width="100%">
+
 
  <tr>
   <td valign="top">Description</td>

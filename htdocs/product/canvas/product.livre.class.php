@@ -70,7 +70,6 @@ class ProductLivre extends Product
     */
     $this->next_prev_filter = "canvas='livre'";
 
-
     $this->onglets[0][0] = 'URL';
     $this->onglets[0][1] = 'Editeur';
 
@@ -209,17 +208,17 @@ class ProductLivre extends Product
    *    \param      id          Id livre ('' par defaut)
    *    \param      ref         Reference du livre ('' par defaut)
    */
-  function FetchCanvas($id='', $ref='')
+  function FetchCanvas($id='', $ref='', $action='')
   {
     $result = $this->fetch($id,$ref);
 
     if ($result >= 0)
       {
-	$sql = "SELECT rowid,isbn,ean,pages,fk_couverture,format,fk_contrat";
-	$sql.= ",px_feuillet,px_revient,px_couverture,px_reliure";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre";
-	if ($id) $sql.= " WHERE rowid = '".$id."'";
-	if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
+	$sql = "SELECT l.rowid,l.isbn,l.ean,l.pages,l.fk_couverture,l.format,l.fk_contrat";
+	$sql.= ",l.px_feuillet,l.px_revient,l.px_couverture,l.px_reliure, s.nom, s.idp";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre as l LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp=l.fk_auteur";
+	if ($id) $sql.= " WHERE l.rowid = '".$id."'";
+	if ($ref) $sql.= " WHERE l.ref = '".addslashes($ref)."'";
 	
 	$result = $this->db->query($sql) ;
 
@@ -236,6 +235,8 @@ class ProductLivre extends Product
 	    $this->px_revient         = $result["px_revient"];
 	    $this->px_couverture      = $result["px_couverture"];
 	    $this->couverture_id      = $result["fk_couverture"];
+	    $this->auteur             = stripslashes($result["nom"]);
+	    $this->auteur_id          = $result["idp"];
 
 	    $this->db->free();
 	  }
@@ -243,6 +244,9 @@ class ProductLivre extends Product
 	$this->contrat = new ProductLivreContrat($this->db);
 	$this->contrat->FetchCanvas($result["fk_contrat"]);
       }
+
+    if ($action =='edit' or $action == 'create')
+      $this->GetAvailableAuteurs();
 
     return $result;
   }
@@ -292,6 +296,7 @@ class ProductLivre extends Product
     $sql.= " , px_couverture = '".ereg_replace(",",".",$this->px_couverture)."'";
     $sql.= " , fk_couverture = '".$this->couverture->id."'";
     $sql.= " , fk_contrat    = '".$this->contrat->id."'";
+    $sql.= " , fk_auteur     = '".$datas["auteur"]."'";
     $sql.= " , format        = '$format'";
     $sql.= " WHERE rowid = " . $this->id;
 
@@ -424,10 +429,15 @@ class ProductLivre extends Product
     $smarty->assign('prod_pxrevient',         price($this->px_revient));
     $smarty->assign('prod_pxvente',           price($this->price_ttc));
 
+    $smarty->assign('livre_contrat_locked',   $this->contrat->locked);
     $smarty->assign('livre_contrat_taux',     $this->contrat->taux);
     $smarty->assign('livre_contrat_duree',    $this->contrat->duree);
     $smarty->assign('livre_contrat_quant',    $this->contrat->quantite);
     $smarty->assign('livre_contrat_date_app', $this->contrat->date_app);
+    $smarty->assign('livre_contrat_user_fullname', $this->contrat->user_fullname);
+
+    $smarty->assign('livre_auteur',           $this->auteur);
+    $smarty->assign('livre_auteur_id',        $this->auteur_id);
 
     $smarty->assign('prod_stock_loc',         $this->stock_loc);
 
@@ -444,6 +454,7 @@ class ProductLivre extends Product
     $this->GetAvailableFormat();
 
     $smarty->assign('livre_available_formats', $this->available_formats);
+    $smarty->assign('livre_available_auteurs', $this->available_auteurs);
 
     if ($this->status==1)
       {
@@ -559,8 +570,27 @@ class ProductLivre extends Product
     $this->db->free($resql);
 
     return 0;
-
   }
+
+  function GetAvailableAuteurs()
+  {
+    $this->available_auteurs = array();
+
+    $sql = "SELECT idp,nom FROM ".MAIN_DB_PREFIX."societe ";
+
+    $resql = $this->db->query($sql);
+
+    while ($obj = $this->db->fetch_object($resql) )
+      {
+	$this->available_auteurs[$obj->idp] = stripslashes($obj->nom);
+      }
+
+    $this->db->free($resql);
+
+    return 0;
+  }
+
+
 
 }
 ?>
