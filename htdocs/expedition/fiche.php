@@ -42,6 +42,7 @@ $langs->load("bills");
 $langs->load('deliveries');
 $langs->load('orders');
 $langs->load('stocks');
+$langs->load('other');
 
 $user->getrights('expedition');
 if (!$user->rights->expedition->lire)
