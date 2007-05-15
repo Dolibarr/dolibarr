@@ -102,6 +102,9 @@ $configfileparameters=array('dolibarr_main_url_root',
 							'dolibarr_main_db_user',
 							'dolibarr_main_db_pass',
 							'dolibarr_main_db_type',
+							'separator',
+							'dolibarr_main_authentication',
+							'separator',
 							'dolibarr_smarty_libs_dir',
 							'dolibarr_smarty_compile',
 							'dolibarr_smarty_cache'
@@ -114,6 +117,9 @@ $configfilelib=array($langs->trans("URLRoot"),
 					$langs->trans("Login"),
 					$langs->trans("Password"),
 					$langs->trans("DriverType"),
+					'separator',
+					$langs->trans("AuthenticationMode"),
+					'separator',
 					$langs->trans("SmartyLibs"),
 					$langs->trans("SmartyCompile"),
 					$langs->trans("SmartyCache")
@@ -128,11 +134,19 @@ $i=0;
 foreach($configfileparameters as $key)
 {
 	$var=!$var;
-	print "<tr ".$bc[$var]."><td>".$configfilelib[$i].'</td><td>'.$key.'</td>';
-	print "<td>";
-	if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
-	else print ${$key};
-	print "</td>";
+	print "<tr ".$bc[$var].">";
+	if ($key == 'separator')
+	{
+		print '<td colspan="3">&nbsp;</td>';
+	}
+	else
+	{
+		print "<td>".$configfilelib[$i].'</td><td>'.$key.'</td>';
+		print "<td>";
+		if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
+		else print ${$key};
+		print "</td>";
+	}
 	print "</tr>\n";
 	$i++;
 }
