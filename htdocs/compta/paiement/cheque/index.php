@@ -21,10 +21,10 @@
  */
  
 /**
-   \file       htdocs/compta/paiement/cheque/liste.php
-    \ingroup    compta
-     \brief      Page liste des bordereau de remise de cheque
-      \version    $Revision$
+		\file       htdocs/compta/paiement/cheque/index.php
+		\ingroup    compta
+		\brief      Page liste des bordereau de remise de cheque
+		\version    $Revision$
 */
 
 require("./pre.inc.php");

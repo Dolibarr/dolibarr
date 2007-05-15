@@ -36,7 +36,7 @@ $langs->load("bills");
 $user->getrights("facture");
 
 // Sécurité accés client
-if (! $user->rights->facture->lire)
+if (! $user->rights->facture->lire && ! $user->rights->adherent->cotisation->lire)
   accessforbidden();
 
 $socid=0;
