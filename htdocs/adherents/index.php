@@ -203,7 +203,7 @@ if ($resql)
 {
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td colspan="4">'.$langs->trans("LastMembers",$max).'</td></tr>';
+    print '<td colspan="4">'.$langs->trans("LastMembersModified",$max).'</td></tr>';
 
     $num = $db->num_rows($resql);
     if ($num)

@@ -94,6 +94,7 @@ BlankSubscriptionForm=Subscription form
 MemberPublicLinks=Public links/pages
 ExportDataset_member_1=Members and properties
 LastMembers=Last %s members
+LastMembersModified=Last %s modified members
 AttributeName=Attribute name
 FieldEdition=% field edition
 AlphaNumOnlyCharsAndNoSpace=only alphanumericals characters without space
