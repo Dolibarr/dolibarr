@@ -535,7 +535,7 @@ else
    			    
    			    // Volume Total
             print '<tr><td>'.$langs->trans("TotalVolume").'</td>';
-            print '<td colspan="3">'.$totalVolume.' '.measuring_units_string($volumeUnit,"weight")."</td>\n";
+            print '<td colspan="3">'.$totalVolume.' '.measuring_units_string($volumeUnit,"volume")."</td>\n";
    			    print '</tr>';
 
             // Statut
