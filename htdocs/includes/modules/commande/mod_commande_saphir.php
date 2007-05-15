@@ -232,7 +232,7 @@ function info()
 	*      	\param      commande		Objet commande
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc,$commande)
+    function getNextValue($objsoc=0)
     {
         global $db,$conf;
         
@@ -443,9 +443,9 @@ function info()
      *      \param      commande		Objet commande
      *      \return     string      Texte descripif
      */
-    function commande_get_num($objsoc=0,$commande)
+    function commande_get_num($objsoc=0)
     {
-        return $this->getNextValue($objsoc,$commande);
+        return $this->getNextValue($objsoc);
     } 
 }    
 

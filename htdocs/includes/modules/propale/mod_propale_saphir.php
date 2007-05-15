@@ -232,7 +232,7 @@ function info()
 	*      	\param      propale		  Objet propale
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc=0,$propale)
+    function getNextValue($objsoc=0)
     {
         global $db,$conf;
         
