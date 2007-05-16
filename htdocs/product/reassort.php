@@ -103,9 +103,11 @@ if ($sall)
 }
 if ($type==1)
 {
-  $sql .= " AND p.fk_product_type = '1';
-} else
-  $sql .= " AND p.fk_product_type <> '1';
+  $sql .= " AND p.fk_product_type = '1'";
+}
+else
+{
+  $sql .= " AND p.fk_product_type <> '1'";
 }
 if ($sref)
 {
