@@ -421,7 +421,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	}  
     }
 
-  $product->assign_smarty_values($smarty);
+  $product->assign_smarty_values($smarty, 'create');
 
   if ($_error == 1)
     {
@@ -599,7 +599,7 @@ if ($_GET["id"] || $_GET["ref"])
       
       $smarty->template_dir = DOL_DOCUMENT_ROOT.'/product/canvas/'.$product->canvas.'/';
       
-      $product->assign_smarty_values($smarty);
+      $product->assign_smarty_values($smarty,$_GET["action"]);
     }
   else
     {
