@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +25,6 @@
  */
 require ("../../master.inc.php");
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/SimpleBar.class.php");
 
 /*
@@ -57,6 +56,8 @@ class ProcessGraphLignes
   {
     dolibarr_syslog("go $ligne");
     $this->ligne = $ligne;
+
+    /* Lecture des donnees */
     $this->GetDatas();
 
     $error = 0;
@@ -74,7 +75,6 @@ class ProcessGraphLignes
     $graphx->barcolor = "blue";
     $graphx->show_console = 0 ;
     $graphx->GraphDraw($file, $this->vente, $this->labels);
-
 
     /* Gain */
 
