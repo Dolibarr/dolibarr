@@ -60,10 +60,11 @@ class UserGroup
     }
 
 
-  /**
-   *    \brief      Charge un objet user avec toutes ces caractéristiques
-   *    \param      id      id du groupe à charger
-   */
+	/**
+	*	\brief      Charge un objet user avec toutes ces caractéristiques
+	*	\param      id      id du groupe à charger
+	*	\return		int		<0 si KO, >0 si OK
+	*/
     function fetch($id)
     {
         $this->id = $id;
@@ -72,8 +73,8 @@ class UserGroup
         $sql .= " FROM ".MAIN_DB_PREFIX."usergroup as g";
         $sql .= " WHERE g.rowid = ".$this->id;
 
-        $result = $this->db->query($sql);
-
+        dolibarr_syslog("Usergroup::fetch sql=".$sql);
+		$result = $this->db->query($sql);
         if ($result)
         {
             if ($this->db->num_rows($result))
@@ -87,11 +88,12 @@ class UserGroup
                 $this->datem = $obj->datem;
             }
             $this->db->free($result);
-
+			return 1;
         }
         else
         {
             dolibarr_syslog("UserGroup::Fetch Erreur");
+			return -1;
         }
 
     }
