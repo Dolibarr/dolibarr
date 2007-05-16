@@ -380,8 +380,15 @@ class ProductLivre extends Product
    *    \brief      Assigne les valeurs pour les templates Smarty
    *    \param      smarty     Instance de smarty
    */
-  function assign_smarty_values(&$smarty)
+  function assign_smarty_values(&$smarty, $action='')
   {
+
+    if ($action =='edit' or $action == 'create')
+      {
+	$this->GetAvailableFormat();
+	$this->GetAvailableAuteurs();
+      }
+
     if ($this->errno == 257)
       {
 	$smarty->assign('class_normal_ref', 'error');
@@ -451,7 +458,7 @@ class ProductLivre extends Product
     $smarty->assign('prod_statuts_id', array(1,0) );
     $smarty->assign('prod_statuts_value', array('En vente', 'Hors vente') );
 
-    $this->GetAvailableFormat();
+
 
     $smarty->assign('livre_available_formats', $this->available_formats);
     $smarty->assign('livre_available_auteurs', $this->available_auteurs);
