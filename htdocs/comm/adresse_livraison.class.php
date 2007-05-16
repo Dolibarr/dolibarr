@@ -293,7 +293,7 @@ class AdresseLivraison
 				            $ligne->adresse_full    = stripslashes($objp->address) . "\n". $objp->cp . ' '. stripslashes($objp->ville);
 				            $ligne->pays_id         = $objp->fk_pays;
 				            $ligne->pays_code       = $objp->fk_pays?$objp->pays_code:'';
-				            $ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?$langs->trans('Country'.$objp->pays_code):$objp->pays):'';
+				            $ligne->pays            = $objp->fk_pays?($langs->trans('Country'.$objp->pays_code)!='Country'.$objp->pays_code?strtoupper($langs->trans('Country'.$objp->pays_code)):$objp->pays):'';
 				            $ligne->note            = $objp->note;
 				            
 				            $this->lignes[$i]      = $ligne;
