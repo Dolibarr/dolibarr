@@ -197,9 +197,6 @@ if ($action == 'create')
 /* ************************************************************************** */
 else
 {
-
-    if ($message) { print $message."<br>"; }
-
     if ($_GET["id"] )
     {
         $group = new UserGroup($db);
@@ -227,7 +224,7 @@ else
          * Fiche en mode visu
          */
 
-        if ($_GET["action"] != 'edit')
+        if ($action != 'edit')
         {
             print '<table class="border" width="100%">';
             
@@ -244,11 +241,8 @@ else
     
             print '</div>';
     
-            if ($message) { print $message; }
-    
             /*
              * Barre d'actions
-             *
              */
             print '<div class="tabsAction">';
     
@@ -265,6 +259,9 @@ else
             print "</div>\n";
             print "<br>\n";
     
+
+			if ($message) { print $message."<br>"; }
+
     
             /*
              * Liste des utilisateurs dans le groupe
@@ -300,7 +297,7 @@ else
                 dolibarr_print_error($db);
             }
     
-            if ($user->admin)
+            if ($caneditperms)
             {
                 $form = new Form($db);
                 print '<form action="fiche.php?id='.$group->id.'" method="post">'."\n";
@@ -314,6 +311,7 @@ else
                 print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
                 print '</table></form>'."\n";
+                print '<br>';
             }
     
             /*
@@ -331,8 +329,6 @@ else
             {
                 $num = $db->num_rows($result);
                 $i = 0;
-    
-                print '<br>';
     
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
@@ -387,7 +383,7 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && $user->admin)
+        if ($_GET["action"] == 'edit' && $caneditperms)
         {
             print '<form action="fiche.php?id='.$group->id.'" method="post" name="updategroup" enctype="multipart/form-data">';
             print '<input type="hidden" name="action" value="update">';
