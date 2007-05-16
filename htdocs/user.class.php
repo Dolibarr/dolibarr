@@ -117,8 +117,6 @@ class User
 	{
 		global $conf;
 
-		dolibarr_syslog("User::Fetch id=".$this->id." login=".$login, LOG_DEBUG);
-		
 		// Recupere utilisateur
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
@@ -139,7 +137,7 @@ class User
 			$sql .= " WHERE u.rowid = ".$this->id;
 		}
 		
-
+		dolibarr_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
