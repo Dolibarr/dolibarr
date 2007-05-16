@@ -29,6 +29,7 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
 
+$user->getrights('user');
 
 // Defini si peux lire/modifier utilisateurs et permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
