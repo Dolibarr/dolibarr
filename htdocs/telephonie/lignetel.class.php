@@ -290,7 +290,7 @@ class LigneTel {
     else
       {
 	$this->error_message = "Echec de la création de la ligne, le numéro de la ligne est incorrect !";
-	dolibarr_syslog("LigneTel::Create Error -2");
+	dolibarr_syslog("LigneTel::Create Error -2 ($this->numero)");
 	return -2;
       }
   }
