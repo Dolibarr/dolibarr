@@ -482,8 +482,9 @@ class pdf_crabe extends ModelePDFFactures
         }
         else
         {
-            $this->error=$langs->trans("ErrorSQL")." $sql";
-            return 0;
+            $this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
+			dolibarr_syslog($this->db,$this->error);
+            return -1;
         }
 
     }
