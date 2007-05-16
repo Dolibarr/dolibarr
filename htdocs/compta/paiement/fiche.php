@@ -74,27 +74,31 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 
 	$paiement = new Paiement($db);
 	$paiement->id = $_GET['id'];
-	if ($paiement->valide() >= 0)
+	if ($paiement->valide() > 0)
 	{
-    $db->commit();
-    
-    // régénère le pdf
-    $fac = new Facture($db);
-    $fac->fetch($_GET['facid']);
-    if ($_REQUEST['lang_id'])
-    {
-    	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-     	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    }
-    facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		$db->commit();
 		
+		// \TODO Boucler sur les facture liées à ce paiement et régénèrer le pdf
+		$factures=array();
+		foreach($factures as $id)
+		{
+			$fac = new Facture($db);
+			$fac->fetch($id);
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+		}
+
 		Header('Location: fiche.php?id='.$paiement->id);
-    exit;
+		exit;
 	}
 	else
 	{
 		$mesg='<div class="error">'.$paiement->error.'</div>';
-    $db->rollback();
+		$db->rollback();
 	}
 }
 
