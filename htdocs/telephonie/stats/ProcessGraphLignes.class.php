@@ -19,25 +19,14 @@
  * $Source$
  *
  *
- * Generation des graphiques clients
+ * Generation des graphiques de statistiques des lignes
  *
  *
  */
 require ("../../master.inc.php");
 
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbminutes.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/SimpleBar.class.php");
 
 /*
  * Process
@@ -66,6 +55,7 @@ class ProcessGraphLignes
   
   function go($ligne)
   {
+    dolibarr_syslog("go $ligne");
     $this->ligne = $ligne;
     $this->GetDatas();
 
@@ -77,7 +67,7 @@ class ProcessGraphLignes
 
     $file = $img_root . $ligne."/graphca.png";
 
-    $graphx = new GraphBar ($this->db, $file);
+    $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
     $graphx->titre = "Chiffre d'affaire (euros HT)";
@@ -90,7 +80,7 @@ class ProcessGraphLignes
 
     $file = $img_root . $ligne."/graphgain.png";
     
-    $graphx = new GraphBar ($this->db, $file);
+    $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
     $graphx->titre = "Gain (euros HT)";
@@ -102,7 +92,7 @@ class ProcessGraphLignes
     
     $file = $img_root . $ligne."/graphappelsdureemoyenne.png";
     
-    $graphx = new GraphBar ($this->db, $file);
+    $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
     $graphx->titre = "Durée moyenne";
@@ -114,10 +104,11 @@ class ProcessGraphLignes
     
     $file = $img_root . $ligne."/nb-comm-mensuel.png";
 
-    $graphx = new GraphBar ($this->db, $file);
+    $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
     $graphx->titre = "Nombre de communications";
+    $graphx->barcolor = "yellow";
     $graphx->show_console = 0 ;
     $graphx->GraphDraw($file, $this->nbcomm, $this->labels);
 
@@ -125,12 +116,12 @@ class ProcessGraphLignes
     
     $file = $img_root . $ligne."/nb-minutes-mensuel.png";
     
-    $graphx = new GraphBar ($this->db, $file);
+    $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
     $graphx->show_console = 0 ;
     $graphx->titre = "Nombre de minutes";
-    $graphx->barcolor = "bisque2";
+    $graphx->barcolor = "pink";
     $graphx->GraphDraw($file, $this->nbminutes, $this->labels);    
   }
 
