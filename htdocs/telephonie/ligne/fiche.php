@@ -34,28 +34,45 @@ $s = strftime("%S",$dt);
 
 if ($_POST["action"] == 'add' && $user->rights->telephonie->ligne->creer)
 {
-  $ligne = new LigneTel($db);
-  $ligne->contrat         = $_POST["contrat"];
-  $ligne->numero          = $_POST["numero"];
-  $ligne->client_comm     = $_POST["client_comm"];
-  $ligne->client          = $_POST["client"];
-  $ligne->client_facture  = $_POST["client_facture"];
-  $ligne->fournisseur     = $_POST["fournisseur"];
-  $ligne->commercial_sign = $_POST["commercial_sign"];
-  $ligne->commercial_suiv = $_POST["commercial_suiv"];
-  $ligne->concurrent      = $_POST["concurrent"];
-  $ligne->remise          = $_POST["remise"];
-  $ligne->note            = $_POST["note"];
-  $ligne->techno          = $_POST["techno"];
+  $result = 0;
+  
+  $cbegin = trim($_POST["numero"]);
+  $cend = strlen(trim($_POST["numero_end"]))>0?trim($_POST["numero_end"]):trim($_POST["numero"]);
 
-  if ( $ligne->create($user) == 0)
+  $cli = $cbegin;
+  
+  while ($cli <= $cend)
+    {     
+      $ligne = new LigneTel($db);
+      $ligne->contrat         = $_POST["contrat"];
+      $ligne->numero          = "0".$cli;
+      $ligne->client_comm     = $_POST["client_comm"];
+      $ligne->client          = $_POST["client"];
+      $ligne->client_facture  = $_POST["client_facture"];
+      $ligne->fournisseur     = $_POST["fournisseur"];
+      $ligne->commercial_sign = $_POST["commercial_sign"];
+      $ligne->commercial_suiv = $_POST["commercial_suiv"];
+      $ligne->concurrent      = $_POST["concurrent"];
+      $ligne->remise          = $_POST["remise"];
+      $ligne->note            = $_POST["note"];
+      $ligne->techno          = $_POST["techno"];
+      
+      $result += $ligne->create($user);
+      
+      $cli++;
+    }
+    
+  if ( $result == 0)
     {
-      Header("Location: fiche.php?id=".$ligne->id);
+      Header("Location: ../contrat/fiche.php?id=".$ligne->contrat);
     }
   else
     {
       $_GET["action"] = 'create';
       $_GET["contratid"] = $_POST["contrat"];
+
+      $ligne->numero = $_POST["numero"];
+      $ligne->numero_end = $_POST["numero_end"];
     }  
 }
 
@@ -310,7 +327,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 
 
   $form = new Form($db);
-  print_titre("Nouvelle ligne sur le contrat : ".$contrat->ref);
+  print_titre("Nouvelle(s) ligne(s) sur le contrat : ".$contrat->ref);
 
   if (is_object($ligne))
     {
@@ -365,19 +382,15 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	  print '<tr><td width="20%">Contrat</td><td colspan="2">'.$contrat->ref_url.'</a></td></tr>';
+	  print '<tr><td width="20%">Contrat</td><td colspan="2">'.$contrat->ref_url.'</td></tr>';
 
-	  print '<tr><td width="20%">Client</td><td >';  
-	  print $socc->nom;
-	  print '</td></tr>';
+	  print '<tr><td width="20%">Client</td><td colspan="2">'.$socc->nom.'</td></tr>';
 	  
-	  print '<tr><td width="20%">Code client</td><td >';  
-	  print $socc->code_client;
-	  print '</td></tr>';
-	  
-	  
-	  print '<tr><td width="20%">Numéro</td><td><input name="numero" size="11" maxlength="10" value="'.$ligne->numero.'"></td></tr>';
-	  
+	  print '<tr><td width="20%">Code client</td><td colspan="2">'.$socc->code_client.'</td></tr>';
+	  	 
+	  print '<tr><td width="20%">Numéro</td><td>0<input name="numero" size="10" maxlength="9" value="'.$ligne->numero.'"></td>';
+	  print '<td>0<input name="numero_end" size="10" maxlength="9" value="'.$ligne->numero_end.'"> derniere SDA</td></tr>';
+
 	  $client = new Societe($db, $contrat->client_id);
 	  $client->fetch($contrat->client_id);
 	  
@@ -398,7 +411,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  print '</td><td>';
 	  print '<input type="hidden" name="client_facture" value="'.$contrat->client_facture_id.'">';
 
-	  print '<tr><td width="20%">Fournisseur</td><td >';
+	  print '<tr><td width="20%">Fournisseur</td><td>';
 	  $ff = array();
 	  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur WHERE commande_active = 1 ORDER BY nom ";
 	  if ( $db->query( $sql) )
@@ -422,7 +435,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  $tech = array();
 	  $tech["presel"] = "Présélection";
 	  $tech["voip"] = "VoIP";
-	  print "&nbsp;Technologie&nbsp;:&nbsp;";
+	  print "</td><td>Technologie&nbsp;:&nbsp;";
 	  $form->select_array("techno",$tech,"presel");
 
 	  print '</td></tr>';
@@ -431,7 +444,7 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	   * Concurrents
 	   */
 	  
-	  print '<tr><td width="20%">Fournisseur précédent</td><td >';
+	  print '<tr><td width="20%">Fournisseur précédent</td><td colspan="2">';
 	  $ff = array();
 	  $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_concurrents ORDER BY rowid ";
 	  if ( $db->query( $sql) )
@@ -455,17 +468,15 @@ elseif ($_GET["action"] == 'create' && $_GET["contratid"] > 0)
 	  
 	  print '<tr><td width="20%">Remise LMN</td><td><input name="remise" size="3" maxlength="2" value="'.$ligne->remise.'">&nbsp;%</td></tr>'."\n";
 	  
-	  print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
+	  print '<tr><td width="20%" valign="top">Note</td><td colspan="2">'."\n";
 	  print '<textarea name="note" rows="4" cols="50">'."\n";
 	  print stripslashes($ligne->note);
 	  print '</textarea></td></tr>'."\n";
 	  
-	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+	  print '<tr><td>&nbsp;</td><td colspan="2"><input type="submit" value="Créer"></td></tr>'."\n";
 	  print '</table>'."\n";
-	  print '</form>';
-	  
-	}
-      
+	  print '</form>';	  
+	}      
     }
   else
     {
