@@ -285,16 +285,16 @@ class Expedition extends CommonObject
             $resql=$this->db->query($sql);
             if ($resql)
             {
-                $num = $this->db->num_rows($resql);
-		if ($num >0) {
-		    return 0;
-		}
+            	$num = $this->db->num_rows($resql);
+            	if ($num > 0)
+            	{
+            		return 0;
+            	}
             }
-                        $num = $this->db->num_rows($resql);
-            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
 
-            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition SET ref='".$this->ref."', fk_statut = 1, date_valid=now(), fk_user_valid=$user->id";
-            $sql .= " WHERE rowid = $this->id AND fk_statut = 0 ;";
+            $sql = "UPDATE ".MAIN_DB_PREFIX."expedition";
+            $sql.= " SET ref='".$this->ref."', fk_statut = 1, date_valid = now(), fk_user_valid = ".$user->id;
+            $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
     
             if ($this->db->query($sql) )
             {
