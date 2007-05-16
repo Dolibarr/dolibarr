@@ -288,18 +288,14 @@ class Livraison extends CommonObject
 	
 					// on vérifie si le bon de livraison est en numérotation provisoire
 					$livref = substr($this->ref, 1, 4);
-					if ($livref == PROV)
+					if ($livref == 'PROV')
 					{
-						$num = $objMod->livraison_get_num($soc);
-					}
-					else
-					{
-						$num = $this->ref;
+						$this->ref = $objMod->livraison_get_num($soc);
 					}
 	
 					// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
           // de décrémenter 2 fois le stock.
-          $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> '0'";
+          $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> 0";
           $resql=$this->db->query($sql);
           if ($resql)
           {
@@ -309,9 +305,9 @@ class Livraison extends CommonObject
            		return 0;
            	}
           }
-					
+
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
-					$sql.= " SET ref='".addslashes($num)."', fk_statut = 1, date_valid = now(), fk_user_valid = ".$user->id;
+					$sql.= " SET ref='".addslashes($this->ref)."', fk_statut = 1, date_valid = now(), fk_user_valid = ".$user->id;
 					$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
 					$resql=$this->db->query($sql);
 					if ($resql)
