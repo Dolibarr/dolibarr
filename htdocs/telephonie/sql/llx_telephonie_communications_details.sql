@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ create table llx_telephonie_communications_details (
 
   key (fk_fournisseur),
   key (fk_ligne),
-  key (fk_telephonie_facture)
+  key (fk_telephonie_facture),
   key (ym),
   key (num_prefix)
 
