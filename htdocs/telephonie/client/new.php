@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Brian Fraval         <brian@fraval.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005 Eric Seigne <eric.seigne@ryxeo.com>
@@ -155,6 +155,12 @@ if ($_POST["action"] == 'add')
       $verif = "nok";
     }
   
+  if (strlen(trim($_POST["cliend"])) <> 9 && $verif == 'ok')
+    {
+      $mesg = "Numéro de ligne dernier SDA (0".$_POST["cliend"].") incorrect";
+      $verif = "nok";
+    }
+
   $p = array("1","2","3","4","5");
 
   if (!in_array(substr(trim($_POST["cli"]),0,1), $p) && $verif == 'ok')
@@ -367,6 +373,8 @@ if ($_POST["action"] == 'add')
       $contrat->addpo($_POST["montantpo"], $user);
     }
 
+  /* Ligne 1 */
+
   $ligne = new LigneTel($db);
   $ligne->contrat         = $contrat->id;
   $ligne->numero          = "0".$_POST["cli"];
@@ -393,6 +401,47 @@ if ($_POST["action"] == 'add')
 	    {
 	      $error = 1027;
 	      $mesg.= "Impossible de créer la ligne #1 0".$_POST["cli"];
+	    }
+	}
+    }
+  
+  /* SDA */
+
+  if(!$error && $verif == "ok")
+    {
+      if (strlen(trim($_POST["cli"])) == 9 && strlen(trim($_POST["cliend"])) == 9)
+	{
+	  $cbegin = trim($_POST["cli"]) + 1;
+	  $cend = trim($_POST["cliend"]);
+
+	  $cli = $cbegin;
+
+	  while ($cli <= $cend)
+	    {
+	      $ligne = new LigneTel($db);
+	      $ligne->contrat         = $contrat->id;
+	      $ligne->numero          = "0".$cli;
+	      $ligne->client_comm     = $soc->id;
+	      $ligne->client          = $soc->id;
+	      $ligne->client_facture  = $soc->id;
+	      $ligne->fournisseur     = $_POST["fournisseur"];
+	      $ligne->commercial_sign = $_POST["commercial_sign"];
+	      $ligne->commercial_suiv = $_POST["commercial_sign"];
+	      $ligne->concurrent      = $_POST["concurrent"];
+	      $ligne->remise          = "0";
+	      $ligne->note            = $_POST["note"];
+	      
+	      if ( $ligne->create($user, $_POST["mode_paiement"]) == 0)
+		{
+		  
+		}
+	      else
+		{
+		  $error = 1027;
+		  $mesg.= "Impossible de créer la ligne 0$cli";
+		}
+
+	      $cli++;
 	    }
 	}
     }
@@ -730,7 +779,10 @@ if ($user->rights->telephonie->ligne->creer)
     print '<table class="noborder" width="100%">';
     
     print '<tr><td width="20%">Ligne téléphonique #1</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cli" value="'.$_POST["cli"].'"></td>';
-    print '<td colspan="2">Si le client a plusieurs lignes vous pourrez les ajouter au contrat ultérieuremnt</td></tr>';
+
+    print '<td>Derniere SDA</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cliend" value="'.$_POST["cliend"].'"></td></tr>';
+
+
     
     print '<tr><td width="20%">Ligne téléphonique #2</td><td>0<input type="text" size="10" maxlength="9" '.$focus.' name="cli2" value="'.$_POST["cli2"].'"></td></tr>';
 
