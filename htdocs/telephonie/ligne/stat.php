@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -147,22 +147,7 @@ if ($_GET["id"] or $_GET["numero"])
 
 	  print '</td></tr>';
 
-	  print '<tr><td width="50%" valign="top" align="center">';
 
-	  $file = $img_root.$ligne->id."/graphappelsdureemoyenne.png";
-
-	  if (file_exists($file)) 
-	    {
-	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
-	    }
-	  else
-	    {
-	      print $mesg_no_graph;
-	    }
-
-	  print '</td><td width="50%" valign="top" align="center">';
-	  print "&nbsp;";
-	  print '</td></tr>';
 	  print '<tr><td width="50%" valign="top" align="center">';
 
 	  $file = $img_root.$ligne->id."/nb-comm-mensuel.png";
@@ -189,11 +174,25 @@ if ($_GET["id"] or $_GET["numero"])
 	      print $mesg_no_graph;
 	    }
 
-	  print '</td></tr></table>';
+	  print '</td></tr>';
+	  print '<tr><td width="50%" valign="top" align="center">';
 
+	  $file = $img_root.$ligne->id."/graphappelsdureemoyenne.png";
+
+	  if (file_exists($file)) 
+	    {
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	    }
+	  else
+	    {
+	      print $mesg_no_graph;
+	    }
+
+	  print '</td><td width="50%" valign="top" align="center">';
+	  print "&nbsp;";
+	  print '</td></tr></table>';
 	}
     }
-
 }
 else
 {
