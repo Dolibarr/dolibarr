@@ -299,7 +299,7 @@ class Livraison extends CommonObject
 	
 					// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
           // de décrémenter 2 fois le stock.
-          $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut='1'";
+          $sql = "SELECT ref FROM ".MAIN_DB_PREFIX."livraison where ref='".$this->ref."' AND fk_statut <> '0'";
           $resql=$this->db->query($sql);
           if ($resql)
           {
