@@ -297,12 +297,9 @@ class Livraison extends CommonObject
 						$num = $this->ref;
 					}
 	
-					// \todo Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter
-					//       de décrémenter 2 fois le stock.
-	
 					$sql = "UPDATE ".MAIN_DB_PREFIX."livraison ";
 					$sql.= " SET ref='".addslashes($num)."', fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
-					$sql.= " WHERE rowid = $this->id AND fk_statut = 0";
+					$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0"; // on vérifie déjà le statut dans la requete
 					$resql=$this->db->query($sql);
 					if ($resql)
 					{
@@ -629,12 +626,12 @@ class Livraison extends CommonObject
         	if ($statut==0) return $this->statuts[$statut];
         	if ($statut==1) return $this->statuts[$statut];
     	}
-        if ($mode == 4)
-        {
+      if ($mode == 4)
+      {
         	if ($statut==-1) return img_picto($langs->trans('StatusSendingCanceled'),'statut5').' '.$langs->trans('StatusSendingDraft');
         	if ($statut==0) return img_picto($langs->trans('StatusSendingDraft'),'statut0').' '.$langs->trans('StatusSendingDraft');
         	if ($statut==1) return img_picto($langs->trans('StatusSendingValidated'),'statut4').' '.$langs->trans('StatusSendingValidated');
-		}
+		  }
     }
     
   /**
