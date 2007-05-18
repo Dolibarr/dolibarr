@@ -2706,4 +2706,14 @@ function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 	return $script;
 }
 
+/**
+*	\brief		Fonction simple identique à microtime de PHP 5 mais compatible PHP 4
+*	\return		float		Time en millisecondes avec decimal pour microsecondes
+*/
+function dol_microtime_float()
+{
+    list($usec, $sec) = explode(" ", microtime());
+    return ((float)$usec + (float)$sec);
+}
+
 ?>
