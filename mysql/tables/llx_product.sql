@@ -25,7 +25,7 @@ create table llx_product
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   datec              datetime,
   tms                timestamp,
-  ref                varchar(16) NOT NULL,
+  ref                varchar(32) NOT NULL,
   label              varchar(255) NOT NULL,
   description        text,
   note               text,

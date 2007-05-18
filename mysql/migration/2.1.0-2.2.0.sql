@@ -519,3 +519,5 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 
 ALTER TABLE llx_product ADD COLUMN volume float DEFAULT NULL after weight_units;
 ALTER TABLE llx_product ADD COLUMN volume_units tinyint DEFAULT NULL after volume;
+
+ALTER TABLE llx_product modify ref varchar(32) NOT NULL;

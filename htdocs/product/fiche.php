@@ -444,7 +444,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       
       print '<table class="border" width="100%">';
       print '<tr>';
-      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="20" value="'.$product->ref.'">';
+      print '<td width="20%">'.$langs->trans("Ref").'</td><td><input name="ref" size="40" maxlength="32" value="'.$product->ref.'">';
       if ($_error == 1)
 	{
 	  print $langs->trans("RefAlreadyExists");
@@ -833,7 +833,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '<input type="hidden" name="id" value="'.$product->id.'">';
 	  print '<input type="hidden" name="canvas" value="'.$product->canvas.'">';
 	  print '<table class="border" width="100%">';
-	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="20" value="'.$product->ref.'"></td></tr>';
+	  print '<tr><td width="15%">'.$langs->trans("Ref").'</td><td colspan="2"><input name="ref" size="40" maxlength="32" value="'.$product->ref.'"></td></tr>';
 	  print '<td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 	  print '<tr><td>'.$langs->trans("VATRate").'</td><td colspan="2">';
