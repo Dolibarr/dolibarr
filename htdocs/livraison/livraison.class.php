@@ -290,7 +290,7 @@ class Livraison extends CommonObject
 					$livref = substr($this->ref, 1, 4);
 					if ($livref == 'PROV')
 					{
-						$this->ref = $objMod->livraison_get_num($soc);
+						$this->ref = $objMod->livraison_get_num($soc,$this);
 					}
 	
 					// Tester si non dejà au statut validé. Si oui, on arrete afin d'éviter

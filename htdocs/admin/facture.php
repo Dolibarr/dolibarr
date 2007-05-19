@@ -250,11 +250,11 @@ while (($file = readdir($handle))!==false)
 	        }
 	        print '</td>';
 
-			$facture=new Facture($db);
+			    $facture=new Facture($db);
 
-			// Info
-			$htmltooltip='';
-			$facture->type=0;
+			    // Info
+			    $htmltooltip='';
+			    $facture->type=0;
 	        $nextval=$module->getNextValue($mysoc,$facture);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {

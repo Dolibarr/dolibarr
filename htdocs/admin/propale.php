@@ -215,10 +215,12 @@ if ($handle)
                 print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
             }
             print '</td>';
+            
+            $propale=new Propal($db);
 			     
 			     // Info
 			    $htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc);
+	        $nextval=$module->getNextValue($mysoc,$propale);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;

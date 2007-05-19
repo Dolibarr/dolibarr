@@ -32,6 +32,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 
 $langs->load("admin");
 $langs->load("bills");
@@ -191,9 +192,11 @@ if ($handle)
 	        }
 	        print '</td>';
 	
-			// Info
-			$htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc);
+			    $livraison=new Livraison($db);
+			    
+			    // Info
+			    $htmltooltip='';
+	        $nextval=$module->getNextValue($mysoc,$livraison);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;

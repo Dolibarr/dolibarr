@@ -174,7 +174,7 @@ class Commande extends CommonObject
 
             $obj = new $classname();
             $numref = "";
-            $numref = $obj->getNextValue($soc);
+            $numref = $obj->getNextValue($soc,$this);
 
             if ( $numref != "")
             {
