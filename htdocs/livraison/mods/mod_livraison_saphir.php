@@ -24,24 +24,30 @@
  */
 
 /**
-	\file       htdocs/includes/modules/facture/pluton/pluton.modules.php
-	\ingroup    facture
-	\brief      Fichier contenant la classe du modèle de numérotation de référence de facture Pluton
+	\file       htdocs/includes/modules/commande/mod_livraison_saphir.php
+	\ingroup    commande
+	\brief      Fichier contenant la classe du modèle de numérotation de référence de livraison Saphir
 	\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
 
 /**
-	\class      mod_facture_pluton
-	\brief      Classe du modèle de numérotation de référence de facture Pluton
+	\class      mod_livraison_saphir
+	\brief      Classe du modèle de numérotation de référence de livraison Saphir
 */
-class mod_facture_pluton extends ModeleNumRefFactures
+class mod_livraison_saphir extends ModeleNumRefDeliveryOrder
 {
-	var $prefixinvoice='';
-	var $prefixcreditnote='';
-	var $facturenummatrice='';
+	var $prefixorder='';
+	var $ordernummatrice='';
 	var $error='';
+	
+	/**   \brief      Constructeur
+   */
+  function mod_livraison_saphir()
+  {
+    $this->nom = "Saphir";
+  }
 
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
@@ -54,46 +60,37 @@ function info()
 		  
 		  $form = new Form($db);
     	
-      $texte = $langs->trans('PlutonNumRefModelDesc1')."<br>\n";
+      $texte = $langs->trans('SaphirNumRefModelDesc1')."<br>\n";
       $texte.= '<table class="nobordernopadding" width="100%">';
       
       // Paramétrage de la matrice
       $texte.= '<tr><td>Matrice de disposition des objets (prefix,mois,année,compteur...)</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="updateMatrice">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->FACTURE_NUM_MATRICE.'"></td>';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="matrice" value="'.$conf->global->LIVRAISON_NUM_MATRICE.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceInvoiceDesc"),1,1).'</td>';
+      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("MatriceOrderDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // Paramétrage du prefix des factures
-      $texte.= '<tr><td>Préfix des factures</td>';
+      // Paramétrage du prefix des commandes
+      $texte.= '<tr><td>Préfix des bons de livraions</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updatePrefixFacture">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixfacture" value="'.$conf->global->FACTURE_NUM_PREFIX.'"></td>';
+      $texte.= '<input type="hidden" name="action" value="updatePrefix">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefix" value="'.$conf->global->LIVRAISON_NUM_PREFIX.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixInvoiceDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-      
-      // Paramétrage du prefix des avoirs
-      $texte.= '<tr><td>Préfix des avoirs</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updatePrefixAvoir">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixavoir" value="'.$conf->global->AVOIR_NUM_PREFIX.'"></td>';
-      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixCreditNoteDesc"),1,1).'</td>';
+      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixOrderDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
       // On détermine un offset sur le compteur
       $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setOffset">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->LIVRAISON_NUM_DELTA.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On défini si le debut d'année fiscale
+      // On défini le debut d'année fiscale
       $texte.= '<tr><td>Début d\'année fiscale</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setFiscalMonth">';
@@ -108,19 +105,9 @@ function info()
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
       $texte.= '<input type="hidden" name="action" value="setNumRestart">';
       $texte.= '<td align="right">';
-      $texte.= $form->selectyesno('numrestart',$conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR,1);
+      $texte.= $form->selectyesno('numrestart',$conf->global->LIVRAISON_NUM_RESTART_BEGIN_YEAR,1);
       $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("NumRestartDesc"),1,1).'</td>';
-      $texte.= '</tr></form>';
-      
-      // On défini si le compteur des avoirs s'incrémente avec les factures
-      $texte.= '<tr><td>La numérotation des avoirs s\'incrémente avec les factures</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="setNumWithInvoice">';
-      $texte.= '<td align="right">';
-      $texte.= $form->selectyesno('numwithinvoice',$conf->global->AVOIR_NUM_WITH_INVOICE,1);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("CreditNoteNumWithInvoiceDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
       $texte.= '</table><br>';
@@ -135,16 +122,15 @@ function info()
     {
     	global $conf;
     	
-    	$this->prefixinvoice     = $conf->global->FACTURE_NUM_PREFIX;
-      $this->prefixcreditnote  = $conf->global->AVOIR_NUM_PREFIX;
-      $this->matrice           = $conf->global->FACTURE_NUM_MATRICE;
+    	$this->prefix  = $conf->global->LIVRAISON_NUM_PREFIX;
+      $this->matrice = $conf->global->LIVRAISON_NUM_MATRICE;
         
         if ($this->matrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = '';
         	
-        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: FA pour facture et AV pour avoir), COM : prefix du client
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: BL pour bon de livraison), COM : prefix du client
         	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
         	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
         	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
@@ -192,15 +178,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					// Les avoirs peuvent suivre la numérotation des factures
-        					if (!$conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
-        					{
-        						$prefix = $this->prefixcreditnote;
-        					}
-        					else
-        					{
-        						$prefix = $this->prefixinvoice;
-        					}
+        					$prefix = $this->prefix;
         					$numMatrice .= $prefix;
         				}
         				else if ($idMatrice == 'year')
@@ -209,15 +187,7 @@ function info()
         					$numbityear = $resultCount;
         					// On défini le mois du début d'année fiscale
         					$fiscal_current_month = date("n");
-        					
-        					if (is_object($facture) && $facture->date)
-                  {
-        	          $create_month = strftime("%m",$facture->date);
-                  }
-                  else
-                  {
-        	          $create_month = $fiscal_current_month;
-                  }
+        					$create_month = $fiscal_current_month;
 
                   // On change d'année fiscal si besoin
                   if($conf->global->SOCIETE_FISCAL_MONTH_START && $fiscal_current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
@@ -248,7 +218,7 @@ function info()
     	
     	// On récupère le nombre de chiffres du compteur
     	$arg = '%0'.$numbitcounter.'s';
-      $num = sprintf($arg,$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA:1);
+      $num = sprintf($arg,$conf->global->LIVRAISON_NUM_DELTA?$conf->global->LIVRAISON_NUM_DELTA:1);
       
       // Construction de l'exemple de numérotation
     	$numExample = $numMatrice.$num;
@@ -259,23 +229,22 @@ function info()
 
 	/**		\brief      Renvoi prochaine valeur attribuée
 	*      	\param      objsoc      Objet société
-	*      	\param      facture		Objet facture
+	*      	\param      commande		Objet commande
 	*      	\return     string      Valeur
 	*/
-    function getNextValue($objsoc,$facture)
+    function getNextValue($objsoc=0)
     {
         global $db,$conf;
         
-        $this->prefixinvoice     = $conf->global->FACTURE_NUM_PREFIX;
-        $this->prefixcreditnote  = $conf->global->AVOIR_NUM_PREFIX;
-        $this->matrice           = $conf->global->FACTURE_NUM_MATRICE;
+        $this->prefix  = $conf->global->LIVRAISON_NUM_PREFIX;
+        $this->matrice = $conf->global->LIVRAISON_NUM_MATRICE;
         
         if ($this->matrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = Array();
         	
-        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: FA pour facture et AV pour avoir), COM : prefix du client
+        	$matricePrefix   = "PREF|COM"; // PREF : prefix libre (ex: C pour commande), COM : prefix du client
         	$matriceYear     = "[A]{2,4}"; // l'année est sur 2 ou 4 chiffres
         	$matriceMonth    = "[M]{2}"; // le mois est sur 2 chiffres
         	$matriceCounter  = "[C]{1,}"; //le compteur a un nombre de chiffres libre
@@ -332,15 +301,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					// Les avoirs peuvent suivre la numérotation des factures
-        					if (!$conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
-        					{
-        						$prefix = $this->prefixcreditnote;
-        					}
-        					else
-        					{
-        						$prefix = $this->prefixinvoice;
-        					}
+        					$prefix = $this->prefix;
         					$numMatrice[$k] = '$prefix';
         					$searchLast .= $prefix;
         					$searchLastWithNoYear .= $prefix;
@@ -354,9 +315,9 @@ function info()
         					// On défini le mois du début d'année fiscale
         					$current_month = date("n");
         					
-        					if (is_object($facture) && $facture->date)
+        					if (is_object($commande) && $commande->date)
                   {
-        	          $create_month = strftime("%m",$facture->date);
+        	          $create_month = strftime("%m",$commande->date);
                   }
                   else
                   {
@@ -407,24 +368,24 @@ function info()
         // On récupère la valeur max (réponse immédiate car champ indéxé)
         $posindice  = $numbitcounter;
         $searchyy='';
-        $sql = "SELECT MAX(facnumber)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE facnumber like '${searchLast}%'";
+        $sql = "SELECT MAX(ref)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+        if ($conf->global->LIVRAISON_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref like '${searchLast}%'";
         $resql=$db->query($sql);
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $fayy = substr($row[0],0,-$posindice);
+            if ($row) $searchyy = substr($row[0],0,-$posindice);
         }
         
-        if ($conf->global->PROPALE_NUM_DELTA != '')
+        if ($conf->global->LIVRAISON_NUM_DELTA != '')
         {
         	//on vérifie si il y a une année précédente
           //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
           $previousyy='';
-          $sql = "SELECT MAX(facnumber)";
-          $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-          $sql.= " WHERE facnumber like '${searchLastWithPreviousYear}%'";
+          $sql = "SELECT MAX(ref)";
+          $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+          $sql.= " WHERE ref like '${searchLastWithPreviousYear}%'";
           $resql=$db->query($sql);
           if ($resql)
           {
@@ -437,9 +398,9 @@ function info()
         if (eregi('^'.$searchLastWithNoYear.'',$searchyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '${searchyy}%'";
+            $sql = "SELECT MAX(0+SUBSTRING(ref,-".$posindice."))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."livraison";
+            $sql.= " WHERE ref like '${searchyy}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -447,20 +408,14 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$previousyy))
+        else if ($conf->global->LIVRAISON_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$previousyy))
         {
         	// on applique le delta une seule fois
-        	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;
+        	$max=$conf->global->LIVRAISON_NUM_DELTA?$conf->global->LIVRAISON_NUM_DELTA-1:0;
         }
         else
         {
         	$max=0;
-        }
-        
-        // On replace le prefix de l'avoir
-        if ($conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
-        {
-        	$prefix = $this->prefixcreditnote;
         }
     	  
     	  // On applique le nombre de chiffres du compteur
@@ -477,7 +432,7 @@ function info()
         	if ($objetMatrice == '$num') $numFinal .= $num;
         } 
         
-        dolibarr_syslog("mod_facture_pluton::getNextValue return ".$numFinal);
+        dolibarr_syslog("mod_livraison_saphir::getNextValue return ".$numFinal);
         return  $numFinal;
     }
   }
@@ -485,12 +440,12 @@ function info()
   
     /**     \brief      Renvoie la référence de commande suivante non utilisée
      *      \param      objsoc      Objet société
-     *      \param      facture		Objet facture
+     *      \param      commande		Objet commande
      *      \return     string      Texte descripif
      */
-    function getNumRef($objsoc=0,$facture)
+    function commande_get_num($objsoc=0)
     {
-        return $this->getNextValue($objsoc,$facture);
+        return $this->getNextValue($objsoc);
     } 
 }    
 

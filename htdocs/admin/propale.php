@@ -148,7 +148,7 @@ if ($_GET["action"] == 'setmod')
 
 // défini les constantes du modèle saphir
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "PROPALE_NUM_MATRICE",$_POST["matrice"]);
-if ($_POST["action"] == 'updatePrefixPropale') dolibarr_set_const($db, "PROPALE_NUM_PREFIX",$_POST["prefixpropale"]);
+if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "PROPALE_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "PROPALE_NUM_DELTA",$_POST["offset"]);
 if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
 if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "PROPALE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);

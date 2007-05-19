@@ -75,8 +75,8 @@ function info()
       // Paramétrage du prefix des commandes
       $texte.= '<tr><td>Préfix des propositions commerciales</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="updatePrefixPropale">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefixpropale" value="'.$conf->global->PROPALE_NUM_PREFIX.'"></td>';
+      $texte.= '<input type="hidden" name="action" value="updatePrefix">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="prefix" value="'.$conf->global->PROPALE_NUM_PREFIX.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixProposalDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
@@ -122,10 +122,10 @@ function info()
     {
     	global $conf;
     	
-    	$this->prefixproposal     = $conf->global->PROPALE_NUM_PREFIX;
-      $this->proposalnummatrice = $conf->global->PROPALE_NUM_MATRICE;
+    	$this->prefix  = $conf->global->PROPALE_NUM_PREFIX;
+      $this->matrice = $conf->global->PROPALE_NUM_MATRICE;
         
-        if ($this->proposalnummatrice != '')
+        if ($this->matrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = '';
@@ -143,7 +143,7 @@ function info()
         	                         );
         	
         	// on détermine l'emplacement des tirets
-        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->proposalnummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->matrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
         	
         	$j = 0;
         	
@@ -178,7 +178,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					$prefix = $this->prefixproposal;
+        					$prefix = $this->prefix;
         					$numMatrice .= $prefix;
         				}
         				else if ($idMatrice == 'year')
@@ -236,10 +236,10 @@ function info()
     {
         global $db,$conf;
         
-        $this->prefixproposal     = $conf->global->PROPALE_NUM_PREFIX;
-        $this->proposalnummatrice = $conf->global->PROPALE_NUM_MATRICE;
+        $this->prefix  = $conf->global->PROPALE_NUM_PREFIX;
+        $this->matrice = $conf->global->PROPALE_NUM_MATRICE;
         
-        if ($this->proposalnummatrice != '')
+        if ($this->matrice != '')
         {
         	$resultatMatrice = Array();
         	$numMatrice = Array();
@@ -257,7 +257,7 @@ function info()
         	                         );
         	
         	// on détermine l'emplacement des tirets
-        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->proposalnummatrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
+        	$resultTiret = preg_split('/'.$matriceTiret.'/',$this->matrice, -1, PREG_SPLIT_OFFSET_CAPTURE);
         	
         	$j = 0;
         	$k = 0;
@@ -301,7 +301,7 @@ function info()
         				}
         				else if ($idMatrice == 'prefix' && $resultatMatrice[0] == 'PREF')
         				{
-        					$prefix = $this->prefixproposal;
+        					$prefix = $this->prefix;
         					$numMatrice[$k] = '$prefix';
         					$searchLast .= $prefix;
         					$searchLastWithNoYear .= $prefix;
@@ -367,7 +367,7 @@ function info()
 
         // On récupère la valeur max (réponse immédiate car champ indéxé)
         $posindice  = $numbitcounter;
-        $pryy='';
+        $searchyy='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."propal";
         if ($conf->global->PROPALE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref like '${searchLast}%'";
@@ -375,14 +375,14 @@ function info()
         if ($resql)
         {
             $row = $db->fetch_row($resql);
-            if ($row) $pryy = substr($row[0],0,-$posindice);
+            if ($row) $searchyy = substr($row[0],0,-$posindice);
         }
         
         if ($conf->global->PROPALE_NUM_DELTA != '')
         {
         	//on vérifie si il y a une année précédente
         	//pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
-        	$lastyy='';
+        	$previousyy='';
         	$sql = "SELECT MAX(ref)";
         	$sql.= " FROM ".MAIN_DB_PREFIX."propal";
         	$sql.= " WHERE ref like '${searchLastWithPreviousYear}%'";
@@ -390,17 +390,17 @@ function info()
         	if ($resql)
         	{
         		$row = $db->fetch_row($resql);
-        		if ($row) $lastyy = substr($row[0],0,-$posindice);
+        		if ($row) $previousyy = substr($row[0],0,-$posindice);
         	}
         }
         	
         // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$searchLastWithNoYear.'',$pryy))
+        if (eregi('^'.$searchLastWithNoYear.'',$searchyy))
         {
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(ref,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."propal";
-            $sql.= " WHERE ref like '${pryy}%'";
+            $sql.= " WHERE ref like '${searchyy}%'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -408,7 +408,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$lastyy))
+        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$searchLastWithPreviousYear.'',$previousyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->PROPALE_NUM_DELTA?$conf->global->PROPALE_NUM_DELTA-1:0;
