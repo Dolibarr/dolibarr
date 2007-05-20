@@ -49,12 +49,13 @@ class DolEditor
                                           	'In' chaque fenêtre d'édition a ça propre barre d'outils
                                           	'Out:nom' partage de la barre d'outils où 'nom' est le nom du DIV qui affiche la barre
             \param  toolbarstartexpanded  	visible ou non au démarrage
-    */
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false)
+			\param	modulepart				modulepart pour protection wrapper download viewimage
+	*/
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$modulepart='fckeditor')
     {
     	global $conf,$langs;
     	
-    	dolibarr_syslog("DolEditor::DolEditor");
+    	dolibarr_syslog("DolEditor::DolEditor modulepart=".$modulepart);
 
     	require_once(DOL_DOCUMENT_ROOT."/includes/fckeditor/fckeditor.php");
     	$this->editor = new FCKeditor($htmlname);
@@ -66,8 +67,11 @@ class DolEditor
     	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
     	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
     	
-    	$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart=fckeditor&file=';
-    	$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/fckeditor/' ;
+		// \TODO Le forcage de ces 2 parametres ne semble pas fonctionner.
+		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
+		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
+    	$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/'.$modulepart.'/' ;
     	
     	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
     	{

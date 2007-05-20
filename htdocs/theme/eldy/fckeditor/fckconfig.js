@@ -97,6 +97,7 @@ FCKConfig.TemplateReplaceCheckbox = true ;
 
 FCKConfig.ToolbarLocation = 'In' ;
 
+/* Ne pas mettre le lien sur objets internes (Image,Smiley) sur le type mailing */
 FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['FitWindow','Source'],
         ['Cut','Copy','Paste','PasteText','PasteWord','-','SpellCheck','-','Preview','Print'],
@@ -104,7 +105,7 @@ FCKConfig.ToolbarSets["dolibarr_mailings"] = [
         ['Bold','Italic','Underline','StrikeThrough','-','Subscript','Superscript','-','TextColor','BGColor','-','RemoveFormat'],
         ['OrderedList','UnorderedList','-','Outdent','Indent'],
         ['JustifyLeft','JustifyCenter','JustifyRight','JustifyFull'],
-        ['Link','Unlink','Anchor','Image','Table','Rule','Smiley','SpecialChar'],
+        ['Link','Unlink','Anchor','Table','Rule','SpecialChar'],
         ['FontName','FontSize']
 ] ;
 
