@@ -114,7 +114,7 @@ if ($id)
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$adh->login.'&nbsp;</td></tr>';
 
 	// Note
-    print '<tr><td valign="top">'.$langs->trans("Note").' :</td>';
+    print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
 	print '<td valign="top" colspan="3">';
 	if ($action == 'edit' && $user->rights->adherent->creer)
 	{

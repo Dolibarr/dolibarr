@@ -50,6 +50,11 @@ function member_prepare_head($member)
 		$h++;
 	}
 
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$member->id;
+	$head[$h][1] = $langs->trans("Note");
+	$head[$h][2] = 'note';
+	$h++;
+
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$member->id;
 	$head[$h][1] = $langs->trans("Subscriptions");
 	$head[$h][2] = 'subscription';

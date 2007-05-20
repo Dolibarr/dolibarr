@@ -70,7 +70,7 @@ class Adherent
 
 	var $morphy;
 	var $public;
-	var $commentaire;
+	var $commentaire;		// Note
 	var $statut;			// -1=brouillon, 0=résilié, 1=validé,payé
 	var $photo;
 
@@ -409,6 +409,35 @@ class Adherent
 		}
 	}
 
+
+	/**
+			\brief 		Fonction qui met à jour le commentaire d'un adhérent
+			\param		note			Note
+			\param		user			Utilisateur qui réalise la mise a jour
+			\return		int				<0 si KO, >0 si OK
+	*/
+	function update_note($note,$user)
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
+		$sql.= " note='".addslashes($note)."'";
+		$sql.= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("Adherent::update_note sql=$sql");
+		$result = $this->db->query($sql);
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+		
+		$this->commentaire = $note;
+		
+		$this->db->commit();
+		return 1;
+	}
 
 	/**
 			\brief 		Fonction qui met à jour l'adhérent

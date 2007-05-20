@@ -586,7 +586,7 @@ if ($action == 'edit')
 	print '</tr>';
 
 	// Prenom
-	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	print '</tr>';
 	
 	// Login
