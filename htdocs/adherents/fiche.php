@@ -365,7 +365,6 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     }
 }
 
-
 if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
 	$result=$adh->fetch($rowid);
@@ -578,15 +577,17 @@ if ($action == 'edit')
 	
 	// Nom
 	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
-	// Notes
-	print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
+	// Photo
+	$rowspan=17;
+	$rowspan+=sizeof($adho->attribute_label);
+	print '<td rowspan="'.$rowspan.'" valign="top">';
+	print '&nbsp;';
+	print '</td>';
+	print '</tr>';
 
 	// Prenom
 	print '<tr><td width="15%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-	$rowspan=16;
-	$rowspan+=sizeof($adho->attribute_label);
-	print '<td rowspan="'.$rowspan.'" valign="top">';
-	print '<textarea name="comment" wrap="soft" cols="70" rows="16">'.$adh->commentaire.'</textarea></td></tr>';
+	print '</tr>';
 	
 	// Login
 	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
@@ -684,12 +685,11 @@ if ($action == 'create')
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" value="'.$adh->nom.'" size="40"></td>';
-    print '<td width="50%" valign="top">'.$langs->trans("Notes").' :</td></tr>';
+    print '</tr>';
 
 	// Prenom
     print '<tr><td>'.$langs->trans("Firstname").'*</td><td><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-    $rowspan=16;
-    print '<td valign="top" rowspan="'.$rowspan.'"><textarea name="comment" wrap="soft" cols="70" rows="14">'.$adh->commantaire.'</textarea></td></tr>';
+    print '</tr>';
 
 	// Login
     print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="member_login" size="40" value="'.$adh->login.'"></td></tr>';
@@ -799,7 +799,6 @@ if ($rowid && $action != 'edit')
 
     $html = new Form($db);
 
-
 	/*
 	 * Affichage onglets
 	 */
@@ -885,7 +884,7 @@ if ($rowid && $action != 'edit')
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-	print '<td class="valeur" colspan="3">';
+	print '<td class="valeur" colspan="2">';
 	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
 	print $adh->id;
 	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
@@ -893,12 +892,13 @@ if ($rowid && $action != 'edit')
 
     // Nom
     print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
-    print '<td valign="top" width="50%">'.$langs->trans("Notes").'</td></tr>';
+    $rowspan=19+sizeof($adho->attribute_label);
+	print '<td rowspan="'.$rowspan.'" valign="top" width="50%">';
+    print '&nbsp;</td>';
+	print '</tr>';
 
     // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td>';
-    print '<td rowspan="'.(13+count($adh->array_options)).'" valign="top" width="50%">';
-    print nl2br($adh->commentaire).'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td></tr>';
 
     // Login
     print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';

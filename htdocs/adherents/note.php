@@ -95,7 +95,7 @@ if ($id)
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td>';
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
 	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
 	print $adh->id;
