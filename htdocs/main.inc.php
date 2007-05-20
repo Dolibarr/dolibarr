@@ -30,10 +30,6 @@
    \version    $Revision$   
 */
 
-// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
-// est positionne A appeler avant tout.
-if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=microtime(true);
-
 // Forcage du parametrage PHP magic_quotes_gpc et nettoyage des parametres
 // (Sinon il faudrait a chaque POST, conditionner
 // la lecture de variable par stripslashes selon etat de get_magic_quotes).
@@ -345,10 +341,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	$result=$user->fetch($login);
 	if ($result <= 0)
 	{
-		//$langs->load('main');
-		//dolibarr_print_error($db,$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login));
-		dolibarr_syslog('User not found, connexion refused');
 		session_destroy();
+		dolibarr_syslog('User not found, connexion refused');
 
 		// On repart sur page accueil
 		session_name($sessionname);
@@ -520,14 +514,18 @@ else
 
 
 /**
- *  \brief      Affiche en-tete html
+ *  \brief      Affiche en-tete HTML
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
  */
 function top_htmlhead($head, $title="", $target="") 
 {
-    global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db, $micro_start_time;
+
+	// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
+	// est positionne A appeler avant tout.
+	if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=dol_microtime_float(true);
     
     if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
 
@@ -595,7 +593,7 @@ function top_htmlhead($head, $title="", $target="")
 }
 
 /**
- *  \brief      Affiche en-tete html + la barre de menu superieure
+ *  \brief      Affiche en-tete HTML + BODY + Barre de menu superieure
  *  \param      head    lignes d'en-tete head
  *  \param      title   titre page web
  *  \param      target  target du menu Accueil
@@ -803,7 +801,7 @@ function printSearchForm($urlaction,$urlobject,$title,$htmlmodesearch='search',$
 
 
 /**
- *		\brief   	Impression du pied de page
+ *		\brief   	Impression du pied de page DIV + BODY + HTML
  *		\remarks	Ferme 2 div
  * 		\param   	foot    Non utilise
  */
@@ -817,7 +815,8 @@ function llxFooter($foot='',$limitIEbug=1)
     
     if (isset($_SERVER['DOL_TUNING']))
     {
-        print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*(microtime(true)-$micro_start_time)).' ms"</script>';
+		$micro_end_time=dol_microtime_float(true);
+		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms"</script>';
         print "\n";
     } 
 
