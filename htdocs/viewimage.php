@@ -205,6 +205,13 @@ if ($modulepart)
       $original_file=$conf->fckeditor->dir_output.'/'.$original_file;
     }
 
+    // Wrapping pour les images wysiwyg mailing
+    if ($modulepart == 'mailing')
+    {
+      $accessallowed=1;
+      $original_file=$conf->mailing->dir_output.'/'.$original_file;
+    }
+
     // Wrapping pour les graph energie
     if ($modulepart == 'graph_stock')
     {

@@ -51,7 +51,7 @@ class DolEditor
             \param  toolbarstartexpanded  	visible ou non au démarrage
 			\param	modulepart				modulepart pour protection wrapper download viewimage
 	*/
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=false)
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=true)
     {
     	global $conf,$langs;
     	

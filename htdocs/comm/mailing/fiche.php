@@ -249,7 +249,7 @@ if ($_GET["action"] == 'create')
 	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
     {
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_mailings','',true);
+		$doleditor=new DolEditor('body',$objp->description,320,'dolibarr_mailings','',true,false);
 		$doleditor->Create();
     }
     else
@@ -452,7 +452,7 @@ else
             if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING)
             {
             	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings','',true);
+				$doleditor=new DolEditor('body',$mil->body,320,'dolibarr_mailings','',true,false);
 				$doleditor->Create();
             }
             else
