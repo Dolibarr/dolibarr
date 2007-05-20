@@ -51,7 +51,7 @@ class DolEditor
             \param  toolbarstartexpanded  	visible ou non au démarrage
 			\param	modulepart				modulepart pour protection wrapper download viewimage
 	*/
-    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$modulepart='fckeditor')
+    function DolEditor($htmlname,$content,$height=200,$toolbarname='Basic',$toolbarlocation='In',$toolbarstartexpanded=false,$uselocalbrowser=false)
     {
     	global $conf,$langs;
     	
@@ -67,12 +67,16 @@ class DolEditor
     	$this->editor->Config['ToolbarLocation'] = $toolbarlocation ? $toolbarlocation : 'In';
     	$this->editor->Config['ToolbarStartExpanded'] = $toolbarstartexpanded;
     	
-		// \TODO Le forcage de ces 2 parametres ne semble pas fonctionner.
+		// Rem: Le forcage de ces 2 parametres ne semble pas fonctionner.
 		// Dolibarr utilise toujours liens avec modulepart='fckeditor' quelque soit modulepart.
 		// Ou se trouve donc cette valeur /viewimage.php?modulepart=fckeditor&file=' ?
-    	$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
+    	$modulepart='fckeditor';
+		$this->editor->Config['UserFilesPath'] = '/viewimage.php?modulepart='.$modulepart.'&file=';
 		$this->editor->Config['UserFilesAbsolutePath'] = DOL_DOCUMENT_ROOT.'/'.$modulepart.'/' ;
-    	
+
+    	$this->editor->Config['LinkBrowser']=($uselocalbrowser?'true':'false');
+    	$this->editor->Config['ImageBrowser']=($uselocalbrowser?'true':'false');
+
     	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js'))
     	{
     		$this->editor->Config['CustomConfigurationsPath'] = DOL_URL_ROOT.'/theme/'.$conf->theme.'/fckeditor/fckconfig.js';
