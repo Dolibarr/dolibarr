@@ -36,6 +36,7 @@ $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
 
 $user->getrights('adherent');
 
+$langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
 
