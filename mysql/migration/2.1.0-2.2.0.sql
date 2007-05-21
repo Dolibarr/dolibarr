@@ -13,7 +13,7 @@ update llx_actioncomm set fk_action = 9 where fk_action = 10;
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
 
 update llx_const set name='MAIN_ENABLE_DEVELOPMENT' where name='MAIN_SHOW_DEVELOPMENT_MODULES';
-
+delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 
 delete from llx_adherent_type where libelle IS NULL;
 alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
