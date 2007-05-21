@@ -770,7 +770,7 @@ else
         {
             print '<table class="border" width="100%">';
 
-            $rowspan=17;
+            $rowspan=15;
 
             // Ref
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
@@ -910,14 +910,6 @@ else
 		   	print $fuser->getLibStatut(4);
 		    print '</td></tr>';
 		
-            print '<tr><td width="25%" valign="top">'.$langs->trans("DateCreation").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datec,"%d/%m/%Y %H:%M:%S").'</td>';
-            print "</tr>\n";
-
-            print '<tr><td width="25%" valign="top">'.$langs->trans("DateModification").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datem,"%d/%m/%Y %H:%M:%S").'</td>';
-            print "</tr>\n";
-
             print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dolibarr_print_date($fuser->datelastlogin,"%d/%m/%Y %H:%M:%S").'</td>';
             print "</tr>\n";
