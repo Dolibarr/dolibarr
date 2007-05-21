@@ -163,31 +163,23 @@ class modFacture extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 1321;
-        $this->rights[$r][1] = 'Exporter les factures clients et attributs';
+        $this->rights[$r][1] = 'Exporter les factures clients, attributs et règlements';
         $this->rights[$r][2] = 'r';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'facture';
         $this->rights[$r][5] = 'export';
     
-/*
-        $r++;
-        $this->rights[$r][0] = 1325;
-        $this->rights[$r][1] = 'Exporter les paiements';
-        $this->rights[$r][2] = 'r';
-        $this->rights[$r][3] = 0;
-        $this->rights[$r][4] = 'paiement';
-        $this->rights[$r][5] = 'export';
-*/    
-        // Exports
+
+		// Exports
         //--------
         $r=0;
     
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Factures clients et lignes de facture';
-        $this->export_fields_array[$r]=array('s.idp'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.fk_soc'=>"IdCompany",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.amount'=>"Amount",'f.remise_percent'=>"GlobalDiscount",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LinePrice",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd");
-		$this->export_entities_array[$r]=array('s.idp'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.fk_soc'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.amount'=>"invoice",'f.remise_percent'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.price'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_taux'=>"invoice_line",'fd.qty'=>"invoice_line",'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line");
-        $this->export_alias_array[$r]=array('s.idp'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.fk_soc'=>"fk_soc",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.amount'=>"amount",'f.remise_percent'=>"globaldiscount",'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.price'=>"lineprice",'fd.total_ht'=>"linetotalht",'fd.total_tva'=>"linetotaltva",'fd.total_ttc'=>"linetotalttc",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty",'fd.date_start'=>"linedatestart",'fd.date_end'=>"linedateend");
+        $this->export_fields_array[$r]=array('s.idp'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'fd.rowid'=>'LineId','fd.description'=>"LineDescription",'fd.price'=>"LinePrice",'fd.total_ht'=>"LineTotalHT",'fd.total_tva'=>"LineTotalTVA",'fd.total_ttc'=>"LineTotalTTC",'fd.tva_taux'=>"LineVATRate",'fd.qty'=>"LineQty",'fd.date_start'=>"DateStart",'fd.date_end'=>"DateEnd");
+		$this->export_entities_array[$r]=array('s.idp'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'fd.rowid'=>'invoice_line','fd.description'=>"invoice_line",'fd.price'=>"invoice_line",'fd.total_ht'=>"invoice_line",'fd.total_tva'=>"invoice_line",'fd.total_ttc'=>"invoice_line",'fd.tva_taux'=>"invoice_line",'fd.qty'=>"invoice_line",'fd.date_start'=>"invoice_line",'fd.date_end'=>"invoice_line");
+        $this->export_alias_array[$r]=array('s.idp'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.tva'=>"totalvat",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'fd.rowid'=>'lineid','fd.description'=>"linedescription",'fd.price'=>"lineprice",'fd.total_ht'=>"linetotalht",'fd.total_tva'=>"linetotaltva",'fd.total_ttc'=>"linetotalttc",'fd.tva_taux'=>"linevatrate",'fd.qty'=>"lineqty",'fd.date_start'=>"linedatestart",'fd.date_end'=>"linedateend");
         $this->export_sql[$r]="select distinct ";
         $i=0;
         foreach ($this->export_alias_array[$r] as $key => $value)
@@ -198,7 +190,24 @@ class modFacture extends DolibarrModules
         }
         $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'facturedet as fd, '.MAIN_DB_PREFIX.'societe as s WHERE f.fk_soc = s.idp AND f.rowid = fd.fk_facture';
         $this->export_permission[$r]=array(array("facture","facture","export"));
-    
+
+        $r++;
+        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_label[$r]='Factures clients et règlements';
+        $this->export_fields_array[$r]=array('s.idp'=>"IdCompany",'s.nom'=>'CompanyName','s.address'=>'Address','s.cp'=>'Zip','s.ville'=>'Town','s.fk_pays'=>'Country','s.tel'=>'Phone','s.siren'=>'ProfId1','s.siret'=>'ProfId2','s.ape'=>'ProfId3','s.idprof4'=>'ProfId4','f.rowid'=>"Id",'f.facnumber'=>"Ref",'f.datec'=>"DateCreation",'f.datef'=>"DateInvoice",'f.total'=>"TotalHT",'f.total_ttc'=>"TotalTTC",'f.tva'=>"TotalVAT",'f.paye'=>"BillShortStatusPayed",'f.fk_statut'=>'Status','f.note'=>"Note",'pf.amount'=>'AmountPayment','p.datep'=>'DatePayment','p.num_paiement'=>'Numero');
+		$this->export_entities_array[$r]=array('s.idp'=>"company",'s.nom'=>'company','s.address'=>'company','s.cp'=>'company','s.ville'=>'company','s.fk_pays'=>'company','s.tel'=>'company','s.siren'=>'company','s.siret'=>'company','s.ape'=>'company','s.idprof4'=>'company','f.rowid'=>"invoice",'f.facnumber'=>"invoice",'f.datec'=>"invoice",'f.datef'=>"invoice",'f.total'=>"invoice",'f.total_ttc'=>"invoice",'f.tva'=>"invoice",'f.paye'=>"invoice",'f.fk_statut'=>'invoice','f.note'=>"invoice",'pf.amount'=>'payment','p.datep'=>'payment','p.num_paiement'=>'payment');
+        $this->export_alias_array[$r]=array('s.idp'=>"socid",'s.nom'=>'soc_name','s.address'=>'soc_adres','s.cp'=>'soc_zip','s.ville'=>'soc_ville','s.fk_pays'=>'soc_pays','s.tel'=>'soc_tel','s.siren'=>'soc_siren','s.siret'=>'soc_siret','s.ape'=>'soc_ape','s.idprof4'=>'soc_idprof4','f.rowid'=>"invoiceid",'f.facnumber'=>"ref",'f.datec'=>"datecreation",'f.datef'=>"dateinvoice",'f.total'=>"totalht",'f.total_ttc'=>"totalttc",'f.tva'=>"totalvat",'f.paye'=>"paid",'f.fk_statut'=>'status','f.note'=>"note",'pf.amount'=>'amount_payment','p.datep'=>'date_payment','p.num_paiement'=>'num_payment');
+        $this->export_sql[$r]="select distinct ";
+        $i=0;
+        foreach ($this->export_alias_array[$r] as $key => $value)
+        {
+            if ($i > 0) $this->export_sql[$r].=', ';
+            else $i++;
+            $this->export_sql[$r].=$key.' as '.$value;
+        }
+        $this->export_sql[$r].=' from ('.MAIN_DB_PREFIX.'facture as f, '.MAIN_DB_PREFIX.'societe as s) LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON pf.fk_facture = f.rowid LEFT JOIN '.MAIN_DB_PREFIX.'paiement as p ON pf.fk_paiement = p.rowid WHERE f.fk_soc = s.idp';
+        $this->export_permission[$r]=array(array("facture","facture","export"));
+		
     }
 
 

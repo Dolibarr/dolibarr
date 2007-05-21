@@ -128,7 +128,7 @@ class modTax extends DolibarrModules
     
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
-        $this->export_label[$r]='Taxes et charges sociales, et leurs éventuels règlements';
+        $this->export_label[$r]='Taxes et charges sociales, et leurs règlements';
         $this->export_fields_array[$r]=array('cc.libelle'=>"Type",'c.libelle'=>"Label",'c.date_ech'=>'DateDue','c.periode'=>'Period','c.amount'=>"AmountExpected","c.paye"=>"Status",'p.datep'=>'DatePayment','p.amount'=>'AmountPayment','p.num_paiement'=>'Numero');
         $this->export_entities_array[$r]=array('cc.libelle'=>"tax_type",'c.libelle'=>'tax','c.date_ech'=>'tax','c.periode'=>'tax','c.amount'=>"tax","c.paye"=>"tax",'p.datep'=>'payment','p.amount'=>'payment','p.num_paiement'=>'payment');
         $this->export_alias_array[$r]=array('cc.libelle'=>"type",'c.libelle'=>'label','c.date_ech'=>'datedue','c.periode'=>'period','c.amount'=>"amount_clamed","c.paye"=>"status",'p.datep'=>'date_payment','p.amount'=>'amount_payment','p.num_paiement'=>'num_payment');

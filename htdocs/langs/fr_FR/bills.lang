@@ -43,6 +43,7 @@ Payment=Réglement
 PaymentBack=Remboursement
 Payments=Réglements
 PaymentsBack=Remboursements
+DatePayment=Date paiement
 DeletePayment=Supprimer le paiement
 ConfirmDeletePayment=Etes vous sur de vouloir supprimer ce paiement ?
 ConfirmConvertToReduc=Voulez-vous convertir cet avoir en réduction future ?<br>Le montant de cet avoir sera alors stocké en réduction fixe en attente pour le client. Cette dernière pourra être utilisée pour réduire le montant d'une prochaine facture de ce client.
