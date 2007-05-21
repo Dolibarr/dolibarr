@@ -96,11 +96,17 @@ dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _S
 // Example: array('forceuser');
 $authmode=array();
 
-// Authentication mode: http
-if (! $dolibarr_main_authentication || $dolibarr_main_authentication == 'http')
+// Authentication mode: non defini (cas de compatibilite ascendante)
+if (! $dolibarr_main_authentication)
 {
 	// Mode par defaut, on test http + dolibarr
 	$authmode=array('http','dolibarr');
+}
+
+// Authentication mode: http
+if ($dolibarr_main_authentication == 'http')
+{
+	$authmode=array('http');
 }
 // Authentication mode: dolibarr
 if ($dolibarr_main_authentication == 'dolibarr')
