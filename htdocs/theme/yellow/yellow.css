@@ -19,8 +19,16 @@
  * $Source$
  */
 
+/**
+		\file       htdocs/theme/yellow/yellow.css
+		\brief      Fichier de style CSS du theme Yellow
+		\version    $Revision$
+*/
 
-/***** Style du fond *****/
+/* ============================================================================== */
+/* Styles par défaut                                                              */
+/* ============================================================================== */
+
 body {
   background: #ebebe0; 
   font: 12px helvetica, verdana, arial, sans-serif;
@@ -30,7 +38,6 @@ body {
   margin-left: 0;
 }
 
-/***** Styles par défaut *****/
 a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -85,15 +92,18 @@ form
 }
 
 
+/* ============================================================================== */
+/* Styles de positionnement des zones                                             */
+/* ============================================================================== */
 
 div.vmenuplusfiche
 {
     top: auto;
     left: auto;
     display: block;
-    margin-right: 13px;
+    margin-right: 6px;
     margin-left: 1px;
-    margin-top: 10px;
+    margin-top: 6px;
     
 }
 
@@ -115,14 +125,11 @@ div.fiche
     width:auto;
 }
 
-* html div.fiche
-{
-	width:800px;	
-}
 
-/*
- *   Menu superieur et 1ere ligne tableau
- */
+
+/* ============================================================================== */
+/* Menu superieur et 1ere ligne tableau                                           */
+/* ============================================================================== */
 
 div.tmenu
 {
@@ -145,14 +152,14 @@ div.tmenu
 table.tmenu
 {
     padding: 0px 0px 10px 0px;
-    margin: 0px 0px 0px 10px;
+    margin: 0px 0px 0px 6px;
 }
 
 
 a.tmenu:link
 {
   color: #234046;
-  padding: 0px 8px;
+  padding: 0px 5px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
@@ -160,7 +167,7 @@ a.tmenu:link
 a.tmenu:visited
 {
   color: #234046;
-  padding: 0px 8px;
+  padding: 0px 5px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
@@ -169,14 +176,14 @@ a.tmenu#sel
 { 
   color: #234046;
   background: #eeeecc;
-  padding: 0px 8px;
+  padding: 0px 5px;
   border: 1px solid #eeeecc;
 }
 a.tmenu:hover
 {
   color: #234046;
   background: #eeeecc;
-  padding: 0px 8px;
+  padding: 0px 5px;
   border: 1px solid #eeeecc;
   text-decoration: none;
 }
@@ -184,7 +191,7 @@ a.tmenu:hover
 font.tmenudisabled
 {
   color: #93a5aa;
-  padding: 0px 8px;
+  padding: 0px 5px;
   border: 1px solid #b3c5cc;
   font-weight:bold;
   font-size:12px;
@@ -199,8 +206,8 @@ a.login
   top: 3px;
 
   color: #234046;
-  padding: 0em 1em;
-  margin: 0em 0em 1.5em 0em;
+  padding: 0px 8px;
+  margin: 0px 0px 1px 0px;
   border: 1px solid #dcdcb3;
   font-weight:bold;
   font-size:12px;
@@ -213,19 +220,19 @@ a.login:hover
 img.login
 {
   position: absolute;
-  right: 9px;
+  right: 8px;
   top: 3px;
 
-  padding:2px;
   text-decoration:none;
   color:white;
   font-weight:bold;
 }
 
 
-/*
- *   Barre de gauche
- */
+/* ============================================================================== */
+/* Barre de gauche                                                                */
+/* ============================================================================== */
+
 
 a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
@@ -303,9 +310,10 @@ td.photo {
 }
 
 
-/*
- *   Barre onglets
- */
+/* ============================================================================== */
+/* Onglets                                                                        */
+/* ============================================================================== */
+
 div.tabBar {
     background: #dcdcd3;
     padding-top: 14px;
@@ -319,13 +327,13 @@ div.tabBar {
 
 div.tabs {
     top: 20px;
-    margin: 1px 0em 0em 0em;
-    padding: 0em 0.5em;
+    margin: 1px 0px 0px 0px;
+    padding: 0px 6px 0px 0px;
     text-align: left;
 }
 
 div.tabsAction {
-    margin: 24px 0em 1px 0em;
+    margin: 20px 0em 1px 0em;
     padding: 0em 0em;
     text-align: right;
 }
@@ -335,8 +343,8 @@ a.tabTitle {
     border: 1px solid #8CACBB;
     color: white;
     font-weight: normal;
-    padding: 0em 0.5em;
-    margin: 0em 1em;
+    padding: 0px 6px;
+    margin: 0px 6px;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -345,8 +353,8 @@ a.tab:link {
   background: white;
   border: 1px solid #999999;
   color: #436976;
-  padding: 0em 0.4em;
-  margin: 0em 0.1em;
+  padding: 0px 6px;
+  margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
@@ -354,22 +362,22 @@ a.tab:visited {
   background: white;
   border: 1px solid #999999;
   color: #436976;
-  padding: 0em 0.4em;
-  margin: 0em 0.1em;
+  padding: 0px 6px;
+  margin: 0em 0.2em;
   text-decoration: none;
   white-space: nowrap;
 }
 a.tab#active {
   background: #dcdcd3;
   border-bottom: #dcdcd3 1px solid;
-  padding: 0em 0.4em;
-  margin: 0em 0.1em;
+  padding: 0px 6px;
+  margin: 0em 0.2em;
   text-decoration: none;
 }
 a.tab:hover {
   background: #eeeecc;
-  padding: 0em 0.4em;
-  margin: 0em 0.1em;
+  padding: 0px 6px;
+  margin: 0em 0.2em;
   text-decoration: none;
 }
 
@@ -380,9 +388,9 @@ a.tabimage {
 }
 
 
-/*
- *   Boutons actions
- */
+/* ============================================================================== */
+/* Boutons actions                                                                */
+/* ============================================================================== */
 
 a.butAction:link    { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.butAction:visited { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
