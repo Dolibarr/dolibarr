@@ -31,7 +31,6 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/exports/export.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
 
-
 $langs->load("exports");
 
 $user->getrights();
@@ -42,13 +41,13 @@ if (! $user->societe_id == 0)
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
 	'order'=>'order','order_line'=>'order',
-	'member'=>'user', 'member_type'=>'group');
+	'member'=>'user', 'member_type'=>'group','subscription'=>'payment');
 $entitytolang=array(
 	'user'=>'User',
 	'company'=>'Company','contact'=>'Contact',
 	'invoice'=>'Bill','invoice_line'=>'InvoiceLine',
 	'order'=>'Order','order_line'=>'OrderLine',
-	'member'=>'Member','member_type'=>'MemberType');
+	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription');
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');

@@ -35,7 +35,9 @@
 
 class Export
 {
-    var $array_export_code=array();             // Tableau de "idmodule_numlot"
+    var $db;
+	
+	var $array_export_code=array();             // Tableau de "idmodule_numlot"
     var $array_export_module=array();           // Tableau de "nom de modules"
     var $array_export_label=array();            // Tableau de "libellé de lots"
     var $array_export_sql=array();              // Tableau des "requetes sql"
@@ -85,7 +87,7 @@ class Export
                 $file = $dir."/".$modulename.".class.php";
                 $classname = $modulename;
                 require_once($file);
-                $module = new $classname($db);
+                $module = new $classname($this->db);
                 
                 if (is_array($module->export_code))
                 {
