@@ -80,6 +80,7 @@ DeleteType=Delete
 VoteAllowed=Vote allowed
 Physical=Physical
 Moral=Moral
+MorPhy=Moral/Physical
 Reenable=Reenable
 ResiliateMember=Resiliate a member
 ConfirmResiliateMember=Are you sure you want to resiliate this member ?
