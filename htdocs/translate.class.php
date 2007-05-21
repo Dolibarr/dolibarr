@@ -40,6 +40,8 @@ class Translate {
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja chargés
     var $tab_translate=array();		// Tableau des traductions
 
+	var $charset='ISO-8859-1';		// Codage du contenu du fichier langue
+	
 
     /**
      *  \brief      Constructeur de la classe
@@ -232,8 +234,10 @@ class Translate {
             $newstr=ereg_replace('<','__lt__',$str);
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
+
             // Cryptage en html de la chaine
-            $newstr=htmlentities($newstr);
+            $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset);
+
             // On restaure les tags HTML
             $newstr=ereg_replace('__lt__','<',$newstr);
             $newstr=ereg_replace('__gt__','>',$newstr);
