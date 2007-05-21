@@ -36,6 +36,7 @@ HomeArea=Home area
 LastConnexion=Last connection
 PreviousConnexion=Previous connection
 ConnectedSince=Connected since
+AuthenticationMode=Authentification mode
 RequestedUrl=Requested Url
 DatabaseTypeManager=Database type manager
 RequestLastAccess=Request for last database access

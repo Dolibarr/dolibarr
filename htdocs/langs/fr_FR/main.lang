@@ -36,6 +36,7 @@ HomeArea=Espace accueil
 LastConnexion=Dernière connexion
 PreviousConnexion=Connexion précédente
 ConnectedSince=Connecté depuis
+AuthenticationMode=Mode authentification
 RequestedUrl=Url sollicitée
 DatabaseTypeManager=Type gestionnaire de base de donnée
 RequestLastAccess=Requete dernier acces en base
@@ -47,6 +48,7 @@ InformationToHelpDiagnose=Voici les informations qui pourront aider au diagnosti
 MoreInformation=Plus d'information
 NotePublic=Note (publique)
 NotePrivate=Note (privée)
+
 yes=oui
 Yes=Oui
 no=non
