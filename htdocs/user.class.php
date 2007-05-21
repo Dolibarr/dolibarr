@@ -1,7 +1,7 @@
 <?php
 /* Copyright (c) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (c) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -1496,6 +1496,40 @@ class User
     return $err;
   }
 
+  
+     /*
+    *       \brief     Charge les informations d'ordre info dans l'objet user
+    *       \param     id     id du user a charger
+    */
+    function info($id)
+    {
+        $sql = "SELECT u.rowid, u.login as ref, ".$this->db->pdate("datec")." as datec,";
+        $sql.= $this->db->pdate("u.tms")." as date_modification";
+        $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
+        $sql.= " WHERE u.rowid = ".$id;
+
+        $result=$this->db->query($sql);
+        if ($result)
+        {
+            if ($this->db->num_rows($result))
+            {
+                $obj = $this->db->fetch_object($result);
+
+                $this->id = $obj->rowid;
+
+			    $this->ref			     = (! $obj->ref) ? $obj->rowid : $obj->ref;
+                $this->date_creation     = $obj->datec;
+                $this->date_modification = $obj->date_modification;
+            }
+
+            $this->db->free($result);
+
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
 }
 
 
