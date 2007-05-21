@@ -104,7 +104,7 @@ class Form
 			if ($text)
 			{
 				$s.='<td'.$paramfortooltiptext.'>'.$text;
-				$s.='&nbsp;';
+				if ($direction) $s.='&nbsp;';
 				$s.='</td>';
 			}
 			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
@@ -115,7 +115,7 @@ class Form
 			if ($text)
 			{
 				$s.='<td'.$paramfortooltiptext.'>';
-				$s.='&nbsp;';
+				if ($direction) $s.='&nbsp;';
 				$s.=$text.'</td>';
 			}
 		}
