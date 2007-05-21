@@ -600,7 +600,7 @@ function top_htmlhead($head, $title="", $target="")
  */
 function top_menu($head, $title="", $target="") 
 {
-    global $user, $conf, $langs, $db;
+    global $user, $conf, $langs, $db, $dolibarr_main_authentication;
 
     if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
@@ -653,15 +653,24 @@ function top_menu($head, $title="", $target="")
     // Lien logout
     if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
-        print '<a href="'.DOL_URL_ROOT.'/user/logout.php"';
-        print $menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
-        print '>';
         $title=$langs->trans("Logout");
-        $title.=' ('.$langs->trans("ConnectedSince").': '.dolibarr_print_date($user->datelastlogin,"%d/%m/%Y %H:%M:%S").')';
-        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
-        print ' alt="'.$title.'" title="'.$title.'"';
-        print '>';
-        print '</a>';
+        $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"%d/%m/%Y %H:%M:%S");
+        $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
+
+        $text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+        $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
+        $text.='>';
+        $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+        $text.=' alt="" title=""';
+        $text.='>';
+        $text.='</a>';
+
+		$html=new Form($db);
+		print $html->textwithtooltip('',$title,2,1,$text);
+
+//        print '<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';
+//        print ' alt="'.$title.'" title="'.$title.'"';
+//        print '>';
     }
 
     print "\n</div>\n<!-- End top horizontal menu -->\n";

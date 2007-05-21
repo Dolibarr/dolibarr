@@ -65,46 +65,75 @@ class Form
   
   
   /**
+     \brief     Affiche un texte+picto avec tooltip sur texte ou sur picto
+     \param     text				Texte à afficher
+     \param     htmltext	     	Contenu html du tooltip
+	 \param		tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
+     \param		direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
+     \param		img					Code img du picto
+     \return	string				Code html du texte,picto
+  */
+  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='')
+    {
+		global $conf;
+		
+		if (! $htmltext) return $text;
+		
+        $paramfortooltiptext ='';
+        $paramfortooltippicto ='';
+        if ($conf->use_javascript)
+        {
+			// Sanitize tooltip
+        	$htmltext=ereg_replace("'","\'",$htmltext);
+			if ($tooltipon==1 || $tooltipon==3)
+			{
+				$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
+				$paramfortooltiptext.=' onMouseout="hidetip()"';
+			}
+			if ($tooltipon==2 || $tooltipon==3)
+			{
+				$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
+				$paramfortooltippicto.=' onMouseout="hidetip()"';
+			}
+        }
+
+		$s="";
+		$s.='<table class="nobordernopadding"><tr>';
+		if ($direction > 0)
+		{
+			if ($text)
+			{
+				$s.='<td'.$paramfortooltiptext.'>'.$text;
+				$s.='&nbsp;';
+				$s.='</td>';
+			}
+			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+		}
+		else
+		{
+			if ($direction) $s.='<td'.$paramfortooltippicto.' valign="top" width="14">'.$img.'</td>';
+			if ($text)
+			{
+				$s.='<td'.$paramfortooltiptext.'>';
+				$s.='&nbsp;';
+				$s.=$text.'</td>';
+			}
+		}
+		$s.='</tr></table>';
+		return $s;
+    }
+
+	/**
      \brief     Affiche un texte avec picto help qui affiche un tooltip
      \param     text				Texte à afficher
      \param     htmltooltip     	Contenu html du tooltip
      \param		direction			1=Le picto est après, -1=le picto est avant
      \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
      \return	string				Code html du texte,picto
-  */
-  function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
+	*/
+	function textwithhelp($text,$htmltext,$direction=1,$usehelpcursor=1)
     {
-		global $conf;
-		
-		if (! $htmltext)
-		{
-			return $text;
-		}
-		
-		$s="";
-		
-		// Sanitize tooltip
-        $paramfortooltip ='';
-        if ($conf->use_javascript)
-        {
-        	$htmltext=ereg_replace("'","\'",$htmltext);
-            $paramfortooltip.=' onmouseover="showtip(\''.$htmltext.'\')"';
-            $paramfortooltip.=' onMouseout="hidetip()"';
-        }
-
-		$s.='<table class="nobordernopadding"><tr>';
-		if ($direction > 0)
-		{
-			if ($text) $s.='<td>'.$text.'&nbsp;</td>';
-			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_help($usehelpcursor,0).'</td>';
-		}
-		else
-		{
-			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_help($usehelpcursor,0).'</td>';
-			if ($text) $s.='<td>&nbsp;'.$text.'</td>';
-		}
-		$s.='</tr></table>';
-		return $s;
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_help($usehelpcursor,0));
     }
     
     /**
@@ -113,40 +142,10 @@ class Form
      \param     htmltooltip     	Contenu html du tooltip
      \param		direction			1=Le picto est après, -1=le picto est avant
      \return	string				Code html du texte,picto
-  */
-  function textwithwarning($text,$htmltext,$direction=1)
+	*/
+	function textwithwarning($text,$htmltext,$direction=1)
     {
-		global $conf;
-		
-		if (! $htmltext)
-		{
-			return $text;
-		}
-		
-		$s="";
-		
-		// Sanitize tooltip
-        $paramfortooltip ='';
-        if ($conf->use_javascript)
-        {
-        	$htmltext=ereg_replace("'","\'",$htmltext);
-            $paramfortooltip.=' onmouseover="showtip(\''.$htmltext.'\')"';
-            $paramfortooltip.=' onMouseout="hidetip()"';
-        }
-
-		$s.='<table class="nobordernopadding"><tr>';
-		if ($direction > 0)
-		{
-			if ($text) $s.='<td>'.$text.'&nbsp;</td>';
-			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_warning("default").'</td>';
-		}
-		else
-		{
-			$s.='<td'.$paramfortooltip.' valign="top" width="14">'.img_warning("default").'</td>';
-			if ($text) $s.='<td>&nbsp;'.$text.'</td>';
-		}
-		$s.='</tr></table>';
-		return $s;
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning("default"));
     }
     
     
