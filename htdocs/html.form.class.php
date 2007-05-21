@@ -67,7 +67,7 @@ class Form
   /**
      \brief     Affiche un texte+picto avec tooltip sur texte ou sur picto
      \param     text				Texte à afficher
-     \param     htmltext	     	Contenu html du tooltip
+     \param     htmltext	     	Contenu html du tooltip, codé en html
 	 \param		tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
      \param		direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
      \param		img					Code img du picto
@@ -85,6 +85,7 @@ class Form
         {
 			// Sanitize tooltip
         	$htmltext=ereg_replace("'","\'",$htmltext);
+        	$htmltext=ereg_replace("&#039;","\'",$htmltext);
 			if ($tooltipon==1 || $tooltipon==3)
 			{
 				$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
@@ -145,7 +146,7 @@ class Form
 	*/
 	function textwithwarning($text,$htmltext,$direction=1)
     {
-		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning("default"));
+		return $this->textwithtooltip($text,$htmltext,2,$direction,img_warning(""));
     }
     
     

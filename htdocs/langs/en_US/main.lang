@@ -31,6 +31,7 @@ ErrorDuplicateField=Duplicate value in a unique field
 ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. We rollback changes.
 ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined inside Dolibarr config file <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr database.
+DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is setup to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that password database is extern to Dolibarr, so changing this field may have no effects.
 SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Last connection

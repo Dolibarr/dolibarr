@@ -1167,18 +1167,24 @@ else
 
             // Pass
             print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
-            if ($fuser->ldap_sid)
+            print '<td>';
+			if ($fuser->ldap_sid)
             {
-            	print '<td>Mot de passe du domaine</td>';
+            	$text='Mot de passe du domaine';
             }
             else if ($caneditpassword) 
             {
-                print '<td><input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'"></td>';
+                $text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
+				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
+				{
+					$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
+				}
             }
             else
             {
-                print '<td width="50%">'.eregi_replace('.','*',$fuser->pass);
+                $text=eregi_replace('.','*',$fuser->pass);
             }
+			print $text;
             print "</td></tr>\n";
             
             // Administrateur

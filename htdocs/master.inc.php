@@ -94,7 +94,6 @@ $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);								// URL racine relative
 
-
 /*
  * Creation objet $conf
  */

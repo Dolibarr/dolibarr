@@ -655,7 +655,7 @@ function top_menu($head, $title="", $target="")
     {
         $title=$langs->trans("Logout");
         $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"%d/%m/%Y %H:%M:%S");
-        $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
+        if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
 
         $text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
         $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
