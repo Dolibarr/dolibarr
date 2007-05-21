@@ -40,14 +40,18 @@ if (! $user->societe_id == 0)
 
 $entitytoicon=array(
 	'invoice'=>'bill','invoice_line'=>'bill',
-	'order'=>'order','order_line'=>'order',
-	'member'=>'user', 'member_type'=>'group','subscription'=>'payment');
+	'order'=>'order' ,'order_line'=>'order',
+	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
+	'tax'=>'generic' ,'tax_type'=>'generic',
+	'payment'=>'payment');
 $entitytolang=array(
 	'user'=>'User',
 	'company'=>'Company','contact'=>'Contact',
 	'invoice'=>'Bill','invoice_line'=>'InvoiceLine',
 	'order'=>'Order','order_line'=>'OrderLine',
-	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription');
+	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription',
+	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
+	'payment'=>'Payment');
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();
 $datatoexport=isset($_GET["datatoexport"])? $_GET["datatoexport"] : (isset($_POST["datatoexport"])?$_POST["datatoexport"]:'');
