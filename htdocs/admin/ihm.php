@@ -195,7 +195,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // Message d'accueil'
 	$var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageHome").'</td><td>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("MessageLogin").'</td><td>';
 	if ($conf->fckeditor->enabled)
 	{
 		// Editeur wysiwyg

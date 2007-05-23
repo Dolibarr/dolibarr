@@ -1,0 +1,120 @@
+<?php
+/* Copyright (C) 2004-2007 Cyrille de Lambert <cyrille.delambert@auguria.net>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
+ * $Source$
+ */
+
+/**
+   \file       htdocs/install/etape1.php
+   \brief      Pemet d'afficher et de confirmer le charset par rapport aux informations précedntes -> sélection suite à connection'
+   \version    $Revision$
+*/
+
+define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
+
+include_once("./inc.php");
+
+$setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
+$langs->setDefaultLang($setuplang);
+
+$langs->load("admin");
+$langs->load("install");
+
+pHeader($langs->trans("ConfigurationFile"),"etape1");
+
+$error = 0;
+
+/*
+ * Actions
+ */
+if ($_POST["action"] == "set")
+{
+  umask(0);
+    foreach($_POST as $cle=>$valeur)
+    {
+    echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
+    }
+}
+/**
+ * Récuparation des information de connexion
+ */
+$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+// Répertoire des pages dolibarr
+$main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
+/**
+* 	Si l'utilisateur n'est pas créé déjà créé, on se connecte à l'aide du login root'
+*/
+require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
+if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
+{	
+	
+	$databasefortest=$conf->db->name;
+	if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+	{
+		$databasefortest='mysql';
+	}else{
+		$databasefortest='postgres';
+	}
+	$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
+}else{	
+	$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"]);
+}
+if ($db->error)
+{
+		print $langs->trans("ThisPHPDoesNotSupportTypeBase",$conf->db->type);
+		$error++;
+}
+
+/*
+* Si creation database demandée, il est possible de faire un choix
+*/
+$disabled="";
+if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_database"] == "on"))
+{
+	$disabled="";
+}else{
+	$disabled="disabled";
+}
+if ($db->connected){
+?>
+<table border="0" cellpadding="1" cellspacing="0">
+	<tr><td valign="top" class="label" colspan="3"><?php echo $langs->trans("CharsetChoice");?></td></tr>
+	<tr>
+		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetClient"); ?></td>
+		<td valign="top" class="label"><select name="character_set_client"/><option>ISO-8859-1</option><option>ISO-8859-15</option><option>UTF-8</option><option>cp866</option><option>cp1251</option><option>cp1252</option><option>KOI8-R</option><option>BIG5</option><option>GB2312</option><option>BIG5-HKSCS</option><option>Shift_JIS</option><option>EUC-JP</option></select></td>
+		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetClientComment"); ?></div></td>
+	</tr>
+	<?php  
+	include($_POST["db_type"].'.php');?>
+<?php
+}else{
+	
+	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
+	{	
+			print 'Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
+			print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
+			print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
+			print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
+	}else{
+			print 'La connexion ayant échoué, les paramètres de connexion de l\'utilisateur  sont peut-etre incorrects.<br>';
+			print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
+	}
+}
+pFooter($err,$setuplang);
+?>

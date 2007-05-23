@@ -46,6 +46,8 @@ class DoliDb
   var $type='mysqli';          
   //! Charset
   var $forcecharset='latin1';
+  //! Charset client
+  var $forcecharsetclient='iso-8859-1';
   //! Collate
   var $forcecollate='latin1_swedish_ci';
   //! Version min database
@@ -57,7 +59,9 @@ class DoliDb
   //! 1 si base sélectionné, 0 sinon
   var $database_selected; 
   //! Nom base sélectionnée
-  var $database_name;			
+  var $database_name;
+  //! Nom user base
+  var $database_user;	   
   //! 1 si une transaction est en cours, 0 sinon
   var $transaction_opened;	
   //! Derniere requete exécutée
@@ -114,6 +118,14 @@ class DoliDb
     function DoliDb($type='mysqli', $host, $user, $pass, $name='', $newlink=0)
     {
         global $conf,$langs;
+        
+        $conffile = "../../conf/conf.php";
+        if (file_exists($conffile)) {
+	    	include($conffile);
+	    	$this->forcecharset=$character_set_database;
+	    	$this->forcecollate=$collation_connection;
+	    	$this->db_user=$dolibarr_main_db_user;
+		}
         $this->transaction_opened=0;
 
         //print "Name DB: $host,$user,$pass,$name<br>";
@@ -230,6 +242,22 @@ class DoliDb
 		return mysqli_get_server_info($this->db);
     }
 
+    /**
+     \brief          Renvoie la version du serveur sous forme de nombre
+     \return	        string      Chaine version
+	  */
+	  function getIntVersion()
+	  {
+			$version=	$this->getVersion();
+			$vlist=split('[.-]',$version);
+			if (strlen($vlist[1])==1){
+				$vlist[1]="0".$vlist[1];
+			}
+			if (strlen($vlist[2])==1){
+				$vlist[2]="0".$vlist[2];
+			}
+			return $vlist[0].$vlist[1].$vlist[2];
+	  }
 
     /**
             \brief          Renvoie la version du serveur dans un tableau
@@ -631,22 +659,20 @@ class DoliDb
             \return	        resource		resource définie si ok, null si ko
             \remarks        Ne pas utiliser les fonctions xxx_create_db (xxx=mysql, ...) car elles sont deprecated
     */
-    function DDLCreateDb($database)
-    {
-        $sql = 'CREATE DATABASE '.$database;
-        $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
-        $ret=$this->query($sql);
-        if (! $ret)
-        {
-        	// On réessaie pour compatibilité avec Mysql < 5.0
-	        $sql = 'CREATE DATABASE '.$database;
-	        $ret=$this->query($sql);
-        }
-
-        //print "database=".$this->database_name." ret=".$ret." mysqlerror=".mysqli_error($this->db);
-        return $ret;
-    }
-
+  function DDLCreateDb($database)
+  {
+    // ALTER DATABASE dolibarr_db DEFAULT CHARACTER SET latin DEFAULT COLLATE latin1_swedish_ci
+    $sql = 'CREATE DATABASE '.$database;
+    $sql.= ' DEFAULT CHARACTER SET '.$this->forcecharset.' DEFAULT COLLATE '.$this->forcecollate;
+    $ret=$this->query($sql);
+	if (! $ret)
+		{
+		// On réessaie pour compatibilité avec Mysql < 4.1.1
+		$sql = 'CREATE DATABASE '.$database;
+		$ret=$this->query($sql);
+		}
+    return $ret;
+  }
 
     /**
         \brief      Liste des tables dans une database.
@@ -824,6 +850,67 @@ class DoliDb
 		$resql=$this->query($sql);
 	
 		return 1;
+	}
+	
+	function getDefaultCharacterSetDatabase(){
+		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
+		  if (!$resql)
+	      {
+			// version Mysql < 4.1.1
+			return $this->forcecharset;
+	      }
+	    $liste=$this->fetch_array($resql);
+	    return $liste['Value'];
+	}
+	
+	function getListOfCharacterSet(){
+		 $resql=$this->query('SHOW CHARSET');
+		$liste = array();
+		if ($resql) 
+			{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['charset'] = $obj->Charset;
+				$liste[$i]['description'] = $obj->Description;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  	} else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
+	}
+	
+	function getDefaultCollationConnection(){
+		$resql=$this->query('SHOW VARIABLES LIKE \'collation_connection\'');
+		 if (!$resql)
+	      {
+			// version Mysql < 4.1.1
+			return $this->forcecollate;
+	      }
+	    $liste=$this->fetch_array($resql);
+	    return $liste['Value'];
+	}
+	
+	function getListOfCollation(){
+		 $resql=$this->query('SHOW COLLATION');
+		$liste = array();
+		if ($resql) 
+			{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['collation'] = $obj->Collation;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  	} else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
 	}
 }
 

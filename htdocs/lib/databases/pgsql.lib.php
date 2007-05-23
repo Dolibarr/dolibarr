@@ -44,6 +44,8 @@ class DoliDb
 {
     var $db;                      // Handler de base
     var $type='pgsql';            // Nom du gestionnaire
+   //! Charset
+    var $forcecharset='latin1';
 	var $versionmin=array(8,1,0);	// Version min database
 
     var $results;                 // Resultset de la dernière requete
@@ -51,12 +53,14 @@ class DoliDb
     var $connected;               // 1 si connecté, 0 sinon
     var $database_selected;       // 1 si base sélectionné, 0 sinon
     var $database_name;			  // Nom base sélectionnée
+  var $database_user;	   //! Nom user base
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
 
     var $ok;
     var $error;
+ 
 
 
     /**
@@ -71,6 +75,12 @@ class DoliDb
     function DoliDb($type='pgsql', $host, $user, $pass, $name='')
     {
         global $conf,$langs;
+        $conffile = "../conf/conf.php";
+		if (file_exists($conffile)) {	
+	    	include($conffile);
+	    	$this->forcecharset=$character_set_database;
+	    	$this->db_user=$dolibarr_main_db_user;
+		}
         $this->transaction_opened=0;
 
         //print "Name DB: $host,$user,$pass,$name<br>";
@@ -161,7 +171,10 @@ class DoliDb
     */
     function connect($host, $login, $passwd, $name)
     {
-        $con_string = "host=$host dbname=$name user=$login password=--hidden--";
+    	if (!$name){
+    		$name="postgres";
+    	}
+        $con_string = "host=$host dbname=$name user=$login password=$passwd";
         $this->db = pg_connect($con_string);
         if ($this->db)
         {
@@ -177,10 +190,28 @@ class DoliDb
     */
     function getVersion()
     {
-        return '?';
+    	$resql=$this->query('SHOW server_version');
+	    $liste=$this->fetch_array($resql);
+	    return $liste['server_version'];
     }
 
-
+    /**
+     \brief          Renvoie la version du serveur sous forme de nombre
+     \return	        string      Chaine version
+	  */
+	  function getIntVersion()
+	  {
+			$version=	$this->getVersion();
+			$vlist=split('[.-]',$version);
+			if (strlen($vlist[1])==1){
+				$vlist[1]="0".$vlist[1];
+			}
+			if (strlen($vlist[2])==1){
+				$vlist[2]="0".$vlist[2];
+			}
+			return $vlist[0].$vlist[1].$vlist[2];
+	  }
+  
     /**
             \brief          Renvoie la version du serveur dans un tableau
             \return	        array  		Tableau de chaque niveau de version
@@ -266,8 +297,11 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-        $ret = pg_query($this->db, $query);
-
+        
+		if ($this->forcecharset=="UTF-8"){
+					$buffer=utf8_encode ($buffer);
+		}
+		$ret = pg_query($this->db, $query);	
         if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
         {
             // Si requete utilisateur, on la sauvegarde ainsi que son resultset
@@ -528,7 +562,7 @@ class DoliDb
         $nbre = pg_num_rows($result);
         $row = pg_fetch_result($result,0,0);
         return $row;
-
+    }
 
 	// Next function are not required. Only minor features use them.
 	//--------------------------------------------------------------
@@ -593,9 +627,8 @@ class DoliDb
     */
     function DDLCreateDb($database)
     {
-        $ret=$this->query('CREATE DATABASE '.$database.';');
+        $ret=$this->query('CREATE DATABASE '.$database.' OWNER '.$this->db_user.' ENCODING \''.$this->forcecharset.'\' ;');
         return $ret;
-    }
     }
 
     /**
@@ -630,6 +663,11 @@ class DoliDb
 		
 		return 1;
 	}
+	
+	function getDefaultCharacterSetDatabase(){
+		 $resql=$this->query('SHOW SERVER_ENCODING');
+	    $liste=$this->fetch_array($resql);
+	    return $liste['server_encoding'];
+	}
 }
-
 ?>

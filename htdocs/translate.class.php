@@ -49,6 +49,7 @@ class Translate {
      */
     function Translate($dir = "")
     {
+		$this->charset=$_SESSION['charset'];
         $this->dir=$dir;
     }
 
@@ -236,7 +237,9 @@ class Translate {
             $newstr=ereg_replace('"','__quot__',$newstr);
 
             // Cryptage en html de la chaine
-            $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset);
+            $this->load("main");
+           $charset=sprintf($this->tab_translate["charset"]);
+            $newstr=htmlentities($newstr,ENT_QUOTES,$charset);
 
             // On restaure les tags HTML
             $newstr=ereg_replace('__lt__','<',$newstr);
@@ -311,12 +314,8 @@ class Translate {
 		
     function lang_header()
     {
-        $this->load("main");
-        $charset=$this->trans("charset");
-        if (! $charset) $charset="iso-8859-1";
-    
         //header("Content-Type: text/html; charset=$charset");
-        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$charset\">\n";
+        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$this->charset\">\n";
     
         return $texte;
     }

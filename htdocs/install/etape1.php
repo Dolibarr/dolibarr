@@ -135,6 +135,16 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
 			fputs($fp,"\n");
 
+			/* Choix des charsets*/
+			fputs($fp, '$character_set_client="'.$_POST["character_set_client"].'";');
+			fputs($fp,"\n");
+			
+			fputs($fp, '$character_set_database="'.$_POST["character_set_database"].'";');
+			fputs($fp,"\n");
+			
+			fputs($fp, '$collation_connection="'.$_POST["collation_connection"].'";');
+			fputs($fp,"\n");
+
 			/* Preparation integration SMARTY */
 			fputs($fp, '$dolibarr_smarty_libs_dir="";');
 			fputs($fp,"\n");
@@ -260,9 +270,12 @@ if ($_POST["action"] == "set")
 			if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 			{
 				$databasefortest='mysql';
+			}else{
+				$databasefortest='postgres';
 			}
 			
 			// Creation handler de base, verification du support et connexion
+
 			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest);
 			if ($db->error)
 			{

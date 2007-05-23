@@ -48,7 +48,6 @@ llxHeader();
 
 print_fiche_titre($langs->trans("HomeArea"));
 
-
 if (defined("MAIN_MOTD") && strlen(trim(MAIN_MOTD)))
 {
     print '<table width="100%" class="notopnoleftnoright"><tr><td>';

@@ -266,7 +266,7 @@ class CMailFile
        
         if ($this->msgishtml)
         {
-        	$out.= "Content-Type: text/html; charset=iso-8859-1".$this->eol;
+        	$out.= "Content-Type: text/html; charset=".$_SESSION['charset'].$this->eol;
         	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
         else

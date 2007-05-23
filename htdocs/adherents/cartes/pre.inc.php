@@ -51,7 +51,7 @@ function llxHeader($head = "") {
   $menu->add_submenu(DOL_URL_ROOT."/exports/index.php?leftmenu=export",$langs->trans("Datas"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/htpasswd.php",$langs->trans("Filehtpasswd"));
   $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/carte.php",$langs->trans("MembersCards"));
-  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php","Etiquettes d'adhérents");
+  $menu->add_submenu(DOL_URL_ROOT."/adherents/cartes/etiquette.php",$langs->trans("MembersTickets"));
 
   $langs->load("compta");
   $menu->add(DOL_URL_ROOT."/adherents/index.php",$langs->trans("Accountancy"));

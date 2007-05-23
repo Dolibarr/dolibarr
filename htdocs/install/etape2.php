@@ -239,6 +239,10 @@ if ($_POST["action"] == "set")
                     {
 		                //print "<tr><td>Création des clés et index de la table $name: '$buffer'</td>";
 						$requestnb++;
+						if ($character_set_client=="UTF-8"){
+							$buffer=utf8_encode ($buffer);
+						}
+						
                         if ($db->query(trim($buffer)))
                         {
                             //print "<td>OK requete ==== $buffer</td></tr>";

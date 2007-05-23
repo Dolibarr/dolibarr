@@ -40,7 +40,7 @@ $langs->setDefaultLang($setuplang);
 $langs->load("install");
 
 
-pHeader($langs->trans("ConfigurationFile"),"etape1");
+pHeader($langs->trans("ConfigurationFile"),"etape0");
 
 
 print '<table border="0" cellpadding="1" cellspacing="0">';
@@ -76,7 +76,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
         $dolibarr_main_document_root = ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
     }
 }
-
+echo $PMA_MYSQL_INT_VERSION;
 ?>
 <td  class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>" name="main_dir">
 </td><td class="comment">

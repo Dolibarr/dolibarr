@@ -130,6 +130,13 @@ require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
+require_once(DOL_DOCUMENT_ROOT ."/conf/conf.class.php");
+if ($character_set_client ){
+	$_SESSION['charset'] = $character_set_client;
+}else{
+	$_SESSION['charset'] =$langs->trans("charset");
+}
+
 /*
  * Creation objet $db
  */

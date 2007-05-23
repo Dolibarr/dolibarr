@@ -39,9 +39,11 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 
 
 $conffile = "../conf/conf.php";
+$charset="ISO-8859-1";
 if (file_exists($conffile))
 {
 	include_once($conffile);
+	$charset=$character_set_client;
 	if ($dolibarr_main_document_root)
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
@@ -95,18 +97,20 @@ $bc[true]=' class="bg2"';
 
 function pHeader($soutitre,$next,$action='set')
 {
+	
+	global $charset;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
 
 	// On force contenu en ISO-8859-1
-	header("Content-type: text/html; charset=iso-8859-1");
+	header("Content-type: text/html; charset=".$charset);
     //header("Content-type: text/html; charset=UTF-8");
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>';
     print '<head>';
-    print '<meta http-equiv="content-type" content="text/html; charset='.$langs->trans("charset").'">';
+    print '<meta http-equiv="content-type" content="text/html; charset='.$charset.'">';
     print '<link rel="stylesheet" type="text/css" href="./default.css">';
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';

@@ -88,11 +88,12 @@ Start=Démarrer
 InstallNotAllowed=Configuration non autorisée par les permissions de <b>conf.php</b>
 NotAvailable=Non disponible
 YouMustCreateWithPermission=Vous devez créer le fichier %s et donner les permissions d'écrire dans ce fichier à votre serveur web pendant le processus d'installation.
+CharacterSetDatabase
 CorrectProblemAndReloadPage=Corrigez le problème et <a href="%s">rechargez la page</a> (Pressez la touche F5).
 AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base de données
 ServerVersion=Version du serveur de bases de données
-=
+
 #########=
 # upgrade=
 MigrationOrder=Migration des données de commandes clients

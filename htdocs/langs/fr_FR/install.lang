@@ -100,6 +100,13 @@ AlreadyDone=Déjà migré
 DatabaseVersion=Version de la base
 ServerVersion=Version du serveur de base de donnée
 YouMustCreateItAndAllowServerToWrite=Vous devez créer ce dossier et permettre au serveur web d'écrire dans celui-ci.
+CharsetChoice=Choix du codage des caractères
+CharacterSetClient=Codage utilisé pour l'affichage des pages
+CharacterSetClientComment=Veuillez choisir le codage que vous souhaitez pour l'affichage des pages.<br/> Le codage par défaut est celui définie sur la base mysql par défaut
+CollationConnection=Collation utilisée pour la base de données
+CollationConnectionComment=Veuillez choisir la collation que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
+CharacterSetDatabase=Codage utilisé pour la base de données
+CharacterSetDatabaseComment=Veuillez choisir le codage que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
 
 #########
 # upgrade
