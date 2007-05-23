@@ -110,7 +110,12 @@ if ($_POST['action'] == 'confirm_valide' && $_POST['confirm'] == 'yes' && $user-
 llxHeader();
 
 $paiement = new Paiement($db);
-$paiement->fetch($_GET['id']);
+$result=$paiement->fetch($_GET['id']);
+if ($result <= 0)
+{
+	dolibarr_print_error($db,'Payement '.$_GET['id'].' not found in database');
+	exit;
+}
 
 $html = new Form($db);
 

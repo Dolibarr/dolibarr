@@ -164,6 +164,7 @@ if ($action == 'add_paiement')
 		}
 		else
 		{
+			$fiche_erreur_message = '<div class="error">'.$langs->trans("Error").'</div>';
 			$error++;
 		}
 
