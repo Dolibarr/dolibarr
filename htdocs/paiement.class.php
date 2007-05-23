@@ -68,7 +68,7 @@ class Paiement
     /**
      *    \brief      Récupère l'objet paiement
      *    \param      id      id du paiement a récupérer
-     *    \return     int     <0 si ko, >0 si ok
+     *    \return     int     <0 si ko, 0 si non trouvé, >0 si ok
      */
     function fetch($id)
 	{
@@ -80,6 +80,7 @@ class Paiement
 		$sql.= ' WHERE p.fk_paiement = c.id';
 		$sql.= ' AND p.rowid = '.$id;
 
+		dolibarr_syslog("Paiement::fetch sql=".$sql);
 		$result = $this->db->query($sql);
 		
 		if ($result)
@@ -98,13 +99,15 @@ class Paiement
 				$this->type_libelle   = $obj->type_libelle;
 				$this->type_code      = $obj->type_code;
 				$this->statut         = $obj->statut;
+
+				$this->db->free($result);
 				return 1;
 			}
 			else
 			{
-				return -2;
+				$this->db->free($result);
+				return 0;
 			}
-			$this->db->free($result);
 		}
 		else
 		{
