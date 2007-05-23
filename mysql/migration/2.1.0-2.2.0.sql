@@ -8,6 +8,14 @@
 -- sans AUCUNE erreur ni warning
 --
 
+-- Sequence de requete pour nettoyage et correction champ type table llx_bank_url
+update llx_bank_url set type='company'  where (type is null or type = '') and url like '%compta/fiche.php?socid=%';
+alter table llx_bank_url modify `type` enum("","?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc");
+update llx_bank_url set type='?'  where (type is null or type = '') and url like '%compta/facture.php?facid=%';
+update llx_bank_url set type='payment_supplier' where (type='' or type is null) and url like '%fourn/paiement/fiche.php?id=%';
+alter table llx_bank_url modify `type` enum("?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc") NOT NULL;
+
+
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
 
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);

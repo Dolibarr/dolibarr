@@ -227,7 +227,7 @@ alter table llx_paiementfourn add statut smallint(6) NOT NULL DEFAULT 0;
 
 alter table llx_bank_url add column type enum("company","payment","member","subscription","donation","sc","payment_sc");
 update llx_bank_url set type=null where type='';
-alter table llx_bank_url modify type enum("company","payment","member","subscription","donation","sc","payment_sc");
+alter table llx_bank_url modify type enum("company","payment","member","subscription","donation","sc","payment_sc") NOT NULL;
 
 update llx_bank_url set type = 'payment_supplier' where label = '(paiement)' and type='payment' and url like '%/fourn/%';
 
