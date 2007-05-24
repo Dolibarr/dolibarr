@@ -4,7 +4,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005 	   Simon Tosser         <simon@kornog-computing.com> 
  * Copyright (C) 2006 	   Andre Cianfarani     <andre.cianfarani@acdeveloppement.net> 
  *
@@ -130,6 +130,15 @@ require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
 require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
 
+/*
+ * Creation objet $langs
+ */
+require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
+$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
+
+/*
+ *
+ */
 require_once(DOL_DOCUMENT_ROOT ."/conf/conf.class.php");
 if ($character_set_client ){
 	$_SESSION['charset'] = $character_set_client;
@@ -157,13 +166,7 @@ $user = new User($db);
 $conf->setValues($db);
 
 /*
- * Creation objet $langs
- */
-require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
-$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-
-/*
- * Chargement objet $langs
+ * Chargement langage par défaut
  */
 $langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
 $langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
