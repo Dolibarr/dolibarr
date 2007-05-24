@@ -2033,7 +2033,9 @@ else
 					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'abandon')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
-						print $html->textwithhelp($langs->trans("Abandoned").':',$langs->trans("HelpAbandonOther"),-1);
+						$text=$langs->trans("HelpAbandonOther");
+						if ($fac->close_note) $text.='<br><br><b>'.$langs->trans("Reason").'</b>:'.$fac->close_note;
+						print $html->textwithhelp($langs->trans("Abandoned").':',$text,-1);
 						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 						$resteapayeraffiche=0;
 					}
