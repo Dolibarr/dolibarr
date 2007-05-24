@@ -183,7 +183,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	{
 		// Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',true);
+		$doleditor=new DolEditor('main_motd',$conf->global->MAIN_MOTD,158,'dolibarr_notes','In',false);
 		$doleditor->Create();
 	}
 	else
@@ -200,7 +200,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	{
 		// Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',true);
+		$doleditor=new DolEditor('main_home',$conf->global->MAIN_HOME,158,'dolibarr_notes','In',false);
 		$doleditor->Create();
 	}
 	else
