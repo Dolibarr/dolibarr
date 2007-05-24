@@ -69,14 +69,14 @@ class Facture extends CommonObject
   //! 0=brouillon,
   //! 1=validée,
   //! 2=classée payée partiellement (close_code='discount_vat','bad_customer') ou complètement (close_code=null),
-  //! 3=classée abandonnée (close_code='abandon')
+  //! 3=classée abandonnée et aucun paiement n'a eu lieu (close_code='abandon' ou 'replaced')
   var $statut;
   //! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
   var $paye;
   //! id facture source si facture de remplacement ou avoir
   var $fk_facture_source;
-  //! Fermeture partielle: discount_vat, bad_customer, abandon
-  //! Fermeture car abandon suite a remplacement: replaced
+  //! Fermeture apres paiement partiel: discount_vat, bad_customer, abandon
+  //! Fermeture alors que aucun paiement: replaced (si remplacé), abandon
   var $close_code;	
   //! Commentaire si mis a paye sans paiement complet
   var $close_note;
