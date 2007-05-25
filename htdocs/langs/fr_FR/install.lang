@@ -1,4 +1,5 @@
 # Dolibarr language file - fr_FR - install
+CHARSET=ISO-8859-1
 InstallEasy=Nous avons fait en sorte que l'installation soit le plus simple possible, vous n'avez qu'à suivre les étapes une à une.
 MiscellanousChecks=Vérification de prérequis
 DolibarrWelcome=Bienvenue sur Dolibarr
@@ -107,7 +108,10 @@ CollationConnection=Collation utilisée pour la base de données
 CollationConnectionComment=Veuillez choisir la collation que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
 CharacterSetDatabase=Codage utilisé pour la base de données
 CharacterSetDatabaseComment=Veuillez choisir le codage que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=Vous avez demandé la création du login Dolibarr <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
+BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.
 
+					
 #########
 # upgrade
 #########

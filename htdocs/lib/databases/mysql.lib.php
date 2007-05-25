@@ -164,8 +164,9 @@ class DoliDb
 	// host, login ou password incorrect
 	$this->connected = 0;
 	$this->ok = 0;
+	$this->error=mysql_error();
 	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
-      }
+	}
     
     // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
     if ($this->connected && $name)

@@ -105,16 +105,22 @@ if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
 $conf = new Conf();
+// On defini tous les parametres de conf
 $conf->db->host   = $dolibarr_main_db_host;
 $conf->db->name   = $dolibarr_main_db_name;
 $conf->db->user   = $dolibarr_main_db_user;
 $conf->db->pass   = $dolibarr_main_db_pass;
+if (! isset($dolibarr_main_db_type) && ! $dolibarr_main_db_type) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->type   = $dolibarr_main_db_type;
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
-// Defini prefix
-if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
+if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='ISO-8859-1';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+$conf->db->character_set=$dolibarr_main_db_charset;
+if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+$conf->character_set_client=$character_set_client;
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 $conf->db->prefix = $dolibarr_main_db_prefix;
+
+// Defini prefix
+if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 
 // Detection browser
@@ -134,17 +140,7 @@ require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
  * Creation objet $langs
  */
 require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
-$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs");
-
-/*
- *
- */
-require_once(DOL_DOCUMENT_ROOT ."/conf/conf.class.php");
-if ($character_set_client ){
-	$_SESSION['charset'] = $character_set_client;
-}else{
-	$_SESSION['charset'] =$langs->trans("charset");
-}
+$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);	// A mettre apres lecture de la conf
 
 /*
  * Creation objet $db

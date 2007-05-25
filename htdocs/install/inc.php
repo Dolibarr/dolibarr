@@ -87,7 +87,7 @@ if (get_magic_quotes_gpc())
 
 
 // Defini objet langs
-$langs = new Translate('../langs');
+$langs = new Translate('../langs',$conf);
 $langs->setDefaultLang('auto');
 $langs->setPhpLang();
 

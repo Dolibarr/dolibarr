@@ -135,11 +135,11 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$dolibarr_main_db_type="'.$_POST["db_type"].'";');
 			fputs($fp,"\n");
 
-			/* Choix des charsets*/
-			fputs($fp, '$character_set_client="'.$_POST["character_set_client"].'";');
+			fputs($fp, '$dolibarr_main_db_character_set="'.$_POST["character_set_database"].'";');
 			fputs($fp,"\n");
 			
-			fputs($fp, '$character_set_database="'.$_POST["character_set_database"].'";');
+			/* Choix des charsets*/
+			fputs($fp, '$character_set_client="'.$_POST["character_set_client"].'";');
 			fputs($fp,"\n");
 			
 			fputs($fp, '$collation_connection="'.$_POST["collation_connection"].'";');
@@ -279,7 +279,7 @@ if ($_POST["action"] == "set")
 			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest);
 			if ($db->error)
 			{
-				print $langs->trans("ThisPHPDoesNotSupportTypeBase",$conf->db->type);
+				print '<div class="error">'.$db->error.'</div>';
 				$error++;
 			}
 			
@@ -333,9 +333,9 @@ if ($_POST["action"] == "set")
 					
 					// Affiche aide diagnostique
 					print '<tr><td colspan="2"><br>';
-					print 'Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
-					print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-					print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
+					print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
+					print '<br>';
+					print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 					print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 					print '</td></tr>';
 					
@@ -392,9 +392,10 @@ if ($_POST["action"] == "set")
 				print '</tr>';
 
 				// Affiche aide diagnostique
-				print '<tr><td colspan="2"><br>Vous avez demandé la création de la base Dolibarr "<b>'.$dolibarr_main_db_name.'</b>", mais pour cela, ';
-				print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-				print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
+				print '<tr><td colspan="2"><br>';
+				print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
+				print '<br>';
+				print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 				print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 				print '</td></tr>';
 

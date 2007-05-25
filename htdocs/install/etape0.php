@@ -35,13 +35,21 @@ $langs->setDefaultLang($setuplang);
 $langs->load("admin");
 $langs->load("install");
 
-pHeader($langs->trans("ConfigurationFile"),"etape1");
-
 $error = 0;
 
 /*
  * Actions
  */
+
+ 
+ 
+/*
+ * Affichage page
+ */
+
+pHeader($langs->trans("ConfigurationFile"),"etape1");
+
+// On reporte champ formulaire précédent pour propagation
 if ($_POST["action"] == "set")
 {
   umask(0);
@@ -50,6 +58,7 @@ if ($_POST["action"] == "set")
     echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
     }
 }
+
 /**
  * Récuparation des information de connexion
  */
@@ -57,13 +66,13 @@ $userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 // Répertoire des pages dolibarr
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
+
 /**
 * 	Si l'utilisateur n'est pas créé déjà créé, on se connecte à l'aide du login root'
 */
 require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
 if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 {	
-	
 	$databasefortest=$conf->db->name;
 	if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
 	{
@@ -77,9 +86,10 @@ if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 }
 if ($db->error)
 {
-		print $langs->trans("ThisPHPDoesNotSupportTypeBase",$conf->db->type);
+		print '<div class="error">'.$db->error.'</div>';
 		$error++;
 }
+
 
 /*
 * Si creation database demandée, il est possible de faire un choix
@@ -97,11 +107,10 @@ if ($db->connected){
 	<tr><td valign="top" class="label" colspan="3"><?php echo $langs->trans("CharsetChoice");?></td></tr>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetClient"); ?></td>
-		<td valign="top" class="label"><select name="character_set_client"/><option>ISO-8859-1</option><option>ISO-8859-15</option><option>UTF-8</option><option>cp866</option><option>cp1251</option><option>cp1252</option><option>KOI8-R</option><option>BIG5</option><option>GB2312</option><option>BIG5-HKSCS</option><option>Shift_JIS</option><option>EUC-JP</option></select></td>
+		<td valign="top" class="label"><select name="character_set_client"><option>ISO-8859-1</option><option>ISO-8859-15</option><option>UTF-8</option><option>cp866</option><option>cp1251</option><option>cp1252</option><option>KOI8-R</option><option>BIG5</option><option>GB2312</option><option>BIG5-HKSCS</option><option>Shift_JIS</option><option>EUC-JP</option></select></td>
 		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetClientComment"); ?></div></td>
 	</tr>
-	<?php  
-	include($_POST["db_type"].'.php');?>
+	<?php include($_POST["db_type"].'.php');?>
 <?php
 }else{
 	
@@ -116,5 +125,10 @@ if ($db->connected){
 			print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
 	}
 }
-pFooter($err,$setuplang);
+
+?>
+</table>
+
+<?php
+pFooter($error,$setuplang);
 ?>

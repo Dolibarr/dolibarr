@@ -40,16 +40,22 @@ class Translate {
     var $tab_loaded=array();		// Tableau pour signaler les fichiers deja chargés
     var $tab_translate=array();		// Tableau des traductions
 
-	var $charset='ISO-8859-1';		// Codage du contenu du fichier langue
+	var $charset_inputfile='ISO-8859-1';	// Codage du contenu du fichier langue
+	var $charset_output='ISO-8859-1';		// Codage par defaut de la sortie de la méthode trans
 	
 
     /**
      *  \brief      Constructeur de la classe
      *  \param      dir             Repertoire racine des fichiers de traduction
+     *  \param      conf			Objet qui contient la config Dolibarr
      */
-    function Translate($dir = "")
+    function Translate($dir = "",$conf)
     {
-		$this->charset=$_SESSION['charset'];
+		// Si charset output defini
+		if (isset($conf->character_set_client) && $conf->character_set_client) 
+		{
+			$this->charset_output=$conf->character_set_client;
+		}
         $this->dir=$dir;
     }
 
@@ -183,7 +189,21 @@ class Translate {
                         if (! $this->getTransFromTab($key))
                         {
 	                        if (isset($tab[1])) $value=trim(ereg_replace('\\\n',"\n",$tab[1]));
-                        	$this->setTransFromTab($key,$value);
+							
+							if (eregi('^CHARSET$',$key))
+							{
+								// On est tombe sur une balise qui declare le format du fichier lu
+								$this->charset_inputfile=strtoupper($value);
+								//print 'File '.$file_lang.' has format '.$this->charset_inputfile.'<br>';
+							}
+							else
+							{
+								// On stocke toujours dans le tableau Tab en ISO
+	                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
+	                        	if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
+					
+								$this->setTransFromTab($key,$value);
+							}
                         }
                     }
                 }
@@ -237,9 +257,7 @@ class Translate {
             $newstr=ereg_replace('"','__quot__',$newstr);
 
             // Cryptage en html de la chaine
-            $this->load("main");
-           $charset=sprintf($this->tab_translate["charset"]);
-            $newstr=htmlentities($newstr,ENT_QUOTES,$charset);
+            $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
 
             // On restaure les tags HTML
             $newstr=ereg_replace('__lt__','<',$newstr);
@@ -315,7 +333,7 @@ class Translate {
     function lang_header()
     {
         //header("Content-Type: text/html; charset=$charset");
-        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=$this->charset\">\n";
+        $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$this->charset_output."\">\n";
     
         return $texte;
     }

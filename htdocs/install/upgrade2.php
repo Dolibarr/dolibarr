@@ -177,7 +177,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_delete_old_files($db,$langs,$conf);
 
 		// Script pour V2.1 -> V2.2
-		migrate_paiements_orphelins($db,$langs,$conf);
+		migrate_paiements_orphelins_1($db,$langs,$conf);
+
+		migrate_paiements_orphelins_2($db,$langs,$conf);
 		
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -281,7 +283,7 @@ function migrate_paiements($db,$langs,$conf)
  * Pour verifier s'il reste des orphelins:
  * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
  */
-function migrate_paiements_orphelins($db,$langs,$conf)
+function migrate_paiements_orphelins_1($db,$langs,$conf)
 {
 	print '<tr><td colspan="4">';
 
@@ -299,16 +301,16 @@ function migrate_paiements_orphelins($db,$langs,$conf)
 	$sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
 	$resql = $db->query($sql);
 
+	$row = array();
 	if ($resql) 
 	{
 		$i = $j = 0;
-		$row = array();
 		$num = $db->num_rows($resql);
 		
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			if ($obj->pamount == $obj->bamount)	// Pour etre sur d'avoir bon cas
+			if ($obj->pamount == $obj->bamount && $obj->socid)	// Pour etre sur d'avoir bon cas
 			{
 				$row[$j]['paymentid'] = $obj->rowid ;		// paymentid
 				$row[$j]['pamount'] = $obj->pamount;
@@ -325,49 +327,45 @@ function migrate_paiements_orphelins($db,$langs,$conf)
 		dolibarr_print_error($db);   
 	}
 	
-	if ($num)
+	if (sizeof($row))
 	{
-		print $langs->trans('MigrationPaymentsNumberToUpdate', $num)."<br>\n";
-		if ($db->begin())
+		print $langs->trans('MigrationPaymentsNumberToUpdate', sizeof($row))."<br>\n";
+		$db->begin();
+		
+		$res = 0;
+		for ($i = 0 ; $i < sizeof($row) ; $i++)
 		{
-			$res = 0;
-			for ($i = 0 ; $i < sizeof($row) ; $i++)
-			{
-				//print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
-				// On cherche facture du meme montant pour meme societe.
-				// Si y en a plusieurs, on prend la premiere sans lien vers un paiement
-				if ($row[$i]['socid'] > 0)
-				{
-					$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
-					$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
-					$sql.=" WHERE f.fk_statut in (2,3) AND fk_soc = ".$row[$i]['socid']." AND total_ttc = ".$row[$i]['pamount'];
-					$sql.=" AND pf.fk_facture IS NULL";
-					$sql.=" ORDER BY f.fk_statut";
-					print $sql.'<br>';
-					$resql=$db->query($sql);
-					if ($resql)
-					{
-						$num = $db->num_rows($resql);
-						//print 'Nb of invoice found for this amount and company :'.$num.'<br>';
-						if ($num >= 1) 
-						{
-							$obj=$db->fetch_object($resql);
-							$facid=$obj->rowid;
-							
-							$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
-							$sql .= " VALUES (".$facid.",".$row[$i]['paymentid'].",".$row[$i]['pamount'].")";
-							$res += $db->query($sql);
+			print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
-							print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
-						}
-					}
-					else
-					{
-						print 'ERROR';
-					}
+			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+			$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+			$sql.=" WHERE f.fk_statut in (2,3) AND fk_soc = ".$row[$i]['socid']." AND total_ttc = ".$row[$i]['pamount'];
+			$sql.=" AND pf.fk_facture IS NULL";
+			$sql.=" ORDER BY f.fk_statut";
+			//print $sql.'<br>';
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				//print 'Nb of invoice found for this amount and company :'.$num.'<br>';
+				if ($num >= 1) 
+				{
+					$obj=$db->fetch_object($resql);
+					$facid=$obj->rowid;
+					
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+					$sql .= " VALUES (".$facid.",".$row[$i]['paymentid'].",".$row[$i]['pamount'].")";
+					$res += $db->query($sql);
+
+					print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
 				}
-			} 
-		}
+			}
+			else
+			{
+				print 'ERROR';
+			}
+		} 
 		
 		if ($res > 0)
 		{
@@ -377,6 +375,8 @@ function migrate_paiements_orphelins($db,$langs,$conf)
 		{
 			print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
 		}
+		
+		$db->commit();
 	}
 	else
 	{
@@ -384,6 +384,128 @@ function migrate_paiements_orphelins($db,$langs,$conf)
 	}
 
 	print '</td></tr>';
+}
+
+
+/**
+ * Corrige paiement orphelins (liens paumes suite a bugs)
+ * Pour verifier s'il reste des orphelins:
+ * select * from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
+ */
+function migrate_paiements_orphelins_2($db,$langs,$conf)
+{
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationPaymentsUpdate')."</b><br>\n";
+	
+	// Tous les enregistrements qui sortent de cette requete devrait avoir un pere dans llx_paiement_facture
+	$sql = "SELECT distinct p.rowid, p.datec, p.amount as pamount, bu.fk_bank, b.amount as bamount,";
+	$sql.= " bu2.url_id as socid";
+	$sql.= " FROM (".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."bank_url as bu, ".MAIN_DB_PREFIX."bank as b)";
+	$sql.= " left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid";
+	$sql.= " left join llx_bank_url as bu2 on (bu.fk_bank=bu2.fk_bank AND bu2.type='company')";
+	$sql.= " WHERE pf.rowid IS NULL AND (p.fk_bank=bu.fk_bank AND bu.type='payment') AND bu.fk_bank = b.rowid";
+	$sql.= " AND (p.fk_facture = 0 OR p.fk_facture IS NULL)";
+	$resql = $db->query($sql);
+
+	$row = array();
+	if ($resql) 
+	{
+		$i = $j = 0;
+		$num = $db->num_rows($resql);
+		
+		while ($i < $num)
+		{
+			$obj = $db->fetch_object($resql);
+			if ($obj->pamount == $obj->bamount && $obj->socid)	// Pour etre sur d'avoir bon cas
+			{
+				$row[$j]['paymentid'] = $obj->rowid ;		// paymentid
+				$row[$j]['pamount'] = $obj->pamount;
+				$row[$j]['fk_bank'] = $obj->fk_bank;
+				$row[$j]['bamount'] = $obj->bamount;
+				$row[$j]['socid'] = $obj->socid;
+				$row[$j]['datec'] = $obj->datec;
+				$j++;
+			}
+			$i++;
+		}
+	}
+	else {
+		dolibarr_print_error($db);   
+	}
+	
+	if (sizeof($row))
+	{
+		print $langs->trans('MigrationPaymentsNumberToUpdate', sizeof($row))."<br>\n";
+		$db->begin();
+
+		$res = 0;
+		for ($i = 0 ; $i < sizeof($row) ; $i++)
+		{
+			print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
+
+			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
+			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
+			$sql.=" LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
+			$sql.=" WHERE f.fk_statut in (2,3) AND fk_soc = ".$row[$i]['socid']." AND total_ttc = ".$row[$i]['pamount'];
+			$sql.=" AND pf.fk_facture IS NULL";
+			$sql.=" ORDER BY f.fk_statut";
+			//print $sql.'<br>';
+			$resql=$db->query($sql);
+			if ($resql)
+			{
+				$num = $db->num_rows($resql);
+				//print 'Nb of invoice found for this amount and company :'.$num.'<br>';
+				if ($num >= 1) 
+				{
+					$obj=$db->fetch_object($resql);
+					$facid=$obj->rowid;
+					
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiement_facture (fk_facture, fk_paiement, amount)";
+					$sql .= " VALUES (".$facid.",".$row[$i]['paymentid'].",".$row[$i]['pamount'].")";
+					$res += $db->query($sql);
+
+					print $langs->trans('MigrationProcessPaymentUpdate', 'facid='.$facid.'-paymentid='.$row[$i]['paymentid'].'-amount='.$row[$i]['pamount'])."<br>\n";
+				}
+			}
+			else
+			{
+				print 'ERROR';
+			}
+		} 
+		
+		if ($res > 0)
+		{
+			print $langs->trans('MigrationSuccessfullUpdate')."<br>";
+		}
+		else
+		{
+			print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+		}
+
+		$db->commit();
+	}
+	else
+	{
+		print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+	}
+
+	print '</td></tr>';
+}
+
+
+function migrate_paiements_orphelins_3($db,$langs,$conf)
+{
+
+/*
+select p.rowid from llx_paiement as p left join llx_paiement_facture as pf on pf.fk_paiement=p.rowid WHERE pf.rowid IS NULL AND (p.fk_facture = 0 OR p.fk_facture IS NULL)
+Poru chaque rep, test si
+select count(*) from llx_bank where rowid = obj->fk_bank
+select count(*) from llx_bank_url where url_id = 128 and type='payment'
+Si partout 0, on efface ligne de llx_paiement
+*/
+
 }
 
 

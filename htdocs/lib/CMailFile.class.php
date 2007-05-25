@@ -244,7 +244,8 @@ class CMailFile
     */
     function write_smtpheaders()
     {
-        $out = "";
+		global $conf;
+		$out = "";
 
 		// Sender
         //$out .= "X-Sender: ".getValidAddress($this->addr_from,2).$this->eol;
@@ -266,7 +267,7 @@ class CMailFile
        
         if ($this->msgishtml)
         {
-        	$out.= "Content-Type: text/html; charset=".$_SESSION['charset'].$this->eol;
+        	$out.= "Content-Type: text/html; charset=".$conf->charset_output.$this->eol;
         	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
         else

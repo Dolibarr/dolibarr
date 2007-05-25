@@ -1299,7 +1299,7 @@ function dolibarr_print_error($db='',$error='')
     if (! $langs)
     {
         require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
-        $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", "en_US");
+        $langs = new Translate(DOL_DOCUMENT_ROOT ."/langs", $conf);
     }
     $langs->load("main");
 
