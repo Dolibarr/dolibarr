@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -26,18 +27,14 @@
         \version    $Revision$
 */
 
-require('../master.inc.php');
+require('../main.inc.php');
 
 $langs->load("products");
 $langs->load("main");
 
-//header("Content-type: text/html; charset=UTF-8");
-//header("Content-type: text/html; charset=$character_set_client"); //TODO: ne fonctionne pas !!
-header("Content-type: text/html; charset=iso-8859-1");
-print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-print "\n<html>";
-print "\n<body>";
+top_htmlhead("", "", 1);
 
+print '<body id="mainbody">'."\n";
 
 // Generation liste de produits
 if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
