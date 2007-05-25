@@ -1,4 +1,5 @@
 # Dolibarr language file - en_US - install
+CHARSET=ISO-8859-1
 InstallEasy=We tried to make Dolibarr setup as easy as possible. Just follow instructions step by step.
 MiscellanousChecks=Prerequisites checks
 DolibarrWelcome=Welcome on Dolibarr
@@ -73,14 +74,15 @@ AdminLoginCreatedSuccessfuly=Administrator login created successfuly.
 GoToSetupArea=Go to setup area
 Examples=Examples
 WithNoSlashAtTheEnd=Without the slash "/" at the end
+DirectoryRecommendation=It is recommanded to put this directry out of directory for web pages.
 LoginAlreadyExists=Already exists
 DolibarrAdminLogin=Dolibarr admin login
 FailedToCreateAdminLogin=Failed to create Dolibarr administator account.
 AdminLoginAlreadyExists=Dolibarr administrator account '%s' already exists.
 WarningRemoveInstallDir=Warning, for security reasons, once install or upgrade is finished, you have to remove the install directory.
 ThisPHPDoesNotSupportTypeBase=This PHP system does not support interfaces to access database type %s
-MigrateScript=Migrate script
 FunctionNotAvailableInThisPHP=Not available on this PHP
+MigrateScript=Migrate script
 ChoosedMigrateScript=Choosed migrate script
 DataMigration=Data migration
 DatabaseMigration=Structure database migration
@@ -99,6 +101,15 @@ AlreadyDone=Already migrated
 DatabaseVersion=Database version
 ServerVersion=Database server version
 YouMustCreateItAndAllowServerToWrite=You must create this directory and grant web server to write into.
+CharsetChoice=Ccharacter set choice
+CharacterSetClient=Character set used for generating web pages
+CharacterSetClientComment=Choose character set for web display.<br/> Default proposed character set is the one of your database.
+CollationConnection=Collation used for the database
+CollationConnectionComment=Choose collation wanted for creating database.<br/>This parameter can't be defined if database already exists.
+CharacterSetDatabase=Character set for database
+CharacterSetDatabaseComment=Choose character set wanted for database creation.<br/>This parameter can't be defined if database already exists.
+YouAskDatabaseCreationSoDolibarrNeedToConnect=You ask to create database login <b>%s</b>, but for this, Dolibarr need to connect to server <b>%s</b> with super user <b>%s</b> permissions.
+BecauseConnectionFailedParametersMayBeWrong=As connection failed, host or super user parameters must be wrong.
 
 #########
 # upgrade
