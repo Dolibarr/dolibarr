@@ -101,28 +101,125 @@ if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_databa
 }else{
 	$disabled="disabled";
 }
-if ($db->connected){
+
+if ($db->connected)
+{
 ?>
 <table border="0" cellpadding="1" cellspacing="0">
 	<tr><td valign="top" class="label" colspan="3"><?php echo $langs->trans("CharsetChoice");?></td></tr>
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetClient"); ?></td>
-		<td valign="top" class="label"><select name="character_set_client"><option>ISO-8859-1</option><option>ISO-8859-15</option><option>UTF-8</option><option>cp866</option><option>cp1251</option><option>cp1252</option><option>KOI8-R</option><option>BIG5</option><option>GB2312</option><option>BIG5-HKSCS</option><option>Shift_JIS</option><option>EUC-JP</option></select></td>
+		<td valign="top" class="label"><select name="character_set_client">
+		<option>ISO-8859-1</option>
+		<option>ISO-8859-15</option>
+		<option>UTF-8</option>
+		<option>cp866</option>
+		<option>cp1251</option>
+		<option>cp1252</option>
+		<option>KOI8-R</option>
+		<option>BIG5</option>
+		<option>GB2312</option>
+		<option>BIG5-HKSCS</option>
+		<option>Shift_JIS</option>
+		<option>EUC-JP</option>
+		</select></td>
 		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetClientComment"); ?></div></td>
 	</tr>
-	<?php include($_POST["db_type"].'.php');?>
-<?php
-}else{
-	
+
+	<?php
+	$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
+	$defaultCollationConnection=$db->getDefaultCollationConnection();
+	$listOfCharacterSet=$db->getListOfCharacterSet();
+	$listOfCollation=$db->getListOfCollation();
+
+	if ($defaultCharacterSet)
+	{
+		?>
+		<tr>
+		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
+		<td valign="top" class="label">
+		<?php 
+		if (sizeof($listOfCharacterSet))
+		{
+			print '<select name="character_set_database" '.$disabled.'>';
+			$selected="";
+			foreach ($listOfCharacterSet as $characterSet)
+			{
+				if ($defaultCharacterSet == $characterSet['charset'] )
+				{
+					$selected="selected";
+				}
+				else
+				{
+					$selected="";
+				}
+				print '<option value="'.$characterSet['charset'].'" '.$selected.'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
+			}
+			print '</select>';
+		}
+		else
+		{
+			print '<input name="character_set_database" '.$disabled.' value="'.$defaultCharacterSet.'">';
+		}
+		?>
+		</td>
+		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div></td>
+		</tr>
+		<?php
+	}
+
+	if ($defaultCollationConnection)
+	{
+		?>
+		<tr>
+		<td valign="top" class="label"><?php echo $langs->trans("CollationConnection"); ?></td>
+		<td valign="top" class="label">
+		<?php
+		if (sizeof($listOfCollation))
+		{
+			print '<select name="collation_connection" '.$disabled.'>';
+			$selected="";
+			foreach ($listOfCollation as $collation)
+			{
+				if ($defaultCollationConnection == $collation['collation'])
+				{
+					$selected="selected";
+				}
+				else
+				{
+					$selected="";
+				}
+				print '<option value="'.$collation['collation'].'" '.$selected.'>'.$collation['collation'].'</option>';
+			}
+			print '</select>';
+		}
+		else
+		{
+			print '<input type="hidden" name="collation_connection" value="'.$collation['collation'].'">';
+		}
+		?>
+		</td>
+		<td class="label"><div class="comment"><?php echo $langs->trans("CollationConnectionComment"); ?></div></td>
+		</tr>
+		<?php
+	}
+}
+else
+{
 	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	{	
-			print 'Vous avez demandé la création du login Dolibarr "<b>'.$dolibarr_main_db_user.'</b>", mais pour cela, ';
-			print 'Dolibarr doit se connecter sur le serveur "<b>'.$dolibarr_main_db_host.'</b>" via le super utilisateur "<b>'.$userroot.'</b>".<br>';
-			print 'La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.<br>';
-			print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
-	}else{
-			print 'La connexion ayant échoué, les paramètres de connexion de l\'utilisateur  sont peut-etre incorrects.<br>';
-			print $langs->trans("ErrorGoBackAndCorrectParameters").'<br><br>';
+		print $langs->trans("YouAskDatabaseCreationSoDolibarrNeedToConnect",$dolibarr_main_db_user,$dolibarr_main_db_host,$userroot);
+		print '<br>';
+		print $langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+		print $langs->trans("ErrorGoBackAndCorrectParameters");
+		$error++;
+	}
+	else
+	{
+		print $db->lasterror();
+		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
+		print $langs->trans("ErrorGoBackAndCorrectParameters");
+		$error++;
 	}
 }
 
