@@ -42,12 +42,14 @@ $conffile = "../conf/conf.php";
 $charset="ISO-8859-1";
 if (file_exists($conffile))
 {
-	include_once($conffile);
+	include_once($conffile);	// Fichier conf chargé
 	$charset=$character_set_client;
 	if ($dolibarr_main_document_root)
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 		$conf=new Conf();
+		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+		$conf->character_set_client=$character_set_client;
 	}
 	if ($dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
 	{

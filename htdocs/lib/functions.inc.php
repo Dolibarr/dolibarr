@@ -1292,7 +1292,7 @@ function accessforbidden($message='',$printheader=1)
 */
 function dolibarr_print_error($db='',$error='')
 {
-    global $langs,$argv;
+    global $conf,$langs,$argv;
     $syslog = '';
 
     // Si erreur intervenue avant chargement langue

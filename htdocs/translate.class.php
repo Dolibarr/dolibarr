@@ -199,9 +199,9 @@ class Translate {
 							else
 							{
 								// On stocke toujours dans le tableau Tab en ISO
-	                        	if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
 	                        	if ($this->charset_inputfile == 'UTF-8')      $value=utf8_decode($value);
-					
+	                        	//if ($this->charset_inputfile == 'ISO-8859-1') $value=$value;
+
 								$this->setTransFromTab($key,$value);
 							}
                         }
@@ -256,7 +256,18 @@ class Translate {
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
 
+/*
+			if ($key=='DatabaseConnection') {
+				print utf8_encode($newstr).'-'.$newstr;					
+				print '-'.$this->charset_output;
+				print '-'.htmlentities($newstr,ENT_QUOTES,'UTF-8').'<br>';
+			}
+*/			
+			if ($this->charset_output=='UTF-8')      $newstr=utf8_encode($newstr);
+			//if ($this->charset_output=='ISO-8859-1') $newstr=$newstr;
+			
             // Cryptage en html de la chaine
+			// $newstr est une chaine stockee en memoire au format $this->charset_output
             $newstr=htmlentities($newstr,ENT_QUOTES,$this->charset_output);
 
             // On restaure les tags HTML

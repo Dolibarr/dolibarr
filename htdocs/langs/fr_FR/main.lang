@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - main
-charset=iso-8859-1
+CHARSET=ISO-8859-1
+DatabaseConnection=Connexion à la base
 SeparatorDecimal=,
 SeparatorThousand= 
 Error=Erreur
