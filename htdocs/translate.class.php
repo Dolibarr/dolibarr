@@ -256,15 +256,7 @@ class Translate {
             $newstr=ereg_replace('>','__gt__',$newstr);
             $newstr=ereg_replace('"','__quot__',$newstr);
 
-/*
-			if ($key=='DatabaseConnection') {
-				print utf8_encode($newstr).'-'.$newstr;					
-				print '-'.$this->charset_output;
-				print '-'.htmlentities($newstr,ENT_QUOTES,'UTF-8').'<br>';
-			}
-*/			
-			if ($this->charset_output=='UTF-8')      $newstr=utf8_encode($newstr);
-			//if ($this->charset_output=='ISO-8859-1') $newstr=$newstr;
+			$newstr=$this->convToOuptutCharset($newstr);
 			
             // Cryptage en html de la chaine
 			// $newstr est une chaine stockee en memoire au format $this->charset_output
@@ -276,7 +268,10 @@ class Translate {
             $newstr=ereg_replace('__quot__','"',$newstr);
             return $newstr;
         }
-        return $key;
+		else
+		{
+			return $this->convToOuptutCharset($key);
+		}
     }
 
 
@@ -313,6 +308,19 @@ class Translate {
     {
         if ($this->tab_translate["$str$countrycode"]) return $this->trans("$str$countrycode");
         else return $this->trans("$str");
+    }
+
+
+    /**
+     *  \brief       Convertit une chaine dans le charset de sortie
+     *  \param       str            chaine a convertir
+     *  \return      string         chaine traduite
+     */
+    function convToOuptutCharset($str)
+    {
+		if ($this->charset_output=='UTF-8')      	$str=utf8_encode($str);
+		//if ($this->charset_output=='ISO-8859-1')	$str=$str;
+		return $str;
     }
 
 
