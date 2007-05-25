@@ -81,7 +81,7 @@ if ($user->societe_id > 0)
 
 
 
-top_htmlhead("", $langs->trans("SearchTown"), "");
+top_htmlhead("", $langs->trans("SearchTown"));
 
 print "<body>";
 

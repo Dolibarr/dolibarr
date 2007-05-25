@@ -521,11 +521,11 @@ else
 
 /**
  *  \brief      Affiche en-tete HTML
- *  \param      head    lignes d'en-tete head
- *  \param      title   titre page web
- *  \param      target  target du menu Accueil
+ *  \param      head    	Lignes d'en-tete head optionnelles
+ *  \param      title   	Titre page web
+ *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisée par sous formulaire Ajax)	
  */
-function top_htmlhead($head, $title="", $target="") 
+function top_htmlhead($head, $title='', $disablejs=0) 
 {
     global $user, $conf, $langs, $db, $micro_start_time;
 
@@ -536,10 +536,10 @@ function top_htmlhead($head, $title="", $target="")
     if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
 
     //header("Content-type: text/html; charset=UTF-8");
- 	header("Content-type: text/html; charset=".$_SESSION['charset']);
+ 	header("Content-type: text/html; charset=".$conf->character_set_client);
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-//    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
     print "\n";
 	print "<html>\n";
 	print "<head>\n";
@@ -549,10 +549,10 @@ function top_htmlhead($head, $title="", $target="")
 
     // Affiche meta
     print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-    print '<meta name="author" content="'.$langs->trans("DevelopmentTeam").'">'."\n";
+    print '<meta name="author" content="DevelopmentTeam">'."\n";
 
     // Affiche title
-    if (strlen($title) > 0)
+    if ($title)
     {
         print '<title>Dolibarr - '.$title.'</title>';
     }
@@ -574,20 +574,22 @@ function top_htmlhead($head, $title="", $target="")
     print '<link rel="stylesheet" type="text/css" media="print" HREF="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 
     // Definition en alternate style sheet des feuilles de styles les plus maintenues
-    // Les navigateurs qui supportent sont rares.
+    // Les navigateurs qui supportent sont rares. Plus aucun connu.
+	/*
     print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
     print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css.php">'."\n";
     print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
-
+	*/
+	
     print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
     print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
     print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.org">'."\n";
 
-    if ($conf->use_javascript || $conf->use_ajax)
+    if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
 	}
-    if ($conf->use_ajax)
+    if (! $disablejs && $conf->use_ajax)
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";

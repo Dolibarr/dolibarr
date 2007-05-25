@@ -100,19 +100,18 @@ $bc[true]=' class="bg2"';
 function pHeader($soutitre,$next,$action='set')
 {
 	
-	global $charset;
+	global $conf;
     global $langs;
     $langs->load("main");
     $langs->load("admin");
 
-	// On force contenu en ISO-8859-1
-	header("Content-type: text/html; charset=".$charset);
-    //header("Content-type: text/html; charset=UTF-8");
+	// On force contenu dans format sortie
+	header("Content-type: text/html; charset=".$conf->character_set_client);
 
     print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
     print '<html>';
     print '<head>';
-    print '<meta http-equiv="content-type" content="text/html; charset='.$charset.'">';
+    print '<meta http-equiv="content-type" content="text/html; charset='.$conf->character_set_client.'">';
     print '<link rel="stylesheet" type="text/css" href="./default.css">';
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';

@@ -348,12 +348,9 @@ class Translate {
      *  [en]         Send header and return a string of html start page
      *  \return      string      html header avec charset
      */
-		
     function lang_header()
     {
-        //header("Content-Type: text/html; charset=$charset");
         $texte = "<meta http-equiv=\"Content-Type\" content=\"text/html; charset=".$this->charset_output."\">\n";
-    
         return $texte;
     }
 
@@ -364,7 +361,6 @@ class Translate {
      *  \param      searchalt       cherche aussi dans langue alternative
      *  \return     boolean         true si existe, false sinon
      */
-		 
     function file_exists($filename,$searchalt=0)
     {
         // Test si fichier dans répertoire de la langue

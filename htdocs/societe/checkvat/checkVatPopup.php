@@ -36,7 +36,7 @@ $WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/api/checkVatPort';
 $WS_METHOD  = 'checkVat';
 
 
-top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"), "");
+top_htmlhead("", $langs->trans("VATIntraCheckableOnEUSite"));
 print '<body style="margin: 10px">';
 print '<div>';
 print '<div>';

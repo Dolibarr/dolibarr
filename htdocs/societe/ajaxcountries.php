@@ -26,13 +26,11 @@
         \version    $Revision$
 */
 
-require('../master.inc.php');
+require('../main.inc.php');
 
-//header("Content-type: text/html; charset=UTF-8");
-header("Content-type: text/html; charset=iso-8859-1");
-print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-print "\n<html>";
-print "\n<body>";
+top_htmlhead("", "", 1);
+
+print '<body id="mainbody">';
 
 // Generation liste des pays
 if(isset($_POST['pays']) && !empty($_POST['pays']))

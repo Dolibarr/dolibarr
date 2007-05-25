@@ -818,60 +818,72 @@ class Form
     global $langs,$conf;
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
-    	print $langs->trans("RefOrLabel").' : <input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
-    	print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','working');
-    }
+		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+		print '<td class="nobordernopadding" width="30" nowrap="nowrap">';
+    	print $langs->trans("RefOrLabel").':</td>';
+		print '<td class="nobordernopadding" align="left" width="16">';
+		print ajax_updater_indicator($htmlname,'working');
+		print '</td>';
+		print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
+		print '</td>';
+		print '</tr>';
+		print '<tr class="nocellnopadd">';
+		print '<td class="nobordernopadding" colspan="3">';
+		print ajax_updater($htmlname,'keysearch','/product/ajaxproducts.php','&price_level='.$price_level.'&type=1','');
+		print '</td></tr>';
+		print '</table>';
+	}
     else
     {
     	$this->select_produits_do($selected,$htmlname,$filtretype,$limit,$price_level);
     }    
   }
 	
-  /**
-     \brief      Retourne la liste des produits
-     \param      selected        Produit présélectionné
-     \param      htmlname        Nom de la zone select
-     \param      filtretype      Pour filtre sur type de produit
-     \param      limit           Limite sur le nombre de lignes retournées
-     \param      price_level     Niveau de prix en fonction du client
-     \param      ajaxkeysearch   Filtre des produits si ajax est utilisé
-  */
-  function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
-  {
-    global $langs,$conf,$user;
-    $user->getrights("categorie");
-    
-    $sql = "SELECT ";
-    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-    {
-    	$sql.="DISTINCT";	
-    }
-    $sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
-    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-    {
-    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
-	    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-    }
-    $sql.= " WHERE p.envente = 1";
-    if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
-    {
-    	$sql.= ' AND IFNULL(c.visible,1)=1';
-    }
-    if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
-    if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
-    $sql.= " ORDER BY p.nbvente DESC";
-    if ($limit) $sql.= " LIMIT $limit";
-    
-    dolibarr_syslog("Form::select_produits_do sql=$sql",LOG_DEBUG);
+	/**
+		\brief      Retourne la liste des produits
+		\param      selected        Produit présélectionné
+		\param      htmlname        Nom de la zone select
+		\param      filtretype      Pour filtre sur type de produit
+		\param      limit           Limite sur le nombre de lignes retournées
+		\param      price_level     Niveau de prix en fonction du client
+		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
+	*/
+	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
+	{
+		global $langs,$conf,$user;
+		$user->getrights("categorie");
+		
+		$sql = "SELECT ";
+		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+		{
+			$sql.="DISTINCT";	
+		}
+		$sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
+		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON p.rowid = cp.fk_product";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+		}
+		$sql.= " WHERE p.envente = 1";
+		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
+		{
+			$sql.= ' AND IFNULL(c.visible,1)=1';
+		}
+		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
+		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
+		$sql.= " ORDER BY p.nbvente DESC";
+		if ($limit) $sql.= " LIMIT $limit";
+		
+		dolibarr_syslog("Form::select_produits_do sql=$sql",LOG_DEBUG);
 
-    $result=$this->db->query($sql);
-    if (! $result) dolibarr_print_error($this->db);
-    
-    // Multilang : on construit une liste des traductions des produits listés
-    if ($conf->global->MAIN_MULTILANGS)
-    {
-    	$sqld = "SELECT d.fk_product, d.label";
+		$result=$this->db->query($sql);
+		if (! $result) dolibarr_print_error($this->db);
+		
+		// Multilang : on construit une liste des traductions des produits listés
+		if ($conf->global->MAIN_MULTILANGS)
+		{
+			$sqld = "SELECT d.fk_product, d.label";
 			$sqld.= " FROM ".MAIN_DB_PREFIX."product as p, ".MAIN_DB_PREFIX."product_det as d ";
 			$sqld.= " WHERE d.fk_product=p.rowid AND p.envente=1 AND d.lang='". $langs->getDefaultLang() ."'";
 			$sqld.= " ORDER BY p.nbvente DESC";
@@ -893,20 +905,20 @@ class Form
 				else
 				{
 					print '<select class="flat" name="'.$htmlname.'" onchange="publish_selvalue(this);">';
-		            print '<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
+					print '<option value="0" selected="true">-- '.$langs->trans("MatchingProducts").' --</option>';
 				}
 			}
 			else
 			{
 				print '<select class="flat" name="'.$htmlname.'">';
-	      print '<option value="0" selected="true">&nbsp;</option>';
-      }
-      
-      $i = 0;
-      while ($num && $i < $num)
-      {
-      	$objp = $this->db->fetch_object($result);
-                
+				print '<option value="0" selected="true">&nbsp;</option>';
+			}
+			
+			$i = 0;
+			while ($num && $i < $num)
+			{
+				$objp = $this->db->fetch_object($result);
+				
 				// Multilangs : modification des donnée si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
 				{
@@ -918,24 +930,24 @@ class Form
 				}
 				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
 				$opt.= dolibarr_trunc($objp->label,32).' - ';
-                
+				
 				// Multiprix
 				if ($price_level > 1)
 				{
-						$sql= "SELECT price ";
-						$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
-						$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
-						$sql.= " order by date_price DESC limit 1";
-						$result2 = $this->db->query($sql) ;
-						$objp2 = $this->db->fetch_object($result2);
-						if ($objp2->price)
-						{
-							$opt.= $objp2->price.' '.$langs->trans("Currency".$conf->monnaie);
-						}
-						else
-						{
-							$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
-						}
+					$sql= "SELECT price ";
+					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
+					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
+					$sql.= " order by date_price DESC limit 1";
+					$result2 = $this->db->query($sql) ;
+					$objp2 = $this->db->fetch_object($result2);
+					if ($objp2->price)
+					{
+						$opt.= $objp2->price.' '.$langs->trans("Currency".$conf->monnaie);
+					}
+					else
+					{
+						$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+					}
 				}
 				else
 				{
@@ -945,19 +957,19 @@ class Form
 				if ($objp->duration) $opt.= ' - '.$objp->duration;
 				
 				$opt.= "</option>\n";
-        print $opt;
-        $i++;
-      }
-      
-      print '</select>';    			
-      
-      $this->db->free($result);
-    }
-    else
-	  {
-	  	dolibarr_print_error($db);
-	  }
-  }
+				print $opt;
+				$i++;
+			}
+			
+			print '</select>';    			
+			
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	}
   
   /**
      \brief      Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do

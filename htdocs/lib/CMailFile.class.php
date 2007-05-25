@@ -322,7 +322,7 @@ class CMailFile
             $out.= "--" . $this->mime_boundary . $this->eol;
 	        if ($this->msgishtml)
 	        {
-	        	$out.= "Content-Type: text/html; charset=iso-8859-1".$this->eol;
+	        	$out.= "Content-Type: text/html; charset=".$conf->charset_output.$this->eol;
 	        }
             $out.= $this->eol;
         }

@@ -34,7 +34,7 @@ $langs->load("main");
 
 top_htmlhead("", "", 1);
 
-print '<body id="mainbody">'."\n";
+print '<body class="nocellnopadd">'."\n";
 
 // Generation liste de produits
 if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))

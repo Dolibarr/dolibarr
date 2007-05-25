@@ -1349,7 +1349,7 @@ if ($_GET['propalid'] > 0)
 		$var=true;
 
 		print '<tr '.$bc[$var].">\n";
-		print '<td><textarea cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
+		print '<td><textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
 		print '<td align="center">';
 		if($societe->tva_assuj == "0")
 		{
@@ -1389,7 +1389,7 @@ if ($_GET['propalid'] > 0)
 				$html->select_produits('','idprod','',$conf->produit->limit_size);
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-			print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+			print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
 			print '</td>';
 			print '<td>&nbsp;</td>';
 			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';

@@ -2638,21 +2638,27 @@ function num_lines($texte)
 	return $nblines;
 }
 
+function ajax_updater_indicator($htmlname,$indicator='working')
+{
+	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
+	return $script;
+}
+
 /**
    \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
-   \param	    htmlname            nom et id du champ
+   \param	  htmlname            nom et id du champ
    \param     keysearch           nom et id complémentaire du champ de collecte
-   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
+   \param	  url                 chemin du fichier de réponse : /chemin/fichier.php
    \param     option              champ supplémentaire de recherche dans les paramètres
-   \param     indicator           nom de l'image gif sans l'extension
+   \param     indicator           Nom de l'image gif sans l'extension
    \return    script              script complet
 */
 function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
-	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-  $script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
-  $script.= '<script type="text/javascript">';
-  $script.= 'var myIndicator'.$htmlname.' = {
+	$script='';
+	if ($indicator) $script.=ajax_updater_indicator($htmlname,$indicator);
+	$script.='<script type="text/javascript">';
+	$script.='var myIndicator'.$htmlname.' = {
                      onCreate: function(){
                             if($F("'.$keysearch.$htmlname.'")){
                                   Element.show(\'indicator'.$htmlname.'\');
@@ -2665,20 +2671,21 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
                             }
                      }
              };';
-  $script.= 'Ajax.Responders.register(myIndicator'.$htmlname.');';
-  $script.= 'new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
-               function(){
-                  var myAjax = new Ajax.Updater( {
-                     success: \'ajdynfield'.$htmlname.'\'},
-                     \''.DOL_URL_ROOT.$url.'\', {
-                        method: \'get\',
-                        parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option.'"
-                     });
-                   });';
-  $script.= '</script>';
-  $script.= '<div class="notopnoleftnoright" id="ajdynfield'.$htmlname.'"></div>';
+	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
+	$script.='new Form.Element.Observer($("'.$keysearch.$htmlname.'"), 1,
+			   function(){
+				  var myAjax = new Ajax.Updater( {
+					 success: \'ajdynfield'.$htmlname.'\'},
+					 \''.DOL_URL_ROOT.$url.'\', {
+						method: \'get\',
+						parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"&htmlname='.$htmlname.$option.'"
+					 });
+				   });';
+	$script.='</script>';
+	$script.='<div class="nocellnopadd" id="ajdynfield'.$htmlname.'"></div>';
+	$script.='<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
   
-  return $script;
+	return $script;
 }
 
 /**
