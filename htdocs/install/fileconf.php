@@ -45,6 +45,13 @@ pHeader($langs->trans("ConfigurationFile"),"etape0");
 
 print '<table border="0" cellpadding="1" cellspacing="0">';
 
+?>
+<tr>
+<td colspan="3" class="label" align="center"><h3>
+<?php echo $langs->trans("Main"); ?>
+</h3></td></tr>
+<?php
+
 print '<tr>';
 print '<td valign="top" class="label">';
 print $langs->trans("WebPagesDirectory");
@@ -76,7 +83,7 @@ if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
         $dolibarr_main_document_root = ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
     }
 }
-echo $PMA_MYSQL_INT_VERSION;
+//echo $PMA_MYSQL_INT_VERSION;
 ?>
 <td  class="label" valign="top"><input type="text" size="60" value="<?php print $dolibarr_main_document_root; ?>" name="main_dir">
 </td><td class="comment">
@@ -152,10 +159,12 @@ print $langs->trans("Examples").":<br>";
 <li>http://www.myserver.com:8180/dolibarr</li>
 </tr>
 
+<!-- Dolibarr database -->
+
 <tr>
-<td colspan="3" align="center"><h2>
+<td colspan="3" class="label" align="center"><br><h3>
 <?php echo $langs->trans("DolibarrDatabase"); ?>
-</h2></td>
+</h3></td>
 </tr>
 <?php
 if (!isset($dolibarr_main_db_host))
@@ -299,10 +308,13 @@ while (($file = readdir($handle))!==false)
 </td>
 </tr>
 
+
+<!-- Super access -->
+
 <tr>
-<td colspan="3" align="center"><h2>
+<td colspan="3" class="label" align="center"><br><h3>
 <?php echo $langs->trans("DatabaseSuperUserAccess"); ?>
-</h2></td></tr>
+</h3></td></tr>
 
 <tr>
 <td class="label" valign="top">

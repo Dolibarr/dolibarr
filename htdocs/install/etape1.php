@@ -70,7 +70,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 if ($_POST["action"] == "set")
 {
 	umask(0);
-	print '<h2>'.$langs->trans("SaveConfigurationFile").'</h2>';  
+	print '<h3>'.$langs->trans("SaveConfigurationFile").'</h3>';  
 	print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
 	// Verification validite parametre main_dir

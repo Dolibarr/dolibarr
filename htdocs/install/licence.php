@@ -40,9 +40,9 @@ dolibarr_install_syslog("licence: Entering licence.php page");
 
 pHeader($langs->trans("License"),"fileconf");
 
-print '<pre>';
+print '<pre style="align: center; font-size: 12px">';
 $langs->print_file("html/gpl.txt",1);
-print "</pre>";
+print '</pre>';
 
 pFooter(0,$setuplang);
 

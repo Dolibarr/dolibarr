@@ -116,16 +116,17 @@ function pHeader($soutitre,$next,$action='set')
     print '<title>'.$langs->trans("DolibarrSetup").'</title>';
     print '</head>';
     print '<body>';
-    print '<span class="titre">'.$langs->trans("DolibarrSetup").'</span>';
+    print '<span class="titre">'.$langs->trans("DolibarrSetup");
+    if ($soutitre) {
+        print ' - '.$soutitre;
+    }
+	print '</span>';
 
     print '<form action="'.$next.'.php" method="POST">';
     print '<input type="hidden" name="testpost" value="ok">';
     print '<input type="hidden" name="action" value="'.$action.'">';
 
 	print '<table class="main" width="100%"><tr><td>';
-    if ($soutitre) {
-        print '<div class="soustitre">'.$soutitre.'</div>';
-    }
 
 	print '<table class="main-inside" width="100%"><tr><td>';
 

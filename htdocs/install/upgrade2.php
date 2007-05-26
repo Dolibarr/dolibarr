@@ -70,7 +70,7 @@ pHeader($langs->trans('DataMigration'),'etape5','upgrade');
 
 if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 {
-	print '<h2>'.$langs->trans('DataMigration').'</h2>';
+	print '<h3>'.$langs->trans('DataMigration').'</h3>';
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	
@@ -145,8 +145,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	
 		$db->begin();
 		
-		print '<tr><td colspan="4" nowrap="nowrap">&nbsp;</td></tr>';
-
         // Chaque action de migration doit renvoyer une ligne sur 4 colonnes avec
         // dans la 1ere colonne, la description de l'action a faire
         // dans la 4eme colonne, le texte 'OK' si fait ou 'AlreadyDone' si rien n'est fait ou 'Error'
@@ -329,13 +327,13 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 	
 	if (sizeof($row))
 	{
-		print $langs->trans('MigrationPaymentsNumberToUpdate', sizeof($row))."<br>\n";
+		print $langs->trans('OrphelinsPaymentsDetectedByMethod', 1).': '.sizeof($row)."<br>\n";
 		$db->begin();
 		
 		$res = 0;
 		for ($i = 0 ; $i < sizeof($row) ; $i++)
 		{
-			print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
+			if ($conf->MAIN_ENABLE_DEVELOPMENT) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
 			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
 			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
@@ -373,14 +371,14 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 		}
 		else
 		{
-			print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+			print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
 		}
 		
 		$db->commit();
 	}
 	else
 	{
-		print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+		print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
 	}
 
 	print '</td></tr>';
@@ -437,13 +435,13 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 	
 	if (sizeof($row))
 	{
-		print $langs->trans('MigrationPaymentsNumberToUpdate', sizeof($row))."<br>\n";
+		print $langs->trans('OrphelinsPaymentsDetectedByMethod', 2).': '.sizeof($row)."<br>\n";
 		$db->begin();
 
 		$res = 0;
 		for ($i = 0 ; $i < sizeof($row) ; $i++)
 		{
-			print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
+			if ($conf->MAIN_ENABLE_DEVELOPMENT) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
 			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
 			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
@@ -481,14 +479,14 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 		}
 		else
 		{
-			print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+			print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
 		}
 
 		$db->commit();
 	}
 	else
 	{
-		print $langs->trans('MigrationPaymentsNothingToUpdate')."<br>\n";
+		print $langs->trans('MigrationPaymentsNothingUpdatable')."<br>\n";
 	}
 
 	print '</td></tr>';

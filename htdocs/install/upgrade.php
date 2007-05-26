@@ -65,7 +65,7 @@ pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
 
 if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 {
-	print '<h2>'.$langs->trans("DatabaseMigration").'</h2>';
+	print '<h3>'.$langs->trans("DatabaseMigration").'<h3>';
 
 	if (! $versionfrom && ! $versionto)
 	{

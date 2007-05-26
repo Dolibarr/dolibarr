@@ -110,6 +110,7 @@ CharacterSetDatabase=Character set for database
 CharacterSetDatabaseComment=Choose character set wanted for database creation.<br/>This parameter can't be defined if database already exists.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=You ask to create database login <b>%s</b>, but for this, Dolibarr need to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=As connection failed, host or super user parameters must be wrong.
+OrphelinsPaymentsDetectedByMethod=Orphelins payment detected by method %s
 
 #########
 # upgrade
@@ -126,6 +127,7 @@ MigrationPaymentsUpdate=Payment data correction
 MigrationPaymentsNumberToUpdate=%s payment(s) to update
 MigrationProcessPaymentUpdate=Update payment(s) %s
 MigrationPaymentsNothingToUpdate=No more things to do
+MigrationPaymentsNothingUpdatable=No more payments that can be corrected
 
 # Contracts Update
 MigrationContractsUpdate=Contract data correction

@@ -62,7 +62,7 @@ pHeader($langs->trans("CreateDatabaseObjects"),"etape4");
 
 if ($_POST["action"] == "set")
 {
-    print '<h2>'.$langs->trans("Database").'</h2>';
+    print '<h3>'.$langs->trans("Database").'</h3>';
 
     print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
     $error=0;

@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2004-2007 Cyrille de Lambert <cyrille.delambert@auguria.net>
+/* Copyright (C) 2007 Cyrille de Lambert   <cyrille.delambert@auguria.net>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -106,13 +107,16 @@ if ($db->connected)
 {
 ?>
 <table border="0" cellpadding="1" cellspacing="0">
-	<tr><td valign="top" class="label" colspan="3"><?php echo $langs->trans("CharsetChoice");?></td></tr>
+	
+	<tr><td align="center" class="label" colspan="3"><h3><?php echo $langs->trans("CharsetChoice");?></h3></td></tr>
+	
 	<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetClient"); ?></td>
 		<td valign="top" class="label"><select name="character_set_client">
-		<option>ISO-8859-1</option>
+		<option value="ISO-8859-1">ISO-8859-1</option>
+		<option value="UTF-8">UTF-8 <?php echo $langs->trans("Experimental") ?></option>
+<!--
 		<option>ISO-8859-15</option>
-		<option>UTF-8</option>
 		<option>cp866</option>
 		<option>cp1251</option>
 		<option>cp1252</option>
@@ -122,6 +126,7 @@ if ($db->connected)
 		<option>BIG5-HKSCS</option>
 		<option>Shift_JIS</option>
 		<option>EUC-JP</option>
+-->
 		</select></td>
 		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetClientComment"); ?></div></td>
 	</tr>

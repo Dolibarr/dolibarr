@@ -110,7 +110,8 @@ CharacterSetDatabase=Codage utilisé pour la base de données
 CharacterSetDatabaseComment=Veuillez choisir le codage que vous désirez choisir pour la création de la base de données.<br/> Ce paramètre n'est pas sélectionnable si votre base est déjà créée.
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Vous avez demandé la création du login de base de donnée <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
 BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.
-					
+OrphelinsPaymentsDetectedByMethod=Paiement orphelins detectés par la méthode %s
+
 #########
 # upgrade
 #########
@@ -126,6 +127,7 @@ MigrationPaymentsUpdate=Mise a jour des paiments (lien n-n paiements-factures)
 MigrationPaymentsNumberToUpdate=%s paiement(s) à mettre à jour
 MigrationProcessPaymentUpdate=Mise a jour paiement(s) %s
 MigrationPaymentsNothingToUpdate=Pas ou plus de paiements orphelins à corriger.
+MigrationPaymentsNothingUpdatable=Pas ou plus de paiements orphelins corrigeable.
 
 # Contracts Update
 MigrationContractsUpdate=Mise a jour des contrats sans details (gestion du contrat + detail de contrat)
