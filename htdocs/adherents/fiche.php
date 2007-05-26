@@ -96,7 +96,7 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
+if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 {
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
@@ -183,7 +183,7 @@ if ($_REQUEST["action"] == 'update' && ! $_POST["cancel"])
 	}
 }
 
-if ($_POST["action"] == 'add')
+if ($user->rights->adherent->creer && $_POST["action"] == 'add')
 {
 	$datenaiss='';
 	if (isset($_POST["naissday"]) && $_POST["naissday"]
@@ -350,7 +350,7 @@ if ($_POST["action"] == 'add')
     }
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
 	$result=$adh->fetch($rowid);
     $result=$adh->delete($rowid);
@@ -365,7 +365,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
     }
 }
 
-if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 {
 	$result=$adh->fetch($rowid);
     $result=$adh->validate($user);
@@ -418,7 +418,7 @@ if ($_POST["action"] == 'confirm_valid' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
     $result=$adh->resiliate($user);
@@ -459,7 +459,7 @@ if ($_POST["action"] == 'confirm_resign' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
     $adht = new AdherentType($db);
@@ -476,7 +476,7 @@ if ($_POST["action"] == 'confirm_add_glasnost' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
     $adht = new AdherentType($db);
@@ -493,7 +493,7 @@ if ($_POST["action"] == 'confirm_del_glasnost' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
 	if ($result >= 0 && ! sizeof($adh->errors))
@@ -504,7 +504,7 @@ if ($_POST["action"] == 'confirm_del_spip' && $_POST["confirm"] == 'yes')
 	}
 }
 
-if ($_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
+if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_spip' && $_POST["confirm"] == 'yes')
 {
     $result=$adh->fetch($rowid);
 	if ($result >= 0 && ! sizeof($adh->errors))

@@ -34,6 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 $langs->load("members");
 $langs->load("companies");
 
+$user->getrights('adherent');
+
 
 /*
  * Affiche liste
@@ -231,9 +233,16 @@ if ($result)
 
         // Actions
         print '<td align="center">';
-        print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>&nbsp;";
-        print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_disable($langs->trans("Resiliate"))."</a>";
-        print "</td>";
+		if ($user->rights->adherent->creer)
+		{
+			print "<a href=\"fiche.php?rowid=$objp->rowid&action=edit&return=liste.php\">".img_edit()."</a>";
+		}
+		print '&nbsp;';
+		if ($user->rights->adherent->supprimer)
+		{
+			print "<a href=\"fiche.php?rowid=$objp->rowid&action=resign&return=liste.php\">".img_disable($langs->trans("Resiliate"))."</a>";
+        }
+		print "</td>";
 
         print "</tr>\n";
         $i++;
