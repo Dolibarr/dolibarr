@@ -220,11 +220,13 @@ print "</div>\n";
 print '<div class="tabsAction">';
 
 // Lien nouvelle cotisation si non brouillon et non résilié
-if ($action != 'addsubscription' && $adh->statut > 0)
+if ($user->rights->adherent->cotisation->creer)
 {
-	print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("NewSubscription")."</a>";
+	if ($action != 'addsubscription' && $adh->statut > 0)
+	{
+		print "<a class=\"butAction\" href=\"card_subscriptions.php?rowid=$rowid&action=addsubscription\">".$langs->trans("NewSubscription")."</a>";
+	}
 }
-
 print '</div>';
 print "<br>\n";
 

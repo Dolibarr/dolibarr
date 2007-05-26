@@ -819,12 +819,12 @@ class Form
     if ($conf->global->PRODUIT_USE_SEARCH_TO_SELECT)
     {
 		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-		print '<td class="nobordernopadding" width="30" nowrap="nowrap">';
+		print '<td class="nobordernopadding" width="80" nowrap="nowrap">';
     	print $langs->trans("RefOrLabel").':</td>';
 		print '<td class="nobordernopadding" align="left" width="16">';
 		print ajax_updater_indicator($htmlname,'working');
 		print '</td>';
-		print '<td><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'">';
+		print '<td align="left"><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"> ';
 		print '</td>';
 		print '</tr>';
 		print '<tr class="nocellnopadd">';

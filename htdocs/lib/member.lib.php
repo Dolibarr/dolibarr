@@ -30,7 +30,7 @@
 
 function member_prepare_head($member)
 {
-	global $langs, $conf;
+	global $langs, $conf, $user;
 	
 	$h = 0;
 	$head = array();
@@ -50,14 +50,17 @@ function member_prepare_head($member)
 		$h++;
 	}
 
+    if ($user->rights->adherent->cotisation->lire)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$member->id;
+		$head[$h][1] = $langs->trans("Subscriptions");
+		$head[$h][2] = 'subscription';
+		$h++;
+	}
+	
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/note.php?id='.$member->id;
 	$head[$h][1] = $langs->trans("Note");
 	$head[$h][2] = 'note';
-	$h++;
-
-	$head[$h][0] = DOL_URL_ROOT.'/adherents/card_subscriptions.php?rowid='.$member->id;
-	$head[$h][1] = $langs->trans("Subscriptions");
-	$head[$h][2] = 'subscription';
 	$h++;
 
 	$head[$h][0] = DOL_URL_ROOT.'/adherents/info.php?id='.$member->id;

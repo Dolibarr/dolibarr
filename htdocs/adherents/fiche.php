@@ -978,39 +978,56 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
     
-    
-    print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Edit")."</a>";
-    
-    // Valider
-    if ($adh->statut == -1)
-    {
-        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
-    }
-
-    // Réactiver
-    if ($adh->statut == 0)
-    {
-        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
-    }
-    
-    // Envoi fiche par mail
-    if ($adh->statut >= 1 && $adh->email)
+    if ($user->rights->adherent->creer)
 	{
-    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+		print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=edit\">".$langs->trans("Edit")."</a>";
     }
-    
-    // Résilier
-    if ($adh->statut == 1)
-    {
-        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
-    }
-
-	// Barre d'actions
-	if (! $user->societe_id)
+	
+    if ($user->rights->adherent->creer)
 	{
-		if (! $adh->user_id && $user->rights->user->user->creer)
+	    // Valider
+	    if ($adh->statut == -1)
+	    {
+	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Validate")."</a>\n";
+	    }
+	}
+	
+    if ($user->rights->adherent->creer)
+	{
+	    // Réactiver
+	    if ($adh->statut == 0)
+	    {
+	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=valid\">".$langs->trans("Reenable")."</a>\n";
+	    }
+	}
+	
+    if ($user->rights->adherent->creer)
+	{
+	    // Envoi fiche par mail
+	    if ($adh->statut >= 1 && $adh->email)
 		{
-			print '<a class="tabAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+	    	print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=sendinfo\">".$langs->trans("SendCardByMail")."</a>\n";
+	    }
+	}
+		
+    if ($user->rights->adherent->supprimer)
+	{
+		// Résilier
+	    if ($adh->statut == 1)
+	    {
+	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
+	    }
+	}
+	
+	// Barre d'actions
+	if ($user->rights->user->user->creer)
+	{
+		if (! $user->societe_id)
+		{
+			if (! $adh->user_id)
+			{
+				print '<a class="tabAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+			}
 		}
 	}
     
