@@ -47,7 +47,6 @@ $modules = array(
 $conditions = array(
 'SOCIETE' => $conf->societe->enabled,
 'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
-'PRODUCTNOTE' => ($conf->produit->enabled||$conf->service->enabled),
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
 'MAILING' => $conf->mailing->enabled,
 'MEMBER' => $conf->adherent->enabled

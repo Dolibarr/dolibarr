@@ -185,7 +185,7 @@ if ($_GET["action"] == 'edit')
 	  }
 	  print '</td></tr>';
 		print '<tr><td valign="top" width="15%">'.$langs->trans('Note').'</td><td>';
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	  {
 	    require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	    $doleditor=new DolEditor('note-'.$key.'',$product->multilangs[$key]["note"],160,'dolibarr_notes','',false);
