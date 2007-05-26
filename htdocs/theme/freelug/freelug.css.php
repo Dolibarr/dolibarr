@@ -118,7 +118,8 @@ select.flat
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
-form {
+form
+{
     padding: 0em 0em 0em 0em;
     margin: 0em 0em 0em 0em;
 }
@@ -132,10 +133,12 @@ div.vmenuplusfiche
 {
     top: auto;
     left: auto;
+	position: static;
+    float: left;
     display: block;
     margin-right: 6px;
     margin-left: 1px;
-    margin-top: 6px;
+    margin-top: 4px;
     
 }
 
@@ -151,16 +154,16 @@ div.vmenu
 div.fiche
 {
     float: right top;
+<?php
+	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+?>
     display: block;
-    
-    margin-left: 170px;
+	margin-left: 2px;
+	margin-right: 4px;
     width:auto;
 }
 
-* html div.fiche
-{
-	width:800px;	
-}
 
 
 /* ============================================================================== */

@@ -148,6 +148,8 @@ div.fiche
 	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
 ?>
     display: block;
+	margin-left: 2px;
+	margin-right: 4px;
     width:auto;
 }
 
