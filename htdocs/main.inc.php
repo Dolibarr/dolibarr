@@ -525,7 +525,7 @@ else
  *  \param      title   	Titre page web
  *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisée par sous formulaire Ajax)	
  */
-function top_htmlhead($head, $title='', $disablejs=0) 
+function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {
     global $user, $conf, $langs, $db, $micro_start_time;
 
@@ -542,7 +542,9 @@ function top_htmlhead($head, $title='', $disablejs=0)
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
     print "\n";
 	print "<html>\n";
-	print "<head>\n";
+	if ($disablehead == 0)
+	{
+		print "<head>\n";
 	
     print $langs->lang_header();
     print $head;
@@ -587,8 +589,8 @@ function top_htmlhead($head, $title='', $disablejs=0)
 
     if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
     {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-	}
+    	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+    }
     if (! $disablejs && $conf->use_ajax)
     {
         print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
@@ -598,6 +600,7 @@ function top_htmlhead($head, $title='', $disablejs=0)
     }
     
     print "</head>\n";
+  }
 }
 
 /**

@@ -28,7 +28,7 @@
 
 require('../main.inc.php');
 
-top_htmlhead("", "", 1);
+top_htmlhead("", "", 1, 1);
 
 print '<body id="mainbody">';
 
