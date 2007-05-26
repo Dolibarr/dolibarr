@@ -40,32 +40,34 @@
 class Conf
 {
     /** \public */
-  //! Objet des caractéristiques de connexions
-  var $db;            
-     
-  var $externalrss;
-  var $commande;
-  var $ficheinter;
-  var $commercial;
-  var $societe;
-  var $expedition;
-  var $compta;
-  var $banque;
-  var $don;
-  var $caisse;
-  var $fournisseur;
-  var $adherent;
-  var $produit;
-  var $service;
-  var $stock;
-  var $boutique;
-  var $projet;
-  var $postnuke;
-  var $webcal;
-  var $mantis;
-  var $propal;
-  var $categorie;
-  var $oscommerce2;
+	//! Objet des caractéristiques de connexions
+	var $db;            
+	//! Charset for HTML output
+	var $character_set_client;	
+
+	var $externalrss;
+	var $commande;
+	var $ficheinter;
+	var $commercial;
+	var $societe;
+	var $expedition;
+	var $compta;
+	var $banque;
+	var $don;
+	var $caisse;
+	var $fournisseur;
+	var $adherent;
+	var $produit;
+	var $service;
+	var $stock;
+	var $boutique;
+	var $projet;
+	var $postnuke;
+	var $webcal;
+	var $mantis;
+	var $propal;
+	var $categorie;
+	var $oscommerce2;
 
 
   /**

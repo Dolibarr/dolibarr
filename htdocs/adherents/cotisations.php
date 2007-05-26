@@ -142,7 +142,7 @@ if ($result)
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
-    if ($conf->global->ADHERENT_BANK_USE)
+    if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
     {
         print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield);
     }
@@ -169,7 +169,7 @@ if ($result)
         print '<td>'.$cotisation->getNomUrl(1).'</td>';
         print '<td>'.dolibarr_print_date($objp->dateadh)."</td>\n";
         print '<td>'.$adherent->getNomUrl(1).'</td>';
-        if ($conf->global->ADHERENT_BANK_USE)
+        if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
         {
             if ($objp->fk_account)
             {
@@ -206,7 +206,7 @@ if ($result)
     print "<td>".$langs->trans("Total")."</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
-    if ($conf->global->ADHERENT_BANK_USE)
+    if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
     {
     	print '<td>&nbsp;</td>';
     }

@@ -2723,4 +2723,20 @@ function dol_microtime_float()
     return ((float)$usec + (float)$sec);
 }
 
+
+/*
+ *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau
+ *    \param      chaine      			Chaine dans laquelle faire les substitutions
+ *    \param      substitutionarray		Tableau clé substitution => valeur a mettre
+ *    \return     string      			Chaine avec les substitutions effectuées
+ */
+function make_substitutions($chaine,$substitutionarray)
+{
+	foreach ($substitutionarray as $key => $value)
+	{
+		$chaine=ereg_replace($key,$value,$chaine);
+	}
+	return $chaine;
+}
+	
 ?>

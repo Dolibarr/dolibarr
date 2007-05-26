@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur       <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur       <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin             <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -38,10 +38,10 @@ if (!$user->admin)
 // Constante et traduction de la description du module
 $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
-'PRODUCTDESC' => 'FCKeditorForProductDescription',
-'PRODUCTNOTE' => 'FCKeditorForProductNote',
+'PRODUCTDESC' => 'FCKeditorForProduct',
 'DETAILS' => 'FCKeditorForProductDetails',
-'MAILING' => 'FCKeditorForMailing'
+'MAILING' => 'FCKeditorForMailing',
+'MEMBER' => 'FCKeditorForMembers'
 );
 // Conditions pour que l'option soit proposée
 $conditions = array(
@@ -49,7 +49,16 @@ $conditions = array(
 'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
 'PRODUCTNOTE' => ($conf->produit->enabled||$conf->service->enabled),
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
-'MAILING' => $conf->mailing->enabled
+'MAILING' => $conf->mailing->enabled,
+'MEMBER' => $conf->adherent->enabled
+);
+// Picto
+$picto = array(
+'SOCIETE' => 'company',
+'PRODUCTDESC' => 'product',
+'DETAILS' => 'generic',
+'MAILING' => 'email',
+'MEMBER' => 'user'
 );
 
 
@@ -105,7 +114,7 @@ $var=true;
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("ActivateFCKeditor").'</td>';
+print '<td colspan="2">'.$langs->trans("ActivateFCKeditor").'</td>';
 print '<td align="center" width="20">&nbsp;</td>';
 print '<td align="center" width="100">'.$langs->trans("Action").'</td>';
 print "</tr>\n";
@@ -118,6 +127,7 @@ foreach($modules as $const => $desc)
 	
 	$var=!$var;
 	print "<tr ".$bc[$var].">";
+	print '<td width="16">'.img_object("",$picto[$const]).'</td>';
 	print '<td>'.$langs->trans($desc).'</td>';
 	print '<td align="center" width="20">';
 

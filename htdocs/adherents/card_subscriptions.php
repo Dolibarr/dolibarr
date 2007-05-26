@@ -93,7 +93,7 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 
 	if ($adht->cotisation)
 	{
-		if ($conf->global->ADHERENT_BANK_USE)
+		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{
 			if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
 			if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
@@ -371,35 +371,35 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	{
 		print '<tr><td>'.$langs->trans("Amount").'</td><td><input type="text" name="cotisation" size="6" value="'.$_POST["cotisation"].'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-		if ($conf->global->ADHERENT_BANK_USE)
+		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 		{
 			print '<tr><td>'.$langs->trans("FinancialAccount").'</td><td>';
 			$html->select_comptes($_POST["accountid"],'accountid',0,'',1);
 			print "</td></tr>\n";
-
-			print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
-			$html->select_types_paiements($_POST["operation"],'operation');
-			print "</td></tr>\n";
-
-			print '<tr><td>'.$langs->trans('Numero');
-			print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
-			print '</td>';
-			print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
-
-			print '<tr><td>'.$langs->trans('CheckTransmitter');
-			print ' <em>(Emetteur du chèque)</em>';	// \todo a traduire
-			print '</td>';
-			print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
-
-			print '<tr><td>'.$langs->trans('Bank');
-			print ' <em>(Banque du chèque)</em>';	// \todo a traduire
-			print '</td>';
-			print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
-
-			print '<tr><td>'.$langs->trans("Label").'</td>';
-			print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
-			print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
 		}
+		
+		print '<tr><td>'.$langs->trans("PaymentMode").'</td><td>';
+		$html->select_types_paiements($_POST["operation"],'operation');
+		print "</td></tr>\n";
+
+		print '<tr><td>'.$langs->trans('Numero');
+		print ' <em>(Numéro chèque ou virement)</em>';	// \todo a traduire
+		print '</td>';
+		print '<td><input name="num_chq" type="text" size="8" value="'.(empty($_POST['num_chq'])?'':$_POST['num_chq']).'"></td></tr>';
+
+		print '<tr><td>'.$langs->trans('CheckTransmitter');
+		print ' <em>(Emetteur du chèque)</em>';	// \todo a traduire
+		print '</td>';
+		print '<td><input name="chqemetteur" size="32" type="text" value="'.(empty($_POST['chqemetteur'])?$facture->client->nom:$_POST['chqemetteur']).'"></td></tr>';
+
+		print '<tr><td>'.$langs->trans('Bank');
+		print ' <em>(Banque du chèque)</em>';	// \todo a traduire
+		print '</td>';
+		print '<td><input name="chqbank" size="32" type="text" value="'.(empty($_POST['chqbank'])?'':$_POST['chqbank']).'"></td></tr>';
+
+		print '<tr><td>'.$langs->trans("Label").'</td>';
+		print '<td><input name="label" type="text" size="32" value="'.$langs->trans("Subscription").' ';
+		print strftime("%Y",($adh->datefin?$adh->datefin:time())).'" ></td></tr>';
 	}
 	
 	print '<tr><td>'.$langs->trans("SendAcknowledgementByMail").'</td>';

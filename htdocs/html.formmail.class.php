@@ -26,6 +26,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 
 
 /**     \class      FormMail
@@ -46,6 +47,7 @@ class FormMail
 	var $toname;
 	var $tomail;
 	
+	var $withsubstit;			// Show substitution array
 	var $withfrom;
 	var $withto;
 	var $withtocc;
@@ -95,20 +97,6 @@ class FormMail
 
 
 	/*
-	 *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau $this->substit
-	 *    \param      chaine      chaine dans laquelle faire les substitutions
-	 *    \return     string      chaine avec les substitutions effectuées
-	 */
-  	function make_substitutions($chaine)
-    {
-        foreach ($this->substit as $key=>$value) {
-            $chaine=ereg_replace($key,$value,$chaine);
-        }
-        return $chaine;
-    }
-
-
-	/*
 	 *    \brief  Affiche la partie de formulaire pour saisie d'un mail en fonction des propriétés
 	 */
 	function show_form()
@@ -128,6 +116,19 @@ class FormMail
 		}
 		print "<table class=\"border\" width=\"100%\">\n";
 	
+		// Substitution array
+		if ($this->withsubstit)
+		{
+			print "<tr><td colspan=\"2\">";
+			$help="";
+		    foreach($this->substit as $key => $val)
+			{
+				$help.=$key.' -> '.$langs->trans($val).'<br>';
+			}
+			print $form->textwithhelp($langs->trans("EMailTestSubstitutionReplacedByGenericValues"),$help);
+			print "</td></tr>\n";
+		}
+		
 		// From
 		if ($this->withfrom)
 		{
@@ -212,7 +213,7 @@ class FormMail
 		// Topic
 		if ($this->withtopic)
 		{
-			$this->withtopic=$this->make_substitutions($this->withtopic);
+			$this->withtopic=make_substitutions($this->withtopic,$this->substit);
 
 			print "<tr>";
 			print "<td width=\"180\">".$langs->trans("MailTopic")."</td>";
@@ -251,7 +252,7 @@ class FormMail
 			if ($this->param["models"]=='propal_send') { $defaultmessage="Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n"; }
 			if ($this->param["models"]=='order_send') { $defaultmessage="Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n"; }
 
-			$defaultmessage=$this->make_substitutions($defaultmessage);
+			$defaultmessage=$this->make_substitutions($defaultmessage,$this->substit);
 
 			print "<tr>";
 			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";

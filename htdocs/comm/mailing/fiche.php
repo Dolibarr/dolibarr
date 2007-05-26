@@ -36,8 +36,21 @@ $user->getrights("mailing");
 if (! $user->rights->mailing->lire || $user->societe_id > 0)
   accessforbidden();
 
-
 $message = '';
+
+// Tableau des substitutions possibles
+$substitutionarray=array(	
+'__ID__' => 'IdRecord',
+'__EMAIL__' => 'EMail',
+'__LASTNAME__' => 'Lastname',
+'__FIRSTNAME__' => 'Firstname'
+);
+$substitutionarrayfortest=array(	
+'__ID__' => 'TESTIdRecord',
+'__EMAIL__' => 'TESTEMail',
+'__LASTNAME__' => 'TESTLastname',
+'__FIRSTNAME__' => 'TESTFirstname'
+);
 
 
 // Action envoi mailing pour tous
@@ -51,7 +64,7 @@ if ($_GET["action"] == 'sendall')
 }
 
 // Action envoi test mailing
-if ($_POST["action"] == 'send')
+if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 {
     $mil = new Mailing($db);
     $result=$mil->fetch($_POST["mailid"]);
@@ -74,7 +87,11 @@ if ($_POST["action"] == 'send')
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 
-        $mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
+        // Pratique les substitutions sur le sujet et message
+		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest);
+		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
+		
+		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
         							$arr_file,$arr_mime,$arr_name,
         							'', '', 0, $msgishtml);
 
@@ -85,7 +102,7 @@ if ($_POST["action"] == 'send')
         }
         else
         {
-            $message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.'</div>';
+            $message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
         }
 
         $_GET["action"]='';
@@ -239,10 +256,10 @@ if ($_GET["action"] == 'create')
     print '<tr><td width="25%">'.$langs->trans("MailTopic").'</td><td><input class="flat" name="sujet" size="60" value=""></td></tr>';
     print '<tr><td width="25%" valign="top">'.$langs->trans("MailMessage").'<br>';
     print '<br><i>'.$langs->trans("CommonSubstitutions").':<br>';
-    print '__ID__ = '.$langs->trans("IdRecord").'<br>';
-    print '__EMAIL__ = '.$langs->trans("EMail").'<br>';
-    print '__LASTNAME__ = '.$langs->trans("Lastname").'<br>';
-    print '__FIRSTNAME__ = '.$langs->trans("Firstname").'<br>';
+    foreach($substitutionarray as $key => $val)
+	{
+		print $key.' = '.$langs->trans($val).'<br>';
+	}
     print '</i></td>';
     print '<td>';
     // éditeur wysiwyg
@@ -289,13 +306,6 @@ else
         if ($_GET["action"] == 'valide')
         {
             $html->form_confirm("fiche.php?id=".$mil->id,$langs->trans("ValidMailing"),$langs->trans("ConfirmValidMailing"),"confirm_valide");
-            print '<br>';
-        }
-
-        // Confirmation de l'approbation du mailing
-        if ($_GET["action"] == 'approve')
-        {
-            $html->form_confirm("fiche.php?id=".$mil->id,"Approuver le mailing","Confirmez-vous l'approbation du mailing ?","confirm_approve");
             print '<br>';
         }
 
@@ -394,7 +404,7 @@ else
                 print '<br /><br /></div>';
             }
 
-
+			// Affichage formulaire de TEST
             if ($_GET["action"] == 'test')
             {
             	      print_titre($langs->trans("TestMailing"));
@@ -404,6 +414,7 @@ else
             	      $formmail = new FormMail($db);	    
             	      $formmail->fromname = $mil->email_from;
             	      $formmail->frommail = $mil->email_from;
+                      $formmail->withsubstit=1;
                       $formmail->withfrom=0;
                       $formmail->withto=$user->email?$user->email:1;
                       $formmail->withcc=0;
@@ -412,8 +423,9 @@ else
                       $formmail->withfile=0;
             	      $formmail->withbody=0;
             	      $formmail->withbodyreadonly=1;
+            	      $formmail->withcancel=1;
                       // Tableau des substitutions
-                      $formmail->substit["__FACREF__"]=$fac->ref;
+					  $formmail->substit=$substitutionarrayfortest;
                       // Tableau des paramètres complémentaires du post
                       $formmail->param["action"]="send";
                       $formmail->param["models"]="body";

@@ -136,20 +136,28 @@ print "</td></tr>\n";
 print '</form>';
 
 // Insertion cotisations dans compte financier
+$var=!$var;
+print '<form action="adherent.php" method="POST">';
+print '<input type="hidden" name="action" value="update">';
+print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
+print "<tr $bc[$var] class=value><td>".$langs->trans("AddSubscriptionIntoAccount").'</td>';
 if ($conf->banque->enabled)
 {
-    $var=!$var;
-    print '<form action="adherent.php" method="POST">';
-    print '<input type="hidden" name="action" value="update">';
-    print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-    print '<input type="hidden" name="constname" value="ADHERENT_BANK_USE">';
-    print "<tr $bc[$var] class=value><td>".$langs->trans("AddSubscriptionIntoAccount").'</td><td>';
-    print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);
-    print '</td><td align="center" width="80">';
-    print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
-    print "</td></tr>\n";
-    print '</form>';
+	print '<td>';
+	print $form->selectyesno('constvalue',$conf->global->ADHERENT_BANK_USE,1);
+	print '</td><td align="center" width="80">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button">';
+	print '</td>';
 }
+else
+{
+	print '<td align="right" colspan="2">';
+	print $langs->trans("WarningModuleNotActive",$langs->transnoentities("Module85Name")).' '.img_warning("","");
+	print '</td>';
+}
+print "</tr>\n";
+print '</form>';
 print '</table>';
 print '<br>';
 

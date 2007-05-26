@@ -216,7 +216,8 @@ class CMailFile
 		}
 		else
 		{
-            dolibarr_syslog("CMailFile::sendfile: No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS");
+            $this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
 		}
 
         error_reporting($errorlevel);              // Réactive niveau erreur origine
@@ -267,7 +268,7 @@ class CMailFile
        
         if ($this->msgishtml)
         {
-        	$out.= "Content-Type: text/html; charset=".$conf->charset_output.$this->eol;
+        	$out.= "Content-Type: text/html; charset=".$conf->character_set_client.$this->eol;
         	$out.= "Content-Transfer-Encoding: 8bit".$this->eol;
         }
         else

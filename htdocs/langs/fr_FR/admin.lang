@@ -3,6 +3,7 @@ Version=Version
 VersionExperimental=Expérimental
 VersionDevelopment=Développement
 VersionUnknown=Inconnue
+WarningModuleNotActive=Module <b>%s</b> non actif
 DolibarrSetup=Installation de Dolibarr
 DolibarrUser=Utilisateur Dolibarr
 InternalUser=Utilisateur interne
