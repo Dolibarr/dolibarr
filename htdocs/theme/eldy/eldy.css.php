@@ -120,16 +120,20 @@ div.vmenuplusfiche
 {
     top: auto;
     left: auto;
+
+	position: static;
+    float: left;
+
     display: block;
     margin-right: 6px;
     margin-left: 1px;
-    margin-top: 6px;
-    
+    margin-top: 2px;
 }
 
 div.vmenu
 {
     float: left;
+
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
@@ -138,14 +142,14 @@ div.vmenu
 
 div.fiche
 {
-    float: right top;
+	float: right top;
+<?php
+	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+?>
     display: block;
-    
-    margin-left: 170px;
     width:auto;
 }
-
-
 
 /* ============================================================================== */
 /* Menu superieur et 1ere ligne tableau                                           */
