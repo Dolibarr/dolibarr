@@ -538,7 +538,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       
       // Note (invisible sur facture, propales...)
       print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
+      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
 	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	  $doleditor=new DolEditor('note','',200,'dolibarr_notes','',false);
@@ -910,7 +910,7 @@ if ($_GET["id"] || $_GET["ref"])
 
 	  // Note
 	  print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td colspan="2">';
-	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTNOTE)
+	  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	    {
 	      require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	      $doleditor=new DolEditor('note',$product->note,200,'dolibarr_notes','',false);
