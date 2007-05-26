@@ -692,8 +692,8 @@ DeliveriesOrderAbility=Products deliveries receipt ability
 ##### FCKeditor #####
 ActivateFCKeditor=Activate FCKeditor for:
 FCKeditorForCompany=WYSIWIG creation/edition of companies description and note
-FCKeditorForProductDescription=WYSIWIG creation/edition of products/services description
-FCKeditorForProductNote=WYSIWIG creation/edition of products/services note
+FCKeditorForProduct=WYSIWIG creation/edition of products/services description and note
+FCKeditorForMembers=WYSIWIG creation/edition of members description and note
 FCKeditorForProductDetails=WYSIWIG creation/edition of details lines for all entities (proposals, orders, invoices, etc...)
 FCKeditorForMailing=WYSIWIG creation/edition of mailings
 ##### OSCommerce 1 #####

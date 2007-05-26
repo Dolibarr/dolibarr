@@ -122,7 +122,7 @@ if ($id)
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
 
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_SOCIETE)
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER)
 	    {
 		    // Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
