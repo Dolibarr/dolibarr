@@ -139,22 +139,41 @@ if ($resql)
             $obj = $db->fetch_object($resql);
 
             // sendto en RFC2822
-            $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ."<".$obj->email.">";
+            $sendto = stripslashes($obj->prenom). " ".stripslashes($obj->nom) ." <".$obj->email.">";
 
+			// Pratique les substitutions sur le sujet et message
+			$substitutionarray=array(	
+				'__ID__' => $obj->rowid,
+				'__EMAIL__' => $obj->email,
+				'__LASTNAME__' => $obj->nom,
+				'__FIRSTNAME__' => $obj->prenom
+			);
+
+			$substitutionisok=true;
+			$subject=make_substitutions($subject,$substitutionarray);
+			$message=make_substitutions($message,$substitutionarray);
+			// TODO Set substitutionisok to flase if errors
+			
             // Fabrication du mail
             $mail = new CMailFile($subject, $sendto, $from, $message, 
             						array(), array(), array(),
             						'', '', 0, $msgishtml);
+            $mail->errors_to = $errorsto;
+			
             						
 			if ($mail->error)
 			{
+				$res=0;
+			}
+			if (! $substitutionisok)
+			{
+				$mail->error='Some substitution failed';
 				$res=0;
 			}
 
             // Envoi du mail
 			if ($res)
 			{
-	            $mail->errors_to = $errorsto;
     			$res=$mail->sendfile();
 			}
 			
@@ -163,7 +182,10 @@ if ($resql)
                 // Mail envoye avec succes
                 $nbok++;
     
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+		        dolibarr_syslog("mailing-send: ok for #".$i.' - '.$mail->error);
+
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql.=" SET statut=1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
@@ -175,7 +197,10 @@ if ($resql)
                 // Mail en echec
                 $nbko++;
     
-                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
+		        dolibarr_syslog("mailing-send: error for #".$i.' - '.$mail->error);
+
+                $sql="UPDATE ".MAIN_DB_PREFIX."mailing_cibles";
+				$sql.=" SET statut=-1, date_envoi=SYSDATE() WHERE rowid=".$obj->rowid;
                 $resql2=$db->query($sql);
                 if (! $resql2)
                 {
@@ -187,11 +212,12 @@ if ($resql)
         }
     }
 
-    // Met a jour statut global du mail
+    // Loop finished, set global statut of mail
     $statut=2;
     if (! $nbko) $statut=3;
 
     $sql="UPDATE ".MAIN_DB_PREFIX."mailing SET statut=".$statut." WHERE rowid=".$id;
+    dolibarr_syslog("mailing-send: update global status sql=".$sql);
     $resql2=$db->query($sql);
     if (! $resql2)
     {
