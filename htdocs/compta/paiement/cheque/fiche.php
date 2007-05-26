@@ -263,7 +263,7 @@ if ($_GET['action'] == 'new')
 		print "</table>";
 	
 		print '<div class="tabsAction">';
-		print '<a class="tabAction" href="fiche.php?action=create&amp;accountid='.$bid.'">';
+		print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$bid.'">';
 		print $langs->trans('NewCheckDepositOn',$account_label);
 		print '</a>';
 		print '</div><br />';
@@ -402,17 +402,17 @@ print '<div class="tabsAction">';
 
 if ($user->societe_id == 0 && sizeof($accounts) == 1 && $_GET['action'] == 'new')
 {
-  print '<a class="tabAction" href="fiche.php?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
+  print '<a class="butAction" href="fiche.php?action=create&amp;accountid='.$account_id.'">'.$langs->trans('NewCheckReceipt').'</a>';
 }
 
 if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
 {
-  print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+  print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;facid='.$objp->facid.'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 }
 
 if ($user->societe_id == 0 && $remisecheque->statut == 0 && $_GET['action'] == '')
 {
-  print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+  print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
   
 }
 print '</div>';

@@ -1330,37 +1330,37 @@ if ($_GET["action"] == '' && $result == 1 && $client_comm->perm_read)
 
   if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 3 && $ligne->techno == 'presel')
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=resilier&amp;id=$ligne->id\">".$langs->trans("Demander la résiliation")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=resilier&amp;id=$ligne->id\">".$langs->trans("Demander la résiliation")."</a>";
     }
 
   if ( $user->rights->telephonie->ligne->resilier && $ligne->statut == 4 && $ligne->techno == 'presel')
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
     }
   
   if ( $user->rights->telephonie->ligne_activer && $ligne->statut <> 6)
     {
-  print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
+  print "<a class=\"butAction\" href=\"fiche.php?action=contact&amp;id=$ligne->id\">".$langs->trans("Contact")."</a>";
     }
 
   if ( $user->rights->telephonie->ligne->creer && $ligne->statut < 4)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=chgcontrat&amp;id=$ligne->id\">".$langs->trans("Changer de contrat")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=chgcontrat&amp;id=$ligne->id\">".$langs->trans("Changer de contrat")."</a>";
     }
 
   if ( $user->rights->telephonie->ligne->creer && $ligne->statut < 4)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=editremise&amp;id=$ligne->id\">".$langs->trans("Changer la remise")."</a>";
     }
 
   if ( $user->rights->telephonie->ligne_activer && $ligne->statut == -1)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$ligne->id\">".$langs->trans("Edit")."</a>";
     }
      
   if ( $user->rights->telephonie->ligne->creer && $ligne->statut == -1)
     {
-      print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$ligne->id\">".$langs->trans("Delete")."</a>";
+      print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&amp;id=$ligne->id\">".$langs->trans("Delete")."</a>";
     }
  
 }

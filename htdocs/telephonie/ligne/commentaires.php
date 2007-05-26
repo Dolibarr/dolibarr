@@ -228,7 +228,7 @@ print '</div>';
 /* ************************************************************************** */
 /*
 print "\n<br>\n<div class=\"tabsAction\">\n";
-print "<a class=\"tabAction\" href=\"commentaires.php?action=add&amp;id=$soc->id\">".$langs->trans("Ajouter un commentaire")."</a>";
+print "<a class=\"butAction\" href=\"commentaires.php?action=add&amp;id=$soc->id\">".$langs->trans("Ajouter un commentaire")."</a>";
 print "</div>";
 */
 

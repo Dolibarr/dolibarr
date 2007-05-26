@@ -271,7 +271,7 @@ if (function_exists("ldap_connect"))
 	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_SYNCHRO_ACTIVE == 'dolibarr2ldap')
 	{
 		print '<br>';
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testuser">'.$langs->trans("LDAPTestSynchroUser").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testuser">'.$langs->trans("LDAPTestSynchroUser").'</a>';
 		print '<br><br>';
 	}
 

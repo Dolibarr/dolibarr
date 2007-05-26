@@ -578,12 +578,12 @@ else
 		{
 			if ( $user->rights->produit->creer)
 			{
-				print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+				print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 			}
 		
 			if ($product->isproduct() && $conf->stock->enabled)
 			{
-				print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
+				print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/stock/product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("CorrectStock").'</a>';
 			}
 
 			print '<a class="butAction" href="fiche.php?id='.$product->id.'&amp;action=ajout_fourn">'.$langs->trans("AddSupplier").'</a>';
@@ -591,7 +591,7 @@ else
 			if ($product->isproduct() && $user->rights->commande->creer)
 			{
 				$langs->load('orders');
-				print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+				print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
 				print $langs->trans("CreateOrder").'</a>';
 			}
 		

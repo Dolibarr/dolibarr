@@ -250,7 +250,7 @@ if (function_exists("ldap_connect"))
 {
 	if ($conf->global->LDAP_SERVER_HOST)
 	{
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestConnect").'</a><br><br>';
 	}
 
 	if ($_GET["action"] == 'test')

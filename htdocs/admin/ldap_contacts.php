@@ -232,7 +232,7 @@ if (function_exists("ldap_connect"))
 	if ($conf->global->LDAP_SERVER_HOST)
 	{
 		print '<br>';
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("LDAPTestSynchroContact").'</a>';
 		print '<br><br>';
 	}
 

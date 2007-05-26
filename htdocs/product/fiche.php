@@ -959,24 +959,24 @@ if ($_GET["action"] == '')
   if ( $user->rights->produit->creer)
     {
       if ($product->no_button_edit <> 1)
-	print '<a class="tabAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+	print '<a class="butAction" href="fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
       if ($product->no_button_copy <> 1)
-	print '<a class="tabAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
+	print '<a class="butAction" href="fiche.php?action=clone&amp;id='.$product->id.'">'.$langs->trans("CreateCopy").'</a>';
     }
 
   /*
     if ($product->isproduct() && $user->rights->commande->creer)
     {
     $langs->load('orders');
-    print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+    print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
     print $langs->trans("CreateCustomerOrder").'</a>';
     }
 
     if ($product->isproduct() && $user->rights->fournisseur->commande->creer)
     {
     $langs->load('orders');
-    print '<a class="tabAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
+    print '<a class="butAction" href="fiche.php?action=fastappro&amp;id='.$product->id.'">';
     print $langs->trans("CreateSupplierOrder").'</a>';
     }
   */

@@ -371,8 +371,8 @@ if (function_exists("ldap_connect"))
 	if ($conf->global->LDAP_SERVER_HOST && $conf->global->LDAP_MEMBER_ACTIVE)
 	{
 		print '<br>';
-		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testmember">'.$langs->trans("LDAPTestSynchroMember").'</a>';
-//		print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=testtype">'.$langs->trans("LDAPTestSynchroTypeMember").'</a>';
+		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testmember">'.$langs->trans("LDAPTestSynchroMember").'</a>';
+//		print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=testtype">'.$langs->trans("LDAPTestSynchroTypeMember").'</a>';
 		print '<br><br>';
 	}
 

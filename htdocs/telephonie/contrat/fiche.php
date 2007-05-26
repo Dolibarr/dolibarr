@@ -870,7 +870,7 @@ else
 	      print "</textarea></td></tr>";
 	  
 	      print '<tr><td align="center" colspan="3"><input type="submit" value="Mettre à jour">';
-	      print '<a class="tabAction" href="fiche.php?id='.$contrat->id.'">Annuler</a></td></tr>';
+	      print '<a class="butAction" href="fiche.php?id='.$contrat->id.'">Annuler</a></td></tr>';
 	      print '</table>'."\n";
 	      print '</form>'."\n";
 	  
@@ -1007,26 +1007,26 @@ else
 	    {  
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
-		  print '<a class="tabAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
+		  print '<a class="butAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
 		}
 	      
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
-		  print "<a class=\"tabAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
+		  print "<a class=\"butAction\" href=\"fiche.php?action=contact&amp;id=$contrat->id\">".$langs->trans("Contact")."</a>";
 		}
 	      
 	      if ($user->rights->telephonie->ligne->creer && $po == 0 && $contrat->statut <> 6)
 		{
-		  print "<a class=\"tabAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
+		  print "<a class=\"butAction\" href=\"fiche.php?action=po&amp;id=$contrat->id\">Ajouter une prise d'ordre</a>";
 		}
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
-		  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
+		  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$contrat->id\">".$langs->trans("Edit")."</a>";
 		}
 	      
 	      if ($user->rights->telephonie->ligne->creer && $numlignes == 0 && $contrat->statut <> 6)
 		{
-		  print "<a class=\"butDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
+		  print "<a class=\"butActionDelete\" href=\"fiche.php?action=delete&amp;id=$contrat->id\">".$langs->trans("Delete")."</a>";
 		}      
 	    }
 	  

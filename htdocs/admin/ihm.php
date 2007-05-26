@@ -299,7 +299,7 @@ else
     print '</table>';
 
     print '<div class="tabsAction">';
-    print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
 
 }

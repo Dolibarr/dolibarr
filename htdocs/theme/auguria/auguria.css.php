@@ -703,19 +703,6 @@ a.butActionDelete:visited {  font-weight: bold; background: white; border: 1px s
 a.butActionDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
-/* Ancienne syntaxe. A supprimer quand remplace par butXxx */
-
-a.tabAction:link    {  font-weight: bold; background: #68ACCF; border: 1px solid #8CACBB; color: #FFFFFF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:visited {  font-weight: bold; background: #68ACCF; border: 1px solid #8CACBB; color: #FFFFFF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:active  {  font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:hover   {  font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-
-a.butDelete:link    {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:active  {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:visited {  font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-
-
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */

@@ -138,7 +138,7 @@ if ($_GET["id"] || $_GET["ref"])
 
         if ($_GET["action"] != 'ajout_photo' && $user->rights->produit->creer && $conf->upload)
         {
-            print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+            print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/photos.php?action=ajout_photo&amp;id='.$product->id.'">';
             print $langs->trans("AddPhoto").'</a>';
         }
 

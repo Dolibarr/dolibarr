@@ -496,14 +496,14 @@ if ($_GET["facid"] > 0)
 	  // Envoyer
 	  if ($fac->statut == 1 && $user->rights->facture->envoyer)
 	    {
-	      print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
+	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=presend\">".$langs->trans("Send")."</a>\n";
 	    }
 
 	  // Envoyer une relance
 	  /*
 	  if ($fac->statut == 1 && price($resteapayer) > 0 && $user->rights->facture->envoyer)
 	    {
-	      print "  <a class=\"tabAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
+	      print "  <a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?facid=$fac->id&amp;action=prerelance\">".$langs->trans("SendRemind")."</a>\n";
 	    }
 	  */
 

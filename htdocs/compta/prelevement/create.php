@@ -95,9 +95,9 @@ if ($nb)
 {
     print "<div class=\"tabsAction\">\n";
     
-    if ($nb) print '<a class="tabAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
-    if ($nb1) print '<a class="tabAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
-    if ($nb11) print '<a class="tabAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
+    if ($nb) print '<a class="butAction" href="create.php?action=create">'.$langs->trans("Create")."</a>\n";
+    if ($nb1) print '<a class="butAction" href="create.php?action=create&amp;banque=1&amp;guichet=1">'.$langs->trans("CreateGuichet")."</a>\n";
+    if ($nb11) print '<a class="butAction" href="create.php?action=create&amp;banque=1">'.$langs->trans("CreateBanque")."</a>\n";
     
     print "</div>\n";
 }

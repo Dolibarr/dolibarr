@@ -62,9 +62,9 @@ if ($action == '' && !$cancel) {
 	print "\n<div class=\"tabsAction\">\n";
 
 	  if ( $user->rights->commande->creer) {
-        print '<a class="tabAction" href="fiche.php?action=import&amp;orderid='.$osc_order->osc_orderid.'">'.$langs->trans("Import").'</a>';
+        print '<a class="butAction" href="fiche.php?action=import&amp;orderid='.$osc_order->osc_orderid.'">'.$langs->trans("Import").'</a>';
     	}
-  	  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+  	  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
      
@@ -74,7 +74,7 @@ if ($action == '' && !$cancel) {
 	  print "\n<div class=\"tabsAction\">\n";
 		  print "<p>ERROR 1c</p>\n";
 		  dolibarr_print_error('',"erreur webservice ".$osc_order->error);
-		  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	  print "\n</div><br>\n";
 	}
  }
@@ -82,7 +82,7 @@ if ($action == '' && !$cancel) {
  {
 	  print "\n<div class=\"tabsAction\">\n";
 		  print "<p>ERROR 1b</p>\n";
-		  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	  print "\n</div><br>\n";
  }
 }
@@ -116,7 +116,7 @@ if ($action == '' && !$cancel) {
 	    		{
 				  	print "\n<div class=\"tabsAction\">\n";
 		    		print '<br>erreur 1</br>';
-		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		    		print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 					print "\n</div><br>\n";
 		    	}
 	    	/* initialisation */
@@ -171,7 +171,7 @@ if ($action == '' && !$cancel) {
 		       	  print '<br>création réussie nouvelle commande '.$id;
    			     $res = $osc_order->transcode($osc_order->osc_orderid,$id);
 					  print 'pour la commande osc : '.$osc_order->osc_orderid.'</p>';
-					  print '<p><a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
+					  print '<p><a class="butAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
 				  print "\n</div><br>\n";
 
 				if ($id > 0)  exit;
@@ -203,7 +203,7 @@ if ($action == '' && !$cancel) {
 					}
 					else print '<br>update impossible $id : '.$id.' </br>';
 				}
-			  print '<p><a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
+			  print '<p><a class="butAction" href="index.php">'.$langs->trans("Retour").'</a></p>';
 		    }
 		 }
  

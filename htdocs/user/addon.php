@@ -130,7 +130,7 @@ if ($_GET["id"])
 
     if ($user->admin)
     {
-        print '<a class="tabAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
+        print '<a class="butAction" href="addon.php?id='.$fuser->id.'&amp;action=create_bk4u_login">'.$langs->trans("Créer login Bookmark4u").'</a>';
     }
 
     print "</div>\n";

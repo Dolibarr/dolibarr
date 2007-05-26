@@ -52,9 +52,9 @@ if ($action == '' && !$cancel) {
 	print "\n<div class=\"tabsAction\">\n";
 
 	  if ( $user->rights->societe->creer) {
-        print '<a class="tabAction" href="fiche.php?action=import&amp;custid='.$osc_cust->osc_custid.'">'.$langs->trans("Import").'</a>';
+        print '<a class="butAction" href="fiche.php?action=import&amp;custid='.$osc_cust->osc_custid.'">'.$langs->trans("Import").'</a>';
     	}
-    print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+    print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
 // seule action importer
      
@@ -64,7 +64,7 @@ if ($action == '' && !$cancel) {
 	  	print "\n<div class=\"tabsAction\">\n";
 		  print "<p>ERROR 1c</p>\n";
 	  	  dolibarr_print_error('',"erreur webservice ".$osc_cust->error);
-    	  print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+    	  print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 		print "\n</div><br>\n";
 	}
  }
@@ -73,7 +73,7 @@ if ($action == '' && !$cancel) {
   	print "\n<div class=\"tabsAction\">\n";
 	   print "<p>ERROR 1b</p>\n";
 	   print "Error";
-	   print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+	   print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 	print "\n</div><br>\n";
  }
 }
@@ -93,7 +93,7 @@ if ($action == '' && !$cancel) {
 	      
 			  	print "\n<div class=\"tabsAction\">\n";
 		    		print '<br>erreur 1</br>';
-		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		    		print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 				print "\n</div><br>\n";
 	    	}
 
@@ -120,7 +120,7 @@ if ($action == '' && !$cancel) {
 		{
 			print "\n<div class=\"tabsAction\">\n";
 			print '<p>Ce client existe déjà mise à jour à prévoir</p>';
-			print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+			print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 			print "\n</div><br>\n";
 		}
 		else {
@@ -132,7 +132,7 @@ if ($action == '' && !$cancel) {
 			    	print '<p>création réussie nouveau client/prospect : '.$societe->nom;
 			    	$res = $osc_cust->transcode($osc_cust->osc_custid,$societe->id);
 					print ' : Id Dolibarr '.$societe->id.' , Id osc : '.$osc_cust->osc_custid.'</p>';
-		    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+		    		print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 				print "\n</div><br>\n";
 		    }
 		    else
@@ -151,7 +151,7 @@ if ($action == '' && !$cancel) {
 		    	 {
 			    	print "\n<div class=\"tabsAction\">\n";
 		       		print '<br>erreur 1</br>';
-			    		print '<a class="tabAction" href="index.php">'.$langs->trans("Retour").'</a>';
+			    		print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
 					print "\n</div><br>\n";
 		    	 }
 			     $idp = $societe_control->fetch($socid = $osc_cust->osc_ref);

@@ -723,19 +723,6 @@ a.butActionDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; fo
 a.butActionDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
-/* Ancienne syntaxe. A supprimer quand remplace par butXxx */
-
-a.tabAction:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:active  { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.tabAction:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #dee7ec; border: 1px solid #8CACBB; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-
-a.butDelete:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:active  { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-
-
 /* ============================================================================== */
 /* Tables                                                                         */
 /* ============================================================================== */

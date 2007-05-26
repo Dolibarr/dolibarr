@@ -344,12 +344,12 @@ if ($_GET["action"] == '' )
 {
 	if ($user->rights->stock->mouvement->creer)
 	{
-		print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
+		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=transfert">'.$langs->trans("StockMovement").'</a>';
 	}
 	
 	if ($user->rights->stock->creer)
 	{
-		print '<a class="tabAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
+		print '<a class="butAction" href="product.php?id='.$product->id.'&amp;action=correction">'.$langs->trans("StockCorrection").'</a>';
 	}
 }
 print '</div>';

@@ -123,7 +123,7 @@ print "</table>";
 if ($_GET["action"] != 'create') 
 {
 	print '<div class="tabsAction">';
-	print "<a class=\"tabAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
+	print "<a class=\"butAction\" href=\"options.php?action=create\">".$langs->trans("NewAttribute")."</a>";
 	print "</div>";
 }
 

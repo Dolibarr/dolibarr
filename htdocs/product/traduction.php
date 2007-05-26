@@ -236,8 +236,8 @@ print "\n<div class=\"tabsAction\">\n";
 if ($_GET["action"] == '')
     if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$product->id.'">'.$langs->trans("Add").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=edit&id='.$product->id.'">'.$langs->trans("Update").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/traduction.php?action=add&id='.$product->id.'">'.$langs->trans("Add").'</a>';
     }
 
 print "\n</div>\n";

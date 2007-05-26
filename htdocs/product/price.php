@@ -202,7 +202,7 @@ if ($_GET["action"] == '')
 {
     if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/price.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
 }
 

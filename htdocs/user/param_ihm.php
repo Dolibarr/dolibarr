@@ -176,7 +176,7 @@ else
     print '<div class="tabsAction">';
     if (($fuser->id == $user->id) || $user->admin)       // Si utilisateur édité = utilisateur courant ou admin
     {
-        print '<a class="tabAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
     print '</div>';
 

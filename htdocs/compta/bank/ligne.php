@@ -467,7 +467,7 @@ if ($orig_account)
 {
     $acct=new Account($db,$orig_account);
     $acct->fetch($orig_account);
-    print '<a class="tabAction" href="rappro.php?account='.$orig_account.'">'.$langs->trans("BackToConciliate",$acct->label).'</a>';
+    print '<a class="butAction" href="rappro.php?account='.$orig_account.'">'.$langs->trans("BackToConciliate",$acct->label).'</a>';
 }
 
 print '</div>';

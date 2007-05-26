@@ -358,12 +358,12 @@ if ($socid > 0)
 		// Si société cliente ou prospect, on affiche bouton "Créer facture client"
 		if ($societe->client != 0 && $conf->facture->enabled && $user->rights->facture->creer) {
 			$langs->load("bills");
-			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
+			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/facture.php?action=create&socid=$societe->id\">".$langs->trans("AddBill")."</a>";
 		}
 	
 		if ($conf->deplacement->enabled) {
 			$langs->load("trips");
-			print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
+			print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/deplacement/fiche.php?socid=$societe->id&amp;action=create\">".$langs->trans("AddTrip")."</a>";
 		}
 	}
 	
@@ -371,7 +371,7 @@ if ($socid > 0)
 
 	if ($user->rights->societe->contact->creer)
 	{
-		print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
+		print "<a class=\"butAction\" href=\"".DOL_URL_ROOT.'/contact/fiche.php?socid='.$socid."&amp;action=create\">".$langs->trans("AddContact")."</a>";
 	}
 
     print '</div>';

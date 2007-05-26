@@ -146,12 +146,12 @@ if ($_GET["id"])
 
     if ($user->admin && $_GET["action"] <> 'edit')
     {
-        print '<a class="tabAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
     }
 
     if ($user->admin && $_GET["action"] == 'edit')
     {
-        print '<a class="tabAction" href="clicktodial.php?id='.$fuser->id.'">'.$langs->trans("Cancel").'</a>';
+        print '<a class="butAction" href="clicktodial.php?id='.$fuser->id.'">'.$langs->trans("Cancel").'</a>';
     }
 
     print "</div>\n";

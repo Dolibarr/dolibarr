@@ -164,7 +164,7 @@ print '<div class="tabsAction">';
 
 if ($soc->active == 0)
 {
-  print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=activer">Activer</a>';
+  print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=activer">Activer</a>';
 }
 
 

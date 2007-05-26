@@ -229,13 +229,13 @@ print "\n<div class=\"tabsAction\">\n";
 
 if ($_GET["action"] == '' && $service->statut == 0)
 {
-  print "<a class=\"tabAction\" href=\"fiche.php?action=active&amp;id=$service->id\">".$langs->trans("Active")."</a>";
+  print "<a class=\"butAction\" href=\"fiche.php?action=active&amp;id=$service->id\">".$langs->trans("Active")."</a>";
 }
 
 
 if ($_GET["action"] == '')
 {
-  print "<a class=\"tabAction\" href=\"fiche.php?action=edit&amp;id=$service->id\">".$langs->trans("Edit")."</a>";
+  print "<a class=\"butAction\" href=\"fiche.php?action=edit&amp;id=$service->id\">".$langs->trans("Edit")."</a>";
 }
 
 

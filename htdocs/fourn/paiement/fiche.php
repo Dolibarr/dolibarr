@@ -240,7 +240,7 @@ if ($user->societe_id == 0 && $paiement->statut == 0 && $_GET['action'] == '')
 {
 	if ($user->rights->fournisseur->facture->valider)
 	{
-		print '<a class="tabAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
+		print '<a class="butAction" href="fiche.php?id='.$_GET['id'].'&amp;action=valide">'.$langs->trans('Valid').'</a>';
 
 	}
 }
@@ -248,7 +248,7 @@ if ($user->societe_id == 0 && $allow_delete && $paiement->statut == 0 && $_GET['
 {
 	if ($user->rights->fournisseur->facture->supprimer)
 	{
-		print '<a class="butDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+		print '<a class="butActionDelete" href="fiche.php?id='.$_GET['id'].'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 
 	}
 }

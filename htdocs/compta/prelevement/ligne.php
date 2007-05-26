@@ -282,7 +282,7 @@ if ($_GET["id"])
   
       if ($bon->credite == 1 && $lipre->statut == 2)
 	{      
-	  print "<a class=\"tabAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("Emmetre un rejet")."</a>";
+	  print "<a class=\"butAction\" href=\"ligne.php?action=rejet&amp;id=$lipre->id\">".$langs->trans("Emmetre un rejet")."</a>";
 	}
     }
 

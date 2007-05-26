@@ -108,7 +108,7 @@ if ($result)
 	}
       else
 	{
-	  print '<a class="tabAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
+	  print '<a class="butAction" href="fiche.php?action=create&amp;fournid='.$row[1].'">Créer la commande</a>';
 	}
       print "</td><td>\n";
       print $fournisseur->email_commande;

@@ -368,7 +368,7 @@ if ($action == '')
    
     if ( $user->rights->produit->creer)
     {
-        print '<a class="tabAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
+        print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/sousproduits/fiche.php?action=edit&amp;id='.$product->id.'">'.$langs->trans("Edit").'</a>';
 
     }
 

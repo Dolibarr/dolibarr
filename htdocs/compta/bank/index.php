@@ -219,8 +219,8 @@ print "</table>";
  */
 print "<br><div class=\"tabsAction\">\n";
 if ($user->rights->banque->configurer) {
-	print '<a class="tabAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
-	print '<a class="tabAction" href="categ.php">'.$langs->trans("Categories").'</a>';
+	print '<a class="butAction" href="fiche.php?action=create">'.$langs->trans("NewFinancialAccount").'</a>';
+	print '<a class="butAction" href="categ.php">'.$langs->trans("Categories").'</a>';
 }
 print "</div>";
 

@@ -392,12 +392,12 @@ elseif ($_GET["id"] > 0)
 
         if ($fichinter->statut == 0)
         {
-            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
+            print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=edit">'.$langs->trans("Edit").'</a>';
         }
 
         if ($fichinter->statut == 0)
         {
-            print '<a class="tabAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
+            print '<a class="butAction" href="fiche.php?id='.$_GET["id"].'&action=valid">'.$langs->trans("Valid").'</a>';
         }
     }
     print '</div>';

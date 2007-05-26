@@ -607,17 +607,17 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 		if ($user->rights->societe->contact->creer)
 		{
-			print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=edit">'.$langs->trans('Edit').'</a>';
 		}
 
 		if (! $contact->user_id && $user->rights->user->user->creer && $contact->socid > 0)
 		{
-			print '<a class="tabAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+			print '<a class="butAction" href="fiche.php?id='.$contact->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 		}
 
 		if ($user->rights->societe->contact->supprimer)
 		{
-			print '<a class="butDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+			print '<a class="butActionDelete" href="fiche.php?id='.$contact->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
 		}
 
 		print "</div><br>";

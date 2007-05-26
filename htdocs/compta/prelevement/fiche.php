@@ -239,7 +239,7 @@ if ($_GET["action"] == '')
   
   if ($bon->credite == 0)
     {      
-      print "<a class=\"tabAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("Classer crédité")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=credite&amp;id=$bon->id\">".$langs->trans("Classer crédité")."</a>";
     }
 
 

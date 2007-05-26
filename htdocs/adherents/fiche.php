@@ -1026,7 +1026,7 @@ if ($rowid && $action != 'edit')
 		{
 			if (! $adh->user_id)
 			{
-				print '<a class="tabAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
+				print '<a class="butAction" href="fiche.php?rowid='.$adh->id.'&amp;action=create_user">'.$langs->trans("CreateDolibarrLogin").'</a>';
 			}
 		}
 	}
@@ -1044,10 +1044,10 @@ if ($rowid && $action != 'edit')
         $isinglasnost=$adh->is_in_glasnost();
         if ($isinglasnost == 1)
         {
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
+            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_glasnost\">Suppression dans Glasnost</a>\n";
         }
         if ($isinglasnost == 0) {
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
+            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_glasnost\">Ajout dans Glasnost</a>\n";
         }
         if ($isinglasnost == -1) {
             print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';
@@ -1060,11 +1060,11 @@ if ($rowid && $action != 'edit')
         $isinspip=$adh->is_in_spip();
         if ($isinspip == 1)
         {
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
+            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=del_spip\">Suppression dans Spip</a>\n";
         }
         if ($isinspip == 0)
         {
-            print "<a class=\"tabAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
+            print "<a class=\"butAction\" href=\"fiche.php?rowid=$adh->id&action=add_spip\">Ajout dans Spip</a>\n";
         }
         if ($isinspip == -1) {
             print '<br><font class="error">Failed to connect to SPIP: '.$adh->error.'</font>';

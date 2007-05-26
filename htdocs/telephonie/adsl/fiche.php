@@ -807,24 +807,24 @@ if ($_GET["action"] == '')
 
   if ( $user->rights->telephonie->adsl->requete && $ligne->statut == -1)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=ordertech&amp;id=$ligne->id\">".$langs->trans("Commander")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=ordertech&amp;id=$ligne->id\">".$langs->trans("Commander")."</a>";
     }
 
   if ( $user->rights->telephonie->adsl->requete && $ligne->statut == 1)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=cancelordertech&amp;id=$ligne->id\">".$langs->trans("Annuler la commande")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=cancelordertech&amp;id=$ligne->id\">".$langs->trans("Annuler la commande")."</a>";
 
     }
 
   if ( $user->rights->telephonie->adsl->requete && $ligne->statut == 5)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=annuleresilier&amp;id=$ligne->id\">".$langs->trans("Annuler la demande de résiliation")."</a>";
 
     }
 
   if ( $user->rights->telephonie->adsl->creer && $ligne->statut == -1)
     {
-      print "<a class=\"tabAction\" href=\"fiche.php?action=delete&amp;id=$ligne->id\">".$langs->trans("Delete")."</a>";
+      print "<a class=\"butAction\" href=\"fiche.php?action=delete&amp;id=$ligne->id\">".$langs->trans("Delete")."</a>";
 
     }
 }

@@ -250,25 +250,25 @@ if ($chid > 0)
 			// Editer
 			if ($cha->paye == 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Edit")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=edit\">".$langs->trans("Edit")."</a>";
 			}
 
 			// Emettre paiement
 			if ($cha->paye == 0 && round($resteapayer) > 0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
 			// Classer 'payé'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
-				print "<a class=\"tabAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
+				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
 			}
 
 			// Supprimer
 			if ($cha->paye == 0 && $totalpaye <=0 && $user->rights->tax->charges->supprimer)
 			{
-				print "<a class=\"butDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
+				print "<a class=\"butActionDelete\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=delete\">".$langs->trans("Delete")."</a>";
 			}
 
 			print "</div>";

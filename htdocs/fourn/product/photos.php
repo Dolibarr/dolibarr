@@ -201,7 +201,7 @@ if ($_GET["id"])
     {            
       if ( $user->rights->produit->creer && $product->isproduct() && $conf->upload)
 	{
-	  print '<a class="tabAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
+	  print '<a class="butAction" href="photos.php?action=ajout_photo&amp;id='.$product->id.'">';
 	  print $langs->trans("AddPhoto").'</a>';
 	}      
 }

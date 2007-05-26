@@ -199,7 +199,7 @@ if ($_GET["id"])
 
     if ($user->rights->contrat->creer && $_GET["action"] <> 'edit')
     {
-        print "<a class=\"tabAction\" href=\"note.php?id=".$contrat->id."&amp;action=edit\">".$langs->trans('Edit')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=".$contrat->id."&amp;action=edit\">".$langs->trans('Edit')."</a>";
     }
 
     print "</div>";

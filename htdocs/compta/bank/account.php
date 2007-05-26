@@ -611,12 +611,12 @@ if ($account > 0)
 
 		if ($user->rights->banque->modifier && $acct->type != 2 && $acct->rappro)  // Si non compte cash et rapprochable
 		{
-			print '<a class="tabAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
+			print '<a class="butAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
 		}
 
 		if ($user->rights->banque->modifier)
 		{
-			print '<a class="tabAction" href="account.php?action=addline&amp;account='.$acct->id.'&amp;page='.$page.'">'.$langs->trans("AddBankRecord").'</a>';
+			print '<a class="butAction" href="account.php?action=addline&amp;account='.$acct->id.'&amp;page='.$page.'">'.$langs->trans("AddBankRecord").'</a>';
 		}
 
 		print '</div>';
