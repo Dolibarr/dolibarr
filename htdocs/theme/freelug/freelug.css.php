@@ -49,7 +49,9 @@ body {
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/background.png' ?>);
 	text-decoration: none ;
 	color: #101010;
-	font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
+
 }
 
 a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
@@ -61,31 +63,31 @@ input
     font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
-    padding: 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 input.flat
 { 
     font: 12px helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
-    padding: 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 textarea  {
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
-    padding: 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 textarea.flat
 {
     font: 12px helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
-    padding: 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 select.flat
 {
@@ -106,22 +108,11 @@ select.flat
 	background-position: bottom;
 	background-repeat: repeat-x;
 }
-.button:focus  {
-	font: 11px arial,verdana,heletica, sans-serif;
-    padding: 0px 2px 0px 2px;
-    margin: 0px 0px 0px 0px; 
-	border-left: 1px solid #aaaaaa;
-	border-right: 1px solid #cccccc;
-	border-top: 1px solid #aaaaaa;
-	border-bottom: 1px solid #ffffff;
-	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/freelug/img/button_bg.xxx' ?>);
-	background-position: bottom;
-	background-repeat: repeat-x;
-}
+
 form
 {
-    padding: 0em 0em 0em 0em;
-    margin: 0em 0em 0em 0em;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
 }
 
 
@@ -153,7 +144,7 @@ div.vmenu
 
 div.fiche
 {
-    float: right top;
+	float: right top;
 <?php
 	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
 	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
@@ -602,17 +593,6 @@ a.leftmenu {
 
 
 
-div.leftmenu { 
-               background: #ccccb3; 
-               text-align: left;
-               border-right: 1px solid #000000;
-               border-bottom: 1px solid #000000;
-               margin: 1px 0em 0em 0em;
-               padding: 2px;
-               }
-
-
-
 /*
  *   Ok, Warning, Error
  */
@@ -906,6 +886,7 @@ color:#062342;
 vertical-align:middle;
 cursor: pointer;
 }
+
 /* ============================================================================== */
 /*  Afficher/cacher                                                               */
 /* ============================================================================== */

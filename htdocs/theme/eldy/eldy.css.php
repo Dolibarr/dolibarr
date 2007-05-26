@@ -105,6 +105,15 @@ select.flat
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
+.button:focus  {
+    font: 12px helvetica, verdana, arial, sans-serif;
+	color: #222244;
+	border: 0px;
+	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
+	background-position: bottom;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
 form
 {
     padding: 0em 0em 0em 0em;
@@ -1358,3 +1367,4 @@ div.menuFleche
 	position:relative;
 
 }
+

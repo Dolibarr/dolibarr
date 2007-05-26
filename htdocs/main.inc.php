@@ -549,7 +549,7 @@ function top_htmlhead($head, $title='', $disablejs=0)
 
     // Affiche meta
     print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-    print '<meta name="author" content="DevelopmentTeam">'."\n";
+    print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
     // Affiche title
     if ($title)
@@ -583,7 +583,7 @@ function top_htmlhead($head, $title='', $disablejs=0)
 	
     print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
     print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-    print '<link rel="author" title="'.$langs->trans("DevelopmentTeam").'" href="http://www.dolibarr.org">'."\n";
+    print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
     if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
     {
@@ -786,6 +786,17 @@ function left_menu($menu_array, $help_url='', $form_search='')
     print "\n";
     print "</div>\n";
     print "<!-- Fin left vertical menu -->\n";
+
+	// Cas special pour auguria. 
+	// On le met pour tous les autres styles sinon ko avec IE6 et resolution autre que 1024x768
+	if ($conf->theme != 'auguria')
+	{
+	    print "\n";
+	    print '</div>'."\n";
+	    print '<!-- fin de zone gauche, debut zon droite -->';
+		print '<div class="vmenuplusfiche">'."\n";
+	    print "\n";
+	}
     
     print '<!-- fiche -->'."\n";
     print '<div class="fiche">'."\n";
