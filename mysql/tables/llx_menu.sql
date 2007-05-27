@@ -31,7 +31,7 @@ CREATE TABLE `llx_menu` (
   `fk_menu` int(11) NOT NULL,					-- 0 or Id of mother menu line
   `order` tinyint(4) NOT NULL,					-- Order of entry
 
-  `url` varchar(255) NOT NULL,					-- Url to go
+  `url` varchar(255) NOT NULL,					-- Relative (or absolute) url to go
   `target` varchar(100) NULL,					-- Target of Url link
 
   `titre` varchar(255) NOT NULL,				-- Key for menu translation 
@@ -41,6 +41,6 @@ CREATE TABLE `llx_menu` (
 
   `leftmenu` varchar(100) NULL,					-- Condition to show or hide
   `right` varchar(255),							-- Condition to show enabled or disabled
-  `user` tinyint(4) NOT NULL default '0',		-- 0 if menu for all users
+  `user` tinyint(4) NOT NULL default '0',		-- 0 if menu for all users, 1 for external only, 2 for internal only
   PRIMARY KEY  (`rowid`)
 ) type=innodb;

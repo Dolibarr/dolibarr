@@ -325,7 +325,25 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("OSCommerce").'</a></td>';
         }
         
-        // Webcal
+        // Members
+        if ($conf->adherent->enabled)
+        {
+            $langs->load("members");
+        
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+        
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
+        }
+
+       // Webcal
         if ($conf->webcal->enabled)
         {
             $langs->load("other");
@@ -363,24 +381,6 @@ class MenuTop {
             }
 
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/mantis/mantis.php?mainmenu=mantis"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("BugTracker").'</a></td>';
-        }
-       
-        // Members
-        if ($conf->adherent->enabled)
-        {
-            $langs->load("members");
-        
-            $class="";
-            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "members")
-            {
-                $class='class="tmenu" id="sel"';
-            }
-            else
-            {
-                $class = 'class="tmenu"';
-            }
-        
-            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/adherents/index.php?mainmenu=members&amp;leftmenu="'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Members").'</a></td>';
         }
         
         print '</tr></table>';

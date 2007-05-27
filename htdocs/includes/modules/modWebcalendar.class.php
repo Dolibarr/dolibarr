@@ -74,11 +74,11 @@ class modWebcalendar extends DolibarrModules
 		// Data directories to create when module is enabled
 		$this->dirs = array();
 		
-		// Config pages
+		// Config pages. Put here list of php page names stored in admmin directory used to setup module
 		$this->config_page_url = array("webcalendar.php");
 		
 		// Dependencies
-		$this->depends = array();		// List of modules id that must be enabled
+		$this->depends = array();		// List of modules id that must be enabled if this module is enabled
 		$this->requiredby = array();	// List of modules id to disable if this one is disabled
 		
 		// Constants
@@ -86,22 +86,57 @@ class modWebcalendar extends DolibarrModules
 		
 		// Boxes
 		$this->boxes = array();			// List of boxes 
+		$r=0;
 		
+		// Add here list of default box name and php file stored in includes/boxes that
+		// contains class to show a box.
+		// Example:
+		//$this->boxes[$r][0] = "My box";
+        //$this->boxes[$r][1] = "mybox.php";
+    	//$r++;
+
 		// Permissions
 		$this->rights_class = 'webcal';	// Permission key
 		$this->rights = array();		// Permission array used by this module
-		// Example
+		
+		// Add here list of permission defined by an id, a label, a boolean and two constant strings.
+		// Example:
 		// $r++;
 		// $this->rights[$r][0] = 2000; 				// Permission id (must not be already used)
 		// $this->rights[$r][1] = 'Permision label';	// Permission label
 		// $this->rights[$r][3] = 1; 					// Permission by default for new user (0/1)
 		// $this->rights[$r][4] = 'level1';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
 		// $this->rights[$r][5] = 'level2';				// In php code, permission will be checked by test if ($user->rights->permkey->level1->level2)
+
+		$this->rights_class = 'webcal';	// Permission key
+		$this->rights = array();		// Permission array used by this module
+
+		// Main menu entries
+		$this->menus = array();			// List of menus to add
+		$r=0;
+
+		// Example:
+		// $r++;
+		// insert into `llx_menu` (
+		//  menu_handler			'all'				// Menu handler name (all to add with all menu handlers)
+		//  type					'top'				// Menu top or left
+		// `mainmenu`,				'webcal'			// Name family/module (home, companies, ...)
+		// `fk_menu`,				0					// 0 or Id of mother menu line
+		// `order`					10					// Order of entry
+		// `url`,					'/webcal/webcal.php?mainmenu=webcal&amp;leftmenu='	// Relative (or absolute) url to go
+		// `target`,				''					// Target of Url link
+		// `titre`,					'Calendar'			// Key for menu translation 
+		// `langs`,					other				// Lang file to load for translation
+		// `level`,					-1					// deprecated
+		// `leftmenu`,				''					// Condition to compare to $_REQUEST["leftmenu"] to show or hide menu entry
+		// `right`,					''					// Condition to show enabled or disabled menu entry
+		// `user`,					0					// 0 if menu for all users, 1 for external only, 2 for internal only
+
 	}
 
 	/**
      *		\brief      Function called when module is enabled.
-     *					Add constants, boxes and permissions into Dolibarr database.
+     *					The init function add previous constants, boxes and permissions into Dolibarr database.
      *					It also creates data directories.
      */
 	function init()

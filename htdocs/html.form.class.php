@@ -497,28 +497,55 @@ class Form
      */
     function select_menu($selected='',$htmlname,$dirmenu)
     {
-        global $langs;
+        global $langs,$conf;
     
         if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilité
-        
-        print '<select class="flat" name="'.$htmlname.'">';
+    
+		$menuarray=array();
         $handle=opendir($dirmenu);
         while (($file = readdir($handle))!==false)
         {
             if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
             {
                 $filelib=eregi_replace('\.php$','',$file);
+				$prefix='';
+				if (eregi('^eldy',$file)) $prefix='0';			// Recommanded
+				else if (eregi('^default',$file)) $prefix='2';	// Other
+				else if (eregi('^empty',$file)) $prefix='2';	// Other
+				else $prefix='1';								// Experimental
+				
                 if ($file == $selected)
                 {
-                    print '<option value="'.$file.'" selected="true">'.$filelib.'</option>';
+					$menuarray[$prefix.'_'.$file]='<option value="'.$file.'" selected="true">'.$filelib.'</option>';
                 }
                 else
                 {
-                    print '<option value="'.$file.'">'.$filelib.'</option>';
+                    $menuarray[$prefix.'_'.$file]='<option value="'.$file.'">'.$filelib.'</option>';
                 }
             }
         }
-        print '</select>';
+		ksort($menuarray);
+		
+		// Affichage liste deroulante des menus
+        print '<select class="flat" name="'.$htmlname.'">';
+        $oldprefix='';
+		foreach ($menuarray as $key => $val)
+		{
+			$tab=split('_',$key);
+			$newprefix=$tab[0];
+			if ($conf->browser->firefox && $newprefix != $oldprefix)
+			{
+				// Affiche titre
+				print '<option value="-1" disabled="disabled">';
+				if ($newprefix=='0') print '-- '.$langs->trans("VersionRecommanded").' --';
+				if ($newprefix=='1') print '-- '.$langs->trans("VersionExperimental").' --';
+				if ($newprefix=='2') print '-- '.$langs->trans("Other").' --';
+				print '</option>';
+				$oldprefix=$newprefix;
+			}
+			print $val."\n";
+		}
+		print '</select>';
     }
 
   /**
