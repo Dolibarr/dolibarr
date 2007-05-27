@@ -123,7 +123,7 @@ foreach($sortorder as $numero=>$name)
     $idperms="";
     $var=!$var;
     // Module
-    print "<tr $bc[$var]><td width=\"240\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
+    print "<tr $bc[$var]><td width=\"240\" nowrap=\"nowrap\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
     // Version
     print '<td>'.$modules[$numero]->getVersion().'</td>';
     // Id
