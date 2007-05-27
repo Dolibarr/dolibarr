@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -94,7 +94,9 @@ print '</table>';
 print '<br>';
 
 // conf.php file
-$configfileparameters=array('dolibarr_main_url_root',
+$configfileparameters=array(
+//							'separator',
+							'dolibarr_main_url_root',
 							'dolibarr_main_document_root',
 							'dolibarr_main_data_root',
 							'dolibarr_main_db_host',
@@ -103,13 +105,17 @@ $configfileparameters=array('dolibarr_main_url_root',
 							'dolibarr_main_db_pass',
 							'dolibarr_main_db_type',
 							'separator',
+							'character_set_client',
+							'separator',
 							'dolibarr_main_authentication',
 							'separator',
 							'dolibarr_smarty_libs_dir',
 							'dolibarr_smarty_compile',
 							'dolibarr_smarty_cache'
 						);
-$configfilelib=array($langs->trans("URLRoot"),
+$configfilelib=array(
+//					'separator',
+					$langs->trans("URLRoot"),
 					$langs->trans("DocumentRootServer"),
 					$langs->trans("DataRootServer"),
 					$langs->trans("DatabaseServer"),
@@ -117,6 +123,8 @@ $configfilelib=array($langs->trans("URLRoot"),
 					$langs->trans("Login"),
 					$langs->trans("Password"),
 					$langs->trans("DriverType"),
+					'separator',
+					$langs->trans("Charset"),
 					'separator',
 					$langs->trans("AuthenticationMode"),
 					'separator',
