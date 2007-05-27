@@ -259,7 +259,8 @@ class Form
 		  print '<option value="0">&nbsp;</option>';
 		}
 		else {
-		  if ($pays == '' || $pays != $obj->libelle_pays) {
+		  if ($pays == '' || $pays != $obj->libelle_pays)
+		  {
 		    // Affiche la rupture
 		    print '<option value="-1" disabled="disabled">----- '.$obj->libelle_pays." -----</option>\n";
 		    $pays=$obj->libelle_pays;   
