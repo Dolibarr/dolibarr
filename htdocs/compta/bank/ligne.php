@@ -31,7 +31,7 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->banque->modifier)
+if (!$user->rights->banque->modifier && !$user->rights->banque->consolidate)
   accessforbidden();
 
 $langs->load("banks");

@@ -559,20 +559,21 @@ if ($account > 0)
 	            }
 	            else
 	            {
-	                if ($user->rights->banque->modifier)
+                    print '<td align="center">';
+	                if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 	                {
-	                    print '<td align="center">';
 	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
 	                    print img_edit();
-	                    print '</a> &nbsp;';
+	                    print '</a>';
+					}
+					print '&nbsp;';
+	                if ($user->rights->banque->modifier)
+	                {
 	                    print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?action=delete&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'&amp;page='.$page.'">';
 	                    print img_delete();
-	                    print '</a></td>';
+	                    print '</a>';
 	                }
-	                else
-	                {
-	                    print "<td align=\"center\">&nbsp;</td>";
-	                }
+					print '</td>';
 	            }
 	    
 	            print "</tr>";
@@ -609,14 +610,25 @@ if ($account > 0)
 	{
 		print '<div class="tabsAction">';
 
-		if ($user->rights->banque->modifier && $acct->type != 2 && $acct->rappro)  // Si non compte cash et rapprochable
+		if ($acct->type != 2 && $acct->rappro)  // Si non compte cash et rapprochable
 		{
-			print '<a class="butAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
+			if ($user->rights->banque->consolidate)
+			{
+				print '<a class="butAction" href="rappro.php?account='.$acct->id.'">'.$langs->trans("Conciliate").'</a>';
+			}
+			else
+			{
+				print '<font class="butActionRefused">'.$langs->trans("Conciliate").'</font>';
+			}
 		}
 
 		if ($user->rights->banque->modifier)
 		{
 			print '<a class="butAction" href="account.php?action=addline&amp;account='.$acct->id.'&amp;page='.$page.'">'.$langs->trans("AddBankRecord").'</a>';
+		}
+		else
+		{
+			print '<font class="butActionRefused">'.$langs->trans("AddBankRecord").'</font>';
 		}
 
 		print '</div>';

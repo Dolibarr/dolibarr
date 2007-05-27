@@ -45,66 +45,73 @@ class modBanque extends DolibarrModules
     *   \brief      Constructeur. Definit les noms, constantes et boites
     *   \param      DB      handler d'accès base
     */
-  function modBanque($DB)
-  {
-    $this->db = $DB ;
-    $this->id = 'banque';   // Same value xxx than in file modXxx.class.php file
-    $this->numero = 85 ;
+	function modBanque($DB)
+	{
+	    $this->db = $DB ;
+	    $this->id = 'banque';   // Same value xxx than in file modXxx.class.php file
+	    $this->numero = 85 ;
 
-    $this->family = "financial";
-    $this->name = "Banque";
-    $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
+	    $this->family = "financial";
+	    $this->name = "Banque";
+	    $this->description = "Gestion des comptes financiers de type Comptes bancaires ou postaux";
 
-    $this->revision = explode(' ','$Revision$');
-    $this->version = $this->revision[1];
+	    $this->revision = explode(' ','$Revision$');
+	    $this->version = $this->revision[1];
 
-    $this->const_name = 'MAIN_MODULE_BANQUE';
-    $this->special = 0;
-    $this->picto='account';
+	    $this->const_name = 'MAIN_MODULE_BANQUE';
+	    $this->special = 0;
+	    $this->picto='account';
 
-    // Dépendances
-    $this->depends = array();
-    $this->requiredby = array("modComptabilite","modComptabiliteExpert");
-	$this->conflictwith = array();
-	$this->langfiles = array("banks");
-	
-    // Constantes
-    $this->const = array();
+	    // Dépendances
+	    $this->depends = array();
+	    $this->requiredby = array("modComptabilite","modComptabiliteExpert");
+		$this->conflictwith = array();
+		$this->langfiles = array("banks");
+		
+	    // Constantes
+	    $this->const = array();
 
-    $this->dirs = array();
+	    $this->dirs = array();
 
-    // Boites
-    $this->boxes = array();
+	    // Boites
+	    $this->boxes = array();
 
-    $this->boxes[0][0] = "Soldes Comptes Bancaires";
-    $this->boxes[0][1] = "box_comptes.php";
+	    $this->boxes[0][0] = "Soldes Comptes Bancaires";
+	    $this->boxes[0][1] = "box_comptes.php";
 
-    // Permissions
-    $this->rights = array();
-    $this->rights_class = 'banque';
-    $r=0;
-    
-    $r++;
-    $this->rights[$r][0] = 111; // id de la permission
-    $this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
-    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'lire';
+	    // Permissions
+	    $this->rights = array();
+	    $this->rights_class = 'banque';
+	    $r=0;
+	    
+	    $r++;
+	    $this->rights[$r][0] = 111; // id de la permission
+	    $this->rights[$r][1] = 'Lire les comptes bancaires'; // libelle de la permission
+	    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'lire';
 
-    $r++;
-    $this->rights[$r][0] = 112; // id de la permission
-    $this->rights[$r][1] = 'Créer modifier rapprocher transactions'; // libelle de la permission
-    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'modifier';
+	    $r++;
+	    $this->rights[$r][0] = 112; // id de la permission
+	    $this->rights[$r][1] = 'Créer/modifier/supprimer écriture bancaire'; // libelle de la permission
+	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'modifier';
 
-    $r++;
-    $this->rights[$r][0] = 113; // id de la permission
-    $this->rights[$r][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
-    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'configurer';
-  }
+	    $r++;
+	    $this->rights[$r][0] = 113; // id de la permission
+	    $this->rights[$r][1] = 'Configurer les comptes bancaires (créer, gérer catégories)'; // libelle de la permission
+	    $this->rights[$r][2] = 'a'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'configurer';
+
+	    $r++;
+	    $this->rights[$r][0] = 114; // id de la permission
+	    $this->rights[$r][1] = 'Rapprocher transactions'; // libelle de la permission
+	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'consolidate';
+	}
 
 
    /**

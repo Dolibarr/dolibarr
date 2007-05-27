@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,17 +30,18 @@
 require("./pre.inc.php");
 
 $langs->load("banks");
+$langs->load("bills");
 
 $user->getrights('compta');
 
-if (! $user->rights->banque->modifier) accessforbidden();
+if (! $user->rights->banque->consolidate) accessforbidden();
 
 
 
 /*
  * Action rapprochement
  */
-if ($_POST["action"] == 'rappro')
+if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
 {
 	// Definition, nettoyage parametres
     $valrappro=1;
@@ -232,6 +233,22 @@ if ($resql)
                 print '</a>';
                 $newline=0;
             }
+            elseif ($links[$key]['type']=='payment_supplier') {
+				print '<a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$links[$key]['url_id'].'">';
+				if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+				{
+					// Label générique car entre parenthèses. On l'affiche en le traduisant	
+					if ($reg[1]=='paiement') $reg[1]='Payment';
+					print img_object($langs->trans('ShowPayment'),'payment').' ';
+					print $langs->trans($reg[1]);
+				}
+				else
+				{    
+					print $links[$key]['label'];
+				}
+				print '</a>';
+                $newline=0;
+			}
             elseif ($links[$key]['type']=='company') {
                 print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                 print img_object($langs->trans('ShowCustomer'),'company').' ';

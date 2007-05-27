@@ -16,6 +16,10 @@ update llx_bank_url set type='payment_supplier' where (type='' or type is null) 
 alter table llx_bank_url modify `type` enum("?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc") NOT NULL;
 
 
+insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
+update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';
+
+
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
 
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
