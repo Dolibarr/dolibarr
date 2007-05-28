@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,15 +22,16 @@
  */
 
 /**
-        \file       htdocs/includes/modules/fichinter/mod_pacific.php
-		\ingroup    facture
+    \file       htdocs/includes/modules/fichinter/mod_pacific.php
+		\ingroup    fiche intervention
 		\brief      Fichier contenant la classe du modèle de numérotation de référence de fiche intervention Pacific
 		\version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/modules_fichinter.php");
 
-/**	    \class      mod_facture_terre
+/**
+    \class      mod_pacific
 		\brief      Classe du modèle de numérotation de référence de fiche intervention Pacific
 */
 
@@ -142,7 +143,7 @@ class mod_pacific extends ModeleNumRefFicheinter
         return $this->prefix."$yymm-$num";
     }
     
-    /**     \brief      Renvoie la référence de facture suivante non utilisée
+    /**     \brief      Renvoie la référence de fiche d'intervention suivante non utilisée
      *      \param      objsoc      Objet société
      *      \return     string      Texte descripif
      */

@@ -103,7 +103,7 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
 }
 
-// défini les constantes du modèle pluton
+// défini les constantes du modèle arctic
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"]);
 if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"]);

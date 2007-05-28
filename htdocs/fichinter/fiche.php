@@ -32,9 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
-if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php"))
+if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php"))
 {
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php");
+  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");
@@ -166,13 +166,13 @@ if ($_GET["action"] == 'create')
 		exit;
 	}
 
-	$fix = new Fichinter($db);
+	$ficheinter = new Fichinter($db);
 
-	$file = "mod_".$conf->global->FICHEINTER_ADDON.".php";
+	$obj = $conf->global->FICHEINTER_ADDON;
+	$file = $obj.".php";
 
-	$obj = "mod_".$conf->global->FICHEINTER_ADDON;
 	$modFicheinter = new $obj;
-	$numpr = $modFicheinter->getNextValue($societe);
+	$numpr = $modFicheinter->getNextValue($societe,$ficheinter);
 
 	print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
 
