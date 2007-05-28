@@ -216,7 +216,7 @@ if ($_GET["action"] == 'create')
 	print $htmls->selectyesno("vote",0,1);
 	print '</td></tr>';
 
-	print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
+	print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
 	print "<textarea name=\"comment\" wrap=\"soft\" cols=\"60\" rows=\"3\"></textarea></td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
@@ -277,7 +277,7 @@ if ($rowid > 0)
         print yn($adht->vote);
         print '</tr>';
         
-        print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
         print nl2br($adht->commentaire)."</td></tr>";
         
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';
@@ -347,7 +347,7 @@ if ($rowid > 0)
         print $htmls->selectyesno("vote",$adht->vote,1);
         print '</td></tr>';
         
-        print '<tr><td valign="top">'.$langs->trans("Comments").'</td><td>';
+        print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
         print "<textarea name=\"comment\" wrap=\"soft\" cols=\"90\" rows=\"3\">".$adht->commentaire."</textarea></td></tr>";
         
         print '<tr><td valign="top">'.$langs->trans("WelcomeEMail").'</td><td>';

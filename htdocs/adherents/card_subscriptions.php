@@ -60,10 +60,10 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
  * 	Actions
  */
 
-if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
+if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 {
     $langs->load("banks");
-	
+
 	$adh->id = $rowid;
     $result=$adh->fetch($rowid);
 
@@ -93,18 +93,22 @@ if ($_POST["action"] == 'cotisation' && ! $_POST["cancel"])
 
 	if ($adht->cotisation)
 	{
-		if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
-		{
-			if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-			if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-			if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
-			if ($errmsg) $action='addsubscription';
-		}
-	    if (! $_POST["cotisation"] > 0)
+	    if (! is_numeric($_POST["cotisation"]))
 	    {
+			// If field is '' or not a numeric value
 		    $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
 		    $action='addsubscription';
 	    }
+		else
+		{
+			if ($_POST["cotisation"] && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+			{
+				if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+				if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+				if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+				if ($errmsg) $action='addsubscription';
+			}
+		}
 	}
 	
     if ($action=='cotisation')
