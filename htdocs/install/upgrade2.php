@@ -775,6 +775,10 @@ function migrate_contracts_open($db,$langs,$conf)
 function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 {
 	global $bc;
+
+	print '<tr><td colspan="4">';
+	print '<br>';
+	print '</td></tr>';
 	
 	$error = 0;
     $nb=0;
