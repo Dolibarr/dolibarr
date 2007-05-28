@@ -91,11 +91,20 @@ function info()
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("PrefixCreditNoteDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
       
-      // On détermine un offset sur le compteur
-      $texte.= '<tr><td>Appliquer un offset sur le compteur</td>';
+      // On détermine un offset sur le compteur des factures
+      $texte.= '<tr><td>Appliquer un offset sur le compteur des factures</td>';
       $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="setOffset">';
-      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offset" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<input type="hidden" name="action" value="setOffsetInvoice">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offsetinvoice" value="'.$conf->global->FACTURE_NUM_DELTA.'"></td>';
+      $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
+      $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
+      $texte.= '</tr></form>';
+      
+      // On détermine un offset sur le compteur des avoirs
+      $texte.= '<tr><td>Appliquer un offset sur le compteur des avoirs</td>';
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="setOffsetCreditNote">';
+      $texte.= '<td align="right"><input type="text" class="flat" size="30" name="offsetcreditnote" value="'.$conf->global->AVOIR_NUM_DELTA.'"></td>';
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
@@ -196,7 +205,7 @@ function info()
           if ($row) $searchyy = substr($row[0],0,-$posindice);
         }
 
-        if ($conf->global->PROPALE_NUM_DELTA != '')
+        if ($conf->global->FACTURE_NUM_DELTA != '')
         {
         	//on vérifie si il y a une année précédente
           //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
@@ -226,10 +235,15 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($conf->global->FACTURE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
+        else if ($facture->type == 1 && $conf->global->FACTURE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;
+        }
+        else if ($facture->type == 2 && $conf->global->AVOIR_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
+        {
+        	// on applique le delta une seule fois
+        	$max=$conf->global->AVOIR_NUM_DELTA?$conf->global->AVOIR_NUM_DELTA-1:0;
         }
         else
         {

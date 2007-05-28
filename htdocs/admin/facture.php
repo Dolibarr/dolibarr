@@ -172,7 +172,8 @@ if ($_GET["action"] == 'delete')
 if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FACTURE_NUM_MATRICE",$_POST["matrice"]);
 if ($_POST["action"] == 'updatePrefixFacture') dolibarr_set_const($db, "FACTURE_NUM_PREFIX",$_POST["prefixfacture"]);
 if ($_POST["action"] == 'updatePrefixAvoir') dolibarr_set_const($db, "AVOIR_NUM_PREFIX",$_POST["prefixavoir"]);
-if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setOffsetInvoice') dolibarr_set_const($db, "FACTURE_NUM_DELTA",$_POST["offsetinvoice"]);
+if ($_POST["action"] == 'setOffsetCreditNote') dolibarr_set_const($db, "AVOIR_NUM_DELTA",$_POST["offsetcreditnote"]);
 if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
 if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FACTURE_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
 if ($_POST["action"] == 'setNumWithInvoice') dolibarr_set_const($db, "AVOIR_NUM_WITH_INVOICE",$_POST["numwithinvoice"]);
