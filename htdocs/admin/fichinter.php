@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -30,6 +31,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT.'/fichinter/fichinter.class.php');
 
 $langs->load("admin");
 $langs->load("bills");
@@ -101,6 +103,12 @@ if ($_GET["action"] == 'setmod')
 	dolibarr_set_const($db, "FICHEINTER_ADDON",$_GET["value"]);
 }
 
+// défini les constantes du modèle pluton
+if ($_POST["action"] == 'updateMatrice') dolibarr_set_const($db, "FICHEINTER_NUM_MATRICE",$_POST["matrice"]);
+if ($_POST["action"] == 'updatePrefix') dolibarr_set_const($db, "FICHEINTER_NUM_PREFIX",$_POST["prefix"]);
+if ($_POST["action"] == 'setOffset') dolibarr_set_const($db, "FICHEINTER_NUM_DELTA",$_POST["offset"]);
+if ($_POST["action"] == 'setFiscalMonth') dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonth"]);
+if ($_POST["action"] == 'setNumRestart') dolibarr_set_const($db, "FICHEINTER_NUM_RESTART_BEGIN_YEAR",$_POST["numrestart"]);
 
 
 /*
@@ -154,19 +162,21 @@ if ($handle)
             print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
 
             print '<td align="center">';
-            if ("mod_".$conf->global->FICHEINTER_ADDON == $file)
+            if ($conf->global->FICHEINTER_ADDON == $file)
             {
                 print img_tick($langs->trans("Activated"));
             }
             else
             {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Activate").'</a>';
+                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
             }
             print '</td>';
 
-			// Info
-			$htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc);
+			    $ficheinter=new Fichinter($db);
+			    
+			    // Info
+			    $htmltooltip='';
+	        $nextval=$module->getNextValue($mysoc,$ficheinter);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
 	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
