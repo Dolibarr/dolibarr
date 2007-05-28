@@ -43,7 +43,13 @@ $charset="ISO-8859-1";
 if (file_exists($conffile))
 {
 	include_once($conffile);	// Fichier conf chargé
+
 	$charset=$character_set_client;
+	// Remove last / or \ on directories or url value
+	if (! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
+	if (! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
+	if (! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
+	
 	if ($dolibarr_main_document_root)
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
