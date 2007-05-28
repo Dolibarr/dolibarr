@@ -6,6 +6,7 @@ ProjectsArea=Projects area
 NewProject=New project
 AddProject=Add project
 DeleteAProject=Supprimer un projet
+OfficerProject=Officer project
 ConfirmDeleteAProject=Are you sure you want to delete this project ?
 LastProjects=Last %s projects
 AllProjects=All projects

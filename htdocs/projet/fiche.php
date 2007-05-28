@@ -68,9 +68,10 @@ if ($projetid && !$user->rights->commercial->client->voir)
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
 	$pro = new Project($db);
-	$pro->socid = $_GET["socid"];
-	$pro->ref = $_POST["ref"];
-	$pro->title = $_POST["title"];
+	$pro->socid           = $_GET["socid"];
+	$pro->ref             = $_POST["ref"];
+	$pro->title           = $_POST["title"];
+	$pro->user_resp_id    = $_POST["officer_project"];
 	$result = $pro->create($user);
 
 	if ($result > 0)
@@ -92,9 +93,10 @@ if ($_POST["action"] == 'update' && $user->rights->projet->creer)
 		if (!(empty($_POST["id"]) || empty($_POST["ref"]) || empty($_POST["title"])))
 		{
 			$projet = new Project($db);
-			$projet->id = $_POST["id"];
-			$projet->ref = $_POST["ref"];
-			$projet->title = $_POST["title"];
+			$projet->id           = $_POST["id"];
+			$projet->ref          = $_POST["ref"];
+			$projet->title        = $_POST["title"];
+			$projet->user_resp_id = $_POST["officer_project"];
 			$projet->update($user);
 
 			$_GET["id"]=$projet->id;  // On retourne sur la fiche projet
@@ -129,6 +131,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes" && $user-
 
 llxHeader("",$langs->trans("Project"),"Projet");
 
+$html = new Form($db);
 
 if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 {
@@ -147,13 +150,20 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	// Label
   print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" type="text" name="title"></td></tr>';
 
+  // Client
   print '<tr><td>'.$langs->trans("Company").'</td><td>';
   $societe = new Societe($db);
   $societe->fetch($_GET["socid"]); 
   print $societe->getNomUrl(1);
   print '</td></tr>';
 
+  // Auteur du projet
   print '<tr><td>'.$langs->trans("Author").'</td><td>'.$user->fullname.'</td></tr>';
+  
+  // Responsable du projet
+  print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+	$html->select_users($projet->user_resp_id,'officer_project',1);
+	print '</td></tr>';
 
   print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Create").'"></td></tr>';
   print '</table>';
@@ -173,11 +183,9 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	$head=project_prepare_head($projet);
 	dolibarr_fiche_head($head, 'project', $langs->trans("Project"));
 
-
 	if ($_GET["action"] == 'delete')
 	{
-		$htmls = new Form($db);
-		$htmls->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
+		$html->form_confirm("fiche.php?id=".$_GET["id"],$langs->trans("DeleteAProject"),$langs->trans("ConfirmDeleteAProject"),"confirm_delete");
 		print "<br>";
 	}
 
@@ -195,19 +203,27 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input size="30" name="title" value="'.$projet->title.'"></td></tr>';
 
+		// Client
 		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		
+		// Responsable du projet
+		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>';
+		$html->select_users($projet->user_resp_id,'officer_project',1);
+		print '</td></tr>';
+		
 		print '<tr><td align="center" colspan="2"><input name="update" class="button" type="submit" value="'.$langs->trans("Modify").'"> &nbsp; <input type="submit" class="button" name="cancel" Value="'.$langs->trans("Cancel").'"></td></tr>';
 		print '</table>';
 		print '</form>';
 	}
 	else
 	{
+		$projet->fetch_user($projet->user_resp_id);
+		
 		print '<table class="border" width="100%">';
-
 		print '<tr><td>'.$langs->trans("Ref").'</td><td>'.$projet->ref.'</td></tr>';
 		print '<tr><td>'.$langs->trans("Label").'</td><td>'.$projet->title.'</td></tr>';
-
 		print '<tr><td>'.$langs->trans("Company").'</td><td>'.$projet->societe->getNomUrl(1).'</td></tr>';
+		print '<tr><td>'.$langs->trans("OfficerProject").'</td><td>'.$projet->user->fullname.'</td></tr>';
 		print '</table>';
 	}
 

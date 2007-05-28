@@ -27,17 +27,20 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
 /**
 		\class      Project
 		\brief      Classe permettant la gestion des projets
 */
-class Project
+class Project extends CommonObject
 {
 	var $id;
 	var $db;
 	var $ref;
 	var $title;
 	var $socid;
+	var $user_resp_id;
 
 	/**
 	*    \brief  Constructeur de la classe
@@ -58,8 +61,9 @@ class Project
 	{
 		if (trim($this->ref))
 		{
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, dateo) ";
-			$sql .= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."', $this->socid, ".$user->id.",now()) ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet (ref, title, fk_soc, fk_user_creat, fk_user_resp, dateo) ";
+			$sql.= " VALUES ('".addslashes($this->ref)."', '".addslashes($this->title)."'";
+			$sql.= ", ".$this->socid.", ".$user->id.", ".$this->user_resp_id.", now()) ;";
 
 			if ($this->db->query($sql) )
 			{
@@ -88,9 +92,10 @@ class Project
 		if (strlen(trim($this->ref)) > 0)
 		{
 			$sql = "UPDATE ".MAIN_DB_PREFIX."projet";
-			$sql .= " SET ref='$this->ref'";
-			$sql .= " , title = '$this->title'";
-			$sql .= " WHERE rowid = ".$this->id;
+			$sql.= " SET ref='".$this->ref."'";
+			$sql.= ", title = '".$this->title."'";
+			$sql.= ", fk_user_resp = ".$this->user_resp_id;
+			$sql.= " WHERE rowid = ".$this->id;
 
 			if ($this->db->query($sql) )
 			{
@@ -119,8 +124,9 @@ class Project
 	function fetch($rowid)
 	{
 
-		$sql = "SELECT title, ref, fk_soc FROM ".MAIN_DB_PREFIX."projet";
-		$sql .= " WHERE rowid=".$rowid;
+		$sql = "SELECT title, ref, fk_soc, fk_user_creat, fk_user_resp, fk_statut, note";
+		$sql.= " FROM ".MAIN_DB_PREFIX."projet";
+		$sql.= " WHERE rowid=".$rowid;
 
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -129,11 +135,15 @@ class Project
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $rowid;
-				$this->ref = $obj->ref;
-				$this->title = $obj->title;
-				$this->titre = $obj->title;
-				$this->societe->id = $obj->fk_soc;
+				$this->id             = $rowid;
+				$this->ref            = $obj->ref;
+				$this->title          = $obj->title;
+				$this->titre          = $obj->title;
+				$this->note           = $obj->note;
+				$this->societe->id    = $obj->fk_soc;
+				$this->user_author_id = $obj->fk_user_creat;
+				$this->user_resp_id   = $obj->fk_user_resp;
+				$this->statut         = $obj->fk_statut;
 
 				$this->db->free($resql);
 
