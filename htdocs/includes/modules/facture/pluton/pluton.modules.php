@@ -205,7 +205,7 @@ function info()
           if ($row) $searchyy = substr($row[0],0,-$posindice);
         }
 
-        if ($conf->global->FACTURE_NUM_DELTA != '')
+        if ($conf->global->FACTURE_NUM_DELTA || $conf->global->AVOIR_NUM_DELTA)
         {
         	//on vérifie si il y a une année précédente
           //pour éviter que le delta soit appliqué de nouveau sur la nouvelle année
@@ -235,7 +235,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($facture->type == 1 && $conf->global->FACTURE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
+        else if ($facture->type < 2 && $conf->global->FACTURE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;
@@ -249,7 +249,7 @@ function info()
         {
         	$max=0;
         }
-        
+
         // On replace le prefix de l'avoir
         if ($conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
         {
