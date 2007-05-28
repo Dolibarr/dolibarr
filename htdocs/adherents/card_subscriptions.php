@@ -253,6 +253,7 @@ print '<td valign="top" width="50%">';
 */
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
 $sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank,";
+$sql.= " b.rowid as bid,";
 $sql.= " ba.rowid as baid, ba.label, ba.bank";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank = b.rowid";
@@ -294,7 +295,7 @@ while ($i < $num)
 	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 	{
 		print '<td align="right">';
-		if ($objp->fk_bank) 
+		if ($objp->bid) 
 		{
 			$accountstatic->label=$objp->label;
 			$accountstatic->id=$objp->baid;

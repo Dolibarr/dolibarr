@@ -213,7 +213,7 @@ class Account
 		// Verififcation parametres
 		if (! $this->rowid)
 		{
-			$this->error="Account::addline rowid not defined";
+			$this->error="Account::addline this->rowid not defined";
 			return -1;
 		}
 
@@ -462,7 +462,6 @@ class Account
      */
     function fetch($id)
     {
-        $this->id = $id;
         $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
         $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
         $sql.= " domiciliation, proprio, adresse_proprio,";
@@ -471,15 +470,17 @@ class Account
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
         $sql.= " WHERE rowid  = ".$id;
 
+		dolibarr_syslog("Account::fetch sql=".$sql);
         $result = $this->db->query($sql);
-
         if ($result)
         {
             if ($this->db->num_rows($result))
             {
                 $obj = $this->db->fetch_object($result);
 
-                $this->ref           = $obj->ref;
+				$this->id            = $obj->rowid;		// deprecated
+				$this->rowid         = $obj->rowid;
+				$this->ref           = $obj->ref;
                 $this->label         = $obj->label;
                 $this->type          = $obj->courant;
                 $this->courant       = $obj->courant;
@@ -504,12 +505,18 @@ class Account
                 $this->min_allowed    = $obj->min_allowed;
                 $this->min_desired    = $obj->min_desired;
                 $this->comment        = $obj->comment;
+				return 1;
             }
+			else
+			{
+				return 0;
+			}
             $this->db->free($result);
         }
         else
         {
             dolibarr_print_error($this->db);
+			return -1;
         }
     }
 

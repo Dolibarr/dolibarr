@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -36,6 +36,7 @@
 */
 
 require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
 
 /**
@@ -946,15 +947,17 @@ class Adherent
 		
         $this->db->begin();
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation)";
-        $sql .= " VALUES (".$this->id.", now(), ".$this->db->idate($date).", ".$montant.")";
+		// Create subscription
+		$cotisation=new Cotisation($this->db);
+		$cotisation->fk_adherent=$this->id;
+		$cotisation->dateh=$date;
+		$cotisation->amount=$montant;
+		$cotisation->note=$label;
 
-        dolibarr_syslog("Adherent::cotisation sql=".$sql);
-        $resql=$this->db->query($sql);
-        if ($resql)
+		$rowid=$cotisation->create($user);
+		
+        if ($rowid > 0)
         {
-            $rowid=$this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
-
 			// datefin = date + 1 an - 1 jour
             $datefin = dolibarr_time_plus_duree($date,1,'y');
             $datefin = dolibarr_time_plus_duree($datefin,-1,'d');
@@ -962,7 +965,7 @@ class Adherent
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
             $sql.= " WHERE rowid =". $this->id;
             
-            dolibarr_syslog("Adherent::cotisation sql=".$sql);
+            dolibarr_syslog("Adherent::cotisation update member sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {
@@ -986,7 +989,9 @@ class Adherent
 	                    if ($inserturlid > 0)
 	                    {
 	                        // Met a jour la table cotisation
-	                        $sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
+	                        
+							
+							$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
 	                        $resql = $this->db->query($sql);
 	                        if (! $resql)
 	                        {
@@ -1037,8 +1042,7 @@ class Adherent
         }
         else
         {
-            $this->error=$this->db->error();
-            dolibarr_syslog("Adherent::cotisation error ".$this->error);
+            $this->error=$cotisation->error;
             $this->db->rollback();
             return -1;
         }

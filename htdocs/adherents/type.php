@@ -33,6 +33,7 @@ require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $langs->load("members");
+
 $user->getrights('adherent');
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
@@ -41,10 +42,8 @@ $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 /*
 *	Actions
 */
-if ($_POST["action"] == 'add') 
+if ($user->rights->adherent->configurer && $_POST["action"] == 'add') 
 {
-	if (! $user->rights->adherent->configurer) accessforbidden();
-
     if ($_POST["button"] != $langs->trans("Cancel"))
     {
         $adht = new AdherentType($db);
@@ -77,10 +76,8 @@ if ($_POST["action"] == 'add')
     }
 }
 
-if ($_POST["action"] == 'update') 
+if ($user->rights->adherent->configurer && $_POST["action"] == 'update') 
 {
-	if (! $user->rights->adherent->creer) accessforbidden();
-
     if ($_POST["button"] != $langs->trans("Cancel"))
     {
         $adht = new AdherentType($db);
@@ -98,7 +95,7 @@ if ($_POST["action"] == 'update')
     }	  
 }
 
-if ($_GET["action"] == 'delete')
+if ($user->rights->adherent->configurer && $_GET["action"] == 'delete')
 {
 	$adht = new AdherentType($db);
 	$adht->delete($rowid);
@@ -106,7 +103,7 @@ if ($_GET["action"] == 'delete')
 	exit;
 }
 
-if ($_GET["action"] == 'commentaire')
+if ($user->rights->adherent->configurer && $_GET["action"] == 'commentaire')
 {
 	$don = new Don($db);
 	$don->set_commentaire($rowid,$_POST["commentaire"]);
