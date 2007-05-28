@@ -600,42 +600,41 @@ class User
     // Supprime droits
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user_rights WHERE fk_user = ".$this->id;
     if ($this->db->query($sql))
-      {
+    {
 	
-      }
+    }
     
     // Si contact, supprime lien
     if ($this->contact_id)
-      {
-	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
-	if ($this->db->query($sql))
-	  {
+    {
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
+	    if ($this->db->query($sql))
+	    {
 	    
-	  }
-      }
+	    }
+    }
     
     // Supprime utilisateur
     $sql = "DELETE FROM ".MAIN_DB_PREFIX."user WHERE rowid = $this->id";
     $result = $this->db->query($sql);
     
     if ($result)
-      {
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
-	if ($result < 0) $error++;
-	// Fin appel triggers
+    {
+    	// Appel des triggers
+	    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	    $interface=new Interfaces($this->db);
+	    $result=$interface->run_triggers('USER_DELETE',$this,$user,$lang,$conf);
+	    if ($result < 0) $error++;
+	    // Fin appel triggers
 	
-	$this->db->commit();
-	return 1;
-      }
+	    $this->db->commit();
+	    return 1;
+    }
     else
-      {
-	$this->db->rollback();
-	dolibarr_print_error($this->db);
-	return -1;
-      }
+    {
+    	$this->db->rollback();
+	    return -1;
+    }
   }
   
   /**

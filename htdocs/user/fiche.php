@@ -111,9 +111,16 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
     {
         $edituser = new User($db, $_GET["id"]);
         $edituser->id=$_GET["id"];
-        $edituser->delete();
-        Header("Location: index.php");
-        exit;
+        $result = $edituser->delete();
+        if ($result < 0)
+        {
+        	$message='<div class="error">'.$langs->trans("UserCannotBeDelete").'</div>';
+        }
+        else
+        {
+        	Header("Location: index.php");
+          exit;
+        }
     }
 }
 
