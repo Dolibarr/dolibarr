@@ -198,40 +198,30 @@ if ($_GET["action"] == 'create')
 	{
 		// Projet associe
 		$langs->load("project");
-		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td><select name="projetidp">';
-		print '<option value="0"></option>';
 
-		$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc = '.$_GET["socid"];
-
-		$resql=$db->query($sql);
-		if ($resql)
+		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+		
+    $numprojet = $societe->has_projects();
+    
+		if (!$numprojet)
 		{
-			$i = 0 ;
-			$numprojet = $db->num_rows($resql);
-			while ($i < $numprojet)
-			{
-				$projet = $db->fetch_object($resql);
-				print "<option value=\"$projet->rowid\">$projet->title</option>";
-				$i++;
-			}
-			$db->free($resql);
-		}
-		print '</select>';
-
-		if ($numprojet==0)
-		{
-			print 'Cette société n\'a pas de projet.&nbsp;';
+			print '<table class="nobordernopadding" width="100%">';
+			print '<tr><td width="130">'.$langs->trans("NoProject").'</td>';
 
 			$user->getrights("projet");
 
 			if ($user->rights->projet->creer)
 			{
-				print '<a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$socid.'&action=create>'.$langs->trans("Add").'</a>';
+				print '<td><a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans("Add").'</a></td>';
 			}
+			print '</tr></table>';
 		}
-		
+		else
+		{
+			$html->select_projects($societe->id,'','projetidp');
+		}
+		print '</td></tr>';
 	}
-	print '</td></tr>';
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
 	print "<td>";
@@ -295,12 +285,33 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"] > 0)
   print '<tr><td>'.$langs->trans("Duration")." (".$langs->trans("days").')</td><td><input name="duree" value="'.$fichinter->duree.'"></td></tr>';
   
   if ($conf->projet->enabled)
-    {
-      // Projet associé
-      print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
-      $html->select_projects($fichinter->societe_id,$fichinter->projet_id,"projetidp");
-      print '</td></tr>';
-    }
+  {
+  	$societe=new Societe($db);
+  	$societe->fetch($fichinter->societe_id);
+  	$numprojet = $societe->has_projects();
+  	
+  	// Projet associé
+    print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+  	
+  	if (!$numprojet)
+  	{
+  		print '<table class="nobordernopadding" width="100%">';
+			print '<tr><td width="130">'.$langs->trans("NoProject").'</td>';
+
+			$user->getrights("projet");
+
+			if ($user->rights->projet->creer)
+			{
+				print '<td><a href='.DOL_URL_ROOT.'/projet/fiche.php?socid='.$fichinter->societe_id.'&action=create>'.$langs->trans("Add").'</a></td>';
+			}
+			print '</tr></table>';
+		}
+		else
+		{
+			$html->select_projects($fichinter->societe_id,$fichinter->projet_id,"projetidp");
+		}
+		print '</td></tr>';
+  }
 
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
@@ -365,7 +376,11 @@ elseif ($_GET["id"] > 0)
     if ($conf->projet->enabled)
     {
         $fichinter->fetch_projet();
-        print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>'.$fichinter->projet->title.'</td></tr>';
+        print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
+        print '<a href="'.DOL_URL_ROOT.'/projet/fiche.php?id='.$fichinter->projet->id.'" title="'.$langs->trans('ShowProject').'">';
+				print $fichinter->projet->title;
+				print '</a>';
+				print '</td></tr>';
     }
     
     // Statut
