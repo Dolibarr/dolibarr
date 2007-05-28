@@ -464,9 +464,9 @@ class Propal extends CommonObject
     {
     	global $langs,$conf,$mysoc;
     	
-    	$soc = new Societe($this->db);
+    	// on vérifie si la ref n'est pas utilisée
+		  $soc = new Societe($this->db);
 	    $soc->fetch($this->socid);
-	    
 	    $this->verifyNumRef($soc);
 
       // Nettoyage/définition paramètres
@@ -1859,11 +1859,16 @@ class Propal extends CommonObject
      */
 	function create_from()
 	{
-        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+		
+		// on vérifie si la ref n'est pas utilisée
+		$soc = new Societe($this->db);
+	  $soc->fetch($this->socid);
+	  $this->verifyNumRef($soc);
 
 		dolibarr_syslog("Propal.class::create_from ref=".$this->ref);
 
-        $this->db->begin();
+    $this->db->begin();
 
 		$this->fetch_client();
 
