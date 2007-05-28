@@ -18,6 +18,7 @@ Mytasks=My tasks
 Tasks=Tasks
 Task=Task
 NewTask=New task
+AddDuration=Add duration
 Activity=Activity
 MyActivity=My activity
 DurationEffective=Effective duration
