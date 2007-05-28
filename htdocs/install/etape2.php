@@ -41,7 +41,7 @@ $ok = 0;
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
-@set_time_limit(120);         
+@set_time_limit(180);         
 error_reporting($err);
 
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
