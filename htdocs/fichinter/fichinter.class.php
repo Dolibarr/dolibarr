@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -78,9 +79,16 @@ class Fichinter extends CommonObject
      */
     function create()
     {
-        if (! is_numeric($this->duree)) { $this->duree = 0; }
+    	if (! is_numeric($this->duree)) { $this->duree = 0; }
 
-		$this->db->begin();
+		  // on vérifie si la ref n'est pas utilisée
+		  $soc = new Societe($this->db);
+	    $soc->fetch($this->socid);
+	    $this->verifyNumRef($soc);
+	    
+	    dolibarr_syslog("Fichinter.class::create ref=".$this->ref);
+		  
+		  $this->db->begin();
 		
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree";
         if ($this->projet_id) {
@@ -281,6 +289,70 @@ class Fichinter extends CommonObject
 				return 0;
 			}
 		}
-	}	
+	}
+	
+ /**
+   *      \brief      Vérifie si la ref n'est pas déjà utilisée
+   *      \param	    soc  		            objet societe
+   */
+  function verifyNumRef($soc)
+  {
+  	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."fichinter";
+  	$sql.= " WHERE ref = '".$this->ref."'";
+
+  	$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			if ($num > 0)
+			{
+				$this->ref = $this->getNextNumRef($soc);
+			}
+		}
+	}
+  	
+	
+ /**
+   *      \brief      Renvoie la référence de fiche intervention suivante non utilisée en fonction du module
+   *                  de numérotation actif défini dans FICHEINTER_ADDON
+   *      \param	    soc  		            objet societe
+   *      \return     string              reference libre pour la fiche intervention
+   */
+  function getNextNumRef($soc)
+  {
+    global $db, $langs;
+    $langs->load("interventions");
+
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
+
+    if (defined("FICHEINTER_ADDON") && FICHEINTER_ADDON)
+    {
+    	$file = FICHEINTER_ADDON.".php";
+
+	    // Chargement de la classe de numérotation
+	    $classname = FICHEINTER_ADDON;
+	    require_once($dir.$file);
+
+	    $obj = new $classname();
+
+	    $numref = "";
+	    $numref = $obj->getNumRef($soc,$this);
+
+	    if ( $numref != "")
+	    {
+	      return $numref;
+	    }
+	    else
+	    {
+	      dolibarr_print_error($db,"Fichinter::getNextNumRef ".$obj->error);
+	      return "";
+	    }
+     }
+     else
+     {
+	     print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
+	     return "";
+     }
+  }
 }  
 ?>
