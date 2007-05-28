@@ -226,7 +226,7 @@ function info()
                 $max = $row[0];
             }
         }
-        else if ($conf->global->PROPALE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
+        else if ($conf->global->FACTURE_NUM_DELTA != '' && !eregi('^'.$this->searchLastWithPreviousYear.'',$previousyy))
         {
         	// on applique le delta une seule fois
         	$max=$conf->global->FACTURE_NUM_DELTA?$conf->global->FACTURE_NUM_DELTA-1:0;
