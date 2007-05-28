@@ -91,7 +91,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	    $action='addsubscription';
 	}
 
-	if ($adht->cotisation)
+	if ($adht->cotisation)	// Type adherent soumis a cotisation
 	{
 	    if (! is_numeric($_POST["cotisation"]))
 	    {
@@ -101,11 +101,18 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	    }
 		else
 		{
-			if ($_POST["cotisation"] && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
+			if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 			{
-				if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
-				if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
-				if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+				if ($_POST["cotisation"])
+				{
+					if (! $_POST["label"])     $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+					if (! $_POST["operation"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("PaymentMode"));
+					if (! $_POST["accountid"]) $errmsg=$langs->trans("ErrorFieldRequired",$langs->transnoentities("FinancialAccount"));
+				}
+				else
+				{
+					if ($_POST["accountid"])   $errmsg=$langs->trans("ErrorDoNotProvideAccountsIfNullAmount");
+				}
 				if ($errmsg) $action='addsubscription';
 			}
 		}
