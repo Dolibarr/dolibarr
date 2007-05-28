@@ -103,15 +103,15 @@ if ($_GET["id"] > 0)
       print '<input type="hidden" name="action" value="addtime">';
       print '<table class="noborder" width="100%">';
       print '<tr class="liste_titre">';
-      print '<td>'.$langs->trans("Task").'</td>';
-      print '<td align="right">'.$langs->trans("DurationEffective").'</td>';
-      print '<td colspan="2">'.$langs->trans("AddDuration").'</td>';
+      print '<td>'.$langs->trans("Date").'</td>';
+      print '<td>'.$langs->trans("DurationEffective").'</td>';
+      print '<td colspan="2">'.$langs->trans("User").'</td>';
       print "</tr>\n";      
       
       foreach ($tasks as $task_time)
 	{
 	  print "<tr $bc[$var]>";
-	  print '<td>'.$task_time[0].'</td>';
+	  print '<td>'.dolibarr_print_date($task_time[0]).'</td>';
 	  print '<td>'.$task_time[1].'</td>';
 	  print '<td>'.$task_time[3].'</td>';
 	  print "</tr>\n";
