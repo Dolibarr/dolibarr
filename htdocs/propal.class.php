@@ -463,15 +463,20 @@ class Propal extends CommonObject
     function create($user='')
     {
     	global $langs,$conf,$mysoc;
-        
-        // Nettoyage/définition paramètres
-        $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
+    	
+    	$soc = new Societe($this->db);
+	    $soc->fetch($this->socid);
+	    
+	    $this->verifyNumRef($soc);
 
-		dolibarr_syslog("Propal.class::create ref=".$this->ref);
+      // Nettoyage/définition paramètres
+      $this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 
-        $this->db->begin();
+		  dolibarr_syslog("Propal.class::create ref=".$this->ref);
 
-		$this->fetch_client();
+      $this->db->begin();
+
+		  $this->fetch_client();
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
@@ -2053,6 +2058,70 @@ class Propal extends CommonObject
 			return -1;
 		}
 	}
+	
+ /**
+   *      \brief      Vérifie si la ref n'est pas déjà utilisée
+   *      \param	    soc  		            objet societe
+   */
+  function verifyNumRef($soc)
+  {
+  	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."propal";
+  	$sql.= " WHERE ref = '".$this->ref."'";
+
+  	$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			if ($num > 0)
+			{
+				$this->ref = $this->getNextNumRef($soc);
+			}
+		}
+	}
+  	
+	
+ /**
+   *      \brief      Renvoie la référence de propale suivante non utilisée en fonction du module
+   *                  de numérotation actif défini dans PROPALE_ADDON
+   *      \param	    soc  		            objet societe
+   *      \return     string              reference libre pour la propale
+   */
+  function getNextNumRef($soc)
+  {
+    global $db, $langs;
+    $langs->load("propal");
+
+    $dir = DOL_DOCUMENT_ROOT . "/includes/modules/propale/";
+
+    if (defined("PROPALE_ADDON") && PROPALE_ADDON)
+    {
+    	$file = PROPALE_ADDON.".php";
+
+	    // Chargement de la classe de numérotation
+	    $classname = PROPALE_ADDON;
+	    require_once($dir.$file);
+
+	    $obj = new $classname();
+
+	    $numref = "";
+	    $numref = $obj->getNextValue($soc,$this);
+
+	    if ( $numref != "")
+	    {
+	      return $numref;
+	    }
+	    else
+	    {
+	      dolibarr_print_error($db,"Propale::getNextNumRef ".$obj->error);
+	      return "";
+	    }
+     }
+     else
+     {
+	     print $langs->trans("Error")." ".$langs->trans("Error_PROPALE_ADDON_NotDefined");
+	     return "";
+     }
+  }
 
 }
 
