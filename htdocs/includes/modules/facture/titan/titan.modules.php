@@ -94,7 +94,7 @@ function info()
         	$create_month = $current_month;
         }
         
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        if($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START && $create_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
         	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
         }

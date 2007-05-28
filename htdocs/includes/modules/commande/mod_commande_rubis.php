@@ -90,7 +90,7 @@ class mod_commande_rubis extends ModeleNumRefCommandes
         // D'abord on défini l'année fiscale
         $prefix='C';
         $current_month = date("n");
-        if($conf->global->SOCIETE_FISCAL_MONTH_START && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
+        if($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
         	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
         }
