@@ -311,8 +311,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    'basedn' => $ldapdn,
 		    'binddn' => $ldapadminlogin,
 		    'bindpw' => $ldapadminpass,
-
-			'debug' => $ldapdebug,
+		    'debug' => $ldapdebug,
+		    //'attributes' => array('pwdlastset'),
 		    'userfilter' => ''
 	    );
 		if ($ldapdebug) print "DEBUG: params=".join(',',$params)."<br>\n";
@@ -323,16 +323,16 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    $result = $aDol->getAuth();	// Si deja logue avec succes, renvoie vrai, sinon effectue un redirect sur page loginfunction et renvoie false
 	    if ($result)
 	    {
-	        // Authentification Auth OK, on va chercher le login
-			$login=$aDol->getUsername();
-	        dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
-		}
+	    	// Authentification Auth OK, on va chercher le login
+			  $login=$aDol->getUsername();
+	      dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
+		  }
 	    else
 	    {
 	        if (isset($_POST["loginfunction"]))
 	        {
-	            // Echec authentification
-	            dolibarr_syslog("Authentification ko (en mode Pear Base LDAP) pour '".$_POST["username"]."'");
+	           // Echec authentification
+	           dolibarr_syslog("Authentification ko (en mode Pear Base LDAP) pour '".$_POST["username"]."'");
 	        }
 	        else 
 	        {
