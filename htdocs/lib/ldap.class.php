@@ -216,8 +216,8 @@ class Ldap
 				{
 					$result=$this->setReferrals();
 					dolibarr_syslog("Ldap::connect_bind try bindauth for activedirectory on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-					$result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-					if ($result)
+					$this->result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+					if ($this->result)
 					{
 						$this->bind=$this->result;
 						$connected=3;
@@ -234,8 +234,8 @@ class Ldap
 					if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
 					{
 						dolibarr_syslog("Ldap::connect_bind try bindauth on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-						$result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
-						if ($result)
+						$this->result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+						if ($this->result)
 						{
 							$this->bind=$this->result;
 							$connected=2;
