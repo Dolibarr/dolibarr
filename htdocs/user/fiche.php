@@ -1112,7 +1112,7 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && (($caneditperms && (!$fuser->ldap_sid || !$fuser->login)) || ($user->id == $fuser->id)))
+        if ($_GET["action"] == 'edit' && (($caneditperms && ($user->id == $fuser->id))
         {
 
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
@@ -1146,44 +1146,44 @@ else
             // Nom
             print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
             print '<td>';
-            if ($caneditfield) print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
+            if ($caneditfield && !$fuser->ldap_sid) print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
             else print $fuser->nom;
             print '</td></tr>';
 
-			// Prenom
+			      // Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td>';
-            if ($caneditfield) print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
+            if ($caneditfield && !$fuser->ldap_sid) print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
             else print $fuser->prenom;
             print '</td></tr>';
 
             // Login
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
             print '<td>';
-            if ($user->admin) print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
+            if ($user->admin  && !$fuser->ldap_sid) print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
             else print $fuser->login.'<input type="hidden" name="login" value="'.$fuser->login.'">';
             print '</td></tr>';
 
             // Pass
             print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
             print '<td>';
-			if ($fuser->ldap_sid)
+			      if ($fuser->ldap_sid)
             {
             	$text='Mot de passe du domaine';
             }
             else if ($caneditpassword) 
             {
-                $text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
-				if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
-				{
-					$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
-				}
+            	$text='<input size="12" maxlength="32" type="password" class="flat" name="pass" value="'.$fuser->pass.'">';
+            	if ($dolibarr_main_authentication && $dolibarr_main_authentication == 'http')
+            	{
+            		$text=$html->textwithwarning($text,$langs->trans("DolibarrInHttpAuthenticationSoPasswordUseless",$dolibarr_main_authentication));
+            	}
             }
             else
             {
                 $text=eregi_replace('.','*',$fuser->pass);
             }
-			print $text;
+			      print $text;
             print "</td></tr>\n";
             
             // Administrateur
@@ -1250,26 +1250,26 @@ else
             // Tel, fax, portable
  			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
 			print '<td>';
-			if ($caneditfield) print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+			if ($caneditfield  && !$fuser->ldap_sid) print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
 			else print $fuser->office_phone; 
 			print '</td></tr>';
 			
 			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
  			print '<td>';
- 			if ($caneditfield) print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+ 			if ($caneditfield  && !$fuser->ldap_sid) print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
 			else print $fuser->office_fax; 
  			print '</td></tr>';
 			
 			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
 			print '<td>';
-			if ($caneditfield) print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+			if ($caneditfield && !$fuser->ldap_sid) print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
 			else print $fuser->user_mobile; 
 			print '</td></tr>';
 
             // EMail
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
             print '<td>';
-            if ($caneditfield) print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
+            if ($caneditfield  && !$fuser->ldap_sid) print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
 			else print $fuser->email; 
             print '</td></tr>';
 
