@@ -780,7 +780,7 @@ class Ldap
         if ($this->serverType == "activedirectory")
         {
         	$this->bindauth($this->searchUser, $this->searchPassword);
-        	dolibarr_syslog("Ldap::bindauth searchUser=".$this->searchUser." searchPassword=".$this->searchPassword);
+        	dolibarr_syslog("Ldap::bindauth serverType=activedirectory searchUser=".$this->searchUser);
         }
 
         // Define filter
