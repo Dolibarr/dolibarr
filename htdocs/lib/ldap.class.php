@@ -215,10 +215,11 @@ class Ldap
 				if ($this->serverType == "activedirectory")
 				{
 					$result=$this->setReferrals();
+					dolibarr_syslog("Ldap::connect_bind try bindauth for activedirectory on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
+					$result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
 					if ($result)
 					{
-						//$this->bind=????	Comment positionne-t-on bind avec activedirectory ?
-						//si bind non défini, les autres fonctions échouent
+						$this->bind=$this->result;
 						$connected=3;
 						break;
 					}
