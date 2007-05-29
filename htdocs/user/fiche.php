@@ -1112,7 +1112,7 @@ else
         /*
          * Fiche en mode edition
          */
-        if ($_GET["action"] == 'edit' && (($caneditperms && ($user->id == $fuser->id))
+        if ($_GET["action"] == 'edit' && (($caneditperms && ($user->id == $fuser->id)))
         {
 
             print '<form action="fiche.php?id='.$fuser->id.'" method="post" name="updateuser" enctype="multipart/form-data">';
