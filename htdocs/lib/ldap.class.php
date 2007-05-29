@@ -219,7 +219,7 @@ class Ldap
 					{
 						//$this->bind=????	Comment positionne-t-on bind avec activedirectory ?
 						//si bind non défini, les autres fonctions échouent
-						$connected=2;
+						$connected=3;
 						break;
 					}
 					else
@@ -772,47 +772,53 @@ class Ldap
      */
     function getRecords($search, $userDn, $useridentifier, $attributeArray, $activefilter=0)
     {
-		$fulllist=array();
+    	$fulllist=array();
 		
-		dolibarr_syslog("Ldap::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
+		  dolibarr_syslog("Ldap::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
 
 	    // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory")
-        {
-        	$this->bindauth($this->searchUser, $this->searchPassword);
-        	dolibarr_syslog("Ldap::bindauth serverType=activedirectory searchUser=".$this->searchUser);
-        }
+      if ($this->serverType == "activedirectory")
+      {
+      	$this->bindauth($this->searchUser, $this->searchPassword);
+      	dolibarr_syslog("Ldap::bindauth serverType=activedirectory searchUser=".$this->searchUser);
+      }
 
-        // Define filter
-        if ($activefilter == 1)
-        {
-        	if ($this->filter) $filter = '('.$this->filter.')';
-			else $filter='('.$useridentifier.'=*)';
-        }
-        else
-        {
-        	$filter = '('.$useridentifier.'='.$search.')';
-        }
+      // Define filter
+      if ($activefilter == 1)
+      {
+      	if ($this->filter)
+      	{
+      		$filter = '('.$this->filter.')';
+      	}
+      	else
+      	{
+      		$filter='('.$useridentifier.'=*)';
+      	}
+      }
+      else
+      {
+      	$filter = '('.$useridentifier.'='.$search.')';
+      }
 
-        if (is_array($attributeArray))
-		{
-			// Return list with required fields
-			dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
-			$this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
-		}
-		else
-		{
-			// Return list with fields selected by default
-			dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
-			$this->result = @ldap_search($this->connection, $userDn, $filter);
-		}
-        if (!$this->result)
-        {
-        	$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
-        	return -1;
-        }
+      if (is_array($attributeArray))
+      {
+      	// Return list with required fields
+			  dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter. " attributeArray=(".join(',',$attributeArray).")");
+			  $this->result = @ldap_search($this->connection, $userDn, $filter, $attributeArray);
+		  }
+		  else
+		  {
+			  // Return list with fields selected by default
+			  dolibarr_syslog("Ldap::getRecords connection=".$this->connection." userDn=".$userDn." filter=".$filter);
+			  $this->result = @ldap_search($this->connection, $userDn, $filter);
+		  }
+      if (!$this->result)
+      {
+      	$this->error = 'LDAP search failed: '.ldap_errno($this->connection)." ".ldap_error($this->connection);
+      	return -1;
+      }
 
-        $info = @ldap_get_entries($this->connection, $this->result);
+      $info = @ldap_get_entries($this->connection, $this->result);
 
 		// Warning: Dans info, les noms d'attributs sont en minuscule meme si passé
 		// a ldap_search en majuscule !!!
