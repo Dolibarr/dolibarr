@@ -297,7 +297,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		}
 		if (! $ldaphost)       $ldaphost=$conf->global->LDAP_SERVER_HOST;
 		if (! $ldapport)       $ldapport=$conf->global->LDAP_SERVER_PORT;
-		if (! $ldapversion)    $ldapport=(int) $conf->global->LDAP_SERVER_PROTOCOLVERSION;
+		if (! $ldapversion)    $ldapversion=(int) $conf->global->LDAP_SERVER_PROTOCOLVERSION;
 		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
 		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
