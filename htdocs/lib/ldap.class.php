@@ -777,8 +777,10 @@ class Ldap
 		dolibarr_syslog("Ldap::getRecords search=".$search." userDn=".$userDn." useridentifier=".$useridentifier." attributeArray=array(".join(',',$attributeArray).")");
 
 	    // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory") {
-            $this->bindauth($this->searchUser, $this->searchPassword);
+        if ($this->serverType == "activedirectory")
+        {
+        	$this->bindauth($this->searchUser, $this->searchPassword);
+        	dolibarr_syslog("Ldap::bindauth searchUser=".$this->searchUser." searchPassword=".$this->searchPassword);
         }
 
         // Define filter
