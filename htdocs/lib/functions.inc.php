@@ -1218,7 +1218,7 @@ print '</td></tr>
 ';
 if ($conf->global->MAIN_SECURITY_ALLOWFORGETPASSWORD)
 {
-	print '<tr><td colspan="3" align="right"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
+	print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
 }
 
     print '
