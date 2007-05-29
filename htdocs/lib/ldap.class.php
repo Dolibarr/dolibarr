@@ -190,7 +190,7 @@ class Ldap
      */
 	function connect_bind()
 	{
-		global $conf,$langs;
+		global $langs;
 
 		$connected=0;
 		$this->bind=0;
@@ -215,8 +215,8 @@ class Ldap
 				if ($this->serverType == "activedirectory")
 				{
 					$result=$this->setReferrals();
-					dolibarr_syslog("Ldap::connect_bind try bindauth for activedirectory on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-					$this->result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+					dolibarr_syslog("Ldap::connect_bind try bindauth for activedirectory on ".$host." user=".$this->searchUser,LOG_DEBUG);
+					$this->result=$this->bindauth($this->searchUser,$this->searchPassword);
 					if ($this->result)
 					{
 						$this->bind=$this->result;
@@ -231,10 +231,10 @@ class Ldap
 				else
 				{
 					// Try in auth mode
-					if ($conf->global->LDAP_ADMIN_DN && $conf->global->LDAP_ADMIN_PASS)
+					if ($this->searchUser && $this->searchPassword)
 					{
-						dolibarr_syslog("Ldap::connect_bind try bindauth on ".$host." user=".$conf->global->LDAP_ADMIN_DN,LOG_DEBUG);
-						$this->result=$this->bindauth($conf->global->LDAP_ADMIN_DN,$conf->global->LDAP_ADMIN_PASS);
+						dolibarr_syslog("Ldap::connect_bind try bindauth on ".$host." user=".$this->searchUser,LOG_DEBUG);
+						$this->result=$this->bindauth($this->searchUser,$this->searchPassword);
 						if ($this->result)
 						{
 							$this->bind=$this->result;
@@ -364,7 +364,6 @@ class Ldap
 		 * \return	version
      */
      function setVersion() {
-     	global $conf;
 		// LDAP_OPT_PROTOCOL_VERSION est une constante qui vaut 17
      	$ldapsetversion = ldap_set_option($this->connection, LDAP_OPT_PROTOCOL_VERSION, $this->ldapProtocolVersion);
      	return $ldapsetversion;
@@ -375,7 +374,6 @@ class Ldap
 		 * \return	referrals
      */
      function setReferrals() {
-     	global $conf;
 		// LDAP_OPT_REFERRALS est une constante qui vaut ?
      	$ldapreferrals = ldap_set_option($this->connection, LDAP_OPT_REFERRALS, 0);
      	return $ldapreferrals;
