@@ -220,7 +220,7 @@ class Ldap
 					if ($this->result)
 					{
 						$this->bind=$this->result;
-						$connected=3;
+						$connected=2;
 						break;
 					}
 					else
