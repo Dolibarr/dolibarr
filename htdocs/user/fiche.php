@@ -810,9 +810,9 @@ else
             print '<td width="50%">'.$fuser->prenom.'</td>';
             print "</tr>\n";
 
-			// Login
+			      // Login
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
-            if ($fuser->ldap_sid)
+            if ($fuser->ldap_sid && $fuser->statut==0)
             {
             	print '<td width="50%" class="error">'.$langs->trans("LoginAccountDisableInDolibarr").'</td>';
             }
