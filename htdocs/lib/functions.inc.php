@@ -1127,7 +1127,7 @@ function dol_loginfunction($notused,$pearstatus)
     print "<html>\n";
     print "<head>\n";
     print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-	  print "<title>Dolibarr Authentification</title>\n";
+	print "<title>Dolibarr Authentification</title>\n";
 
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
@@ -1169,7 +1169,7 @@ function dol_loginfunction($notused,$pearstatus)
     print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
     print '">';
 
-    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="350">';
+    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
 
 
     if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
@@ -1182,15 +1182,15 @@ function dol_loginfunction($notused,$pearstatus)
       print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
     }
 
-    print'</table>
+    print '</table>
 
 <br>
 
-<table cellpadding="2" align="center" width="350">
+<table cellpadding="2" align="center" width="400">
 
 <tr><td colspan="3">&nbsp;</td></tr>
 
-<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>
+<tr><td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>
 <td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>
 ';
 
@@ -1207,14 +1207,20 @@ function dol_loginfunction($notused,$pearstatus)
     print '
 </tr>
 
-<tr><td align="left"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>
-<td><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2" />
-</td></tr>
+<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>
+<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+print '</td></tr>
 
 <tr><td colspan="3" style="text-align:center;"><br>
 <input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />
 </td></tr>
+
 ';
+if ($conf->global->MAIN_SECURITY_ALLOWFORGETPASSWORD)
+{
+	print '<tr><td colspan="3" align="right"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
+}
+
     print '
 </table>
 <input type="hidden" name="loginfunction" value="loginfunction" />

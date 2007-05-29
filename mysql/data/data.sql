@@ -65,7 +65,6 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP
 insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0);
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_ENABLE_DEVELOPMENT','0','yesno',1,'Make development modules visible');
-insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','0','yesno',1,'Add products list in first step of proposal, invoice, order creation');
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMPANY','1','yesno',0,'Show form for quick company search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
@@ -196,6 +195,12 @@ insert into llx_const (name, value, type, visible, note) VALUES ('MAIN_FORCE_SET
 -- Duree de validite des propales
 --
 insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDITY_DURATION',      '15', 'chaine', 0, 'Durée de validitée des propales');
+
+
+--
+-- Product
+--
+insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','0','yesno',1,'Add products list in first step of proposal, invoice, order creation');
 
 
 --
