@@ -1146,22 +1146,43 @@ else
             // Nom
             print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
             print '<td>';
-            if ($caneditfield && !$fuser->ldap_sid) print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
-            else print $fuser->nom;
+            if ($caneditfield && !$fuser->ldap_sid)
+            {
+            	print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="nom" value="'.$fuser->nom.'">';
+            	print $fuser->nom;
+            }
             print '</td></tr>';
 
 			      // Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td>';
-            if ($caneditfield && !$fuser->ldap_sid) print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
-            else print $fuser->prenom;
+            if ($caneditfield && !$fuser->ldap_sid)
+            {
+            	print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="prenom" value="'.$fuser->prenom.'">';
+            	print $fuser->prenom;
+            }
             print '</td></tr>';
 
             // Login
             print "<tr>".'<td valign="top">'.$langs->trans("Login").'*</td>';
             print '<td>';
-            if ($user->admin  && !$fuser->ldap_sid) print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
-            else print $fuser->login.'<input type="hidden" name="login" value="'.$fuser->login.'">';
+            if ($user->admin  && !$fuser->ldap_sid)
+            {
+            	print '<input size="12" maxlength="24" type="text" class="flat" name="login" value="'.$fuser->login.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="login" value="'.$fuser->login.'">';
+            	print $fuser->login;
+            }
             print '</td></tr>';
 
             // Pass
@@ -1248,59 +1269,87 @@ else
             print "</tr>\n";
 
             // Tel, fax, portable
- 			print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
-			print '<td>';
-			if ($caneditfield  && !$fuser->ldap_sid) print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
-			else print $fuser->office_phone; 
-			print '</td></tr>';
-			
-			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td>';
- 			if ($caneditfield  && !$fuser->ldap_sid) print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
-			else print $fuser->office_fax; 
- 			print '</td></tr>';
-			
-			print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
-			print '<td>';
-			if ($caneditfield && !$fuser->ldap_sid) print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
-			else print $fuser->user_mobile; 
-			print '</td></tr>';
+            print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
+			      print '<td>';
+			      if ($caneditfield  && !$fuser->ldap_sid)
+			      {
+			      	print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+			      }
+			      else
+			      {
+			      	print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
+			      	print $fuser->office_phone; 
+			      }
+			      print '</td></tr>';
+			      
+			      print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+			      print '<td>';
+			      if ($caneditfield  && !$fuser->ldap_sid)
+			      {
+			      	print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+			      }
+			      else
+			      {
+			      	print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
+			      	print $fuser->office_fax; 
+			      }
+			      print '</td></tr>';
+			      
+			      print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
+			      print '<td>';
+			      if ($caneditfield && !$fuser->ldap_sid)
+			      {
+			      	print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+			      }
+			      else
+			      {
+			      	print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
+			      	print $fuser->user_mobile; 
+			      }
+			      print '</td></tr>';
 
             // EMail
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
             print '<td>';
-            if ($caneditfield  && !$fuser->ldap_sid) print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
-			else print $fuser->email; 
+            if ($caneditfield  && !$fuser->ldap_sid)
+            {
+            	print '<input size="40" type="text" name="email" class="flat" value="'.$fuser->email.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="email" value="'.$fuser->email.'">';
+            	print $fuser->email; 
+            }
             print '</td></tr>';
-
-			// Statut
-		    print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-		    print '<td>';
-		   	print $fuser->getLibStatut(4);
-		    print '</td></tr>';
-		
-			// Note
+            
+            // Statut
+            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+            print '<td>';
+            print $fuser->getLibStatut(4);
+            print '</td></tr>';
+            
+            // Note
             print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">';
             if ($caneditfield) 
             {
-				if ($conf->fckeditor->enabled)
-				{
-			    	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('note',$fuser->note,180,'dolibarr_notes','',false);
-					$doleditor->Create();
-				}
-				else
-				{
-					print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+            	if ($conf->fckeditor->enabled)
+            	{
+            		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+            		$doleditor=new DolEditor('note',$fuser->note,180,'dolibarr_notes','',false);
+            		$doleditor->Create();
+            	}
+            	else
+            	{
+            		print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
 		            print $fuser->note;
-					print '</textarea>';
-				}
-	        }
-	        else
-	        {
-	        	print nl2br($fuser->note);
-	    	}
-	        print '</td></tr>';
+		            print '</textarea>';
+		          }
+		        }
+		        else
+		        {
+		        	print nl2br($fuser->note);
+		        }
+		        print '</td></tr>';
 
             // Autres caractéristiques issus des autres modules
             if ($conf->webcal->enabled)
@@ -1322,8 +1371,8 @@ else
             print '</table>';
             print '</form>';
 
-			print '</div>';
-        }
+			      print '</div>';
+         }
 
         $ldap->close;
     }
@@ -1337,5 +1386,3 @@ function dolValidElement($element) {
 
 llxFooter('$Date$ - $Revision$');
 ?>
-
-
