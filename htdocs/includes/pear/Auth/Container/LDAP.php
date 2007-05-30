@@ -426,7 +426,7 @@ class Auth_Container_LDAP extends Auth_Container
                      $attributes['count'] > 0)
                 {
                     $this->_debug('Saving attributes to Auth data',  __LINE__);
-                    DOLIAUTH::setAuthData('attributes',  $attributes);
+                    DOLIAuth::setAuthData('attributes',  $attributes);
                 }
             }
             @ldap_free_result($result_id);

@@ -303,6 +303,17 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
 		// Fin code pour compatiblité
 		
+		// Si synchro ldap2dolibarr on récupère les attributs de l'utilisateur
+		// afin de les synchroniser à sa connexion
+		if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
+		{
+			$attrArray = array(); // récupération de tous les attributs de l'utilisateur
+		}
+		else
+		{
+			$attrArray = array(''); // aucun attribut récupéré
+		}
+		
 	    $params = array(
 		    'userattr' => $ldapuserattr,
 		    'host' => $ldaphost,
@@ -312,7 +323,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    'binddn' => $ldapadminlogin,
 		    'bindpw' => $ldapadminpass,
 		    'debug' => $ldapdebug,
-		    //'attributes' => array('pwdlastset'),
+		    'attributes' => $attrArray, 
 		    'userfilter' => ''
 	    );
 		if ($ldapdebug) print "DEBUG: params=".join(',',$params)."<br>\n";
@@ -326,6 +337,9 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    	// Authentification Auth OK, on va chercher le login
 			  $login=$aDol->getUsername();
 	      dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
+	      
+	      // Récupération des attributs de l'utilisateur
+	      $attributs = $aDol->getAuthData("attributes");
 		  }
 	    else
 	    {
