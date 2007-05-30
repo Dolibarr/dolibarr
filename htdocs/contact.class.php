@@ -96,14 +96,15 @@ class Contact
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_create)";
         $sql.= " VALUES (now(),";
         if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
         $sql.= "'".addslashes($this->name)."',";
-		$sql.= $user->id;
-		$sql.= ")";
-	   	dolibarr_syslog("Contact.class::create sql=".$sql);
+        $sql.= $user->id;
+        $sql.= ")";
+        
+        dolibarr_syslog("Contact.class::create sql=".$sql);
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -578,10 +579,10 @@ class Contact
      */
     function info($id)
     {
-        $sql = "SELECT c.idp, ".$this->db->pdate("datec")." as datec, fk_user";
-        $sql .= ", ".$this->db->pdate("tms")." as tms, fk_user_modif";
+        $sql = "SELECT c.idp, ".$this->db->pdate("c.datec")." as datec, c.fk_user_create";
+        $sql .= ", ".$this->db->pdate("c.tms")." as tms, c.fk_user_modif";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= " WHERE c.idp = $id";
+        $sql .= " WHERE c.idp = ".$id;
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -592,8 +593,8 @@ class Contact
     
                 $this->id                = $obj->idp;
     
-                if ($obj->fk_user) {
-                    $cuser = new User($this->db, $obj->fk_user);
+                if ($obj->fk_user_create) {
+                    $cuser = new User($this->db, $obj->fk_user_create);
                     $cuser->fetch();
                     $this->user_creation     = $cuser;
                 }

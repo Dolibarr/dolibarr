@@ -762,7 +762,7 @@ class User
             if ($resql)
             {
                 $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-                $sql.= " SET fk_user = ".$this->id;
+                $sql.= " SET fk_user_create = ".$this->id;
                 $sql.= " WHERE idp = ".$contact->id;
                 $resql=$this->db->query($sql);
 

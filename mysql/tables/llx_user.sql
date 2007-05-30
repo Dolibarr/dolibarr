@@ -48,6 +48,6 @@ create table llx_user
   datepreviouslogin datetime,
   egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
-  statut			tinyint DEFAULT 1,
+  statut			      tinyint DEFAULT 1,
   lang              varchar(6)
 )type=innodb;
