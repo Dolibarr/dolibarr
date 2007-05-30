@@ -55,6 +55,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FULLNAME',$_POST["fieldfullname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_NAME',$_POST["fieldname"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FIRSTNAME',$_POST["fieldfirstname"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_COMPANY',$_POST["fieldcompany"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
@@ -62,6 +63,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS',$_POST["fieldaddress"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ZIP',$_POST["fieldzip"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_TOWN',$_POST["fieldtown"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_COUNTRY',$_POST["fieldcountry"])) $error++;
 	
 	if ($error)
 	{
@@ -157,6 +159,14 @@ print '</td><td>'.$langs->trans("LDAPFieldFirstNameExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_FIRSTNAME.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_FIRSTNAME?' checked="true"':'')."></td>";
 print '</tr>';
 
+// Company
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCompany").'</td><td>';
+print '<input size="25" type="text" name="fieldcompany" value="'.$conf->global->LDAP_FIELD_COMPANY.'">';
+print '</td><td>'.$langs->trans("LDAPFieldCompanyExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_COMPANY.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_COMPANY?' checked="true"':'')."></td>";
+print '</tr>';
+
 // Mail
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldMail").'</td><td>';
@@ -211,6 +221,14 @@ print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldTown").'</td><td>';
 print '<input size="25" type="text" name="fieldtown" value="'.$conf->global->LDAP_FIELD_TOWN.'">';
 print '</td><td>'.$langs->trans("LDAPFieldTownExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_TOWN.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_TOWN?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Pays
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldCountry").'</td><td>';
+print '<input size="25" type="text" name="fieldcountry" value="'.$conf->global->LDAP_FIELD_COUNTRY.'">';
+print '</td><td>'.$langs->trans("LDAPFieldCountryExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_COUNTRY.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_COUNTRY?' checked="true"':'')."></td>";
 print '</tr>';
 
 
