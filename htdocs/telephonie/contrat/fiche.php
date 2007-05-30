@@ -463,7 +463,7 @@ else
 		  require_once DOL_DOCUMENT_ROOT.'/telephonie/contrat/modules/'.$conf->global->TELEPHONIE_CONTRAT_PLUGIN.'.php';
 		  $var = $conf->global->TELEPHONIE_CONTRAT_PLUGIN;
 		  $plugin = new $var;
-		  if($plugin->tabs($h))
+		  if($plugin->tabs($head,$h))
 		    $h++;
 		  else
 		    dolibarr_syslog("$var::tabs error");
