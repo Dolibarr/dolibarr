@@ -455,6 +455,20 @@ else
 		}
 	      $h++;
 
+	      /*
+               * Mise en place de l'interface greffon
+               */
+              if($conf->global->TELEPHONIE_CONTRAT_PLUGIN)
+		{
+		  require_once DOL_DOCUMENT_ROOT.'/telephonie/contrat/modules/'.$conf->global->TELEPHONIE_CONTRAT_PLUGIN.'.php';
+		  $var = $conf->global->TELEPHONIE_CONTRAT_PLUGIN;
+		  $plugin = new $var;
+		  if($plugin->tabs($h))
+		    $h++;
+		  else
+		    dolibarr_syslog("$var::tabs error");
+		}
+	      
 	      $head[$h][0] = DOL_URL_ROOT."/telephonie/contrat/stats.php?id=".$contrat->id;
 	      $head[$h][1] = $langs->trans("Stats");
 	      $h++;
