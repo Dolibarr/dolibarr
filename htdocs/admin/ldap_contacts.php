@@ -58,6 +58,7 @@ if ($_GET["action"] == 'setvalue' && $user->admin)
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_COMPANY',$_POST["fieldcompany"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MAIL',$_POST["fieldmail"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_PHONE',$_POST["fieldphone"])) $error++;
+	if (! dolibarr_set_const($db, 'LDAP_FIELD_HOMEPHONE',$_POST["fieldhomephone"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_MOBILE',$_POST["fieldmobile"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_FAX',$_POST["fieldfax"])) $error++;
 	if (! dolibarr_set_const($db, 'LDAP_FIELD_ADDRESS',$_POST["fieldaddress"])) $error++;
@@ -175,12 +176,20 @@ print '</td><td>'.$langs->trans("LDAPFieldMailExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_MAIL.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_MAIL?' checked="true"':'')."></td>";
 print '</tr>';
 
-// Phone
+// Phone pro
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphone" value="'.$conf->global->LDAP_FIELD_PHONE.'">';
 print '</td><td>'.$langs->trans("LDAPFieldPhoneExample").'</td>';
 print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_PHONE.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_PHONE?' checked="true"':'')."></td>";
+print '</tr>';
+
+// Phone home
+$var=!$var;
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldHomePhone").'</td><td>';
+print '<input size="25" type="text" name="fieldhomephone" value="'.$conf->global->LDAP_FIELD_HOMEPHONE.'">';
+print '</td><td>'.$langs->trans("LDAPFieldHomePhoneExample").'</td>';
+print '<td align="right"><input type="radio" name="key" value="'.$conf->global->LDAP_FIELD_HOMEPHONE.'"'.($conf->global->LDAP_KEY_CONTACTS==$conf->global->LDAP_FIELD_HOMEPHONE?' checked="true"':'')."></td>";
 print '</tr>';
 
 // Mobile
