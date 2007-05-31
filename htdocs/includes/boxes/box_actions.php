@@ -97,6 +97,7 @@ class box_actions extends ModeleBoxes {
 				$i = 0;
 				while ($i < $num)
 				{
+					$late = '';
 					$objp = $db->fetch_object($result);
 	
 					if (date("U",$objp->dp)  < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) $late=img_warning($langs->trans("Late"));
