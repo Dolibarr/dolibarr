@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -167,20 +167,16 @@ else
 	  print '</td><td>Valeur relevée</td>';
 
 	  print '<td align="center"><input type="text" size="11" maxlength="10" name="releve"></td>';
-
 	  print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
-	  
 	  print "</table></form><br>";
-
-	  print '</div>';
-	  
-
-
+	
 	  print '<table class="noborder" width="100%">';
 	  print '<tr><td><a href="compteur_graph.php?id='.$compteur->id.'">';
 	  $file = "all.".$compteur->id.".png";
 	  print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
 	  print '</a></td></tr></table><br>';
+
+	  print '</div>';
 
 	  print '<table class="noborder" width="100%">';
 	  print '<tr class="liste_titre"><td>'.$langs->trans("Date").'</td>';
