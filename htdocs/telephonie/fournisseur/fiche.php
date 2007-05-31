@@ -32,10 +32,11 @@ if ($_POST["action"] == 'add')
 {
   $fourn = new FournisseurTelephonie($db);
 
-  $fourn->nom            = $_POST["nom"];
-  $fourn->email_commande = $_POST["email_commande"];
+  $fourn->nom              = $_POST["nom"];
+  $fourn->email_commande   = $_POST["email_commande"];
   $fourn->methode_commande = $_POST["methode"];
-  $fourn->grille         = $_POST["grille"];
+  $fourn->cdrformat        = $_POST["cdrformat"];
+  $fourn->grille           = $_POST["grille"];
 
   if ( $fourn->create($user) == 0)
     {
@@ -53,6 +54,7 @@ if ($_POST["action"] == 'update' && $_GET["id"])
       $fourn->num_client       = $_POST["num_client"];
       $fourn->email_commande   = $_POST["email_commande"];
       $fourn->methode_commande = $_POST["methode"];
+      $fourn->cdrformat        = $_POST["cdrformat"];
       $fourn->commande_bloque  = $_POST["commande_bloque"];
       $fourn->grille           = $_POST["grille"];      
 
@@ -116,12 +118,19 @@ if ($_GET["action"] == 'create')
   $html = new Form($db);
   
   $arr = $fourn->array_methode();
-  
+  $cdr = $fourn->array_cdrformat();  
+
   print '<tr><td width="20%">Méthode de commande</td>';
   print '<td>';
   print $html->select_array("methode",$arr,$fourn->class_commande);
   print '</td>';
   print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
+
+  print '<tr><td width="20%">Format de CDR</td>';
+  print '<td>';
+  print $html->select_array("cdrformat",$cdr,$fourn->cdrformat);
+  print '</td>';
+  print '<td>Format des fichiers CDR</td></tr>';
 
   $ta->liste_name[0] = ' Creer une nouvelle grille';
   asort($ta->liste_name);
@@ -175,6 +184,7 @@ if ($_GET["id"] > 0)
 	$html = new Form($db);
 
 	$arr = $fourn->array_methode();
+	$cdr = $fourn->array_cdrformat();
 
 	print '<tr><td width="20%">Méthode de commande</td>';
 	print '<td>';
@@ -182,6 +192,12 @@ if ($_GET["id"] > 0)
 	print '</td>';
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
     
+	print '<tr><td width="20%">Format de CDR</td>';
+	print '<td>';
+	print $html->select_array("cdrformat",$cdr,$fourn->cdrformat);
+	print '</td>';
+	print '<td>Format des fichiers CDR</td></tr>';
+
 	print '<tr><td width="20%">Blocage des commandes</td>';
 	print '<td>';
 
@@ -235,6 +251,10 @@ if ($_GET["id"] > 0)
 	print '<td>'.$fourn->class_commande.'</td>';
 	print '<td>méthode utilisée pour les commandes de lignes</td></tr>';
 	       
+	print '<tr><td width="20%">Format de CDR</td>';
+	print '<td>'.$fourn->cdrformat.'</td>';
+	print '<td>Format des fichiers CDR</td></tr>';
+
 	print '<tr><td width="20%">Blocage des commandes</td>';
 	print '<td>'.$art[$fourn->commande_bloque].'</td>';
 	print '<td>Les commandes sont bloquées</td></tr>';

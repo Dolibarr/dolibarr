@@ -35,6 +35,7 @@ class FournisseurTelephonie {
     $this->db = $DB;
     $this->id = $id;
     $this->classdir = DOL_DOCUMENT_ROOT.'/telephonie/fournisseur/commande/';
+    $this->cdrformatdir = DOL_DOCUMENT_ROOT.'/telephonie/fournisseur/cdrformat/';
     return 1;
   }
   /**
@@ -59,8 +60,8 @@ class FournisseurTelephonie {
     if ($res == 0)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_fournisseur";
-	$sql .= " (nom, email_commande, commande_active, class_commande,fk_tarif_grille)";
-	$sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."',".$this->grille.")";
+	$sql .= " (nom, email_commande, commande_active, class_commande,fk_tarif_grille,cdrformat)";
+	$sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."','".$this->grille."','".$this->cdrformat."');";
 	
 	if (! $this->db->query($sql) )
 	  {
@@ -83,6 +84,7 @@ class FournisseurTelephonie {
     $sql .= ", num_client = '".$this->num_client."'";
     $sql .= ", class_commande = '".$this->methode_commande."'";
     $sql .= ", commande_bloque = '".$this->commande_bloque."'";
+    $sql .= ", cdrformat = '".$this->cdrformat."'";
 
     $sql .= " WHERE rowid = ".$this->id;
 
@@ -102,7 +104,7 @@ class FournisseurTelephonie {
 
       $sql = "SELECT f.rowid, f.nom, f.email_commande, f.commande_active";
       $sql .= ", f.class_commande, f.commande_bloque, f.fk_tarif_grille";
-      $sql .= ", f.num_client";
+      $sql .= ", f.num_client, f.cdrformat";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
       $sql .= " WHERE f.rowid = ".$this->id;
 	  
@@ -118,6 +120,7 @@ class FournisseurTelephonie {
 	      $this->commande_enable = $obj->commande_active;
 	      $this->class_commande  = $obj->class_commande;
 	      $this->commande_bloque = $obj->commande_bloque;
+	      $this->cdrformat       = $obj->cdrformat;
 	      $this->grille          = $obj->fk_tarif_grille;
 
 	      return 0;
@@ -169,7 +172,7 @@ class FournisseurTelephonie {
     return $res;
   }
   /**
-   *
+   * Retourne la liste des classe de format de commande
    *
    *
    *
@@ -177,16 +180,11 @@ class FournisseurTelephonie {
   function array_methode()
   {
     clearstatcache();
- 
     $handle=opendir($this->classdir);
-
     $arr = array();
 
     while (($file = readdir($handle))!==false)
       {
-
-	dolibarr_syslog($file);
-	
 	if (is_readable($this->classdir.$file) && substr($file, 0, 8) == 'commande' && substr($file, -10) == '.class.php')
 	  {
 
@@ -201,6 +199,35 @@ class FournisseurTelephonie {
 	    
 	    $obj = new $classname($this->db);
 
+	    $arr[$name] = $obj->nom;
+	  }
+	
+      }
+    return $arr;
+  }
+  /**
+   * Retourne la liste des classe de format de commande
+   */
+  function array_cdrformat()
+  {
+    clearstatcache();
+    $handle=opendir($this->cdrformatdir);
+    $arr = array();
+
+    while (($file = readdir($handle))!==false)
+      {
+	if (is_readable($this->cdrformatdir.$file) && substr($file, 0, 9) == 'cdrformat' && substr($file, -10) == '.class.php')
+	  {
+	    $name = substr($file, 10, strlen($file) -20);
+	    $filebis = $this->classdir . $file;
+      
+	    // Chargement de la classe de numérotation
+	    $classname = "CdrFormat".ucfirst($name);
+
+	    require_once($this->cdrformatdir.$file);
+	    
+	    $obj = new $classname($this->db);
+	    
 	    $arr[$name] = $obj->nom;
 	  }
 	
