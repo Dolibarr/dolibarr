@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,121 +21,77 @@
  */
 
 require("./pre.inc.php");
-
-/*
- *
- */	
-if ($_POST["action"] == 'addvalue')
-{
-  if ($_POST["releve"] > 0)
-    {
-      $compteur = new EnergieCompteur($db, $user);
-      if ( $compteur->fetch($_GET["id"]) == 0)
-	{
-	  $date = mktime(12, 
-			 0 , 
-			 0, 
-			 $_POST["remonth"], 
-			 $_POST["reday"], 
-			 $_POST["reyear"]);
-	  
-	  $compteur->AjoutReleve($date, $_POST["releve"]);
-	  Header("Location: compteur.php?id=".$_GET["id"]);
-	}
-    }
-}
-/*
- *
- */	
-
 llxHeader($langs, '',$langs->trans("Compteur"),"Compteur");
 
-$html = new Form($db);
-
-/*********************************************************************
- *
- * Mode creation
- *
- *
- ************************************************************************/
-if ($_GET["action"] == 'create') 
-{
-  print_titre("Ajouter une compteur");
-
-} 
-else 
 /* *************************************************************************** */
 /*                                                                             */
 /* Mode vue                                                                    */
 /*                                                                             */
 /* *************************************************************************** */
-{  
-  if ($_GET["id"] > 0)
-    {
-      $compteur = new EnergieCompteur($db, $user);
-      if ( $compteur->fetch($_GET["id"]) == 0)
-	{	  
-	  $head[0][0] = DOL_URL_ROOT.'/energie/compteur.php?id='.$compteur->id;
-	  $head[0][1] = "Compteur";
-	  $h++;
-
-	  $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_graph.php?id='.$compteur->id;
-	  $head[$h][1] = "Graph";
-	  $a = $h;
-	  $h++;
-
-	  $head[$h][0] = DOL_URL_ROOT.'/energie/releve.php?id='.$compteur->id;
-	  $head[$h][1] = "Relevés";
-	  $h++;
-	  
-	  $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_groupe.php?id='.$compteur->id;
-	  $head[$h][1] = "Groupe";
-	  $h++;
-
-	  dolibarr_fiche_head($head, $a, $soc->nom);	  
-	  
-	  print '<table class="border" width="100%">';
-	  print "<tr><td>".$langs->trans("Compteur")."</td>";
-	  print '<td width="50%">';
-	  print $compteur->libelle;
-	  print "</td></tr>";	  	  
-	  print "</table><br>";
-	  	  
-	  print '</div>';
-	  
-
-	  print '<table class="noborder" width="100%">';
-
-	  print '<tr><td align="center" colspan="2">';
-	  $file = "day.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td></tr>';
-
-	  print '<tr><td align="center" colspan="2">';
-	  $file = "week.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td></tr>';
-
-	  print '<tr><td align="center">';
-	  $file = "month.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td><td align="center">';
-	  $file = "year.".$compteur->id.".png";
-	  print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</td></tr></table><br>';
-
-	}
-      else
-	{
-	  /* Commande non trouvée */
-	  print "Compteur inexistant";
-	}
-    }  
+  
+if ($_GET["id"] > 0)
+{
+  $compteur = new EnergieCompteur($db, $user);
+  if ( $compteur->fetch($_GET["id"]) == 0)
+    {	  
+      $head[0][0] = DOL_URL_ROOT.'/energie/compteur.php?id='.$compteur->id;
+      $head[0][1] = "Compteur";
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_graph.php?id='.$compteur->id;
+      $head[$h][1] = "Graph";
+      $a = $h;
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/energie/releve.php?id='.$compteur->id;
+      $head[$h][1] = "Relevés";
+      $h++;
+      
+      $head[$h][0] = DOL_URL_ROOT.'/energie/compteur_groupe.php?id='.$compteur->id;
+      $head[$h][1] = "Groupe";
+      $h++;
+      
+      dolibarr_fiche_head($head, $a, $soc->nom);	  
+      
+      print '<table class="border" width="100%">';
+      print "<tr><td>".$langs->trans("Compteur")."</td>";
+      print '<td width="50%">';
+      print $compteur->libelle;
+      print "</td></tr>";	  	  
+      print "</table><br>";
+      
+      print '<table class="noborder" width="100%">';
+      
+      print '<tr><td align="center" colspan="2">';
+      $file = "day.".$compteur->id.".png";
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+      print '</td></tr>';
+      
+      print '<tr><td align="center" colspan="2">';
+      $file = "week.".$compteur->id.".png";
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+      print '</td></tr>';
+      
+      print '<tr><td align="center">';
+      $file = "month.".$compteur->id.".png";
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+      print '</td><td align="center">';
+      $file = "year.".$compteur->id.".png";
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
+      print '</td></tr></table><br>';
+      print '</div>';
+    }
   else
     {
+      /* Compteur non trouvée */
       print "Compteur inexistant";
     }
+}  
+else
+{
+  print "Compteur inexistant";
 }
+
 
 $db->close();
 
