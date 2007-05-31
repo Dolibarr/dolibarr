@@ -122,18 +122,20 @@ ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_constraint` FOREIG
 -- Contenu de la table `llx_menu`
 -- 
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1, 'home', '', 0, '/index.php?mainmenu=home&leftmenu=', 'Home', -1, '', '', '', 2, 1);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2, 'companies', '', 0, '/index.php?mainmenu=companies&amp;leftmenu=', 'ThirdParties', -1, 'companies', '', '', 2, 1);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (3, 'products', '', 0, '/product/index.php?mainmenu=products&amp;leftmenu=', 'Products/Services', -1, 'products', '$user->rights->produit->lire', '', 0, 2);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4, 'suppliers', '', 0, '/fourn/index.php?mainmenu=suppliers&amp;leftmenu=', 'Suppliers', -1, 'suppliers', '$user->rights->fournisseur->lire', '', 0, 3);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (5, 'commercial', '', 0, '/comm/index.php?mainmenu=commercial&amp;leftmenu=', 'Commercial', -1, 'commercial', '$user->rights->commercial->main->lire', '', 2, 4);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (6, 'accountancy', '', 0, '/compta/index.php?mainmenu=accountancy&amp;leftmenu=', 'MenuFinancial', -1, 'compta', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire || $user->rights->commande->lire || $user->rights->facture->lire || $user->rights->banque->lire', '', 2, 5);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (7, 'project', '', 0, '/projet/index.php?mainmenu=project&amp;leftmenu=', 'Projects', -1, 'projects', '$user->rights->projet->lire', '', 0, 6);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (8, 'tools', '', 0, '/index.php?mainmenu=tools&amp;leftmenu=', 'Tools', -1, 'other', '$user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire', '', 2, 7);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (9, 'shop', '', 0, '/boutique/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 8);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (10, 'shop', '', 0, '/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 9);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (11, 'webcal', '', 0, '/webcal/webcal.php?mainmenu=webcal&amp;leftmenu=', 'Calendar', -1, 'other', '', '', 0, 10);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (12, 'mantis', '', 0, '/mantis/mantis.php?mainmenu=mantis', 'BugTracker', -1, 'other', '', '', 2, 11);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (13, 'members', '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 12);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2, 'companies', '', 0, '/index.php?mainmenu=companies&amp;leftmenu=', 'ThirdParties', -1, 'companies', '', '', 2, 2);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (3, 'products', '', 0, '/product/index.php?mainmenu=products&amp;leftmenu=', 'Products/Services', -1, 'products', '$user->rights->produit->lire', '', 0, 3);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4, 'suppliers', '', 0, '/fourn/index.php?mainmenu=suppliers&amp;leftmenu=', 'Suppliers', -1, 'suppliers', '$user->rights->fournisseur->lire', '', 0, 4);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (5, 'commercial', '', 0, '/comm/index.php?mainmenu=commercial&amp;leftmenu=', 'Commercial', -1, 'commercial', '$user->rights->commercial->main->lire', '', 2, 5);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (6, 'accountancy', '', 0, '/compta/index.php?mainmenu=accountancy&amp;leftmenu=', 'MenuFinancial', -1, 'compta', '$user->rights->compta->resultat->lire || $user->rights->comptaexpert->plancompte->lire || $user->rights->commande->lire || $user->rights->facture->lire || $user->rights->banque->lire', '', 2, 6);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (7, 'project', '', 0, '/projet/index.php?mainmenu=project&amp;leftmenu=', 'Projects', -1, 'projects', '$user->rights->projet->lire', '', 0, 7);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (8, 'tools', '', 0, '/index.php?mainmenu=tools&amp;leftmenu=', 'Tools', -1, 'other', '$user->rights->mailing->lire || $user->rights->bookmark->lire || $user->rights->export->lire', '', 2, 8);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (9, 'telephony', '', 0, '/telephonie/index.php?mainmenu=telephony&amp;leftmenu=', 'Telephony', -1, 'telephony', '$user->rights->telephonie->lire', '', 2, 9);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (10, 'energy', '', 0, '/energie/index.php?mainmenu=energy&amp;leftmenu=', 'Energy', -1, 'energy', '', '', 2, 10);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (11, 'shop', '', 0, '/boutique/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 11);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (12, 'shop', '', 0, '/oscommerce_ws/index.php?mainmenu=shop&amp;leftmenu=', 'OSCommerce', -1, 'shop', '', '', 0, 12);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (13, 'webcal', '', 0, '/webcal/webcal.php?mainmenu=webcal&amp;leftmenu=', 'Calendar', -1, 'other', '', '', 0, 13);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (14, 'mantis', '', 0, '/mantis/mantis.php?mainmenu=mantis', 'BugTracker', -1, 'other', '', '', 2, 14);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (15, 'members', '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 15);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (100, 'home', '', 1, '/admin/index.php?leftmenu=setup', 'Setup', 0, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (101, 'home', '$leftmenu=="setup"', 100, '/admin/company.php', 'MenuCompanySetup', 1, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (102, 'home', '$leftmenu=="setup"', 100, '/admin/ihm.php', 'GUISetup', 1, 'admin', '', '', 2, 1);
@@ -424,6 +426,8 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (42, '(dolibarr_get
 insert into `llx_menu_constraint` (`rowid`, `action`) values (43, '!((dolibarr_get_const($this->db,"PRODUIT_SPECIAL_LIVRE")) && (dolibarr_get_const($this->db,"PRODUCT_CANVAS_ABILITY")))');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (44, '$conf->droitpret->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energie->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->telephonie->enabled');
 
 -- 
 -- Contenu de la table `llx_menu_const`
@@ -511,23 +515,25 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (82, 6, 36, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (83, 7, 27, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (84, 8, 37, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (85, 9, 38, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (86, 10, 39, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (87, 11, 40, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (88, 12, 41, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (89, 13, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (90, 1715, 13, 1);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (91, 1716, 13, 1);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (92, 1717, 13, 1);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (93, 2804, 42, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (94, 2805, 42, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (95, 2801, 43, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (96, 2802, 43, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (105, 4800, 44, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (106, 4900, 26, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (107, 4901, 6, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (108, 5000, 26, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (109, 5001, 6, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (85, 9, 47, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (86, 10, 46, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (87, 11, 38, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (88, 12, 39, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (89, 13, 40, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (90, 14, 41, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (91, 15, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (100, 1715, 13, 1);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (101, 1716, 13, 1);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (102, 1717, 13, 1);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (103, 2804, 42, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (104, 2805, 42, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (105, 2801, 43, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (106, 2802, 43, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (110, 4800, 44, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (111, 4900, 26, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (112, 4901, 6, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (113, 5000, 26, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (114, 5001, 6, 2);
 
 ALTER TABLE llx_product ADD COLUMN volume float DEFAULT NULL after weight_units;
 ALTER TABLE llx_product ADD COLUMN volume_units tinyint DEFAULT NULL after volume;
