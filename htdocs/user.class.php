@@ -607,7 +607,7 @@ class User
     // Si contact, supprime lien
     if ($this->contact_id)
     {
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user = null WHERE idp = $this->contact_id";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE idp = $this->contact_id";
 	    if ($this->db->query($sql))
 	    {
 	    

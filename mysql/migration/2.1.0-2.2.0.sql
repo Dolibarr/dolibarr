@@ -534,4 +534,5 @@ ALTER TABLE llx_product ADD COLUMN volume_units tinyint DEFAULT NULL after volum
 
 ALTER TABLE llx_product modify ref varchar(32) NOT NULL;
 
-ALTER TABLE `llx_socpeople` CHANGE `fk_user` `fk_user_create` INT( 11 ) NULL DEFAULT '0';
+ALTER TABLE `llx_socpeople` CHANGE `fk_user` `fk_user_creat` INT( 11 ) NULL DEFAULT '0';
+ALTER TABLE `llx_socpeople` CHANGE `fk_user_create` `fk_user_creat` INT( 11 ) NULL DEFAULT '0';

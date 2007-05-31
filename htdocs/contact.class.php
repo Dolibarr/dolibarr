@@ -96,7 +96,7 @@ class Contact
         $this->name=trim($this->name);
         if (! $this->socid) $this->socid = 0;
 
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_create)";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."socpeople (datec, fk_soc, name, fk_user_creat)";
         $sql.= " VALUES (now(),";
         if ($this->socid > 0) $sql.= " ".$this->socid.",";
         else $sql.= "null,";
@@ -580,7 +580,7 @@ class Contact
      */
     function info($id)
     {
-        $sql = "SELECT c.idp, ".$this->db->pdate("c.datec")." as datec, c.fk_user_create";
+        $sql = "SELECT c.idp, ".$this->db->pdate("c.datec")." as datec, c.fk_user_creat";
         $sql .= ", ".$this->db->pdate("c.tms")." as tms, c.fk_user_modif";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= " WHERE c.idp = ".$id;
@@ -594,8 +594,8 @@ class Contact
     
                 $this->id                = $obj->idp;
     
-                if ($obj->fk_user_create) {
-                    $cuser = new User($this->db, $obj->fk_user_create);
+                if ($obj->fk_user_creat) {
+                    $cuser = new User($this->db, $obj->fk_user_creat);
                     $cuser->fetch();
                     $this->user_creation     = $cuser;
                 }
