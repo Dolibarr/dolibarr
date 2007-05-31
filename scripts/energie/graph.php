@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,18 +24,12 @@ require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-include_once(JPGRAPH_DIR."jpgraph.php");
-include_once(JPGRAPH_DIR."jpgraph_line.php");
-include_once(JPGRAPH_DIR."jpgraph_bar.php");
-include_once(JPGRAPH_DIR."jpgraph_pie.php");
-include_once(JPGRAPH_DIR."jpgraph_error.php");
-include_once(JPGRAPH_DIR."jpgraph_canvas.php");
+require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php");
+require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
 
 $error = 0;
 
-$sql_c = "SELECT rowid";
-$sql_c .= " FROM ".MAIN_DB_PREFIX."energie_compteur";
-
+$sql_c = "SELECT rowid FROM ".MAIN_DB_PREFIX."energie_compteur";
 $resql_c = $db->query($sql_c);
 
 if ($resql_c)
@@ -146,29 +140,28 @@ if ($resql_c)
 	      $height = 300;
 	      if (sizeof($gdatas) > 2)
 		{
-		  $graph = new Graph($width, $height,"auto");    
-
-		  $graph->SetScale("textlin");
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(40,20,20,35);
-	      
-		  $b2plot = new LinePlot($gdatas);	      
-
-		  $b2plot->SetColor("blue");
-		  $b2plot->SetWeight(2);
-
-		  $graph->title->Set("Consommation par jour");
-	      
-		  $graph->xaxis->SetTickLabels($glabels);   
-		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-	      
-		  $graph->Add($b2plot);
-		  $graph->img->SetImgFormat("png");
-	      
 		  $file= DOL_DATA_ROOT."/energie/graph/day.".$obj_c->rowid.".png";
+
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation par jour");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new LinePlot($gdatas);
+    
+		  $plot->xAxis->setLabelText($glabels);
+		  $plot->xAxis->label->setFont(new Tuffy(7));
 		  
-		  $graph->Stroke($file);
+		  $graph->add($plot);
+		  $graph->draw($file);
 		}
 	      $width = 450;
 	      $height = 300;
@@ -183,27 +176,30 @@ if ($resql_c)
 		}
 	      if (sizeof($gmdatas))
 		{
-		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin");
-	      
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(40,20,20,35);
-	      
-		  $b2plot = new BarPlot($gmdatas);	      
-		  $b2plot->SetFillColor("blue");
-	      
-		  $graph->title->Set("Consommation par mois");
-		  
-		  $graph->xaxis->SetTickLabels($gmlabels);   
-		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-		  
-		  $graph->Add($b2plot);		  
-		  $graph->img->SetImgFormat("png");
-		  
 		  $file= DOL_DATA_ROOT."/energie/graph/month.".$obj_c->rowid.".png";
-		  		  
-		  $graph->Stroke($file);
+
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation par mois");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new BarPlot($gmdatas);
+		  $col = "blue";
+		  $color = new $col ;
+		  $plot->setBarColor($color);
+		  $plot->xAxis->setLabelText($gmlabels);
+		  $plot->xAxis->label->setFont(new Tuffy(7));
+		  
+		  $graph->add($plot);
+		  $graph->draw($file);
 		}
 	      // Hebdomadaire
 	      $width = 750;
@@ -217,28 +213,30 @@ if ($resql_c)
 		}
 	      if (sizeof($gwdatas))
 		{
-		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin");
-		  
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(40,20,20,35);
-		  
-		  $b2plot = new BarPlot($gwdatas);
-		  $graph->xaxis->SetTickLabels($gwlabels);
-		  
-		  $b2plot->SetFillColor("blue");
-		  $graph->title->Set("Consommation par semaine");
-		  
-		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-		  
-		  $graph->Add($b2plot);
-		  
-		  $graph->img->SetImgFormat("png");
-		  
 		  $file= DOL_DATA_ROOT."/energie/graph/week.".$obj_c->rowid.".png";
-		  	      		  
-		  $graph->Stroke($file);
+
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation par semaine");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new BarPlot($gwdatas);
+		  $col = "blue";
+		  $color = new $col ;
+		  $plot->setBarColor($color);
+		  $plot->xAxis->setLabelText($gwlabels);
+		  $plot->xAxis->label->setFont(new Tuffy(7));
+		  
+		  $graph->add($plot);
+		  $graph->draw($file);
 		}
 
 	      // Annuel
@@ -254,28 +252,30 @@ if ($resql_c)
 	     
 	      if (sizeof($gydatas))
 		{
-		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin");
-	      
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(40,20,20,35);
-		  
-		  $b2plot = new BarPlot($gydatas);
-		  $graph->xaxis->SetTickLabels($gylabels);
-		  
-		  $b2plot->SetFillColor("blue");
-		  $graph->title->Set("Consommation annuelle");
-		  
-		  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-		  
-		  $graph->Add($b2plot);
-		  
-		  $graph->img->SetImgFormat("png");
-		  
 		  $file= DOL_DATA_ROOT."/energie/graph/year.".$obj_c->rowid.".png";
-		  		  
-		  $graph->Stroke($file);
+
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation annuelle");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new BarPlot($gydatas);
+		  $col = "blue";
+		  $color = new $col ;
+		  $plot->setBarColor($color);
+		  $plot->xAxis->setLabelText($gylabels);
+		  $plot->xAxis->label->setFont(new Tuffy(7));
+		  
+		  $graph->add($plot);
+		  $graph->draw($file);
 		}	      
 	    }
 	  else
@@ -292,7 +292,10 @@ else
   dolibarr_syslog("Erreur SQL");
   dolibarr_syslog($db->error($resql_c));
 }
-
+/*************************************************************
+ * Groupes
+ * 
+ */
 
 $sql_g = "SELECT distinct fk_energie_groupe";
 $sql_g .= " FROM ".MAIN_DB_PREFIX."energie_compteur_groupe";
@@ -331,22 +334,28 @@ if ($resql_g)
 	  $width = 450;
 	  $height = 300;
 
-	  //
-	  $graph = new Graph($width, $height,"auto");    
-	  $graph->SetScale("textlin");
-
-	  $graph->SetFrame(1);
-	  $graph->img->SetMargin(40,20,20,35);
-	  $graph->img->SetImgFormat("png");
-	  $graph->title->Set("Consommation hebdomadaire");
-	  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-
+	  // Hebdo
+	  $file= DOL_DATA_ROOT."/energie/graph/groupe.week.".$row_g[0].".png";
+	  
+	  $group = new PlotGroup;
+	  $group->setPadding(30, 10, NULL, NULL);
+	  
+	  $graph = new Graph($width, $height);
+	  $graph->border->hide();
+	  $graph->setAntiAliasing(true);
+	  
+	  $graph->title->set("Consommation hebdomadaire");
+	  $graph->title->setFont(new Tuffy(10));
+	  
+	  $bgcolor= new Color(222,231,236);
+	  $graph->setBackgroundColor($bgcolor);
+	  
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-
+	      
 	      $i=0;
 	      foreach ($wdatas[$cx] as $key => $value)
 		{
@@ -354,40 +363,42 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      $bplot = new BarPlot($gydatas);
-	      $cc = new EnergieCompteur($db,0);
-	      $cc->fetch($cx);
-	      $bplot->SetFillColor($cc->couleurs[$cc->energie]);
 	      
 	      array_push($gbspl, $bplot);
+
+	      $plot = new BarPlot($gydatas);
+	      $col = "green";
+	      $color = new $col ;
+	      $plot->setBarColor($color);
+	      $plot->xAxis->setLabelText($gylabels);
+	      $plot->xAxis->label->setFont(new Tuffy(7));
+	      $graph->add($plot);	      	      
 	    }
-
-	  $gbplot = new GroupBarPlot($gbspl);
-
-	  $graph->xaxis->SetTickLabels($gylabels);	  
-	  $graph->Add($gbplot);
-	  	  	  	  
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.week.".$row_g[0].".png";
-	  if (sizeof($gbspl))
-	    $graph->Stroke($file);
+	  
+	  $graph->draw($file);
 	  //
 	  //
 	  //
-	  $graph = new Graph($width, $height,"auto");    
-	  $graph->SetScale("textlin");
-
-	  $graph->SetFrame(1);
-	  $graph->img->SetMargin(40,20,20,35);
-	  $graph->img->SetImgFormat("png");
-	  $graph->title->Set("Consommation mensuelle");
-	  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-
+	  $file= DOL_DATA_ROOT."/energie/graph/groupe.month.".$row_g[0].".png";	  
+	  $group = new PlotGroup;
+	  $group->setPadding(30, 10, NULL, NULL);
+	  
+	  $graph = new Graph($width, $height);
+	  $graph->border->hide();
+	  $graph->setAntiAliasing(true);
+	  
+	  $graph->title->set("Consommation mensuelle");
+	  $graph->title->setFont(new Tuffy(10));
+	  
+	  $bgcolor= new Color(222,231,236);
+	  $graph->setBackgroundColor($bgcolor);
+	  
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-
+	      
 	      $i=0;
 	      foreach ($mdatas[$cx] as $key => $value)
 		{
@@ -395,41 +406,44 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      $bplot = new BarPlot($gydatas);
-
-	      $cc = new EnergieCompteur($db,0);
-	      $cc->fetch($cx);
-	      $bplot->SetFillColor($cc->couleurs[$cc->energie]);
-
+	      
 	      array_push($gbspl, $bplot);
+
+	      $plot = new BarPlot($gydatas);
+	      $col = "blue";
+	      $color = new $col ;
+	      $plot->setBarColor($color);
+	      $plot->xAxis->setLabelText($gylabels);
+	      $plot->xAxis->label->setFont(new Tuffy(7));
+	      $graph->add($plot);
+	      	      
 	    }
+	  
+	  $graph->draw($file);
 
-	  $gbplot = new GroupBarPlot($gbspl);
-
-	  $graph->xaxis->SetTickLabels($gylabels);	  
-	  $graph->Add($gbplot);
-	  	  	  	  
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.month.".$row_g[0].".png";	  
-	  if (sizeof($gbspl))
-	    $graph->Stroke($file);
 	  //
 	  //
 	  //
-	  $graph = new Graph($width, $height,"auto");    
-	  $graph->SetScale("textlin");
-
-	  $graph->SetFrame(1);
-	  $graph->img->SetMargin(40,20,20,35);
-	  $graph->img->SetImgFormat("png");
-	  $graph->title->Set("Consommation annuelle");
-	  $graph->xaxis->title->Set(strftime("%d/%m/%y %H:%M:%S", time()));
-
+	  $file= DOL_DATA_ROOT."/energie/graph/groupe.year.".$row_g[0].".png";
+	  $group = new PlotGroup;
+	  $group->setPadding(30, 10, NULL, NULL);
+	  
+	  $graph = new Graph($width, $height);
+	  $graph->border->hide();
+	  $graph->setAntiAliasing(true);
+	  
+	  $graph->title->set("Consommation annuelle");
+	  $graph->title->setFont(new Tuffy(10));
+	  
+	  $bgcolor= new Color(222,231,236);
+	  $graph->setBackgroundColor($bgcolor);
+	  
 	  $gbspl = array();
 	  foreach ($compteurs as $cx)
 	    {
 	      $gydatas = array();
 	      $gylabels = array();
-
+	      
 	      $i=0;
 	      foreach ($ydatas[$cx] as $key => $value)
 		{
@@ -437,23 +451,20 @@ if ($resql_g)
 		  $gylabels[$i] = $key;
 		  $i++;
 		}
-	      $bplot = new BarPlot($gydatas);
-
-	      $cc = new EnergieCompteur($db,0);
-	      $cc->fetch($cx);
-	      $bplot->SetFillColor($cc->couleurs[$cc->energie]);
 	      
 	      array_push($gbspl, $bplot);
+
+	      $plot = new BarPlot($gydatas);
+	      $col = "yellow";
+	      $color = new $col ;
+	      $plot->setBarColor($color);
+	      $plot->xAxis->setLabelText($gylabels);
+	      $plot->xAxis->label->setFont(new Tuffy(7));
+	      $graph->add($plot);
+	      	      
 	    }
-
-	  $gbplot = new GroupBarPlot($gbspl);
-
-	  $graph->xaxis->SetTickLabels($gylabels);	  
-	  $graph->Add($gbplot);
-	  	  	  	  
-	  $file= DOL_DATA_ROOT."/energie/graph/groupe.year.".$row_g[0].".png";	  
-	  if (sizeof($gbspl))
-	    $graph->Stroke($file);
+	  
+	  $graph->draw($file);
 	  //
 	}
       else
