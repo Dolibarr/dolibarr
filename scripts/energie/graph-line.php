@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,17 +25,14 @@ require_once("../../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieCompteur.class.php");
 require_once(DOL_DOCUMENT_ROOT."/energie/EnergieGroupe.class.php");
 
-include_once(JPGRAPH_DIR."jpgraph.php");
-include_once(JPGRAPH_DIR."jpgraph_line.php");
+require_once (DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php");
 
 $error = 0;
 
 $labels = array();
 $datas = array();
 
-$sql_c = "SELECT rowid";
-$sql_c .= " FROM ".MAIN_DB_PREFIX."energie_compteur";
-
+$sql_c = "SELECT rowid FROM ".MAIN_DB_PREFIX."energie_compteur";
 $resql_c = $db->query($sql_c);
 
 $user = New User($db);
@@ -71,8 +68,6 @@ if ($resql_c)
 	      if ($num > 0)
 		{
 		  $obj = $db->fetch_object($resql);
-		  
-		  //print strftime("%Y-%m-%d", $obj->date_releve) . "\t\t".$obj->valeur."\n";
 		  
 		  $previous_date  = $obj->date_releve;
 		  $previous_value = $obj->valeur;
@@ -153,50 +148,51 @@ if ($resql_c)
 		{
 		  $width = 750;
 		  $height = 300;
-		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin");
-	      
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(40,20,20,35);
-	      
-		  $b2plot = new LinePlot($xydatas);	      
-
-		  $b2plot->SetColor("blue");
-
-		  $graph->title->Set("Consommation journalière");
-	      
-		  $graph->xaxis->Hide();
-	      
-		  $graph->Add($b2plot);
-		  $graph->img->SetImgFormat("png");
-	      
+      
 		  $file= DOL_DATA_ROOT."/energie/graph/all.".$obj_c->rowid.".png";
+
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation journalière");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new LinePlot($xydatas);
+		  $plot->xAxis->Hide();
 		  
-		  $graph->Stroke($file);
+		  $graph->add($plot);
+		  $graph->draw($file);
+
 
 		  $width = 300;
 		  $height = 90;
-		  $graph = new Graph($width, $height,"auto");    
-		  $graph->SetScale("textlin");
-	      
-		  $graph->yaxis->scale->SetGrace(2);
-		  $graph->SetFrame(1);
-		  $graph->img->SetMargin(30,10,10,10);
-	      
-		  $b2plot = new LinePlot($xydatas);	      
-
-		  $b2plot->SetColor("blue");
-
-		  $graph->xaxis->Hide();
-	      
-		  $graph->Add($b2plot);
-		  $graph->img->SetImgFormat("png");
-	      
 		  $file= DOL_DATA_ROOT."/energie/graph/small-all.".$obj_c->rowid.".png";
-		  
-		  $graph->Stroke($file);
 
+		  $group = new PlotGroup;
+		  $group->setPadding(30, 10, NULL, NULL);
+    
+		  $graph = new Graph($width, $height);
+		  $graph->border->hide();
+		  $graph->setAntiAliasing(true);
+
+		  $graph->title->set("Consommation journalière");
+		  $graph->title->setFont(new Tuffy(10));
+
+		  $bgcolor= new Color(222,231,236);
+		  $graph->setBackgroundColor($bgcolor);
+    
+		  $plot = new LinePlot($xydatas);
+		  $plot->xAxis->Hide();
+		  
+		  $graph->add($plot);
+		  $graph->draw($file);
 		}
 	      else
 		{
