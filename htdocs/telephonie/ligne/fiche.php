@@ -618,8 +618,9 @@ else
 	      print $client_comm->nom.'</a></td><td>'.$client_comm->code_client;
 	      print '</td></tr>';
 
-	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero);
-	      print " ".$ligne->support.'</td>';
+	      print '<tr><td width="20%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
+	      //print " ".$ligne->support.
+
 	      print '<td>Facturée : '.$ligne->facturable.'</td></tr>';
 	      	     
 	      $client = new Societe($db, $ligne->client_id);
