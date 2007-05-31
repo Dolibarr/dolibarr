@@ -761,24 +761,8 @@ class User
 
             if ($resql)
             {
-                $sql = "UPDATE ".MAIN_DB_PREFIX."socpeople";
-                $sql.= " SET fk_user_create = ".$this->id;
-                $sql.= " WHERE idp = ".$contact->id;
-                $resql=$this->db->query($sql);
-
-                if ($resql)
-                {
-                    $this->db->commit();
-                    return $this->id;
-                }
-                else
-                {
-                    $this->error=$this->db->error()." - $sql";
-                    dolibarr_syslog("User::create_from_contact - 20 - ".$this->error);
-
-                    $this->db->rollback();
-                    return -2;
-                }
+                $this->db->commit();
+                return $this->id;
             }
             else
             {
