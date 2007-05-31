@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,6 +30,7 @@ create table llx_telephonie_fournisseur (
   commande_bloque tinyint default 0, 
 
   class_commande  varchar(25),        -- nom de la classe utilisée pour la commande
+  cdrformat       varchar(25),        -- nom du format de CDR
   fk_tarif_grille integer
 
 )type=innodb;
