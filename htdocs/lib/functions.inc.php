@@ -2661,7 +2661,7 @@ function ajax_updater_indicator($htmlname,$indicator='working')
 */
 function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
-	$script='';
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
 	if ($indicator) $script.=ajax_updater_indicator($htmlname,$indicator);
 	$script.='<script type="text/javascript">';
 	$script.='var myIndicator'.$htmlname.' = {
@@ -2689,7 +2689,6 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 				   });';
 	$script.='</script>';
 	$script.='<div class="nocellnopadd" id="ajdynfield'.$htmlname.'"></div>';
-	$script.='<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
   
 	return $script;
 }
