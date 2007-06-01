@@ -352,10 +352,10 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		{
 			// On charge les attributs du user ldap
 			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
-	    $userldap = $ldap->fetch($login);
+	    $ldap->fetch($login);
 	    
 	    // On stop si le mot de passe ldap doit etre modifié
-	    if ($userldap->pwdlastset == 0)
+	    if ($ldap->pwdlastset == 0)
 	    {
 	    	session_destroy();
 		    dolibarr_syslog('User '.$login.' must change password next logon');
