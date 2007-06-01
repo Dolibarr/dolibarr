@@ -542,3 +542,8 @@ ALTER TABLE llx_product modify ref varchar(32) NOT NULL;
 
 ALTER TABLE `llx_socpeople` CHANGE `fk_user` `fk_user_creat` INT( 11 ) NULL DEFAULT '0';
 ALTER TABLE `llx_socpeople` CHANGE `fk_user_create` `fk_user_creat` INT( 11 ) NULL DEFAULT '0';
+
+
+drop table if exists llx_soc_events;
+drop table if exists llx_todocomm.sql;
+drop table if exists llx_ventes.sql;
