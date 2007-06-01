@@ -260,7 +260,7 @@ class CMailFile
         if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".getValidAddress($this->addr_bcc,2).$this->eol;
 
         // Accusé réception
-        if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,1).$this->eol;
+        if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
 
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION .$this->eol;
         $out .= "MIME-Version: 1.0".$this->eol;
