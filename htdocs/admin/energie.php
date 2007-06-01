@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,29 +36,15 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setvalue' && $user->admin)
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'JPGRAPH_DIR'";
-
-  $db->query($sql);
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible)";
-  $sql .= " VALUES ('JPGRAPH_DIR','".$_POST["url"]."',0)";
-	
-  if ($db->query($sql))
-    {
-      Header("Location: energie.php");
-    }
-  else
-    {
-      dolibarr_print_error($db);
-    }
+	dolibarr_set_const($db, "JPGRAPH_DIR",$_POST["url"]);
 }
 
-llxHeader();
 
 /*
  *
- *
  */
+
+ llxHeader();
 
 print_fiche_titre($langs->trans("Energy"),'','setup');
 
@@ -71,9 +58,9 @@ print '<td>'.$langs->trans("NewValue").'</td><td>'.$langs->trans("CurrentValue")
 print "</tr>\n";
 print '<tr><td>';
 print $langs->trans("Emplacement de la librairie JpGraph").'</td><td>';
-print '<input size="45" type="text" name="url" value="'.JPGRAPH_DIR.'">';
+print '<input size="45" type="text" name="url" value="'.$conf->global->JPGRAPH_DIR.'">';
 print '</td><td>';
-print JPGRAPH_DIR;
+print $conf->global->JPGRAPH_DIR;
 print '</td></tr>';
 
 print '<tr><td colspan="3" align="center"><input type="submit" value="'.$langs->trans("Modify").'"></td></tr>';
