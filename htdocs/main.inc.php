@@ -303,17 +303,6 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
 		// Fin code pour compatiblité
 		
-		// Si synchro ldap2dolibarr on récupère les attributs de l'utilisateur
-		// afin de les synchroniser à chaque connexion
-		if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
-		{
-			$attrArray = array(); // récupération de tous les attributs de l'utilisateur
-		}
-		else
-		{
-			$attrArray = array(''); // aucun attribut récupéré
-		}
-		
 	    $params = array(
 		    'userattr' => $ldapuserattr,
 		    'host' => $ldaphost,
@@ -322,8 +311,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    'basedn' => $ldapdn,
 		    'binddn' => $ldapadminlogin,
 		    'bindpw' => $ldapadminpass,
-		    'debug' => $ldapdebug,
-		    'attributes' => $attrArray, 
+		    'debug' => $ldapdebug, 
 		    'userfilter' => ''
 	    );
 		if ($ldapdebug) print "DEBUG: params=".join(',',$params)."<br>\n";
@@ -337,9 +325,6 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    	// Authentification Auth OK, on va chercher le login
 			  $login=$aDol->getUsername();
 	      dolibarr_syslog ("Authentification ok (en mode Pear Base LDAP)");
-	      
-	      // Récupération des attributs de l'utilisateur
-	      $attributs = $aDol->getAuthData("attributes");
 		  }
 	    else
 	    {
@@ -357,26 +342,55 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    }
     }
 
-	// Charge l'objet user depuis son login ou son sid
-	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && is_array($attributs))
+	// Charge l'objet user depuis son login ou son SID
+	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 		$ldap=new Ldap();
 		$result=$ldap->connect_bind();
 		if ($result > 0)
 		{
-			//on récupère le sid
-			if ($ldapuserattr == 'samaccountname') $ldapuserattr = 'sAMAccountName';
-			if ($ldapdebug) print "DEBUG: attribut ldapuserattr = ".$attributs[$ldapuserattr][0]."<br>\n";
-		  $user->search_sid = $ldap->getObjectSid($attributs[$ldapuserattr][0]);
+			// On charge les attributs du user ldap
+			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
+	    $userldap = $ldap->fetch($login);
+	    
+	    // On stop si le mot de passe ldap doit etre modifié
+	    if ($userldap->pwdlastset == 0)
+	    {
+	    	session_destroy();
+		    dolibarr_syslog('User '.$login.' must change password next logon');
+		    if ($ldapdebug) print "DEBUG: User ".$login." must change password<br>\n";
+		    $ldap->close();
+
+		    // On repart sur page accueil
+		    session_name($sessionname);
+		    session_start();
+		    $langs->load('admin');
+		    $_SESSION["loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
+		    header('Location: '.DOL_URL_ROOT.'/index.php');
+		    exit;
+		  }
+	    
+			// On recherche le user dolibarr en fonction de son SID ldap
+		  $user->search_sid = $ldap->getObjectSid($login);
 		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
 		  $result=$user->fetch();
+		  if ($result)
+		  {
+		  	//TODO: on vérifie si le login à changer et on met à jour les attributs dolibarr
+		  	if ($user->login != $ldap->login)
+		  	{
+		  		
+		  	}
+		    //$resultUpdate = $user->update_ldap2dolibarr($attributs);
+		  }
 		}
 		else
 		{
 			session_destroy();
 		  dolibarr_syslog('Synchro LDAP KO');
 		  if ($ldapdebug) print "DEBUG: Error connect_bind = ".$ldap->error."<br>\n";
+		  $ldap->close();
 
 		  // On repart sur page accueil
 		  session_name($sessionname);
@@ -423,13 +437,6 @@ if (! isset($_SESSION["dol_login"]))
     $_SESSION["dol_login"]=$user->login;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
     $user->update_last_login_date();
-    
-    // Mise à jour ldap2dolibarr
-    if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && is_array($attributs))
-    {
-    	//$result = $user->update_ldap2dolibarr($attributs);
-    }
-    
 }
 
 
