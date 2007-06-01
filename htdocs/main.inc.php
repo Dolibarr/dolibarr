@@ -304,7 +304,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		// Fin code pour compatiblité
 		
 		// Si synchro ldap2dolibarr on récupère les attributs de l'utilisateur
-		// afin de les synchroniser à sa connexion
+		// afin de les synchroniser à chaque connexion
 		if ($conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 		{
 			$attrArray = array(); // récupération de tous les attributs de l'utilisateur
@@ -357,8 +357,39 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    }
     }
 
-	// Charge l'objet user depuis son login
-	$result=$user->fetch($login);
+	// Charge l'objet user depuis son login ou son sid
+	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && is_array($attributs))
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+		$ldap=new Ldap();
+		$result=$ldap->connect_bind();
+		if ($result > 0)
+		{
+			//on récupère le sid
+		  $user->search_sid = $ldap->getObjectSid($attributs[$ldapuserattr][0]);
+		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
+		  $result=$user->fetch();
+		}
+		else
+		{
+			session_destroy();
+		  dolibarr_syslog('Synchro LDAP KO');
+		  if ($ldapdebug) print "DEBUG: Error connect_bind = ".$ldap->error."<br>\n";
+
+		  // On repart sur page accueil
+		  session_name($sessionname);
+		  session_start();
+		  $langs->load('admin');
+		  $_SESSION["loginmesg"]=$langs->trans("LDAPSynchroKO");
+		  header('Location: '.DOL_URL_ROOT.'/index.php');
+		  exit;
+		}
+	}
+	else
+	{
+		$result=$user->fetch($login);
+	}
+	
 	if ($result <= 0)
 	{
 		session_destroy();
@@ -378,9 +409,9 @@ else
 	// On est déjà en session qui a sauvegardé login
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal idnetifiés
 	$login=$_SESSION["dol_login"];
-    dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
+  dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
 	$user->fetch($login);
-    $login=$user->login;
+  $login=$user->login;
 }
 
 // Est-ce une nouvelle session
@@ -390,6 +421,13 @@ if (! isset($_SESSION["dol_login"]))
     $_SESSION["dol_login"]=$user->login;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
     $user->update_last_login_date();
+    
+    // Mise à jour ldap2dolibarr
+    if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && is_array($attributs))
+    {
+    	//$result = $user->update_ldap2dolibarr($attributs);
+    }
+    
 }
 
 

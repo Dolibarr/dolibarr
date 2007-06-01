@@ -50,6 +50,7 @@ class User
   
   var $id;
   var $ldap_sid;
+  var $search_sid;
   var $fullname;
   var $nom;
   var $prenom;
@@ -128,7 +129,12 @@ class User
 		$sql.= " ".$this->db->pdate("u.datelastlogin")." as datel,";
 		$sql.= " ".$this->db->pdate("u.datepreviouslogin")." as datep";
 		$sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-		if ($login)
+		if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && $this->search_sid != '')
+		{
+			// permet une recherche du user par son SID ActiveDirectory ou Samba
+			$sql .= " WHERE u.ldap_sid = '".$this->search_sid."'";
+		}
+		else if ($login)
 		{
 			$sql .= " WHERE u.login = '".$login."'";
 		}
