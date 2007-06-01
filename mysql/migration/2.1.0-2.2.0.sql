@@ -551,3 +551,4 @@ drop table if exists llx_soc_events;
 drop table if exists llx_todocomm.sql;
 drop table if exists llx_ventes.sql;
 drop table if exists llx_pointmort.sql;
+drop table if exists llx_birthday_alert;
