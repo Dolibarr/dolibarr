@@ -354,6 +354,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
 	    $ldap->fetch($login);
 	    
+	    //TODO : doit etre géré au niveau de PEAR
+/*	    
 	    // On stop si le mot de passe ldap doit etre modifié
 	    if ($ldap->pwdlastset == 0)
 	    {
@@ -370,7 +372,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    header('Location: '.DOL_URL_ROOT.'/index.php');
 		    exit;
 		  }
-	    
+*/	    
 			// On recherche le user dolibarr en fonction de son SID ldap
 		  $user->search_sid = $ldap->getObjectSid($login);
 		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
