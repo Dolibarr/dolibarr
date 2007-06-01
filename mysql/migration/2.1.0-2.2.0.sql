@@ -548,7 +548,7 @@ ALTER TABLE `llx_socpeople` CHANGE `fk_user_create` `fk_user_creat` INT(11) NULL
 
 
 drop table if exists llx_soc_events;
-drop table if exists llx_todocomm.sql;
-drop table if exists llx_ventes.sql;
-drop table if exists llx_pointmort.sql;
+drop table if exists llx_todocomm;
+drop table if exists llx_ventes;
+drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
