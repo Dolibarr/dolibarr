@@ -365,7 +365,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		    // On repart sur page accueil
 		    session_name($sessionname);
 		    session_start();
-		    $langs->load('admin');
+		    $langs->load('ldap');
 		    $_SESSION["loginmesg"]=$langs->trans("UserMustChangePassNextLogon");
 		    header('Location: '.DOL_URL_ROOT.'/index.php');
 		    exit;
