@@ -91,42 +91,8 @@ class Account
     return 1;
   }
 
-    /**
-     *      \brief      Efface une entree dans la table ".MAIN_DB_PREFIX."bank
-     *      \param      rowid       Id de l'ecriture a effacer
-     *      \return     int         <0 si ko, >0 si ok
-     */
-    function deleteline($rowid)
-    {
-        $nbko=0;
-        
-        $this->db->begin();
-        
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$rowid;
-        $result = $this->db->query($sql);
-        if (! $result) $nbko++;
 
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$rowid;
-        $result = $this->db->query($sql);
-        if (! $result) $nbko++;
-
-        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$rowid;
-        $result = $this->db->query($sql);
-        if (! $result) $nbko++;
-
-        if (! $nbko) 
-        {
-            $this->db->commit();
-            return 1;
-        }
-        else
-        {
-            $this->db->rollback();
-            return -$nbko;
-        }
-    }
-
-    /**
+	/**
      *      \brief      Ajoute lien entre ecriture bancaire et sources
      *      \param      line_id     Id ecriture bancaire
      *      \param      url_id      Id parametre url
@@ -140,6 +106,7 @@ class Account
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label, type)";
         $sql .= " VALUES ('$line_id', '$url_id', '$url', '$label', '$type')";
 
+		dolibarr_syslog("Account::add_url_line sql=".$sql);
         if ($this->db->query($sql))
         {
             $rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank_url");
@@ -528,6 +495,8 @@ class Account
     {
         $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_account";
         $sql .= " WHERE rowid  = ".$this->rowid;
+
+		dolibarr_syslog("Account::delete sql=".$sql);
         $result = $this->db->query($sql);
         if ($result) {
             return 1;
@@ -761,6 +730,9 @@ class AccountLine
 {
     var $db;
     
+	var $rappro;
+	
+	
     /**
      *  Constructeur
      */
@@ -785,6 +757,7 @@ class AccountLine
         $sql.= " FROM ".MAIN_DB_PREFIX."bank";
         $sql.= " WHERE rowid  = ".$rowid;
 
+		dolibarr_syslog("AccountLine::fetch sql=".$sql);
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -820,6 +793,51 @@ class AccountLine
     }
 
 
+    /**
+     *      \brief      Efface ligne bancaire
+     *      \return		int 	<0 si KO, >0 si OK
+     */
+    function delete()
+    {
+        $nbko=0;
+        
+		if ($this->rappro)
+		{
+			// Protection pour eviter tout suppression d'une ligne consolidée
+			$this->error="DeleteNotPossibleLineIsConsolidated";
+			return -1;
+		}
+		
+        $this->db->begin();
+        
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_class WHERE lineid=".$this->rowid;
+		dolibarr_syslog("AccountLine::delete sql=".$sql);
+        $result = $this->db->query($sql);
+        if (! $result) $nbko++;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank_url WHERE fk_bank=".$this->rowid;
+		dolibarr_syslog("AccountLine::delete sql=".$sql);
+        $result = $this->db->query($sql);
+        if (! $result) $nbko++;
+
+        $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$this->rowid;
+		dolibarr_syslog("AccountLine::delete sql=".$sql);
+        $result = $this->db->query($sql);
+        if (! $result) $nbko++;
+
+        if (! $nbko) 
+        {
+            $this->db->commit();
+            return 1;
+        }
+        else
+        {
+            $this->db->rollback();
+            return -$nbko;
+        }
+	}
+	
+	
 	/**
 	 *      \brief     Charge les informations d'ordre info dans l'objet facture
 	 *      \param     id       Id de la facture a charger

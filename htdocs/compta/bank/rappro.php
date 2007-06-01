@@ -96,10 +96,12 @@ if ($user->rights->banque->consolidate && $_POST["action"] == 'rappro')
  */
 if ($_GET["action"] == 'del')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."bank WHERE rowid=".$_GET["rowid"];
-    $resql = $db->query($sql);
-    if (! $resql) {
-        dolibarr_print_error($db);
+	$accline=new AccountLine($db);
+	$accline->fetch($_GET["rowid"]);
+	$result=$accline->delete();
+    if ($result < 0)
+	{
+        dolibarr_print_error($db,$accline->error);
     }
 }
 

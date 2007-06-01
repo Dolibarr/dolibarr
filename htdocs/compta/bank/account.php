@@ -97,9 +97,9 @@ if ($_POST["action"] == 'add' && $account && ! isset($_POST["cancel"]) && $user-
 }
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"]=='yes' && $user->rights->banque->modifier)
 {
-    $acct=new Account($db);
-	$acct->id=$account;
-    $result=$acct->deleteline($_GET["rowid"]);
+	$accline=new AccountLine($db);
+	$accline->fetch($_GET["rowid"]);
+	$result=$accline->delete();
 }
 
 

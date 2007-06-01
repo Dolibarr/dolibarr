@@ -269,11 +269,12 @@ class Paiement
     		// Supprimer l'écriture bancaire si paiement lié à écriture
     		if ($bank_line_id)
     		{
-    			$acc = new Account($this->db);
-    			$result=$acc->deleteline($bank_line_id);
+    			$accline = new AccountLine($this->db);
+    			$accline->fetch($bank_line_id);
+				$result=$accline->delete();
     			if ($result < 0)
     			{
-                    $this->error=$acc->error;
+                    $this->error=$accline->error;
                     $this->db->rollback();
     	    		return -4;
     		    }
