@@ -366,7 +366,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if ($result > 0)
 		{
 			//on récupère le sid
-			if ($ldapdebug) print "DEBUG: search_sid = ".$attributs[$ldapuserattr][0]."<br>\n";
+			if ($ldapdebug) print "DEBUG: value of ldapuserattr = ".$ldapuserattr."<br>\n";
+			if ($ldapdebug) print "DEBUG: attribut ldapuserattr = ".$attributs[$ldapuserattr][0]."<br>\n";
 		  $user->search_sid = $ldap->getObjectSid($attributs[$ldapuserattr][0]);
 		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
 		  $result=$user->fetch();
