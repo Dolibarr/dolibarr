@@ -252,7 +252,7 @@ class FormMail
 			if ($this->param["models"]=='propal_send') { $defaultmessage="Veuillez trouver ci-joint la proposition commerciale __PROPREF__\n\nCordialement\n\n"; }
 			if ($this->param["models"]=='order_send') { $defaultmessage="Veuillez trouver ci-joint la commande __ORDERREF__\n\nCordialement\n\n"; }
 
-			$defaultmessage=$this->make_substitutions($defaultmessage,$this->substit);
+			$defaultmessage=make_substitutions($defaultmessage,$this->substit);
 
 			print "<tr>";
 			print "<td width=\"180\" valign=\"top\">".$langs->trans("MailText")."</td>";
