@@ -61,6 +61,9 @@ $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_selec
 // en banque mais on va mettre le solde banque direct a la valeur apres toutes les adhésions.
 $allowinsertbankafter=0;	
 
+if (! $user->rights->adherent->cotisation->lire)
+	 accessforbidden();
+
 
 /*
 *	Actions

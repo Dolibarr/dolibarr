@@ -2,6 +2,7 @@
 MembersArea=Espace adhérents
 PublicMembersArea=Espace public des adhérents
 MemberCard=Fiche adhérent
+SubscriptionCard=Fiche adhésion
 Member=Adhérent
 Members=Adhérents
 MembersTickets=Etiquettes d'adhérents
@@ -87,6 +88,8 @@ ResiliateMember=Résilier un adhérent
 ConfirmResiliateMember=Etes-vous sûr de vouloir résilier cet adhérent ?
 DeleteMember=Effacer un membre
 ConfirmDeleteMember=Etes-vous sûr de vouloir effacer ce membre (Effacer un membre efface aussi toutes ses cotisations) ?
+DeleteSubscription=Effacer une adhésion
+ConfirmDeleteSubscription=Etes-vous sûr de vouloir effacer cette adhésion ?
 Filehtpasswd=Fichier htpasswd
 ValidateMember=Valider un adhérent
 ConfirmValidateMember=Etes-vous sûr de vouloir valider cet adhérent ?

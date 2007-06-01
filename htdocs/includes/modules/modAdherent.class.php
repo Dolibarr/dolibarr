@@ -177,7 +177,7 @@ class modAdherent extends DolibarrModules
     
         $r++;
         $this->rights[$r][0] = 79;
-        $this->rights[$r][1] = 'Créer/modifier les cotisations';
+        $this->rights[$r][1] = 'Créer/modifier/supprimer les cotisations';
         $this->rights[$r][2] = 'w';
         $this->rights[$r][3] = 0;
         $this->rights[$r][4] = 'cotisation';

@@ -24,7 +24,7 @@
 /**
         \file       htdocs/adherents/card_subscriptions.php
         \ingroup    adherent
-        \brief      Page d'ajout, edition, suppression d'une adhésion
+        \brief      Onglet d'ajout, edition, suppression des adhésions d'un adhérent
         \version    $Revision$
 */
 
@@ -54,6 +54,8 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 
+if (! $user->rights->adherent->cotisation->lire)
+	 accessforbidden();
 
 
 /*

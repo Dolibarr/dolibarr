@@ -160,7 +160,7 @@ class Cotisation
 	*/
 	function fetch($rowid)
 	{
-        $sql="SELECT fk_adherent, datec, tms, dateadh, cotisation, note, fk_bank";
+        $sql="SELECT rowid, fk_adherent, datec, tms, dateadh, cotisation, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
 
@@ -173,6 +173,8 @@ class Cotisation
 				$obj = $this->db->fetch_object($resql);
 
 				$this->id             = $obj->rowid;
+				$this->ref            = $obj->rowid;
+
 				$this->fk_adherent    = $obj->fk_adherent;
 				$this->datec          = $obj->datec;
 				$this->datem          = $obj->tms;
@@ -238,8 +240,8 @@ class Cotisation
 		
 		$result='';
 
-//		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/cotisations.php?rowid='.$this->id.'">';
-//		$lienfin='</a>';
+		$lien = '<a href="'.DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$this->id.'">';
+		$lienfin='</a>';
 		
 		$picto='payment';
 		$label=$langs->trans("ShowSubscription");
