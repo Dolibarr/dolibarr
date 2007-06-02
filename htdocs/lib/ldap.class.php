@@ -872,41 +872,40 @@ class Ldap
       * ldapuser. le login de l'utilisateur 	 
       * Indispensable pour Active Directory
       */ 	 
-     function getObjectSid($ldapUser) 	 
-     { 	 
-         $criteria =  '('.$this->getUserIdentifier().'='.$ldapUser.')'; 	 
-         $justthese = array("objectsid");
+     function getObjectSid($ldapUser)
+     {
+     	$criteria =  '('.$this->getUserIdentifier().'='.$ldapUser.')'; 	 
+      $justthese = array("objectsid");
          
-         // if the directory is AD, then bind first with the search user first
-        if ($this->serverType == "activedirectory")
-        {
-            $this->bindauth($this->searchUser, $this->searchPassword);
-        }	 
+      // if the directory is AD, then bind first with the search user first
+      if ($this->serverType == "activedirectory")
+      {
+      	$this->bindauth($this->searchUser, $this->searchPassword);
+      }	 
 
-         $ldapSearchResult = @ldap_search($this->connection, $this->people, $criteria, $justthese);
+      $ldapSearchResult = @ldap_search($this->connection, $this->people, $criteria, $justthese);
          
-         // Si pas de résultat on cherche dans le domaine
-         if (!$ldapSearchResult) $ldapSearchResult = @ldap_search($this->connection, $this->domain, $criteria, $justthese);
+      // Si pas de résultat on cherche dans le domaine
+      if (!$ldapSearchResult) $ldapSearchResult = @ldap_search($this->connection, $this->domain, $criteria, $justthese);
          
-         if (!$ldapSearchResult)
-        {
-        	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-        	return -1;
-        } 	 
+      if (!$ldapSearchResult)
+      {
+      	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+        return -1;
+      } 	 
   	 
-        $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
-        if ($entry)
-		{
-			$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
-			$SIDText = $this->binSIDtoText($ldapBinary[0]);
-			return $SIDText; 	 
-			//return $ldapBinary; 	 
-		}
-		else
-		{
-			return '?';
-		}
-
+      $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
+      if ($entry)
+      {
+      	$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
+			  $SIDText = $this->binSIDtoText($ldapBinary[0]);
+			  return $SIDText;
+			}
+			else
+		  {
+		  	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+		  	return '?';
+		  }
      }
      
      /**
