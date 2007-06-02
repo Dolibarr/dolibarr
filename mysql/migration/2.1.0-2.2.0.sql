@@ -546,6 +546,7 @@ ALTER TABLE `llx_socpeople` CHANGE `fk_user_create` `fk_user_creat` INT(11) NULL
 -- V4 ALTER TABLE llx_socpeople ADD INDEX idx_fk_user_creat (fk_user_creat);
 -- V4 ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_user_creat_user_rowid FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
 
+ALTER TABLE llx_user add pass_temp VARCHAR(32) NULL after pass_crypted;
 
 drop table if exists llx_soc_events;
 drop table if exists llx_todocomm;

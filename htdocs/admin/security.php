@@ -133,6 +133,22 @@ else if ($_GET["action"] == 'disable_pdfsecurity')
 	exit;
 }
 
+if ($_GET["action"] == 'activate_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+{
+	dolibarr_set_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK", '1');
+	Header("Location: security.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_MAIN_SECURITY_DISABLEFORGETPASSLINK')
+{
+	dolibarr_del_const($db, "MAIN_SECURITY_DISABLEFORGETPASSLINK");
+	Header("Location: security.php");
+	exit;
+}
+
+
+
+
 /*
  * Affichage onglet
  */
@@ -246,11 +262,12 @@ print "<input type=\"hidden\" name=\"action\" value=\"encrypt\">";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="3">'.$langs->trans("Encryption").'</td>';
+print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';
 print '<td align="center">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
+// Disable clear password in database
 $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("DoNotStoreClearPassword").'</td>';
@@ -260,14 +277,12 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 	print img_tick();
 }
 print '</td>';
-
 if ($conf->global->DATABASE_PWD_ENCRYPTED == 0)
 {
 	print '<td align="center" width="100">';
 	print '<a href="security.php?action=activate_encrypt">'.$langs->trans("Activate").'</a>';
 	print "</td>";
 }
-
 if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 {
 	print '<td align="center" width="100">';
@@ -283,7 +298,32 @@ if($conf->global->DATABASE_PWD_ENCRYPTED == 1)
 	}
 	print "</td>";
 }
+print "</td>";
+print '</tr>';
 
+
+// Disable link "Forget password" on logon
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("DisableForgetPasswordLinkOnLogonPage").'</td>';
+print '<td align="center" width="60">';
+if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+{
+	print img_tick();
+}
+print '</td>';
+if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 0)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=activate_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Activate").'</a>';
+	print "</td>";
+}
+if($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK == 1)
+{
+	print '<td align="center" width="100">';
+	print '<a href="security.php?action=disable_MAIN_SECURITY_DISABLEFORGETPASSLINK">'.$langs->trans("Disable").'</a>';
+	print "</td>";
+}
 print "</td>";
 print '</tr>';
 
@@ -321,7 +361,7 @@ $var=!$var;
 print "<tr ".$bc[$var].">";
 print '<td colspan="3">';
 $text = $langs->trans("ProtectAndEncryptPdfFiles");
-$desc = $html->textwithwarning($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
+$desc = $html->textwithhelp($text,$langs->transnoentities("ProtectAndEncryptPdfFilesDesc"),1);
 print $desc;
 print '</td>';
 print '<td align="center" width="60">';

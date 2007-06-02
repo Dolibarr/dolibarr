@@ -121,7 +121,7 @@ class User
 		// Recupere utilisateur
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
-		$sql.= " u.pass, u.pass_crypted,";
+		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
 		$sql.= " u.statut, u.lang,";
 		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
@@ -160,6 +160,7 @@ class User
 				$this->pass_indatabase = $obj->pass;
 				$this->pass_indatabase_crypted = $obj->pass_crypted;
 				$this->pass = $obj->pass;
+				$this->pass_temp = $obj->pass_temp;
 				$this->office_phone = $obj->office_phone;
 				$this->office_fax   = $obj->office_fax;
 				$this->user_mobile  = $obj->user_mobile;
@@ -988,17 +989,18 @@ class User
 
 
 	/**
-	 *    \brief     Change le mot de passe d'un utilisateur
-	 *    \param     user             		Object user de l'utilisateur qui fait la modification
-	 *    \param     password         		Nouveau mot de passe (à générer si non communiqué)
-	 *    \param     noclearpassword		0 ou 1 s'il ne faut pas stocker le mot de passe en clair
-	 *    \return    string           		mot de passe, < 0 si erreur
-	 */
-    function password($user, $password='', $noclearpassword=0)
+	*   \brief     	Change le mot de passe d'un utilisateur
+	*   \param     	user             		Object user de l'utilisateur qui fait la modification
+	*   \param     	password         		Nouveau mot de passe (à générer si non communiqué)
+	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
+	*	\param		changelater				1=Change password only after clicking on confirm email
+	*   \return    	string           		Mot de passe non crypté, < 0 si erreur
+	*/
+    function password($user, $password='', $noclearpassword=0, $changelater=0)
     {
         global $langs;
 
-        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
+        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted." changelater=".$changelater);
 
         // Si nouveau mot de passe non communiqué, on génère par module
         if (! $password)
@@ -1008,56 +1010,82 @@ class User
         	//$password=creer_pass_aleatoire_2('');
         }
 
-       	// Crypte avec systeme encodage par defaut du PHP
-        //$sqlpass = crypt($password, makesalt());
+       	// Crypte avec md5
         $password_crypted = md5($password);
 
 		// Mise a jour
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
-		$sql.= " SET pass_crypted = '".$password_crypted."'";
-		if (! $noclearpassword)
+		if (! $changelater)
 		{
-			$sql.= ", pass = '".$password."'";
+	        $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+			$sql.= " SET pass_crypted = '".addslashes($password_crypted)."',";
+			$sql.= " pass_temp = null";
+			if ($noclearpassword)
+			{
+				$sql.= ", pass = null";
+			}
+			else
+			{
+				$sql.= ", pass = '".addslashes($password)."'";
+			}
+	        $sql.= " WHERE rowid = ".$this->id;
+
+	        $result = $this->db->query($sql);
+	        if ($result)
+	        {
+	            if ($this->db->affected_rows())
+	            {
+			        $this->pass=$password;
+			        $this->pass_indatabase=$password;
+			        $this->pass_indatabase_crypted=$password_crypted;
+
+	                // Appel des triggers
+	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                $interface=new Interfaces($this->db);
+	                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
+	                if ($result < 0) $this->errors=$interface->errors;
+	                // Fin appel triggers
+
+	                return $this->pass;
+	            }
+	            else {
+	                return -2;
+	            }
+	        }
+	        else
+	        {
+	            dolibarr_print_error($this->db);
+	            return -1;
+	        }
 		}
-        $sql.= " WHERE rowid = ".$this->id;
-
-        $result = $this->db->query($sql);
-        if ($result)
-        {
-            if ($this->db->affected_rows())
-            {
-		        $this->pass=$password;
-		        $this->pass_indatabase=$password;
-		        $this->pass_indatabase_crypted=$password_crypted;
-
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
-                if ($result < 0) $this->errors=$interface->errors;
-                // Fin appel triggers
-
-                return $this->pass;
-            }
-            else {
-                return -2;
-            }
-        }
-        else
-        {
-            dolibarr_print_error($this->db);
-            return -1;
-        }
+		else
+		{
+			// We store clear password in password temporary field.
+			// After receiving confirmation link, we will crypt it and store it in pass_crypted
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
+			$sql.= " SET pass_temp = '".addslashes($password)."'";
+	        $sql.= " WHERE rowid = ".$this->id;
+	        $result = $this->db->query($sql);
+	        if ($result)
+			{
+                return $password;
+			}
+			else
+			{
+	            dolibarr_print_error($this->db);
+	            return -3;
+	        }
+		}
     }
 
 
-  /**
-   *    \brief     Envoie mot de passe par mail
-   *    \param     user             Object user de l'utilisateur qui fait l'envoi
-   *    \param     password         Nouveau mot de passe
-   *    \return    int              < 0 si erreur, > 0 si ok
-   */
-    function send_password($user, $password='')
+	/**
+	*   \brief     	Envoie mot de passe par mail
+	*   \param     	user            Object user de l'utilisateur qui fait l'envoi
+	*   \param		password        Nouveau mot de passe
+	*	\param		changelater		1=Change password only after clicking on confirm email
+	*   \return    	int             < 0 si erreur, > 0 si ok
+	*/
+    function send_password($user, $password='', $changelater=0)
     {
         global $langs;
 
@@ -1066,16 +1094,33 @@ class User
         $subject = $langs->trans("SubjectNewPassword");
         $msgishtml=0;
 
-        $mesg .= "Bonjour,\n\n";
-        $mesg .= "Votre mot de passe pour accéder à Dolibarr a été changé :\n\n";
-        $mesg .= $langs->trans("Login")." : $this->login\n";
-        $mesg .= $langs->trans("Password")." : $password\n\n";
-
-        $mesg .= "Adresse : http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
-        $mesg .= "\n\n";
-        $mesg .= "--\n";
-        $mesg.= $user->fullname;
-
+		// Define $msg
+        $mesg = '';
+		if (! $changelater)
+		{
+			$mesg.= "A request to change your Dolibarr password has been received.\n";
+	        $mesg.= "This is your new keys to login:\n\n";
+	        $mesg.= $langs->trans("Login")." : $this->login\n";
+	        $mesg.= $langs->trans("Password")." : $password\n\n";
+			$mesg.= "\n";
+	        $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
+			$mesg.= '<a href="'.$url.'">Go to Dolibarr</a>'."\n\n";
+	        $mesg.= "--\n";
+	        $mesg.= $user->fullname;	// Username that make then sending
+		}
+		else
+		{
+			$mesg.= "A request to change your Dolibarr password has been received.\n";
+	        $mesg.= "Your new key to login will be:\n\n";
+	        $mesg.= $langs->trans("Login")." : $this->login\n";
+			$mesg.= $langs->trans("Password")." : $password\n\n";
+			$mesg.= "\n";
+			$mesg.= "You must click on the folowing link to validate its change.\n";
+	        $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
+			$mesg.= '<a href="'.$url.'">Validate my new password</a>'."\n\n";
+			$mesg.= "If you didn't ask anything, just forget this email\n\n";
+			dolibarr_syslog("User::send_password url=".$url);
+		}
         $mailfile = new CMailFile($subject,$this->email,$conf->email_from,$mesg,
         							array(),array(),array(),
         							'', '', 0, $msgishtml);
@@ -1087,6 +1132,7 @@ class User
         else
         {
             $this->error=$langs->trans("ErrorFailedToSendPassword");
+			//print nl2br($mesg);
             return -1;
         }
     }

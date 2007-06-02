@@ -1121,17 +1121,15 @@ function dol_loginfunction($notused,$pearstatus)
     // Ce DTD est KO car inhibe document.body.scrollTop
     //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
     // Ce DTD est OK
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">';
+    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 
-    print "\n";
+	// En tete html
     print "<html>\n";
     print "<head>\n";
     print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 	print "<title>Dolibarr Authentification</title>\n";
 
     print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-
-
 
     print '<style type="text/css">'."\n";
     print '<!--'."\n";
@@ -1162,16 +1160,17 @@ function dol_loginfunction($notused,$pearstatus)
     print '</script>'."\n";
     print '</head>'."\n";
 
-    print '<body class="body" onload="donnefocus();">';
+    // Body
+	print '<body class="body" onload="donnefocus();">';
 
+	// Start Form
     print '<form id="login" name="login" method="post" action="';
     print $_SERVER['PHP_SELF'];
     print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
     print '">';
 
+	// Table 1
     print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
-
-
     if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
     {
       print '<tr><td colspan="3" style="text-align:center;">';
@@ -1181,18 +1180,16 @@ function dol_loginfunction($notused,$pearstatus)
     {
       print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
     }
+    print '</table>';
+	print '<br>';
 
-    print '</table>
+	// Table 2
+	print '<table cellpadding="2" align="center" width="400">';
 
-<br>
+	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
-<table cellpadding="2" align="center" width="400">
-
-<tr><td colspan="3">&nbsp;</td></tr>
-
-<tr><td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>
-<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>
-';
+	print '<tr><td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+	print '<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
     // Affiche logo du theme si existe, sinon logo commun
     if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
@@ -1204,27 +1201,23 @@ function dol_loginfunction($notused,$pearstatus)
         print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
     }
 
-    print '
-</tr>
+    print '</tr>';
 
-<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>
-<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
-print '</td></tr>
+    print '<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+    print '<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '</td></tr>';
 
-<tr><td colspan="3" style="text-align:center;"><br>
-<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />
-</td></tr>
+    print '<tr><td colspan="3" style="text-align:center;"><br>';
+    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+    print '</td></tr>';
 
-';
-if ($conf->global->MAIN_SECURITY_ALLOWFORGETPASSWORD)
-{
-	print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
-}
+	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+	{
+		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
+	}
 
-    print '
-</table>
-<input type="hidden" name="loginfunction" value="loginfunction" />
-';
+    print '</table>';
+    print '<input type="hidden" name="loginfunction" value="loginfunction" />';
 
     print '</form>';
 
@@ -1242,13 +1235,15 @@ if ($conf->global->MAIN_SECURITY_ALLOWFORGETPASSWORD)
 		}
 		print '</div></td></tr></table></center>';
 	}
-	if (defined("MAIN_HOME") && strlen(trim(MAIN_HOME)))
+	if ($conf->global->MAIN_HOME)
 	{
 	    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td>';
 	    print nl2br(MAIN_HOME);
 	    print '</td></tr></table><br>';
 	}
-    print "\n</body>\n</html>";
+    
+	// Fin entete html
+	print "\n</body>\n</html>";
 }
 
 

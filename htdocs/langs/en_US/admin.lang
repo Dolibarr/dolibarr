@@ -448,7 +448,8 @@ UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
 RuleForGeneratedPasswords=Rule to generate suggested passwords
 DoNotSuggest=Do not suggest any password
-EncryptedPasswordInDatabase=To allow the encryption of the passwords in the database 
+EncryptedPasswordInDatabase=To allow the encryption of the passwords in the database
+DisableForgetPasswordLinkOnLogonPage=Do not show the link "Forget password" on login page
 ##### Company setup #####
 CompanySetup=Companies module setup
 CompanyCodeChecker=Module for third parties code checking (customer or supplier)
