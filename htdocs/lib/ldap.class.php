@@ -1168,8 +1168,7 @@ class Ldap
     $secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
     $ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
     $unixTimeStamp=intval($secsAfterADEpoch-$ADToUnixConvertor); // Unix time stamp
-    $timestamp=date("d-m-Y", $unixTimeStamp); // Date formatée
-    return $timestamp;
+    return $unixTimeStamp;
   } 
 
 }
