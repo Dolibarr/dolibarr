@@ -883,18 +883,34 @@ class Ldap
       	$this->bindauth($this->searchUser, $this->searchPassword);
       }	 
 
-      $ldapSearchResult = @ldap_search($this->connection, $this->people, $criteria, $justthese);
-         
-      // Si pas de résultat on cherche dans le domaine
-      if (!$ldapSearchResult) $ldapSearchResult = @ldap_search($this->connection, $this->domain, $criteria, $justthese);
-         
-      if (!$ldapSearchResult)
+      $i = 0;
+      $searchDN = $this->people;
+      
+      while ($i <= 2)
       {
-      	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
-        return -1;
-      } 	 
+      	$ldapSearchResult = @ldap_search($this->connection, $searchDN, $criteria, $justthese);
+         
+        if (!$ldapSearchResult)
+        {
+      	  $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+          return -1;
+        } 	 
   	 
-      $entry = ldap_first_entry($this->connection, $ldapSearchResult); 	 
+        $entry = ldap_first_entry($this->connection, $ldapSearchResult);
+        
+        if (!$entry)
+        {
+        	// Si pas de résultat on cherche dans le domaine
+        	$searchDN = $this->domain;
+        	$i++;
+        }
+        else
+        {
+        	$i++;
+        	$i++;
+        }
+      }
+      
       if ($entry)
       {
       	$ldapBinary = ldap_get_values_len ($this->connection, $entry, "objectsid"); 	 
@@ -979,13 +995,34 @@ class Ldap
         $userIdentifier = $this->getUserIdentifier();
 
         $filter = '('.$this->filter.'('.$userIdentifier.'='.$user.'))';
-
-        $this->result = @ldap_search($this->connection, $this->people, $filter);
         
-        // Si pas de résultat on cherche dans le domaine
-        if (!$this->result) $this->result = @ldap_search($this->connection, $this->domain, $filter);
-
-        $result = @ldap_get_entries( $this->connection, $this->result);
+        $i = 0;
+        $searchDN = $this->people;
+      
+        while ($i <= 2)
+        {
+      	  $this->result = @ldap_search($this->connection, $searchDN, $filter);
+         
+          if (!$this->result)
+          {
+      	    $this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
+            return -1;
+          } 	 
+  	 
+          $result = @ldap_get_entries( $this->connection, $this->result);
+        
+          if (!$result)
+          {
+        	  // Si pas de résultat on cherche dans le domaine
+        	  $searchDN = $this->domain;
+        	  $i++;
+          }
+          else
+          {
+        	  $i++;
+        	  $i++;
+          }
+        }
 
         if (! $result)
         {
