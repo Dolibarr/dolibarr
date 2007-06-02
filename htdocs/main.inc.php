@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2003      Xavier Dutoit        <doli@sydesy.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -386,7 +386,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  	//TODO: on vérifie si le login à changer et on met à jour les attributs dolibarr
 		  	if ($user->login != $ldap->login)
 		  	{
-		  		
+		  		$user->login = $ldap->login;
+		  		$user->update();
 		  	}
 		    //$resultUpdate = $user->update_ldap2dolibarr($attributs);
 		  }
