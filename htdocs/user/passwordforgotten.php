@@ -100,15 +100,15 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 		    {
 		        // Succes
 		        if ($edituser->send_password($user,$newpassword,1) > 0)
-				{
-					$message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
-					//$message.=$newpassword;
-				}
-				else
-				{
-					//$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
-					$message.= '<div class="error">'.$edituser->error.'</div>';
-				}
+		        {
+		        	$message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
+					    //$message.=$newpassword;
+					  }
+					  else
+				    {
+				    	//$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+					    $message.= '<div class="error">'.$edituser->error.'</div>';
+				    }
 		    }
 		}
 	}

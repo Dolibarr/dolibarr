@@ -1087,7 +1087,7 @@ class User
 	*/
     function send_password($user, $password='', $changelater=0)
     {
-        global $langs;
+        global $conf,$langs;
 
         require_once DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php";
 
@@ -1099,29 +1099,29 @@ class User
 		if (! $changelater)
 		{
 			$mesg.= "A request to change your Dolibarr password has been received.\n";
-	        $mesg.= "This is your new keys to login:\n\n";
-	        $mesg.= $langs->trans("Login")." : $this->login\n";
-	        $mesg.= $langs->trans("Password")." : $password\n\n";
+	    $mesg.= "This is your new keys to login:\n\n";
+	    $mesg.= $langs->trans("Login")." : $this->login\n";
+	    $mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
-	        $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
+	    $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT;
 			$mesg.= '<a href="'.$url.'">Go to Dolibarr</a>'."\n\n";
-	        $mesg.= "--\n";
-	        $mesg.= $user->fullname;	// Username that make then sending
+	    $mesg.= "--\n";
+	    $mesg.= $user->fullname;	// Username that make then sending
 		}
 		else
 		{
 			$mesg.= "A request to change your Dolibarr password has been received.\n";
-	        $mesg.= "Your new key to login will be:\n\n";
-	        $mesg.= $langs->trans("Login")." : $this->login\n";
+	    $mesg.= "Your new key to login will be:\n\n";
+	    $mesg.= $langs->trans("Login")." : $this->login\n";
 			$mesg.= $langs->trans("Password")." : $password\n\n";
 			$mesg.= "\n";
 			$mesg.= "You must click on the folowing link to validate its change.\n";
-	        $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
-			$mesg.= '<a href="'.$url.'">Validate my new password</a>'."\n\n";
+	    $url = "http://".$_SERVER["HTTP_HOST"].DOL_URL_ROOT.'/user/passwordforgotten.php?action=validatenewpassword&username='.$this->login."&passwordmd5=".md5($password);
+	    $mesg.= $url."\n\n";
 			$mesg.= "If you didn't ask anything, just forget this email\n\n";
 			dolibarr_syslog("User::send_password url=".$url);
 		}
-        $mailfile = new CMailFile($subject,$this->email,$conf->email_from,$mesg,
+        $mailfile = new CMailFile($subject,$this->email,$conf->notification->email_from,$mesg,
         							array(),array(),array(),
         							'', '', 0, $msgishtml);
 
