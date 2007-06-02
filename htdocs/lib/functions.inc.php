@@ -1192,13 +1192,14 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
     // Affiche logo du theme si existe, sinon logo commun
+    if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
     if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
     {
-        print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
+        print '<td rowspan="2"><img title="'.$title.'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
     }
     else
     {
-        print '<td rowspan="2"><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
+        print '<td rowspan="2"><img title="'.$title.'" src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
     }
 
     print '</tr>';
@@ -1208,9 +1209,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print '</td></tr>';
 
     print '<tr><td colspan="3" style="text-align:center;"><br>';
-    if ($dolibarr_main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$dolibarr_main_authentication;
-
-    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" alt="'.$title.' tabindex="4" />';
+    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
     print '</td></tr>';
 
 	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)

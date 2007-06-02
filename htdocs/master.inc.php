@@ -118,6 +118,7 @@ if (! isset($character_set_client) || ! $character_set_client) $character_set_cl
 $conf->character_set_client=$character_set_client;
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 $conf->db->prefix = $dolibarr_main_db_prefix;
+$conf->main_authentication = $dolibarr_main_authentication;
 
 // Defini prefix
 if (isset($_SERVER["LLX_DBNAME"])) $dolibarr_main_db_prefix=$_SERVER["LLX_DBNAME"];
