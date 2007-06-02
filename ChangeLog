@@ -4,18 +4,21 @@ English Dolibarr changelog
 
 - Added more statistics on main page.
 - Added option to add message on login page.
-- Full support for LDAP authentication.
 - Management of categories for third parties.
 - Adde volume on products properties.
+- Support LDAP authentication.
 - Full member synchronisation with LDAP database in
-  funcation module.
-- Better logging for install.
+  fundation module.
+- More LDAP fields supported for user synchronization.
+- Better logger for install.
+- First changes to support UTF8.
+- Added a "forget password" feature.
 - Setup process can run several migrate files if need
   to jump several versions to upgrade.
 - Support for webcalendar 1.1 in webcalendar module.
 - Support for menu in database.
 - Better support for using Dolibarr on more WHP.
-- Removed some deprecated files.
+- Removed some deprecated files and clean code.
 - New theme: Auguria
 - Removed PHP warnings.
 - Some bugs fixes.
