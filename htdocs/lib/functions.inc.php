@@ -1208,7 +1208,9 @@ function dol_loginfunction($notused,$pearstatus)
 	print '</td></tr>';
 
     print '<tr><td colspan="3" style="text-align:center;"><br>';
-    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+    if ($dolibarr_main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$dolibarr_main_authentication;
+
+    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" alt="'.$title.' tabindex="4" />';
     print '</td></tr>';
 
 	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
