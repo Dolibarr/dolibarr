@@ -1040,7 +1040,7 @@ class Ldap
 
         	$this->uacf       = $this->parseUACF($this->ldap_utf8_decode($result[0]["useraccountcontrol"][0]));
         	$this->pwdlastset = $this->convert_time($this->ldap_utf8_decode($result[0]["pwdlastset"][0]));
-        	$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badPasswordTime"][0]));
+        	$this->badpwdtime = $this->convert_time($this->ldap_utf8_decode($result[0]["badpasswordtime"][0]));
 
         	ldap_free_result($this->result);
         }
