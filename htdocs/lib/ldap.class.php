@@ -981,7 +981,7 @@ class Ldap
         $this->result = @ldap_search($this->connection, $this->people, $filter);
         
         // Si pas de résultat on cherche dans le domaine
-        if (!this->result) $this->result = @ldap_search($this->connection, $this->domain, $filter);
+        if (!$this->result) $this->result = @ldap_search($this->connection, $this->domain, $filter);
 
         $result = @ldap_get_entries( $this->connection, $this->result);
 
