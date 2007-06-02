@@ -885,6 +885,9 @@ class Ldap
 
          $ldapSearchResult = @ldap_search($this->connection, $this->people, $criteria, $justthese);
          
+         // Si pas de résultat on cherche dans le domaine
+         if (!$ldapSearchResult) $ldapSearchResult = @ldap_search($this->connection, $this->domain, $criteria, $justthese);
+         
          if (!$ldapSearchResult)
         {
         	$this->error = ldap_errno($this->connection)." ".ldap_error($this->connection);
