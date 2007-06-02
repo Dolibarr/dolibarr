@@ -378,6 +378,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 */	    
 			// On recherche le user dolibarr en fonction de son SID ldap
 		  $user->search_sid = $ldap->getObjectSid($login);
+		  if ($ldapdebug) print "DEBUG: erreur getObjectSid = ".$ldap->error."<br>\n";
 		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
 		  $result=$user->fetch();
 		  if ($result)
