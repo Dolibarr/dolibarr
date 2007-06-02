@@ -354,7 +354,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 			if ($ldapdebug) print "DEBUG: login ldap = ".$login."<br>\n";
 	    $ldap->fetch($login);
 	    
-	    if ($ldapdebug) print "DEBUG: UACF = ".$ldap->uacf."<br>\n";
+	    if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
 	    if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'%d %b %Y')."<br>\n";
 	    if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'%d %b %Y')."<br>\n";
 	    
