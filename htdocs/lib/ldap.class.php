@@ -1155,7 +1155,22 @@ class Ldap
 		//if ($this->serverType != "activedirectory")	return utf8_decode($string);
 		//else return($string);
 		return utf8_decode($string); //utile aussi avec Active Directory - Regis
-	}	
+	}
+	
+	/*
+	*	\brief		Convertit le temps ActiveDirectory en Unix timestamp
+	*	\param		string		AD time to convert
+	*	\return		string		Unix timestamp
+	*/
+	function convert_time($value)
+  {
+    $dateLargeInt=$value; // nano secondes depuis 1601 !!!!
+    $secsAfterADEpoch = $dateLargeInt / (10000000); // secondes depuis le 1 jan 1601
+    $ADToUnixConvertor=((1970-1601) * 365.242190) * 86400; // UNIX start date - AD start date * jours * secondes
+    $unixTimeStamp=intval($secsAfterADEpoch-$ADToUnixConvertor); // Unix time stamp
+    $timestamp=date("d-m-Y", $unixTimeStamp); // Date formatée
+    return $timestamp;
+  } 
 
 }
 
