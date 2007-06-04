@@ -1,4 +1,5 @@
 // Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+// Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
 //
 // Script javascript mis en en-tete de pages (dans section head)
 //

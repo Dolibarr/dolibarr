@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) phpBSM
  * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * This file is a modified version of datepicker.php from phpBSM
  *
  * This program is free software; you can redistribute it and/or modify
