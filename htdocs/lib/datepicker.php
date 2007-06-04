@@ -100,6 +100,24 @@ function displayBox($selectedDate,$month,$year){
 	<?php 
 		$firstdate=getdate($thedate);
 		$mydate=$firstdate;
+		$tradTemp=Array($langs->trans("January"),
+		                $langs->trans("February"),
+		                $langs->trans("March"),
+		                $langs->trans("April"),
+		                $langs->trans("May"),
+		                $langs->trans("June"),
+		                $langs->trans("July"),
+		                $langs->trans("August"),
+		                $langs->trans("September"),
+		                $langs->trans("October"),
+		                $langs->trans("November"),
+		                $langs->trans("December")
+		                );
+
+    print '<script language="Javascript">';
+    print 'var tradMonths = '.php2js($tradTemp);
+    print '</script>';
+
 		while($firstdate["month"]==$mydate["month"])
 		{
 			if($mydate["wday"]==0) echo "<TR class=\"dpWeek\">";
@@ -116,7 +134,7 @@ function displayBox($selectedDate,$month,$year){
 			
 			// Sur click dans calendrier, appelle fonction dpClickDay
 			echo "<TD class=\"".$dayclass."\"";
-			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].")\"";
+			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
 			echo " onClick=\"dpClickDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
 			echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 			

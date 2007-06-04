@@ -204,21 +204,9 @@ function dpClickDay(year,month,day,format)
 	closeDPBox();
 }
 
-function dpHighlightDay(year,month,day){
+function dpHighlightDay(year,month,day,tradMonths){
 	var displayinfo=getObjectFromID("dpExp");
-	var months=Array("January",
-	                 "February",
-	                 "March",
-	                 "April",
-	                 "May",
-	                 "June",
-	                 "July",
-	                 "August",
-	                 "September",
-	                 "October",
-	                 "November",
-	                 "December"
-	                 );
+	var months = tradMonths;
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
