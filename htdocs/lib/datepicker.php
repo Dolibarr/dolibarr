@@ -72,7 +72,13 @@ function displayBox($selectedDate,$month,$year){
 ?>
 <table class="dp" cellspacing="0" cellpadding="0" border=0>
 	<tr>
-		<td colspan=6 class="dpHead"><?php echo date("F, Y", $thedate) ?></td>
+		<td colspan=6 class="dpHead">
+		<?php
+		$selectMonth = date("F", $thedate);
+		$selectYear = date("Y", $thedate);
+		echo $langs->trans($selectMonth).", ".$selectYear;
+		?>
+		</td>
 		<td class="dpHead"><button type="buttton" class="dpInvisibleButtons" id="DPCancel" onClick="closeDPBox();">X</button></td>
 	</tr>
 	<tr>
@@ -83,13 +89,13 @@ function displayBox($selectedDate,$month,$year){
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
 	<tr  class="dpDayNames">
-		<td width="14.286%">S</td>
-		<td width="14.286%">M</td>
-		<td width="14.286%">T</td>
-		<td width="14.286%">W</td>
-		<td width="14.286%">R</td>
-		<td width="14.286%">F</td>
-		<td width="14.286%">S</td>
+		<td width="14.286%"><?php echo $langs->trans("ShortSunday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortMonday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortTuesday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortWednesday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortThursday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortFriday") ?></td>
+		<td width="14.286%"><?php echo $langs->trans("ShortSaturday") ?></td>
 	</tr>
 	<?php 
 		$firstdate=getdate($thedate);
@@ -122,14 +128,14 @@ function displayBox($selectedDate,$month,$year){
 		if($mydate["wday"]!=0){
 			for($i=6;$i>=$mydate["wday"];$i--)
 				echo "<TD>&nbsp;</TD>";
-			echo "</TR";
+			echo "</TR>";
 		}
 	?>
 	<tr><td id="dpExp" class="dpExplanation" colspan="7"><?php 
 		if($selDate)
 		{
 			$tempDate=getdate($selDate);
-			print $tempDate["month"]." ";
+			print $langs->trans($tempDate["month"])." ";
 			print sprintf("%02s",$tempDate["mday"]);
 			print ", ".$tempDate["year"];
 		}

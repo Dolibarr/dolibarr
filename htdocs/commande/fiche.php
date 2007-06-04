@@ -93,8 +93,8 @@ if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
 if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 {
   $datecommande='';
-  $datecommande  = @mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
-  $datelivraison = @mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
+  $datecommande  = dolibarr_mktime(12, 0, 0, $_POST['remonth'],  $_POST['reday'],  $_POST['reyear']);
+  $datelivraison = dolibarr_mktime(12, 0, 0, $_POST['liv_month'],$_POST['liv_day'],$_POST['liv_year']);
 
   $commande = new Commande($db);
   $commande->socid=$_POST['socid'];
@@ -202,7 +202,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
 
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
-  $datelivraison=@mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+  $datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
   $result=$commande->set_date_livraison($user,$datelivraison);

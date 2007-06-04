@@ -556,15 +556,15 @@ function dolibarr_stringtotime($string)
 /**
 		\brief  	Retourne une date fabriquée depuis infos.
 					Remplace la fonction mktime non implémentée sous Windows si année < 1970
-		\param		x				X
-		\param		y				Y
-		\param		z				Z
+		\param		hour			Heure
+		\param		minute		Minute
+		\param		second		Seconde
 		\param		month			Mois
 		\param		day				Jour
 		\param		year			Année
 		\return		date			Date
 */
-function dolibarr_mktime($x,$y,$z,$month,$day,$year)
+function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 {
 	$montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
 					  7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
@@ -581,7 +581,7 @@ function dolibarr_mktime($x,$y,$z,$month,$day,$year)
 	}
  	else
  	{
-		return mktime($x,$y,$z,$month,$day,$year);
+		return mktime($hour,$minute,$second,$month,$day,$year);
  	}
 }
 

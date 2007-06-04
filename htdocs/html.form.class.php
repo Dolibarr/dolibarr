@@ -2401,11 +2401,11 @@ class Form
 	         * Affiche date en popup
 	         */
 			if ($conf->use_javascript && $conf->use_popup_calendar)
-	        {
-	            //print "e".$set_time." t ".$conf->format_date_short;
-	            if ($set_time > 0)
-	            {
-		            $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+	    {
+	    	//print "e".$set_time." t ".$conf->format_date_short;
+	      if ($set_time > 0)
+	      {
+		      $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 				}
 	
 				// Calendrier popup version eldy

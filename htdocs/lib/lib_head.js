@@ -206,7 +206,19 @@ function dpClickDay(year,month,day,format)
 
 function dpHighlightDay(year,month,day){
 	var displayinfo=getObjectFromID("dpExp");
-	var months=Array("January","February","March","April","May","June","July","August","September","October","November","December");
+	var months=Array("January",
+	                 "February",
+	                 "March",
+	                 "April",
+	                 "May",
+	                 "June",
+	                 "July",
+	                 "August",
+	                 "September",
+	                 "October",
+	                 "November",
+	                 "December"
+	                 );
 	displayinfo.innerHTML=months[month-1]+" "+day+", "+year;
 }
 
