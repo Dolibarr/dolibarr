@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -90,9 +90,11 @@ class LigneAdsl {
 	$sql .= " VALUES (";
 	$sql .= " $this->client,$this->client_install,$this->client_facture,'$this->numero',$this->type,$this->fournisseur, '$this->note',$this->commercial, -1,$user->id)";
 	
-	if ( $this->db->query($sql) )
+	$resql = $this->db->query($sql);
+
+	if ( $resql )
 	  {
-	    $this->id = $this->db->last_insert_id();
+	    $this->id = $this->db->last_insert_id($resql);
 	    return 0;
 	  }
 	else
