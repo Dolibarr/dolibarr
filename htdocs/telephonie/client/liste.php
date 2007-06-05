@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -46,7 +45,6 @@ if ($sortfield == "") {
 /*
  * Recherche
  *
- *
  */
 
 if ($page == -1) { $page = 0 ; }
@@ -59,22 +57,14 @@ $pagenext = $page + 1;
  * Mode Liste
  *
  *
- *
  */
-
-
-
 $sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne, cs.ca";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-$sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perms as sp ON sp.fk_soc = s.idp ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON cs.fk_client_comm = s.idp";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_societe_ligne as l ON l.fk_client_comm = s.idp";
 
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON s.idp=cs.fk_client_comm";
-
-$sql .= " WHERE l.fk_client_comm = s.idp ";
-
-$sql .= " AND s.idp = sp.fk_soc";
-$sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
+$sql .= " WHERE sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_client"])
 {
@@ -83,7 +73,6 @@ if ($_GET["search_client"])
 }
 
 $sql .= " GROUP BY s.idp";
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
@@ -107,14 +96,10 @@ if ($result)
   print '<form action="liste.php" method="GET">';
   print '<td><input type="text" name="search_client" value="'. $_GET["search_client"].'" size="12"></td>';  
   print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td><td>&nbsp;</td>';
-
   print '</form>';
   print '</tr>';
 
-
   $var=True;
-
-  $ligne = new LigneTel($db);
 
   while ($i < min($num,$conf->liste_limit))
     {
@@ -131,8 +116,6 @@ if ($result)
       print '<td align="center">'.$obj->ligne."</td>\n";
 
       print '<td align="right">'.price($obj->ca)." euros HT</td>\n";
-
-
       print "</tr>\n";
       $i++;
     }
