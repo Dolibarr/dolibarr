@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  *
  */
 require("./pre.inc.php");
-
 
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
@@ -48,7 +47,6 @@ if ($sortfield == "") {
  *
  *
  */
-
 if ($page == -1) { $page = 0 ; }
 
 $offset = $conf->liste_limit * $page ;
@@ -59,17 +57,12 @@ $pagenext = $page + 1;
  * Mode Liste
  *
  *
- *
  */
-
 $sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne, cs.ca";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON s.idp=cs.fk_client_comm";
-
-$sql .= " WHERE l.fk_client_comm = s.idp ";
-$sql .= " AND l.fk_commercial_suiv = ".$user->id;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_societe_ligne AS l ON l.fk_client_comm = s.idp";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON cs.fk_client_comm = s.idp";
+$sql .= " WHERE l.fk_commercial_suiv = ".$user->id; 
 
 if ($_GET["search_client"])
 {
@@ -78,7 +71,6 @@ if ($_GET["search_client"])
 }
 
 $sql .= " GROUP BY s.idp";
-
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
