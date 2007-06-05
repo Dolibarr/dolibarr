@@ -1,5 +1,6 @@
 <?php
- /* Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
+/* Copyright (C) 2007 Patrick Raguin       <patrick.raguin@gmail.com>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,7 +29,7 @@
  
 require("./pre.inc.php");
  
-if (!$user->rights->menudb->creer && ! $user->admin)
+if (! $user->admin)
   accessforbidden();
   
 
@@ -128,35 +129,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'down')
 	$sql = "UPDATE ".MAIN_DB_PREFIX."menu as m SET m.order = ".$precedent['order']." WHERE m.rowid = ".$suivant['rowid'].""; // Descend celui du dessus
 	$db->query($sql);		
 }    
-  
-  
-
-/*
- * Affichage page
- */
-
-llxHeader();
-
-
-
-print_fiche_titre($langs->trans("Menus"),'','setup');
-
-print $langs->trans("MenusEditorDesc")."<br>\n";
-print "<br>\n";
-
-$h = 0;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
-$head[$h][1] = $langs->trans("MenuHandlers");
-$head[$h][2] = 'handler';
-$h++;
-
-$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
-$head[$h][1] = $langs->trans("MenuAdmin");
-$head[$h][2] = 'editor';
-$h++;
-
-dolibarr_fiche_head($head, 'editor', $langs->trans("Menus"));
 
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
@@ -184,7 +156,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 		
 	}
-;
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
 	$db->query($sql);
 
@@ -202,20 +174,44 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 	}
 }
 
+
+/*
+ * Affichage page
+ */
+
+llxHeader();
+
+
+print_fiche_titre($langs->trans("Menus"),'','setup');
+
+print $langs->trans("MenusEditorDesc")."<br>\n";
+print "<br>\n";
+
+$h = 0;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus.php";
+$head[$h][1] = $langs->trans("MenuHandlers");
+$head[$h][2] = 'handler';
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
+$head[$h][1] = $langs->trans("MenuAdmin");
+$head[$h][2] = 'editor';
+$h++;
+
+dolibarr_fiche_head($head, 'editor', $langs->trans("Menus"));
+
 // Confirmation de la suppression de la facture
 if ($_GET["action"] == 'delete')
 {
-    
 	$sql = "SELECT m.titre FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
 	$result = $db->query($sql);
 	$obj = $db->fetch_object($result);
     
     $html = new Form($db);
-    $html->form_confirm("index.php?menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu")." ".$obj->titre,"confirm_delete");
+    $html->form_confirm("index.php?menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
     print "<br />\n";
 }
-
-
 
 
 
@@ -226,12 +222,12 @@ print '<td>'.$langs->trans("MenuHandler").': <b>'.$menu_handler.'</b></td>';
 print '</tr>';
 
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("TreeMenu").'</td>';
+print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
 print '</tr>';
 
 print '<tr>';
 print '<td>';
-	
+
 /*************************
  *      ARBORESCENCE     *       
  *************************/	

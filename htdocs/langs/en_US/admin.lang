@@ -721,3 +721,26 @@ MantisErrorConnectOkButWrongDatabase=Connection succeeded but database doesn't l
 ##### Stock #####
 StockSetup=Configuration module stock
 UserWarehouse=Use user personal stocks
+##### Menu #####
+MenuDeleted=Menu deleted
+TreeMenu=Tree menus
+TreeMenuPersonalized=Personalized menus
+NewMenu=New menu
+MenuConf=Menus setup
+Menu=Selection of menu
+MenuHandler=Manu handler
+DetailId=Id menu
+DetailMenuHandler=Menu handler (or "all" for all menu handlers)
+DetailType=Type of menu (top or left)
+DetailTitre=Menu label
+DetailMainmenu=Groupe auquel il appartient (obsolete)
+DetailUrl=URL where menu send you
+DetailLeftmenu=Condition d'affichage ou non (obsolete)
+DetailRight=Condition to display unauthorized grey menus
+DetailLangs=Lang file name for label translation
+DetailUser=Intern / Extern / All
+DetailTarget=Target
+DetailLevel=Niveau (-1:menu top, 0:entete menu, >0 menu et sous menu)
+ModifMenu=Menu change
+DeleteMenu=Delete menu entry
+ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b> ?

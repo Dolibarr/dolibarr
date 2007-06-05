@@ -2,17 +2,17 @@ English Dolibarr changelog
 
 ***** Changelog for 2.2 compared to 2.1 *****
 
-- Added more statistics on main page.
-- Added option to add message on login page.
+- Add more statistics on main page.
+- Add option to add message on login page.
 - Management of categories for third parties.
-- Adde volume on products properties.
-- Support LDAP authentication.
+- Add volume on products properties.
+- Support for LDAP authentication.
 - Full member synchronisation with LDAP database in
   fundation module.
 - More LDAP fields supported for user synchronization.
 - Better logger for install.
 - First changes to support UTF8.
-- Added a "forget password" feature.
+- Add a "forget password" feature.
 - Setup process can run several migrate files if need
   to jump several versions to upgrade.
 - Support for webcalendar 1.1 in webcalendar module.

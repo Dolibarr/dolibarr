@@ -29,9 +29,17 @@
 
 require("./pre.inc.php");
  
- 
-if (!$user->admin)
+if (! $user->admin)
   accessforbidden();
+
+$menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
+$menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
+$menu_handler_top=eregi_replace('_backoffice\.php','',$menu_handler_top);
+$menu_handler_top=eregi_replace('_frontoffice\.php','',$menu_handler_top);
+$menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
+$menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
+
+$menu_handler=$menu_handler_left;
 
 
 /*
@@ -40,8 +48,6 @@ if (!$user->admin)
 
 if (isset($_GET["action"]) && $_GET["action"] == 'update')
 {	
-
-
 	if(!$_POST['cancel'])
 	{		
 
@@ -54,10 +60,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 	if($_GET['return'])
 	{
 		header("location: index.php");
+		exit;
 	}
 	else
 	{
 		header("location: edit.php?action=edit&menuId=".$_POST['menuId']);
+		exit;
 	}
 	
 
@@ -65,89 +73,70 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 
 if (isset($_GET["action"]) && $_GET["action"] == 'add')
 {	
-
-	if($_POST['cancel'])
+	if ($_POST['cancel'])
 	{
 		header("location:index.php");
+		exit;
 	}
-	else
+
+	$error=0;
+	if (! $error && ! $_POST['handler'])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",'handler').'</div>';
+		$_GET["action"] = 'create';
+		$error++;
+	}
+	if (! $error && ! $_POST['type'])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",'type').'</div>';
+		$_GET["action"] = 'create';
+		$error++;
+	}
+	if (! $error && ! $_POST['url'])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Url")).'</div>';
+		$_GET["action"] = 'create';
+		$error++;
+	}
+	if (! $error && ! $_POST['titre'])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("Title")).'</div>';
+		$_GET["action"] = 'create';
+		$error++;
+	}
+	if (! $error)
 	{		
+		$sql = "SELECT max(m.rowid) as maxId FROM ".MAIN_DB_PREFIX."menu as m";
+		$result = $db->query($sql);
+		$lastMenu = $db->fetch_object($result);	
+		$rowid = $lastMenu->maxId + 1;
+		
+		// On prend le max de toutes celles qui auront le meme pere fk_menu
+		$sql = "SELECT max(m.order) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.fk_menu = ".$_POST['menuId'];
+		$result = $db->query($sql);
+		$lastMenu = $db->fetch_object($result);	
+		if ($lastMenu) $order = $lastMenu->maxOrder + 1;
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	
-		if($_POST['level'] == -1)
-		{
-			$sql = "SELECT max(m.rowid) as maxId FROM ".MAIN_DB_PREFIX."menu as m WHERE m.level = ".$_POST['level'];
-			$result = $db->query($sql);
-			$lastMenu = $db->fetch_object($result);	
-			$rowid = $lastMenu->maxId + 1;
-			
-			$sql = "SELECT max(m.order) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.level = ".$_POST['level'];
-			$result = $db->query($sql);
-			$lastMenu = $db->fetch_object($result);	
-			$order = $lastMenu->maxOrder + 1;			
-				
-		}
-		elseif($_POST['level'] == 0)
-		{
-
-				$sql = "SELECT max(m.rowid) as maxId FROM ".MAIN_DB_PREFIX."menu as m WHERE m.level = ".$_POST['level'];
-				$result = $db->query($sql);
-				$lastMenu = $db->fetch_object($result);		
-				
-				$rowid = $lastMenu->maxId + 100	;
-				
-				$sql = "SELECT max(m.order) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.fk_menu = ".$_GET['menuId'];
-				$result = $db->query($sql);
-				$lastMenu = $db->fetch_object($result);				
-				if(isset($lastMenu->maxOrder))
-				{
-					$order = ($lastMenu->maxOrder) + 1;
-				}
-				else
-				{
-					$order = 0;
-				}
-			
-		}
-		elseif($_POST['level'] > 0)
-		{
-			
-			$parentId = round($_GET['menuId'] / 100);
-
-			$sql = "SELECT max(m.rowid) as maxId FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid LIKE '".$parentId."__' AND m.rowid <> '".$parentId."00'";
-			$result = $db->query($sql);
-			$lastMenu = $db->fetch_object($result);	
-			
-			if(isset($lastMenu->maxId))
-			{
-				$rowid = ($lastMenu->maxId) + 1;
-			}
-			else
-			{
-				$rowid = ($parentId * 100) + 1;
-			}
-			
-			$sql = "SELECT max(m.order) as maxOrder FROM ".MAIN_DB_PREFIX."menu as m WHERE m.fk_menu = ".$_GET['menuId'];
-			$result = $db->query($sql);
-			$lastMenu = $db->fetch_object($result);	
-			if(isset($lastMenu->maxOrder))
-			{
-				$order = ($lastMenu->maxOrder) + 1;
-			}
-			else
-			{
-				$order = 0;
-			}			
-
-		}
-
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, `right`, target, user, `order`)";
+		$sql.=" VALUES(".$rowid.",'".$_POST['handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",0)";
 		
-		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid, menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, right, target, user, order)";
-		$sql.=
-		$sql.=" VALUES($rowid, '".$_POST['menu_hanlder']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_GET['menuId'].",'".$_POST['url']."','".$_POST['titre']."',".$_POST['level'].",'".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",".$order.")";
+		dolibarr_syslog("edit: insert menu entry sql=".$sql);
 		$result=$db->query($sql);		
-		
-		header("location: edit.php?action=edit&menuId=".$rowid);
+		if ($result > 0)
+		{
+		dolibarr_syslog("location: edit.php?action=edit&menuId=".$rowid);
+			header("location: edit.php?action=edit&menuId=".$rowid);
+			exit;
+		}
+		else
+		{
+			$mesg='<div class="error">'.'FailedToInsert'.$db->lasterror().' sql='.$sql.'</div>';
+			$_GET["action"] = 'create';
+		}
 	}
 } 
 
@@ -176,7 +165,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add_const')
 	$db->query($sql);	
 	
 	header("location:edit.php?action=edit&menuId=".$_POST['menuId']);	
-	
+	exit;	
 }
 
 if (isset($_GET["action"]) && $_GET["action"] == 'del_const')
@@ -194,14 +183,12 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_const')
 	}	
 	
 	header("location:edit.php?action=edit&menuId=".$_GET['menuId']);
+	exit;
 }
 
-
-
+// Suppression
 if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 {
-
-
 	$sql = "SELECT c.rowid, c.fk_constraint FROM ".MAIN_DB_PREFIX."menu_const as c WHERE c.fk_menu = ".$_GET['menuId'];
 	$res  = $db->query($sql);
 	if ($res)
@@ -226,7 +213,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 
 		
 	}
-;
+
 	$sql = "DELETE FROM ".MAIN_DB_PREFIX."menu WHERE rowid = ".$_GET['menuId'];
 	$db->query($sql);
 
@@ -258,6 +245,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 {
 	print_titre($langs->trans("NewMenu"),'','setup');
 	
+	if ($mesg) print $mesg;
+	
 	print '<form action="./edit.php?action=add&menuId='.$_GET['menuId'].'" method="post" name="formmenucreate">';
 	
 	print '<table class="border" width="100%">';
@@ -286,12 +275,31 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 		}
 	}
 
+	// MenuId Parent
+	print '<tr><td><b>'.$langs->trans('MenuIdParent').'</b></td>';
+	//$menu_handler
+	//print '<td><input type="text" size="50" name="handler" value="all"></td>';
+	print '<td><input type="text" size="50" name="menuId" value="0"></td>';
+	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
+
 	//Handler
-	print '<tr><td>'.$langs->trans('MenuHandler').'</td><td><input type="text" size="50" name="handler" value="'.$handler.'"></td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
-	//Handler
-	print '<tr><td>'.$langs->trans('Type').'</td><td><input type="text" size="50" name="type" value="'.$type.'"></td><td>'.$langs->trans('DetailType').'</td></tr>';
+	print '<tr><td><b>'.$langs->trans('MenuHandler').'</b></td>';
+	//$menu_handler
+	//print '<td><input type="text" size="50" name="handler" value="all"></td>';
+	print '<td><input type="text" size="50" name="handler" value="'.$menu_handler.'"></td>';
+	print '<td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
+
+	// Type
+	print '<tr><td><b>'.$langs->trans('Type').'</b></td><td>';
+	print '<select name="type" class="flat">';
+	print '<option value="">&nbsp;</option>';
+	print '<option value="top">Top</option>';
+	print '<option value="left">Left</option>';
+	print '</select>';
+	//	print '<input type="text" size="50" name="type" value="'.$type.'">';
+	print '</td><td>'.$langs->trans('DetailType').'</td></tr>';
 	//User
-	print '<tr><td>'.$langs->trans('User').'</td>';
+	print '<tr><td><b>'.$langs->trans('User').'</b></td>';
 	print '<td><select class="flat" name="user">';
 	print '<option value="0">'.$langs->trans('Interne').'</option>';
 	print '<option value="1">'.$langs->trans('Externe').'</option>';
@@ -301,11 +309,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	//Level
 	print '<input type="hidden" size="50" name="level" value="'.($parent_level + 1).'">';
 	//Titre
-	print '<tr><td>'.$langs->trans('Title').'</td><td><input type="text" size="50" name="titre" value=""></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	print '<tr><td><b>'.$langs->trans('Title').'</b></td><td><input type="text" size="50" name="titre" value=""></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
+	//URL
+	print '<tr><td><b>'.$langs->trans('URL').'</b></td><td><input type="text" size="50" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 	//Langs
 	print '<tr><td>'.$langs->trans('Langs').'</td><td><input type="text" size="50" name="langs" value="'.$parent_langs.'"></td><td>'.$langs->trans('DetailLangs').'</td></tr>';
-	//URL
-	print '<tr><td>'.$langs->trans('URL').'</td><td><input type="text" size="50" name="url" value=""></td><td>'.$langs->trans('DetailUrl').'</td></tr>';
 	//Target
 	print '<tr><td>'.$langs->trans('Target').'</td><td><select class="flat" name="target">';
 	print '<option value=""'.($menu->target==""?' selected="true"':'').'>'.$langs->trans('').'</option>';
@@ -315,9 +323,9 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<tr><td>'.$langs->trans('Right').'</td><td><input type="text" size="50" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	//Mainmenu = group
-	print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="50" name="mainmenu" value="'.$mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
+	//print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="50" name="mainmenu" value="'.$mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
 	//Leftmenu
-	print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="50" name="leftmenu" value=""></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
+	//print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="50" name="leftmenu" value=""></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
 
 	// Boutons
 	print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="Enregistrer">';
@@ -337,7 +345,6 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	
 	print '<table class="border" width="100%">';
 	
-	
 	$sql = "SELECT m.rowid, m.menu_handler, m.type, m.titre, m.mainmenu, m.leftmenu, m.fk_menu, m.url, m.langs, m.level, m.right, m.target, m.user, m.order";
 	$sql.="	FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
 	$result = $db->query($sql);
@@ -349,11 +356,17 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		while($i < $num)
 		{
 			$menu = $db->fetch_object($result);
-
 			
-			// Id
+			// MenuId Parent
+			print '<tr><td>'.$langs->trans('MenuIdParent').'</td>';
+			//$menu_handler
+			//print '<td><input type="text" size="50" name="handler" value="all"></td>';
+			print '<td>'.$menu->fk_menu.'</td>';
+			print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 			print '<input type="hidden" name="menuId" value="'.$_GET['menuId'].'">';
-			print '<tr><td>'.$langs->trans('rowid').'</td><td>'.$menu->rowid.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
+
+			// Id
+			print '<tr><td>'.$langs->trans('Id').'</td><td>'.$menu->rowid.'</td><td>'.$langs->trans('DetailId').'</td></tr>';
 
 			// Handler
 			print '<tr><td>'.$langs->trans('MenuHandler').'</td><td>'.$menu->menu_handler.'</td><td>'.$langs->trans('DetailMenuHandler').'</td></tr>';
@@ -369,7 +382,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			print '<tr><td>'.$langs->trans('Type').'</td><td>'.$menu->type.'</td><td>'.$langs->trans('DetailType').'</td></tr>';
 
 			// Niveau
-			print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
+			//print '<tr><td>'.$langs->trans('Level').'</td><td>'.$menu->level.'</td><td>'.$langs->trans('DetailLevel').'</td></tr>';
 
 			// Titre
 			print '<tr><td>'.$langs->trans('Title').'</td><td><input type="text" size="70" name="titre" value="'.$menu->titre.'"></td><td>'.$langs->trans('DetailTitre').'</td></tr>';
@@ -389,9 +402,9 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 			print '<tr><td>'.$langs->trans('Right').'</td><td><input type="text" size="70" name="right" value="'.$menu->right.'"></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 			// Leftmenu
-			print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="70" name="leftmenu" value="'.htmlentities($menu->leftmenu).'"></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
+			//print '<tr><td>'.$langs->trans('Leftmenu').'</td><td><input type="text" size="70" name="leftmenu" value="'.htmlentities($menu->leftmenu).'"></td><td>'.$langs->trans('DetailLeftmenu').'</td></tr>';
 			// Mainmenu = group
-			print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="70" name="mainmenu" value="'.$menu->mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
+			//print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="70" name="mainmenu" value="'.$menu->mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
 
 			// Bouton			
 			print '<tr><td colspan="3" align="center"><input type="submit" class="button" name="save" value="Enregistrer">';
@@ -404,7 +417,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	
 	print '</form>';
 		
-		/*
+	/*
 	* Lignes de contraintes
 	*/
 	$sql = 'SELECT c.rowid, c.action, mc.user ';
@@ -496,7 +509,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 		while ($i < $num)
 		{
 			$objc = $db->fetch_object($resql);
-			print '<option value="'.$objc->rowid.'">'.$objc->action.'</option>';
+			print '<option value="'.$objc->rowid.'">'.dolibarr_trunc($objc->action,70).'</option>';
 			$i++;
 			
 		}
@@ -523,18 +536,12 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
 	print '</table>';
 	
 
-
-	print '<div class="tabsAction">';
-
-	print '<a class="butAction" href="edit.php?action=update&menuId='.$_GET['menuId'].'&amp;return=1">'.$langs->trans('Valid').'</a>';
-	print '<a class="butActionDelete" href="edit.php?menuId='.$_GET['menuId'].'&amp;action=delete">'.$langs->trans('Supprimer').'</a>';
-	print '</div>';
-
-
 }
 
+print '</div>';
 
-	
-			
- 
+
+$db->close();
+
+llxFooter('$Date$ - $Revision$');
 ?>
