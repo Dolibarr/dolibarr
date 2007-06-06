@@ -178,9 +178,12 @@ class CMailFile
 		
       if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
       {
-      	if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
-			  if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
-			  if (!ini_get('sendmail_from') && $this->addr_from) ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+      	if (isset($_SERVER["WINDIR"]))
+      	{
+      		if ($conf->global->MAIN_MAIL_SMTP_SERVER) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+      		if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+      		if ($this->addr_from) ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+      	}
 
       $dest=getValidAddress($this->addr_to,2);
 			if (! $dest)
@@ -212,9 +215,12 @@ class CMailFile
 		    	dolibarr_syslog("CMailFile::sendfile: mail end success");
 		    }
 			}
-			if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
-			if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
-			ini_restore('sendmail_from');
+			if (isset($_SERVER["WINDIR"]))
+			{
+				if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
+			  if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
+			  ini_restore('sendmail_from');
+			}
 		}
 		else
 		{
