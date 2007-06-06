@@ -127,7 +127,7 @@ function info()
      */
     function getExample()
     {
-    	global $conf;
+    	global $conf,$langs;
     	
     	$buildResult = $this->buildMatrice();
         
