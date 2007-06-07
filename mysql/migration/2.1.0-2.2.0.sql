@@ -29,6 +29,8 @@ delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 
 update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_FROM';
 
+update llx_const set visible=0 where name in ('MAIN_UPLOAD_DOC','MAIN_MAIL_SMTP_SERVER','MAIN_MAIL_SMTP_PORT','MAIN_MAIL_EMAIL_FROM');
+
 delete from llx_adherent_type where libelle IS NULL;
 alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
 
