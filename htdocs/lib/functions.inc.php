@@ -1247,6 +1247,57 @@ function dol_loginfunction($notused,$pearstatus)
 	print "\n</body>\n</html>";
 }
 
+/*
+ *    \brief      Vérifie les droits de l'utilisateur
+ *    \param      user      	  Utilisateur courant
+ *    \param      module        Module à vérifier
+ *    \param      objectid      ID du document
+ *    \param      dbtable       Table de la base correspondant au module (optionnel)
+ */
+ function restrictedArea($user, $modulename, $objectid='' , $dbtablename='')
+ {
+ 	global $db;
+ 		
+ 	$user->getrights($modulename);
+ 	$socid = 0;
+ 	
+ 	//si dbtable non défini, même nom que le module
+ 	if (!$dbtable) $dbtablename = $modulename;
+
+ 	if (!$user->rights->$modulename->lire)
+ 	{
+ 		accessforbidden();
+ 		return -1;
+ 	}
+ 	
+ 	if ($user->societe_id > 0)
+ 	{
+    $socid = $user->societe_id;
+  }
+
+  if ($objectid && (!$user->rights->commercial->client->voir || $socid > 0))
+  {
+  	$sql = "SELECT sc.fk_soc, dbt.fk_soc";
+  	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+  	$sql .= " WHERE dbt.rowid = ".$objectid;
+    if (!$user->rights->commercial->client->voir && !$socid > 0)
+    {
+    	$sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
+    }
+    if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
+
+    if ($db->query($sql))
+    {
+      if ($db->num_rows() == 0)
+      {
+      	accessforbidden();
+      	return -2;
+      }
+    }
+  }
+  return 1;
+}
+
 
 /**
 		\brief      Affiche message erreur de type acces interdit et arrete le programme

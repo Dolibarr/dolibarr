@@ -33,19 +33,12 @@ require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
 
 $langs->load("facture");
-// $langs->load("orders");
 $langs->load("companies");
 
-$user->getrights('facture');
+$facid = isset($_GET["facid"])?$_GET["facid"]:'';
 
-if (!$user->rights->facture->lire) accessforbidden();
-
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$security = restrictedArea($user, 'facture', $facid);
 
 /*
  * Ajout d'un nouveau contact

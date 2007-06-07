@@ -37,15 +37,10 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$user->getrights('propale');
-if (!$user->rights->propale->lire) accessforbidden();
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$security = restrictedArea($user, 'propale', $propalid, 'propal');
 
 /*
  * Ajout d'un nouveau contact

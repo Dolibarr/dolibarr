@@ -37,15 +37,10 @@ $langs->load("orders");
 $langs->load("sendings");
 $langs->load("companies");
 
-$user->getrights('commande');
-if (!$user->rights->commande->lire) accessforbidden();
+$commandeid = isset($_GET["id"])?$_GET["id"]:'';
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$security = restrictedArea($user, 'commande', $commandeid);
 
 /*
  * Ajout d'un nouveau contact
