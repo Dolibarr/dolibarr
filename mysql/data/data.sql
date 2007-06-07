@@ -163,7 +163,7 @@ insert into llx_const (name, value, type, note, visible) values ('OSC_DB_HOST','
 --
 -- Notification
 --
-insert into llx_const (name, value, type, note, visible) values ('NOTIFICATION_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les notifications automatiques Dolibarr',1);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',1);
 
 --
 -- Modeles de numerotation et generation document
