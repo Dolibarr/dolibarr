@@ -51,9 +51,9 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 
 llxHeader();
 
-print_fiche_titre($langs->trans("GUISetup"),'','setup');
+print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 
-print $langs->trans("DisplayDesc")."<br>\n";
+print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
 
 
