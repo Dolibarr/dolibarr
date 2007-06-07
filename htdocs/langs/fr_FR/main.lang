@@ -370,6 +370,7 @@ NoEMail=Pas d'email
 Owner=Propriétaire
 DetectedVersion=Version détectée
 FollowingConstantsWillBeSubstituted=Les constantes suivantes seront substituées par leur valeur correspondante.
+Refresh=Rafraichir
 # Countries
 CountryFR=France
 CountryBE=Belgique

@@ -56,6 +56,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'update')
 		$sql.=" WHERE m.rowid = ".$_POST['menuId'];
 		$db->query($sql);	
 	}
+	else
+	{
+		header("location: index.php?menu_handler=".$menu_handler);
+		exit;
+	}
 	
 	if($_GET['return'])
 	{
@@ -121,6 +126,16 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 			dolibarr_print_error($db);
 		}
 	
+		if ($rowid == $_POST['menuId'])
+		{
+			$mesg='<div class="error">'.'FailedToInsertParentdoesNotExist sql='.$sql.'</div>';
+			$_GET["action"] = 'create';
+			$error++;
+		}
+	}
+
+	if (! $error)
+	{		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."menu(rowid,menu_handler, type, mainmenu, leftmenu, fk_menu, url, titre, level, langs, `right`, target, user, `order`)";
 		$sql.=" VALUES(".$rowid.",'".$_POST['handler']."','".$_POST['type']."','".$_POST['mainmenu']."','".$_POST['leftmenu']."',".$_POST['menuId'].",'".$_POST['url']."','".$_POST['titre']."','".$_POST['level']."','".$_POST['langs']."','".$_POST['right']."','".$_POST['target']."',".$_POST['user'].",0)";
 		
@@ -128,7 +143,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'add')
 		$result=$db->query($sql);		
 		if ($result > 0)
 		{
-		dolibarr_syslog("location: edit.php?action=edit&menuId=".$rowid);
+			dolibarr_syslog("location: edit.php?action=edit&menuId=".$rowid);
 			header("location: edit.php?action=edit&menuId=".$rowid);
 			exit;
 		}
@@ -252,16 +267,11 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<table class="border" width="100%">';
 	
 	// Id
-	if($_GET['menuId'] == 0)
-	{
-		$parent_rowid = $_GET['menuId'];
-		$parent_level = -2;
-	}
-	else
+	$parent_rowid = $_GET['menuId'];
+	if ($_GET['menuId'])
 	{
 		$sql = "SELECT m.rowid, m.mainmenu, m.level, m.langs FROM ".MAIN_DB_PREFIX."menu as m WHERE m.rowid = ".$_GET['menuId'];
 		$res  = $db->query($sql);
-		
 		if ($res)
 		{
 	
@@ -279,7 +289,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<tr><td><b>'.$langs->trans('MenuIdParent').'</b></td>';
 	//$menu_handler
 	//print '<td><input type="text" size="50" name="handler" value="all"></td>';
-	print '<td><input type="text" size="50" name="menuId" value="0"></td>';
+	print '<td><input type="text" size="50" name="menuId" value="'.$parent_rowid.'"></td>';
 	print '<td>'.$langs->trans('DetailMenuIdParent').'</td></tr>';
 
 	//Handler
@@ -320,7 +330,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'create')
 	print '<option value="_new"'.($menu->target=="_new"?' selected="true"':'').'>'.$langs->trans('_new').'</option>';
 	print '</select></td></td><td>'.$langs->trans('DetailTarget').'</td></tr>';
 	//Right
-	print '<tr><td>'.$langs->trans('Right').'</td><td><input type="text" size="50" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
+	print '<tr><td>'.$langs->trans('Rights').'</td><td><input type="text" size="50" name="right" value=""></td><td>'.$langs->trans('DetailRight').'</td></tr>';
 
 	//Mainmenu = group
 	//print '<tr><td>'.$langs->trans('Group').'</td><td><input type="text" size="50" name="mainmenu" value="'.$mainmenu.'"></td><td>'.$langs->trans('DetailMainmenu').'</td></tr>';
@@ -488,7 +498,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
     	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
     	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
 		print '</td>';
-		print '<td align="center"><input type="submit" class="button"></td>';
+		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 		print '</form>';
 		
@@ -523,7 +533,7 @@ elseif (isset($_GET["action"]) && $_GET["action"] == 'edit')
     	print '<option value="1"'.($menu->user==1?' selected="true"':'').'>'.$langs->trans('Externe').'</option>';
     	print '<option value="2"'.($menu->user==2?' selected="true"':'').'>Tous</option>';		
 		print '</td>';
-		print '<td align="center"><input type="submit" class="button""></td>';
+		print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 		print '</tr>';
 
 		print '</form>';

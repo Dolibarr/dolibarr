@@ -31,7 +31,9 @@ require("./pre.inc.php");
  
 if (! $user->admin)
   accessforbidden();
-  
+
+$dirtop = "../../includes/menus/barre_top";
+$dirleft = "../../includes/menus/barre_left";
 
 $menu_handler_top=$conf->global->MAIN_MENU_BARRETOP;
 $menu_handler_left=$conf->global->MAIN_MENU_BARRELEFT;
@@ -41,6 +43,9 @@ $menu_handler_left=eregi_replace('_backoffice\.php','',$menu_handler_left);
 $menu_handler_left=eregi_replace('_frontoffice\.php','',$menu_handler_left);
 
 $menu_handler=$menu_handler_left;
+
+if ($_REQUEST["menu_handler"]) $menu_handler=$_REQUEST["menu_handler"];
+
 
 /*
 * Actions
@@ -178,6 +183,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
 /*
  * Affichage page
  */
+$html=new Form($db);
 
 llxHeader();
 
@@ -209,17 +215,20 @@ if ($_GET["action"] == 'delete')
 	$obj = $db->fetch_object($result);
     
     $html = new Form($db);
-    $html->form_confirm("index.php?menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
+    $html->form_confirm("index.php?menu_handler=".$menu_handler."&menuId=".$_GET['menuId'],$langs->trans("DeleteMenu"),$langs->trans("ConfirmDeleteMenu",$obj->titre),"confirm_delete");
     print "<br />\n";
 }
 
+print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
+print '<input type="hidden" action="change_menu_handler">';
+print $langs->trans("MenuHandler").': ';
+print $html->select_menu_families($menu_handler,'menu_handler',$dirleft);
+print ' &nbsp; <input type="submit" class="button" value="'.$langs->trans("Refresh").'">';
+print '</form>';
 
+print '<br>';
 
 print '<table class="border" width="100%">';
-
-print '<tr>';
-print '<td>'.$langs->trans("MenuHandler").': <b>'.$menu_handler.'</b></td>';
-print '</tr>';
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("TreeMenuPersonalized").'</td>';
@@ -244,7 +253,7 @@ if ($conf->use_javascript)
 */
 function affiche($tab,$rang) 
 {
-	global $rangLast, $idLast;
+	global $rangLast, $idLast, $menu_handler;
 	
 	if ($conf->use_javascript)
 	{
@@ -291,11 +300,12 @@ function affiche($tab,$rang)
 	}
 	 
 	print '<li id=li'.$tab[0].'>';
-	print '<strong><a href="edit.php?action=edit&menuId='.$tab[0].'">'.$tab[2].'</a></strong>';
-	print '<div class="menuEdit"><a href="edit.php?action=edit&menuId='.$tab[0].'"><img src="../../theme/auguria/img/edit.png" class="menuEdit" id="edit'.$tab[0].'" /></a></div>';
-	print '<div class="menuNew"><a href="edit.php?action=create&menuId='.$tab[0].'"><img src="../../theme/auguria/img/filenew.png" class="menuNew" id="new'.$tab[0].'" /></a></div>';
-	print '<div class="menuDel"><a href="index.php?action=delete&menuId='.$tab[0].'"><img src="../../theme/auguria/img/stcomm-1.png" class="menuDel" id="del'.$tab[0].'" /></a></div>';
-	print '<div class="menuFleche"><a href="index.php?action=up&menuId='.$tab[0].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?action=down&menuId='.$tab[0].'">'.img_picto("Descendre","1downarrow").'</a></div>';
+	print '<strong>';
+	print '<a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'">'.$tab[2].'</a></strong>';
+	print '<div class="menuEdit"><a href="edit.php?menu_handler='.$menu_handler.'&action=edit&menuId='.$tab[0].'"><img src="../../theme/auguria/img/edit.png" class="menuEdit" id="edit'.$tab[0].'" /></a></div>';
+	print '<div class="menuNew"><a href="edit.php?menu_handler='.$menu_handler.'&action=create&menuId='.$tab[0].'"><img src="../../theme/auguria/img/filenew.png" class="menuNew" id="new'.$tab[0].'" /></a></div>';
+	print '<div class="menuDel"><a href="index.php?menu_handler='.$menu_handler.'&action=delete&menuId='.$tab[0].'"><img src="../../theme/auguria/img/stcomm-1.png" class="menuDel" id="del'.$tab[0].'" /></a></div>';
+	print '<div class="menuFleche"><a href="index.php?menu_handler='.$menu_handler.'&action=up&menuId='.$tab[0].'">'.img_picto("Monter","1uparrow").'</a><a href="index.php?action=down&menuId='.$tab[0].'">'.img_picto("Descendre","1downarrow").'</a></div>';
 	print '</li>';
 	echo "\n";	
 	
@@ -311,24 +321,23 @@ function affiche($tab,$rang)
 */
 function recur($tab,$pere,$rang) {
 
-  //ballayage du tableau
-  for ($x=0;$x<count($tab);$x++) {
+	if ($rang > 10)	return;	// Protection contre boucle infinie
+	
+	//ballayage du tableau
+	for ($x=0;$x<count($tab);$x++)
+	{
+		//si un élément a pour père : $pere
+		if ($tab[$x][1]==$pere) {
 
-    //si un élément a pour père : $pere
-    if ($tab[$x][1]==$pere) {
-
-       //on l'affiche avec le décallage courrant
-		affiche($tab[$x],$rang);
-		
-       /*et on recherche ses fils
-         en rappelant la fonction recur()
-       (+ incrémentation du décallage)*/
-       recur($tab,$tab[$x][0],$rang+1);
-    }
-
-
-
-  }
+		   //on l'affiche avec le décallage courrant
+			affiche($tab[$x],$rang);
+			
+		   /*et on recherche ses fils
+			 en rappelant la fonction recur()
+		   (+ incrémentation du décallage)*/
+		   recur($tab,$tab[$x][0],$rang+1);
+		}
+	}
 }
 
 /*-------------------- MAIN -----------------------
@@ -375,8 +384,6 @@ if ($res)
   		print '<script type="text/javascript">imgDel('.$idLast.')</script>';
   	print '</ul>';
 
-  
-		
 
 	print '</td>';
 
