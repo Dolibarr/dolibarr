@@ -1797,7 +1797,7 @@ class Societe
     function isInEEC()
     {
       // \todo liste code pays à compléter
-      $country_code_in_EEC=array('BE','FR','LU');	
+      $country_code_in_EEC=array('BE','FR','LU','UK');	
       //print "dd".$this->pays_code;
       return in_array($this->pays_code,$country_code_in_EEC);
     }
