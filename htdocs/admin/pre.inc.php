@@ -34,40 +34,42 @@ $langs->load("admin");
 
 function llxHeader($head = "", $title="", $help_url='')
 {
-  global $user, $langs;
+	global $user, $langs;
 
-  top_menu($head);
+	top_menu($head);
 
-  $menu = new Menu();
-  $langs->load("admin");
-  $langs->load("users");
-  
-  $menu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
+	$menu = new Menu();
+	$langs->load("admin");
+	$langs->load("users");
 
-  $menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
+	$menu->add(DOL_URL_ROOT."/admin/company.php", $langs->trans("MenuCompanySetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
+	$menu->add(DOL_URL_ROOT."/admin/modules.php", $langs->trans("Modules"));
 
-  $menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
+	$menu->add(DOL_URL_ROOT."/admin/menus.php", $langs->trans("Menus"));
 
-  $menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
-  
-  $menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
+	$menu->add(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 
-  $menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
+	$menu->add(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
 
-  $menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
+	$menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
 
-  $langs->load("users");
-  $menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
+	$menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 
-  $menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
+	$menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
 
-  $menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
+	$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
 
-  $menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+	$langs->load("users");
+	$menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
 
-  left_menu($menu->liste, $help_url);
+	$menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
+
+	$menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
+
+	$menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+
+	left_menu($menu->liste, $help_url);
 }
 
 ?>
