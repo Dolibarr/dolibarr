@@ -162,30 +162,36 @@ class CMailFile
             \brief     Envoi le mail
             \return    boolean     true si mail envoyé, false sinon
     */
-    function sendfile()
-    {
-    	global $conf;
-        
-      dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
-      dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
-      //dolibarr_syslog("CMailFile::sendfile message=\n".$message);
-      //$this->send_to_file();
-
-      $errorlevel=error_reporting();
-      error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
-
-		  $res=false;
+	function sendfile()
+	{
+		global $conf;
 		
-      if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
-      {
-      	if (isset($_SERVER["WINDIR"]))
-      	{
-      		if ($conf->global->MAIN_MAIL_SMTP_SERVER) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
-      		if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
-      		if ($this->addr_from) ini_set('sendmail_from',getValidAddress($this->addr_from,2));
-      	}
+		dolibarr_syslog("CMailFile::sendfile addr_from=".$this->addr_from.", addr_to=".$this->addr_to.", subject=".$this->subject);
+		dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
+		//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
+		//$this->send_to_file();
 
-      $dest=getValidAddress($this->addr_to,2);
+		$errorlevel=error_reporting();
+		error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
+
+		$res=false;
+		
+		if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
+		{
+			// Si Windows, addr_from doit obligatoirement etre défini
+			if (isset($_SERVER["WINDIR"]))
+			{
+				if (! $this->addr_from) $this->addr_from = 'robot@mydomain.com';
+				if ($this->addr_from) @ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+
+				// Forcage parametres
+				// \TODO A mettre pout tout OS ?
+				if ($conf->global->MAIN_MAIL_SMTP_SERVER) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+				if ($conf->global->MAIN_MAIL_SMTP_PORT)   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+			}
+
+
+			$dest=getValidAddress($this->addr_to,2);
 			if (! $dest)
 			{
 				$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Recipient address '$dest' invalid";
@@ -196,42 +202,46 @@ class CMailFile
 				if ($this->errors_to)
 				{
 					// \TODO Tester que le safe_mode est inactif car fonction mail avec ces param non dispo en safe_mode
-		      dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
+					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
 					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
-		    }
-		    else
-		    {
-		    	dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
-		      //dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
+				}
+				else
+				{
+					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
+					//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
 					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
-		    }
-		    if (! $res) 
-		    {
-		    	$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
-		      dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
-		    }
-		    else
-		    {
-		    	dolibarr_syslog("CMailFile::sendfile: mail end success");
-		    }
+				}
+				if (! $res) 
+				{
+					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
+					dolibarr_syslog("CMailFile::sendfile: mail end error=".$this->error);
+				}
+				else
+				{
+					dolibarr_syslog("CMailFile::sendfile: mail end success");
+				}
 			}
+			
 			if (isset($_SERVER["WINDIR"]))
 			{
+				@ini_restore('sendmail_from');
+
+				// Forcage parametres
+				// \TODO A mettre pout tout OS ?
 				if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
-			  if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
-			  ini_restore('sendmail_from');
+				if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
 			}
 		}
 		else
 		{
-            $this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
+			$this->error='No mail sent. Feature is disabled by option MAIN_DISABLE_ALL_MAILS';
 			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
 		}
 
-        error_reporting($errorlevel);              // Réactive niveau erreur origine
+		error_reporting($errorlevel);              // Réactive niveau erreur origine
 
-        return $res;
-    }
+		return $res;
+	}
 
 
     /**
