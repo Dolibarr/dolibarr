@@ -1259,6 +1259,7 @@ function dol_loginfunction($notused,$pearstatus)
  	global $db;
  		
  	$user->getrights($modulename);
+ 	$user->getrights('commercial');
  	$socid = 0;
  	
  	//si dbtable non défini, même nom que le module
@@ -1267,31 +1268,47 @@ function dol_loginfunction($notused,$pearstatus)
  	if (!$user->rights->$modulename->lire)
  	{
  		accessforbidden();
- 		return -1;
+ 	}
+ 	else if (!$user->rights->$modulename->creer)
+ 	{
+ 		if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
+ 		{
+ 			accessforbidden();
+ 		}
  	}
  	
  	if ($user->societe_id > 0)
  	{
-    $socid = $user->societe_id;
+    $_GET["action"] = '';
+	  $_POST["action"] = '';
+    $user_socid = $user->societe_id;
   }
-
-  if ($objectid && (!$user->rights->commercial->client->voir || $socid > 0))
+  
+  if ($objectid)
   {
-  	$sql = "SELECT sc.fk_soc, dbt.fk_soc";
-  	$sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
-  	$sql .= " WHERE dbt.rowid = ".$objectid;
-    if (!$user->rights->commercial->client->voir && !$socid > 0)
-    {
-    	$sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
+  	if ($modulename == 'societe' && !$user->rights->commercial->client->voir && !$user_socid > 0)
+  	{
+  		$sql = "SELECT sc.fk_soc";
+      $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+      $sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
     }
-    if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
+    else if ($objectid && (!$user->rights->commercial->client->voir || $user_socid > 0))
+    {
+  	  $sql = "SELECT sc.fk_soc, dbt.fk_soc";
+  	  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
+  	  $sql .= " WHERE dbt.rowid = ".$objectid;
+      if (!$user->rights->commercial->client->voir && !$user_socid > 0)
+      {
+    	  $sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
+      }
+      if ($user_socid > 0) $sql .= " AND dbt.fk_soc = ".$user_socid;
+    }
 
     if ($db->query($sql))
     {
       if ($db->num_rows() == 0)
       {
       	accessforbidden();
-      	return -2;
       }
     }
   }

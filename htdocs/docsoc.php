@@ -34,32 +34,12 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 $langs->load("companies");
 $langs->load('other');
 
-$user->getrights('commercial');
-
 $mesg = "";
 
-// Sécurité accés client
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
-if ($socid == '') accessforbidden();
-if ($user->societe_id > 0)
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
 
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-  $sql = "SELECT sc.fk_soc, s.client";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
-  
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() == 0) accessforbidden();
-    }
-}
-
+// Sécurité d'accès client et commerciaux
+$security = restrictedArea($user, 'commercial', $socid, 'societe');
 
 /*
  * Actions

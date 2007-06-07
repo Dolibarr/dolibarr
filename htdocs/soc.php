@@ -33,42 +33,16 @@
 require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 
-$user->getrights('societe');
-$user->getrights('commercial');
-
 $langs->load("companies");
 $langs->load("commercial");
 $langs->load("bills");
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
-// Sécurité accés client
-if (! $user->rights->societe->creer)
-{
-    if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
-    {
-        accessforbidden();
-    }
-}
-if ($user->societe_id > 0) 
-{
-	$_GET["action"] = '';
-	$_POST["action"] = '';
-	$socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$security = restrictedArea($user, 'societe', $socid);
+print $security;
 
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-  $sql = "SELECT sc.fk_soc";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-  
-  if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() == 0) accessforbidden();
-    }
-}
 // Initialisation de l'objet Societe
 $soc = new Societe($db);
 
