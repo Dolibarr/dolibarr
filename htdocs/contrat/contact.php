@@ -39,7 +39,7 @@ $langs->load("companies");
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Sécurité d'accès client et commerciaux
-$security = restrictedArea($user, 'contrat', $contratid);
+$socid = restrictedArea($user, 'contrat', $contratid);
 
 /*
  * Ajout d'un nouveau contact

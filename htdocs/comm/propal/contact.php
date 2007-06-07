@@ -40,7 +40,7 @@ $langs->load("companies");
 $propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
 // Sécurité d'accès client et commerciaux
-$security = restrictedArea($user, 'propale', $propalid, 'propal');
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 /*
  * Ajout d'un nouveau contact

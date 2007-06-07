@@ -38,7 +38,7 @@ $langs->load("companies");
 $facid = isset($_GET["facid"])?$_GET["facid"]:'';
 
 // Sécurité d'accès client et commerciaux
-$security = restrictedArea($user, 'facture', $facid);
+$socid = restrictedArea($user, 'facture', $facid);
 
 /*
  * Ajout d'un nouveau contact

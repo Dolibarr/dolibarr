@@ -1281,27 +1281,27 @@ function dol_loginfunction($notused,$pearstatus)
  	{
     $_GET["action"] = '';
 	  $_POST["action"] = '';
-    $user_socid = $user->societe_id;
+    $socid = $user->societe_id;
   }
   
   if ($objectid)
   {
-  	if ($modulename == 'societe' && !$user->rights->commercial->client->voir && !$user_socid > 0)
+  	if ($modulename == 'societe' && !$user->rights->commercial->client->voir && !$socid > 0)
   	{
   		$sql = "SELECT sc.fk_soc";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
     }
-    else if ($objectid && (!$user->rights->commercial->client->voir || $user_socid > 0))
+    else if ($objectid && (!$user->rights->commercial->client->voir || $socid > 0))
     {
   	  $sql = "SELECT sc.fk_soc, dbt.fk_soc";
   	  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
   	  $sql .= " WHERE dbt.rowid = ".$objectid;
-      if (!$user->rights->commercial->client->voir && !$user_socid > 0)
+      if (!$user->rights->commercial->client->voir && !$socid > 0)
       {
     	  $sql .= " AND sc.fk_soc = dbt.fk_soc AND sc.fk_user = ".$user->id;
       }
-      if ($user_socid > 0) $sql .= " AND dbt.fk_soc = ".$user_socid;
+      if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
     }
 
     if ($db->query($sql))
@@ -1312,7 +1312,7 @@ function dol_loginfunction($notused,$pearstatus)
       }
     }
   }
-  return 1;
+  return $socid;
 }
 
 

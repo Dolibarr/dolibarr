@@ -40,8 +40,7 @@ $langs->load("bills");
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
 // Sécurité d'accès client et commerciaux
-$security = restrictedArea($user, 'societe', $socid);
-print $security;
+$socid = restrictedArea($user, 'societe', $socid);
 
 // Initialisation de l'objet Societe
 $soc = new Societe($db);

@@ -40,7 +40,7 @@ $langs->load("companies");
 $commandeid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Sécurité d'accès client et commerciaux
-$security = restrictedArea($user, 'commande', $commandeid);
+$socid = restrictedArea($user, 'commande', $commandeid);
 
 /*
  * Ajout d'un nouveau contact

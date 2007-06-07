@@ -30,24 +30,14 @@
  
 require_once("./pre.inc.php");
 
-if (!$user->rights->societe->lire)
-  accessforbidden();
-
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
 $langs->load("customers");
 $langs->load("suppliers");
 
-
-// Sécurité accés client
-$socid=0; 
-if ($user->societe_id > 0) 
-{
-    $action = '';
-    $socid = $user->societe_id;
-}
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe');
 
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
