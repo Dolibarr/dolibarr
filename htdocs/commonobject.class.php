@@ -369,11 +369,74 @@ class CommonObject
    *		\param      userid 		Id du contact
    */
 	function fetch_adresse_livraison($deliveryaddressid)
-    {
-      $address = new Societe($this->db);
-      $address->fetch_adresse_livraison($deliveryaddressid);
-      $this->deliveryaddress = $address;
-    }
+  {
+  	$address = new Societe($this->db);
+    $address->fetch_adresse_livraison($deliveryaddressid);
+    $this->deliveryaddress = $address;
+  }
+  
+/**
+  *    \brief      Retourne la liste déroulante des sociétés
+  *    \param      object          Fetch du document
+  *    \param      var_id          Nom de la variable de l'id du document
+  *    \param      selected        Societe présélectionnée
+  *    \param      htmlname        Nom champ formulaire
+  */
+ function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
+ {
+	 // On recherche les societes
+	 $sql = "SELECT s.idp, s.nom FROM";
+	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
+   //if ($filter) $sql .= " WHERE $filter";
+	 $sql .= " ORDER BY nom ASC";
+
+	 $resql = $object->db->query($sql);
+	 if ($resql)
+	 {
+		 $javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+		 print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
+		 $num = $object->db->num_rows($resql);
+		 $i = 0;
+		 if ($num)
+		 {
+			 while ($i < $num)
+			 {
+				 $obj = $object->db->fetch_object($resql);
+				 if ($i == 0) $firstCompany = $obj->idp;
+				 if ($selected > 0 && $selected == $obj->idp)
+				 {
+					 print '<option value="'.$obj->idp.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
+					 $firstCompany = $obj->idp;
+				 }
+				 else
+				 {
+					 print '<option value="'.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</option>';
+				 }
+				 $i ++;
+			 }
+		 }
+		 print "</select>\n";
+		 return $firstCompany;
+	 }
+	 else
+	 {
+		 dolibarr_print_error($object->db);
+	 }
+ }
+ 
+/**
+ * 
+ */
+ function selectTypeContact($object, $defValue, $htmlname = 'type', $source)
+ {
+	 $lesTypes = $object->liste_type_contact($source);
+	 print '<select class="flat" name="'.$htmlname.'">';
+	 foreach($lesTypes as $key=>$value)
+	 {
+		 print '<option value="'.$key.'">'.$value.'</option>';
+	 }
+	 print "</select>\n";
+ }
 
 }
 

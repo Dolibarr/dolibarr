@@ -38,69 +38,7 @@ $langs->load("sendings");
 $langs->load("companies");
 
 $user->getrights('propale');
-if (!$user->rights->propale->lire)
-	accessforbidden();
-
-// les methodes locales
-/**
-  *    \brief      Retourne la liste déroulante des sociétés
-  *    \param      selected        Societe présélectionnée
-  *    \param      htmlname        Nom champ formulaire
-  */
-function select_societes_for_newconcat($propal, $selected = '', $htmlname = 'newcompany'){
-	// On recherche les societes
-	$sql = "SELECT s.idp, s.nom FROM";
-	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-//	if ($filter) $sql .= " WHERE $filter";
-	$sql .= " ORDER BY nom ASC";
-
-	$resql = $propal->db->query($sql);
-	if ($resql)
-	{
-		$javaScript = "window.location='./contact.php?propalid=".$propal->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-		print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
-		$num = $propal->db->num_rows($resql);
-		$i = 0;
-		if ($num)
-		{
-			while ($i < $num)
-			{
-				$obj = $propal->db->fetch_object($resql);
-				if ($i == 0)
-					$firstCompany = $obj->idp;
-				if ($selected > 0 && $selected == $obj->idp)
-				{
-					print '<option value="'.$obj->idp.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
-					$firstCompany = $obj->idp;
-				} else
-				{
-					print '<option value="'.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</option>';
-				}
-				$i ++;
-			}
-		}
-		print "</select>\n";
-		return $firstCompany;
-	} else
-	{
-		dolibarr_print_error($propal->db);
-	}
-}
-
-/**
- * 
- */
-function select_type_contact($propal, $defValue, $htmlname = 'type', $source)
-{
-	$lesTypes = $propal->liste_type_contact($source);
-	print '<select class="flat" name="'.$htmlname.'">';
-	foreach($lesTypes as $key=>$value)
-	{
-		print '<option value="'.$key.'">'.$value.'</option>';
-	}
-	print "</select>\n";
-}
-
+if (!$user->rights->propale->lire) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0)
@@ -291,7 +229,7 @@ if ($id > 0)
 			$html->select_users($user->id,'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($propal, '', 'type','internal');
+			$propal->selectTypeContact($propal, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -313,14 +251,14 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = select_societes_for_newconcat($propal, $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $propal->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($propal, '', 'type','external');
+			$propal->selectTypeContact($propal, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';

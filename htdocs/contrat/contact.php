@@ -39,8 +39,7 @@ $langs->load("companies");
 
 $user->getrights('contrat');
 
-if (!$user->rights->contrat->lire)
-	accessforbidden();
+if (!$user->rights->contrat->lire) accessforbidden();
 
 // Sécurité accés client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
@@ -68,69 +67,6 @@ if ($contratid && (!$user->rights->commercial->client->voir || $user->societe_id
           if ( $db->num_rows() == 0) accessforbidden();
         }
 }
-
-
-// les methodes locales
-/**
-  *    \brief      Retourne la liste déroulante des sociétés
-  *    \param      selected        Societe présélectionnée
-  *    \param      htmlname        Nom champ formulaire
-  */
-function select_societes_for_newconcat($contrat, $selected = '', $htmlname = 'newcompany')
-{
-		// On recherche les societes
-	$sql = "SELECT s.idp, s.nom FROM";
-	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-	if ($filter) $sql .= " WHERE $filter";
-	$sql .= " ORDER BY nom ASC";
-
-	$resql = $contrat->db->query($sql);
-	if ($resql)
-	{
-		$javaScript = "window.location='./contact.php?id=".$contrat->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-		print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
-		$num = $contrat->db->num_rows($resql);
-		$i = 0;
-		if ($num)
-		{
-			while ($i < $num)
-			{
-				$obj = $contrat->db->fetch_object($resql);
-				if ($i == 0)
-					$firstCompany = $obj->idp;
-				if ($selected > 0 && $selected == $obj->idp)
-				{
-					print '<option value="'.$obj->idp.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
-					$firstCompany = $obj->idp;
-				} else
-				{
-					print '<option value="'.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</option>';
-				}
-				$i ++;
-			}
-		}
-		print "</select>\n";
-		return $firstCompany;
-	} else
-	{
-		dolibarr_print_error($contrat->db);
-	}
-}
-
-/**
- * 
- */
-function select_type_contact($contrat, $defValue, $htmlname = 'type', $source)
-{
-	$lesTypes = $contrat->liste_type_contact($source);
-	print '<select class="flat" name="'.$htmlname.'">';
-	foreach($lesTypes as $key=>$value)
-	{
-		print '<option value="'.$key.'">'.$value.'</option>';
-	}
-	print "</select>\n";
-}
-
 
 /*
  * Ajout d'un nouveau contact
@@ -327,7 +263,7 @@ if ($id > 0)
 			$html->select_users($user->id,'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($contrat, '', 'type','internal');
+			$contrat->selectTypeContact($contrat, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -349,14 +285,14 @@ if ($id > 0)
 			
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$contrat->societe->id;
-			$selectedCompany = select_societes_for_newconcat($contrat, $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $contrat->selectCompaniesForNewContact($contrat, 'id', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($contrat, '', 'type','external');
+			$contrat->selectTypeContact($contrat, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';

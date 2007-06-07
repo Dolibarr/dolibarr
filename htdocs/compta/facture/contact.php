@@ -38,70 +38,7 @@ $langs->load("companies");
 
 $user->getrights('facture');
 
-if (!$user->rights->facture->lire)
-	accessforbidden();
-
-// les methodes locales
-/**
-  *    \brief      Retourne la liste déroulante des sociétés
-  *    \param      selected        Societe présélectionnée
-  *    \param      htmlname        Nom champ formulaire
-  */
-function select_societes_for_newconcat($facture, $selected = '', $htmlname = 'newcompany')
-{
-		// On recherche les societes
-	$sql = "SELECT s.idp, s.nom FROM";
-	$sql .= " ".MAIN_DB_PREFIX."societe as s";
-//	if ($filter) $sql .= " WHERE $filter";
-	$sql .= " ORDER BY nom ASC";
-
-	$resql = $facture->db->query($sql);
-	if ($resql)
-	{
-		$javaScript = "window.location='./contact.php?facid=".$facture->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-		print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
-		$num = $facture->db->num_rows($resql);
-		$i = 0;
-		if ($num)
-		{
-			while ($i < $num)
-			{
-				$obj = $facture->db->fetch_object($resql);
-				if ($i == 0)
-					$firstCompany = $obj->idp;
-				if ($selected > 0 && $selected == $obj->idp)
-				{
-					print '<option value="'.$obj->idp.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
-					$firstCompany = $obj->idp;
-				} else
-				{
-					print '<option value="'.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</option>';
-				}
-				$i ++;
-			}
-		}
-		print "</select>\n";
-		return $firstCompany;
-	} else
-	{
-		dolibarr_print_error($facture->db);
-	}
-}
-
-/**
- * 
- */
-function select_type_contact($facture, $defValue, $htmlname = 'type', $source)
-{
-	$lesTypes = $facture->liste_type_contact($source);
-	print '<select class="flat" name="'.$htmlname.'">';
-	foreach($lesTypes as $key=>$value)
-	{
-		print '<option value="'.$key.'">'.$value.'</option>';
-	}
-	print "</select>\n";
-}
-
+if (!$user->rights->facture->lire) accessforbidden();
 
 // Sécurité accés client
 if ($user->societe_id > 0)
@@ -285,7 +222,7 @@ if ($id > 0)
 			$html->select_users($user->id,'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($facture, '', 'type','internal');
+			$facture->selectTypeContact($facture, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -307,14 +244,14 @@ if ($id > 0)
 			
 			print '<td colspan="1">';
 			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$facture->client->id;
-			$selectedCompany = select_societes_for_newconcat($facture, $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = $facture->selectCompaniesForNewContact($facture, 'facid', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
 			print '</td>';
 			print '<td>';
-			select_type_contact($facture, '', 'type','external');
+			$facture->selectTypeContact($facture, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
