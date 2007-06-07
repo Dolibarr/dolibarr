@@ -29,14 +29,8 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->societe->lire) accessforbidden();
-
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe');
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];

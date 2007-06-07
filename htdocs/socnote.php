@@ -35,28 +35,11 @@ $action = isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 
 $langs->load("companies");
 
-$user->getrights('commercial');
-
 // Protection quand utilisateur externe
 $socid = isset($_GET["socid"])?$_GET["socid"]:$_POST["socid"];
-if ($user->societe_id > 0)
-{
-    $socid = $user->societe_id;
-}
 
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-        $sql = "SELECT sc.fk_soc, s.client";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id." AND s.client = 1";
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe', $socid);
 
 if ($_POST["action"] == 'add')
 {

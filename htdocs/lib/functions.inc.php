@@ -1254,13 +1254,15 @@ function dol_loginfunction($notused,$pearstatus)
  *    \param      objectid      ID du document
  *    \param      dbtable       Table de la base correspondant au module (optionnel)
  */
- function restrictedArea($user, $modulename, $objectid='' , $dbtablename='')
+ function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
  {
  	global $db;
  		
  	$user->getrights($modulename);
  	$user->getrights('commercial');
+ 	
  	$socid = 0;
+ 	if ($modulename == 'societe' && $objectid) $socid = $objectid; 
  	
  	//si dbtable non défini, même nom que le module
  	if (!$dbtable) $dbtablename = $modulename;
@@ -1283,7 +1285,7 @@ function dol_loginfunction($notused,$pearstatus)
 	  $_POST["action"] = '';
     $socid = $user->societe_id;
   }
-  
+
   if ($objectid)
   {
   	if ($modulename == 'societe' && !$user->rights->commercial->client->voir && !$socid > 0)
@@ -1292,7 +1294,7 @@ function dol_loginfunction($notused,$pearstatus)
       $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
       $sql .= " WHERE sc.fk_soc = ".$objectid." AND sc.fk_user = ".$user->id;
     }
-    else if ($objectid && (!$user->rights->commercial->client->voir || $socid > 0))
+    else if (!$user->rights->commercial->client->voir || $socid > 0)
     {
   	  $sql = "SELECT sc.fk_soc, dbt.fk_soc";
   	  $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX.$dbtablename." as dbt";
@@ -1311,6 +1313,10 @@ function dol_loginfunction($notused,$pearstatus)
       	accessforbidden();
       }
     }
+  }
+  else if (!$objectid && $modulename == 'societe' && $list==0)
+  {
+  	accessforbidden();
   }
   return $socid;
 }

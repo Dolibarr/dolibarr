@@ -41,21 +41,11 @@ if ($page < 0) { $page = 0 ; }
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 
-$socid=$_GET["socid"];
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
 $type=$_GET["type"];
 
-
-/*
- * Sécurité accés client
- */
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
-if (!$user->rights->societe->lire) accessforbidden();
-
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe');
 
 llxHeader('','Contacts');
 

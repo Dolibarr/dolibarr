@@ -32,19 +32,8 @@ require("pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/comm/adresse_livraison.class.php");
 
-$user->getrights('societe');
-$user->getrights('commercial');
-
 $langs->load("companies");
 $langs->load("commercial");
- 
-if (! $user->rights->societe->creer)
-{
-    if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
-    {
-        accessforbidden();
-    }
-}
 
 $idl = isset($_GET["idl"])?$_GET["idl"]:'';
 $origin = isset($_GET["origin"])?$_GET["origin"]:'';
@@ -52,29 +41,8 @@ $originid = isset($_GET["originid"])?$_GET["originid"]:'';
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if (! $socid && ($_REQUEST["action"] != 'create' && $_REQUEST["action"] != 'add' && $_REQUEST["action"] != 'update')) accessforbidden();
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $_GET["action"] = '';
-  $_POST["action"] = '';
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0)
-{
-        $sql = "SELECT sc.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_user = ".$user->id;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
-
-
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe', $socid);
 
 /*
  * Actions

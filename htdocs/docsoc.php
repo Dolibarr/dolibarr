@@ -39,7 +39,7 @@ $mesg = "";
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 
 // Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'commercial', $socid, 'societe');
+$socid = restrictedArea($user, 'societe', $socid);
 
 /*
  * Actions
