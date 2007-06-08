@@ -30,7 +30,7 @@
 require("./pre.inc.php");
 
 // Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'societe');
+$socid = restrictedArea($user, 'societe','','',1);
 
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];

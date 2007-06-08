@@ -1253,6 +1253,7 @@ function dol_loginfunction($notused,$pearstatus)
  *    \param      module        Module à vérifier
  *    \param      objectid      ID du document
  *    \param      dbtable       Table de la base correspondant au module (optionnel)
+ *    \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
  */
  function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
  {
@@ -1262,8 +1263,7 @@ function dol_loginfunction($notused,$pearstatus)
  	$user->getrights('commercial');
  	
  	$socid = 0;
- 	$nocreate = 0;
- 	if ($modulename == 'societe' && $objectid) $socid = $objectid; 
+ 	$nocreate = 0; 
  	
  	//si dbtable non défini, même nom que le module
  	if (!$dbtable) $dbtablename = $modulename;
@@ -1320,7 +1320,7 @@ function dol_loginfunction($notused,$pearstatus)
   {
   	accessforbidden();
   }
-  return $socid;
+  return $objectid;
 }
 
 
