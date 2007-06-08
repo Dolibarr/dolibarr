@@ -1262,6 +1262,7 @@ function dol_loginfunction($notused,$pearstatus)
  	$user->getrights('commercial');
  	
  	$socid = 0;
+ 	$nocreate = 0;
  	if ($modulename == 'societe' && $objectid) $socid = $objectid; 
  	
  	//si dbtable non défini, même nom que le module
@@ -1273,6 +1274,7 @@ function dol_loginfunction($notused,$pearstatus)
  	}
  	else if (!$user->rights->$modulename->creer)
  	{
+ 		$nocreate = 1;
  		if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
  		{
  			accessforbidden();
@@ -1314,7 +1316,7 @@ function dol_loginfunction($notused,$pearstatus)
       }
     }
   }
-  else if (!$objectid && $modulename == 'societe' && $list==0)
+  else if ((!$objectid && $modulename == 'societe' && $list==0) && $nocreate == 1)
   {
   	accessforbidden();
   }
