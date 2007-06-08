@@ -1308,7 +1308,7 @@ function dol_loginfunction($notused,$pearstatus)
       if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
     }
 
-    if ($db->query($sql))
+    if ($sql && $db->query($sql))
     {
       if ($db->num_rows() == 0)
       {
