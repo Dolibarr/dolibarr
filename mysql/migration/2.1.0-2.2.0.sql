@@ -558,3 +558,12 @@ drop table if exists llx_todocomm;
 drop table if exists llx_ventes;
 drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
+
+-- Pas de limite sur nb decimal dans base car definie en option 
+ALTER TABLE llx_product_price ADD COLUMN price_ttc float DEFAULT 0 AFTER price;
+ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0 AFTER price_base_type;
+ALTER TABLE llx_product_price MODIFY price_ttc float DEFAULT 0;
+ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
+
+ 
+
