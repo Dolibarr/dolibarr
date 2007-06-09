@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - main
-charset=iso-8859-1
+CHARSET=ISO-8859-1
+DatabaseConnection=Database connection
 SeparatorDecimal=.
 SeparatorThousand=,
 Error=Error
@@ -32,6 +33,7 @@ ErrorSomeErrorWereFoundRollbackIsDone=Some errors were found. We rollback change
 ErrorConfigParameterNotDefined=Parameter <b>%s</b> is not defined inside Dolibarr config file <b>conf.php</b>.
 ErrorCantLoadUserFromDolibarrDatabase=Failed to find user <b>%s</b> in Dolibarr database.
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr authentication mode is setup to <b>%s</b> in configuration file <b>conf.php</b>.<br>This means that password database is extern to Dolibarr, so changing this field may have no effects.
+PasswordForgotten=Password forgotten ?
 SeeAbove=See above
 HomeArea=Home area
 LastConnexion=Last connection

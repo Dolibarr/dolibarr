@@ -145,6 +145,10 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$collation_connection="'.$_POST["collation_connection"].'";');
 			fputs($fp,"\n");
 
+			/* Authentication */
+                        fputs($fp, '$dolibarr_main_authentication="dolibarr";');
+                        fputs($fp,"\n");
+
 			/* Preparation integration SMARTY */
 			fputs($fp, '$dolibarr_smarty_libs_dir="";');
 			fputs($fp,"\n");
