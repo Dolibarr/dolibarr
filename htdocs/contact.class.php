@@ -182,7 +182,7 @@ class Contact
         $sql .= ", phone_mobile = '".addslashes($this->phone_mobile)."'";
         $sql .= ", jabberid = '".addslashes($this->jabberid)."'";
         if ($user) $sql .= ", fk_user_modif=".$user->id;
-        $sql .= " WHERE idp=".$id;
+        $sql .= " WHERE rowid=".$id;
         dolibarr_syslog("Contact.class::update sql=".$sql,LOG_DEBUG);
     
         $result = $this->db->query($sql);
@@ -300,7 +300,7 @@ class Contact
 	function update_perso($id, $user=0)
 	{
 		// Mis a jour contact
-		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET idp=".$id;
+		$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET rowid=".$id;
 	
 		if ($this->birthday)	// <0 si avant 1970, >0 si apres 1970
 		{
@@ -316,7 +316,7 @@ class Contact
             }
 		}
         if ($user) $sql .= ", fk_user_modif=".$user->id;
-		$sql .= " WHERE idp=$id";
+		$sql .= " WHERE rowid=".$id;
 
 		dolibarr_syslog("Contact::update_perso this->birthday=".$this->birthday." - sql=".$sql);	
 		$resql = $this->db->query($sql);
@@ -371,7 +371,7 @@ class Contact
     {
     	global $langs;
     	$langs->load("companies");
-        $sql = "SELECT c.idp, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
+        $sql = "SELECT c.rowid, c.fk_soc, c.civilite as civilite_id, c.name, c.firstname,";
         $sql.= " c.address, c.cp, c.ville,";
         $sql.= " c.fk_pays, p.libelle as pays, p.code as pays_code,";
         $sql.= " c.birthday,";
@@ -379,8 +379,8 @@ class Contact
         $sql.= " u.rowid as user_id, u.login as user_login";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON c.fk_pays = p.rowid";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.idp = u.fk_socpeople";
-        $sql.= " WHERE c.idp = ". $id;
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON c.rowid = u.fk_socpeople";
+        $sql.= " WHERE c.rowid = ". $id;
     
     	dolibarr_syslog("Contact::fetch sql=".$sql);
         $resql=$this->db->query($sql);
@@ -390,7 +390,7 @@ class Contact
             {
                 $obj = $this->db->fetch_object($resql);
     
-                $this->id             = $obj->idp;
+                $this->id             = $obj->rowid;
                 $this->civilite_id    = $obj->civilite_id;
                 $this->name           = $obj->name;
                 $this->firstname      = $obj->firstname;
@@ -540,7 +540,7 @@ class Contact
 		global $conf, $langs;
 	
 		$sql = "SELECT c.name, c.firstname FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql .= " WHERE c.idp = ". $id;
+		$sql .= " WHERE c.rowid = ". $id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -554,7 +554,7 @@ class Contact
 		}
 	
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE idp=$id";
+		$sql .= " WHERE rowid=".$id;
 	
 		$result = $this->db->query($sql);
 		if (! $result)
@@ -580,10 +580,10 @@ class Contact
      */
     function info($id)
     {
-        $sql = "SELECT c.idp, ".$this->db->pdate("c.datec")." as datec, c.fk_user_creat";
+        $sql = "SELECT c.rowid, ".$this->db->pdate("c.datec")." as datec, c.fk_user_creat";
         $sql .= ", ".$this->db->pdate("c.tms")." as tms, c.fk_user_modif";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
-        $sql .= " WHERE c.idp = ".$id;
+        $sql .= " WHERE c.rowid = ".$id;
         
         $resql=$this->db->query($sql);
         if ($resql)
@@ -592,7 +592,7 @@ class Contact
             {
                 $obj = $this->db->fetch_object($resql);
     
-                $this->id                = $obj->idp;
+                $this->id                = $obj->rowid;
     
                 if ($obj->fk_user_creat) {
                     $cuser = new User($this->db, $obj->fk_user_creat);
@@ -747,7 +747,7 @@ class Contact
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe LIMIT 10";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

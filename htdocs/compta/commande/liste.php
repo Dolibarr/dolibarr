@@ -55,17 +55,17 @@ $langs->load('companies');
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.idp,";
+$sql = "SELECT s.nom, s.rowid as socid,";
 $sql.= " c.rowid, c.ref, c.total_ht,".$db->pdate("c.date_commande")." as date_commande,";
 $sql.= " c.fk_statut, c.facture";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= " WHERE c.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
-    $sql .= " AND s.idp = $socid";
+    $sql .= " AND s.rowid = ".$socid;
 }
 if ($_GET["month"] > 0)
 {
@@ -130,7 +130,7 @@ if ($resql)
         $var=!$var;
         print "<tr $bc[$var]>";
         print "<td><a href=\"".$link."?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
-        print "<td><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a>";
+        print "<td><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid."\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a>";
         if (($objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 )
         {
             print img_warning();

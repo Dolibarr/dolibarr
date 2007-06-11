@@ -41,14 +41,14 @@ if ($user->societe_id > 0)
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+    $sql = "SELECT s.rowid as socid FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
   }
       
   if ( $db->query($sql) ) {
     if ( $db->num_rows() == 1) {
       $obj = $db->fetch_object(0);
-      $socid = $obj->idp;
+      $socid = $obj->socid;
     }
     $db->free();
   }

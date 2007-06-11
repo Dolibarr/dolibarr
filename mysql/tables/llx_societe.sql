@@ -22,7 +22,7 @@
 
 create table llx_societe
 (
-  idp                integer AUTO_INCREMENT PRIMARY KEY,
+  rowid              integer AUTO_INCREMENT PRIMARY KEY,
   statut             tinyint        DEFAULT 0,            -- statut
   parent             integer,
   tms                timestamp,

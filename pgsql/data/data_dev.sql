@@ -129,19 +129,19 @@ values ('Foo SARL','22300','Ploubezre','01 55 55 03 18','01 55 55 55 55',1,'FOO'
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Talphinfo',now(),'29400','Bodilis','01 40 15 03 18','01 40 15 06 18',1,'AP');
 
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (rowid,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (20,'Bouleau','22800','Le Foeil','01 55 55 03 18','01 55 55 55 55',1,'BTP');
 
 insert into llx_societe (nom,datec,cp,ville,tel,fax, client, prefix_comm)
 values ('Valphanix',now(),'29820','Bohars','01 40 15 03 18','01 40 15 06 18',1,'AL');
 
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (rowid,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (101,'Cerisier','22290','Goudelin','01 55 55 03 18','01 55 55 55 55',1,'CER');
 
 insert into llx_societe (nom,cp,ville,tel,fax,client,url)
 values ('Turin','29890','Brignogan-Plage','01 55 55 03 18','01 55 55 55 55',1,'http://www.ot-brignogan-plage.fr/');
 
-insert into llx_societe (idp,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
+insert into llx_societe (rowid,nom,cp,ville,tel,fax,fournisseur,prefix_comm)
 values (100,'Chêne','22330','Le Gouray','01 55 55 03 18','01 55 55 55 55',1,'DEL');
 
 insert into llx_societe (nom,cp,ville,tel,fax,client)
@@ -165,39 +165,39 @@ values ('Iono','22110','Rostrenen','01 55 55 03 18','01 55 55 55 55',1);
 -- Contact
 --
 delete from llx_socpeople;
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,poste)
 values (10,1,'Maréchal','Ferdinand','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Administrateur système');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (11,5,'Pejat','Jean-Marie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email,poste)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email,poste)
 values (12,1,'Poulossière','Paul','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net','Directeur technique');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (13,6,'Myriam','Isabelle','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (20,2,'Corin','Arnaud','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (30,3,'Philippine','Sagan','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (31,3,'Marie','Jeanne','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (41,4,'Alix','Hopper','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (14,7,'Victoire','Renoir','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (15,7,'Baudelaire','Matthias','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (16,8,'Hugo','Benjamin','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (17,9,'Rembrandt','Stéphanie','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (18,10,'Picasso','Myriam','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (19,11,'Beethoven','John','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (22,11,'Dumas','Elisabeth','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
-insert into llx_socpeople (idp,fk_soc, name, firstname, phone,fax,email)
+insert into llx_socpeople (rowid,fk_soc, name, firstname, phone,fax,email)
 values (21,10,'','Joséphine','01 40 15 03 18','01 40 15 06 18','dev@lafrere.net');
 --
 --

@@ -65,16 +65,16 @@ if (! $sortfield) $sortfield="nom";
  * Mode Liste
  *
  */
-$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if ($_GET["cat"]) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-if ($_GET["cat"]) $sql .= " AND cf.fk_societe=s.idp AND cf.fk_categorie='".$_GET["cat"]."'";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql .= " AND s.idp=".$socid;
+if ($_GET["cat"]) $sql .= " AND cf.fk_societe = s.rowid AND cf.fk_categorie='".$_GET["cat"]."'";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
@@ -137,8 +137,8 @@ if ($resql)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+      print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
       print "<td>".$obj->ville."</td>\n";       
       print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta_fournisseur.'&nbsp;</td>';

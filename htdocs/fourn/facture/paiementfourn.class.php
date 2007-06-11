@@ -343,7 +343,7 @@ class PaiementFourn
 			if ($num)
 			{
 				$obj = $this->db->fetch_object($resql);
-				$this->id = $obj->idp;
+				$this->id = $obj->rowid;
 				if ($obj->fk_user_creat)
 				{
 					$cuser = new User($this->db, $obj->fk_user_creat);

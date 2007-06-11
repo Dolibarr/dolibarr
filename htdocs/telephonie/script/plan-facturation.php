@@ -47,7 +47,7 @@ $sql .=" , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE sl.fk_contrat  = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND sl.statut <> 7";
-$sql .= " AND c.fk_soc_facture = s.idp";
+$sql .= " AND c.fk_soc_facture = s.rowid";
 $sql .= " ORDER BY c.rowid ASC, sl.code_analytique ASC";
 
 $resql = $db->query($sql);

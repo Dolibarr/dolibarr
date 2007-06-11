@@ -37,7 +37,7 @@ if ($db->query($sql))
 
 }
 
-$sql = "SELECT max(s.idp)";
+$sql = "SELECT max(s.rowid)";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 
 if ($db->query($sql))

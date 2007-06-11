@@ -215,8 +215,8 @@ class ProductLivre extends Product
     if ($result >= 0)
       {
 	$sql = "SELECT l.rowid,l.isbn,l.ean,l.pages,l.fk_couverture,l.format,l.fk_contrat";
-	$sql.= ",l.px_feuillet,l.px_revient,l.px_couverture,l.px_reliure, s.nom, s.idp";
-	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre as l LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp=l.fk_auteur";
+	$sql.= ",l.px_feuillet,l.px_revient,l.px_couverture,l.px_reliure, s.nom, s.rowid as socid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."product_cnv_livre as l LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = l.fk_auteur";
 	if ($id) $sql.= " WHERE l.rowid = '".$id."'";
 	if ($ref) $sql.= " WHERE l.ref = '".addslashes($ref)."'";
 	
@@ -236,7 +236,7 @@ class ProductLivre extends Product
 	    $this->px_couverture      = $result["px_couverture"];
 	    $this->couverture_id      = $result["fk_couverture"];
 	    $this->auteur             = stripslashes($result["nom"]);
-	    $this->auteur_id          = $result["idp"];
+	    $this->auteur_id          = $result["socid"];
 
 	    $this->db->free();
 	  }
@@ -583,13 +583,13 @@ class ProductLivre extends Product
   {
     $this->available_auteurs = array();
 
-    $sql = "SELECT idp,nom FROM ".MAIN_DB_PREFIX."societe ";
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."societe ";
 
     $resql = $this->db->query($sql);
 
     while ($obj = $this->db->fetch_object($resql) )
       {
-	$this->available_auteurs[$obj->idp] = stripslashes($obj->nom);
+	$this->available_auteurs[$obj->rowid] = stripslashes($obj->nom);
       }
 
     $this->db->free($resql);

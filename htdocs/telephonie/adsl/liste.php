@@ -54,11 +54,11 @@ if ($sortfield == "") $sortfield="la.statut ASC, s.nom";
  */
 
 $sql = "SELECT la.rowid, fk_client, s.nom as nom, la.numero_ligne, la.statut, t.intitule";
-$sql .= " , s.idp";
+$sql .= " , s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne as la";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as s";
 $sql .= " ,  ".MAIN_DB_PREFIX."telephonie_adsl_type as t";
-$sql .= " WHERE la.fk_client = s.idp";
+$sql .= " WHERE la.fk_client = s.rowid";
 $sql .= " AND t.rowid = la.fk_type";
 
 if ($_GET["search_ligne"])
@@ -133,9 +133,9 @@ if ($resql)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.dolibarr_print_phone($obj->numero_ligne)."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("Fiche Compta"),"bill")."</a> ";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("Fiche Compta"),"bill")."</a> ";
 
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/telephonie/comm/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/telephonie/comm/fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->intitule.'</td>';
 
       print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";

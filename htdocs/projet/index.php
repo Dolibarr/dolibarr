@@ -111,15 +111,15 @@ print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$s
 print '<td align="right">'.$langs->trans("Nb").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT s.nom, s.idp, count(p.rowid)";
+$sql = "SELECT s.nom, s.rowid as socid, count(p.rowid)";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE p.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= " WHERE p.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 { 
-  $sql .= " AND s.idp = $socid"; 
+  $sql .= " AND s.rowid = ".$socid; 
 }
 $sql .= " GROUP BY s.nom";
 //$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);

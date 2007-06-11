@@ -319,9 +319,9 @@ if ($_GET["action"] == 'create')
 
     $new_contrat = new Contrat($db);
 
-    $sql = "SELECT s.nom, s.prefix_comm, s.idp ";
-    $sql .= "FROM ".MAIN_DB_PREFIX."societe as s ";
-    $sql .= "WHERE s.idp = ".$_GET["socid"];
+    $sql = "SELECT s.nom, s.prefix_comm, s.rowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    $sql.= " WHERE s.rowid = ".$_GET["socid"];
 
     $resql=$db->query($sql);
     if ($resql)
@@ -332,7 +332,7 @@ if ($_GET["action"] == 'create')
             $obj = $db->fetch_object($resql);
 
             $soc = new Societe($db);
-            $soc->fetch($obj->idp);
+            $soc->fetch($obj->rowid);
 
             print '<form name="contrat" action="fiche.php" method="post">';
 

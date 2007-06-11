@@ -46,15 +46,15 @@ $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_
 $search_code=isset($_GET["search_code"])?$_GET["search_code"]:$_POST["search_code"];
 
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
+$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea, st.libelle as stcomm, s.prefix_comm, s.code_client";
 if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
 
-if ($socid)           $sql .= " AND s.idp = $socid";
-if ($user->societe_id) $sql .= " AND s.idp = " .$user->societe_id;
-if (!$user->rights->commercial->client->voir) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid)           $sql .= " AND s.rowid = ".$socid;
+if ($user->societe_id) $sql .= " AND s.rowid = " .$user->societe_id;
+if (!$user->rights->commercial->client->voir) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($search_nom)   $sql .= " AND s.nom like '%".addslashes(strtolower($search_nom))."%'";
 if ($search_ville) $sql .= " AND s.ville like '%".addslashes(strtolower($search_ville))."%'";
@@ -119,16 +119,16 @@ if ($result)
       $var=!$var;
       
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">';
       print img_object($langs->trans("ShowCustomer"),"company");
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom).'</a></td>';
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->rowid.'">'.stripslashes($obj->nom).'</a></td>';
       print '<td>'.$obj->ville.'</td>';
       print '<td>'.$obj->code_client.'</td>';
       print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
-	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->rowid.'">';
 	  print img_folder();
 	  print '</a>';
 	}

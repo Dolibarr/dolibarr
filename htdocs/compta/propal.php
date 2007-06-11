@@ -653,20 +653,20 @@ else
   $pagenext = $page + 1;
 
 
-  $sql = "SELECT s.nom, s.idp, s.client,";
+  $sql = "SELECT s.nom, s.rowid as socid, s.client,";
   $sql.= " p.rowid as propalid, p.price, p.ref, p.fk_statut,";
   $sql.= $db->pdate("p.datep")." as dp, ";
   $sql.= $db->pdate("p.fin_validite")." as dfin";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  $sql.= " WHERE p.fk_soc = s.idp";
-  if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-  if ($socid)           $sql .= " AND s.idp = $socid";
+  $sql.= " WHERE p.fk_soc = s.rowid";
+  if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+  if ($socid)           $sql .= " AND s.rowid = ".$socid;
   if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
-  if ($month > 0)        $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
-  if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
-  $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
+  if ($month > 0)        $sql .= " AND date_format(p.datep, '%Y-%m') = '".$year-$month."'";
+  if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = ".$year;
+  $sql .= " ORDER BY ".$sortfield." ".$sortorder.", p.rowid DESC ";
   $sql .= $db->plimit($limit + 1,$offset);
 
 	if ( $db->query($sql) )
@@ -704,7 +704,7 @@ else
 			// Societe
 			print "<td>";
 			$societestatic->nom=$objp->nom;
-			$societestatic->id=$objp->idp;
+			$societestatic->id=$objp->socid;
 			$societestatic->client=$objp->client;
 			print $societestatic->getNomUrl(1,'customer',44);
 			print "</td>";

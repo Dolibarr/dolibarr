@@ -64,7 +64,7 @@ class ComptaExport
     
     $sql = "SELECT f.rowid as facid, f.facnumber, ".$this->db->pdate("f.datef")." as datef";
     $sql .= " , f.total_ttc, f.tva ";
-    $sql .= " ,s.nom, s.idp, s.code_compta";
+    $sql .= " ,s.nom, s.rowid as socid, s.code_compta";
     $sql .= " , l.price, l.tva_taux";
     $sql .= " , c.numero, f.increment";
     $sql .= " , l.rowid as lrowid";
@@ -75,7 +75,7 @@ class ComptaExport
     $sql .= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
     
     $sql .= " WHERE f.rowid = l.fk_facture ";
-    $sql .= " AND s.idp = f.fk_soc";
+    $sql .= " AND s.rowid = f.fk_soc";
     $sql .= " AND f.fk_statut = 1 ";
     
     $sql .= " AND l.fk_code_ventilation <> 0 ";
@@ -114,7 +114,7 @@ class ComptaExport
 	    if ($obj->code_compta == '')
 	      {
 		$societe=new Societe($this->db);
-		$societe->fetch($obj->idp);
+		$societe->fetch($obj->socid);
 		$this->error_message.= $langs->transnoentities("ErrorWrongAccountancyCodeForCompany",$societe->getNomUrl(1))."<br>";
 		$error++;
 	      }
@@ -153,7 +153,7 @@ class ComptaExport
     $sql .= " AND p.rowid = pf.fk_paiement";
     $sql .= " AND cp.id = p.fk_paiement";
     $sql .= " AND f.rowid = pf.fk_facture";
-    $sql .= " AND f.fk_soc = s.idp";
+    $sql .= " AND f.fk_soc = s.rowid";
     $sql .= " AND p.statut = 1 ";
 
     $sql .= " ORDER BY f.rowid ASC, p.rowid ASC";

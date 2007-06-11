@@ -71,7 +71,7 @@ if ($_POST["action"] == 'setconditions' && $user->rights->societe->creer)
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->cond_reglement=$_POST['cond_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET cond_reglement='".$_POST['cond_reglement_id'];
-	$sql.= "' WHERE idp='".$_GET["socid"]."'";
+	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -81,7 +81,7 @@ if ($_POST["action"] == 'setmode' && $user->rights->societe->creer)
     $societe = new Societe($db, $_GET["socid"]);
     $societe->mode_reglement=$_POST['mode_reglement_id'];
 	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET mode_reglement='".$_POST['mode_reglement_id'];
-	$sql.= "' WHERE idp='".$_GET["socid"]."'";
+	$sql.= "' WHERE rowid='".$_GET["socid"]."'";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -90,7 +90,7 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
 {
 	$societe = new Societe($db, $_GET["socid"]);
     $societe->tva_assuj=$_POST['assujtva_value'];
-	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE idp='".$socid."'";
+	$sql = "UPDATE ".MAIN_DB_PREFIX."societe SET tva_assuj='".$_POST['assujtva_value']."' WHERE rowid='".$socid."'";
     $result = $db->query($sql);
     if (! $result) dolibarr_print_error($result);
 }
@@ -105,7 +105,7 @@ if ($action == 'stcomm')
 
         if ($result)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=".$socid;
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
             $result = $db->query($sql);
         }
         else
@@ -132,18 +132,18 @@ if ($action == 'stcomm')
  */
 if ($mode == 'search') {
     if ($mode-search == 'soc') {
-        $sql = "SELECT s.idp";
+        $sql = "SELECT s.rowid";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
         $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
 
     if ( $db->query($sql) ) {
         if ( $db->num_rows() == 1) {
             $obj = $db->fetch_object();
-            $socid = $obj->idp;
+            $socid = $obj->rowid;
         }
         $db->free();
     }
@@ -381,11 +381,11 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-	    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
+	    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
 	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-        $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-        $sql .= " AND s.idp = ".$objsoc->id;
+        $sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
+        $sql .= " AND s.rowid = ".$objsoc->id;
         $sql .= " ORDER BY p.datep DESC";
         
         $resql=$db->query($sql);
@@ -433,12 +433,12 @@ if ($socid > 0)
         
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp,";
+        $sql = "SELECT s.nom, s.rowid,";
         $sql.= " c.rowid as cid, c.total_ht, c.ref, c.fk_statut, c.facture,";
         $sql.= " ".$db->pdate("c.date_commande")." as dc";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-        $sql.= " WHERE c.fk_soc = s.idp ";
-        $sql.= " AND s.idp = $objsoc->id";
+        $sql.= " WHERE c.fk_soc = s.rowid ";
+        $sql.= " AND s.rowid = ".$objsoc->id;
         $sql.= " ORDER BY c.date_commande DESC";
 
         $resql=$db->query($sql);
@@ -481,10 +481,10 @@ if ($socid > 0)
         
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, c.rowid as id, c.ref as ref, c.statut, ".$db->pdate("c.datec")." as dc";
+        $sql = "SELECT s.nom, s.rowid, c.rowid as id, c.ref as ref, c.statut, ".$db->pdate("c.datec")." as dc";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c";
-        $sql .= " WHERE c.fk_soc = s.idp ";
-        $sql .= " AND s.idp = $objsoc->id";
+        $sql .= " WHERE c.fk_soc = s.rowid ";
+        $sql .= " AND s.rowid = ".$objsoc->id;
         $sql .= " ORDER BY c.datec DESC";
 
         $resql=$db->query($sql);
@@ -528,10 +528,10 @@ if ($socid > 0)
     {
         print '<table class="noborder" width="100%">';
 
-        $sql = "SELECT s.nom, s.idp, f.rowid as id, f.ref, ".$db->pdate("f.datei")." as di";
+        $sql = "SELECT s.nom, s.rowid, f.rowid as id, f.ref, ".$db->pdate("f.datei")." as di";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f";
-        $sql .= " WHERE f.fk_soc = s.idp";
-        $sql .= " AND s.idp = ".$objsoc->id;
+        $sql .= " WHERE f.fk_soc = s.rowid";
+        $sql .= " AND s.rowid = ".$objsoc->id;
         $sql .= " ORDER BY f.datei DESC";
         
         $resql=$db->query($sql);
@@ -669,7 +669,7 @@ if ($socid > 0)
     print '<td>&nbsp;</td>';
     print "</tr>";
 
-    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note ";
     $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql .= " WHERE p.fk_soc = ".$objsoc->id;
     $sql .= " ORDER by p.datec";
@@ -685,9 +685,9 @@ if ($socid > 0)
         $var = !$var;
         print "<tr $bc[$var]>";
 
-        $contactstatic->id=$obj->idp;
-        $contactstatic->name=$obj->name;
-        $contactstatic->firstname=$obj->firstname;
+        $contactstatic->id = $obj->rowid;
+        $contactstatic->name = $obj->name;
+        $contactstatic->firstname = $obj->firstname;
         print '<td>';
         print $contactstatic->getNomUrl(1);
         if (trim($obj->note))
@@ -701,7 +701,7 @@ if ($socid > 0)
         if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
         {
             print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
+            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$objsoc->id.'&amp;call='.$obj->phone.'">';
             print img_phone_out("Appel émis") ;
             print '</td><td>';
         }
@@ -710,16 +710,16 @@ if ($socid > 0)
         	print '<td colspan="2">';
         }
         
-        print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
-        print '<td><a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
-        print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
+        print '<a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+        print '<td><a href="action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.dolibarr_print_phone($obj->fax).'</a>&nbsp;</td>';
+        print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
         print '<td align="center">';
-        print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
         print img_edit();
         print '</a></td>';
 
-        print '<td align="center"><a href="action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$objsoc->id.'">';
+        print '<td align="center"><a href="action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$objsoc->id.'">';
         print img_object($langs->trans("Rendez-Vous"),"action");
         print '</a></td>';
 

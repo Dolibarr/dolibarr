@@ -321,7 +321,7 @@ if ($_GET["action"] == 'create')
 
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
+  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
       $num = $db->num_rows();
@@ -412,7 +412,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  
 	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
 	  $ff = array();
-	  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
+	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
 	  if ( $db->query( $sql) )
 	    {
 	      $num = $db->num_rows();
@@ -433,7 +433,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  
 	  print '<tr><td width="20%">Client à facturer</td><td >';
 	  $ff = array();
-	  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
+	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
 	  if ( $db->query( $sql) )
 	    {
 	      $num = $db->num_rows();
@@ -485,9 +485,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 
 	  print '<tr><td width="20%">Fournisseur</td><td >';
 	  $ff = array();
-	  $sql = "SELECT f.idp, f.nom FROM ".MAIN_DB_PREFIX."societe as f";
+	  $sql = "SELECT f.rowid, f.nom FROM ".MAIN_DB_PREFIX."societe as f";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_adsl_fournisseur as fa";
-	  $sql .= " WHERE fa.commande_active = 1 AND fa.fk_soc = f.idp ORDER BY f.nom ";
+	  $sql .= " WHERE fa.commande_active = 1 AND fa.fk_soc = f.rowid ORDER BY f.nom ";
 	  if ( $db->query( $sql) )
 	    {
 	      $num = $db->num_rows();

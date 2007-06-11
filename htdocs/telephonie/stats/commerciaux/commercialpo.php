@@ -80,7 +80,7 @@ if ($_GET["commid"])
    *
    */
   
-  $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
+  $sql = "SELECT s.rowid as socid, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
   $sql .= ", p.rem_pour_prev, p.rem_pour_autr, p.mode_paiement";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat_priseordre as p";
@@ -88,7 +88,7 @@ if ($_GET["commid"])
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   
   $sql .= " WHERE p.fk_commercial =".$_GET["commid"];
-  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND c.fk_soc = s.rowid";
   $sql .= " AND p.fk_contrat = c.rowid";
   $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
   
@@ -119,11 +119,11 @@ if ($_GET["commid"])
 	  
 	  print "<tr $bc[$var]>";
 	  
-	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
 	  print img_file();
 	  print '</a>&nbsp;';
       
-	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
 	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->fk_contrat.'">'.$obj->fk_contrat."</a></td>\n";
 	  print '<td align="center">'.strftime("%e %b %Y",$obj->datepo)."</td>\n";
 

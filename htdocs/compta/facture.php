@@ -2996,14 +2996,14 @@ else
 		$sql.= ' f.rowid as facid, f.facnumber, f.type, f.increment, f.total, f.total_ttc,';
 		$sql.= ' '.$db->pdate('f.datef').' as df, '.$db->pdate('f.date_lim_reglement').' as datelimite,';
 		$sql.= ' f.paye as paye, f.fk_statut,';
-		$sql.= ' s.nom, s.idp';
+		$sql.= ' s.nom, s.rowid as socid';
 		if (! $sall) $sql.= ' ,sum(pf.amount) as am';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql.= ','.MAIN_DB_PREFIX.'facture as f';
 		if (! $sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture ';
 		if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facturedet as fd ON f.rowid=fd.fk_facture ';
-		$sql.= ' WHERE f.fk_soc = s.idp';
-		if ($socid) $sql .= ' AND s.idp = '.$socid;
+		$sql.= ' WHERE f.fk_soc = s.rowid';
+		if ($socid) $sql .= ' AND s.rowid = '.$socid;
 		if ($month > 0) $sql .= ' AND date_format(f.datef, \'%m\') = '.$month;
 		if ($_GET['filtre'])
 		{
@@ -3131,7 +3131,7 @@ else
 					{
 						print '<td align="center"><b>!!!</b></td>';
 					}
-					print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
+					print '<td><a href="fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,48).'</a></td>';
 					print '<td align="right">'.price($objp->total).'</td>';
 					print '<td align="right">'.price($objp->total_ttc).'</td>';
 					print '<td align="right">'.price($objp->am).'</td>';

@@ -73,7 +73,7 @@ if ($mode == 'search')
 {
     if ($mode-search == 'soc')
     {
-        $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+        $sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
         $sql .= " WHERE lower(s.nom) like '%".strtolower($socname)."%'";
     }
 
@@ -82,7 +82,7 @@ if ($mode == 'search')
         if ( $db->num_rows() == 1)
         {
             $obj = $db->fetch_object();
-            $socid = $obj->idp;
+            $socid = $obj->rowid;
         }
         $db->free();
     }
@@ -109,7 +109,7 @@ $contactstatic = new Contact($db);
 if ($socid > 0)
 {
     $societe = new Societe($db);
-    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
 	if ($societe->id <= 0)
 	{
 		dolibarr_print_error($db,$societe->error);
@@ -242,14 +242,14 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc,';
-        $sql.= ' '.$db->pdate("f.datef").' as df, f.paye as paye, f.fk_statut as statut,';
-		$sql.= ' s.nom, s.idp,';
-		$sql.= ' sum(pf.amount) as am';
+        $sql = 'SELECT f.rowid as facid, f.facnumber, f.type, f.amount, f.total, f.total_ttc';
+        $sql.= ', '.$db->pdate("f.datef").' as df, f.paye as paye, f.fk_statut as statut';
+		    $sql.= ', s.nom, s.rowid as socid';
+		    $sql.= ', sum(pf.amount) as am';
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
-        $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
-		$sql.= ' GROUP BY f.rowid';
+		    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiement_facture as pf ON f.rowid=pf.fk_facture';
+        $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
+		    $sql.= ' GROUP BY f.rowid';
         $sql.= " ORDER BY f.datef DESC, f.datec DESC";
 
         $resql=$db->query($sql);
@@ -392,7 +392,7 @@ if ($socid > 0)
 	print '<td>&nbsp;</td>';
 	print "</tr>";
 
-    $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+    $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
     $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
     $sql.= " WHERE p.fk_soc = ".$societe->id;
     $sql.= " ORDER by p.datec";
@@ -408,7 +408,7 @@ if ($socid > 0)
         print "<tr $bc[$var]>";
 
         print '<td>';
-        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
         if (trim($obj->note))
         {
@@ -416,15 +416,15 @@ if ($socid > 0)
         }
         print '</td>';
         print '<td>'.$obj->poste.'&nbsp;</td>';
-        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+        print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
     	print '<td align="center">';
     	
        	if ($user->rights->societe->contact->creer)
 		{
-    		print "<a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+    		print "<a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
     	 	print img_edit();
     	 	print '</a>';
     	}
@@ -432,7 +432,7 @@ if ($socid > 0)
     		
     	print '</td>';
 
-        print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+        print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
         print img_object($langs->trans("Rendez-Vous"),"action");
         print '</a></td>';
 

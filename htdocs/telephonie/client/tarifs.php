@@ -273,9 +273,9 @@ if ($_GET["id"])
 	  $sql .= "," . MAIN_DB_PREFIX."societe as s";
 	  $sql .= "," . MAIN_DB_PREFIX."user as u";
 	  
-	  $sql .= " WHERE t.rowid = tc.fk_tarif AND tc.fk_client = s.idp";
+	  $sql .= " WHERE t.rowid = tc.fk_tarif AND tc.fk_client = s.rowid";
    	  $sql .= " AND u.rowid = tc.fk_user";
-	  $sql .= " AND s.idp = ".$soc->id;
+	  $sql .= " AND s.rowid = ".$soc->id;
 	  $sql .= " ORDER BY t.libelle ASC";
 
 	  if ( $db->query( $sql) )

@@ -60,7 +60,7 @@ $sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login, ".$
 $sql.= " u.ldap_sid, u.statut,";
 $sql.= " s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.idp";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON u.fk_societe = s.rowid";
 $sql.= " WHERE 1=1";
 if ($_POST["search_user"])
 {

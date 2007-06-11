@@ -78,16 +78,16 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, f.rowid as fournid, l.mode_paiement";
+$sql = "SELECT sf.rowid as sfidp, sf.nom as sfnom, s.rowid as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, f.rowid as fournid, l.mode_paiement";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= ",".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp ";
+$sql .= " WHERE l.fk_soc = s.rowid ";
 $sql .= " AND l.fk_fournisseur = f.rowid ";
 $sql .= " AND l.statut IN (-1,1,4) ";
 $sql .= " AND l.techno = 'presel'";
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);

@@ -200,13 +200,13 @@ if ($action == 'create' || $action == 'add_paiement')
 	$facture = new FactureFournisseur($db);
 	$facture->fetch($facid);
 
-	$sql = 'SELECT s.nom,s.idp, f.amount, f.total_ttc as total, f.facnumber';
+	$sql = 'SELECT s.nom, s.rowid as socid, f.amount, f.total_ttc as total, f.facnumber';
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'facture_fourn as f';
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= ' WHERE f.fk_soc = s.idp';
+	$sql .= ' WHERE f.fk_soc = s.rowid';
 	$sql .= ' AND f.rowid = '.$facid;
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -221,7 +221,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			print '<input type="hidden" name="action" value="add_paiement">';
 			print '<input type="hidden" name="facid" value="'.$facid.'">';
 			print '<input type="hidden" name="facnumber" value="'.$obj->facnumber.'">';
-			print '<input type="hidden" name="socid" value="'.$obj->idp.'">';
+			print '<input type="hidden" name="socid" value="'.$obj->socid.'">';
 			print '<input type="hidden" name="societe" value="'.$obj->nom.'">';
 
 			print '<table class="border" width="100%">';
@@ -355,7 +355,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 
 	$sql = 'SELECT p.rowid, '.$db->pdate('p.datep').' as dp, p.amount as pamount,';
 	$sql.= ' f.amount, f.facnumber, f.rowid as facid,';
-	$sql.= ' s.idp, s.nom,';
+	$sql.= ' s.rowid as socid, s.nom,';
 	$sql.= ' c.libelle as paiement_type, p.num_paiement,';
 	$sql.= ' ba.rowid as bid, ba.label';
 	if (!$user->rights->commercial->client->voir) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -364,10 +364,10 @@ if (! $_GET['action'] && ! $_POST['action'])
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'paiementfourn_facturefourn AS pf ON p.rowid=pf.fk_paiementfourn';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'facture_fourn AS f ON f.rowid=pf.fk_facturefourn ';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement AS c ON p.fk_paiement = c.id';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.idp = f.fk_soc';
+	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'societe AS s ON s.rowid = f.fk_soc';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank as b ON p.fk_bank = b.rowid';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'bank_account as ba ON b.fk_account = ba.rowid';
-	if (!$user->rights->commercial->client->voir) $sql .= " WHERE s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir) $sql .= " WHERE s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)
 	{
 		$sql .= ' WHERE f.fk_soc = '.$socid;
@@ -406,7 +406,7 @@ if (! $_GET['action'] && ! $_POST['action'])
 			else print '&nbsp;';
 			print '</td>';
 			print '<td>';
-			if ($objp->idp) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,32).'</a>';
+			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,32).'</a>';
 			else print '&nbsp;';
 			print '</td>';
 			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp)."</td>\n";

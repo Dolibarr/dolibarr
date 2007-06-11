@@ -86,7 +86,7 @@ while (<FH>)
 	$stha = $dbh->prepare($sql);
 	$stha->execute;
 	
-	$sql = "SELECT MAX(idp) as co FROM llx_societe";
+	$sql = "SELECT MAX(rowid) as co FROM llx_societe";
 	$sth = $dbh->prepare("$sql") || die $dbh->errstr ;
 	if ( $sth->execute ) {
 	    if ( $sth->rows ) {

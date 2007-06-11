@@ -81,11 +81,11 @@ if ($_GET["propalid"] > 0)
 		/*
 		*   Propal
 		*/
-		$sql = 'SELECT s.nom, s.idp, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
+		$sql = 'SELECT s.nom, s.rowid, p.price, p.fk_projet, p.remise, p.tva, p.total, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp, p.note,';
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
-		$sql.= ' WHERE p.fk_soc = s.idp AND p.rowid = '.$propal->id;
-		if ($socid) $sql .= ' AND s.idp = '.$socid;
+		$sql.= ' WHERE p.fk_soc = s.rowid AND p.rowid = '.$propal->id;
+		if ($socid) $sql .= ' AND s.rowid = '.$socid;
 
 		$result = $db->query($sql);
 
@@ -95,7 +95,7 @@ if ($_GET["propalid"] > 0)
 				$obj = $db->fetch_object($result);
 
 				$societe = new Societe($db);
-				$societe->fetch($obj->idp);
+				$societe->fetch($obj->rowid);
 
 				print '<table class="border" width="100%">';
 

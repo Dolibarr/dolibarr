@@ -46,18 +46,18 @@ $pagenext = $page + 1;
  *
  *
  */
-$sql = "SELECT c.rowid, c.ref, s.idp as socid, c.statut, s.nom ";
-$sql .= ", sf.idp as sfidp, sf.nom as sfnom";
-$sql .= ", sa.idp as saidp, sa.nom as sanom";
+$sql = "SELECT c.rowid, c.ref, s.rowid as socid, c.statut, s.nom ";
+$sql .= ", sf.rowid as sfidp, sf.nom as sfnom";
+$sql .= ", sa.rowid as saidp, sa.nom as sanom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sa";
 $sql .= " , ".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 
-$sql .= " WHERE c.fk_client_comm = s.idp";
-$sql .= " AND c.fk_soc = sa.idp";
-$sql .= " AND c.fk_soc_facture = sf.idp";
+$sql .= " WHERE c.fk_client_comm = s.rowid";
+$sql .= " AND c.fk_soc = sa.rowid";
+$sql .= " AND c.fk_soc_facture = sf.rowid";
 
 $sql .= " AND c.fk_client_comm = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";

@@ -410,11 +410,12 @@ else
 			if ($user->rights->facture->lire)
 			{
 
-				$sql = "SELECT s.nom,s.idp,f.titre,f.total,f.rowid as facid";
-				$sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f WHERE f.fk_soc = s.idp";
+				$sql = "SELECT s.nom, s.rowid as socid, f.titre, f.total, f.rowid as facid";
+				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_rec as f";
+				$sql.= " WHERE f.fk_soc = s.rowid";
 
 				if ($socid)
-				$sql .= " AND s.idp = $socid";
+				$sql .= " AND s.rowid = ".$socid;
 
 				//$sql .= " ORDER BY $sortfield $sortorder, rowid DESC ";
 				//	$sql .= $db->plimit($limit + 1,$offset);
@@ -447,7 +448,7 @@ else
 
 						print '<td><a href="fiche-rec.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->titre;
 						print "</a></td>\n";
-						print '<td><a href="../fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+						print '<td><a href="../fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
 
 						print "<td align=\"right\">".price($objp->total)."</td>\n";
 

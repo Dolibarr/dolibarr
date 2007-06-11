@@ -64,12 +64,12 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.rowid, idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql = "SELECT s.rowid as socid, sf.rowid as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 
 if ($_GET["search_ligne"])
 {

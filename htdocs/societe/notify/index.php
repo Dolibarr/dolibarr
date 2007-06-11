@@ -62,12 +62,12 @@ $pagenext = $page + 1;
 
 llxHeader();
 
-$sql = "SELECT s.nom, s.idp, c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
-$sql .= " AND n.fk_soc = s.idp";
+$sql = "SELECT s.nom, s.rowid as socid, c.name, c.firstname, a.titre,n.rowid FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+$sql .= " AND n.fk_soc = s.rowid";
 if ($socid > 0)
 {
-	$sql .= " AND s.idp = " . $user->societe_id;
+	$sql .= " AND s.rowid = " . $user->societe_id;
 }
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit, $offset);
 
@@ -94,7 +94,7 @@ if ($result)
 		$var=!$var;
 	
 		print "<tr $bc[$var]>";
-		print "<td><a href=\"fiche.php?socid=$obj->idp\">$obj->nom</A></td>\n";
+		print "<td><a href=\"fiche.php?socid=".$obj->socid."\">$obj->nom</A></td>\n";
 		print "<td>".$obj->firstname." ".$obj->name."</td>\n";
 		print "<td>".$obj->titre."</td>\n";
 		print "</tr>\n";

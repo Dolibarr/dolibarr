@@ -38,7 +38,7 @@ $langs->load("suppliers");
 
 // Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, 'societe','','',1);
-
+print 'socid '.$socid;
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
 
@@ -70,7 +70,7 @@ if ($mode == 'search')
 {
     $_POST["search_nom"]="$socname";
 
-    $sql = "SELECT s.idp";
+    $sql = "SELECT s.rowid";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -80,7 +80,7 @@ if ($mode == 'search')
 	$sql.= " OR s.email like '%".$socname."%'";
 	$sql.= " OR s.url like '%".$socname."%'";
     $sql.= ")";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
     $result=$db->query($sql);
     if ($result)
@@ -88,8 +88,8 @@ if ($mode == 'search')
         if ($db->num_rows($result) == 1)
         {
             $obj = $db->fetch_object($result);
-            $socid = $obj->idp;
-            header("Location: soc.php?socid=$socid");
+            $socid = $obj->rowid;
+            header("Location: soc.php?socid=".$socid."");
             exit;
         }
         $db->free($result);
@@ -128,7 +128,7 @@ if (isset($_POST["button_removefilter_x"]))
 */ 
 $title=$langs->trans("ListOfThirdParties");
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
 $sql.= ", st.libelle as stcomm, s.prefix_comm, s.client, s.fournisseur, s.siren";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -137,7 +137,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " WHERE s.fk_stcomm = st.id";
 if ($socid)
 {
-  $sql .= " AND s.idp = ".$socid;
+  $sql .= " AND s.rowid = ".$socid;
 }
 
 if ($socname)
@@ -151,7 +151,7 @@ if (strlen($stcomm)) {
 
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
-	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 
 if ($search_nom)
@@ -219,19 +219,19 @@ if ($result)
       $obj = $db->fetch_object();    
       $var=!$var;    
       print "<tr $bc[$var]><td>";
-      print "<a href=\"soc.php?socid=$obj->idp\">";
+      print "<a href=\"soc.php?socid=".$obj->rowid."\">";
       print img_object($langs->trans("ShowCompany"),"company");
-      print "</a>&nbsp;<a href=\"soc.php?socid=$obj->idp\">".stripslashes($obj->nom)."</a></td>\n";
+      print "</a>&nbsp;<a href=\"soc.php?socid=".$obj->rowid."\">".stripslashes($obj->nom)."</a></td>\n";
       print "<td>".$obj->ville."&nbsp;</td>\n";
       print "<td>".$obj->siren."&nbsp;</td>\n";
       print '<td align="center">';
       if ($obj->client==1)
 	{
-	  print "<a href=\"comm/fiche.php?socid=$obj->idp\">".$langs->trans("Customer")."</a>\n";
+	  print "<a href=\"comm/fiche.php?socid=".$obj->rowid."\">".$langs->trans("Customer")."</a>\n";
 	}
       elseif ($obj->client==2)
 	{
-	  print "<a href=\"comm/prospect/fiche.php?id=$obj->idp\">".$langs->trans("Prospect")."</a>\n";
+	  print "<a href=\"comm/prospect/fiche.php?id=".$obj->rowid."\">".$langs->trans("Prospect")."</a>\n";
 	}
       else
 	{
@@ -240,7 +240,7 @@ if ($result)
       print "</td><td align=\"center\">";
       if ($obj->fournisseur)
 	{
-	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.$langs->trans("Supplier").'</a>';
+	  print '<a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->rowid.'">'.$langs->trans("Supplier").'</a>';
 	}
       else
 	{

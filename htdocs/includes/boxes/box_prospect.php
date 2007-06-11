@@ -69,15 +69,15 @@ class box_prospect extends ModeleBoxes {
 
         if ($user->rights->societe->lire) 
         {
-            $sql = "SELECT s.nom, s.idp, s.fk_stcomm, ".$db->pdate("s.datec")." as dc";
+            $sql = "SELECT s.nom, s.rowid as socid, s.fk_stcomm, ".$db->pdate("s.datec")." as dc";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql .= " WHERE s.client = 2";
-            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if ($user->societe_id > 0)
             {
-                $sql .= " AND s.idp = $user->societe_id";
+                $sql .= " AND s.rowid = ".$user->societe_id;
             }
             $sql .= " ORDER BY s.datec DESC ";
             $sql .= $db->plimit($max, 0);
@@ -97,7 +97,7 @@ class box_prospect extends ModeleBoxes {
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
                     'text' => stripslashes($objp->nom),
-                    'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->idp);
+                    'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->socid);
 
 					$this->info_box_contents[$i][1] = array('align' => 'ce,ter',
 					'text' => dolibarr_print_date($objp->dc, "day"));

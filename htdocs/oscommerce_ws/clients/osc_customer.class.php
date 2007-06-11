@@ -134,7 +134,7 @@ class Osc_customer
 /**
 *      \brief      Mise à jour de la table de transition
 *      \param      oscid      Id du client dans OsC 
-*	   \param	   socid	  champ société.idp 	
+*	   \param	   socid	  champ société.rowid 	
 *      \return     int     <0 si ko, >0 si ok
 */
 	function transcode($oscid, $socid)

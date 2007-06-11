@@ -1,13 +1,24 @@
--- phpMyAdmin SQL Dump
--- version 2.6.2-Debian-3sarge1
--- http://www.phpmyadmin.net
--- 
--- Serveur: localhost
--- Généré le : Samedi 05 Août 2006 à 17:25
--- Version du serveur: 4.0.24
--- Version de PHP: 4.3.10-16
--- 
+-- ===================================================================
+-- Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General Public License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General Public License for more details.
+--
+-- You should have received a copy of the GNU General Public License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ===================================================================
 
 
-ALTER TABLE `llx_osc_customer`
-  ADD CONSTRAINT `llx_osc_customer_societe_idp` FOREIGN KEY (`doli_socidp`) REFERENCES `llx_societe` (`idp`);
+ALTER TABLE llx_osc_customer ADD CONSTRAINT fk_osc_customer_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

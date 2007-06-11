@@ -178,8 +178,8 @@ if (!$error)
       /* Lecture des factures téléphoniques du contrat */
       dolibarr_syslog($xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")");
 
-      $sql = "SELECT f.rowid, s.idp FROM ";     
-      $sql .=     MAIN_DB_PREFIX."telephonie_facture as f";
+      $sql = "SELECT f.rowid, s.rowid as socid";    
+      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
       $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
       $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= ",".MAIN_DB_PREFIX."societe as s";
@@ -188,7 +188,7 @@ if (!$error)
       $sql .= " AND c.rowid = ".$contrat;
       $sql .= " AND l.fk_contrat = c.rowid";
       $sql .= " AND l.rowid = f.fk_ligne";
-      $sql .= " AND s.idp = c.fk_soc_facture ";
+      $sql .= " AND s.rowid = c.fk_soc_facture ";
       $sql .= " AND f.fk_facture IS NULL";
       $sql .= " AND f.isfacturable = 'oui'";  
 

@@ -49,7 +49,7 @@ if ($resql)
 }
 
 $socids = array();
-$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
 if ($resql) 
 {
@@ -65,7 +65,7 @@ if ($resql)
 }
 
 $contids = array();
-$sql = "SELECT idp, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
+$sql = "SELECT rowid, fk_soc FROM ".MAIN_DB_PREFIX."socpeople";
 $resql = $db->query($sql);
 if ($resql) 
 {

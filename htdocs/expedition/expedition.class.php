@@ -660,7 +660,7 @@ class Expedition extends CommonObject
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

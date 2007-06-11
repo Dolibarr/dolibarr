@@ -62,13 +62,13 @@ function tva_coll($db,$y)
     if ($conf->compta->mode == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra, sum(f.total) as amount, sum(f.tva) as tva, s.tva_assuj as assuj, s.idp as id_soc";
+        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra, sum(f.total) as amount, sum(f.tva) as tva, s.tva_assuj as assuj, s.rowid as socid";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE ";
         $sql.= " f.fk_statut in (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND s.idp = f.fk_soc ";
-        $sql.= " GROUP BY s.idp";
+        $sql.= " AND s.rowid = f.fk_soc ";
+        $sql.= " GROUP BY s.rowid";
     }
     else
     {
@@ -120,13 +120,13 @@ function tva_paye($db, $y)
     if ($conf->compta->mode == "CREANCES-DETTES")
     {
         // Si on paye la tva sur les factures dues (non brouillon)
-        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra, sum(f.total_ht) as amount, sum(f.tva) as tva, s.tva_assuj as assuj, s.idp as id_soc";
+        $sql = "SELECT s.nom as nom, s.tva_intra as tva_intra, sum(f.total_ht) as amount, sum(f.tva) as tva, s.tva_assuj as assuj, s.rowid as socid";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
         $sql.= " WHERE ";
         $sql.= " f.fk_statut in (1,2)";
         $sql.= " AND date_format(f.datef,'%Y') = ".$y;
-        $sql.= " AND s.idp = f.fk_soc ";
-        $sql.= " GROUP BY s.idp";
+        $sql.= " AND s.rowid = f.fk_soc ";
+        $sql.= " GROUP BY s.rowid";
     }
     else
     {

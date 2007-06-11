@@ -105,15 +105,15 @@ if ($sortfield == "") {
  *
  */
 $sql = "SELECT pl.rowid, pl.statut, pl.amount";
-$sql .= " , s.idp, s.nom";
+$sql .= " , s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pl.fk_prelevement_bons=".$prev_id;
-$sql .= " AND pl.fk_soc = s.idp";
+$sql .= " AND pl.fk_soc = s.rowid";
 
 if ($_GET["socid"])
 {
-  $sql .= " AND s.idp = ".$_GET["socid"];
+  $sql .= " AND s.rowid = ".$_GET["socid"];
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -151,7 +151,7 @@ if ($result)
       print substr('000000'.$obj->rowid, -6);
       print '</a></td>';
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td align="center">'.price($obj->amount)."</td>\n";
 

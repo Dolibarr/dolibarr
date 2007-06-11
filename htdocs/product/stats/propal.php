@@ -119,14 +119,14 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
 
 
-        $sql = "SELECT distinct(s.nom), s.idp, p.rowid as propalid, p.ref, p.total as amount,";
+        $sql = "SELECT distinct(s.nom), s.rowid as socid, p.rowid as propalid, p.ref, p.total as amount,";
 				$sql.= $db->pdate("p.datec")." as date, p.fk_statut as statut";
 				if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."propaldet as d";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-				$sql.= " WHERE p.fk_soc = s.idp";
+				$sql.= " WHERE p.fk_soc = s.rowid";
         $sql.= " AND d.fk_propal = p.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid)
         {
             $sql .= " AND p.fk_soc = $socid";
@@ -165,7 +165,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print '<td><a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
                     print $objp->ref;
                     print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";
                     print "<td align=\"right\">".price($objp->amount)."</td>\n";

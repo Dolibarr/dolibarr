@@ -68,9 +68,9 @@ $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= ",".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid ";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid ";
 $sql .= " AND l.statut IN (1,4,8) ";
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 $sql .= " GROUP BY f.rowid, f.nom ASC";
 
 $result = $db->query($sql);
@@ -128,14 +128,14 @@ else
  *
  */
 
-$sql = "SELECT sf.idp as sfidp, sf.nom as sfnom, s.idp as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
+$sql = "SELECT sf.rowid as sfidp, sf.nom as sfnom, s.rowid as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
 $sql .= " AND l.statut IN (1,4,8) ";
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 $sql .= " ORDER BY s.nom ASC ";
 
 if ($db->query($sql))

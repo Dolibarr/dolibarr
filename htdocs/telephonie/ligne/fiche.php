@@ -295,7 +295,7 @@ if ($_GET["action"] == 'create1')
 
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
+  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
   if ( $db->query( $sql) )
     {
       $num = $db->num_rows();
@@ -790,10 +790,10 @@ else
 
 	      /* Contacts */
 	     
-	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	      $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
 	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_ligne = ".$ligne->id." ORDER BY name ";
+	      $sql .= " WHERE c.rowid = cf.fk_contact AND cf.fk_ligne = ".$ligne->id." ORDER BY name ";
 	      if ( $db->query( $sql) )
 		{
 		  $num = $db->num_rows();
@@ -1103,10 +1103,10 @@ else
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
 
-	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	      $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
 	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_ligne = ".$ligne->id." ORDER BY name ";
+	      $sql .= " WHERE c.rowid = cf.fk_contact AND cf.fk_ligne = ".$ligne->id." ORDER BY name ";
 	      if ( $db->query( $sql) )
 		{
 		  $num = $db->num_rows();
@@ -1137,7 +1137,7 @@ else
 
 	      print '<tr><td valign="top" width="20%">Contact</td><td valign="top" colspan="2">';
 	  	 
-	      $sql = "SELECT idp, name, firstname, email FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$ligne->client_facture_id." ORDER BY name ";
+	      $sql = "SELECT rowid, name, firstname, email FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = ".$ligne->client_facture_id." ORDER BY name ";
 	      if ( $db->query( $sql) )
 		{
 		  print '<select name="contact_id">';

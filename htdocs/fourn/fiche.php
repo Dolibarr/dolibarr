@@ -59,7 +59,7 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 {
   $sql = "SELECT sc.rowid";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.idp AND sc.fk_user = ".$user->id." AND s.fournisseur = 1";
+  $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.rowid AND sc.fk_user = ".$user->id." AND s.fournisseur = 1";
   
   if ( $db->query($sql) )
     {
@@ -311,7 +311,7 @@ if ( $societe->fetch($socid) )
 	print '<td>&nbsp;</td>';
 	print "</tr>";
 
-	$sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+	$sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
 	$sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
 	$sql.= " WHERE p.fk_soc = ".$societe->id;
 	$sql.= "  ORDER by p.datec";
@@ -330,7 +330,7 @@ if ( $societe->fetch($socid) )
 		print "<tr $bc[$var]>";
 
 		print '<td>';
-		print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+		print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">';
 		print img_object($langs->trans("ShowContact"),"contact");
 		print ' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
@@ -340,16 +340,16 @@ if ( $societe->fetch($socid) )
 		}
 		print "</td>";
 		print "<td>$obj->poste&nbsp;</td>";
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone.'</a>&nbsp;</td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+		print '<td><a href="../comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
 		if ($user->rights->societe->contact->creer)
 		{
-			print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=$obj->idp\">".img_edit()."</a></td>";
+			print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">".img_edit()."</a></td>";
 		}
 
-		print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+		print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
 		print img_object($langs->trans("Rendez-Vous"),"action");
 		print '</a></td>';
 

@@ -69,15 +69,15 @@ $offset = $conf->liste_limit * $page ;
  * Mode Liste
  */
 
-$sql = "SELECT s.idp, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
+$sql = "SELECT s.rowid as socid, s.nom, ".$db->pdate("cf.date_commande")." as dc,";
 $sql .= " cf.rowid,cf.ref, cf.fk_statut";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql .= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-$sql .= " WHERE cf.fk_soc = s.idp ";
+$sql .= " WHERE cf.fk_soc = s.rowid ";
 
 if ($socid)
 {
-    $sql .= " AND s.idp=".$socid;
+    $sql .= " AND s.rowid = ".$socid;
 }
 
 if (strlen($_GET["statut"]))
@@ -138,7 +138,7 @@ if ($resql)
         print '<td><a href="'.DOL_URL_ROOT.'/fourn/commande/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref.'</a></td>'."\n";
 
         // Société
-        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
+        print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' ';
         print $obj->nom.'</a></td>'."\n";
 
         // Date

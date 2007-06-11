@@ -205,9 +205,9 @@ print '</table>';
  *
  */
 $allow_delete = 1 ;
-$sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.idp';
+$sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';
 $sql .= ' FROM '.MAIN_DB_PREFIX.'paiement_facture as pf,'.MAIN_DB_PREFIX.'facture as f,'.MAIN_DB_PREFIX.'societe as s';
-$sql .= ' WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.idp';
+$sql .= ' WHERE pf.fk_facture = f.rowid AND f.fk_soc = s.rowid';
 $sql .= ' AND pf.fk_paiement = '.$paiement->id;
 $resql=$db->query($sql); 			
 if ($resql)
@@ -239,7 +239,7 @@ if ($resql)
 			print $objp->facnumber;
 			print "</a></td>\n";
 			print '<td align="center">'.$facturestatic->LibStatut($objp->paye,$objp->fk_statut,2,1).'</td>';
-			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+			print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 			print '<td align="right">'.price($objp->amount).'</td>';
 			print "</tr>\n";
 			if ($objp->paye == 1)

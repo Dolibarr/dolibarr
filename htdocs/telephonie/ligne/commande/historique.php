@@ -61,13 +61,13 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql = "SELECT s.rowid as socid, s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " , ".$db->pdate("ls.tms")."  as dc";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne_statut as ls";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
 $sql .= " AND ls.fk_ligne = l.rowid";
 $sql .= " AND ls.statut = 2";
 

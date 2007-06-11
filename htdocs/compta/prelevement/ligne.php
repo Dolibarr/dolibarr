@@ -195,7 +195,7 @@ if ($_GET["id"])
    */
   $sql = "SELECT pf.rowid";
   $sql .= " ,f.rowid as facid, f.facnumber as ref, f.total_ttc";
-  $sql .= " , s.idp, s.nom";
+  $sql .= " , s.rowid as socid, s.nom";
   $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
   $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
   $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture as pf";
@@ -203,13 +203,13 @@ if ($_GET["id"])
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   $sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
   $sql .= " AND pl.fk_prelevement_bons = p.rowid";
-  $sql .= " AND f.fk_soc = s.idp";
+  $sql .= " AND f.fk_soc = s.rowid";
   $sql .= " AND pf.fk_facture = f.rowid";
   $sql .= " AND pl.rowid=".$_GET["id"];
 
   if ($_GET["socid"])
     {
-      $sql .= " AND s.idp = ".$_GET["socid"];
+      $sql .= " AND s.rowid = ".$_GET["socid"];
     }
 
   $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -246,7 +246,7 @@ if ($_GET["id"])
 
 	  print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->ref."</a></td>\n";
 
-	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
+	  print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
 	  print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
 	  print '<td align="center">'.price($obj->total_ttc)."</td>\n";

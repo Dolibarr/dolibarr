@@ -176,15 +176,15 @@ class CommandeTableur
 
     $ligneids = array();
     
-    $sqlall = "SELECT s.nom, s.idp as socid, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
+    $sqlall = "SELECT s.nom, s.rowid as socid, l.ligne, f.nom as fournisseur, l.statut, l.rowid";
     $sqlall .= " , comm.name, comm.firstname, l.remise";
     $sqlall .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sqlall .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sqlall .= " , ".MAIN_DB_PREFIX."societe as r";
     $sqlall .= " , ".MAIN_DB_PREFIX."user as comm";
     $sqlall .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-    $sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-    $sqlall .= " AND l.fk_soc_facture = r.idp ";
+    $sqlall .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
+    $sqlall .= " AND l.fk_soc_facture = r.rowid ";
     $sqlall .= " AND l.fk_commercial = comm.rowid ";
     /*
      *

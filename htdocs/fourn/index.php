@@ -115,7 +115,7 @@ $sql = "SELECT count(cf.rowid), fk_statut,";
 $sql.= " cf.rowid,cf.ref";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
-$sql.= " WHERE cf.fk_soc = s.idp ";
+$sql.= " WHERE cf.fk_soc = s.rowid ";
 $sql.= " GROUP BY cf.fk_statut";
 
 $resql = $db->query($sql);
@@ -158,9 +158,9 @@ else
 if ($conf->fournisseur->enabled)
 {
     $langs->load("orders");
-    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
+    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c, ".MAIN_DB_PREFIX."societe as s";
-    $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
+    $sql.= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
     if ($socid)
     {
         $sql .= " AND c.fk_soc = ".$socid;
@@ -189,7 +189,7 @@ if ($conf->fournisseur->enabled)
 				print $commandestatic->getNomUrl(1,'',16);
 				print '</td>';
                 print '<td>';
-				$companystatic->id=$obj->idp;
+				$companystatic->id=$obj->socid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
@@ -215,9 +215,9 @@ if ($conf->fournisseur->enabled)
 if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
-	$sql.= " s.nom, s.idp";
+	$sql.= " s.nom, s.rowid as socid";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
 	if ($socid)
 	{
 		$sql .= " AND f.fk_soc = ".$socid;
@@ -247,7 +247,7 @@ if ($conf->fournisseur->enabled && $user->rights->fournisseur->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td>';
-				$companystatic->id=$obj->idp;
+				$companystatic->id=$obj->rowid;
 				$companystatic->nom=$obj->nom;
 				$companystatic->client=0;
 				print $companystatic->getNomUrl(1,'',16);
@@ -284,14 +284,14 @@ print '<td valign="top" width="70%" class="notopnoleft">';
  * Liste des 10 derniers saisis
  *
  */
-$sql = "SELECT s.idp, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql .= " AND s.idp=".$socid;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 $sql .= " ORDER BY s.datec DESC LIMIT 10; ";
 
@@ -315,8 +315,8 @@ if ($resql)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-      print "&nbsp;<a href=\"fiche.php?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+      print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
       print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
       print '<td align="right">'.dolibarr_print_date($obj->datec,'day').'</td>';
       print "</tr>\n";

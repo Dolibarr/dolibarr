@@ -76,9 +76,9 @@ $html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$
 $catotal=0;
 if ($modecompta == 'CREANCES-DETTES')
 {
-    $sql = "SELECT s.idp as rowid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
+    $sql = "SELECT s.rowid as socid, s.nom as name, sum(f.total) as amount, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_soc = s.idp";
+    $sql .= " WHERE f.fk_statut in (1,2) AND f.fk_soc = s.rowid";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
 else
@@ -87,14 +87,14 @@ else
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
      */
-	$sql = "SELECT s.idp as rowid, s.nom as name, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.rowid as socid, s.nom as name, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
+    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.rowid";
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }
-if ($socid) $sql .= " AND f.fk_soc = $socid";
-$sql .= " GROUP BY rowid";
-$sql .= " ORDER BY rowid";
+if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+$sql .= " GROUP BY s.rowid";
+$sql .= " ORDER BY s.rowid";
 
 $result = $db->query($sql);
 if ($result)
@@ -104,8 +104,8 @@ if ($result)
     while ($i < $num)
     {
          $obj = $db->fetch_object($result);
-         $amount[$obj->rowid] += $obj->amount_ttc;
-         $name[$obj->rowid] = $obj->name;
+         $amount[$obj->socid] += $obj->amount_ttc;
+         $name[$obj->socid] = $obj->name;
          $catotal+=$obj->amount_ttc;
          $i++;
     }

@@ -56,10 +56,10 @@ print '</table>';
 
 print '<br />';
 
-$sql = "SELECT distinct s.idp ";
+$sql = "SELECT distinct s.rowid as socid ";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE s.idp = l.fk_client_comm ";
+$sql .= " WHERE s.rowid = l.fk_client_comm ";
 $sql .= " AND l.fk_commercial_suiv = ".$user->id;
 $resql = $db->query($sql);
 if ($resql)
@@ -92,12 +92,12 @@ print '<br />';
  * Liste
  *
  */
-$sql = "SELECT s.idp as socid, s.nom, max(sc.datec) as dam";
+$sql = "SELECT s.rowid as socid, s.nom, max(sc.datec) as dam";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."societe_consult as sc";
-$sql .= " WHERE s.idp = sc.fk_soc";
+$sql .= " WHERE s.rowid = sc.fk_soc";
 $sql .= " AND sc.fk_user = ".$user->id;
-$sql .= " GROUP BY s.idp";
+$sql .= " GROUP BY s.rowid";
 $sql .= " ORDER BY dam DESC LIMIT 10";
 
 $resql = $db->query($sql);
@@ -138,14 +138,14 @@ print '</td><td valign="top" width="70%" rowspan="3">';
  * Liste
  *
  */
-$sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne";
+$sql = "SELECT s.rowid as socid, s.nom, count(l.ligne) as ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE l.fk_client_comm = s.idp ";
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " WHERE l.fk_client_comm = s.rowid ";
+$sql .= " AND s.rowid = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
-$sql .= " GROUP BY s.idp";
+$sql .= " GROUP BY s.rowid";
 $sql .= " ORDER BY s.datec DESC LIMIT 10";
 
 $resql = $db->query($sql);
@@ -191,12 +191,12 @@ else
 print "<br />";
 /* Commentaires */
 
-$sql = "SELECT s.idp as socid, s.nom, c.commentaire";
+$sql = "SELECT s.rowid as socid, s.nom, c.commentaire";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_commentaire as c";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE c.fk_soc = s.idp ";
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " WHERE c.fk_soc = s.rowid ";
+$sql .= " AND s.rowid = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 $sql .= " ORDER BY c.datec DESC LIMIT 10";
 

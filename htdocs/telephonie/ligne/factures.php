@@ -93,11 +93,11 @@ if ($_GET["id"] or $_GET["numero"])
 
 
       $sql = "SELECT f.fk_facture";
-      $sql .= " ,s.nom, s.idp";
+      $sql .= " ,s.nom, s.rowid as socid";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
       $sql .= " , ".MAIN_DB_PREFIX."societe as s";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-      $sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";  
+      $sql .= " WHERE s.rowid = l.fk_soc_facture AND l.rowid = f.fk_ligne";  
       $sql .= " AND f.ligne ='".$ligne->numero."'";  
       $sql .= " ORDER BY f.fk_facture DESC";
       

@@ -168,10 +168,10 @@ if ($_GET["id"])
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	  $sql .= " WHERE c.fk_client_comm = ".$soc->id;
-	  $sql .= " AND c.fk_soc = ss.idp ";
+	  $sql .= " AND c.fk_soc = ss.rowid ";
 	  $sql .= " AND l.fk_contrat = c.rowid";
 	  $sql .= " GROUP BY c.rowid";
-	  $sql .= " ORDER BY ss.idp ASC";
+	  $sql .= " ORDER BY ss.rowid ASC";
 	  
 	  $resql = $db->query($sql);
 

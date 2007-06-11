@@ -96,7 +96,7 @@ class LolixSociete {
       $sql = "SELECT s.nom,s.active,s.siren,s.tel,s.url,s.fax,";
       $sql .= $this->db->pdate("s.datec")." as dc";
       $sql .= " FROM lolixfr.societe as s";
-      $sql .= " WHERE s.idp = ".$this->id;
+      $sql .= " WHERE s.rowid = ".$this->id;
 
       if ($this->db->query($sql)) 
 	{

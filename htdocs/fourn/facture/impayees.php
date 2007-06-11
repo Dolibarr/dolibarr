@@ -73,7 +73,7 @@ if ($user->rights->fournisseur->facture->lire)
 	$limit = $conf->liste_limit;
 	$offset = $limit * $page ;
 
-	$sql = "SELECT s.nom, s.idp,";
+	$sql = "SELECT s.nom, s.rowid as socid,";
 	$sql.= " f.facnumber,f.total_ht,f.total_ttc,";
 	$sql.= $db->pdate("f.datef")." as df, ".$db->pdate("f.date_lim_reglement")." as datelimite, ";
 	$sql.= " f.paye as paye, f.rowid as facid, f.fk_statut";
@@ -83,10 +83,10 @@ if ($user->rights->fournisseur->facture->lire)
 	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql.= ",".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf ON f.rowid=pf.fk_facturefourn ";
-	$sql.= " WHERE f.fk_soc = s.idp";
+	$sql.= " WHERE f.fk_soc = s.rowid";
 	$sql.= " AND f.paye = 0 AND f.fk_statut = 1";
-	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql .= " AND s.idp = ".$socid;
+	if (! $user->rights->commercial->client->voir && ! $socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if ($socid) $sql .= " AND s.rowid = ".$socid;
 
 	if ($_GET["filtre"])
 	{
@@ -206,7 +206,7 @@ if ($user->rights->fournisseur->facture->lire)
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->datelimite)."</td>\n";
 
-				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
+				print '<td><a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,32).'</a></td>';
 
 				print "<td align=\"right\">".price($objp->total_ht)."</td>";
 				print "<td align=\"right\">".price($objp->total_ttc)."</td>";

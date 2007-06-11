@@ -63,7 +63,7 @@ if (! $conf->global->LDAP_CONTACT_ACTIVE)
 }
 */
 
-$sql = "SELECT idp as rowid";
+$sql = "SELECT rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople";
 
 $resql = $db->query($sql);

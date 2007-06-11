@@ -72,7 +72,7 @@ class pdf_courrier_droit_editeur
     $year = strftime("%Y", time());
     
     // 
-    $sql = "SELECT s.idp,s.nom";
+    $sql = "SELECT s.rowid,s.nom";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     //$sql .= " , ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
     $sql .= " WHERE s.fournisseur = 1 ";
@@ -104,7 +104,7 @@ class pdf_courrier_droit_editeur
 
 	    while ($obj = $this->db->fetch_object($resql) )
 	    {
-	      $id = $obj->idp;
+	      $id = $obj->rowid;
 	    
 	      dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
 	    
@@ -198,15 +198,14 @@ class pdf_courrier_droit_editeur
 	  {
 	    $i = 0;
 	    while ($obj = $this->db->fetch_object($resql) )
-	      {
-		$id       = $obj->idp;
-		$books[$i]['title'] = $obj->label;
-		$books[$i]['id'] = $obj->rowid;
-		$books[$i]['taux'] = $obj->taux;
-		$books[$i]['qty'] = $obj->quantite;
+	    {
+		    $books[$i]['title'] = $obj->label;
+		    $books[$i]['id'] = $obj->rowid;
+		    $books[$i]['taux'] = $obj->taux;
+		    $books[$i]['qty'] = $obj->quantite;
 
-		$i++;           
-	      }   
+		    $i++;
+	    }   
 	    $this->db->free($resql);
 	  }
 	else

@@ -84,7 +84,7 @@ if ($catid)
 	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = pf.fk_soc";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_soc = pf.fk_soc AND ppf.fk_product = p.rowid AND ppf.quantity = 1";
 
 if ($_POST["mode"] == 'search')

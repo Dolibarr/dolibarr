@@ -305,14 +305,14 @@ if ($modecompta != 'CREANCES-DETTES')
   // Factures non réglées
   // \todo Y a bug ici. Il faut prendre le reste à payer et non le total des factures non réglèes !
 
-  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp, f.total_ttc, sum(pf.amount) as am";
+  $sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid, f.total_ttc, sum(pf.amount) as am";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f left join ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
-  $sql .= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+  $sql .= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
   if ($socid)
     {
       $sql .= " AND f.fk_soc = $socid";
     }
-  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.idp, f.total_ttc";   
+  $sql .= " GROUP BY f.facnumber,f.rowid,s.nom, s.rowid, f.total_ttc";   
   
   if ( $db->query($sql) )
     {
@@ -352,16 +352,16 @@ if ($modecompta != 'CREANCES-DETTES')
 Je commente toute cette partie car les chiffres affichées sont faux - Eldy.
 En attendant correction.
 
-  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.idp, p.total_ht, p.total_ttc
+  $sql = "SELECT sum(f.total) as tot_fht,sum(f.total_ttc) as tot_fttc, p.rowid, p.ref, s.nom, s.rowid as socid, p.total_ht, p.total_ttc
 			FROM ".MAIN_DB_PREFIX."commande AS p, llx_societe AS s
 			LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid
 			LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid
-			WHERE p.fk_soc = s.idp
+			WHERE p.fk_soc = s.rowid
 					AND p.fk_statut >=1
 					AND p.facture =0";
   if ($socid)
     {
-      $sql .= " AND f.fk_soc = $socid";
+      $sql .= " AND f.fk_soc = ".$socid;
     }
 	$sql .= " GROUP BY p.rowid";
 

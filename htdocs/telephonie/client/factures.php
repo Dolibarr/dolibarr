@@ -109,13 +109,13 @@ if ($_GET["id"])
 	  $pagenext = $page + 1;
 	  
 	  $sql = "SELECT f.rowid, f.date, sum(f.cout_vente) as cout_vente, f.fk_facture";
-	  $sql .= " ,s.nom, s.idp";
+	  $sql .= " ,s.nom, s.rowid as socid";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  
-	  $sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";
-	  $sql .= " AND s.idp = ".$soc->id;
+	  $sql .= " WHERE s.rowid = l.fk_soc_facture AND l.rowid = f.fk_ligne";
+	  $sql .= " AND s.rowid = ".$soc->id;
 	  $sql .= " GROUP BY f.fk_facture";
 	  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 	  

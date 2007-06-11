@@ -55,14 +55,14 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT s.idp as socid, s.nom, r.amount";
+$sql = "SELECT s.rowid as socid, s.nom, r.amount";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_client_remise as r";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE r.fk_client = s.idp ";
+$sql .= " WHERE r.fk_client = s.rowid ";
 $sql .= " AND r.fk_facture = 0";
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND s.rowid = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_client"])

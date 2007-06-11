@@ -141,10 +141,10 @@ if ($_GET["id"])
 	  print '<tr><td valign="top" width="20%">Contact facture</td>';
 	  print '<td valign="top" colspan="2">';
 
-	  $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	  $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
 	  $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
 	  $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
-	  $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
+	  $sql .= " WHERE c.rowid = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
 	  if ( $db->query( $sql) )
 	    {
 	      $num = $db->num_rows();

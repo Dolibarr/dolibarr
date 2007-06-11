@@ -70,16 +70,16 @@ $fourns=array();
 
 llxHeader();
 
-$sql = "SELECT s.idp, s.nom, s.ville, ca.ca_genere as ca, ca.year";
+$sql = "SELECT s.rowid as socid, s.nom, s.ville, ca.ca_genere as ca, ca.year";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."fournisseur_ca as ca";
 if ($_GET["cat"]) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1 AND s.idp = ca.fk_societe";
-if ($_GET["cat"]) $sql .= " AND cf.fk_societe=s.idp AND cf.fk_categorie='".$_GET["cat"]."'";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid) $sql .= " AND s.idp=".$socid;
+$sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1 AND s.rowid = ca.fk_societe";
+if ($_GET["cat"]) $sql .= " AND cf.fk_societe = s.rowid AND cf.fk_categorie = '".$_GET["cat"]."'";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid) $sql .= " AND s.rowid = ".$socid;
 if ($socname) {
   $sql .= " AND lower(s.nom) like '%".strtolower($socname)."%'";
   $sortfield = "lower(s.nom)";
@@ -109,9 +109,9 @@ if ($resql)
       $var=!$var;
       $i++;
 
-      $fourns[$obj->idp] = $obj->nom;
+      $fourns[$obj->socid] = $obj->nom;
       $years[$obj->year] = $obj->year;
-      $ca[$obj->idp][$obj->year] = $obj->ca;
+      $ca[$obj->socid][$obj->year] = $obj->ca;
     }
 
 }
@@ -158,8 +158,8 @@ foreach($fourns as $fid => $fnom)
   $var=!$var;
   
   print "<tr $bc[$var]>";
-  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-  print "&nbsp;<a href=\"fiche.php?socid=$fid\">$fnom</a></td>\n";
+  print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+  print "&nbsp;<a href=\"fiche.php?socid=".$fid."\">".$fnom."</a></td>\n";
   print "<td>".$obj->ville."</td>\n";       
   print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
   

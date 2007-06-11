@@ -112,7 +112,7 @@ if ($user->rights->telephonie->fournisseur->lire)
   $sql = "SELECT distinct f.nom as fournisseur, f.rowid, count(*) as cc";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-  $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+  $sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
   if ($user->rights->telephonie->ligne->lire_restreint)
     {
       $sql .= " AND l.fk_commercial_suiv = ".$user->id;
@@ -152,7 +152,7 @@ if ($user->rights->telephonie->fournisseur->lire)
 
 print '</td><td valign="top" width="70%">';
 
-$sql = "SELECT s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
+$sql = "SELECT s.rowid as socid, sf.rowid as sfidp, sf.nom as nom_facture,s.nom, l.ligne, f.nom as fournisseur, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
@@ -160,12 +160,12 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
 
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND s.rowid = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 
 $sql .= " ORDER BY rowid DESC LIMIT 10";
 

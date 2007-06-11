@@ -699,16 +699,19 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
   
   if ($propalid)
     {
-      $sql = 'SELECT s.nom, s.prefix_comm, s.idp, p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, p.fk_cond_reglement, p.fk_mode_reglement, '.$db->pdate('p.datep').' as dp, c.id as statut, c.label as lst';
+      $sql = 'SELECT s.nom, s.prefix_comm, s.rowid';
+      $sql.= ', p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, p.fk_cond_reglement, p.fk_mode_reglement';
+      $sql.= ', '.$db->pdate('p.datep').' as dp';
+      $sql.= ', c.id as statut, c.label as lst';
       $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
-      $sql .= ' WHERE p.fk_soc = s.idp AND p.fk_statut = c.id';
+      $sql .= ' WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id';
       $sql .= ' AND p.rowid = '.$propalid;
     }
   else
     {
-      $sql = 'SELECT s.nom, s.prefix_comm, s.idp, s.mode_reglement, s.cond_reglement ';
+      $sql = 'SELECT s.nom, s.prefix_comm, s.rowid, s.mode_reglement, s.cond_reglement ';
       $sql .= 'FROM '.MAIN_DB_PREFIX.'societe as s ';
-      $sql .= 'WHERE s.idp = '.$_GET['socid'];
+      $sql .= 'WHERE s.rowid = '.$_GET['socid'];
     }
   $resql = $db->query($sql);
   if ( $resql )
@@ -719,7 +722,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	  $obj = $db->fetch_object($resql);
 	  
 	  $soc = new Societe($db);
-	  $soc->fetch($obj->idp);
+	  $soc->fetch($obj->rowid);
 	  
 	  $nbrow=7;
 	  

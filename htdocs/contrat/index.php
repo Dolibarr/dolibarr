@@ -105,16 +105,16 @@ $sql.= ' sum('.$db->ifsql("cd.statut=0",1,0).') as nb_initial,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND cd.date_fin_validite > sysdate()",1,0).') as nb_running,';
 $sql.= ' sum('.$db->ifsql("cd.statut=4 AND (cd.date_fin_validite IS NULL OR cd.date_fin_validite <= sysdate())",1,0).') as nb_late,';
 $sql.= ' sum('.$db->ifsql("cd.statut=5",1,0).') as nb_closed,';
-$sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.idp as sidp";
+$sql.= " c.rowid as cid, c.ref, c.datec, c.statut, s.nom, s.rowid as socid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."contrat as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."contratdet as cd ON c.rowid = cd.fk_contrat";
-$sql.= " WHERE c.fk_soc = s.idp ";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid > 0) $sql .= " AND s.idp = ".$socid;
-$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.idp";
+$sql.= " WHERE c.fk_soc = s.rowid ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql .= " AND s.rowid = ".$socid;
+$sql.= " GROUP BY c.rowid, c.datec, c.statut, s.nom, s.rowid";
 $sql.= " ORDER BY c.datec DESC";
 $sql.= " LIMIT $max";
 
@@ -146,7 +146,7 @@ if ($result)
         . (isset($obj->ref) ? $obj->ref : $obj->cid).'</a>';
         if ($obj->nb_late) print img_warning($langs->trans("Late"));
         print '</td>';
-        print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
+        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
         print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
         print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
@@ -174,9 +174,9 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, s
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql.= " WHERE c.statut=1 AND cd.statut = 0";
-$sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid > 0) $sql.= " AND s.idp = ".$socid;
+$sql.= " AND cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )
@@ -227,9 +227,9 @@ $sql = "SELECT cd.rowid as cid, c.ref, cd.statut, cd.label, cd.description as no
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-if ($socid > 0) $sql.= " AND s.idp = ".$socid;
+$sql.= " WHERE cd.fk_contrat = c.rowid AND c.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+if ($socid > 0) $sql.= " AND s.rowid = ".$socid;
 $sql.= " ORDER BY cd.tms DESC";
 
 if ( $db->query($sql) )

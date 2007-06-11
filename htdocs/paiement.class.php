@@ -351,7 +351,7 @@ class Paiement
 			if ($this->db->num_rows($result))
 			{
 				$obj = $this->db->fetch_object($result);
-				$this->id = $obj->idp;
+				$this->id = $obj->rowid;
 				if ($obj->fk_user_creat)
 				{
 					$cuser = new User($this->db, $obj->fk_user_creat);

@@ -131,16 +131,16 @@ if ($conf->contrat->enabled)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT p.rowid, p.ref, p.price, s.idp, s.nom";
+    $sql = "SELECT p.rowid, p.ref, p.price, s.rowid as socid, s.nom";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.idp";
+    $sql.= " WHERE p.fk_statut = 0 and p.fk_soc = s.rowid";
     if ($socid) 
     {
-       $sql .= " AND s.idp = $socid";
+       $sql .= " AND s.rowid = ".$socid;
     }
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
  
     $resql=$db->query($sql);
     if ($resql)
@@ -160,7 +160,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $obj = $db->fetch_object($resql);
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<td><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
                 print '<td align="right" nowrap="nowrap">'.price($obj->price).'</td></tr>';
                 $i++;
                 $total += $obj->price;
@@ -183,12 +183,12 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->commande->enabled)
 {
     $langs->load("orders");
-    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.idp";
+    $sql = "SELECT c.rowid, c.ref, c.total_ttc, s.nom, s.rowid as socid";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."commande as c, ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= " WHERE c.fk_soc = s.idp AND c.fk_statut = 0";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql.= " WHERE c.fk_soc = s.rowid AND c.fk_statut = 0";
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     if ($socid)
     {
         $sql .= " AND c.fk_soc = ".$socid;
@@ -212,7 +212,7 @@ if ($conf->commande->enabled)
                 $var=!$var;
                 $obj = $db->fetch_object($resql);
                 print "<tr $bc[$var]><td nowrap><a href=\"../commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
-                print '<td><a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
+                print '<td><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
                 print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td></tr>';
                 $i++;
                 $total += $obj->total_ttc;
@@ -233,12 +233,12 @@ if ($conf->commande->enabled)
  */
  if ($conf->bookmark->enabled)
  {
- 	$sql = "SELECT s.idp, s.nom,b.rowid as bid";
+ 	$sql = "SELECT s.rowid, s.nom,b.rowid as bid";
  	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
- 	$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
+ 	$sql .= " WHERE b.fk_soc = s.rowid AND b.fk_user = ".$user->id;
  	if ($socid)
   { 
-    $sql .= " AND s.idp = $socid"; 
+    $sql .= " AND s.rowid = ".$socid; 
   }
   $sql .= " ORDER BY lower(s.nom) ASC";
 
@@ -262,7 +262,7 @@ if ($conf->commande->enabled)
 	      $obj = $db->fetch_object();
 	      $var = !$var;
 	      print "<tr $bc[$var]>";
-	      print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	      print '<td><a href="fiche.php?socid='.$obj->rowid.'">'.$obj->nom.'</a></td>';
 	      print '<td align="right"><a href="index.php?action=del_bookmark&bid='.$obj->bid.'">';
 	      print img_delete();
 	      print '</a></td>';
@@ -284,15 +284,15 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, a.fk_user_author,";
 $sql.= " c.code, c.libelle,";
-$sql.= " s.nom as sname, s.idp, s.client";
+$sql.= " s.nom as sname, s.rowid, s.client";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.idp = a.fk_soc";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " WHERE c.id=a.fk_action AND a.percent < 100 AND s.rowid = a.fk_soc";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 {
-    $sql .= " AND s.idp = ".$socid;
+    $sql .= " AND s.rowid = ".$socid;
 }
 $sql .= " ORDER BY a.datep DESC, a.id DESC";
 
@@ -324,7 +324,7 @@ if ($resql)
 
             print '<td>'.dolibarr_trunc($obj->label,24).'</td>';
 
-            $customerstatic->id=$obj->idp;
+            $customerstatic->id=$obj->rowid;
             $customerstatic->nom=$obj->sname;
             $customerstatic->client=$obj->client;
             print '<td>'.$customerstatic->getNomUrl(1,'',16).'</td>';
@@ -362,18 +362,18 @@ else
 
 $sql = "SELECT a.id, a.percent, ".$db->pdate("a.datea")." as da, a.fk_user_author,";
 $sql.= " c.code, c.libelle,";
-$sql.= " s.idp, s.nom as sname, s.client";
+$sql.= " s.rowid, s.nom as sname, s.client";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE c.id=a.fk_action AND a.percent >= 100 AND s.idp = a.fk_soc";
+$sql .= " WHERE c.id = a.fk_action AND a.percent >= 100 AND s.rowid = a.fk_soc";
 if ($socid)
 {
-	$sql .= " AND s.idp = ".$socid;
+	$sql .= " AND s.rowid = ".$socid;
 }
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
-	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 $sql .= " ORDER BY a.datea DESC";
 $sql .= $db->plimit($max, 0);
@@ -403,7 +403,7 @@ if ($resql)
 		print $libelle;
 		print '</a></td>';
 
-		$customerstatic->id=$obj->idp;
+		$customerstatic->id=$obj->rowid;
 		$customerstatic->nom=$obj->sname;
 		$customerstatic->client=$obj->client;
 		print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
@@ -435,18 +435,18 @@ else
  */
 if ($user->rights->societe->lire)
 {
-    $sql = "SELECT s.idp,s.nom,".$db->pdate("datec")." as datec";
+    $sql = "SELECT s.rowid,s.nom,".$db->pdate("datec")." as datec";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
     $sql.= " WHERE s.client = 1";
     if ($socid)
     {
-        $sql .= " AND s.idp = $socid";
+        $sql .= " AND s.rowid = $socid";
     }
     if (!$user->rights->commercial->client->voir && !$socid) //restriction
     {
-	      $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	      $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
     $sql .= " ORDER BY s.datec DESC";
     $sql .= $db->plimit($max, 0);
@@ -469,7 +469,7 @@ if ($user->rights->societe->lire)
             {
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
-                print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
+                print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
                 print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec)."</td>";
                 print '</tr>';
                 $i++;
@@ -492,18 +492,18 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 {
   $langs->load("contracts");
   
-  $sql = "SELECT s.nom, s.idp, c.statut, c.rowid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
+  $sql = "SELECT s.nom, s.rowid, c.statut, c.rowid as contratid, p.ref, c.mise_en_service as datemes, c.fin_validite as datefin, c.date_cloture as dateclo";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."contrat as c, ".MAIN_DB_PREFIX."product as p";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-  $sql .= " WHERE c.fk_soc = s.idp and c.fk_product = p.rowid";
+  $sql .= " WHERE c.fk_soc = s.rowid and c.fk_product = p.rowid";
   if ($socid)
-    { 
-      $sql .= " AND s.idp = $socid"; 
-    }
+  { 
+      $sql .= " AND s.rowid = ".$socid; 
+  }
   if (!$user->rights->commercial->client->voir && !$socid) //restriction
   {
-	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
   }
   $sql .= " ORDER BY c.tms DESC";
   $sql .= $db->plimit(5, 0);
@@ -524,8 +524,8 @@ if ($conf->contrat->enabled && 0) // \todo A REFAIRE DEPUIS NOUVEAU CONTRAT
 	  while ($i < $num)
 	    {
 	      $obj = $db->fetch_object();
-	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
-	      print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";      
+	      print "<tr $bc[$var]><td><a href=\"../contrat/fiche.php?id=".$obj->contratid."\">".img_object($langs->trans("ShowContract","contract"))." ".$obj->ref."</a></td>";
+	      print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany","company"))." ".$obj->nom."</a></td>\n";      
 	      print "<td align=\"right\">".$staticcontrat->LibStatut($obj->statut,3)."</td></tr>\n";
 	      $var=!$var;
 	      $i++;
@@ -547,13 +547,13 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $langs->load("propal");
     
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut = 1";
-    if ($socid) $sql .= " AND s.idp = $socid";
-    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+    $sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = 1";
+    if ($socid) $sql .= " AND s.rowid = ".$socid;
+    if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     $sql .= " ORDER BY p.rowid DESC";
     
     $result=$db->query($sql);
@@ -575,11 +575,11 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a>";
     		    if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
                 print "</td>";
-                print "<td><a href=\"fiche.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
+                print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp)."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td>";
-				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
+				        print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
                 print "</tr>\n";
                 $i++;
                 $total += $obj->price;
@@ -604,16 +604,16 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->propal->enabled && $user->rights->propale->lire) {
     $NBMAX=5;
     
-	$sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE p.fk_soc = s.idp AND p.fk_statut > 1";
+	$sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut > 1";
 	if ($socid)
 	{ 
-	  $sql .= " AND s.idp = $socid"; 
+	  $sql .= " AND s.rowid = ".$socid; 
 	}
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	$sql .= " ORDER BY p.rowid DESC";
 	$sql .= $db->plimit($NBMAX, 0);
 	
@@ -632,7 +632,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		print '<td nowrap>';
 		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
 		print $objp->ref.'</a></td>';
-		print '<td><a href="fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+		print '<td><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
         print "<td>&nbsp;</td>";
 		print "<td align=\"right\">";
 		print dolibarr_print_date($objp->dp)."</td>\n";	  

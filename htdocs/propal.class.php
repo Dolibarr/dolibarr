@@ -525,7 +525,7 @@ class Propal extends CommonObject
                 // Affectation au projet
                 if ($resql && $this->projetidp)
                 {
-                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=$this->projetidp WHERE ref='$this->ref'";
+                    $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET fk_projet=".$this->projetidp." WHERE ref='".$this->ref."'";
                     $result=$this->db->query($sql);
                 }
 
@@ -1962,7 +1962,7 @@ class Propal extends CommonObject
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

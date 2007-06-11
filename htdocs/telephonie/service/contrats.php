@@ -86,14 +86,14 @@ if ($_GET["id"])
       dolibarr_fiche_head($head, $hselected, 'Service : '.$service->id);
       
       
-      $sql = "SELECT s.idp as socid, s.nom as nom_facture";
+      $sql = "SELECT s.rowid as socid, s.nom as nom_facture";
       $sql .= " , c.ref, cs.montant, c.rowid as crowid";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat_service as cs";
       $sql .= " WHERE cs.fk_service = ".$_GET["id"];
       $sql .= " AND cs.fk_contrat = c.rowid";
-      $sql .= " AND s.idp = c.fk_soc_facture";
+      $sql .= " AND s.rowid = c.fk_soc_facture";
       
       if ($_GET["search_client"])
 	{
@@ -148,7 +148,7 @@ if ($_GET["id"])
 	      
 	      print '<a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$obj->crowid.'">'.$obj->ref."</a></td>\n";
 	      
-	      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->sfidp.'">'.stripslashes($obj->nom_facture).'</a></td>';
+	      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.stripslashes($obj->nom_facture).'</a></td>';
 	      
 	      print '<td align="right">'.price($obj->montant)."</td>\n";
 	      print "</tr>\n";

@@ -38,9 +38,9 @@ ALTER TABLE llx_telephonie_societe_ligne ADD INDEX (fk_commercial);
 ALTER TABLE llx_telephonie_societe_ligne ADD INDEX (fk_concurrent);
 
 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_fournisseur)   REFERENCES llx_telephonie_fournisseur (rowid);
-ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_client_comm)   REFERENCES llx_societe(idp);
-ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc)           REFERENCES llx_societe(idp);
-ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture)   REFERENCES llx_societe(idp);
+ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_client_comm)   REFERENCES llx_societe(rowid);
+ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc)           REFERENCES llx_societe(rowid);
+ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture)   REFERENCES llx_societe(rowid);
 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_user_creat)    REFERENCES llx_user(rowid);
 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_user_commande) REFERENCES llx_user(rowid);
 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_commercial) REFERENCES llx_user(rowid);

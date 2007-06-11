@@ -55,7 +55,7 @@ $factures_lignes = array();
  */
 $sql = "SELECT sc.email FROM ";     
 $sql .= MAIN_DB_PREFIX."socpeople as sc";
-$sql .= " WHERE sc.idp = ".$contactid;
+$sql .= " WHERE sc.rowid = ".$contactid;
 
 $resql = $db->query($sql);
 
@@ -81,10 +81,10 @@ $sql .= MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 
-$sql .= " WHERE s.idp = l.fk_client_comm";
+$sql .= " WHERE s.rowid = l.fk_client_comm";
 $sql .= " AND f.fk_facture IS NOT NULL";
 $sql .= " AND l.rowid = f.fk_ligne";
-$sql .= " AND s.idp = ".$clientid;
+$sql .= " AND s.rowid = ".$clientid;
 $sql .= " AND date_format(date,'%Y%m') = ".$year.$month;
 $sql .= " ORDER BY f.fk_facture ASC";
 
@@ -120,10 +120,10 @@ $sql .= MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 
-$sql .= " WHERE s.idp = l.fk_client_comm";
+$sql .= " WHERE s.rowid = l.fk_client_comm";
 $sql .= " AND f.fk_facture IS NOT NULL";
 $sql .= " AND l.rowid = f.fk_ligne";
-$sql .= " AND s.idp = ".$clientid;
+$sql .= " AND s.rowid = ".$clientid;
 $sql .= " AND date_format(date,'%Y%m') = ".$year.$month;
 $sql .= " ORDER BY f.fk_facture ASC";
 

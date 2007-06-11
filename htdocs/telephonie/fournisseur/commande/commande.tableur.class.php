@@ -187,7 +187,7 @@ class CommandeMethodeTableur extends CommandeMethode
 
     $this->ligneids = array();
     
-    $sqlall = "SELECT s.nom, s.idp as socid, f.nom as fournisseur";
+    $sqlall = "SELECT s.nom, s.rowid as socid, f.nom as fournisseur";
     $sqlall .= ", l.ligne, l.statut, l.rowid, l.remise";
     $sqlall .= ",".$this->db->pdate("l.date_commande") . " as date_commande";
     $sqlall .= " , comm.name, comm.firstname";
@@ -196,8 +196,8 @@ class CommandeMethodeTableur extends CommandeMethode
     $sqlall .= " , ".MAIN_DB_PREFIX."societe as r";
     $sqlall .= " , ".MAIN_DB_PREFIX."user as comm";
     $sqlall .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-    $sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
-    $sqlall .= " AND l.fk_soc_facture = r.idp ";
+    $sqlall .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
+    $sqlall .= " AND l.fk_soc_facture = r.rowid ";
     $sqlall .= " AND l.fk_commercial = comm.rowid ";
     $sqlall .= " AND f.rowid =".$this->fourn->id;
     /*

@@ -389,7 +389,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  		$user->login = $ldap->login;
 		  		$user->update();
 		  	}
-		    //$resultUpdate = $user->update_ldap2dolibarr($attributs);
+		    //$resultUpdate = $user->update_ldap2dolibarr();
 		  }
 		}
 		else

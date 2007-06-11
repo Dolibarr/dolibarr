@@ -71,21 +71,21 @@ class ProcessGraphClients
      * Lecture des clients
      *
      */
-    $sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne";
+    $sql = "SELECT s.rowid as socid, s.nom, count(l.ligne) as ligne";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
     $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
-    $sql .= " WHERE l.fk_client_comm = s.idp ";
+    $sql .= " WHERE l.fk_client_comm = s.rowid ";
     if ($id == 0)
       {
-	$sql .= " AND s.idp >= ".$min;
-	$sql .= " AND s.idp < ".$max;
+	$sql .= " AND s.rowid >= ".$min;
+	$sql .= " AND s.rowid < ".$max;
       }
     else
       {
 	$sql .= " AND l.fk_client_comm = ".$id;
       }
 
-    $sql .= " GROUP BY s.idp";
+    $sql .= " GROUP BY s.rowid";
 
     $resql = $this->db->query($sql);
     

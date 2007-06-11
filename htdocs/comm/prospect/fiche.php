@@ -58,7 +58,7 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 {
         $sql = "SELECT sc.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.idp AND sc.fk_user = ".$user->id." AND s.client = 2";
+        $sql .= " WHERE sc.fk_soc = ".$socid." AND sc.fk_soc = s.rowid AND sc.fk_user = ".$user->id." AND s.client = 2";
 
         if ( $db->query($sql) )
         {
@@ -75,7 +75,7 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["stcomm"];
-  $sql .= " WHERE idp = ".$_GET["id"];
+  $sql .= " WHERE rowid = ".$_GET["id"];
   $db->query($sql);
 }
 
@@ -162,12 +162,12 @@ if ($socid > 0)
      *
      */
     print '<table class="noborder" width="100%">';
-    $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
+    $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
     $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite,";
     $sql.= " c.label as statut, c.id as statutid";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
-    $sql.= " WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
-    $sql.= " AND s.idp = ".$societe->id;
+    $sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
+    $sql.= " AND s.rowid = ".$societe->id;
     $sql.= " ORDER BY p.datep DESC";
 
     $resql=$db->query($sql);
@@ -261,7 +261,7 @@ if ($socid > 0)
 		print '<td>&nbsp;</td>';
 		print "</tr>";
 
-        $sql = "SELECT p.idp, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
+        $sql = "SELECT p.rowid, p.name, p.firstname, p.poste, p.phone, p.fax, p.email, p.note";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as p";
         $sql.= " WHERE p.fk_soc = ".$societe->id;
         $sql.= " ORDER by p.datec";
@@ -277,7 +277,7 @@ if ($socid > 0)
             print "<tr $bc[$var]>";
 
             print '<td>';
-            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
+            print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$obj->firstname.' '. $obj->name.'</a>&nbsp;';
 
             if (trim($obj->note))
             {
@@ -285,23 +285,23 @@ if ($socid > 0)
             }
             print '</td>';
             print '<td>'.$obj->poste.'&nbsp;</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->phone;
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->phone;
 
 	        if (strlen($obj->phone) && $user->clicktodial_enabled == 1)
 	        {
-	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->idp.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
+	            print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->rowid.'&amp;socid='.$societe->id.'&amp;call='.$obj->phone.'">';
 	            print img_phone_out("Appel émis") ;
 	        }
 			print '</a></td>';
 
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
-            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->idp.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_FAX&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->fax.'</a>&nbsp;</td>';
+            print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->rowid.'&socid='.$societe->id.'">'.$obj->email.'</a>&nbsp;</td>';
 
         	print '<td align="center">';
         	
            	if ($user->rights->societe->contact->creer)
     		{
-        		print "<a href=\"".DOL_URL_ROOT."/contact/fiche.php?action=edit&amp;id=$obj->idp\">";
+        		print "<a href=\"".DOL_URL_ROOT."/contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">";
         	 	print img_edit();
         	 	print '</a>';
         	}
@@ -309,7 +309,7 @@ if ($socid > 0)
         		
         	print '</td>';
 
-            print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->idp.'&socid='.$societe->id.'">';
+            print '<td align="center"><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
             print img_object($langs->trans("Rendez-Vous"),"action");
             print '</a></td>';
 

@@ -72,7 +72,7 @@ print_fiche_titre($langs->trans("Bookmarks"));
  
 if ($mesg) print $mesg;
 
-$sql = "SELECT b.fk_soc as idp, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
+$sql = "SELECT b.fk_soc as rowid, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, b.title, b.favicon,";
 $sql.= " u.login, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."user as u";
 $sql.= " WHERE b.fk_user=u.rowid";
@@ -117,7 +117,7 @@ if ($resql)
 
         // Title
         print "<td>";
-        if ($obj->idp)
+        if ($obj->rowid)
         {
             // Lien interne societe
             $lieninterne=1;
@@ -127,7 +127,7 @@ if ($resql)
                 // Pour compatibilite avec anciens bookmarks
                 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
                 $societe=new Societe($db);
-                $societe->fetch($obj->idp);
+                $societe->fetch($obj->rowid);
                 $obj->title=$societe->nom;
             }
             $title=img_object($langs->trans("ShowCompany"),"company").' '.$obj->title;

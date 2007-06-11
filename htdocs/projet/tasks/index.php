@@ -68,7 +68,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc 
 
 if ($socid)
 { 
-  $sql .= " AND s.idp = $socid"; 
+  $sql .= " AND s.rowid = ".$socid; 
 }
 $sql .= " GROUP BY p.rowid";
 
@@ -124,7 +124,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc 
 
 if ($socid)
 { 
-  $sql .= " AND s.idp = $socid"; 
+  $sql .= " AND s.rowid = ".$socid; 
 }
 $sql .= " GROUP BY p.rowid";
 

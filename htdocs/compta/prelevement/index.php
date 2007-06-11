@@ -127,15 +127,15 @@ print '</td><td valign="top" width="70%">';
  * Factures
  *
  */
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql .= " WHERE s.idp = f.fk_soc";
+$sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($socid)
 {
@@ -159,7 +159,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td>';
 	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
 	  print '</tr>';
 	  $i++;
 	}

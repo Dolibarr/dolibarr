@@ -149,7 +149,7 @@ for ($j = 0 ; $j < 10 ; $j++)
  *
  */
 
-$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 
 if ($db->query($sql))
 {

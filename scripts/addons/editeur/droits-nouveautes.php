@@ -102,7 +102,7 @@ $sql .= ", ".MAIN_DB_PREFIX."product_fournisseur as pf";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
 
 $sql .= " WHERE p.rowid = pl.rowid";
-$sql .= " AND pf.fk_product = p.rowid AND s.idp=pf.fk_soc";
+$sql .= " AND pf.fk_product = p.rowid AND s.rowid = pf.fk_soc";
 $sql .= " AND p.rowid = c.fk_cnv_livre";
 $sql .= " AND p.canvas = 'livre'";
 $sql .= " ORDER BY p.rowid ASC";

@@ -61,11 +61,11 @@ print '<br />';
 
 /* Consultations */
 
-$sql = "SELECT s.idp as socid, s.nom, max(sc.datec) as dam, c.ref, c.rowid";
+$sql = "SELECT s.rowid as socid, s.nom, max(sc.datec) as dam, c.ref, c.rowid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_consult as sc";
-$sql .= " WHERE s.idp = c.fk_soc";
+$sql .= " WHERE s.rowid = c.fk_soc";
 $sql .= " AND c.rowid = sc.fk_contrat";
 $sql .= " AND sc.fk_user = ".$user->id;
 $sql .= " GROUP BY c.rowid";
@@ -152,16 +152,16 @@ else
 print '</td><td valign="top" width="70%">';
 
 $sql = "SELECT c.ref, c.rowid, c.statut";
-$sql .= " ,s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom";
+$sql .= " ,s.rowid as socid, sf.rowid as sfidp, sf.nom as nom_facture,s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
 $sql .= " , ".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE c.fk_soc = s.idp";
-$sql .= " AND c.fk_soc_facture = sf.idp";
+$sql .= " WHERE c.fk_soc = s.rowid";
+$sql .= " AND c.fk_soc_facture = sf.rowid";
 
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND s.rowid = sp.fk_soc";
 
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 

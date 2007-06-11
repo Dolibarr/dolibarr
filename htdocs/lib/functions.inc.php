@@ -1307,7 +1307,7 @@ function dol_loginfunction($notused,$pearstatus)
       }
       if ($socid > 0) $sql .= " AND dbt.fk_soc = ".$socid;
     }
-
+//print $sql;
     if ($sql && $db->query($sql))
     {
       if ($db->num_rows() == 0)
@@ -1316,7 +1316,7 @@ function dol_loginfunction($notused,$pearstatus)
       }
     }
   }
-  else if ((!$objectid && $modulename == 'societe' && $list==0) && $nocreate == 1)
+  else if ((!$objectid && $list==0) && $nocreate == 1)
   {
   	accessforbidden();
   }

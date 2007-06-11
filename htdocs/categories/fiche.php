@@ -44,9 +44,9 @@ else
 
 if ($_REQUEST['origin'])
 {
-	if($_GET['type'] == 0)$idprodorigin = $_REQUEST['origin'];
-	if($_GET['type'] == 1)$idSupplierorigin = $_REQUEST['origin'];
-	if($_GET['type'] == 2)$idCompanyorigin = $_REQUEST['origin'];
+	if($_GET['type'] == 0)$idProdOrigin = $_REQUEST['origin'];
+	if($_GET['type'] == 1)$idSupplierOrigin = $_REQUEST['origin'];
+	if($_GET['type'] == 2)$idCompanyOrigin = $_REQUEST['origin'];
 	
 }
 
@@ -103,13 +103,13 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 		print '<div class="ok">'.$langs->trans("CategorySuccessfullyCreated",$categorie->label).'</div>';
 		print '<br>';
 		
-		if ($idprodorigin)
+		if ($idProdOrigin)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idprodorigin.'">'.$langs->trans("ReturnInProduct").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/categorie.php?id='.$idProdOrigin.'">'.$langs->trans("ReturnInProduct").'</a>';
 		}
-		if ($idSupplierorigin || $idCompanyorigin)
+		if ($idSupplierOrigin || $idCompanyOrigin)
 		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyorigin.'">'.$langs->trans("ReturnInCompany").'</a>';
+			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'">'.$langs->trans("ReturnInCompany").'</a>';
 		}
 
 		print '</td></tr></table>';

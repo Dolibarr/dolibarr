@@ -60,18 +60,18 @@ if ($user->societe_id > 0)
     $socid = $user->societe_id;
 }
 
-$sql = "SELECT s.nom, s.idp,";                                  // Ou
+$sql = "SELECT s.nom, s.rowid as socid,";                       // Ou
 $sql.= " d.rowid, ".$db->pdate("d.dated")." as dd, d.km, ";     // Comment
 $sql.= " u.name, u.firstname";                                  // Qui
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."deplacement as d, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE d.fk_soc = s.idp AND d.fk_user = u.rowid";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " WHERE d.fk_soc = s.rowid AND d.fk_user = u.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if ($socid)
 {
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1 ,$offset);
@@ -98,7 +98,7 @@ if ($resql)
     {
       $objp = $db->fetch_object($resql);
       $soc = new Societe($db);
-      $soc->fetch($objp->idp);
+      $soc->fetch($objp->socid);
       $var=!$var;
       print "<tr $bc[$var]>";
       print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans("ShowTrip"),"trip").' '.$objp->rowid.'</a></td>';

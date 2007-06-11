@@ -213,7 +213,7 @@ function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $p
   /*
    * Create a new company
    *  - insert data in table societe 
-   *  - return company's idp
+   *  - return company's rowid
    */
 
   // Check validity
@@ -236,20 +236,20 @@ function gljCreateCompany($db, $company_name, $address, $cp, $ville, $fkpays, $p
       } else {
 	$token = uniqid("SOC");
       }
-      $sql .= ",'$token'";
+      $sql .= ",'".$token."'";
     }
     $sql .= ");";
     
     if ( $db->query($sql) ) {
-      $sql = "SELECT idp FROM societe WHERE id= '$token';";
+      $sql = "SELECT rowid FROM societe WHERE id= '".$token."';";
       if ( $db->query($sql) ) {
 	if ( $db->num_rows() ) {
 	  $obj = $db->fetch_object();
-	  return $obj->idp;
+	  return $obj->rowid;
 	  $db->free();
 	  
 	  $sql = "INSERT INTO socpeople (datec, name, firstname, fk_soc, phone, fax, email)";
-	  $sql .= "VALUES (now(),'$c_nom','$c_prenom', $obj->idp, $phone, $fax,$url, '$c_mail')";
+	  $sql .= "VALUES (now(),'".$c_nom."','".$c_prenom."', ".$obj->rowid.", ".$phone.", ".$fax.", ".$url.", '".$c_mail."')";
 	  if ( $db->query($sql) ) {
 	    
 	  }

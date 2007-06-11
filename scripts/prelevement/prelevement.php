@@ -69,7 +69,7 @@ if (!$error)
   $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
 
   $sql .= " WHERE f.rowid = pfd.fk_facture";
-  $sql .= " AND s.idp = f.fk_soc";
+  $sql .= " AND s.rowid = f.fk_soc";
   $sql .= " AND f.fk_statut = 1";
   $sql .= " AND f.paye = 0";
   $sql .= " AND pfd.traite = 0";

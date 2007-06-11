@@ -131,9 +131,9 @@ if (!$error)
   $sql .= " AND f.isfacturable = 'oui'"; 
   $sql .= " AND f.fk_ligne = l.rowid ";
   $sql .= " AND l.fk_contrat = c.rowid";  
-  $sql .= " AND c.fk_client_comm = s.idp";
+  $sql .= " AND c.fk_client_comm = s.rowid";
   $sql .= " AND f.fourn_montant > f.cout_vente";
-  $sql .= " ORDER BY s.idp ASC, c.rowid ASC";
+  $sql .= " ORDER BY s.rowid ASC, c.rowid ASC";
     
   $resql = $db->query($sql) ;
 
@@ -194,7 +194,7 @@ if (!$error)
 
 if (!$error)
 {
-  $sql = "SELECT distinct(s.idp), s.nom";
+  $sql = "SELECT distinct(s.rowid), s.nom";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
   $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
   $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -205,7 +205,7 @@ if (!$error)
   $sql .= " AND f.isfacturable = 'oui'"; 
   $sql .= " AND f.fk_ligne = l.rowid ";
   $sql .= " AND l.fk_contrat = c.rowid";  
-  $sql .= " AND c.fk_client_comm = s.idp";
+  $sql .= " AND c.fk_client_comm = s.rowid";
   $sql .= " AND f.fourn_montant > f.cout_vente";
   $sql .= " GROUP BY s.nom ASC";
 
@@ -259,11 +259,11 @@ if (!$error)
 	  $sql .= " ,    ".MAIN_DB_PREFIX."societe as s";
 	  
 	  $sql .= " WHERE f.fk_facture IS NOT NULL";
-	  $sql .= " AND s.idp = ".$row[0];
+	  $sql .= " AND s.rowid = ".$row[0];
 	  $sql .= " AND f.isfacturable = 'oui'"; 
 	  $sql .= " AND f.fk_ligne = l.rowid ";
 	  $sql .= " AND l.fk_contrat = c.rowid";  
-	  $sql .= " AND c.fk_client_comm = s.idp";
+	  $sql .= " AND c.fk_client_comm = s.rowid";
 	  $sql .= " ORDER BY f.date DESC";
 	  
 	  $re2sql = $db->query($sql) ;

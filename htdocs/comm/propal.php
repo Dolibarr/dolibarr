@@ -1672,17 +1672,17 @@ else
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
-  $sql = 'SELECT s.nom, s.idp, s.client, ';
+  $sql = 'SELECT s.nom, s.rowid, s.client, ';
   $sql.= 'p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
   if ($sall) $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'propaldet as pd ON p.rowid=pd.fk_propal';
-  $sql.= ' WHERE p.fk_soc = s.idp';
+  $sql.= ' WHERE p.fk_soc = s.rowid';
 
   if (!$user->rights->commercial->client->voir && !$socid) //restriction
     {
-	    $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	    $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
     }
   if (!empty($_GET['search_ref']))
     {
@@ -1697,7 +1697,7 @@ else
       $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
     }
   if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
-  if ($socid) $sql .= ' AND s.idp = '.$socid;
+  if ($socid) $sql .= ' AND s.rowid = '.$socid;
   if ($_GET['viewstatut'] <> '')
     {
       $sql .= ' AND p.fk_statut in ('.$_GET['viewstatut'].')';
@@ -1764,11 +1764,11 @@ else
 
             if ($objp->client == 1)
             {
-                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp;
+                $url = DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->rowid;
             }
             else
             {
-                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->idp;
+                $url = DOL_URL_ROOT.'/comm/prospect/fiche.php?socid='.$objp->rowid;
             }
 
 			// Société

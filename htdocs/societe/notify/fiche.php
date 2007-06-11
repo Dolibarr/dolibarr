@@ -221,9 +221,9 @@ if ( $soc->fetch($soc->id) )
     print '</tr>';
     
     // Liste
-    $sql = "SELECT c.idp as id, c.name, c.firstname, a.titre, n.rowid";
+    $sql = "SELECT c.rowid as id, c.name, c.firstname, a.titre, n.rowid";
     $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n";
-    $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
+    $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action AND n.fk_soc = ".$soc->id;
     
     $resql=$db->query($sql);
     if ($resql)

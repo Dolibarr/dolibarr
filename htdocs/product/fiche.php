@@ -1021,9 +1021,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
       // Liste de "Mes propals"
       print '<tr><td width="50%" valign="top">';
 
-      $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
+      $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.ref,".$db->pdate("p.datep")." as dp";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
-      $sql .=" WHERE p.fk_soc = s.idp AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
+      $sql .=" WHERE p.fk_soc = s.rowid AND p.fk_statut = 0 AND p.fk_user_author = ".$user->id;
       $sql .= " ORDER BY p.datec DESC, tms DESC";
 
       $result=$db->query($sql);
@@ -1043,8 +1043,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		  print "<tr $bc[$var]>";
 		  print "<td nowrap>";
 		  print '<input type="hidden" name="action" value="addinpropal">';
-		  print "<a href=\"../comm/propal.php?propalid=$objp->propalid\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
-		  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
+		  print "<a href=\"../comm/propal.php?propalid=".$objp->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$objp->ref."</a></td>\n";
+		  print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
 		  print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->dp,"%d %b")."</td>\n";
 		  print '<td><input type="hidden" name="propalid" value="'.$objp->propalid.'">';
 		  print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
@@ -1134,9 +1134,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
       // Liste de "Mes commandes"
       print '<tr><td width="50%" valign="top">';
-      $sql = "SELECT s.nom, s.idp, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
+      $sql = "SELECT s.nom, s.rowid as socid, c.rowid as commandeid, c.ref,".$db->pdate("c.date_commande")." as dc";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as c";
-      $sql .=" WHERE c.fk_soc = s.idp AND c.fk_statut = 0 AND c.fk_user_author = ".$user->id;
+      $sql .=" WHERE c.fk_soc = s.rowid AND c.fk_statut = 0 AND c.fk_user_author = ".$user->id;
       $sql .= " ORDER BY c.date_creation DESC";
 
       $result=$db->query($sql);
@@ -1156,8 +1156,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		  print "<tr $bc[$var]>";
 		  print "<td nowrap>";
 		  print '<input type="hidden" name="action" value="addincommande">';
-		  print "<a href=\"../commande/fiche.php?id=$objc->commandeid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
-		  print "<td><a href=\"../comm/fiche.php?socid=$objc->idp\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
+		  print "<a href=\"../commande/fiche.php?id=".$objc->commandeid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$objc->ref."</a></td>\n";
+		  print "<td><a href=\"../comm/fiche.php?socid=".$objc->socid."\">".dolibarr_trunc($objc->nom,18)."</a></td>\n";
 		  print "<td nowrap=\"nowrap\">".dolibarr_print_date($objc->dc,"%d %b")."</td>\n";
 		  print '<td><input type="hidden" name="commandeid" value="'.$objc->commandeid.'">';
 		  print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
@@ -1243,9 +1243,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 
       // Liste de Mes factures
       print '<tr><td width="50%" valign="top">';
-      $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+      $sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
       $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-      $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
+      $sql .=" WHERE f.fk_soc = s.rowid AND f.fk_statut = 0 AND f.fk_user_author = ".$user->id;
       $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
 
       $result=$db->query($sql);
@@ -1265,8 +1265,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		  print "<tr $bc[$var]>";
 		  print "<td nowrap>";
 		  print '<input type="hidden" name="action" value="addinfacture">';
-		  print "<a href=\"../compta/facture.php?facid=$objp->factureid\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
-		  print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
+		  print "<a href=\"../compta/facture.php?facid=".$objp->factureid."\">".img_object($langs->trans("ShowBills"),"bill")." ".$objp->facnumber."</a></td>\n";
+		  print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,18)."</a></td>\n";
 		  print "<td nowrap=\"nowrap\">".dolibarr_print_date($objp->df,"%d %b")."</td>\n";
 		  print '<td><input type="hidden" name="factureid" value="'.$objp->factureid.'">';
 		  print '<input type="text" class="flat" name="qty" size="1" value="1"></td><td nowrap>'.$langs->trans("ReductionShort");
@@ -1301,9 +1301,9 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 	  // Liste de Autres factures
 	  $var=true;
 
-	  $sql = "SELECT s.nom, s.idp, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
+	  $sql = "SELECT s.nom, s.rowid as socid, f.rowid as factureid, f.facnumber,".$db->pdate("f.datef")." as df";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-	  $sql .=" WHERE f.fk_soc = s.idp AND f.fk_statut = 0 AND f.fk_user_author <> ".$user->id;
+	  $sql .=" WHERE f.fk_soc = s.rowid AND f.fk_statut = 0 AND f.fk_user_author <> ".$user->id;
 	  $sql .= " ORDER BY f.datec DESC, f.rowid DESC";
 
 	  $result=$db->query($sql);
@@ -1321,8 +1321,8 @@ if ($_GET["id"] && $_GET["action"] == '' && $product->status)
 		    $var=!$var;
 		    print '<form method="POST" action="fiche.php?id='.$product->id.'">';
 		    print "<tr $bc[$var]>";
-		    print "<td><a href=\"../compta/facture.php?facid=$objp->factureid\">$objp->facnumber</a></td>\n";
-		    print "<td><a href=\"../comm/fiche.php?socid=$objp->idp\">".dolibarr_trunc($objp->nom,24)."</a></td>\n";
+		    print "<td><a href=\"../compta/facture.php?facid=".$objp->factureid."\">$objp->facnumber</a></td>\n";
+		    print "<td><a href=\"../comm/fiche.php?socid=".$objp->socid."\">".dolibarr_trunc($objp->nom,24)."</a></td>\n";
 		    print "<td colspan=\"2\">".$langs->trans("Qty");
 		    print '<input type="hidden" name="action" value="addinfacture">';
 		    print "</td>";

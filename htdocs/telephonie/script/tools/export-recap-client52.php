@@ -38,7 +38,7 @@ $sql .= " WHERE date_format(f.date,'%Y') = '2005'";
 $sql .= " AND l.fk_contrat = c.rowid";
 $sql .= " AND c.fk_client_comm = 52";
 $sql .= " AND f.ligne = l.ligne";
-$sql .= " AND l.fk_soc_facture =s.idp";
+$sql .= " AND l.fk_soc_facture =s.rowid";
 $sql .= " AND fc.rowid = f.fk_facture";
 $sql .= " ORDER BY f.date ASC, f.fk_ligne ASC";
 

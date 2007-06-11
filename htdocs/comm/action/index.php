@@ -63,14 +63,14 @@ llxHeader();
  *
  */
 
-$sql = "SELECT s.nom as societe, s.idp as socid, s.client,";
+$sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " u.login, u.rowid as userid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE a.fk_soc = s.idp AND c.id=a.fk_action AND a.fk_user_author = u.rowid";
+$sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
 {
   $sql .= " AND c.id = ".$_GET["type"];
@@ -81,11 +81,11 @@ if ($_GET["time"] == "today")
 }
 if ($socid) 
 {
-  $sql .= " AND s.idp = ".$socid;
+  $sql .= " AND s.rowid = ".$socid;
 }
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
-	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }

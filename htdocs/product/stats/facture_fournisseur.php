@@ -116,14 +116,14 @@ if ($_GET["id"] || $_GET["ref"])
         print '</div>';
         
 
-        $sql = "SELECT distinct(s.nom), s.idp, s.code_client, f.facnumber, f.amount as amount,";
+        $sql = "SELECT distinct(s.nom), s.rowid as socid, s.code_client, f.facnumber, f.amount as amount,";
         $sql.= " ".$db->pdate("f.datef")." as date, f.paye, f.fk_statut as statut, f.rowid as facid";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."facture_fourn_det as d";
         if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE f.fk_soc = s.idp";
+        $sql.= " WHERE f.fk_soc = s.rowid";
         $sql.= " AND d.fk_facture_fourn = f.rowid AND d.fk_product =".$product->id;
-        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
         if ($socid)
         {
             $sql .= " AND f.fk_soc = $socid";
@@ -142,7 +142,7 @@ if ($_GET["id"] || $_GET["ref"])
             print "<table class=\"noborder\" width=\"100%\">";
 
             print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.idp","","&amp;id=".$_GET["id"],'',$sortfield);
+            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"s.rowid","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client","","&amp;id=".$_GET["id"],'',$sortfield);
             print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"f.datef","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
@@ -162,7 +162,7 @@ if ($_GET["id"] || $_GET["ref"])
                     print '<td><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' ';
                     print $objp->facnumber;
                     print "</a></td>\n";
-                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
                     print "<td>".$objp->code_client."</td>\n";
                     print "<td align=\"center\">";
                     print dolibarr_print_date($objp->date)."</td>";

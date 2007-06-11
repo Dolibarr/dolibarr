@@ -142,7 +142,7 @@ if ($user->rights->telephonie->fournisseur->lire)
   $sql .= " ,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
   $sql .= " ,".MAIN_DB_PREFIX."telephonie_fournisseur as f";
   $sql .= " ,".MAIN_DB_PREFIX."societe_perms as sp";
-  $sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+  $sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
   $sql .= " AND l.fk_client_comm = sp.fk_soc";
   $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
   $sql .= " GROUP BY f.nom";

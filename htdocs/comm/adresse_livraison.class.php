@@ -238,9 +238,9 @@ class AdresseLivraison
     {
 		   global $langs, $conf;
 
-		   $sql = 'SELECT idp, nom, client, fournisseur';
+		   $sql = 'SELECT rowid, nom, client, fournisseur';
 		   $sql .= ' FROM '.MAIN_DB_PREFIX.'societe';
-		   $sql .= ' WHERE idp = '.$socid;
+		   $sql .= ' WHERE rowid = '.$socid;
 		   
 		   $resqlsoc=$this->db->query($sql);
     
@@ -251,8 +251,8 @@ class AdresseLivraison
                 $obj = $this->db->fetch_object($resqlsoc);
                 
                 $this->nom_societe = $obj->nom;
-                $this->socid       = $obj->idp;
-                $this->id          = $obj->idp;
+                $this->socid       = $obj->rowid;
+                $this->id          = $obj->rowid;
                 $this->client      = $obj->client;
                 $this->fournisseur = $obj->fournisseur;
              }
@@ -416,7 +416,7 @@ class AdresseLivraison
   function get_nom($id)
   {
 
-    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
+    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
 
     $result = $this->db->query($sql);
 
@@ -442,10 +442,10 @@ class AdresseLivraison
     */
     function info($id)
     {
-        $sql = "SELECT s.idp, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
+        $sql = "SELECT s.rowid, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
         $sql.= " fk_user_creat, fk_user_modif";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.idp = ".$id;
+        $sql.= " WHERE s.rowid = ".$id;
 
         $result=$this->db->query($sql);
         if ($result)
@@ -454,7 +454,7 @@ class AdresseLivraison
             {
                 $obj = $this->db->fetch_object($result);
 
-                $this->id = $obj->idp;
+                $this->id = $obj->rowid;
 
                 if ($obj->fk_user_creat) {
                     $cuser = new User($this->db, $obj->fk_user_creat);

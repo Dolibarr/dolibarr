@@ -50,7 +50,7 @@ if ($contactid && ! $user->rights->commercial->client->voir)
 {
     $sql = "SELECT sc.fk_soc, sp.fk_soc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."socpeople as sp";
-    $sql .= " WHERE sp.idp = ".$contactid;
+    $sql .= " WHERE sp.rowid = ".$contactid;
     if (! $user->rights->commercial->client->voir && ! $socid)
     {
     	$sql .= " AND sc.fk_soc = sp.fk_soc AND sc.fk_user = ".$user->id;

@@ -123,7 +123,7 @@ if ($_GET["id"])
 	  print "</table><br />";
 
 
-  $sql = "SELECT s.idp, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
+  $sql = "SELECT s.rowid as socid, s.nom, p.fk_contrat, p.montant, p.avance_duree, p.avance_pourcent";
   $sql .= ", p.rem_pour_prev, p.rem_pour_autr, p.mode_paiement";
   $sql .= ", u.name, u.firstname, u.login";
   $sql .= " , ".$db->pdate("p.datepo") . " as datepo";
@@ -133,8 +133,8 @@ if ($_GET["id"])
   $sql .= " , ".MAIN_DB_PREFIX."user as u";
   
   $sql .= " WHERE p.fk_commercial =u.rowid";
-  $sql .= " AND p.fk_user =uu.rowid";
-  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND p.fk_user =u.rowid";
+  $sql .= " AND c.fk_soc = s.rowid";
   $sql .= " AND p.fk_contrat = c.rowid";
   $sql .= " AND c.rowid =".$_GET["id"];
 

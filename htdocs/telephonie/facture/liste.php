@@ -65,7 +65,7 @@ $pagenext = $page + 1;
  */
 
 $sql = "SELECT f.rowid, f.date, f.ligne, f.fourn_montant, f.cout_vente, f.gain, f.fk_facture";
-$sql .= " ,s.nom, s.idp";
+$sql .= " ,s.nom, s.rowid as socid";
 $sql .= " , fac.facnumber as ref";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
@@ -73,8 +73,8 @@ $sql .= " , ".MAIN_DB_PREFIX."facture as fac";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 
-$sql .= " WHERE s.idp = l.fk_soc_facture AND l.rowid = f.fk_ligne";
-$sql .= " AND l.fk_soc_facture = s.idp";
+$sql .= " WHERE s.rowid = l.fk_soc_facture AND l.rowid = f.fk_ligne";
+$sql .= " AND l.fk_soc_facture = s.rowid";
 $sql .= " AND l.fk_client_comm = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
@@ -151,11 +151,11 @@ if ($result)
 
       print "<tr $bc[$var]>";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
       print img_file();      
       print '</a>&nbsp;';
 
-      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+      print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?numero='.$obj->ligne.'">'.dolibarr_print_phone($obj->ligne)."</a></td>\n";
       print '<td align="center">'.$obj->date."</td>\n";
       print '<td align="right">'.sprintf("%01.4f",$obj->cout_vente)."</td>\n";

@@ -61,13 +61,13 @@ $user_contract = CMD_PRESEL_WEB_CONTRACT;
  * Lecture des lignes a commander
  *
  */
-$sql = "SELECT s.nom, s.idp as socid, s.address, s.cp, s.ville";
+$sql = "SELECT s.nom, s.rowid as socid, s.address, s.cp, s.ville";
 $sql .= ", l.ligne, l.statut, l.rowid";
 
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-$sql .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+$sql .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
 $sql .= " AND f.rowid = 4 AND l.statut = 9";
 if ($ligne > 0)
 {
@@ -358,7 +358,7 @@ function CreateAbonne($host, $user_login, $user_passwd, $user_contract, $societe
   if ($result == "OK")
     {
       if ($verbose > 1)
-	dolibarr_syslog("Commande réussie id client ".$client_id);
+	dolibarr_syslog("Commande rè´³sie id client ".$client_id);
       return $client_id;
     }
   else

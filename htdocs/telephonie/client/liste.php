@@ -58,11 +58,11 @@ $pagenext = $page + 1;
  *
  *
  */
-$sql = "SELECT s.idp as socid, s.nom, count(l.ligne) as ligne, cs.ca";
+$sql = "SELECT s.rowid as socid, s.nom, count(l.ligne) as ligne, cs.ca";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perms as sp ON sp.fk_soc = s.idp ";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON cs.fk_client_comm = s.idp";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_societe_ligne as l ON l.fk_client_comm = s.idp";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe_perms as sp ON sp.fk_soc = s.rowid ";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_client_stats as cs ON cs.fk_client_comm = s.rowid";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."telephonie_societe_ligne as l ON l.fk_client_comm = s.rowid";
 
 $sql .= " WHERE sp.fk_user = ".$user->id." AND sp.pread = 1";
 
@@ -72,7 +72,7 @@ if ($_GET["search_client"])
   $sql .= " AND s.nom LIKE '%".$sel."%'";
 }
 
-$sql .= " GROUP BY s.idp";
+$sql .= " GROUP BY s.rowid";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);

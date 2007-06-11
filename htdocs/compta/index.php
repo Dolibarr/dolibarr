@@ -122,12 +122,12 @@ if ($conf->facture->enabled)
 if ($conf->facture->enabled && $user->rights->facture->lire)
 {
 	$sql  = "SELECT f.facnumber, f.rowid, f.total_ttc, f.type,";
-	$sql.= " s.nom, s.idp";
+	$sql.= " s.nom, s.rowid as socid";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql .= " WHERE s.idp = f.fk_soc AND f.fk_statut = 0";
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " WHERE s.rowid = f.fk_soc AND f.fk_statut = 0";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
   if ($socid)
     {
@@ -160,7 +160,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	      print $facturestatic->getNomUrl(1,'');
 	      print '</td>';
 	      print '<td>';
-		  $companystatic->id=$obj->idp;
+		  $companystatic->id=$obj->socid;
 		  $companystatic->nom=$obj->nom;
 		  $companystatic->client=1;
 		  print $companystatic->getNomUrl(1,'',16);
@@ -245,9 +245,9 @@ if ($conf->tax->enabled)
 /**
  * Bookmark
  */
-$sql = "SELECT s.idp, s.nom,b.rowid as bid";
+$sql = "SELECT s.rowid as socid, s.nom, b.rowid as bid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."bookmark as b";
-$sql .= " WHERE b.fk_soc = s.idp AND b.fk_user = ".$user->id;
+$sql .= " WHERE b.fk_soc = s.rowid AND b.fk_user = ".$user->id;
 $sql .= " ORDER BY lower(s.nom) ASC";
 
 $resql = $db->query($sql);
@@ -266,7 +266,7 @@ if ( $resql )
 	  $obj = $db->fetch_object($resql);
 	  $var = !$var;
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+	  print '<td><a href="fiche.php?socid='.$obj->socid.'">'.$obj->nom.'</a></td>';
 	  print '<td align="right"><a href="index.php?action=del_bookmark&amp;bid='.$obj->bid.'">'.img_delete().'</a></td>';
 	  print '</tr>';
 	  $i++;
@@ -290,15 +290,15 @@ if ($user->rights->societe->lire)
 	$langs->load("boxes");
 	$max=5;
 
-	$sql = "SELECT s.nom, s.idp, ".$db->pdate("s.datec")." as dc";
+	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.client = 1";
-	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($user->societe_id > 0)
 	{
-		$sql .= " AND s.idp = $user->societe_id";
+		$sql .= " AND s.rowid = ".$user->societe_id;
 	}
 	$sql .= " ORDER BY s.datec DESC ";
 	$sql .= $db->plimit($max, 0);
@@ -325,7 +325,7 @@ if ($user->rights->societe->lire)
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->idp;
+				$customerstatic->id=$objp->rowid;
 				$customerstatic->nom=$objp->nom;
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
@@ -348,15 +348,15 @@ if ($user->rights->societe->lire)
 	$langs->load("boxes");
 	$max=5;
 
-	$sql = "SELECT s.nom, s.idp, ".$db->pdate("s.datec")." as dc";
+	$sql = "SELECT s.nom, s.rowid, ".$db->pdate("s.datec")." as dc";
 	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 	$sql .= " WHERE s.fournisseur = 1";
-	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($user->societe_id > 0)
 	{
-		$sql .= " AND s.idp = $user->societe_id";
+		$sql .= " AND s.rowid = ".$user->societe_id;
 	}
 	$sql .= " ORDER BY s.datec DESC ";
 	$sql .= $db->plimit($max, 0);
@@ -383,7 +383,7 @@ if ($user->rights->societe->lire)
 			while ($i < $num && $i < $max)
 			{
 				$objp = $db->fetch_object($result);
-				$customerstatic->id=$objp->idp;
+				$customerstatic->id=$objp->rowid;
 				$customerstatic->nom=$objp->nom;
 				$var=!$var;
 				print '<tr '.$bc[$var].'>';
@@ -408,7 +408,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	$langs->load("orders");
 
 	$sql = "SELECT sum(f.total) as tot_fht, sum(f.total_ttc) as tot_fttc,";
-	$sql.= " s.nom, s.idp,";
+	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " p.rowid, p.ref, p.facture, p.fk_statut, p.total_ht, p.total_ttc";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM (".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."commande AS p";
@@ -416,11 +416,11 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc)";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
-	$sql.= " WHERE p.fk_soc = s.idp";
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql.= " WHERE p.fk_soc = s.rowid";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid)
 	{
-		$sql.= " AND p.fk_soc = $socid";
+		$sql.= " AND p.fk_soc = ".$socid;
 	}
 	$sql.= " AND p.fk_statut = 3 AND p.facture=0";
 	$sql.= " GROUP BY p.rowid";
@@ -451,8 +451,8 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
 				print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
 
-				print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-				print '<a href="fiche.php?socid='.$obj->idp.'">'.dolibarr_trunc($obj->nom,44).'</a></td>';
+				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+				print '<a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->total_ttc-$obj->tot_fttc).'</td>';
@@ -492,15 +492,15 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$sql = "SELECT f.rowid, f.facnumber, f.fk_statut, f.type, f.total, f.total_ttc, ";
 	$sql.= $db->pdate("f.date_lim_reglement")." as datelimite,";
 	$sql.= " sum(pf.amount) as am,";
-	$sql.= " s.nom, s.idp";
+	$sql.= " s.nom, s.rowid as socid";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf on f.rowid=pf.fk_facture";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-	$sql.= " WHERE s.idp = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql.= " WHERE s.rowid = f.fk_soc AND f.paye = 0 AND f.fk_statut = 1";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
-	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, s.nom, s.idp";
+	$sql.= " GROUP BY f.rowid, f.facnumber, f.fk_statut, f.total, f.total_ttc, s.nom, s.rowid";
 	$sql.= " ORDER BY f.datef ASC, f.facnumber ASC";
 
 	$resql = $db->query($sql);
@@ -533,7 +533,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturestatic->getNomUrl(1,'');
 				if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
 				print '</td>';
-				print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '<td align="right">'.price($obj->am).'</td>';
@@ -574,15 +574,15 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	{
 		$sql = "SELECT ff.rowid, ff.facnumber, ff.fk_statut, ff.fk_statut, ff.libelle, ff.total_ht, ff.total_ttc,";
 		$sql.= " sum(pf.amount) as am,";
-		$sql.= " s.nom, s.idp";
+		$sql.= " s.nom, s.rowid as socid";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture_fourn as ff";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf on ff.rowid=pf.fk_facturefourn";
 		if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= " WHERE s.idp = ff.fk_soc";
+		$sql.= " WHERE s.rowid = ff.fk_soc";
 		$sql.= " AND ff.paye=0 AND ff.fk_statut = 1";
-		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
-		$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.total, ff.total_ttc, s.nom, s.idp";
+		if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+		$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.total, ff.total_ttc, s.nom, s.rowid";
 
 		$resql=$db->query($sql);
 		if ($resql)
@@ -609,7 +609,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 					$facstatic->id=$obj->rowid;
 					print $facstatic->getNomUrl(1,'');
 					print '</td>';
-					print '<td><a href="fiche.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+					print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 					if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total_ht).'</td>';
 					print '<td align="right">'.price($obj->total_ttc).'</td>';
 					print '<td align="right">'.price($obj->am).'</td>';

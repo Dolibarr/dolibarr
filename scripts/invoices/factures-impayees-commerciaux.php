@@ -50,10 +50,10 @@ $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " , ".MAIN_DB_PREFIX."user as u";
 $sql .= " WHERE f.paye = 0";
-$sql .= " AND f.fk_soc = s.idp";
-$sql .= " AND sc.fk_soc = s.idp";
+$sql .= " AND f.fk_soc = s.rowid";
+$sql .= " AND sc.fk_soc = s.rowid";
 $sql .= " AND sc.fk_user = u.rowid";
-$sql .= " ORDER BY u.email ASC, s.idp ASC";
+$sql .= " ORDER BY u.email ASC, s.rowid ASC";
 
 if ( $db->query($sql) )
 {

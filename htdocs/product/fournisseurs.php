@@ -289,11 +289,11 @@ if ($_GET["id"] || $_GET["ref"])
 				print '</tr>';
 
 				// Liste des fournisseurs
-				$sql = "SELECT s.nom, s.idp, pf.ref_fourn, pfp.price, pfp.quantity";
+				$sql = "SELECT s.nom, s.rowid as socid, pf.ref_fourn, pfp.price, pfp.quantity";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " ON pf.fk_soc = pfp.fk_soc AND pf.fk_product = pfp.fk_product";
-				$sql.= " WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
+				$sql.= " WHERE pf.fk_soc = s.rowid AND pf.fk_product = ".$product->id;
 				$sql.= " ORDER BY lower(s.nom), pfp.quantity";
 
 				$resql="";
@@ -310,7 +310,7 @@ if ($_GET["id"] || $_GET["ref"])
 						$var=!$var;
 						
 						print "<tr $bc[$var]>";
-						print '<td><a href="../fourn/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
+						print '<td><a href="../fourn/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$objp->nom.'</a></td>';
 
 						// Fournisseur
 						print '<td align="left">'.$objp->ref_fourn.'</td>';
@@ -333,8 +333,8 @@ if ($_GET["id"] || $_GET["ref"])
 						// Modifier-Supprimer
 						print '<td align="center">';
 						if ($user->rights->produit->creer) {
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'&amp;price='.$objp->price.'">'.img_edit()."</a>";
-							print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->idp.'&amp;qty='.$objp->quantity.'">';
+							print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=add_price&amp;id_fourn='.$objp->socid.'&amp;qty='.$objp->quantity.'&amp;price='.$objp->price.'">'.img_edit()."</a>";
+							print '<a href="fournisseurs.php?id='.$product->id.'&amp;action=remove_fourn&amp;id_fourn='.$objp->socid.'&amp;qty='.$objp->quantity.'">';
 							print img_disable($langs->trans("Remove")).'</a>';
 						}
 

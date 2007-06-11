@@ -614,7 +614,7 @@ class User
     // Si contact, supprime lien
     if ($this->contact_id)
     {
-    	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE idp = $this->contact_id";
+    	$sql = "UPDATE ".MAIN_DB_PREFIX."socpeople SET fk_user_creat = null WHERE rowid = ".$this->contact_id;
 	    if ($this->db->query($sql))
 	    {
 	    
@@ -1453,7 +1453,7 @@ class User
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

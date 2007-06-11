@@ -183,7 +183,7 @@ if ($account > 0)
 	if ($mode_search)
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 	}
 	$sql.= " WHERE b.fk_account=".$acct->id;
 	$sql.= $sql_rech;
@@ -355,7 +355,7 @@ if ($account > 0)
 	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	if ($mode_search)
 	{
-		$sql.= " ,s.idp as socid, s.nom as thirdparty";
+		$sql.= ", s.rowid as socid, s.nom as thirdparty";
 	}
 	if ($mode_search && $conf->adherent->enabled)
 	{
@@ -369,19 +369,19 @@ if ($account > 0)
 	if ($mode_search)
 	{
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 	}
 	if ($mode_search && $conf->adherent->enabled)
 	{
 		// \TODO Mettre jointure sur adherent
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 	}
 	if ($mode_search && $conf->tax->enabled)
 	{
 		// \TODO Mettre jointure sur charges sociales
 		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = b.rowid AND bu.type='company'";
-		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.idp";
+		//$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON bu.url_id = s.rowid";
 	}
 	$sql.= " WHERE fk_account=".$acct->id;
 	$sql.= $sql_rech;

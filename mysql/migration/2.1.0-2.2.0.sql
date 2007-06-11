@@ -47,8 +47,9 @@ create table `llx_categorie_societe` (
 ) type=innodb;
 
 -- 
+alter table `llx_categorie_societe` drop foreign key fk_societe;
 alter table `llx_categorie_societe`
-  add constraint `llx_categorie_societe_ibfk_1` foreign key(`fk_societe`) REFERENCES `llx_societe` (`idp`) ON DELETE CASCADE ON UPDATE CASCADE,
+  add constraint `llx_categorie_societe_ibfk_1` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE,
   add constraint `llx_categorie_societe_ibfk_2` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
 drop table if exists `llx_categorie_product`;
@@ -560,11 +561,70 @@ drop table if exists llx_ventes;
 drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
 
--- Pas de limite sur nb decimal dans base car definie en option 
+-- Pas de limite sur nb decimal dans base car definie en option
 ALTER TABLE llx_product_price ADD COLUMN price_ttc float DEFAULT 0 AFTER price;
 ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0 AFTER price_base_type;
 ALTER TABLE llx_product_price MODIFY price_ttc float DEFAULT 0;
 ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
 
- 
+-- Changement de idp en rowid
+-- V4 ALTER TABLE llx_socpeople DROP FOREIGN KEY fk_socpeople_fk_soc;
+-- V4 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_societe;
+-- V4 ALTER TABLE llx_commande_fournisseur DROP FOREIGN KEY fk_commande_fournisseur_societe;
+-- V4 ALTER TABLE llx_contrat DROP FOREIGN KEY fk_contrat_societe;
+-- V4 ALTER TABLE llx_facture DROP FOREIGN KEY fk_facture_fk_soc;
+-- V4 ALTER TABLE llx_facture_fourn DROP FOREIGN KEY fk_facture_fourn_fk_soc;
+-- V4 ALTER TABLE llx_fichinter DROP FOREIGN KEY fk_fichinter_fk_soc;
+-- V4 ALTER TABLE llx_osc_customer DROP FOREIGN KEY llx_osc_customer_fk_soc;
+-- V4 ALTER TABLE llx_propal DROP FOREIGN KEY fk_propal_fk_soc;
+-- V4 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_soc;
+-- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_soc;
+-- V4 ALTER TABLE llx_categorie_societe DROP FOREIGN KEY fk_categorie_societe_societe_rowid;
 
+ALTER TABLE `llx_societe` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
+ALTER TABLE `llx_socpeople` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
+
+-- V4 ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_contrat ADD CONSTRAINT fk_contrat_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_fichinter ADD CONSTRAINT fk_fichinter_fk_soc	FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
+
+ALTER TABLE `llx_osc_customer` CHANGE `osc_custid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_customer` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_customer` CHANGE `doli_socidp` `fk_soc` integer NOT NULL default '0';
+ALTER TABLE `llx_osc_customer` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_customer` ADD UNIQUE KEY `fk_soc` (`fk_soc`);
+-- V4 ALTER TABLE llx_osc_customer ADD CONSTRAINT fk_osc_customer_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE `llx_osc_order` CHANGE `osc_orderid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_order` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_order` CHANGE `doli_orderidp` `fk_commande` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_order` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_order` ADD UNIQUE KEY `fk_commande` (`fk_commande`);
+ALTER TABLE `llx_osc_product` CHANGE `osc_prodid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_product` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_product` CHANGE `doli_prodidp` `fk_product` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_product` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
+
+-- V4 ALTER TABLE llx_telephonie_adsl_fournisseur DROP FOREIGN KEY fk_soc;
+-- V4 ALTER TABLE llx_telephonie_adsl_fournisseur ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_telephonie_client_stats DROP FOREIGN KEY fk_client_comm;
+-- V4 ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP FOREIGN KEY fk_contact;
+-- V4 ALTER TABLE llx_telephonie_contact_facture ADD FOREIGN KEY (fk_contact) REFERENCES llx_socpeople (rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_client_comm;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc_facture;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_tarif_client DROP FOREIGN KEY fk_client;
+-- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
+-- fin du changement idp en rowid

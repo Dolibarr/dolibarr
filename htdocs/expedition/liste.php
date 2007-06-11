@@ -57,13 +57,13 @@ $offset = $limit * $_GET["page"] ;
 
 llxHeader('',$langs->trans('ListOfSendings'),'ch-expedition.html');
 
-$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut, s.nom as socname, s.idp, c.ref as comref, c.rowid as comid";
+$sql = "SELECT e.rowid, e.ref,".$db->pdate("e.date_expedition")." as date_expedition, e.fk_statut, s.nom as socname, s.rowid as socid, c.ref as comref, c.rowid as comid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."expedition as e";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."commande as c";
 if ($socid) $sql.=", ".MAIN_DB_PREFIX."commande as c";
 if ($user->rights->commercial->client->voir && !$socid) $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."commande as c ON c.rowid = e.fk_commande";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = c.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = c.fk_soc";
 
 $sql_add = " WHERE ";
 if ($socid)
@@ -111,9 +111,9 @@ if ($resql)
       
       $var=!$var;
       print "<tr $bc[$var]>";
-      print "<td><a href=\"fiche.php?id=$objp->rowid\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
-      print "<a href=\"fiche.php?id=$objp->rowid\">".$objp->ref."</a></td>\n";
-      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.$objp->socname.'</a></td>';
+      print "<td><a href=\"fiche.php?id=".$objp->rowid."\">".img_object($langs->trans("ShowSending"),"sending").'</a>&nbsp;';
+      print "<a href=\"fiche.php?id=".$objp->rowid."\">".$objp->ref."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.$objp->socname.'</a></td>';
       print '<td><a href="'.DOL_URL_ROOT.'/expedition/commande.php?id='.$objp->comid.'">'.$objp->comref.'</a></td>';
 
       $now = time();

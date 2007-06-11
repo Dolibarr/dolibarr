@@ -119,7 +119,7 @@ class mod_codecompta_aquarium extends ModeleAccountancyCode
     if ($type == 'customer') $sql.= "code_compta";
     if ($type == 'supplier') $sql.= "code_compta_fournisseur";
     $sql.= " = '".$code."'";
-    $sql.= " AND idp != ".$societe->id;
+    $sql.= " AND rowid != ".$societe->id;
     
     $resql=$db->query($sql);
     if ($resql)

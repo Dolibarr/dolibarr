@@ -52,10 +52,10 @@ $sortorder = $_GET["sortorder"];
 if ($sortorder == "") $sortorder="DESC";
 if ($sortfield == "") $sortfield="marge";
 
-$sql = "SELECT nom, ca, gain, cout, marge, idp";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
-$sql .= " , " .MAIN_DB_PREFIX."societe";
-$sql .= " WHERE idp = fk_client_comm";
+$sql = "SELECT s.nom, tcs.ca, tcs.gain, tcs.cout, tcs.marge, s.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats as tcs";
+$sql .= " , " .MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE s.rowid = tcs.fk_client_comm";
 $sql .= " ORDER BY $sortfield $sortorder ";// . $db->plimit($conf->liste_limit+1, $offset);
 
 if ($db->query($sql))
@@ -65,11 +65,11 @@ if ($db->query($sql))
 
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre("Client","gain.php","nom");
-  print_liste_field_titre("Marge","gain.php","marge",'','','align="right"');
-  print_liste_field_titre("Gain Total","gain.php","gain",'','','align="right"');
-  print_liste_field_titre("Vente","gain.php","ca",'','','align="right"');
-  print_liste_field_titre("Achat","gain.php","cout",'','','align="right"');
+  print_liste_field_titre("Client","gain.php","s.nom");
+  print_liste_field_titre("Marge","gain.php","tcs.marge",'','','align="right"');
+  print_liste_field_titre("Gain Total","gain.php","tcs.gain",'','','align="right"');
+  print_liste_field_titre("Vente","gain.php","tcs.ca",'','','align="right"');
+  print_liste_field_titre("Achat","gain.php","tcs.cout",'','','align="right"');
   print "</tr>\n";
   $var=True;
 

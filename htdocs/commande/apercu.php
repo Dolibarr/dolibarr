@@ -89,12 +89,12 @@ if ($_GET["id"] > 0) {
 		/*
 		 *   Commande
 		 */
-		$sql = 'SELECT s.nom, s.idp, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
+		$sql = 'SELECT s.nom, s.rowid, c.amount_ht, c.fk_projet, c.remise, c.tva, c.total_ttc, c.ref, c.fk_statut, '.$db->pdate('c.date_commande').' as dp, c.note,';
 		$sql.= ' c.fk_user_author, c.fk_user_valid, c.fk_user_cloture, c.date_creation, c.date_valid, c.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
-		$sql.= ' WHERE c.fk_soc = s.idp';
+		$sql.= ' WHERE c.fk_soc = s.rowid';
 		$sql.= ' AND c.rowid = '.$commande->id;
-		if ($socid) $sql .= ' AND s.idp = '.$socid;
+		if ($socid) $sql .= ' AND s.rowid = '.$socid;
 
 		$result = $db->query($sql);
 
@@ -105,7 +105,7 @@ if ($_GET["id"] > 0) {
 				$obj = $db->fetch_object($result);
 
 				$societe = new Societe($db);
-				$societe->fetch($obj->idp);
+				$societe->fetch($obj->rowid);
 
 				print '<table class="border" width="100%">';
 

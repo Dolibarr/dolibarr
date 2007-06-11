@@ -51,7 +51,7 @@ if ($sortfield == "") $sortfield="ca";
 $sql = "SELECT nom, ca, gain, cout, marge, fk_client_comm";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
 $sql .= " , " .MAIN_DB_PREFIX."societe";
-$sql .= " WHERE idp = fk_client_comm";
+$sql .= " WHERE rowid = fk_client_comm";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 if ($resql)

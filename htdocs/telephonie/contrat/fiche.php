@@ -156,7 +156,7 @@ if ($_GET["action"] == 'create' && $user->rights->telephonie->ligne->creer)
 
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
-  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 AND (parent = 0 OR parent IS NULL) ORDER BY nom ";
+  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 AND (parent = 0 OR parent IS NULL) ORDER BY nom ";
   if ( $db->query( $sql) )
     {
       $num = $db->num_rows();
@@ -244,9 +244,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  
 	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
 	  $ff = array();
-	  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe";
+	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe";
 	  $sql .= " WHERE client=1";
-	  $sql .= " AND (idp = $socc->id OR parent = $socc->id)";
+	  $sql .= " AND (rowid = ".$socc->id." OR parent = ".$socc->id.")";
 	  $sql .= " ORDER BY nom ";
 
 	  if ( $db->query( $sql) )
@@ -273,8 +273,8 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  
 	  print '<tr><td width="20%">Client à facturer</td><td >';
 	  $ff = array();
-	  $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
-	  $sql .= " AND (idp = $socc->id OR parent = $socc->id)";
+	  $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
+	  $sql .= " AND (rowid = ".$socc->id." OR parent = ".$socc->id.")";
 	  $sql .= " ORDER BY nom ";
 	  if ( $db->query( $sql) )
 	    {
@@ -338,17 +338,17 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client_comm"] > 0 && $user->r
 	  /*
 	   * Contrats existants
 	   */
-	  $sql = "SELECT c.rowid, c.ref, s.idp as socid, s.nom ";
-	  $sql .= ", sf.idp as sfidp, sf.nom as sfnom";
-	  $sql .= ", sa.idp as saidp, sa.nom as sanom";
+	  $sql = "SELECT c.rowid, c.ref, s.rowid as socid, s.nom ";
+	  $sql .= ", sf.rowid as sfidp, sf.nom as sfnom";
+	  $sql .= ", sa.rowid as saidp, sa.nom as sanom";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as sf";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as sa";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";	  	  
-	  $sql .= " WHERE c.fk_client_comm = s.idp";
-	  $sql .= " AND c.fk_soc = sa.idp";
-	  $sql .= " AND c.fk_soc_facture = sf.idp";	  	 
-	  $sql .= " AND s.idp = ".$_GET["client_comm"];
+	  $sql .= " WHERE c.fk_client_comm = s.rowid";
+	  $sql .= " AND c.fk_soc = sa.rowid";
+	  $sql .= " AND c.fk_soc_facture = sf.rowid";	  	 
+	  $sql .= " AND s.rowid = ".$_GET["client_comm"];
 	  
 	  $result = $db->query($sql);
 	  if ($result)
@@ -570,10 +570,10 @@ else
 	      print '<tr><td valign="top" width="20%">Contact facture</td>';
 	      print '<td valign="top" colspan="3">';
 
-	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	      $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
 	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
+	      $sql .= " WHERE c.rowid = cf.fk_contact AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
 	      if ( $db->query( $sql) )
 		{
 		  $num = $db->num_rows();
@@ -609,7 +609,7 @@ else
 	      $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 	      $sql .= " WHERE l.fk_fournisseur = f.rowid";
-	      $sql .= " AND l.fk_soc = ss.idp ";
+	      $sql .= " AND l.fk_soc = ss.rowid ";
 	      $sql .= " AND l.fk_contrat = ".$contrat->id;
 	      $sql .= " ORDER BY l.statut ASC, l.ligne ASC";
 	      
@@ -713,8 +713,8 @@ else
 	      print '<tr><td width="20%">Client (Agence/Filiale)</td><td colspan="2">';
 	      print '<select name="client">';
 	      
-	      $sql = "SELECT idp, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
-	      $sql .= " AND (idp = $client_comm->id OR parent = $client_comm->id)";
+	      $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
+	      $sql .= " AND (rowid = ".$client_comm->id." OR parent = ".$client_comm->id.")";
 	      $sql .= "  ORDER BY nom ";
 	      if ( $db->query( $sql) )
 		{
@@ -743,8 +743,8 @@ else
 	      print '<select name="client_facture">'."\n";
 	      
 	      
-	      $sql = "SELECT idp, nom,ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ";
-	      $sql .= " AND (idp = $client_comm->id OR parent = $client_comm->id)";
+	      $sql = "SELECT rowid, nom,ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ";
+	      $sql .= " AND (rowid = ".$client_comm->id." OR parent = ".$client_comm->id.")";
 	      $sql .= "  ORDER BY nom ";
 	      if ( $db->query( $sql) )
 		{
@@ -904,10 +904,10 @@ else
 
 	      print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
-	      $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+	      $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
 	      $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
 	      $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
-	      $sql .= " WHERE c.idp = cf.fk_contact ";
+	      $sql .= " WHERE c.rowid = cf.fk_contact ";
 	      $sql .= " AND cf.fk_contrat = ".$contrat->id." ORDER BY name ";
 
 	      if ( $db->query( $sql) )
@@ -940,7 +940,7 @@ else
 
 	      print '<tr><td valign="top" width="20%">Contact</td><td valign="top" colspan="2">';
 	  	 
-	      $sql = "SELECT idp, name, firstname, email ";
+	      $sql = "SELECT rowid, name, firstname, email ";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."socpeople ";
 	      $sql .= " WHERE fk_soc in (".$contrat->client_facture_id.",".$contrat->client_id.")";
 	      $sql .= " ORDER BY name ";

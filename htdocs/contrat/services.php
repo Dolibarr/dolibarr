@@ -68,7 +68,7 @@ $staticcontratligne=new ContratLigne($db);
 llxHeader();
 
 
-$sql = "SELECT s.idp as sidp, s.nom, c.rowid as cid,";
+$sql = "SELECT s.rowid as socid, s.nom, c.rowid as cid,";
 $sql.= " cd.rowid, cd.description, cd.statut, p.rowid as pid, p.label as label,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " sc.fk_soc, sc.fk_user,";
 $sql.= " ".$db->pdate("cd.date_ouverture_prevue")." as date_ouverture_prevue,";
@@ -82,8 +82,8 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
 $sql.= " WHERE c.statut > 0";
 $sql.= " AND c.rowid = cd.fk_contrat";
-$sql.= " AND c.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " AND c.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($mode == "0") $sql.= " AND cd.statut = 0";
 if ($mode == "4") $sql.= " AND cd.statut = 4";
 if ($mode == "5") $sql.= " AND cd.statut = 5";
@@ -91,7 +91,7 @@ if ($filter == "expired") $sql.= " AND date_fin_validite < sysdate()";
 if ($search_nom)      $sql.= " AND s.nom like '%".addslashes($search_nom)."%'";
 if ($search_contract) $sql.= " AND c.rowid = '".addslashes($search_contract)."'";
 if ($search_service)  $sql.= " AND (p.ref like '%".addslashes($search_service)."%' OR p.description like '%".addslashes($search_service)."%')";
-if ($socid > 0)       $sql.= " AND s.idp = ".$socid;
+if ($socid > 0)       $sql.= " AND s.rowid = ".$socid;
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit($limit + 1 ,$offset);
 
@@ -163,7 +163,7 @@ if ($resql)
         	print dolibarr_trunc($obj->description,20);
     	}
         print '</td>';
-        print '<td><a href="../comm/fiche.php?socid='.$obj->sidp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
+        print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         // Date debut
         if ($mode == "0") {
             print '<td align="center">';

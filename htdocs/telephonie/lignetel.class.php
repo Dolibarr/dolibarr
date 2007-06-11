@@ -667,10 +667,10 @@ class LigneTel {
    */
   function log_clients()
   {
-    $sql = "SELECT distinct s.idp ";
+    $sql = "SELECT distinct s.rowid ";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
     $sql .= " , ".MAIN_DB_PREFIX."societe as s";
-    $sql .= " WHERE l.statut = 3 AND s.idp = l.fk_soc ";
+    $sql .= " WHERE l.statut = 3 AND s.rowid = l.fk_soc ";
 
     if ($this->db->query($sql))
       {
@@ -829,10 +829,10 @@ class LigneTel {
     $resid = array();
 
 
-    $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+    $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
     $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
     $sql .= ",".MAIN_DB_PREFIX."telephonie_contact_facture as cf";
-    $sql .= " WHERE c.idp = cf.fk_contact AND cf.fk_ligne = ".$this->id." ORDER BY name ";
+    $sql .= " WHERE c.rowid = cf.fk_contact AND cf.fk_ligne = ".$this->id." ORDER BY name ";
 
     if ( $this->db->query( $sql) )
       {

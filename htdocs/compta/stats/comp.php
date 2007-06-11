@@ -26,11 +26,12 @@ require("./lib.inc.php");
 
 function propals ($db, $year, $month) {
   global $bc,$langs;
-  $sql = "SELECT s.nom, s.idp, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c WHERE p.fk_soc = s.idp AND p.fk_statut = c.id";
+  $sql = "SELECT s.nom, s.rowid as socid, p.rowid as propalid, p.price, p.ref,".$db->pdate("p.datep")." as dp, c.label as statut, c.id as statutid";
+  $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
+  $sql.= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
   $sql .= " AND c.id in (1,2,4)";
-  $sql .= " AND date_format(p.datep, '%Y') = $year ";
-  $sql .= " AND round(date_format(p.datep, '%m')) = $month ";
+  $sql .= " AND date_format(p.datep, '%Y') = ".$year;
+  $sql .= " AND round(date_format(p.datep, '%m')) = ".$month;
 
 
   $sql .= " ORDER BY p.fk_statut";
@@ -68,14 +69,14 @@ function propals ($db, $year, $month) {
     $var=!$var;
     print "<tr $bc[$var]>";
     
-    print "<td><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></td>\n";
+    print "<td><a href=\"comp.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
     
-    print "<td><a href=\"../../comm/propal.php?propalid=$objp->propalid\">$objp->ref</a></td>\n";
+    print "<td><a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$objp->propalid."\">".$objp->ref."</a></td>\n";
     
     print "<td align=\"right\">".dolibarr_print_date($objp->dp)."</td>\n";
     
     print "<td align=\"right\">".price($objp->price)."</td>\n";
-    print "<td align=\"center\">$objp->statut</td>\n";
+    print "<td align=\"center\">".$objp->statut."</td>\n";
     print "</tr>\n";
     
     $total = $total + $objp->price;
@@ -97,15 +98,15 @@ function propals ($db, $year, $month) {
 function factures ($db, $year, $month, $paye) {
   global $bc,$conf;
 
-  $sql = "SELECT s.nom, s.idp, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+  $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
   $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
   $sql .= " WHERE f.fk_statut = 1";
   if ($conf->compta->mode != 'CREANCES-DETTES') { 
-	$sql .= " AND f.paye = $paye";
+	$sql .= " AND f.paye = ".$paye;
   }
-  $sql .= " AND f.fk_soc = s.idp";
-  $sql .= " AND date_format(f.datef, '%Y') = $year ";
-  $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
+  $sql .= " AND f.fk_soc = s.rowid";
+  $sql .= " AND date_format(f.datef, '%Y') = ".$year;
+  $sql .= " AND round(date_format(f.datef, '%m')) = ".$month;
   $sql .= " ORDER BY f.datef DESC ";
 
   $result = $db->query($sql);
@@ -130,8 +131,8 @@ function factures ($db, $year, $month, $paye) {
 	      $objp = $db->fetch_object($result);
 	      $var=!$var;
 	      print "<tr $bc[$var]>";
-	      print "<td><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></td>\n";
-	      print "<td><a href=\"../facture.php?facid=$objp->facid\">$objp->facnumber</a></td>\n";
+	      print "<td><a href=\"comp.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
+	      print "<td><a href=\"../facture.php?facid=".$objp->facid."\">".$objp->facnumber."</a></td>\n";
 	      if ($objp->df > 0 )
 		{
 		  print "<td align=\"right\">".dolibarr_print_date($objp->df)."</td>\n";

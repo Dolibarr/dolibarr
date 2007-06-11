@@ -52,14 +52,14 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.nom,s.idp, f.note, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
+$sql = "SELECT s.nom,s.rowid as socid, f.note, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
-$sql .= " WHERE f.fk_soc = s.idp";
+$sql .= " WHERE f.fk_soc = s.rowid";
 
 
 if ($socid > 0)
 {
-  $sql .= " AND s.idp = " . $socid;
+  $sql .= " AND s.rowid = " . $socid;
 }
 
 if (empty ($MM))
@@ -120,8 +120,8 @@ if ( $db->query($sql) )
       {
 	if (!empty($MM))
 	  $filter="&MM=$MM&YY=$YY";
-        print '<td><a href="rapport.php?socid='.$objp->idp.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
-        print "<a href=\"../comm/fiche.php?socid=$objp->idp$filter\">$objp->nom</a></TD>\n";
+        print '<td><a href="rapport.php?socid='.$objp->socid.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
+        print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
       }
       print '<td>'.nl2br($objp->note).'</td>';
       print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";

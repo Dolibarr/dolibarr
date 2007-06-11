@@ -65,15 +65,15 @@ if ($user->societe_id > 0)
 llxHeader();
 
 
-$sql = "SELECT s.nom,s.idp, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.note, f.duree";
+$sql = "SELECT s.nom,s.rowid as socid, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.note, f.duree";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= " WHERE f.fk_soc = s.idp ";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql.= " WHERE f.fk_soc = s.rowid ";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid > 0)
 {
-	$sql .= " AND s.idp = " . $socid;
+	$sql .= " AND s.rowid = " . $socid;
 }
 $sql.= " ORDER BY $sortfield $sortorder ";
 $sql.= $db->plimit( $limit + 1 ,$offset);
@@ -105,8 +105,8 @@ if ($result)
         $objp = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print "<td><a href=\"fiche.php?id=$objp->fichid\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
+        print "<td><a href=\"fiche.php?id=".$objp->fichid."\">".img_object($langs->trans("Show"),"task").' '.$objp->ref."</a></td>\n";
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
         print '<td>'.nl2br($objp->note).'</td>';
         print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
         print '<td align="right">'.price($objp->duree).'</td>';

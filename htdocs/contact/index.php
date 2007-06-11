@@ -104,13 +104,13 @@ if ($_POST["button_removefilter"])
  
 llxHeader();
 
-$sql = "SELECT s.idp, s.nom, ";
-$sql.= " p.idp as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
+$sql = "SELECT s.rowid as socid, s.nom, ";
+$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."socpeople as p";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql.= " WHERE 1=1 ";
 
 if ($_GET["userid"])    // statut commercial
@@ -119,7 +119,7 @@ if ($_GET["userid"])    // statut commercial
 }
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
-	$sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+	$sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($search_nom)        // filtre sur le nom
 {
@@ -155,7 +155,7 @@ if ($sall)
 }
 if ($socid)
 {
-    $sql .= " AND s.idp = $socid";
+    $sql .= " AND s.rowid = ".$socid;
 }
 
 if($_GET["view"] == "recent")
@@ -261,9 +261,9 @@ if ($result)
         print ' '.$obj->name.'</a></td>';
         print '<td>'.$obj->firstname.'</td>';
         print '<td>';
-        if ($obj->idp)
+        if ($obj->socid)
         {
-            print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->idp.'">';
+            print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
             print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,40).'</a>';
         }
         else
@@ -271,7 +271,7 @@ if ($result)
             print '&nbsp;';
         }
         print '</td>';
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
         if ($_GET["view"] == 'phone')
         {

@@ -82,7 +82,7 @@ class ComptaJournalPaiement  {
 	$sql .= " , ".MAIN_DB_PREFIX."societe as s";
 	$sql .= " WHERE p.fk_paiement = c.id";
 	$sql .= " AND pf.fk_paiement = p.rowid";
-	$sql .= " AND f.fk_soc = s.idp";
+	$sql .= " AND f.fk_soc = s.rowid";
 	$sql .= " AND p.statut = 1 ";
 	$sql .= " AND pf.fk_facture = f.rowid";
 	$sql .= " AND p.fk_export_compta = ".$excid;

@@ -425,11 +425,11 @@ else
 	      print '<td align="center">'.$langs->trans("Quantity").'</td>';
 	      print '</tr>';
 
-	      $sql = "SELECT s.nom, s.idp, pf.ref_fourn, pfp.price, pfp.quantity";
+	      $sql = "SELECT s.nom, s.rowid as socid, pf.ref_fourn, pfp.price, pfp.quantity";
 	      $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
-	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.idp = pfp.fk_soc";
+	      $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON s.rowid = pfp.fk_soc";
 	      $sql .= " AND pfp.fk_product =".$product->id; 
-	      $sql .= " WHERE pf.fk_soc = s.idp AND pf.fk_product = ".$product->id;
+	      $sql .= " WHERE pf.fk_soc = s.rowid AND pf.fk_product = ".$product->id;
 	      $sql .= " ORDER BY pfp.price ASC, lower(s.nom)";
 	      
 	      if ( $db->query($sql) )
@@ -442,11 +442,11 @@ else
 		      $objp = $db->fetch_object($resql);
 		      $var=!$var;
 		      print "<tr $bc[$var]>";
-		      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+		      print '<td><a href="'.DOL_URL_ROOT.'/fourn/fiche.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
 		      print '<td>';
-		      print '<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->idp.'">';
+		      print '<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->socid.'">';
 		      print img_edit($langs->trans("Edit"));
-		      print '&nbsp;<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->idp.'">';
+		      print '&nbsp;<a href="fourn.php?id='.$product->id.'&amp;id_fourn='.$objp->socid.'">';
 		      print $objp->ref_fourn.'</a></td>';
 
 		      print '<td align="right">';
@@ -476,7 +476,7 @@ else
 		  print '<table class="border" width="100%"><tr>';
 		  print '<td>'.$langs->trans("Suppliers").'</td><td><select name="id_fourn">';
 		  
-		  $sql = "SELECT s.idp, s.nom, s.ville";
+		  $sql = "SELECT s.rowid as socid, s.nom, s.ville";
 		  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s WHERE s.fournisseur=1";	     
 		  $sql .= " ORDER BY lower(s.nom)";
 		  
@@ -488,7 +488,7 @@ else
 		      while ($i < $num)
 			{
 			  $obj = $db->fetch_object($resql);
-			  print '<option value="'.$obj->idp.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
+			  print '<option value="'.$obj->socid.'">'.$obj->nom . ($obj->ville?" ($obj->ville)":"");
 			  $i++;
 			}
 		      $db->free($resql);

@@ -161,7 +161,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	{
 		$sql = "SELECT code_client FROM ".MAIN_DB_PREFIX."societe";
 		$sql.= " WHERE code_client = '".$code."'";
-		$sql.= " AND idp != '".$soc->id."'";
+		$sql.= " AND rowid != '".$soc->id."'";
 
 		$resql=$db->query($sql);
 		if ($resql)

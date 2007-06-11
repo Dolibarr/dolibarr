@@ -73,7 +73,7 @@ class mailing_poire extends MailingTargets
         $langs->load("commercial");
 
 	    $statssql=array();
-        $statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.idp = c.fk_soc AND s.client = 1 AND c.email != ''";
+        $statssql[0]="SELECT '".$langs->trans("NbOfCompaniesContacts")."' as label, count(distinct(c.email)) as nb FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."societe as s WHERE s.rowid = c.fk_soc AND s.client = 1 AND c.email != ''";
 
 		return $statssql;
 	}
@@ -90,7 +90,7 @@ class mailing_poire extends MailingTargets
         $sql  = "SELECT count(distinct(c.email)) as nb";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE s.idp = c.fk_soc";
+        $sql .= " WHERE s.rowid = c.fk_soc";
         $sql .= " AND c.email != ''";
 
         // La requete doit retourner un champ "nb" pour etre comprise
@@ -144,10 +144,10 @@ class mailing_poire extends MailingTargets
         $cibles = array();
 
         // La requete doit retourner: id, email, fk_contact, name, firstname
-        $sql = "SELECT c.idp as id, c.email as email, c.idp as fk_contact, c.name as name, c.firstname as firstname";
+        $sql = "SELECT c.rowid as id, c.email as email, c.rowid as fk_contact, c.name as name, c.firstname as firstname";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
         $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE s.idp = c.fk_soc";
+        $sql .= " WHERE s.rowid = c.fk_soc";
         $sql .= " AND c.email != ''";
         foreach($filtersarray as $key)
         {

@@ -51,7 +51,7 @@ if ($resql)
 }
 
 $socids = array();
-$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1";
 $resql = $db->query($sql);
 if ($resql) 
 {

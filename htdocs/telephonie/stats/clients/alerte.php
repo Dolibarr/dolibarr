@@ -63,12 +63,12 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 
 print '<tr><td width="70%" valign="top">';
 
-$sql = "SELECT nom, ca, gain, cout, marge, idp";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats";
-$sql .= " , " .MAIN_DB_PREFIX."societe";
-$sql .= " WHERE idp = fk_client_comm";
-$sql .= " AND marge < ". $marge;
-$sql .= " GROUP BY marge DESC";
+$sql = "SELECT s.nom, tcs.ca, tcs.gain, tcs.cout, tcs.marge, s.rowid";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_client_stats as tcs";
+$sql .= " , " .MAIN_DB_PREFIX."societe as s";
+$sql .= " WHERE s.rowid = tcs.fk_client_comm";
+$sql .= " AND tcs.marge < ". $marge;
+$sql .= " GROUP BY tcs.marge DESC";
 
 if ($db->query($sql))
 {

@@ -49,10 +49,10 @@ function factures ($db, $year, $month, $paye)
 {
   global $bc,$langs;
 
-  $sql = "SELECT s.nom, s.idp, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
-  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.idp AND f.paye = $paye";
-  $sql .= " AND date_format(f.datef, '%Y') = $year ";
-  $sql .= " AND round(date_format(f.datef, '%m')) = $month ";
+  $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.total as amount,".$db->pdate("f.datef")." as df, f.paye, f.rowid as facid ";
+  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f WHERE f.fk_soc = s.rowid AND f.paye = ".$paye;
+  $sql .= " AND date_format(f.datef, '%Y') = ".$year;
+  $sql .= " AND round(date_format(f.datef, '%m')) = ".$month;
   $sql .= " ORDER BY f.datef DESC ";
 
   $result = $db->query($sql);
@@ -74,8 +74,8 @@ function factures ($db, $year, $month, $paye)
 	$objp = $db->fetch_object($result);
 	$var=!$var;
 	print "<TR $bc[$var]>";
-	print "<TD><a href=\"comp.php?socid=$objp->idp\">$objp->nom</a></TD>\n";
-	print "<TD><a href=\"facture.php?facid=$objp->facid\">$objp->facnumber</a></TD>\n";
+	print "<TD><a href=\"comp.php?socid=".$objp->socid."\">".$objp->nom."</a></TD>\n";
+	print "<TD><a href=\"facture.php?facid=".$objp->facid."\">".$objp->facnumber."</a></TD>\n";
 	if ($objp->df > 0 ) {
 	  print "<TD align=\"right\">".dolibarr_print_date($objp->df)."</TD>\n";
 	} else {

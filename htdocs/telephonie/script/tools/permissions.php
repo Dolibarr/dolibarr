@@ -28,7 +28,7 @@
  ****************************************************************/
 require ("../../../master.inc.php");
 
-$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe";
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe";
 $resql = $db->query($sql);
   
 if ( $resql )

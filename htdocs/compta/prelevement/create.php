@@ -163,10 +163,10 @@ else
  * Factures en attente de prélèvement
  *
  */
-$sql = "SELECT f.facnumber, f.rowid, s.nom, s.idp";
+$sql = "SELECT f.facnumber, f.rowid, s.nom, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."societe as s";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_facture_demande as pfd";
-$sql .= " WHERE s.idp = f.fk_soc";
+$sql .= " WHERE s.rowid = f.fk_soc";
 $sql .= " AND pfd.traite = 0 AND pfd.fk_facture = f.rowid";
 
 if ($socid)
@@ -191,7 +191,7 @@ if ( $db->query($sql) )
 	  $var=!$var;
 	  print '<tr '.$bc[$var].'><td>';
 	  print '<a href="'.DOL_URL_ROOT.'/compta/facture/prelevement.php?facid='.$obj->rowid.'">'.img_file().' '.$obj->facnumber.'</a></td>';
-      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/soc.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),'company').' '.$obj->nom.'</a></td>';
 	  print '</tr>';
 	  $i++;
 	}

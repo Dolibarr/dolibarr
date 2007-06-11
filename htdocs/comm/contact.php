@@ -71,15 +71,15 @@ if ($type == "f")
  *
  */
 
-$sql = "SELECT s.idp, s.nom,  st.libelle as stcomm";
-$sql .= ", p.idp as cidp, p.name, p.firstname, p.email, p.phone";
+$sql = "SELECT s.rowid, s.nom,  st.libelle as stcomm";
+$sql .= ", p.rowid as cidp, p.name, p.firstname, p.email, p.phone";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."c_stcomm as st,";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql .= " ".MAIN_DB_PREFIX."socpeople as p";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.idp = p.fk_soc";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = p.fk_soc";
 $sql .= " WHERE s.fk_stcomm = st.id";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($type == "c") $sql .= " AND s.client = 1";
 if ($type == "p") $sql .= " AND s.client = 2";
 if ($type == "f") $sql .= " AND s.fournisseur = 1";
@@ -118,7 +118,7 @@ if ($_GET["contactname"]) // acces a partir du module de recherche
 }
 
 if ($socid) {
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($limit+1, $offset);
@@ -158,16 +158,16 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->idp.'">'.img_object($langs->trans("ShowContact"),"contact");
-      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->name.'</a></td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowContact"),"contact");
+      print '</a>&nbsp;<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->name.'</a></td>';
       print "<td>$obj->firstname</TD>";
       
-      print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->idp.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
-      print "<a href=\"".$urlfiche."?socid=$obj->idp\">$obj->nom</a></td>\n";
+      print '<td><a href="'.$_SERVER["PHP_SELF"].'?type='.$type.'&socid='.$obj->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
+      print "<a href=\"".$urlfiche."?socid=".$obj->rowid."\">$obj->nom</a></td>\n";
       
-      print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.$obj->email.'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actioncode=AC_EMAIL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.$obj->email.'</a>&nbsp;</td>';
       
-      print '<td><a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->cidp.'&socid='.$obj->idp.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
+      print '<td><a href="action/fiche.php?action=create&actioncode=AC_TEL&contactid='.$obj->cidp.'&socid='.$obj->rowid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
       
       print "</tr>\n";
       $i++;

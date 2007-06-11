@@ -129,7 +129,7 @@ class CommandeMethodeTextP extends CommandeMethode
 
 	$this->ligneids = array();
 	
-	$sqlall = "SELECT s.nom, s.idp as socid, l.ligne, l.statut, l.rowid";
+	$sqlall = "SELECT s.nom, s.rowid as socid, l.ligne, l.statut, l.rowid";
 	$sqlall .= " , comm.name, comm.firstname";
 	
 	$sqlall .= " FROM ".MAIN_DB_PREFIX."societe as s";
@@ -137,7 +137,7 @@ class CommandeMethodeTextP extends CommandeMethode
 	$sqlall .= " , ".MAIN_DB_PREFIX."user as comm";
 	$sqlall .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
 
-	$sqlall .= " WHERE l.fk_soc = s.idp AND l.fk_fournisseur = f.rowid";
+	$sqlall .= " WHERE l.fk_soc = s.rowid AND l.fk_fournisseur = f.rowid";
 
 	$sqlall .= " AND l.fk_commercial = comm.rowid ";
 	$sqlall .= " AND f.rowid =".$this->fourn->id;

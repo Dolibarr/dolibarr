@@ -73,18 +73,18 @@ class box_actions extends ModeleBoxes {
 		{
 			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent,";
 			$sql.= " ta.code,";
-			$sql.= " s.nom, s.idp";
+			$sql.= " s.nom, s.rowid as socid";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 			$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm AS ta, ";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux AS sc, ";
 			$sql.= MAIN_DB_PREFIX."actioncomm AS a";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.idp";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe AS s ON a.fk_soc = s.rowid";
 			$sql.= " WHERE a.fk_action = ta.id";
 			$sql.= " AND a.percent <> 100";
-			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 			if($user->societe_id)
 			{
-				$sql .= " AND s.idp = ".$user->societe_id;
+				$sql .= " AND s.rowid = ".$user->societe_id;
 			}
 			$sql.= " ORDER BY a.datec DESC";
 			$sql.= $db->plimit($max, 0);
@@ -113,7 +113,7 @@ class box_actions extends ModeleBoxes {
 	
 					$this->info_box_contents[$i][1] = array('align' => 'left',
 					'text' => dolibarr_trunc($objp->nom,20),
-					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+					'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 	
 					$this->info_box_contents[$i][2] = array('align' => 'right',
 					'text' => dolibarr_print_date($objp->dp, "dayhour"));

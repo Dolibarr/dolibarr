@@ -70,18 +70,18 @@ $rej = new RejetPrelevement($db, $user);
  *
  */
 $sql = "SELECT pl.rowid, pr.motif, p.ref, pl.statut";
-$sql .= " , s.idp, s.nom";
+$sql .= " , s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_rejet as pr";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pr.fk_prelevement_lignes = pl.rowid";
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND pl.fk_soc = s.idp";
+$sql .= " AND pl.fk_soc = s.rowid";
 
 if ($_GET["socid"])
 {
-  $sql .= " AND s.idp = ".$_GET["socid"];
+  $sql .= " AND s.rowid = ".$_GET["socid"];
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -115,7 +115,7 @@ if ($result)
 
       print substr('000000'.$obj->rowid, -6)."</a></td>";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.stripslashes($obj->nom)."</a></td>\n";
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">'.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td>'.$rej->motifs[$obj->motif].'</td>';
       print "</tr>\n";

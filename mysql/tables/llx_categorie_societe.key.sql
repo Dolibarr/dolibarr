@@ -22,4 +22,4 @@ ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_categorie (
 ALTER TABLE llx_categorie_societe ADD INDEX idx_categorie_societe_fk_societe (fk_societe);
 
 ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_categorie_rowid FOREIGN KEY (fk_categorie) REFERENCES llx_categorie (rowid);
-ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_societe_rowid   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);

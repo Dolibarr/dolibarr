@@ -85,18 +85,18 @@ print '<tr><td colspan="4">&nbsp;</td></tr>';
 print '<tr><td colspan="4">Facturation clients</td></tr>';
 
 if ($modecompta == 'CREANCES-DETTES') { 
-    $sql = "SELECT s.nom, s.idp, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
+    $sql = "SELECT s.nom, s.rowid as socid, sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
+    $sql .= " WHERE f.fk_soc = s.rowid AND f.fk_statut in (1,2)";
     if ($year) $sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
      * vieilles versions, ils n'étaient pas liés via paiement_facture. On les ajoute plus loin)
      */
-	$sql = "SELECT s.nom as nom, s.idp as idp, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.nom as nom, s.rowid as socid, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."facture as f, ".MAIN_DB_PREFIX."paiement_facture as pf, ".MAIN_DB_PREFIX."paiement as p";
-    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.idp";
+    $sql .= " WHERE p.rowid = pf.fk_paiement AND pf.fk_facture = f.rowid AND f.fk_soc = s.rowid";
     if ($year) $sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
 }    
 if ($socid) $sql .= " AND f.fk_soc = $socid";
@@ -114,7 +114,7 @@ if ($result) {
         $var=!$var;
             
         print "<tr $bc[$var]><td>&nbsp;</td>";
-        print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=$objp->idp\">$objp->nom</td>\n";
+        print "<td>".$langs->trans("Bills")." <a href=\"../facture.php?socid=".$objp->socid."\">$objp->nom</td>\n";
         
         if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price($objp->amount_ht)."</td>\n";
         print "<td align=\"right\">".price($objp->amount_ttc)."</td>\n";
@@ -187,19 +187,19 @@ print '</tr>';
  */
 if ($modecompta == 'CREANCES-DETTES')
 { 
-    $sql = "SELECT s.nom, s.idp, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
+    $sql = "SELECT s.nom, s.rowid as socid, sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
+    $sql .= " WHERE f.fk_soc = s.rowid AND f.fk_statut in (1,2)";
    if ($year) {
     	$sql .= " AND f.datef between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
     }
 } else {
-	$sql = "SELECT s.nom, s.idp, date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
+	$sql = "SELECT s.nom, s.rowid as socid, date_format(p.datep,'%Y-%m') as dm, sum(pf.amount) as amount_ttc";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p, ".MAIN_DB_PREFIX."paiementfourn_facturefourn as pf";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."facture_fourn as f";
 	$sql .= " ON pf.fk_facturefourn = f.rowid";
 	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s";
-	$sql .= " ON f.fk_soc = s.idp";
+	$sql .= " ON f.fk_soc = s.rowid";
     $sql .= " WHERE p.rowid = pf.fk_paiementfourn ";
     if ($year) {
     	$sql .= " AND p.datep between '".$year."-01-01 00:00:00' and '".$year."-12-31 23:59:59'";
@@ -207,10 +207,10 @@ if ($modecompta == 'CREANCES-DETTES')
 }
 if ($socid)
 {
-  $sql .= " AND f.fk_soc = $socid";
+  $sql .= " AND f.fk_soc = ".$socid;
 }
-$sql .= " GROUP BY nom, idp";
-$sql .= " ORDER BY nom, idp";
+$sql .= " GROUP BY nom, s.rowid";
+$sql .= " ORDER BY nom, s.rowid";
 
 print '<tr><td colspan="4">Facturation fournisseurs</td></tr>';
 $subtotal_ht = 0;
@@ -226,7 +226,7 @@ if ($result) {
       $var=!$var;
             
       print "<tr $bc[$var]><td>&nbsp;</td>";
-      print "<td>".$langs->trans("Bills")." <a href=\"../../fourn/facture/index.php?socid=".$objp->idp."\">$objp->nom</a></td>\n";
+      print "<td>".$langs->trans("Bills")." <a href=\"".DOL_URL_ROOT."/fourn/facture/index.php?socid=".$objp->socid."\">".$objp->nom."</a></td>\n";
       
       if ($modecompta == 'CREANCES-DETTES') print "<td align=\"right\">".price(-$objp->amount_ht)."</td>\n";
       print "<td align=\"right\">".price(-$objp->amount_ttc)."</td>\n";

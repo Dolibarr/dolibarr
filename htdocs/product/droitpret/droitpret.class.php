@@ -102,8 +102,8 @@ class DroitPret
    
     		$sql = "SELECT f.rowid, f.facnumber, f.datec, f.total_ttc, f.total ";
     		$sql.= "FROM llx_facture AS f, llx_facturedet AS d, llx_product AS p, llx_societe AS s, llx_categorie_societe AS c ";
-    		$sql.= "WHERE f.fk_soc = s.idp ";
-    		$sql.= "AND c.fk_societe = s.idp ";
+    		$sql.= "WHERE f.fk_soc = s.rowid ";
+    		$sql.= "AND c.fk_societe = s.rowid ";
     		$sql.= "AND d.fk_product = p.rowid ";
       		$sql.= "AND f.rowid = d.fk_facture ";
       		$sql.= "AND f.datec >= '".date("Y-m-d H:i:s",$this->dated)."' ";
@@ -140,9 +140,9 @@ class DroitPret
     function WriteINT($fac)
     {
     	global $conf;
-		$sql = "SELECT f.rowid, s.idp ";
+		$sql = "SELECT f.rowid, s.rowid as socid ";
 		$sql.= "FROM llx_facture AS f, llx_societe AS s ";
-		$sql.= "WHERE f.fk_soc = s.idp ";
+		$sql.= "WHERE f.fk_soc = s.rowid ";
 		$sql.= "AND f.rowid = ".$fac." ";
 		
 		$result = $this->db->query($sql);
@@ -155,7 +155,7 @@ class DroitPret
 		    while ($i < $num)
     		{
         		$obj = $this->db->fetch_object($result);
-				$ligne = "INT".$this->ComplChar($conf->global->MAIN_INFO_SOCIETE_GENCOD,"0",13).$this->ComplChar($obj->idp,"0",13);
+				$ligne = "INT".$this->ComplChar($conf->global->MAIN_INFO_SOCIETE_GENCOD,"0",13).$this->ComplChar($obj->socid,"0",13);
         		fwrite($this->fp,$ligne."\n");
         		$i++;
     		}

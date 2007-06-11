@@ -70,15 +70,15 @@ $pagenext = $page + 1;
 llxHeader();
 
 $sql = "SELECT p.rowid as projectid, p.ref, p.title, ".$db->pdate("p.dateo")." as do";
-$sql .= " , s.nom, s.idp, s.client";
+$sql .= ", s.nom, s.rowid as socid, s.client";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."projet as p";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql .= " WHERE p.fk_soc = s.idp";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= " WHERE p.fk_soc = s.rowid";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid)
 { 
-  $sql .= " AND s.idp = ".$socid; 
+  $sql .= " AND s.rowid = ".$socid; 
 }
 if ($_GET["search_ref"])
 {
@@ -136,7 +136,7 @@ if ($resql)
       print '<td>';
       print img_object($langs->trans("ShowCompany"),"company");
       
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->idp.'">'.$objp->nom.'</a></td>';
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.$objp->nom.'</a></td>';
       print '<td>&nbsp;</td>';
       print "</tr>\n";
       

@@ -170,22 +170,20 @@ class CommonObject
         $sql = "SELECT ec.rowid, ec.statut, ec.fk_socpeople as id,";
         if ($source == 'internal') $sql.=" '-1' as socid,";
         if ($source == 'external') $sql.=" t.fk_soc as socid,";
-        if ($source == 'internal') $sql.=" t.name as nom,";
-        if ($source == 'external') $sql.=" t.name as nom,";
+        $sql.=" t.name as nom,";
         $sql.= "tc.source, tc.element, tc.code, tc.libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
         if ($source == 'internal') $sql.=" ".MAIN_DB_PREFIX."user t,";
         if ($source == 'external') $sql.=" ".MAIN_DB_PREFIX."socpeople t,";
         $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
-        $sql.= " WHERE element_id =".$this->id;
+        $sql.= " WHERE ec.element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element='".$this->element."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
-        if ($source == 'internal') $sql.= " AND ec.fk_socpeople = t.rowid";
-        if ($source == 'external') $sql.= " AND ec.fk_socpeople = t.idp";
-        if ($statut >= 0) $sql.= " AND statut = '$statut'";
+        $sql.= " AND ec.fk_socpeople = t.rowid";
+        if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
         $sql.=" ORDER BY t.name ASC";
 
         $resql=$this->db->query($sql);
@@ -222,9 +220,9 @@ class CommonObject
     {
         $sql = "SELECT ec.datecreate, ec.statut, ec.fk_socpeople, ec.fk_c_type_contact,";
         $sql.= " tc.code, tc.libelle,";
-		$sql.= " s.fk_soc";
+		    $sql.= " s.fk_soc";
         $sql.= " FROM (".MAIN_DB_PREFIX."element_contact as ec, ".MAIN_DB_PREFIX."c_type_contact as tc)";
-        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.idp";	// Si contact de type external, alors il est lié à une societe
+        $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as s ON ec.fk_socpeople=s.rowid";	// Si contact de type external, alors il est lié à une societe
         $sql.= " WHERE ec.rowid =".$rowid;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
@@ -385,7 +383,7 @@ class CommonObject
  function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
  {
 	 // On recherche les societes
-	 $sql = "SELECT s.idp, s.nom FROM";
+	 $sql = "SELECT s.rowid, s.nom FROM";
 	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
    //if ($filter) $sql .= " WHERE $filter";
 	 $sql .= " ORDER BY nom ASC";
@@ -402,15 +400,15 @@ class CommonObject
 			 while ($i < $num)
 			 {
 				 $obj = $object->db->fetch_object($resql);
-				 if ($i == 0) $firstCompany = $obj->idp;
-				 if ($selected > 0 && $selected == $obj->idp)
+				 if ($i == 0) $firstCompany = $obj->rowid;
+				 if ($selected > 0 && $selected == $obj->rowid)
 				 {
-					 print '<option value="'.$obj->idp.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
-					 $firstCompany = $obj->idp;
+					 print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
+					 $firstCompany = $obj->rowid;
 				 }
 				 else
 				 {
-					 print '<option value="'.$obj->idp.'">'.dolibarr_trunc($obj->nom,24).'</option>';
+					 print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->nom,24).'</option>';
 				 }
 				 $i ++;
 			 }

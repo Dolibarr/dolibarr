@@ -79,7 +79,7 @@ class ComptaJournalVente  {
 	  $sql .= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
 	  
 	  $sql .= " WHERE f.rowid = l.fk_facture ";
-	  $sql .= " AND s.idp = f.fk_soc";
+	  $sql .= " AND s.rowid = f.fk_soc";
 	  $sql .= " AND f.fk_statut = 1 ";
 	  $sql .= " AND l.fk_code_ventilation <> 0 ";
 	  $sql .= " AND l.fk_export_compta <> 0";	  

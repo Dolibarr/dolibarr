@@ -55,7 +55,7 @@ llxHeader();
 if ($socid > 0)
 {
     $societe = new Societe($db);
-    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.idp > $socid ORDER BY idp ASC LIMIT 1";
+    $societe->fetch($socid, $to);  // si $to='next' ajouter " AND s.rowid > $socid ORDER BY idp ASC LIMIT 1";
 
     /*
      * Affichage onglets
@@ -91,11 +91,11 @@ if ($socid > 0)
     
         print '<table class="noborder" width="100%">';
     
-        $sql = "SELECT s.nom, s.idp, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
+        $sql = "SELECT s.nom, s.rowid as socid, f.facnumber, f.amount, ".$db->pdate("f.datef")." as df,";
         $sql.= " f.paye as paye, f.fk_statut as statut, f.rowid as facid,";
         $sql.= " u.login, u.rowid as userid";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f,".MAIN_DB_PREFIX."user as u";
-        $sql.= " WHERE f.fk_soc = s.idp AND s.idp = ".$societe->id;
+        $sql.= " WHERE f.fk_soc = s.rowid AND s.rowid = ".$societe->id;
         $sql.= " AND f.fk_user_valid = u.rowid";
         $sql.= " ORDER BY f.datef DESC";
     

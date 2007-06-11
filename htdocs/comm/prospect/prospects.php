@@ -66,7 +66,7 @@ $pagenext = $page + 1;
 if ($_GET["action"] == 'cstc')
 {
   $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm = ".$_GET["pstcomm"];
-  $sql .= " WHERE idp = ".$_GET["pid"];
+  $sql .= " WHERE rowid = ".$_GET["pid"];
   $db->query($sql);
 }
 
@@ -75,7 +75,7 @@ if ($_GET["action"] == 'cstc')
  * Affichage liste
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
+$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm, s.fk_stcomm ";
 $sql .= ", d.nom as departement";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM (".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."societe as s";
@@ -91,9 +91,9 @@ else
 	$sql .=")";
 }
 
-$sql .= " LEFT join ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
-$sql .= " WHERE s.fk_stcomm = st.id AND s.client=2";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_departements as d on (d.rowid = s.fk_departement)";
+$sql .= " WHERE s.fk_stcomm = st.id AND s.client = 2";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (isset($stcomm))
 {
@@ -102,7 +102,7 @@ if (isset($stcomm))
 
 if ($user->societe_id)
 {
-    $sql .= " AND s.idp = " .$user->societe_id;
+    $sql .= " AND s.rowid = " .$user->societe_id;
 }
 
 if ($_GET["search_nom"])
@@ -133,7 +133,7 @@ if ($resql)
     if ($num == 1 && $socname)
     {
         $obj = $db->fetch_object($resql);
-        Header("Location: fiche.php?socid=".$obj->idp);
+        Header("Location: fiche.php?socid=".$obj->rowid);
         exit;
     }
     else
@@ -181,7 +181,7 @@ if ($resql)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->idp.'">';
+        print '<td><a href="'.DOL_URL_ROOT.'/comm/prospect/fiche.php?id='.$obj->rowid.'">';
         print img_object($langs->trans("ShowProspect"),"company");
         print ' '.dolibarr_trunc($obj->nom,44).'</a></td>';
         print "<td>".$obj->ville."&nbsp;</td>";
@@ -199,7 +199,7 @@ if ($resql)
         {
             if ($value <> $obj->fk_stcomm)
             {
-                print '<a href="prospects.php?pid='.$obj->idp.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
+                print '<a href="prospects.php?pid='.$obj->rowid.'&amp;pstcomm='.$value.'&amp;action=cstc&amp;'.$urladd.'">';
                 print img_action(0,$value);
                 print '</a>&nbsp;';
             }

@@ -35,7 +35,7 @@ $error = 0;
 $year = strftime("%Y", time());
 
 // 
-$sql = "SELECT s.idp,s.nom";
+$sql = "SELECT s.rowid as socid, s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 //$sql .= " , ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
 $sql .= " WHERE s.fournisseur = 1 ";
@@ -47,7 +47,7 @@ if ($resql)
 {
   while ($obj = $db->fetch_object($resql) )
     {
-      $id       = $obj->idp;
+      $id       = $obj->socid;
       
       dolibarr_syslog("droits-editeurs.php id:$id", LOG_DEBUG );
       
@@ -120,7 +120,7 @@ class pdf_courrier_editeur
 	$year_data = $year - 1;
 
 	// On récupère données du mail
-	$sql = "SELECT p.rowid,p.label, pc.taux, pc.quantite";
+	$sql = "SELECT p.rowid, p.label, pc.taux, pc.quantite";
 	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql .= " , ".MAIN_DB_PREFIX."facturedet as fd";
 	$sql .= " , ".MAIN_DB_PREFIX."product as p";
@@ -141,7 +141,7 @@ class pdf_courrier_editeur
 	    $i = 0;
 	    while ($obj = $this->db->fetch_object($resql) )
 	      {
-		$id       = $obj->idp;
+		$id       = $obj->socid;
 		$books[$i]['title'] = $obj->label;
 		$books[$i]['id'] = $obj->rowid;
 		$books[$i]['taux'] = $obj->taux;

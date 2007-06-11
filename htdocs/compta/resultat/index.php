@@ -84,7 +84,7 @@ $html->report_header($nom,$nomlink,$period,$periodlink,$description,$builddate,$
 if ($modecompta == 'CREANCES-DETTES') { 
     $sql  = "SELECT sum(f.total) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
+    $sql .= " WHERE f.fk_soc = s.rowid AND f.fk_statut in (1,2)";
 } else {
     /*
      * Liste des paiements (les anciens paiements ne sont pas vus par cette requete car, sur les
@@ -151,7 +151,7 @@ if ($modecompta != 'CREANCES-DETTES') {
 if ($modecompta == 'CREANCES-DETTES') { 
     $sql  = "SELECT sum(f.total_ht) as amount_ht, sum(f.total_ttc) as amount_ttc, date_format(f.datef,'%Y-%m') as dm";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
-    $sql .= " WHERE f.fk_soc = s.idp AND f.fk_statut in (1,2)";
+    $sql .= " WHERE f.fk_soc = s.rowid AND f.fk_statut in (1,2)";
 } else {
 	$sql = "SELECT sum(p.amount) as amount_ttc, date_format(p.datep,'%Y-%m') as dm";
 	$sql .= " FROM ".MAIN_DB_PREFIX."paiementfourn as p";

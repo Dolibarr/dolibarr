@@ -226,7 +226,7 @@ if($_GET["socid"])
     
             $title=$langs->trans("CompanyList");
     
-            $sql = "SELECT s.idp, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur, te.libelle";
+            $sql = "SELECT s.rowid as socid, s.nom, s.ville, s.prefix_comm, s.client, s.fournisseur, te.libelle";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
             $sql .= " , ".MAIN_DB_PREFIX."c_typent as te";
             $sql .= "  WHERE s.fk_typent = te.id";
@@ -304,7 +304,7 @@ if($_GET["socid"])
     
                     print '</td>';
                     // Lien Sélectionner
-                    print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->idp.'">'.$langs->trans("Select").'</a>';
+                    print '<td align="center"><a href="lien.php?socid='.$_GET["socid"].'&amp;select='.$obj->socid.'">'.$langs->trans("Select").'</a>';
                     print '</td>';
     
                     print '</tr>'."\n";

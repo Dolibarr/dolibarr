@@ -70,17 +70,17 @@ class box_commandes extends ModeleBoxes {
         if ($user->rights->commande->lire)
         {
 
-            $sql = "SELECT s.nom, s.idp,";
+            $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " p.ref, ".$db->pdate("p.date_commande")." as dp, p.rowid,";
             $sql.= " p.fk_statut, p.facture";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE p.fk_soc = s.idp";
-            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+            $sql .= " WHERE p.fk_soc = s.rowid";
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if($user->societe_id)
             {
-                $sql .= " AND s.idp = $user->societe_id";
+                $sql .= " AND s.rowid = ".$user->societe_id;
             }
             $sql .= " ORDER BY p.date_commande DESC, p.ref DESC ";
             $sql .= $db->plimit($max, 0);
@@ -104,7 +104,7 @@ class box_commandes extends ModeleBoxes {
 
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
                     
                     $this->info_box_contents[$i][2] = array(
                     'align' => 'right',

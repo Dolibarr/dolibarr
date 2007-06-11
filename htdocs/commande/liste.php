@@ -70,15 +70,15 @@ if (! $sortorder) $sortorder='DESC';
 $limit = $conf->liste_limit;
 $offset = $limit * $_GET['page'] ;
 
-$sql = 'SELECT s.nom, s.idp, c.rowid, c.ref, c.total_ht, c.ref_client,';
+$sql = 'SELECT s.nom, s.rowid as socid, c.rowid, c.ref, c.total_ht, c.ref_client,';
 $sql.= ' '.$db->pdate('c.date_commande').' as date_commande, c.fk_statut, c.facture as facturee';
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'commande as c';
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-$sql.= ' WHERE c.fk_soc = s.idp';
+$sql.= ' WHERE c.fk_soc = s.rowid';
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
-  $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+  $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 }
 if ($sref)
 {
@@ -90,7 +90,7 @@ if ($sall)
 }
 if ($socid)
 {
-	$sql .= ' AND s.idp = '.$socid;
+	$sql .= ' AND s.rowid = '.$socid;
 }
 if ($viewstatut <> '')
 {
@@ -181,7 +181,7 @@ if ($resql)
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
 		print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowOrder'),'order').' '.$objp->ref.'</a></td>';
-		print '<td><a href="../comm/fiche.php?socid='.$objp->idp.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
+		print '<td><a href="../comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 		print '<td>'.$objp->ref_client.'</td>';
 		print '<td>&nbsp;</td>';
 		print '<td align="right">';

@@ -636,7 +636,7 @@ class Form
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
     {
         // On recherche les societes
-        $sql = "SELECT s.idp, s.nom FROM";
+        $sql = "SELECT s.rowid, s.nom FROM";
         $sql.= " ".MAIN_DB_PREFIX ."societe as s";
         if ($filter) $sql.= " WHERE $filter";
         $sql.= " ORDER BY nom ASC";
@@ -653,13 +653,13 @@ class Form
                 while ($i < $num)
                 {
                     $obj = $this->db->fetch_object($resql);
-                    if ($selected > 0 && $selected == $obj->idp)
+                    if ($selected > 0 && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->idp.'" selected="true">'.$obj->nom.'</option>';
+                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->nom.'</option>';
                     }
                     else
                     {
-                        print '<option value="'.$obj->idp.'">'.$obj->nom.'</option>';
+                        print '<option value="'.$obj->rowid.'">'.$obj->nom.'</option>';
                     }
                     $i++;
                 }
@@ -734,7 +734,7 @@ class Form
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0)
     {
 	        // On recherche les societes
-	        $sql = "SELECT s.idp, s.name, s.firstname FROM";
+	        $sql = "SELECT s.rowid, s.name, s.firstname FROM";
 	        $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
 	        $sql.= " WHERE fk_soc=".$socid;
 	        $sql.= " ORDER BY s.name ASC";
@@ -757,18 +757,18 @@ class Form
 
 			            if ($htmlname != 'none')
 			            {
-		                    if ($selected && $selected == $obj->idp)
+		                    if ($selected && $selected == $obj->rowid)
 		                    {
-		                        print '<option value="'.$obj->idp.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+		                        print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
 		                    }
 		                    else
 		                    {
-		                        print '<option value="'.$obj->idp.'">'.$obj->name.' '.$obj->firstname.'</option>';
+		                        print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
 		                    }
 						}
 						else
 						{
-							if ($selected == $obj->idp) print $obj->name.' '.$obj->firstname;
+							if ($selected == $obj->rowid) print $obj->name.' '.$obj->firstname;
 						}
 	                    $i++;
 	                }

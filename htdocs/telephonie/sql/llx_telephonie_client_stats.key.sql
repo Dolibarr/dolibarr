@@ -23,4 +23,4 @@
 --
 
 
-ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(idp);
+ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);

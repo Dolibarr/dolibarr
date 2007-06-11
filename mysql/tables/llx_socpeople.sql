@@ -22,7 +22,7 @@
 
 create table llx_socpeople
 (
-  idp            integer AUTO_INCREMENT PRIMARY KEY,
+  rowid          integer AUTO_INCREMENT PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
   fk_soc         integer,           -- lien vers la societe

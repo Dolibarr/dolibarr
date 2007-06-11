@@ -431,10 +431,10 @@ class TelephonieContrat {
     $res   = array();
     $resid = array();
 
-    $sql = "SELECT c.idp, c.name, c.firstname, c.email ";
+    $sql = "SELECT c.rowid, c.name, c.firstname, c.email ";
     $sql .= "FROM ".MAIN_DB_PREFIX."socpeople as c";
     $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
-    $sql .= " WHERE c.idp = cf.fk_contact ";
+    $sql .= " WHERE c.rowid = cf.fk_contact ";
     $sql .= " AND cf.fk_contrat = ".$this->id." ORDER BY name ";
 
     $resql = $this->db->query($sql);

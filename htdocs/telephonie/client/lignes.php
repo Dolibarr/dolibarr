@@ -113,16 +113,16 @@ if ($_GET["id"])
 	  
 	  /* Lignes */
 	     
-	  $sql = "SELECT s.idp as socid, f.nom as fournisseur, s.nom";
+	  $sql = "SELECT s.rowid as socid, f.nom as fournisseur, s.nom";
 	  $sql .= ", ss.nom as agence, ss.ville, ss.code_client";
 	  $sql .= " , l.ligne,  l.statut, l.rowid, l.remise";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	  $sql .= " , ".MAIN_DB_PREFIX."societe as ss";
 	  $sql .= " , ".MAIN_DB_PREFIX."telephonie_fournisseur as f";
-	  $sql .= " WHERE l.fk_client_comm = s.idp AND l.fk_fournisseur = f.rowid";
-	  $sql .= " AND l.fk_soc = ss.idp ";
-	  $sql .= " AND s.idp = ".$soc->id;
-	  $sql .= " ORDER BY ss.idp ASC";
+	  $sql .= " WHERE l.fk_client_comm = s.rowid AND l.fk_fournisseur = f.rowid";
+	  $sql .= " AND l.fk_soc = ss.rowid ";
+	  $sql .= " AND s.rowid = ".$soc->id;
+	  $sql .= " ORDER BY ss.rowid ASC";
 
 	  $resql =  $db->query($sql);
 	  

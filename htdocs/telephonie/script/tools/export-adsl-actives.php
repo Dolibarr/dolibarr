@@ -33,7 +33,7 @@ $sql = "SELECT la.numero_ligne, s.nom as nom,  la.prix, t.intitule";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne as la";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as s";
 $sql .= " ,  ".MAIN_DB_PREFIX."telephonie_adsl_type as t";
-$sql .= " WHERE la.fk_client_facture = s.idp";
+$sql .= " WHERE la.fk_client_facture = s.rowid";
 $sql .= " AND t.rowid = la.fk_type";
 
 

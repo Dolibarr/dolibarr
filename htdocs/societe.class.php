@@ -401,7 +401,7 @@ class Societe
                 $sql .= ", code_compta_fournisseur = ".($this->code_compta_fournisseur?"'".addslashes($this->code_compta_fournisseur)."'":"null");
             }
             if ($user) $sql .= ",fk_user_modif = '".$user->id."'";
-            $sql .= " WHERE idp = '" . $id ."'";
+            $sql .= " WHERE rowid = '" . $id ."'";
 
         	
 			      dolibarr_syslog("Societe::update sql=".$sql);
@@ -499,7 +499,7 @@ class Societe
 			}
 		}
 
-		$sql = 'SELECT s.idp, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, prefix_comm';
+		$sql = 'SELECT s.rowid, s.nom, s.address,'.$this->db->pdate('s.datec').' as dc, prefix_comm';
 		// multiprix
 		if($conf->global->PRODUIT_MULTIPRICES == 1)
 			$sql .= ', s.price_level';
@@ -521,7 +521,7 @@ class Societe
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
-		$sql .= ' WHERE s.idp = '.$socid;
+		$sql .= ' WHERE s.rowid = '.$socid;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -529,7 +529,7 @@ class Societe
 			{
 				$obj = $this->db->fetch_object($resql);
 
-				$this->id = $obj->idp;
+				$this->id = $obj->rowid;
 
 				$this->date_update = $obj->date_update;
 
@@ -636,7 +636,7 @@ class Societe
         $sql .= ", p.libelle as pays, p.code, s.nom as socname";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe_adresse_livraison as l";
         $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON l.fk_pays = p.rowid";
-        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.idp";
+        $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON l.fk_societe = s.rowid";
         $sql .= " WHERE l.rowid = ".$id;
 
         $result = $this->db->query($sql) ;
@@ -707,7 +707,7 @@ class Societe
             }
 
             $sql = "DELETE from ".MAIN_DB_PREFIX."societe ";
-            $sql .= " WHERE idp = " . $id .";";
+            $sql .= " WHERE rowid = " . $id .";";
 
             if ($this->db->query($sql))
             {
@@ -811,7 +811,7 @@ class Societe
 	 */
 	function attribute_prefix()
 	{
-		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp = '".$this->id."'";
+		$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid = '".$this->id."'";
 		$resql=$this->db->query( $sql);
 		if ($resql)
 		{
@@ -831,7 +831,7 @@ class Societe
 					$this->db->free($resql);
 					if (! $obj->nb)
 					{
-						$sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='$prefix' WHERE idp='$this->id'";
+						$sql = "UPDATE ".MAIN_DB_PREFIX."societe set prefix_comm='".$prefix."' WHERE rowid='".$this->id."'";
 	
 						if ( $this->db->query( $sql) )
 						{
@@ -900,7 +900,7 @@ class Societe
       {
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
 	$sql .= " SET client = 1";
-	$sql .= " WHERE idp = " . $this->id .";";
+	$sql .= " WHERE rowid = " . $this->id .";";
 
 	return $this->db->query($sql);
       }
@@ -934,7 +934,7 @@ class Societe
 			// Positionne remise courante
 			$sql = "UPDATE ".MAIN_DB_PREFIX."societe ";
 			$sql.= " SET remise_client = '".$remise."'";
-			$sql.= " WHERE idp = " . $this->id .";";
+			$sql.= " WHERE rowid = " . $this->id .";";
 			$resql=$this->db->query($sql);
 			if (! $resql)
 			{
@@ -1062,7 +1062,7 @@ class Societe
       {
 	$sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
 	$sql .= " SET price_level = '".$price_level."'";
-	$sql .= " WHERE idp = " . $this->id .";";
+	$sql .= " WHERE rowid = " . $this->id .";";
 
 	$this->db->query($sql);
 
@@ -1173,7 +1173,7 @@ class Societe
   function get_nom($id)
   {
 
-    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE idp='$id';";
+    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
 
     $result = $this->db->query($sql);
 
@@ -1218,7 +1218,7 @@ class Societe
 	{
 		$contact_email = array();
 	
-		$sql = "SELECT idp, email, name, firstname";
+		$sql = "SELECT rowid, email, name, firstname";
 		$sql.= " FROM ".MAIN_DB_PREFIX."socpeople";
 		$sql.= " WHERE fk_soc = '".$this->id."'";
 		$resql=$this->db->query($sql);
@@ -1231,7 +1231,7 @@ class Societe
 				while ($i < $nump)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$contact_email[$obj->idp] = trim($obj->firstname." ".$obj->name)." &lt;".$obj->email."&gt;";
+					$contact_email[$obj->rowid] = trim($obj->firstname." ".$obj->name)." &lt;".$obj->email."&gt;";
 					$i++;
 				}
 			}
@@ -1252,7 +1252,7 @@ class Societe
 	{
 		$contacts = array();
 	
-		$sql = "SELECT idp, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '$this->id'";
+		$sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE fk_soc = '".$this->id."'";
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
@@ -1263,7 +1263,7 @@ class Societe
 				while ($i < $nump)
 				{
 					$obj = $this->db->fetch_object($resql);
-					$contacts[$obj->idp] = "$obj->firstname $obj->name";
+					$contacts[$obj->rowid] = $obj->firstname." ".$obj->name;
 					$i++;
 				}
 			}
@@ -1283,7 +1283,7 @@ class Societe
     function contact_get_email($rowid)
     {
 
-        $sql = "SELECT idp, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE idp = '$rowid'";
+        $sql = "SELECT rowid, email, name, firstname FROM ".MAIN_DB_PREFIX."socpeople WHERE rowid = '".$rowid."'";
 
         if ($this->db->query($sql) )
         {
@@ -1601,7 +1601,7 @@ class Societe
         {
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET parent = ".$id;
-            $sql .= " WHERE idp = " . $this->id .";";
+            $sql .= " WHERE rowid = " . $this->id .";";
 
             if ( $this->db->query($sql) )
             {
@@ -1625,7 +1625,7 @@ class Societe
         {
             $sql  = "UPDATE ".MAIN_DB_PREFIX."societe ";
             $sql .= " SET parent = null";
-            $sql .= " WHERE idp = " . $this->id .";";
+            $sql .= " WHERE rowid = " . $this->id .";";
 
             if ( $this->db->query($sql) )
             {
@@ -1751,10 +1751,10 @@ class Societe
     */
     function info($id)
     {
-        $sql = "SELECT s.idp, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
+        $sql = "SELECT s.rowid, s.nom, ".$this->db->pdate("datec")." as datec, ".$this->db->pdate("datea")." as datea,";
         $sql.= " fk_user_creat, fk_user_modif";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE s.idp = ".$id;
+        $sql.= " WHERE s.rowid = ".$id;
 
         $result=$this->db->query($sql);
         if ($result)
@@ -1763,7 +1763,7 @@ class Societe
             {
                 $obj = $this->db->fetch_object($result);
 
-                $this->id = $obj->idp;
+                $this->id = $obj->rowid;
 
                 if ($obj->fk_user_creat) {
                     $cuser = new User($this->db, $obj->fk_user_creat);

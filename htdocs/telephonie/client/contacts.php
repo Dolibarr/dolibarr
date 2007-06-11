@@ -58,17 +58,17 @@ $pagenext = $page + 1;
  * Mode Liste
  *
  */
-$sql = "SELECT distinct cont.email, cont.idp, cont.name, cont.firstname, s.nom, s.idp as socid";
+$sql = "SELECT distinct cont.email, cont.rowid, cont.name, cont.firstname, s.nom, s.rowid as socid";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s";
 
 $sql .= ",".MAIN_DB_PREFIX."societe_perms as sp";
 $sql .= ",".MAIN_DB_PREFIX."telephonie_contrat_contact_facture as cf";
 $sql .= ",".MAIN_DB_PREFIX."socpeople as cont";
 
-$sql .= " WHERE cont.fk_soc = s.idp ";
-$sql .= " AND cf.fk_contact = cont.idp";
+$sql .= " WHERE cont.fk_soc = s.rowid ";
+$sql .= " AND cf.fk_contact = cont.rowid";
 
-$sql .= " AND s.idp = sp.fk_soc";
+$sql .= " AND s.rowid = sp.fk_soc";
 $sql .= " AND sp.fk_user = ".$user->id." AND sp.pread = 1";
 
 if ($_GET["search_client"])
@@ -83,7 +83,7 @@ if ($_GET["search_email"])
   $sql .= " AND cont.email LIKE '%".$sel."%'";
 }
 
-//$sql .= " GROUP BY s.idp";
+//$sql .= " GROUP BY s.rowid";
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
 $result = $db->query($sql);
@@ -132,7 +132,7 @@ if ($result)
       print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->firstname.' '.$obj->name."</td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->rowid.'">';
       print $obj->email."</a></td>\n";
 
       print "</tr>\n";

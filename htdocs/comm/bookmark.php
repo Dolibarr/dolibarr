@@ -92,9 +92,9 @@ if ($_GET["action"] == 'delete')
 
 print_fiche_titre($langs->trans("Bookmarks"));
  
-$sql = "SELECT s.idp, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname";
+$sql = "SELECT s.rowid, s.nom, ".$db->pdate("b.dateb")." as dateb, b.rowid as bid, b.fk_user, b.url, b.target, u.name, u.firstname";
 $sql.= " FROM ".MAIN_DB_PREFIX."bookmark as b, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-$sql.= " WHERE b.fk_soc = s.idp AND b.fk_user=u.rowid";
+$sql.= " WHERE b.fk_soc = s.rowid AND b.fk_user=u.rowid";
 if (! $user->admin) $sql.= " AND b.fk_user = ".$user->id;
 $sql.= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit, $offset);
 
@@ -131,10 +131,10 @@ if ($resql)
       print "<td align=\"center\"><b>".$obj->bid."</b></td>";
       print "<td><a href='".DOL_URL_ROOT."/user/fiche.php?id=".$obj->fk_user."'>".img_object($langs->trans("ShowUser"),"user").' '.$obj->name." ".$obj->firstname."</a></td>\n";
       print '<td align="center">'.dolibarr_print_date($obj->dateb) ."</td>";
-      print "<td><a href=\"index.php?socid=$obj->idp\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
+      print "<td><a href=\"index.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom."</a></td>\n";
       print '<td align="center">'.$obj->url."</td>";
       print '<td align="center">'.$obj->target."</td>";
-      print "<td><a href=\"bookmark.php?action=delete&bid=$obj->bid\">".img_delete()."</a></td>\n";
+      print "<td><a href=\"bookmark.php?action=delete&bid=".$obj->bid."\">".img_delete()."</a></td>\n";
       print "</tr>\n";
       $i++;
     }

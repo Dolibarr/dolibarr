@@ -116,16 +116,16 @@ if ($_GET["id"])
   $mois = strftime("%B %Y", mktime(12,0,0,$monthprev,1,$yearprev));
 
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat, c.statut, sum(a.montant) as montant";
+  $sql = "SELECT s.rowid as socid, s.nom, a.fk_contrat, c.statut, sum(a.montant) as montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_avance as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   
   $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " AND a.fk_contrat = c.rowid"; 
-  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND c.fk_soc = s.rowid";
   $sql .= " AND a.date ='".$yearprev.$monthprev."'";
-  $sql .= " GROUP BY s.idp";
+  $sql .= " GROUP BY s.rowid";
   $sql .= " ORDER BY s.nom ASC";
   
   $resql = $db->query($sql);
@@ -147,11 +147,11 @@ if ($_GET["id"])
 	{
 	  $obj = $db->fetch_object($resql);	 
 	  print "<tr $bc[$var]>";	  
-	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
 	  print img_file();
 	  print '</a>&nbsp;';
 	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
 	  $total += $obj->montant;
@@ -181,17 +181,17 @@ if ($_GET["id"])
   
   $total = 0;
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat,c.statut,sum(a.montant) as montant";
+  $sql = "SELECT s.rowid as socid, s.nom, a.fk_contrat,c.statut,sum(a.montant) as montant";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_regul as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 
   $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " AND a.fk_contrat = c.rowid"; 
-  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND c.fk_soc = s.rowid";
   $sql .= " AND a.date ='".$yearprev.$monthprev."'";
 
-  $sql .= " GROUP BY s.idp";
+  $sql .= " GROUP BY s.rowid";
   $sql .= " ORDER BY s.nom ASC";
 
   $resql = $db->query($sql);
@@ -201,11 +201,11 @@ if ($_GET["id"])
       while ($obj = $db->fetch_object($resql))
 	{
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
 	  print img_file();
 	  print '</a>&nbsp;';
 	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
 	  $var=!$var;
@@ -213,17 +213,17 @@ if ($_GET["id"])
 	}
     }
 
-  $sql = "SELECT s.idp, s.nom, a.fk_contrat, sum(a.montant) as montant, c.statut";
+  $sql = "SELECT s.rowid as socid, s.nom, a.fk_contrat, sum(a.montant) as montant, c.statut";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_commission_conso as a";
   $sql .= " , ".MAIN_DB_PREFIX."telephonie_contrat as c";
   $sql .= " , ".MAIN_DB_PREFIX."societe as s";
   
   $sql .= " WHERE a.fk_distributeur =".$distri->id;
   $sql .= " AND a.fk_contrat = c.rowid"; 
-  $sql .= " AND c.fk_soc = s.idp";
+  $sql .= " AND c.fk_soc = s.rowid";
   $sql .= " AND a.date ='".$yearprev.$monthprev."'";
   $sql .= " AND a.avance = 0";
-  $sql .= " GROUP BY s.idp";
+  $sql .= " GROUP BY s.rowid";
   $sql .= " ORDER BY s.nom ASC";
 
   $resql = $db->query($sql);
@@ -237,11 +237,11 @@ if ($_GET["id"])
 	  $obj = $db->fetch_object($resql);
 	  
 	  print "<tr $bc[$var]>";
-	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">';
+	  print '<td><a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">';
 	  print img_file();
 	  print '</a>&nbsp;';
 	  print '<img src="../contrat/statut'.$obj->statut.'.png">&nbsp;';
-	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->idp.'">'.$obj->nom."</a></td>\n";
+	  print '<a href="'.DOL_URL_ROOT.'/telephonie/client/fiche.php?id='.$obj->socid.'">'.$obj->nom."</a></td>\n";
 	  print '<td align="right">'.sprintf("%01.2f",$obj->montant)."</td>\n";	  
 	  print "</tr>\n";
 	  $total += $obj->montant;

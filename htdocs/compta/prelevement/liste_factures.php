@@ -49,7 +49,7 @@ $offset = $conf->liste_limit * $page ;
  */
 $sql = "SELECT p.rowid, p.ref, p.statut";
 $sql .= " ,f.rowid as facid, f.facnumber, f.total_ttc";
-$sql .= " , s.idp, s.nom";
+$sql .= " , s.rowid as socid, s.nom";
 $sql .= " , pl.statut as statut_ligne, pl.rowid as rowid_ligne";
 $sql .= " FROM ".MAIN_DB_PREFIX."prelevement_bons as p";
 $sql .= " , ".MAIN_DB_PREFIX."prelevement_lignes as pl";
@@ -58,12 +58,12 @@ $sql .= " , ".MAIN_DB_PREFIX."facture as f";
 $sql .= " , ".MAIN_DB_PREFIX."societe as s";
 $sql .= " WHERE pf.fk_prelevement_lignes = pl.rowid";
 $sql .= " AND pl.fk_prelevement_bons = p.rowid";
-$sql .= " AND f.fk_soc = s.idp";
+$sql .= " AND f.fk_soc = s.rowid";
 $sql .= " AND pf.fk_facture = f.rowid";
 
 if ($_GET["socid"])
 {
-  $sql .= " AND s.idp = ".$_GET["socid"];
+  $sql .= " AND s.rowid = ".$_GET["socid"];
 }
 
 if ($_GET["search_fac"])
@@ -131,7 +131,7 @@ if ($result)
 
       print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->facid.'">'.$obj->facnumber."</a></td>\n";
 
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->socid.'">';
       print img_object($langs->trans("ShowCompany"),"company"). ' '.stripslashes($obj->nom)."</a></td>\n";
 
       print '<td align="right">'.price($obj->total_ttc)."</td>\n";

@@ -40,7 +40,7 @@ $page->set_column(0,4,18); // A
 $sql = "SELECT distinct(c.email),c.name, c.firstname, s.nom ";
 $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c";
 $sql .= ", ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE s.idp = c.fk_soc";
+$sql .= " WHERE s.rowid = c.fk_soc";
 $sql .= " AND s.client = 1";
 $sql .= " AND c.email IS NOT NULL";
 $sql .= " ORDER BY c.email ASC";

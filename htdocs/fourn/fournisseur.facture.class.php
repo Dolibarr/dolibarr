@@ -169,9 +169,9 @@ class FactureFournisseur extends Facture
 		$sql.= ' total_ht, total_tva, total_ttc, fk_user_author,';
 		$sql.= ' fk_statut, paye, f.note, f.note_public,';
 		$sql.= ' '.$this->db->pdate('date_lim_reglement').'as de,';
-		$sql.= ' s.nom as socnom, s.idp as socid';
+		$sql.= ' s.nom as socnom, s.rowid as socid';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture_fourn as f,'.MAIN_DB_PREFIX.'societe as s';
-		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.idp';
+		$sql.= ' WHERE f.rowid='.$rowid.' AND f.fk_soc = s.rowid';
 
 		dolibarr_syslog("FactureFourn::Fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -653,7 +653,7 @@ class FactureFournisseur extends Facture
 
 		// Charge tableau des id de société socids
 		$socids = array();
-		$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
+		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE fournisseur=1 LIMIT 10";
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{

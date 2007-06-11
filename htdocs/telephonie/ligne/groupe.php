@@ -61,7 +61,7 @@ $pagenext = $page + 1;
  *
  */
 
-$sql = "SELECT g.nom as gnom, s.idp as socid, sf.idp as sfidp, sf.nom as nom_facture,s.nom, l.ligne, l.statut, l.rowid, l.remise";
+$sql = "SELECT g.nom as gnom, s.rowid as socid, sf.rowid as sfidp, sf.nom as nom_facture,s.nom, l.ligne, l.statut, l.rowid, l.remise";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 $sql .= " ,  ".MAIN_DB_PREFIX."societe as sf";
 
@@ -70,13 +70,13 @@ $sql .= " , ".MAIN_DB_PREFIX."telephonie_groupeligne as g";
 $sql .= " , ".MAIN_DB_PREFIX."telephonie_groupe_ligne as gl";
 
 
-$sql .= " WHERE l.fk_soc = s.idp ";
+$sql .= " WHERE l.fk_soc = s.rowid ";
 
 $sql .= " AND g.rowid = gl.fk_groupe";
 $sql .= " AND gl.fk_ligne = l.rowid";
 
 
-$sql .= " AND l.fk_soc_facture = sf.idp";
+$sql .= " AND l.fk_soc_facture = sf.rowid";
 
 if ($_GET["search_ligne"])
 {

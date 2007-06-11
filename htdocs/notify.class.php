@@ -86,12 +86,12 @@ class Notify
 	{
         $num=-1;
         
-        $sql = "SELECT n.rowid, c.email, c.idp, c.name, c.firstname, a.titre, s.nom";
+        $sql = "SELECT n.rowid, c.email, c.rowid, c.name, c.firstname, a.titre, s.nom";
         $sql.= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-        $sql.= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
-        $sql.= " AND n.fk_soc = s.idp";
+        $sql.= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+        $sql.= " AND n.fk_soc = s.rowid";
         $sql.= " AND n.fk_action = ".$action;
-        $sql.= " AND s.idp = ".$socid;
+        $sql.= " AND s.rowid = ".$socid;
 
 		dolibarr_syslog("Notify.class::countDefinedNotifications $action, $socid");
 
@@ -117,11 +117,11 @@ class Notify
     {
         global $conf,$langs;
 
-        $sql = "SELECT s.nom, c.email, c.idp, c.name, c.firstname, a.titre,n.rowid";
+        $sql = "SELECT s.nom, c.email, c.rowid, c.name, c.firstname, a.titre,n.rowid";
         $sql .= " FROM ".MAIN_DB_PREFIX."socpeople as c, ".MAIN_DB_PREFIX."action_def as a, ".MAIN_DB_PREFIX."notify_def as n, ".MAIN_DB_PREFIX."societe as s";
-        $sql .= " WHERE n.fk_contact = c.idp AND a.rowid = n.fk_action";
-        $sql .= " AND n.fk_soc = s.idp AND n.fk_action = ".$action;
-        $sql .= " AND s.idp = ".$socid;
+        $sql .= " WHERE n.fk_contact = c.rowid AND a.rowid = n.fk_action";
+        $sql .= " AND n.fk_soc = s.rowid AND n.fk_action = ".$action;
+        $sql .= " AND s.rowid = ".$socid;
 
 		dolibarr_syslog("Notify.class::send $action, $socid, $texte, $objet_type, $objet_id, $file");
 
@@ -160,7 +160,7 @@ class Notify
                         $sendto = htmlentities($sendto);
 
                         $sql = "INSERT INTO ".MAIN_DB_PREFIX."notify (daten, fk_action, fk_contact, objet_type, objet_id)";
-                        $sql .= " VALUES (now(), $action ,$obj->idp , '$objet_type', $objet_id);";
+                        $sql .= " VALUES (now(), ".$action." ,".$obj->rowid." , '".$objet_type."', ".$objet_id.");";
                         if (! $this->db->query($sql) )
                         {
                             dolibarr_print_error($db);

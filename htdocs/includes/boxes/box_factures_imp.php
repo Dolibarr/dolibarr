@@ -70,18 +70,18 @@ class box_factures_imp extends ModeleBoxes {
 
         if ($user->rights->facture->lire)
         {
-            $sql = "SELECT s.nom, s.idp,";
+            $sql = "SELECT s.nom, s.rowid as socid,";
             $sql.= " f.facnumber,".$db->pdate("f.date_lim_reglement")." as datelimite,";
             $sql.= " f.amount,".$db->pdate("f.datef")." as df,";
             $sql.= " f.paye, f.fk_statut, f.rowid as facid";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-            $sql .= " WHERE f.fk_soc = s.idp AND f.paye=0 AND fk_statut = 1";
+            $sql .= " WHERE f.fk_soc = s.rowid AND f.paye=0 AND fk_statut = 1";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
             if($user->societe_id)
             {
-                $sql .= " AND s.idp = $user->societe_id";
+                $sql .= " AND s.rowid = ".$user->societe_id;
             }
             //$sql .= " ORDER BY f.datef DESC, f.facnumber DESC ";
             $sql .= " ORDER BY f.datef ASC, f.facnumber ASC ";
@@ -110,7 +110,7 @@ class box_factures_imp extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'maxlength'=>44,
-                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->idp);
+                    'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
 
                     $this->info_box_contents[$i][2] = array(
                     'align' => 'right',

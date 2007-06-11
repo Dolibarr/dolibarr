@@ -68,7 +68,7 @@ if ($action == 'attribute_prefix')
 
 if ($action == 'note')
 {
-  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='$note' WHERE idp=$socid";
+  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET note='".$note."' WHERE rowid=".$socid;
   $result = $db->query($sql);
 }
 
@@ -82,7 +82,7 @@ if ($action == 'stcomm')
       
       if ($result)
 	{
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE idp=$socid";
+	  $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=".$stcommid." WHERE rowid=".$socid;
 	  $result = $db->query($sql);
 	}
       else
@@ -109,14 +109,14 @@ if ($action == 'stcomm')
  */
 if ($mode == 'search') {
   if ($mode-search == 'soc') {
-    $sql = "SELECT s.idp FROM ".MAIN_DB_PREFIX."societe as s ";
+    $sql = "SELECT s.rowid FROM ".MAIN_DB_PREFIX."societe as s ";
     $sql .= " WHERE lower(s.nom) like '%".addslashes(strtolower($socname))."%'";
   }
       
   if ( $db->query($sql) ) {
     if ( $db->num_rows() == 1) {
       $obj = $db->fetch_object();
-      $socid = $obj->idp;
+      $socid = $obj->rowid;
     }
     $db->free();
   }
@@ -129,13 +129,13 @@ if ($mode == 'search') {
  *
  */
 
-$sql = "SELECT s.idp, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
+$sql = "SELECT s.rowid, s.nom, s.ville, ".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea";
 $sql .= ", st.libelle as stcomm, s.prefix_comm, s.code_client, s.code_compta ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
 $sql .= " WHERE s.fk_stcomm = st.id AND s.client=1";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 
 if (strlen($stcomm))
 {
@@ -171,7 +171,7 @@ if (strlen($begin))
 
 if ($socid)
 {
-  $sql .= " AND s.idp = $socid";
+  $sql .= " AND s.rowid = ".$socid;
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -232,9 +232,9 @@ if ($result)
       $var=!$var;
 
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">';
+      print '<td><a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">';
       print img_object($langs->trans("ShowCustomer"),"company");
-      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->idp.'">'.$obj->nom.'</a></td>';
+      print '&nbsp;<a href="'.DOL_URL_ROOT.'/compta/fiche.php?socid='.$obj->rowid.'">'.$obj->nom.'</a></td>';
       print '<td>'.$obj->ville.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_client.'&nbsp;</td>';
       print '<td align="left">'.$obj->code_compta.'&nbsp;</td>';
@@ -242,7 +242,7 @@ if ($result)
       print '<td align="center">';
       if (defined("MAIN_MODULE_DOSSIER") && MAIN_MODULE_DOSSIER == 1)
 	{
-	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->idp.'">';
+	  print '<a href="'.DOL_URL_ROOT.'/dossier/client/fiche.php?id='.$obj->rowid.'">';
 	  print img_folder();
 	  print '</a>';
 	}

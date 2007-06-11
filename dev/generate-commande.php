@@ -42,7 +42,7 @@ include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 define (GEN_NUMBER_COMMANDE, 10);
 
 
-$sql = "SELECT idp FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
+$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
 if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
 	while ($i < $num) {
 		$row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++;

@@ -33,7 +33,7 @@ $conf->db->pass = $dolibarr_main_db_pass;
 $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
 $sql = "SELECT ".$db->pdate("f.datef")." as datef, s.nom, f.total, f.note, f.paye";
 $sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f, ".MAIN_DB_PREFIX."societe as s";
-$sql .= " WHERE f.fk_soc = s.idp ORDER BY f.datef DESC";
+$sql .= " WHERE f.fk_soc = s.rowid ORDER BY f.datef DESC";
 
 if ( $db->query( $sql) )
 {
