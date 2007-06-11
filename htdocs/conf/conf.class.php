@@ -400,20 +400,27 @@ class Conf
 		if (! $this->global->MAIN_THEME) $this->global->MAIN_THEME="eldy";
 		$this->theme=$this->global->MAIN_THEME;
 		$this->css  = "theme/".$this->theme."/".$this->theme.".css";
-
-		// $this->email_from          = email pour envoi par Dolibarr des mails auto (notifications, ...)
-		$this->notification->email_from="dolibarr-robot@domain.com";
-		if (defined('NOTIFICATION_EMAIL_FROM'))
+		
+		// $this->email_from = email pour envoi par dolibarr des mails automatiques
+		$this->email_from = "dolibarr-robot@domain.com";
+		if ($conf->global->MAIN_MAIL_EMAIL_FROM)
 		{
-		    $this->notification->email_from=NOTIFICATION_EMAIL_FROM;
+			$this->email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+		}
+		
+		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
+	    $this->notification->email_from=$conf->global->MAIN_MAIL_EMAIL_FROM;
+		if ($conf->global->NOTIFICATION_EMAIL_FROM)
+		{
+		    $this->mailing->email_from=$conf->global->NOTIFICATION_EMAIL_FROM;
 		}
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
-		if (defined('MAILING_EMAIL_FROM'))
+		$this->mailing->email_from=$conf->global->MAIN_MAIL_EMAIL_FROM;
+		if ($conf->global->MAILING_EMAIL_FROM)
 		{
-		    $this->mailing->email_from=MAILING_EMAIL_FROM;
+		    $this->mailing->email_from=$conf->global->MAILING_EMAIL_FROM;
 		}
-		else $this->mailing->email_from=$this->email_from;
 
 		// $this->adherent->email_resil, ...
 		if (defined("MAIN_MAIL_RESIL"))

@@ -491,7 +491,7 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste déroulante des menus disponibles
+     *    \brief      Retourne la liste déroulante des menus disponibles (eldy_backoffice, ...)
      *    \param      selected        Menu pré-sélectionnée
      *    \param      htmlname        Nom de la zone select
      *    \param      dirmenu         Repértoire à scanner
@@ -549,12 +549,55 @@ class Form
 		print '</select>';
     }
 
-  /**
+    /**
+     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
+     *    \param      selected        Menu pré-sélectionnée
+     *    \param      htmlname        Nom de la zone select
+     *    \param      dirmenu         Repértoire à scanner
+     */
+    function select_menu_families($selected='',$htmlname,$dirmenu)
+    {
+		global $langs,$conf;
+    
+		$menuarray=array();
+        $handle=opendir($dirmenu);
+        while (($file = readdir($handle))!==false)
+        {
+            if (is_file($dirmenu."/".$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+            {
+                $filelib=eregi_replace('(_backoffice|_frontoffice)?\.php$','',$file);
+				if (eregi('^default',$filelib)) continue;
+				if (eregi('^empty',$filelib)) continue;
+
+				$menuarray[$filelib]=1;
+            }
+			$menuarray['all']=1;
+        }
+		ksort($menuarray);
+
+		// Affichage liste deroulante des menus
+        print '<select class="flat" name="'.$htmlname.'">';
+        $oldprefix='';
+		foreach ($menuarray as $key => $val)
+		{
+			$tab=split('_',$key);
+			$newprefix=$tab[0];
+			print '<option value="'.$key.'"';
+            if ($key == $selected)
+			{
+				print '	selected="true"';
+			}
+			print '>'.$key.'</option>'."\n";
+		}
+		print '</select>';
+    }
+	
+	
+	/**
    *    \brief      Retourne la liste des types de comptes financiers
    *    \param      selected        Type pré-sélectionné
    *    \param      htmlname        Nom champ formulaire
    */
-	 
   function select_type_comptes_financiers($selected=1,$htmlname='type')
   {
     global $langs;
