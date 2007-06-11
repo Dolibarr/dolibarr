@@ -111,6 +111,7 @@ OfficialWebSiteFr=French official web site
 CurrentTheme=Current theme
 CurrentTopMenuHandler=Current top menu handler
 CurrentLeftMenuHandler=Current left menu handler
+Emails=Emails
 EMailsSetup=EMails setup
 EMailsDesc=This page allows you to overwrite your PHP parameters for emails sending. In most cases on Unix/Linux OS, your PHP setup is correct and this parameters are useless.
 MAIN_MAIL_SMTP_PORT=SMTP Port (By default in php.ini: <b>%s</b>)
