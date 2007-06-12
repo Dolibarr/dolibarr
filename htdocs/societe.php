@@ -38,7 +38,7 @@ $langs->load("suppliers");
 
 // Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, 'societe','','',1);
-print 'socid '.$socid;
+//print 'socid '.$socid;
 $search_nom=isset($_GET["search_nom"])?$_GET["search_nom"]:$_POST["search_nom"];
 $search_ville=isset($_GET["search_ville"])?$_GET["search_ville"]:$_POST["search_ville"];
 
