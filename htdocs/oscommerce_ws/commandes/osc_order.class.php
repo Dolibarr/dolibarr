@@ -200,7 +200,7 @@ class Osc_order
 	{
 
 		/* suppression et insertion */
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_orders WHERE osc_prodid = ".$osc_orderid.";";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_order WHERE rowid = ".$osc_orderid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
@@ -233,9 +233,9 @@ class Osc_order
 
 	function get_orderid($osc_orderid)
 	{
-		$sql = "SELECT doli_orderidp";
+		$sql = "SELECT fk_commande";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_order";
-		$sql.= " WHERE osc_orderid = ".$osc_orderid;
+		$sql.= " WHERE rowid = ".$osc_orderid;
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs

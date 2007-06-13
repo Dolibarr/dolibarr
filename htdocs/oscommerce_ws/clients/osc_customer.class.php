@@ -141,7 +141,7 @@ class Osc_customer
 	{
 
 		/* suppression et insertion */
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_customer WHERE osc_custid = ".$oscid.";";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_customer WHERE rowid = ".$oscid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
@@ -176,7 +176,7 @@ class Osc_customer
 	{
 		$sql = "SELECT doli_socidp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_customer";
-		$sql.= " WHERE osc_custid = ".$osc_client;
+		$sql.= " WHERE rowid = ".$osc_client;
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs
