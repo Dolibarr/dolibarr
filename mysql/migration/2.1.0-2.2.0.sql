@@ -568,6 +568,7 @@ ALTER TABLE llx_product_price MODIFY price_ttc float DEFAULT 0;
 ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
 
 -- Changement de idp en rowid
+-- V4 ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_ibfk1;
 -- V4 ALTER TABLE llx_socpeople DROP FOREIGN KEY fk_socpeople_fk_soc;
 -- V4 ALTER TABLE llx_commande DROP FOREIGN KEY fk_commande_societe;
 -- V4 ALTER TABLE llx_commande_fournisseur DROP FOREIGN KEY fk_commande_fournisseur_societe;
@@ -598,6 +599,8 @@ ALTER TABLE `llx_socpeople` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
 
 ALTER TABLE `llx_osc_customer` CHANGE `osc_custid` `rowid` integer NOT NULL default 0;
 ALTER TABLE `llx_osc_customer` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+-- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY llx_osc_customer_societe_idp;
+-- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY fk_osc_customer_fk_soc;
 ALTER TABLE `llx_osc_customer` CHANGE `doli_socidp` `fk_soc` integer NOT NULL default '0';
 ALTER TABLE `llx_osc_customer` ADD PRIMARY KEY (rowid);
 ALTER TABLE `llx_osc_customer` ADD UNIQUE KEY `fk_soc` (`fk_soc`);
