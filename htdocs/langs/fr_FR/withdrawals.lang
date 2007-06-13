@@ -1,5 +1,6 @@
 # Dolibarr language file - fr_FR - withdrawals
 StandingOrdersArea=Espace prélèvements
+CustomersStandingOrdersArea=Espace prélèvements clients
 StandingOrders=Prélèvements
 StandingOrder=Prélèvement
 NewStandingOrder=Nouveau prélèvement
@@ -13,3 +14,5 @@ WithdrawedBills=Factures prélevées
 WithdrawalsLines=Lignes de prélèvements
 RequestStandingOrderToTreat=Demandes de prélèvements à traiter
 RequestStandingOrderTreated=Demandes de prélèvements traitées
+CustomersStandingOrders=Prélèvements clients
+CustomerStandingOrder=Prélèvement client

@@ -1,5 +1,6 @@
 # Dolibarr language file - en_US - withdrawals
 StandingOrdersArea=Standing orders area
+CustomersStandingOrdersArea=Customers standing orders area
 StandingOrders=Standing orders
 StandingOrder=Standing orders
 NewStandingOrder=New standing order
@@ -13,3 +14,5 @@ WithdrawedBills=Withdrawed invoices
 WithdrawalsLines=Withdrawals lines
 RequestStandingOrderToTreat=Request for standing orders to treat
 RequestStandingOrderTreated=Request for standing orders treated
+CustomersStandingOrders=Customer standing orders
+CustomerStandingOrder=Customer standing order
