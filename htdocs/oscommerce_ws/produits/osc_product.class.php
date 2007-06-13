@@ -157,7 +157,7 @@ class Osc_product
 //		print "entree transcode <br>";
 
 		/* suppression et insertion */
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_product WHERE osc_prodid = ".$oscid.";";
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_product WHERE rowid = ".$oscid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
@@ -192,7 +192,7 @@ class Osc_product
 	{
 		$sql = "SELECT doli_prodidp";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
-		$sql.= " WHERE osc_prodid = ".$osc_product;
+		$sql.= " WHERE rowid = ".$osc_product;
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($resql);
 // test d'erreurs
