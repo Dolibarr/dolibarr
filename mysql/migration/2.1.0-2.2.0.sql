@@ -581,6 +581,22 @@ ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
 -- V4 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_soc;
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_soc;
 -- V4 ALTER TABLE llx_categorie_societe DROP FOREIGN KEY fk_categorie_societe_societe_rowid;
+-- V4 ALTER TABLE llx_telephonie_adsl_fournisseur DROP FOREIGN KEY fk_soc;
+-- V4 ALTER TABLE llx_telephonie_client_stats DROP FOREIGN KEY fk_client_comm;
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP FOREIGN KEY fk_contact;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_client_comm;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc;
+-- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc_facture;
+-- V4 ALTER TABLE llx_telephonie_tarif_client DROP FOREIGN KEY fk_client;
+-- V4 ALTER TABLE llx_telephonie_adsl_fournisseur DROP INDEX fk_soc_2;
+-- V4 ALTER TABLE llx_telephonie_commande_ligne DROP INDEX fk_ligne_2;
+-- V4 ALTER TABLE llx_telephonie_commande_ligne DROP INDEX fk_commande_2;
+-- V4 ALTER TABLE llx_telephonie_commande DROP INDEX fk_user_creat_2;
+-- V4 ALTER TABLE llx_telephonie_commande DROP INDEX fk_fournisseur_2;
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP INDEX fk_contact_2;
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP INDEX fk_contact_3;
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP INDEX fk_ligne_2;
+-- V4 ALTER TABLE llx_telephonie_contact_facture DROP INDEX fk_ligne_3;
 
 ALTER TABLE `llx_societe` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
 ALTER TABLE `llx_socpeople` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
@@ -616,18 +632,11 @@ ALTER TABLE `llx_osc_product` CHANGE `doli_prodidp` `fk_product` integer NOT NUL
 ALTER TABLE `llx_osc_product` ADD PRIMARY KEY (rowid);
 ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 
--- V4 ALTER TABLE llx_telephonie_adsl_fournisseur DROP FOREIGN KEY fk_soc;
 -- V4 ALTER TABLE llx_telephonie_adsl_fournisseur ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
--- V4 ALTER TABLE llx_telephonie_client_stats DROP FOREIGN KEY fk_client_comm;
 -- V4 ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_contact_facture DROP FOREIGN KEY fk_contact;
 -- V4 ALTER TABLE llx_telephonie_contact_facture ADD FOREIGN KEY (fk_contact) REFERENCES llx_socpeople (rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_client_comm;
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc;
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne DROP FOREIGN KEY fk_soc_facture;
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_tarif_client DROP FOREIGN KEY fk_client;
 -- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
 -- fin du changement idp en rowid
