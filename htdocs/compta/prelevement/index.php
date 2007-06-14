@@ -30,6 +30,9 @@
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT."/includes/modules/modPrelevement.class.php";
 
+$langs->load("withdrawals");
+
+
 if (!$user->rights->prelevement->bons->lire)
   accessforbidden();
 
@@ -49,7 +52,7 @@ if ($user->societe_id > 0)
 llxHeader();
 
 
-print_fiche_titre($langs->trans("StandingOrdersArea"));
+print_fiche_titre($langs->trans("CustomersStandingOrdersArea"));
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
