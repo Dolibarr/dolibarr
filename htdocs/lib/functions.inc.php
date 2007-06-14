@@ -513,7 +513,7 @@ function dolibarr_print_date($time,$format='')
     if (! $time) return '';
 
     // Analyse de la date
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$time,$reg))
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$time,$reg))
     {
         // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $syear = $reg[1];
