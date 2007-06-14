@@ -138,7 +138,8 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		{
 			// Suppression vieilles contraintes sans noms et en doubles
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
-		    $listtables=array(  'llx_product_fournisseur_price',
+		    /*
+			$listtables=array(  'llx_product_fournisseur_price',
 								'llx_fichinter',
 								'llx_facture_fourn',
 								'llx_propal',
@@ -148,34 +149,36 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 								'llx_telephonie_contact_facture',
 								'llx_telephonie_societe_ligne',
 								'llx_telephonie_tarif_client');
+		    */
+			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)
-		    {
-		    	$searchTable = '';
-		    	$searchTable = $db->DDLListTables($conf->db->name,$val);
-		    	if ($searchTable == $val)
-		    	{
-		    		$sql = "SHOW CREATE TABLE ".$val;
-			      $resql = $db->query($sql);
-			      if (! $resql) dolibarr_print_error($db);
-				    {
-				  	  $values=$db->fetch_array($resql);
-					    $i=0;
-					    $createsql=$values[1];
-					    while (eregi('CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`',$createsql,$reg) && $i < 100)
-					    {
-						    $sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
-						    $resqldrop = $db->query($sqldrop);
-						    if ($resqldrop)
-						    {
-							    print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
-						    }
-						    $createsql=eregi_replace('CONSTRAINT `'.$reg[1].'`','XXX',$createsql);
-						    $i++;
-					    }
-					    $db->free($resql);
-				    }
-			   }
-		  }
+			{
+				//print "x".$val."<br>";
+				$sql = "SHOW CREATE TABLE ".$val;
+				$resql = $db->query($sql);
+				if ($resql)
+				{
+					$values=$db->fetch_array($resql);
+					$i=0;
+					$createsql=$values[1];
+					while (eregi('CONSTRAINT `(0_[0-9a-zA-Z]+|[_0-9a-zA-Z]+_ibfk_[0-9]+)`',$createsql,$reg) && $i < 100)
+					{
+						$sqldrop="ALTER TABLE ".$val." DROP FOREIGN KEY ".$reg[1];
+						$resqldrop = $db->query($sqldrop);
+						if ($resqldrop)
+						{
+							print '<tr><td colspan="2">'.$sqldrop.";</td></tr>\n";
+						}
+						$createsql=eregi_replace('CONSTRAINT `'.$reg[1].'`','XXX',$createsql);
+						$i++;
+					}
+					$db->free($resql);
+				}
+				else
+				{
+					// \TODO Ignore only error DB_ERROR_NOSUCHTABLE
+				}
+			}
 		}
 	}
 	
