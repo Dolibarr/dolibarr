@@ -46,7 +46,7 @@ function llxHeader ($head = "", $urlp = "", $title="")
   
   if ($conf->categorie->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/categories/index.php", $langs->trans("Categories"));
+      $menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
       $menu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"));
 
       if ($user->rights->categorie->creer)
