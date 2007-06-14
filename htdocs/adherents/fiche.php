@@ -269,8 +269,8 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
         $error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Lastname"))."<br>\n";
     }
-    if (!isset($prenom) || $prenom=='') {
-        $error++;
+	if ($morphy != 'mor' && (!isset($prenom) || $prenom=='')) {
+		$error++;
         $errmsg .= $langs->trans("ErrorFieldRequired",$langs->transnoentities("Firstname"))."<br>\n";
     }
     if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($email)) {
@@ -604,6 +604,7 @@ if ($action == 'edit')
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print "<tr><td>".$langs->trans("Person")."</td><td>";
+	print $adh->morphy;
 	$htmls->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
 	
@@ -725,7 +726,7 @@ if ($action == 'create')
     $morphys["phy"] = "Physique";
     $morphys["mor"] = "Morale";
     print "<tr><td>".$langs->trans("Person")."*</td><td>\n";
-    $htmls->select_array("morphy",  $morphys);
+    $htmls->select_array("morphy", $morphys, $adh->morphy);
     print "</td>\n";
 
     print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
