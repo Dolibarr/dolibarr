@@ -193,10 +193,10 @@ class Osc_product
 		$sql = "SELECT fk_product";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
 		$sql.= " WHERE rowid = ".$osc_product;
-		$result=$this->db->query($sql);
-		$row = $this->db->fetch_row($resql);
+		$resql=$this->db->query($sql);
+		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($row) return $row[0];	
+		if ($obj) return $obj->fk_product;	
 		else return '';	
 	}
 

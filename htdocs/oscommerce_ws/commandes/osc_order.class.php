@@ -236,10 +236,10 @@ class Osc_order
 		$sql = "SELECT fk_commande";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_order";
 		$sql.= " WHERE rowid = ".$osc_orderid;
-		$result=$this->db->query($sql);
-		$row = $this->db->fetch_row($resql);
+		$resql=$this->db->query($sql);
+		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($row) return $row[0];	
+		if ($obj) return $obj->fk_commande;	
 		else return '';
 	}
 

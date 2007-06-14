@@ -174,13 +174,13 @@ class Osc_customer
 
 	function get_clientid($osc_client)
 	{
-		$sql = "SELECT doli_socidp";
+		$sql = "SELECT fk_soc";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_customer";
 		$sql.= " WHERE rowid = ".$osc_client;
-		$result=$this->db->query($sql);
-		$row = $this->db->fetch_row($resql);
+		$resql=$this->db->query($sql);
+		$obj = $this->db->fetch_object($resql);
 // test d'erreurs
-		if ($row) return $row[0];	
+		if ($obj) return $obj->fk_soc[0];	
 		else return '';
 	}
 
