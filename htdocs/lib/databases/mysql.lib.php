@@ -671,25 +671,25 @@ class DoliDb
     return $ret;
   }
   
-  /**
-      \brief      Liste des tables dans une database.
-      \param	    database	Nom de la database
-      \param	    table   	Nom de la table à rechercher
-      \return	    resource
-    */
+	/**
+		\brief     	Liste des tables dans une database.
+		\param	    database		Nom de la database
+		\param	    table   		Nom de la table à rechercher
+		\return	    array			Tableau des 
+	*/
     function DDLListTables($database, $table='')
     {
-    	$like = '';
-    	if ($table) $like = "LIKE '".$table."'"
-    	$result = mysqli_query($this->db, "SHOW TABLES FROM ".$database." ".$like." ");
-    	while($row = mysqli_fetch_array($result))
-      {
-    	  $this->results = $row[0];
-      }
-      return $this->results;
+		$like = '';
+		if ($table) $like = "LIKE '".$table."'"
+		$result = mysql_query($this->db, "SHOW TABLES FROM ".$database." ".$like." ");
+		while($row = mysql_fetch_array($result))
+		{
+			$this->results = $row[0];
+		}
+		return $this->results;
     }
   
-  /**
+	/**
      \brief      Crée une table
      \param	    table 			Nom de la table
      \param	    fields 			Tableau associatif [nom champ][tableau des descriptions]
@@ -699,7 +699,7 @@ class DoliDb
      \param	    key 			Tableau des champs clés noms => valeur
      \param	    type 			Type de la table
      \return	    int				<0 si KO, >=0 si OK
-  */
+	*/
 	function DDLCreateTable($table,$fields,$primary_key,$type,$unique_keys="",$fulltext_keys="",$keys="")
 	{
 		// clés recherchées dans le tableau des descriptions (fields) : type,value,attribute,null,default,extra
