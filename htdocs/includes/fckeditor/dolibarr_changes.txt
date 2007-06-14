@@ -3,7 +3,7 @@ If fckeditor files are replaced by new version, following changes must be done:
 
 * Edit fckconfig.js to set:
 ***************************
-
+(Rem: Pas requis car deja géré dans le fichier fckconfig.js qui est dans le repertoire du theme)
 FCKConfig.LinkUpload = false ;
 FCKConfig.ImageUpload = false ;
 FCKConfig.FlashUpload = false ;
