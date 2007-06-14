@@ -678,12 +678,19 @@ class DoliDb
     /**
         \brief      Liste des tables dans une database.
         \param	    database	Nom de la database
+        \param	    table   	Nom de la table à rechercher
         \return	    resource
     */
-    function DDLListTables($database)
+    function DDLListTables($database, $table='')
     {
-        $this->results = mysqli_list_tables($database, $this->db);
-        return $this->results;
+    	$like = '';
+    	if ($table) $like = "LIKE '".$table."'";
+    	$result = mysqli_query($this->db, "SHOW TABLES FROM ".$database." ".$like." ");
+    	while($row = mysqli_fetch_array($result))
+      {
+    	  $this->results = $row[0];
+      }
+      return $this->results;
     }
 
 	/**
