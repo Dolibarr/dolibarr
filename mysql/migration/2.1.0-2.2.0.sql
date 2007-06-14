@@ -581,6 +581,10 @@ ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
 -- V4 ALTER TABLE llx_societe_remise_except DROP FOREIGN KEY fk_societe_remise_fk_soc;
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_soc;
 -- V4 ALTER TABLE llx_categorie_societe DROP FOREIGN KEY fk_categorie_societe_societe_rowid;
+
+-- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY llx_osc_customer_societe_idp;
+-- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY fk_osc_customer_fk_soc;
+
 -- V4 ALTER TABLE llx_telephonie_adsl_fournisseur DROP FOREIGN KEY fk_soc;
 -- V4 ALTER TABLE llx_telephonie_client_stats DROP FOREIGN KEY fk_client_comm;
 -- V4 ALTER TABLE llx_telephonie_contact_facture DROP FOREIGN KEY fk_contact;
@@ -601,6 +605,22 @@ ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
 ALTER TABLE `llx_societe` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
 ALTER TABLE `llx_socpeople` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
 
+ALTER TABLE `llx_osc_customer` CHANGE `osc_custid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_customer` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_customer` CHANGE `doli_socidp` `fk_soc` integer NOT NULL default '0';
+ALTER TABLE `llx_osc_customer` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_customer` ADD UNIQUE KEY `fk_soc` (`fk_soc`);
+ALTER TABLE `llx_osc_order` CHANGE `osc_orderid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_order` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_order` CHANGE `doli_orderidp` `fk_commande` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_order` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_order` ADD UNIQUE KEY `fk_commande` (`fk_commande`);
+ALTER TABLE `llx_osc_product` CHANGE `osc_prodid` `rowid` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_product` CHANGE `osc_lastmodif` `datem` datetime default NULL;
+ALTER TABLE `llx_osc_product` CHANGE `doli_prodidp` `fk_product` integer NOT NULL default 0;
+ALTER TABLE `llx_osc_product` ADD PRIMARY KEY (rowid);
+ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
+
 -- V4 ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_commande_fournisseur ADD CONSTRAINT fk_commande_fournisseur_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
@@ -613,24 +633,7 @@ ALTER TABLE `llx_socpeople` CHANGE `idp` `rowid` integer AUTO_INCREMENT;
 -- V4 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
 
-ALTER TABLE `llx_osc_customer` CHANGE `osc_custid` `rowid` integer NOT NULL default 0;
-ALTER TABLE `llx_osc_customer` CHANGE `osc_lastmodif` `datem` datetime default NULL;
--- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY llx_osc_customer_societe_idp;
--- V4 ALTER TABLE `llx_osc_customer` DROP FOREIGN KEY fk_osc_customer_fk_soc;
-ALTER TABLE `llx_osc_customer` CHANGE `doli_socidp` `fk_soc` integer NOT NULL default '0';
-ALTER TABLE `llx_osc_customer` ADD PRIMARY KEY (rowid);
-ALTER TABLE `llx_osc_customer` ADD UNIQUE KEY `fk_soc` (`fk_soc`);
 -- V4 ALTER TABLE llx_osc_customer ADD CONSTRAINT fk_osc_customer_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
-ALTER TABLE `llx_osc_order` CHANGE `osc_orderid` `rowid` integer NOT NULL default 0;
-ALTER TABLE `llx_osc_order` CHANGE `osc_lastmodif` `datem` datetime default NULL;
-ALTER TABLE `llx_osc_order` CHANGE `doli_orderidp` `fk_commande` integer NOT NULL default 0;
-ALTER TABLE `llx_osc_order` ADD PRIMARY KEY (rowid);
-ALTER TABLE `llx_osc_order` ADD UNIQUE KEY `fk_commande` (`fk_commande`);
-ALTER TABLE `llx_osc_product` CHANGE `osc_prodid` `rowid` integer NOT NULL default 0;
-ALTER TABLE `llx_osc_product` CHANGE `osc_lastmodif` `datem` datetime default NULL;
-ALTER TABLE `llx_osc_product` CHANGE `doli_prodidp` `fk_product` integer NOT NULL default 0;
-ALTER TABLE `llx_osc_product` ADD PRIMARY KEY (rowid);
-ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 
 -- V4 ALTER TABLE llx_telephonie_adsl_fournisseur ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
