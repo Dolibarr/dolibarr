@@ -685,7 +685,7 @@ class DoliDb
 		if ($table) $like = "LIKE '".$table."'";
 		$sql="SHOW TABLES FROM ".$database." ".$like.";";
 		//print $sql;
-		$result = mysql_query($this->db, $sql);
+		$result = mysql_query($sql, $this->db);
 		while($row = mysql_fetch_array($result))
 		{
 			$listtables[] = $row[0];
