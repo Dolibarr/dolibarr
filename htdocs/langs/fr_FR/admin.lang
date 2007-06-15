@@ -457,6 +457,11 @@ DictionnaryDesc=Definissez ici les données de référence. Vous pouvez compléter/m
 ConstDesc=Tout autre parametre non editable dans les pages précédentes
 OnceSetupFinishedCreateUsers=Attention, vous êtes sous un compte administrateur de Dolibarr. Les administrateurs sont utilisés pour configurer Dolibarr. Pour une utilisation courante de Dolibarr, il est recommandé d'utiliser un compte non administrateur créé depuis le menu "Utilisateurs & Groupes".
 MiscellanousDesc=Définissez ici les autres paramètres en rapport avec la sécurité.
+LimitsSetup=Configuration des limites et precisions
+LimitsDesc=Vous pouvez définir ici les limites et précisions utilisées par Dolibarr
+MAIN_MAX_DECIMALS_UNIT=Nombre de décimals maximum pour les prix unitaires
+MAIN_MAX_DECIMALS_TTC=Nombre de décimals maximum pour les prix totaux toute taxe comprise
+MAIN_MAX_DECIMALS_SHOWN=Nombre de décimals maximum pour les montant affichés à l'écran (Les décimals en trop sont remplacés par trois petits points: <b>...</b>)
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré

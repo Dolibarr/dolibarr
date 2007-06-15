@@ -129,6 +129,8 @@ About=About
 WelcomeString=<font class="body">We are </font>%s<font class="body">, and you are connected as user</font> %s
 Number=Number
 Numero=Numero
+Limit=Limit
+Limits=Limits
 DevelopmentTeam=Development Team
 Logout=Logout
 Connection=Connection

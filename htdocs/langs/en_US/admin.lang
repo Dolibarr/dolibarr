@@ -450,6 +450,11 @@ DictionnaryDesc=Define here all reference datas. You can complete predefined val
 ConstDesc=All other parameters not available in previous pages
 OnceSetupFinishedCreateUsers=Warning, you are a Dolibarr administrator user. Administrator users are used to setup Dolibarr. For a usual usage of Dolibarr, it is recommended to use a non administrator user created from Users & Groups menu.
 MiscellanousDesc=Define here all other parameters related to security.
+LimitsSetup=Limits/Precision setup
+LimitsDesc=You can define here limits and precision used by Dolibarr
+MAIN_MAX_DECIMALS_UNIT=Max decimals for unit prices
+MAIN_MAX_DECIMALS_TTC=Max decimals for prices with taxes
+MAIN_MAX_DECIMALS_SHOWN=Max decimals for prices shown on screen (Excedented decimals will be replaced by three dots <b>...</b>)
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
