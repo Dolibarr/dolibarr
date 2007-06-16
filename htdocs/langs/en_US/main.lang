@@ -53,6 +53,7 @@ MoreInformation=More information
 NotePublic=Note (public)
 NotePrivate=Note (private)
 PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
+DoTest=Test
 yes=yes
 Yes=Yes
 no=no
