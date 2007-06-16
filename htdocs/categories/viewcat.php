@@ -33,6 +33,8 @@ if ($_REQUEST['id'] == "")
   exit();
 }
 
+$type=$_GET['type'];
+
 // Securite
 $user->getrights('categorie');
 if (! $user->rights->categorie->lire)
@@ -78,7 +80,7 @@ if ($mesg) print $mesg.'<br>';
 $h = 0;
 $head = array();
 
-$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$c->id;
+$head[$h][0] = DOL_URL_ROOT.'/categories/viewcat.php?id='.$c->id.'&amp;type='.$type;
 $head[$h][1] = $langs->trans("Card");
 $head[$h][2] = 'card';
 $h++;
@@ -91,7 +93,7 @@ dolibarr_fiche_head($head, 'card', $langs->trans("Category"));
 */
 if ($_GET['action'] == 'delete')
 {
-	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
+	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$c->id.'&amp;type='.$type,$langs->trans('DeleteCategory'),$langs->trans('ConfirmDeleteCategory'),'confirm_delete');
 	print '<br />';
 }
 
@@ -134,7 +136,7 @@ if ($user->rights->categorie->creer)
 
 if ($user->rights->categorie->supprimer)
 {
-	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$c->id."'>".$langs->trans("Delete")."</a>";
+	print "<a class='butActionDelete' href='".DOL_URL_ROOT."/categories/viewcat.php?action=delete&amp;id=".$c->id."&amp;type=".$type."'>".$langs->trans("Delete")."</a>";
 }
 
 print "</div>";
@@ -161,7 +163,7 @@ else
 			$i++;
 			$var=!$var;
 			print "\t<tr ".$bc[$var].">\n";
-			print "\t\t<td nowrap=\"nowrap\"><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+			print "\t\t<td nowrap=\"nowrap\"><a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a></td>\n";
 			print "\t\t<td>".$cat->description."</td>\n";
 			
 			if ($cat->visible == 1)

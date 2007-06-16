@@ -97,7 +97,7 @@ if($_POST['catname'] || $_REQUEST['id'])
 	{
 		$var = ! $var;
 		print "\t<tr ".$bc[$var].">\n";
-		print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
+		print "\t\t<td><a href='viewcat.php?id=".$cat->id."&amp;type=".$type."'>".$cat->label."</a></td>\n";
 		print "\t\t<td>".$cat->description."</td>\n";
 		print "\t</tr>\n";
 	}
@@ -170,7 +170,7 @@ if ($conf->use_javascript)
 			$newelement=array(
 					'text' => $cate_arbo[$key]['label'],
 					//'link' => $_SERVER["PHP_SELF"].'?id='.$cate_arbo[$key]['id'],
-					'link' => DOL_URL_ROOT.'/categories/viewcat.php?id='.$cate_arbo[$key]['id'],
+					'link' => DOL_URL_ROOT.'/categories/viewcat.php?id='.$cate_arbo[$key]['id'].'&amp;type='.$type,
 					'icon' => $icon,
 					'expandedIcon' => $expandedIcon
 			);
@@ -240,7 +240,7 @@ else
 			{
 				$var = ! $var;
 				print "\t<tr ".$bc[$var].">\n";
-				print '<td><a href="viewcat.php?id='.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</a></td>';
+				print '<td><a href="viewcat.php?id='.$cate_arbo[$key]['id'].'&amp;type='.$type.'">'.$cate_arbo[$key]['fulllabel'].'</a></td>';
 				print '<td>'.$c->get_desc($cate_arbo[$key]['id']).'</td>';
 				print "\t</tr>\n";
 			}
