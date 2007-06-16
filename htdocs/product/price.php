@@ -294,7 +294,7 @@ else
   $sql .= " AND p.fk_user_author = u.rowid";
   $sql .= " ORDER BY p.date_price DESC ";
 }
-//$sql .= $db->plimit();
+$sql .= $db->plimit();
 
 $result = $db->query($sql) ;
 if ($result)
