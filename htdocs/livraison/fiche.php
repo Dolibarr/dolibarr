@@ -442,7 +442,7 @@ else
     
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'%A %d %B %Y')."</td>\n";
+            print '<td colspan="3">'.dolibarr_print_date($livraison->date_creation,'dayhourtext')."</td>\n";
     		print '</tr>';
     		
             // Statut
@@ -633,7 +633,7 @@ else
                             print "<td>".stripslashes(nl2br($objp->description))."</td>\n";
                         }
                         print '<td align="center">'.$objp->qty_livre.'</td>';
-                        print '<td align="center">'.dolibarr_print_date($objp->date_livraison).'</td>';
+                        print '<td align="center">'.dolibarr_print_date($objp->date_livraison,"dayhour").'</td>';
                         print '</tr>';
                         $i++;
                     }

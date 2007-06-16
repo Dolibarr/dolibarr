@@ -331,7 +331,7 @@ if ($socid > 0)
                 print "<tr $bc[$var]>";
                 print '<td><a href="../projet/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowProject"),"project")." ".$obj->title.'</a></td>';
 
-                print "<td align=\"right\">".dolibarr_print_date($obj->do,"%d %b %Y") ."</td></tr>";
+                print "<td align=\"right\">".dolibarr_print_date($obj->do,"day") ."</td></tr>";
                 $i++;
             }
             $db->free();

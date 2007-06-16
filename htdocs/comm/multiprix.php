@@ -152,7 +152,7 @@ if ($_socid > 0)
 	    $obj = $db->fetch_object($resql);
 	    $tag = !$tag;
 	    print '<tr '.$bc[$tag].'>';
-	    print '<td>'.dolibarr_print_date($obj->dc,"%d %B %Y %H:%M").'</td>';
+	    print '<td>'.dolibarr_print_date($obj->dc,"dayhour").'</td>';
 	    print '<td>'.$obj->price_level.' </td>';
 	    print '<td>'.$obj->login.'</td>';
 	    print '</tr>';

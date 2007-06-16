@@ -349,7 +349,7 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
       
       $pdf->SetTextColor(200,0,0);
       $pdf->SetFont('Arial','B',12);
-      $pdf->Text(11, 88, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"));
+      $pdf->Text(11, 88, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"day"));
       $pdf->Text(11, 94, $langs->transnoentities("DeliveryOrder")." ".$delivery->ref);
       
       $pdf->SetFont('Arial','B',9);

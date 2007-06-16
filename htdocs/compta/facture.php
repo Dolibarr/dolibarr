@@ -1951,7 +1951,7 @@ else
 			
 			// Dates
 			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="3">'.dolibarr_print_date($fac->date,'%A %d %B %Y').'</td>';
+			print '<td colspan="3">'.dolibarr_print_date($fac->date,'daytext').'</td>';
 			
 			$nbrows=8;
 			if ($conf->global->FAC_USE_CUSTOMER_ORDER_REF) $nbrows++;
@@ -2064,7 +2064,7 @@ else
 			print '<td colspan="3">';
 			if ($fac->type != 2)
 			{
-				print dolibarr_print_date($fac->date_lim_reglement,'%A %d %B %Y');
+				print dolibarr_print_date($fac->date_lim_reglement,'daytext');
 				if ($fac->date_lim_reglement < (time() - $conf->facture->client->warning_delay) && ! $fac->paye && $fac->statut == 1 && ! $fac->am) print img_warning($langs->trans('Late'));
 			}
 			else

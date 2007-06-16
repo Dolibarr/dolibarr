@@ -198,7 +198,7 @@ else
 
     if ($contact->birthday)
     {
-        print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday);
+        print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,'day");
 
         if ($contact->birthday_alert)
         print ' (alerte anniversaire active)</td>';

@@ -173,7 +173,7 @@ if ($socid > 0)
 				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
 				print "</td>\n";
 				print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"dayhour").'</td>';
 				print '<td align="center">';
 				echo '<a href="docsoc.php?socid='.$socid.'&amp;action=delete_file&urlfile='.urlencode($file).'">'.img_delete().'</a>';
 				print "</td></tr>\n";
@@ -218,7 +218,7 @@ if ($socid > 0)
 				print "</td>\n";
 
 				print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"%d %b %Y %H:%M:%S").'</td>';
+				print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
 				print "</tr>\n";
 			}
 		}

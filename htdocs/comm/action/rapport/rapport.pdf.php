@@ -118,7 +118,7 @@ class CommActionRapport
 
         $pdf->SetFont('Arial','',30);
         $pdf->SetXY (10, 140);
-        $pdf->MultiCell(190, 20, $langs->trans("Date").': '.dolibarr_print_date($this->date_edition,"%d %B %Y"), 0, 'C', 0);
+        $pdf->MultiCell(190, 20, $langs->trans("Date").': '.dolibarr_print_date($this->date_edition,"day"), 0, 'C', 0);
 
         $pdf->SetXY (10, 170);
         $pdf->SetFont('Arial','B',18);
@@ -171,7 +171,7 @@ class CommActionRapport
                 $y = max($y, $pdf->GetY(), $y0, $y1, $y2, $y3) + 1;
 
                 $pdf->SetXY(5, $y);
-                $pdf->MultiCell(22, 4, dolibarr_print_date($obj->da)."\n".dolibarr_print_date($obj->da,"%H:%m:%S"), 0, 'L', 0);
+                $pdf->MultiCell(22, 4, dolibarr_print_date($obj->da,"day")."\n".dolibarr_print_date($obj->da,"hour"), 0, 'L', 0);
                 $y0 = $pdf->GetY();
 
                 $pdf->SetXY(26, $y);

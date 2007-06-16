@@ -236,13 +236,13 @@ else
 			print "<tr $bc[$var]>";
 
 			// Date operation
-			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->do,"%d/%m/%Y").'</td>';
+			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->do,"day").'</td>';
 
 			// Date de valeur
 			print '<td align="center" valign="center" nowrap="nowrap">';
 			print '<a href="releve.php?action=dvprev&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_previous().'</a> ';
-			print dolibarr_print_date($objp->dv,"%d/%m/%Y") .' ';
+			print dolibarr_print_date($objp->dv,"day") .' ';
 			print '<a href="releve.php?action=dvnext&amp;num='.$num.'&amp;account='.$_GET["account"].'&amp;dvid='.$objp->rowid.'">';
 			print img_next().'</a>';
 			print "</td>\n";

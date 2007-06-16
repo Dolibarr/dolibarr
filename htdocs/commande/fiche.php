@@ -1105,7 +1105,7 @@ else
 
 			// Date
 			print '<tr><td>'.$langs->trans('Date').'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+			print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
 			if ($commande->source == 0)
 			{
@@ -1138,7 +1138,7 @@ else
 				}
 				else
 				{
-					print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
+					print dolibarr_print_date($commande->date_livraison,'daytext');
 				}
 				print '</td>';
 				print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';

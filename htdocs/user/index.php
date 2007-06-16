@@ -113,7 +113,7 @@ if ($result)
         }
         else print $langs->trans("InternalUser");
         print '</td>';
-        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
+        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
 
 		// Statut
 		$userstatic->statut=$obj->statut;

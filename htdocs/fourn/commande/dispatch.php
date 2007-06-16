@@ -161,7 +161,7 @@ if ($id	> 0)
 	      
 	  if ($commande->date_commande)
 	    {
-	      print dolibarr_print_date($commande->date_commande,"%A %d %B %Y")."\n";
+	      print dolibarr_print_date($commande->date_commande,"dayhourtext")."\n";
 	    }
 	
 	  print '</td><td width="50%" colspan="3">';

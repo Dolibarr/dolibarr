@@ -418,8 +418,8 @@ if ($account > 0)
 	            }
 	    
 	            print "<tr $bc[$var]>";
-	            print "<td nowrap>".dolibarr_print_date($objp->do,"%d/%m/%y")."</td>\n";
-	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"%d/%m/%y")."</td>\n";
+	            print "<td nowrap>".dolibarr_print_date($objp->do,"day")."</td>\n";
+	            print "<td nowrap>&nbsp;".dolibarr_print_date($objp->dv,"day")."</td>\n";
 	            print "<td nowrap>&nbsp;".$objp->fk_type." ".($objp->num_chq?$objp->num_chq:"")."</td>\n";
 	            print '<td><a href="ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 				if (eregi('^\((.*)\)$',$objp->label,$reg))

@@ -196,7 +196,7 @@ if ($socid > 0)
             {
                 print " ".img_warning();
             }
-            print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"%d %B %Y")."</td>\n";
+            print "</td><td align=\"right\">".dolibarr_print_date($objp->dp,"day")."</td>\n";
             print "<td align=\"right\">".price($objp->price)."</td>\n";
             print "<td align=\"right\">".$propal_static->LibStatut($objp->fk_statut,5)."</td></tr>\n";
             $i++;

@@ -89,7 +89,7 @@ if ($result)
 		print "<tr $bc[$var]>";
 
 		print '<td>'.$obj->ref.'</td>';
-		print '<td>'.dolibarr_print_date($obj->date_export,"%a %e %b %Y %H:%M:%S").'</td>';
+		print '<td>'.dolibarr_print_date($obj->date_export,"dayhour").'</td>';
 		print '<td><a href="index.php?action=export&amp;id='.$obj->rowid.'">'.$langs->trans("ReBuild").'</a></td>';
 		print "</tr>\n";
 		$i++;

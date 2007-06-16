@@ -578,11 +578,11 @@ else
 			print '</tr>';
 
 			print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3" nowrap="nowrap">';
-			print dolibarr_print_date($fac->datep,'%A %d %B %Y').'</td></tr>';
+			print dolibarr_print_date($fac->datep,'dayhourtext').'</td></tr>';
 
 			print '<tr>';
 			print '<td>'.$langs->trans('DateEcheance').'</td><td colspan="3">';
-			print dolibarr_print_date($fac->date_echeance,'%A %d %B %Y');
+			print dolibarr_print_date($fac->date_echeance,'dayhourtext');
 	        if (($fac->paye == 0) && ($fac->statut > 0) && $fac->date_echeance < (time() - $conf->facture->fournisseur->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 			print '</td></tr>';
 

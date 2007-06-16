@@ -355,8 +355,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    $ldap->fetch($login);
 	    
 	    if ($ldapdebug) print "DEBUG: UACF = ".join(',',$ldap->uacf)."<br>\n";
-	    if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'%d %b %Y')."<br>\n";
-	    if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'%d %b %Y')."<br>\n";
+	    if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
+	    if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
 	    
 	    //TODO : doit etre géré au niveau de PEAR
 /*	    
@@ -733,7 +733,7 @@ function top_menu($head, $title="", $target="")
     if (! isset($_SERVER["REMOTE_USER"]) || ! $_SERVER["REMOTE_USER"])
     {
         $title=$langs->trans("Logout");
-        $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"%d/%m/%Y %H:%M:%S");
+        $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
         if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
 
         $text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';

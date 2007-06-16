@@ -93,7 +93,7 @@ $userstring=$user->fullname;
 print '<td nowrap>'.$langs->trans("User").'</td><td>'.$userstring.'</td></tr>';
 print '<tr '.$bc[true].'>';
 print '<td nowrap>'.$langs->trans("PreviousConnexion").'</td><td>';
-if ($user->datepreviouslogin) print dolibarr_print_date($user->datepreviouslogin,"%d %b %Y %H:%M:%S");
+if ($user->datepreviouslogin) print dolibarr_print_date($user->datepreviouslogin,"dayhour");
 else print $langs->trans("Unknown");
 print '</td>';
 print "</tr>\n";

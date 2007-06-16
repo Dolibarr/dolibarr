@@ -729,12 +729,12 @@ if ($_GET["id"])
 
         // Date planification
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
-		print dolibarr_print_date($act->datep,'%d %B %Y %H:%M');
+		print dolibarr_print_date($act->datep,'dayhour');
 		if ($act->percent < 100 && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Date fin real
-        print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'%d %B %Y %H:%M').'</td></tr>';
+        print '<tr><td>'.$langs->trans("DateActionDone").'</td><td colspan="3">'.dolibarr_print_date($act->date,'dayhour').'</td></tr>';
 
         // Statut
         print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3">';

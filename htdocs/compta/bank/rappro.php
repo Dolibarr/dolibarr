@@ -207,8 +207,8 @@ if ($resql)
         print "<input type=\"hidden\" name=\"account\" value=\"".$_GET["account"]."\">";
         print "<input type=\"hidden\" name=\"rowid\" value=\"".$objp->rowid."\">";
 
-        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->do,"%d/%m/%Y").'</td>';
-        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->dv,"%d/%m/%Y").'</td>';
+        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->do,"day").'</td>';
+        print '<td align="center" nowrap="nowrap">'.dolibarr_print_date($objp->dv,"day").'</td>';
         print '<td nowrap="nowrap">'.$objp->type.($objp->num_chq?' '.$objp->num_chq:'').'</td>';
 
 		// Description

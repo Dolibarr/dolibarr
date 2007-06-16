@@ -166,7 +166,7 @@ if ($result)
     $var=!$var;
 
     print "<tr $bc[$var]>";
-    print '<td align="center">'.dolibarr_print_date($objp->do,"%d %b %y")."</td>\n";
+    print '<td align="center">'.dolibarr_print_date($objp->do,"day")."</td>\n";
       
     print "<td><a href=\"ligne.php?rowid=$objp->rowid&amp;account=$objp->fk_account\">";
 	$reg=array();

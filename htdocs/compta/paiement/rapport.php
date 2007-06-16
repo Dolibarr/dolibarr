@@ -147,7 +147,7 @@ if ($year)
 	      $relativepath = $year.'/'.$file;
 	      print "<tr $bc[$var]>".'<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture_paiement&amp;file='.urlencode($relativepath).'">'.img_pdf().' '.$file.'</a></td>';
 	      print '<td align="right">'.filesize($tfile). ' '.$langs->trans("Bytes").'</td>';
-	      print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"%d %b %Y %H:%M:%S").'</td></tr>';
+	      print '<td align="right">'.dolibarr_print_date(filemtime($tfile),"dayhour").'</td></tr>';
 	    }
 	}
       print '</table>';

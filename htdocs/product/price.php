@@ -350,7 +350,7 @@ if ($result)
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			// Date
-			print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
+			print "<td>".dolibarr_print_date($objp->dp,"dayhour")."</td>";
 			
 			// catégorie de Prix
 			if ($conf->global->PRODUIT_MULTIPRICES)

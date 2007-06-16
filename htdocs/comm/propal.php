@@ -846,7 +846,7 @@ if ($_GET['propalid'] > 0)
 
 	// Dates
 	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-	print dolibarr_print_date($propal->date,'%a %d %B %Y');
+	print dolibarr_print_date($propal->date,'daytext');
 	print '</td>';
 
 	if ($conf->projet->enabled) $rowspan++;
@@ -881,7 +881,7 @@ if ($_GET['propalid'] > 0)
 	{
 		if ($propal->fin_validite)
 		{
-			print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+			print dolibarr_print_date($propal->fin_validite,'daytext');
 			if ($propal->statut == 1 && $propal->fin_validite < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
 		}
 		else

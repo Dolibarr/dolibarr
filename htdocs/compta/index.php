@@ -655,7 +655,7 @@ if ($resql)
       $obj = $db->fetch_object($resql);
       $var=!$var;
 
-      print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da,"%d %b %Y")."</td>";
+      print "<tr $bc[$var]><td>".dolibarr_print_date($obj->da,"day")."</td>";
       print "<td><a href=\"action/fiche.php\">$obj->libelle $obj->label</a></td></tr>";
       $i++;
     }

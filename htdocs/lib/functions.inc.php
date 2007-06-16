@@ -599,31 +599,31 @@ function dolibarr_print_object_info($object)
         print $langs->trans("CreatedBy")." : " . $object->user_creation->fullname . '<br>';
 
     if (isset($object->date_creation))
-        print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateCreation")." : " . dolibarr_print_date($object->date_creation,"dayhourtext") . '<br>';
 
     if (isset($object->user_modification) && $object->user_modification->fullname)
         print $langs->trans("ModifiedBy")." : " . $object->user_modification->fullname . '<br>';
 
     if (isset($object->date_modification))
-        print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateLastModification")." : " . dolibarr_print_date($object->date_modification,"dayhourtext") . '<br>';
 
     if (isset($object->user_validation) && $object->user_validation->fullname)
         print $langs->trans("ValidatedBy")." : " . $object->user_validation->fullname . '<br>';
 
     if (isset($object->date_validation))
-        print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateValidation")." : " . dolibarr_print_date($object->date_validation,"dayhourtext") . '<br>';
 
     if (isset($object->user_cloture) && $object->user_cloture->fullname )
         print $langs->trans("ClosedBy")." : " . $object->user_cloture->fullname . '<br>';
 
     if (isset($object->date_cloture))
-        print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateClosing")." : " . dolibarr_print_date($object->date_cloture,"dayhourtext") . '<br>';
 
     if (isset($object->user_rappro) && $object->user_rappro->fullname )
         print $langs->trans("ConciliatedBy")." : " . $object->user_rappro->fullname . '<br>';
 
     if (isset($object->date_rappro))
-        print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"%A %d %B %Y %H:%M:%S") . '<br>';
+        print $langs->trans("DateConciliating")." : " . dolibarr_print_date($object->date_rappro,"dayhourtext") . '<br>';
 }
 
 /**

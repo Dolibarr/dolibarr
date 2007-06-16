@@ -349,7 +349,7 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
     print '<table class="border" width="100%">';
     
     print "<tr><td>".$langs->trans("Date")."</td><td>";
-    print dolibarr_print_date($don->date,"%d %B %Y");
+    print dolibarr_print_date($don->date,"day");
     print "</td>";
     
     $nbrows=12;

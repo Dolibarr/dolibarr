@@ -237,8 +237,8 @@ if ($_GET["facid"] > 0)
 	  print "<td>Conditions de réglement</td><td>" . $fac->cond_reglement ."</td></tr>";
 	  
 	  print '<tr><td>'.$langs->trans("Date").'</td>';
-	  print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"%A %d %B %Y")."</td>\n";
-	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"%A %d %B %Y");
+	  print "<td colspan=\"3\">".dolibarr_print_date($fac->date,"dayhourtext")."</td>\n";
+	  print '<td>'.$langs->trans("DateMaxPayment").'</td><td>' . dolibarr_print_date($fac->date_lim_reglement,"dayhourtext");
 	  print "</td></tr>";
 	  
 	  print '<tr>';

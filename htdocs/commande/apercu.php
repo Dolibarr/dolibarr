@@ -223,7 +223,7 @@ if ($_GET["id"] > 0) {
 
 		        // Date
 		        print '<tr><td>'.$langs->trans("Date").'</td>';
-		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"%A %d %B %Y")."</td>\n";
+		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"daytext")."</td>\n";
 		        print '</tr>';
 
 				// ligne 6

@@ -110,7 +110,7 @@ if ($_GET["id"] > 0)
 		if ($commande->methode_commande_id > 0)
 		{
 			print '<tr><td>'.$langs->trans("Date").'</td>';
-			print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"%A %d %B %Y")."</td>\n";
+			print '<td colspan="2">'.dolibarr_print_date($commande->date_commande,"dayhourtext")."</td>\n";
 			print '<td width="50%">&nbsp;';
 			print "</td></tr>";
 		}
@@ -149,7 +149,7 @@ if ($_GET["id"] > 0)
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
 
-				print '<td width="20%">'.dolibarr_print_date($obj->dl,"%a %d %b %Y %H:%M:%S")."</td>\n";
+				print '<td width="20%">'.dolibarr_print_date($obj->dl,"dayhour")."</td>\n";
 
 				// Statut
 				print '<td width="100px" nowrap="1">'.$commande->LibStatut($obj->fk_statut,4)."</td>\n";

@@ -429,7 +429,6 @@ class Facture extends CommonObject
 	if ($this->db->num_rows($result))
 	  {
 	    $obj = $this->db->fetch_object($result);
-	    //print strftime('%Y%m%d%H%M%S',$obj->df).' '.$obj->df.' '.dolibarr_print_date($obj->df);
 
 	    $this->id                     = $rowid;
 	    $this->ref                    = $obj->facnumber;

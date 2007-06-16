@@ -823,12 +823,12 @@ class pdf_propale_azur extends ModelePDFPropales
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("Date")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
 
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dolibarr_print_date($object->fin_validite,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEndPropal")." : " . dolibarr_print_date($object->fin_validite,"day"), '', 'R');
 
         if ($showadress)
         {

@@ -918,11 +918,11 @@ else
 		    print '</td></tr>';
 		
             print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datelastlogin,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datelastlogin,"dayhour").'</td>';
             print "</tr>\n";
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("PreviousConnexion").'</td>';
-            print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"%d/%m/%Y %H:%M:%S").'</td>';
+            print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
             // Note

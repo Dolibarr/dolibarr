@@ -934,14 +934,14 @@ class pdf_crabe extends ModelePDFFactures
         $posy+=5;
         $pdf->SetXY(100,$posy);
         $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
+        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateInvoice")." : " . dolibarr_print_date($object->date,"day"), '', 'R');
 
         if ($object->type != 2)
         {
 	        $posy+=5;
 	        $pdf->SetXY(100,$posy);
 	        $pdf->SetTextColor(0,0,60);
-	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"%d %b %Y"), '', 'R');
+	        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("DateEcheance")." : " . dolibarr_print_date($object->date_lim_reglement,"day"), '', 'R');
 		}
 		
         if ($showadress)

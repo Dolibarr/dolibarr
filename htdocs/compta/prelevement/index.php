@@ -109,7 +109,7 @@ if ($result)
 
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
 
-      print '<td>'.dolibarr_print_date($obj->datec,"%d/%m/%Y %H:%M")."</td>\n";
+      print '<td>'.dolibarr_print_date($obj->datec,"dayhour")."</td>\n";
 
       print '<td align="right">'.price($obj->amount)."</td>\n";
 

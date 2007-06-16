@@ -248,7 +248,7 @@ if ($_GET["id"] || $_GET["ref"])
 	    print '<tr>';
 	    if (file_exists($dir."/".$graphfiles[$key]['file']) && filemtime($dir."/".$graphfiles[$key]['file']) && ! $px->isGraphKo())
 	      {
-		print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"%d %b %Y %H:%M:%S")).'</td>';
+		print '<td>'.$langs->trans("GeneratedOn",dolibarr_print_date(filemtime($dir."/".$graphfiles[$key]['file']),"dayhour")).'</td>';
 	      }
 	    else
 	      {

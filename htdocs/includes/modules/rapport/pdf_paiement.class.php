@@ -71,7 +71,7 @@ class pdf_paiement
     $pdf->Text(76, 10, $title);
     
     $pdf->SetFont('Arial','B',12);
-    $pdf->Text(11, 16, $langs->transnoentities("Date")." : ".dolibarr_print_date(time(),"%d %b %Y"));
+    $pdf->Text(11, 16, $langs->transnoentities("Date")." : ".dolibarr_print_date(time(),"day"));
     
     $pdf->SetFont('Arial','',12);
     $pdf->Text(11, 22, $langs->transnoentities("Page")." : ".$page);

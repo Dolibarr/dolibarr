@@ -148,7 +148,7 @@ if ($_GET["id"] > 0)
 	
 	// Date
 	print '<tr><td>'.$langs->trans('Date').'</td>';
-	print '<td colspan="2">'.dolibarr_print_date($commande->date,'%A %d %B %Y').'</td>';
+	print '<td colspan="2">'.dolibarr_print_date($commande->date,'day').'</td>';
 	print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
 	if ($commande->source == 0)
 	  {
@@ -179,7 +179,7 @@ if ($_GET["id"] > 0)
 	  }
 	else
 	  {
-	    print dolibarr_print_date($commande->date_livraison,'%A %d %B %Y');
+	    print dolibarr_print_date($commande->date_livraison,'dayhour');
 	  }
 	print '</td>';
 	print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';

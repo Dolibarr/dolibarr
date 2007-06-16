@@ -709,7 +709,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		print "<tr $bc[$var]>";
 
 		// Date
-		print "<td>". dolibarr_print_date($histo[$key]['date'],"%d %b %Y %H:%M") ."</td>";
+		print "<td>". dolibarr_print_date($histo[$key]['date'],"dayhour") ."</td>";
 
 		// Action
 		print '<td>';

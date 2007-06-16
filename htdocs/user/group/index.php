@@ -86,7 +86,7 @@ if ($resql)
 
         print "<tr $bc[$var]>";
         print '<td><a href="fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a></td>';
-        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"%d %b %Y").'</td>';
+        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
         print "</tr>\n";
         $i++;
     }

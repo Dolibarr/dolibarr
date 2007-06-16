@@ -336,7 +336,7 @@ else
             $uc->fetch();
             print '<tr><td>'.$langs->trans("CreatedBy").'</td><td>'.$uc->getNomUrl(1).'</td>';
             print '<td>'.$langs->trans("Date").'</td>';
-            print '<td>'.dolibarr_print_date($mil->date_creat,"%d %b %Y %H:%M").'</td></tr>';
+            print '<td>'.dolibarr_print_date($mil->date_creat,"dayhour").'</td></tr>';
 
             if ($mil->statut > 0)
             {
@@ -344,14 +344,14 @@ else
                 $uv->fetch();
                 print '<tr><td>'.$langs->trans("ValidatedBy").'</td><td>'.$uv->getNomUrl(1).'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.dolibarr_print_date($mil->date_valid,"%d %b %Y %H:%M").'</td></tr>';
+                print '<td>'.dolibarr_print_date($mil->date_valid,"dayhour").'</td></tr>';
             }
 
             if ($mil->statut > 1)
             {
                 print '<tr><td>'.$langs->trans("SentBy").'</td><td>'.$langs->trans("Unknown").'</td>';
                 print '<td>'.$langs->trans("Date").'</td>';
-                print '<td>'.dolibarr_print_date($mil->date_envoi,"%d %b %Y %H:%M").'</td></tr>';
+                print '<td>'.dolibarr_print_date($mil->date_envoi,"dayhour").'</td></tr>';
             }
 
             // Sujet

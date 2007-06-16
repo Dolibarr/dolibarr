@@ -115,13 +115,13 @@ if ($_GET["propalid"] > 0)
 				// ligne 2
 				// partie Gauche
 				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
-				print dolibarr_print_date($propal->date,'%a %e %B %Y');
+				print dolibarr_print_date($propal->date,'daytext');
 				print '</td>';
 
 				// partie Droite
 				print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
 				if ($propal->fin_validite) {
-					print dolibarr_print_date($propal->fin_validite,'%a %d %B %Y');
+					print dolibarr_print_date($propal->fin_validite,'daytext');
 				} else {
 					print $langs->trans("Unknown");
 				}

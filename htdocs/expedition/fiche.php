@@ -248,7 +248,7 @@ if ($_GET["action"] == 'create')
 
 		// Date
 		print "<tr><td>".$langs->trans("Date")."</td>";
-		print '<td colspan="3">'.dolibarr_print_date($commande->date,"%A %d %B %Y")."</td></tr>\n";
+		print '<td colspan="3">'.dolibarr_print_date($commande->date,"dayhour")."</td></tr>\n";
 
 		// Entrepot (si forcé)
 		if ($conf->stock->enabled && $_GET["entrepot_id"])
@@ -525,7 +525,7 @@ else
 
             // Date
             print '<tr><td>'.$langs->trans("Date").'</td>';
-            print '<td colspan="3">'.dolibarr_print_date($expedition->date,"%A %d %B %Y")."</td>\n";
+            print '<td colspan="3">'.dolibarr_print_date($expedition->date,"dayhour")."</td>\n";
    			    print '</tr>';
    			    
    			    // Poids Total
