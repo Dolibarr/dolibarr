@@ -2258,7 +2258,7 @@ function numero_semaine($time)
 {
     $stime = strftime( '%Y-%m-%d',$time);
 
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$stime,$reg))
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$stime,$reg))
     {
         // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $annee = $reg[1];
