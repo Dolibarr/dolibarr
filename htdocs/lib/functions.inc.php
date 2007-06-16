@@ -718,13 +718,14 @@ function img_object($alt, $object)
 /**
         \brief      Affiche picto (fonction générique)
         \param      alt         Texte sur le alt de l'image
-        \param      picto       Nom de l'image a afficher
+        \param      picto       Nom de l'image a afficher (Si pas d'extension, on met '.png')
         \return     string      Retourne tag img
 */
 function img_picto($alt, $picto, $options='')
 {
-  global $conf,$langs;
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.png" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
+	global $conf;
+	if (! eregi('(\.png|\.gif)$',$picto)) $picto.='.png';
+	return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
 }
 
 /**
@@ -1073,18 +1074,6 @@ function img_allow($allow)
     {
       return "-";
     }
-}
-
-/**
-        \brief      Affiche image gif (fonction générique)
-        \param      alt         Texte sur le alt de l'image
-        \param      picto       Nom de l'image a afficher
-        \return     string      Retourne tag img
-*/
-function img_gif($alt, $picto, $options='')
-{
-  global $conf,$langs;
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/'.$picto.'.gif" border="0" alt="'.$alt.'" title="'.$alt.'"'.($options?' '.$options:'').'>';
 }
 
 
@@ -2718,7 +2707,7 @@ function num_lines($texte)
 
 function ajax_updater_indicator($htmlname,$indicator='working')
 {
-	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
+	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
 	return $script;
 }
 
@@ -2774,7 +2763,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 */
 function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 {
-	$script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_gif('Working...',$indicator).'</span>';
+	$script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
 	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
 	$script.= '</div>';
 	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';
