@@ -57,7 +57,7 @@ if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' 
 {
 	if ($c->remove() >= 0)
 	{
-		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type=0');
+		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type='.$type);
 		exit;
 	}
 	else

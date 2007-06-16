@@ -658,3 +658,5 @@ ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
 -- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
 -- fin du changement idp en rowid
+
+-- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;

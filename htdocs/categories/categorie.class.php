@@ -657,7 +657,7 @@ class Categorie
 	{
 		$sql = "SELECT count(c.rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie as c, ".MAIN_DB_PREFIX."categorie_association as ca";
-		$sql.= " WHERE c.label = '".addslashes($this -> label)."'";
+		$sql.= " WHERE c.label = '".addslashes($this -> label)."' AND type=".$this->type;
 		if($this -> id_mere != "")
 		{
 			$sql.= " AND c.rowid = ca.fk_categorie_fille";
