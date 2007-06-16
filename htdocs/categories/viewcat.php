@@ -20,7 +20,7 @@
 
 /**
         \file       htdocs/categories/viewcat.php
-        \ingroup    categories
+        \ingroup    category
         \brief      Page de visualisation de categorie produit
         \version    $Revision$
 */
@@ -55,7 +55,7 @@ if ($user->rights->categorie->supprimer && $_POST["action"] == 'confirm_delete' 
 {
 	if ($c->remove() >= 0)
 	{
-		header("Location: ".DOL_URL_ROOT.'/categories/index.php');
+		header("Location: ".DOL_URL_ROOT.'/categories/index.php?type=0');
 		exit;
 	}
 	else
