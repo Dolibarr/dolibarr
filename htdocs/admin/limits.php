@@ -37,12 +37,21 @@ if (!$user->admin)
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
-	dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",  $_POST["MAIN_MAX_DECIMALS_UNIT"]);
-	dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TTC",   $_POST["MAIN_MAX_DECIMALS_TTC"]);
-	dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"]);
-		
-	Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
-	exit;
+	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > 8
+	 || $_POST["MAIN_MAX_DECIMALS_TTC"]   > 8
+	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > 8)
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden").'</div>';
+	}
+	else
+	{
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",  $_POST["MAIN_MAX_DECIMALS_UNIT"]);
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TTC",   $_POST["MAIN_MAX_DECIMALS_TTC"]);
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"]);
+			
+		Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
+		exit;
+	}
 }
 
 
@@ -53,6 +62,7 @@ print_fiche_titre($langs->trans("LimitsSetup"),'','setup');
 print $langs->trans("LimitsDesc")."<br>\n";
 print "<br>\n";
 
+if ($mesg) print $mesg.'<br>';
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
