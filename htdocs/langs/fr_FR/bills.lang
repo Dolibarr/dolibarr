@@ -78,6 +78,7 @@ EnterPaymentDueToCustomer=Réaliser réglement d'avoirs dus au client
 VAT=TVA
 VATRate=Taux TVA
 Amount=Montant
+PriceBase=Base du prix
 TotalTTCToYourCredit=Total TTC à votre crédit
 BillStatus=État de la facture
 BillStatusDraft=Brouillon (à valider)

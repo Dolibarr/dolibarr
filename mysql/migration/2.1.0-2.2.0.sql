@@ -561,11 +561,25 @@ drop table if exists llx_ventes;
 drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
 
--- Pas de limite sur nb decimal dans base car definie en option
-ALTER TABLE llx_product_price ADD COLUMN price_ttc float DEFAULT 0 AFTER price;
-ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0 AFTER price_base_type;
-ALTER TABLE llx_product_price MODIFY price_ttc float DEFAULT 0;
-ALTER TABLE llx_product ADD COLUMN price_ttc float DEFAULT 0;
+-- Pas de limite sur nb decimal des prix dans base car definie en option
+-- Tous les prix doivent etre au format float(16,8)
+-- Tous les tx tva doivent etre au format float(6,3)
+ALTER TABLE llx_product_price ADD COLUMN price_ttc double(16,8) DEFAULT 0 AFTER price;
+ALTER TABLE llx_product ADD COLUMN price_ttc double(16,8) DEFAULT 0 AFTER price_base_type;
+
+ALTER TABLE llx_product MODIFY price double(16,8) DEFAULT 0;
+ALTER TABLE llx_product MODIFY price_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_product MODIFY tva_tx double(6,3);
+
+ALTER TABLE llx_product_price MODIFY price double(16,8) DEFAULT 0;
+ALTER TABLE llx_product_price MODIFY price_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_product_price MODIFY tva_tx double(6,3);
+
+ALTER TABLE llx_product_fournisseur_price_log MODIFY price    double(16,8);
+ALTER TABLE llx_product_fournisseur_price_log MODIFY quantity double;
+ALTER TABLE llx_product_fournisseur_price MODIFY price    double(16,8);
+ALTER TABLE llx_product_fournisseur_price MODIFY quantity double;
+
 
 -- Changement de idp en rowid
 -- V4 ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_ibfk1;

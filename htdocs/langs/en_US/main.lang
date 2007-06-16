@@ -52,6 +52,7 @@ InformationToHelpDiagnose=This is information that can help to diagnose
 MoreInformation=More information
 NotePublic=Note (public)
 NotePrivate=Note (private)
+PrecisionUnitIsLimitedToXDecimals=Dolibarr was setup to limit precision of unit prices to <b>%s</b> decimals.
 yes=yes
 Yes=Yes
 no=no

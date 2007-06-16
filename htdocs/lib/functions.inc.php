@@ -1896,12 +1896,12 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 
 
 /**
-*		\brief      Fonction qui retourne un montant monétaire formaté
+*		\brief      Fonction qui retourne un montant monétaire formaté pour visualisation
 *		\remarks    Fonction utilisée dans les pdf et les pages html
 *		\param	    amount			Montant a formater
 *		\param	    html			Formatage html ou pas (0 par defaut)
 *		\param	    outlangs		Objet langs pour formatage
-*		\param		trunc			1=Tronque affichage si trop de décimales
+*		\param		trunc			1=Tronque affichage si trop de décimales,0=Force le non troncage
 *		\return		string			Chaine avec montant formaté
 *		\seealso	price2num		Fonction inverse de price
 */
@@ -1919,12 +1919,13 @@ function price($amount, $html=0, $outlangs='', $trunc=1)
 	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
 	//print "dec=".$dec." thousand=".$thousand;
 
-	//print "xx".$amount."-";	
+	//print "amount=".$amount."-";	
 	$amount = ereg_replace(',','.',$amount);
 	//print $amount."-";
 	$datas = split("\.",$amount);
 	$decpart = $datas[1];
-	//print $datas[1]."<br>";
+	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie décimale
+	//print "decpart=".$decpart."<br>";
 
 	// On pose par defaut 2 decimales
 	$nbdecimal = 2;
@@ -1953,16 +1954,35 @@ function price($amount, $html=0, $outlangs='', $trunc=1)
 }
 
 /**
-   \brief      Fonction qui retourne un numérique depuis un montant formaté
-   \remarks    Fonction à appeler sur montants saisi avant un insert
-   \param	    amount		montant a formater
-   \seealso	price		Fonction inverse de price2num
+	\brief     		Fonction qui retourne un numérique conforme PHP et SQL, depuis un montant au
+					format utilisateur.
+	\remarks   		Fonction à appeler sur montants saisis avant un insert en base
+	\param	    	amount		Montant a formater
+	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
+								'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TTC)
+								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
+								''=No rounding
+	\return			string		Montant au format numérique PHP et SQL (Exemple: '99.99999')
+	\seealso		price		Fonction inverse de price2num
 */
-function price2num($amount)
+function price2num($amount,$rounding='')
 {
-  $amount=ereg_replace(',','.',$amount);
-  $amount=ereg_replace(' ','',$amount);
-  return $amount;
+	global $conf;
+	
+	// Round PHP function does not allow number like '1,234.5'.
+	// Numbers must be '1234.5'
+	$amount=ereg_replace(',','.',$amount);
+	$amount=ereg_replace(' ','',$amount);
+	if ($rounding)
+	{
+		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
+		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TTC);
+		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
+		else $amount='ErrorBadParameterProvidedToFunction';
+		$amount=ereg_replace(',','.',$amount);
+		$amount=ereg_replace(' ','',$amount);
+	}
+	return $amount;
 }
 
 

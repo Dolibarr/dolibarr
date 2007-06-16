@@ -23,11 +23,12 @@
 /**
 		\file 		htdocs/lib/price.lib.php
 		\brief 		Librairie contenant les fonctions pour calculer un prix.
-		\author 		Rodolphe Quiedeville.
+		\author 	Rodolphe Quiedeville.
 		\version 	$Revision$
 
 		Ensemble des fonctions permettant de calculer un prix.
 */
+
 
 /**
 		\brief 	Permet de calculer les parts total HT, TVA et TTC d'une ligne de

@@ -78,6 +78,7 @@ EnterPaymentDueToCustomer=Make payment due to customer
 VAT=VAT
 VATRate=VAT Rate
 Amount=Amount
+PriceBase=Price base
 TotalTTCToYourCredit=Total TTC to your credit
 BillStatus=Invoice status
 BillStatusDraft=Draft (needs to be validated)

@@ -42,7 +42,7 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire)
 accessforbidden();
 
-$html = new Form($db);
+
 
 /*
  * Actions
@@ -51,48 +51,49 @@ $html = new Form($db);
 if ($_POST["action"] == 'update_price' && 
     $_POST["cancel"] <> $langs->trans("Cancel") && $user->rights->produit->creer)
 {
-  $product = new Product($db);
-  
-  $result = $product->fetch($_GET["id"]);
+	$product = new Product($db);
 
-  $product->SetSellprice($_POST["price"], $_POST["price_base_type"]);
+	$result = $product->fetch($_GET["id"]);
 
-  // MultiPrix
-  if($conf->global->PRODUIT_MULTIPRICES == 1)
-  {
-    for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
-	  {
-	    if($_POST["price_".$i])
-	    {
-	    	$price = ereg_replace(" ","", $_POST["price_".$i]);
-        $price = ereg_replace(",",".", $price);
-	    	$product->multiprices["$i"] = $price;
-	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
-	    }
-	    else
-	    {
-	    	$product->multiprices["$i"] = "";
-	    }
-	  }
-  }
-  
-  if ( $product->update_price($product->id, $user) > 0 )
-    {
-      $_GET["action"] = '';
-      $mesg = 'Fiche mise à jour';
-    }
-  else
-    {
-      $_GET["action"] = 'edit_price';
-      $mesg = 'Fiche non mise à jour !' . "<br>" . $product->mesg_error;
-    }
+	$newprice=price2num($_POST["price"],'MU');
+	$newpricebase=$_POST["price_base_type"];
+
+	// MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+			if($_POST["price_".$i])
+			{
+				$price = ereg_replace(" ","", $_POST["price_".$i]);
+				$price = ereg_replace(",",".", $price);
+				$product->multiprices["$i"] = $price;
+				$product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+			}
+			else
+			{
+				$product->multiprices["$i"] = "";
+			}
+		}
+	}
+
+	if ($product->update_price($product->id, $newprice, $newpricebase, $user) > 0)
+	{
+		$_GET["action"] = '';
+		$mesg = $langs->trans("RecordSaved");
+	}
+	else
+	{
+		$_GET["action"] = 'edit_price';
+		$mesg = '<div class="error">'.$product->error.'</div>';
+	}
 }
-
 
 
 /*
  * Affiche historique prix
  */
+$html = new Form($db);
 
 $product = new Product($db);
 if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
@@ -125,7 +126,7 @@ print '</tr>';
 
 
 // MultiPrix
-if($conf->global->PRODUIT_MULTIPRICES == 1)
+if($conf->global->PRODUIT_MULTIPRICES)
 {
   print '<tr><td>'.$langs->trans("SellingPrice").' 1</td>';
   
@@ -168,15 +169,15 @@ if($conf->global->PRODUIT_MULTIPRICES == 1)
 // Prix
 else
 {
-  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
-  if ($product->price_base_type == 'TTC')
-    {
-      print price($product->price_ttc).' '.$langs->trans($product->price_base_type).'</td></tr>';
-    }
-  else
-    {
-      print price($product->price).' '.$langs->trans($product->price_base_type).'</td></tr>';
-    }
+	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+	if ($product->price_base_type == 'TTC')
+	{
+		print price($product->price_ttc).' '.$langs->trans($product->price_base_type).'</td></tr>';
+	}
+	else
+	{
+		print price($product->price).' '.$langs->trans($product->price_base_type).'</td></tr>';
+	}
 }
 
 // Statut
@@ -196,17 +197,18 @@ print "</div>\n";
 /*                                                                            */
 /* ************************************************************************** */
 
-print "\n<div class=\"tabsAction\">\n";
-
-if ($_GET["action"] == '')
+if (! $_GET["action"])
 {
+	print "\n<div class=\"tabsAction\">\n";
+
     if ($user->rights->produit->modifier || $user->rights->produit->creer)
     {
         print '<a class="butAction" href="'.DOL_URL_ROOT.'/product/price.php?action=edit_price&amp;id='.$product->id.'">'.$langs->trans("UpdatePrice").'</a>';
     }
+
+	print "\n</div>\n";
 }
 
-print "\n</div>\n";
 
 
 /*
@@ -214,20 +216,16 @@ print "\n</div>\n";
  */
 if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 {
-  print_fiche_titre($langs->trans("NewPrice"));
-
-  print '<form action="price.php?id='.$product->id.'" method="post">';
-  print '<input type="hidden" name="action" value="update_price">';
-  print '<input type="hidden" name="id" value="'.$product->id.'">';
-  print '<table class="border" width="100%">';
-  if($conf->global->PRODUIT_MULTIPRICES == 1)
-  {
-    print '<tr><td width="15%">'.$langs->trans('SellingPrice').' 1</td>';
-  }
-  else
-  {
-  	print '<tr><td width="15%">'.$langs->trans('SellingPrice').'</td>';
-  }
+	print_fiche_titre($langs->trans("NewPrice"));
+	print '<form action="price.php?id='.$product->id.'" method="post">';
+	print '<input type="hidden" name="action" value="update_price">';
+	print '<input type="hidden" name="id" value="'.$product->id.'">';
+	print '<table class="border" width="100%">';
+	print '<tr><td width="15%">';
+	$text=$langs->trans('SellingPrice');
+	if ($conf->global->PRODUIT_MULTIPRICES) $text.=' 1';
+	print $html->textwithhelp($text,$langs->trans("PrecisionUnitIsLimitedToXDecimals",$conf->global->MAIN_MAX_DECIMALS_UNIT),$direction=1,$usehelpcursor=1);
+	print '</td>';
   
   if ($product->price_base_type == 'TTC')
   {
@@ -278,7 +276,7 @@ if ($_GET["action"] == 'edit_price' && $user->rights->produit->creer)
 
 // Liste des evolutions du prix
 $sql = "SELECT p.rowid, p.price, p.price_ttc, p.price_base_type, ";
-if($conf->global->PRODUIT_MULTIPRICES == 1)
+if($conf->global->PRODUIT_MULTIPRICES)
 {
   $sql .= "p.price_level, ";
   $sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
@@ -293,13 +291,12 @@ else
   $sql .= $db->pdate("p.date_price")." as dp, u.rowid as user_id, u.login";
   $sql .= " FROM ".MAIN_DB_PREFIX."product_price as p, ".MAIN_DB_PREFIX."user as u";
   $sql .= " WHERE fk_product = ".$product->id;
-  $sql .= " AND p.fk_user_author = u.rowid ";
+  $sql .= " AND p.fk_user_author = u.rowid";
   $sql .= " ORDER BY p.date_price DESC ";
 }
-       
-$sql .= $db->plimit();
-$result = $db->query($sql) ;
+//$sql .= $db->plimit();
 
+$result = $db->query($sql) ;
 if ($result)
 {
     $num = $db->num_rows($result);
@@ -325,47 +322,42 @@ if ($result)
         print '<tr class="liste_titre">';
         print '<td>'.$langs->trans("AppliedPricesFrom").'</td>';
 		    
-		    if($conf->global->PRODUIT_MULTIPRICES == 1)
-		    {
-		    	print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
-		    }
+		if($conf->global->PRODUIT_MULTIPRICES)
+		{
+			print '<td>'.$langs->trans("MultiPriceLevelsName").'</td>';
+		}
 		    
-        print '<td>'.$langs->trans("Price").'</td>';
+        print '<td align="right">'.$langs->trans("HT").'</td>';
+        print '<td align="right">'.$langs->trans("TTC").'</td>';
+        print '<td align="center">'.$langs->trans("PriceBase").'</td>';
         print '<td>'.$langs->trans("ChangedBy").'</td>';
         print '</tr>';
 
         $var=True;
         $i = 0;
         while ($i < $num)
-        {
-            $objp = $db->fetch_object($result);
-            $var=!$var;
-            print "<tr $bc[$var]>";
-        
-            // Date
-            print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
-            
-			      // catégorie de Prix
-			      if($conf->global->PRODUIT_MULTIPRICES == 1)
-			      {
-				      print "<td>".$objp->price_level."</td>";
-				    }
-				      
-				      if ($objp->price_base_type == 'TTC')
-				      {
-				        print "<td>".price($objp->price_ttc);
-				      }
-				      else
-				      {
-				      	print "<td>".price($objp->price);
-				      }
-				      print " ".$langs->trans($objp->price_base_type)."</td>";
+		{
+			$objp = $db->fetch_object($result);
+			$var=!$var;
+			print "<tr $bc[$var]>";
+			// Date
+			print "<td>".dolibarr_print_date($objp->dp,"%d %b %Y %H:%M:%S")."</td>";
+			
+			// catégorie de Prix
+			if($conf->global->PRODUIT_MULTIPRICES)
+			{
+				print "<td>".$objp->price_level."</td>";
+			}
 
-            // User
-            print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
-            print "</tr>\n";
-            $i++;
-        }
+			print '<td align="right">'.price($objp->price)."</td>";
+			print '<td align="right">'.price($objp->price_ttc)."</td>";
+			print '<td align="center">'.$langs->trans($objp->price_base_type)."</td>";
+
+			// User
+			print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$objp->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$objp->login.'</a></td>';
+			print "</tr>\n";
+			$i++;
+		}
         $db->free($result);
         print "</table>";
         print "<br>";

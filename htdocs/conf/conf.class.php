@@ -472,11 +472,11 @@ class Conf
 
 		$this->format_date_short_java="dd/MM/yyyy";
 
-		// Format montant affichés
-		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN))
-		{
-			$this->global->MAIN_MAX_DECIMALS_SHOWN=5;
-		}
+		// Limites decimales
+		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
+		if (! isset($this->global->MAIN_MAX_DECIMALS_TTC))   $this->global->MAIN_MAX_DECIMALS_TTC=2;
+		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
+
 		
 		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
 		 * (pour particuliers ou libéraux en franchise)

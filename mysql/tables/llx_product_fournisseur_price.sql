@@ -27,8 +27,8 @@ create table llx_product_fournisseur_price
   tms             timestamp,
   fk_product      integer,
   fk_soc          integer, -- lien sur llx_societe
-  price           real,
-  quantity        real,
+  price           double(16,8),
+  quantity        double,
   fk_user         integer
 
 )type=innodb;
