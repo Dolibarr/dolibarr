@@ -37,11 +37,12 @@ if (!$user->admin)
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
-	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > 8
-	 || $_POST["MAIN_MAX_DECIMALS_TTC"]   > 8
-	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > 8)
+	$MAXDEC=8;
+	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > $MAXDEC
+	 || $_POST["MAIN_MAX_DECIMALS_TTC"]   > $MAXDEC
+	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
 	{
-		$mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden").'</div>';
+		$mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC).'</div>';
 	}
 	else
 	{

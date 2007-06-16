@@ -30,10 +30,22 @@ require("./pre.inc.php");
 $langs->load("companies");
 $langs->load("products");
 $langs->load("admin");
+$langs->load("mails");
 
 if (!$user->admin)
   accessforbidden();
 
+$substitutionarrayfortest=array(	
+'__ID__' => 'TESTIdRecord',
+'__EMAIL__' => 'TESTEMail',
+'__LASTNAME__' => 'TESTLastname',
+'__FIRSTNAME__' => 'TESTFirstname'
+);
+
+
+/*
+* Actions
+*/
 
 if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
@@ -48,6 +60,58 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	exit;
 }
 
+// Action envoi test mailing
+if ($_POST["action"] == 'send' && ! $_POST["cancel"])
+{
+    
+    $sendto    = $_POST["sendto"];
+	$email_from= $conf->global->MAIN_MAIL_EMAIL_FROM;
+	$subject="Dolibarr test";
+	$body="This is a test";
+
+	if (! $sendto)
+	{
+		$message='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("MailTo")).'</div>';
+	}
+    if ($sendto)
+    {
+        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
+
+        $arr_file = array();
+        $arr_mime = array();
+        $arr_name = array();
+
+		// Le message est-il en html
+		$msgishtml=0;	// Non par defaut
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
+
+        // Pratique les substitutions sur le sujet et message
+		$subject=make_substitutions($subject,$substitutionarrayfortest);
+		$body=make_substitutions($body,$substitutionarrayfortest);
+		
+		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
+        							$arr_file,$arr_mime,$arr_name,
+        							'', '', 0, $msgishtml);
+
+        $result=$mailfile->sendfile();
+        if ($result)
+        {
+            $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
+        }
+        else
+        {
+            $message='<div class="error">'.$langs->trans("ResultKo").'<br>'.$mailfile->error.' '.$result.'</div>';
+        }
+
+        $_GET["action"]='';
+    }
+}
+
+
+/*
+* Affichage page
+*/
 
 llxHeader();
 
@@ -55,6 +119,8 @@ print_fiche_titre($langs->trans("EMailsSetup"),'','setup');
 
 print $langs->trans("EMailsDesc")."<br>\n";
 print "<br>\n";
+
+if ($message) print $message.'<br>';
 
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
@@ -112,11 +178,50 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_DISABLE_ALL_MAILS").'</td><td>'.yn($conf->global->MAIN_DISABLE_ALL_MAILS).'</td></tr>';
 
-    print '</table><br>';
+    print '</table>';
 
+
+	// Boutons actions
     print '<div class="tabsAction">';
+    print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=test">'.$langs->trans("DoTest").'</a>';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
+	
+	
+	// Affichage formulaire de TEST
+	if ($_GET["action"] == 'test')
+	{
+			  print '<br>';
+			  print_titre($langs->trans("TestMailing"));
+			  
+			  // Créé l'objet formulaire mail
+			  include_once("../html.formmail.class.php");
+			  $formmail = new FormMail($db);	    
+			  $formmail->fromname = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
+			  $formmail->withsubstit=0;
+			  $formmail->withfrom=1;
+			  $formmail->withto=$user->email?$user->email:1;
+			  $formmail->withcc=0;
+			  $formmail->withtopic=0;
+			  $formmail->withtopicreadonly=1;
+			  $formmail->withfile=0;
+			  $formmail->withbody=0;
+			  $formmail->withbodyreadonly=1;
+			  $formmail->withcancel=1;
+			  // Tableau des substitutions
+			  $formmail->substit=$substitutionarrayfortest;
+			  // Tableau des paramètres complémentaires du post
+			  $formmail->param["action"]="send";
+			  $formmail->param["models"]="body";
+			  $formmail->param["mailid"]=$mil->id;
+			  $formmail->param["returnurl"]=DOL_URL_ROOT."/admin/mails.php";
+	
+			  $formmail->show_form();
+			  
+			  print '<br>';
+	}
+	
 }
 
 
