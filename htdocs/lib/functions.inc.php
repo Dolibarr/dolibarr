@@ -1959,7 +1959,7 @@ function price($amount, $html=0, $outlangs='', $trunc=1)
 	\remarks   		Fonction à appeler sur montants saisis avant un insert en base
 	\param	    	amount		Montant a formater
 	\param	    	rounding	'MU'=Round to Max unit price (MAIN_MAX_DECIMALS_UNIT)
-								'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TTC)
+								'MT'=Round to Max with Tax (MAIN_MAX_DECIMALS_TOT)
 								'MS'=Round to Max Shown (MAIN_MAX_DECIMALS_SHOWN)
 								''=No rounding
 	\return			string		Montant au format numérique PHP et SQL (Exemple: '99.99999')
@@ -1976,7 +1976,7 @@ function price2num($amount,$rounding='')
 	if ($rounding)
 	{
 		if ($rounding == 'MU')     $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_UNIT);
-		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TTC);
+		elseif ($rounding == 'MT') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_TOT);
 		elseif ($rounding == 'MS') $amount = round($amount,$conf->global->MAIN_MAX_DECIMALS_SHOWN);
 		else $amount='ErrorBadParameterProvidedToFunction';
 		$amount=ereg_replace(',','.',$amount);

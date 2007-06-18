@@ -2841,14 +2841,14 @@ class FactureLigne
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_facture.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		$sql.= " '".price2num($this->qty)."',";
-		$sql.= " '".price2num($this->tva_tx)."',";
+		$sql.= " ".price2num($this->qty).",";
+		$sql.= " ".price2num($this->tva_tx).",";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
-		$sql.= " '".price2num($this->remise_percent)."',";
-		$sql.= " '".price2num($this->subprice)."',";
-		$sql.= " '".price2num($this->price)."',";
-		$sql.= " '".price2num($this->remise)."',";
+		$sql.= " ".price2num($this->remise_percent).",";
+		$sql.= " ".price2num($this->subprice).",";
+		$sql.= " ".price2num($this->price).",";
+		$sql.= " ".price2num($this->remise).",";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
 		if ($this->date_start) { $sql.= "'".$this->date_start."',"; }
@@ -2859,9 +2859,9 @@ class FactureLigne
 		$sql.= ' '.$this->fk_export_compta.',';
 		$sql.= ' '.$rangtouse.',';
 		$sql.= " '".$this->info_bits."',";
-		$sql.= " '".price2num($this->total_ht)."',";
-		$sql.= " '".price2num($this->total_tva)."',";
-		$sql.= " '".price2num($this->total_ttc)."'";
+		$sql.= " ".price2num($this->total_ht);
+		$sql.= " ".price2num($this->total_tva);
+		$sql.= " ".price2num($this->total_ttc);
 		$sql.= ')';
 
 		dolibarr_syslog("FactureLigne::insert sql=".$sql);
@@ -2943,23 +2943,23 @@ class FactureLigne
     // Mise a jour ligne en base
     $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
     $sql.= " description='".addslashes($this->desc)."'";
-    $sql.= ",subprice='".price2num($this->subprice)."'";
-    $sql.= ",price='".price2num($this->price)."'";
-    $sql.= ",remise='".price2num($this->remise)."'";
-    $sql.= ",remise_percent='".price2num($this->remise_percent)."'";
+    $sql.= ",subprice=".price2num($this->subprice)."";
+    $sql.= ",price=".price2num($this->price)."";
+    $sql.= ",remise=".price2num($this->remise)."";
+    $sql.= ",remise_percent=".price2num($this->remise_percent)."";
     if ($this->fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
     else $sql.= ",fk_remise_except=null";
-    $sql.= ",tva_taux='".price2num($this->tva_tx)."'";
-    $sql.= ",qty='".price2num($this->qty)."'";
+    $sql.= ",tva_taux=".price2num($this->tva_tx)."";
+    $sql.= ",qty=".price2num($this->qty)."";
     if ($this->date_start) { $sql.= ",date_start='".$this->date_start."'"; }
     else { $sql.=',date_start=null'; }
     if ($this->date_end) { $sql.= ",date_end='".$this->date_end."'"; }
     else { $sql.=',date_end=null'; }
     $sql.= ",rang='".$this->rang."'";
     $sql.= ",info_bits='".$this->info_bits."'";
-    $sql.= ",total_ht='".price2num($this->total_ht)."'";
-    $sql.= ",total_tva='".price2num($this->total_tva)."'";
-    $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+    $sql.= ",total_ht=".price2num($this->total_ht)."";
+    $sql.= ",total_tva=".price2num($this->total_tva)."";
+    $sql.= ",total_ttc=".price2num($this->total_ttc)."";
     $sql.= " WHERE rowid = ".$this->rowid;
 
     dolibarr_syslog("FactureLigne::update sql=$sql");
@@ -2990,9 +2990,9 @@ class FactureLigne
 
     // Mise a jour ligne en base
     $sql = "UPDATE ".MAIN_DB_PREFIX."facturedet SET";
-    $sql.= " total_ht='".price2num($this->total_ht)."'";
-    $sql.= ",total_tva='".price2num($this->total_tva)."'";
-    $sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+    $sql.= " total_ht=".price2num($this->total_ht)."";
+    $sql.= ",total_tva=".price2num($this->total_tva)."";
+    $sql.= ",total_ttc=".price2num($this->total_ttc)."";
     $sql.= " WHERE rowid = ".$this->rowid;
 
 

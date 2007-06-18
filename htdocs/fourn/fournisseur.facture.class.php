@@ -446,8 +446,8 @@ class FactureFournisseur extends Facture
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
 			$sql.= 'SET ';
 			$sql.= 'description =\''.addslashes($label).'\'';
-			$sql.= ', pu_ht = '  .$puht;
-			$sql.= ', qty ='     .$qty;
+			$sql.= ', pu_ht = '  .price2num($puht);
+			$sql.= ', qty ='     .price2num($qty);
 			$sql.= ', total_ht=' .price2num($totalht);
 			$sql.= ', tva='      .price2num($tva);
 			$sql.= ', tva_taux=' .price2num($tauxtva);
@@ -456,6 +456,7 @@ class FactureFournisseur extends Facture
 			else $sql.= ', fk_product=null';
 			$sql.= ' WHERE rowid = '.$id;
 
+			dolibarr_syslog("Fournisseur.facture::updateline sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -524,6 +525,7 @@ class FactureFournisseur extends Facture
 			$sql .= ',total_tva = '.price2num($total_tva);
 			$sql .= ',total_ttc = '.price2num($total_ttc);
 			$sql .= ' WHERE rowid = '.$facid.';';
+			dolibarr_syslog("Fournisseur.facture::update_price sql=".$sql);
 			$resql2 = $this->db->query($sql);
 			if ($resql2)
 			{

@@ -39,7 +39,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 {
 	$MAXDEC=8;
 	if ($_POST["MAIN_MAX_DECIMALS_UNIT"]  > $MAXDEC
-	 || $_POST["MAIN_MAX_DECIMALS_TTC"]   > $MAXDEC
+	 || $_POST["MAIN_MAX_DECIMALS_TOT"]   > $MAXDEC
 	 || $_POST["MAIN_MAX_DECIMALS_SHOWN"] > $MAXDEC)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorDecimalLargerThanAreForbidden",$MAXDEC).'</div>';
@@ -47,7 +47,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	else
 	{
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_UNIT",  $_POST["MAIN_MAX_DECIMALS_UNIT"]);
-		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TTC",   $_POST["MAIN_MAX_DECIMALS_TTC"]);
+		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_TOT",   $_POST["MAIN_MAX_DECIMALS_TOT"]);
 		dolibarr_set_const($db, "MAIN_MAX_DECIMALS_SHOWN", $_POST["MAIN_MAX_DECIMALS_SHOWN"]);
 			
 		Header("Location: ".$_SERVER["PHP_SELF"]."?mainmenu=home&leftmenu=setup");
@@ -82,7 +82,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_UNIT").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_UNIT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_UNIT . '"></td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_TTC").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_TTC" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_TTC . '"></td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_TOT").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_TOT" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_TOT . '"></td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td><input class="flat" name="MAIN_MAX_DECIMALS_SHOWN" size="3" value="' . $conf->global->MAIN_MAX_DECIMALS_SHOWN . '"></td></tr>';
@@ -109,7 +109,7 @@ else
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_UNIT").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_UNIT.'</td></tr>';
 
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_TTC").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_TTC.'</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_TOT").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_TOT.'</td></tr>';
 
     $var=!$var;
     print '<tr '.$bc[$var].'><td>'.$langs->trans("MAIN_MAX_DECIMALS_SHOWN").'</td><td align="right">'.$conf->global->MAIN_MAX_DECIMALS_SHOWN.'</td></tr>';

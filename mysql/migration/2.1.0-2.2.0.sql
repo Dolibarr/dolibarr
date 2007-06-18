@@ -583,6 +583,22 @@ ALTER TABLE llx_product_fournisseur_price MODIFY price    double(16,8);
 ALTER TABLE llx_product_fournisseur_price MODIFY quantity double;
 
 
+ALTER TABLE llx_facture_fourn MODIFY   amount     double(16,8)     DEFAULT 0 NOT NULL;
+ALTER TABLE llx_facture_fourn MODIFY   remise     double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   tva        double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total      double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_ht   double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_tva  double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_ttc  double(16,8)     DEFAULT 0;
+
+ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  qty               smallint DEFAULT 1;
+ALTER TABLE llx_facture_fourn_det MODIFY  total_ht          double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  tva               double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  total_ttc         double(16,8) DEFAULT 0;
+
+
 -- Changement de idp en rowid
 -- V4 ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_ibfk1;
 -- V4 ALTER TABLE llx_socpeople DROP FOREIGN KEY fk_socpeople_fk_soc;

@@ -474,7 +474,7 @@ class Conf
 
 		// Limites decimales
 		if (! isset($this->global->MAIN_MAX_DECIMALS_UNIT))  $this->global->MAIN_MAX_DECIMALS_UNIT=5;
-		if (! isset($this->global->MAIN_MAX_DECIMALS_TTC))   $this->global->MAIN_MAX_DECIMALS_TTC=2;
+		if (! isset($this->global->MAIN_MAX_DECIMALS_TOT))   $this->global->MAIN_MAX_DECIMALS_TOT=2;
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		
