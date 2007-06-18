@@ -54,7 +54,6 @@ alter table `llx_categorie_societe`
   add constraint `llx_categorie_societe_ibfk_1` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE,
   add constraint `llx_categorie_societe_ibfk_2` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE;
 
-drop table if exists `llx_categorie_product`;
 create table `llx_categorie_product` (
   `fk_categorie` int(11) not null,
   `fk_product` int(11) not null,
@@ -66,8 +65,9 @@ create table `llx_categorie_product` (
 alter table `llx_categorie_product`
   add constraint `fk_categorie_product_categorie_rowid` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`),
   add constraint `fk_categorie_product_product_rowid` foreign key(`fk_product`) REFERENCES `llx_product` (`rowid`);
+
   
- -- Ajout gestion du droit de prêt
+-- Ajout gestion du droit de prêt
 drop table if exists `llx_droitpret_rapport`;
 create table `llx_droitpret_rapport` (
   `rowid` int(11) NOT NULL auto_increment,
@@ -82,10 +82,6 @@ create table `llx_droitpret_rapport` (
 
 
 -- Gestion des menu
-drop table if exists `llx_menu_const`;
-drop table if exists `llx_menu`;
-drop table if exists `llx_menu_constraint`;
-
 CREATE TABLE `llx_menu` (
   `rowid` int(11) NOT NULL,
   `menu_handler` varchar(16) NOT NULL default 'auguria',
@@ -128,6 +124,9 @@ ALTER TABLE `llx_menu_const` ADD CONSTRAINT `fk_menu_const_fk_constraint` FOREIG
 -- 
 -- Contenu de la table `llx_menu`
 -- 
+delete from llx_menu_const;
+delete from llx_menu_constraint;
+delete from llx_menu where menu_handler='auguria';
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1, 'home', '', 0, '/index.php?mainmenu=home&leftmenu=', 'Home', -1, '', '', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (2, 'companies', '', 0, '/index.php?mainmenu=companies&amp;leftmenu=', 'ThirdParties', -1, 'companies', '', '', 2, 2);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (3, 'products', '', 0, '/product/index.php?mainmenu=products&amp;leftmenu=', 'Products/Services', -1, 'products', '$user->rights->produit->lire', '', 0, 3);
