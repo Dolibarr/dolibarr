@@ -37,6 +37,8 @@ alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
 
 -- Extention de la gestion des catégories
 alter table llx_categorie ADD type int not null default '0';
+-- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
+ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 drop table if exists `llx_categorie_societe`;
 create table `llx_categorie_societe` (
@@ -658,5 +660,3 @@ ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
 -- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
 -- fin du changement idp en rowid
-
--- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
