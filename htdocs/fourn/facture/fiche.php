@@ -507,7 +507,7 @@ else
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100))).'</td>';
 				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
-				print '<td align="right">'.$fac->lignes[$i]->tva_taux.'</td>';
+				print '<td align="right">'.price($fac->lignes[$i]->tva_taux).'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
 				print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
@@ -751,10 +751,10 @@ else
 					}
 					print '</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht).'</td>';
-					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100))).'</td>';
+					print '<td align="right" nowrap="nowrap">'.price(price2num($fac->lignes[$i]->pu_ht * (1+($fac->lignes[$i]->tva_taux/100)),'MU')).'</td>';
 					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
-					print '<td align="right">'.$fac->lignes[$i]->tva_taux.'</td>';
+					print '<td align="right">'.price($fac->lignes[$i]->tva_taux).'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->tva).'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
 					print '<td align="center"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
