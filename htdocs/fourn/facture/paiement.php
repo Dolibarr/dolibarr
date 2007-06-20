@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne           <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Christophe Combelles  <ccomb@free.fr>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  *
@@ -385,10 +385,9 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Ref').'</td>';
-		print_liste_field_titre($langs->trans('Bill'),'paiement.php','facnumber','','','',$sortfield);
-		print_liste_field_titre($langs->trans('Company'),'paiement.php','s.nom','','','',$sortfield);
+		print_liste_field_titre($langs->trans('Ref'),'paiement.php','rowid','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield);
+		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield);
 		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield);
 		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','f.amount','','','align="right"',$sortfield);
@@ -400,16 +399,17 @@ if (! $_GET['action'] && ! $_POST['action'])
 			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print '<tr '.$bc[$var].'>';
+			
+			// Ref
 			print '<td nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/fourn/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' '.$objp->rowid.'</a></td>';
-			print '<td nowrap="nowrap">';
-			if ($objp->facid) print '<a href="'.DOL_URL_ROOT.'/fourn/facture/fiche.php?facid='.$objp->facid.'">'.img_object($langs->trans('ShowBill'),'bill').' '.dolibarr_trunc($objp->facnumber,16).'</a>';
-			else print '&nbsp;';
-			print '</td>';
+			
+			// Date
+			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp,'day')."</td>\n";
+
 			print '<td>';
 			if ($objp->socid) print '<a href="'.DOL_URL_ROOT.'/soc.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.dolibarr_trunc($objp->nom,32).'</a>';
 			else print '&nbsp;';
 			print '</td>';
-			print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
 			print '<td>'.dolibarr_trunc($objp->paiement_type.' '.$objp->num_paiement,32)."</td>\n";
 			print '<td>';
 			if ($objp->bid) print '<a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$objp->bid.'">'.img_object($langs->trans("ShowAccount"),'account').' '.dolibarr_trunc($objp->label,24).'</a>';

@@ -48,6 +48,7 @@ if ($user->societe_id > 0)
 
 $paymentstatic=new Paiement($db);
 $accountstatic=new Account($db);
+$companystatic=new Societe($db);
 
 
 /*
@@ -68,16 +69,14 @@ $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
 //$sql.= " c.libelle as paiement_type,";
 $sql.= " c.code as paiement_code,"; 
-$sql.= " ba.rowid as bid, ba.label";
-$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c,";
-$sql.= " ".MAIN_DB_PREFIX."paiement as p";
+$sql.= " ba.rowid as bid, ba.label,";
+$sql.= " s.rowid as socid, s.nom";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_paiement as c, ".MAIN_DB_PREFIX."paiement as p";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON p.fk_bank = b.rowid";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON b.fk_account = ba.rowid";
-if ($socid)
-{
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
-}
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON pf.fk_facture = f.rowid";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
 $sql.= " WHERE p.fk_paiement = c.id";
 if ($socid)
 {
@@ -94,11 +93,12 @@ if ($_GET["orphelins"])     // Option qui ne sert qu'au debogage
   $sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
   $sql.= " p.statut, p.num_paiement,";
   //$sql.= " c.libelle as paiement_type";
-  $sql.= " c.code as paiement_code";
+  $sql.= " c.code as paiement_code,";
+  $sql.= " s.rowid as socid, s.nom";
   $sql.= " FROM ".MAIN_DB_PREFIX."paiement as p,";
   $sql.= " ".MAIN_DB_PREFIX."c_paiement as c";
-  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf";
-  $sql.= " ON p.rowid = pf.fk_paiement";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON p.rowid = pf.fk_paiement";
+  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
   $sql.= " WHERE p.fk_paiement = c.id AND pf.rowid IS NULL";
 }
 $sql .= " ORDER BY $sortfield $sortorder";
@@ -120,19 +120,19 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield);
 	print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield);
+	print_liste_field_titre($langs->trans("ThirdParty"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
 	print_liste_field_titre($langs->trans("Type"),"liste.php","c.libelle","",$paramlist,"",$sortfield);
 	print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield);
-	print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
+	print_liste_field_titre($langs->trans("AmountTTC"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield);
 	print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield);
-	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
 	// Lignes des champs de filtre
 	print '<tr class="liste_titre">';
-	print '<td colspan="4">&nbsp;</td>';
+	print '<td colspan="5">&nbsp;</td>';
 	print '<td align="right">';
 	print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
-	print '</td><td align="right" colspan="2">';
+	print '</td><td align="right">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
 	print '</td>';
 	print "</tr>\n";
@@ -149,7 +149,19 @@ if ($resql)
 		print $paymentstatic->getNomUrl(1);
 		print '</td>';
 
-		print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+		print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
+
+		// Company
+		print '<td>';
+		if ($objp->socid)
+		{
+			$companystatic->id=$objp->socid;
+			$companystatic->nom=$objp->nom;
+			print $companystatic->getNomUrl(1,'',24);
+		}
+		else print '&nbsp;';
+		print '</td>';
+
 		print '<td>'.$langs->trans("PaymentTypeShort".$objp->paiement_code).' '.$objp->num_paiement.'</td>';
 		print '<td>';
 		if ($objp->bid)
@@ -162,15 +174,9 @@ if ($resql)
 		print '</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">';
+		if ($objp->statut == 0) print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">';
 		print $paymentstatic->LibStatut($objp->statut,5);
-		print '</td>';
-
-		print '<td align="right">';
-		if ($objp->statut == 0)
-		{
-			print '<a href="fiche.php?id='.$objp->rowid.'&amp;action=valide">'.$langs->trans("Validate").'</a>';
-		}
-		else print '&nbsp;';
+		if ($objp->statut == 0) print '</a>';
 		print '</td>';
 
 		print '</tr>';
