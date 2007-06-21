@@ -34,15 +34,16 @@ require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 $langs->load("companies");
 $langs->load("interventions");
 
+$sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
+$sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
+$socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
+$page=$_GET["page"]?$_GET["page"]:$_POST["page"];
+
 // Securité
 if ($user->societe_id > 0)
 {
   $socid = $user->societe_id ;
 }
-
-$sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
-$sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
-$page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="f.datei";
