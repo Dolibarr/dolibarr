@@ -38,13 +38,15 @@ function fichinter_prepare_head($fichinter)
   $h = 0;
   $head = array();
   
-  if ($conf->fichinter->enabled && $user->rights->ficheinter->lire)
-    {
-      $head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$fichinter->id;
-      $head[$h][1] = $langs->trans("Card");
-      $head[$h][2] = 'card';
-      $h++;
-    }
+  $head[$h][0] = DOL_URL_ROOT.'/fichinter/fiche.php?id='.$fichinter->id;
+  $head[$h][1] = $langs->trans("Card");
+  $head[$h][2] = 'card';
+  $h++;
+  
+  $head[$h][0] = DOL_URL_ROOT.'/fichinter/contact.php?id='.$fichinter->id;
+	$head[$h][1] = $langs->trans('InterventionContact');
+	$head[$h][2] = 'contact';
+	$h++;
   
   return $head;
 }

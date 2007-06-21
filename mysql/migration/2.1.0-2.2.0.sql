@@ -675,3 +675,8 @@ ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 -- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
 -- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
 -- fin du changement idp en rowid
+
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (120, 'fichinter','internal', 'INTERREPFOLL',  'Responsable suivi de l\'intervention', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (121, 'fichinter','internal', 'INTERVENING',   'Intervenant', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (130, 'fichinter','external', 'BILLING',       'Contact client facturation intervention', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (131, 'fichinter','external', 'CUSTOMER',      'Contact client suivi de l\'intervention', 1);

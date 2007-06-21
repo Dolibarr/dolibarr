@@ -53,27 +53,22 @@ $pagenext = $page + 1;
 
 // Sécurité accés client
 $user->getrights('facture');
-$user->getrights('propale');
-if (!$user->rights->propale->lire) accessforbidden();
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0)
+
+if (isset($_GET["socid"]))
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$objectid=$_GET["socid"];
+	$module='societe';
+	$dbtable='';
 }
-if ($_GET['propalid'] > 0)
+else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 {
-  $propal = new Propal($db);
-  $result=$propal->fetch($_GET['propalid']);
-  if (! $result > 0)
-    {
-      dolibarr_print_error($db,$propal->error);
-      exit;
-    }
-  if ($user->societe_id > 0 && $propal->socid <> $user->societe_id)
-    accessforbidden();
+	$objectid=$_GET["propalid"];
+	$module='propale';
+	$dbtable='propal';
 }
+
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, $module, $objectid, $dbtable);
 
 
 

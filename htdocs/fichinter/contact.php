@@ -1,6 +1,5 @@
 <?php
-/* Copyright (C) 2005      Patrick Rouillon     <patrick@rouillon.net>
- * Copyright (C) 2005-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Regis Houssin  <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,63 +20,63 @@
  */
 
 /**
-        \file       htdocs/comm/propal/contact.php
-        \ingroup    propal
-        \brief      Onglet de gestion des contacts de propal
+        \file       htdocs/fichinter/contact.php
+        \ingroup    fichinter
+        \brief      Onglet de gestion des contacts de fiche d'intervention
         \version    $Revision$
 */
 
 require ("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 
-$langs->load("facture");
-$langs->load("orders");
+$langs->load("interventions");
 $langs->load("sendings");
 $langs->load("companies");
 
-$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
 // Sécurité d'accès client et commerciaux
-$socid = restrictedArea($user, 'propale', $propalid, 'propal');
+$socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 /*
  * Ajout d'un nouveau contact
  */
 
-if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
+if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
 {
 	
 	$result = 0;
-	$propal = new Propal($db);
-	$result = $propal->fetch($_GET["propalid"]);
+	$fichinter = new Fichinter($db);
+	$result = $fichinter->fetch($_GET["id"]);
 
-    if ($result > 0 && $_GET["propalid"] > 0)
+    if ($result > 0 && $_GET["id"] > 0)
     {
-  		$result = $propal->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
+  		$result = $fichinter->add_contact($_POST["contactid"], $_POST["type"], $_POST["source"]);
     }
     
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?propalid=".$propal->id);
+		Header("Location: contact.php?id=".$fichinter->id);
 		exit;
-	} else
+	}
+	else
 	{
-		$mesg = '<div class="error">'.$propal->error.'</div>';
+		$mesg = '<div class="error">'.$fichinter->error.'</div>';
 	}
 }
 // modification d'un contact. On enregistre le type
-if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
+if ($_POST["action"] == 'updateligne' && $user->rights->ficheinter->creer)
 {
-	$propal = new Propal($db);
-	if ($propal->fetch($_GET["propalid"]))
+	$fichinter = new Fichinter($db);
+	if ($fichinter->fetch($_GET["id"]))
 	{
-		$contact = $propal->detail_contact($_POST["elrowid"]);
+		$contact = $fichinter->detail_contact($_POST["elrowid"]);
 		$type = $_POST["type"];
 		$statut = $contact->statut;
 
-		$result = $propal->update_contact($_POST["elrowid"], $statut, $type);
+		$result = $fichinter->update_contact($_POST["elrowid"], $statut, $type);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -93,16 +92,16 @@ if ($_POST["action"] == 'updateligne' && $user->rights->propale->creer)
 }
 
 // bascule du statut d'un contact
-if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
+if ($_GET["action"] == 'swapstatut' && $user->rights->ficheinter->creer)
 {
-	$propal = new Propal($db);
-	if ($propal->fetch($_GET["propalid"]))
+	$fichinter = new Fichinter($db);
+	if ($fichinter->fetch($_GET["id"]))
 	{
-		$contact = $propal->detail_contact($_GET["ligne"]);
+		$contact = $fichinter->detail_contact($_GET["ligne"]);
 		$id_type_contact = $contact->fk_c_type_contact;
 		$statut = ($contact->statut == 4) ? 5 : 4;
 
-		$result = $propal->update_contact($_GET["ligne"], $statut, $id_type_contact);
+		$result = $fichinter->update_contact($_GET["ligne"], $statut, $id_type_contact);
 		if ($result >= 0)
 		{
 			$db->commit();
@@ -118,15 +117,15 @@ if ($_GET["action"] == 'swapstatut' && $user->rights->propale->creer)
 }
 
 // Efface un contact
-if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
+if ($_GET["action"] == 'deleteline' && $user->rights->ficheinter->creer)
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET["propalid"]);
-	$result = $propal->delete_contact($_GET["lineid"]);
+	$fichinter = new Fichinter($db);
+	$fichinter->fetch($_GET["id"]);
+	$result = $fichinter->delete_contact($_GET["lineid"]);
 
 	if ($result >= 0)
 	{
-		Header("Location: contact.php?propalid=".$propal->id);
+		Header("Location: contact.php?id=".$fichinter->id);
 		exit;
 	}
 	else {
@@ -135,7 +134,7 @@ if ($_GET["action"] == 'deleteline' && $user->rights->propale->creer)
 }
 
 
-llxHeader('', $langs->trans("Proposal"), "Propal");
+llxHeader();
 
 $html = new Form($db);
 $contactstatic=new Contact($db);
@@ -148,36 +147,36 @@ $contactstatic=new Contact($db);
 /* *************************************************************************** */
 if (isset($mesg)) print $mesg;
 
-$id = $_GET["propalid"];
+$id = $_GET["id"];
 if ($id > 0)
 {
-	$propal = New Propal($db);
-	if ( $propal->fetch($_GET['propalid']) > 0)
+	$fichinter = New Fichinter($db);
+	if ($fichinter->fetch($_GET['id']) > 0)
 	{
-		$soc = new Societe($db, $propal->socid);
-		$soc->fetch($propal->socid);
+		$soc = new Societe($db, $fichinter->socid);
+		$soc->fetch($fichinter->socid);
 
 
-		$head = propal_prepare_head($propal);
-		dolibarr_fiche_head($head, 'contact', $langs->trans("Proposal"));
+		$head = fichinter_prepare_head($fichinter);
+		dolibarr_fiche_head($head, 'contact', $langs->trans("InterventionCard"));
 
 
 		/*
-		*   Propal synthese pour rappel
+		*   Fiche intervention synthese pour rappel
 		*/
 		print '<table class="border" width="100%">';
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $propal->ref_url;
+		print $fichinter->ref_url;
 		print "</td></tr>";
 
 		// Customer
-		if ( is_null($propal->client) )
-			$propal->fetch_client();
+		if ( is_null($fichinter->client) )
+			$fichinter->fetch_client();
 			
 		print "<tr><td>".$langs->trans("Company")."</td>";
-		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
+		print '<td colspan="3">'.$fichinter->client->getNomUrl(1).'</td></tr>';
 		print "</table>";
 
 		print '</div>';
@@ -191,7 +190,7 @@ if ($id > 0)
 		* Ajouter une ligne de contact
 		* Non affiché en mode modification de ligne
 		*/
-		if ($_GET["action"] != 'editline' && $user->rights->propale->creer)
+		if ($_GET["action"] != 'editline' && $user->rights->ficheinter->creer)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Source").'</td>';
@@ -203,10 +202,10 @@ if ($id > 0)
 
 			$var = false;
 
-			print '<form action="contact.php?propalid='.$id.'" method="post">';
+			print '<form action="contact.php?id='.$id.'" method="post">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="internal">';
-			print '<input type="hidden" name="propalid" value="'.$id.'">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Ligne ajout pour contact interne
 			print "<tr $bc[$var]>";
@@ -223,17 +222,17 @@ if ($id > 0)
 			$html->select_users($user->id,'contactid');
 			print '</td>';
 			print '<td>';
-			$propal->selectTypeContact($propal, '', 'type','internal');
+			$fichinter->selectTypeContact($fichinter, '', 'type','internal');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
 
 			print '</form>';
 
-			print '<form action="contact.php?propalid='.$id.'" method="post">';
+			print '<form action="contact.php?id='.$id.'" method="post">';
 			print '<input type="hidden" name="action" value="addcontact">';
 			print '<input type="hidden" name="source" value="external">';
-			print '<input type="hidden" name="propalid" value="'.$id.'">';
+			print '<input type="hidden" name="id" value="'.$id.'">';
 
 			// Ligne ajout pour contact externe
 			$var=!$var;
@@ -244,15 +243,15 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$propal->client->id;
-			$selectedCompany = $propal->selectCompaniesForNewContact($propal, 'propalid', $selectedCompany, $htmlname = 'newcompany');
+			$selectedCompany = isset($_GET["newcompany"])?$_GET["newcompany"]:$fichinter->client->id;
+			$selectedCompany = $fichinter->selectCompaniesForNewContact($fichinter, 'id', $selectedCompany, $htmlname = 'newcompany');
 			print '</td>';
 
 			print '<td colspan="1">';
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
 			print '</td>';
 			print '<td>';
-			$propal->selectTypeContact($propal, '', 'type','external');
+			$fichinter->selectTypeContact($fichinter, '', 'type','external');
 			print '</td>';
 			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 			print '</tr>';
@@ -277,7 +276,7 @@ if ($id > 0)
 
 		foreach(array('internal','external') as $source)
 		{
-			$tab = $propal->liste_contact(-1,$source);
+			$tab = $fichinter->liste_contact(-1,$source);
 			$num=sizeof($tab);
 
 			$i = 0;
@@ -331,17 +330,17 @@ if ($id > 0)
 				// Statut
 				print '<td align="center">';
 				// Activation desativation du contact
-				if ($propal->statut >= 0) print '<a href="contact.php?propalid='.$propal->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
+				if ($fichinter->statut >= 0) print '<a href="contact.php?id='.$fichinter->id.'&amp;action=swapstatut&amp;ligne='.$tab[$i]['rowid'].'">';
 				print $contactstatic->LibStatut($tab[$i]['status'],3);
-				if ($propal->statut >= 0) print '</a>';
+				if ($fichinter->statut >= 0) print '</a>';
 				print '</td>';
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($propal->statut < 5 && $user->rights->propale->creer)
+				if ($fichinter->statut < 5 && $user->rights->ficheinter->creer)
 				{
 					print '&nbsp;';
-					print '<a href="contact.php?propalid='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
+					print '<a href="contact.php?id='.$fichinter->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
 					print img_delete();
 					print '</a>';
 				}
@@ -356,8 +355,8 @@ if ($id > 0)
 	}
 	else
 	{
-		// Propale non trouvée
-		print "Propale inexistante ou accès refusé";
+		// Fiche intervention non trouvée
+		print "Fiche intervention inexistante ou accès refusé";
 	}
 }
 

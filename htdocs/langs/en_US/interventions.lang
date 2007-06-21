@@ -3,10 +3,16 @@ Intervention=Intervention
 Interventions=Interventions
 InterventionCard=Intervention card
 NewIntervention=New intervention
-EditIntervention=Editer intervention
 AddIntervention=Add intervention
 ListOfInterventions=List of interventions
+EditIntervention=Editer intervention
 LastInterventions=Last %s interventions
 AllInterventions=All interventions
 CreateDaftIntervention=Create draft
 CustomerDoesNotHavePrefix=Customer does not have a prefix
+InterventionContact=Intervention contact
+##### Types de contacts #####
+TypeContact_fichinter_internal_INTERREPFOLL=Representative following-up intervention
+TypeContact_fichinter_internal_INTERVENING=Intervening
+TypeContact_fichinter_external_BILLING=Billing customer contact
+TypeContact_fichinter_external_CUSTOMER=Following-up customer contact

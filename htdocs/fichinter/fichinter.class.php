@@ -36,12 +36,12 @@ require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
 class Fichinter extends CommonObject
 {
     var $db;
-	var $element='ficheinter';
+	  var $element='fichinter';
 
     var $id;
     
-	var $socid;		// Id client
-	var $client;		// Objet societe client (à charger par fetch_client)
+	  var $socid;		// Id client
+	  var $client;		// Objet societe client (à charger par fetch_client)
 
     var $author;
     var $ref;
@@ -175,10 +175,11 @@ class Fichinter extends CommonObject
                 $this->duree      = $obj->duree;
                 $this->ref        = $obj->ref;
                 $this->note       = $obj->note;
-                $this->socid     = $obj->fk_soc;
-                $this->societe_id = $obj->fk_soc;		// A virer, obsolete
+                $this->socid      = $obj->fk_soc;
                 $this->projet_id  = $obj->fk_projet;
                 $this->statut     = $obj->fk_statut;
+                
+                $this->ref_url = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
 
                 $this->db->free($resql);
                 return 1;
