@@ -1224,7 +1224,7 @@ class CommandeFournisseur extends Commande
    *      \param     tva_tx           Taux TVA
    *      \return    int              < 0 si erreur, > 0 si ok
    */
-  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva)
+  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $txtva, $price_base_type='HT')
   {
     dolibarr_syslog("CommandeFournisseur::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $txtva");
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1244,7 +1244,7 @@ class CommandeFournisseur extends Commande
 	// qty, pu, remise_percent et txtva
 	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, $price_base_type);
 	$total_ht  = $tabprice[0];
 	$total_tva = $tabprice[1];
 	$total_ttc = $tabprice[2];

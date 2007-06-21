@@ -591,7 +591,8 @@ ALTER TABLE llx_facture_fourn MODIFY   total_ht   double(16,8)     DEFAULT 0;
 ALTER TABLE llx_facture_fourn MODIFY   total_tva  double(16,8)     DEFAULT 0;
 ALTER TABLE llx_facture_fourn MODIFY   total_ttc  double(16,8)     DEFAULT 0;
 
-ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(16,8);
+ALTER TABLE llx_facture_fourn_det ADD     pu_ttc            double(16,8) AFTER pu_ht;
 ALTER TABLE llx_facture_fourn_det MODIFY  qty               smallint DEFAULT 1;
 ALTER TABLE llx_facture_fourn_det MODIFY  total_ht          double(16,8) DEFAULT 0;
 ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(16,8) DEFAULT 0;

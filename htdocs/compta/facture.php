@@ -2222,7 +2222,7 @@ else
 					print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+					print '<td align="right" width="50">'.$langs->trans('TotalHT').'</td>';
 					print '<td width="16">&nbsp;</td>';
 					print '<td width="16">&nbsp;</td>';
 					print '<td width="12">&nbsp;</td>';
@@ -2407,7 +2407,7 @@ else
 						}
 						else print '&nbsp;';
 						print '</td>';
-						print '<td align="center" rowspan="1" colspan="5" valign="center"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
+						print '<td align="center" rowspan="1" colspan="5" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans('Save').'">';
 						print '<br /><input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 						print '</tr>' . "\n";
 						if ($conf->service->enabled)

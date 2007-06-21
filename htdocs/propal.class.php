@@ -267,7 +267,7 @@ class Propal extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
+    function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
     {
     	dolibarr_syslog("Propal.class::addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -287,7 +287,7 @@ class Propal extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -359,7 +359,7 @@ class Propal extends CommonObject
    *    \param      desc            Description
    *    \return     int             0 en cas de succès
    */
-    function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='')
+    function updateline($rowid, $pu, $qty, $remise_percent=0, $txtva, $desc='', $price_base_type='HT')
     {
     	dolibarr_syslog("propal.class.php::UpdateLine $rowid, $pu, $qty, $remise_percent, $txtva, $desc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -379,7 +379,7 @@ class Propal extends CommonObject
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];

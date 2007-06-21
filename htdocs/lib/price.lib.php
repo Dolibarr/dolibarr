@@ -35,42 +35,48 @@
 				facture, propale, commande ou autre depuis:
 				quantité, prix unitaire, remise_percent_ligne, txtva, remise_percent_global
 		\param 	qty							Quantité
-		\param 	pu							Prix unitaire HT
+		\param 	pu							Prix unitaire (HT ou TTC selon price_base_type)
 		\param 	remise_percent_ligne		Remise ligne
 		\param 	txtva						Taux tva
 		\param 	remise_percent_global		0
 		\param	price_base_type 			HT=on calcule sur le HT, TTC=on calcule sur le TTC
-		\param	pu_ttc 						Prix unitaire TTC
-		\return result[0,1,2]				(total_ht, total_tva, total_ttc)
+		\return result[0,1,2,3,4,5]			(total_ht, total_tva, total_ttc, pu_ht, pu_tva, pu_ttc)
 */
-function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0, $price_base_type='HT', $pu_ttc=0)
+function calcul_price_total($qty, $pu, $remise_percent_ligne, $txtva, $remise_percent_global=0, $price_base_type='HT')
 {
-	$maxdecimalfortotal=2;
+	global $conf;
 	
 	$result=array();
 
-	if ($price_base_type =='HT')
+	//dolibarr_syslog("price.lib::calcul_price_total $qty, $pu, $remise_percent_ligne, $txtva, $price_base_type");
+	if ($price_base_type == 'HT')
 	{
 		// On travaille par defaut en partant du prix HT
 		$tot_sans_remise = $pu * $qty;
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
-		$result[0] = round($tot_avec_remise, $maxdecimalfortotal);
-		$result[2] = round($tot_avec_remise * ( 1 + ($txtva / 100)), $maxdecimalfortotal);
+		$result[0] = price2num($tot_avec_remise, 'MT');
+		$result[2] = price2num($tot_avec_remise * ( 1 + ($txtva / 100)), 'MT');
 		$result[1] = $result[2] - $result[0];
+		$result[3] = price2num($pu, 'MU');
+		$result[5] = price2num($pu * ( 1 + ($txtva / 100)), 'MU');
+		$result[4] = $result[5] - $result[3];
 	}
 	else
 	{
 		// On cacule à l'envers en partant du prix TTC
 		// Utilise pour les produits a prix TTC reglemente (livres, ...)
 
-		$tot_sans_remise = $pu_ttc * $qty;
+		$tot_sans_remise = $pu * $qty;
 		$tot_avec_remise_ligne = $tot_sans_remise       * ( 1 - ($remise_percent_ligne / 100));
 		$tot_avec_remise       = $tot_avec_remise_ligne * ( 1 - ($remise_percent_global / 100));
 
-		$result[2] = round($tot_avec_remise, $maxdecimalfortotal);
-		$result[0] = round($tot_avec_remise / ( 1 + ($txtva / 100)), $maxdecimalfortotal);
+		$result[2] = price2num($tot_avec_remise, 'MT');
+		$result[0] = price2num($tot_avec_remise / ( 1 + ($txtva / 100)), 'MT');
 		$result[1] = $result[2] - $result[0];
+		$result[5] = price2num($pu, 'MU');
+		$result[3] = price2num($pu / ( 1 + ($txtva / 100)), 'MU');
+		$result[4] = $result[5] - $result[3];
 	}
 
 	return $result;

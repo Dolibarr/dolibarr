@@ -900,7 +900,7 @@ function migrate_price_facture($db,$langs,$conf)
 					$facligne= new FactureLigne($db);
 					$facligne->fetch($rowid);
 
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global);
+					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
 					$total_ht  = $result[0];
 					$total_tva = $result[1];
 					$total_ttc = $result[2];
@@ -1006,7 +1006,7 @@ function migrate_price_propal($db,$langs,$conf)
 					$propalligne= new PropaleLigne($db);
 					$propalligne->fetch($rowid);
 
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global);
+					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
 					$total_ht  = $result[0];
 					$total_tva = $result[1];
 					$total_ttc = $result[2];
@@ -1112,7 +1112,7 @@ function migrate_price_commande($db,$langs,$conf)
 					$commandeligne= new CommandeLigne($db);
 					$commandeligne->fetch($rowid);
 
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global);
+					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
 					$total_ht  = $result[0];
 					$total_tva = $result[1];
 					$total_ttc = $result[2];

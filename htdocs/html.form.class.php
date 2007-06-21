@@ -929,7 +929,7 @@ class Form
 		{
 			$sql.="DISTINCT";	
 		}
-		$sql.= " p.rowid, p.label, p.ref, p.price, p.duration";
+		$sql.= " p.rowid, p.label, p.ref, p.price, p.price_ttc, p.price_base_type, p.duration";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p ";
 		if ($conf->categorie->enabled && ! $user->rights->categorie->voir)
 		{
@@ -1005,24 +1005,23 @@ class Form
 				// Multiprix
 				if ($price_level > 1)
 				{
-					$sql= "SELECT price ";
+					$sql= "SELECT price, price_ttc, price_base_type ";
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
 					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
 					$sql.= " order by date_price DESC limit 1";
 					$result2 = $this->db->query($sql) ;
 					$objp2 = $this->db->fetch_object($result2);
-					if ($objp2->price)
-					{
-						$opt.= $objp2->price.' '.$langs->trans("Currency".$conf->monnaie);
-					}
+					if ($objp2->price_base_type == 'HT')
+						$opt.= price2num($objp2->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
 					else
-					{
-						$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
-					}
+						$opt.= price2num($objp2->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 				}
 				else
 				{
-					$opt.= $objp->price.' '.$langs->trans("Currency".$conf->monnaie);
+					if ($objp->price_base_type == 'HT')
+						$opt.= price2num($objp->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+					else
+						$opt.= price2num($objp->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 				}
 				
 				if ($objp->duration) $opt.= ' - '.$objp->duration;

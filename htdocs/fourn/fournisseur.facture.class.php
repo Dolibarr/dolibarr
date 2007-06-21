@@ -209,7 +209,7 @@ class FactureFournisseur extends Facture
 				/*
 				* Lignes
 				*/
-				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.qty, f.tva_taux, f.tva';
+				$sql = 'SELECT f.rowid, f.description, f.pu_ht, f.pu_ttc, f.qty, f.tva_taux, f.tva';
 				$sql.= ', f.total_ht, f.tva as total_tva, f.total_ttc, f.fk_product';
 				$sql.= ', p.ref, p.label as label, p.description as product_desc';
 				//$sql.= ', pf.ref_fourn';
@@ -236,6 +236,7 @@ class FactureFournisseur extends Facture
 							$this->lignes[$i]->libelle          = $obj->label;           // Label du produit
 							$this->lignes[$i]->product_desc     = $obj->product_desc;    // Description du produit
 							$this->lignes[$i]->pu_ht            = $obj->pu_ht;
+							$this->lignes[$i]->pu_ttc           = $obj->pu_ttc;
 							$this->lignes[$i]->tva_taux         = $obj->tva_taux;
 							$this->lignes[$i]->qty              = $obj->qty;
 							$this->lignes[$i]->tva              = $obj->tva;
@@ -367,12 +368,13 @@ class FactureFournisseur extends Facture
 	* 		\param    	date_end        Date de fin de validité du service
 	* 		\param    	ventil          Code de ventilation comptable
 	* 		\param    	info_bits		Bits de type de lignes
+	* 		\param    	price_base      HT ou TTC
 	* 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
 	*					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
 	*/
-	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
+	function addline($desc, $pu, $txtva, $qty, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $price_base_type='HT')
 	{
 		dolibarr_syslog("FactureFourn::Addline $desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -382,23 +384,18 @@ class FactureFournisseur extends Facture
 		// Nettoyage paramètres
 		$txtva=price2num($txtva);
 
-		// Calcul du total TTC et de la TVA pour la ligne a partir de
-		// qty, pu, remise_percent et txtva
-		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
-		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-		$tabprice = calcul_price_total($qty, $pu, 0, $txtva, 0, 'HT', 0);
-		$total_ht  = $tabprice[0];
-		$total_tva = $tabprice[1];
-		$total_ttc = $tabprice[2];
 
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'facture_fourn_det (fk_facture_fourn)';
 		$sql .= ' VALUES ('.$this->id.');';
+		dolibarr_syslog("Fournisseur.facture::addline sql=".$sql);
+
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
-			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product);
 
+			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product);
+			
 			// Mise a jour prix facture
 			$result=$this->update_price($this->id);
 			if ($result > 0)
@@ -424,50 +421,60 @@ class FactureFournisseur extends Facture
 
 	/**
 	 * \brief     Mets à jour une ligne de facture
-	 * \param     id            Id de la ligne de facture
-	 * \param     label         Description de la ligne
-	 * \param     puht          Prix unitaire
-	 * \param     tauxtva       Taux tva
-	 * \param     qty           Quantité
-	 * \param     idproduct		Id produit
-	 * \return    int           <0 si ko, >0 si ok
+	 * \param     id            	Id de la ligne de facture
+	 * \param     label         	Description de la ligne
+	 * \param     pu          		Prix unitaire (HT ou TTC selon price_base_type)
+	 * \param     tauxtva       	Taux tva
+	 * \param     qty           	Quantité
+	 * \param     idproduct			Id produit
+	 * \param	  price_base_type	HT ou TTC
+	 * \return    int           	<0 si ko, >0 si ok
 	 */
-	function updateline($id, $label, $puht, $tauxtva, $qty=1, $idproduct=0)
+	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT')
 	{
-		$puht = price2num($puht);
+		$pu = price2num($pu);
 		$qty  = price2num($qty);
 
-		if (is_numeric($puht) && is_numeric($qty))
+		// Validation
+		if (! is_numeric($pu) || ! is_numeric($qty)) return -1;
+
+		// Calcul du total TTC et de la TVA pour la ligne a partir de
+		// qty, pu, remise_percent et txtva
+		// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
+		// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+		$tabprice = calcul_price_total($qty, $pu, 0, $tauxtva, 0, $price_base_type);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+		$pu_ht  = $tabprice[3];
+		$pu_tva = $tabprice[4];
+		$pu_ttc = $tabprice[5];
+
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
+		$sql.= 'SET ';
+		$sql.= 'description =\''.addslashes($label).'\'';
+		$sql.= ', pu_ht = '  .price2num($pu_ht);
+		$sql.= ', pu_ttc= '  .price2num($pu_ttc);
+		$sql.= ', qty ='     .price2num($qty);
+		$sql.= ', tva_taux=' .price2num($tauxtva);
+		$sql.= ', total_ht=' .price2num($total_ht);
+		$sql.= ', tva='      .price2num($total_tva);
+		$sql.= ', total_ttc='.price2num($total_ttc);
+		if ($idproduct) $sql.= ', fk_product='.$idproduct;
+		else $sql.= ', fk_product=null';
+		$sql.= ' WHERE rowid = '.$id;
+
+		dolibarr_syslog("Fournisseur.facture::updateline sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
 		{
-			$totalht  = ($puht * $qty);
-			$tva      = ($totalht * $tauxtva /  100);
-			$totalttc = $totalht + $tva;
-
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn_det ';
-			$sql.= 'SET ';
-			$sql.= 'description =\''.addslashes($label).'\'';
-			$sql.= ', pu_ht = '  .price2num($puht);
-			$sql.= ', qty ='     .price2num($qty);
-			$sql.= ', total_ht=' .price2num($totalht);
-			$sql.= ', tva='      .price2num($tva);
-			$sql.= ', tva_taux=' .price2num($tauxtva);
-			$sql.= ', total_ttc='.price2num($totalttc);
-			if ($idproduct) $sql.= ', fk_product='.$idproduct;
-			else $sql.= ', fk_product=null';
-			$sql.= ' WHERE rowid = '.$id;
-
-			dolibarr_syslog("Fournisseur.facture::updateline sql=".$sql);
-			$resql=$this->db->query($sql);
-			if ($resql)
-			{
-				// Mise a jour prix facture
-				return $this->update_price($this->id);
-			}
-			else
-			{
-				$this->error=$this->db->error();
-				return -1;
-			}
+			// Mise a jour prix total facture
+			return $this->update_price($this->id);
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
@@ -497,6 +504,8 @@ class FactureFournisseur extends Facture
 	 */
 	function update_price($facid)
 	{
+		global $conf;
+		
 		$total_ht  = 0;
 		$total_tva = 0;
 		$total_ttc = 0;
@@ -521,9 +530,9 @@ class FactureFournisseur extends Facture
 			$total_ttc = $total_ttc != '' ? $total_ttc : 0;
 
 			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture_fourn SET';
-			$sql .= ' total_ht = '. price2num($total_ht);
-			$sql .= ',total_tva = '.price2num($total_tva);
-			$sql .= ',total_ttc = '.price2num($total_ttc);
+			$sql .= ' total_ht = '. price2num($total_ht,'MT');
+			$sql .= ',total_tva = '.price2num($total_tva,'MT');
+			$sql .= ',total_ttc = '.price2num($total_ttc,'MT');
 			$sql .= ' WHERE rowid = '.$facid.';';
 			dolibarr_syslog("Fournisseur.facture::update_price sql=".$sql);
 			$resql2 = $this->db->query($sql);

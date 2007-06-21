@@ -1308,12 +1308,14 @@ class Facture extends CommonObject
 			if (! $info_bits) $info_bits=0;
 			$pu = price2num($pu);
 			$txtva=price2num($txtva);
-
+			if ($price_base_type=='HT') $pu=$pu;
+			else $pu=$pu_ttc;
+			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
 			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type, $pu_ttc);
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
 			$total_ht  = $tabprice[0];
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
@@ -1382,15 +1384,16 @@ class Facture extends CommonObject
    *      \brief     Mets à jour une ligne de facture
    *      \param     rowid            Id de la ligne de facture
    *      \param     desc             Description de la ligne
-   *      \param     pu               Prix unitaire
+   *      \param     pu               Prix unitaire (HT ou TTC selon price_base_type)
    *      \param     qty              Quantité
    *      \param     remise_percent   Pourcentage de remise de la ligne
-   *      \param     date_start        Date de debut de validité du service
-   *      \param     date_end          Date de fin de validité du service
+   *      \param     date_start       Date de debut de validité du service
+   *      \param     date_end         Date de fin de validité du service
    *      \param     tva_tx           Taux TVA
+   * 	  \param	 price_base_type  HT ou TTC
    *      \return    int              < 0 si erreur, > 0 si ok
    */
-  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva)
+  function updateline($rowid, $desc, $pu, $qty, $remise_percent=0, $date_start, $date_end, $txtva, $price_base_type='HT')
   {
     dolibarr_syslog("Facture::UpdateLine $rowid, $desc, $pu, $qty, $remise_percent, $date_start, $date_end, $txtva", LOG_DEBUG);
     include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
@@ -1410,10 +1413,13 @@ class Facture extends CommonObject
 	// qty, pu, remise_percent et txtva
 	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker
 	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva);
-	$total_ht  = $tabprice[0];
-	$total_tva = $tabprice[1];
-	$total_ttc = $tabprice[2];
+	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+		$total_ht  = $tabprice[0];
+		$total_tva = $tabprice[1];
+		$total_ttc = $tabprice[2];
+		$pu_ht  = $tabprice[3];
+		$pu_tva = $tabprice[4];
+		$pu_ttc = $tabprice[5];
 
 	// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 	$price = $pu;
