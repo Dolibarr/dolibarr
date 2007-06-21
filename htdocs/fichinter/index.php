@@ -42,7 +42,6 @@ if ($user->societe_id > 0)
 
 $sortorder=$_GET["sortorder"]?$_GET["sortorder"]:$_POST["sortorder"];
 $sortfield=$_GET["sortfield"]?$_GET["sortfield"]:$_POST["sortfield"];
-$socid=$_GET["socid"]?$_GET["socid"]:$_POST["socid"];
 $page=$_GET["page"]?$_GET["page"]:$_POST["page"];
 
 if (! $sortorder) $sortorder="DESC";
@@ -53,13 +52,6 @@ $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
-
-// Securité accès client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
 
 
 llxHeader();
