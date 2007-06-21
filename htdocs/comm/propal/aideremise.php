@@ -28,19 +28,12 @@
 */
 
 require("./pre.inc.php");
-
-$user->getrights('propale');
-if (!$user->rights->propale->lire)
-  accessforbidden();
-
 include_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-  $action = '';
-  $socid = $user->societe_id;
-}
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /******************************************************************************/
