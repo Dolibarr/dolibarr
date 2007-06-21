@@ -54,46 +54,21 @@ if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
 $year=isset($_GET["year"])?$_GET["year"]:"";
 $month=isset($_GET["month"])?$_GET["month"]:"";
 
-// Sécurité accés client
-$socid='';
-if ($_GET["socid"]) { $socid=$_GET["socid"]; }
-if ($user->societe_id > 0)
+if (isset($_GET["socid"]))
 {
-  $action = '';
-  $socid = $user->societe_id;
+	$objectid=$_GET["socid"];
+	$module='societe';
+	$dbtable='';
 }
-if (!$user->rights->propale->lire) accessforbidden();
-if ($_GET['propalid'] > 0)
+else if (isset($_GET["propalid"]) &&  $_GET["propalid"] > 0)
 {
-  $propal = new Propal($db);
-  $result=$propal->fetch($_GET['propalid']);
-  if (! $result > 0)
-  {
-      dolibarr_print_error($db,$propal->error);
-      exit;
-  }
-  // Protection restriction commercial
-  if ($user->societe_id > 0)
-  {
-	// Si externe, on autorise que ses propres infos
-	if ($propal->socid <> $user->societe_id) accessforbidden();
-  }
-  else if (!$user->rights->commercial->client->voir)
-  {
-	// Si interne et pas les droits de voir tous les clients, on autorise que si liés
-  	$sql = "SELECT sc.fk_soc";
-    $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql .= " WHERE sc.fk_soc = ".$propal->socid." AND sc.fk_user = ".$user->id;
-    if ( $db->query($sql) )
-    {
-      if ( $db->num_rows() == 0)
-      {
-      	accessforbidden();
-      }
-    }
-  }
-  // Fin de Protection restriction commercial
+	$objectid=$_GET["propalid"];
+	$module='propale';
+	$dbtable='propal';
 }
+
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, $module, $objectid, $dbtable);
 
 // Nombre de ligne pour choix de produit/service prédéfinis
 $NBLINES=4;
@@ -749,6 +724,9 @@ if ($_GET['propalid'] > 0)
 	 */
   
   if ($mesg) print "$mesg<br>";
+  
+  $propal = new Propal($db);
+  $propal->fetch($_GET['propalid']);
 
   $societe = new Societe($db);
   $societe->fetch($propal->socid);

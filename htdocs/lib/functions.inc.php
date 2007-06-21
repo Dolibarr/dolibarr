@@ -1247,6 +1247,12 @@ function dol_loginfunction($notused,$pearstatus)
  function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
  {
  	global $db;
+ 	
+ 	if (!$modulename)
+ 	{
+ 		$modulename = 'societe';
+ 		$list = 1;
+ 	}
  		
  	$user->getrights($modulename);
  	$user->getrights('commercial');
@@ -1255,7 +1261,7 @@ function dol_loginfunction($notused,$pearstatus)
  	$nocreate = 0; 
  	
  	//si dbtable non défini, même nom que le module
- 	if (!$dbtable) $dbtablename = $modulename;
+ 	if (!$dbtablename) $dbtablename = $modulename;
 
  	if (!$user->rights->$modulename->lire)
  	{
@@ -1275,6 +1281,8 @@ function dol_loginfunction($notused,$pearstatus)
     $_GET["action"] = '';
 	  $_POST["action"] = '';
     $socid = $user->societe_id;
+    if (!$objectid) $objectid = $socid;
+    if ($modulename == 'societe' && $socid <> $objectid) accessforbidden();
   }
 
   if ($objectid)

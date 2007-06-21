@@ -38,7 +38,10 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 $langs->load("categories");
 $langs->load("companies");
 
-if (!$user->rights->societe->lire) accessforbidden();
+$socid = isset($_GET["socid"])?$_GET["socid"]:'';
+
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'societe', $socid);
 
 $mesg = '';
 
