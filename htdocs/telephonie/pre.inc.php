@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -45,8 +45,6 @@ function llxHeader($head = "", $title="") {
       $menu->add_submenu(DOL_URL_ROOT."/telephonie/simulation/fiche.php?action=create", "Nouvelle");
     }
 
-
-
   $menu->add(DOL_URL_ROOT."/telephonie/client/index.php", "Clients");
   if ($user->rights->telephonie->ligne->creer)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/client/new.php", "Nouveau client");
@@ -59,7 +57,10 @@ function llxHeader($head = "", $title="") {
     $menu->add(DOL_URL_ROOT."/telephonie/ligne/commande/", "Commandes");
 
   if ($user->rights->telephonie->facture->lire)
-    $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
+    {
+      $menu->add(DOL_URL_ROOT."/telephonie/facturation/", "Facturation");
+      $menu->add(DOL_URL_ROOT."/telephonie/facture/", "Factures");
+    }
 
   if ($user->rights->telephonie->stats->lire)
     $menu->add(DOL_URL_ROOT."/telephonie/stats/", "Statistiques");
