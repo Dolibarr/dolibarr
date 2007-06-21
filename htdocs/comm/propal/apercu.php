@@ -36,24 +36,14 @@ if ($conf->projet->enabled) {
 	require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 }
 
-
-$user->getrights('propale');
-
-if (!$user->rights->propale->lire)
-	accessforbidden();
-
 $langs->load('propal');
 $langs->load("bills");
 $langs->load('compta');
 
-// Sécurité accés client
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 llxHeader();
 
@@ -85,10 +75,8 @@ if ($_GET["propalid"] > 0)
 		$sql.= ' p.fk_user_author, p.fk_user_valid, p.fk_user_cloture, p.datec, p.date_valid, p.date_cloture';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
 		$sql.= ' WHERE p.fk_soc = s.rowid AND p.rowid = '.$propal->id;
-		if ($socid) $sql .= ' AND s.rowid = '.$socid;
 
 		$result = $db->query($sql);
-
 
 		if ($result) {
 			if ($db->num_rows($result)) {

@@ -33,17 +33,15 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 
-$user->getrights('propale');
-
-if (!$user->rights->propale->lire)
-	accessforbidden();
-
 $langs->load('compta');
 $langs->load('other');
 
-$propalid=empty($_GET['propalid']) ? 0 : intVal($_GET['propalid']);
 $action=empty($_GET['action']) ? (empty($_POST['action']) ? '' : $_POST['action']) : $_GET['action'];
 
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
+
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /*

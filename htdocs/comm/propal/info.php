@@ -35,14 +35,10 @@ require_once(DOL_DOCUMENT_ROOT."/lib/propal.lib.php");
 $langs->load('propal');
 $langs->load('compta');
 
-$user->getrights('propale');
-if (! $user->rights->propale->lire)
-	accessforbidden();
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-if (! $_GET['propalid'])
-{
-	accessforbidden();
-}
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 
 /*

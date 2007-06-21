@@ -37,17 +37,10 @@ $langs->load('propal');
 $langs->load('compta');
 $langs->load('bills');
 
-$user->getrights('propale');
-if (!$user->rights->propale->lire)
-	accessforbidden();
+$propalid = isset($_GET["propalid"])?$_GET["propalid"]:'';
 
-
-// Sécurité accés client
-if ($user->societe_id > 0) 
-{
-	unset($_GET['action']);
-	$socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'propale', $propalid, 'propal');
 
 /******************************************************************************/
 /*                     Actions                                                */
