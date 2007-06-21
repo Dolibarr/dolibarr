@@ -41,31 +41,10 @@ $langs->load("companies");
 $langs->load("interventions");
 
 
-if ($_GET["socid"])
-{
-	$societe=new Societe($db);
-	$societe->fetch($_GET["socid"]);
-}
+$fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 
-// Sécurité accés client
-$user->getrights("ficheinter");
-if (!$user->rights->ficheinter->lire) accessforbidden();
-if ($user->societe_id > 0)
-{
-	$action = '';
-	$socid = $user->societe_id;
-}
-if ($_GET["id"])
-{
-	$fichinter = new Fichinter($db);
-	$result=$fichinter->fetch($_GET["id"]);
-	if (! $result > 0)
-	{
-		dolibarr_print_error($db);
-		exit;
-	}
-	if ($user->societe_id > 0 && $fichinter->socid <> $user->societe_id) accessforbidden();
-}
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
 
 /*
@@ -167,6 +146,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	$ficheinter = new Fichinter($db);
+	$result=$ficheinter->fetch($_GET["id"]);
 
 	$obj = $conf->global->FICHEINTER_ADDON;
 	$file = $obj.".php";
