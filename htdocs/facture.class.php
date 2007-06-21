@@ -2859,7 +2859,7 @@ class FactureLigne
 		$sql.= ' '.$this->fk_export_compta.',';
 		$sql.= ' '.$rangtouse.',';
 		$sql.= " '".$this->info_bits."',";
-		$sql.= " ".price2num($this->total_ht).", ";
+		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
 		$sql.= " ".price2num($this->total_ttc);
 		$sql.= ')';
