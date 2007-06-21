@@ -196,17 +196,20 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
   exit;
 }
 
-if ($_GET['action'] == 'deleteline' && $user->rights->fournisseur->commande->creer)
+if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
-  $commande = new CommandeFournisseur($db);
-  $commande->fetch($_GET['id']);
-  $result = $commande->delete_line($_GET['lineid']);
-  if ($_REQUEST['lang_id'])
+	if ($user->rights->fournisseur->commande->creer)
+	{
+		$commande = new CommandeFournisseur($db);
+		$commande->fetch($_GET['id']);
+    $result = $commande->delete_line($_GET['lineid']);
+    if ($_REQUEST['lang_id'])
     {
       $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
       $outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-  supplier_order_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+    supplier_order_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+  }
   Header('Location: fiche.php?id='.$_GET['id']);
   exit;
 }
@@ -537,6 +540,15 @@ else
 				  $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
 	      print '<br />';
 	    }
+	    
+	  /*
+     * Confirmation de la suppression d'une ligne produit
+     */
+    if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+    {
+      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+      print '<br>';
+    }
 	
 	  /*
 	   *	Commande
@@ -662,7 +674,7 @@ else
 		      print img_edit();
 		      print '</a></td>';
 	
-		      print '<td align="right"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+		      print '<td align="right"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
