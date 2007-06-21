@@ -178,14 +178,14 @@ if ($_GET["id"] > 0)
 			if ($_GET['action'] == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-                print '<input type="hidden" name="action" value="setdate_livraison">';
-                $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
-                print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-                print '</form>';
+        print '<input type="hidden" name="action" value="setdate_livraison">';
+        $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+        print '</form>';
 			}
 			else
 			{
-				print dolibarr_print_date($commande->date_livraison,'dayhourtext');
+				print dolibarr_print_date($commande->date_livraison,'daytext');
 			}
 			print '</td>';
 			print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';
