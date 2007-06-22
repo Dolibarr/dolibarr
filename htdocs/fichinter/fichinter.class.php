@@ -389,8 +389,8 @@ class Fichinter extends CommonObject
 	}
 	
 	/**
-   *      \brief      Information sur l'objet propal
-   *      \param      id      id de la propale
+   *      \brief      Information sur l'objet fiche intervention
+   *      \param      id      id de la fiche d'intervention
    */
   function info($id)
   {
