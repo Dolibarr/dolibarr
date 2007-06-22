@@ -52,7 +52,7 @@ $offset = $limit * $page ;
 $pageprev = $page - 1;
 $pagenext = $page + 1;
 
-$sql = "SELECT s.nom,s.rowid as socid, f.note, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
+$sql = "SELECT s.nom,s.rowid as socid, f.description, f.ref,".$db->pdate("f.datei")." as dp, f.rowid as fichid, f.fk_statut, f.duree";
 $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."fichinter as f ";
 $sql .= " WHERE f.fk_soc = s.rowid";
 
@@ -123,7 +123,7 @@ if ( $db->query($sql) )
         print '<td><a href="rapport.php?socid='.$objp->socid.$filter.'"><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/filter.png" border="0"></a>&nbsp;';
         print "<a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid.$filter."\">".$objp->nom."</a></TD>\n";
       }
-      print '<td>'.nl2br($objp->note).'</td>';
+      print '<td>'.nl2br($objp->description).'</td>';
       print "<td>".strftime("%d %B %Y",$objp->dp)."</td>\n";
       print '<td align="center">'.sprintf("%.1f",$objp->duree).'</td>';
       $DureeTotal += $objp->duree;

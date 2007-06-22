@@ -681,3 +681,7 @@ insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) v
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (121, 'fichinter','internal', 'INTERVENING',   'Intervenant', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (130, 'fichinter','external', 'BILLING',       'Contact client facturation intervention', 1);
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (131, 'fichinter','external', 'CUSTOMER',      'Contact client suivi de l\'intervention', 1);
+
+ALTER TABLE llx_fichinter CHANGE note description text DEFAULT NULL;
+ALTER TABLE llx_fichinter ADD COLUMN note_private text DEFAULT NULL after description;
+ALTER TABLE llx_fichinter ADD COLUMN note_public text DEFAULT NULL after note_prive;

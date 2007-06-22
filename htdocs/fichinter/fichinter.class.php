@@ -47,7 +47,9 @@ class Fichinter extends CommonObject
     var $ref;
     var $date;
     var $duree;
-    var $note;
+    var $description
+    var $note_prive;
+    var $note_public;
     var $projet_id;
 
 
@@ -90,12 +92,12 @@ class Fichinter extends CommonObject
 		  
 		  $this->db->begin();
 		
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, note, duree";
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, duree";
         if ($this->projet_id) {
             $sql .=  ",fk_projet";
         }
         $sql .= ") ";
-        $sql .= " VALUES ($this->socid, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->note)."', $this->duree";
+        $sql .= " VALUES ($this->socid, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->description)."', $this->duree";
         if ($this->projet_id) {
             $sql .= ", ".$this->projet_id;
         }
@@ -137,7 +139,7 @@ class Fichinter extends CommonObject
          */
         $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter SET ";
         $sql .= " datei = ".$this->date;
-        $sql .= ", note  = '".addslashes($this->note)."'";
+        $sql .= ", description  = '".addslashes($this->description)."'";
         $sql .= ", duree = ".$this->duree;
         $sql .= ", fk_projet = ".$this->projet_id;
         $sql .= " WHERE rowid = $id";
@@ -158,7 +160,7 @@ class Fichinter extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT ref,note,fk_soc,fk_statut,duree,".$this->db->pdate(datei)." as di, fk_projet";
+        $sql = "SELECT ref,description,fk_soc,fk_statut,duree,".$this->db->pdate(datei)." as di, fk_projet";
         $sql.= " FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=".$rowid;
 
 		dolibarr_syslog("Fichinter.class::fetch rowid=$rowid sql=$sql");
@@ -170,14 +172,14 @@ class Fichinter extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id         = $rowid;
-                $this->date       = $obj->di;
-                $this->duree      = $obj->duree;
-                $this->ref        = $obj->ref;
-                $this->note       = $obj->note;
-                $this->socid      = $obj->fk_soc;
-                $this->projet_id  = $obj->fk_projet;
-                $this->statut     = $obj->fk_statut;
+                $this->id          = $rowid;
+                $this->date        = $obj->di;
+                $this->duree       = $obj->duree;
+                $this->ref         = $obj->ref;
+                $this->description = $obj->description;
+                $this->socid       = $obj->fk_soc;
+                $this->projet_id   = $obj->fk_projet;
+                $this->statut      = $obj->fk_statut;
                 
                 $this->ref_url = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
 

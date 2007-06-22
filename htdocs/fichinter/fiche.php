@@ -73,7 +73,7 @@ if ($_POST["action"] == 'add')
 	$fichinter->duree = $_POST["duree"];
 	$fichinter->projet_id = $_POST["projetidp"];
 	$fichinter->author = $user->id;
-	$fichinter->note = $_POST["note"];
+	$fichinter->description = $_POST["description"];
 	$fichinter->ref = $_POST["ref"];
 
 	$result = $fichinter->create();
@@ -96,7 +96,7 @@ if ($_POST["action"] == 'update')
   $fichinter->duree = $_POST["duree"];
   $fichinter->projet_id = $_POST["projetidp"];
   $fichinter->author = $user->id;
-  $fichinter->note = $_POST["note"];
+  $fichinter->description = $_POST["description"];
   $fichinter->ref = $_POST["ref"];
   
   $fichinter->update($_POST["id"]);
@@ -210,12 +210,12 @@ if ($_GET["action"] == 'create')
 	{
 		// Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note','',280,'dolibarr_notes','In',true);
+		$doleditor=new DolEditor('description','',280,'dolibarr_notes','In',true);
 		$doleditor->Create();
 	}
 	else
 	{
-		print '<textarea name="note" wrap="soft" cols="70" rows="15"></textarea>';
+		print '<textarea name="description" wrap="soft" cols="70" rows="15"></textarea>';
 	}
 
 	print '</td></tr>';
@@ -301,12 +301,12 @@ elseif ($_GET["action"] == 'edit' && $_GET["id"] > 0)
     {
 	    // Editeur wysiwyg
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note',$fichinter->note,280,'dolibarr_notes','In',true);
+		$doleditor=new DolEditor('description',$fichinter->description,280,'dolibarr_notes','In',true);
 		$doleditor->Create();
     }
     else
     {
-		print '<textarea name="note" wrap="soft" cols="70" rows="12">'.$fichinter->note.'</textarea>';
+		print '<textarea name="description" wrap="soft" cols="70" rows="12">'.$fichinter->description.'</textarea>';
     }
 
     print '</td></tr>';
@@ -369,7 +369,7 @@ elseif ($_GET["id"] > 0)
     // Description
     print '<tr><td valign="top">'.$langs->trans("Description").'</td>';
     print '<td>';
-    print nl2br($fichinter->note);
+    print nl2br($fichinter->description);
     print '</td></tr>';
 
     print "</table>";

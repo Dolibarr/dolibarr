@@ -33,7 +33,9 @@ create table llx_fichinter
   fk_user_valid   integer,               -- valideur de la fiche
   fk_statut       smallint  DEFAULT 0,
   duree           real,
-  note            text,
+  descrition      text,
+  note_private    text,
+  note_public     text
 
   UNIQUE INDEX (ref)
 )type=innodb;
