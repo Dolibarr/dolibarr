@@ -96,7 +96,7 @@ class MenuTop {
         	if ($tabMenu[$i]['right'] == true)
         	{
         		
-        		print '<li><a '.$tabMenu[$i]['class'].' href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$tabMenu[$i]['atarget']":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
+        		print '<li><a '.$tabMenu[$i]['class'].' href="'.DOL_URL_ROOT.$tabMenu[$i]['url'].'"'.($this->atarget?" target=$this->atarget":"").'>'.$tabMenu[$i]['titre'].'</a></li>';
         	}
         	else
         	{

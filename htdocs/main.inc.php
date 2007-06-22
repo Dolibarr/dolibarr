@@ -684,7 +684,7 @@ function top_menu($head, $title="", $target="")
     if (! $conf->top_menu)  $conf->top_menu ='eldy_backoffice.php';
 	if (! $conf->left_menu) $conf->left_menu='eldy_backoffice.php';
 
-    top_htmlhead($head, $title, $target);
+    top_htmlhead($head, $title);
 
     print '<body id="mainbody"><div id="dhtmltooltip"></div>';
 
