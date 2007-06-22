@@ -29,7 +29,7 @@
 
 require ("../main.inc.php");
 
-top_menu("","","_self");
+top_menu("","","_top");
 
 ?>
 
