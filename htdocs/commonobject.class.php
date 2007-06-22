@@ -382,45 +382,77 @@ class CommonObject
   */
  function selectCompaniesForNewContact($object, $var_id, $selected = '', $htmlname = 'newcompany')
  {
+	 global $conf, $langs;
+	 
 	 // On recherche les societes
 	 $sql = "SELECT s.rowid, s.nom FROM";
 	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-   //if ($filter) $sql .= " WHERE $filter";
+	 if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+	 {
+	 	$sql.= " WHERE rowid = ".$selected;
+	 }
 	 $sql .= " ORDER BY nom ASC";
 
 	 $resql = $object->db->query($sql);
 	 if ($resql)
 	 {
-		 $javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
-		 print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
-		 $num = $object->db->num_rows($resql);
-		 $i = 0;
-		 if ($num)
+		 if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
 		 {
-			 while ($i < $num)
-			 {
-				 $obj = $object->db->fetch_object($resql);
-				 if ($i == 0) $firstCompany = $obj->rowid;
-				 if ($selected > 0 && $selected == $obj->rowid)
-				 {
-					 print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
-					 $firstCompany = $obj->rowid;
-				 }
-				 else
-				 {
-					 print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->nom,24).'</option>';
-				 }
-				 $i ++;
-			 }
-		 }
-		 print "</select>\n";
-		 return $firstCompany;
-	 }
-	 else
-	 {
-		 dolibarr_print_error($object->db);
-	 }
- }
+		 	$langs->load("companies");
+		 	$obj = $this->db->fetch_object($resql);
+		 	$socid = $obj->rowid?$obj->rowid:'';
+		 	$javaScript = "window.location=\'./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=\' + document.getElementById(\'newcompany_id\').value;";
+
+			// On applique un delai d'execution pour le bon fonctionnement
+			$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
+
+			print '<div>';
+			if ($obj->rowid == 0)
+			{
+				print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$langs->trans("SelectCompany").'" '.$htmloption.' />';
+			}
+			else
+			{
+				print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$obj->nom.'" '.$htmloption.' />';
+			}
+			
+			print ajax_autocompleter($socid,'newcompany','/societe/ajaxcompanies.php','working');
+			return $socid;
+		}
+		else
+		{
+			$javaScript = "window.location='./contact.php?".$var_id."=".$object->id."&amp;".$htmlname."=' + form.".$htmlname.".options[form.".$htmlname.".selectedIndex].value;";
+			print '<select class="flat" name="'.$htmlname.'" onChange="'.$javaScript.'">';
+		  $num = $object->db->num_rows($resql);
+		  $i = 0;
+		  if ($num)
+		  {
+		    while ($i < $num)
+		    {
+			    $obj = $object->db->fetch_object($resql);
+			    if ($i == 0) $firstCompany = $obj->rowid;
+			    if ($selected > 0 && $selected == $obj->rowid)
+			    {
+				    print '<option value="'.$obj->rowid.'" selected="true">'.dolibarr_trunc($obj->nom,24).'</option>';
+				    $firstCompany = $obj->rowid;
+			    }
+			    else
+			    {
+				    print '<option value="'.$obj->rowid.'">'.dolibarr_trunc($obj->nom,24).'</option>';
+			    }
+			    $i ++;
+		    }
+		   }
+		   print "</select>\n";
+		   return $firstCompany;
+		  }
+	   }
+	   else
+	   {
+		   dolibarr_print_error($object->db);
+	   }
+   }
+
  
 /**
  * 
