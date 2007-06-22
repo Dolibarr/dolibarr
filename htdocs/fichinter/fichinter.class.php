@@ -47,7 +47,7 @@ class Fichinter extends CommonObject
     var $ref;
     var $date;
     var $duree;
-    var $description
+    var $description;
     var $note_private;
     var $note_public;
     var $projet_id;
