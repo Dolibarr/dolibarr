@@ -157,6 +157,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
         migrate_contracts_date2($db,$langs,$conf);
 
         migrate_contracts_date3($db,$langs,$conf);
+        
+        migrate_fichinter_date1($db,$langs,$conf);
 
         migrate_contracts_open($db,$langs,$conf);
 
@@ -708,6 +710,34 @@ function migrate_contracts_date3($db,$langs,$conf)
 	 	print $langs->trans('MigrationContractsIncoherentCreationDateUpdateSuccess')."<br>\n";
     else
 	 	print $langs->trans('MigrationContractsIncoherentCreationDateNothingToUpdate')."<br>\n";
+
+	print '</td></tr>';
+}
+
+/*
+ * Mise a jour des dates tms de fiche d'intervention
+ */
+function migrate_fichinter_date1($db,$langs,$conf)
+{
+ 	print '<tr><td colspan="4">';
+
+    print '<br>';
+    print '<b>'.$langs->trans('MigrationFichinterIncoherentTmsDateUpdate')."</b><br>\n";
+    
+    $sql1="update llx_fichinter set tms=datec where tms < datec";
+    $resql1 = $db->query($sql1);
+    if (! $resql1) dolibarr_print_error($db);
+    if ($db->affected_rows() > 0)
+	 	print $langs->trans('MigrationFchinterIncoherentTmsDateUpdateSuccess')."<br>\n";
+    else
+	 	print $langs->trans('MigrationFichinterIncoherentTmsDateNothingToUpdate')."<br>\n";
+    $sql2="update llx_fichinter set tms=date_valid where tms < date_valid";
+    $resql2 = $db->query($sql2);
+    if (! $resql2) dolibarr_print_error($db);
+    if ($db->affected_rows() > 0)
+	 	print $langs->trans('MigrationFchinterIncoherentTmsDateUpdateSuccess')."<br>\n";
+    else
+	 	print $langs->trans('MigrationFichinterIncoherentTmsDateNothingToUpdate')."<br>\n";
 
 	print '</td></tr>';
 }

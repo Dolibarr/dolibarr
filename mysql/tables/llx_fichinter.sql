@@ -26,6 +26,7 @@ create table llx_fichinter
   fk_soc          integer NOT NULL,
   fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la fiche
   ref             varchar(30) NOT NULL,  -- number
+  tms             timestamp,
   datec           datetime,              -- date de creation 
   date_valid      datetime,              -- date de validation
   datei           date,                  -- date de l'intervention
