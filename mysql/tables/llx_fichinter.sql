@@ -34,7 +34,7 @@ create table llx_fichinter
   fk_user_valid   integer,               -- valideur de la fiche
   fk_statut       smallint  DEFAULT 0,
   duree           real,
-  descrition      text,
+  description     text,
   note_private    text,
   note_public     text
 
