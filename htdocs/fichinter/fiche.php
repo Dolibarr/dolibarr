@@ -348,7 +348,7 @@ elseif ($_GET["id"] > 0)
   print "<tr><td>".$langs->trans("Company")."</td><td>".$fichinter->client->getNomUrl(1)."</td></tr>";
   
   // Date
-  print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($fichinter->date,"day").'</td></tr>';
+  print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($fichinter->date,"daytext").'</td></tr>';
 
 	// Durée
     print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$fichinter->duree.'</td></tr>';
