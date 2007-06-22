@@ -47,6 +47,16 @@ function fichinter_prepare_head($fichinter)
 	$head[$h][1] = $langs->trans('InterventionContact');
 	$head[$h][2] = 'contact';
 	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$fichinter->id;
+	$head[$h][1] = $langs->trans('Note');
+	$head[$h][2] = 'note';
+	$h++;
+	
+	$head[$h][0] = DOL_URL_ROOT.'/fichinter/info.php?id='.$fichinter->id;
+	$head[$h][1] = $langs->trans('Info');
+	$head[$h][2] = 'info';
+	$h++;
   
   return $head;
 }

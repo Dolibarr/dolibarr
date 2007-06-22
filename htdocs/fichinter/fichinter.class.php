@@ -160,10 +160,12 @@ class Fichinter extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT ref,description,fk_soc,fk_statut,duree,".$this->db->pdate(datei)." as di, fk_projet";
-        $sql.= " FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid=".$rowid;
+        $sql = "SELECT ref, description, fk_soc, fk_statut, duree";
+        $sql.= ", ".$this->db->pdate(datei)." as di, fk_projet, note_public, note_private";
+        $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
+        $sql.= " WHERE rowid=".$rowid;
 
-		dolibarr_syslog("Fichinter.class::fetch rowid=$rowid sql=$sql");
+		    dolibarr_syslog("Fichinter.class::fetch rowid=$rowid sql=$sql");
 
         $resql=$this->db->query($sql);
         if ($resql)
@@ -172,14 +174,16 @@ class Fichinter extends CommonObject
             {
                 $obj = $this->db->fetch_object($resql);
 
-                $this->id          = $rowid;
-                $this->date        = $obj->di;
-                $this->duree       = $obj->duree;
-                $this->ref         = $obj->ref;
-                $this->description = $obj->description;
-                $this->socid       = $obj->fk_soc;
-                $this->projet_id   = $obj->fk_projet;
-                $this->statut      = $obj->fk_statut;
+                $this->id           = $rowid;
+                $this->date         = $obj->di;
+                $this->duree        = $obj->duree;
+                $this->ref          = $obj->ref;
+                $this->description  = $obj->description;
+                $this->socid        = $obj->fk_soc;
+                $this->projet_id    = $obj->fk_projet;
+                $this->statut       = $obj->fk_statut;
+                $this->note_public  = $obj->note_public;
+                $this->note_private = $obj->note_private;
                 
                 $this->ref_url = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
 
@@ -356,6 +360,76 @@ class Fichinter extends CommonObject
 	     print $langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined");
 	     return "";
      }
+  }
+  
+  /**
+ 	 *    \brief      Mets à jour les commentaires publiques et privés
+	 *    \param      note	Commentaire
+	 *    \param      type  Type de note
+	 *    \return     int         	<0 si ko, >0 si ok
+	 */
+	function update_note($note,$type)
+	{
+		$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter';
+		$sql.= " SET ".$type." = '".addslashes($note)."'";
+		$sql.= " WHERE rowid =". $this->id;
+
+		dolibarr_syslog("Fichinter.class::update_note type=".$type." sql=".$sql);
+
+		if ($this->db->query($sql))
+		{
+			$this->$type = $type;
+			return 1;
+		}
+		else
+		{
+      $this->error=$this->db->error();
+			return -1;
+		}
+	}
+	
+	/**
+   *      \brief      Information sur l'objet propal
+   *      \param      id      id de la propale
+   */
+  function info($id)
+  {
+    $sql = "SELECT f.rowid, ";
+    $sql.= $this->db->pdate("f.datec")." as datec, ".$this->db->pdate("f.date_valid")." as datev";
+    $sql.= ", f.fk_user_author, f.fk_user_valid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."fichinter as f";
+    $sql.= " WHERE f.rowid = ".$id;
+
+    $result = $this->db->query($sql);
+    
+    if ($result)
+    {
+    	if ($this->db->num_rows($result))
+    	{
+    		$obj = $this->db->fetch_object($result);
+
+	      $this->id                = $obj->rowid;
+
+	      $this->date_creation     = $obj->datec;
+	      $this->date_validation   = $obj->datev;
+
+	      $cuser = new User($this->db, $obj->fk_user_author);
+	      $cuser->fetch();
+	      $this->user_creation     = $cuser;
+
+	      if ($obj->fk_user_valid)
+	      {
+		      $vuser = new User($this->db, $obj->fk_user_valid);
+		      $vuser->fetch();
+		      $this->user_validation     = $vuser;
+	      }
+	    }
+	    $this->db->free($result);
+	  }
+    else
+    {
+    	dolibarr_print_error($this->db);
+    }
   }
 }  
 ?>
