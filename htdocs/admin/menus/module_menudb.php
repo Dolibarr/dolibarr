@@ -36,6 +36,7 @@ class MenuDb
 	var $db;
 	var $menu_handler;
 	var $type;
+	var $atarget;
 	
 	var $newmenu;
 	var $mainmenu;
