@@ -136,6 +136,12 @@ if ($_GET["action"] == 'create')
 	 * Mode creation
 	 * Creation d'une nouvelle fiche d'intervention
 	 */
+	 
+	if ($_GET["socid"])
+	{
+		$societe=new Societe($db); 	 
+	  $societe->fetch($_GET["socid"]);
+	}
 
 	print_titre($langs->trans("AddIntervention"));
 
