@@ -3082,7 +3082,7 @@ else
 			// Lignes des champs de filtre
 
 			print '<tr class="liste_titre">';
-			print '<td class="liste_titre" align="right">';
+			print '<td class="liste_titre" align="left">';
 			print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
 			print '</td><td class="liste_titre">&nbsp;</td>';
 			print '<td class="liste_titre" align="left">';
