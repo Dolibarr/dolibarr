@@ -65,6 +65,19 @@ if ($_GET["action"] == 'setcodecompta')
 	}
 }
 
+if ($_POST["action"] == 'usesearchtoselectcompany')
+{
+  if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"]))
+  {
+  	Header("Location: ".$_SERVER["PHP_SELF"]);
+  	exit;
+  }
+  else
+  {
+  	dolibarr_print_error($db);
+  }
+}
+
 
 /*
  * 	Affichage page configuration module societe
@@ -201,40 +214,38 @@ print '<br>';
 
 
 // Autres options
-/*
-print_titre($langs->trans("OtherOptions"));
-
+$html=new Form($db);
 $var=true;
-
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td>'.$langs->trans("Value").'</td>';
-print '<td>'.$langs->trans("Description").'</td>';
-print '<td>&nbsp;</td>';
-print "</tr>\n";
+print "  <td>".$langs->trans("Parameters")."</td>\n";
+print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
+print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
-print '<form action="'.$_SERVER["societe.php"].'" method="POST">';
-print '<input type="hidden" name="action" value="setxxx">';
-print '<input type="hidden" name="constname" value="XXX">';
-
+// utilisation formulaire Ajax sur choix société
 $var=!$var;
-print '<tr '.$bc[$var].' class="value">';
-print '<td nowrap="nowrap">'.$langs->trans("UseXXX")."</td>\n";
-print '<td>';
-print $form->selectyesno('constvalue',! $conf->global->XXX,1);
-print '</td>';
-print '<td>'.$langs->trans("XXXDesc").'</td>';
-print '<td align="right">';
-print '<input class="button" type="submit" value="'.$langs->trans('Modify').'" name="button"> &nbsp; ';
-print '</td>';
-print "</tr>\n";
-
+print "<form method=\"post\" action=\"societe.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("UseSearchToSelectCompany").'</td>';
+if (! $conf->use_ajax)
+{
+  print '<td nowrap="nowrap" align="right" colspan="2">';
+  print $langs->trans("NotAvailableWhenAjaxDisabled");	
+  print "</td>";
+}
+else
+{
+  print '<td width="60" align="right">';
+  print $html->selectyesno("activate_usesearchtoselectcompany",$conf->global->COMPANY_USE_SEARCH_TO_SELECT,1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
+}
+print '</tr>';
 print '</form>';
 
-print "</table>\n";
-*/
-
+print '</table>';
 
 $db->close();
 

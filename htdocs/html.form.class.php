@@ -397,7 +397,7 @@ class Form
 				{
 					$htmloption = 'onChange="ac_delay(\'company_save_refresh()\',\'500\')"';
 				}
-				
+
 				print '<div>';
 				if ($obj->rowid == 0)
 				{
@@ -409,7 +409,6 @@ class Form
 				}
 				
 				print ajax_autocompleter($pays_id,'pays','/societe/ajaxcountries.php','working');
-
 			}
 			else
 			{
@@ -893,7 +892,7 @@ class Form
 		print '<td class="nobordernopadding" width="80" nowrap="nowrap">';
     	print $langs->trans("RefOrLabel").':</td>';
 		print '<td class="nobordernopadding" align="left" width="16">';
-		print ajax_updater_indicator($htmlname,'working');
+		print ajax_indicator($htmlname,'working');
 		print '</td>';
 		print '<td align="left"><input type="text" size="16" name="keysearch'.$htmlname.'" id="keysearch'.$htmlname.'"> ';
 		print '</td>';

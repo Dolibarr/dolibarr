@@ -2733,7 +2733,7 @@ function num_lines($texte)
 	return $nblines;
 }
 
-function ajax_updater_indicator($htmlname,$indicator='working')
+function ajax_indicator($htmlname,$indicator='working')
 {
 	$script.='<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
 	return $script;
@@ -2751,7 +2751,7 @@ function ajax_updater_indicator($htmlname,$indicator='working')
 function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 {
 	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
-	if ($indicator) $script.=ajax_updater_indicator($htmlname,$indicator);
+	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
 	$script.='<script type="text/javascript">';
 	$script.='var myIndicator'.$htmlname.' = {
                      onCreate: function(){
@@ -2791,7 +2791,7 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 */
 function ajax_autocompleter($selected='',$htmlname,$url,$indicator='working')
 {
-	$script.= '<span id="indicator'.$htmlname.'" style="display: none">'.img_picto('Working...',$indicator.'.gif').'</span>';
+	if ($indicator) $script.= ajax_indicator($htmlname,$indicator);
 	$script.= '<input type="hidden" name="'.$htmlname.'_id" id="'.$htmlname.'_id" value="'.$selected.'" />';
 	$script.= '</div>';
 	$script.= '<div id="result'.$htmlname.'" class="autocomplete"></div>';

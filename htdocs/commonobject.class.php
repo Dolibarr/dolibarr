@@ -387,7 +387,7 @@ class CommonObject
 	 // On recherche les societes
 	 $sql = "SELECT s.rowid, s.nom FROM";
 	 $sql .= " ".MAIN_DB_PREFIX."societe as s";
-	 if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+	 if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 	 {
 	 	$sql.= " WHERE rowid = ".$selected;
 	 }
@@ -396,7 +396,7 @@ class CommonObject
 	 $resql = $object->db->query($sql);
 	 if ($resql)
 	 {
-		 if ($conf->use_ajax && $conf->global->CODE_DE_TEST == 1)
+		 if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
 		 {
 		 	$langs->load("companies");
 		 	$obj = $this->db->fetch_object($resql);
@@ -406,6 +406,8 @@ class CommonObject
 			// On applique un delai d'execution pour le bon fonctionnement
 			$htmloption = 'onChange="ac_delay(\''.$javaScript.'\',\'500\')"';
 
+			print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+			print '<td class="nobordernopadding">';
 			print '<div>';
 			if ($obj->rowid == 0)
 			{
@@ -415,8 +417,12 @@ class CommonObject
 			{
 				print '<input type="text" size="30" id="newcompany" name="newcompany" value="'.$obj->nom.'" '.$htmloption.' />';
 			}
-			
-			print ajax_autocompleter($socid,'newcompany','/societe/ajaxcompanies.php','working');
+			print ajax_autocompleter($socid,'newcompany','/societe/ajaxcompanies.php','');
+			print '</td>';
+			print '<td class="nobordernopadding" align="left" width="16">';
+			print ajax_indicator($htmlname,'working');
+			print '</td></tr>';
+			print '</table>';
 			return $socid;
 		}
 		else

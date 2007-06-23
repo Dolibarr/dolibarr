@@ -21,6 +21,7 @@ DictionnarySetup=Dictionnary setup
 DisableJavascript=Disable JavaScript functions
 DisableAjax=Disable AJAX functions
 UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
+UseSearchToSelectProduct=Use a search form to choose a company (intead of using a list box)
 NotAvailableWhenAjaxDisabled=Not available when Ajax disabled
 JavascriptDisabled=JavaScript disabled
 UsePopupCalendar=Use popup for dates input

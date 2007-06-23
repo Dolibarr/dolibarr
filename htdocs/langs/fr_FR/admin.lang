@@ -21,6 +21,7 @@ DictionnarySetup=Dictionnaires
 DisableJavascript=Désactiver les fonctions javascript
 DisableAjax=Désactiver les fonctions ajax
 UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choix d'un produit (plutôt que liste déroulante)
+UseSearchToSelectCompany=Utiliser un formulaire de recherche pour choix d'un tiers (plutôt que liste déroulante)
 NotAvailableWhenAjaxDisabled=Non disponible quand Ajax désactivé
 JavascriptDisabled=Javascript désactivé
 UsePopupCalendar=Utiliser les popups pour la saisie des dates

@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2007 Auguria SARL <info@auguria.org>
+ * Copyright (C)      2007 Auguria SARL         <info@auguria.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -54,50 +54,30 @@ if ($_POST["action"] == 'multiprix')
 {
   $res=$db->DDLDescTable(MAIN_DB_PREFIX."societe","price_level");
   if(! $db->fetch_row($res))
+  {
+  	$field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
+    if ($_POST["activate_multiprix"])
     {
-      $field_desc = array('type'=>'TINYINT','value'=>'4','default'=>'1');
-      if ($_POST["activate_multiprix"])
-	{
-	  // on ajoute le champ price_level dans la table societe
-	  if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
+    	// on ajoute le champ price_level dans la table societe
+    	if ($db->DDLAddField(MAIN_DB_PREFIX."societe","price_level",$field_desc) < 0)
 	    {
 	      dolibarr_print_error($db);
 	      exit;
 	    }
-	  // on crée la table societe_prices
-	  else
-	    {
-	      /*
-	       * La table est desormais cree par un fichier SQL comme les autres tables
-	       *
-	       * $table = MAIN_DB_PREFIX."societe_prices";
-	       * $fields['rowid'] = array('type'=>'int','value'=>'11','null'=>'not null','extra'=> 'auto_increment');
-	       * $fields['fk_soc'] = array('type'=>'int','value'=>'11','null'=>'not null','default'=> '0');
-	       * $fields['tms'] = array('type'=>'timestamp','value'=>'14','null'=>'not null');
-	       * $fields['datec'] = array('type'=>'datetime','default'=> 'null');
-	       * $fields['fk_user_author'] = array('type'=>'int','value'=>'11','default'=> 'null');
-	       * $fields['price_level'] = array('type'=>'tinyint','value'=>'4','default'=> '1');
-	       * if ($db->DDLCreateTable($table,$fields,"rowid","InnoDB") < 0)
-	       * {
-	       * dolibarr_print_error($db);
-	       * exit;
-	       *	}
-	       */
-	    }
-	}
-      dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-      dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-      Header("Location: produit.php");
-      exit;
-    }
+	  }
+	  dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+    dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+    Header("Location: produit.php");
+    exit;
+  }
   else
-    {
-      dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
-      dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
-      dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-      Header("Location: produit.php");
-      exit;
-    }
+  {
+  	dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
+    dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
+    dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
+    Header("Location: produit.php");
+    exit;
+  }
 }
 else if ($_POST["action"] == 'sousproduits')
 {
