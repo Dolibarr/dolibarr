@@ -56,47 +56,6 @@ $filtre=$_GET["filtre"];
 
 
 
-/*
- * Ajout d'une charge sociale
- */
-
-if ($_POST["action"] == 'add')
-{
-	if (! $_POST["date"])
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
-	}
-	elseif (! $_POST["periode"])
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
-	}
-	elseif (! $_POST["amount"])
-	{
-		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")).'</div>';
-	}
-	else
-	{
-		$chargesociales=new ChargeSociales($db);
-		
-		$chargesociales->type=$_POST["type"];
-		$chargesociales->lib=$_POST["libelle"];
-		$chargesociales->date_ech=$_POST["date"];
-		$chargesociales->period=$_POST["period"];
-		$chargesociales->amount=$_POST["amount"];
-		
-		$result=$chargesociales->create($user);
-		if ($result > 0)
-		{
-			$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
-		}
-		else
-		{
-			$mesg='<div class="error">'.$chargesociales->error.'</div>';
-		}
-	}
-}
-
-
 
 /*
  *  Affichage liste et formulaire des charges.
@@ -107,74 +66,12 @@ llxHeader();
 print_fiche_titre($langs->trans("SocialContributions"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 print "<br>\n";
 
-if ($mesg) {
-    print "$mesg<br>";
+if ($mesg)
+{
+    print $mesg."<br>";
 }
 
 print "<table class=\"noborder\" width=\"100%\">";
-
-/*
- * Forumalaire d'ajout d'une charge
- *
- */
-if ($user->rights->tax->charges->creer) {
-    $var=false;
-
-    print "<tr class=\"liste_titre\">";
-    print '<td>';
-    print '&nbsp;';
-    print '</td><td align="left">';
-    print $langs->trans("DateDue");
-    print '</td><td align="left">';
-    print $langs->trans("Period");
-    print '</td><td align="left">';
-    print $langs->trans("Type");
-    print '</td><td align="left">';
-    print $langs->trans("Label");
-    print '</td><td align="right">';
-    print $langs->trans("Amount");
-    print '</td><td align="center">';
-    print '&nbsp;';
-    print '</td>';
-    print "</tr>\n";
-
-    print '<form method="post" action="index.php">';
-    print '<tr '.$bc[$var].' valign="top">';
-    print '<input type="hidden" name="action" value="add">';
-    print '<td>&nbsp;</td>';
-    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
-    print '<td><input type="text" size="8" name="periode"><br>YYYYMMDD</td>';
-
-    print '<td align="left"><select name="type">';
-
-    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
-    $sql .= " ORDER BY lower(c.libelle) ASC";
-
-    if ( $db->query($sql) )
-    {
-      $num = $db->num_rows();
-      $i = 0;
-
-      while ($i < $num)
-        {
-          $obj = $db->fetch_object();
-          print '<option value="'.$obj->id.'">'.$obj->type;
-          $i++;
-        }
-    }
-    print '</select>';
-    print '</td>';
-    print '<td align="left"><input type="text" size="34" name="libelle"></td>';
-    print '<td align="right"><input type="text" size="6" name="amount"></td>';
-
-    print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
-    print '</tr>';
-
-    print '</form>';
-
-    print '<tr><td colspan="7">&nbsp;</td></tr>';
-
-}
 
 print "<tr class=\"liste_titre\">";
 print_liste_field_titre($langs->trans("Ref"),"index.php","id","","","",$sortfield);

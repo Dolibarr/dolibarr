@@ -56,11 +56,8 @@ if ($_POST["action"] == 'add_paiement')
 	
     if ($_POST["paiementtype"] > 0)
     {
-
-        $datepaye = $db->idate(dolibarr_mktime(12, 0 , 0,
-        $_POST["remonth"],
-        $_POST["reday"],
-        $_POST["reyear"]));
+        $datepaye = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+		//print "x".dolibarr_print_date($datepaye,'dayhour');
 
         $paiement_id = 0;
         $amounts = array();
@@ -94,14 +91,13 @@ if ($_POST["action"] == 'add_paiement')
             {
                 $chid = $key;
                 $value = trim($value);
-                $amount = round(price2num($value), 2);   // Un round est ok si nb avec '.'
-                if (is_numeric($amount)) $total += $amount;
+                $amount = price2num(trim($value), 'MT');   // Un round est ok si nb avec '.'
+                $total += $amount;
             }
-            $total = price2num($total);
 
             // Insertion dans llx_bank
             $langs->load("banks");
-			$label = $langs->trans("SocialContributionPayment");
+			$label = $langs->transnoentities("SocialContributionPayment");
             $acc = new Account($db, $_POST["accountid"]);
             $bank_line_id = $acc->addline($paiement->datepaye, $paiement->paiementtype, $label, -abs($total), $paiement->num_paiement, '', $user);
 
@@ -172,6 +168,7 @@ if ($_GET["action"] == 'create')
 	  print '<form name="add_paiement" action="paiement_charge.php" method="post">';
 	  print "<input type=\"hidden\" name=\"id\" value=\"$charge->id\">";
 	  print '<input type="hidden" name="action" value="add_paiement">';
+
 	  print '<table cellspacing="0" class="border" width="100%" cellpadding="2">';
 
       print "<tr class=\"liste_titre\"><td colspan=\"3\">Charge</td>";

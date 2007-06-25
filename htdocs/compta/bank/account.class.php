@@ -174,18 +174,6 @@ class Account
 		// Nettoyage parametres
 		$emetteur=trim($emetteur);
 		$banque=trim($banque);
-		
-		dolibarr_syslog("Account::Addline: date=".$date.", oper=".$oper.", label=".$label.", amount=".$amount.", num_chq=".$num_chq.", categorie=".$categorie.", user=".$user->id);
-
-		// Verififcation parametres
-		if (! $this->rowid)
-		{
-			$this->error="Account::addline this->rowid not defined";
-			return -1;
-		}
-
-		$this->db->begin();
-			
 		switch ($oper)
 		{
 			case 1:
@@ -210,7 +198,16 @@ class Account
 				$oper = 'CHQ';
 				break;
 		}
+		
+		// Verification parametres
+		if (! $this->rowid)
+		{
+			$this->error="Account::addline this->rowid not defined";
+			return -1;
+		}
 
+		$this->db->begin();
+			
 		$datev = $date;
 
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, dateo, datev, label, amount, fk_user_author, num_chq, fk_account, fk_type,emetteur,banque)";
@@ -223,6 +220,7 @@ class Account
 		$sql.= " ".($banque?"'".addslashes($banque)."'":"null");
 		$sql.= ")";
 
+		dolibarr_syslog("Account::addline sql=".$sql);
 		if ($this->db->query($sql))
 		{
 			$rowid = $this->db->last_insert_id(MAIN_DB_PREFIX."bank");

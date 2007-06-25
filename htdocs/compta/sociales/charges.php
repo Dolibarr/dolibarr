@@ -91,9 +91,154 @@ if ($_POST["action"] == 'confirm_delete')
 	}
 }
 
+/*
+ * Ajout d'une charge sociale
+ */
+
+if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
+{
+	if (! $_POST["date"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
+		$_GET["action"] = 'create';
+	}
+	elseif (! $_POST["period"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+		$_GET["action"] = 'create';
+	}
+	elseif (! $_POST["amount"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount")).'</div>';
+		$_GET["action"] = 'create';
+	}
+	else
+	{
+		$chargesociales=new ChargeSociales($db);
+		
+		$chargesociales->type=$_POST["type"];
+		$chargesociales->lib=$_POST["label"];
+		$chargesociales->date_ech=$_POST["date"];
+		$chargesociales->periode=$_POST["period"];
+		$chargesociales->amount=$_POST["amount"];
+		
+		$chid=$chargesociales->create($user);
+		if ($chid > 0)
+		{
+			//$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
+		}
+		else
+		{
+			$mesg='<div class="error">'.$chargesociales->error.'</div>';
+		}
+	}
+}
 
 
+if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
+{
+	if (! $_POST["date"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
+		$_GET["action"] = 'edit';
+	}
+	elseif (! $_POST["period"])
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Period")).'</div>';
+		$_GET["action"] = 'edit';
+	}
+	else
+	{
+		$chargesociales=new ChargeSociales($db);
+		$result=$chargesociales->fetch($_GET["id"]);
+		
+		$chargesociales->lib=$_POST["label"];
+		$chargesociales->date_ech=$_POST["date"];
+		$chargesociales->periode=$_POST["period"];
+		
+		$result=$chargesociales->update($user);
+		if ($result > 0)
+		{
+			//$mesg='<div class="ok">'.$langs->trans("SocialContributionAdded").'</div>';
+		}
+		else
+		{
+			$mesg='<div class="error">'.$chargesociales->error.'</div>';
+		}
+	}
+}
+ 
 llxHeader();
+
+/*
+ * Mode creation
+ *
+ */
+if ($_GET["action"] == 'create')
+{
+	print_fiche_titre($langs->trans("NewSocialContribution"));
+	print "<br>\n";
+
+	if ($mesg) print $mesg.'<br>';
+	
+    $var=false;
+
+    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/sociales/charges.php">';
+    print '<input type="hidden" name="action" value="add">';
+
+	print "<table class=\"noborder\" width=\"100%\">";
+    print "<tr class=\"liste_titre\">";
+    print '<td>';
+    print '&nbsp;';
+    print '</td><td align="left">';
+    print $langs->trans("DateDue");
+    print '</td><td align="left">';
+    print $langs->trans("Period");
+    print '</td><td align="left">';
+    print $langs->trans("Type");
+    print '</td><td align="left">';
+    print $langs->trans("Label");
+    print '</td><td align="right">';
+    print $langs->trans("Amount");
+    print '</td><td align="center">';
+    print '&nbsp;';
+    print '</td>';
+    print "</tr>\n";
+
+    print '<tr '.$bc[$var].' valign="top">';
+    print '<td>&nbsp;</td>';
+    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
+    print '<td><input type="text" size="8" name="period"><br>YYYYMMDD</td>';
+
+    print '<td align="left"><select class="flat" name="type">';
+    $sql = "SELECT c.id, c.libelle as type FROM ".MAIN_DB_PREFIX."c_chargesociales as c";
+    $sql .= " ORDER BY lower(c.libelle) ASC";
+    if ( $db->query($sql) )
+    {
+      $num = $db->num_rows();
+      $i = 0;
+
+      while ($i < $num)
+        {
+          $obj = $db->fetch_object();
+          print '<option value="'.$obj->id.'">'.$obj->type;
+          $i++;
+        }
+    }
+    print '</select>';
+    print '</td>';
+
+    print '<td align="left"><input type="text" size="34" name="label" class="flat"></td>';
+
+    print '<td align="right"><input type="text" size="6" name="amount" class="flat"></td>';
+
+    print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+    print '</tr>';
+
+    print '</table>';
+
+    print '</form>';
+}
 
 /* *************************************************************************** */
 /*                                                                             */
@@ -139,7 +284,7 @@ if ($chid > 0)
 			print '<br />';
 		}
 
-		print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
+		if ($_GET['action'] == 'edit') print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
 
 		print '<table class="border" width="100%">';
 
@@ -151,7 +296,7 @@ if ($chid > 0)
 		print "<td>";
 		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
-			print "<input type=\"text\" name=\"period\" value=\"".strftime("%Y%m%d",$cha->period)."\">";
+			print "<input type=\"text\" name=\"period\" value=\"".strftime("%Y%m%d",$cha->periode)."\">";
 		}
 		else
 		{
@@ -219,10 +364,10 @@ if ($chid > 0)
 		if ($cha->paye==0 && $_GET['action'] == 'edit')
 		{
 			print '<tr><td>'.$langs->trans("Label").'</td><td>';
-			print '<input type="text" name="desc" size="40" value="'.$cha->lib.'">';
+			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print "<input type=\"text\" name=\"amount\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\">";
+			print "<input type=\"text\" name=\"date\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\">";
 			print "</td></tr>";
 		}
 		else {
@@ -232,19 +377,28 @@ if ($chid > 0)
 		print '<tr><td>'.$langs->trans("AmountTTC").'</td><td>'.price($cha->amount).'</td></tr>';
 	
 		print '<tr><td>'.$langs->trans("Status").'</td><td>'.$cha->getLibStatut(4).'</td></tr>';
+
+		if ($_GET['action'] == 'edit') 
+		{
+			print '<tr><td colspan="3" align="center">';
+			print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+			print ' &nbsp; ';
+			print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+			print '</td></tr>';
+		}
+		
 		print '</table>';
 
-
-		print "</form>\n";
+		if ($_GET['action'] == 'edit') print "</form>\n";
 
 		print '</div>';
 
-		if (! $_GET["action"])
-		{
-			/*
-			*   Boutons actions
-			*/
 
+		/*
+		*   Boutons actions
+		*/
+		if (! $_GET["action"] || $_GET["action"] == 'update')
+		{
 			print "<div class=\"tabsAction\">\n";
 
 			// Editer

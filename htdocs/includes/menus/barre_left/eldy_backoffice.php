@@ -443,7 +443,8 @@ class MenuLeft {
 				if ($conf->tax->enabled)
 				{
 					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&amp;mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->tax->charges->lire);
-					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->tax->charges->lire);
+					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/charges.php?action=create",$langs->trans("MenuNewSocialContribution"), 1, $user->rights->tax->charges->creer);
+					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("List"), 1, $user->rights->tax->charges->lire);
 				}
 
 				// Charges tva

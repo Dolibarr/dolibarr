@@ -38,8 +38,9 @@ function llxHeader($head = "")
     
     $menu = new Menu();
     
-    $menu->add("../charges/",$langs->trans("Contributions"));
-    $menu->add_submenu("index.php",$langs->trans("SocialContributions"));
+    $menu->add(DOL_URL_ROOT."/compta/charges/index.php",$langs->trans("Contributions"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/charges.php?action=create",$langs->trans("MenuNewSocialContribution"));
+    $menu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("List"));
     
     left_menu($menu->liste);
 }

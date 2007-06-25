@@ -102,25 +102,42 @@ class ChargeSociales
     /**
      *      \brief      Crée une charge sociale
      *      \param      user    Utilisateur qui crée
-     *      \return     int     <0 si erreur, >0 si ok
+     *      \return     int     <0 si KO, id charge créée si OK
      */
     function create($user)
     {
+		// Nettoyage parametres
+		$newamount=price2num($this->amount,'MT');
+		
+		// Validation parametres
+		if (! $newamount > 0)
+		{
+			$this->error="ErrorBadParameter";
+			return -2;
+		}
+		
+		$this->db->begin();
+		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount)";
 		$sql.= " VALUES (".$this->type.",'".addslashes($this->lib)."',";
 		$sql.= "'".$this->date_ech."','".$this->periode."',";
-		$sql.= "'".$this->amount."'";
-		$sql.= ')';
+		$sql.= " ".$newamount;
+		$sql.= ")";
 		
 		dolibarr_syslog("ChargesSociales::create sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			return 1;
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."chargesociales");
+
+			//dolibarr_syslog("ChargesSociales::create this->id=".$this->id);
+			$this->db->commit();
+			return $this->id;
 		}
 		else
 		{
 			$this->error=$this->db->error();
+			$this->db->rollback();
 			return -1;
 		}
 	}	
@@ -147,6 +164,38 @@ class ChargeSociales
 			return -1;
 		}
 	}
+	
+
+    /**
+     *      \brief      Met a jour une charge sociale
+     *      \param      user    Utilisateur qui modifie
+     *      \return     int     <0 si erreur, >0 si ok
+     */
+    function update($user)
+    {
+		$this->db->begin();
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
+		$sql.= " SET libelle='".addslashes($this->lib)."',";
+		$sql.= " date_ech='".$this->date_ech."',";
+		$sql.= " periode='".$this->periode."'";
+		$sql.= " WHERE rowid=".$this->id;
+		
+		dolibarr_syslog("ChargesSociales::update sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			$this->db->rollback();
+			return -1;
+		}
+	}	
+	
 	
     function solde($year = 0)
     {
@@ -293,26 +342,25 @@ class PaiementCharge
      */
     function create($user)
 	{
+		global $conf;
+		
         $error = 0;
-
         $this->db->begin();
 
-		$total = 0;
+		$total=0;
 		foreach ($this->amounts as $key => $value)
 		{
 			$facid = $key;
-			$value = trim($value);
-			$amount = round(price2num($value), 2);   // Un round est ok si nb avec '.'
-			if (is_numeric($amount)) $total += $amount;
+			$amount = price2num(trim($value), 'MT');
+			$total += $amount;
 		}
-		$total = price2num($total);
 
 		if ($total > 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
-			$sql .= " VALUES ($this->chid, now(), $this->datepaye, '$total', $this->paiementtype, '$this->num_paiement', '$this->note', $user->id)";
+			$sql .= " VALUES ($this->chid, now(), ".$this->db->idate($this->datepaye).", ".price2num($total).", $this->paiementtype, '$this->num_paiement', '$this->note', $user->id)";
 
-			dolibarr_syslog("PaiementCharges::create sql=".$sql);
+			dolibarr_syslog("PaiementCharge::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)
 			{
@@ -342,7 +390,7 @@ class PaiementCharge
     /**
      *      \brief      Mise a jour du lien entre le paiement de  charge et la ligne dans llx_bank générée
      *      \param      id_bank         Id de la banque
-     *      \return     int             1 ou 0
+     *      \return     int             >0 si OK, <=0 si KO
      */
     function update_fk_bank($id_bank)
 	{
