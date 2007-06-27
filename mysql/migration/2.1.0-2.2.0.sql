@@ -687,3 +687,5 @@ ALTER TABLE llx_fichinter ADD COLUMN note_private text DEFAULT NULL after descri
 ALTER TABLE llx_fichinter ADD COLUMN note_public text DEFAULT NULL after note_private;
 ALTER TABLE llx_fichinter ADD COLUMN tms timestamp after ref;
 ALTER TABLE llx_fichinter ADD COLUMN fk_contrat integer DEFAULT 0 after fk_projet;
+
+drop table if exists `llx_accountingsystem_det`;
