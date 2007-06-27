@@ -157,7 +157,12 @@ if ($action == '' && !$cancel) {
 
 			for ($lig = 0; $lig < sizeof($commande->lines); $lig++)
 			{
-				if (! $commande->lines[$lig]->fk_product) $err ++;
+//				print "<p>traitement de ".$commande->lines[$lig]->fk_product."</p>";
+				if (! $commande->lines[$lig]->fk_product) 
+				{
+					print "<p>Article non trouvé ".$commande->lines[$lig]->libelle." : ".$commande->lines[$lig]->desc."</p>";
+					$err ++;
+				}
 			}			
 			if ($err > 0) {
 				print ("<p> Des produits de la commande sont inexistants</p>");

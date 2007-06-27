@@ -24,8 +24,11 @@ set_magic_quotes_runtime(0);
 
 require_once("./includes/configure.php");
 
+define(OSC_IMG_URL, 'http://www.tiaris.info/catalog/images/'); // url du site OSC
+
 // OSC
 define('OSCADMIN', '/home/jean/projets/osc_tiaris/admin/');
+define('OSCIMAGES', '/home/jean/projets/osc_tiaris/images/');
 
 require(OSCADMIN.'includes/configure.php');
 require(OSCADMIN.DIR_WS_CLASSES . 'object_info.php');
@@ -48,6 +51,8 @@ $s->wsdl->schemaTargetNamespace=$ns;
 $s->register('get_article');
 $s->register('get_listearticles');
 $s->register('create_article');
+
+
 
 function create_article($prod)
 {
@@ -98,7 +103,7 @@ function get_article($id='',$ref='') {
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
 //on recherche
-		$sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, p.products_price, d.products_name, d.products_description, m.manufacturers_name, m.manufacturers_id";
+		$sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, concat('".OSC_IMG_URL."',p.products_image) as image, p.products_price, d.products_name, d.products_description, m.manufacturers_name, m.manufacturers_id";
 		$sql .= " FROM products as p ";
 		$sql .= " JOIN products_description as d ON p.products_id = d.products_id "; 			$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
 		$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
@@ -130,7 +135,7 @@ function get_listearticles() {
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
 //on recherche
-	$sql = "SELECT p.products_id as OSC_id, p.products_model as model, p.products_quantity as quantity, p.products_status as status, d.products_name as name, m.manufacturers_name as manufacturer, m.manufacturers_id";
+	$sql = "SELECT p.products_id as OSC_id, p.products_model as model, p.products_quantity as quantity, p.products_status as status, concat('".OSC_IMG_URL."',p.products_image) as image, d.products_name as name, m.manufacturers_name as manufacturer, m.manufacturers_id";
 	$sql .= " FROM products as p";
 	$sql .= " JOIN products_description as d ON p.products_id = d.products_id "; 		 		$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
 	$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
@@ -152,6 +157,14 @@ function get_listearticles() {
 	mysql_close($connexion);
  /* Sends the results to the client */
 return $liste_articles;
+}
+
+function saveImage($name,$content)
+{
+	$fich = fopen(OSCIMAGES.$name, 'wb');
+	fwrite($fich,base64_decode($content));
+	fclose($fich);
+	return $name.' enregistré';
 }
 
 // Return the results.

@@ -45,6 +45,7 @@ class Osc_product
 	var $osc_stockmini;
 	var $osc_stock;
 	var $osc_four;
+	var $osc_image;
 	
 	var $error;
 	
@@ -108,6 +109,7 @@ class Osc_product
   			$this->osc_stock = $obj[products_quantity];
   			$this->osc_four = $obj[manufacturers_id];
 			$this->osc_price = $obj[products_price];
+			$this->osc_image = $obj[image];
   			}
   		else {
 		    $this->error = 'Erreur '.$err ;
@@ -200,7 +202,17 @@ class Osc_product
 		else return '';	
 	}
 
-	
+	function get_osc_productid($productidp)
+	{
+		$sql = "SELECT osc_prodid";
+		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
+		$sql.= " WHERE doli_prodidp = ".$productidp;
+		$result=$this->db->query($sql);
+		$row = $this->db->fetch_row($resql);
+// test d'erreurs
+		if ($row) return $row[0];	
+		else return -1;	
+	}	
        
 	  /**
      *    \brief      création d'un article dans base OSC

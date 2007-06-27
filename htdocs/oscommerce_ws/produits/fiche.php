@@ -75,6 +75,7 @@ if ($action == '' && !$cancel) {
 /* action Import création de l'objet product de dolibarr 
 *
 */
+
  if (($_GET["action"] == 'import' ) && ( $_GET["id"] != '' ) && $user->rights->produit->creer)
     {
 		  $osc_prod = new Osc_product($db, $_GET['id']);
@@ -89,7 +90,11 @@ if ($action == '' && !$cancel) {
 			//	exit;
 	    	}
 	    	$product = $osc_prod->osc2dolibarr($_GET['id']);
-		 } 
+		} 
+		else
+		{
+			print "<p>erreur $osc_prod->fetch</p>";
+		}
 
 /* utilisation de la table de transco*/
 		if ($osc_prod->get_productid($osc_prod->osc_id)>0)
@@ -98,15 +103,22 @@ if ($action == '' && !$cancel) {
 		}
 		else 
 		{
+
 			$id = $product->create($user);
        
 		    if ($id > 0)
 		    {
 	       	print "\n<div class=\"tabsAction\">\n";
+				$prod = new Product($db);
+				$res = $prod->fetch($id);
+
+				$prod->add_photo_web($conf->produit->dir_output,$osc_prod->osc_image);
 	       	print '<p>création réussie produit '.$id.' référence : '.$product->ref;
 				$res = $osc_prod->transcode($osc_prod->osc_id,$product->id);
+
 				print ' Id osc : '.$osc_prod->osc_id.'</p>';
 		    	print '<a class="butAction" href="index.php">'.$langs->trans("Retour").'</a>';
+
 				print "\n</div><br>\n";
 				$id_entrepot = OSC_ENTREPOT;
 				$id = $product->create_stock($id_entrepot,$osc_prod->osc_stock);
@@ -114,6 +126,7 @@ if ($action == '' && !$cancel) {
 		    }
 		    else
 		    {
+				print "<p>On a une erreur".$id."</p>";
 		        if ($id == -3)
 		        {
 		            $_error = 1;

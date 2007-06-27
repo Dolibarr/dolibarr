@@ -40,6 +40,8 @@ function llxHeader($head = "", $urlp = "")
 	
 	$menu->add(DOL_URL_ROOT."/oscommerce_ws/index.php", $langs->trans("OSCommerceShop"));
 	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/produits/index.php", $langs->trans("Products"));
+	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/produits/OSCvente.php", $langs->trans("AddProd"));
+	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/produits/categories.php", $langs->trans("Categories"));
 	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/clients/index.php", $langs->trans("Clients"));
 	$menu->add_submenu(DOL_URL_ROOT."/oscommerce_ws/commandes/index.php", $langs->trans("Commandes"));
 	

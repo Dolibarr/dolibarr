@@ -88,7 +88,7 @@ elseif (!($err = $client->getError()) )
     		if ($prodid) $lib = "modifier";
     		else $lib = "<u>importer</u>";
     		print '<TD align="center"><a href="fiche.php?action=import&id='.$result[$i][OSC_id].'"'.">".$lib."</a></TD>\n";
-    		print "</TR>\n";
+    		print '</TR>'."\n";
     		$i++;
   		}
 		print "</table></p>";
@@ -98,7 +98,7 @@ elseif (!($err = $client->getError()) )
 	}
 }
 else {
-	dolibarr_print_error('',"Erreur service web ".$err); 
+	dolibarr_print_error('',"Erreur service web ".$client->faultstring); 
 }
 
 print "</TABLE>";

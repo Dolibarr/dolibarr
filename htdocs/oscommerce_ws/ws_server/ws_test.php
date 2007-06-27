@@ -7,15 +7,16 @@ require_once('./lib/nusoap.php');
 // Create the soap Object
 $s = new soap_server;
 $ns='oscommerce';
-$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
-$s->wsdl->schemaTargetNamespace=$ns;
+
+#$s->configureWSDL('WebServicesOSCommerceForDolibarr',$ns);
+#$s->wsdl->schemaTargetNamespace=$ns;
 
 // Register a method available for clients
 $s->register('hello');
 
 function hello($name){
 
-$returnedString = "Hello de Tetiaroa ".$name." !";
+$returnedString = "Coucou ** de Tetiaroa ".$name." !";
 return $returnedString;
 
 }
@@ -23,3 +24,4 @@ return $returnedString;
 // Return the results.
 $s->service($HTTP_RAW_POST_DATA);
 ?>
+
