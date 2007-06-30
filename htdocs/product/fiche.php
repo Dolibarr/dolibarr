@@ -113,7 +113,7 @@ if ($_POST["action"] == 'add' && $user->rights->produit->creer)
   // Produit spécifique
   // $_POST n'est pas utilise dans la classe Product
   // mais dans des classes qui hérite de Product
-  $id = $product->Create($user, $_POST);
+  $id = $product->create($user, $_POST);
   
   if ($id > 0)
     {
@@ -399,10 +399,12 @@ if ($_POST["cancel"] == $langs->trans("Cancel"))
   exit;
 }
 
+
+
 $html = new Form($db);
 
 /*
- * Action création du produit
+ * Fiche création du produit
  */
 if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 {
@@ -737,7 +739,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '</td></tr>';
 	  
 	  // TVA
-	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.$product->tva_tx.'%</td></tr>';
+	  print '<tr><td>'.$langs->trans("VATRate").'</td><td>'.price2num($product->tva_tx,'MU').'%</td></tr>';
 	  
 	  // Stock
 	  if ($product->isproduct() && $conf->stock->enabled)
