@@ -148,7 +148,7 @@ class modBanque extends DolibarrModules
         }
         $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'bank as b';
         //$this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_url as but ON but.fk_bank = b.rowid';
-        $this->export_sql[$r].=' ORDER BY b.datev';
+        $this->export_sql[$r].=' ORDER BY b.datev, b.num_releve';
         $this->export_permission[$r]=array(array("banque","export"));
 
 	}
