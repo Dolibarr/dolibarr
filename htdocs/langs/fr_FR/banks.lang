@@ -64,6 +64,7 @@ DeleteAccount=Suppression de compte
 ConfirmDeleteAccount=Etes-vous sur de vouloir supprimer ce compte ?
 Account=Compte
 ByCategories=Par catégories
+BankTransactions=Transactions bancaires
 SearchTransaction=Recherche écriture
 TransactionsToConciliate=Ecritures à rapprocher
 Conciliable=Rapprochable

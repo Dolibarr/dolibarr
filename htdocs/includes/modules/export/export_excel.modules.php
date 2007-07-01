@@ -143,12 +143,22 @@ class ExportExcel extends ModeleExports
 
     function write_record($array_alias,$array_selected_sorted,$objp)
     {
+        global $langs;
+
         $this->col=0;
         foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
-            //print "dd".$alias;
-            $this->worksheet->write($this->row, $this->col, clean_html($objp->$alias));
+			$newvalue=$objp->$alias;
+            // Nettoyage newvalue
+            $newvalue=clean_html($newvalue);
+			// Traduction newvalue
+			if (eregi('^\((.*)\)$',$newvalue,$reg))
+			{
+				$newvalue=$langs->transnoentities($reg[1]);
+			}
+
+			$this->worksheet->write($this->row, $this->col, $newvalue);
             $this->col++;
         }
         $this->row++;

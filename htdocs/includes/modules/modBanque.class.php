@@ -111,6 +111,46 @@ class modBanque extends DolibarrModules
 	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 	    $this->rights[$r][4] = 'consolidate';
+
+	    $r++;
+	    $this->rights[$r][0] = 115; // id de la permission
+	    $this->rights[$r][1] = 'Exporter transactions et relevés'; // libelle de la permission
+	    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'export';
+
+		
+		// Exports
+        //--------
+        $r=0;
+
+        $r++;
+        $this->export_code[$r]=$this->id.'_'.$r;
+        $this->export_label[$r]='Ecritures bancaires et relevés';
+        $this->export_fields_array[$r]=array('b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation");
+		$this->export_entities_array[$r]=array('b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account");
+        $this->export_alias_array[$r]=array('b.datev'=>'datev','b.dateo'=>'dateo','b.label'=>'label','-b.amount'=>'debit','b.amount'=>'credit','b.num_releve'=>'numrel','b.datec'=>"datec");
+        $this->export_sql[$r]="select distinct ";
+        $i=0;
+        foreach ($this->export_alias_array[$r] as $key => $value)
+        {
+            if ($i > 0) $this->export_sql[$r].=', ';
+            else $i++;
+			// Cas special du debit et credit
+			if ($value=='credit' || $value=='debit')
+			{
+				$this->export_sql[$r].='IF('.$key.'>0,'.$key.',NULL) as '.$value;
+			}
+			else
+			{
+				$this->export_sql[$r].=$key.' as '.$value;
+			}
+        }
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'bank as b';
+        //$this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_url as but ON but.fk_bank = b.rowid';
+        $this->export_sql[$r].=' ORDER BY b.datev';
+        $this->export_permission[$r]=array(array("banque","export"));
+
 	}
 
 

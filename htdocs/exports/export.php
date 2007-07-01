@@ -43,6 +43,7 @@ $entitytoicon=array(
 	'order'=>'order' ,'order_line'=>'order',
 	'member'=>'user' ,'member_type'=>'group','subscription'=>'payment',
 	'tax'=>'generic' ,'tax_type'=>'generic',
+	'account'=>'account',
 	'payment'=>'payment');
 $entitytolang=array(
 	'user'=>'User',
@@ -51,6 +52,7 @@ $entitytolang=array(
 	'order'=>'Order','order_line'=>'OrderLine',
 	'member'=>'Member','member_type'=>'MemberType','subscription'=>'Subscription',
 	'tax'=>'SocialContribution','tax_type'=>'DictionnarySocialContributions',
+	'account'=>'BankTransactions',
 	'payment'=>'Payment');
 
 $array_selected=isset($_SESSION["export_selected_fields"])?$_SESSION["export_selected_fields"]:array();

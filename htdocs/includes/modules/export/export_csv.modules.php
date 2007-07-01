@@ -127,15 +127,26 @@ class ExportCsv extends ModeleExports
 
     function write_record($array_alias,$array_selected_sorted,$objp)
     {
-        foreach($array_selected_sorted as $code => $value)
+        global $langs;
+		
+		$this->col=0;
+ 		foreach($array_selected_sorted as $code => $value)
         {
             $alias=$array_alias[$code];
-            //print "dd".$alias;
-            $newvalue=ereg_replace(';',',',clean_html($objp->$alias));
+			$newvalue=$objp->$alias;
+            // Nettoyage newvalue
+			$newvalue=ereg_replace(';',',',clean_html($newvalue));
             $newvalue=ereg_replace("\r",'',$newvalue);
             $newvalue=ereg_replace("\n",'\n',$newvalue);
-            fwrite($this->handle,$newvalue.";");
-        }
+			// Traduction newvalue
+			if (eregi('^\((.*)\)$',$newvalue,$reg))
+			{
+				$newvalue=$langs->transnoentities($reg[1]);
+			}
+			
+			fwrite($this->handle,$newvalue.";");
+            $this->col++;
+		}
         fwrite($this->handle,"\n");
         return 0;
     }

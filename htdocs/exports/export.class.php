@@ -174,6 +174,8 @@ class Export
         
         // Execute requete export        
         $sql=$this->array_export_sql[$indice];
+		
+		dolibarr_syslog("Export::build_file sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
