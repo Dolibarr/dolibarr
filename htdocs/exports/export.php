@@ -315,8 +315,8 @@ if ($step == 2 && $datatoexport)
     print '<tr class="liste_titre">';
 	print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportableFields").'</td>';
-    print '<td width="4%">&nbsp;</td>';
-    print '<td width="48%">'.$langs->trans("ExportedFields").'</td>';
+    print '<td width="12">&nbsp;</td>';
+    print '<td width="44%">'.$langs->trans("ExportedFields").'</td>';
     print '</tr>';
 
     // Champs exportables
@@ -344,7 +344,7 @@ if ($step == 2 && $datatoexport)
         $entityicon=$entitytoicon[$entity]?$entitytoicon[$entity]:$entity;
         $entitylang=$entitytolang[$entity]?$entitytolang[$entity]:$entity;
 
-        print '<td>'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
+        print '<td nowrap="nowrap">'.img_object('',$entityicon).' '.$langs->trans($entitylang).'</td>';
         if ((isset($array_selected[$code]) && $array_selected[$code]) || $modelchoice == 1)
         {
             // Champ sélectionné

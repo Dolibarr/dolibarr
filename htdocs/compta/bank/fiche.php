@@ -47,7 +47,7 @@ if ($_POST["action"] == 'add')
     // Creation compte
     $account = new Account($db,0);
     
-    $account->ref           = ereg_replace(' ','',trim($_POST["ref"]));
+    $account->ref           = sanitize_string(trim($_POST["ref"]));
     $account->label         = trim($_POST["label"]);
     $account->courant       = $_POST["type"];
     $account->clos          = $_POST["clos"];
@@ -57,7 +57,7 @@ if ($_POST["action"] == 'add')
     $account->account_number  = trim($_POST["account_number"]);
     
     $account->solde           = $_POST["solde"];
-    $account->date_solde      = mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+    $account->date_solde      = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 
     $account->currency_code   = trim($_POST["account_currency_code"]);
     $account->country_code    = trim($_POST["account_country_code"]);
@@ -89,7 +89,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"])
     $account = new Account($db, $_POST["id"]);
     $account->fetch($_POST["id"]);
 
-    $account->ref             = ereg_replace(' ','',trim($_POST["ref"]));
+    $account->ref             = sanitize_string(trim($_POST["ref"]));
     $account->label           = trim($_POST["label"]);
     $account->courant         = $_POST["type"];
     $account->clos            = $_POST["clos"];

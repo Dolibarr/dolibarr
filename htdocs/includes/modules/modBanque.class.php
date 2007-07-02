@@ -66,7 +66,7 @@ class modBanque extends DolibarrModules
 	    $this->depends = array();
 	    $this->requiredby = array("modComptabilite","modComptabiliteExpert");
 		$this->conflictwith = array();
-		$this->langfiles = array("banks");
+		$this->langfiles = array("banks","compta","companies");
 		
 	    // Constantes
 	    $this->const = array();
@@ -127,9 +127,9 @@ class modBanque extends DolibarrModules
         $r++;
         $this->export_code[$r]=$this->id.'_'.$r;
         $this->export_label[$r]='Ecritures bancaires et relevés';
-        $this->export_fields_array[$r]=array('b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation");
-		$this->export_entities_array[$r]=array('b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account");
-        $this->export_alias_array[$r]=array('b.datev'=>'datev','b.dateo'=>'dateo','b.label'=>'label','-b.amount'=>'debit','b.amount'=>'credit','b.num_releve'=>'numrel','b.datec'=>"datec");
+        $this->export_fields_array[$r]=array('b.rowid'=>'IdTransaction','ba.ref'=>'AccountRef','ba.label'=>'AccountLabel','b.datev'=>'DateValue','b.dateo'=>'DateOperation','b.label'=>'Label','-b.amount'=>'Debit','b.amount'=>'Credit','b.num_releve'=>'AccountStatement','b.datec'=>"DateCreation","but.url_id"=>"IdThirdParty","s.nom"=>"ThirdParty","s.code_compta"=>"CustomerAccountancyCode","s.code_compta_fournisseur"=>"SupplierAccountancyCode");
+		$this->export_entities_array[$r]=array('b.rowid'=>'account','ba.ref'=>'account','ba.label'=>'account','b.datev'=>'account','b.dateo'=>'account','b.label'=>'account','-b.amount'=>'account','b.amount'=>'account','b.num_releve'=>'account','b.datec'=>"account","but.url_id"=>"company","s.nom"=>"company","s.code_compta"=>"company","s.code_compta_fournisseur"=>"company");
+        $this->export_alias_array[$r]=array('b.rowid'=>'tran_id','ba.ref'=>'account_ref','ba.label'=>'account_label','b.datev'=>'datev','b.dateo'=>'dateo','b.label'=>'label','-b.amount'=>'debit','b.amount'=>'credit','b.num_releve'=>'numrel','b.datec'=>"datec","but.url_id"=>"soc_id","s.nom"=>"thirdparty","s.code_compta"=>"customeracccode","s.code_compta_fournisseur"=>"supplieracccode");
         $this->export_sql[$r]="select distinct ";
         $i=0;
         foreach ($this->export_alias_array[$r] as $key => $value)
@@ -146,9 +146,12 @@ class modBanque extends DolibarrModules
 				$this->export_sql[$r].=$key.' as '.$value;
 			}
         }
-        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'bank as b';
-        //$this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_url as but ON but.fk_bank = b.rowid';
-        $this->export_sql[$r].=' ORDER BY b.datev, b.num_releve';
+        $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'bank_account as ba, '.MAIN_DB_PREFIX.'bank as b';
+		$this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'bank_url as but ON but.fk_bank = b.rowid';
+		$this->export_sql[$r].=' LEFT JOIN '.MAIN_DB_PREFIX.'societe as s ON but.url_id = s.rowid';
+        $this->export_sql[$r].=" WHERE IFNULL(but.type,'company') = 'company'";
+		$this->export_sql[$r].=' AND ba.rowid=b.fk_account';
+		$this->export_sql[$r].=' ORDER BY b.datev, b.num_releve';
         $this->export_permission[$r]=array(array("banque","export"));
 
 	}

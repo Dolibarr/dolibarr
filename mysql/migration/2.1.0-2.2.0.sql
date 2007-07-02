@@ -689,3 +689,6 @@ ALTER TABLE llx_fichinter ADD COLUMN tms timestamp after ref;
 ALTER TABLE llx_fichinter ADD COLUMN fk_contrat integer DEFAULT 0 after fk_projet;
 
 drop table if exists `llx_accountingsystem_det`;
+
+
+update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');

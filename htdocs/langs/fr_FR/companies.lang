@@ -17,6 +17,7 @@ NewSocGroup=Nouveau groupement de sociétés
 NewPrivateIndividual=Nouveau particulier (prospect, client, fournisseur)
 ProspectionArea=Espace prospection
 SocGroup=Groupement de sociétés
+IdThirdParty=Id tiers
 IdCompany=Id société
 IdContact=Id contact
 Company=Société
