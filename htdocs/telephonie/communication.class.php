@@ -100,16 +100,14 @@ class CommunicationTelephonique {
     else
       {
 	/* Fin Numéros spéciaux */
-	if (! $tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat))
+	if ($tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat) == 0)
 	  {
-	    print "3- Tarif achat manquant pour $num\n";
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
-	    $error++;
+	    //$error++;
 	  }
 	
-	if (! $tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente))
+	if ($tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente) == 0)
 	  {
-	    print "3- Tarif vente manquant pour $num\n";
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
 	    $error++;
 	  }
