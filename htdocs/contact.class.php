@@ -252,15 +252,15 @@ class Contact
 			if ($soc->client == 2)      $info["businessCategory"] = "Prospects";
 			if ($soc->fournisseur == 1) $info["businessCategory"] = "Suppliers";
 		}
-		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = $this->address;
+		if ($this->address && $conf->global->LDAP_FIELD_ADDRESS) $info[$conf->global->LDAP_FIELD_ADDRESS] = utf8_encode($this->address);
 		if ($this->cp && $conf->global->LDAP_FIELD_ZIP)          $info[$conf->global->LDAP_FIELD_ZIP] = $this->cp;
-		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = $this->ville;
+		if ($this->ville && $conf->global->LDAP_FIELD_TOWN)      $info[$conf->global->LDAP_FIELD_TOWN] = utf8_encode($this->ville);
 		if ($this->pays && $conf->global->LDAP_FIELD_COUNTRY)      $info[$conf->global->LDAP_FIELD_COUNTRY] = $this->pays_code;
 		if ($this->phone_pro && $conf->global->LDAP_FIELD_PHONE) $info[$conf->global->LDAP_FIELD_PHONE] = $this->phone_pro;
 		if ($this->phone_perso && $conf->global->LDAP_FIELD_HOMEPHONE) $info[$conf->global->LDAP_FIELD_HOMEPHONE] = $this->phone_perso;
 		if ($this->phone_mobile && $conf->global->LDAP_FIELD_MOBILE) $info[$conf->global->LDAP_FIELD_MOBILE] = $this->phone_mobile;
 		if ($this->fax && $conf->global->LDAP_FIELD_FAX)	    $info[$conf->global->LDAP_FIELD_FAX] = $this->fax;
-		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = $this->note;
+		if ($this->note && $conf->global->LDAP_FIELD_DESCRIPTION) $info[$conf->global->LDAP_FIELD_DESCRIPTION] = utf8_encode($this->note);
 		if ($this->email && $conf->global->LDAP_FIELD_MAIL)     $info[$conf->global->LDAP_FIELD_MAIL] = $this->email;
 
 		if ($conf->global->LDAP_SERVER_TYPE == 'egroupware')
