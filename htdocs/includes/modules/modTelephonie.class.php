@@ -166,6 +166,14 @@ class modTelephonie extends DolibarrModules
     $this->rights[$r][5] = 'lire';
     $r++;
 
+    $this->rights[$r][0] = 273;
+    $this->rights[$r][1] = 'Emmettre les factures';
+    $this->rights[$r][2] = 'r';
+    $this->rights[$r][3] = 0;
+    $this->rights[$r][4] = 'facture';
+    $this->rights[$r][5] = 'ecrire';
+    $r++;
+
     $this->rights[$r][0] = 206;
     $this->rights[$r][1] = 'Consulter les liaisons';
     $this->rights[$r][2] = 'w';
@@ -274,6 +282,9 @@ class modTelephonie extends DolibarrModules
     $this->dirs[4] = $conf->telephonie->dir_output."/client" ;
     $this->dirs[5] = $conf->telephonie->dir_output."/rapports" ;
     $this->dirs[6] = $conf->telephonie->dir_output."/ligne/commande/retour" ;
+    $this->dirs[7] = $conf->telephonie->dir_output."/cdr" ;
+    $this->dirs[8] = $conf->telephonie->dir_output."/cdr/archive" ;
+    $this->dirs[9] = $conf->telephonie->dir_output."/cdr/atraiter" ;
     //
     $this->load_tables();
     //
