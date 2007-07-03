@@ -20,21 +20,7 @@
  *
  */
 require("./pre.inc.php");
-require_once DOL_DOCUMENT_ROOT.'/telephonie/facturation/FacturationImportCdr.class.php';
-
-$dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
-
-$handle=opendir($dir);
-
-$files = array();
-
-$var=true;
-while (($file = readdir($handle))!==false)
-{
-  if (is_file($dir.'/'.$file))
-    array_push($files, $file);
-}
-closedir($handle);
+require_once DOL_DOCUMENT_ROOT.'/telephonie/facturation/FacturationCalcul.class.php';
 
 if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 
@@ -48,31 +34,24 @@ if ($user->societe_id > 0)
   $action = '';
   $socid = $user->societe_id;
 }
-
-
 /*
  *
- *
- *
  */
-print_barre_liste("Importation des fichiers CDR", $page, "files.php", "", $sortfield, $sortorder, '', $num);
+print_barre_liste("Calcul des CDR", $page, "calcul.php", "", $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
-print '<td>Message</td>';
-
-print "</tr>\n";
+print '<td>Message</td></tr>';
 
 $var=True;
 
-$obj = new FacturationImportCdr($db);
-$obj->Import($_GET["id"]);
+$obj = new FacturationCalcul($db);
+$obj->Calcul();
 
 foreach ($obj->messages as $message)
 {
   $var=!$var;  
-  print "<tr $bc[$var]>";  
-  print '<td>'.$message.'</td></tr>';
+  print "<tr $bc[$var]><td>".$message."</td></tr>\n";
 }
 print "</table>";
 
