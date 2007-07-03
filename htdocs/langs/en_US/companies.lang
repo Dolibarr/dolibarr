@@ -217,3 +217,4 @@ DeleteFile=Delete file
 ConfirmDeleteFile=Are you sure you want to delete this file?
 AllocateCommercial=Allocate a commercial
 SelectCountry=Select a country
+SelectCompany=Select a third party

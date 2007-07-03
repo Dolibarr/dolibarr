@@ -237,9 +237,9 @@ class Contact
 		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 		
 		// Champs 
-		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = $this->fullname;
-		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = $this->name;
-		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->firstname;
+		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = utf8_encode($this->fullname);
+		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = utf8_encode($this->name);
+		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = utf8_encode($this->firstname);
 
 		if ($this->poste) $info["title"] = $this->poste;
 		if ($this->socid > 0)

@@ -220,3 +220,4 @@ DeleteFile=Suppression d'un fichier
 ConfirmDeleteFile=Êtes-vous sûr de vouloir supprimer ce fichier ?
 AllocateCommercial=Affecter un commercial
 SelectCountry=Sélectionner un pays
+SelectCompany=Sélectionner un tiers
