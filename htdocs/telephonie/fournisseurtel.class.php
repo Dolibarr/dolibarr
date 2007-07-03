@@ -258,6 +258,28 @@ class FournisseurTelephonie {
 	
     return $result;
   }
+  /**
+   * Retourne un tableau des founisseurs actifs
+   *
+   *
+   */
+  function getActives()
+  {
+    $fourns = array();
+    $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."telephonie_fournisseur";
+    $resql = $this->db->query($sql);
 
+    if ($resql)
+      {
+	while ($obj = $this->db->fetch_object($resql))
+	  {
+	    $fourns[$obj->rowid] = stripslashes($obj->nom);
+	  }
+      }
+	
+    $this->db->free($resql);
+
+    return $fourns;
+  }
 }
 ?>
