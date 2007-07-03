@@ -196,7 +196,7 @@ class TelephonieContrat {
     $sql .= " WHERE c.rowid = ".$id;
     
     $resql = $this->db->query($sql);
-    dolibarr_syslog($sql);
+
     if ($resql)
       {
 	if ($this->db->num_rows($resql))
