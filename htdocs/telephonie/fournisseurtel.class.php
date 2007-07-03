@@ -92,6 +92,10 @@ class FournisseurTelephonie {
       {
 	$res = -1;
       }
+
+    @mkdir(DOL_DATA_ROOT."/telephonie/cdr/atraiter/".$this->id);
+
+
     return $res;
   }
   /**
