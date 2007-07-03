@@ -51,9 +51,9 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/ligne/index.php", "Lignes");
 
   $menu->add(DOL_URL_ROOT."/telephonie/facturation/index.php", "Facturation");
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/facturation/batch.php", "Batch");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/facturation/files.php", "Fichiers CDR");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/facturation/cdr.php", "CDR");
-  $menu->add_submenu(DOL_URL_ROOT."/telephonie/facturation/batch.php", "Batch");
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/facturation/facture.php", "Factures");
 
   //$menu->add_submenu(DOL_URL_ROOT."/telephonie/facture/check.php", "Verif");
