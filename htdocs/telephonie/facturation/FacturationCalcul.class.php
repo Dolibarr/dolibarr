@@ -355,6 +355,7 @@ class FacturationCalcul {
 		    $this->db->query("COMMIT");
 		    $nbcommit++;
 		    dolibarr_syslog("FacturationCalcul Ligne $ligne->numero - COMMIT");
+		    array_push($this->messages, "Facturation ligne ".$ligne->numero." reussie");
 		  }
 		else
 		  {
