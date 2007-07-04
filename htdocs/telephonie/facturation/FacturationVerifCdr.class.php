@@ -97,4 +97,5 @@ class FacturationVerifCdr {
 	$this->db->free($resql);
 	
       }
+	}
 }
