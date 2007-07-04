@@ -27,8 +27,9 @@ require_once("./includes/configure.php");
 define(OSC_IMG_URL, 'http://www.tiaris.info/catalog/images/'); // url du site OSC
 
 // OSC
-define('OSCADMIN', '/home/jean/projets/osc_tiaris/admin/');
-define('OSCIMAGES', '/home/jean/projets/osc_tiaris/images/');
+
+define('OSCADMIN', '/home/tiaris.info/catalog/admin/');
+define('OSCIMAGES', '/home/tiaris.info/catalog/images/');
 
 require(OSCADMIN.'includes/configure.php');
 require(OSCADMIN.DIR_WS_CLASSES . 'object_info.php');

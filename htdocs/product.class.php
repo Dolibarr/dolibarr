@@ -3,6 +3,7 @@
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2007		Jean Heimburger		<jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -2272,7 +2273,7 @@ class Product
   {
     $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
     $dir .= "photos/";
-  
+
     if (! file_exists($dir))
       {
 	dolibarr_syslog("Product Create $dir");
@@ -2289,6 +2290,38 @@ class Product
       }
   }
 
+  /**
+   *    \brief      Déplace fichier récupéré sur internet (utilisé pour interface avec OSC)
+   *    \param      sdir        Répertoire destination finale
+   *    \param      $files      url de l'image
+   *		Jean Heimburger		juin 2007
+   */
+  function add_photo_web($sdir, $files)
+  {
+    $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
+    $dir .= "photos/";
+
+    if (! file_exists($dir))
+      {
+	dolibarr_syslog("Product Create $dir");
+	create_exdir($dir);
+      }
+  
+    if (file_exists($dir))
+    {
+	// Crée fichier en taille vignette
+	// \todo A faire
+      
+	// Crée fichier en taille origine
+			$content = file_get_contents($files);
+			
+			$nom = basename($files);
+			$im = fopen($dir.$nom,'wb');
+			fwrite($im, $content);
+			fclose($im);	
+//		}
+    }
+  }
 
   /**
    *    \brief      Affiche la première photo du produit
