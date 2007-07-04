@@ -550,7 +550,7 @@ ALTER TABLE llx_product modify ref varchar(32) NOT NULL;
 
 ALTER TABLE `llx_socpeople` CHANGE `fk_user` `fk_user_creat` INT(11) NULL;
 ALTER TABLE `llx_socpeople` CHANGE `fk_user_create` `fk_user_creat` INT(11) NULL;
--- V4 UPDATE llx_socpeople set fk_user_creat = null where llx_socpeople.fk_user_creat is not null and llx_socpeople.fk_user_creat not in (select rowid from llx_user);
+-- V4.1 UPDATE llx_socpeople set fk_user_creat = null where llx_socpeople.fk_user_creat is not null and llx_socpeople.fk_user_creat not in (select rowid from llx_user);
 -- V4 ALTER TABLE llx_socpeople ADD INDEX idx_socpeople_fk_user_creat (fk_user_creat);
 -- V4 ALTER TABLE llx_socpeople DROP INDEX idx_fk_user_creat;
 -- V4 ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_user_creat_user_rowid FOREIGN KEY (fk_user_creat) REFERENCES llx_user (rowid);
