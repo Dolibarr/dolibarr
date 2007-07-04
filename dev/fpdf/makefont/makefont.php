@@ -163,7 +163,7 @@ function MakeFontDescriptor($fm,$symbolic)
 	if(isset($fm['FontBBox']))
 		$fbb=$fm['FontBBox'];
 	else
-		$fbb=array(0,$des-100,1000,$asc+100);
+		$fbb=array(0,$desc-100,1000,$asc+100);
 	$fd.=",'FontBBox'=>'[".$fbb[0].' '.$fbb[1].' '.$fbb[2].' '.$fbb[3]."]'";
 	//ItalicAngle
 	$ia=(isset($fm['ItalicAngle']) ? $fm['ItalicAngle'] : 0);
