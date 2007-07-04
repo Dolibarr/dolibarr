@@ -706,11 +706,11 @@ class Form
 					
 					if ($selected > 0 && $selected == $obj->rowid)
                     {
-                        print '<option value="'.$obj->rowid.'" selected="true">'.$desc.' ('.$obj->amount_ht.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                        print '<option value="'.$obj->rowid.'" selected="true">'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
                     }
                     else
                     {
-                        print '<option value="'.$obj->rowid.'">'.$desc.' ('.$obj->amount_ht.' '.$langs->trans("Currency".$conf->monnaie).')'.'</option>';
+                        print '<option value="'.$obj->rowid.'">'.$desc.' ('.price($obj->amount_ht).' '.$langs->trans("HT").' - '.price($obj->amount_ttc).' '.$langs->trans("TTC").')</option>';
                     }
                     $i++;
                 }
@@ -2039,7 +2039,7 @@ class Form
 			print '<input type="hidden" name="action" value="setabsolutediscount">';
             print '<table class="nobordernopadding" cellpadding="0" cellspacing="0">';
             print '<tr><td>';
-			print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie)).': ';
+			print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie)).': ';
 //			print $langs->trans("AvailableGlobalDiscounts").': ';
 			print $this->select_remises('',$htmlname,'fk_facture IS NULL',$socid);
             print '</td>';
@@ -2051,7 +2051,9 @@ class Form
             if ($selected)
             {
                 print $selected;
-            } else {
+            }
+			else
+			{
                 print "0";
             }
         }

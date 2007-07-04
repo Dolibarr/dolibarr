@@ -1938,12 +1938,12 @@ else
 			{
 				if ($fac->statut > 0 || $fac->type == 2)
 				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 				}
 				else
 				{
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount);
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,price($absolute_discount));
 				}
 			}
 			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';

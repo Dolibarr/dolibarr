@@ -27,12 +27,12 @@ create table llx_societe_remise_except
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer NOT NULL, -- client
   datec           datetime,
-  amount_ht       real NOT NULL,
-  amount_tva 	  real DEFAULT 0 NOT NULL,
-  amount_ttc 	  real DEFAULT 0 NOT NULL,
-  tva_tx   	      real DEFAULT 0 NOT NULL,
-  fk_user         integer NOT NULL,
+  amount_ht       double(16,8) NOT NULL,
+  amount_tva 	  double(16,8) DEFAULT 0 NOT NULL,
+  amount_ttc 	  double(16,8) DEFAULT 0 NOT NULL,
+  tva_tx   	      double(6,3)  DEFAULT 0 NOT NULL,
+  fk_user           integer NOT NULL,
   fk_facture        integer,
   fk_facture_source integer,
-  description     varchar(255) NOT NULL
+  description       varchar(255) NOT NULL
 )type=innodb;

@@ -994,10 +994,10 @@ class Societe
 		{
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
-			$discount->amount_ht=$remise;
-			$discount->amount_tva=($remise*$tva_tx/100);
-			$discount->amount_ttc=$discount->amount_ht+$discount->amount_tva;
-			$discount->tva_tx=$tva_tx;
+			$discount->amount_ht=price2num($remise,'MT');
+			$discount->amount_tva=price2num($remise*$tva_tx/100,'MT');
+			$discount->amount_ttc=price2num($discount->amount_ht+$discount->amount_tva,'MT');
+			$discount->tva_tx=price2num($tva_tx,'MT');
 			$discount->desc=$desc;
 			$result=$discount->create($user);
 			if ($result > 0)

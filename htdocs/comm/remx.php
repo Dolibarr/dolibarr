@@ -232,7 +232,7 @@ if ($_socid > 0)
 			}
 			print '</td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="right">'.price($obj->tva_tx).'%</td>';
+            print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
             print '<td align="right">'.price($obj->amount_ttc).'</td>';
             print '<td align="center">';
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;
@@ -311,7 +311,7 @@ if ($_socid > 0)
 			print '</td>';
             print '<td align="left"><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$obj->rowid.'">'.img_object($langs->trans("ShowBill"),'bill').' '.$obj->facnumber.'</a></td>';
             print '<td align="right">'.price($obj->amount_ht).'</td>';
-            print '<td align="right">'.price($obj->tva_tx).'%</td>';
+            print '<td align="right">'.price2num($obj->tva_tx,'MU').'%</td>';
             print '<td align="right">'.price($obj->amount_ttc).'</td>';
             print '<td align="center">';
 			print '<a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->user_id.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login;

@@ -702,102 +702,112 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-     \brief     	Supprime la facture
-     \param     	rowid      	Id de la facture à supprimer
-     \return		int			<0 si ko, >0 si ok
-   */
-  function delete($rowid=0)
-  {
-    global $user,$langs,$conf;
+	/**
+		\brief     	Supprime la facture
+		\param     	rowid      	Id de la facture à supprimer
+		\return		int			<0 si ko, >0 si ok
+	*/
+	function delete($rowid=0)
+	{
+		global $user,$langs,$conf;
 
-    if (! $rowid) $rowid=$this->id;
+		if (! $rowid) $rowid=$this->id;
 
-    dolibarr_syslog("Facture::Delete rowid=".$rowid, LOG_DEBUG);
+		dolibarr_syslog("Facture::delete rowid=".$rowid, LOG_DEBUG);
 		
-    $this->db->begin();
+		$this->db->begin();
 
-    $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
-    if ($this->db->query($sql))
-      {
-	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
-	if ($this->db->query($sql))
-	  {
-	    $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
-	    if ($this->db->query($sql))
-	      {
-		// On désaffecte de la facture les remises liées
-		$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re,';
-		$sql.= ' '.MAIN_DB_PREFIX.'facturedet as fd';
-		$sql.= ' SET re.fk_facture = NULL';
-		$sql.= ' WHERE fd.rowid=re.fk_facture AND fd.fk_facture = '.$rowid;
-
+		$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture = '.$rowid;
 		if ($this->db->query($sql))
-		  {
-		    $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
-		    if ($this->db->query($sql))
-		      {
-			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
-			$resql=$this->db->query($sql);
-			if ($resql)
-			  {
-			    // Appel des triggers
-			    include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			    $interface=new Interfaces($this->db);
-			    $result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
-			    // Fin appel triggers
-	
-			    $this->db->commit();
-			    return 1;
-			  }
+		{
+			$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'fa_pr WHERE fk_facture = '.$rowid;
+			if ($this->db->query($sql))
+			{
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'co_fa WHERE fk_facture = '.$rowid;
+				if ($this->db->query($sql))
+				{
+					// On met a jour le lien des remises
+					$list_rowid_det=array();
+					$sql = 'SELECT fd.rowid FROM '.MAIN_DB_PREFIX.'facturedet as fd WHERE fk_facture = '.$rowid;
+					$resql=$this->db->query($sql);
+					while ($obj = $this->db->fetch_object($resql))
+					{
+						$list_rowid_det[]=$obj->rowid;
+					}
+					
+					// On désaffecte de la facture les remises liées
+					if (sizeof($list_rowid_det))
+					{
+						$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except as re';
+						$sql.= ' SET re.fk_facture = NULL';
+						$sql.= ' WHERE re.fk_facture in ('.join(',',$list_rowid_det).')';
+
+						dolibarr_syslog("Facture.class::delete sql=".$sql);
+						if (! $this->db->query($sql))
+						{
+							$this->error=$this->db->error()." sql=".$sql;
+							dolibarr_syslog("Facture.class::delete ".$this->error);
+							$this->db->rollback();
+							return -5;
+						}
+					}
+					
+					$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE fk_facture = '.$rowid;
+					if ($this->db->query($sql))
+					{
+						$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture WHERE rowid = '.$rowid;
+						$resql=$this->db->query($sql);
+						if ($resql)
+						{
+							// Appel des triggers
+							include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+							$interface=new Interfaces($this->db);
+							$result=$interface->run_triggers('BILL_DELETE',$this,$user,$langs,$conf);
+							// Fin appel triggers
+							
+							$this->db->commit();
+							return 1;
+						}
+						else
+						{
+							$this->error=$this->db->error()." sql=".$sql;
+							dolibarr_syslog("Facture.class::delete ".$this->error);
+							$this->db->rollback();
+							return -6;
+						}
+					}
+					else
+					{
+						$this->error=$this->db->error()." sql=".$sql;
+						dolibarr_syslog("Facture.class::delete ".$this->error);
+						$this->db->rollback();
+						return -4;
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error()." sql=".$sql;
+					dolibarr_syslog("Facture.class::delete ".$this->error);
+					$this->db->rollback();
+					return -3;
+				}
+			}
 			else
-			  {
-			    $this->error=$this->db->error()." sql=".$sql;
-			    dolibarr_syslog("Facture.class::delete ".$this->error);
-			    $this->db->rollback();
-			    return -6;
-			  }
-		      }
-		    else
-		      {
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				dolibarr_syslog("Facture.class::delete ".$this->error);
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
 			$this->error=$this->db->error()." sql=".$sql;
 			dolibarr_syslog("Facture.class::delete ".$this->error);
 			$this->db->rollback();
-			return -4;
-		      }
-		  }
-		else
-		  {
-		    $this->error=$this->db->error()." sql=".$sql;
-		    dolibarr_syslog("Facture.class::delete ".$this->error);
-		    $this->db->rollback();
-		    return -5;
-		  }
-	      }
-	    else
-	      {
-		$this->error=$this->db->error()." sql=".$sql;
-		dolibarr_syslog("Facture.class::delete ".$this->error);
-		$this->db->rollback();
-		return -3;
-	      }
-	  }
-	else
-	  {
-	    $this->error=$this->db->error()." sql=".$sql;
-	    dolibarr_syslog("Facture.class::delete ".$this->error);
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error()." sql=".$sql;
-	dolibarr_syslog("Facture.class::delete ".$this->error);
-	$this->db->rollback();
-	return -1;
-      }
-  }
+			return -1;
+		}
+	}
 
 
   /**

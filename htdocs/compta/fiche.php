@@ -189,7 +189,7 @@ if ($socid > 0)
         	print '<a href="'.DOL_URL_ROOT.'/comm/remise.php?id='.$societe->id.'">'.img_edit($langs->trans("Modify")).'</a>';
         }
         print '</td></tr></table>';
-        print '</td><td colspan="3">'.($societe->remise_client?$societe->remise_client.'%':$langs->trans("DiscountNone")).'</td>';
+        print '</td><td colspan="3">'.($societe->remise_client?price2num($societe->remise_client,'MT').'%':$langs->trans("DiscountNone")).'</td>';
         print '</tr>';
         
         // Réductions (Remises-Ristournes-Rabbais)
@@ -207,7 +207,7 @@ if ($socid > 0)
         print '<td colspan="3">';
 		$amount_discount=$societe->getCurrentDiscount();
 		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
-        if ($amount_discount > 0) print $amount_discount.'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
+        if ($amount_discount > 0) print price($amount_discount).'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
         else print $langs->trans("DiscountNone");
         print '</td>';
         print '</tr>';
