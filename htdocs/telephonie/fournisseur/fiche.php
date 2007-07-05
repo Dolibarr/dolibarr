@@ -262,8 +262,20 @@ if ($_GET["id"] > 0)
 	print '<tr><td width="20%">Grille de tarif</td>';
 	print '<td>'.$ta->liste_name[$fourn->grille].'</td>';
 	print '<td>Grille de tarif</td></tr>';
-	
-	print '</table><br /></div>';
+	print '</table><br />';
+	print 'Format de CDR<br/>';
+
+	if (strlen($fourn->cdrformat))
+	  {
+	    if (@require_once(DOL_DOCUMENT_ROOT."/telephonie/fournisseur/cdrformat/cdrformat.".$fourn->cdrformat.".class.php"))
+	      {
+		$format = "CdrFormat".ucfirst($fourn->cdrformat);
+		$cdrformat = new $format();
+		print '<pre>'.$cdrformat->ShowSample().'</pre>';
+	      }
+	  }
+	print '</div>';
+
       }
   }
 }
