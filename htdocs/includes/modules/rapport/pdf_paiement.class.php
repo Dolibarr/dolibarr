@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -66,7 +66,7 @@ class pdf_paiement
   {
     global $langs;
     
-    $title=$this->description.' - '.dolibarr_print_date(mktime(0,0,0,$this->month),"%B");
+    $title=$this->description.' - '.dolibarr_print_date(mktime($this->year,0,0,$this->month),"%B %Y");
     $pdf->SetFont('Arial','B',12);
     $pdf->Text(76, 10, $title);
     
