@@ -33,16 +33,19 @@ top_htmlhead("", "", 1, 1);
 print '<body id="mainbody">';
 
 // Generation liste des sociétés
-if(isset($_POST['newcompany']) && !empty($_POST['newcompany']))
+if(isset($_POST['newcompany']) && !empty($_POST['newcompany']) || isset($_POST['socid']) && !empty($_POST['socid'])
+    || isset($_POST['id_fourn']) && !empty($_POST['id_fourn']))
 {
-	global $langs;
-	$langs->load("dict");
 	
+	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
+	$socid = $_POST['socid']?$_POST['socid']:'';
+	$socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
+
 	$sql = "SELECT rowid, nom";
 	$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-	$sql.= " WHERE nom LIKE '%" . utf8_decode($_POST['newcompany']) . "%'";
+	$sql.= " WHERE nom LIKE '%" . utf8_decode($socid) . "%'";
 	$sql.= " ORDER BY nom ASC;";
-	
+
 	$resql=$db->query($sql);
 
 	if ($resql)
@@ -52,7 +55,7 @@ if(isset($_POST['newcompany']) && !empty($_POST['newcompany']))
 		{
 			print '<li>';
 			print $company->nom;
-			print '<span id="socid" class="informal" style="display:none">'.$company->rowid.'-idcache</span>';
+			print '<span id="object" class="informal"	style="display:none">'.$company->rowid.'-idcache</span>';
 			print '</li>';
 		}
 		print '</ul>';

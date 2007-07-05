@@ -633,16 +633,54 @@ class Form
 	 *    \param      filter          Criteres optionnels de filtre
 	 */
 	function select_societes($selected='',$htmlname='socid',$filter='',$showempty=0)
-    {
+  {
+  	global $conf;
         // On recherche les societes
         $sql = "SELECT s.rowid, s.nom FROM";
         $sql.= " ".MAIN_DB_PREFIX ."societe as s";
-        if ($filter) $sql.= " WHERE $filter";
+        if ($filter) $sql.= " WHERE ".$filter;
+        if ($selected && $conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+        {
+        	if ($filter)
+        	{
+        		$sql.= " AND";
+        	}
+        	else
+        	{
+        		$sql.= " WHERE";
+        	}
+        	$sql.= " rowid = ".$selected;
+        }
         $sql.= " ORDER BY nom ASC";
     
         $resql=$this->db->query($sql);
         if ($resql)
         {
+        	if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
+        	{
+        		if ($selected) $obj = $this->db->fetch_object($resql);
+        		$socid = $obj->rowid?$obj->rowid:'';
+
+        		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        		print '<td class="nobordernopadding">';
+        		print '<div>';
+        		if ($obj->rowid == 0)
+        		{
+        			print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value=""/>';
+        		}
+        		else
+        		{
+        			print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'"/>';
+        		}
+        		print ajax_autocompleter($socid,$htmlname,'/societe/ajaxcompanies.php','');
+        		print '</td>';
+        		print '<td class="nobordernopadding" align="left" width="16">';
+        		print ajax_indicator($htmlname,'working');
+        		print '</td></tr>';
+        		print '</table>';
+        	}
+        	else
+        	{
             print '<select class="flat" name="'.$htmlname.'">';
             if ($showempty) print '<option value="-1">&nbsp;</option>';
             $num = $this->db->num_rows($resql);
@@ -664,8 +702,10 @@ class Form
                 }
             }
             print '</select>';
+          }
         }
-        else {
+        else
+        {
             dolibarr_print_error($this->db);
         }
     }

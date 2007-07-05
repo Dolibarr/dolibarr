@@ -46,6 +46,12 @@ $fichinterid = isset($_GET["id"])?$_GET["id"]:'';
 // Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, 'ficheinter', $fichinterid, 'fichinter');
 
+//Récupère le résultat de la recherche Ajax
+//Todo: voir pour le supprimer par la suite
+if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT && $_POST['socid_id'])
+{
+	$_POST['socid'] = $_POST['socid_id'];
+}
 
 /*
  * Traitements des actions
@@ -166,8 +172,17 @@ if ($_GET["action"] == 'create')
 	$syear = date("Y", time());
 	print '<table class="border" width="100%">';
 
-	print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
-	print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
+	if ($_GET["socid"])
+	{
+		print '<input type="hidden" name="socid" value='.$_GET["socid"].'>';
+		print "<tr><td>".$langs->trans("Company")."</td><td>".$societe->getNomUrl(1)."</td></tr>";
+	}
+	else
+	{
+		print "<tr><td>".$langs->trans("Company")."</td><td>";
+		$html->select_societes('','socid','');
+		print "</td></tr>";
+	}
 
 	print "<tr><td>".$langs->trans("Date")."</td><td>";
 	$html->select_date(time(),"p",'','','','fichinter');
@@ -187,7 +202,7 @@ if ($_GET["action"] == 'create')
 
 		print '<tr><td valign="top">'.$langs->trans("Project").'</td><td>';
 		
-    $numprojet = $societe->has_projects();
+    if ($_GET["socid"]) $numprojet = $societe->has_projects();
     
 		if (!$numprojet)
 		{
