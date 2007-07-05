@@ -197,14 +197,21 @@ function info()
         $searchyy='';
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE facnumber like '".$this->searchLast."%'";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
+        {
+        	$sql.= " WHERE facnumber like '".$this->searchLast."%'";
+        }
+        else if ($facture->type == 2)
+        {
+        	$sql.= " WHERE type = 2";
+        }
         $resql=$db->query($sql);
         if ($resql)
         {
         	$row = $db->fetch_row($resql);
           if ($row) $searchyy = substr($row[0],0,-$posindice);
         }
-
+        
         if ($conf->global->FACTURE_NUM_DELTA || $conf->global->AVOIR_NUM_DELTA)
         {
         	//on vérifie si il y a une année précédente
