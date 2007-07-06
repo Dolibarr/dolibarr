@@ -359,7 +359,7 @@ class FactureFournisseur extends Facture
 	/**
 	* 		\brief     	Ajoute une ligne de facture (associé à aucun produit/service prédéfini)
 	* 		\param    	desc            Description de la ligne
-	* 		\param    	pu              Prix unitaire
+	* 		\param    	pu              Prix unitaire (HT ou TTC selon price_base_type)
 	* 		\param    	txtva           Taux de tva forcé, sinon -1
 	* 		\param    	qty             Quantité
 	*		\param    	fk_product      Id du produit/service predéfini
@@ -368,7 +368,7 @@ class FactureFournisseur extends Facture
 	* 		\param    	date_end        Date de fin de validité du service
 	* 		\param    	ventil          Code de ventilation comptable
 	* 		\param    	info_bits		Bits de type de lignes
-	* 		\param    	price_base      HT ou TTC
+	* 		\param    	price_base_type HT ou TTC
 	* 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	*					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
 	*					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
@@ -394,7 +394,7 @@ class FactureFournisseur extends Facture
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product);
+			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type);
 			
 			// Mise a jour prix facture
 			$result=$this->update_price($this->id);
