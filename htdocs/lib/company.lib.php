@@ -33,14 +33,24 @@
 
 function societe_prepare_head($objsoc)
 {
-  global $langs, $conf, $user;
-  $h = 0;
-  $head = array();
+	global $langs, $conf, $user;
+	$h = 0;
+	$head = array();
+
+	$head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
+	$head[$h][1] = $langs->trans("Company");
+	$head[$h][2] = 'company';
+	$h++;
+
+    //affichage onglet catégorie
+	if ($conf->categorie->enabled)
+  	{
+		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id;
+		$head[$h][1] = $langs->trans('Categories');
+		$head[$h][2] = 'category';
+		$h++;   		
+    }
   
-  $head[$h][0] = DOL_URL_ROOT.'/soc.php?socid='.$objsoc->id;
-  $head[$h][1] = $langs->trans("Company");
-  $head[$h][2] = 'company';
-  $h++;
   
   if ($objsoc->client==1)
     {
@@ -64,15 +74,6 @@ function societe_prepare_head($objsoc)
       $h++;
     }
     
-      //affichage onglet catégorie
-  if ($conf->categorie->enabled)
-  	{
-		$head[$h][0] = DOL_URL_ROOT.'/categories/categorie.php?socid='.$objsoc->id;
-		$head[$h][1] = $langs->trans('Categories');
-		$head[$h][2] = 'category';
-		$h++;   		
-    }
-  
   if ($conf->facture->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
     {
       $langs->load("compta");

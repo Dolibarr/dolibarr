@@ -111,9 +111,9 @@ if ($_GET["filtre"])
       }
   }
 
-if ($_GET["search_ref"])
+if ($_REQUEST["search_ref"])
   {
-    $sql .= " AND fac.facnumber like '%".addslashes($_GET["search_ref"])."%'";
+    $sql .= " AND fac.facnumber like '%".addslashes($_REQUEST["search_ref"])."%'";
   }
 
 if ($_GET["search_libelle"])
@@ -167,7 +167,7 @@ if ($resql)
 
     print '<tr class="liste_titre">';
     print '<td class="liste_titre" align="left">';
-    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET["search_ref"].'">';
+    print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_REQUEST["search_ref"].'">';
     print '</td><td class="liste_titre">&nbsp;</td>';
     print '<td class="liste_titre" align="left">';
     print '<input class="flat" type="text" name="search_libelle" value="'.$_GET["search_libelle"].'">';
