@@ -474,28 +474,6 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
 }
 
 
-if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
-{
-	if ($_POST["remise_id"])
-	{
-	    $propal = new Propal($db);
-	    $propal->id=$_GET['propalid'];
-	    $ret=$propal->fetch($_GET['propalid']);
-		if ($ret > 0)
-		{
-			$propal->insert_discount($_POST["remise_id"]);
-			if ($result < 0)
-			{
-				$mesg='<div class="error">'.$propal->error.'</div>';
-			}
-		}
-		else
-		{
-			dolibarr_print_error($db,$propal->error);
-		}
-	}
-}
-
 /*
  *  Ajout d'une ligne produit dans la propale
  */
@@ -551,7 +529,8 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['qty'],
 			$tva_tx,
 			$_POST['idprod'],
-			$_POST['remise_percent']
+			$_POST['remise_percent'],
+			'HT'
 			);
 
 		if ($_REQUEST['lang_id'])
@@ -1150,7 +1129,7 @@ if ($_GET['propalid'] > 0)
 					}
 					print "</td>\n";
 				}
-				print '<td align="right">'.$objp->tva_tx.'%</td>';
+				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
 				// Qty

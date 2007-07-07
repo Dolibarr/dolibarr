@@ -1904,16 +1904,35 @@ function print_fleche_navigation($page,$file,$options='',$nextpage)
 
 
 /**
+*		\brief      Fonction qui retourne un taux de tva formaté pour visualisation
+*		\remarks    Fonction utilisée dans les pdf et les pages html
+*		\param	    rate			Taux a formater (19.6 19,6 19.6% 19,6%...)
+*		\return		string			Chaine avec montant formaté (19,6 ou 19,6%)
+*/
+function vatrate($rate)
+{
+	$foundpercent=false;
+	if (eregi('%',$rate))
+	{
+		$rate=eregi_replace('%','',$rate);
+		$foundpercent=true;
+	}
+	return price($rate,0,'',0,0).($foundpercent?'%':'');
+}
+
+
+/**
 *		\brief      Fonction qui retourne un montant monétaire formaté pour visualisation
 *		\remarks    Fonction utilisée dans les pdf et les pages html
 *		\param	    amount			Montant a formater
 *		\param	    html			Formatage html ou pas (0 par defaut)
-*		\param	    outlangs		Objet langs pour formatage
+*		\param	    outlangs		Objet langs pour formatage text
 *		\param		trunc			1=Tronque affichage si trop de décimales,0=Force le non troncage
+*		\param		nbdecimal		Nbre decimals minimum.
 *		\return		string			Chaine avec montant formaté
 *		\seealso	price2num		Fonction inverse de price
 */
-function price($amount, $html=0, $outlangs='', $trunc=1)
+function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 {
 	global $langs,$conf;
 
@@ -1934,17 +1953,19 @@ function price($amount, $html=0, $outlangs='', $trunc=1)
 	$decpart = $datas[1];
 	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie décimale
 	//print "decpart=".$decpart."<br>";
-
-	// On pose par defaut 2 decimales
-	$nbdecimal = 2;
 	$end='';
+
 	// On augmente au besoin si il y a plus de 2 décimales
 	if (strlen($decpart) > $nbdecimal) $nbdecimal=strlen($decpart);
 	// Si on depasse max
 	if ($trunc && $nbdecimal > $conf->global->MAIN_MAX_DECIMALS_SHOWN) 
 	{
 		$nbdecimal=$conf->global->MAIN_MAX_DECIMALS_SHOWN;
-		$end='...';
+		if (eregi('\.\.\.',$conf->global->MAIN_MAX_DECIMALS_SHOWN))
+		{
+			// Si un affichage est tronqué, on montre des ...
+			$end='...';
+		}
 	}
 	
 	// Formate nombre

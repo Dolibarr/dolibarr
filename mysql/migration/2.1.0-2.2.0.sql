@@ -599,6 +599,18 @@ ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(16,8) DEFAULT
 ALTER TABLE llx_facture_fourn_det MODIFY  tva               double(16,8) DEFAULT 0;
 ALTER TABLE llx_facture_fourn_det MODIFY  total_ttc         double(16,8) DEFAULT 0;
 
+ALTER TABLE llx_propal ADD total_ht double(16,8)     DEFAULT 0 after remise;
+
+ALTER TABLE llx_propal MODIFY   tva      double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propal MODIFY   total_ht double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propal MODIFY   total    double(16,8)     DEFAULT 0;
+
+ALTER TABLE llx_propaldet MODIFY   tva_tx    double(6,3)      DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_ht  double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_tva double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_ttc double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   subprice  double(16,8)     DEFAULT 0;
+
 ALTER TABLE llx_societe_remise_except MODIFY  amount_ht     double(16,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  amount_tva    double(16,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(16,8) DEFAULT 0;

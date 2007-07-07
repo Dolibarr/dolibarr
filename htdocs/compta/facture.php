@@ -1639,7 +1639,7 @@ if ($_GET['action'] == 'create')
 					}
 				}
 				print '</td>';
-				print '<td align="right">'.$objp->tva_tx.'%</td>';
+				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
 				print '<td align="right">'.price($objp->subprice).'</td>';
 				print '<td align="right">';
 				print (($objp->info_bits & 2) != 2) ? $objp->qty : '&nbsp;';
@@ -2193,9 +2193,10 @@ else
 			/*
 			* Lignes de factures
 			*/
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux,';
+			$sql = 'SELECT l.fk_product, l.description, l.qty, l.rowid, l.tva_taux,';
 			$sql.= ' l.fk_remise_except,';
 			$sql.= ' l.remise_percent, l.subprice, l.info_bits,';
+			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 			$sql.= ' '.$db->pdate('l.date_start').' as date_start,';
 			$sql.= ' '.$db->pdate('l.date_end').' as date_end,';
 			$sql.= ' p.ref, p.fk_product_type, p.label as product,';
@@ -2289,7 +2290,7 @@ else
 							}
 							print "</td>\n";
 						}
-						print '<td align="right">'.$objp->tva_taux.'%</td>';
+						print '<td align="right">'.vatrate($objp->tva_taux).'%</td>';
 						print '<td align="right">'.price($objp->subprice)."</td>\n";
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)
@@ -2306,7 +2307,7 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
-						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+						print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 						// Icone d'edition et suppression
 						if ($fac->statut == 0  && $user->rights->facture->creer)

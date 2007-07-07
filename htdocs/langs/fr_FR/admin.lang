@@ -463,7 +463,7 @@ LimitsSetup=Configuration des limites et precisions
 LimitsDesc=Vous pouvez définir ici les limites et précisions utilisées par Dolibarr
 MAIN_MAX_DECIMALS_UNIT=Nombre de décimals maximum pour les prix unitaires
 MAIN_MAX_DECIMALS_TOT=Nombre de décimals maximum pour les prix totaux
-MAIN_MAX_DECIMALS_SHOWN=Nombre de décimals maximum pour les montant affichés à l'écran (Les décimals en trop sont remplacés par trois petits points: <b>...</b>)
+MAIN_MAX_DECIMALS_SHOWN=Nombre de décimals maximum pour les montant affichés à l'écran (Mettre <b>...</b> après ce nombre max si vous voulez voir <b>...</b> quand le nombre est tronqué à l'affichage écran)
 ##### Users setup #####
 UserGroupSetup=Configuration module utilisateurs et groupes
 GeneratePassword=Proposer un mot de passe généré

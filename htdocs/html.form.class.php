@@ -2316,7 +2316,7 @@ class Form
 			{
 				print ' selected="true"';
 			}
-			print '>'.$libtva[$i].'</option>';
+			print '>'.vatrate($libtva[$i]).'</option>';
 			
 			$this->tva_taux_value[$i] = $txtva[$i];
 			$this->tva_taux_libelle[$i] = $libtva[$i];

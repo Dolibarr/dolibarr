@@ -280,8 +280,8 @@ class Propal extends CommonObject
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
-            $pu = price2num($pu);
-			$txtva = price2num($txtva);
+            $pu = price2num($pu,'MU');
+			$txtva = price2num($txtva,'MU');
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -292,8 +292,9 @@ class Propal extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
+            // \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-            $price = $pu;
+			$price = $pu;
             if ($remise_percent > 0)
             {
                 $remise = round(($pu * $remise_percent / 100), 2);
@@ -316,7 +317,7 @@ class Propal extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 
-			// Ne plus utiliser
+			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 
@@ -2236,6 +2237,9 @@ class PropaleLigne
 		dolibarr_syslog("PropaleLigne.class::insert rang=".$this->rang);
 		$this->db->begin();
 
+		// Nettoyage parameteres
+		if (! $this->remise) $this->remise=0;
+		
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
 		{
@@ -2258,29 +2262,29 @@ class PropaleLigne
 
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
-		$sql.= ' (fk_propal, description, price, qty, tva_tx,';
-		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
-		$sql.= ' rang, coef,';
-		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
+		$sql.= ' (fk_propal, description, fk_product, fk_remise_except, qty, tva_tx,';
+		$sql.= ' subprice, remise_percent, price, remise,  ';
+		$sql.= ' info_bits, ';
+		$sql.= ' total_ht, total_tva, total_ttc, coef, rang)';
 		$sql.= " VALUES (".$this->fk_propal.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		$sql.= " '".price2num($this->price)."',";
-		$sql.= " '".price2num($this->qty)."',";
-		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
-		$sql.= " '".price2num($this->remise_percent)."',";
-		$sql.= " '".price2num($this->subprice)."',";
-		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
-		$sql.= ' '.$rangtouse.',';
+		$sql.= " ".price2num($this->qty).",";
+		$sql.= " ".price2num($this->tva_tx).",";
+		$sql.= " ".price2num($this->subprice).",";
+		$sql.= " ".price2num($this->remise_percent).",";
+		$sql.= " ".price2num($this->price).",";				// \TODO A virer
+		$sql.= " ".price2num($this->remise).",";			// \TODO A virer
+		$sql.= " '".$this->info_bits."',";
+		$sql.= " ".price2num($this->total_ht).",";
+		$sql.= " ".price2num($this->total_tva).",";
+		$sql.= " ".price2num($this->total_ttc).",";
 		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
 		else $sql.= ' null,';
-		$sql.= " '".$this->info_bits."',";
-		$sql.= " '".price2num($this->total_ht)."',";
-		$sql.= " '".price2num($this->total_tva)."',";
-		$sql.= " '".price2num($this->total_ttc)."'";
+		$sql.= ' '.$rangtouse;
 		$sql.= ')';
 
        	dolibarr_syslog("PropaleLigne.class::insert sql=$sql");
@@ -2313,20 +2317,20 @@ class PropaleLigne
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
 		$sql.= " description='".addslashes($this->desc)."'";
-		$sql.= ",price='".price2num($this->price)."'";
-		$sql.= ",subprice='".price2num($this->subprice)."'";
-		$sql.= ",remise='".price2num($this->remise)."'";
-		$sql.= ",remise_percent='".price2num($this->remise_percent)."'";
 		if ($fk_remise_except) $sql.= ",fk_remise_except=".$this->fk_remise_except;
 		else $sql.= ",fk_remise_except=null";
 		$sql.= ",tva_tx='".price2num($this->tva_tx)."'";
 		$sql.= ",qty='".price2num($this->qty)."'";
+		$sql.= ",subprice=".price2num($this->subprice)."";
+		$sql.= ",remise_percent=".price2num($this->remise_percent)."";
+		$sql.= ",price=".price2num($this->price)."";					// \TODO A virer
+		$sql.= ",remise=".price2num($this->remise)."";					// \TODO A virer
+		$sql.= ",info_bits='".$this->info_bits."'";
+		$sql.= ",total_ht=".price2num($this->total_ht)."";
+		$sql.= ",total_tva=".price2num($this->total_tva)."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= ",coef='".$this->coef."'";
-		$sql.= ",info_bits='".$this->info_bits."'";
-		$sql.= ",total_ht='".price2num($this->total_ht)."'";
-		$sql.= ",total_tva='".price2num($this->total_tva)."'";
-		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
        	dolibarr_syslog("PropaleLigne::update sql=$sql");
@@ -2347,7 +2351,7 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     	Mise a jour an base des champs total_xxx de ligne de propale
+	 *      \brief     	Mise a jour en base des champs total_xxx de ligne de propale
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
@@ -2356,9 +2360,9 @@ class PropaleLigne
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql.= " total_ht='".price2num($this->total_ht)."'";
-		$sql.= ",total_tva='".price2num($this->total_tva)."'";
-		$sql.= ",total_ttc='".price2num($this->total_ttc)."'";
+		$sql.= " total_ht=".price2num($this->total_ht)."";
+		$sql.= ",total_tva=".price2num($this->total_tva)."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
        	dolibarr_syslog("PropaleLigne::update_total sql=$sql");
