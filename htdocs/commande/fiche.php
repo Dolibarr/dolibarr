@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Regis Houssin         <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani      <acianfa@free.fr>
@@ -1349,7 +1349,7 @@ else
 							print '</td>';
 						}
 
-						print '<td align="right">'.$objp->tva_tx.'%</td>';
+						print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
 						print '<td align="right">'.price($objp->subprice).'</td>';
 						print '<td align="right">';
 						if (($objp->info_bits & 2) != 2)

@@ -1,6 +1,6 @@
 -- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,17 +26,17 @@ create table llx_commandedet
   fk_commande    integer,
   fk_product     integer,
   description    text,
-  tva_tx         real, 				-- taux tva
+  tva_tx         double(6,3),		-- taux tva
   qty            real,              -- quantité
   remise_percent real DEFAULT 0,    -- pourcentage de remise
   remise         real DEFAULT 0,    -- montant de la remise
   fk_remise_except	integer NULL,   -- Lien vers table des remises fixes
-  subprice       real,              -- prix avant remise
   price          real,              -- prix final
-  total_ht        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc       real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  info_bits		  integer DEFAULT 0, 	-- TVA NPR ou non
+  subprice       double(16,8),          -- prix unitaire
+  total_ht       double(16,8),        	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva      double(16,8),	       	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc      double(16,8),	       	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits		 integer DEFAULT 0, 	-- TVA NPR ou non
   coef           real,              -- coefficient de marge
   special_code        tinyint(1) UNSIGNED DEFAULT 0, -- code pour les lignes speciales
   rang           integer DEFAULT 0

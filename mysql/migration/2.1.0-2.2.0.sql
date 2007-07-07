@@ -563,6 +563,12 @@ drop table if exists llx_ventes;
 drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
 
+ALTER TABLE llx_commande_fournisseurdet ADD total_ht              double(16,8) after subprice;
+ALTER TABLE llx_commande_fournisseurdet ADD total_tva             double(16,8) after total_ht;
+ALTER TABLE llx_commande_fournisseurdet ADD total_ttc             double(16,8) after total_tva;
+ALTER TABLE llx_commande_fournisseurdet ADD info_bits             integer DEFAULT 0 after total_ttc;
+
+
 -- Pas de limite sur nb decimal des prix dans base car definie en option
 -- Tous les prix doivent etre au format float(16,8)
 -- Tous les tx tva doivent etre au format float(6,3)
@@ -616,6 +622,26 @@ ALTER TABLE llx_contratdet MODIFY  subprice              double(16,8);
 ALTER TABLE llx_contratdet MODIFY  total_ht              double(16,8);
 ALTER TABLE llx_contratdet MODIFY  total_tva             double(16,8);
 ALTER TABLE llx_contratdet MODIFY  total_ttc             double(16,8);
+
+ALTER TABLE llx_commande MODIFY  total_ht              double(16,8);
+ALTER TABLE llx_commande MODIFY  tva                   double(16,8);
+ALTER TABLE llx_commande MODIFY  total_ttc             double(16,8);
+
+ALTER TABLE llx_commande_fournisseur MODIFY  total_ht              double(16,8);
+ALTER TABLE llx_commande_fournisseur MODIFY  tva                   double(16,8);
+ALTER TABLE llx_commande_fournisseur MODIFY  total_ttc             double(16,8);
+
+ALTER TABLE llx_commandedet MODIFY  subprice              double(16,8);
+ALTER TABLE llx_commandedet MODIFY  total_tva             double(16,8);
+ALTER TABLE llx_commandedet MODIFY  total_ht              double(16,8);
+ALTER TABLE llx_commandedet MODIFY  total_ttc             double(16,8);
+ALTER TABLE llx_commandedet MODIFY  tva_tx                double(6,3);
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY  subprice              double(16,8);
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_tva             double(16,8);
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ht              double(16,8);
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ttc             double(16,8);
+ALTER TABLE llx_commande_fournisseurdet MODIFY  tva_tx                double(6,3);
 
 ALTER TABLE llx_societe_remise_except MODIFY  amount_ht     double(16,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  amount_tva    double(16,8) DEFAULT 0;

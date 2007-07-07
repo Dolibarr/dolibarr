@@ -253,22 +253,22 @@ class Fichinter extends CommonObject
         if ($mode == 2)
         {
         	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts_short[$statut];
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1').' '.$this->statuts_short[$statut];
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts_short[$statut];
         }
         if ($mode == 3)
         {
         	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0');
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1');
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6');
         }
         if ($mode == 4)
         {
         	if ($statut==0) return img_picto($this->statuts_short[$statut],'statut0').' '.$this->statuts[$statut];
-        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut1').' '.$this->statuts[$statut];
+        	if ($statut==1) return img_picto($this->statuts_short[$statut],'statut6').' '.$this->statuts[$statut];
         }
         if ($mode == 5)
         {
         	if ($statut==0) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut0');
-        	if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut1');
+        	if ($statut==1) return $this->statuts_short[$statut].' '.img_picto($this->statuts_short[$statut],'statut6');
         }
     }
 
