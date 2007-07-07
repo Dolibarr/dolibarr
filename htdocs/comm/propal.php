@@ -555,7 +555,8 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     	$_POST['qty'],
     	$_POST['remise_percent'],
     	$_POST['tva_tx'],
-    	$_POST['desc']);
+    	$_POST['desc'],
+		'HT');
 
 	if ($_REQUEST['lang_id'])
 	{
@@ -1020,8 +1021,9 @@ if ($_GET['propalid'] > 0)
 	 */
 	print '<table class="noborder" width="100%">';
 
-	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
+	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1032,7 +1034,7 @@ if ($_GET['propalid'] > 0)
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
-		$i = 0; $total = 0;
+		$i = 0;
 
 		if ($num)
 		{
@@ -1148,7 +1150,7 @@ if ($_GET['propalid'] > 0)
 				{
 					print '<td>&nbsp;</td>';
 				}
-				print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+				print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 				// Icone d'edition et suppression
 				if ($propal->statut == 0  && $user->rights->propale->creer)
@@ -1268,7 +1270,6 @@ if ($_GET['propalid'] > 0)
 				print "</form>\n";
 			}
 
-			$total = $total + ($objp->qty * $objp->price);
 			$i++;
 		}
 

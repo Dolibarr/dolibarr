@@ -27,8 +27,9 @@
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/lib/price.lib.php");
 
 
 /**
@@ -640,31 +641,34 @@ class Contrat extends CommonObject
     
     /**
      *      \brief      Ajoute une ligne de contrat en base
-     *      \param      desc            Description de la ligne
-     *      \param      pu              Prix unitaire
-     *      \param      qty             Quantité
-     *      \param      txtva           Taux tva
-     *      \param      fk_product      Id produit
-     *      \param      remise_percent  Pourcentage de remise de la ligne
-     *      \param      date_start      Date de debut prévue
-     *      \param      date_end        Date de fin prévue
-     *      \return     int             <0 si erreur, >0 si ok
+     *      \param      desc            	Description de la ligne
+     *      \param      pu              	Prix unitaire (HT ou TTC selon price_base_type
+     *      \param      qty             	Quantité
+     *      \param      txtva           	Taux tva
+     *      \param      fk_product      	Id produit
+     *      \param      remise_percent  	Pourcentage de remise de la ligne
+     *      \param      date_start      	Date de debut prévue
+     *      \param      date_end        	Date de fin prévue
+	 *		\param		price_base_type		HT ou TTC
+     *      \return     int             	<0 si erreur, >0 si ok
      */
-    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end)
+    function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start, $date_end, $price_base_type='HT')
     {
         global $langs;
 		global $conf;
         
 		// Nettoyage parametres
 		if (! $txtva) $txtva=0;
+		$remise_percent=price2num($remise_percent);
+		$qty=price2num($qty);
+		if (! $qty) $qty=1;
+		$pu = price2num($pu,'MU');
+		$txtva = price2num($txtva,'MU');
 		
-        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end");
+        dolibarr_syslog("Contrat::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $date_start, $date_end, $price_base_type");
 
         if ($this->statut == 0)
         {
-            $qty = price2num($qty);
-            $pu = price2num($pu);
-            
             if ($fk_product > 0)
             {
                 $prod = new Product($this->db, $fk_product);
@@ -680,9 +684,19 @@ class Contrat extends CommonObject
                 }
             }
             
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+
+            // \TODO A virer
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
             $remise = 0;
             $price = price2num(round($pu, 2));
-            $subprice = $price;
             if (strlen($remise_percent) > 0)
             {
                 $remise = round(($pu * $remise_percent / 100), 2);
@@ -691,18 +705,22 @@ class Contrat extends CommonObject
             
             // Insertion dans la base
             $sql = "INSERT INTO ".MAIN_DB_PREFIX."contratdet";
-            $sql.= " (fk_contrat, label, description, fk_product, price_ht, qty, tva_tx,";
-            $sql.= " remise_percent, subprice, remise";
+            $sql.= " (fk_contrat, label, description, fk_product, qty, tva_tx,";
+            $sql.= " remise_percent, subprice,";
+			$sql.= " total_ht, total_tva, total_ttc,";
+			$sql.= " price_ht, remise";								// \TODO A virer
             if ($date_start > 0) { $sql.= ",date_ouverture_prevue"; }
             if ($date_end > 0)  { $sql.= ",date_fin_validite"; }
             $sql.= ") VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',";
-            $sql.= ($fk_product>0 ? $fk_product : "null");
-            $sql.= ",".price2num($price).", '$qty', ";
-			$sql.= $txtva.",";
-			$sql.= $remise_percent.",'".price2num($subprice)."','".price2num( $remise)."'";
+            $sql.= ($fk_product>0 ? $fk_product : "null").",";
+            $sql.= " '$qty',";
+			$sql.= " ".$txtva.",";
+			$sql.= " ".price2num($remise_percent).",".price2num($pu).",";
+			$sql.= " ".price2num($total_ht).",".price2num($total_tva).",".price2num($total_ttc).",";
+			$sql.= " ".price2num($price).",".price2num( $remise);	// \TODO A virer
             if ($date_start > 0) { $sql.= ",".$this->db->idate($date_start); }
             if ($date_end > 0) { $sql.= ",".$this->db->idate($date_end); }
-            $sql.= ");";
+            $sql.= ")";
             
             if ( $this->db->query($sql) )
             {
@@ -831,6 +849,7 @@ class Contrat extends CommonObject
 
     /**
      *      \brief      Mets à jour le prix total du contrat
+     *		\return     int     <0 si ko, >0 si ok
      */
     function update_price()
     {
@@ -839,7 +858,7 @@ class Contrat extends CommonObject
         /*
          *  Liste des produits a ajouter
          */
-        $sql = "SELECT price_ht, qty, tva_tx";
+        $sql = "SELECT total_ht, total_tva, total_ttc";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet";
         $sql.= " WHERE fk_contrat = ".$this->id;
         $resql=$this->db->query($sql);
@@ -851,23 +870,35 @@ class Contrat extends CommonObject
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($resql);
-                $products[$i][0] = $obj->price_ht;
-                $products[$i][1] = $obj->qty;
-                $products[$i][2] = $obj->tva_tx;
+                $this->total_ht  += $obj->total_ht;
+                $this->total_tva += $obj->total_tva;
+                $this->total_ttc += $obj->total_ttc;
                 $i++;
             }
-        }
+
+	        // Met a jour en base
+			/*
+	        $sql = "UPDATE ".MAIN_DB_PREFIX."contrat SET";
+	        $sql .= " total_ht=".  price2num($this->total_ht).",";
+	        $sql .= " total_tva=". price2num($this->total_tva).",";
+	        $sql .= " total_ttc='".price2num($this->total_ttc);
+	        $sql .=" WHERE rowid = ".$this->id;
+	        if ( $this->db->query($sql) )
+	        {
+	            return 1;
+	        }
+	        else
+	        {
+	            $this->error=$this->db->error();
+	            return -1;
+	        }
+			*/
+		}
         else
         {
             $this->error=$this->db->error();
             return -1;
         }
-        $calculs = calcul_price($products, $this->remise_percent);
-    
-        $this->remise         = $calculs[3];
-        $this->total_ht       = $calculs[0];
-        $this->total_tva      = $calculs[1];
-        $this->total_ttc      = $calculs[2];
     }
     
 
