@@ -34,6 +34,7 @@ require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_
 require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 include_once('../facture.class.php');
 include_once('../propal.class.php');
+include_once('../contrat/contrat.class.php');
 include_once('../commande/commande.class.php');
 include_once('../lib/price.lib.php');
 
@@ -158,8 +159,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_contracts_date3($db,$langs,$conf);
         
-        migrate_fichinter_date1($db,$langs,$conf);
-
         migrate_contracts_open($db,$langs,$conf);
 
         migrate_modeles($db,$langs,$conf);
@@ -169,6 +168,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_price_commande($db,$langs,$conf);
 
 		migrate_price_facture($db,$langs,$conf);
+
+		migrate_price_contrat($db,$langs,$conf);
 
         migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
@@ -714,34 +715,6 @@ function migrate_contracts_date3($db,$langs,$conf)
 	print '</td></tr>';
 }
 
-/*
- * Mise a jour des dates tms de fiche d'intervention
- */
-function migrate_fichinter_date1($db,$langs,$conf)
-{
- 	print '<tr><td colspan="4">';
-
-    print '<br>';
-    print '<b>'.$langs->trans('MigrationFichinterIncoherentTmsDateUpdate')."</b><br>\n";
-    
-    $sql1="update llx_fichinter set tms=datec where tms < datec";
-    $resql1 = $db->query($sql1);
-    if (! $resql1) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0)
-	 	print $langs->trans('MigrationFchinterIncoherentTmsDateUpdateSuccess')."<br>\n";
-    else
-	 	print $langs->trans('MigrationFichinterIncoherentTmsDateNothingToUpdate')."<br>\n";
-    $sql2="update llx_fichinter set tms=date_valid where tms < date_valid";
-    $resql2 = $db->query($sql2);
-    if (! $resql2) dolibarr_print_error($db);
-    if ($db->affected_rows() > 0)
-	 	print $langs->trans('MigrationFchinterIncoherentTmsDateUpdateSuccess')."<br>\n";
-    else
-	 	print $langs->trans('MigrationFichinterIncoherentTmsDateNothingToUpdate')."<br>\n";
-
-	print '</td></tr>';
-}
-
 
 /*
  * Reouverture des contrats qui ont au moins une ligne non fermée
@@ -891,104 +864,101 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
  */
 function migrate_price_facture($db,$langs,$conf)
 {
-    if ($conf->facture->enabled)
-    {
-		$db->begin();
+	$db->begin();
 
-		dolibarr_install_syslog("upgrade2: Upgrade data for invoice");
+	dolibarr_install_syslog("upgrade2: Upgrade data for invoice");
 
-	 	print '<tr><td colspan="4">';
+	print '<tr><td colspan="4">';
 
-	    print '<br>';
-	    print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
-		
-		// Liste des lignes facture non a jour
-		$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, ";
-		$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global";
-		$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
-		$sql.= " WHERE fd.fk_facture = f.rowid";
-		$sql.= " AND ((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL)";
-		$resql=$db->query($sql);
-		if ($resql)
-		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			if ($num)
-			{
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-					
-					$rowid = $obj->rowid;
-					$qty = $obj->qty;
-					$pu = $obj->subprice;
-					$txtva = $obj->tva_taux;
-					$remise_percent = $obj->remise_percent;
-					$remise_percent_global = $obj->remise_percent_global;
-					
-					// On met a jour les 3 nouveaux champs
-					$facligne= new FactureLigne($db);
-					$facligne->fetch($rowid);
-
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
-					$total_ht  = $result[0];
-					$total_tva = $result[1];
-					$total_ttc = $result[2];
-					
-					$facligne->total_ht  = $total_ht; 
-					$facligne->total_tva = $total_tva;
-					$facligne->total_ttc = $total_ttc;
-					
-					dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
-					print ". ";
-					$facligne->update_total();
-															
-					
-					/* On touche pas a facture mere
-					$facture = new Facture($db);
-					$facture->id=$obj->facid;
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 	
-					if ( $facture->fetch($facture->id) >= 0)
+	// Liste des lignes facture non a jour
+	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, ";
+	$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
+	$sql.= " WHERE fd.fk_facture = f.rowid";
+	$sql.= " AND ((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL)";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+				
+				$rowid = $obj->rowid;
+				$qty = $obj->qty;
+				$pu = $obj->subprice;
+				$txtva = $obj->tva_taux;
+				$remise_percent = $obj->remise_percent;
+				$remise_percent_global = $obj->remise_percent_global;
+				
+				// On met a jour les 3 nouveaux champs
+				$facligne= new FactureLigne($db);
+				$facligne->fetch($rowid);
+
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
+				$total_ht  = $result[0];
+				$total_tva = $result[1];
+				$total_ttc = $result[2];
+				
+				$facligne->total_ht  = $total_ht; 
+				$facligne->total_tva = $total_tva;
+				$facligne->total_ttc = $total_ttc;
+				
+				dolibarr_install_syslog("upgrade2: Line $rowid: facid=$obj->facid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+				print ". ";
+				$facligne->update_total();
+														
+				
+				/* On touche pas a facture mere
+				$facture = new Facture($db);
+				$facture->id=$obj->facid;
+
+				if ( $facture->fetch($facture->id) >= 0)
+				{
+					if ( $facture->update_price($facture->id) > 0 )
 					{
-						if ( $facture->update_price($facture->id) > 0 )
-						{
-							print ". ";
-						}
-						else
-						{
-							print "Error id=".$facture->id;
-							$err++;
-						}
+						print ". ";
 					}
 					else
 					{
-						print "Error #3";
+						print "Error id=".$facture->id;
 						$err++;
 					}
-					*/
-					$i++;
 				}
+				else
+				{
+					print "Error #3";
+					$err++;
+				}
+				*/
+				$i++;
 			}
-			else
-			{
-				print $langs->trans("AlreadyDone");	
-			}
-			$db->free();
-
-			$db->rollback();
 		}
 		else
 		{
-			print "Error #1 ".$db->error();
-			$err++;
-
-			$db->rollback();
+			print $langs->trans("AlreadyDone");	
 		}
+		$db->free($resql);
 
-		print '<br><br>';
-		
-		print '</td></tr>';
+		$db->commit();
 	}
+	else
+	{
+		print "Error #1 ".$db->error();
+		$err++;
+
+		$db->rollback();
+	}
+
+	print '<br>';
+	
+	print '</td></tr>';
 }
 
 
@@ -997,104 +967,206 @@ function migrate_price_facture($db,$langs,$conf)
  */
 function migrate_price_propal($db,$langs,$conf)
 {
-    if ($conf->propal->enabled)
-    {
-		$db->begin();
+	$db->begin();
 
-		dolibarr_install_syslog("upgrade2: Upgrade data for propal");
+	dolibarr_install_syslog("upgrade2: Upgrade data for propal");
 
-	 	print '<tr><td colspan="4">';
+	print '<tr><td colspan="4">';
 
-	    print '<br>';
-	    print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationProposal')."</b><br>\n";
 
-		// Liste des lignes propal non a jour
-		$sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, ";
-		$sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
-		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
-		$sql.= " WHERE pd.fk_propal = p.rowid";
-		$sql.= " AND ((pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL)";
-		$resql=$db->query($sql);
-		if ($resql)
+	// Liste des lignes propal non a jour
+	$sql = "SELECT pd.rowid, pd.qty, pd.subprice, pd.remise_percent, pd.tva_tx as tva_taux, ";
+	$sql.= " p.rowid as propalid, p.remise_percent as remise_percent_global";
+	$sql.= " FROM ".MAIN_DB_PREFIX."propaldet as pd, ".MAIN_DB_PREFIX."propal as p";
+	$sql.= " WHERE pd.fk_propal = p.rowid";
+	$sql.= " AND ((pd.total_ttc = 0 AND pd.remise_percent != 100) or pd.total_ttc IS NULL)";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
 		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			if ($num)
+			while ($i < $num)
 			{
-				while ($i < $num)
+				$obj = $db->fetch_object($resql);
+
+				$rowid = $obj->rowid;
+				$qty = $obj->qty;
+				$pu = $obj->subprice;
+				$txtva = $obj->tva_taux;
+				$remise_percent = $obj->remise_percent;
+				$remise_percent_global = $obj->remise_percent_global;
+				
+				// On met a jour les 3 nouveaux champs
+				$propalligne= new PropaleLigne($db);
+				$propalligne->fetch($rowid);
+
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
+				$total_ht  = $result[0];
+				$total_tva = $result[1];
+				$total_ttc = $result[2];
+				
+				$propalligne->total_ht  = $total_ht; 
+				$propalligne->total_tva = $total_tva;
+				$propalligne->total_ttc = $total_ttc;
+				
+				dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+				print ". ";
+				$propalligne->update_total($rowid);
+
+
+				/* On touche pas a propal mere
+				$propal = new Propal($db);
+				$propal->id=$obj->rowid;
+				if ( $propal->fetch($propal->id) >= 0 )
 				{
-					$obj = $db->fetch_object($resql);
-	
-					$rowid = $obj->rowid;
-					$qty = $obj->qty;
-					$pu = $obj->subprice;
-					$txtva = $obj->tva_taux;
-					$remise_percent = $obj->remise_percent;
-					$remise_percent_global = $obj->remise_percent_global;
-					
-					// On met a jour les 3 nouveaux champs
-					$propalligne= new PropaleLigne($db);
-					$propalligne->fetch($rowid);
-
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
-					$total_ht  = $result[0];
-					$total_tva = $result[1];
-					$total_ttc = $result[2];
-					
-					$propalligne->total_ht  = $total_ht; 
-					$propalligne->total_tva = $total_tva;
-					$propalligne->total_ttc = $total_ttc;
-					
-					dolibarr_install_syslog("upgrade2: Line $rowid: propalid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
-					print ". ";
-					$propalligne->update_total($rowid);
-
-
-					/* On touche pas a propal mere
-					$propal = new Propal($db);
-					$propal->id=$obj->rowid;
-					if ( $propal->fetch($propal->id) >= 0 )
+					if ( $propal->update_price($propal->id) > 0 )
 					{
-						if ( $propal->update_price($propal->id) > 0 )
-						{
-							print ". ";
-						}
-						else
-						{
-							print "Error id=".$propal->id;
-							$err++;
-						}
+						print ". ";
 					}
 					else
 					{
-						print "Error #3";
+						print "Error id=".$propal->id;
 						$err++;
 					}
-					*/
-					$i++;
 				}
+				else
+				{
+					print "Error #3";
+					$err++;
+				}
+				*/
+				$i++;
 			}
-			else
-			{
-				print $langs->trans("AlreadyDone");	
-			}
-				
-			$db->free();
-
-			$db->rollback();
 		}
 		else
 		{
-			print "Error #1 ".$db->error();
-			$err++;
-
-			$db->rollback();
+			print $langs->trans("AlreadyDone");	
 		}
+			
+		$db->free($resql);
 
-		print '<br>';
-
-		print '</td></tr>';
+		$db->commit();
 	}
+	else
+	{
+		print "Error #1 ".$db->error();
+		$err++;
+
+		$db->rollback();
+	}
+
+	print '<br>';
+
+	print '</td></tr>';
+}
+
+
+
+/*
+ * Mise a jour des totaux lignes de propal
+ */
+function migrate_price_contrat($db,$langs,$conf)
+{
+	$db->begin();
+
+	dolibarr_install_syslog("upgrade2: Upgrade data for contracts");
+
+	print '<tr><td colspan="4">';
+
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationContract')."</b><br>\n";
+
+	// Liste des lignes contrat non a jour
+	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
+	$sql.= " c.rowid as contratid";
+	$sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd, ".MAIN_DB_PREFIX."contrat as c";
+	$sql.= " WHERE cd.fk_contrat = c.rowid";
+	$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100 AND cd.subprice > 0) or cd.total_ttc IS NULL)";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
+		{
+			while ($i < $num)
+			{
+				$obj = $db->fetch_object($resql);
+
+				$rowid = $obj->rowid;
+				$qty = $obj->qty;
+				$pu = $obj->subprice;
+				$txtva = $obj->tva_taux;
+				$remise_percent = $obj->remise_percent;
+				$remise_percent_global = $obj->remise_percent_global;
+				
+				// On met a jour les 3 nouveaux champs
+				$contratligne= new ContratLigne($db);
+				//$contratligne->fetch($rowid); Non requis car le update_total ne met a jour que chp redefinis
+				$contratligne->rowid=$rowid;
+				
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
+				$total_ht  = $result[0];
+				$total_tva = $result[1];
+				$total_ttc = $result[2];
+				
+				$contratligne->total_ht  = $total_ht; 
+				$contratligne->total_tva = $total_tva;
+				$contratligne->total_ttc = $total_ttc;
+				
+				dolibarr_install_syslog("upgrade2: Line $rowid: contratdetid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+				print ". ";
+				$contratligne->update_total($rowid);
+
+
+				/* On touche pas a contrat mere
+				$propal = new Propal($db);
+				$propal->id=$obj->rowid;
+				if ( $propal->fetch($propal->id) >= 0 )
+				{
+					if ( $propal->update_price($propal->id) > 0 )
+					{
+						print ". ";
+					}
+					else
+					{
+						print "Error id=".$propal->id;
+						$err++;
+					}
+				}
+				else
+				{
+					print "Error #3";
+					$err++;
+				}
+				*/
+				$i++;
+			}
+		}
+		else
+		{
+			print $langs->trans("AlreadyDone");	
+		}
+			
+		$db->free($resql);
+
+		$db->commit();
+	}
+	else
+	{
+		print "Error #1 ".$db->error();
+		$err++;
+
+		$db->rollback();
+	}
+
+	print '<br>';
+
+	print '</td></tr>';
 }
 
 
@@ -1103,111 +1175,108 @@ function migrate_price_propal($db,$langs,$conf)
  */
 function migrate_price_commande($db,$langs,$conf)
 {
-    if ($conf->facture->enabled)
-    {
-		$db->begin();
+	$db->begin();
 
-		dolibarr_install_syslog("upgrade2: Upgrade data for order");
+	dolibarr_install_syslog("upgrade2: Upgrade data for order");
 
-	 	print '<tr><td colspan="4">';
+	print '<tr><td colspan="4">';
 
-	    print '<br>';
-	    print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
+	print '<br>';
+	print '<b>'.$langs->trans('MigrationOrder')."</b><br>\n";
 
-		// Liste des lignes commande non a jour
-		$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
-		$sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
-		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
-		$sql.= " WHERE cd.fk_commande = c.rowid";
-		$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
-		$resql=$db->query($sql);
-		if ($resql)
+	// Liste des lignes commande non a jour
+	$sql = "SELECT cd.rowid, cd.qty, cd.subprice, cd.remise_percent, cd.tva_tx as tva_taux, ";
+	$sql.= " c.rowid as commandeid, c.remise_percent as remise_percent_global";
+	$sql.= " FROM ".MAIN_DB_PREFIX."commandedet as cd, ".MAIN_DB_PREFIX."commande as c";
+	$sql.= " WHERE cd.fk_commande = c.rowid";
+	$sql.= " AND ((cd.total_ttc = 0 AND cd.remise_percent != 100) or cd.total_ttc IS NULL)";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$num = $db->num_rows($resql);
+		$i = 0;
+		if ($num)
 		{
-			$num = $db->num_rows($resql);
-			$i = 0;
-			if ($num)
+			while ($i < $num)
 			{
-				while ($i < $num)
+				$obj = $db->fetch_object($resql);
+
+				$rowid = $obj->rowid;
+				$qty = $obj->qty;
+				$pu = $obj->subprice;
+				$txtva = $obj->tva_taux;
+				$remise_percent = $obj->remise_percent;
+				$remise_percent_global = $obj->remise_percent_global;
+				
+				// On met a jour les 3 nouveaux champs
+				$commandeligne= new CommandeLigne($db);
+				$commandeligne->fetch($rowid);
+
+				$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
+				$total_ht  = $result[0];
+				$total_tva = $result[1];
+				$total_ttc = $result[2];
+				
+				$commandeligne->total_ht  = $total_ht; 
+				$commandeligne->total_tva = $total_tva;
+				$commandeligne->total_ttc = $total_ttc;
+				
+				dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
+				print ". ";
+				$commandeligne->update_total($rowid);
+
+				/* On touche pas a facture mere
+				$commande = new Commande($db);
+				$commande->id = $obj->rowid;
+				if ( $commande->fetch($commande->id) >= 0 )
 				{
-					$obj = $db->fetch_object($resql);
-	
-					$rowid = $obj->rowid;
-					$qty = $obj->qty;
-					$pu = $obj->subprice;
-					$txtva = $obj->tva_taux;
-					$remise_percent = $obj->remise_percent;
-					$remise_percent_global = $obj->remise_percent_global;
-					
-					// On met a jour les 3 nouveaux champs
-					$commandeligne= new CommandeLigne($db);
-					$commandeligne->fetch($rowid);
-
-					$result=calcul_price_total($qty,$pu,$remise_percent,$txtva,$remise_percent_global,'HT');
-					$total_ht  = $result[0];
-					$total_tva = $result[1];
-					$total_ttc = $result[2];
-					
-					$commandeligne->total_ht  = $total_ht; 
-					$commandeligne->total_tva = $total_tva;
-					$commandeligne->total_ttc = $total_ttc;
-					
-					dolibarr_install_syslog("upgrade2: Line $rowid: commandeid=$obj->rowid pu=$pu qty=$qty tva_taux=$txtva remise_percent=$remise_percent remise_global=$remise_percent_global -> $total_ht, $total_tva, $total_ttc");
-					print ". ";
-					$commandeligne->update_total($rowid);
-
-					/* On touche pas a facture mere
-					$commande = new Commande($db);
-					$commande->id = $obj->rowid;
-					if ( $commande->fetch($commande->id) >= 0 )
+					if ( $commande->update_price($commande->id) > 0 )
 					{
-						if ( $commande->update_price($commande->id) > 0 )
-						{
-							print ". ";
-						}
-						else
-						{
-							print "Error id=".$commande->id;
-							$err++;
-						}
+						print ". ";
 					}
 					else
 					{
-						print "Error #3";
+						print "Error id=".$commande->id;
 						$err++;
 					}
-					*/
-					$i++;
 				}
+				else
+				{
+					print "Error #3";
+					$err++;
+				}
+				*/
+				$i++;
 			}
-			else
-			{
-				print $langs->trans("AlreadyDone");	
-			}
-
-			$db->free();
-
-			$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
-			$sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
-			$resql=$db->query($sql);
-			if (! $resql)
-			{
-				dolibarr_print_error($db);	
-			}
-			
-			$db->rollback();
 		}
 		else
 		{
-			print "Error #1 ".$db->error();
-			$err++;
-
-			$db->rollback();
+			print $langs->trans("AlreadyDone");	
 		}
 
-		print '<br>';
+		$db->free($resql);
 
-		print '</td></tr>';
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."commandedet";
+		$sql.= " WHERE price = 0 and total_ttc = 0 and total_tva = 0 and total_ht = 0";
+		$resql=$db->query($sql);
+		if (! $resql)
+		{
+			dolibarr_print_error($db);	
+		}
+		
+		$db->commit();
 	}
+	else
+	{
+		print "Error #1 ".$db->error();
+		$err++;
+
+		$db->rollback();
+	}
+
+	print '<br>';
+
+	print '</td></tr>';
 }
 
 

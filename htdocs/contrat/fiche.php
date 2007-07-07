@@ -184,7 +184,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
                 $_POST["p_idprod"],
                 $_POST["premise"],
                 $date_start,
-                $date_end
+                $date_end,
+				'HT'
                 );
         }
         elseif ($_POST["mode"]=='libre')
@@ -197,7 +198,8 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
                 0,
                 $_POST["premise"],
                 $date_start_sl,
-                $date_end_sl
+                $date_end_sl,
+				'HT'
                 );
         }
     

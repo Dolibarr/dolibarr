@@ -1198,6 +1198,9 @@ class Contrat extends CommonObject
 
 class ContratLigne  
 {
+	var $db;
+	var $error;
+
     var $id;
     var $desc;
     var $libelle;
@@ -1216,9 +1219,16 @@ class ContratLigne
     var $date_fin_prevue;
     var $date_fin_reel;
 
-    function ContratLigne()
+
+	/**
+	 *      \brief     Constructeur d'objets ligne de contrat
+	 *      \param     DB      handler d'accès base de donnée
+	 */
+    function ContratLigne($DB)
     {
+		$this->db= $DB;
     }
+
     
     function is_activated()
     {
@@ -1283,6 +1293,38 @@ class ContratLigne
 		}
     }    
 
+		/**
+	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
+	 *		\remarks	Utilisé par migration
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function update_total()
+	{
+		$this->db->begin();
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."contratdet SET";
+		$sql.= " total_ht=".price2num($this->total_ht,'MT')."";
+		$sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+       	dolibarr_syslog("ContratLigne::update_total sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("ContratLigne::update_total Error ".$this->error);
+			$this->db->rollback();
+            return -2;
+		}
+	}
 }
 
 

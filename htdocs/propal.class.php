@@ -2183,7 +2183,7 @@ class PropaleLigne
 	 */
 	function PropaleLigne($DB)
 	{
-		$this->db= $DB ;
+		$this->db= $DB;
 	}
 
 	/**
@@ -2356,7 +2356,8 @@ class PropaleLigne
 	}
 
 	/**
-	 *      \brief     	Mise a jour en base des champs total_xxx de ligne de propale
+	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
+	 *		\remarks	Utilisé par migration
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function update_total()
@@ -2365,9 +2366,9 @@ class PropaleLigne
 
 		// Mise a jour ligne en base
 		$sql = "UPDATE ".MAIN_DB_PREFIX."propaldet SET";
-		$sql.= " total_ht=".price2num($this->total_ht)."";
-		$sql.= ",total_tva=".price2num($this->total_tva)."";
-		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
+		$sql.= " total_ht=".price2num($this->total_ht,'MT')."";
+		$sql.= ",total_tva=".price2num($this->total_tva,'MT')."";
+		$sql.= ",total_ttc=".price2num($this->total_ttc,'MT')."";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
        	dolibarr_syslog("PropaleLigne::update_total sql=$sql");

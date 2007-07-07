@@ -611,6 +611,12 @@ ALTER TABLE llx_propaldet MODIFY   total_tva double(16,8)     DEFAULT 0;
 ALTER TABLE llx_propaldet MODIFY   total_ttc double(16,8)     DEFAULT 0;
 ALTER TABLE llx_propaldet MODIFY   subprice  double(16,8)     DEFAULT 0;
 
+ALTER TABLE llx_contratdet MODIFY  tva_tx                double(6,3);
+ALTER TABLE llx_contratdet MODIFY  subprice              double(16,8);
+ALTER TABLE llx_contratdet MODIFY  total_ht              double(16,8);
+ALTER TABLE llx_contratdet MODIFY  total_tva             double(16,8);
+ALTER TABLE llx_contratdet MODIFY  total_ttc             double(16,8);
+
 ALTER TABLE llx_societe_remise_except MODIFY  amount_ht     double(16,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  amount_tva    double(16,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(16,8) DEFAULT 0;
@@ -709,3 +715,8 @@ drop table if exists `llx_accountingsystem_det`;
 
 
 update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');
+
+
+update llx_fichinter set tms=datec where tms < datec;
+update llx_fichinter set tms=date_valid where tms < date_valid;
+
