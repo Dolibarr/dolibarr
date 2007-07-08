@@ -58,6 +58,7 @@ CanceledBy=Annulé par %s
 ClosedBy=Cloturé par %s
 FileWasRemoved=Le fichier a été supprimé
 FeatureNotYetAvailable=Fonctionnalité pas encore disponible dans cette version
+FeatureExperimental=Fonctionnalité expérimentale. Non stable dans cette version
 FeaturesSupported=Fonctionnalités supportées
 Width=Largeur
 Height=Hauteur

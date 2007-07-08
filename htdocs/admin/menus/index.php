@@ -219,6 +219,9 @@ if ($_GET["action"] == 'delete')
     print "<br />\n";
 }
 
+print $html->textwithwarning($langs->trans("FeatureExperimental"),$langs->trans("FeatureExperimental"),-1);
+print '<br>';
+
 print '<form name="newmenu" class="nocellnopadding" action="'.$_SERVER["PHP_SELF"].'">';
 print '<input type="hidden" action="change_menu_handler">';
 print $langs->trans("MenuHandler").': ';
