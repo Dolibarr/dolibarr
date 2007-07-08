@@ -174,8 +174,9 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     	}
     }
 
-    $db->query("UPDATE llx_const set value='".$setuplang."' WHERE name='MAIN_LANG_DEFAULT';");
-            
+    // May fail if parameter already defined
+    $resql=$db->query("INSERT INTO llx_const(name,value,type,visible,note) values('MAIN_LANG_DEFAULT','".$setuplang."','chaine',0,'Default language')");
+	
     print '</table>';
 
     $db->close();
