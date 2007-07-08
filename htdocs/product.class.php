@@ -141,12 +141,13 @@ class Product
 	{
 		$this->errno = 0;
 
+		// Clean parameters
 		$this->ref = trim(sanitize_string($this->ref));
-		
 		if ($this->tva_tx=='') $this->tva_tx = 0;
 		if ($this->price=='')  $this->price = 0;
 		if ($this->status=='') $this->status = 0;
-		
+		$price_ht=0;
+		$price_ttc=0;
 		if ($this->price > 0)
 		{
 			if ($this->price_base_type == 'TTC')
@@ -161,7 +162,7 @@ class Product
 			}
 		}
 		
-		dolibarr_syslog("Product::Create ref=".$this->ref." Categorie : ".$this->catid);
+		dolibarr_syslog("Product::Create ref=".$this->ref." price=".$this->price." tva_tx=".$this->tva_tx." Categorie : ".$this->catid);
 		
 		if ($this->ref)
 		{
@@ -199,9 +200,9 @@ class Product
 						if ($id > 0)
 						{
 							$this->id = $id;
-							$this->price = $price_ht;
+							$this->price     = $price_ht;
 							$this->price_ttc = $price_ttc;
-							
+
 							$result = $this->_log_price($user);
 							if ($result > 0)
 							{

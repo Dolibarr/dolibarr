@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Régis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
@@ -61,134 +61,133 @@ if ($_GET["action"] == 'fastappro')
 // Action ajout d'un produit ou service
 if ($_POST["action"] == 'add' && $user->rights->produit->creer)
 {
-  if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
-    {
-      $class = 'Product'.ucfirst($_POST["canvas"]);
-      include_once('canvas/product.'.$_POST["canvas"].'.class.php');
-      $product = new $class($db);
-    }
-  else
-    {
-      $product = new Product($db);
-    }
-  
-  $product->ref                = $_POST["ref"];
-  $product->libelle            = $_POST["libelle"];
-  $product->price              = $_POST["price"];
-  $product->price_base_type    = $_POST["price_base_type"];
-  $product->tva_tx             = $_POST["tva_tx"];
-  $product->type               = $_POST["type"];
-  $product->status             = $_POST["statut"];
-  $product->description        = $_POST["desc"];
-  $product->note               = $_POST["note"];
-  $product->duration_value     = $_POST["duration_value"];
-  $product->duration_unit      = $_POST["duration_unit"];
-  $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-  $product->canvas             = $_POST["canvas"];
-  $product->new_weight         = $_POST["weight"];
-  $product->new_weight_units   = $_POST["weight_units"];
-  $product->new_volume         = $_POST["volume"];
-  $product->new_volume_units   = $_POST["volume_units"];
-  // MultiPrix
-  if($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+	if ($_POST["canvas"] <> '' && file_exists('canvas/product.'.$_POST["canvas"].'.class.php') )
 	{
-	  if($_POST["price_".$i])
-	    {
-	      $price = ereg_replace(" ","", $_POST["price_".$i]);
-	      $price = ereg_replace(",",".", $price);
-	      $product->multiprices["$i"] = $price;
-	      $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
-	    }
-	  else
-	    {
-	      $product->multiprices["$i"] = "";
-	    }
+		$class = 'Product'.ucfirst($_POST["canvas"]);
+		include_once('canvas/product.'.$_POST["canvas"].'.class.php');
+		$product = new $class($db);
 	}
-    }
-  
-  if ( $value != $current_lang ) $e_product = $product;
-  
-  // Produit spécifique
-  // $_POST n'est pas utilise dans la classe Product
-  // mais dans des classes qui hérite de Product
-  $id = $product->create($user, $_POST);
-  
-  if ($id > 0)
-    {
-      Header("Location: fiche.php?id=$id");
-      exit;
-    }
-  else
-    {
-      $mesg='<div class="error">'.$langs->trans($product->error()).'</div>';
-      $_GET["action"] = "create";
-      $_GET["canvas"] = $product->canvas;
-      $_GET["type"] = $_POST["type"];
-    }
+	else
+	{
+		$product = new Product($db);
+	}
+
+	$product->ref                = $_POST["ref"];
+	$product->libelle            = $_POST["libelle"];
+	$product->price              = $_POST["price"];
+	$product->price_base_type    = $_POST["price_base_type"];
+	$product->tva_tx             = $_POST["tva_tx"];
+	$product->type               = $_POST["type"];
+	$product->status             = $_POST["statut"];
+	$product->description        = $_POST["desc"];
+	$product->note               = $_POST["note"];
+	$product->duration_value     = $_POST["duration_value"];
+	$product->duration_unit      = $_POST["duration_unit"];
+	$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+	$product->canvas             = $_POST["canvas"];
+	$product->new_weight         = $_POST["weight"];
+	$product->new_weight_units   = $_POST["weight_units"];
+	$product->new_volume         = $_POST["volume"];
+	$product->new_volume_units   = $_POST["volume_units"];
+	// MultiPrix
+	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	{
+		for($i=2;$i<=$conf->global->PRODUIT_MULTIPRICES_LIMIT;$i++)
+		{
+			if($_POST["price_".$i])
+			{
+				$price = price2num($_POST["price_".$i]);
+				$product->multiprices["$i"] = $price;
+				$product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
+			}
+			else
+			{
+				$product->multiprices["$i"] = "";
+			}
+		}
+	}
+
+	if ( $value != $current_lang ) $e_product = $product;
+
+	// Produit spécifique
+	// $_POST n'est pas utilise dans la classe Product
+	// mais dans des classes qui hérite de Product
+	$id = $product->create($user, $_POST);
+
+	if ($id > 0)
+	{
+		Header("Location: fiche.php?id=$id");
+		exit;
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans($product->error()).'</div>';
+		$_GET["action"] = "create";
+		$_GET["canvas"] = $product->canvas;
+		$_GET["type"] = $_POST["type"];
+	}
 }
 
 // Action mise a jour d'un produit ou service
 if ($_POST["action"] == 'update' &&
-    $_POST["cancel"] <> $langs->trans("Cancel") &&
-    $user->rights->produit->creer)
+		$_POST["cancel"] <> $langs->trans("Cancel") &&
+		$user->rights->produit->creer)
 {
-  $product = new Product($db);
-  if ($product->fetch($_POST["id"]))
-    {
-      $product->ref                = $_POST["ref"];
-      $product->libelle            = $_POST["libelle"];
-      if ( isset( $_POST["price"] ) )
-	    $product->price              = $_POST["price"];
-      $product->tva_tx             = $_POST["tva_tx"];
-      $product->description        = $_POST["desc"];
-      $product->note               = $_POST["note"];
-      $product->status             = $_POST["statut"];
-      $product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
-      $product->stock_loc          = $_POST["stock_loc"];
-      $product->duration_value     = $_POST["duration_value"];
-      $product->duration_unit      = $_POST["duration_unit"];
-      $product->canvas             = $_POST["canvas"];
-      $product->new_weight         = $_POST["weight"];
-      $product->new_weight_units   = $_POST["weight_units"];
-      $product->new_volume         = $_POST["volume"];
-      $product->new_volume_units   = $_POST["volume_units"];
-      
-      if ($product->check())
+	$product = new Product($db);
+	if ($product->fetch($_POST["id"]))
 	{
-	  if ($product->update($product->id, $user) > 0)
-	    {
-	      $_GET["action"] = '';
-	      $_GET["id"] = $_POST["id"];
-	    }
-	  else
-	    {
-	      $_GET["action"] = 'edit';
-	      $_GET["id"] = $_POST["id"];
-	      $mesg = $product->error;
-	    }
+		$product->ref                = $_POST["ref"];
+		$product->libelle            = $_POST["libelle"];
+		if ( isset( $_POST["price"] ) )
+		$product->price              = $_POST["price"];
+		$product->tva_tx             = $_POST["tva_tx"];
+		$product->description        = $_POST["desc"];
+		$product->note               = $_POST["note"];
+		$product->status             = $_POST["statut"];
+		$product->seuil_stock_alerte = $_POST["seuil_stock_alerte"];
+		$product->stock_loc          = $_POST["stock_loc"];
+		$product->duration_value     = $_POST["duration_value"];
+		$product->duration_unit      = $_POST["duration_unit"];
+		$product->canvas             = $_POST["canvas"];
+		$product->new_weight         = $_POST["weight"];
+		$product->new_weight_units   = $_POST["weight_units"];
+		$product->new_volume         = $_POST["volume"];
+		$product->new_volume_units   = $_POST["volume_units"];
+		
+		if ($product->check())
+		{
+			if ($product->update($product->id, $user) > 0)
+			{
+				$_GET["action"] = '';
+				$_GET["id"] = $_POST["id"];
+			}
+			else
+			{
+				$_GET["action"] = 'edit';
+				$_GET["id"] = $_POST["id"];
+				$mesg = $product->error;
+			}
+		}
+		else
+		{
+			$_GET["action"] = 'edit';
+			$_GET["id"] = $_POST["id"];
+			$mesg = $langs->trans("ErrorProductBadRefOrLabel");
+		}
+		
+		// Produit spécifique
+		if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
+		{
+			$class = 'Product'.ucfirst($product->canvas);
+			include_once('canvas/product.'.$product->canvas.'.class.php');
+			
+			$product = new $class($db);
+			if ($product->FetchCanvas($_POST["id"]))
+			{
+				$product->UpdateCanvas($_POST);
+			}
+		}
 	}
-      else
-	{
-	  $_GET["action"] = 'edit';
-	  $_GET["id"] = $_POST["id"];
-	  $mesg = $langs->trans("ErrorProductBadRefOrLabel");
-	}
-            
-      // Produit spécifique
-      if ($product->canvas <> '' && file_exists('canvas/product.'.$product->canvas.'.class.php') )
-	{
-	  $class = 'Product'.ucfirst($product->canvas);
-	  include_once('canvas/product.'.$product->canvas.'.class.php');
-	  
-	  $product = new $class($db);
-	  if ($product->FetchCanvas($_POST["id"]))
-	    {
-	      $product->UpdateCanvas($_POST);
-	    }
-	}
-    }
 }
 
 // clone d'un produit
