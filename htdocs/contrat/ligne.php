@@ -282,7 +282,7 @@ if ($id > 0)
                     }
 
                 // TVA
-                print '<td align="center">'.$objp->tva_tx.'%</td>';
+                print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
 
                 print '<td align="right">'.price($objp->subprice)."</td>\n";
 

@@ -400,7 +400,7 @@ if ($_GET["propalid"] > 0)
 					}
 					print "</td>\n";
 				}
-                print '<td align="right">'.$objp->tva_tx.'%</td>';
+                print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
                 print '<td align="right">'.price($objp->subprice)."</td>\n";
 
 				// Qty
