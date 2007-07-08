@@ -188,10 +188,10 @@ if ($socid > 0)
 
     /*
      *
-     *
      */
-    print '<table width="100%" border="0">';
-    print '<tr><td valign="top">';
+    print '<table width="100%" class="notopnoleftnoright">';
+    print '<tr><td valign="top" class="notopnoleft">';
+	
     print '<table class="border" width="100%">';
 
     print '<tr><td width="30%">'.$langs->trans("Name").'</td><td width="70%" colspan="3">';
@@ -357,7 +357,7 @@ if ($socid > 0)
     print "</td>\n";
 
 
-    print '<td valign="top" width="50%">';
+    print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
     // Nbre max d'éléments des petites listes
     $MAXLIST=4;
