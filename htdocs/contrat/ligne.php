@@ -135,8 +135,8 @@ if ($id > 0)
          */
         if ($_GET["action"] == 'active' && $user->rights->contrat->activer)
         {
-            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+            $dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+            $dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
             $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("ActivateService"),$langs->trans("ConfirmActivateService",strftime("%A %d %B %Y", $dateactstart)),"confirm_active");
             print '<br />';
         }
@@ -146,8 +146,8 @@ if ($id > 0)
          */
         if ($_GET["action"] == 'close' && $user->rights->contrat->activer)
         {
-            $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-            $dateactend   = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+			$dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+            $dateactend   = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
             $html->form_confirm("ligne.php?id=".$contrat->id."&amp;ligne=".$_GET["ligne"]."&amp;date=".$dateactstart."&amp;dateend=".$dateactend,$langs->trans("CloseService"),$langs->trans("ConfirmCloseService",strftime("%A %d %B %Y", $dateactstart)),"confirm_close");
             print '<br />';
         }
@@ -426,10 +426,10 @@ if ($id > 0)
             print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("CloseService").'</td></tr>';
 
             // Definie date debut et fin par defaut
-            if ($_POST["remonth"]) $dateactstart = mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+            if ($_POST["remonth"]) $dateactstart = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
             elseif (! $dateactstart) $dateactstart = time();
 
-            if ($_POST["endmonth"]) $dateactend = mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
+            if ($_POST["endmonth"]) $dateactend = dolibarr_mktime(12, 0 , 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
             elseif (! $dateactend)
             {
                 if ($objp->fk_product > 0)
@@ -439,7 +439,10 @@ if ($id > 0)
                     $dateactend = dolibarr_time_plus_duree (time(), $product->duration_value, $product->duration_unit);
                 }
             }
+            $now=mktime();
+			if ($dateactend > $now) $dateactend=$now;
 
+			
             print '<tr '.$bc[$var].'><td>'.$langs->trans("DateEndReal").'</td><td>';
             print $form->select_date($dateactend,"end",'','','',"close");
             print '</td>';
