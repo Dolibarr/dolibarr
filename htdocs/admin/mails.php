@@ -63,11 +63,20 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 // Action envoi test mailing
 if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 {
-    
-    $sendto    = $_POST["sendto"];
-	$email_from= $conf->global->MAIN_MAIL_EMAIL_FROM;
-	$subject="Dolibarr test";
-	$body="This is a test";
+	$filepath = array();
+	$mimetype = array();
+	$filename = array();
+
+	$email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
+    $sendto     = $_POST["sendto"];
+	$subject    = $_POST['subject'];
+	$body       = $_POST['message'];
+	if ($_FILES['addedfile']['tmp_name'])
+	{
+		$filepath[0] = $_FILES['addedfile']['tmp_name'];
+		$mimetype[0] = $_FILES['addedfile']['type'];
+		$filename[0] = $_FILES['addedfile']['name'];
+	}
 
 	if (! $sendto)
 	{
@@ -77,13 +86,9 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
     {
         require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 
-        $arr_file = array();
-        $arr_mime = array();
-        $arr_name = array();
-
 		// Le message est-il en html
 		$msgishtml=0;	// Non par defaut
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
+		//if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
 		if (eregi('[ \t]*<html>',$message)) $msgishtml=1;						
 
         // Pratique les substitutions sur le sujet et message
@@ -91,7 +96,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		$body=make_substitutions($body,$substitutionarrayfortest);
 		
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
-        							$arr_file,$arr_mime,$arr_name,
+        							$filepath,$mimetype,$filename,
         							'', '', 0, $msgishtml);
 
         $result=$mailfile->sendfile();
@@ -203,11 +208,11 @@ else
 			  $formmail->withfrom=1;
 			  $formmail->withto=$user->email?$user->email:1;
 			  $formmail->withcc=0;
-			  $formmail->withtopic=0;
-			  $formmail->withtopicreadonly=1;
-			  $formmail->withfile=0;
-			  $formmail->withbody=0;
-			  $formmail->withbodyreadonly=1;
+			  $formmail->withtopic=$langs->trans("Test");
+			  $formmail->withtopicreadonly=0;
+			  $formmail->withfile=1;
+			  $formmail->withbody=$langs->trans("Test");
+			  $formmail->withbodyreadonly=0;
 			  $formmail->withcancel=1;
 			  // Tableau des substitutions
 			  $formmail->substit=$substitutionarrayfortest;
