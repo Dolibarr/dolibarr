@@ -30,6 +30,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("admin");
+$langs->load("categories");
 
 if (!$user->admin)
   accessforbidden();
