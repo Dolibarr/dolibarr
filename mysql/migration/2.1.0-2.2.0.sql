@@ -742,6 +742,9 @@ drop table if exists `llx_accountingsystem_det`;
 
 update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');
 
+alter table llx_product_fournisseur_price add unitprice double(16,8);
+alter table llx_product_fournisseur_price add ref_fourn varchar(30) after fk_soc;
+update llx_product_fournisseur_price set unitprice = ROUND(price/quantity,8) where unitprice IS NULL;
 
 update llx_fichinter set tms=datec where tms < datec;
 update llx_fichinter set tms=date_valid where tms < date_valid;

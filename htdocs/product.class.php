@@ -659,7 +659,7 @@ class Product
 	function get_buyprice($fourn_id, $qty)
 	{
 		$result = 0;
-		$sql = "SELECT pf.price as price, pf.quantity as quantity";
+		$sql = "SELECT pf.rowid, pf.price as price, pf.quantity as quantity";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
 		$sql.= " WHERE pf.fk_soc = ".$fourn_id;
 		$sql.= " AND pf.fk_product =" .$this->id;
@@ -715,112 +715,6 @@ class Product
 			$this->error=$this->db->error();
 			return -2;
 		}
-		return $result;
-	}
-
-
-	/**
-	*    \brief  Modifie le prix d'achat pour un fournisseur
-	*    \param  id_fourn        	Id du fournisseur
-	*    \param  qty             	Quantite pour lequel le prix est valide
-	*    \param  buyprice        	Prix d'achat pour la quantité
-	*    \param  user            	Objet user de l'utilisateur qui modifie
-	*    \param  price_base_type	HT or TTC
-	*/
-	function update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type='HT')
-	{
-		$error=0;
-		$this->db->begin();
-
-		// Supprime prix courant du fournisseur pour cette quantité
-		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
-		$sql .= " WHERE ";
-		$sql .= " fk_product = ".$this->id;
-		$sql .= " AND fk_soc = ".$id_fourn;
-		$sql .= " AND quantity = ".$qty;
-
-		if ($this->db->query($sql))
-		{
-			// Ajoute prix courant du fournisseur pour cette quantité
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
-			$sql .= " SET datec = now()";
-			$sql .= " ,fk_product = ".$this->id;
-			$sql .= " ,fk_soc = ".$id_fourn;
-			$sql .= " ,fk_user = ".$user->id;
-			$sql .= " ,price = ".price2num($buyprice);
-			$sql .= " ,quantity = ".$qty;
-
-			if (! $this->db->query($sql))
-			{
-				$error++;
-			}
-
-			if (! $error) {
-				// Ajoute modif dans table log
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
-				$sql .= " SET datec = now()";
-				$sql .= " ,fk_product = ".$this->id;
-				$sql .= " ,fk_soc = ".$id_fourn;
-				$sql .= " ,fk_user = ".$user->id;
-				$sql .= " ,price = ".price2num($buyprice);
-				$sql .= " ,quantity = ".$qty;
-
-				if (! $this->db->query($sql))
-				{
-					$error++;
-				}
-			}
-
-			if (! $error)
-			{
-				$this->db->commit();
-				return 0;
-			}
-			else
-			{
-				$this->error=$this->db->error()." sql=".$sql;
-				$this->db->rollback();
-				return -2;
-			}
-		}
-		else
-		{
-			$this->error=$this->db->error()." sql=".$sql;
-			$this->db->rollback();
-			return -1;
-		}
-	}
-
-
-	/**
-		\brief  Modifie le prix d'achat pour un fournisseur par la référecne du produit chez le fournisseur
-		\param  id_fourn        		Id du fournisseur
-		\param  product_fourn_ref 		Ref du produit chez le fournisseur
-		\param  qty             		Quantite pour lequel le prix est valide
-		\param  buyprice        		Prix d'achat pour la quantité
-		\param  user            		Objet user de l'utilisateur qui modifie
-		\return	int						<0 si KO, >0 si OK
-	*/
-	function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user, $price_base_type='HT')
-	{
-		$result=0;
-
-		// Recherche id produit pour cette ref et fournisseur
-		$sql = "SELECT fk_product";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-		$sql.= " WHERE fk_soc ='".$id_fourn."'";
-		$sql.= " AND ref_fourn='".$product_fourn_ref."'";
-
-		if ($this->db->query($sql))
-		{
-			if ($obj = $this->db->fetch_object($resql))
-			{
-				// Met a jour prix pour la qté
-				$this->id = $obj->fk_product;
-				$result = $this->update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type);
-			}
-		}
-
 		return $result;
 	}
 
@@ -919,7 +813,8 @@ class Product
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
     
-    $result = $this->db->query($sql) ;
+	dolibarr_syslog("Product::fetch sql=".$sql);
+    $result = $this->db->query($sql);
     if ( $result )
       {
 	$result = $this->db->fetch_array();
@@ -1743,28 +1638,6 @@ class Product
   }
 
   /**
-   *    \brief    Délie un fournisseur au produit/service
-   *    \param    user        utilisateur qui défait le lien
-   *    \param    id_fourn    id du fournisseur
-   *    \return   int         < 0 si erreur, > 0 si ok
-   */
-  function remove_fournisseur($user, $id_fourn)
-  {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."product_fournisseur ";
-    $sql.= " WHERE fk_product = $this->id AND fk_soc = $id_fourn;";
-
-    if ($this->db->query($sql) )
-      {
-	return 1;
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-	return -1;
-      }
-  }
-
-  /**
    *    \brief    Recopie les prix d'un produit/service sur un autre
    *    \param    fromId      Id produit source
    *    \param    toId        Id produit cible
@@ -2243,30 +2116,6 @@ class Product
 	$this->error=$this->db->error();
 	return -1;
       }
-  }
-
-  /**
-   *    \brief      Charge les informations relatives à un fournisseur
-   *    \param      fournid         id du fournisseur
-   *    \return     int             < 0 si erreur, > 0 si ok
-   */
-  function fetch_fourn_data($fournid)
-  {
-    $sql = "SELECT rowid, ref_fourn";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur ";
-    $sql.= " WHERE fk_product = ".$this->id;
-    $sql.= " AND fk_soc = ".$fournid;
-    $result = $this->db->query($sql) ;
-  
-    if ($result)
-      {
-	$result = $this->db->fetch_array();
-	$this->ref_fourn = $result["ref_fourn"];
-	return 1;
-      }
-    else {
-      return -1;
-    }
   }
 
 

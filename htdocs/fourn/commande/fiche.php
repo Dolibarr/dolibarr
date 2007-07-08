@@ -90,7 +90,7 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
  */
 if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->creer)
 {
-  if ($_POST['qty'] && (($_POST['pu']	&& $_POST['desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprod']))
     {
       $commande =	new	CommandeFournisseur($db);
       $ret=$commande->fetch($_POST["id"]);
@@ -105,7 +105,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 
       // Ecrase $pu par celui	du produit
       // Ecrase $desc	par	celui du produit
-      // Ecrase $txtva par celui du produit
+      // Ecrase $txtva  par celui du produit
       if ($_POST["idprod"] > 0)
 	{
 	  $prod =	new	Product($db, $_POST['idprod']);
@@ -113,7 +113,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 
 	  $libelle = $prod->libelle;
 
-	  // La description de	la ligne est celle saisie ou
+	  // La description de la ligne est celle saisie ou
 	  // celle du	produit	si (non	saisi +	PRODUIT_CHANGE_PROD_DESC défini)
 	  // \todo Ne	faut-il	pas	rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours	a on
 	  $desc=$_POST['np_desc'];
@@ -137,7 +137,8 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 				 $_POST['qty'],
 				 $tva_tx,
 				 $_POST['idprod'],
-				 $_POST['remise_percent']
+				 $_POST['remise_percent'],
+				 'HT'
 				 );
 
       if ($result > 0)
@@ -535,7 +536,7 @@ else
 	   */
 	  if ($_GET["action"]	== 'commande')
 	    {
-	      $date_com =	mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
+	      $date_com = dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	      $html->form_confirm("fiche.php?id=".$commande->id."&amp;datecommande=".$date_com."&amp;methode=".$_POST["methodecommande"],
 				  $langs->trans("MakeOrder"),$langs->trans("ConfirmMakeOrder",dolibarr_print_date($date_com,'day')),"confirm_commande");
 	      print '<br />';
@@ -657,7 +658,7 @@ else
 		  print ' - '.$objp->label;
 		  if ($objp->description) print '<br>'.nl2br($objp->description);
 		  print "</td>";
-		  print '<td align="center">'.$objp->tva_tx.'%</td>';
+		  print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
 		  print '<td align="center">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent >	0)
 		    {

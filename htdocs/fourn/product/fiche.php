@@ -150,7 +150,7 @@ if ($_POST["action"] == 'add_fourn' && $_POST["cancel"] <> $langs->trans("Cancel
 }
 if ($_GET["action"] == 'remove_fourn')
 {
-  $product = new Product($db);
+  $product = new ProductFournisseur($db);
   if( $product->fetch($_GET["id"]) )
     {
       if ($product->remove_fournisseur($user, $_GET["id_fourn"]) > 0)

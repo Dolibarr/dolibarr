@@ -637,100 +637,106 @@ class CommandeFournisseur extends Commande
       }
   }
 
-  /**
-   *      \brief      Ajoute une ligne de commande
-   *      \param      desc            Description
-   *      \param      pu              Prix unitaire
-   *      \param      qty             Quantité
-   *      \param      txtva           Taux tva
-   *      \param      fk_product      Id produit
-   *      \param      remise_percent  Remise
-   *      \param      int             <0 si ko, >0 si ok
-   */
-  function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0)
-  {
-    global $langs;
-        
-    $qty  = price2num($qty);
-    $pu   = price2num($pu);
-    $desc = trim($desc);
-    $remise_percent = price2num($remise_percent);
-        
-    dolibarr_syslog("Fournisseur.Commande.class::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+	/**
+	*      \brief      Ajoute une ligne de commande
+	*      \param      desc            	Description
+	*      \param      pu              	Prix unitaire
+	*      \param      qty             	Quantité
+	*      \param      txtva           	Taux tva
+	*      \param      fk_product      	Id produit
+	*      \param      remise_percent  	Remise
+	*      \param      price_base_type	HT or TTC
+	*      \param      int             	<0 si ko, >0 si ok
+	*/
+	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
+	{
+		global $langs;
+		
+		// Clean parameters
+		$qty  = price2num($qty);
+		$pu   = price2num($pu);
+		$desc = trim($desc);
+		$remise_percent = price2num($remise_percent);
+		
+		dolibarr_syslog("Fournisseur.Commande.class::addline $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
 
-    if ($qty < 1 && ! $fk_product)
-      {
-	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
-	return -1;
-      }
-    
-    if ($this->brouillon)
-      {
-	$this->db->begin();
-            
-	if ($fk_product > 0)
-	  {
-	    $prod = new Product($this->db, $fk_product);
-	    if ($prod->fetch($fk_product) > 0)
-	      {
-		$result=$prod->get_buyprice($this->fourn_id,$qty);
-		if ($result > 0)
-		  {
-		    $label = $prod->libelle;
-		    $desc  = $prod->description;
-		    $txtva = $prod->tva_tx;
-		    $pu    = $prod->fourn_pu;
-		    $ref   = $prod->ref;
-		  }
-		if ($result == 0 || $result == -1)
-		  {
-		    $this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
-		    $this->db->rollback();
-		    dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
-		    return -1;
-		  }
-		if ($result < -1)
-		  {
-		    $this->error=$prod->error;
-		    $this->db->rollback();
-		    dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
-		    return -1;
-		  }
-	      }
-	    else
-	      {
-		$this->error=$this->db->error();
-		return -1;
-	      }
-	  }
-    
-	$remise = 0;
-	$price = price2num($pu);
-	$subprice = $price;
-	if ($remise_percent > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100), 2);
-	    $price = $pu - $remise;
-	  }
-    
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-	$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price).", '$qty', $txtva, $remise_percent,'".price2num($subprice)."','".price2num($remise)."','".$ref."') ;";
-	dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
-	$resql=$this->db->query($sql);
-	if ($resql)
-	  {
-	    $this->update_price();
+		if ($qty < 1 && ! $fk_product)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Product"));
+			return -1;
+		}
+		
+		if ($this->brouillon)
+		{
+			$this->db->begin();
+			
+			if ($fk_product > 0)
+			{
+				$prod = new Product($this->db, $fk_product);
+				if ($prod->fetch($fk_product) > 0)
+				{
+					$result=$prod->get_buyprice($this->fourn_id,$qty);
+					if ($result > 0)
+					{
+						$label = $prod->libelle;
+						$desc  = $prod->description;
+						$txtva = $prod->tva_tx;
+						$pu    = $prod->fourn_pu;
+						$ref   = $prod->ref;
+					}
+					if ($result == 0 || $result == -1)
+					{
+						$this->error="Aucun tarif trouvé pour cette quantité. Quantité saisie insuffisante ?";
+						$this->db->rollback();
+						dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
+						return -1;
+					}
+					if ($result < -1)
+					{
+						$this->error=$prod->error;
+						$this->db->rollback();
+						dolibarr_syslog("Fournisseur.commande.class::addline result=".$result." - ".$this->error);
+						return -1;
+					}
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					return -1;
+				}
+			}
+			
+			$subprice = price2num($pu,'MU');
+			
+			// Champ obsolete
+			$remise = 0;
+			$price = $subprice;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100), 2);
+				$price = $pu - $remise;
+			}
+			
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+			$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
+			dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->update_price();
 
-	    $this->db->commit();
-	    return 1;
-	  }
-	else
-	  {
-	    $this->db->rollback();
-	    return -1;
-	  }
-      }
-  }
+				$this->db->commit();
+				return 1;
+			}
+			else
+			{
+				$this->db->rollback();
+				return -1;
+			}
+		}
+	}
+	
+	
   /**
    * Dispatch un element de la commande dans un stock
    *

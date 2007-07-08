@@ -29,7 +29,7 @@
 
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.commande.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php");
 
 
 /**
@@ -169,7 +169,7 @@ class Fournisseur extends Societe
 	
 		if ($idc > 0)
 		{
-			$prod = new Product($this->db);
+			$prod = new ProductFournisseur($this->db);
 			$prod->fetch($fk_product);
 			$prod->fetch_fourn_data($this->id);
 	

@@ -60,8 +60,7 @@ if ($_GET["id"])
     {
       $product = new ProductFournisseur($db);
       $result = $product->fetch($_GET["id"], $_GET["id_fourn"]);
-
-      $product->get_buyprice(1);
+      $product->get_buyprice($_GET["id_fourn"],1);
     }
   
   if ( $result == 0)
