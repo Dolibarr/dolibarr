@@ -107,3 +107,4 @@ BankChecksToReceipt=Chèques à déposer
 DeleteTransaction=Supprimer la transaction
 ConfirmDeleteTransaction=Etes-vous sur de vouloir supprimer cette transaction ?
 ThisWillAlsoDeleteBankRecord=Ceci supprimera aussi les écritures banquaires générées
+BankMovements=Mouvements

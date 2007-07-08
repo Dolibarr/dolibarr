@@ -31,6 +31,8 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/dolgraph.class.php");
 
+$langs->load("banks");
+
 if (!$user->rights->banque->lire)
   accessforbidden();
 
@@ -412,7 +414,7 @@ if ($account > 0)
 
 	// Fabrication tableau 4
 	$file= $conf->banque->dir_temp."/movement.$account.$year.png";
-	$title=$langs->transnoentities("Movements").' '.$langs->transnoentities("Year").': '.$year;
+	$title=$langs->transnoentities("BankMovements").' '.$langs->transnoentities("Year").': '.$year;
 	$graph_datas=array();
 	foreach($data_credit as $i => $val)
 	{
