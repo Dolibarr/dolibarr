@@ -129,8 +129,14 @@ class CMailFile
         }
 
 		// On defini $this->headers et $this->message
-        $this->headers = $smtp_headers . $mime_headers . $this->eol;
-        $this->message = $text_body . $text_encoded . $this->eol;
+		//$this->headers = $smtp_headers . $mime_headers . $this->eol;
+		//$this->message = $text_body . $text_encoded . $this->eol;
+        $this->headers = $smtp_headers . $mime_headers;
+        $this->message = $text_body . $text_encoded;
+		// On nettoie le header pour qu'il ne se termine pas un retour chariot.
+		// Ceci evite aussi les lignes vides en fin qui peuvent etre interprétées 
+		// comme des injections mail par les serveurs de messagerie.
+		$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
     }
 
 
@@ -259,7 +265,6 @@ class CMailFile
 
     /**
             \brief		Création des headers smtp
-            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
     */
     function write_smtpheaders()
     {
@@ -280,9 +285,9 @@ class CMailFile
         // Accusé réception
         if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
 
+        //$out .= "X-Priority: 3".$this->eol;
         $out .= "X-Mailer: Dolibarr version " . DOL_VERSION .$this->eol;
         $out .= "MIME-Version: 1.0".$this->eol;
-        //$out .= "X-Priority: 3\n";
        
         if ($this->msgishtml)
         {
@@ -294,7 +299,7 @@ class CMailFile
 			$out.= "Content-Transfer-Encoding: 7bit".$this->eol;
 		}
 
-        dolibarr_syslog("CMailFile::write_smtpheaders $out");
+        dolibarr_syslog("CMailFile::write_smtpheaders smtp_header=\n".$out);
         return $out;
     }
 
@@ -303,7 +308,6 @@ class CMailFile
             \brief 		Création header MIME
             \param 		filename_list
             \param 		mimefilename_list
-            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
     */
     function write_mimeheaders($filename_list, $mimefilename_list)
     {
@@ -322,7 +326,8 @@ class CMailFile
             	$out.= "X-attachments: $filename_list[$i]".$this->eol;
         	}
         }
-      	$out.= $this->eol;
+      	//$out.= $this->eol;
+        dolibarr_syslog("CMailFile::write_mimeheaders mime_header=\n".$out);
         return $out;
     }
 
@@ -330,7 +335,6 @@ class CMailFile
             \brief 		Permet d'ecrire le corps du message
             \param 		msgtext
             \param 		filename_list
-            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
     */
     function write_body($msgtext, $filename_list)
     {
@@ -360,7 +364,6 @@ class CMailFile
         	$out.= $msgtext;
         }
        	$out.= $this->eol;
-//      $out.= $this->eol;
         return $out;
     }
 
@@ -370,7 +373,6 @@ class CMailFile
             \param 		mimetype_list		Tableau
             \param 		mimefilename_list	Tableau
             \return		out					Chaine fichiers encodés
-            \remarks	On construit tout avec \n. Toute correction se fait plus tard.
     */
     function write_files($filename_list,$mimetype_list,$mimefilename_list)
     {
@@ -405,7 +407,6 @@ class CMailFile
 
 		// Fin de tous les attachements
         $out = $out . "--" . $this->mime_boundary . "--" . $this->eol;
-//        $out.= $this->eol;
         return $out;
     }
     
