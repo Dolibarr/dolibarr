@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -88,10 +88,10 @@ if ( $societe->fetch($socid) )
   dolibarr_fiche_head($head, 'supplier', $societe->nom);
   
   
-  print '<table width="100%">';
-  print '<tr><td valign="top" width="50%">';
+  print '<table width="100%" class="notopnoleftnoright">';
+  print '<tr><td valign="top" width="50%" class="notopnoleft">';
   
-  print '<table class="border" width="100%">';
+  print '<table width="100%" class="border">';
   print '<tr><td width="20%">'.$langs->trans("Name").'</td><td width="80%" colspan="3">'.$societe->nom.'</td></tr>';
   
   print '<tr><td>'.$langs->trans('Prefix').'</td><td colspan="3">'.$societe->prefix_comm.'</td></tr>';
@@ -123,7 +123,7 @@ if ( $societe->fetch($socid) )
   print '</table>';
   
   
-  print '</td><td valign="top" width="50%">';
+  print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
   $var=true;
   
   $MAXLIST=4;

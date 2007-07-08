@@ -719,104 +719,110 @@ class Product
 	}
 
 
-  /**
-   *    \brief  Modifie le prix d'achat pour un fournisseur
-   *    \param  id_fourn        Id du fournisseur
-   *    \param  qty             Quantite pour lequel le prix est valide
-   *    \param  buyprice        Prix d'achat pour la quantité
-   *    \param  user            Objet user de l'utilisateur qui modifie
-   */
-  function update_buyprice($id_fourn, $qty, $buyprice, $user)
-  {
-    $error=0;
-    $this->db->begin();
+	/**
+	*    \brief  Modifie le prix d'achat pour un fournisseur
+	*    \param  id_fourn        	Id du fournisseur
+	*    \param  qty             	Quantite pour lequel le prix est valide
+	*    \param  buyprice        	Prix d'achat pour la quantité
+	*    \param  user            	Objet user de l'utilisateur qui modifie
+	*    \param  price_base_type	HT or TTC
+	*/
+	function update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type='HT')
+	{
+		$error=0;
+		$this->db->begin();
 
-    // Supprime prix courant du fournisseur pour cette quantité
-    $sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
-    $sql .= " WHERE ";
-    $sql .= " fk_product = ".$this->id;
-    $sql .= " AND fk_soc = ".$id_fourn;
-    $sql .= " AND quantity = ".$qty;
+		// Supprime prix courant du fournisseur pour cette quantité
+		$sql = "DELETE FROM  ".MAIN_DB_PREFIX."product_fournisseur_price ";
+		$sql .= " WHERE ";
+		$sql .= " fk_product = ".$this->id;
+		$sql .= " AND fk_soc = ".$id_fourn;
+		$sql .= " AND quantity = ".$qty;
 
-    if ($this->db->query($sql))
-      {
-	// Ajoute prix courant du fournisseur pour cette quantité
-	$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price ";
-	$sql .= " SET datec = now()";
-	$sql .= " ,fk_product = ".$this->id;
-	$sql .= " ,fk_soc = ".$id_fourn;
-	$sql .= " ,fk_user = ".$user->id;
-	$sql .= " ,price = ".price2num($buyprice);
-	$sql .= " ,quantity = ".$qty;
+		if ($this->db->query($sql))
+		{
+			// Ajoute prix courant du fournisseur pour cette quantité
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
+			$sql .= " SET datec = now()";
+			$sql .= " ,fk_product = ".$this->id;
+			$sql .= " ,fk_soc = ".$id_fourn;
+			$sql .= " ,fk_user = ".$user->id;
+			$sql .= " ,price = ".price2num($buyprice);
+			$sql .= " ,quantity = ".$qty;
 
-	if (! $this->db->query($sql))
-	  {
-	    $error++;
-	  }
+			if (! $this->db->query($sql))
+			{
+				$error++;
+			}
 
-	if (! $error) {
-	  // Ajoute modif dans table log
-	  $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
-	  $sql .= " SET datec = now()";
-	  $sql .= " ,fk_product = ".$this->id;
-	  $sql .= " ,fk_soc = ".$id_fourn;
-	  $sql .= " ,fk_user = ".$user->id;
-	  $sql .= " ,price = ".price2num($buyprice);
-	  $sql .= " ,quantity = ".$qty;
+			if (! $error) {
+				// Ajoute modif dans table log
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price_log ";
+				$sql .= " SET datec = now()";
+				$sql .= " ,fk_product = ".$this->id;
+				$sql .= " ,fk_soc = ".$id_fourn;
+				$sql .= " ,fk_user = ".$user->id;
+				$sql .= " ,price = ".price2num($buyprice);
+				$sql .= " ,quantity = ".$qty;
 
-	  if (! $this->db->query($sql))
-	    {
-	      $error++;
-	    }
+				if (! $this->db->query($sql))
+				{
+					$error++;
+				}
+			}
+
+			if (! $error)
+			{
+				$this->db->commit();
+				return 0;
+			}
+			else
+			{
+				$this->error=$this->db->error()." sql=".$sql;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+			$this->db->rollback();
+			return -1;
+		}
 	}
 
-	if (! $error)
-	  {
-	    $this->db->commit();
-	    return 0;
-	  }
-	else
-	  {
-	    $this->error=$this->db->error()." ($sql)";
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-    else
-      {
-	$this->error=$this->db->error()." ($sql)";
-	$this->db->rollback();
-	return -1;
-      }
-  }
-  /**
-     \brief  Modifie le prix d'achat pour un fournisseur par la référecne du produit chez le fournisseur
-     \param  id_fourn        Id du fournisseur
-     \param  product_fourn_ref Reference du produit chez le fournisseur
-     \param  qty             Quantite pour lequel le prix est valide
-     \param  buyprice        Prix d'achat pour la quantité
-     \param  user            Objet user de l'utilisateur qui modifie
-   */
-  function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user)
-  {
-    $errno=0;
 
-    // Supprime prix courant du fournisseur pour cette quantité
-    $sql = "SELECT fk_product FROM  ".MAIN_DB_PREFIX."product_fournisseur";
-    $sql.= " WHERE fk_soc ='".$id_fourn."'";
-    $sql.= " AND ref_fourn='".$product_fourn_ref."';";
+	/**
+		\brief  Modifie le prix d'achat pour un fournisseur par la référecne du produit chez le fournisseur
+		\param  id_fourn        		Id du fournisseur
+		\param  product_fourn_ref 		Ref du produit chez le fournisseur
+		\param  qty             		Quantite pour lequel le prix est valide
+		\param  buyprice        		Prix d'achat pour la quantité
+		\param  user            		Objet user de l'utilisateur qui modifie
+		\return	int						<0 si KO, >0 si OK
+	*/
+	function UpdateBuyPriceByFournRef($id_fourn, $product_fourn_ref, $qty, $buyprice, $user, $price_base_type='HT')
+	{
+		$result=0;
 
-    if ($this->db->query($sql))
-      {
-	if ($row = $this->db->fetch_row($resql) )
-	  {
-	    $this->id = $row[0];
-	    $errno = $this->update_buyprice($id_fourn, $qty, $buyprice, $user);
-	  }
-      }
+		// Recherche id produit pour cette ref et fournisseur
+		$sql = "SELECT fk_product";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+		$sql.= " WHERE fk_soc ='".$id_fourn."'";
+		$sql.= " AND ref_fourn='".$product_fourn_ref."'";
 
-    return $errno;
-  }
+		if ($this->db->query($sql))
+		{
+			if ($obj = $this->db->fetch_object($resql))
+			{
+				// Met a jour prix pour la qté
+				$this->id = $obj->fk_product;
+				$result = $this->update_buyprice($id_fourn, $qty, $buyprice, $user, $price_base_type);
+			}
+		}
+
+		return $result;
+	}
 
 
 	/**

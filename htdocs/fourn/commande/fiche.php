@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005	   Eric	Seigne <eric.seigne@ryxeo.com>
  *
  * This	program	is free	software; you can redistribute it and/or modify
@@ -23,9 +23,9 @@
 
 /**
    \file		htdocs/fourn/commande/fiche.php
-   \ingroup	commande
+   \ingroup		commande
    \brief		Fiche commande
-   \version	$Revision$
+   \version		$Revision$
 */
 
 require('./pre.inc.php');
@@ -425,12 +425,12 @@ else
 	
   /* *************************************************************************** */
   /*																			   */
-  /* Mode	vue	et edition														   */
+  /* Mode vue et edition														   */
   /*																			   */
   /* *************************************************************************** */
 	
-  $id	= $_GET['id'];
-  if ($id	> 0)
+  $id = $_GET['id'];
+  if ($id > 0)
     {
       //if ($mesg) print $mesg.'<br>';
 	

@@ -104,7 +104,7 @@ if ($_GET['id'])
 
       print '<table class="border" width="100%">';
 
-	    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fichinter->ref_url.'</td></tr>';
+	    print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fichinter->ref.'</td></tr>';
 
       // Société
       print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td></tr>';

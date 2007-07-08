@@ -547,8 +547,8 @@ else
 				print '<br />';
 			}
 
-			print '<table border="0" width="100%">';
-			print '<tr><td width="50%" valign="top">';
+			print '<table width="100%" class="notopnoleftnoright">';
+			print '<tr><td width="50%" valign="top" class="notopnoleft">';
 
 			/*
 			 *   Facture
@@ -586,10 +586,10 @@ else
 
 			print '</table>';
 
-			print '</td><td valign="top">';
+			print '</td><td valign="top" class="notopnoleftnoright">';
 
 
-			print '<table class="border" width="100%">';
+			print '<table width="100%" class="noborder">';
 
 			/*
 			 * Liste des paiements

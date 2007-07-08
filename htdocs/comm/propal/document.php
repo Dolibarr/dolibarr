@@ -145,7 +145,7 @@ if ($propalid > 0)
         print '<table class="border"width="100%">';
 
 		// Ref
-        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref_url.'</td></tr>';
+        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="3">'.$propal->ref.'</td></tr>';
 
         // Société
         print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td></tr>';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Destailleur Laurent  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Destailleur Laurent  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -145,7 +145,7 @@ if ($_GET["propalid"] > 0)
   print '<table class="border" width="100%">';
 
   // Ref
-  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
 
   // Ref client
   print '<tr><td>';

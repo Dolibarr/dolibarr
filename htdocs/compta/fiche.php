@@ -123,8 +123,8 @@ if ($socid > 0)
 	dolibarr_fiche_head($head, 'compta', $societe->nom);
 
 
-    print "<table width=\"100%\">\n";
-    print '<tr><td valign="top" width="50%">';
+    print '<table width="100%" class="notopnoleftnoright">';
+    print '<tr><td valign="top" width="50%" class="notopnoleft">';
 
     print '<table class="border" width="100%">';
     
@@ -218,7 +218,7 @@ if ($socid > 0)
     print "</td>\n";
 
 
-    print '<td valign="top" width="50%">';
+    print '<td valign="top" width="50%" class="notopnoleftnoright">';
 
     // Nbre max d'éléments des petites listes
     $MAXLIST=5;

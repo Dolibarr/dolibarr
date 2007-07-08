@@ -87,7 +87,7 @@ if ($_GET["propalid"] > 0)
 
 				print '<table class="border" width="100%">';
 
-		        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref_url.'</td></tr>';
+		        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
 
 				$rowspan=3;
 

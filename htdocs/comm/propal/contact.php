@@ -169,7 +169,7 @@ if ($id > 0)
 
 		// Ref
 		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $propal->ref_url;
+		print $propal->ref;
 		print "</td></tr>";
 
 		// Customer

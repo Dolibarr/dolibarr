@@ -851,8 +851,6 @@ class Propal extends CommonObject
                 $this->lignes = array();
                 $this->db->free($resql);
 
-                $this->ref_url = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">'.$this->ref.'</a>';
-
                 /*
                  * Lignes propales liées à un produit ou non
                  */

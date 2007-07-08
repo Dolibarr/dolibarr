@@ -185,8 +185,6 @@ class Fichinter extends CommonObject
                 $this->note_public  = $obj->note_public;
                 $this->note_private = $obj->note_private;
                 
-                $this->ref_url = '<a href="'.DOL_URL_ROOT.'/fichinter/fiche.php?id='.$this->id.'">'.$this->ref.'</a>';
-
                 $this->db->free($resql);
                 return 1;
             }

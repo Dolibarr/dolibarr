@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -90,63 +90,63 @@ if ($_GET["action"] == 'remove_fourn')
 if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Cancel"))
 {
 
-  $product = new Product($db);
-  if( $product->fetch($_GET["id"]) )
-    {
-      $db->begin();
-      
-      $error=0;
-      
-      if ($_POST["ref_fourn"])
-        {
-	  $ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
-	  if ($ret < 0)
-	    {
-	      $error++;
-	      $mesg='<div class="error">'.$product->error.'</div>';
-	    }
-        }
-      else
-        {
-	  $error++;
-	  $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
-        }
-      
-      if ($_POST["qty"])
-        {
-	  if ($_POST["price"] >= 0)
-	    {
-	      $ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
-	      if ($ret < 0)
+	$product = new Product($db);
+	if( $product->fetch($_GET["id"]) )
+	{
+		$db->begin();
+		
+		$error=0;
+		
+		if ($_POST["ref_fourn"])
 		{
-		  $error++;
-		  $mesg='<div class="error">'.$product->error.'</div>';
-		  if ($ret == -2)
-		    {
-		      $mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
-		    }
+			$ret=$product->add_fournisseur($user, $_POST["id_fourn"], $_POST["ref_fourn"]);
+			if ($ret < 0)
+			{
+				$error++;
+				$mesg='<div class="error">'.$product->error.'</div>';
+			}
 		}
-	    }
-          else
-	    {
-	      $error++;
-	      $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
-	    }
-        }
-      else
-        {
-	  $error++;
-	  $mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
-        }
-      
-      if (! $error)
-        {
-	  $db->commit();
-        }
-      else {
-	$db->rollback();
-      }
-    }
+		else
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref")).'</div>';
+		}
+		
+		if (! $error && $_POST["qty"])
+		{
+			if ($_POST["price"] >= 0)
+			{
+				$ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
+				if ($ret < 0)
+				{
+					$error++;
+					$mesg='<div class="error">'.$product->error.'</div>';
+					if ($ret == -2)
+					{
+						$mesg='<div class="error">'.$langs->trans("ProductHasAlreadyReferenceInThisSupplier").'</div>';
+					}
+				}
+			}
+			else
+			{
+				$error++;
+				$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Price")).'</div>';
+			}
+		}
+		else
+		{
+			$error++;
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Qty")).'</div>';
+		}
+		
+		if (! $error)
+		{
+			$db->commit();
+		}
+		else {
+			$db->rollback();
+		}
+	}
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
@@ -249,7 +249,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<td>'.$langs->trans("QtyMin").'</td>';
 				$quantity = $_GET["qty"] ? $_GET["qty"] : "1";
 				print '<td><input class="flat" name="qty" size="5" value="'.$quantity.'"></td>';
-				print '<td>'.$langs->trans("PriceHTQty").'</td>';
+				print '<td>'.$langs->trans("PriceQtyHT").'</td>';
 				print '<td><input class="flat" name="price" size="8" value="'.price($_GET["price"]).'"></td></tr>';
 				
 				print '<tr><td colspan="6" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -290,13 +290,14 @@ if ($_GET["id"] || $_GET["ref"])
 				print $langs->trans("Suppliers").'</td>';
 				print '<td>'.$langs->trans("Ref").'</td>';
 				print '<td align="center">'.$langs->trans("QtyMin").'</td>';
-				print '<td align="right">'.$langs->trans("PriceHTQty").'</td>';
-				print '<td align="right">'.$langs->trans("UnitPrice").'</td>';
+				print '<td align="right">'.$langs->trans("PriceQtyHT").'</td>';
+				print '<td align="right">'.$langs->trans("UnitPriceHT").'</td>';
 				print '<td>&nbsp;</td>';
 				print '</tr>';
 
 				// Liste des fournisseurs
-				$sql = "SELECT s.nom, s.rowid as socid, pf.ref_fourn, pfp.price, pfp.quantity";
+				$sql = "SELECT s.nom, s.rowid as socid,";
+				$sql.= "pf.ref_fourn, pfp.price, pfp.quantity";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
 				$sql.= " ON pf.fk_soc = pfp.fk_soc AND pf.fk_product = pfp.fk_product";

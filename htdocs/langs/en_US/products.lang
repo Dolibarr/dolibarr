@@ -110,5 +110,7 @@ NoStockForThisProduct=No stock for this product
 Restock=Restock
 ProductSpecial=Special
 QtyMin=Quantity minimum
-PriceHTQty=Price HT for this quantity
-
+PriceQty=Price for this quantity
+PriceQtyHT=Price for this quantity HT
+PriceQtyTTC=Price for this quantity TTC
+NoPriceDefinedForThisSupplier=No price/qty defined for this supplier/product
