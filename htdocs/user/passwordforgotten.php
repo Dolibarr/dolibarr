@@ -214,7 +214,7 @@ print "</form>";
 print '<center>';
 if ($mode == 'dolibarr')
 {
-	print '<table width="90%"><tr><td>'.$langs->trans("SendNewPasswordDesc").'</td></tr></table><br>';
+	print '<table width="90%"><tr><td><font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font></td></tr></table><br>';
 }
 else
 {
