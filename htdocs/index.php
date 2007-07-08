@@ -105,6 +105,7 @@ print "</table>\n";
  * Non affiché pour un utilisateur externe
  */
 $langs->load("commercial");
+$langs->load("bills");
 if ($user->societe_id == 0)
 {
     print '<br>';
