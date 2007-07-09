@@ -669,7 +669,68 @@ else
 		  print $sql;
 		}
 	      
-	      print "</table>";
+	      print "</table><br />";
+
+	      /* Liens xDSL */
+
+	      require_once DOL_DOCUMENT_ROOT.'/telephonie/adsl/ligneadsl.class.php';
+
+	      $sql = "SELECT l.rowid, l.numero_ligne, l.statut, t.intitule";
+	      $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne as l";
+	      $sql .= " , ".MAIN_DB_PREFIX."telephonie_adsl_type as t";
+	      $sql .= " WHERE l.fk_contrat=".$contrat->id;
+	      $sql .= " AND t.rowid = l.fk_type";
+	      $sql .= " ORDER BY l.statut ASC;";
+	      $resql = $db->query($sql);
+	      if ( $resql )
+		{
+		  $numlignes = $db->num_rows($resql);
+		  if ( $numlignes > 0 )
+		    {
+		      $i = 0;
+		      
+		      $ligne = new LigneAdsl($db);
+		      
+		      print '<table name="table_lignes" class="border" width="100%" cellspacing="0" cellpadding="4">';
+		      print '<tr class="liste_titre"><td width="15%" valign="center">Liens xDSL';
+		      print '</td><td>Numero support</td><td align="center">Statut</td>';
+		      print "</tr>\n";
+		      
+		      while ($i < $numlignes)
+			{
+			  $obj = $db->fetch_object($i);	
+			  $var=!$var;
+			  
+			  print "<tr $bc[$var]><td>";
+			  
+			  print '<img src="'.DOL_URL_ROOT.'/telephonie/adsl/statut'.$obj->statut.'.png">&nbsp;';
+			  
+			  print '<a href="'.DOL_URL_ROOT.'/telephonie/adsl/fiche.php?id='.$obj->rowid.'">';
+			  print img_file();
+			  
+			  print '</a>&nbsp;';
+			  
+			  print '<a href="'.DOL_URL_ROOT.'/telephonie/adsl/fiche.php?id='.$obj->rowid.'">'.stripslashes($obj->intitule)."</a></td>\n";
+			  
+			  print '<td>'.$obj->numero_ligne."</td>\n";
+			  print '<td align="center">'.$ligne->statuts[$obj->statut]."</td>\n";
+			  print "</tr>\n";
+			  $i++;
+			}
+		      print "</table>";
+		    }
+		  $db->free($resql);     
+
+
+		  
+		}
+	      else
+		{
+		  print $db->error();
+		  print $sql;
+		}
+	      
+
 	    }
 	  	  
 	  /*
