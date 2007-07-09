@@ -285,6 +285,7 @@ class modTelephonie extends DolibarrModules
     $this->dirs[7] = $conf->telephonie->dir_output."/cdr" ;
     $this->dirs[8] = $conf->telephonie->dir_output."/cdr/archive" ;
     $this->dirs[9] = $conf->telephonie->dir_output."/cdr/atraiter" ;
+    $this->dirs[10] = $conf->telephonie->dir_output."/ligne/commande/retour/traite" ;
     //
     $this->load_tables();
     //
