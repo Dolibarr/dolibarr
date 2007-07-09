@@ -81,11 +81,12 @@ if ($db->query($sql))
       $i++;
     }
 
-  foreach ($ligne->statuts as $key => $statut)
+  foreach ($ligne->statuts_order as $keyo => $statut)
     {
       $var=!$var;
+      $key = $statut;
       print "<tr $bc[$var]>";
-      print "<td>".$statut."</td>\n";
+      print "<td>".$ligne->statuts[$statut]."</td>\n";
       print "<td>".$values[$key]."</td>\n";
       print '<td><a href="'.DOL_URL_ROOT.'/telephonie/adsl/liste.php?statut='.$key.'"><img border="0" src="./statut'.$key.'.png"></a></td>';
       print "</tr>\n";
