@@ -337,21 +337,21 @@ if ($_GET["action"] == 'create')
   print '<tr><td width="20%">Client</td><td >';
   $ff = array();
   $sql = "SELECT rowid, nom, ville FROM ".MAIN_DB_PREFIX."societe WHERE client=1 ORDER BY nom ";
-  if ( $db->query( $sql) )
+  $resql = $db->query($sql);
+  if ( $resql )
     {
-      $num = $db->num_rows();
+      $num = $db->num_rows($resql);
       if ( $num > 0 )
 	{
 	  $i = 0;
 	  while ($i < $num)
 	    {
-	      $row = $db->fetch_row($i);
+	      $row = $db->fetch_row($resql);
 	      $ff[$row[0]] = stripslashes($row[1]) . " (".$row[2].")";
-
 	      $i++;
 	    }
 	}
-      $db->free();      
+      $db->free($resql);
     }
   $form->select_array("client",$ff,$ligne->client_comm);
   print '</td></tr>';
