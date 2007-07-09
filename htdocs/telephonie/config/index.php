@@ -100,9 +100,23 @@ $form = new Form($db);
 /* ***************************************** */
 
 print '<tr class="pair"><td>Groupes des commerciaux</td>';
-print '<td align="center">';
+print '<td align="left">';
 
-print TELEPHONIE_GROUPE_COMMERCIAUX_ID.'</td><td>-';
+$ff = array();
+$sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ORDER BY nom ASC;";
+$resql = $db->query($sql);
+if ($resql)
+{
+  while ($row = $db->fetch_row($resql))
+    {
+      $ff[$row[0]] = $row[1];
+    }
+  $db->free($resql);	
+}
+$form->select_array("value4",$ff,TELEPHONIE_GROUPE_COMMERCIAUX_ID);
+
+print '<input type="hidden" name="nom4" value="TELEPHONIE_GROUPE_COMMERCIAUX_ID">';
+print '</td><td><input type="submit" value="'.$langs->trans('Update').'">';
 print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
 
 /* ***************************************** */
