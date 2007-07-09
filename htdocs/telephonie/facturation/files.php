@@ -20,21 +20,30 @@
  *
  */
 require("./pre.inc.php");
+require_once DOL_DOCUMENT_ROOT.'/telephonie/fournisseurtel.class.php';
 
 $dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
 
-$handle=opendir($dir);
-
 $files = array();
 
-$var=true;
-while (($file = readdir($handle))!==false)
-{
-  if (is_file($dir.'/'.$file))
-    array_push($files, $file);
-}
-closedir($handle);
+$obj = new FournisseurTelephonie($db,$user);
+$fourns = $obj->GetActives();
 
+$var=true;
+foreach ($fourns as $id => $nom)
+{
+  $fdir = $dir . $id.'/';
+  if (is_dir($fdir))
+  {
+    $handle=opendir($fdir);
+    while (($file = readdir($handle))!==false)
+      {
+	if (is_file($fdir.'/'.$file))
+	  array_push($files, $id.'/'.$file);
+      }
+    closedir($handle);
+  }
+}
 
 
 if (!$user->rights->telephonie->facture->lire) accessforbidden();
@@ -75,9 +84,6 @@ $pagenext = $page + 1;
 
 /*
  * Mode Liste
- *
- *
- *
  */
 
 print_barre_liste("Fichiers CDR a traiter", $page, "files.php", "", $sortfield, $sortorder, '', $num);
@@ -100,7 +106,7 @@ foreach ($files as $file)
   print '<td>';
   print img_file();      
   print '&nbsp;';
-  print $file."</td>\n";
+  print basename($file)."</td>\n";
   
   print '<td>'.date("d F Y H:i:s", filemtime($dir.$file)).'</td>';
   print '<td align="right">'.filesize($dir.$file).' octets</td>';
