@@ -82,6 +82,15 @@ if ($_GET["search_ligne"])
   $sel = ereg_replace(" ","",$sel);
   $sql .= " AND ligne LIKE '%".$sel."%'";
 }
+
+if ($_GET["search_num"])
+{
+  $sel =urldecode($_GET["search_num"]);
+  $sel = ereg_replace("\.","",$sel);
+  $sel = ereg_replace(" ","",$sel);
+  $sql .= " AND num LIKE '%".$sel."%'";
+}
+
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 $resql = $db->query($sql);
 
