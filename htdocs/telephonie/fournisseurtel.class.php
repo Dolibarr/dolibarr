@@ -71,7 +71,7 @@ class FournisseurTelephonie {
     return $res;
   }
   /**
-   *
+   * Mets a jour les informations dans la base de donnees
    *
    */
   function update()
@@ -85,7 +85,7 @@ class FournisseurTelephonie {
     $sql .= ", class_commande = '".$this->methode_commande."'";
     $sql .= ", commande_bloque = '".$this->commande_bloque."'";
     $sql .= ", cdrformat = '".$this->cdrformat."'";
-
+    $sql .= ", fk_tarif_grille='".$this->grille."'";
     $sql .= " WHERE rowid = ".$this->id;
 
     if (! $this->db->query($sql) )
