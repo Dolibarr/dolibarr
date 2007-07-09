@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -23,6 +23,7 @@
 create table llx_telephonie_adsl_ligne (
   rowid              integer AUTO_INCREMENT PRIMARY KEY,
   fk_client          integer NOT NULL,
+  fk_contrat         integer NULL,
   fk_client_install  integer NOT NULL,
   fk_client_facture  integer NOT NULL,
   numero_ligne       varchar(20) NOT NULL,
