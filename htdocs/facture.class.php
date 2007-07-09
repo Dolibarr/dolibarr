@@ -2836,6 +2836,10 @@ class FactureLigne
 	{
 		global $langs;
 		
+		// Nettoyage parametres
+		if (! $this->subprice) $this->subprice=0;
+		if (! $this->price) $this->price=0;
+		
 		dolibarr_syslog("FactureLigne::Insert rang=".$this->rang, LOG_DEBUG);
 		$this->db->begin();
 
