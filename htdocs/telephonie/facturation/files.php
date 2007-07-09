@@ -25,11 +25,11 @@ require_once DOL_DOCUMENT_ROOT.'/telephonie/fournisseurtel.class.php';
 $dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
 
 $files = array();
+$fourn_files = array();
 
 $obj = new FournisseurTelephonie($db,$user);
 $fourns = $obj->GetActives();
 
-$var=true;
 foreach ($fourns as $id => $nom)
 {
   $fdir = $dir . $id.'/';
@@ -39,18 +39,17 @@ foreach ($fourns as $id => $nom)
     while (($file = readdir($handle))!==false)
       {
 	if (is_file($fdir.'/'.$file))
-	  array_push($files, $id.'/'.$file);
+	  {
+	    array_push($files, $id.'/'.$file);
+	    $fourn_files[$id.'/'.$file] = $nom;
+	  }
       }
     closedir($handle);
   }
 }
 
 
-if (!$user->rights->telephonie->facture->lire) accessforbidden();
-
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
+if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 
 llxHeader();
 
@@ -63,33 +62,14 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
-if ($sortorder == "") {
-  $sortorder="";
-}
-if ($sortfield == "") {
-  $sortfield="f.date DESC, f.gain ASC";
-}
-
-/*
- * Recherche
- *
- *
- */
-
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
 
 /*
  * Mode Liste
  */
-
 print_barre_liste("Fichiers CDR a traiter", $page, "files.php", "", $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-print '<tr class="liste_titre">';
+print '<tr class="liste_titre"><td>Fournisseur</td>';
 print '<td>Fichier</td><td>Date</td>';
 print '<td align="right">Taille</td>';
 print "</tr>\n";
@@ -98,10 +78,11 @@ $var=True;
 
 foreach ($files as $file)
 {
-  $obj = $db->fetch_object($i);	
   $var=!$var;
   
   print "<tr $bc[$var]>";
+
+  print '<td>'.$fourn_files[$file].'</td>';
   
   print '<td>';
   print img_file();      
