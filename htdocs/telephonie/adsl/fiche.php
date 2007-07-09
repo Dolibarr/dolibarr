@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -247,6 +247,22 @@ if ($_GET["action"] == 'livraison' && $user->rights->telephonie->adsl->gerer)
     }
 }
 
+if ($_GET["action"] == 'backbone' && $user->rights->telephonie->adsl->gerer)
+{
+  $ligne = new LigneAdsl($db);
+  $ligne->fetch_by_id($_GET["id"]);
+
+  $datea = $db->idate(mktime($h, $m , $s,
+			    $_POST["remonth"], 
+			    $_POST["reday"],
+			    $_POST["reyear"]));
+
+  if ( $ligne->set_statut($user, 9, $datea, $_POST["commentaire"]) == 0)
+    {
+      Header("Location: fiche.php?id=".$ligne->id);
+    }
+}
+
 if ($_GET["action"] == 'acommander')
 {
   $ligne = new LigneAdsl($db);
@@ -286,7 +302,6 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
       $mesg = 'Fiche non mise à jour !' . "<br>" . $entrepot->mesg_error;
     }
 }
-
 
 llxHeader("","","Fiche Liaison");
 
@@ -730,10 +745,23 @@ if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 2)
 
 if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 3)
 {
-  /**
-   * 
-   */
+  print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
+  print '<form name="backbone" action="fiche.php?id='.$ligne->id.'&amp;action=backbone" method="POST">';
+  print '<table class="noborder" cellpadding="2" cellspacing="0">';
+  print '<tr class="liste_titre"><td colspan="2">Programmé sur le backbone</td><td>';
+  print "<tr><td>Date de la programmation</td><td>";
+  print $form->select_date('','','','','',"backbone");
+  print '</td>';
+  print '<td colspan="2"><input type="submit" name="Programmer"></td></tr>';
+  print '<tr><td colspan="3">Commentaire <input size="30" type="text" name="commentaire"></td></tr>';
+  print '</table>';
+  print '</form></td><td>';
+  print '&nbsp;</td></tr></table>';
+}
+
+if ( $user->rights->telephonie->adsl->gerer && $ligne->statut == 9)
+{
   print '<table class="noborder" cellpadding="2" cellspacing="0" width="100%"><tr><td>';
 
   print '<form name="livraison" action="fiche.php?id='.$ligne->id.'&amp;action=livraison" method="POST">';
@@ -830,8 +858,6 @@ if ($_GET["action"] == '')
 }
 
 print "</div>";
-
-
 
 $db->close();
 
