@@ -103,6 +103,7 @@ print '<tr class="pair"><td>Groupes des commerciaux</td>';
 print '<td align="left">';
 
 $ff = array();
+$ff[0] = "Aucun groupe defini";
 $sql = "SELECT rowid, nom FROM ".MAIN_DB_PREFIX."usergroup ORDER BY nom ASC;";
 $resql = $db->query($sql);
 if ($resql)
