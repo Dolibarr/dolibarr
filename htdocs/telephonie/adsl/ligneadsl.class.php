@@ -42,6 +42,18 @@ class LigneAdsl {
     $this->statuts[6] = "Résiliation demandée";
     $this->statuts[7] = "Résiliée";
     $this->statuts[8] = "Rejetée";
+    $this->statuts[9] = "Backbone programmé";
+
+    $this->statuts_order[0] = -1;
+    $this->statuts_order[1] = 1;
+    $this->statuts_order[2] = 2;
+    $this->statuts_order[3] = 3;
+    $this->statuts_order[4] = 9;     
+    $this->statuts_order[5] = 4;
+    $this->statuts_order[6] = 5;
+    $this->statuts_order[7] = 6;
+    $this->statuts_order[8] = 7;
+    $this->statuts_order[9] = 8;
 
     return 1;
   }
