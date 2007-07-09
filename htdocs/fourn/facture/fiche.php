@@ -213,25 +213,36 @@ if ($_GET['action'] == 'del_ligne')
 }
 
 // Modification d'une ligne
-if ($_REQUEST['action'] == 'change_line')
+if ($_REQUEST['action'] == 'update_line')
 {
 	if ($_REQUEST['etat'] == '1' && ! $_REQUEST['cancel']) // si on valide la modification
 	{
-		$facfou = new FactureFournisseur($db,'',$_GET['facid']);
+		$facfou = new FactureFournisseur($db);
+		$facfou->fetch($_GET['facid']);
+
+		if ($_POST['puht'])
+		{
+			$pu=$_POST['puht'];
+			$price_base_type='HT';
+		}
+		if ($_POST['puttc'])
+		{
+			$pu=$_POST['puttc'];
+			$price_base_type='TTC';
+		}
 
 	    if ($_POST['idprod'])
 	    {
 	        $prod = new Product($db);
 			$prod->fetch($_POST['idprod']);
-		
 			$label = $prod->libelle;
-
-			$facfou->updateline($_GET['ligne_id'], $label, $_POST['puht'], $_POST['tauxtva'], $_POST['qty'], $_POST['idprod']);
 		}
 		else
 		{
-			$facfou->updateline($_GET['ligne_id'], $_POST['label'], $_POST['puht'], $_POST['tauxtva'], $_POST['qty']);
+			$label = $_POST['label'];
 		}
+
+		$facfou->updateline($_GET['ligne_id'], $label, $pu, $_POST['tauxtva'], $_POST['qty'], $_POST['idprod'], $price_base_type);
 	}
 }
 
@@ -496,7 +507,7 @@ else
 				$var=!$var;
 				// Affichage simple de la ligne
 				print '<tr '.$bc[$var].'><td>'.$fac->lignes[$i]->description.'</td>';
-				print '<td align="right">'.price($fac->lignes[$i]->tva_taux).'%</td>';
+				print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
 				print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
 				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
@@ -697,12 +708,16 @@ else
 				if ($fac->statut == 0 && $_GET['action'] == 'mod_ligne' && $_GET['etat'] == '0' && $_GET['ligne_id'] == $fac->lignes[$i]->rowid)
 				{
 					print '<form action="fiche.php?facid='.$fac->id.'&amp;etat=1&amp;ligne_id='.$fac->lignes[$i]->rowid.'" method="post">';
-					print '<input type="hidden" name="action" value="change_line">';
+					print '<input type="hidden" name="action" value="update_line">';
 					print '<tr '.$bc[$var].'>';
 					print '<td>';
 					if ($conf->produit->enabled && $fac->lignes[$i]->fk_product)
 					{
-						$html->select_produits_fournisseurs($fac->socid,$fac->lignes[$i]->fk_product,'idprod',$filtre);
+						$product=new ProductFournisseur($db);
+						$product->fetch($fac->lignes[$i]->fk_product);
+						$product->ref=$product->libelle;	// Car sur facture fourn on met juste le libelle sur produits lies
+						print $product->getNomUrl(1);
+						print '<input type="hidden" name="idprod" value="'.$fac->lignes[$i]->fk_product.'">';
 					}
 					else
 					{
@@ -713,7 +728,7 @@ else
 					$html->select_tva('tauxtva',$fac->lignes[$i]->tva_taux,$societe,$mysoc);
 					print '</td>';
 					print '<td align="right" nowrap="nowrap"><input size="6" name="puht" type="text" value="'.price($fac->lignes[$i]->pu_ht).'"></td>';
-					print '<td align="right" nowrap="nowrap"><input size="6" name="amountttc" type="text" value=""></td>';
+					print '<td align="right" nowrap="nowrap"><input size="6" name="puttc" type="text" value=""></td>';
 					print '<td align="right"><input size="1" name="qty" type="text" value="'.$fac->lignes[$i]->qty.'"></td>';
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
 					print '<td align="right" nowrap="nowrap">&nbsp;</td>';
@@ -740,7 +755,7 @@ else
 						print nl2br($fac->lignes[$i]->description);
 					}
 					print '</td>';
-					print '<td align="right">'.price($fac->lignes[$i]->tva_taux).'%</td>';
+					print '<td align="right">'.vatrate($fac->lignes[$i]->tva_taux).'%</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->pu_ht,'MU').'</td>';
 					print '<td align="right" nowrap="nowrap">'.($fac->lignes[$i]->pu_ttc?price($fac->lignes[$i]->pu_ttc,'MU'):'&nbsp;').'</td>';
 					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';

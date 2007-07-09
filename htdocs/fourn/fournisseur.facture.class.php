@@ -432,6 +432,8 @@ class FactureFournisseur extends Facture
 	 */
 	function updateline($id, $label, $pu, $tauxtva, $qty=1, $idproduct=0, $price_base_type='HT')
 	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
 		$pu = price2num($pu);
 		$qty  = price2num($qty);
 
