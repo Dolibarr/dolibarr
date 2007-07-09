@@ -213,7 +213,6 @@ if ($_GET["id"] > 0)
 	print '</td>';
 	print '<td>Grille de tarif</td></tr>';
 
-
 	print '<tr><td colspan="3" align="center"><input type="submit" value="Update"></td></tr>';
 	print '</table></form><br />';
       }

@@ -46,7 +46,7 @@ class TelephonieTarif {
    * Constructeur
    *
    */
-  function TelephonieTarif($_DB, $fournisseur_id, $type, $tarif_spec = 0, $client_id = 0)
+  function TelephonieTarif($_DB, $grille_id, $type, $fournisseur_id = 0 , $client_id = 0)
   {
     $this->db = $_DB;
 
@@ -65,7 +65,7 @@ class TelephonieTarif {
 	$this->prefixe_max = array();
       }
 
-    $this->_load_tarif($fournisseur_id, $type);
+    $this->_load_tarif($grille_id, $type);
   }
 
 
@@ -121,15 +121,10 @@ class TelephonieTarif {
    *
    *
    */
-  function _load_tarif($fournisseur_id, $type)
+  function _load_tarif($grille_id, $type)
   {
-    
     if ($type == 'achat')
       {
-	$sql = "SELECT prefix, temporel, fixe";
-	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_achat ";
-	$sql .= " WHERE fk_fournisseur = " . $fournisseur_id;
-
 	$sql = "SELECT p.prefix, m.temporel, m.fixe";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant as m ";
 	$sql .= " , ".MAIN_DB_PREFIX."telephonie_prefix as p ";
@@ -151,21 +146,19 @@ class TelephonieTarif {
 
 	$sql .= " WHERE t.rowid = m.fk_tarif";
 	$sql .= " AND t.rowid = p.fk_tarif";
-	$sql .= " AND m.fk_tarif_desc = 1";
+	$sql .= " AND m.fk_tarif_desc = ". $grille_id;
       }
         
-    if ( $this->db->query($sql) )
+    if ( $resql = $this->db->query($sql) )
       {
-	$num = $this->db->num_rows();
+	$num = $this->db->num_rows($resql);
 	
 	//print "$num tableau_tarif trouvés\n";
 	
 	$i = 0;
 	
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    
+	while ( $row = $this->db->fetch_row($resql) )
+	  {	    
 	    $l = $row[0];
 
 	    $this->tableau_tarif[$l] = $row;
@@ -183,7 +176,7 @@ class TelephonieTarif {
 	    
 	    $i++;
 	  }
-
+	$this->num_tarifs = $num;
 	$this->db->free();	
       }
     else
@@ -291,7 +284,7 @@ class TelephonieTarif {
 	
 	if (in_array($prefix_to_find, $this->prefixes[$first_char_in_prefix]))
 	  {
-	    //	    print "\t$prefix_to_find\n";
+	    //print "\t$prefix_to_find\n";
 	    $cout_tempo    = $this->tableau_tarif[$prefix_to_find][1];
 	    $cout_fixe     = $this->tableau_tarif[$prefix_to_find][2];
 	    $tarif_libelle = $this->tableau_tarif[$prefix_to_find][3];
