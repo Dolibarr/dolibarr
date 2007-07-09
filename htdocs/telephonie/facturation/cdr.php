@@ -42,6 +42,12 @@ if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 $page = $_GET["page"];
 $sortorder = $_GET["sortorder"];
 $sortfield = $_GET["sortfield"];
+if ($page == -1) { $page = 0 ; }
+
+$offset = $conf->liste_limit * $page ;
+$pageprev = $page - 1;
+$pagenext = $page + 1;
+
 
 llxHeader();
 
@@ -62,21 +68,25 @@ if ($sortfield == "") {
 }
 
 /*
- * Recherche
- *
- *
- */
-
-if ($page == -1) { $page = 0 ; }
-
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
-/*
  * Mode Liste
  *
  */
+
+$sql = "SELECT ligne,date,heure,num, montant, duree,fichier";
+$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+$sql .= " WHERE 1=1";
+if ($_GET["search_ligne"])
+{
+  $sel =urldecode($_GET["search_ligne"]);
+  $sel = ereg_replace("\.","",$sel);
+  $sel = ereg_replace(" ","",$sel);
+  $sql .= " AND ligne LIKE '%".$sel."%'";
+}
+$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$resql = $db->query($sql);
+
+$num = $db->num_rows($resql);
+
 
 print_barre_liste("CDR a traiter", $page, "cdr.php", "", $sortfield, $sortorder, '', $num);
 
@@ -97,18 +107,6 @@ print '<td><input type="submit" class="button" value="'.$langs->trans("Search").
 
 $var=True;
 
-$sql = "SELECT ligne,date,heure,num, montant, duree,fichier";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
-$sql .= " WHERE 1=1";
-if ($_GET["search_ligne"])
-{
-  $sel =urldecode($_GET["search_ligne"]);
-  $sel = ereg_replace("\.","",$sel);
-  $sel = ereg_replace(" ","",$sel);
-  $sql .= " AND ligne LIKE '%".$sel."%'";
-}
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
-$resql = $db->query($sql);
 
 while ($obj = $db->fetch_object($resql))
 {
