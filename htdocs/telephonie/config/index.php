@@ -34,7 +34,7 @@ if (!$user->admin) accessforbidden();
 
 if ($_GET["action"] == "set")
 {
-  for ($i = 1 ; $i < 4 ; $i++)
+  for ($i = 1 ; $i < 5 ; $i++)
     {
       dolibarr_set_const($db, $_POST["nom$i"], $_POST["value$i"], $type='chaine');
     }
@@ -115,9 +115,9 @@ if ($resql)
 }
 $form->select_array("value4",$ff,TELEPHONIE_GROUPE_COMMERCIAUX_ID);
 
-print '<input type="hidden" name="nom4" value="TELEPHONIE_GROUPE_COMMERCIAUX_ID">';
 print '</td><td><input type="submit" value="'.$langs->trans('Update').'">';
 print '</td><td>TELEPHONIE_GROUPE_COMMERCIAUX_ID</td></tr>';
+print '<input type="hidden" name="nom4" value="TELEPHONIE_GROUPE_COMMERCIAUX_ID">';
 
 /* ***************************************** */
 
