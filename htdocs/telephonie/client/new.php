@@ -155,7 +155,7 @@ if ($_POST["action"] == 'add')
       $verif = "nok";
     }
   
-  if (strlen(trim($_POST["cliend"])) <> 9 && $verif == 'ok')
+  if (strlen(trim($_POST["cliend"])) > 0 && strlen(trim($_POST["cliend"])) <> 9 && $verif == 'ok')
     {
       $mesg = "Numéro de ligne dernier SDA (0".$_POST["cliend"].") incorrect";
       $verif = "nok";
