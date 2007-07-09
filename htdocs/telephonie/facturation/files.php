@@ -22,6 +22,29 @@
 require("./pre.inc.php");
 require_once DOL_DOCUMENT_ROOT.'/telephonie/fournisseurtel.class.php';
 
+if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
+
+if ($_GET["action"] == 'archive' && $user->rights->telephonie->facture->ecrire)
+{
+  $srcdir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
+
+
+  $file = urldecode ($_GET["file"]);
+
+  $destdir = $conf->telephonie->dir_output."/cdr/archive/".dirname($file).'/';
+
+  if (!is_dir($destdir))
+    {
+      @mkdir($destdir);
+    }
+
+  if (is_dir($destdir) && is_file($srcdir.$file))
+    {
+      rename($srcdir.$file,$destdir.basename($file));
+    }
+
+}
+
 $dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
 
 $files = array();
@@ -48,9 +71,6 @@ foreach ($fourns as $id => $nom)
   }
 }
 
-
-if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
-
 llxHeader();
 
 /*
@@ -72,7 +92,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Fournisseur</td>';
 print '<td>Fichier</td><td>Date</td>';
 print '<td align="right">Taille</td>';
-print "</tr>\n";
+print "<td>&nbsp;</td></tr>\n";
 
 $var=True;
 
@@ -91,6 +111,7 @@ foreach ($files as $file)
   
   print '<td>'.date("d F Y H:i:s", filemtime($dir.$file)).'</td>';
   print '<td align="right">'.filesize($dir.$file).' octets</td>';
+  print '<td align="right"><a href="files.php?action=archive&amp;file='.urlencode($file).'">archiver</a></td>';
 }
 print "</table>";
 
