@@ -1021,6 +1021,7 @@ else
 	    {  
 	      if ($user->rights->telephonie->ligne->creer && $contrat->statut <> 6)
 		{
+		  print '<a class="butAction" href="'.DOL_URL_ROOT.'/telephonie/adsl/fiche.php?action=create_line&amp;contratid='.$contrat->id.'&amp;client='.$contrat->client_id.'">Nouveau lien xDSL</a>';
 		  print '<a class="butAction" href="'.DOL_URL_ROOT.'/telephonie/ligne/fiche.php?action=create&amp;contratid='.$contrat->id.'">Nouvelle ligne</a>';
 		}
 	      
