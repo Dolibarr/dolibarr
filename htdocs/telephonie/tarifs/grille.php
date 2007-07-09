@@ -128,7 +128,7 @@ if ($auth_write)
   
   $sql = "SELECT rowid, libelle";
   $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif";
-  $sql .= " WHERE tlink = 0";
+  //$sql .= " WHERE tlink = 0";
   $sql .= " ORDER BY libelle ASC";
   
   $resql = $db->query($sql);
