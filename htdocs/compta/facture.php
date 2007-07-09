@@ -400,7 +400,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		if ($_POST['fac_replacement'] > 0)
 		{
 			// Si facture remplacement
-			$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 			$result=$facture->fetch($_POST['fac_replacement']);
 
@@ -434,7 +434,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 		if ($_POST['fac_avoir'] > 0)
 		{
 			// Si facture avoir
-			$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+			$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 			//$result=$facture->fetch($_POST['fac_avoir']);
 
@@ -467,9 +467,9 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] > 0)
 	{
 		// Si facture récurrente
-		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
-		$facture->socid 		     = $_POST['socid'];
+		$facture->socid 		 = $_POST['socid'];
 		$facture->type           = $_POST['type'];
 		$facture->number         = $_POST['facnumber'];
 		$facture->date           = $datefacture;
@@ -488,7 +488,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
 	if ($_POST['type'] == 0 && $_POST['fac_rec'] <= 0)
 	{
 		// Si facture standard
-		$datefacture = mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
+		$datefacture = dolibarr_mktime(12, 0 , 0, $_POST['remonth'], $_POST['reday'], $_POST['reyear']);
 
 		$facture->socid 		 = $_POST['socid'];
 		$facture->type           = $_POST['type'];
