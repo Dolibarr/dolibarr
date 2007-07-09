@@ -454,7 +454,7 @@ if ($user->rights->societe->lire)
 	{
 		$sql .= " AND s.rowid = ".$user->societe_id;
 	}
-	$sql .= " ORDER BY s.datec DESC ";
+	$sql .= " ORDER BY s.datec DESC";
 	$sql .= $db->plimit($max, 0);
 
 	$result = $db->query($sql);
