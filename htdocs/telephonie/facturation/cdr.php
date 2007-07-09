@@ -85,10 +85,10 @@ if ($_GET["search_ligne"])
 
 if ($_GET["search_num"])
 {
-  $sel =urldecode($_GET["search_num"]);
-  $sel = ereg_replace("\.","",$sel);
-  $sel = ereg_replace(" ","",$sel);
-  $sql .= " AND num LIKE '%".$sel."%'";
+  $selnum =urldecode($_GET["search_num"]);
+  $selnum = ereg_replace("\.","",$selnum);
+  $selnum = ereg_replace(" ","",$selnum);
+  $sql .= " AND num LIKE '%".$selnum."%'";
 }
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
@@ -96,8 +96,9 @@ $resql = $db->query($sql);
 
 $num = $db->num_rows($resql);
 
+$urladd= "&amp;search_ligne=".$sel."&amp;search_num=".$selnum;
 
-print_barre_liste("CDR a traiter", $page, "cdr.php", "", $sortfield, $sortorder, '', $num);
+print_barre_liste("CDR a traiter", $page, "cdr.php", $urladd, $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
