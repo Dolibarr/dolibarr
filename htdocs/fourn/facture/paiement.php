@@ -97,11 +97,14 @@ if ($action == 'add_paiement')
 		}
 	}
 
+/*
+	\TODO A activer qd gestion avoir active et que creation facture fournisseur negative interdit
 	if ($total <= 0)
 	{
 		$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('Amount')).'</div>';
 		$error++;
 	}
+*/
 
 	if (! $error)
 	{
