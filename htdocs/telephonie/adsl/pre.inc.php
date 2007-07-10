@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -34,13 +34,16 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
-  $menu->add(DOL_URL_ROOT."/telephonie/adsl/index.php", "ADSL");
+  $menu->add(DOL_URL_ROOT."/telephonie/adsl/index.php", "Liens xDSL");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/adsl/liste.php", "Liste");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/adsl/fiche.php?action=create", "Nouvelle liaison");
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
+
+  if ($user->rights->telephonie->configurer)
+    $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
   left_menu($menu->liste);
 }

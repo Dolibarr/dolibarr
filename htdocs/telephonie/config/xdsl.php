@@ -31,6 +31,8 @@ require_once(DOL_DOCUMENT_ROOT.'/fourn/fournisseur.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/telephonie/adsl/fournisseurxdsl.class.php');
 
 $langs->load("admin");
+$langs->load("suppliers");
+$langs->load("products");
 
 if (!$user->admin) accessforbidden();
 
@@ -58,6 +60,17 @@ if ($_GET["action"] == "switch")
  *
  */
 llxHeader('','Téléphonie - Configuration - Liens xDSL');
+
+$h=0;
+$head[$h][0] = DOL_URL_ROOT."/telephonie/config/xdsl.php";
+$head[$h][1] = $langs->trans("Suppliers");
+$hselected = $h;
+$h++;
+
+$head[$h][0] = DOL_URL_ROOT."/telephonie/config/xdsl_product.php";
+$head[$h][1] = $langs->trans("Products");
+$h++;
+
 
 dolibarr_fiche_head($head, $hselected, "Configuration des liens xDSL");
 

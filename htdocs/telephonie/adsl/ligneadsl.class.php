@@ -63,7 +63,6 @@ class LigneAdsl {
    */
   function update($user)
   {
-
     $sql = "UPDATE ".MAIN_DB_PREFIX."telephonie_societe_ligne";
     $sql .= " SET ";
     $sql .= " fk_client_comm = $this->client_comm, ";
@@ -98,9 +97,9 @@ class LigneAdsl {
     if (strlen(trim($this->numero)) == 10)
       {
 	$sql = "INSERT INTO ".MAIN_DB_PREFIX."telephonie_adsl_ligne";
-	$sql .= " (fk_client, fk_client_install, fk_client_facture, numero_ligne, fk_type, fk_fournisseur, note, fk_commercial, statut, fk_user_creat)";
+	$sql .= " (fk_client, fk_client_install, fk_client_facture, fk_contrat, numero_ligne, fk_type, fk_fournisseur, note, fk_commercial, statut, fk_user_creat)";
 	$sql .= " VALUES (";
-	$sql .= " $this->client,$this->client_install,$this->client_facture,'$this->numero',$this->type,$this->fournisseur, '$this->note',$this->commercial, -1,$user->id)";
+	$sql .= " $this->client,$this->client_install,$this->client_facture,'$this->contrat','$this->numero',$this->type,$this->fournisseur, '$this->note',$this->commercial, -1,$user->id)";
 	
 	$resql = $this->db->query($sql);
 
@@ -174,7 +173,7 @@ class LigneAdsl {
   function fetch($ligne, $id = 0)
     {
       $sql = "SELECT l.rowid, l.fk_client, l.fk_client_install, l.fk_client_facture, l.fk_fournisseur, l.numero_ligne, l.note, l.statut, l.fk_commercial";
-      $sql .= ", l.ip, l.login, l.password, l.prix";
+      $sql .= ", l.ip, l.login, l.password, l.prix, l.fk_contrat";
       $sql .= " , t.intitule AS type";
       $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_adsl_ligne as l";
       $sql .= " , ".MAIN_DB_PREFIX."telephonie_adsl_type as t";
@@ -188,12 +187,12 @@ class LigneAdsl {
 	{
 	  $sql .= " AND l.numero_ligne = ".$ligne;
 	}
-
-      if ($this->db->query($sql))
+      $resql = $this->db->query($sql);
+      if ($resql)
 	{
-	  if ($this->db->num_rows())
+	  if ($this->db->num_rows($resql))
 	    {
-	      $obj = $this->db->fetch_object();
+	      $obj = $this->db->fetch_object($resql);
 
 	      $this->id = $obj->rowid;
 	      $this->socid             = $obj->fk_soc;
@@ -204,6 +203,7 @@ class LigneAdsl {
 	      $this->client_facture_id = $obj->fk_client_facture;
 	      $this->fournisseur_id    = $obj->fk_fournisseur;
 	      $this->commercial_id     = $obj->fk_commercial;
+	      $this->contrat_id        = $obj->fk_contrat;
 	      $this->type              = $obj->type;
 	      $this->prix              = $obj->prix;
 	      $this->statut            = $obj->statut;
@@ -221,7 +221,7 @@ class LigneAdsl {
 	      $result = -2;
 	    }
 
-	  $this->db->free();
+	  $this->db->free($resql);
 	}
       else
 	{
