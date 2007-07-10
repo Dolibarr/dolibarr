@@ -35,7 +35,7 @@ function llxHeader($head = "", $title="") {
   $menu = new Menu();
 
   if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
-    $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "ADSL");
+    $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "Liens xDSL");
 
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
