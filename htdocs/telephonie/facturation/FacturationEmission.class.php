@@ -192,8 +192,8 @@ class FacturationEmission {
 	    
 	    /* Lecture des factures téléphoniques du contrat */
 	    dolibarr_syslog("FacturationEmission::Emission ".$xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")",LOG_DEBUG);
-	    
-	    $sql = "SELECT f.rowid, s.idp FROM ";     
+	    array_push($this->messages, $xcli."/".$xclis." Contrat à facturer id=".$contrat.",batch=".$batch_id);
+	    $sql = "SELECT f.rowid, s.rowid FROM ";     
 	    $sql .=     MAIN_DB_PREFIX."telephonie_facture as f";
 	    $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	    $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -203,7 +203,7 @@ class FacturationEmission {
 	    $sql .= " AND c.rowid = ".$contrat;
 	    $sql .= " AND l.fk_contrat = c.rowid";
 	    $sql .= " AND l.rowid = f.fk_ligne";
-	    $sql .= " AND s.idp = c.fk_soc_facture ";
+	    $sql .= " AND s.rowid = c.fk_soc_facture ";
 	    $sql .= " AND f.fk_facture IS NULL";
 	    $sql .= " AND f.isfacturable = 'oui'";  
 	    
@@ -228,6 +228,7 @@ class FacturationEmission {
 		$this->db->free();
 		
 		dolibarr_syslog("FacturationEmission::Emission Contrat $contrat, $i factures trouvées à générer", LOG_DEBUG);
+		array_push($this->messages, "Contrat $contrat, $i factures trouvées à générer");
 		
 		$factures_prev = array();
 		$factures_a_mailer = array();
@@ -246,12 +247,12 @@ class FacturationEmission {
 		  {
 		    //$this->_emails($this->db, $this->user, $contrat, $factures_a_mailer);
 		  }
-
 	      }
 	    else
 	      {
 		$error = 1;
 		dolibarr_syslog("FacturationEmission::Emission Error ".$error, LOG_ERR);
+		array_push($this->messages, "Erreur base de donnees");
 	      }     
 	  }
       }
