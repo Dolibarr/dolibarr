@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,6 +24,6 @@ create table llx_telephonie_adsl_fournisseur (
   rowid           integer AUTO_INCREMENT PRIMARY KEY,
   fk_soc          integer NOT NULL,
   email_commande  varchar(255),
-  commande_active tinyint default 0
-
+  commande_active tinyint default 0,
+  UNIQUE(fk_soc)
 )type=innodb;
