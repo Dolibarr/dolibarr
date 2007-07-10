@@ -40,10 +40,12 @@ if ($_POST["action"] == 'add')
   $ligne->client         = $_POST["client"];
   $ligne->client_install = $_POST["client_install"];
   $ligne->client_facture = $_POST["client_facture"];
+  $ligne->contrat        = $_POST["contrat"];
   $ligne->fournisseur    = $_POST["fournisseur"];
   $ligne->commercial     = $_POST["commercial"];
   $ligne->type           = $_POST["type"];
   $ligne->note           = $_POST["note"];
+
 
   if ( $ligne->create($user) == 0)
     {
@@ -412,6 +414,7 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="client" value="'.$socc->id.'">'."\n";
+	  print '<input type="hidden" name="contrat" value="'.$_GET['contratid'].'">'."\n";
 	  
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td width="20%">Client</td><td >';  
@@ -653,6 +656,9 @@ else
 		}
 
 	      print '</td></tr>';
+	      print '<tr><td width="20%">Contrat</td>';
+	      print '<td colspan="2"><a href="'.DOL_URL_ROOT.'/telephonie/contrat/fiche.php?id='.$ligne->contrat_id.'">';
+	      print substr("00000000".$ligne->contrat_id,-8).'</a></td></tr>';
 
 	      $commercial = new User($db, $ligne->commercial_id);
 	      $commercial->fetch();
