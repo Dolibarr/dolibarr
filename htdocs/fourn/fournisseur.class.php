@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
  * 
  * This program is free software; you can redistribute it and/or modify
@@ -21,10 +21,10 @@
  */
 
 /**
-		\file       htdocs/fourn/fournisseur.class.php
-		\ingroup    fournisseur,societe
-		\brief      Fichier de la classe des fournisseurs
-		\version    $Revision$
+   \file       htdocs/fourn/fournisseur.class.php
+   \ingroup    fournisseur,societe
+   \brief      Fichier de la classe des fournisseurs
+   \version    $Revision$
 */
 
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
@@ -47,12 +47,13 @@ class Fournisseur extends Societe
    *    \param  id     id societe (0 par defaut)
    */
 	 
-  function Fournisseur($DB, $id=0)
+  function Fournisseur($DB, $id=0, $user=0)
   {
     global $config;
 
     $this->db = $DB;
     $this->id = $id;
+    $this->user = $user;
     $this->client = 0;
     $this->fournisseur = 0;
     $this->effectif_id  = 0;
@@ -237,6 +238,42 @@ class Fournisseur extends Societe
 	return -1;
       }
   }
+
+  /**
+   * Retourne la liste des fournisseurs
+   *
+   *
+   */
+  function ListArray()
+  {
+    $arr = array();
+
+    $sql = "SELECT s.rowid, s.nom";
+    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+    $sql.= " WHERE s.fournisseur = 1";
+    if (!$this->user->rights->commercial->client->voir && !$this->user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$this->user->id;
+
+    $resql=$this->db->query($sql);
+
+    if ($resql)
+      {
+	while ($obj=$this->db->fetch_object($resql))
+	  {
+	    $arr[$obj->rowid] = stripslashes($obj->nom);
+	  }
+
+      }
+    else 
+      {
+	dolibarr_print_error($this->db);
+	$this->error=$this->db->error();
+
+      }
+    return $arr;
+  }
+    
 }
 
 ?>
