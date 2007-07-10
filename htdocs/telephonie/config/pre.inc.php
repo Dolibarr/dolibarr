@@ -34,6 +34,9 @@ function llxHeader($head = "", $title="") {
 
   $menu = new Menu();
 
+  if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
+    $menu->add(DOL_URL_ROOT."/telephonie/adsl/", "Liens xDSL");
+
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
   if (TELEPHONIE_MODULE_SIMULATION == 1)
@@ -56,6 +59,9 @@ function llxHeader($head = "", $title="") {
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/mail.php", "Mails");
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/concurrents/liste.php", "Concurrents");
+
+  if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/xdsl.php", "Liens xDSL");
 
   left_menu($menu->liste);
 }
