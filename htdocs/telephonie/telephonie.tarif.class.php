@@ -68,7 +68,6 @@ class TelephonieTarif {
     $this->_load_tarif($grille_id, $type);
   }
 
-
   function CreateTarif($name, $type)
   {
 

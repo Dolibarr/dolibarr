@@ -40,8 +40,6 @@ require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/communication.class.php");
-
-//require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie-tarif.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.class.php");
 
 
@@ -435,8 +433,6 @@ $db->close();
 
 dolibarr_syslog("Fin Batch ID ".$batch_id);
 
-dolibarr_syslog("Conso mémoire ".memory_get_usage() );
-
 // FIN
 
 /******************************************************************************
@@ -455,9 +451,9 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
   $nbnat   = 0;
   $duree   = 0;
 
-  $fournisseur_id = 1;
+  $fournisseur_id = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID ;
 
-  $tarif_spec = 1 ;
+  $tarif_spec = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID ;
 
   $sql = "SELECT d.grille_tarif";
 
@@ -485,9 +481,8 @@ function calcul($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente
   
   dolibarr_syslog("Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
 
-
-  $tarif_achat = new TelephonieTarif($db, $fournisseur_id, "achat");
-  $tarif_vente = new TelephonieTarif($db, $fournisseur_id, "vente", $tarif_spec, $ligne->client_comm_id);
+  $tarif_achat = new TelephonieTarif($db, $tarif_spec, "achat", $fournisseur_id);
+  $tarif_vente = new TelephonieTarif($db, $tarif_spec, "vente", $tarif_spec, $ligne->client_comm_id);
 
   $comms = array();
 

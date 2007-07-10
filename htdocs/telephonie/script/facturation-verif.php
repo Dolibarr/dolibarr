@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,6 +24,8 @@
 
 require ("../../master.inc.php");
 
+dolibarr_syslog("facturation-verif.php BEGIN"); 
+
 require_once (DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/lignetel.class.php");
 require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
@@ -37,7 +39,7 @@ $sql = "SELECT count(*) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 if ( $db->query($sql) )
 {
   $row = $db->fetch_row();
-  print $row[0]." lignes de communications\n";
+  dolibarr_syslog("facturation-verif.php ".$row[0]." lignes de communications a verifier");
 }
 
 /*******************************************************************************
@@ -45,9 +47,11 @@ if ( $db->query($sql) )
  * Verifie la présence des tarifs adequat
  *
  */
+$grille_vente = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID;
 
-$tarif_achat = new TelephonieTarif($db, 1, "achat");
-$tarif_vente = new TelephonieTarif($db, 1, "vente");
+$tarif_vente = new TelephonieTarif($db, $grille_vente, "vente");
+
+dolibarr_syslog("facturation-verif.php Grille : $grille contient ".$tarif_vente->num_tarifs." tarifs");
 
 $sql = "SELECT distinct(num) FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
 
@@ -57,12 +61,8 @@ if ( $resql )
 {
   $nums = $db->num_rows($resql);
 
-  $i = 0;
-
-  while($i < $nums)
+  while($row = $db->fetch_row($resql) )
     {
-      $row = $db->fetch_row($resql);
-
       $numero = $row[0];
 
       /* Reformatage du numéro */
@@ -83,110 +83,23 @@ if ( $resql )
 	  $numero = "0033".substr($numero, 1);
 	}	  
 
-      /* Recherche du tarif */
-
       /* Numéros spéciaux */
       if (substr($numero,4,1) == 8)
 	{
 
 	}
       else
-	{
-	  if (! $tarif_achat->cout($numero, $x, $y, $z))
+	{	  
+	  if ( $tarif_vente->cout($numero, $x, $y, $z) == 0)
 	    {
-	      print "\nTarif achat manquant pour $numero\n";
-	      print "\nPour les corrections utilisez facturation-correction-import.php\n";
-	      exit(1);
-	    }
-	  
-	  if (! $tarif_vente->cout($numero, $x, $y, $z))
-	    {
-	      print "\nTarif vente manquant pour $numero\n";
-	      print "\nPour les corrections utilisez facturation-correction-import.php\n";
-	      exit(1);
+	      print "Tarif vente manquant pour $numero ($row[0]) $x $y dans la grille $grille\n";
 	    }
 	}
 
-      print ".";
-      $i++;
     }
-  $db->free();
-}
-print "\n";
-
-/*
- * Verification des contrats
- */
-$contrats = array();
-
-$sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture";
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat ";
-
-$resql = $db->query($sql) ;
-
-if ( $resql )
-{
-  $num = $db->num_rows($resql);
-  
-  $i = 0;
-  
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($resql);
-      
-      $contrats[$i] = $objp;
-      
-      $i++;
-    }            
-  $db->free();
-}
-dolibarr_syslog(sizeof($contrats) ." contrats a vérifier"); 
-
-$error = 0;
-
-foreach ($contrats as $contrat)
-{
-
-  $sql = "SELECT rowid, fk_client_comm, fk_soc, fk_soc_facture";
-  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_societe_ligne";
-  $sql .= " WHERE fk_contrat = ".$contrat->rowid;
-
-  $resql = $db->query($sql) ;
-  
-  if ( $resql )
-    {
-      $num = $db->num_rows($resql);      
-      $i = 0;
-      
-      while ($i < $num)
-	{
-	  $objp = $db->fetch_object($resql);
-	  
-	  if ($objp->fk_client_comm <> $contrat->fk_client_comm)
-	    {
-	      dolibarr_syslog("Erreur fk_client_comm contrat ".$contrat->rowid." ligne ".$objp->rowid);
-	      $error++;
-	    }
-	  
-	  if ($objp->fk_soc <> $contrat->fk_soc)
-	    {
-	      dolibarr_syslog("Erreur fk_soc contrat ".$contrat->rowid." ligne ".$objp->rowid);
-	      $error++;
-	    }
-
-	  if ($objp->fk_soc_facture <> $contrat->fk_soc_facture)
-	    {
-	      dolibarr_syslog("Erreur fk_soc_facture contrat ".$contrat->rowid." ligne ".$objp->rowid);
-	      $error++;
-	    }
-	  $i++;
-	}            
-      $db->free();
-    } 
-  else
-    {
-      dolibarr_syslog("Erreur SQL");
-    }
+  $db->free($resql);
 }
 dolibarr_syslog($error ." erreurs trouvées"); 
+
+dolibarr_syslog("facturation-verif.php END"); 
 ?>

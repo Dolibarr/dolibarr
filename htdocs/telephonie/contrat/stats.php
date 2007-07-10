@@ -116,6 +116,7 @@ if ($_GET["id"])
 	  if (file_exists($file)) 
 	    {
 	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="CA Mensuel">';
+	      //print '<img src="'.DOL_URL_ROOT.'/viewimage.php?graph='.$file.'" alt="CA Mensuel">';
 	    }
 	  else
 	    {
@@ -142,7 +143,7 @@ if ($_GET["id"])
 
 	  if (file_exists($file)) 
 	    {
-	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'">';
+	      print '<img src="'.DOL_URL_ROOT.'/telephonie/showgraph.php?graph='.$file.'" alt="dureemoyenne">';
 	    }
 	  else
 	    {
