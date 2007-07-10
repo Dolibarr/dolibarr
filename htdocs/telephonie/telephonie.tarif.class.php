@@ -176,27 +176,23 @@ class TelephonieTarif {
 	    $i++;
 	  }
 	$this->num_tarifs = $num;
-	$this->db->free();	
+	$this->db->free($resql);
       }
     else
       {
-	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 1");
-	dolibarr_syslog($this->db->error());
+	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 1", LOG_ERR);
+	dolibarr_syslog($this->db->error(), LOG_DEBUG);
       }
-
     /*
      * Tarif Spécifique
      *
      */
-
     if ($this->tarif_spec <> 1)
       {
-
 	$sql = "SELECT p.prefix, m.temporel, m.fixe, t.libelle";
 	$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_montant as m";
 	$sql .= " ,  ".MAIN_DB_PREFIX."telephonie_tarif as t";
 	$sql .= " ,  ".MAIN_DB_PREFIX."telephonie_prefix as p";
-
 	$sql .= " WHERE t.rowid = m.fk_tarif";
 	$sql .= " AND t.rowid = p.fk_tarif";
 	$sql .= " AND m.fk_tarif_desc = ".$this->tarif_spec;

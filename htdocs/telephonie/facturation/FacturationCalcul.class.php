@@ -471,7 +471,7 @@ class FacturationCalcul {
 	$db->free($resql);
       }
     
-    dolibarr_syslog("FacturationCalcul Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
+    dolibarr_syslog("FacturationCalcul::_calcul_facture Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
     
     $tarif_achat = new TelephonieTarif($db, $tarif_spec, "achat", $fournisseur_id);
     $tarif_vente = new TelephonieTarif($db, $tarif_spec, "vente", $tarif_spec, $ligne->client_comm_id);
@@ -519,7 +519,7 @@ class FacturationCalcul {
     else
       {
 	$error++;
-	dolibarr_syslog("FacturationCalcul Erreur dans Calcul() Problème SQL");
+	dolibarr_syslog("FacturationCalcul::_calcul_facture Erreur dans Calcul() Problème SQL");
       }
 
     for ($ii = 0 ; $ii < $num_sql ; $ii++)
