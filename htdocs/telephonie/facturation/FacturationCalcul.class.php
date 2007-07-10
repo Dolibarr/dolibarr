@@ -280,6 +280,7 @@ class FacturationCalcul {
 		      {
 			$error++;
 			dolibarr_syslog("FacturationCalcul Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
+			array_push($this->messages, "Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
 		      }	  
 		  }	  
 		
@@ -447,8 +448,7 @@ class FacturationCalcul {
     
     $tarif_spec = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID ;
     
-    $sql = "SELECT d.grille_tarif";
-    
+    $sql = "SELECT d.grille_tarif";    
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
