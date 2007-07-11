@@ -70,7 +70,7 @@ class CdrFormatFructidor
 		$this->datas[$i]['ligne']   = ereg_replace('"','',$tabline[0]);
 		$this->datas[$i]['date']    = $tabline[1];
 		$this->datas[$i]['heure']   = $tabline[2];
-		$this->datas[$i]['numero']  = ereg_replace('"','',$tabline[3]);
+		$this->datas[$i]['numero']  = ereg_replace('"','',"0".substr($tabline[3],2,strlen($tabline[3]-2)));
 		$this->datas[$i]['tarif']   = trim($tabline[4]);
 		$this->datas[$i]['duree']   = trim($tabline[5]);
 		$this->datas[$i]['montant'] = trim($tabline[6]);
