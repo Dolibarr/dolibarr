@@ -54,7 +54,7 @@ class CdrFormatFructidor
     $badformat = 0;
     $error = 0;
     $i = 0;
-    $line = 1;
+    $line = 0;
     $hf = fopen ($file, "r");
 		
     while (!feof($hf))
@@ -81,8 +81,8 @@ class CdrFormatFructidor
 		dolibarr_syslog("CdrFormatFructidor::ReadFile Mauvais format de fichier ligne $line", LOG_ERR);
 		$badformat++;
 	      }  
+	    $line++;
 	  }
-	$line++;
       }
     fclose($hf);
     array_push($this->messages,array('info',"$line lignes lues dans le fichier"));
