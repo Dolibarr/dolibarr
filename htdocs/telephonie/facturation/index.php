@@ -118,7 +118,14 @@ $nb = $obj->nbfac;
 print "<tr $bc[1]>";
 print '<td>Lignes de facture</td><td align="right"><a href="facture.php">'.$nb.'</a></td>';
 print '<td align="center"><a href="emission.php">Emettre</a></td></tr>';
+print '</table><br />';
+
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="2">Statistiques</td></tr>';
+print "<tr $bc[$var]>";
+print '<td>Generation</td><td align="right"><a href="stats.php">Generer</a></td></tr>';
 print '</table>';
+
 
 print '</td><td valign="top" width="50%" rowspan="3">';
 
