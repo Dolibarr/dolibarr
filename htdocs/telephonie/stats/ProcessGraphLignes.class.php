@@ -124,8 +124,6 @@ class ProcessGraphLignes
 
     @mkdir(DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/".$ligne);
 
-    array_push($this->messages,array('error',"$file"));
-
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
     $graphx->width = 360;
