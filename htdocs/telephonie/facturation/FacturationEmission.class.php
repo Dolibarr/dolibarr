@@ -182,7 +182,7 @@ class FacturationEmission {
     if (!$error)
       { 
 	dolibarr_syslog("FacturationEmission::Emission Nombre de contrats à facturer ".sizeof($contrats),LOG_DEBUG);
-	
+	array_push($this->messages, "Nombre de contrats à facturer : ".sizeof($contrats));
 	$xcli = 0;
 	$xclis = sizeof($contrats);
 	
@@ -193,7 +193,7 @@ class FacturationEmission {
 	    /* Lecture des factures téléphoniques du contrat */
 	    dolibarr_syslog("FacturationEmission::Emission ".$xcli."/".$xclis." Contrat à facturer id=".$contrat." (".memory_get_usage() .")",LOG_DEBUG);
 	    array_push($this->messages, $xcli."/".$xclis." Contrat à facturer id=".$contrat.",batch=".$batch_id);
-	    $sql = "SELECT f.rowid, s.rowid FROM ";     
+	    $sql = "SELECT f.rowid FROM ";     
 	    $sql .=     MAIN_DB_PREFIX."telephonie_facture as f";
 	    $sql .= ",".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
 	    $sql .= " ,    ".MAIN_DB_PREFIX."telephonie_contrat as c";
@@ -210,22 +210,14 @@ class FacturationEmission {
 	    $sql .= " ORDER BY l.code_analytique ASC, l.rowid DESC";
 	    
 	    $numlignes = array();
-	    
-	    if ( $this->db->query($sql) )
+	    $resql = $this->db->query($sql);
+	    if ( $resql )
 	      {
-		$num = $this->db->num_rows();
-		
-		$i = 0;
-		
-		while ($i < $num)
-		  {
-		    $objp = $this->db->fetch_object();
-		    
-		    $numlignes[$i] = $objp->rowid;
-		    
-		    $i++;
+		while ($objp = $this->db->fetch_object($resql))
+		  {		    
+		    array_push($numlignes, $objp->rowid);
 		  }            
-		$this->db->free();
+		$this->db->free($resql);
 		
 		dolibarr_syslog("FacturationEmission::Emission Contrat $contrat, $i factures trouvées à générer", LOG_DEBUG);
 		array_push($this->messages, "Contrat $contrat, $i factures trouvées à générer");
@@ -288,6 +280,7 @@ class FacturationEmission {
 	  {
 	    $error++;
 	    dolibarr_syslog("FacturationEmission::facture_contrat Impossible de lire le contrat");
+	    array_push($this->messages, array('error',"Impossible de lire le contrat : $contrat_id"));
 	  }
       }
     
@@ -303,6 +296,7 @@ class FacturationEmission {
 	  }
 	else
 	  {
+	    array_push($this->messages, array('error',"Impossible de lire la societe"));
 	    $error = 132;
 	  }
       }
@@ -330,6 +324,7 @@ class FacturationEmission {
 	else
 	  {
 	    dolibarr_syslog("FacturationEmission::facture_contrat Erreur création objet facture erreur : $facid",LOG_ERR);
+	    array_push($this->messages, array('error',"Erreur création objet facture erreur : $facid"));
 	    $error = 16;
 	  }		  
       }
@@ -351,7 +346,8 @@ class FacturationEmission {
 	      }
 	    else
 	      {
-		dolibarr_syslog("ERREUR lecture facture téléphonique $factel_id");
+		dolibarr_syslog("FacturationEmission::facture_contrat Erreur lecture facture téléphonique $factel_id");
+		array_push($this->messages, array('error',"Erreur lecture facture téléphonique (id=$factel_id)"));
 		$error = 17;
 	      }
 	  
