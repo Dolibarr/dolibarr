@@ -42,7 +42,14 @@ if ($_GET["action"] == 'archive' && $user->rights->telephonie->facture->ecrire)
     {
       rename($srcdir.$file,$destdir.basename($file));
     }
+}
 
+if ($_GET["action"] == 'delete' && $user->rights->telephonie->facture->ecrire)
+{
+  $srcdir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
+  $file = urldecode ($_GET["file"]);
+
+  unlink($srcdir.$file);
 }
 
 $dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
@@ -92,7 +99,7 @@ print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Fournisseur</td>';
 print '<td>Fichier</td><td>Date</td>';
 print '<td align="right">Taille</td>';
-print "<td>&nbsp;</td></tr>\n";
+print "<td colspan='2'>&nbsp;</td></tr>\n";
 
 $var=True;
 
@@ -111,7 +118,8 @@ foreach ($files as $file)
   
   print '<td>'.date("d F Y H:i:s", filemtime($dir.$file)).'</td>';
   print '<td align="right">'.filesize($dir.$file).' octets</td>';
-  print '<td align="right"><a href="files.php?action=archive&amp;file='.urlencode($file).'">archiver</a></td>';
+  print '<td align="right"><a href="files.php?action=archive&amp;file='.urlencode($file).'">Archiver</a></td>';
+  print '<td align="right"><a href="files.php?action=delete&amp;file='.urlencode($file).'">Supprimer</a></td></tr>';
 }
 print "</table>";
 
