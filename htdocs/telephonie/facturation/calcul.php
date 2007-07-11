@@ -41,7 +41,7 @@ print_barre_liste("Calcul des CDR", $page, "calcul.php", "", $sortfield, $sortor
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
-print '<td>Message</td></tr>';
+print '<td colspan="2">Messages</td></tr>';
 
 $var=True;
 
@@ -50,8 +50,19 @@ $obj->Calcul();
 
 foreach ($obj->messages as $message)
 {
-  $var=!$var;  
-  print "<tr $bc[$var]><td>".$message."</td></tr>\n";
+  $var=!$var;
+  print "<tr $bc[$var]>";
+  if (is_array($message))
+    {
+      $func = 'img_'.$message[0];
+      print '<td>'.$func().'</td>';
+      print '<td width="99%">'.$message[1].'</td></tr>';
+    }
+  else
+    {
+      print '<td>'.img_info().'</td>';
+      print '<td width="99%">'.$message.'</td></tr>';
+    }
 }
 print "</table>";
 
