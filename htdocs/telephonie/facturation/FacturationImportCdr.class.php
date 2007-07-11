@@ -70,12 +70,12 @@ class FacturationImportCdr {
 		if (is_file($dir.$xfile) && substr($xfile, -4) == ".csv")
 		  {
 		    $files[$i] = $dir.$xfile;
-		    dolibarr_syslog("FacturationImportCdr::Import ".$xfile." ajouté");
+		    dolibarr_syslog("FacturationImportCdr::Import ".$xfile." ajoute");
 		    $i++;
 		  }
 		else
 		  {
-		    dolibarr_syslog("FacturationImportCdr::Import ".$xfile." ignoré");
+		    dolibarr_syslog("FacturationImportCdr::Import ".$xfile." ignore");
 		  }
 	      }
 	    
@@ -105,7 +105,7 @@ class FacturationImportCdr {
       }
     
     /*
-     * Vérification des fichiers charges
+     * Verification des fichiers charges
      *
      */
     $fichiers = array();
@@ -125,7 +125,7 @@ class FacturationImportCdr {
       }
 
     /*
-     * Vérification des fichiers traités
+     * Verification des fichiers traites
      *
      */
     $sql = "SELECT distinct(fichier_cdr)";
@@ -185,19 +185,21 @@ class FacturationImportCdr {
 	  {
 	    if ( $this->_verif($this->db, $xfile, $fichiers) == 0)
 	      {      
+		$error = 0;
 		dolibarr_syslog("FacturationImportCdr::Import Lecture du fichier $xfile", LOG_DEBUG);
 		array_push($this->messages,array('info',"Fichier ".basename($xfile)." : utilisation format ".$cdrformat->nom));
-		$cdrformat->ReadFile($xfile);
+
+		$error = $cdrformat->ReadFile($xfile);
 
 		$this->messages=array_merge($this->messages, $cdrformat->messages);
 
-		$error = 0;
+
 		$line = 0;
 		$line_inserted = 0;
 		$hf = fopen ($xfile, "r");
 		$line = 0;
 		
-		if ($this->db->query("BEGIN"))
+		if ($this->db->query("BEGIN") && $error == 0)
 		  {  
 		    foreach ($cdrformat->datas as $data)
 		      {
@@ -242,27 +244,27 @@ class FacturationImportCdr {
 				  }
 				else
 				  {
-				    dolibarr_syslog("FacturationImportCdr::Import Ligne : $cont ignorée", LOG_INFO);
+				    dolibarr_syslog("FacturationImportCdr::Import Ligne : $cont ignoree", LOG_INFO);
 				    $error++;
 				  }
 			      }
 			    else
 			      {
-				dolibarr_syslog("FacturationImportCdr::Import Duree nulle Ligne : $cont ignorée", LOG_INFO);
+				dolibarr_syslog("FacturationImportCdr::Import Duree nulle Ligne : $cont ignoree", LOG_INFO);
 			      }
 			  }
 			else
 			  {
-			    dolibarr_syslog("FacturationImportCdr::Import Ligne $ligne inconnue Ligne : $cont ignorée", LOG_INFO);
+			    dolibarr_syslog("FacturationImportCdr::Import Ligne $ligne inconnue Ligne : $cont ignoree", LOG_INFO);
 			    array_push($this->messages,array('warning',"Ligne $ligne inconnue"));
 			  }
 			$line++;
 		      }		    
 
-		    dolibarr_syslog("FacturationImportCdr::Import $line lignes traitées dans le fichier", LOG_INFO);
+		    dolibarr_syslog("FacturationImportCdr::Import $line lignes traitees dans le fichier", LOG_INFO);
 		    $level = ($line > 0) ? 'info':'warning';
-		    array_push($this->messages,array($level,"$line lignes traitées dans le fichier"));		
-		    dolibarr_syslog("FacturationImportCdr::Import $line_inserted insert effectués", LOG_INFO);
+		    array_push($this->messages,array($level,"$line lignes traitees dans le fichier"));		
+		    dolibarr_syslog("FacturationImportCdr::Import $line_inserted insert effectues", LOG_INFO);
 		    $level = ($line_inserted > 0) ? 'info':'warning';
 		    array_push($this->messages,array($level,"$line_inserted ajout dans la table des CDR a traiter"));
 		    
@@ -283,8 +285,13 @@ class FacturationImportCdr {
 		      {
 			$this->db->query("ROLLBACK");
 			dolibarr_syslog("ROLLBACK");
+			array_push($this->messages, array('error',"Fichier ".basename($xfile)." : echec de l'importation"));
 		      }		    
-		  }	
+		  }
+		else
+		  {
+		    array_push($this->messages, array('error',"Fichier ".basename($xfile)." : echec de l'importation"));
+		  }
 	      }
 	  }
 	else
