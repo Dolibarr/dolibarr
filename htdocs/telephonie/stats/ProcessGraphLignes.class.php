@@ -36,10 +36,10 @@ class ProcessGraphLignes
 {
   var $ident;
   
-  function ProcessGraphLignes( $db)
+  function ProcessGraphLignes($db)
   {
     global $conf;
-
+    $this->messages = array();
     $this->ident = $ident;
     $this->cpc = $cpc;
 
@@ -51,6 +51,55 @@ class ProcessGraphLignes
     $this->vente = array();
     $this->gain = array();
   }
+
+  function GenerateAll()
+  {
+    $graph_all = 1;
+    $datetime = time();
+    $month = strftime("%m", $datetime);
+    $year = strftime("%Y", $datetime);
+    
+    if ($month == 1)
+      {
+	$month = "12";
+	$year = $year - 1;
+      }
+    else
+      {
+	$month = substr("00".($month - 1), -2) ;
+      }
+    
+    $sql = "SELECT distinct(fk_ligne)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+    if ($graph_all == 0)
+      {
+	$sql .= " WHERE date_format(date,'%m%Y') = '".$month.$year."'";
+      }
+    
+    $resql = $this->db->query($sql);
+    
+    if ($resql)
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+	array_push($this->messages,array('info',"$num lignes trouvees"));
+	
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    //if ($verbose)
+	      //print substr("0000".($i+1), -4) . "/".substr("0000".$num, -4)."\n";
+	      
+	      $this->go($row[0]);
+	    
+	    $i++;
+	  }
+      }
+    else
+      {
+	array_push($this->messages,array('error','SQL Erreur'));
+      }
+  }
+  
   
   function go($ligne)
   {
@@ -66,7 +115,16 @@ class ProcessGraphLignes
     
     $img_root = DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/";
 
+    @mkdir(DOL_DATA_ROOT."/graph/");
+    @mkdir(DOL_DATA_ROOT."/graph/".substr($ligne,-1));
+    @mkdir(DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/");
+    @mkdir(DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/");
+
     $file = $img_root . $ligne."/graphca.png";
+
+    @mkdir(DOL_DATA_ROOT."/graph/".substr($ligne,-1)."/telephonie/ligne/".$ligne);
+
+    array_push($this->messages,array('error',"$file"));
 
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
