@@ -20,10 +20,10 @@
  *
  *
  * Script de calcul de la facturation
- * - Lit les entrées dans la table import_cdr
+ * - Lit les entrees dans la table import_cdr
  * - Verifie que tous les tarifs sont dispos
  * - Importe les lignes dans llx_communications_details
- * - Calcul la facture téléphonique par ligne
+ * - Calcul la facture telephonique par ligne
  */
 
 /**
@@ -56,7 +56,7 @@ class FacturationCalcul {
     $date = strftime("%d%h%Y%Hh%Mm%S",$datetime);
 
     /*
-     * On facture les communications du mois précédent
+     * On facture les communications du mois precedent
      */
     
     $month = strftime("%m", $datetime);
@@ -88,7 +88,7 @@ class FacturationCalcul {
 	$num = $this->db->num_rows($resql);
 	$row = $this->db->fetch_row($resql);
 	
-	dolibarr_syslog("FacturationCalcul::Calcul Communications à traiter ".$row[0],LOG_INFO);
+	dolibarr_syslog("FacturationCalcul::Calcul Communications a traiter ".$row[0],LOG_INFO);
 	$this->db->free($resql);
       }
     else
@@ -122,7 +122,7 @@ class FacturationCalcul {
     
     /**
      *
-     * Lectures des différentes lignes dans la table d'import
+     * Lectures des differentes lignes dans la table d'import
      *
      */
     
@@ -145,7 +145,7 @@ class FacturationCalcul {
 		$i++;
 	      }            
 	    $this->db->free($resql);
-	    dolibarr_syslog(sizeof($lines_keys)." lignes trouvées");
+	    dolibarr_syslog(sizeof($lines_keys)." lignes trouvees");
 	  }
 	else
 	  {
@@ -156,7 +156,7 @@ class FacturationCalcul {
 
     /**********************************************************
      *
-     * Création d'un batch de facturation
+     * Creation d'un batch de facturation
      *
      ***********************************************************/
     
@@ -207,12 +207,12 @@ class FacturationCalcul {
 		  {
 		    
 		    $error = 5;	  
-		    dolibarr_syslog("FacturationCalcul Error ($error): Aucune société rattachée à la ligne : $line_key");
+		    dolibarr_syslog("FacturationCalcul Error ($error): Aucune societe rattachee a la ligne : $line_key");
 		  }
 		
 		
 		/*
-		 * Récupération des infos sur la sociétés
+		 * Recuperation des infos sur la societes
 		 *
 		 */      
 		if (!$error )
@@ -231,7 +231,7 @@ class FacturationCalcul {
 		
 		/*
 		 *
-		 * Création d'une facture de telephonie si la ligne est facturable
+		 * Creation d'une facture de telephonie si la ligne est facturable
 		 *
 		 */
 		
@@ -286,7 +286,7 @@ class FacturationCalcul {
 		
 		/*
 		 *
-		 * Insertion des données dans la base
+		 * Insertion des donnees dans la base
 		 *
 		 */
 		
@@ -323,14 +323,14 @@ class FacturationCalcul {
 		    else
 		      {
 			$error++;
-			dolibarr_syslog("FacturationCalcul Erreur de mise à jour dans llx_telephonie_facture");
+			dolibarr_syslog("FacturationCalcul Erreur de mise a jour dans llx_telephonie_facture");
 			dolibarr_syslog($this->db->error());
 			dolibarr_syslog($sql);
 		      }
 		  }
 	  
 		/*
-		 * Suppression des données de la table d'import
+		 * Suppression des donnees de la table d'import
 		 *
 		 */
 	  
@@ -403,7 +403,7 @@ class FacturationCalcul {
      *
      ***********************************************************/
 
-    dolibarr_syslog($nbcommit." facture émises");
+    dolibarr_syslog($nbcommit." facture emises");
 
     /**********************************************************
      *
@@ -519,7 +519,7 @@ class FacturationCalcul {
     else
       {
 	$error++;
-	dolibarr_syslog("FacturationCalcul::CalculateBill Erreur dans Calcul() Problème SQL");
+	dolibarr_syslog("FacturationCalcul::CalculateBill Erreur dans Calcul() Probleme SQL");
       }
 
     for ($ii = 0 ; $ii < $num_sql ; $ii++)
