@@ -233,7 +233,7 @@ class FacturationImportCdr {
 			else
 			  {
 			    dolibarr_syslog("FacturationImportCdr::Import Ligne $ligne inconnue Ligne : $cont ignorée", LOG_INFO);
-			    array_push($this->messages,"Ligne $ligne inconnue");
+			    array_push($this->messages,array('warning',"Ligne $ligne inconnue"));
 			  }
 			$line++;
 		      }		    
@@ -253,7 +253,7 @@ class FacturationImportCdr {
 		    if ($error == 0)
 		      {	  
 			$this->db->query("COMMIT");
-			array_push($this->messages, "Fichier ".basename($xfile)." importation reussie");
+			array_push($this->messages, array('info',"Fichier ".basename($xfile)." importation reussie"));
 		      }
 		    else
 		      {
