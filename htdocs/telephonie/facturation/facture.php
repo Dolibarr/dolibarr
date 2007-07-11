@@ -21,22 +21,6 @@
  */
 require("./pre.inc.php");
 
-$dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
-
-$handle=opendir($dir);
-
-$files = array();
-
-$var=true;
-while (($file = readdir($handle))!==false)
-{
-  if (is_file($dir.'/'.$file))
-    array_push($files, $file);
-}
-closedir($handle);
-
-
-
 if (!$user->rights->telephonie->facture->lire) accessforbidden();
 
 $page = $_GET["page"];
@@ -78,23 +62,23 @@ $pagenext = $page + 1;
  *
  */
 
-print_barre_liste("CDR a traiter", $page, "cdr.php", "", $sortfield, $sortorder, '', $num);
+print_barre_liste("Factures telephonie", $page, "facture.php", "", $sortfield, $sortorder, '', $num);
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
 print '<td>Ligne</td><td>Date</td>';
-print '<td align="right">Montant HT</td>';
+print '<td align="right">Montant HT</td><td align="right">Montant Fournisseur</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
-print '<form action="cdr.php" method="GET">';
+print '<form action="facture.php" method="GET">';
 print '<td><input type="text" name="search_ligne" value="'. $_GET["search_ligne"].'" size="10"></td>'; 
-print '<td>&nbsp;</td>';
+print '<td>&nbsp;</td><td>&nbsp;</td>';
 print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td>';
 
 $var=True;
 
-$sql = "SELECT fk_contrat,ligne,date,cout_vente";
+$sql = "SELECT fk_contrat,ligne,date,cout_vente,fourn_montant";
 $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_facture";
 $sql .= " WHERE 1=1";
 if ($_GET["search_ligne"])
@@ -115,6 +99,7 @@ while ($obj = $db->fetch_object($resql))
   print '<td>'.$obj->ligne."</td>\n";
   print '<td>'.$obj->date."</td>\n";
   print '<td align="right">'.price($obj->cout_vente)."</td>\n";
+  print '<td align="right">'.price($obj->fourn_montant)."</td>\n";
 
 
 }
