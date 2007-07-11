@@ -850,16 +850,14 @@ class FacturationEmission {
 	dolibarr_syslog("ROLLBACK de la transaction $error");
       }    
   }
-
+  /**
+     \brief Emissions des demandes de prelevement
+     \param db database handler
+     \param user Object User
+     \param factures_prev Array factures id
+   */
   function _prelevements($db, $user, $factures_prev)
   { 
-    /********************************************************************
-     *                                                                  *
-     *                                                                  *
-     * Emissions des demandes de prelevement                            *
-     *                                                                  *
-     *                                                                  *
-     ********************************************************************/  
     dolibarr_syslog("FacturationEmission::_prelevements Debut demande de prelevement", LOG_DEBUG);
     dolibarr_syslog("FacturationEmission::_prelevements Nombre de factures ".sizeof($factures_prev),LOG_DEBUG); 
     if (sizeof($factures_prev) > 0)
@@ -911,7 +909,6 @@ class FacturationEmission {
 		  }
 		$sendto = substr($sendto,0,strlen($sendto) - 1);
 
-
 		dolibarr_syslog("[EM] Envoi email à ".html_entity_decode($sendto) );
 
 		$subject = ereg_replace("#FACREF#",$fact->ref,TELEPHONIE_MAIL_FACTURATION_SUJET);
@@ -939,13 +936,6 @@ class FacturationEmission {
 		$arr_mime = array();
 
 		$facfile = FAC_OUTPUTDIR . "/" . $fact->ref . "/" . $fact->ref . ".pdf";
-
-		/*
-		 * Joint le fichier commercial supplémentaire
-		 */
-		//array_push($arr_file, "/home/www/dolibarr/documents/hp65152.pdf");
-		//array_push($arr_mime, "application/pdf");
-		//array_push($arr_name, "hp65152.pdf");
 
 		/*
 		 * Join la facture
