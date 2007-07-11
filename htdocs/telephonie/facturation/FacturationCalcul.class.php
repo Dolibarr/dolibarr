@@ -88,7 +88,7 @@ class FacturationCalcul {
 	$num = $this->db->num_rows($resql);
 	$row = $this->db->fetch_row($resql);
 	
-	dolibarr_syslog("FacturationCalcul Communications à traiter ".$row[0]);
+	dolibarr_syslog("FacturationCalcul::Calcul Communications à traiter ".$row[0],LOG_INFO);
 	$this->db->free($resql);
       }
     else
@@ -276,11 +276,11 @@ class FacturationCalcul {
 		    $total_vente = 0;
 		    $total_fourn = 0;
 		    
-		    if ($this->_calcul_facture($this->db, $ligne, $facid, $total_achat, $total_vente, $total_fourn) <> 0)
+		    if ($this->CalculateBill($this->db, $ligne, $facid, $total_achat, $total_vente, $total_fourn) <> 0)
 		      {
 			$error++;
 			dolibarr_syslog("FacturationCalcul Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
-			array_push($this->messages, "Erreur de calcul de la facture pour la ligne $line_key $ligne->numero");
+			array_push($this->messages, array('error',"Erreur de calcul de la facture pour la ligne $ligne->numero (id=$line_key)"));
 		      }	  
 		  }	  
 		
@@ -434,7 +434,7 @@ class FacturationCalcul {
    *
    ******************************************************************************/
   
-  function _calcul_facture($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente, &$total_cout_fourn)
+  function CalculateBill($db, $ligne, $facture_id, &$total_cout_achat, &$total_cout_vente, &$total_cout_fourn)
   {
     $error = 0;
     
@@ -471,7 +471,7 @@ class FacturationCalcul {
 	$db->free($resql);
       }
     
-    dolibarr_syslog("FacturationCalcul::_calcul_facture Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
+    dolibarr_syslog("FacturationCalcul::CalculateBill Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
     
     $tarif_achat = new TelephonieTarif($db, $tarif_spec, "achat", $fournisseur_id);
     $tarif_vente = new TelephonieTarif($db, $tarif_spec, "vente", $tarif_spec, $ligne->client_comm_id);
@@ -519,7 +519,7 @@ class FacturationCalcul {
     else
       {
 	$error++;
-	dolibarr_syslog("FacturationCalcul::_calcul_facture Erreur dans Calcul() Problème SQL");
+	dolibarr_syslog("FacturationCalcul::CalculateBill Erreur dans Calcul() Problème SQL");
       }
 
     for ($ii = 0 ; $ii < $num_sql ; $ii++)
@@ -533,8 +533,16 @@ class FacturationCalcul {
 	$total_cout_vente = $total_cout_vente + $comm->cout_vente;
 
 	$error = $error + $comm->logsql($db);
+
+	foreach ($comm->messages as $message)
+	  {
+	    array_push($this->messages, $message);
+	  }
       }
 
+
+
+    dolibarr_syslog("FacturationCalcul::CalculateBill return $error", LOG_DEBUG);
     return $error;
   }
 

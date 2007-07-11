@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -29,13 +29,14 @@ class CommunicationTelephonique {
   var $dest;
   var $numero;
   var $montant;
-
+  var $messages;
   /**
    * Constructeur
    *
    */
   function CommunicationTelephonique()
   {
+    $this->messages = array();
     return 1;
   }
 
@@ -103,12 +104,14 @@ class CommunicationTelephonique {
 	if ($tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat) == 0)
 	  {
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
+	    array_push($this->messages, array('warning',"Tarif achat manquant pour le numero $num"));
 	    //$error++;
 	  }
 	
 	if ($tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente) == 0)
 	  {
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
+	    array_push($this->messages, array('error',"Tarif vente manquant pour le numero $num"));
 	    $error++;
 	  }
       }
