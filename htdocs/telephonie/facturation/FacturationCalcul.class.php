@@ -443,12 +443,10 @@ class FacturationCalcul {
     $nbmob   = 0;
     $nbnat   = 0;
     $duree   = 0;
-    
-    $fournisseur_id = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID ;
-    
+
     $tarif_spec = TELEPHONIE_GRILLE_VENTE_DEFAUT_ID ;
     
-    $sql = "SELECT d.grille_tarif";    
+    $sql = "SELECT d.grille_tarif";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_distributeur as d";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_distributeur_commerciaux as dc";
     $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
@@ -470,6 +468,8 @@ class FacturationCalcul {
 	  }
 	$db->free($resql);
       }
+
+    $fournisseur_id = $ligne->fournisseur_id;
     
     dolibarr_syslog("FacturationCalcul::CalculateBill Utilisation du tarif ".$tarif_spec." pour la ligne ".$ligne->id);
     
