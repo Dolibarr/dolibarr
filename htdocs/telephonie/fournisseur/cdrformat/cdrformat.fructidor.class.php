@@ -33,6 +33,7 @@ class CdrFormatFructidor
   {
     $this->nom = "Fructidor";
     $this->datas = array();
+    $this->messages = array();
   }
 
   function showSample()
@@ -48,8 +49,9 @@ class CdrFormatFructidor
 
   function ReadFile($file)
   {
+    $this->messages = array();
     dolibarr_syslog("CdrFormatFructidor::ReadFile($file)", LOG_DEBUG);
-    
+    $badformat = 0;
     $error = 0;
     $i = 0;
     $line = 1;
@@ -77,12 +79,17 @@ class CdrFormatFructidor
 	    else
 	      {
 		dolibarr_syslog("CdrFormatFructidor::ReadFile Mauvais format de fichier ligne $line", LOG_ERR);
+		$badformat++;
 	      }  
 	  }
 	$line++;
       }
     fclose($hf);
-
+    array_push($this->messages,array('info',"Fichier ".basename($file)." : $line lignes lues dans le fichier"));
+    if ($badformat > 0)
+      {
+	array_push($this->messages,array('error',"Fichier ".basename($file)." : $badformat lignes ont un mauvais format dans le fichier"));
+      }
     dolibarr_syslog("CdrFormatFructidor::ReadFile read $i lines", LOG_DEBUG);
   }
 }

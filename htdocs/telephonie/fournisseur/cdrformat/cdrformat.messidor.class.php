@@ -33,6 +33,7 @@ class CdrFormatMessidor
   {
     $this->nom = "Messidor";
     $this->datas = array();
+    $this->messages = array();
   }
 
   function ShowSample()
@@ -82,7 +83,7 @@ class CdrFormatMessidor
 	$line++;
       }
     fclose($hf);
-
+    array_push($this->messages,array('info',"Fichier ".basename($file)." : $line lignes lues dans le fichier"));
     dolibarr_syslog("CdrFormatMessidor::ReadFile read $i lines", LOG_DEBUG);
   }
 }

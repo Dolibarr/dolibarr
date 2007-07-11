@@ -167,8 +167,10 @@ class FacturationImportCdr {
 	    if ( $this->_verif($this->db, $xfile, $fichiers) == 0)
 	      {      
 		dolibarr_syslog("FacturationImportCdr::Import Lecture du fichier $xfile", LOG_DEBUG);
-		
+		array_push($this->messages,array('info',"Fichier ".basename($xfile)." : utilisation format ".$cdrformat->nom));
 		$cdrformat->ReadFile($xfile);
+
+		$this->messages=array_merge($this->messages, $cdrformat->messages);
 
 		$error = 0;
 		$line = 0;
@@ -239,21 +241,24 @@ class FacturationImportCdr {
 		      }		    
 
 		    dolibarr_syslog("FacturationImportCdr::Import $line lignes traitées dans le fichier", LOG_INFO);
+		    $level = ($line > 0) ? 'info':'warning';
+		    array_push($this->messages,array($level,"Fichier ".basename($xfile)." : $line lignes traitées dans le fichier"));		
 		    dolibarr_syslog("FacturationImportCdr::Import $line_inserted insert effectués", LOG_INFO);
-		    array_push($this->messages,"$line_inserted ajout dans la table des CDR a traiter");
+		    $level = ($line_inserted > 0) ? 'info':'warning';
+		    array_push($this->messages,array($level,"Fichier ".basename($xfile)." : $line_inserted ajout dans la table des CDR a traiter"));
 		    
 		    if (sizeof($this->message_bad_file_format))
 		      {
 			foreach ($this->message_bad_file_format as $key => $value)
 			  {
-			    array_push($this->messages,"$value ligne(s) au mauvais format dans $key");
+			    array_push($this->messages,array('warning',"$value ligne(s) au mauvais format dans $key"));
 			  }
 		      }
 		    
 		    if ($error == 0)
 		      {	  
 			$this->db->query("COMMIT");
-			array_push($this->messages, array('info',"Fichier ".basename($xfile)." importation reussie"));
+			array_push($this->messages, array('info',"Fichier ".basename($xfile)." : importation reussie"));
 		      }
 		    else
 		      {
