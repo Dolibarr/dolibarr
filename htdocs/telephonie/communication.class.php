@@ -41,14 +41,14 @@ class CommunicationTelephonique {
   }
 
   /**
-   * Calcul le coût de la communication
+   * Calcul le cout de la communication
    *
    */
   function cout($tarif_achat, $tarif_vente, $ligne, $_db)
   {
     $error = 0;
-
-    if (substr($this->numero,0,2) == '00') /* International */
+    /*
+    if (substr($this->numero,0,2) == '00')
       {
 	$nbinter++;
 	$duree_international += $objp->duree;
@@ -57,8 +57,7 @@ class CommunicationTelephonique {
 
 	$this->remise = 0;
       }
-    
-    elseif (substr($this->numero,0,2) == '06') /* Telephones Mobiles */
+    elseif (substr($this->numero,0,2) == '06')
       {
 	$dureemob += $objp->duree;
 	$nbmob++;
@@ -67,6 +66,7 @@ class CommunicationTelephonique {
 
 	$this->remise = $ligne->remise;
       }
+    */
     /* Tarif Local */
     /*
     elseif (substr($this->numero,0,4) == substr($objp->client,0,4) )
@@ -76,31 +76,33 @@ class CommunicationTelephonique {
 	$num = "0033999".substr($this->numero, 1);
 	$this->remise = $ligne->remise;
       }*/
-    else
-      {
+      //else
+      //{
 	$dureenat += $objp->duree;
 	$nbnat++;
 	
-	$num = "0033".substr($this->numero, 1);
+	$num = "00".substr($this->numero, 1);
 
 	$this->remise = $ligne->remise;
-      }	  
+	//}	  
     
     /*
      *
      *
      */    
-    /* Numéros spéciaux */
+    /* Numeros speciaux */
+	/*
     if (substr($num,4,1) == 8)
       {
 	$this->remise = 0;
 	$this->cout_temp_vente = 0;
-	$this->tarif_libelle_vente = "Numéros spéciaux";
+	$this->tarif_libelle_vente = "Numeros speciaux";
 	$this->cout_fixe_vente = ereg_replace(",",".", $this->montant);
       }
     else
       {
-	/* Fin Numéros spéciaux */
+	*/
+	/* Fin Numeros speciaux */
 	if ($tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat) == 0)
 	  {
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
@@ -114,7 +116,7 @@ class CommunicationTelephonique {
 	    array_push($this->messages, array('error',"Tarif vente manquant pour le numero $num"));
 	    $error++;
 	  }
-      }
+	//}
     /* Specification VoIP */
     if ($ligne->techno == 'voip')
       {
