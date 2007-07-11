@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2004-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -58,7 +58,7 @@ class FactureTel {
 	    }
 	  else
 	    {
-	      dolibarr_syslog("Erreur FactureTel::fetch() id=$id");
+	      dolibarr_syslog("FactureTel::Fetch() Error aucune facture avec cet id=$id", LOG_ERR);
 	      $result = -2;
 	    }
 
@@ -67,8 +67,7 @@ class FactureTel {
       else
 	{
 	  /* Erreur select SQL */
-	  dolibarr_syslog("Erreur FactureTel::fetch(), sql error");
-	  print $this->db->error();
+	  dolibarr_syslog("FactureTel::Fetch() Error SQL id=$id", LOG_ERR);
 	  $result = -1;
 	}
 
@@ -94,8 +93,9 @@ class FactureTel {
       }
     else
       {
-	print $this->db->error();
-	print $sql ;
+	/* Erreur select SQL */
+	dolibarr_syslog("FactureTel::affect_num_facture_compta() Error SQL id=$facid", LOG_ERR);
+	$result = -1;
 	return 1;
       }
   }
