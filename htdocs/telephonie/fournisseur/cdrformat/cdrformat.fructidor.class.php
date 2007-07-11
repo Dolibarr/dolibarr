@@ -66,7 +66,7 @@ class CdrFormatFructidor
 	    $tabline = explode(";", $cont);
 	    if (sizeof($tabline) == 7)
 	      {
-		$this->datas[$i]['index']    = $i;
+		$this->datas[$i]['index']   = $i;
 		$this->datas[$i]['ligne']   = ereg_replace('"','',$tabline[0]);
 		$this->datas[$i]['date']    = $tabline[1];
 		$this->datas[$i]['heure']   = $tabline[2];
@@ -74,6 +74,13 @@ class CdrFormatFructidor
 		$this->datas[$i]['tarif']   = trim($tabline[4]);
 		$this->datas[$i]['duree']   = trim($tabline[5]);
 		$this->datas[$i]['montant'] = trim($tabline[6]);
+
+		if (preg_match("/\D/",$this->datas[$i]['numero']))
+		  {
+		    array_push($this->messages,array('error',"Une ligne du fichier contient un numero invalide : ".$this->datas[$i]['numero']));
+		    $error++;
+		  }
+
 		$i++;
 	      }	  
 	    else
@@ -86,10 +93,14 @@ class CdrFormatFructidor
       }
     fclose($hf);
     array_push($this->messages,array('info',"$line lignes lues dans le fichier"));
+
     if ($badformat > 0)
       {
 	array_push($this->messages,array('error',"$badformat lignes ont un mauvais format dans le fichier"));
       }
+
     dolibarr_syslog("CdrFormatFructidor::ReadFile read $i lines", LOG_DEBUG);
+
+    return $error;
   }
 }
