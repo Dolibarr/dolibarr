@@ -85,10 +85,10 @@ class CdrFormatFructidor
 	$line++;
       }
     fclose($hf);
-    array_push($this->messages,array('info',"Fichier ".basename($file)." : $line lignes lues dans le fichier"));
+    array_push($this->messages,array('info',"$line lignes lues dans le fichier"));
     if ($badformat > 0)
       {
-	array_push($this->messages,array('error',"Fichier ".basename($file)." : $badformat lignes ont un mauvais format dans le fichier"));
+	array_push($this->messages,array('error',"$badformat lignes ont un mauvais format dans le fichier"));
       }
     dolibarr_syslog("CdrFormatFructidor::ReadFile read $i lines", LOG_DEBUG);
   }

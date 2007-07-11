@@ -242,10 +242,10 @@ class FacturationImportCdr {
 
 		    dolibarr_syslog("FacturationImportCdr::Import $line lignes traitées dans le fichier", LOG_INFO);
 		    $level = ($line > 0) ? 'info':'warning';
-		    array_push($this->messages,array($level,"Fichier ".basename($xfile)." : $line lignes traitées dans le fichier"));		
+		    array_push($this->messages,array($level,"$line lignes traitées dans le fichier"));		
 		    dolibarr_syslog("FacturationImportCdr::Import $line_inserted insert effectués", LOG_INFO);
 		    $level = ($line_inserted > 0) ? 'info':'warning';
-		    array_push($this->messages,array($level,"Fichier ".basename($xfile)." : $line_inserted ajout dans la table des CDR a traiter"));
+		    array_push($this->messages,array($level,"$line_inserted ajout dans la table des CDR a traiter"));
 		    
 		    if (sizeof($this->message_bad_file_format))
 		      {
