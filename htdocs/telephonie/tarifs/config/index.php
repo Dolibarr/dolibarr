@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -24,7 +24,7 @@ require("./pre.inc.php");
 llxHeader();
 
 /*
- * Sécurité accés client
+ * Securite acces client
  */
 if ($user->societe_id > 0) 
 {
@@ -148,7 +148,7 @@ if ($resql)
 
       print "<tr $bc[$var]>";
 
-      print '<td><a href="grille.php?id='.$obj->grille.'">';
+      print '<td><a href="../grille.php?id='.$obj->grille.'">';
       print $obj->tarif_desc."</td>\n";
       print '<td><a href="tarif.php?id='.$obj->tarif_id.'">';
       print $obj->tarif."</a></td>\n";
