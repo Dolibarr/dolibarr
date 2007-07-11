@@ -105,10 +105,29 @@ class FacturationImportCdr {
       }
     
     /*
-     * Vérification des fichiers traités
+     * Vérification des fichiers charges
      *
      */
     $fichiers = array();
+    $sql = "SELECT distinct(fichier)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+    if ($this->db->query($sql))
+      {  
+	while ($row = $this->db->fetch_row($resql))
+	  {
+	    array_push($fichiers, $row[0]);
+	  }
+	$this->db->free($resql);
+      }
+    else
+      {
+	dolibarr_syslog("FacturationImportCdr::Import Erreur recherche si fichiers deja charges");
+      }
+
+    /*
+     * Vérification des fichiers traités
+     *
+     */
     $sql = "SELECT distinct(fichier_cdr)";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
     if ($this->db->query($sql))
@@ -289,7 +308,7 @@ class FacturationImportCdr {
     if (in_array (basename($file), $fichiers))
       {
 	dolibarr_syslog ("Fichier ".basename($file)." déjà chargé/traité");
-	array_push($this->messages, "Fichier ".basename($file)." déjà chargé/traité");
+	array_push($this->messages, array('warning',"Fichier ".basename($file)." déjà chargé/traité"));
 	$result = -1;
       }
     
