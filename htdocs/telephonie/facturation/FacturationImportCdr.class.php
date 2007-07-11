@@ -94,7 +94,7 @@ class FacturationImportCdr {
       }
     
     /*
-     * Vérification du fournisseur
+     * Verification du fournisseur
      *
      */
     $fourn = new FournisseurTelephonie($this->db);
@@ -304,22 +304,21 @@ class FacturationImportCdr {
 
     return $error;    
   }
-    
+
+  /**
+     \brief Verifie que le fichier n'a pas deja ete charge/traite
+  */    
   function _verif($db, $file, $fichiers)
   {
     $result = 0;
-    /*
-     * Vérifie que le fichier n'a pas déjà été chargé
-     *
-     */
+
     if (in_array (basename($file), $fichiers))
       {
-	dolibarr_syslog ("Fichier ".basename($file)." déjà chargé/traité");
-	array_push($this->messages, array('warning',"Fichier ".basename($file)." déjà chargé/traité"));
+	dolibarr_syslog ("Fichier ".basename($file)." deja charge/traite");
+	array_push($this->messages, array('warning',"Fichier ".basename($file)." deja charge/traite"));
 	$result = -1;
       }
-    
-    
+        
     return $result;
   }
 
