@@ -103,7 +103,7 @@ print_barre_liste("CDR a traiter", $page, "cdr.php", $urladd, $sortfield, $sorto
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
 print '<td>Ligne</td><td>Numero</td><td>Date</td><td align="right">Duree</td>';
-print '<td align="right">Montant</td><td>Fichier</td>';
+print '<td align="right">Montant</td><td align="right">Fichier</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
