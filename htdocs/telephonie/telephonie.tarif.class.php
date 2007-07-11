@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,6 +41,7 @@ class TelephonieTarif {
   var $tableau_tarif;
   var $prefixes;
   var $prefixe_max;
+  var $messages;
 
   /*
    * Constructeur
@@ -54,10 +55,12 @@ class TelephonieTarif {
 
     $this->prefixes = array();
 
+    $this->fournisseur_id = $fournisseur_id;
     $this->client_id = $client_id;
 
-    $this->tarif_spec = $tarif_spec;
+    $this->tarif_spec = $fournisseur_id;
 
+    $this->messages = array();
 
     for ($j = 0 ; $j++ ; $j < 10)
       {
@@ -133,7 +136,7 @@ class TelephonieTarif {
 
 	$sql .= " AND f.fk_tarif_grille = m.fk_tarif_desc";
 
-	$sql .= " AND f.rowid =  " . $fournisseur_id;
+	$sql .= " AND f.rowid =  " . $this->fournisseur_id;
 	
       }
     elseif ($type == 'vente')
@@ -151,8 +154,6 @@ class TelephonieTarif {
     if ( $resql = $this->db->query($sql) )
       {
 	$num = $this->db->num_rows($resql);
-	
-	//print "$num tableau_tarif trouvés\n";
 	
 	$i = 0;
 	
@@ -180,8 +181,8 @@ class TelephonieTarif {
       }
     else
       {
-	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur 1", LOG_ERR);
-	dolibarr_syslog($this->db->error(), LOG_DEBUG);
+	dolibarr_syslog("TelephonieTarif::_load_tarif Erreur SQL 1 (type=$type)", LOG_ERR);
+	dolibarr_syslog($sql, LOG_DEBUG);
       }
     /*
      * Tarif Spécifique
