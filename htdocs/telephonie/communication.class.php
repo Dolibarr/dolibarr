@@ -81,7 +81,7 @@ class CommunicationTelephonique {
 	$dureenat += $objp->duree;
 	$nbnat++;
 	
-	$num = "00".substr($this->numero, 1);
+	$num = "00".$this->numero;
 
 	$this->remise = $ligne->remise;
 	//}	  
@@ -106,14 +106,14 @@ class CommunicationTelephonique {
 	if ($tarif_achat->cout($num, $this->cout_temp_achat, $this->cout_fixe_achat, $tarif_libelle_achat) == 0)
 	  {
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif achat manquant pour $num");
-	    array_push($this->messages, array('warning',"Tarif achat manquant pour le numero $num"));
+	    array_push($this->messages, array('warning',"Tarif achat manquant pour le numero $this->numero"));
 	    //$error++;
 	  }
 	
 	if ($tarif_vente->cout($num, $this->cout_temp_vente, $this->cout_fixe_vente, $this->tarif_libelle_vente) == 0)
 	  {
 	    dolibarr_syslog("CommunicationTelephonique::Cout Tarif vente manquant pour $num");
-	    array_push($this->messages, array('error',"Tarif vente manquant pour le numero $num"));
+	    array_push($this->messages, array('error',"Tarif vente manquant pour le numero $this->numero"));
 	    $error++;
 	  }
 	//}
