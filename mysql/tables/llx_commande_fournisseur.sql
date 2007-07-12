@@ -1,5 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -47,7 +48,5 @@ create table llx_commande_fournisseur
   note_public         text,
   model_pdf           varchar(50),
 
-  fk_methode_commande integer default 0,
-
-  UNIQUE INDEX (ref)
+  fk_methode_commande integer default 0
 )type=innodb;

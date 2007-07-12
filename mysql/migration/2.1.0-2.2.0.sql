@@ -752,3 +752,7 @@ update llx_product_fournisseur_price set unitprice = ROUND(price/quantity,8) whe
 update llx_fichinter set tms=datec where tms < datec;
 update llx_fichinter set tms=date_valid where tms < date_valid;
 
+ALTER TABLE llx_commande_fournisseur DROP INDEX ref;
+ALTER TABLE llx_commande_fournisseur ADD UNIQUE INDEX uk_commande_fournisseur_ref (ref, fk_soc);
+
+
