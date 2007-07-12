@@ -30,6 +30,7 @@ class DolibarrSimpleBar {
     $this->barcolor = "green";
     $this->height = 240;
     $this->width = 360;
+    $this->yAxisLegend = '';
   }
   
   Function GraphDraw($file, $datas, $labels)
@@ -63,6 +64,12 @@ class DolibarrSimpleBar {
     $plot->xAxis->setLabelText($labels);
     $plot->xAxis->label->setFont(new Tuffy(7));
     
+    if ($this->yAxisLegend)
+      {
+	$plot->yAxis->title->set($this->yAxisLegend);
+	$plot->yAxis->title->setFont(new Tuffy(7));
+      }
+
     $graph->add($plot);
     $graph->draw($file);
   }
