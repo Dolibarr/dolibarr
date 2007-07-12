@@ -126,7 +126,7 @@ class ProcessGraphLignes
 
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
-    $graphx->width = 360;
+    $graphx->width = 400;
     $graphx->titre = "Chiffre d'affaire (euros HT)";
     $graphx->barcolor = "blue";
     $graphx->show_console = 0 ;
@@ -138,7 +138,7 @@ class ProcessGraphLignes
     
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
-    $graphx->width = 360;
+    $graphx->width = 400;
     $graphx->titre = "Gain (euros HT)";
     $graphx->barcolor = "green";
     $graphx->show_console = 0 ;
@@ -150,7 +150,7 @@ class ProcessGraphLignes
     
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
-    $graphx->width = 360;
+    $graphx->width = 400;
     $graphx->titre = "Durée moyenne";
     $graphx->barcolor = "orange";
     $graphx->show_console = 0 ;
@@ -162,7 +162,7 @@ class ProcessGraphLignes
 
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
-    $graphx->width = 360;
+    $graphx->width = 400;
     $graphx->titre = "Nombre de communications";
     $graphx->barcolor = "yellow";
     $graphx->show_console = 0 ;
@@ -174,7 +174,7 @@ class ProcessGraphLignes
     
     $graphx = new DolibarrSimpleBar ($this->db, $file);
     $graphx->ligne = $ligne;
-    $graphx->width = 360;
+    $graphx->width = 400;
     $graphx->show_console = 0 ;
     $graphx->titre = "Nombre de minutes";
     $graphx->barcolor = "pink";
