@@ -2258,6 +2258,9 @@ class Form
 	{
 		global $langs,$conf,$mysoc;
 
+		$txtva=array();
+		$libtva=array();
+
 		//print $societe_vendeuse."-".$societe_acheteuse;
 		if (is_object($societe_vendeuse) && ! $societe_vendeuse->pays_code)
 		{
@@ -2292,16 +2295,23 @@ class Form
 		if ($resql)
 		{
 			$num = $this->db->num_rows($resql);
-			for ($i = 0; $i < $num; $i++)
+			if ($num)
 			{
-				$obj = $this->db->fetch_object($resql);
-				$txtva[ $i ] = $obj->taux;
-				$libtva[ $i ] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+				for ($i = 0; $i < $num; $i++)
+				{
+					$obj = $this->db->fetch_object($resql);
+					$txtva[$i] = $obj->taux;
+					$libtva[$i] = $obj->taux.'%'.($obj->recuperableonly ? ' *':'');
+				}
+			}
+			else
+			{
+				print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry",$code_pays).'</font>';
 			}
 		}
 		else
 		{
-			print '<font class="error">'.$langs->trans("ErrorNoVATRateDefinedForSellerCountry").'</div>';
+			print '<font class="error">'.$this->db->error().'</font>';
 		}        	
 		
 		// Définition du taux à présélectionner
@@ -2312,23 +2322,26 @@ class Form
 		
 		$nbdetaux = sizeof($txtva);
 		
-		print '<select class="flat" name="'.$name.'">';
-		if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
-		
-		for ($i = 0 ; $i < $nbdetaux ; $i++)
+		if (sizeof($txtva))
 		{
-			print '<option value="'.$txtva[$i].'"';
-			if ($txtva[$i] == $defaulttx)
+			print '<select class="flat" name="'.$name.'">';
+			if ($default) print '<option value="0">'.$langs->trans("Default").'</option>';
+			
+			for ($i = 0 ; $i < $nbdetaux ; $i++)
 			{
-				print ' selected="true"';
+				print '<option value="'.$txtva[$i].'"';
+				if ($txtva[$i] == $defaulttx)
+				{
+					print ' selected="true"';
+				}
+				print '>'.vatrate($libtva[$i]).'</option>';
+				
+				$this->tva_taux_value[$i] = $txtva[$i];
+				$this->tva_taux_libelle[$i] = $libtva[$i];
+				
 			}
-			print '>'.vatrate($libtva[$i]).'</option>';
-			
-			$this->tva_taux_value[$i] = $txtva[$i];
-			$this->tva_taux_libelle[$i] = $libtva[$i];
-			
+			print '</select>';
 		}
-		print '</select>';
 	}
 
 
