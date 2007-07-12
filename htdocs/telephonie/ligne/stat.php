@@ -82,10 +82,17 @@ if ($_GET["id"] or $_GET["numero"])
 	  $hselected = $h;
 	  $h++;
 
-	  dolibarr_fiche_head($head, $hselected, 'Ligne : '.$ligne->numero);
+	  $ligne->load_previous_next_id();
+	  
+	  $previous_ref = $ligne->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_previous.'">'.img_previous().'</a>':'';
+	  $next_ref     = $ligne->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.$ligne->ref_next.'">'.img_next().'</a>':'';
 
-	  print_fiche_titre('Fiche Ligne', $mesg);
-      
+	  dolibarr_fiche_head($head, $hselected, 'Statistiques ligne');
+
+	  print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">Statistiques '.$mesg.'</td>';
+	  print '<td class="nobordernopadding"><a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
+	  print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table><br />';
+	        
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 
 	  print '<tr><td width="25%">Numéro</td><td>'.dolibarr_print_phone($ligne->numero).'</td>';
