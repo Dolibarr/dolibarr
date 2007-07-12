@@ -115,13 +115,15 @@ print '<td align="center"><a href="calcul.php">Traiter</a></td></tr>';
 $obj = new FacturationEmission($db,$user);
 $act = $obj->NbFactureToGenerate();
 $nb = $obj->nbfac;
-print "<tr $bc[1]>";
+$var =!$var;
+print "<tr $bc[$var]>";
 print '<td>Lignes de facture</td><td align="right"><a href="facture.php">'.$nb.'</a></td>';
 print '<td align="center"><a href="emission.php">Emettre</a></td></tr>';
 print '</table><br />';
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td colspan="2">Statistiques</td></tr>';
+$var =!$var;
 print "<tr $bc[$var]>";
 print '<td>Generation</td><td align="right"><a href="stats.php">Generer</a></td></tr>';
 print '</table>';
@@ -135,7 +137,7 @@ print '<input type="hidden" name="max_file_size" value="'.$conf->maxfilesize.'">
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre"><td>Charger un fichier CDR</td></tr>';
 
-print "<tr $bc[1]><td>";
+print "<tr $bc[$var]><td>";
 
 $form = new Form($db);
 $form->select_array("fournisseur",$fourns);
