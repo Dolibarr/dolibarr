@@ -25,10 +25,17 @@ if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 
 
 llxHeader();
+
+$messages = array();
+
 require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphLignes.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/ProcessGraphContrats.class.php");
 $obj = new ProcessGraphLignes($db);
 $obj->GenerateAll();
-
+$messages = array_merge($messages, $obj->messages);
+$obj = new ProcessGraphContrats($db);
+$obj->GenerateAll();
+$messages = array_merge($messages, $obj->messages);
 
 /*
  * Sécurité accés client
@@ -44,7 +51,7 @@ print "</tr>\n";
 
 $var=True;
 
-foreach ($obj->messages as $message)
+foreach ($messages as $message)
 {
   $var=!$var;
   print "<tr $bc[$var]>";
