@@ -60,14 +60,15 @@ if ($_POST["action"] == 'modif' && $auth_write)
   $sortfield = "m.tms";
 
   $temporel = ereg_replace(",",".",$_POST["temporel"]);
+  $fixe = ereg_replace(",",".",$_POST["fixe"]);
 
-  if ($temporel > 0)
+  if ($temporel > 0 or $_POST["gratuit"] == 'on')
     {
       require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
 
       $obgrille = new TelephonieTarifGrille($db);
 
-      $obgrille->UpdateTarif($_GET["id"], $_POST["tarif"], $temporel, $_POST["fixe"], $user);
+      $obgrille->UpdateTarif($_GET["id"], $_POST["tarif"], $temporel, $fixe, $user);
 
       Header("Location: grille.php?id=".$_GET["id"]);
     }
@@ -153,6 +154,9 @@ if ($auth_write)
   print '<tr><td>Cout connexion</td>';
   print '<td><input type="text" name="fixe" value="0"></td></tr>';
   
+  print '<tr><td>Numero gratuit</td>';
+  print '<td><input type="checkbox" name="gratuit"></td></tr>';
+
   print '<tr><td colspan="2"><input type="submit" value="'.$langs->trans("Save").'"></td></tr>';
   print '</table></form>';
   
