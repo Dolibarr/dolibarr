@@ -53,9 +53,9 @@ $grille->fetch($_GET["id"]);
 print '<br> <table width="100%" class="border">';
 print '<tr><td width="25%">Nom</td><td>'.$grille->libelle."</a></td></tr>\n";
 print '<tr><td width="25%">Type</td><td>'.$grille->type."</a></td></tr>\n";
+$grille->CountContrats();
+print '<tr><td width="25%">Nombre de contrats</td><td>'.$grille->nb_contrats."</a></td></tr>\n";
 print '</table></div>';
-
-
 
 $db->close();
 
