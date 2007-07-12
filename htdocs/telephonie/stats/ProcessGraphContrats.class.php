@@ -25,19 +25,7 @@
  */
 require ("../../master.inc.php");
 
-require_once (DOL_DOCUMENT_ROOT."/telephonie/facturetel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/ca.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/gain.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/appelsdureemoyenne.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbmensuel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/comm.nbminutes.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/heureappel.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/joursemaine.class.php");
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camoyen.class.php");
-
-require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/camenbert.class.php");
+require_once (DOL_DOCUMENT_ROOT."/telephonie/stats/graph/SimpleBar.class.php");
 
 /*
  * Process
@@ -48,113 +36,180 @@ class ProcessGraphContrats
 {
   var $ident;
   
-  function ProcessGraphContrats( $ident , $cpc)
+  function ProcessGraphContrats( $ident=0 , $cpc=0)
   {
     global $conf;
     
     $this->ident = $ident;
     $this->cpc = $cpc;
     $this->db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name,1);
+    $this->messages = array();
   }
-  
-  function go($contrat_id = 0, $verbose)
+
+  function GenerateAll()
   {
-    if ($contrat_id == 0)
+    $graph_all = 1;
+    $datetime = time();
+    $month = strftime("%m", $datetime);
+    $year = strftime("%Y", $datetime);
+    
+    
+    if ($month == 1)
       {
-	$min = $this->ident * $this->cpc;
-	$max = ($this->ident + 1 ) * $this->cpc;
+	$month = "12";
+	$year = $year - 1;
       }
     else
       {
-	$min = $contrat_id;
-	$max = $contrat_id;
+	$month = substr("00".($month - 1), -2) ;
       }
+    
+    $ym = substr($year,2,2).$month;
 
+    $this->go($row[0], $ym);
+	    
+
+  }
+
+  
+  function go($contrat_id = 0, $ym=0, $verbose=0)
+  {
     $error = 0;
-
+    $contrats = array();
     /*
      * Lecture des contrats
      *
      */
     $sql = "SELECT c.rowid";
     $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat as c";
-
-    if ($contrat_id == 0)
-      {
-	$sql .= " WHERE c.rowid >= ".$min;
-	$sql .= " AND c.rowid < ".$max;
-      }
-    else
-      {
-	$sql .= " WHERE c.rowid = ".$min;
-      }
     
-    if ($this->db->query($sql))
+    if ($resql = $this->db->query($sql))
       {
-	$contrats = array();
-	
-	$num = $this->db->num_rows();
-	$i = 0;
-	
-	while ($i < $num)
+	while ($row = $this->db->fetch_row($resql))
 	  {
-	    $obj = $this->db->fetch_object();	
-	    
-	    $contrats[$i] = $obj->rowid;
-	    $i++;
+	    array_push($contrats, $row[0]);
 	  }
       }
 
+    array_push($this->messages,array('info',sizeof($contrats)." contrats a generer"));
+    
     if (sizeof($contrats))
       {
 	foreach ($contrats as $contrat)
 	  {
-	    /* Chiffre d'affaire */
-	    
 	    $img_root = DOL_DATA_ROOT."/graph/".substr($contrat,-1)."/telephonie/contrat/";
 
-	    $file = $img_root . $contrat."/graphca.png";
-	    $graphca = new GraphCa($this->db, $file);
-	    $graphca->contrat = $contrat;
-	    $graphca->GraphDraw();
+	    if (!is_dir($img_root))
+	      {
+		@mkdir(DOL_DATA_ROOT."/graph/".substr($contrat,-1));
+		@mkdir(DOL_DATA_ROOT."/graph/".substr($contrat,-1)."/telephonie/");
+		@mkdir(DOL_DATA_ROOT."/graph/".substr($contrat,-1)."/telephonie/contrat/");
+		@mkdir(DOL_DATA_ROOT."/graph/".substr($contrat,-1)."/telephonie/contrat/".$contrat);
+	      }
+	    /* Lecture des donnees */
 
-	    /* Gain */
+	    $this->GetDatas($contrat, $ym);	    
 
-	    $file = $img_root . $contrat."/graphgain.png";
+	    if (sizeof($this->labels) > 0)
+	      {
 
-	    $graphgain = new GraphGain ($this->db, $file);
-	    $graphgain->contrat = $contrat;
-	    $graphgain->show_console = 0 ;
-	    $graphgain->GraphDraw();
+		/* Chiffre d'affaire */	   
+		$file = $img_root . $contrat."/graphca.png";
 
-	    /* Duree moyenne des appels */
+		$graph = new DolibarrSimpleBar ($this->db, $file);
+		$graph->width = 400;
+		$graph->titre = "Chiffre d'affaire (euros HT)";
+		$graph->barcolor = "blue";
+		$graph->show_console = 0 ;	    	    
+		$graph->GraphDraw($file, $this->vente, $this->labels);
+				
+		/* Gain */	    
+		$file = $img_root . $contrat."/graphgain.png";
+		
+		$graph = new DolibarrSimpleBar ($this->db, $file);
+		$graph->width = 400;
+		$graph->titre = "Gain (euros HT)";
+		$graph->barcolor = "green";
+		$graph->show_console = 0 ;	    	    
+		$graph->GraphDraw($file, $this->gain, $this->labels);
+		
+		
+		/* Duree moyenne des appels */
+		$file = $img_root . $contrat."/graphappelsdureemoyenne.png";
 
-	    $file = $img_root . $contrat."/graphappelsdureemoyenne.png";
-	    
-	    $graphduree = new GraphAppelsDureeMoyenne ($this->db, $file);
-	    $graphduree->contrat = $contrat;
-	    $graphduree->show_console = 0 ;
-	    $graphduree->Graph();
-	    
-	    /* Nb de communication */
-
-	    $file = $img_root . $contrat."/nb-comm-mensuel.png";
-	    
-	    $graphx = new GraphCommNbMensuel ($this->db, $file);
-	    $graphx->contrat = $contrat;
-	    $graphx->show_console = 0 ;
-	    $graphx->Graph();
-
-	    /* Nb de minutes */
-
-	    $file = $img_root . $contrat."/nb-minutes-mensuel.png";
-	    
-	    $graphx = new GraphCommNbMinutes ($this->db, $file);
-	    $graphx->contrat = $contrat;
-	    $graphx->show_console = 0 ;
-	    $graphx->Graph();
+		$graph = new DolibarrSimpleBar ($this->db, $file);
+		$graph->width = 400;
+		$graph->titre = "Durée moyenne d'un appel";
+		$graph->yAxisLegend = "minutes";
+		$graph->barcolor = "orange";
+		$graph->show_console = 0 ;
+		$graph->GraphDraw($file, $this->duree_moyenne, $this->labels);
+		
+		/* Nb de communication */		
+		$file = $img_root . $contrat."/nb-comm-mensuel.png";
+		
+		$graph = new DolibarrSimpleBar ($this->db, $file);
+		$graph->width = 400;
+		$graph->titre = "Nombre de communications";
+		$graph->barcolor = "yellow";
+		$graph->show_console = 0 ;
+		$graph->GraphDraw($file, $this->nbcomm, $this->labels);
+		
+		/* Nb de minutes */
+		$file = $img_root . $contrat."/nb-minutes-mensuel.png";
+		  
+		$graph = new DolibarrSimpleBar ($this->db, $file);
+		$graph->width = 400;
+		$graph->titre = "Nombre de minutes";
+		$graph->barcolor = "pink";
+		$graph->show_console = 0 ;
+		$graph->GraphDraw($file, $this->nbminutes, $this->labels);
+	      }
 	  }       
       }
   }
+
+  Function GetDatas($id, $ym)
+  {
+    $sql = "SELECT date_format(td.date,'%m'), sum(duree), count(*), sum(cout_vente), sum(fourn_montant)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details as td";
+    $sql .= " , ".MAIN_DB_PREFIX."telephonie_societe_ligne as l";
+    $sql .= " WHERE l.fk_contrat='".$id."' AND l.rowid=td.fk_ligne";
+    $sql .= " GROUP BY date_format(td.date,'%Y%m') ASC ";
+
+    $this->labels = array();
+    $this->vente = array();
+    $this->gain = array();
+    $this->nbcomm = array();
+    $this->nbminutes = array();
+    $this->duree_moyenne = array();
+
+    if ($resql = $this->db->query($sql))
+      {
+	$num = $this->db->num_rows($resql);
+	$i = 0;
+		
+	while ($i < $num)
+	  {
+	    $row = $this->db->fetch_row();	
+	    
+	    $this->labels[$i] = $row[0];
+	    $this->nbminutes[$i] = ceil($row[1] / 60);
+	    $this->nbcomm[$i] = $row[2];
+	    $this->duree_moyenne[$i] = ($this->nbminutes[$i] / $this->nbcomm[$i]);
+	    $this->vente[$i] = $row[3];
+	    $this->gain[$i] = ($row[3] - $row[4]);
+	    
+	    $i++;
+	  }	
+	$this->db->free($resql);
+
+      }
+    else 
+      {
+	dolibarr_syslog("Error");
+      }
+  }
+
 }
 ?>
