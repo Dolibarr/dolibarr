@@ -21,26 +21,10 @@
  */
 require("./pre.inc.php");
 
-$page = $_GET["page"];
-$sortorder = $_GET["sortorder"];
-$sortfield = $_GET["sortfield"];
-
 /*
  *
  *
  */
-if ($_POST["action"] == 'add')
-{
-
-  require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
-
-  $obgrille = new TelephonieTarifGrille($db);
-      
-  $obgrille->CreateGrille($user, $_POST["nom"], $_POST["type"]);
-
-  Header("Location: grille.php");
-
-}
 
 llxHeader();
 
@@ -53,72 +37,23 @@ if ($user->societe_id > 0)
   $socid = $user->societe_id;
 }
 
+$h=0;
+$head[$h][0] = DOL_URL_ROOT."/telephonie/tarifs/config/grille.php?id=".$_GET["id"];
+$head[$h][1] = $langs->trans("Grille");
+$hselected = $h;
+$h++;
 
-print '<form action="grille.php" method="post">';
-print '<input type="hidden" name="action" value="add">';
+require_once DOL_DOCUMENT_ROOT."/telephonie/telephonie.tarif.grille.class.php";
 
-print '<table class="border" width="100%">';
+dolibarr_fiche_head($head, $hselected, "Grille de tarif");
 
-// Nom
-print "<tr>".'<td valign="top">'.$langs->trans("Lastname").'*</td>';
-print '<td>';
+$grille = new TelephonieTarifGrille($db);
+$grille->fetch($_GET["id"]);
 
-print '<input size="30" type="text" name="nom" value="">';
-
-print '</td></tr>';
-print "<tr><td>Type de grille</td>".'<td><select name="type"><option value="vente">vente<option value="achat">achat</select></td></tr>';
-print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("Create").'" type="submit"></td></tr>';
-
-print '</table></form>';
-
-
-print '<br> <table width="100%" class="noborder">';
-print '<tr><td valign="top" width="50%">';
-
-$sql = "SELECT d.libelle as tarif_desc, d.rowid";
-
-$sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
-$sql .= ","    . MAIN_DB_PREFIX."telephonie_tarif_grille_rights as r";
-$sql .= " WHERE d.rowid = r.fk_grille";
-$sql .= " AND r.fk_user =".$user->id;
-$sql .= " AND r.pread = 1";
-
-
-$sql .= " ORDER BY d.rowid";
-
-$result = $db->query($sql);
-if ($result)
-{
-  $num = $db->num_rows();
-  $i = 0;
-  
-  print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
-  print '<tr class="liste_titre">';
-  print "<td>Grille</td>";
-  print "</tr>\n";
-
-  $var=True;
-
-  while ($i < $num)
-    {
-      $obj = $db->fetch_object($i);	
-      $var=!$var;
-
-      print "<tr $bc[$var]>";
-      print '<td><a href="grille.php?id='.$obj->rowid.'">'.$obj->tarif_desc."</a></td>\n";
-
-      print "</tr>\n";
-      $i++;
-    }
-  print "</table>";
-  $db->free();
-}
-else 
-{
-  print $db->error() . ' ' . $sql;
-}
-
-print '</td></tr></table>';
+print '<br> <table width="100%" class="border">';
+print '<tr><td width="25%">Nom</td><td>'.$grille->libelle."</a></td></tr>\n";
+print '<tr><td width="25%">Type</td><td>'.$grille->type."</a></td></tr>\n";
+print '</table></div>';
 
 
 
