@@ -382,6 +382,7 @@ class FactureFournisseur extends Facture
 		$this->db->begin();
 
 		// Nettoyage paramètres
+		if ($txtva == '') $txtva=0;
 		$txtva=price2num($txtva);
 
 
@@ -394,10 +395,7 @@ class FactureFournisseur extends Facture
 		{
 			$idligne = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture_fourn_det');
 
-			$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type);
-			
-			// Mise a jour prix facture
-			$result=$this->update_price($this->id);
+			$result=$this->updateline($idligne, $desc, $pu, $txtva, $qty, $fk_product, $price_base_type);
 			if ($result > 0)
 			{
 				$this->db->commit();
@@ -476,6 +474,7 @@ class FactureFournisseur extends Facture
 		else
 		{
 			$this->error=$this->db->error();
+			dolibarr_syslog("Fournisseur.facture::updateline error=".$this->error);
 			return -1;
 		}
 	}
