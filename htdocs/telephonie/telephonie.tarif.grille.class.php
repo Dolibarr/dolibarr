@@ -73,6 +73,26 @@ class TelephonieTarifGrille {
       }
     
   }
+  /**
+     \brief Lecture de l'objet
+
+  */
+  function CountContrats()
+  {
+    $sql = "SELECT count(grille_tarif)";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_contrat";
+    $sql .=" WHERE grille_tarif='".$this->id."';";
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {	
+	$row = $this->db->fetch_row($resql);
+
+	$this->nb_contrats = $row[0];
+
+	$this->db->free($resql);
+      }
+    
+  }
   /*
     \brief Creation d'une nouvelle grille
   */
