@@ -1480,10 +1480,17 @@ if ($_GET['action'] == 'create')
 				if ($conf->service->enabled)
 				{
 					print '<td nowrap="nowrap">';
+					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+					print '<td class="nobordernopadding" nowrap="nowrap">';
 					print $langs->trans('From').' ';
+					print '</td><td class="nobordernopadding" nowrap="nowrap">';
 					print $html->select_date('','date_start'.$i,0,0,1,"add");
-					print '<br>'.$langs->trans('to').' ';
+					print '</td></tr>';
+					print '<td class="nobordernopadding" nowrap="nowrap">';
+					print $langs->trans('to').' ';
+					print '</td><td class="nobordernopadding" nowrap="nowrap">';
 					print $html->select_date('','date_end'.$i,0,0,1,"add");
+					print '</td></tr></table>';
 					print '</td>';
 				}
 				print "</tr>\n";
