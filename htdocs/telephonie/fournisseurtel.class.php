@@ -63,7 +63,12 @@ class FournisseurTelephonie {
 	$sql .= " (nom, email_commande, commande_active, class_commande,fk_tarif_grille,cdrformat)";
 	$sql .= " VALUES ('".$this->nom."','".$this->email_commande."',1,'".$this->methode_commande."','".$this->grille."','".$this->cdrformat."');";
 	
-	if (! $this->db->query($sql) )
+	if ($this->db->query($sql) )
+	  {
+	    $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."telephonie_fournisseur");
+	    @mkdir(DOL_DATA_ROOT."/telephonie/cdr/atraiter/".$this->id);
+	  }
+	else
 	  {
 	    $res = -1;
 	  }
@@ -93,7 +98,11 @@ class FournisseurTelephonie {
 	$res = -1;
       }
 
-    @mkdir(DOL_DATA_ROOT."/telephonie/cdr/atraiter/".$this->id);
+    /* Cree le repertoire d'upload des CDR */
+    if (!is_dir(DOL_DATA_ROOT."/telephonie/cdr/atraiter/".$this->id))
+    {
+      @mkdir(DOL_DATA_ROOT."/telephonie/cdr/atraiter/".$this->id);
+    }
 
 
     return $res;
