@@ -304,42 +304,37 @@ class TelephonieTarifGrille {
 
   function UpdateTarif($grille_id, $tarif_id, $temporel, $fixe, $user)
   {
-    if ($temporel > 0)
-      {
-	$tarifs_linked = array();
+    $tarifs_linked = array();
 
-	$this->_DBUpdateTarif($grille_id, $tarif_id, $temporel, $fixe, $user);
-	// Ci-dessous a reintegrer avec une option de configuration
-	/*
-	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."telephonie_tarif";
-	$sql .= " WHERE tlink = ".$tarif_id;
-	
-	$resql = $this->db->query($sql);
-	
-	if ($resql)
-	  {
-	    $i = 0;
-	    
-	    while ($row = $this->db->fetch_row($resql))
-	      {
-		$tarifs_linked[$i] = $row[0];
-		$i++;
-	      }
-	    $this->db->free($resql);
-	  }
-	else
-	  {
-	    dolibarr_syslog($this->db->error());
-	  }
-	
-	
-	foreach($tarifs_linked as $tarif)
-	  {
-	    $this->_DBUpdateTarif($grille_id, $tarif, $temporel, $fixe, $user);
-	  }
-	*/
+    $this->_DBUpdateTarif($grille_id, $tarif_id, $temporel, $fixe, $user);
+    // Ci-dessous a reintegrer avec une option de configuration
+    /*
+      $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."telephonie_tarif";
+      $sql .= " WHERE tlink = ".$tarif_id;
+      
+      $resql = $this->db->query($sql);
+      
+      if ($resql)
+      {
+      $i = 0;
+      
+      while ($row = $this->db->fetch_row($resql))
+      {
+      $tarifs_linked[$i] = $row[0];
+      $i++;
       }
-    
+      $this->db->free($resql);
+      }
+      else
+      {
+      dolibarr_syslog($this->db->error());
+      }
+            
+      foreach($tarifs_linked as $tarif)
+      {
+      $this->_DBUpdateTarif($grille_id, $tarif, $temporel, $fixe, $user);
+      }
+    */        
     return $result;
   }
 
