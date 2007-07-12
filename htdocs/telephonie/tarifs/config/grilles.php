@@ -107,7 +107,7 @@ foreach($grilles as $grille)
   $var=!$var;
   
   print "<tr $bc[$var]>";
-  print '<td><a href="../grille.php?id='.$grille[0].'">'.$grille[1]."</a></td>\n";
+  print '<td><a href="grille.php?id='.$grille[0].'">'.$grille[1]."</a></td>\n";
   print '<td>'.$grille[2]."</td>\n";
   print '<td align="right"><a href="grille.php?id='.$grille[0].'&amp;action=delete">'.$langs->trans("Delete")."</a></td>\n";
   print "</tr>\n";
