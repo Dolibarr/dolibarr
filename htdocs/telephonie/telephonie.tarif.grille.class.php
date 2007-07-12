@@ -51,6 +51,28 @@ class TelephonieTarifGrille {
   {
     $this->db = $_DB;
   }
+  /**
+     \brief Lecture de l'objet
+
+  */
+  function Fetch($id)
+  {
+    $sql = "SELECT d.libelle , d.type_tarif";
+    $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_tarif_grille as d";
+    $sql .=" WHERE rowid = $id;";
+    $resql = $this->db->query($sql);
+    if ($resql)
+      {	
+	$obj = $this->db->fetch_object($resql);
+
+	$this->id = $id;
+	$this->libelle = stripslashes($obj->libelle);
+	$this->type = $obj->type_tarif;	
+
+	$this->db->free($resql);
+      }
+    
+  }
   /*
     \brief Creation d'une nouvelle grille
   */
