@@ -119,8 +119,8 @@ class DoliDb
   function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
   {
     global $conf,$langs;
-	$conffile = "../conf/conf.php";
-	if (file_exists($conffile)) {
+    $conffile = DOL_DOCUMENT_ROOT."/conf/conf.php";
+    if (file_exists($conffile)) {
 	    include($conffile);
 	    $this->forcecharset=$character_set_database;
 	    $this->forcecollate=$collation_connection;

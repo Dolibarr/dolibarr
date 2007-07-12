@@ -119,7 +119,7 @@ class DoliDb
     {
         global $conf,$langs;
         
-        $conffile = "../../conf/conf.php";
+        $conffile = DOL_DOCUMENT_ROOT."/conf/conf.php";
         if (file_exists($conffile)) {
 	    	include($conffile);
 	    	$this->forcecharset=$character_set_database;

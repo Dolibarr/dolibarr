@@ -74,9 +74,9 @@ class DoliDb
     */
     function DoliDb($type='pgsql', $host, $user, $pass, $name='')
     {
-        global $conf,$langs;
-        $conffile = "../conf/conf.php";
-		if (file_exists($conffile)) {	
+    	global $conf,$langs;
+      $conffile = DOL_DOCUMENT_ROOT."/conf/conf.php";
+      if (file_exists($conffile)) {	
 	    	include($conffile);
 	    	$this->forcecharset=$character_set_database;
 	    	$this->db_user=$dolibarr_main_db_user;
