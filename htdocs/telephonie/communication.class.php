@@ -182,7 +182,7 @@ class CommunicationTelephonique {
     $sql .= " (fk_ligne,ligne, date, numero, duree";
     $sql .= ", tarif_achat_temp, tarif_achat_fixe, tarif_vente_temp, tarif_vente_fixe";
     $sql .= ", cout_achat, cout_vente, remise,dest, fourn_montant";
-    $sql .= " , fichier_cdr, fk_fournisseur, fk_telephonie_facture)";
+    $sql .= " , fichier_cdr, fk_fournisseur, fk_telephonie_facture,ym)";
 
     $sql .= " VALUES (";
     $sql .=  $this->fk_ligne.",";
@@ -192,7 +192,7 @@ class CommunicationTelephonique {
     $sql .= ", '$this->cout_achat','$this->cout_vente', '$this->remise'";
     $sql .= ",'".addslashes($this->tarif_libelle_vente)."','$this->montant'";
     $sql .= ",'".$this->fichier_cdr."','".$this->fournisseur."'";
-    $sql .= ",'".$this->facture_id."')";
+    $sql .= ",'".$this->facture_id."','".strftime("%y%m",$this->dateheure)."')";
 
     if (! $db->query($sql))
       {
