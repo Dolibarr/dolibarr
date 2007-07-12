@@ -284,6 +284,7 @@ print '<td valign="top" width="70%" class="notopnoleft">';
  * Liste des 10 derniers saisis
  *
  */
+$max=10;
 $sql = "SELECT s.rowid as socid, s.nom, s.ville,".$db->pdate("s.datec")." as datec, ".$db->pdate("s.datea")." as datea,  st.libelle as stcomm, s.prefix_comm";
 $sql.= " , code_fournisseur, code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
@@ -292,42 +293,42 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql.= " WHERE s.fk_stcomm = st.id AND s.fournisseur=1";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
 if ($socid) $sql .= " AND s.rowid = ".$socid;
-
-$sql .= " ORDER BY s.datec DESC LIMIT 10; ";
+$sql.= " ORDER BY s.datec DESC";
+$sql .= $db->plimit($max, 0);
 
 $resql = $db->query($sql);
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  print '<table class="liste" width="100%">';
-  print '<tr class="liste_titre">';
-  print "<td>".$langs->trans("Company")."</td>\n";
-  print "<td>".$langs->trans("SupplierCode")."</td>\n";
-  print '<td align="right">'.$langs->trans("DateCreation")."</td>\n";
-  print "</tr>\n";
+	$langs->load("boxes");
+	$num = $db->num_rows($resql);
+	$i = 0;
 
-  $var=True;
+	print '<table class="liste" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td colspan="2">'.$langs->trans("BoxTitleLastSuppliers",min($max,$num))."</td>\n";
+	print '<td align="right">'.$langs->trans("DateCreation")."</td>\n";
+	print "</tr>\n";
 
-  while ($obj = $db->fetch_object($resql) )
-    {
-      $var=!$var;
+	$var=True;
 
-      print "<tr $bc[$var]>";
-      print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
-      print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
-      print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
-      print '<td align="right">'.dolibarr_print_date($obj->datec,'day').'</td>';
-      print "</tr>\n";
-    }
-  print "</table>\n";
+	while ($obj = $db->fetch_object($resql) )
+	{
+		$var=!$var;
 
-  $db->free($resql);
+		print "<tr $bc[$var]>";
+		print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
+		print "&nbsp;<a href=\"fiche.php?socid=".$obj->socid."\">".$obj->nom."</a></td>\n";
+		print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+		print '<td align="right">'.dolibarr_print_date($obj->datec,'day').'</td>';
+		print "</tr>\n";
+	}
+	print "</table>\n";
+
+	$db->free($resql);
 }
 else 
 {
-  dolibarr_print_error($db);
+	dolibarr_print_error($db);
 }
 
 print "</td></tr>\n";
