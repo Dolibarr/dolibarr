@@ -3079,7 +3079,7 @@ class Form
 	    print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
 	    if (!$iconPDF)
 	    {
-	    	$file["name"];
+	    	print $file["name"];
 	    }
 	    else
 	    {

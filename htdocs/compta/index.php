@@ -92,6 +92,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
 $facturestatic=new Facture($db);
 $facturesupplierstatic=new FactureFournisseur($db);
 
+$html = new Form($db);
+
 llxHeader("",$langs->trans("AccountancyTreasuryArea"));
 
 print_fiche_titre($langs->trans("AccountancyTreasuryArea"));
@@ -546,8 +548,24 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			{
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print "<td width=\"20%\"><a href=\"commande/fiche.php?id=$obj->rowid\">".img_object($langs->trans("ShowOrder"),"order").'</a>&nbsp;';
-				print "<a href=\"commande/fiche.php?id=$obj->rowid\">".$obj->ref.'</a></td>';
+				print '<td width="20%">';
+				
+				$commandestatic->id=$obj->rowid;
+				$commandestatic->ref=$obj->ref;
+				
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print $commandestatic->getNomUrl(1);
+				print '</td>';
+				
+				print '<td width="16" align="right" class="nobordernopadding">';
+				$filename=sanitize_string($obj->ref);
+				$filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+				$urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				$html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				print '</td></tr></table>';
+				
+				print '</td>';
 
 				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").'</a>&nbsp;';
 				print '<a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,44).'</a></td>';
@@ -617,7 +635,6 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		print '</tr>';
 		if ($num)
 		{
-			$html = new Form($db);
 			$total_ttc = $totalam = $total = 0;
 			while ($i < $num && $i < $conf->liste_limit)
 			{
