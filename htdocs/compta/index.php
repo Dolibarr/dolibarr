@@ -617,18 +617,35 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 		print '</tr>';
 		if ($num)
 		{
+			$html = new Form($db);
 			$total_ttc = $totalam = $total = 0;
 			while ($i < $num && $i < $conf->liste_limit)
 			{
 				$obj = $db->fetch_object($resql);
 
 				print '<tr '.$bc[$var].'>';
-				print '<td nowrap>';
+				print '<td nowrap="nowrap">';
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'');
+				print '</td>';
+				
+				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 				if ($obj->datelimite < (time() - $conf->facture->client->warning_delay)) print img_warning($langs->trans("Late"));
+				print '</td>';
+				
+				print '<td width="16" align="right" class="nobordernopadding">';
+					
+				$filename=sanitize_string($obj->facnumber);
+				$filedir=$conf->facture->dir_output . '/' . sanitize_string($obj->facnumber);
+				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$obj->rowid;
+				$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+					
+				print '</td></tr></table>';
+				
 				print '</td>';
 				print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCustomer"),"company").' '.dolibarr_trunc($obj->nom,44).'</a></td>';
 				if ($conf->global->MAIN_SHOW_HT_ON_SUMMARY) print '<td align="right">'.price($obj->total).'</td>';
