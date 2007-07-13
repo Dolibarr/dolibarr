@@ -191,8 +191,8 @@ if ($resql)
 		print $generic_commande->getNomUrl(1);
 		print '</td>';
 		   
-		print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
-		print '&nbsp;';
+		print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		
 		print '<td width="16" align="right" class="nobordernopadding">';
@@ -214,7 +214,6 @@ if ($resql)
 		print strftime('%B',$objp->date_commande).'</a>';
 		print ' <a href="liste.php?year='.$y.'">';
 		print strftime('%Y',$objp->date_commande).'</a>';
-		if (($objp->fk_statut > 0) && ($objp->fk_statut < 3) && $objp->date_commande < (time() - $conf->commande->warning_delay)) print img_picto($langs->trans("Late"),"warning");
 		print '</td>';
 		print '<td align="right">'.$generic_commande->LibStatut($objp->fk_statut,$objp->facturee,5).'</td>';
 		print '</tr>';

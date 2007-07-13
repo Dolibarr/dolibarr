@@ -44,7 +44,7 @@ if ($user->societe_id > 0)
 }
 
 $commandestatic=new Commande($db);
-
+$html = new Form($db);
 
 
 llxHeader("",$langs->trans("Orders"),"Commande");
@@ -95,7 +95,9 @@ if ( $db->query($sql) )
         {
             $var=!$var;
             $obj = $db->fetch_object();
-            print "<tr $bc[$var]><td nowrap><a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
+            print "<tr $bc[$var]>";
+            print '<td width="50%" nowrap="nowrap">';
+            print "<a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' '.$obj->ref."</a></td>";
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
             $i++;
         }
@@ -130,7 +132,29 @@ if ( $db->query($sql) )
         {
             $var=!$var;
             $obj = $db->fetch_object();
-            print "<tr $bc[$var]><td nowrap><a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order")." ".$obj->ref."</a></td>";
+            print "<tr $bc[$var]>";
+            print '<td width="50%" nowrap="nowrap">';
+            
+            $commandestatic->id=$obj->rowid;
+				    $commandestatic->ref=$obj->ref;
+				
+				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				    print $commandestatic->getNomUrl(1);
+				    print '</td>';
+				    
+				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+				    print '&nbsp;';
+				    print '</td>';
+				
+				    print '<td width="16" align="right" class="nobordernopadding">';
+				    $filename=sanitize_string($obj->ref);
+				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    print '</td></tr></table>';
+
+            print '</td>';
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a></td></tr>';
             $i++;
         }
@@ -170,8 +194,30 @@ if ( $db->query($sql) )
         {
             $var=!$var;
             $obj = $db->fetch_object();
-            print "<tr $bc[$var]><td width=\"30%\"><a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrder"),"order").' ';
-            print $obj->ref.'</a></td>';
+            print "<tr $bc[$var]>";
+            print '<td width="20%" nowrap="nowrap">';
+            
+            $commandestatic->id=$obj->rowid;
+				    $commandestatic->ref=$obj->ref;
+				
+				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				    print $commandestatic->getNomUrl(1);
+				    print '</td>';
+				    
+				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+				    print '&nbsp;';
+				    print '</td>';
+				
+				    print '<td width="16" align="right" class="nobordernopadding">';
+				    $filename=sanitize_string($obj->ref);
+				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    print '</td></tr></table>';
+				    
+				    print '</td>';
+            
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
             print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
             print '</tr>';
@@ -213,8 +259,31 @@ if ($resql)
         {
             $var=!$var;
             $obj = $db->fetch_object($resql);
-            print "<tr $bc[$var]><td><a href=\"fiche.php?id=".$obj->rowid."\">".img_object($langs->trans("ShowOrders"),"order").' ';
-            print $obj->ref.'</a></td>';
+            
+            print "<tr $bc[$var]>";
+            print '<td width="20%" nowrap="nowrap">';
+            
+            $commandestatic->id=$obj->rowid;
+				    $commandestatic->ref=$obj->ref;
+				
+				    print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				    print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				    print $commandestatic->getNomUrl(1);
+				    print '</td>';
+				    
+				    print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+				    print '&nbsp;';
+				    print '</td>';
+				
+				    print '<td width="16" align="right" class="nobordernopadding">';
+				    $filename=sanitize_string($obj->ref);
+				    $filedir=$conf->commande->dir_output . '/' . sanitize_string($obj->ref);
+				    $urlsource=$_SERVER['PHP_SELF'].'?id='.$obj->rowid;
+				    $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+				    print '</td></tr></table>';
+				    
+				    print '</td>';
+            
             print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
             print '<td>'.dolibarr_print_date($obj->datec).'</td>';
             print '<td align="right">'.$commandestatic->LibStatut($obj->fk_statut,$obj->facture,5).'</td>';
