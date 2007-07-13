@@ -359,7 +359,7 @@ class Contrat extends CommonObject
             {
                 $objp                  = $this->db->fetch_object($result);
         
-                $ligne                 = new ContratLigne();
+                $ligne                 = new ContratLigne($db);
                 $ligne->id             = $objp->rowid;
                 $ligne->desc           = $objp->description;  // Description ligne
                 $ligne->qty            = $objp->qty;
@@ -1226,7 +1226,7 @@ class ContratLigne
 	 */
     function ContratLigne($DB)
     {
-		$this->db= $DB;
+		$this->db = $DB;
     }
 
     
