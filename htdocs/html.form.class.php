@@ -2888,8 +2888,9 @@ class Form
      *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
      *      \param      delallowed          Suppression autorisée (1/0)
      *      \param      modelselected       Modele à présélectionner par défaut
-     *      \param      modelliste			Tableau des modeles possibles
-     *      \param      forcenomultilang	N'affiche pas option langue meme si MAIN_MULTILANGS défini
+     *      \param      modelliste			    Tableau des modeles possibles
+     *      \param      forcenomultilang	  N'affiche pas option langue meme si MAIN_MULTILANGS défini
+     *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
      *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
      *		\return		int					<0 si ko, nbre de fichiers affichés si ok
@@ -2900,6 +2901,15 @@ class Form
         
         global $langs,$bc,$conf;
         $var=true;
+        
+        if ($iconPDF == 1)
+        {
+        	$genallowed = '';
+        	$delallowed = 0;
+        	$modelselected = '';
+        	$modelliste = '';
+        	$forcenomultilang=0;
+        }
  
         $filename = sanitize_string($filename);
         $headershown=0;

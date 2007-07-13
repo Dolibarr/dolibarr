@@ -200,10 +200,13 @@ if ($user->rights->facture->lire)
 
 				print '<td nowrap="nowrap">';
 				
+				$facturestatic->id=$objp->facid;
+				$facturestatic->ref=$objp->facnumber;
+				$facturestatic->type=$objp->type;
+				
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
-				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
+				print $facturestatic->getNomUrl(1);
 				print '</td>';
 				
 				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
