@@ -84,6 +84,8 @@ if (isset($_GET["action"]) && $_GET["action"] == 'del_bookmark')
  * Affichage page
  */
 
+$html = new Form($db);
+
 llxHeader();
 
 print_fiche_titre($langs->trans("CommercialArea"));
@@ -572,8 +574,30 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
             {
                 $obj = $db->fetch_object($result);
                 $var=!$var;
-                print "<tr $bc[$var]><td width=\"15%\" nowrap><a href=\"propal.php?propalid=".$obj->propalid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref."</a>";
-    		    if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print "<tr $bc[$var]>";
+                print '<td width="20%" nowrap="nowrap">';
+                
+                $propalstatic->id=$obj->propalid;
+                $propalstatic->ref=$obj->ref;
+                
+                print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+                print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+                print $propalstatic->getNomUrl(1);
+                print '</td>';
+                
+                print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+                if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+                print '</td>';
+                
+                print '<td width="16" align="right" class="nobordernopadding">';
+                
+                $filename=sanitize_string($obj->ref);
+                $filedir=$conf->propal->dir_output . '/' . sanitize_string($obj->ref);
+                $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
+                $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                
+                print '</td></tr></table>';
+                
                 print "</td>";
                 print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
@@ -618,35 +642,56 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	$sql .= $db->plimit($NBMAX, 0);
 	
 	if ( $db->query($sql) )
-	    {
-	    $num = $db->num_rows();
+	{
+		$num = $db->num_rows();
 	      
-	    $i = 0;
-	    print '<table class="noborder" width="100%">';      
-	    print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastClosedProposals",$NBMAX).'</td></tr>';
-	    $var=False;	      
-	    while ($i < $num)
-	      {
-		$objp = $db->fetch_object();		  
-		print "<tr $bc[$var]>";
-		print '<td nowrap>';
-		print '<a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
-		print $objp->ref.'</a></td>';
-		print '<td><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
-        print "<td>&nbsp;</td>";
-		print "<td align=\"right\">";
-		print dolibarr_print_date($objp->dp)."</td>\n";	  
-		print "<td align=\"right\">".price($objp->price)."</td>\n";
-		print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
-		print "</tr>\n";
-		$i++;
-		$var=!$var;
+	  $i = 0;
+	  print '<table class="noborder" width="100%">';      
+	  print '<tr class="liste_titre"><td colspan="6">'.$langs->trans("LastClosedProposals",$NBMAX).'</td></tr>';
+	  $var=False;	      
+	  while ($i < $num)
+	  {
+	  	$objp = $db->fetch_object();		  
+		  print "<tr $bc[$var]>";
+		  print '<td width="20%" nowrap="nowrap">';
+		  
+		  $propalstatic->id=$objp->propalid;
+      $propalstatic->ref=$objp->ref;
+                
+      print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+      print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+      print $propalstatic->getNomUrl(1);
+      print '</td>';
+      
+      print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+      print '&nbsp;';
+      print '</td>';
+                
+      print '<td width="16" align="right" class="nobordernopadding">';
+                
+      $filename=sanitize_string($objp->ref);
+      $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+      $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+      $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                
+      print '</td></tr></table>';
+      
+      print '</td>';
+		  
+		  print '<td><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+		  print "<td align=\"right\">";
+		  print dolibarr_print_date($objp->dp)."</td>\n";	  
+		  print "<td align=\"right\">".price($objp->price)."</td>\n";
+		  print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
+		  print "</tr>\n";
+		  $i++;
+		  $var=!$var;
 		
-	      }
+	  }
 	    
-	    print "</table>";
-	    $db->free();
-	    }
+	  print "</table>";
+	  $db->free();
+	}
 }
 
 
