@@ -1680,6 +1680,7 @@ else
   if ($result)
     {
       $num = $db->num_rows($result);
+      $propalstatic=new Propal($db);
       print_barre_liste($langs->trans('ListOfProposals'), $page,'propal.php','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
       $i = 0;
       print '<table class="liste" width="100%">';
@@ -1718,7 +1719,28 @@ else
             $now = time();
             $var=!$var;
             print '<tr '.$bc[$var].'>';
-            print '<td><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref."</a></td>\n";
+            print '<td nowrap="nowrap">';
+            
+            $propalstatic->id=$objp->propalid;
+            $propalstatic->ref=$objp->ref;
+                
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+            print $propalstatic->getNomUrl(1);
+            print '</td>';
+      
+            print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+            if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            print '</td>';
+                
+            print '<td width="16" align="right" class="nobordernopadding">';
+                
+            $filename=sanitize_string($objp->ref);
+            $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+            $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                
+            print '</td></tr></table>';
 
             if ($objp->client == 1)
             {
@@ -1747,7 +1769,6 @@ else
             if ($objp->dfv)
             {
                 print '<td align="center">'.dolibarr_print_date($objp->dfv);
-                if ($objp->fk_statut == 1 && $objp->dfv < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
                 print '</td>';
             }
             else
