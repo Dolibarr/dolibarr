@@ -3116,12 +3116,30 @@ else
 
 					print '<tr '.$bc[$var].'>';
 					print '<td nowrap="nowrap">';
+					
 					$facturestatic->id=$objp->facid;
 					$facturestatic->ref=$objp->facnumber;
 					$facturestatic->type=$objp->type;
+					
+					print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+					print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 					print $facturestatic->getNomUrl(1);
 					print $objp->increment;
+					print '</td>';
+
+					print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
+					print '</td>';
+					print '<td width="16" align="right" class="nobordernopadding">';
+					
+					$filename=sanitize_string($objp->facnumber);
+					$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
+					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
+					$genallowed=($fac->statut >= 1 && $user->rights->facture->liste);
+					$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,'','','','',1);
+					
+					print '</td></tr></table>';
+
 					print "</td>\n";
 
 					if ($objp->df > 0 )

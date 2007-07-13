@@ -2894,7 +2894,7 @@ class Form
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
      *		\return		int					<0 si ko, nbre de fichiers affichés si ok
      */
-    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0)
+    function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0)
     {
         // filedir = conf->...dir_ouput."/".get_exdir(id)
         
@@ -2908,191 +2908,199 @@ class Form
         // Affiche en-tete tableau
         if ($genallowed)
         {
-	  $modellist=array();
-	  if ($modulepart == 'propal')
-            {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
-		  $model=new ModelePDFPropales();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+        	$modellist=array();
+        	if ($modulepart == 'propal')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
+          	{
+          		include_once(DOL_DOCUMENT_ROOT.'/includes/modules/propale/modules_propale.php');
+          		$model=new ModelePDFPropales();
+          		$modellist=$model->liste_modeles($this->db);
             }
-	  else if ($modulepart == 'commande')
+          }
+          else if ($modulepart == 'commande')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-		  $model=new ModelePDFCommandes();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+            	$model=new ModelePDFCommandes();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  elseif ($modulepart == 'expedition')
+          }
+          elseif ($modulepart == 'expedition')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+	          else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
-		  $model=new ModelePDFExpedition();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/expedition/mods/pdf/ModelePdfExpedition.class.php');
+            	$model=new ModelePDFExpedition();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  elseif ($modulepart == 'livraison')
+          }
+          elseif ($modulepart == 'livraison')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
-		  $model=new ModelePDFDeliveryOrder();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/livraison/mods/modules_livraison.php');
+            	$model=new ModelePDFDeliveryOrder();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  else if ($modulepart == 'ficheinter')
+          }
+          else if ($modulepart == 'ficheinter')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
-		  $model=new ModelePDFFicheinter();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/fichinter/modules_fichinter.php');
+            	$model=new ModelePDFFicheinter();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  elseif ($modulepart == 'facture')
+          }
+          elseif ($modulepart == 'facture')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
-		  $model=new ModelePDFFactures();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
+            	$model=new ModelePDFFactures();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  elseif ($modulepart == 'export')
+          }
+          elseif ($modulepart == 'export')
+          {
+          	if (is_array($genallowed)) $modellist=$genallowed;
+          	else
             {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-                {
-		  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
-		  $model=new ModeleExports();
-		  $modellist=$model->liste_modeles($this->db);
-                }
+            	include_once(DOL_DOCUMENT_ROOT.'/includes/modules/export/modules_export.php');
+            	$model=new ModeleExports();
+            	$modellist=$model->liste_modeles($this->db);
             }
-	  else if ($modulepart == 'commande_fournisseur')
-	    {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-		{
-		  include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
-		  $model=new ModelePDFSuppliersOrders();
-		  $modellist=$model->liste_modeles($this->db);
-		}
-	    }
-	  else if ($modulepart == 'facture_fournisseur')
-	    {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-		{
-		  include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
-		  $model=new ModelePDFFacturesSuppliers();
-		  $modellist=$model->liste_modeles($this->db);
-		}
-	    }
-	  else if ($modulepart == 'remisecheque')
-	    {
-	      if (is_array($genallowed)) $modellist=$genallowed;
-	      else
-		{
-		  // ??
-		}
-	    }
-	  else
-            {
-	      dolibarr_print_error($this->db,'Bad value for modulepart');
-	      return -1;
-            }
+          }
+          else if ($modulepart == 'commande_fournisseur')
+	        {
+	        	if (is_array($genallowed)) $modellist=$genallowed;
+	        	else
+		        {
+		        	include_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
+		        	$model=new ModelePDFSuppliersOrders();
+		        	$modellist=$model->liste_modeles($this->db);
+		        }
+		      }
+		      else if ($modulepart == 'facture_fournisseur')
+		      {
+		      	if (is_array($genallowed)) $modellist=$genallowed;
+		      	else
+		      	{
+		      		include_once(DOL_DOCUMENT_ROOT.'/fourn/facture/modules/modules_facturefournisseur.php');
+		      		$model=new ModelePDFFacturesSuppliers();
+		      		$modellist=$model->liste_modeles($this->db);
+		      	}
+		      }
+		      else if ($modulepart == 'remisecheque')
+		      {
+		      	if (is_array($genallowed)) $modellist=$genallowed;
+		      	else
+		      	{
+		      		// ??
+		        }
+		      }
+		      else
+		      {
+		      	dolibarr_print_error($this->db,'Bad value for modulepart');
+		      	return -1;
+		      }
+		      
+		      $headershown=1;
 	  
-	  $headershown=1;
-	  
-	  print '<form action="'.$urlsource.'#builddoc" method="post">';
-	  print '<input type="hidden" name="action" value="builddoc">';
+	        print '<form action="'.$urlsource.'#builddoc" method="post">';
+	        print '<input type="hidden" name="action" value="builddoc">';
+	        
+	        print_titre($langs->trans("Documents"));
+          print '<table class="border" width="100%">';
 
-            print_titre($langs->trans("Documents"));
-            print '<table class="border" width="100%">';
-
-            print '<tr '.$bc[$var].'>';
-            print '<td>'.$langs->trans('Model').'</td>';
-            print '<td align="center">';
-            $this->select_array('model',$modellist,$modelselected,0,0,1);
-            $texte=$langs->trans('Generate');
-            print '</td>';
-            print '<td align="center">';
-            if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
-            {
-              $this->select_lang($langs->getDefaultLang());
-            }
-            else
-            {
-            	print '&nbsp;';
-            }
-            print '</td>';
-            print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
-            print '<input class="button" type="submit" value="'.$texte.'">';
-            print '</td></tr>';
+          print '<tr '.$bc[$var].'>';
+          print '<td>'.$langs->trans('Model').'</td>';
+          print '<td align="center">';
+          $this->select_array('model',$modellist,$modelselected,0,0,1);
+          $texte=$langs->trans('Generate');
+          print '</td>';
+          print '<td align="center">';
+          if($conf->global->MAIN_MULTILANGS && ! $forcenomultilang)
+          {
+            $this->select_lang($langs->getDefaultLang());
+          }
+          else
+          {
+          	print '&nbsp;';
+          }
+          print '</td>';
+          print '<td align="center" colspan="'.($delallowed?'2':'1').'">';
+          print '<input class="button" type="submit" value="'.$texte.'">';
+          print '</td></tr>';
         }
 
         // Recupe liste des fichiers
 		$file_list=dolibarr_dir_list($filedir,'files',0,'','\.meta$','date',SORT_DESC);
 		
         // Affiche en-tete tableau si non deja affiché
-		if (sizeof($file_list) && ! $headershown)
+		if (sizeof($file_list) && ! $headershown && !$iconPDF)
 		{
 			$headershown=1;
-			
-		    print_titre($langs->trans("Documents"));
-		    print '<table class="border" width="100%">';
+		  print_titre($langs->trans("Documents"));
+		  print '<table class="border" width="100%">';
 		}	
 		
 		// Boucle sur chaque ligne trouvée
 		foreach($file_list as $i => $file)
 		{
-		
-	        // Défini chemin relatif par rapport au module pour lien download
-	        $relativepath=$file["name"];								// Cas general
-	        if ($filename) $relativepath=$filename."/".$file["name"];	// Cas prpal, facture...
-	        // Autre cas
-            if ($modulepart == 'don')        { $relativepath = get_exdir($filename,2).$file["name"]; }
-            if ($modulepart == 'export')     { $relativepath = $file["name"]; }
+			// Défini chemin relatif par rapport au module pour lien download
+	    $relativepath=$file["name"];								// Cas general
+	    if ($filename) $relativepath=$filename."/".$file["name"];	// Cas prpal, facture...
+	    // Autre cas
+      if ($modulepart == 'don')        { $relativepath = get_exdir($filename,2).$file["name"]; }
+      if ($modulepart == 'export')     { $relativepath = $file["name"]; }
+ 
+      // Défini le type MIME du document
+      if (eregi('\.([^\.]+)$',$file["name"],$reg)) $extension=$reg[1];
+      $mimetype=strtoupper($extension);
+      if ($extension == 'pdf') $mimetype='PDF';
+      if ($extension == 'html') $mimetype='HTML';
+      if (eregi('\-detail\.pdf',$file["name"])) $mimetype='PDF Détaillé';
 
-            // Défini le type MIME du document
-            if (eregi('\.([^\.]+)$',$file["name"],$reg)) $extension=$reg[1];
-            $mimetype=strtoupper($extension);
-            if ($extension == 'pdf') $mimetype='PDF';
-            if ($extension == 'html') $mimetype='HTML';
-            if (eregi('\-detail\.pdf',$file["name"])) $mimetype='PDF Détaillé';
+      if (!$iconPDF) print "<tr $bc[$var]>";
 
-            print "<tr $bc[$var]>";
-
-            // Affiche colonne type MIME
-            print '<td nowrap>'.$mimetype.'</td>';
-            // Affiche nom fichier avec lien download
-	        print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">'.$file["name"].'</a>';
-			print '</td>';
-            // Affiche taille fichier
-            print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
-            // Affiche date fichier
-            print '<td align="right">'.dolibarr_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
+      // Affiche colonne type MIME
+      if (!$iconPDF) print '<td nowrap>'.$mimetype.'</td>';
+      // Affiche nom fichier avec lien download
+	    if (!$iconPDF) print '<td>';
+	    print '<a href="'.DOL_URL_ROOT . '/document.php?modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'">';
+	    if (!$iconPDF)
+	    {
+	    	$file["name"];
+	    }
+	    else
+	    {
+	    	print img_pdf($file["name"],2);
+	    }
+			print '</a>';
+			if (!$iconPDF) print '</td>';
+      // Affiche taille fichier
+      if (!$iconPDF) print '<td align="right">'.filesize($filedir."/".$file["name"]). ' bytes</td>';
+      // Affiche date fichier
+      if (!$iconPDF) print '<td align="right">'.dolibarr_print_date(filemtime($filedir."/".$file["name"]),'dayhour').'</td>';
 
 			if ($delallowed)
 			{
             	print '<td><a href="'.DOL_URL_ROOT.'/document.php?action=remove_file&amp;modulepart='.$modulepart.'&amp;file='.urlencode($relativepath).'&amp;urlsource='.urlencode($urlsource).'">'.img_delete().'</a></td>';
 			}
 
-            print '</tr>';
+      if (!$iconPDF) print '</tr>';
 
-            $i++;
-    	}
+      $i++;
+    }
         
   
 	    if ($headershown)

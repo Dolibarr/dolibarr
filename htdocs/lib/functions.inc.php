@@ -787,13 +787,14 @@ function img_file_new($alt = "default")
 /**
         \brief      Affiche logo pdf
         \param      alt         Texte sur le alt de l'image
+        \param      $size       Taille de l'icone : 3 = 16x16px , 2 = 14x14px
         \return     string      Retourne tag img
 */
-function img_pdf($alt = "default")
+function img_pdf($alt = "default",$size=3)
 {
   global $conf,$langs;
   if ($alt=="default") $alt=$langs->trans("Show");
-  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/pdf.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/pdf'.$size.'.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
