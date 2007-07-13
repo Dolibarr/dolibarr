@@ -105,7 +105,7 @@ if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
 $conf = new Conf();
-// On defini tous les parametres de conf
+// Identifiant propres au serveur base de donnee
 $conf->db->host   = $dolibarr_main_db_host;
 $conf->db->name   = $dolibarr_main_db_name;
 $conf->db->user   = $dolibarr_main_db_user;
@@ -114,10 +114,14 @@ if (! isset($dolibarr_main_db_type) && ! $dolibarr_main_db_type) $dolibarr_main_
 $conf->db->type   = $dolibarr_main_db_type;
 if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='ISO-8859-1';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->character_set=$dolibarr_main_db_charset;
-if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
-$conf->character_set_client=$character_set_client;
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 $conf->db->prefix = $dolibarr_main_db_prefix;
+// Identifiant propre au client
+if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+$conf->character_set_client=$character_set_client;
+if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
+$conf->collation_connection=$collation_connection;
+// Identifiant autres
 $conf->main_authentication = $dolibarr_main_authentication;
 
 // Defini prefix

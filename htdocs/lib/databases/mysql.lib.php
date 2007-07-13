@@ -118,15 +118,25 @@ class DoliDb
   */
   function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
   {
-    global $conf,$langs;
-    $conffile = DOL_DOCUMENT_ROOT."/conf/conf.php";
-    if (file_exists($conffile)) {
-	    include($conffile);
-	    $this->forcecharset=$character_set_database;
-	    $this->forcecollate=$collation_connection;
-	    $this->db_user=$dolibarr_main_db_user;
-	}
-    $this->transaction_opened=0;
+		global $conf,$langs;
+
+        /* Ce test est inutile. En effet, si DOL_DOCUMENT_ROOT est défini, cela signifie      */
+		/* obligatoirement que le fichier conf a deja été chargée puisque cette constante est */
+		/* definie a partir du contenu du fichier conf.php                                    */
+		/* Et toutes les infos sont chargés dans l'objet conf                                 */
+		/*
+        if (file_exists($conffile)) {
+	    	include($conffile);
+	    	$this->forcecharset=$character_set_database;
+	    	$this->forcecollate=$collation_connection;
+	    	$this->db_user=$dolibarr_main_db_user;
+		}
+		*/
+		$this->forcecharset=$conf->character_set_client;
+	    $this->forcecollate=$conf->collation_connection;
+	    $this->db_user=$conf->db->user;
+
+		$this->transaction_opened=0;
         
     if (! function_exists("mysql_connect"))
       {
