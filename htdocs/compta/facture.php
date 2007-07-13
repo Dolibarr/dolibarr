@@ -3135,8 +3135,7 @@ else
 					$filename=sanitize_string($objp->facnumber);
 					$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
 					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
-					$genallowed=($fac->statut >= 1 && $user->rights->facture->liste);
-					$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,'','','','',1);
+					$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
 					
 					print '</td></tr></table>';
 

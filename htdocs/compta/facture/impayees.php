@@ -183,6 +183,7 @@ if ($user->rights->facture->lire)
 
 		if ($num > 0)
 		{
+			$html = new Form($db);
 			$var=True;
 			$total_ht=0;
 			$total_ttc=0;
@@ -197,9 +198,27 @@ if ($user->rights->facture->lire)
 				print "<tr $bc[$var]>";
 				$class = "impayee";
 
-				print '<td nowrap><a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
+				print '<td nowrap="nowrap">';
+				
+				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill")."</a> ";
 				print '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$objp->facid.'">'.$objp->facnumber.'</a>'.$objp->increment;
+				print '</td>';
+				
+				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
 				if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1) print img_warning($langs->trans("Late"));
+				print '</td>';
+				
+				print '<td width="16" align="right" class="nobordernopadding">';
+					
+				$filename=sanitize_string($objp->facnumber);
+				$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
+				$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
+				$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
+					
+				print '</td></tr></table>';
+				
 				print "</td>\n";
 
 				print "<td nowrap align=\"center\">".dolibarr_print_date($objp->df)."</td>\n";
