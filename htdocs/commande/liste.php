@@ -57,6 +57,8 @@ if ($user->societe_id > 0)
  * Affichage page
  */
  
+$html = new Form($db);
+ 
 llxHeader();
 
 $begin=$_GET['begin'];
@@ -155,7 +157,7 @@ if ($resql)
 	print_liste_field_titre($langs->trans('Ref'),'liste.php','c.ref','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="25%"',$sortfield);
 	print_liste_field_titre($langs->trans('Company'),'liste.php','s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="30%"',$sortfield);
 	print_liste_field_titre($langs->trans('RefCustomerOrder'),'liste.php','c.ref_client','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="15%"',$sortfield);
-	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right" colspan="2"',$sortfield);
+	print_liste_field_titre($langs->trans('Date'),'liste.php','c.date_commande','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'width="20%" align="right"',$sortfield);
 	print_liste_field_titre($langs->trans('Status'),'liste.php','c.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'width="10%" align="center"',$sortfield);
 	print '</tr>';
 	// Lignes des champs de filtre
@@ -168,7 +170,6 @@ if ($resql)
 	print '</td><td class="liste_titre" align="left">';
 	print '<input class="flat" type="text" size="10" name="sref_client" value="'.$sref_client.'">';
 	print '</td><td class="liste_titre">&nbsp;';
-	print '</td><td class="liste_titre">&nbsp;';
 	print '</td><td align="right" class="liste_titre">';
 	print '<input type="image" class="liste_titre" name="button_search" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans('Search').'">';
 	print '</td></tr>';
@@ -180,10 +181,31 @@ if ($resql)
 		$objp = $db->fetch_object($resql);
 		$var=!$var;
 		print '<tr '.$bc[$var].'>';
-		print '<td><a href="fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowOrder'),'order').' '.$objp->ref.'</a></td>';
+    print '<td width="20%" nowrap="nowrap">';
+    
+    $generic_commande->id=$objp->rowid;
+		$generic_commande->ref=$objp->ref;
+				
+		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+		print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+		print $generic_commande->getNomUrl(1);
+		print '</td>';
+		   
+		print '<td width="16" class="nobordernopadding" nowrap="nowrap">';
+		print '&nbsp;';
+		print '</td>';
+		
+		print '<td width="16" align="right" class="nobordernopadding">';
+		$filename=sanitize_string($objp->ref);
+		$filedir=$conf->commande->dir_output . '/' . sanitize_string($objp->ref);
+		$urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
+		$html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+		print '</td></tr></table>';
+				    
+		print '</td>';
+		
 		print '<td><a href="../comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans('ShowCompany'),'company').' '.$objp->nom.'</a></td>';
 		print '<td>'.$objp->ref_client.'</td>';
-		print '<td>&nbsp;</td>';
 		print '<td align="right">';
 		$y = strftime('%Y',$objp->date_commande);
 		$m = strftime('%m',$objp->date_commande);
