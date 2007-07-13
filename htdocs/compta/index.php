@@ -105,7 +105,7 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
  */
 if ($conf->facture->enabled)
 {
-	print '<form method="post" action="'.DOL_URL_ROOT.'/facture.php">';
+	print '<form method="post" action="'.DOL_URL_ROOT.'/compta/facture.php">';
 	print '<table class="noborder" width="100%">';
 	print "<tr class=\"liste_titre\">";
 	print '<td colspan="3">'.$langs->trans("SearchACustomerInvoice").'</td></tr>';
