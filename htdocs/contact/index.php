@@ -192,7 +192,7 @@ if ($result)
 
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "colspan=\"2\"", $sortfield);
     print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
@@ -211,7 +211,7 @@ if ($result)
 
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
-    print '<td class="liste_titre">';
+    print '<td colspan="2" class="liste_titre">';
     print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">';
