@@ -548,7 +548,7 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 			{
 				$obj = $db->fetch_object($resql);
 				print "<tr $bc[$var]>";
-				print '<td width="20%">';
+				print '<td width="20%" nowrap="nowrap">';
 				
 				$commandestatic->id=$obj->rowid;
 				$commandestatic->ref=$obj->ref;
@@ -556,6 +556,10 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
 				print $commandestatic->getNomUrl(1);
+				print '</td>';
+				
+				print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+				print '&nbsp;';
 				print '</td>';
 				
 				print '<td width="16" align="right" class="nobordernopadding">';
@@ -641,9 +645,11 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$obj = $db->fetch_object($resql);
 
 				print '<tr '.$bc[$var].'>';
-				print '<td nowrap="nowrap">';
+				print '<td width="20%" nowrap="nowrap">';
+				
 				print '<table class="nobordernopadding"><tr class="nocellnopadd">';
 				print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+				
 				$facturestatic->ref=$obj->facnumber;
 				$facturestatic->id=$obj->rowid;
 				$facturestatic->type=$obj->type;
