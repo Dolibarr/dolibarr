@@ -30,7 +30,6 @@
 
 
 include_once("./inc.php");
-if (file_exists($conffile)) include_once($conffile);
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");

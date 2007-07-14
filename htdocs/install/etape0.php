@@ -137,7 +137,6 @@ if ($db->connected)
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
-	if ($defaultCharacterSet)
 	{
 		?>
 		<tr>
@@ -161,10 +160,13 @@ if ($db->connected)
 				print '<option value="'.$characterSet['charset'].'" '.$selected.'>'.$characterSet['charset'].' ('.$characterSet['description'].')</option>';
 			}
 			print '</select>';
+			if ($disabled=="disabled"){
+				print '<input type="hidden" name="character_set_database"  value="'.$defaultCharacterSet.'">';
+			}
 		}
 		else
 		{
-			print '<input name="character_set_database" '.$disabled.' value="'.$defaultCharacterSet.'">';
+			print '<input type="text" name="character_set_database"  value="'.$defaultCharacterSet.'">';
 		}
 		?>
 		</td>
@@ -197,10 +199,13 @@ if ($db->connected)
 				print '<option value="'.$collation['collation'].'" '.$selected.'>'.$collation['collation'].'</option>';
 			}
 			print '</select>';
+			if ($disabled=="disabled"){
+				print '<input type="hidden" name="collation_connection"  value="'.$defaultCollationConnection.'">';
+			}
 		}
 		else
 		{
-			print '<input type="hidden" name="collation_connection" value="'.$collation['collation'].'">';
+			print '<input type="text" name="collation_connection"  value="'.$defaultCollationConnection.'">';
 		}
 		?>
 		</td>

@@ -131,8 +131,8 @@ class DoliDb
 	    	$this->db_user=$dolibarr_main_db_user;
 		}
 		*/
-		$this->forcecharset=$conf->character_set_client;
-	    $this->forcecollate=$conf->collation_connection;
+		$this->forcecharset=$conf->db->character_set;
+	    $this->forcecollate=$conf->db->collation_connection;
 	    $this->db_user=$conf->db->user;
 
         $this->transaction_opened=0;
@@ -905,7 +905,7 @@ class DoliDb
 	}
 	
 	function getDefaultCollationConnection(){
-		$resql=$this->query('SHOW VARIABLES LIKE \'collation_connection\'');
+		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
 	      {
 			// version Mysql < 4.1.1

@@ -31,7 +31,6 @@
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
 
 include_once("./inc.php");
-
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 
@@ -67,6 +66,9 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 /*
 * Actions
 */
+
+
+
 if ($_POST["action"] == "set")
 {
 	umask(0);
@@ -166,7 +168,6 @@ if ($_POST["action"] == "set")
 			if (file_exists("$conffile"))
 			{
 				include("$conffile");	// On force rechargement. Ne pas mettre include_once !
-				print "<tr><td>".$langs->trans("ConfigurationSaving")."</td><td>".$langs->trans("OK")."</td>";
 			}
 			else
 			{
@@ -249,14 +250,19 @@ if ($_POST["action"] == "set")
 	*/
 	if (! $error)
 	{
-		include_once($dolibarr_main_document_root . "/conf/conf.class.php");
-		
 		$conf = new Conf();
 		$conf->db->type = trim($dolibarr_main_db_type);
 		$conf->db->host = trim($dolibarr_main_db_host);
 		$conf->db->name = trim($dolibarr_main_db_name);
 		$conf->db->user = trim($dolibarr_main_db_user);
 		$conf->db->pass = trim($dolibarr_main_db_pass);
+		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+		$conf->character_set_client=trim($character_set_client);
+		if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
+		$conf->db->character_set=trim($dolibarr_main_db_charset);
+		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
+		$conf->db->collation_connection=trim($collation_connection);
+		
 		
 		$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 		$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
@@ -360,6 +366,7 @@ if ($_POST["action"] == "set")
 
 			if ($db->connected)
 			{
+					
 				if ($db->DDLCreateDb($dolibarr_main_db_name))
 				{
 					print '<tr><td>';

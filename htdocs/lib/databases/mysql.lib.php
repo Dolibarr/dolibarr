@@ -902,7 +902,7 @@ class DoliDb
 	}
 	
 	function getDefaultCollationConnection(){
-		$resql=$this->query('SHOW VARIABLES LIKE \'collation_connection\'');
+		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
 	      {
 			// version Mysql < 4.1.1

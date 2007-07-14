@@ -54,8 +54,18 @@ if (file_exists($conffile))
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 		$conf=new Conf();
+		$conf = new Conf();
+		$conf->db->type = trim($dolibarr_main_db_type);
+		$conf->db->host = trim($dolibarr_main_db_host);
+		$conf->db->name = trim($dolibarr_main_db_name);
+		$conf->db->user = trim($dolibarr_main_db_user);
+		$conf->db->pass = trim($dolibarr_main_db_pass);
 		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
 		$conf->character_set_client=$character_set_client;
+		if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
+		$conf->db->character_set=$dolibarr_main_db_charset;
+		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
+		$conf->db->collation_connection=$collation_connection;
 	}
 	if ($dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
 	{
@@ -135,7 +145,6 @@ function pHeader($soutitre,$next,$action='set')
 	print '<table class="main" width="100%"><tr><td>';
 
 	print '<table class="main-inside" width="100%"><tr><td>';
-
 }
 
 function pFooter($nonext=0,$setuplang='')
