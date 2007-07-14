@@ -51,7 +51,7 @@ if ($user->societe_id > 0)
 
 $langs->load('companies');
 
-
+$html = new Form($db);
 
 llxHeader();
 
@@ -129,12 +129,31 @@ if ($resql)
 
         $var=!$var;
         print "<tr $bc[$var]>";
-        print "<td><a href=\"".$link."?id=$objp->rowid\">".img_object($langs->trans("ShowOrder"),"order")." ".$objp->ref."</a></td>\n";
+        
+        print '<td width="20%" nowrap="nowrap">';
+        
+        $generic_commande->id=$objp->rowid;
+        $generic_commande->ref=$objp->ref;
+        
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+        print $generic_commande->getNomUrl(1);
+        print '</td>';
+        
+        print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+        if (($objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 ) print img_picto($langs->trans("Late"),"warning");
+        print '</td>';
+        
+        print '<td width="16" align="right" class="nobordernopadding">';
+        $filename=sanitize_string($objp->ref);
+        $filedir=$conf->commande->dir_output . '/' . sanitize_string($objp->ref);
+        $urlsource=$_SERVER['PHP_SELF'].'?id='.$objp->rowid;
+        $html->show_documents('commande',$filename,$filedir,$urlsource,'','','','','',1);
+        print '</td></tr></table>';
+        
+        print '</td>';
+
         print "<td><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid."\">".img_object($langs->trans("ShowCompany"),"company")." ".$objp->nom."</a>";
-        if (($objp->date_commande < (time() - $conf->commande->traitement->warning_delay)) && $objp->statutid == 1 )
-        {
-            print img_warning();
-        }
         print "</td>";
 
         print "<td align=\"center\">";
