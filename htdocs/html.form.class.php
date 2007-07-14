@@ -3058,7 +3058,7 @@ class Form
         if ($iconPDF==1)
         {
         	$png = '|\.png$';
-        	$filter = $filename;
+        	$filter = $filename.'.pdf';
         }
         $file_list=dolibarr_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
 		
