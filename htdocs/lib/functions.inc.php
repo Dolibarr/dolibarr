@@ -798,6 +798,18 @@ function img_pdf($alt = "default",$size=3)
 }
 
 /**
+        \brief      Affiche logo vcard
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tag img
+*/
+function img_vcard($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("VCard");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/vcard.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
         \brief      Affiche logo +
         \param      alt         Texte sur le alt de l'image
         \return     string      Retourne tag img

@@ -254,11 +254,22 @@ if ($result)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-
         print '<td valign="center">';
+        
+        print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+        print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+        
         print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
         print img_object($langs->trans("ShowContact"),"contact");
-        print ' '.$obj->name.'</a></td>';
+        print ' '.$obj->name.'</a>';
+        print '</td>';
+        
+        print '<td width="18" align="right" class="nobordernopadding">';
+        print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
+        print img_vcard($langs->trans("VCard")).' ';
+        print '</a></td></tr></table>';
+        
+        print '</td>';
         print '<td>'.$obj->firstname.'</td>';
         print '<td>';
         if ($obj->socid)
