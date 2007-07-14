@@ -3053,7 +3053,7 @@ class Form
         }
 
         // Recupe liste des fichiers
-        if ($iconPDF==1) $png = '\.png$';
+        if ($iconPDF==1) $png = '|\.png$';
         $file_list=dolibarr_dir_list($filedir,'files',0,'','\.meta$'.$png,'date',SORT_DESC);
 		
         // Affiche en-tete tableau si non deja affiché

@@ -2246,7 +2246,7 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
       while (false !== ($file = readdir($dir)))
 	{
 	  $qualified=1;
-	  
+
 	  // Check if file is qualified
 	  if (eregi('^\.',$file)) $qualified=0;
 	  if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
