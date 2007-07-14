@@ -2241,56 +2241,56 @@ function dolibarr_dir_list($path, $types="all", $recursive=0, $filter="", $exclu
   if (! is_dir($path)) return array();
   
   if ($dir = opendir($path))
+  {
+  	$file_list = array();
+    while (false !== ($file = readdir($dir)))
     {
-      $file_list = array();
-      while (false !== ($file = readdir($dir)))
-	{
-	  $qualified=1;
-
-	  // Check if file is qualified
-	  if (eregi('^\.',$file)) $qualified=0;
-	  if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
-	  
-	  if ($qualified)
+    	$qualified=1;
+    	
+    	// Check if file is qualified
+    	if (eregi('^\.',$file)) $qualified=0;
+    	if ($excludefilter && eregi($excludefilter,$file)) $qualified=0;
+    	
+    	if ($qualified)
 	    {
 	      // Check whether this is a file or directory and whether we're interested in that type
 	      if ((is_dir($path."/".$file)) && (($types=="directories") || ($types=="all")))
-		{
-		  // Add entry into file_list array
-		  if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-		  if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-		  
-		  if (! $filter || eregi($filter,$path.'/'.$file))
-		    {
-		      $file_list[] = array(
+	      {
+	      	// Add entry into file_list array
+	      	if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+	        if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+	        
+	        if (! $filter || eregi($filter,$path.'/'.$file))
+	        {
+	        	$file_list[] = array(
 					   "name" => $file,
 					   "fullname" => $path.'/'.$file,
 					   "date" => $filedate,
 					   "size" => $filesize
 					   );
+		      }
+		      
+		      // if we're in a directory and we want recursive behavior, call this function again
+		      if ($recursive)
+		      {
+		      	$file_list = array_merge($file_list, dolibarr_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
+		      }
 		    }
-		  
-		  // if we're in a directory and we want recursive behavior, call this function again
-		  if ($recursive)
-		    {
-		      $file_list = array_merge($file_list, dolibarr_dir_list($path."/".$file."/", $types, $recursive, $filter, $excludefilter, $sortcriteria, $sortorder));
-		    }
-		}
 	      else if (($types == "files") || ($types == "all"))
-		{
-		  // Add file into file_list array
-		  if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
-		  if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
-		  if (! $filter || eregi($filter,$path.'/'.$file))
-		    {
-		      $file_list[] = array(
+	      {
+	      	// Add file into file_list array
+	      	if ($sortcriteria == 'date') $filedate=filemtime($path."/".$file);
+	      	if ($sortcriteria == 'size') $filesize=filesize($path."/".$file);
+	      	if (! $filter || eregi($filter,$path.'/'.$file))
+	      	{
+	      		$file_list[] = array(
 					   "name" => $file,
 					   "fullname" => $path.'/'.$file,
 					   "date" => $filedate,
 					   "size" => $filesize
 					   );
+		      }
 		    }
-		}
 	    }
 	}
       closedir($dir);
