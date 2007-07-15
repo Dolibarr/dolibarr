@@ -676,7 +676,7 @@ else
 		
 		print "<table class=\"noborder\" width=\"100%\">";
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'',$sortfield);
+		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'width=20%',$sortfield);
 		print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
 		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
@@ -689,11 +689,30 @@ else
 		
 			$var=!$var;
 			print "<tr $bc[$var]>";
-		
-			// Ref
-			print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans("ShowPropal"),"propal").' ';
-			print $objp->ref."</a>";
-			if ($objp->fk_statut==1 && $obj->dfin < time() - $conf->propal->cloture->warning_delay)  { print " ".img_warning($langs->trans("Late")); }
+			print '<td nowrap="nowrap">';
+            
+      $propalstatic->id=$objp->propalid;
+      $propalstatic->ref=$objp->ref;
+      
+      // Ref         
+      print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+      print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+      print $propalstatic->getNomUrl(1);
+      print '</td>';
+      
+      print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+      if ($objp->fk_statut == 1 && $objp->din < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+      print '</td>';
+                
+      print '<td width="16" align="right" class="nobordernopadding">';
+                
+      $filename=sanitize_string($objp->ref);
+      $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+      $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+      $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                
+      print '</td></tr></table>';
+      
 			print "</td>\n";
 		
 			// Societe
