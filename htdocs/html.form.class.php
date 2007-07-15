@@ -1040,7 +1040,7 @@ class Form
 				}
 				$opt = '<option value="'.$objp->rowid.'">'.$objp->ref.' - ';
 				$opt.= dolibarr_trunc($objp->label,32).' - ';
-				
+
 				// Multiprix
 				if ($price_level > 1)
 				{
@@ -1048,12 +1048,23 @@ class Form
 					$sql.= "FROM ".MAIN_DB_PREFIX."product_price ";
 					$sql.= "where fk_product='".$objp->rowid."' and price_level=".$price_level;
 					$sql.= " order by date_price DESC limit 1";
-					$result2 = $this->db->query($sql) ;
+					$result2 = $this->db->query($sql);
 					$objp2 = $this->db->fetch_object($result2);
-					if ($objp2->price_base_type == 'HT')
-						$opt.= price2num($objp2->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+					if ($objp2)
+					{
+					  if ($objp2->price_base_type == 'HT')
+						  $opt.= price2num($objp2->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+					  else
+						  $opt.= price2num($objp2->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+					}
+					//si il n'y a pas de prix multiple on prend le prix de base du produit/service
 					else
-						$opt.= price2num($objp2->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+					{
+						if ($objp->price_base_type == 'HT')
+						  $opt.= price2num($objp->price,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("HT");
+					  else
+						  $opt.= price2num($objp->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
+				  }
 				}
 				else
 				{
