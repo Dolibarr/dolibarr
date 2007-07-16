@@ -26,7 +26,7 @@
         \version    $Revision$
 */
 
-include_once("./inc.php");
+include("./inc.php");
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
@@ -65,13 +65,6 @@ if ($_POST["action"] == "set")
 
     print '<table cellspacing="0" cellpadding="4" border="0" width="100%">';
     $error=0;
-
-    $conf = new Conf();// on pourrait s'en passer
-    $conf->db->type = $dolibarr_main_db_type;
-    $conf->db->host = $dolibarr_main_db_host;
-    $conf->db->name = $dolibarr_main_db_name;
-    $conf->db->user = $dolibarr_main_db_user;
-    $conf->db->pass = $dolibarr_main_db_pass;
 
     $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
     if ($db->connected == 1)
@@ -149,7 +142,7 @@ if ($_POST["action"] == "set")
 				$requestnb++;
                 if ($db->query($buffer))
                 {
-                    //print "<td>OK requete ==== $buffer</td></tr>";
+                   // print "<td>OK requete ==== $buffer</td></tr>";
                 }
                 else
                 {
@@ -385,7 +378,7 @@ if ($_POST["action"] == "set")
             while (!feof ($fp))
             {
                 $buffer = fgets($fp, 4096);
-
+				print "<tr><td>Insertion ligne : $buffer</td><td>";
                 if (strlen(trim(ereg_replace("--","",$buffer))))
                 {
                     if ($db->query($buffer))
@@ -396,7 +389,7 @@ if ($_POST["action"] == "set")
                     {
                         if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
                         {
-                            // print "<tr><td>Insertion ligne : $buffer</td><td>
+                            //print "<tr><td>Insertion ligne : $buffer</td><td>";
                         }
                         else
                         {

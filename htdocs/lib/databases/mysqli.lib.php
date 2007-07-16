@@ -163,10 +163,11 @@ class DoliDb
         if ($this->db)
         {
 			// Si client connecté avec charset different de celui de Dolibarr
-			if (mysqli_client_encoding ( $this->db ) != $this->forcecharset)
+			/*if (mysqli_client_encoding ( $this->db ) != $this->forcecharset)
 			{
 				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-            }
+				$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
+            }*/
             $this->connected = 1;
             $this->ok = 1;
         }
@@ -236,9 +237,10 @@ class DoliDb
 		// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
 		//$this->query('SET NAMES '.$this->forcecharset);
         //print "Resultat fonction connect: ".$this->db;
+        $this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+		$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
         return $this->db;
     }
-
 
     /**
             \brief          Renvoie la version du serveur
@@ -355,10 +357,9 @@ class DoliDb
     function query($query)
     {
         $query = trim($query);
-
         if (! $this->database_name)
         {
-            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+            // Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE
             $ret = mysqli_query($this->db,$query);
         }
         else
@@ -697,7 +698,7 @@ class DoliDb
 		$like = '';
 		if ($table) $like = "LIKE '".$table."'";
 		$sql="SHOW TABLES FROM ".$database." ".$like.";";
-		//print $sql;
+		// $sql;
 		$result = $this->query($sql);
 		while($row = $this->fetch_row($result))
 		{

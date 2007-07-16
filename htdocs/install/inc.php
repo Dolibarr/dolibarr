@@ -44,7 +44,6 @@ if (file_exists($conffile))
 {
 	include_once($conffile);	// Fichier conf chargé
 
-	$charset=$character_set_client;
 	// Remove last / or \ on directories or url value
 	if (! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
 	if (! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
@@ -54,7 +53,6 @@ if (file_exists($conffile))
 	{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 		$conf=new Conf();
-		$conf = new Conf();
 		$conf->db->type = trim($dolibarr_main_db_type);
 		$conf->db->host = trim($dolibarr_main_db_host);
 		$conf->db->name = trim($dolibarr_main_db_name);
@@ -66,6 +64,7 @@ if (file_exists($conffile))
 		$conf->db->character_set=$dolibarr_main_db_charset;
 		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
 		$conf->db->collation_connection=$collation_connection;
+		
 	}
 	if ($dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
 	{

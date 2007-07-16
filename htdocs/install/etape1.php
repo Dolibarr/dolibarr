@@ -30,7 +30,7 @@
 
 define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
 
-include_once("./inc.php");
+include("./inc.php");
 $setuplang=isset($_POST["selectlang"])?$_POST["selectlang"]:(isset($_GET["selectlang"])?$_GET["selectlang"]:'auto');
 $langs->setDefaultLang($setuplang);
 

@@ -165,6 +165,7 @@ class DoliDb
 	if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
 	  {
 	    $this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+	    $this->query("SET CHARACTER SET ". $this->forcecharset);
 	  }
 	$this->connected = 1;
 	$this->ok = 1;
@@ -232,7 +233,8 @@ class DoliDb
     //force les enregistrement en latin1 si la base est en utf8 par défaut
     // Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
 	// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
-	//$this->query('SET NAMES '.$this->forcecharset);
+	$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+	$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
     //print "Resultat fonction connect: ".$this->db;
     return $this->db;
   }
