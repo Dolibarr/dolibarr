@@ -378,7 +378,7 @@ if ($_POST["action"] == "set")
             while (!feof ($fp))
             {
                 $buffer = fgets($fp, 4096);
-				print "<tr><td>Insertion ligne : $buffer</td><td>";
+				//print "<tr><td>Insertion ligne : $buffer</td><td>";
                 if (strlen(trim(ereg_replace("--","",$buffer))))
                 {
                     if ($db->query($buffer))

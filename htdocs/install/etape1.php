@@ -168,6 +168,7 @@ if ($_POST["action"] == "set")
 			if (file_exists("$conffile"))
 			{
 				include("$conffile");	// On force rechargement. Ne pas mettre include_once !
+				conf($dolibarr_main_document_root);
 			}
 			else
 			{
@@ -250,19 +251,7 @@ if ($_POST["action"] == "set")
 	*/
 	if (! $error)
 	{
-		$conf = new Conf();
-		$conf->db->type = trim($dolibarr_main_db_type);
-		$conf->db->host = trim($dolibarr_main_db_host);
-		$conf->db->name = trim($dolibarr_main_db_name);
-		$conf->db->user = trim($dolibarr_main_db_user);
-		$conf->db->pass = trim($dolibarr_main_db_pass);
-		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
-		$conf->character_set_client=trim($character_set_client);
-		if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
-		$conf->db->character_set=trim($dolibarr_main_db_charset);
-		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
-		$conf->db->collation_connection=trim($collation_connection);
-		
+		conf($dolibarr_main_document_root );
 		
 		$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
 		$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
@@ -288,7 +277,7 @@ if ($_POST["action"] == "set")
 
 			$db = new DoliDb($conf->db->type,$conf->db->host,$userroot,$passroot,$databasefortest);
 			if ($db->error)
-			{
+			{		
 				print '<div class="error">'.$db->error.'</div>';
 				$error++;
 			}
