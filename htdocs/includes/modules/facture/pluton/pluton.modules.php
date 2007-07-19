@@ -203,7 +203,7 @@ function info()
         }
         else if ($facture->type == 2)
         {
-        	$sql.= " WHERE type = 2";
+        	$sql.= " WHERE type = 2 AND facnumber REGEXP '^".$this->prefixcreditnote."'";
         }
         $resql=$db->query($sql);
         if ($resql)
