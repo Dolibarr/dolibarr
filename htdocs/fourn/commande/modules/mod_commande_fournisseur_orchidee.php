@@ -173,7 +173,7 @@ function info()
         $searchyy='';
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-        if ($conf->global->COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref like '".$this->searchLast."%'";
+        if ($conf->global->COMMANDE_FOURNISSEUR_NUM_RESTART_BEGIN_YEAR) $sql.= " WHERE ref REGEXP '^".$this->searchLast."'";
         $resql=$db->query($sql);
         if ($resql)
         {
@@ -188,7 +188,7 @@ function info()
           $previousyy='';
           $sql = "SELECT MAX(ref)";
           $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-          $sql.= " WHERE ref like '".$this->searchLastWithPreviousYear."%'";
+          $sql.= " WHERE ref REGEXP '^".$this->searchLastWithPreviousYear."'";
           $resql=$db->query($sql);
           if ($resql)
           {
@@ -203,7 +203,7 @@ function info()
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(ref,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur";
-            $sql.= " WHERE ref like '${searchyy}%'";
+            $sql.= " WHERE ref REGEXP '^".$searchyy."'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -375,9 +375,9 @@ function info()
         					// On récupère le mois si besoin
         					$this->mm = strftime("%m",time());
         					$this->numMatrice[$k] = '$mm';
-        					$this->searchLast .= $this->mm;
+        					$this->searchLast .= '[0-9][0-9]';
         					$this->searchLastWithNoYear .= '[0-9][0-9]';
-        					$this->searchLastWithPreviousYear .= $this->mm;
+        					$this->searchLastWithPreviousYear .= '[0-9][0-9]';
         					$k++;
         				}
         				else if ($idMatrice == 'counter')

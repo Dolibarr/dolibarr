@@ -199,7 +199,7 @@ function info()
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
         {
-        	$sql.= " WHERE facnumber like '".$this->searchLast."%'";
+        	$sql.= " WHERE facnumber REGEXP '^".$this->searchLast."'";
         }
         else if ($facture->type == 2)
         {
@@ -219,7 +219,7 @@ function info()
           $previousyy='';
           $sql = "SELECT MAX(facnumber)";
           $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-          $sql.= " WHERE facnumber like '$".$this->searchLastWithPreviousYear."%'";
+          $sql.= " WHERE facnumber REGEXP '^".$this->searchLastWithPreviousYear."'";
           $resql=$db->query($sql);
           if ($resql)
           {
@@ -234,7 +234,7 @@ function info()
             // Recherche rapide car restreint par un like sur champ indexé
             $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
             $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber like '${searchyy}%'";
+            $sql.= " WHERE facnumber REGEXP '^".$searchyy."'";
             $resql=$db->query($sql);
             if ($resql)
             {
@@ -428,9 +428,9 @@ function info()
         					// On récupère le mois si besoin
         					$this->mm = strftime("%m",time());
         					$this->numMatrice[$k] = '$mm';
-        					$this->searchLast .= $this->mm;
+        					$this->searchLast .= '[0-9][0-9]';
         					$this->searchLastWithNoYear .= '[0-9][0-9]';
-        					$this->searchLastWithPreviousYear .= $this->mm;
+        					$this->searchLastWithPreviousYear .= '[0-9][0-9]';
         					$k++;
         				}
         				else if ($idMatrice == 'counter')
