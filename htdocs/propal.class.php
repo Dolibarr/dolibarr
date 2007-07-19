@@ -2144,7 +2144,7 @@ class Propal extends CommonObject
 		
 		$result='';
 		
-		$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?id='.$this->id.'">';
+		$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">';
 		$lienfin='</a>';
 		
 		$picto='order';
