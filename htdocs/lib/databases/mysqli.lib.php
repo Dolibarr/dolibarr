@@ -131,8 +131,12 @@ class DoliDb
 	    	$this->db_user=$dolibarr_main_db_user;
 		}
 		*/
-		$this->forcecharset=$conf->db->character_set;
-	    $this->forcecollate=$conf->db->collation_connection;
+		if ($conf->db->character_set  && $conf->db->character_set != null && $conf->db->character_set !=""){
+			$this->forcecharset=$conf->db->character_set;
+  		}
+  		if ($conf->db->collation_connection  && $conf->db->collation_connection != null && $conf->db->collation_connection !=""){
+	    	$this->forcecollate=$conf->db->collation_connection;
+  		}
 	    $this->db_user=$conf->db->user;
 
         $this->transaction_opened=0;
