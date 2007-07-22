@@ -422,8 +422,16 @@ class DoliDb
     function fetch_row($resultset=0)
     {
         // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_object($resultset)) { $resultset=$this->results; }
-        return mysqli_fetch_row($resultset);
+        if (! is_bool($resultset))
+        {
+        	if (! is_object($resultset)) { $resultset=$this->results; }
+        	return mysqli_fetch_row($resultset);
+        }
+        else
+        {
+        	// si le curseur est un booléen on retourne la valeur 0
+        	return 0;
+        }
     }
 
     /**
