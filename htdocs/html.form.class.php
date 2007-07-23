@@ -3141,7 +3141,7 @@ class Form
 	        }
 	    }
 	
-		return $i;
+		return ($i?$i:$headershown);
 	}
 
 
