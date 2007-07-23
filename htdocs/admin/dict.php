@@ -283,10 +283,10 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
 
 		dolibarr_syslog("dict actionmodify sql=".$sql);
 		//print $sql;
-        $result = $db->query($sql);
-        if (!$result)
+        $resql = $db->query($sql);
+        if (! $resql)
         {
-        	dolibarr_print_error($db);
+        	$msg=$db->error();
         }
     }
 
@@ -400,6 +400,7 @@ if ($_GET["id"])
 	//print $sql;
     
     $fieldlist=split(',',$tabfield[$_GET["id"]]);
+
     print '<form action="dict.php" method="post">';
     print '<table class="noborder" width="100%">';
 
@@ -423,7 +424,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='lang')            $valuetoshow=$langs->trans("Language");
             if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
             if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
-            if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
+            if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label')         $valuetoshow=$langs->trans("Label")."*"; 
             if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
             if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
             if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
@@ -480,7 +481,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
                 if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
                 if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
-                if ($fieldlist[$field]=='libelle')         { $valuetoshow=$langs->trans("Label")."*";  }
+                if ($fieldlist[$field]=='libelle' || $fieldlist[$field]=='label') { $valuetoshow=$langs->trans("Label")."*";  }
                 if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
                 if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
                 if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MENTION_NPR; }
@@ -511,7 +512,7 @@ if ($_GET["id"])
                 	print '<form action="dict.php" method="post">';
                 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
                 	print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-                	fieldList($fieldlist);
+					fieldList($fieldlist);
 					print '<td colspan="3" align="right"><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'"></td>';
                 }
                 else
@@ -614,6 +615,7 @@ llxFooter('$Date$ - $Revision$');
 function fieldList($fieldlist)
 {
 	global $conf,$langs,$db,$obj;
+	global $region_id;
 	
 	$html = new Form($db);
 
