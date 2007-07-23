@@ -139,7 +139,7 @@ if ($_GET["action"] == 'edit')
     print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
     
 
-    print '<tr><td>'.$langs->trans("Birthday").'</td><td>';
+    print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td>';
     $html=new Form($db);
     if ($contact->birthday)
     {
@@ -198,7 +198,7 @@ else
 
     if ($contact->birthday)
     {
-        print '<tr><td>'.$langs->trans("Birthdate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
+        print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
 
         if ($contact->birthday_alert)
         print ' (alerte anniversaire active)</td>';
