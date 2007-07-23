@@ -1,7 +1,7 @@
 <?php
 /***************************************************************************
 
-php vCard class v2.0
+php vCard class
 (c) Kai Blankenhorn
 www.bitfolge.de/en
 kaib@bitfolge.de
@@ -21,6 +21,10 @@ You should have received a copy of the GNU General Public License
 along with this program; if not, write to the Free Software
 Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA  02111-1307, USA.
 
+***************************************************************************
+2007	v3.0	Laurent Destailleur		eldy@users.sourceforge.net
+		Added functions (as in http://www.ietf.org/rfc/rfc2426.txt):
+		setTitle  setOrg setProdId	setUID
 ***************************************************************************/
 
 /**
@@ -198,8 +202,8 @@ class vCard {
 		\param	address
 */
 
-	function setEmail($address) {
-		$this->properties["EMAIL;INTERNET"] = $address;
+	function setEmail($address,$type="internet,pref") {
+		$this->properties["EMAIL;TYPE=".$type] = $address;
 	}
 
 /**
@@ -211,12 +215,47 @@ class vCard {
 		$this->properties["NOTE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($note);
 	}
 
-/**
-		\brief mise en forme de l'url
-		\param	url
-		\param	type
-*/
+	/**
+		\brief 	mise en forme de la fonction
+		\param	title
+	*/
+	function setTitle($title) {
+		$this->properties["TITLE;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($title);
+	}
+	
 
+	/**
+		\brief 	mise en forme de la societe
+		\param	org
+	*/
+	function setOrg($org) {
+		$this->properties["ORG;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($org);
+	}
+
+
+	/**
+		\brief 	mise en forme du logiciel generateur
+		\param	prodid
+	*/
+	function setProdId($prodid) {
+		$this->properties["PRODID;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($prodid);
+	}
+
+
+	/**
+		\brief 	mise en forme du logiciel generateur
+		\param	uid
+	*/
+	function setUID($uid) {
+		$this->properties["UID;ENCODING=QUOTED-PRINTABLE"] = quoted_printable_encode($uid);
+	}
+	
+	
+	/**
+			\brief mise en forme de l'url
+			\param	url
+			\param	type
+	*/
 	function setURL($url, $type="") {
 	// $type may be WORK | HOME
 		$key = "URL";
@@ -230,7 +269,7 @@ class vCard {
 
 	function getVCard() {
 		$text = "BEGIN:VCARD\r\n";
-		$text.= "VERSION:2.1\r\n";
+		$text.= "VERSION:3.0\r\n";
 		foreach($this->properties as $key => $value) {
 			$text.= "$key:$value\r\n";
 		}

@@ -47,7 +47,9 @@ if ($contact->socid)
 
 // We create VCard
 $v = new vCard();
+$v->setProdId('Dolibarr '.DOL_VERSION);
 
+$v->setUid('DOLIBARR-CONTACTID-'.$contact->id);
 $v->setName($contact->name, $contact->firstname, "", "", "");
 $v->setFormattedName($contact->fullname);
 
@@ -56,9 +58,11 @@ $v->setPhoneNumber($contact->phone_pro, "PREF;WORK;VOICE");
 $v->setPhoneNumber($contact->phone_mobile, "CELL;VOICE");
 $v->setPhoneNumber($contact->fax, "WORK;FAX");
 
-$v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, $contact->pays, "WORK;POSTAL");
-$v->setEmail($contact->email);
+$v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, ($contact->pays_code?$contact->pays:''), "WORK;POSTAL");
+$v->setEmail($contact->email,'internet,pref');
 $v->setNote($contact->note);
+
+$v->setTitle($contact->poste);
 
 // Data from linked company
 if ($company->id)
@@ -67,6 +71,9 @@ if ($company->id)
 	if (! $contact->phone_pro) $v->setPhoneNumber($company->tel, "WORK;VOICE");
 	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "WORK;FAX");
 	if (! $contact->cp)        $v->setAddress("", "", $company->adresse, $company->ville, "", $company->cp, $company->pays_code, "WORK;POSTAL");
+	if ($company->email != $contact->email) $v->setEmail($company->email,'internet');
+	// Si contact lié à un tiers non de type "particulier"
+	if ($contact->typent_code != 'TE_PRIVATE') $v->setOrg($company->nom);
 }
 
 // Personal informations
