@@ -515,12 +515,14 @@ class Societe
 		$sql .= ', p.code as pays_code, p.libelle as pays';
 		$sql .= ', d.code_departement as departement_code, d.nom as departement';
 		$sql .= ', st.libelle as stcomm';
+		$sql .= ', te.code as typent_code';
 		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_effectif as e ON s.fk_effectif = e.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_pays as p ON s.fk_pays = p.rowid';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_stcomm as st ON s.fk_stcomm = st.id';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_forme_juridique as fj ON s.fk_forme_juridique = fj.code';
 		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_departements as d ON s.fk_departement = d.rowid';
+		$sql .= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_typent as te ON s.fk_typent = te.id';
 		$sql .= ' WHERE s.rowid = '.$socid;
 		$resql=$this->db->query($sql);
 		if ($resql)
@@ -577,8 +579,8 @@ class Societe
 				$this->tva_intra_num  = substr($obj->tva_intra,2);
 
 				$this->typent_id      = $obj->typent_id;
-				//$this->typent         = $obj->fk_typent?$obj->typeent:'';
-
+				$this->typent_code    = $obj->typent_code;
+				
 				$this->effectif_id    = $obj->effectif_id;
 				$this->effectif       = $obj->effectif_id?$obj->effectif:'';
 

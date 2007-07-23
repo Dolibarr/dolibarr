@@ -1021,8 +1021,8 @@ else
     print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
     // Type + Staff
-    $arr = $soc->typent_array($soc->typent_id);
-    $soc->typent= $arr[$soc->typent_id];
+    $arr = $soc->typent_array(1);
+    $soc->typent= $arr[$soc->typent_code];
     print '<tr><td>'.$langs->trans("Type").'</td><td>'.$soc->typent.'</td><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td></tr>';
 
     // RIB
