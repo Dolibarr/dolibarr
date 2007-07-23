@@ -29,30 +29,49 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
+require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/vcard/vcard.class.php");
 
 
 $contact = new Contact($db);
-$contact->fetch($_GET["id"]);
+$result=$contact->fetch($_GET["id"]);
 
+$physicalperson=1;
 
-// On crée car la VCard
+$company = new Societe($db);
+if ($contact->socid)
+{
+	$result=$company->fetch($contact->socid);
+	//print "ee";
+}
 
+// We create VCard
 $v = new vCard();
 
-$v->setName($contact->name, $contact->firstname, "", "");
+$v->setName($contact->name, $contact->firstname, "", "", "");
+$v->setFormattedName($contact->fullname);
 
-$v->setPhoneNumber($contact->phone_perso, "PREF;HOME;VOICE");
+// By default, all informations are for work (except phone_perso and phone_mobile)
+$v->setPhoneNumber($contact->phone_pro, "PREF;WORK;VOICE");
+$v->setPhoneNumber($contact->phone_mobile, "CELL;VOICE");
+$v->setPhoneNumber($contact->fax, "WORK;FAX");
 
-if ($contact->birthday) $v->setBirthday($contact->birthday);
-
-$v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, $contact->pays);
-
+$v->setAddress("", "", $contact->address, $contact->ville, "", $contact->cp, $contact->pays, "WORK;POSTAL");
 $v->setEmail($contact->email);
+$v->setNote($contact->note);
 
-//$v->setNote("You can take some notes here.\r\nMultiple lines are supported via \\r\\n.");
-//$v->setURL("http://www.thomas-mustermann.de", "WORK");
+// Data from linked company
+if ($company->id)
+{
+	$v->setURL($company->url, "WORK");
+	if (! $contact->phone_pro) $v->setPhoneNumber($company->tel, "WORK;VOICE");
+	if (! $contact->fax)       $v->setPhoneNumber($company->fax, "WORK;FAX");
+	if (! $contact->cp)        $v->setAddress("", "", $company->adresse, $company->ville, "", $company->cp, $company->pays_code, "WORK;POSTAL");
+}
 
+// Personal informations
+$v->setPhoneNumber($contact->phone_perso, "HOME;VOICE");
+if ($contact->birthday) $v->setBirthday($contact->birthday);
 
 $db->close();
 
