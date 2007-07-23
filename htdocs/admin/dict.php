@@ -237,6 +237,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
         $sql.=",1)";
 
+		dolibarr_syslog("dict actionadd sql=".$sql);
         $result = $db->query($sql);
         if (!$result)
         {
@@ -260,26 +261,29 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         // Modify entry
         $sql = "UPDATE ".$tabname[$_POST["id"]]." SET ";
         // Modifie valeur des champs
-        if ($tabrowid[$_POST["id"]] && !in_array($tabrowid[$_POST["id"]],$listfieldmodify))
+		if ($tabrowid[$_POST["id"]] && !in_array($tabrowid[$_POST["id"]],$listfieldmodify))
         {
         	$sql.= $tabrowid[$_POST["id"]]."=";
         	$sql.= "'".addslashes($_POST["rowid"])."', ";
         }
         $i = 0;
-        foreach ($listfield as $f => $value) {
+
+        foreach ($listfieldmodify as $field) {
         	if ($i > 0)
         	{
         		$sql.= ", ";
         	}
         	
-        	$sql.= $listfieldmodify[$i]."=";
-        	$sql.= "'".addslashes($_POST[$value])."'";
+        	$sql.= $field."=";
+        	$sql.= "'".addslashes($_POST[$field])."'";
 
           $i++;
         }
         $sql.= " WHERE ".$rowidcol." = '".$_POST["rowid"]."'";
-print $sql;
-        //$result = $db->query($sql);
+
+		dolibarr_syslog("dict actionmodify sql=".$sql);
+		//print $sql;
+        $result = $db->query($sql);
         if (!$result)
         {
         	dolibarr_print_error($db);
@@ -297,6 +301,7 @@ if ($_GET["action"] == 'delete')       // delete
 
     $sql = "DELETE from ".$tabname[$_GET["id"]]." WHERE ".$rowidcol."='".$_GET["rowid"]."'";
 
+	dolibarr_syslog("dict delete sql=".$sql);
     $result = $db->query($sql);
     if (! $result)
     {
@@ -317,7 +322,7 @@ if ($_GET["action"] == $acts[0])       // activate
     else { $rowidcol="rowid"; }
 
     if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE $rowidcol='".$_GET["rowid"]."'";
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
     }
     elseif ($_GET["code"]) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 1 WHERE code='".$_GET["code"]."'";
@@ -336,7 +341,7 @@ if ($_GET["action"] == $acts[1])       // disable
     else { $rowidcol="rowid"; }
 
     if ($_GET["rowid"]) {
-        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE $rowidcol='".$_GET["rowid"]."'";
+        $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE ".$rowidcol."='".$_GET["rowid"]."'";
     }
     elseif ($_GET["code"]) {
         $sql = "UPDATE ".$tabname[$_GET["id"]]." SET active = 0 WHERE code='".$_GET["code"]."'";
@@ -369,7 +374,8 @@ print "<br>\n";
  */
 if ($_GET["id"])
 {
-    if ($msg) {
+    if ($msg)
+	{
         print $msg.'<br>';
     }
 
@@ -440,11 +446,11 @@ if ($_GET["id"])
         print '</tr>';
 
         // Ligne d'ajout
-        print "<tr $bc[$var]>";
+        print "<tr ".$bc[$var].">";
 
         fieldList($fieldlist);
         
-        print '<td colspan=3><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
+        print '<td colspan="3"><input type="submit" class="button" name="actionadd" value="'.$langs->trans("Add").'"></td>';
         print "</tr>";
 
         if ($alabelisused)  // Si un des champs est un libellé
@@ -455,9 +461,10 @@ if ($_GET["id"])
     }
 
     // Affiche table des valeurs
-    if ($db->query($sql))
+    $resql=$db->query($sql);
+	if ($resql)
     {
-        $num = $db->num_rows();
+        $num = $db->num_rows($resql);
         $i = 0;
         $var=true;
         if ($num)
@@ -467,22 +474,23 @@ if ($_GET["id"])
             foreach ($fieldlist as $field => $value) {
                 // Determine le nom du champ par rapport aux noms possibles
                 // dans les dictionnaires de données
-                $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
-                if ($fieldlist[$field]=='source')          $valuetoshow=$langs->trans("Contact");
-                if ($fieldlist[$field]=='lang')            $valuetoshow=$langs->trans("Language");
-                if ($fieldlist[$field]=='type')            $valuetoshow=$langs->trans("Type");
-                if ($fieldlist[$field]=='code')            $valuetoshow=$langs->trans("Code");
-                if ($fieldlist[$field]=='libelle')         $valuetoshow=$langs->trans("Label")."*"; 
-                if ($fieldlist[$field]=='libelle_facture') $valuetoshow=$langs->trans("LabelOnDocuments")."*"; 
-                if ($fieldlist[$field]=='pays')            $valuetoshow=$langs->trans("Country");
-                if ($fieldlist[$field]=='recuperableonly') $valuetoshow=MENTION_NPR;
-                if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
-                if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
-                if ($fieldlist[$field]=='decalage')        $valuetoshow=$langs->trans("Offset");
-                if ($fieldlist[$field]=='region_id')       $valuetoshow='';
+                $showfield=1;							  	// Par defaut
+				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+                if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
+                if ($fieldlist[$field]=='lang')            { $valuetoshow=$langs->trans("Language"); }
+                if ($fieldlist[$field]=='type')            { $valuetoshow=$langs->trans("Type"); }
+                if ($fieldlist[$field]=='code')            { $valuetoshow=$langs->trans("Code"); }
+                if ($fieldlist[$field]=='libelle')         { $valuetoshow=$langs->trans("Label")."*";  }
+                if ($fieldlist[$field]=='libelle_facture') { $valuetoshow=$langs->trans("LabelOnDocuments")."*"; }
+                if ($fieldlist[$field]=='pays')            { $valuetoshow=$langs->trans("Country"); }
+                if ($fieldlist[$field]=='recuperableonly') { $valuetoshow=MENTION_NPR; }
+                if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
+                if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
+                if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+                if ($fieldlist[$field]=='region_id')       { $showfield=0; }
                 
                 // Affiche nom du champ
-                if ($valuetoshow != '')
+                if ($showfield)
                 {
                 	print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
                 }
@@ -494,9 +502,9 @@ if ($_GET["id"])
             // Lignes de valeurs
             while ($i < $num)
             {
-                $obj = $db->fetch_object();
+                $obj = $db->fetch_object($resql);
                 $var=!$var;
-
+				//print_r($obj);
                 print "<tr $bc[$var]>";
                 if ($_GET["action"] == 'modify' && ($_GET["rowid"] == ($obj->rowid?$obj->rowid:$obj->code)))
                 {
@@ -504,30 +512,31 @@ if ($_GET["id"])
                 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
                 	print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
                 	fieldList($fieldlist);
-                	print '<td colspan=3><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'"></td>';
+					print '<td colspan="3" align="right"><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'"></td>';
                 }
                 else
                 {                	
-                	foreach ($fieldlist as $field => $value) {
+                	foreach ($fieldlist as $field => $value)
+					{
+						$showfield=1;
                 		$valuetoshow=$obj->$fieldlist[$field];
 
-                    if ($valuetoshow=='all') {
-                    	$valuetoshow=$langs->trans('All');
-                    }
-                    if ($fieldlist[$field]=='recuperableonly') {
-                      $valuetoshow=yn($valuetoshow);
-                    }
-                    if ($fieldlist[$field]=='fdm') {
-                      $valuetoshow=yn($valuetoshow);
-                    }
-                    if ($fieldlist[$field]=='region_id') {
-                      $valuetoshow='';
-                    }
-                    if ($valuetoshow != '') print '<td>'.$valuetoshow.'</td>';
-                  }
+	                    if ($valuetoshow=='all') {
+	                    	$valuetoshow=$langs->trans('All');
+	                    }
+	                    if ($fieldlist[$field]=='recuperableonly') {
+	                      $valuetoshow=yn($valuetoshow);
+	                    }
+	                    if ($fieldlist[$field]=='fdm') {
+	                      $valuetoshow=yn($valuetoshow);
+	                    }
+	                    if ($fieldlist[$field]=='region_id') {
+	                      $showfield=0;
+	                    }
+						if ($showfield) print '<td>'.$valuetoshow.'</td>';
+					}
 
                   print '<td align="center">';
-
                   // Est-ce une entrée du dictionnaire qui peut etre désactivée ?
                   $iserasable=1;  // Oui par defaut
                   if (isset($obj->code) && ($obj->code == '0' || $obj->code == '' || eregi('unknown',$obj->code))) $iserasable=0;
@@ -539,6 +548,7 @@ if ($_GET["id"])
                   	print $langs->trans("AlwaysActive");
                   }
                   print "</td>";
+				  
                   if ($iserasable) {
                   	print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify">'.img_edit().'</a></td>';
                   } else {
