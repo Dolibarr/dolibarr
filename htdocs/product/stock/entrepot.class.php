@@ -125,13 +125,13 @@ class Entrepot
    */
   function update($id, $user)
     {
-      $this->libelle=trim($this->libelle);
-      $this->description=trim($this->description);
+      $this->libelle=addslashes(trim($this->libelle));
+      $this->description=addslashes(trim($this->description));
 
-      $this->lieu=trim($this->lieu);
-      $this->address=trim($this->address);
+      $this->lieu=addslashes(trim($this->lieu));
+      $this->address=addslashes(trim($this->address));
       $this->cp=trim($this->cp);
-      $this->ville=trim($this->ville);
+      $this->ville=addslashes(trim($this->ville));
       $this->pays_id=trim($this->pays_id?$this->pays_id:0);
       
       $sql = "UPDATE ".MAIN_DB_PREFIX."entrepot ";

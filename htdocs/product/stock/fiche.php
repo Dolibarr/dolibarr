@@ -53,15 +53,15 @@ if ($_POST["action"] == 'add')
 {
     $entrepot = new Entrepot($db);
 
-    $entrepot->ref         = trim($_POST["ref"]);
-    $entrepot->libelle     = trim($_POST["libelle"]);
-    $entrepot->description = trim($_POST["desc"]);
-    $entrepot->statut      = trim($_POST["statut"]);
-    $entrepot->lieu        = trim($_POST["lieu"]);
-    $entrepot->address     = trim($_POST["address"]);
-    $entrepot->cp          = trim($_POST["cp"]);
-    $entrepot->ville       = trim($_POST["ville"]);
-    $entrepot->pays_id     = trim($_POST["pays_id"]);
+    $entrepot->ref         = $_POST["ref"];
+    $entrepot->libelle     = $_POST["libelle"];
+    $entrepot->description = $_POST["desc"];
+    $entrepot->statut      = $_POST["statut"];
+    $entrepot->lieu        = $_POST["lieu"];
+    $entrepot->address     = $_POST["address"];
+    $entrepot->cp          = $_POST["cp"];
+    $entrepot->ville       = $_POST["ville"];
+    $entrepot->pays_id     = $_POST["pays_id"];
 
     if ($entrepot->libelle) {
         $id = $entrepot->create($user);
@@ -84,14 +84,14 @@ if ($_POST["action"] == 'update' && $_POST["cancel"] <> $langs->trans("Cancel"))
     $entrepot = new Entrepot($db);
     if ($entrepot->fetch($_POST["id"]))
     {
-        $entrepot->libelle     = trim($_POST["libelle"]);
-        $entrepot->description = trim($_POST["desc"]);
-        $entrepot->statut      = trim($_POST["statut"]);
-        $entrepot->lieu        = trim($_POST["lieu"]);
-        $entrepot->address     = trim($_POST["address"]);
-        $entrepot->cp          = trim($_POST["cp"]);
-        $entrepot->ville       = trim($_POST["ville"]);
-        $entrepot->pays_id     = trim($_POST["pays_id"]);
+        $entrepot->libelle     = $_POST["libelle"];
+        $entrepot->description = $_POST["desc"];
+        $entrepot->statut      = $_POST["statut"];
+        $entrepot->lieu        = $_POST["lieu"];
+        $entrepot->address     = $_POST["address"];
+        $entrepot->cp          = $_POST["cp"];
+        $entrepot->ville       = $_POST["ville"];
+        $entrepot->pays_id     = $_POST["pays_id"];
 
         if ( $entrepot->update($_POST["id"], $user) > 0)
         {
