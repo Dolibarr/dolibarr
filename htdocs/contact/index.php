@@ -192,9 +192,9 @@ if ($result)
 
     // Ligne des titres
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "colspan=\"2\"", $sortfield);
-    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
+    print_liste_field_titre($langs->trans("Lastname"),"index.php","p.name", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield);
+    print_liste_field_titre($langs->trans("Firstname"),"index.php","p.firstname", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", '', $sortfield);
     print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
 
     if ($_GET["view"] == 'phone')
@@ -206,12 +206,12 @@ if ($result)
     {
         print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield);
     }
-    print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" colspan="2">&nbsp;</td>';
     print "</tr>\n";
 
     // Ligne des champs de filtres
     print '<tr class="liste_titre">';
-    print '<td colspan="2" class="liste_titre">';
+    print '<td class="liste_titre">';
     print '<input class="flat" type="text" name="search_nom" size="12" value="'.$search_nom.'">';
     print '</td>';
     print '<td class="liste_titre">';
@@ -240,7 +240,7 @@ if ($result)
         print '</td>';
     }
 
-    print '<td class="liste_titre" align="right">';
+    print '<td class="liste_titre" align="right" colspan="2">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
     print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
     print '</td>';
@@ -254,29 +254,30 @@ if ($result)
         $var=!$var;
 
         print "<tr $bc[$var]>";
-        print '<td valign="center">';
+        
+		// Name
+		print '<td valign="center">';
         print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
         print img_object($langs->trans("ShowContact"),"contact");
         print ' '.$obj->name.'</a>';
         print '</td>';
         
-        print '<td valign="center">';
-        print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
-        print img_vcard($langs->trans("VCard")).' ';
-        print '</a></td>';
-
+		// Firstname
         print '<td>'.$obj->firstname.'</td>';
-        print '<td>';
+        
+		// Company
+		print '<td>';
         if ($obj->socid)
         {
             print '<a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$obj->socid.'">';
-            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,40).'</a>';
+            print img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($obj->nom,24).'</a>';
         }
         else
         {   
             print '&nbsp;';
         }
         print '</td>';
+		
         print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?action=create&amp;actioncode=AC_TEL&amp;contactid='.$obj->cidp.'&amp;socid='.$obj->socid.'">'.dolibarr_print_phone($obj->phone).'</a>&nbsp;</td>';
 
         if ($_GET["view"] == 'phone')
@@ -300,6 +301,12 @@ if ($result)
             }
             print '</td>';
         }
+
+		// Link export vcard
+        print '<td align="right">';
+        print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
+        print img_vcard($langs->trans("VCard")).' ';
+        print '</a></td>';
 
         print "</tr>\n";
         $i++;
