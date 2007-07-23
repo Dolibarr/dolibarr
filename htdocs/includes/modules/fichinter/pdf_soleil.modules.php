@@ -195,7 +195,7 @@ class pdf_soleil extends ModelePDFFicheinter
                 $pdf->SetFont('Arial','', 10);
 
                 $pdf->SetXY (10, $tab_top + 8 );
-                $pdf->MultiCell(190, 5, $fich->note, 0, 'J', 0);
+                $pdf->MultiCell(190, 5, $fich->description, 0, 'J', 0);
 
                 $pdf->Close();
 
