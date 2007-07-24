@@ -1510,8 +1510,8 @@ if ($_GET['propalid'] > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>';
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
-				print '<td align="right">'.$coms[$i]->total_ttc.'</td>';
+				print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
+				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
 				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 				print "</tr>\n";
 			}
