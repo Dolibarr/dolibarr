@@ -1240,9 +1240,9 @@ function dol_loginfunction($notused,$pearstatus)
 	}
 	if ($conf->global->MAIN_HOME)
 	{
-	    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td>';
+	    print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td>';
 	    print nl2br(MAIN_HOME);
-	    print '</td></tr></table><br>';
+	    print '</td></tr></table></center><br>';
 	}
     
 	// Fin entete html
