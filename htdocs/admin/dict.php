@@ -46,7 +46,6 @@ $actl[1] = $langs->trans("Disable");
 
 $active = 1;
 
-
 // Cette page est une page d'édition générique des dictionnaires de données
 // Mettre ici tous les caractéristiques des dictionnaires
 
@@ -86,7 +85,7 @@ $tablib[13]= $langs->trans("DictionnaryPaymentModes");
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
 $tabsql[2] = "SELECT d.rowid as rowid, d.code_departement as code , d.nom as libelle, d.fk_region as region_id, r.nom as region, p.libelle as pays, d.active FROM ".MAIN_DB_PREFIX."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid and r.active=1 and p.active=1";
-$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
+$tabsql[3] = "SELECT r.rowid as rowid, code_region as code , nom as libelle, r.fk_pays as pays_id, p.libelle as pays, r.active FROM ".MAIN_DB_PREFIX."c_regions as r, ".MAIN_DB_PREFIX."c_pays as p WHERE r.fk_pays=p.rowid and p.active=1";
 $tabsql[4] = "SELECT rowid   as rowid, code, libelle, active FROM ".MAIN_DB_PREFIX."c_pays";
 $tabsql[5] = "SELECT c.rowid as rowid, c.code as code, c.civilite AS libelle, c.active FROM ".MAIN_DB_PREFIX."c_civilite AS c";
 $tabsql[6] = "SELECT a.id    as rowid, a.code as code, a.libelle AS libelle, a.type, a.active FROM ".MAIN_DB_PREFIX."c_actioncomm AS a";
@@ -116,7 +115,7 @@ $tabsqlsort[13]="code ASC";
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
 $tabfield[2] = "code,libelle,region_id,region";   // "code,libelle,region"
-$tabfield[3] = "code,libelle,pays";
+$tabfield[3] = "code,libelle,pays_id,pays";
 $tabfield[4] = "code,libelle";
 $tabfield[5] = "code,libelle";
 $tabfield[6] = "code,libelle,type";
@@ -127,6 +126,21 @@ $tabfield[10]= "pays,taux,recuperableonly,note";
 $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
+
+// Nom des champs d'édition pour modification du dictionnaire
+$tabfieldvalue[1] = "code,libelle,pays";
+$tabfieldvalue[2] = "code,libelle,region";   // "code,libelle,region"
+$tabfieldvalue[3] = "code,libelle,pays";
+$tabfieldvalue[4] = "code,libelle";
+$tabfieldvalue[5] = "code,libelle";
+$tabfieldvalue[6] = "code,libelle,type";
+$tabfieldvalue[7] = "libelle,deductible";
+$tabfieldvalue[8] = "code,libelle";
+$tabfieldvalue[9] = "code,code_iso,libelle";
+$tabfieldvalue[10]= "pays,taux,recuperableonly,note";
+$tabfieldvalue[11]= "element,source,code,libelle";
+$tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
+$tabfieldvalue[13]= "code,libelle,type";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -257,6 +271,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
       
       // on utilise les champs d'insertion pour effectuer la modification
       $listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
+      $listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
       
         // Modify entry
         $sql = "UPDATE ".$tabname[$_POST["id"]]." SET ";
@@ -275,7 +290,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         	}
         	
         	$sql.= $field."=";
-        	$sql.= "'".addslashes($_POST[$field])."'";
+        	$sql.= "'".addslashes($_POST[$listfieldvalue[$i]])."'";
 
           $i++;
         }
@@ -431,7 +446,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='nbjour')          $valuetoshow=$langs->trans("NbOfDays");
             if ($fieldlist[$field]=='fdm')             $valuetoshow=$langs->trans("AtEndOfMonth");
             if ($fieldlist[$field]=='decalage')        $valuetoshow=$langs->trans("Offset");
-            if ($fieldlist[$field]=='region_id')       $valuetoshow='';
+            if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id')       $valuetoshow='';
             
             if ($valuetoshow != '')
             {
@@ -488,7 +503,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
                 if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
                 if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
-                if ($fieldlist[$field]=='region_id')       { $showfield=0; }
+                if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
                 
                 // Affiche nom du champ
                 if ($showfield)
@@ -512,7 +527,7 @@ if ($_GET["id"])
                 	print '<form action="dict.php" method="post">';
                 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
                 	print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-					fieldList($fieldlist);
+					fieldList($fieldlist,$obj);
 					print '<td colspan="3" align="right"><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'"></td>';
                 }
                 else
@@ -531,7 +546,7 @@ if ($_GET["id"])
 	                    if ($fieldlist[$field]=='fdm') {
 	                      $valuetoshow=yn($valuetoshow);
 	                    }
-	                    if ($fieldlist[$field]=='region_id') {
+	                    if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') {
 	                      $showfield=0;
 	                    }
 						if ($showfield) print '<td>'.$valuetoshow.'</td>';
@@ -612,19 +627,23 @@ llxFooter('$Date$ - $Revision$');
 /**
         \brief      Affiche les champs
 */
-function fieldList($fieldlist)
+function fieldList($fieldlist,$obj='')
 {
-	global $conf,$langs,$db,$obj;
-	global $region_id;
-	
+	global $conf,$langs,$db;
+	global $region_id,$pays_id;
+
 	$html = new Form($db);
 
 	foreach ($fieldlist as $field => $value)
   {
   	if ($fieldlist[$field] == 'pays') {
   		print '<td>';
-      $html->select_pays($obj->$fieldlist[$field],'pays');
+      $html->select_pays($pays_id,'pays');
       print '</td>';
+    }
+    elseif ($fieldlist[$field] == 'pays_id') {
+    	$pays_id = $obj->$fieldlist[$field];
+    	print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$obj->$fieldlist[$field].'">';
     }
     elseif ($fieldlist[$field] == 'region') {
     	print '<td>';
@@ -633,6 +652,7 @@ function fieldList($fieldlist)
     }
     elseif ($fieldlist[$field] == 'region_id') {
     	$region_id = $obj->$fieldlist[$field];
+    	print '<input type="hidden" name="'.$fieldlist[$field].'" value="'.$obj->$fieldlist[$field].'">';
     }
     elseif ($fieldlist[$field] == 'lang') {
     	print '<td>';
