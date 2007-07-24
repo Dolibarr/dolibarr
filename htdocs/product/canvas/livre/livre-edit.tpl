@@ -26,6 +26,14 @@
 <input type="hidden" name="canvas" value="{$prod_canvas}">
 <input type="hidden" name="price_base_type" value="TTC">
 
+<table width="100%" border="0" class="notopnoleftnoright">
+<tr>
+	<td class="notopnoleftnoright" valign="middle">
+    	<div class="titre">Éditer Livre</div>
+	</td>
+</tr>
+</table>
+
 <table class="border" width="100%">
  <tr>
    <td width="15%">Réf.</td>

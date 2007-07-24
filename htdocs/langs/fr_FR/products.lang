@@ -6,6 +6,7 @@ Product=Produit
 Service=Service
 Reference=Référence
 NewProduct=Nouveau produit
+NewBook=Nouveau livre
 NewService=Nouveau service
 ProductCode=Code produit
 ServiceCode=Code service

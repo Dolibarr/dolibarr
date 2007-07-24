@@ -7,6 +7,7 @@ Service=Service
 Create=Create
 Reference=Reference
 NewProduct=New product
+NewBook=New Book
 NewService=New service
 ProductCode=Product code
 ServiceCode=Service code
