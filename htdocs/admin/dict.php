@@ -291,6 +291,7 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
         }
         $i = 0;
         foreach ($listfieldmodify as $field) {
+        	if ($field == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
         	if ($i) $sql.=",";
         	$sql.= $field."=";
         	$sql.= "'".addslashes($_POST[$listfieldvalue[$i]])."'";
