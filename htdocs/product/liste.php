@@ -199,7 +199,9 @@ if ($resql)
   if ($_GET["canvas"] <> '' && file_exists($smarty->template_dir . '/product/canvas/'.$_GET["canvas"].'/liste.tpl') )
     {
       $smarty->assign('datas', $object->list_datas);
-
+	  $smarty->assign('url_root', $dolibarr_main_url_root);
+	  $smarty->assign('theme', $conf->theme);
+	  $smarty->assign('langs', $langs);
       $smarty->display('product/canvas/'.$_GET["canvas"].'/liste.tpl');
     }
   else
