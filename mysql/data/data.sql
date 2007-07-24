@@ -1521,3 +1521,19 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (112, 4901, 6, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (113, 5000, 26, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (114, 5001, 6, 2);
+
+--
+-- Eco-Taxes
+--
+
+-- France (Organisme ERP)
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (1, 'PAM-A', 'Matériels électriques < 0,2kg', 0.01000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (2, 'PAM-B', 'Matériels électriques >= 0,2 kg et < 0,5 kg', 0.03000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (3, 'PAM-C', 'Matériels électriques >= 0,5 kg et < 1 kg', 0.04000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (4, 'PAM-D', 'Matériels électriques >= 1 kg et < 2 kg', 0.13000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (5, 'PAM-E', 'Matériels électriques >= 2 kg et < 4kg', 0.21000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (6, 'PAM-F', 'Matériels électriques >= 4 kg et <8 kg', 0.42000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (7, 'PAM-G', 'Matériels électriques >= 8 kg et < 15 kg', 0.84000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (8, 'PAM-H', 'Matériels électriques >= 15 kg et < 20 kg', 1.25000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (9, 'PAM-I', 'Matériels électriques >= 20 kg et <30 kg', 1.88000000, 'ERP', 1, 1);
+INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (10, 'PAM-J', 'Matériels électriques >= 30 kg', 3.34000000, 'ERP', 1, 1);

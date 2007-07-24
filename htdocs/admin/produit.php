@@ -144,6 +144,12 @@ else if ($_GET["action"] == 'set')
   Header("Location: produit.php");
   exit;
 }
+else if ($_POST["action"] == 'useecotaxe')
+{
+  dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $_POST["activate_useecotaxe"]);
+  Header("Location: produit.php");
+  exit;
+}
 
 
 /*
@@ -274,6 +280,20 @@ if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
   print '</tr>';
   print '</form>';
 }
+
+// Utilisation de l'écotaxe
+$var=!$var;
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("UseEcoTaxeAbility").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_useecotaxe",$conf->global->PRODUIT_USE_ECOTAXE,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr>';
+print '</form>';
 
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("ProductSpecial")."</td>\n";

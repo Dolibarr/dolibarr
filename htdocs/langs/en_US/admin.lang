@@ -20,7 +20,6 @@ ErrorDecimalLargerThanAreForbidden=Error, precision higher than <b>%s</b> are no
 DictionnarySetup=Dictionnary setup
 DisableJavascript=Disable JavaScript functions
 DisableAjax=Disable AJAX functions
-UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
 UseSearchToSelectProduct=Use a search form to choose a company (intead of using a list box)
 NotAvailableWhenAjaxDisabled=Not available when Ajax disabled
 JavascriptDisabled=JavaScript disabled
@@ -349,6 +348,7 @@ DictionnaryVAT=VAT Rates
 DictionnaryPaymentConditions=Payments conditions
 DictionnaryPaymentModes=Payments modes
 DictionnaryTypeContact=Contacts types
+DictionnaryEcotaxe=Ecotaxe (WEEE)
 VATReceivedOnly=Special rate not billed
 VATManagement=VAT Management
 VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard en vigueur:<br>Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit dans le pays du vendeur. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.<br>Sinon la TVA proposée par défaut=0. Fin de règle.
@@ -680,6 +680,8 @@ NumberOfProductShowInSelect=Max number of products in combos select lists (0=no 
 ConfirmDeleteProductLineAbility=Confirmation of removal of a line produces in the forms
 ModifyProductDescAbility=Personalization of descriptions produced in the forms
 ViewProductDescInFormAbility=Visualization of descriptions produced in the forms
+UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
+UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output
