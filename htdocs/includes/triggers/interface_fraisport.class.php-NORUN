@@ -235,7 +235,7 @@ class InterfaceFraisport
 	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."commandedet";
 	    $sql.= " (fk_commande, description, qty, tva_tx,";
 	    $sql.= " fk_product, remise_percent, subprice, price, remise, fk_remise_except,";
-	    $sql.= " coef,rang,info_bits, total_ht, total_tva, total_ttc,special_code)";
+	    $sql.= " marge_tx, marque_tx, rang, info_bits, total_ht, total_tva, total_ttc, special_code)";
 	    $sql.= " VALUES (".$object->fk_commande.",";
 	    $sql.= " '".addslashes($desc)."',";
 	    $sql.= " '1',";
@@ -244,7 +244,7 @@ class InterfaceFraisport
 	    $sql.= " '0',";
 	    $sql.= " '".price2num($total_ht)."',";
 	    $sql.= " '".price2num($total_ht)."',";
-	    $sql.= " 0,0,0,";
+	    $sql.= " 0,0,0,0,";
 	    $sql.= ' '.$rang.',0,';
 	    $sql.= " '".price2num($total_ht)."',";
 	    $sql.= " '".price2num($total_tva)."',";

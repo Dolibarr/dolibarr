@@ -855,7 +855,7 @@ class Propal extends CommonObject
                  * Lignes propales liées à un produit ou non
                  */
                 $sql = "SELECT d.description, d.price, d.tva_tx, d.qty, d.fk_remise_except, d.remise_percent, d.subprice, d.fk_product,";
-                $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.coef, d.rang,";
+                $sql.= " d.info_bits, d.total_ht, d.total_tva, d.total_ttc, d.marge_tx, d.marque_tx, d.rang,";
                 $sql.= " p.ref, p.label, p.description as product_desc";
                 $sql.= " FROM ".MAIN_DB_PREFIX."propaldet as d";
                 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON d.fk_product = p.rowid";
@@ -886,7 +886,8 @@ class Propal extends CommonObject
                         $ligne->total_ht         = $objp->total_ht;
                         $ligne->total_tva        = $objp->total_tva;
                         $ligne->total_ttc        = $objp->total_ttc;
-                        $ligne->coef             = $objp->coef;
+                        $ligne->marge_tx         = $objp->marge_tx;
+                        $ligne->marque_tx        = $objp->marque_tx;
                         $ligne->rang             = $objp->rang;
 
                         $ligne->fk_product       = $objp->fk_product;
@@ -2182,7 +2183,8 @@ class PropaleLigne
 	var $fk_remise_except;
 	
 	var $rang = 0;
-	var $coef;
+	var $marge_tx;
+	var $marque_tx;
 	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
@@ -2216,7 +2218,7 @@ class PropaleLigne
 	{
 		$sql = 'SELECT pd.rowid, pd.fk_propal, pd.fk_product, pd.description, pd.price, pd.qty, pd.tva_tx,';
 		$sql.= ' pd.remise, pd.remise_percent, pd.fk_remise_except, pd.subprice,';
-		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.coef, pd.rang,';
+		$sql.= ' pd.info_bits, pd.total_ht, pd.total_tva, pd.total_ttc, pd.marge_tx, pd.marque_tx, pd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pd.fk_product = p.rowid';
@@ -2240,7 +2242,8 @@ class PropaleLigne
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;
 			$this->total_ttc      = $objp->total_ttc;
-			$this->coef           = $objp->coef;
+			$this->marge_tx       = $objp->marge_tx;
+			$this->marque_tx      = $objp->marque_tx;
 			$this->rang           = $objp->rang;
 
 			$this->ref			  = $objp->product_ref;
@@ -2292,7 +2295,7 @@ class PropaleLigne
 		$sql.= ' (fk_propal, description, fk_product, fk_remise_except, qty, tva_tx,';
 		$sql.= ' subprice, remise_percent, price, remise,  ';
 		$sql.= ' info_bits, ';
-		$sql.= ' total_ht, total_tva, total_ttc, coef, rang)';
+		$sql.= ' total_ht, total_tva, total_ttc, marge_tx, marque_tx, rang)';
 		$sql.= " VALUES (".$this->fk_propal.",";
 		$sql.= " '".addslashes($this->desc)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
@@ -2309,7 +2312,9 @@ class PropaleLigne
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
 		$sql.= " ".price2num($this->total_ttc).",";
-		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
+		if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
+		else $sql.= ' null,';
+		if (isset($this->marque_tx)) $sql.= ' '.$this->marque_tx.',';
 		else $sql.= ' null,';
 		$sql.= ' '.$rangtouse;
 		$sql.= ')';
@@ -2357,7 +2362,8 @@ class PropaleLigne
 		$sql.= ",total_tva=".price2num($this->total_tva)."";
 		$sql.= ",total_ttc=".price2num($this->total_ttc)."";
 		$sql.= ",rang='".$this->rang."'";
-		$sql.= ",coef='".$this->coef."'";
+		$sql.= ",marge_tx='".$this->marge_tx."'";
+		$sql.= ",marque_tx='".$this->marque_tx."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
        	dolibarr_syslog("PropaleLigne::update sql=$sql");

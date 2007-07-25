@@ -1104,7 +1104,7 @@ class Commande extends CommonObject
   function fetch_lines($only_product=0)
   {
     $sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-    $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.coef, l.rang, l.info_bits,';
+    $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
 	  $sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
     $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
     $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -1138,7 +1138,8 @@ class Commande extends CommonObject
 	    $ligne->remise_percent   = $objp->remise_percent;
 	    $ligne->price            = $objp->price;
 	    $ligne->fk_product       = $objp->fk_product;
-	    $ligne->coef             = $objp->coef;
+	    $ligne->marge_tx         = $objp->marge_tx;
+	    $ligne->marque_tx        = $objp->marque_tx;
 	    $ligne->rang             = $objp->rang;
 	    $ligne->info_bits        = $objp->info_bits;
 
@@ -2327,7 +2328,8 @@ class CommandeLigne
 	var $subprice;
 	var $remise_percent;
 	var $rang = 0;
-	var $coef;
+	var $marge_tx;
+	var $marque_tx;
 	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
 	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
@@ -2361,7 +2363,7 @@ class CommandeLigne
 	{
 		$sql = 'SELECT cd.rowid, cd.fk_commande, cd.fk_product, cd.description, cd.price, cd.qty, cd.tva_tx,';
 		$sql.= ' cd.remise, cd.remise_percent, cd.fk_remise_except, cd.subprice,';
-		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.coef, cd.rang,';
+		$sql.= ' cd.info_bits, cd.total_ht, cd.total_tva, cd.total_ttc, cd.marge_tx, cd.marque_tx, cd.rang,';
 		$sql.= ' p.ref as product_ref, p.label as product_libelle, p.description as product_desc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON cd.fk_product = p.rowid';
@@ -2385,7 +2387,8 @@ class CommandeLigne
 			$this->total_ht       = $objp->total_ht;
 			$this->total_tva      = $objp->total_tva;
 			$this->total_ttc      = $objp->total_ttc;
-			$this->coef           = $objp->coef;
+			$this->marge_tx       = $objp->marge_tx;
+			$this->marque_tx      = $objp->marque_tx;
 			$this->rang           = $objp->rang;
 			
 			$this->ref	       = $objp->product_ref;
@@ -2465,7 +2468,7 @@ class CommandeLigne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
 		$sql.= ' (fk_commande, description, price, qty, tva_tx,';
 		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
-		$sql.= ' rang, coef,';
+		$sql.= ' rang, marge_tx, marque_tx,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_commande.",";
 		$sql.= " '".addslashes($this->desc)."',";
@@ -2480,7 +2483,9 @@ class CommandeLigne
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
 		$sql.= ' '.$rangtouse.',';
-		if (isset($this->coef)) $sql.= ' '.$this->coef.',';
+		if (isset($this->marge_tx)) $sql.= ' '.$this->marge_tx.',';
+		else $sql.= ' null,';
+		if (isset($this->marque_tx)) $sql.= ' '.$this->marque_tx.',';
 		else $sql.= ' null,';
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " '".price2num($this->total_ht)."',";
