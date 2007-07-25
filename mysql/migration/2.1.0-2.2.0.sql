@@ -35,7 +35,7 @@ update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_
 update llx_const set visible=0 where name in ('MAIN_UPLOAD_DOC','MAIN_MAIL_SMTP_SERVER','MAIN_MAIL_SMTP_PORT','MAIN_MAIL_EMAIL_FROM');
 
 delete from llx_adherent_type where libelle IS NULL;
-alter table llx_adherent_type modify libelle          varchar(50) NOT NULL;
+alter table llx_adherent_type modify libelle varchar(50) NOT NULL;
 
 
 -- Extention de la gestion des catégories
@@ -804,3 +804,8 @@ INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et équipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systèmes', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et équipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systèmes', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
+
+ALTER TABLE `llx_commandedet` CHANGE `coef` `marge_tx` real DEFAULT NULL;
+ALTER TABLE `llx_propaldet` CHANGE `coef` `marge_tx` real DEFAULT NULL;
+ALTER TABLE llx_commandedet ADD COLUMN marque_tx real DEFAULT NULL after marge_tx;
+ALTER TABLE llx_propaldet ADD COLUMN marque_tx real DEFAULT NULL after marge_tx;
