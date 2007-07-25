@@ -765,3 +765,5 @@ DetailLevel=Niveau (-1:menu top, 0:entete menu, >0 menu et sous menu)
 ModifMenu=Menu change
 DeleteMenu=Delete menu entry
 ConfirmDeleteMenu=Are you sure you want to delete menu entry <b>%s</b> ?
+DeleteLine=Delete line
+ConfirmDeleteLine=Are you sure you want to delete this line ?

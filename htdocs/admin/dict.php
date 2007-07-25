@@ -200,6 +200,7 @@ $msg='';
 
 
 $sortfield=$_GET["sortfield"];
+$sortorder=$_GET["sortorder"];
 
 /*
  * Actions ajout ou modification d'une entrée dans un dictionnaire de donnée
@@ -312,7 +313,12 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
     $_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
 }
 
-if ($_GET["action"] == 'delete')       // delete
+if ($_POST["actioncancel"])
+{
+	$_GET["id"]=$_POST["id"];       // Force affichage dictionnaire en cours d'edition
+}
+
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')       // delete
 {
     if ($tabrowid[$_GET["id"]]) { $rowidcol=$tabrowid[$_GET["id"]]; }
     else { $rowidcol="rowid"; }
@@ -386,6 +392,15 @@ print_fiche_titre($titre,'','setup');
 print $langs->trans("DictionnaryDesc")."<br>\n";
 print "<br>\n";
 
+  /*
+   * Confirmation de la suppression de la ligne
+   */
+  if ($_GET['action'] == 'delete')
+  {
+  	$html = new Form($db);
+  	$html->form_confirm($_SERVER["PHP_SELF"].'?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.$_GET["rowid"].'&amp;code='.$_GET["code"].'&amp;id='.$_GET["id"], $langs->trans('DeleteLine'), $langs->trans('ConfirmDeleteLine'), 'confirm_delete');
+    print '<br>';
+  }
 
 /*
  * Affichage d'un dictionnaire particulier
@@ -534,8 +549,9 @@ if ($_GET["id"])
                 	print '<form action="dict.php" method="post">';
                 	print '<input type="hidden" name="id" value="'.$_GET["id"].'">';
                 	print '<input type="hidden" name="rowid" value="'.$_GET["rowid"].'">';
-					fieldList($fieldlist,$obj);
-					print '<td colspan="3" align="right"><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'"></td>';
+                	fieldList($fieldlist,$obj);
+                	print '<td colspan="3" align="right"><a name="'.($obj->rowid?$obj->rowid:$obj->code).'">&nbsp;</a><input type="submit" class="button" name="actionmodify" value="'.$langs->trans("Modify").'">';
+                	print '&nbsp;<input type="submit" class="button" name="actioncancel" value="'.$langs->trans("Cancel").'"></td>';
                 }
                 else
                 {                	
@@ -573,7 +589,7 @@ if ($_GET["id"])
                   print "</td>";
 				  
                   if ($iserasable) {
-                  	print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify">'.img_edit().'</a></td>';
+                  	print '<td align="center"><a href="dict.php?sortfield='.$sortfield.'&sortorder='.$sortorder.'&rowid='.($obj->rowid?$obj->rowid:$obj->code).'&amp;code='.$obj->code.'&amp;id='.$_GET["id"].'&amp;action=modify#'.($obj->rowid?$obj->rowid:$obj->code).'">'.img_edit().'</a></td>';
                   } else {
                     print '<td>&nbsp;</td>';   
                   }
