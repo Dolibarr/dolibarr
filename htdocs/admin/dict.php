@@ -707,7 +707,10 @@ function fieldList($fieldlist,$obj='')
     	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="3" name="'.$fieldlist[$field].'"></td>';
     }
     elseif ($fieldlist[$field] == 'price') {
-    	print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="10" name="'.$fieldlist[$field].'"></td>';
+    	print '<td><input type="text" class="flat" value="'.price($obj->$fieldlist[$field]).'" size="8" name="'.$fieldlist[$field].'"></td>';
+    }
+    elseif ($fieldlist[$field] == 'code') {
+    	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="10" name="'.$fieldlist[$field].'"></td>';
     }
     else
     {
