@@ -75,10 +75,11 @@ class ActionComm
 
     /**
      *    \brief      Ajout d'une action en base
-     *    \param      author      auteur de la creation de l'action
-     *    \return     int         id de l'action créée, < 0 si erreur
+     *    \param      author      	auteur de la creation de l'action
+ 	 *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+     *    \return     int         	id de l'action créée, < 0 si erreur
      */
-    function add($author)
+    function add($author,$notrigger=0)
     {
         global $langs,$conf;
     
@@ -133,12 +134,15 @@ class ActionComm
         {
             $this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."actioncomm");
     
-           // Appel des triggers
-            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-            $interface=new Interfaces($this->db);
-            $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
-            // Fin appel triggers
-    
+            if (! $notrigger)
+            {
+	            // Appel des triggers
+	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	            $interface=new Interfaces($this->db);
+	            $result=$interface->run_triggers('ACTION_CREATE',$this,$author,$langs,$conf);
+	            // Fin appel triggers
+			}
+			
 			$this->db->commit();
             return $this->id;
         }

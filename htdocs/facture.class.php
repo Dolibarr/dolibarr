@@ -123,11 +123,12 @@ class Facture extends CommonObject
   }
 
 	/**
-		\brief     Création de la facture en base
-		\param     user       	Object utilisateur qui crée
-		\return	int			<0 si ko, >0 si ok
+		\brief     	Création de la facture en base
+		\param     	user       		Object utilisateur qui crée
+	    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+		\return		int				<0 si ko, >0 si ok
 	*/
-	function create($user)
+	function create($user,$notrigger=0)
 	{
 		global $langs,$conf,$mysoc;
 

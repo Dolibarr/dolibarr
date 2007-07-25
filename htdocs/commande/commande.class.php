@@ -2434,10 +2434,11 @@ class CommandeLigne
 	}
 
 	/**
-	*    \brief     	Insère l'objet ligne de commande en base
-	*	\return		int		<0 si ko, >0 si ok
+	*   \brief     	Insère l'objet ligne de commande en base
+	*   \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	*	\return		int				<0 si ko, >0 si ok
 	*/
-	function insert()
+	function insert($notrigger=0)
 	{
 		global $langs, $conf, $user;
 
@@ -2505,12 +2506,15 @@ class CommandeLigne
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
-			// Fin appel triggers
-
+            if (! $notrigger)
+            {
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result=$interface->run_triggers('LINEORDER_INSERT',$this,$user,$langs,$conf);
+				// Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return 1;	
 		}

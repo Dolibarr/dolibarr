@@ -646,10 +646,11 @@ class User
   
   /**
    *  \brief      Crée l'utilisateur en base
-   *  \param      user        Objet user qui demande la creation
-   *  \return     int         <0 si KO, id compte créé si OK
+   *  \param      user        	Objet user qui demande la creation
+   *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+   *  \return     int         	<0 si KO, id compte créé si OK
    */
-  function create($user='')
+  function create($user='',$notrigger=0)
   {
     global $conf,$langs;
     
@@ -700,13 +701,16 @@ class User
 						return -4;
 					}
 	
-					// Appel des triggers
-					include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-					$interface = new Interfaces($this->db);
-					$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
-					if ($result < 0) $error++;
-					// Fin appel triggers
-	
+		            if (! $notrigger)
+		            {
+						// Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+						$interface = new Interfaces($this->db);
+						$result = $interface->run_triggers('USER_CREATE',$this,$user,$lang,$conf);
+						if ($result < 0) $error++;
+						// Fin appel triggers
+					}
+					
 					if (! $error)
 					{
 						$this->db->commit();
@@ -884,7 +888,7 @@ class User
 
   /**
    *    \brief      Mise à jour en base d'un utilisateur
-   *    \param      notrigger		1 si update durant le create, 0 sinon
+   *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
    *    \return     int         	<0 si KO, >=0 si OK
    */
   function update($notrigger=0)
