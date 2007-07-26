@@ -761,7 +761,7 @@ create table llx_c_ecotaxe
   code         varchar(64)  UNIQUE NOT NULL,
   libelle      varchar(255),
   price        double(16,8),
-  organization varchar(256),
+  organization varchar(255),
   fk_pays      integer NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL
 )type=innodb;
