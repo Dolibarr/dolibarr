@@ -759,7 +759,7 @@ create table llx_c_ecotaxe
 (
   rowid        integer      AUTO_INCREMENT PRIMARY KEY,
   code         varchar(64)  UNIQUE NOT NULL,
-  libelle      varchar(256),
+  libelle      varchar(255),
   price        double(16,8),
   organization varchar(256),
   fk_pays      integer NOT NULL,
