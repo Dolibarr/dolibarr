@@ -2137,15 +2137,22 @@ class Propal extends CommonObject
 		\brief    Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 		\param		option			Sur quoi pointe le lien
+        \param      get_param       Parametres ajouté à l'url
 		\return		string			Chaine avec URL
 	*/
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option='', $get_params='')
 	{
 		global $langs;
 		
 		$result='';
-		
-		$lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id.'">';
+		if($option == '')
+        {
+		  $lien = '<a href="'.DOL_URL_ROOT.'/comm/propal.php?propalid='.$this->id. $get_params .'">';
+        }
+        if($option == 'compta')
+        {
+          $lien = '<a href="'.DOL_URL_ROOT.'/compta/propal.php?propalid='.$this->id. $get_params .'">';
+        }
 		$lienfin='</a>';
 		
 		$picto='order';
