@@ -524,6 +524,8 @@ ProposalsPDFModules=Commercial proposal documents models
 ClassifiedInvoiced=Classified invoiced
 ClassifiedInvoicedWithOrder=Classify invoiced proposal at the same time as the order
 HideTreadedPropal=Hide the treated commercial proposals in the list
+AddShippingDateAbility=Add shipping date ability
+AddDeliveryAddressAbility=Add delivery date ability
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules

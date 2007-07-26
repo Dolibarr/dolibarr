@@ -85,6 +85,20 @@ if ($_POST["action"] == 'setdefaultduration')
     exit;
 }
 
+if ($_POST["action"] == 'addshippingdate')
+{
+    dolibarr_set_const($db, "PROPALE_ADD_SHIPPING_DATE",$_POST["value"]);
+    Header("Location: propale.php");
+    exit;
+}
+
+if ($_POST["action"] == 'adddeliveryaddress')
+{
+    dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
+    Header("Location: propale.php");
+    exit;
+}
+
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
     dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"]);
@@ -391,6 +405,25 @@ print '<td align="right"><input type="submit" class="button" value="'.$langs->tr
 print '</tr>';
 print '</form>';
 
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"setaddshippingdate\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("AddShippingDateAbility").'</td>';
+print '<td>'.$html->selectyesno('value',$conf->global->PROPALE_ADD_SHIPPING_DATE,1).'</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
+
+$var=!$var;
+print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
+print "<input type=\"hidden\" name=\"action\" value=\"setadddeliveryaddress\">";
+print "<tr ".$bc[$var].">";
+print '<td>'.$langs->trans("AddDeliveryAddressAbility").'</td>';
+print '<td>'.$html->selectyesno('value',$conf->global->PROPALE_ADD_DELIVERY_ADDRESS,1).'</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
 
 if ($conf->commande->enabled)
 {
@@ -422,7 +455,7 @@ print "<tr class=\"liste_titre\">\n";
 print "  <td>".$langs->trans("Name")."</td>\n";
 print "  <td>".$langs->trans("Value")."</td>\n";
 print "</tr>\n";
-print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("Directory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
+print "<tr ".$bc[false].">\n  <td width=\"140\">".$langs->trans("PathDirectory")."</td>\n  <td>".$conf->propal->dir_output."</td>\n</tr>\n";
 print "</table>\n<br>";
 
 
