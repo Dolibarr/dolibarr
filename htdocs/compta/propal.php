@@ -42,14 +42,14 @@ $langs->load('orders');
 $page=$_GET["page"];
 $sortorder=$_GET["sortorder"];
 $sortfield=$_GET["sortfield"];
+$viewstatut=$_GET['viewstatut'];
+$propal_statut = $_GET['propal_statut'];
+if($propal_statut != '')
+    $viewstatut=$propal_statut;
 
-if (! $sortorder) $sortorder="ASC";
-if (! $sortfield) $sortfield="nom";
+if (! $sortorder) $sortorder="DESC";
+if (! $sortfield) $sortfield="p.datep";
 if ($page == -1) { $page = 0 ; }
-$offset = $conf->liste_limit * $page ;
-$pageprev = $page - 1;
-$pagenext = $page + 1;
-
 
 // Sécurité accés client
 $user->getrights('facture');
@@ -448,9 +448,11 @@ if ($_GET["propalid"] > 0)
 	/*
  	 * Boutons Actions
  	 */
+    print '<div class="tabsAction">';
+    print '<a class="butAction" href="propal.php' . "?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder" .'">'.'Retour Liste'."</a>";
+    
 	if ($propal->statut <> 4 && $user->societe_id == 0)
 	{
-		print '<div class="tabsAction">';
 
 		if ($propal->statut == 2 && $user->rights->facture->creer)
 		{
@@ -461,10 +463,9 @@ if ($_GET["propalid"] > 0)
 		{
 			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
 		}
-	
-		print "</div>";
-		print "<br>\n";
 	}
+    print "</div>";
+    print "<br>\n";
 	
 
 
@@ -638,10 +639,6 @@ else
    */
 
 
-  if (! $sortfield) $sortfield="p.datep";
-  if (! $sortorder) $sortorder="DESC";
-  if ($page == -1) $page = 0 ;
-
   $limit = $conf->liste_limit;
   $offset = $limit * $page ;
   $pageprev = $page - 1;
@@ -658,10 +655,28 @@ else
   $sql.= " WHERE p.fk_soc = s.rowid";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
   if ($socid)           $sql .= " AND s.rowid = ".$socid;
-  if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
-  if ($month > 0)        $sql .= " AND date_format(p.datep, '%Y-%m') = '".$year-$month."'";
-  if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = ".$year;
-  $sql .= " ORDER BY ".$sortfield." ".$sortorder.", p.rowid DESC ";
+    if ($viewstatut <> '') $sql .= " AND p.fk_statut in ($viewstatut)"; // viewstatut peut etre combinaisons séparé par virgules
+  if ($month > 0)
+  {
+    if ($year > 0)
+        $sql .= " AND date_format(p.datep, '%Y-%m') = '$year-$month'";
+      else
+        $sql .= " AND date_format(p.datep, '%m') = '$month'";
+  }
+  if ($year > 0)         $sql .= " AND date_format(p.datep, '%Y') = $year";
+  if (!empty($_GET['search_ref']))
+  {
+    $sql .= " AND p.ref LIKE '%".addslashes($_GET['search_ref'])."%'";
+  }
+  if (!empty($_GET['search_societe']))
+  {
+    $sql .= " AND s.nom LIKE '%".addslashes($_GET['search_societe'])."%'";
+  }
+  if (!empty($_GET['search_montant_ht']))
+  {
+    $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
+  }
+  $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
   $sql .= $db->plimit($limit + 1,$offset);
 
 	if ( $db->query($sql) )
@@ -669,7 +684,7 @@ else
 		$num = $db->num_rows();
 		
 		
-		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socid=$socid",$sortfield,$sortorder,'',$num);
+		print_barre_liste($langs->trans("Proposals"), $page, "propal.php","&socid=$socid&month=$month&year=$year&search_ref=$search_ref&search_societe=$search_societe&search_montant_ht=$search_montant_ht".'&amp;viewstatut='.$viewstatut,$sortfield,$sortorder,'',$num);
 		
 		$i = 0;
 		$var=true;
@@ -681,8 +696,35 @@ else
 		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+        print '<td class="liste_titre">&nbsp;</td>';
 		print "</tr>\n";
-
+        
+        // Lignes des champs de filtre
+        print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
+    
+        print '<tr class="liste_titre">';
+        print '<td class="liste_titre" valign="right">';
+        print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
+        print '</td>';
+        print '<td class="liste_titre" align="left">';
+        print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
+        print '</td>';
+        print '<td class="liste_titre" colspan="1" align="right">';
+        print 'mois : ' . '<input class="flat" type="text" size="3" name="month" value="'.$month.'">';
+        print '&nbsp;ann&eacute;e : ' . '<input class="flat" type="text" size="5" name="year" value="'.$year.'">';
+        print '</td>';
+        print '<td class="liste_titre" align="right">';
+        print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+        print '</td>';
+        print '<td class="liste_titre" align="right">';
+        //print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+        $html->select_propal_statut($viewstatut);
+        print '</td>';
+        print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+        print '</td>';
+        print "</tr>\n";
+        print '</form>';
+        
 		while ($i < min($num, $limit))
 		{
 			$objp = $db->fetch_object();
@@ -691,27 +733,27 @@ else
 			print "<tr $bc[$var]>";
 			print '<td nowrap="nowrap">';
             
-      $propalstatic->id=$objp->propalid;
-      $propalstatic->ref=$objp->ref;
-      
-      // Ref         
-      print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-      print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
-      print $propalstatic->getNomUrl(1);
-      print '</td>';
-      
-      print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-      if ($objp->fk_statut == 1 && $objp->din < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
-      print '</td>';
-                
-      print '<td width="16" align="right" class="nobordernopadding">';
-                
-      $filename=sanitize_string($objp->ref);
-      $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
-      $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
-      $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-                
-      print '</td></tr></table>';
+            $propalstatic->id=$objp->propalid;
+            $propalstatic->ref=$objp->ref;
+          
+            //Ref         
+            print '<table class="nobordernopadding"><tr class="nocellnopadd">';
+            print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+            print $propalstatic->getNomUrl(1, 'compta', "&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder");
+            print '</td>';
+          
+            print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+            if ($objp->fk_statut == 1 && $objp->din < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
+            print '</td>';
+                    
+            print '<td width="16" align="right" class="nobordernopadding">';
+                    
+            $filename=sanitize_string($objp->ref);
+            $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
+            $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
+            $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
+                    
+            print '</td></tr></table>';
       
 			print "</td>\n";
 		
@@ -736,7 +778,8 @@ else
 			// Prix
 			print "<td align=\"right\">".price($objp->price)."</td>\n";
 			print "<td align=\"right\">".$propalstatic->LibStatut($objp->fk_statut,5)."</td>\n";
-			print "</tr>\n";
+			print "<td>&nbsp;</td>";
+            print "</tr>\n";
 		
 			$i++;
 		}
