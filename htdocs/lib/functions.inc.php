@@ -2904,4 +2904,27 @@ function make_substitutions($chaine,$substitutionarray)
   return $result;
 }
 
+/*
+ *    \brief      Formate l'affichage de date de début et de fin
+ *    \param      date_start    date de début
+ *    \param      date_end      date de fin      	
+ */
+function print_date_range($date_start,$date_end)
+{
+	global $langs;
+
+	if ($date_start && $date_end)
+	{
+		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start),dolibarr_print_date($date_end)).')';
+	}
+	if ($date_start && ! $date_end)
+	{
+		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start)).')';
+	}
+	if (! $date_start && $date_end)
+	{
+		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end)).')';
+	}
+}
+
 ?>

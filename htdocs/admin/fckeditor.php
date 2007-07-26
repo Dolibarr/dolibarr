@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur       <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin             <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin             <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,6 +40,7 @@ $modules = array(
 'SOCIETE' => 'FCKeditorForCompany',
 'PRODUCTDESC' => 'FCKeditorForProduct',
 'DETAILS' => 'FCKeditorForProductDetails',
+'DETAILS_PERSO' => 'FCKeditorForProductDetailsPerso',
 'MAILING' => 'FCKeditorForMailing',
 'MEMBER' => 'FCKeditorForMembers'
 );
@@ -48,6 +49,7 @@ $conditions = array(
 'SOCIETE' => $conf->societe->enabled,
 'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
 'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
+'DETAILS_PERSO' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
 'MAILING' => $conf->mailing->enabled,
 'MEMBER' => $conf->adherent->enabled
 );
@@ -56,6 +58,7 @@ $picto = array(
 'SOCIETE' => 'company',
 'PRODUCTDESC' => 'product',
 'DETAILS' => 'generic',
+'DETAILS_PERSO' => 'generic',
 'MAILING' => 'email',
 'MEMBER' => 'user'
 );
@@ -66,7 +69,7 @@ foreach($modules as $const => $desc)
 	if ($_GET["action"] == 'activate_'.strtolower($const))
 	{
 	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
-	    //si fckeditor est activé dans la description produit/service, on l'active dans les documents
+	    // Si fckeditor est activé dans la description produit/service, on l'active dans les formulaires
 	    if ($const == 'PRODUCTDESC')
 	    {
 	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1");
@@ -77,10 +80,12 @@ foreach($modules as $const => $desc)
 	if ($_GET["action"] == 'disable_'.strtolower($const))
 	{
 		dolibarr_del_const($db, "FCKEDITOR_ENABLE_".$const);
-		//si fckeditor est desactivé dans les documents, on le désactive dans la description produit/service
+		// Si fckeditor est desactivé dans les formulaires,
+		// on le désactive dans la description produit/service et dans la description personnalisée
 	    if ($const == 'DETAILS')
 	    {
 	    	dolibarr_del_const($db, "FCKEDITOR_ENABLE_PRODUCTDESC");
+	    	dolibarr_del_const($db, "FCKEDITOR_ENABLE_DETAILS_PERSO");
 	    }
 		Header("Location: fckeditor.php");
 		exit;

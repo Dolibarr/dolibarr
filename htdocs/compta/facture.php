@@ -713,7 +713,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
  */
 if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu']!='' && $_POST['desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu']!='' && $_POST['np_desc']) || $_POST['idprod']))
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
@@ -773,12 +773,14 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             }
 
             // La description de la ligne est celle saisie ou
-            // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
-            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-            $desc=$_POST['desc'];
-            if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
+            // celle du produit si PRODUIT_CHANGE_PROD_DESC défini
+            if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
             	$desc = $prod->description;
+            }
+            else
+            {
+            	$desc=$_POST['np_desc'];
             }
 
             $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
@@ -787,7 +789,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         {
 	        $pu=$_POST['pu'];
 	        $tva_tx=$_POST['tva_tx'];
-	        $desc=$_POST['desc'];
+	        $desc=$_POST['np_desc'];
         }
 
 	// Insere ligne
@@ -1103,31 +1105,6 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#builddoc');
     }
 }
-
-/*********************************************************************
-*
-* Fonctions internes
-*
-**********************************************************************/
-function print_date_range($date_start,$date_end)
-{
-	global $langs;
-
-	if ($date_start && $date_end)
-	{
-		print ' ('.$langs->trans('DateFromTo',dolibarr_print_date($date_start),dolibarr_print_date($date_end)).')';
-	}
-	if ($date_start && ! $date_end)
-	{
-		print ' ('.$langs->trans('DateFrom',dolibarr_print_date($date_start)).')';
-	}
-	if (! $date_start && $date_end)
-	{
-		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end)).')';
-	}
-}
-
-
 
 llxHeader('',$langs->trans('Bill'),'Facture');
 
@@ -2231,9 +2208,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('TotalHT').'</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="12">&nbsp;</td>';
+					print '<td width="48" colspan="3">&nbsp;</td>';
 					print "</tr>\n";
 
 				}
@@ -2257,12 +2232,17 @@ else
 							print ' '.$objp->ref.'</a>';
 							print ' - '.nl2br(stripslashes($objp->product));
 							print_date_range($objp->date_start,$objp->date_end);
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
-
-							// \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-							if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+							
+							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
-								print '<br>'.nl2br($objp->product_desc);
+								if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+								{
+									print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+								}
+								else
+								{
+									print '<br>'.nl2br($objp->product_desc);
+								}
 							}
 
 							print '</td>';
@@ -2445,7 +2425,7 @@ else
 		/*
 		* Ajouter une ligne
 		*/
-			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid')
+			if ($fac->statut == 0 && $user->rights->facture->creer && $_GET['action'] <> 'valid' && $_GET['action'] <> 'editline')
 			{
 				print '<tr class="liste_titre">';
 				print '<td>';
@@ -2455,10 +2435,7 @@ else
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
 				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
+				print '<td colspan="4">&nbsp;</td>';
 				print "</tr>\n";
 
 				// Ajout produit produits/services personalisés
@@ -2468,8 +2445,19 @@ else
 
 				$var=true;
 				print '<tr '.$bc[$var].'>';
-				print '<td colspan="1">';
-				print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
+				print '<td>';
+				// éditeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+				}
+				print '</td>';
 				print '<td align="right">';
 				if($soc->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';
@@ -2496,29 +2484,65 @@ else
 				// Ajout de produits/services prédéfinis
 				if ($conf->produit->enabled)
 				{
-					print '<form name="addligne_predef" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
+					print '<tr class="liste_titre">';
+					print '<td colspan="3">';
+					if ($conf->service->enabled)
+					{
+						print $langs->trans('RecordedProductsAndServices');
+					}
+					else
+					{
+						print $langs->trans('RecordedProducts');
+					}
+					print '</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+					print '<td colspan="4">&nbsp;</td>';
+					print '</tr>';
+					
+					print '<form id="addpredefinedproduct" action="'.$_SERVER['PHP_SELF'].'#add" method="post">';
 					print '<input type="hidden" name="facid" value="'.$fac->id.'">';
 					print '<input type="hidden" name="action" value="addligne_predef">';
 
 					$var=! $var;
 					print '<tr '.$bc[$var].'>';
-					print '<td colspan="2">';
+					print '<td colspan="3">';
 					// multiprix
 					if($conf->global->PRODUIT_MULTIPRICES == 1)
-					$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+					{
+						$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+					}
 					else
-					$html->select_produits('','idprod','',$conf->produit->limit_size);
+					{
+						$html->select_produits('','idprod','',$conf->produit->limit_size);
+					}
+					
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-					print '<textarea name="desc" cols="70" rows="'.ROWS_2.'"></textarea></td>';
-					print '<td>&nbsp;</td>';
+					
+					if (! $conf->global->PRODUIT_CHANGE_PROD_DESC)
+				  {
+				  	// éditeur wysiwyg
+				  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				  	{
+				  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				  		$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+				  		$doleditor->Create();
+				  	}
+				  	else
+				  	{
+				  		print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+				  	}
+				  }
+
+					print '</td>';
 					print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';
 					print '<td align="right" nowrap><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
-					print '<td align="center" valign="middle" rowspan="2" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+					print '<td align="center" valign="middle" colspan="5"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
 					print '</tr>';
 					if ($conf->service->enabled)
 					{
 						print '<tr '.$bc[$var].'>';
-						print '<td colspan="5">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
+						print '<td colspan="9">'.$langs->trans('ServiceLimitedDuration').' '.$langs->trans('From').' ';
 						print $html->select_date('','date_start_predef',0,0,1,"addligne_predef");
 						print ' '.$langs->trans('to').' ';
 						print $html->select_date('','date_end_predef',0,0,1,"addligne_predef");

@@ -113,7 +113,6 @@ else if ($_POST["action"] == 'sousproduits')
 else if ($_POST["action"] == 'changeproductdesc')
 {
   dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-  dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", 0);
   Header("Location: produit.php");
   exit;
 }
@@ -264,22 +263,20 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
-if ($conf->global->PRODUIT_CHANGE_PROD_DESC == 0)
-{
-  // Visualiser description produit dans les formulaires activation/desactivation
-  $var=!$var;
-  print "<form method=\"post\" action=\"produit.php\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
-  print "<tr ".$bc[$var].">";
-  print '<td width="80%">'.$langs->trans("ViewProductDescInFormAbility").'</td>';
-  print '<td width="60" align="right">';
-  print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
-  print '</td><td align="right">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-  print "</td>";
-  print '</tr>';
-  print '</form>';
-}
+// Visualiser description produit dans les formulaires activation/desactivation
+$var=!$var;
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ViewProductDescInFormAbility").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr>';
+print '</form>';
+
 
 // Utilisation de l'écotaxe
 $var=!$var;

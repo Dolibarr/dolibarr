@@ -256,56 +256,58 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
  */
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
-  if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprod']))
+  if ($_POST['qty'] && (($_POST['pu'] && $_POST['np_desc']) || $_POST['idprod']))
+  {
+  	$commande = new Commande($db);
+    $ret=$commande->fetch($_POST['id']);
+    $soc = new Societe($db, $commande->socid);
+    $soc->fetch($commande->socid);
+    
+    if ($ret < 0)
     {
-      $commande = new Commande($db);
-      $ret=$commande->fetch($_POST['id']);
-      $soc = new Societe($db, $commande->socid);
-      $soc->fetch($commande->socid);
+    	dolibarr_print_error($db,$commande->error);
+    	exit;
+    }
 
-      if ($ret < 0)
-	{
-	  dolibarr_print_error($db,$commande->error);
-	  exit;
-	}
-
-      // Ecrase $pu par celui du produit
-      // Ecrase $desc par celui du produit
-      // Ecrase $txtva par celui du produit
-      if ($_POST['idprod'])
-	{
-	  $prod = new Product($db, $_POST['idprod']);
-	  $prod->fetch($_POST['idprod']);
-
-	  $libelle = $prod->libelle;
-
-	  // multiprix
-	  if ($conf->global->PRODUIT_MULTIPRICES == 1)
+    // Ecrase $pu par celui du produit
+    // Ecrase $desc par celui du produit
+    // Ecrase $txtva par celui du produit
+    if ($_POST['idprod'])
+    {
+    	$prod = new Product($db, $_POST['idprod']);
+    	$prod->fetch($_POST['idprod']);
+    	
+    	$libelle = $prod->libelle;
+    	
+    	// multiprix
+    	if ($conf->global->PRODUIT_MULTIPRICES == 1)
 	    {
 	      $pu = $prod->multiprices[$soc->price_level];
 	    }
-	  else
+	    else
 	    {
 	      $pu=$prod->price;
 	    }
-
-	  // La description de la ligne est celle saisie ou
-	  // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
-	  // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-	  $desc=$_POST['np_desc'];
-	  if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
-	  {
+	    
+	    // La description de la ligne est celle saisie ou
+	    // celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
+	    if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+	    {
 	      $desc = $prod->description;
+	    }
+	    else
+	    {
+	    	$desc=$_POST['np_desc'];
+	    }
+	    
+	    $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx); 
 	  }
-
-	  $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
-	}
-      else
-	{
-	  $pu=$_POST['pu'];
-	  $tva_tx=$_POST['tva_tx'];
-	  $desc=$_POST['desc'];
-	}
+	  else
+	  {
+	  	$pu=$_POST['pu'];
+	  	$tva_tx=$_POST['tva_tx'];
+	  	$desc=$_POST['np_desc'];
+	  }
 
       $commande->addline(
 			 $_POST['id'],
@@ -1264,7 +1266,8 @@ else
 			/*
 			* Lignes de commandes
 			*/
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, ';
+			$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -1288,9 +1291,7 @@ else
 					print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 					print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
-					print '<td width="16">&nbsp;</td>';
+					print '<td width="48" colspan="3">&nbsp;</td>';
 					print "</tr>\n";
 				}
 				$var=true;
@@ -1310,13 +1311,22 @@ else
 							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a> - '.nl2br($objp->product);
-							print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br($objp->description):'';
-							// \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-							if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+							print ' '.$objp->ref.'</a>';
+							print ' - '.nl2br(stripslashes($objp->product));
+							print_date_range($objp->date_start,$objp->date_end);
+							
+							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
-								print '<br>'.nl2br($objp->product_desc);
+								if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+								{
+									print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br(stripslashes($objp->description)):'';
+								}
+								else
+								{
+									print '<br>'.nl2br($objp->product_desc);
+								}
 							}
+
 							print '</td>';
 						}
 						else
@@ -1487,20 +1497,29 @@ else
 				print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 				print '<td align="right">'.$langs->trans('Qty').'</td>';
 				print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
-				print '<td>&nbsp;</td>';
+				print '<td colspan="4">&nbsp;</td>';
 				print '</tr>';
 
-				// Ajout produit produits/services personalisés
+				// Ajout produit produits/services personnalisés
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
 
 				$var=true;
 				print '<tr '.$bc[$var].'>';
-				print '  <td><textarea cols="70" name="desc" rows="1"></textarea></td>';
+				print '<td>';
+				// éditeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+				}
+				print '</td>';
 				print '<td align="center">';
 				if($soc->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';
@@ -1516,28 +1535,66 @@ else
 				print '</form>';
 
 				// Ajout de produits/services prédéfinis
-				print '<form action="fiche.php?id='.$id.'#add" method="post">';
-				print '<input type="hidden" name="id" value="'.$id.'">';
-				print '<input type="hidden" name="action" value="addligne">';
+				if ($conf->produit->enabled)
+				{
+					print '<tr class="liste_titre">';
+					print '<td colspan="3">';
+					if ($conf->service->enabled)
+					{
+						print $langs->trans('RecordedProductsAndServices');
+					}
+					else
+					{
+						print $langs->trans('RecordedProducts');
+					}
+					print '</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+					print '<td colspan="4">&nbsp;</td>';
+					print '</tr>';
+					
+					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$id.'#add" method="post">';
+					print '<input type="hidden" name="id" value="'.$id.'">';
+					print '<input type="hidden" name="action" value="addligne">';
 
-				$var=!$var;
-				print '<tr '.$bc[$var].'>';
-				print '<td colspan="2">';
-				// multiprix
-				if($conf->global->PRODUIT_MULTIPRICES == 1)
-				$html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
-				else
-				$html->select_produits('','idprod','',$conf->produit->limit_size);
-				if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-				print '<textarea cols="70" name="np_desc" rows="1"></textarea>';
-				print '</td>';
-				print '<td>&nbsp;</td>';
-				print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-				print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
-				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
-				print '</tr>';
+				  $var=!$var;
+				  print '<tr '.$bc[$var].'>';
+				  print '<td colspan="3">';
+				  // multiprix
+				  if($conf->global->PRODUIT_MULTIPRICES == 1)
+				  {
+					  $html->select_produits('','idprod','',$conf->produit->limit_size,$soc->price_level);
+				  }
+				  else
+				  {
+					  $html->select_produits('','idprod','',$conf->produit->limit_size);
+				  }
+				
+				  if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+				
+				  if (! $conf->global->PRODUIT_CHANGE_PROD_DESC)
+				  {
+				  	// éditeur wysiwyg
+				  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				  	{
+				  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				  		$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+				  		$doleditor->Create();
+				  	}
+				  	else
+				  	{
+				  		print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+				  	}
+				  }
+				
+				  print '</td>';
+				  print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+				  print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="'.$soc->remise_client.'">%</td>';
+				  print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+				  print '</tr>';
 
-				print '</form>';
+				  print '</form>';
+			  }
 			}
 			print '</table>';
 			print '</div>';
@@ -1545,7 +1602,7 @@ else
 			/*
 			* Boutons actions
 			*/
-			if ($user->societe_id == 0)
+			if ($user->societe_id == 0 && $_GET['action'] <> 'editline')
 			{
 				print '<div class="tabsAction">';
 

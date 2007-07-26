@@ -505,12 +505,14 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
             }
             
             // La description de la ligne est celle saisie ou
-            // celle du produit si (non saisi + PRODUIT_CHANGE_PROD_DESC défini)
-            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-            $desc=$_POST['np_desc'];
-            if (! $desc && $conf->global->PRODUIT_CHANGE_PROD_DESC)
+            // celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
+            if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
             {
             	$desc = $prod->description;
+            }
+            else
+            {
+            	$desc = $_POST['np_desc'];
             }
             
             $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
@@ -851,7 +853,7 @@ if ($_GET['propalid'] > 0)
 	print '</tr>';
 
 
-	// date de livraison (conditonné sur PROPALE_ADD_SHIPPING_DATE car carac à
+	// date de livraison (conditionné sur PROPALE_ADD_SHIPPING_DATE car carac à
 	// gérer par les commandes et non les propal
 	if ($conf->expedition->enabled)
 	{
@@ -1045,9 +1047,7 @@ if ($_GET['propalid'] > 0)
 			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-			print '<td width="16">&nbsp;</td>';
-			print '<td width="16">&nbsp;</td>';
-			print '<td width="16">&nbsp;</td>';
+			print '<td width="48" colspan="3">&nbsp;</td>';
 			print "</tr>\n";
 		}
 		$var=true;
@@ -1068,26 +1068,21 @@ if ($_GET['propalid'] > 0)
 					if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
 					else print img_object($langs->trans('ShowProduct'),'product');
 					print ' '.$objp->ref.'</a>';
-					print ' - '.nl2br($objp->product);
-		            // \todo Ne faut-il pas rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours a on
-					if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-					{
-						print '<br>'.nl2br($objp->product_desc);
-					}
+					print ' - '.nl2br(stripslashes($objp->product));
+					print_date_range($objp->date_start,$objp->date_end);
 
-					if ($objp->date_start && $objp->date_end)
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
 					{
-						print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
+						if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+						{
+							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+						}
+						else
+						{
+							print '<br>'.nl2br($objp->product_desc);
+						}
 					}
-					if ($objp->date_start && ! $objp->date_end)
-					{
-						print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-					}
-					if (! $objp->date_start && $objp->date_end)
-					{
-						print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-					}
-					print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+					
 					print '</td>';
 				}
 				else
@@ -1116,18 +1111,7 @@ if ($_GET['propalid'] > 0)
 					else
 					{
 						print nl2br($objp->description);
-						if ($objp->date_start && $objp->date_end)
-						{
-							print ' (Du '.dolibarr_print_date($objp->date_start).' au '.dolibarr_print_date($objp->date_end).')';
-						}
-						if ($objp->date_start && ! $objp->date_end)
-						{
-							print ' (A partir du '.dolibarr_print_date($objp->date_start).')';
-						}
-						if (! $objp->date_start && $objp->date_end)
-						{
-							print " (Jusqu'au ".dolibarr_print_date($objp->date_end).')';
-						}
+						print_date_range($objp->date_start,$objp->date_end);
 					}
 					print "</td>\n";
 				}
@@ -1293,13 +1277,10 @@ if ($_GET['propalid'] > 0)
 		print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 		print '<td align="right">'.$langs->trans('Qty').'</td>';
 		print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
-		print '<td>&nbsp;</td>';
+		print '<td colspan="4">&nbsp;</td>';
 		print "</tr>\n";
 
-		// Ajout produit produits/services personalisés
+		// Ajout produit produits/services personnalisés
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 		print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
@@ -1307,7 +1288,19 @@ if ($_GET['propalid'] > 0)
 		$var=true;
 
 		print '<tr '.$bc[$var].">\n";
-		print '<td><textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea></td>';
+		print '<td>';
+		// éditeur wysiwyg
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+			$doleditor->Create();
+		}
+		else
+		{
+			print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+		}
+		print '</td>';
 		print '<td align="center">';
 		if($societe->tva_assuj == "0")
 		{
@@ -1329,6 +1322,21 @@ if ($_GET['propalid'] > 0)
 		// Ajout de produits/services prédéfinis
 		if ($conf->produit->enabled)
 		{
+			print '<tr class="liste_titre">';
+		  print '<td colspan="3">';
+		  if ($conf->service->enabled)
+		  {
+		  	print $langs->trans('RecordedProductsAndServices');
+		  }
+		  else
+		  {
+		  	print $langs->trans('RecordedProducts');
+		  }
+		  print '</td>';
+		  print '<td align="right">'.$langs->trans('Qty').'</td>';
+		  print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+		  print '<td colspan="4">&nbsp;</td>';
+		  print '</tr>';
 			print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#add" method="post">';
 			print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
 			print '<input type="hidden" name="action" value="addligne">';
@@ -1336,7 +1344,7 @@ if ($_GET['propalid'] > 0)
 			$var=!$var;
 
 			print '<tr '.$bc[$var].'>';
-			print '<td colspan="2">';
+			print '<td colspan="3">';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
@@ -1347,9 +1355,23 @@ if ($_GET['propalid'] > 0)
 				$html->select_produits('','idprod','',$conf->produit->limit_size);
 			}
 			if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
-			print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+			
+			if (! $conf->global->PRODUIT_CHANGE_PROD_DESC)
+			{
+				// éditeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+				}
+			}
+
 			print '</td>';
-			print '<td>&nbsp;</td>';
 			print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
 			print '<td align="right" nowrap><input type="text" size="1" name="remise_percent" value="'.$societe->remise_client.'">%</td>';
 
@@ -1396,7 +1418,7 @@ if ($_GET['propalid'] > 0)
 	*/
 	print '<div class="tabsAction">';
 
-	if ($_GET['action'] != 'statut')
+	if ($_GET['action'] != 'statut' && $_GET['action'] <> 'editline')
 	{
 
 		// Valid
