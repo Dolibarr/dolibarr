@@ -1432,6 +1432,49 @@ class Form
         }
         print '</select>';
     }
+    /**
+     *    \brief      Retourne la liste déroulante des différents états d'une propal.
+     *                Les valeurs de la liste sont les id de la table c_propalst
+     *    \param      selected    etat pre-séléctionné
+     */
+    function select_propal_statut($selected='')
+    {
+        $sql = "SELECT id, code, label, active FROM ".MAIN_DB_PREFIX."c_propalst";
+        $sql .= " WHERE active = 1";
+    
+        if ($this->db->query($sql))
+        {
+            print '<select class="flat" name="propal_statut">';
+            print '<option value="">&nbsp;</option>';
+            $num = $this->db->num_rows();
+            $i = 0;
+            if ($num)
+            {
+                while ($i < $num)
+                {
+                    $obj = $this->db->fetch_object();
+                    if ($selected == $obj->id)
+                    {
+                        print '<option value="'.$obj->id.'" selected="true">';
+                    }
+                    else
+                    {
+                        print '<option value="'.$obj->id.'">';
+                    }
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
+                    //print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
+                    print $obj->label;
+                    print '</option>';
+                    $i++;
+                }
+            }
+            print '</select>';
+        }
+        else
+        {
+            dolibarr_print_error($this->db);
+        }
+    }
 
 
     /**
