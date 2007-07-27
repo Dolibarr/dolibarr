@@ -4,6 +4,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -85,14 +86,14 @@ if ($_POST["action"] == 'setdefaultduration')
     exit;
 }
 
-if ($_POST["action"] == 'addshippingdate')
+if ($_POST["action"] == 'setaddshippingdate')
 {
     dolibarr_set_const($db, "PROPALE_ADD_SHIPPING_DATE",$_POST["value"]);
     Header("Location: propale.php");
     exit;
 }
 
-if ($_POST["action"] == 'adddeliveryaddress')
+if ($_POST["action"] == 'setadddeliveryaddress')
 {
     dolibarr_set_const($db, "PROPALE_ADD_DELIVERY_ADDRESS",$_POST["value"]);
     Header("Location: propale.php");
