@@ -190,7 +190,6 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 		else
 		{
 			dolibarr_print_error('',"facture_pdf_create Error: ".$obj->error);
-            $this->error=$langs->trans("Error")." ".$obj->error;
 			return -1;
 		}
 
@@ -276,7 +275,6 @@ function facture_delete_preview($db, $facid)
 	{
 	  if ( ! unlink($file) )
 	    {
-	      $this->error=$langs->trans("ErrorFailedToOpenFile",$file);
 	      return 0;
 	    }
 	}
