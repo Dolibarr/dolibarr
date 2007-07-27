@@ -1264,3 +1264,21 @@ form.inplaceeditor-form a { /* The cancel link */
 	background-position : bottom;
 	cursor:pointer;
 }
+
+/* ============================================================================== */
+/*  Ajax - Tooltip                                                                */
+/* ============================================================================== */
+.tooltip {
+     width: 150px;
+     color: #fff;
+     }
+.tooltip .title {
+     background: #0F6788;
+     font: italic 17px Georgia, serif;
+     padding: 5px;
+     }
+.tooltip .content {
+     background: dodgerblue;
+     font: 11px Arial, Helvetica, sans-serif;
+     padding: 5px;
+     }
