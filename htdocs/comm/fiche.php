@@ -944,7 +944,7 @@ if ($socid > 0)
 			if ($obj->fk_facture)
 			{
 				$facturestatic->ref=$langs->trans("Invoice");
-				$facturestatic->id=$obj->rowid;
+				$facturestatic->id=$obj->fk_facture;
 				$facturestatic->type=$obj->type;
 				print $facturestatic->getNomUrl(1,'compta');
 			}
