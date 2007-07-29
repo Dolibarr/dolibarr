@@ -75,13 +75,9 @@ print "</tr>\n";
 <input type="text" class="flat" name="credit" size="6" value=<?php echo $credit ?>>
 </td>
 <td class="liste_titre" align="center">
-<select class="flat" name="type">
-<option value="%">Toutes</option>
-<option value="CHQ">CHQ</option>
-<option value="CB">CB</option>
-<option value="VIR">VIR</option>
-<option value="PRE">PRE</option>
-</select>
+<?php
+$html->select_types_paiements(empty($_POST['type'])?'':$_POST['type'],'type');
+?>	
 </td>
 <?php
 print '<td class="liste_titre" align="right">';
@@ -125,10 +121,13 @@ else {
     dolibarr_print_error($db);    
 }
 
-$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type, ba.label as labelaccount";
-$sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
-$sql .= " WHERE b.fk_account=ba.rowid";
-$sql .= " AND fk_type like '" . $type . "'";
+$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_account, b.fk_type, ba.label as labelaccount, p.libelle as payment_type ";
+$sql .= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba, ".MAIN_DB_PREFIX."c_paiement as p ";
+$sql .= " WHERE b.fk_account=ba.rowid AND p.code = b.fk_type ";
+if(!empty($type))
+{
+	$sql .= " AND p.id = " . $type ." ";
+}
 
 $si=0;
 
@@ -184,7 +183,7 @@ if ($result)
 	print "<td>&nbsp;</td><td align=\"right\">".price($objp->amount)."</td>\n";
       }
     
-    print "<td align=\"center\">".$objp->fk_type."</td>\n";
+    print "<td align=\"center\">".$objp->payment_type."</td>\n";
 
       
     print "<td align=\"left\"><small>".$objp->labelaccount."</small></td>\n";
