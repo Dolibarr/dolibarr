@@ -474,6 +474,16 @@ class CommonObject
 	 print "</select>\n";
  }
 
+
+  /**
+   *      \brief      Charge les propriétés ref_previous et ref_next
+   *      \param      filter      filtre
+   *      \return     int         <0 si ko, >0 si ok
+   */
+  function load_previous_next_ref($filter='')
+  {
+	return 1;
+  }
 }
 
 ?>

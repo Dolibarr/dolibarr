@@ -144,8 +144,12 @@ if ($_GET["propalid"] > 0)
    */
   print '<table class="border" width="100%">';
 
+  $linkback='<a href="propal.php' . "?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder" .'">'.$langs->trans("BackToList")."</a>";
+
   // Ref
-  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
+  print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="5">';
+  print $html->showrefnav($propal,'propalid',$linkback);
+  print '</td></tr>';
 
   // Ref client
   print '<tr><td>';
@@ -449,7 +453,6 @@ if ($_GET["propalid"] > 0)
  	 * Boutons Actions
  	 */
     print '<div class="tabsAction">';
-    print '<a class="butAction" href="propal.php' . "?page=$page&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder" .'">'.'Retour Liste'."</a>";
     
 	if ($propal->statut <> 4 && $user->societe_id == 0)
 	{

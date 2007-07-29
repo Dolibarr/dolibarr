@@ -3327,9 +3327,10 @@ class Form
      *    \brief      Affiche tableau avec ref et bouton navigation pour un objet metier
      *    \param      object	Objet a afficher
      *    \param      paramid   Nom du parametre a utiliser pour nommer id dans liens URL
+     *    \param      morehtml  Code html supplementaire a afficher avant barre nav
      *	  \return     string    Portion HTML avec ref + boutons nav
      */
-	function showrefnav($object,$paramid='ref')
+	function showrefnav($object,$paramid,$morehtml='')
 	{
 		$ret='';
 
@@ -3337,11 +3338,21 @@ class Form
           $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).'">'.img_previous().'</a>':'';
           $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
 
-		if ($previous_ref || $next_ref) $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-		$ret.=$object->getNomUrl(0);
+		if ($previous_ref || $next_ref || $morehtml) {
+			$ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+		}
+		//$ret.=$object->getNomUrl(0);
+		$ret.=$object->ref;
+		if ($morehtml) {
+			$ret.='</td><td class="nobordernopadding" align="right">'.$morehtml;
+		}
 		if ($previous_ref || $next_ref) {
 			$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
-			$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+			$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref;
+		}
+		if ($previous_ref || $next_ref || $morehtml)
+		{
+			$ret.='</td></tr></table>';
 		}
 		return $ret;	
 	}	
