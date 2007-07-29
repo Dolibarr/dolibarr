@@ -132,11 +132,11 @@ $sql .= " AND fk_type like '" . $type . "'";
 
 $si=0;
 
-$debit = ereg_replace(',','.',$debit);
-$credit = ereg_replace(',','.',$credit);
+$debit = price2num(str_replace('-','',$debit));
+$credit = price2num(str_replace('-','',$credit));
 if (is_numeric($debit)) {
   $si++;
-  $sqlw[$si] .= " b.amount = " . -$debit;
+  $sqlw[$si] .= " b.amount = -" . $debit;
 }
 if (is_numeric($credit)) {
   $si++;
