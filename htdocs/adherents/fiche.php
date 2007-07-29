@@ -809,10 +809,6 @@ if ($rowid && $action != 'edit')
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
-	$result=$adh->load_previous_next_id($adh->next_prev_filter);
-	if ($result < 0) dolibarr_print_error($db,$adh->error);
-	$previous_id = $adh->id_previous?'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.urlencode($adh->id_previous).'">'.img_previous().'</a>':'';
-	$next_id     = $adh->id_next?'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.urlencode($adh->id_next).'">'.img_next().'</a>':'';
 
     // Confirmation de la suppression de l'adhérent
     if ($action == 'delete')
@@ -886,9 +882,7 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="2">';
-	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	print $adh->id;
-	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+	print $html->showrefnav($adh);
 	print '</td></tr>';
 
     // Nom

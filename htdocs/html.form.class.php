@@ -3337,7 +3337,7 @@ class Form
           $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
 
 		if ($previous_ref || $next_ref) $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-		$ret.=$object->getNomUrl(1);
+		$ret.=$object->getNomUrl(0);
 		if ($previous_ref || $next_ref) {
 			$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
 			$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
