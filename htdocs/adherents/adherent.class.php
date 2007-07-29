@@ -51,6 +51,7 @@ class Adherent
 	var $error;
 	var $errors=array();
 	
+	var $ref;
 	var $prenom;
 	var $nom;
 	var $fullname;
@@ -686,7 +687,7 @@ class Adherent
 	
 	
 	/**
-	*		\brief      Fonction qui récupére l'adhérent en donnant son login
+	*		\brief      Fonction qui récupére l'adhérent depuis son login
 	*		\param	    login		login de l'adhérent
 	*/
 	function fetch_login($login)
@@ -744,6 +745,7 @@ class Adherent
             {
                 $obj = $this->db->fetch_object($resql);
 
+		$this->ref            = $obj->rowid;
                 $this->id             = $obj->rowid;
                 $this->prenom         = $obj->prenom;
                 $this->nom            = $obj->nom;
@@ -1915,7 +1917,7 @@ class Adherent
 	*      \param      filter      filtre
 	*      \return     int         <0 si ko, >0 si ok
 	*/
-	function load_previous_next_id($filter='')
+	function load_previous_next_ref($filter='')
 	{
 		$sql = "SELECT MAX(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
@@ -1928,7 +1930,7 @@ class Adherent
 			return -1;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->id_previous = $row[0];
+		$this->ref_previous = $row[0];
 		
 		$sql = "SELECT MIN(rowid)";
 		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
@@ -1941,7 +1943,7 @@ class Adherent
 			return -2;
 		}
 		$row = $this->db->fetch_row($result);
-		$this->id_next = $row[0];
+		$this->ref_next = $row[0];
 	}
 
 	

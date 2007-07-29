@@ -882,7 +882,7 @@ if ($rowid && $action != 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="2">';
-	print $html->showrefnav($adh);
+	print $html->showrefnav($adh,'rowid');
 	print '</td></tr>';
 
     // Nom
