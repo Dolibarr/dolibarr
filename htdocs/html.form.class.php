@@ -3322,7 +3322,28 @@ class Form
       $select_month .= '</select>';
       return $select_month;
     }
-	
+
+    /**
+     *    \brief      Affiche tableau avec ref et bouton navigation pour un objet metier
+     *    \param      object	Objet a afficher
+     *	  \return     string    Portion HTML avec ref + boutons nav
+     */
+	function showrefnav($object)
+	{
+		$ret='';
+
+          $object->load_previous_next_ref($object->next_prev_filter);
+          $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($object->ref_previous).'">'.img_previous().'</a>':'';
+          $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
+
+		if ($previous_ref || $next_ref) $ret.='<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
+		$ret.=$object->getNomUrl(1);
+		if ($previous_ref || $next_ref) {
+			$ret.='</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td>';
+			$ret.='<td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+		}
+		return $ret;	
+	}	
 }
 
 ?>

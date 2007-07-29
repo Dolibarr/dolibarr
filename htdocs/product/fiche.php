@@ -628,9 +628,6 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  print($mesg);
 	  
-	  $product->load_previous_next_ref($product->next_prev_filter);
-	  $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($product->ref_previous).'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.urlencode($product->ref_next).'">'.img_next().'</a>':'';
 	}
       if ($_GET["action"] <> 'edit' && $product->canvas <> '')
 	{
@@ -657,11 +654,8 @@ if ($_GET["id"] || $_GET["ref"])
 	  
 	  // Reference
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td width="85%">';
-	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	  print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
-	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+	  print $html->showrefnav($product);
 	  print '</td>';
-	  
 	  
 	  $nblignes=6;
 	  if ($product->isproduct() && $conf->stock->enabled) $nblignes++;
