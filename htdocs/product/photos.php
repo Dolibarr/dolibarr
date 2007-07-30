@@ -188,7 +188,6 @@ if ($_GET["id"] || $_GET["ref"])
                 if ($obj['photo_vignette'])
                 {
                 	$filename=$obj['photo_vignette'];
-                	$thumbfilename=$obj['photo_vignette'];
                 }
                 else
                 {
