@@ -26,6 +26,8 @@ alter table llx_bank_url modify `type` enum("?","company","payment","payment_sup
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
 update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';
 
+-- Supprime colone en doublon avec fk_user_creat
+alter table llx_paiement drop column author;
 
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
 
