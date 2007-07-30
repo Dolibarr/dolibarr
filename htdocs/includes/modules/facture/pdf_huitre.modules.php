@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -124,17 +124,19 @@ class pdf_huitre extends ModelePDFFactures
 
 	if (file_exists($dir))
 	  {
-	    // Initialisation facture vierge
-	    $pdf=new FPDI_Protection('P','mm','A4');
-               		
-		           // Protection et encryption du pdf
+	           // Protection et encryption du pdf
                if ($conf->global->PDF_SECURITY_ENCRYPTION)
                {
+					$pdf=new FPDI_Protection('P','mm','A4');
      	           $pdfrights = array('print'); // Ne permet que l'impression du document
     	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
      	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                }
+			   else
+			   {
+                   $pdf=new FPDI('P','mm',$this->format);
+				}
 
 	    $pdf->Open();
 	    $pdf->AddPage();

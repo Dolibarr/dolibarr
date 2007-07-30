@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,11 +19,22 @@
  *
  * $Id$
  * $Source$
- *
  */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+/**
+            \file       htdocs/expedition/mods/methode_expedition.modules.php
+            \ingroup    expedition
+            \brief      Fichier contenant la classe mère de generation de bon de livraison en PDF
+                            et la classe mère de numérotation des bons de livraisons
+            \version    $Revision$
+*/
 
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
+
+/**
+            \class      methode_expedition
+            \brief      Classe mère des methodes expeditions
+*/
 Class methode_expedition
 {
 
@@ -79,17 +91,19 @@ Class methode_expedition
 	  
 	  if (file_exists($dir))
 	    {
-
-	      $pdf=new FPDI_Protection('P','mm','A4');
-	      		
 		    // Protection et encryption du pdf
         if ($conf->global->PDF_SECURITY_ENCRYPTION)
         {
+			$pdf=new FPDI_Protection('P','mm','A4');
      	    $pdfrights = array('print'); // Ne permet que l'impression du document
     	    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
      	    $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
         }
+		   else
+		   {
+			   $pdf=new FPDI('P','mm',$this->format);
+			}
 
 	      $pdf->Open();
 	      $pdf->AddPage();

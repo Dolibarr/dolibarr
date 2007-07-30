@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -21,25 +21,23 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
             \file       htdocs/livraison/mods/modules_livraison.php
-                \ingroup    expedition
-                \brief      Fichier contenant la classe mère de generation de bon de livraison en PDF
+            \ingroup    expedition
+            \brief      Fichier contenant la classe mère de generation de bon de livraison en PDF
                             et la classe mère de numérotation des bons de livraisons
-                \version    $Revision$
+            \version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
 /**
             \class      ModelePDFDeliveryOrder
                 \brief      Classe mère des modèles de bon de livraison
 */
-
 class ModelePDFDeliveryOrder extends FPDF
 {
     var $error='';

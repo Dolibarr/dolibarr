@@ -30,13 +30,13 @@
 		\version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
+
 
 /**
     	\class      ModelePDFFicheinter
 		\brief      Classe mère des modèles de fiche intervention
 */
-
 class ModelePDFFicheinter extends FPDF
 {
     var $error='';

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -116,17 +116,19 @@ class pdf_propale_jaune extends ModelePDFPropales
 
 			if (file_exists($dir))
 			{
-
-				$pdf=new FPDI_Protection('P','mm',$this->format);
-				               		
-		           // Protection et encryption du pdf
+	           // Protection et encryption du pdf
                if ($conf->global->PDF_SECURITY_ENCRYPTION)
                {
+					$pdf=new FPDI_Protection('P','mm',$this->format);
      	           $pdfrights = array('print'); // Ne permet que l'impression du document
     	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
      	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                }
+			   else
+			   {
+                   $pdf=new FPDI('P','mm',$this->format);
+				}
 
 				$pdf->Open();
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
@@ -30,7 +30,7 @@
         \version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/modules_livraison.php");
+require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
 
 
 /**
@@ -106,17 +106,19 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	  
 	  if (file_exists($dir))
 	    {
-
-	      $pdf=new FPDI_Protection('P','mm',$this->format);
-	                     		
-		           // Protection et encryption du pdf
+	           // Protection et encryption du pdf
                if ($conf->global->PDF_SECURITY_ENCRYPTION)
                {
+					$pdf=new FPDI_Protection('P','mm',$this->format);
      	           $pdfrights = array('print'); // Ne permet que l'impression du document
     	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
      	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
                }
+			   else
+			   {
+                   $pdf=new FPDI('P','mm',$this->format);
+				}
 
 	      $pdf->Open();
 	      $pdf->AddPage();
