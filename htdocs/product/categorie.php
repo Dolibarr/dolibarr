@@ -91,9 +91,7 @@ if ($_GET["id"] || $_GET["ref"])
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 }
 
-
 $html = new Form($db);
-
 
 /*
  * Fiche produit

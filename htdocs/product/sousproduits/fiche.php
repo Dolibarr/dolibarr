@@ -163,26 +163,8 @@ if ($id || $ref)
 	  
 	  // Reference
 	  print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-	  
-	  // Suivant/précédent
-	  $product->load_previous_next_ref();
-	  $previous_ref = $product->ref_previous?'<a href="?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-	  $next_ref     = $product->ref_next?'<a href="?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-	  if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	  print '<a href="?id='.$product->id.'">'.$product->ref.'</a>';
-	  if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-	  
-	  print '</td>';
-	  
-	  if ($product->is_photo_available($conf->produit->dir_output))
-            {
-	      // Photo
-	      print '<td valign="middle" align="center" rowspan="'.$nblignes.'">';
-	      $nbphoto=$product->show_photos($conf->produit->dir_output,1,1,0);
-	      print '</td>';
-            }
-	  
-	  print '</tr>';
+	  print $html->showrefnav($product,'ref');
+	  print '</td></tr>';
 	  
 	  // Libelle
 	  print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
