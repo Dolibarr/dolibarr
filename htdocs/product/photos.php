@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -81,6 +81,7 @@ if ($_GET["action"] == 'addthumb' && $_GET["file"])
  *
  */
 
+$html = new Form($db);
 
 if ($_GET["id"] || $_GET["ref"])
 {
@@ -108,12 +109,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Reference
         print '<tr>';
         print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-        $product->load_previous_next_ref();
-        $previous_ref = $product->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_previous.'">'.img_previous().'</a>':'';
-        $next_ref     = $product->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?ref='.$product->ref_next.'">'.img_next().'</a>':'';
-        if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-        print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">'.$product->ref.'</a>';
-        if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
+		print $html->showrefnav($product,'ref');
         print '</td>';
         print '</tr>';
 
@@ -122,7 +118,16 @@ if ($_GET["id"] || $_GET["ref"])
         print '</tr>';
 
         // Prix
-        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+        print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+	      if ($product->price_base_type == 'TTC')
+		    {
+		      print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
+		    }
+	      else
+		    {
+		      print price($product->price).' '.$langs->trans($product->price_base_type);
+		    }
+		print '</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
