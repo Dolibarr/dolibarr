@@ -178,12 +178,19 @@ if ($_GET["id"] || $_GET["ref"])
                 print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$obj['photo']).'" alt="Taille origine" target="_blank">';
 
                 // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-                if ($obj['photo_vignette']) $filename=$obj['photo_vignette'];
-                else $filename=$obj['photo'];
+                if ($obj['photo_vignette'])
+                {
+                	$filename=$obj['photo_vignette'];
+                	$viewfilename=$obj['photo'];
+                }
+                else
+                {
+                	$filename=$obj['photo'];
+                }
                 print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
-                print '<br>'.$langs->trans("File").': '.dolibarr_trunc($filename,16);
+                print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
                 if ($user->rights->produit->creer)
                 {
                     print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';

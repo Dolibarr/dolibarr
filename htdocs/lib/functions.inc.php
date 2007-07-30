@@ -1470,7 +1470,7 @@ function doliMoveFileUpload($src_file, $dest_file)
 	// On renomme les fichiers avec extention executable car si on a mis le rep
 	// documents dans un rep de la racine web (pas bien), cela permet d'executer
 	// du code a la demande.
-	if (eregi('\.php|\.pl|\.cgi$',$file_name))
+	if (eregi('\.htm|\.html|\.php|\.pl|\.cgi$',$file_name))
 	{
 		$file_name.= '.txt';
 	}
@@ -2925,6 +2925,95 @@ function print_date_range($date_start,$date_end)
 	{
 		print ' ('.$langs->trans('DateUntil',dolibarr_print_date($date_end)).')';
 	}
+}
+
+/*
+ *    \brief     Création d'une vignette à partir d'une image ($file)
+ *    \brief     Les extension prise en compte sont jpg et png
+ *    \param     file           Chemin du fichier image à redimensionner
+ *    \param     maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
+ *    \param     maxHeight      Hauteur maximum que dois faire l'image (120 par défaut)
+ *    \return    imgThumbName   Chemin de la vignette
+ */
+function vignette($file, $maxWidth = 160, $maxHeight = 120){
+   
+   // Vérification des erreurs dans les paramètres de la fonction
+   //============================================================
+   if(!file_exists($file)){
+      // Si le fichier passé en paramètre n'existe pas
+      return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
+   }
+   elseif(empty($file)){
+      // Si le fichier n'a pas été indiqué
+      return 'Nom du fichier non renseigné.';
+   }
+   elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
+      // Si la largeur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
+      return 'Valeur de la largeur incorrecte.';
+   }
+   elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < 0){
+      // Si la hauteur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
+      return 'Valeur de la hauteur incorrecte.';
+   }
+   //============================================================
+   
+   $fichier = realpath($file); // Chemin canonique absolu de l'image
+   $dir = dirname($file).'/'; // Chemin du dossier contenant l'image
+   $infoImg = getimagesize($fichier); // Récupération des infos de l'image
+   $imgWidth = $infoImg[0]; // Largeur de l'image
+   $imgHeight = $infoImg[1]; // Hauteur de l'image
+   
+   // Initialisation des variables selon l'extension de l'image
+   switch($infoImg[2]){
+      case 2:
+         $img = imagecreatefromjpeg($fichier); // Création d'une nouvelle image jpeg à partir du fichier
+         $extImg = '.jpg'; // Extension de l'image
+      break;
+      case 3:
+         $img = imagecreatefrompng($fichier); // Création d'une nouvelle image png à partir du fichier
+         $extImg = '.png';
+   }
+   
+   // Initialisation des dimensions de la vignette si elles sont supérieures à l'original
+   if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
+   if($maxHeight > $imgHeight){ $maxHeight = $imgHeight; }
+   
+   $whFact = $maxWidth/$maxHeight; // Facteur largeur/hauteur des dimensions max de la vignette
+   $imgWhFact = $imgWidth/$imgHeight; // Facteur largeur/hauteur de l'original
+   
+   // Fixe les dimensions de la vignette
+   if($whFact < $imgWhFact){
+      // Si largeur déterminante
+      $thumbWidth  = $maxWidth;
+      $thumbHeight = $thumbWidth / $imgWhFact;
+   } else {
+      // Si hauteur déterminante
+      $thumbHeight = $maxHeight;
+      $thumbWidth  = $thumbHeight * $imgWhFact;
+   }
+   
+   $imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight); // Création de la vignette
+   
+   imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+   
+   $fileName = basename($file, $extImg); // Nom du fichier sans son extension
+   $imgThumbName = $dir.$fileName.'_small'.$extImg; // Chemin complet du fichier de la vignette
+   
+   //Création du fichier de la vignette
+   $fp = fopen($imgThumbName, "w");
+   fclose($fp);
+   
+   // Renvoi la vignette créée
+   switch($infoImg[2]){
+      case 2:
+         imagejpeg($imgThumb, $imgThumbName, 50); // Renvoi d'une image jpeg avec une qualité de 50
+         break;
+      case 3:
+         imagepng($imgThumb, $imgThumbName);
+   }
+   
+   return $imgThumbName;
+
 }
 
 ?>

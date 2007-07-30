@@ -74,20 +74,31 @@ class Form
      \return	string				Code html du texte,picto
   */
   function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='')
-    {
-		global $conf;
+  {
+  	global $conf;
 		
 		if (! $htmltext) return $text;
 		
-        $paramfortooltiptext ='';
-        $paramfortooltippicto ='';
-        if ($conf->use_javascript)
-        {
-			// Sanitize tooltip
-        	$htmltext=ereg_replace("'","\'",$htmltext);
-        	$htmltext=ereg_replace("&#039;","\'",$htmltext);
-			if ($tooltipon==1 || $tooltipon==3)
-			{
+		$paramfortooltiptext ='';
+    $paramfortooltippicto ='';
+    
+    // Sanitize tooltip
+    $htmltext=ereg_replace("'","\'",$htmltext);
+    $htmltext=ereg_replace("&#039;","\'",$htmltext);
+    
+    if ($conf->use_ajax && $tooltipon == 4)
+    {
+    	$s = '<script type=\'text/javascript\'>
+    	       new Tip(\'tip1\', \''.$htmltext.'\');';
+    	$s.= '</script>';
+    	$s.= '<span id="tip1">'.$text.'</span>';
+    }
+    else
+    {
+    	if ($conf->use_javascript)
+    	{
+    		if ($tooltipon==1 || $tooltipon==3)
+    		{
 				$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
 				$paramfortooltiptext.=' onMouseout="hidetip()"';
 			}
@@ -96,7 +107,7 @@ class Form
 				$paramfortooltippicto.=' onmouseover="showtip(\''.$htmltext.'\')"';
 				$paramfortooltippicto.=' onMouseout="hidetip()"';
 			}
-        }
+    }
 
 		$s="";
 		$s.='<table class="nobordernopadding"><tr>';
@@ -121,8 +132,9 @@ class Form
 			}
 		}
 		$s.='</tr></table>';
-		return $s;
-    }
+	}
+  return $s;
+ }
 
 	/**
      \brief     Affiche un texte avec picto help qui affiche un tooltip

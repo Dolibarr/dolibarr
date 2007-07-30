@@ -2131,19 +2131,24 @@ class Product
     $dir .= "photos/";
 
     if (! file_exists($dir))
-      {
-	dolibarr_syslog("Product Create $dir");
-	create_exdir($dir);
-      }
+    {
+    	dolibarr_syslog("Product Create $dir");
+    	create_exdir($dir);
+    }
   
     if (file_exists($dir))
-      {
-	// Crée fichier en taille vignette
-	// \todo A faire
-      
-	// Crée fichier en taille origine
-	doliMoveFileUpload($files['tmp_name'], $dir . $files['name']);
-      }
+    {
+    	$originImage = $dir . $files['name'];
+    	
+    	// Crée fichier en taille origine
+    	doliMoveFileUpload($files['tmp_name'], $originImage);
+    	
+    	if (file_exists($originImage))
+    	{
+    		// Crée fichier en taille vignette
+    		vignette($originImage);
+    	}
+    }
   }
 
   /**
@@ -2158,10 +2163,10 @@ class Product
     $dir .= "photos/";
 
     if (! file_exists($dir))
-      {
-	dolibarr_syslog("Product Create $dir");
-	create_exdir($dir);
-      }
+    {
+    	dolibarr_syslog("Product Create $dir");
+    	create_exdir($dir);
+    }
   
     if (file_exists($dir))
     {
@@ -2182,7 +2187,7 @@ class Product
   /**
    *    \brief      Affiche la première photo du produit
    *    \param      sdir        Répertoire à scanner
-   *    \return     boolean     true si photo dispo, flase sinon
+   *    \return     boolean     true si photo dispo, false sinon
    */
   function is_photo_available($sdir)
   {
@@ -2191,14 +2196,14 @@ class Product
   
     $nbphoto=0;
     if (file_exists($dir))
-      {
-	$handle=opendir($dir);
-      
-	while (($file = readdir($handle)) != false)
-	  {
-	    if (is_file($dir.$file)) return true;
-	  }
-      }
+    {
+    	$handle=opendir($dir);
+    	
+    	while (($file = readdir($handle)) != false)
+    	{
+    		if (is_file($dir.$file)) return true;
+    	}
+    }
     return false;
   }
 
@@ -2222,21 +2227,20 @@ class Product
         $handle=opendir($dir);
 
         while (($file = readdir($handle)) != false)
-	  {
-            $photo='';
-            if (is_file($dir.$file)) $photo = $file;
+        {
+        	$photo='';
 
-            if ($photo)
-	      {
-                $nbphoto++;
-
-                if ($size == 1) {   // Format vignette
-
-		  // On determine nom du fichier vignette
-		  $photo_vignette='';
-		  if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
-		    $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
-		  }
+          if (is_file($dir.$file) && !eregi('\_small',$file))
+          {
+          	$nbphoto++;
+          	$photo = $file;
+          	
+          	if ($size == 1) {   // Format vignette
+          		// On determine nom du fichier vignette
+          		$photo_vignette='';
+          		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs)) {
+          			$photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
+          		}
 
 
 		  if ($nbbyrow && $nbphoto == 1) print '<table width="100%" valign="top" align="center" border="0" cellpadding="2" cellspacing="2">';
@@ -2247,7 +2251,7 @@ class Product
 		  print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
 		  // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-		  if ($photo_vignette && is_file($photo_vignette)) {
+		  if ($photo_vignette && is_file($dir.$photo_vignette)) {
 		    print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo_vignette).'">';
 		  }
 		  else {
@@ -2298,38 +2302,38 @@ class Product
     $tabobj=array();
 
     if (file_exists($dir))
-      {
-	$handle=opendir($dir);
-
-	while (($file = readdir($handle)) != false)
-	  {
-	    if (is_file($dir.$file))
+    {
+    	$handle=opendir($dir);
+    	
+    	while (($file = readdir($handle)) != false)
+    	{
+    		if (is_file($dir.$file) && !eregi('\_small',$file))
 	      {
-		$nbphoto++;
-		$photo = $file;
+	      	$nbphoto++;
+	      	$photo = $file;
+  	
+	      	// On determine nom du fichier vignette
+	      	$photo_vignette='';
+	      	if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
+	      	{
+	      		$photo_vignette=eregi_replace($regs[0],'',$photo).'_small'.$regs[0];
+	      	}
+	      	
+	      	// Objet
+	      	$obj=array();
+	      	$obj['photo']=$photo;
+	      	if ($photo_vignette && is_file($dir.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+	      	else $obj['photo_vignette']="";
 
-		// On determine nom du fichier vignette
-		$photo_vignette='';
-		if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$photo,$regs))
-		  {
-		    $photo_vignette=eregi_replace($regs[0],'',$photo)."_small".$regs[0];
-		  }
-
-		// Objet
-		$obj=array();
-		$obj['photo']=$photo;
-		if ($photo_vignette && is_file($photo_vignette)) $obj['photo_vignette']=$photo_vignette;
-		else $obj['photo_vignette']="";
-
-		$tabobj[$nbphoto-1]=$obj;
-
-		// On continue ou on arrete de boucler ?
-		if ($nbmax && $nbphoto >= $nbmax) break;
+	      	$tabobj[$nbphoto-1]=$obj;
+	      	
+	      	// On continue ou on arrete de boucler ?
+	      	if ($nbmax && $nbphoto >= $nbmax) break;
 	      }
+	    }
+	    
+	    closedir($handle);
 	  }
-
-	closedir($handle);
-      }
 
     return $tabobj;
   }
