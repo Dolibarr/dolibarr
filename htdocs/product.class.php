@@ -79,6 +79,10 @@ class Product
   var $stats_contrat=array();
   var $stats_facture=array();
   var $multilangs=array();
+  
+  //! Taille de l'image
+  var $imgWidth;
+  var $imgHeight;
 
   //! Intitule de l'erreur
   var $error;
@@ -2382,6 +2386,17 @@ class Product
 	  	}
 	  }
 	}
+	
+	/**
+   *    \brief      Récupère la taille de l'image
+   *    \param      file        Chemin de l'image
+   */
+  function get_image_size($file)
+  {
+  	$infoImg = getimagesize($file); // Récupération des infos de l'image
+  	$this->imgWidth = $infoImg[0]; // Largeur de l'image
+  	$this->imgHeight = $infoImg[1]; // Hauteur de l'image
+  }
 
   /**
    *      \brief      Charge indicateurs this->nb de tableau de bord

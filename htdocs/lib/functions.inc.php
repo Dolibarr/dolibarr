@@ -2948,14 +2948,14 @@ function print_date_range($date_start,$date_end)
  *    \return    imgThumbName   Chemin de la vignette
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120){
-   
+
    // Vérification des erreurs dans les paramètres de la fonction
    //============================================================
    if(!file_exists($file)){
       // Si le fichier passé en paramètre n'existe pas
       return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
    }
-   elseif(!eregi('(\.jpg|\.png)$',$files['name']))
+   elseif(!eregi('(\.jpg|\.png)$',$file))
    {
    	  // Todo: Ajouter création vignette pour les autres formats d'images
       return 'Le fichier '.$file.' n\'ai pas géré pour le moment.';
@@ -2973,14 +2973,20 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
       return 'Valeur de la hauteur incorrecte.';
    }
    //============================================================
-   
+
    $fichier = realpath($file); // Chemin canonique absolu de l'image
    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image
    $dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
    $infoImg = getimagesize($fichier); // Récupération des infos de l'image
    $imgWidth = $infoImg[0]; // Largeur de l'image
    $imgHeight = $infoImg[1]; // Hauteur de l'image
-   
+
+   // Si l'image est plus petite que la largeur et le hauteur max, on ne crée pas de vignette
+   if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
+   {
+   	  return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
+   }
+
    // On crée le répertoire contenant les vignettes
    if (! file_exists($dirthumb))
     {

@@ -167,6 +167,9 @@ if ($_GET["id"] || $_GET["ref"])
             $nbphoto=0;
             $nbbyrow=5;
             
+            $maxWidth = 160;
+            $maxHeight = 120;
+            
             $pdir = get_exdir($product->id,2) . $product->id ."/photos/";
             $dir = $conf->produit->dir_output . '/'. $pdir;
 
@@ -196,16 +199,22 @@ if ($_GET["id"] || $_GET["ref"])
                 
                 // Nom affiché
                 $viewfilename=$obj['photo'];
+                
+                // Taille de l'image
+                $product->get_image_size($dir.$filename);
+                $imgWidth = ($product->imgWidth < $maxWidth) ? $product->imgWidth : $maxWidth;
+                $imgHeight = ($product->imgHeight < $maxHeight) ? $product->imgHeight : $maxHeight;
 
-                print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
+                print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
                 print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
                 print '<br>';
-                // On propose la génération de la vignette si elle n'existe pas
-                if (!$obj['photo_vignette'] && eregi('(\.jpg|\.png)$',$obj['photo']))
+
+                // On propose la génération de la vignette si elle n'existe pas et si la taille est supérieure aux limites
+                if (!$obj['photo_vignette'] && eregi('(\.jpg|\.png)$',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
                 {
-                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('RegenerateThumb')).'&nbsp;&nbsp;</a>';
+                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
                 }
                 if ($user->rights->produit->creer)
                 {
