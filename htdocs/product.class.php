@@ -2143,7 +2143,8 @@ class Product
     	// Crée fichier en taille origine
     	doliMoveFileUpload($files['tmp_name'], $originImage);
     	
-    	if (file_exists($originImage))
+    	// Todo: Ajouter création vignette pour les autres formats d'images
+    	if (file_exists($originImage) && eregi('(\.jpg|\.png)$',$files['name']))
     	{
     		// Crée fichier en taille vignette
     		vignette($originImage);
