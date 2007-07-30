@@ -9,6 +9,7 @@ MailRecipients=Recipients
 MailRecipient=Recipient
 MailTitle=Title
 MailFrom=Sender
+MailErrorsTo=Errors to
 MailReply=Reply to
 MailTo=Receiver(s)
 MailCC=Copy to

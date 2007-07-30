@@ -211,8 +211,7 @@ class RejetPrelevement
     
             $mailfile = new CMailFile($subject,$sendto,$from,$message,
                                       $arr_file,$arr_mime,$arr_name,
-                                      '', '', 0, $msgishtml);
-            $mailfile->errors_to = $this->user->email;
+                                      '', '', 0, $msgishtml,$this->user->email);
     
             $result=$mailfile->sendfile();
             if ($result)

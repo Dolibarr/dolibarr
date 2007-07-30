@@ -48,9 +48,11 @@ class CMailFile
 {
     var $subject;
     var $addr_from;
-    var $addr_to;
+    var $errors_to;
+	var $addr_to;
     var $addr_cc;
     var $addr_bcc;
+	
     var $mime_boundary;
     var $deliveryreceipt;
     
@@ -75,9 +77,9 @@ class CMailFile
     */
     function CMailFile($subject,$to,$from,$msg,
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
-                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0)
+                       $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0, $errors_to='')
     {
-        dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc");
+        dolibarr_syslog("CMailFile::CMailfile: from=$from, to=$to, addr_cc=$addr_cc, addr_bcc=$addr_bcc, errors_to=$errors_to");
         dolibarr_syslog("CMailFile::CMailfile: subject=$subject, deliveryreceipt=$deliveryreceipt, msgishtml=$msgishtml");
         foreach ($filename_list as $i => $val)
         {
@@ -107,6 +109,7 @@ class CMailFile
         // En-tete dans $smtp_headers
         $this->subject = $subject;
         $this->addr_from = $from;
+		$this->errors_to = $errors_to;
         $this->addr_to = $to;
         $this->addr_cc = $addr_cc;
         $this->addr_bcc = $addr_bcc;
@@ -172,7 +175,7 @@ class CMailFile
 	{
 		global $conf;
 		
-		dolibarr_syslog("CMailFile::sendfile addr_from=".$this->addr_from.", addr_to=".$this->addr_to.", subject=".$this->subject);
+		dolibarr_syslog("CMailFile::sendfile addr_to=".$this->addr_to.", subject=".$this->subject);
 		dolibarr_syslog("CMailFile::sendfile header=\n".$this->headers);
 		//dolibarr_syslog("CMailFile::sendfile message=\n".$message);
 		//$this->send_to_file();
@@ -205,6 +208,7 @@ class CMailFile
 			}
 			else
 			{
+				/* Le errors_to doit se gerer dans en-tete http et non par option -f
 				if ($this->errors_to)
 				{
 					// \TODO Tester que le safe_mode est inactif car fonction mail avec ces param non dispo en safe_mode
@@ -212,11 +216,11 @@ class CMailFile
 					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
 				}
 				else
-				{
+				{*/
 					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
 					//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
 					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
-				}
+				/* } */
 				if (! $res) 
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";

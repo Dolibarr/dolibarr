@@ -9,6 +9,7 @@ MailRecipients=Destinataires
 MailRecipient=Destinataire
 MailTitle=Titre
 MailFrom=Émetteur
+MailErrorsTo=Erreurs à
 MailReply=Réponse à
 MailTo=Destinataire(s)
 MailCC=Copie à

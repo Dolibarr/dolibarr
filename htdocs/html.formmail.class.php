@@ -1,5 +1,5 @@
 <?PHP
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -80,6 +80,7 @@ class FormMail
 		$this->withfrom=1;
 		$this->withto=1;
 		$this->withtocc=1;
+		$this->witherrorsto=0;
 		$this->withtopic=1;
 		$this->withfile=0;
 		$this->withbody=1;
@@ -88,6 +89,7 @@ class FormMail
 		$this->withreplytoreadonly=1;
 		$this->withtoreadonly=0;
 		$this->withtoccreadonly=0;
+		$this->witherrorstoreadonly=0;
 		$this->withtopicreadonly=0;
 		$this->withbodyreadonly=0;
 		$this->withdeliveryreceiptreadonly=0;
@@ -152,7 +154,26 @@ class FormMail
 				print "</td></tr>\n";
 			}
 		}
-	
+
+		// Errorsto
+		if ($this->witherrorsto)
+		{
+			//if (! $this->errorstomail) $this->errorstomail=$this->frommail;
+			if ($this->witherrorstoreadonly)
+			{
+				print '<input type="hidden" name="errorstomail" value="'.$this->errorstomail.'">';
+				print "<tr><td>".$langs->trans("MailErrorsTo")."</td><td>";
+				print $this->errorstomail;
+				print "</td></tr>\n";
+			}
+			else
+			{
+				print "<tr><td>".$langs->trans("MailErrorsTo")."</td><td>";
+				print "<input size=\"30\" name=\"errorstomail\" value=\"".$this->errorstomail."\">";
+				print "</td></tr>\n";
+			}
+		}
+		
 		// To
 		if ($this->withto || is_array($this->withto))
 		{

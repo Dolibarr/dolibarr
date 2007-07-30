@@ -68,7 +68,8 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 	$filename = array();
 
 	$email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
-    $sendto     = $_POST["sendto"];
+	$errors_to  = $_POST["errorstomail"];
+	$sendto     = $_POST["sendto"];
 	$subject    = $_POST['subject'];
 	$body       = $_POST['message'];
 	if ($_FILES['addedfile']['tmp_name'])
@@ -97,9 +98,9 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
         							$filepath,$mimetype,$filename,
-        							'', '', 0, $msgishtml);
-
-        $result=$mailfile->sendfile();
+        							'', '', 0, $msgishtml,$errors_to);
+        
+		$result=$mailfile->sendfile();
         if ($result)
         {
             $message='<div class="ok">'.$langs->trans("MailSuccessfulySent",$email_from,$sendto).'</div>';
@@ -206,6 +207,7 @@ else
 			  $formmail->frommail = $conf->global->MAIN_MAIL_EMAIL_FROM;
 			  $formmail->withsubstit=0;
 			  $formmail->withfrom=1;
+			  $formmail->witherrorsto=1;
 			  $formmail->withto=$user->email?$user->email:1;
 			  $formmail->withcc=0;
 			  $formmail->withtopic=$langs->trans("Test");
