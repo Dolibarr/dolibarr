@@ -761,6 +761,18 @@ function img_file($alt = "default")
 }
 
 /**
+        \brief      Affiche logo refresh
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tag img
+*/
+function img_refresh($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Refresh");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/refresh.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
         \brief      Affiche logo dossier
         \param      alt         Texte sur le alt de l'image
         \return     string      Retourne tag img

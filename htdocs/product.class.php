@@ -2124,8 +2124,10 @@ class Product
    *    \brief      Déplace fichier uploadé sous le nom $files dans le répertoire sdir
    *    \param      sdir        Répertoire destination finale
    *    \param      $files      Nom du fichier uploadé
+   *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par défaut)
+   *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par défaut)
    */
-  function add_photo($sdir, $files)
+  function add_photo($sdir, $files, $maxWidth = 160, $maxHeight = 120)
   {
     $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
     $dir .= "photos/";
@@ -2147,9 +2149,21 @@ class Product
     	if (file_exists($originImage) && eregi('(\.jpg|\.png)$',$files['name']))
     	{
     		// Crée fichier en taille vignette
-    		vignette($originImage);
+    		$this->add_thumb($originImage,$maxWidth,$maxHeight);
     	}
     }
+  }
+  
+  /**
+   *    \brief      Génère la vignette
+   *    \param      sdir           Répertoire destination finale
+   *    \param      files          Nom du fichier uploadé
+   *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
+   *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par défaut)
+   */
+  function add_thumb($files, $maxWidth = 160, $maxHeight = 120)
+  {
+  	vignette($files,$maxWidth,$maxHeight);
   }
 
   /**

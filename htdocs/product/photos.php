@@ -70,6 +70,12 @@ if ($_GET["action"] == 'delete' && $_GET["file"])
     $product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
 }
 
+if ($_GET["action"] == 'addthumb' && $_GET["file"]) 
+{
+    $product = new Product($db);
+    $product->add_thumb($conf->produit->dir_output."/".$_GET["file"]);
+}
+
 
 /*
  *
@@ -182,6 +188,7 @@ if ($_GET["id"] || $_GET["ref"])
                 if ($obj['photo_vignette'])
                 {
                 	$filename=$obj['photo_vignette'];
+                	$thumbfilename=$obj['photo_vignette'];
                 }
                 else
                 {
@@ -195,9 +202,15 @@ if ($_GET["id"] || $_GET["ref"])
 
                 print '</a>';
                 print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
+                print '<br>';
+                // On propose la génération de la vignette si elle n'existe pas
+                if (!$obj['photo_vignette'])
+                {
+                	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('RegenerateThumb')).'&nbsp;&nbsp;</a>';
+                }
                 if ($user->rights->produit->creer)
                 {
-                    print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">'.img_delete().'</a>';
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">'.img_delete().'</a>';
                 }
                 if ($nbbyrow) print '</td>';
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
