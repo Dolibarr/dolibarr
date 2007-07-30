@@ -71,8 +71,17 @@ print '</tr>';
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
 print '</tr>';
 
-// Prix
-print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">'.price($product->price).'</td></tr>';
+ // Prix
+    print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+	if ($product->price_base_type == 'TTC')
+	{
+	  print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
+	}
+	else
+	{
+	  print price($product->price).' '.$langs->trans($product->price_base_type);
+	}
+	print '</td></tr>';
 
 // Statut
 print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
