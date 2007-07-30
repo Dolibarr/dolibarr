@@ -2338,6 +2338,25 @@ class Product
     return $tabobj;
   }
 
+ /**
+   *    \brief      Efface la photo du produit et sa vignette
+   *    \param      file        Chemin de l'image
+   */
+  function delete_photo($file)
+  {
+  	// On efface l'image d'origine
+  	unlink($file);
+  	
+  	// Si elle existe, on efface la vignette
+  	if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$file,$regs))
+	  {
+	  	$photo_vignette=eregi_replace($regs[0],'',$file).'_small'.$regs[0];
+	  	if (file_exists($photo_vignette))
+	  	{
+	  		unlink($photo_vignette);
+	  	}
+	  }
+	}
 
   /**
    *      \brief      Charge indicateurs this->nb de tableau de bord

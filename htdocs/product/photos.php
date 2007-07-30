@@ -49,7 +49,7 @@ if (!$user->rights->produit->lire) accessforbidden();
  * Actions
  */
 
-if ($_POST["sendit"] && $conf->upload != 0)
+if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && $conf->upload != 0)
 {
     if ($_GET["id"])
     {
@@ -66,7 +66,8 @@ if ($_POST["sendit"] && $conf->upload != 0)
 
 if ($_GET["action"] == 'delete' && $_GET["file"]) 
 {
-    unlink($conf->produit->dir_output."/".$_GET["file"]);
+    $product = new Product($db);
+    $product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
 }
 
 
@@ -181,19 +182,22 @@ if ($_GET["id"] || $_GET["ref"])
                 if ($obj['photo_vignette'])
                 {
                 	$filename=$obj['photo_vignette'];
-                	$viewfilename=$obj['photo'];
                 }
                 else
                 {
                 	$filename=$obj['photo'];
                 }
+                
+                // Nom affiché
+                $viewfilename=$obj['photo'];
+
                 print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
                 print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
                 if ($user->rights->produit->creer)
                 {
-                    print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$filename).'">'.img_delete().'</a>';
+                    print '<br>'.'<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">'.img_delete().'</a>';
                 }
                 if ($nbbyrow) print '</td>';
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
