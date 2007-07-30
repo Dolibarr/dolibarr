@@ -2235,8 +2235,8 @@ class Product
   {
     $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
-    $dirthumb = $dir.'thumb/';
-    $pdirthumb = $pdir.'thumb/';
+    $dirthumb = $dir.'thumbs/';
+    $pdirthumb = $pdir.'thumbs/';
 
     $nbphoto=0;
     if (file_exists($dir))
@@ -2318,7 +2318,7 @@ class Product
     $nbphoto=0;
     $tabobj=array();
     
-    $dirthumb = $dir.'thumb/';
+    $dirthumb = $dir.'thumbs/';
 
     if (file_exists($dir))
     {
@@ -2364,7 +2364,7 @@ class Product
   function delete_photo($file)
   {
   	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
-  	$dirthumb = $dir.'/thumb/'; // Chemin du dossier contenant la vignette
+  	$dirthumb = $dir.'/thumbs/'; // Chemin du dossier contenant la vignette
   	$filename = eregi_replace($dir,'',$file); // Nom du fichier
   	
   	// On efface l'image d'origine

@@ -2971,7 +2971,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
    
    $fichier = realpath($file); // Chemin canonique absolu de l'image
    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image
-   $dirthumb = $dir.'thumb/'; // Chemin du dossier contenant les vignettes
+   $dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
    $infoImg = getimagesize($fichier); // Récupération des infos de l'image
    $imgWidth = $infoImg[0]; // Largeur de l'image
    $imgHeight = $infoImg[1]; // Hauteur de l'image
