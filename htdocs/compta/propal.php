@@ -459,12 +459,12 @@ if ($_GET["propalid"] > 0)
 
 		if ($propal->statut == 2 && $user->rights->facture->creer)
 		{
-			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create\">".$langs->trans("BuildBill")."</a>";
+			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BuildBill")."</a>";
 		}
 	
 		if ($propal->statut == 2 && sizeof($propal->getInvoiceArrayList()))
 		{
-			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4\">".$langs->trans("ClassifyBilled")."</a>";
+			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("ClassifyBilled")."</a>";
 		}
 	}
     print "</div>";
