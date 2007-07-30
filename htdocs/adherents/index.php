@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -283,7 +283,7 @@ foreach ($Total as $key=>$value)
 }
 
 // Total
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price($numb>0?($tot/$numb):0)."</td></tr>\n";
+print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td></tr>\n";
 print "</table><br>\n";
 
 print '</td></tr>';

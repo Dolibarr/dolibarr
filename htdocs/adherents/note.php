@@ -86,11 +86,6 @@ if ($id)
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
-	$result=$adh->load_previous_next_id($adh->next_prev_filter);
-	if ($result < 0) dolibarr_print_error($db,$adh->error);
-	$previous_id = $adh->id_previous?'<a href="'.$_SERVER["PHP_SELF"].'?id='.urlencode($adh->id_previous).'">'.img_previous().'</a>':'';
-	$next_id     = $adh->id_next?'<a href="'.$_SERVER["PHP_SELF"].'?id='.urlencode($adh->id_next).'">'.img_next().'</a>':'';
-
 	print "<form method=\"post\" action=\"note.php\">";
 	
     print '<table class="border" width="100%">';
@@ -98,9 +93,7 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	print $adh->id;
-	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+	print $html->showrefnav($adh,'id');
 	print '</td>';
 	print '</tr>';
 
