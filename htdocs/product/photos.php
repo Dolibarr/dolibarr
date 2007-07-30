@@ -187,7 +187,7 @@ if ($_GET["id"] || $_GET["ref"])
                 // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
                 if ($obj['photo_vignette'])
                 {
-                	$filename=$obj['photo_vignette'];
+                	$filename='thumb/'.$obj['photo_vignette'];
                 }
                 else
                 {

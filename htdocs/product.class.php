@@ -2157,13 +2157,13 @@ class Product
   /**
    *    \brief      Génère la vignette
    *    \param      sdir           Répertoire destination finale
-   *    \param      files          Nom du fichier uploadé
+   *    \param      file           Nom du fichier d'origine
    *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
    *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par défaut)
    */
-  function add_thumb($files, $maxWidth = 160, $maxHeight = 120)
+  function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
   {
-  	vignette($files,$maxWidth,$maxHeight);
+  	vignette($file,$maxWidth,$maxHeight);
   }
 
   /**
@@ -2235,6 +2235,8 @@ class Product
   {
     $pdir = get_exdir($this->id,2) . $this->id ."/photos/";
     $dir = $sdir . '/'. $pdir;
+    $dirthumb = $dir.'thumb/';
+    $pdirthumb = $pdir.'thumb/';
 
     $nbphoto=0;
     if (file_exists($dir))
@@ -2245,7 +2247,7 @@ class Product
         {
         	$photo='';
 
-          if (is_file($dir.$file) && !eregi('\_small',$file))
+          if (is_file($dir.$file))
           {
           	$nbphoto++;
           	$photo = $file;
@@ -2266,8 +2268,8 @@ class Product
 		  print '<a href="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'" alt="Taille origine" target="_blank">';
 
 		  // Si fichier vignette disponible, on l'utilise, sinon on utilise photo origine
-		  if ($photo_vignette && is_file($dir.$photo_vignette)) {
-		    print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo_vignette).'">';
+		  if ($photo_vignette && is_file($dirthumb.$photo_vignette)) {
+		    print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdirthumb.$photo_vignette).'">';
 		  }
 		  else {
 		    print '<img border="0" height="120" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$photo).'">';
@@ -2315,6 +2317,8 @@ class Product
   {
     $nbphoto=0;
     $tabobj=array();
+    
+    $dirthumb = $dir.'thumb/';
 
     if (file_exists($dir))
     {
@@ -2322,7 +2326,7 @@ class Product
     	
     	while (($file = readdir($handle)) != false)
     	{
-    		if (is_file($dir.$file) && !eregi('\_small',$file))
+    		if (is_file($dir.$file))
 	      {
 	      	$nbphoto++;
 	      	$photo = $file;
@@ -2337,7 +2341,7 @@ class Product
 	      	// Objet
 	      	$obj=array();
 	      	$obj['photo']=$photo;
-	      	if ($photo_vignette && is_file($dir.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
+	      	if ($photo_vignette && is_file($dirthumb.$photo_vignette)) $obj['photo_vignette']=$photo_vignette;
 	      	else $obj['photo_vignette']="";
 
 	      	$tabobj[$nbphoto-1]=$obj;
@@ -2359,16 +2363,20 @@ class Product
    */
   function delete_photo($file)
   {
+  	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image d'origine
+  	$dirthumb = $dir.'/thumb/'; // Chemin du dossier contenant la vignette
+  	$filename = eregi_replace($dir,'',$file); // Nom du fichier
+  	
   	// On efface l'image d'origine
   	unlink($file);
   	
   	// Si elle existe, on efface la vignette
-  	if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$file,$regs))
+  	if (eregi('(\.jpg|\.bmp|\.gif|\.png|\.tiff)$',$filename,$regs))
 	  {
-	  	$photo_vignette=eregi_replace($regs[0],'',$file).'_small'.$regs[0];
-	  	if (file_exists($photo_vignette))
+	  	$photo_vignette=eregi_replace($regs[0],'',$filename).'_small'.$regs[0];
+	  	if (file_exists($dirthumb.$photo_vignette))
 	  	{
-	  		unlink($photo_vignette);
+	  		unlink($dirthumb.$photo_vignette);
 	  	}
 	  }
 	}

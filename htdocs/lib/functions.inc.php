@@ -2971,9 +2971,17 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
    
    $fichier = realpath($file); // Chemin canonique absolu de l'image
    $dir = dirname($file).'/'; // Chemin du dossier contenant l'image
+   $dirthumb = $dir.'thumb/'; // Chemin du dossier contenant les vignettes
    $infoImg = getimagesize($fichier); // Récupération des infos de l'image
    $imgWidth = $infoImg[0]; // Largeur de l'image
    $imgHeight = $infoImg[1]; // Hauteur de l'image
+   
+   // On crée le répertoire contenant les vignettes
+   if (! file_exists($dirthumb))
+    {
+    	dolibarr_syslog("Product Create $dirthumb");
+    	create_exdir($dirthumb);
+    }
    
    // Initialisation des variables selon l'extension de l'image
    switch($infoImg[2]){
@@ -3007,9 +3015,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
    $imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight); // Création de la vignette
    
    imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
-   
+
    $fileName = basename($file, $extImg); // Nom du fichier sans son extension
-   $imgThumbName = $dir.$fileName.'_small'.$extImg; // Chemin complet du fichier de la vignette
+   $imgThumbName = $dirthumb.$fileName.'_small'.$extImg; // Chemin complet du fichier de la vignette
    
    //Création du fichier de la vignette
    $fp = fopen($imgThumbName, "w");
