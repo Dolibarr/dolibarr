@@ -1969,12 +1969,12 @@ function price($amount, $html=0, $outlangs='', $trunc=1, $nbdecimal=2)
 
 	if ($outlangs->trans("SeparatorDecimal") != "SeparatorDecimal")  $dec=$outlangs->trans("SeparatorDecimal");
 	if ($outlangs->trans("SeparatorThousand")!= "SeparatorThousand") $thousand=$outlangs->trans("SeparatorThousand");
-	//print "dec=".$dec." thousand=".$thousand;
+	//print "amount=".$amount." html=".$html." trunc=".$trunc." nbdecimal=".$nbdecimal." dec=".$dec." thousand=".$thousand;
 
 	//print "amount=".$amount."-";	
 	$amount = ereg_replace(',','.',$amount);
 	//print $amount."-";
-	$datas = split("\.",$amount);
+	$datas = split('\.',$amount);
 	$decpart = $datas[1];
 	$decpart = eregi_replace('0+$','',$decpart);	// Supprime les 0 de fin de partie décimale
 	//print "decpart=".$decpart."<br>";
