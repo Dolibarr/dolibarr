@@ -203,7 +203,7 @@ if ($_GET["id"] || $_GET["ref"])
                 print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
                 print '<br>';
                 // On propose la génération de la vignette si elle n'existe pas
-                if (!$obj['photo_vignette'])
+                if (!$obj['photo_vignette'] && eregi('(\.jpg|\.png)$',$obj['photo']))
                 {
                 	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('RegenerateThumb')).'&nbsp;&nbsp;</a>';
                 }

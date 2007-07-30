@@ -2955,6 +2955,11 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
       // Si le fichier passé en paramètre n'existe pas
       return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
    }
+   elseif(!eregi('(\.jpg|\.png)$',$files['name']))
+   {
+   	  // Todo: Ajouter création vignette pour les autres formats d'images
+      return 'Le fichier '.$file.' n\'ai pas géré pour le moment.';
+   }
    elseif(empty($file)){
       // Si le fichier n'a pas été indiqué
       return 'Nom du fichier non renseigné.';
@@ -2982,6 +2987,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
     	dolibarr_syslog("Product Create $dirthumb");
     	create_exdir($dirthumb);
     }
+
    
    // Initialisation des variables selon l'extension de l'image
    switch($infoImg[2]){

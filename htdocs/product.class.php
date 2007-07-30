@@ -2123,11 +2123,11 @@ class Product
   /**
    *    \brief      Déplace fichier uploadé sous le nom $files dans le répertoire sdir
    *    \param      sdir        Répertoire destination finale
-   *    \param      $files      Nom du fichier uploadé
+   *    \param      $file       Nom du fichier uploadé
    *    \param      maxWidth    Largeur maximum que dois faire la miniature (160 par défaut)
    *    \param      maxHeight   Hauteur maximum que dois faire la miniature (120 par défaut)
    */
-  function add_photo($sdir, $files, $maxWidth = 160, $maxHeight = 120)
+  function add_photo($sdir, $file, $maxWidth = 160, $maxHeight = 120)
   {
     $dir = $sdir .'/'. get_exdir($this->id,2) . $this->id ."/";
     $dir .= "photos/";
@@ -2140,13 +2140,12 @@ class Product
   
     if (file_exists($dir))
     {
-    	$originImage = $dir . $files['name'];
+    	$originImage = $dir . $file['name'];
     	
     	// Crée fichier en taille origine
-    	doliMoveFileUpload($files['tmp_name'], $originImage);
-    	
-    	// Todo: Ajouter création vignette pour les autres formats d'images
-    	if (file_exists($originImage) && eregi('(\.jpg|\.png)$',$files['name']))
+    	doliMoveFileUpload($file['tmp_name'], $originImage);
+
+    	if (file_exists($originImage))
     	{
     		// Crée fichier en taille vignette
     		$this->add_thumb($originImage,$maxWidth,$maxHeight);
@@ -2157,13 +2156,16 @@ class Product
   /**
    *    \brief      Génère la vignette
    *    \param      sdir           Répertoire destination finale
-   *    \param      file           Nom du fichier d'origine
+   *    \param      file           Chemin du fichier d'origine
    *    \param      maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
    *    \param      maxHeight      Hauteur maximum que dois faire la miniature (120 par défaut)
    */
   function add_thumb($file, $maxWidth = 160, $maxHeight = 120)
   {
-  	vignette($file,$maxWidth,$maxHeight);
+  	if (file_exists($file))
+    {
+    	vignette($file,$maxWidth,$maxHeight);
+    }
   }
 
   /**
