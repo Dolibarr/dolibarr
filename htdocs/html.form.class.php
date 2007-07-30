@@ -86,7 +86,7 @@ class Form
     $htmltext=ereg_replace("'","\'",$htmltext);
     $htmltext=ereg_replace("&#039;","\'",$htmltext);
     
-    if ($conf->use_ajax && $conf->global->PRODUIT_DESC_IN_FORM && $tooltipon == 4)
+    if ($conf->use_ajax && $tooltipon == 4)
     {
     	$s = '<script type=\'text/javascript\'>
     	function init() {
