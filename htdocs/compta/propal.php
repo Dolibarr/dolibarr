@@ -682,7 +682,7 @@ else
   $sql .= " ORDER BY $sortfield $sortorder, p.rowid DESC ";
   $sql .= $db->plimit($limit + 1,$offset);
 
-	if ( $db->query($sql) )
+	if ( $result = $db->query($sql) )
 	{
 		$num = $db->num_rows();
 		
@@ -730,7 +730,7 @@ else
         
 		while ($i < min($num, $limit))
 		{
-			$objp = $db->fetch_object();
+			$objp = $db->fetch_object($result);
 		
 			$var=!$var;
 			print "<tr $bc[$var]>";
@@ -788,7 +788,7 @@ else
 		}
 		
 	  	print "</table>";
-	  	$db->free();
+	  	$db->free($result);
 	}
 	else
 	{
