@@ -202,6 +202,7 @@ if ($_GET["action"] == 'create')
 	$form->select_currency($selectedcode, 'account_currency_code');
 */
 	print $langs->trans("Currency".$conf->monnaie);
+	print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 	print '</td></tr>';
 
 	// Pays		
@@ -320,6 +321,7 @@ else
 		$form->select_currency($selectedcode, 'account_currency_code');
 	*/
 		print $langs->trans("Currency".$conf->monnaie);
+		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 		print '</td></tr>';
 	
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';
@@ -430,6 +432,7 @@ else
 		$form->select_currency($selectedcode, 'account_currency_code');
 	*/
 		print $langs->trans("Currency".$conf->monnaie);
+		print '<input type="hidden" name="account_currency_code" value="'.$conf->monnaie.'">';
 		print '</td></tr>';
 	
 		print '<tr><td valign="top">'.$langs->trans("BalanceMinimalAllowed").'</td>';

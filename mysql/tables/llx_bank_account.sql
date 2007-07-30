@@ -1,6 +1,6 @@
 -- =============================================================================
 -- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -47,7 +47,7 @@ create table llx_bank_account
   rappro         smallint DEFAULT 1,
   url			       varchar(128),
   account_number varchar(8),
-  currency_code  varchar(2) NOT NULL,
+  currency_code  varchar(3) NOT NULL,
   min_allowed    integer DEFAULT 0,
   min_desired    integer DEFAULT 0,
   comment        varchar(254)

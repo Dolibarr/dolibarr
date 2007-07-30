@@ -61,14 +61,13 @@ class box_comptes extends ModeleBoxes {
 	*/
 	function loadBox($max=5)
 	{
-		global $user, $langs, $db;
-		$langs->load("boxes");
+		global $user, $langs, $db, $conf;
 
 		$this->info_box_head = array('text' => $langs->trans("BoxTitleCurrentAccounts"));
 
 		if ($user->rights->banque->lire)
 		{
-			$sql  = "SELECT rowid, label, bank, number";
+			$sql  = "SELECT rowid, label, bank, number, currency_code";
 			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
 			$sql .= " WHERE clos = 0 AND courant = 1";
 			$sql .= " ORDER BY label";
@@ -92,19 +91,21 @@ class box_comptes extends ModeleBoxes {
 
 					$this->info_box_contents[$i][0] = array('align' => 'left',
 					'logo' => $this->boximg,
-					'text' => stripslashes($objp->label),
+					'text' => $objp->label,
 					'url' => DOL_URL_ROOT."/compta/bank/account.php?account=".$objp->rowid);
 
+					/*
 					$this->info_box_contents[$i][1] = array('align' => 'left',
-					'text' => stripslashes($objp->bank)
+					'text' => $objp->bank
+					);
+					*/
+					
+					$this->info_box_contents[$i][1] = array('align' => 'left',
+					'text' => $objp->number
 					);
 
-					$this->info_box_contents[$i][2] = array('align' => 'left',
-					'text' => stripslashes($objp->number)
-					);
-
-					$this->info_box_contents[$i][3] = array('align' => 'right',
-					'text' => price($acc->solde())
+					$this->info_box_contents[$i][2] = array('align' => 'right',
+					'text' => price($acc->solde()).' '.$langs->trans("Currency".$objp->currency_code)
 					);
 
 					$i++;
@@ -115,14 +116,14 @@ class box_comptes extends ModeleBoxes {
 				
 				$this->info_box_contents[$i][0] = array('align' => 'right',
 				//'width' => '75%',
-      			'colspan' => '4',
+      			'colspan' => '3',
 				'class' => 'liste_total',
 				'text' => $langs->trans('Total')
 				);
 
 				$this->info_box_contents[$i][1] = array('align' => 'right',
 				'class' => 'liste_total',
-				'text' => price($solde_total)
+				'text' => price($solde_total).' '.$langs->trans("Currency".$conf->monnaie)
 				);
 
 			}

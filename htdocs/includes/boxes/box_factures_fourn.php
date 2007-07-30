@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -73,8 +73,8 @@ class box_factures_fourn extends ModeleBoxes {
         if ($user->rights->fournisseur->facture->lire)
         {
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " f.facnumber, f.amount,".$db->pdate("f.datef")." as df,";
-            $sql.= " f.paye, f.fk_statut, f.rowid as facid";
+            $sql.= " f.rowid as facid, f.facnumber, f.amount,".$db->pdate("f.datef")." as df,";
+            $sql.= " f.paye, f.fk_statut, f.datec";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture_fourn as f";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -108,8 +108,13 @@ class box_factures_fourn extends ModeleBoxes {
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/fourn/fiche.php?socid=".$objp->socid);
 
-                    $this->info_box_contents[$i][2] = array(
+					$this->info_box_contents[$i][2] = array(
                     'align' => 'right',
+                    'text' => dolibarr_print_date($objp->datec,'day'));
+
+                    $this->info_box_contents[$i][3] = array(
+                    'align' => 'right',
+					'width' => 18,
                     'text' => $facturestatic->LibStatut($objp->paye,$objp->fk_statut,3));
                     
                     $i++;

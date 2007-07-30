@@ -63,7 +63,6 @@ class box_prospect extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db;
-        $langs->load("boxes");
 
         $this->info_box_head = array('text' => $langs->trans("BoxTitleLastProspects",$max));
 
@@ -99,10 +98,11 @@ class box_prospect extends ModeleBoxes {
                     'text' => stripslashes($objp->nom),
                     'url' => DOL_URL_ROOT."/comm/prospect/fiche.php?id=".$objp->socid);
 
-					$this->info_box_contents[$i][1] = array('align' => 'ce,ter',
+					$this->info_box_contents[$i][1] = array('align' => 'right',
 					'text' => dolibarr_print_date($objp->dc, "day"));
 
                     $this->info_box_contents[$i][2] = array('align' => 'right',
+					'width' => 18,
                     'text' => $prospectstatic->LibStatut($objp->fk_stcomm,3));
 
                     $i++;

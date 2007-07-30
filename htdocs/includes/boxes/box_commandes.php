@@ -71,7 +71,7 @@ class box_commandes extends ModeleBoxes {
         {
 
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " p.ref, ".$db->pdate("p.date_commande")." as dp, p.rowid,";
+            $sql.= " p.ref, p.tms, p.rowid,";
             $sql.= " p.fk_statut, p.facture";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."commande as p";
@@ -105,9 +105,14 @@ class box_commandes extends ModeleBoxes {
                     $this->info_box_contents[$i][1] = array('align' => 'left',
                     'text' => $objp->nom,
                     'url' => DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->socid);
+
+                    $this->info_box_contents[$i][2] = array('align' => 'right',
+                    'text' => dolibarr_print_date($objp->tms,'day'),
+                    );
                     
-                    $this->info_box_contents[$i][2] = array(
+                    $this->info_box_contents[$i][3] = array(
                     'align' => 'right',
+					'width' => 18,
                     'text' => $commandestatic->LibStatut($objp->fk_statut,$objp->facturee,3));
 
                     $i++;
@@ -122,11 +127,13 @@ class box_commandes extends ModeleBoxes {
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
                     } else {
                         $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                         $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                        $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
                     }
                     $i++;
                 }

@@ -73,7 +73,7 @@ class box_propales extends ModeleBoxes {
         {
 
             $sql = "SELECT s.nom, s.rowid as socid,";
-            $sql.= " p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp, p.rowid";
+            $sql.= " p.rowid, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp, p.datec";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."propal as p";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -109,6 +109,11 @@ class box_propales extends ModeleBoxes {
                     
                     $this->info_box_contents[$i][2] = array(
                     'align' => 'right',
+                    'text' => dolibarr_print_date($objp->datec,'day'));
+
+                    $this->info_box_contents[$i][3] = array(
+                    'align' => 'right',
+					'width' => 18,
                     'text' => $propalstatic->LibStatut($objp->fk_statut,3));
 
                     $i++;
@@ -123,11 +128,13 @@ class box_propales extends ModeleBoxes {
                 $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
             } else {
                 $this->info_box_contents[$i][0] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][1] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][2] = array('text'=>'&nbsp;');
                 $this->info_box_contents[$i][3] = array('text'=>'&nbsp;');
+                $this->info_box_contents[$i][4] = array('text'=>'&nbsp;');
             }
             $i++;
           }

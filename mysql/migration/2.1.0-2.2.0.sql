@@ -11,6 +11,10 @@
 -- Nettoyage champ ref table llx_bank_account
 update llx_bank_account set ref=concat('ACCOUNT',rowid) where (ref='' or ref is null);
 
+update llx_bank_account set currency_code='EU' where (currency_code IS NULL or currency_code='');
+alter table llx_bank_account modify currency_code varchar(3) NOT NULL;
+update llx_bank_account set currency_code='EUR' where (currency_code IS NULL or currency_code='' or currency_code='EU');
+
 -- Sequence de requete pour nettoyage et correction champ type table llx_bank_url
 update llx_bank_url set type='company'  where (type is null or type = '') and url like '%compta/fiche.php?socid=%';
 alter table llx_bank_url modify `type` enum("","?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc");

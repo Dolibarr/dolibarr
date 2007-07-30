@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -62,7 +61,6 @@ class box_produits extends ModeleBoxes {
     function loadBox($max=5)
     {
         global $user, $langs, $db, $conf;
-        $langs->load("boxes");
 
 		$productstatic=new Product($db);
 		
@@ -70,7 +68,7 @@ class box_produits extends ModeleBoxes {
 
         if ($user->rights->produit->lire)
         {
-            $sql = "SELECT p.label, p.rowid, p.price, p.fk_product_type, p.envente";
+            $sql = "SELECT p.rowid, p.label, p.price, p.price_base_type, p.price_ttc, p.fk_product_type, p.tms, p.envente";
             $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
             if ($conf->categorie->enabled && !$user->rights->categorie->voir)
             {
@@ -111,12 +109,32 @@ class box_produits extends ModeleBoxes {
                     'text' => $objp->label,
                     'url' => DOL_URL_ROOT."/product/fiche.php?id=".$objp->rowid);
     
-                    $this->info_box_contents[$i][1] = array(
+					if ($objp->price_base_type == 'HT')
+					{
+						$price=price($objp->price);
+						$price_base_type=$langs->trans("HT");
+					}
+					else
+					{
+					    $price=price($objp->price_ttc);
+						$price_base_type=$langs->trans("TTC");
+					}
+					$this->info_box_contents[$i][1] = array(
                     'align' => 'right',
-                    'text' => price($objp->price));
+                    'text' => $price);
 
-                    $this->info_box_contents[$i][2] = array(
+					$this->info_box_contents[$i][2] = array(
+                    'align' => 'center',
+					'width' => 20,
+                    'text' => $price_base_type);
+
+					$this->info_box_contents[$i][3] = array(
                     'align' => 'right',
+                    'text' => dolibarr_print_date($objp->tms,'day'));
+
+                    $this->info_box_contents[$i][4] = array(
+                    'align' => 'right',
+					'width' => 18,
                     'text' => $productstatic->LibStatut($objp->envente,3));
 
                     $i++;
