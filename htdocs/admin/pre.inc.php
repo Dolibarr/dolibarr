@@ -60,7 +60,6 @@ function llxHeader($head = "", $title="", $help_url='')
 
 	$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
 
-	$langs->load("users");
 	$menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
 
 	$menu->add(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
@@ -68,6 +67,8 @@ function llxHeader($head = "", $title="", $help_url='')
 	$menu->add(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 
 	$menu->add(DOL_URL_ROOT."/admin/system/", $langs->trans("System"));
+	
+	$menu->add(DOL_URL_ROOT."/admin/tools/", $langs->trans("Tools"));
 
 	left_menu($menu->liste, $help_url);
 }
