@@ -713,8 +713,8 @@ else
         print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
         print '</td>';
         print '<td class="liste_titre" colspan="1" align="right">';
-        print 'mois : ' . '<input class="flat" type="text" size="3" name="month" value="'.$month.'">';
-        print '&nbsp;ann&eacute;e : ' . '<input class="flat" type="text" size="5" name="year" value="'.$year.'">';
+        print $langs->trans('Month').' : ' . '<input class="flat" type="text" size="3" name="month" value="'.$month.'">';
+        print '&nbsp;'.$langs->trans('Year').' : ' . '<input class="flat" type="text" size="5" name="year" value="'.$year.'">';
         print '</td>';
         print '<td class="liste_titre" align="right">';
         print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';

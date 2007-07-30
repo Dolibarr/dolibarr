@@ -66,14 +66,14 @@ class Form
   
   /**
      \brief     Affiche un texte+picto avec tooltip sur texte ou sur picto
-     \param     text				Texte à afficher
-     \param     htmltext	     	Contenu html du tooltip, codé en html
-	 \param		tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2
+     \param   text				  Texte à afficher
+     \param   htmltext	    Contenu html du tooltip, codé en html
+	   \param		tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip ajax
      \param		direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
-     \param		img					Code img du picto
+     \param		img					  Code img du picto
      \return	string				Code html du texte,picto
   */
-  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='')
+  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$option='')
   {
   	global $conf;
 		
@@ -86,12 +86,17 @@ class Form
     $htmltext=ereg_replace("'","\'",$htmltext);
     $htmltext=ereg_replace("&#039;","\'",$htmltext);
     
-    if ($conf->use_ajax && $tooltipon == 4)
+    if ($conf->use_ajax && $conf->global->PRODUIT_DESC_IN_FORM && $tooltipon == 4)
     {
     	$s = '<script type=\'text/javascript\'>
-    	       new Tip(\'tip1\', \''.$htmltext.'\');';
+    	function init() {
+    	//<![CDATA[
+    		new Tip(\'tip'.$i.'\', \''.$htmltext.'\',{title : \''.$option.'\'});
+      //]]>
+      }
+      Event.observe(window, \'load\', init, false);';
     	$s.= '</script>';
-    	$s.= '<span id="tip1">'.$text.'</span>';
+    	$s.= '<span id="tip'.$i.'">'.$text.'</span>';
     }
     else
     {

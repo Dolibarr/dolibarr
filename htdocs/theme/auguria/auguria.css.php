@@ -1269,12 +1269,13 @@ form.inplaceeditor-form a { /* The cancel link */
 /*  Ajax - Tooltip                                                                */
 /* ============================================================================== */
 .tooltip {
-     width: 150px;
+     width: 500px;
      color: #fff;
      }
 .tooltip .title {
      background: #0F6788;
-     font: italic 17px Georgia, serif;
+     font: 15px Arial, Helvetica, sans-serif;
+     font-weight: bold;
      padding: 5px;
      }
 .tooltip .content {

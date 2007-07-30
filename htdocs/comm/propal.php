@@ -1064,11 +1064,19 @@ if ($_GET['propalid'] > 0)
 				{
 					print '<td>';
 					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-					if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-					else print img_object($langs->trans('ShowProduct'),'product');
-					print ' '.$objp->ref.'</a>';
-					print ' - '.nl2br(stripslashes($objp->product));
+					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+					if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+					else $text.= img_object($langs->trans('ShowProduct'),'product');
+					$text.= ' '.$objp->ref.'</a>';
+					$text.= ' - '.nl2br(stripslashes($objp->product));
+					if ($conf->global->PRODUIT_DESC_IN_FORM)
+					{
+						print $text;
+					}
+					else
+					{
+						print $html->textwithtooltip($text,$objp->description,4,'','',$i+1,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
+					}
 					print_date_range($objp->date_start,$objp->date_end);
 
 					if ($conf->global->PRODUIT_DESC_IN_FORM)
