@@ -21,6 +21,12 @@
  */
 require("./pre.inc.php");
 
+if ($_POST["action"] == 'empty' && $_POST["confirm"] == 'yes' && $user->rights->telephonie->facture->ecrire)
+{
+  $sql = "DELETE FROM ".MAIN_DB_PREFIX."telephonie_import_cdr";
+  $db->query($sql);
+}
+
 $dir = $conf->telephonie->dir_output."/cdr/atraiter/" ;
 
 $handle=opendir($dir);
@@ -99,6 +105,16 @@ $num = $db->num_rows($resql);
 $urladd= "&amp;search_ligne=".$sel."&amp;search_num=".$selnum;
 
 print_barre_liste("CDR a traiter", $page, "cdr.php", $urladd, $sortfield, $sortorder, '', $num);
+
+
+if ($_GET["action"] == 'empty_request' )
+{		  
+  $html = new Form($db);
+  
+  $html->form_confirm("cdr.php","Suppression des CDR a traiter","Etes-vous sûr de vouloir vider la table des CDR a traiter ?","empty");
+  print '<br />';
+}
+
 
 print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
 print '<tr class="liste_titre">';
