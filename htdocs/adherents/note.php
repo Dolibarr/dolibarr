@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,6 @@ if ($id)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
-
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER)
 	    {
 		    // Editeur wysiwyg
@@ -124,7 +123,7 @@ if ($id)
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="70" rows="10">'.$adh->commentaire.'</textarea>';
+			print '<textarea name="note" cols="80" rows="10">'.$adh->commentaire.'</textarea>';
 	    }
 	}
 	else
