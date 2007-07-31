@@ -203,10 +203,11 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        {
 	            // Echec authentification
 	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr) pour '".$_POST["username"]."'");
+				sleep(2);
 	        }
 	        else 
 	        {
-	            // Non authentifie
+	            // Non authentifie, un redirect sur page logon a été envoyé, on peut finir.
 	            //dolibarr_syslog("Authentification non realise");
 	        }
 	        exit;
