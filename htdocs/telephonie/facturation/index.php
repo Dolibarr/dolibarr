@@ -26,7 +26,6 @@ require_once DOL_DOCUMENT_ROOT.'/telephonie/fournisseurtel.class.php';
 
 if (!$user->rights->telephonie->facture->ecrire) accessforbidden();
 
-
 if ( $_POST["sendit"] && $conf->upload != 0)
 {
   if ($_POST['fournisseur'] > 0)
@@ -106,10 +105,10 @@ foreach ($fourns as $key => $value)
 }
 
 $obj = new FacturationImportCdr($db);
-$nb = $obj->CountDataImport();
+$nbcdr = $obj->CountDataImport();
 
 print "<tr $bc[$var]>";
-print '<td>Donnees a traiter</td><td align="right"><a href="cdr.php">'.$nb.'</a></td>';
+print '<td>Donnees a traiter</td><td align="right"><a href="cdr.php">'.$nbcdr.'</a></td>';
 print '<td align="center"><a href="calcul.php">Traiter</a></td></tr>';
 
 $obj = new FacturationEmission($db,$user);
@@ -147,7 +146,17 @@ print '<input type="submit" value="'.$langs->trans("Upload").'" name="sendit"> &
 print '<input type="submit" value="'.$langs->trans("Cancel").'" name="cancelit"><br>';
 
 print "</tr>\n";
-print '</table></form>';
+print '</table></form><br />';
+
+print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
+print '<tr class="liste_titre"><td colspan="2">Autres actions</td></tr>';
+
+if ($nbcdr > 0)
+{
+  print "<tr $bc[$var]>";
+  print '<td>Vider la table des CDR a traiter</td><td align="right"><a href="cdr.php?action=empty_request">Vider</a></td></tr>';
+}
+print '</table>';
 
 print '</td></tr>';
 
