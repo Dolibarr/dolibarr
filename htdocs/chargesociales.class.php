@@ -120,8 +120,8 @@ class ChargeSociales
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."chargesociales (fk_type, libelle, date_ech, periode, amount)";
 		$sql.= " VALUES (".$this->type.",'".addslashes($this->lib)."',";
-		$sql.= "'".$this->date_ech."','".$this->periode."',";
-		$sql.= " ".$newamount;
+		$sql.= " '".$this->db->idate($this->date_ech)."','".$this->periode."',";
+		$sql.= " ".price2num($newamount);
 		$sql.= ")";
 		
 		dolibarr_syslog("ChargesSociales::create sql=".$sql);
@@ -177,7 +177,7 @@ class ChargeSociales
 		
 		$sql = "UPDATE ".MAIN_DB_PREFIX."chargesociales";
 		$sql.= " SET libelle='".addslashes($this->lib)."',";
-		$sql.= " date_ech='".$this->date_ech."',";
+		$sql.= " date_ech='".$this->db->idate($this->date_ech)."',";
 		$sql.= " periode='".$this->periode."'";
 		$sql.= " WHERE rowid=".$this->id;
 		
@@ -358,7 +358,9 @@ class PaiementCharge
 		if ($total > 0)
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
-			$sql .= " VALUES ($this->chid, now(), ".$this->db->idate($this->datepaye).", ".price2num($total).", $this->paiementtype, '$this->num_paiement', '$this->note', $user->id)";
+			$sql.= " VALUES ($this->chid, now(), ";
+			$sql.= $this->db->idate($this->date_ech).", ";
+			$sql.= price2num($total).", $this->paiementtype, '$this->num_paiement', '".addslashes($this->note)."', $user->id)";
 
 			dolibarr_syslog("PaiementCharge::create sql=".$sql);
 			$resql=$this->db->query($sql);

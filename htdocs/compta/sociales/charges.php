@@ -97,7 +97,8 @@ if ($_POST["action"] == 'confirm_delete')
 
 if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 {
-	if (! $_POST["date"])
+	$dateech=@dolibarr_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
 		$_GET["action"] = 'create';
@@ -118,7 +119,7 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 		
 		$chargesociales->type=$_POST["type"];
 		$chargesociales->lib=$_POST["label"];
-		$chargesociales->date_ech=$_POST["date"];
+		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$_POST["period"];
 		$chargesociales->amount=$_POST["amount"];
 		
@@ -137,7 +138,8 @@ if ($_POST["action"] == 'add' && $user->rights->tax->charges->creer)
 
 if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->charges->creer)
 {
-	if (! $_POST["date"])
+	$dateech=@dolibarr_mktime($_POST["echhour"],$_POST["echmin"],$_POST["echsec"],$_POST["echmonth"],$_POST["echday"],$_POST["echyear"]);
+	if (! $dateech)
 	{
 		$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DateDue")).'</div>';
 		$_GET["action"] = 'edit';
@@ -153,7 +155,7 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
 		$result=$chargesociales->fetch($_GET["id"]);
 		
 		$chargesociales->lib=$_POST["label"];
-		$chargesociales->date_ech=$_POST["date"];
+		$chargesociales->date_ech=$dateech;
 		$chargesociales->periode=$_POST["period"];
 		
 		$result=$chargesociales->update($user);
@@ -170,6 +172,8 @@ if ($_GET["action"] == 'update' && ! $_POST["cancel"] && $user->rights->tax->cha
  
 llxHeader();
 
+$html = new Form($db);
+
 /*
  * Mode creation
  *
@@ -183,7 +187,7 @@ if ($_GET["action"] == 'create')
 	
     $var=false;
 
-    print '<form method="post" action="'.DOL_URL_ROOT.'/compta/sociales/charges.php">';
+    print '<form name="charge" method="post" action="'.DOL_URL_ROOT.'/compta/sociales/charges.php">';
     print '<input type="hidden" name="action" value="add">';
 
 	print "<table class=\"noborder\" width=\"100%\">";
@@ -207,7 +211,9 @@ if ($_GET["action"] == 'create')
 
     print '<tr '.$bc[$var].' valign="top">';
     print '<td>&nbsp;</td>';
-    print '<td><input type="text" size="8" name="date"><br>YYYYMMDD</td>';
+    print '<td>';
+	print $html->select_date('-1', 'ech', 0, 0, 0, 'charge', 1);
+	print '</td>';
     print '<td><input type="text" size="8" name="period"><br>YYYYMMDD</td>';
 
     print '<td align="left"><select class="flat" name="type">';
@@ -247,8 +253,6 @@ if ($_GET["action"] == 'create')
 /* *************************************************************************** */
 if ($chid > 0)
 {
-	$html = new Form($db);
-
 	$cha = new ChargeSociales($db);
 
 	/*
@@ -284,7 +288,7 @@ if ($chid > 0)
 			print '<br />';
 		}
 
-		if ($_GET['action'] == 'edit') print "<form action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
+		if ($_GET['action'] == 'edit') print "<form name=\"charge\" action=\"charges.php?id=$cha->id&amp;action=update\" method=\"post\">";
 
 		print '<table class="border" width="100%">';
 
@@ -367,7 +371,7 @@ if ($chid > 0)
 			print '<input type="text" name="label" size="40" value="'.$cha->lib.'">';
 			print '</td></tr>';
 			print '<tr><td>'.$langs->trans("DateDue")."</td><td>";
-			print "<input type=\"text\" name=\"date\" value=\"".strftime("%Y%m%d",$cha->date_ech)."\">";
+			print $html->select_date($cha->date_ech, 'ech', 0, 0, 0, 'charge', 1);
 			print "</td></tr>";
 		}
 		else {
