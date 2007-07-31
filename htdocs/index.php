@@ -624,6 +624,7 @@ if (sizeof($boxarray))
 if ($conf->use_ajax && $conf->browser->firefox)
 {
 	print '<script type="text/javascript" language="javascript">'."\n";
+	print '// <![CDATA['."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
 		/*
@@ -641,6 +642,7 @@ if ($conf->use_ajax && $conf->browser->firefox)
 		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){ window.location.href=\''.$_SERVER["PHP_SELF"].'?switchfrom=\'+encodeURIComponent(element.id)+\'&switchto=\'+encodeURIComponent(dropon.id); }});'."\n";
 		//print 'Droppables.add(\'box_'.$ii.'\', {onDrop:function(element,dropon){alert(\'w/o hoverclass, should be:\' + encodeURIComponent(element.id) )}});'."\n";
 	}
+	print '// ]]>'."\n";
 	print '</script>'."\n";
 }
 

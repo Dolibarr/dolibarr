@@ -150,18 +150,18 @@ class pdf_propale_azur extends ModelePDFPropales
 			{
 				$nblignes = sizeof($propale->lignes);
 
-	           // Protection et encryption du pdf
-               if ($conf->global->PDF_SECURITY_ENCRYPTION)
-               {
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-     	           $pdfrights = array('print'); // Ne permet que l'impression du document
-    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
-     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-               }
-			   else
-			   {
-                   $pdf=new FPDI('P','mm',$this->format);
+	      // Protection et encryption du pdf
+        if ($conf->global->PDF_SECURITY_ENCRYPTION)
+        {
+        	$pdf=new FPDI_Protection('P','mm',$this->format);
+     	    $pdfrights = array('print'); // Ne permet que l'impression du document
+    	    $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	    $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	    $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+        }
+			  else
+			  {
+			  	$pdf=new FPDI('P','mm',$this->format);
 				}
 
 				$pdf->Open();
