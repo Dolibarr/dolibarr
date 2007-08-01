@@ -539,109 +539,100 @@ print '</td></tr></table>';
  *
  */
 $boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
-$boxjavascriptids=array();
-//print_r($boxarray);
-
-// Gestion deplacement des boxes
-if (eregi('boxobject_([0-9]+)',$_GET["switchfrom"],$regfrom)
-	&& eregi('boxto_([0-9]+)',$_GET["switchto"],$regto))
-{
-	/*
-	print "Modif ordre box: ";
-	print $boxarray[$regfrom[1]]->box_id."(".$boxarray[$regfrom[1]]->box_order.")";
-	print " <-> ";
-	print $boxarray[$regto[1]]->box_id."(".$boxarray[$regto[1]]->box_order.")";
-	print "<br>\n";
-	*/
-	
-	// Permutation boites
-	$switchii=$boxarray[$regto[1]];
-	$boxarray[$regto[1]]=$boxarray[$regfrom[1]];
-	$boxarray[$regfrom[1]]=$switchii;
-
-	// Permutation box_order
-	$switchbox_order=$boxarray[$regto[1]]->box_order;
-	$boxarray[$regto[1]]->box_order=$boxarray[$regfrom[1]]->box_order;
-	$boxarray[$regfrom[1]]->box_order=$switchbox_order;
-
-	/*
-	print "Modif ordre box: ";
-	print $boxarray[$regfrom[1]]->box_id."(".$boxarray[$regfrom[1]]->box_order.")";
-	print " <-> ";
-	print $boxarray[$regto[1]]->box_id."(".$boxarray[$regto[1]]->box_order.")";
-	print "<br>\n";
-	*/
-	
-	// Sauvegarde nouvel ordre pour l'utilisateur
-	$result=$infobox->saveboxorder("0",$boxarray,$user);
-	if ($result < 0)
-	{
-		dolibarr_print_error($db,$infobox->error);	
-	}
-}
-
-
-$NBCOLS=2;      // Nombre de colonnes pour les boites
 
 if (sizeof($boxarray))
 {
 	print '<br>';
 	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
 	print '<table width="100%" class="notopnoleftnoright">';
+	print '<td>'."\n";
+	
+	$box_id = Array();
+	
+	// Création de la liste des id
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
-		$boxjavascriptids[$ii]='"box_'.$ii.'"';
-	
-		if ($ii % $NBCOLS == 0) print "<tr>\n";
-		print '<td valign="top" width="50%">';
-		print '<div id="boxto_'.$ii.'">';
+		//print 'box_id '.$boxarray[$ii]->box_id.' ';
+		//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		
-		if ($conf->use_ajax && $conf->browser->firefox)
-		{
-			print '<ul class="nocellnopadd" height="100px" id="box_'.$ii.'">';
-			print '<li class="nocellnopadd" height="100px">';
-		}
-		// Affichage boite ii
-		$box=$boxarray[$ii];
-		$box->loadBox();
-		$box->boxid="$ii";
-		$box->showBox();
-		if ($conf->use_ajax && $conf->browser->firefox)
-		{
-			print '</li>';
-			print '</ul>';
-		}
-		
-		print '</div>';
-		print "</td>";
-		if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
+		$box_id[$ii] = $boxarray[$ii]->box_id;
 	}
+	$boxid = join(',',$box_id);
+	
+	// Affichage colonne gauche (boites paires)
+	print '<div id="left"  style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
+	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+	{
+		if ($ii%2 != 1)
+		{
+			print '<div id="boxto_'.$ii.'">';
+			
+			// Affichage boite ii
+			$box=$boxarray[$ii];
+			$box->loadBox();
+			$box->boxid="$ii";
+			$box->showBox();
+			
+			print '</div>';
+    }
+	}
+  print '</div>';
+  print "\n";
+  
+  // Affichage colonne droite (boites impaires)
+  print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
+	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+	{
+		if ($ii%2 == 1)
+		{
+			print '<div id="boxto_'.$ii.'">';
+			
+			// Affichage boite ii
+			$box=$boxarray[$ii];
+			$box->loadBox();
+			$box->boxid="$ii";
+			$box->showBox();
+			
+			print '</div>';
+    }
+	}
+  print '</div>';
+  print "\n";
 
-    if ($ii % $NBCOLS == ($NBCOLS-1)) print "</tr>\n";
-    print "</table>";
+  print "</td></tr>";
+  print "</table>";
 }
 
 if ($conf->use_ajax && $conf->browser->firefox)
 {
-	print '<script type="text/javascript" language="javascript">'."\n";
+	print '<script type="text/javascript" language="javascript">
+	function updateOrder(){
+    var left_list = cleanSerialize(Sortable.serialize(\'left\'));
+    var right_list = cleanSerialize(Sortable.serialize(\'right\'));
+    var boxid = \''.$boxid.'\';
+    var boxorder = left_list + \',\' + right_list;
+    var userid = \''.$user->id.'\';
+    var url = "ajaxbox.php";
+    o_options = new Object();
+    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&boxid=\' + boxid + \'&userid=\' + userid};
+    var myAjax = new Ajax.Request(url, o_options);
+  }'."\n";
 	print '// <![CDATA['."\n";
-	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
-	{
-		/*
-		print 'Sortable.create(';
-		print '\'box_'.$ii.'\', ';
-		print '{hoverclass:\'grey\', ';
-		print 'onUpdate:function(element, dropon, event){ alert( "X "+element+" Z " ); }, ';
-		print 'ghosting:true, dropOnEmpty:true, ';
-		print 'containment:['.join(',',$boxjavascriptids).'], ';
-		print 'constraint:false}';
-		print ");\n";
-		*/
-		print 'new Draggable(\'boxobject_'.$ii.'\', {revert:false});'."\n";
-		//print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){alert(\'From: \' + encodeURIComponent(element.id) + \' - To: \' + encodeURIComponent(dropon.id))}});'."\n";
-		print 'Droppables.add(\'boxto_'.$ii.'\', {onDrop:function(element,dropon){ window.location.href=\''.$_SERVER["PHP_SELF"].'?switchfrom=\'+encodeURIComponent(element.id)+\'&switchto=\'+encodeURIComponent(dropon.id); }});'."\n";
-		//print 'Droppables.add(\'box_'.$ii.'\', {onDrop:function(element,dropon){alert(\'w/o hoverclass, should be:\' + encodeURIComponent(element.id) )}});'."\n";
-	}
+
+	print 'Sortable.create(\'left\', {'."\n";
+	print 'tag:\'div\', '."\n";
+	print 'containment:["left","right"], '."\n";
+	print 'constraint:false, '."\n";
+	print 'onUpdate:updateOrder';
+	print "});\n";
+		
+	print 'Sortable.create(\'right\', {'."\n";
+	print 'tag:\'div\', '."\n";
+	print 'containment:["right","left"], '."\n";
+	print 'constraint:false, '."\n";
+	print 'onUpdate:updateOrder';
+	print "});\n";
+		
 	print '// ]]>'."\n";
 	print '</script>'."\n";
 }
@@ -657,13 +648,3 @@ $db->close();
 
 llxFooter('$Date$ - $Revision$');
 ?>
-
-
-
-
-
-
-
-
-
-

@@ -635,3 +635,17 @@ function ac_return(field, item){
  	// délai exprimé en millisecondes avant le déclenchement de l'action
   setTimeout(funct,delay);
 }
+
+/*=================================================================
+	Purpose:  Nettoie les valeurs d'un "Sortable.serialize"
+	Input:    expr
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+function cleanSerialize(expr) {
+	var reg = new RegExp("(&)", "g");
+	var reg2 = new RegExp("[^0-9,]", "g");
+	var liste1 = expr.replace(reg, ",");
+	var liste = liste1.replace(reg2, "");
+	return liste;
+}

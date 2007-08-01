@@ -147,18 +147,21 @@ class InfoBox
     /**
      *      \brief      Sauvegarde sequencement des boites pour la zone et le user
      *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-     *      \param      $boxarray	Tableau des boites dans le bon ordre
-     *      \param      $user		Objet user
-     *      \return     int			<0 si ko, >= 0 si ok
+     *      \param      $boxid      Id des boites
+     *      \param      $boxorder  Liste des boites dans le bon ordre
+     *      \param      $userid     Id du user
+     *      \return     int         <0 si ko, >= 0 si ok
      */
-	function saveboxorder($zone,$boxarray,$user)
+	function saveboxorder($zone,$boxid,$boxorder,$userid=0)
 	{
-		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$user->id);
+		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 
-		if (! is_object($user) || ! $user->id) return 0;
+		if (! $userid || $userid == 0) return 0;
+		
+		$user = new User($this->db,$userid);
 
 		$this->db->begin();
-		
+
 		// Sauve parametre indiquant que le user a une 
 		$confuserzone='MAIN_BOXES_'.$zone;
 		$tab[$confuserzone]=1;
@@ -170,24 +173,22 @@ class InfoBox
  		}
 		
 		$sql ="DELETE FROM ".MAIN_DB_PREFIX."boxes";
-		$sql.=" WHERE fk_user = ".$user->id;
+		$sql.=" WHERE fk_user = ".$userid;
 		$sql.=" AND position = ".$zone;
 		$result = $this->db->query($sql);
 		if ($result)
 		{
-			for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+			for ($ii=0, $ni=sizeof($boxid); $ii < $ni; $ii++)
 			{
-				//print "box_id".$boxarray[$ii]->box_id.'<br>';
-				//print "box_order".$boxarray[$ii]->box_order.'<br>';
-		        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
-		        $sql.= "(box_id, position, box_order, fk_user)";
-		        $sql.= " values (";
-		        $sql.= " ".$boxarray[$ii]->box_id.",";
-		        $sql.= " ".$zone.",";
-		        $sql.= " ".$boxarray[$ii]->box_order.",";
-		        $sql.= " ".$user->id;
-		        $sql.= ")";
-		        $result = $this->db->query($sql);
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
+		    $sql.= "(box_id, position, box_order, fk_user)";
+		    $sql.= " values (";
+		    $sql.= " ".$boxid[$ii].",";
+		    $sql.= " ".$zone.",";
+		    $sql.= " ".$boxorder[$ii].",";
+		    $sql.= " ".$userid;
+		    $sql.= ")";
+		    $result = $this->db->query($sql);
 				if ($result < 0)
 				{
 					$error++;
