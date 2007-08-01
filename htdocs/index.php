@@ -552,9 +552,6 @@ if (sizeof($boxarray))
 	// Création de la liste des id
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
-		//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		//print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		
 		$box_id[$ii] = $boxarray[$ii]->box_id;
 	}
 	$boxid = join(',',$box_id);
@@ -566,7 +563,8 @@ if (sizeof($boxarray))
 		if ($ii%2 != 1)
 		{
 			print '<div id="boxto_'.$ii.'">';
-			
+			//print 'box_id '.$boxarray[$ii]->box_id.' ';
+		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 			// Affichage boite ii
 			$box=$boxarray[$ii];
 			$box->loadBox();
@@ -586,7 +584,8 @@ if (sizeof($boxarray))
 		if ($ii%2 == 1)
 		{
 			print '<div id="boxto_'.$ii.'">';
-			
+			//print 'box_id '.$boxarray[$ii]->box_id.' ';
+		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 			// Affichage boite ii
 			$box=$boxarray[$ii];
 			$box->loadBox();
@@ -611,6 +610,7 @@ if ($conf->use_ajax && $conf->browser->firefox)
     var right_list = cleanSerialize(Sortable.serialize(\'right\'));
     var boxid = \''.$boxid.'\';
     var boxorder = left_list + \',\' + right_list;
+    //alert( \'boxorder = \' + boxorder );
     var userid = \''.$user->id.'\';
     var url = "ajaxbox.php";
     o_options = new Object();
