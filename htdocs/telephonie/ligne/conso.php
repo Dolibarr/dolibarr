@@ -49,8 +49,7 @@ if ($_GET["id"] or $_GET["numero"])
     {
       print "Lecture non authorisée";
     }
-  
-  
+   
   if ($result == 1 && $client_comm->perm_read)
     { 
       if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
@@ -74,6 +73,15 @@ if ($_GET["id"] or $_GET["numero"])
 	      
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/history.php?id=".$ligne->id;
 	  $head[$h][1] = $langs->trans('Historique');
+	  $h++;
+
+	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/commentaires.php?id=".$ligne->id;
+	  $head[$h][1] = $langs->trans('Commentaires');
+	  $numc = $ligne->num_comments();
+	  if ($numc > 0)
+	    {
+	      $head[$h][1] = $langs->trans("Commentaires ($numc)");
+	    }
 	  $h++;
 
 	  $head[$h][0] = DOL_URL_ROOT."/telephonie/ligne/conso.php?id=".$ligne->id;
@@ -109,7 +117,7 @@ if ($_GET["id"] or $_GET["numero"])
 
 
 	  print '<tr><td width="25%">Statut</td><td colspan="3">';
-	  print '<img src="./graph'.$ligne->statut.'.png">&nbsp;';
+	  print '<img alt="statut" src="./graph'.$ligne->statut.'.png">&nbsp;';
 	  print $ligne->statuts[$ligne->statut];
 	  print '</td></tr>';
 
@@ -163,10 +171,93 @@ if ($_GET["id"] or $_GET["numero"])
 	      print $mesg_no_graph;
 	    }
 
+	  /*
+	   * Mode Liste
+	   *
+	   */
+	  
+	  $sql = "SELECT date,numero, cout_vente, duree,fichier_cdr";
+	  $sql .= " FROM ".MAIN_DB_PREFIX."telephonie_communications_details";
+	  $sql .= " WHERE fk_ligne=".$ligne->id;
+
+	  if (isset($_GET["search_num"]))
+	    $selnum = urldecode($_GET["search_num"]);
+	  
+	  if (isset($_POST["search_num"]))
+	    $selnum = urldecode($_POST["search_num"]);
+
+
+	  if ($selnum)
+	    {
+	      $selnum = ereg_replace("\.","",$selnum);
+	      $selnum = ereg_replace(" ","",$selnum);
+	      $sql .= " AND numero LIKE '%".$selnum."%'";
+	    }
+	  
+	  $page = $_GET["page"];
+	  if ($page == -1) { $page = 0 ; }
+
+	  $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'DESC';
+	  $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'date';
+  
+	  $offset = $conf->liste_limit * $page ;
+	  $pageprev = $page - 1;
+	  $pagenext = $page + 1;
+	      
+
+	  $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+	  $resql = $db->query($sql);
+	  
+	  if ($resql)
+	    {
+	      $num = $db->num_rows($resql);
+	      
+	      $urladd= "&amp;id=".$ligne->id."&amp;search_ligne=".$sel."&amp;search_num=".$selnum;
+	  
+	      print_barre_liste("CDR", $page, "conso.php", $urladd, $sortfield, $sortorder, '', $num);
+
+	      print '<form action="conso.php?'.$urladd.'" method="POST">'."\n";
+	      print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">'."\n";
+	      print '<tr class="liste_titre">';
+	      print '<td>Numero</td><td>Date</td><td align="right">Duree</td>';
+	      print '<td align="right">Montant</td><td align="right">Fichier</td>';
+	      print "</tr>\n";
+	      
+	      print '<tr class="liste_titre">';
+
+	      print '<td><input type="text" name="search_num" value="'. $selnum.'" size="10"></td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td>&nbsp;</td>';
+	      print '<td><input type="submit" class="button" value="'.$langs->trans("Search").'"></td></tr>';
+	      
+	      $var=True;
+	      
+	      while ($obj = $db->fetch_object($resql))
+		{
+		  $var=!$var;
+		  
+		  print "<tr $bc[$var]>";
+		  print '<td>'.$obj->numero."</td>\n";
+		  print '<td>'.$obj->date." ".$obj->heure."</td>\n";
+		  print '<td align="right">'.$obj->duree."</td>\n";
+		  print '<td align="right">'.$obj->cout_vente."</td>\n";
+		  print '<td align="right">'.$obj->fichier_cdr."</td>\n";
+		  
+		}
+	      print "</table></form>";
+	    }
+	  else
+	    {
+	      print $db->error();
+	    }
 
 
 	}
     }
+
+  print '</div>';
+
 }
 else
 {
