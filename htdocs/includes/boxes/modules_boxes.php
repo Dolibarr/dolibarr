@@ -122,7 +122,7 @@ class ModeleBoxes
         if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
         print '>';
 
-		if ($conf->use_ajax && $conf->browser->firefox)
+		if ($conf->use_ajax)
 		{
 			print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
 		}
@@ -131,7 +131,7 @@ class ModeleBoxes
         {
             print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
         }
-		if ($conf->use_ajax && $conf->browser->firefox)
+		if ($conf->use_ajax)
         {
       		print '</td><td class="nocellnopadd" width="14">';
       		print img_picto($langs->trans("Move"),'uparrow','style="cursor:move;"');

@@ -598,7 +598,7 @@ if (sizeof($boxarray))
   print "</table>";
 }
 
-if ($conf->use_ajax && $conf->browser->firefox)
+if ($conf->use_ajax)
 {
 	$boxid = join(',',$boxid_left).','.join(',',$boxid_right);
 	
