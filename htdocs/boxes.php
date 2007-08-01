@@ -185,7 +185,7 @@ class InfoBox
 		    $sql.= " values (";
 		    $sql.= " ".$boxid[$ii].",";
 		    $sql.= " ".$zone.",";
-		    $sql.= " ".$boxorder[$ii].",";
+		    $sql.= " ".($boxorder[$ii]+1).",";
 		    $sql.= " ".$userid;
 		    $sql.= ")";
 		    $result = $this->db->query($sql);

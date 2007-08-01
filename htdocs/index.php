@@ -547,24 +547,19 @@ if (sizeof($boxarray))
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<td>'."\n";
 	
-	$box_id = Array();
-	
-	// Création de la liste des id
-	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
-	{
-		$box_id[$ii] = $boxarray[$ii]->box_id;
-	}
-	$boxid = join(',',$box_id);
+	$boxid_left = Array();
+	$boxid_right = Array();
 	
 	// Affichage colonne gauche (boites paires)
 	print '<div id="left"  style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
-		if ($ii%2 != 1)
+		if ($ii%2 != 1) // pair
 		{
 			print '<div id="boxto_'.$ii.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+		  $boxid_left[$ii] = $boxarray[$ii]->box_id;
 			// Affichage boite ii
 			$box=$boxarray[$ii];
 			$box->loadBox();
@@ -581,11 +576,12 @@ if (sizeof($boxarray))
   print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
-		if ($ii%2 == 1)
+		if ($ii%2 == 1) //impair
 		{
 			print '<div id="boxto_'.$ii.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+		  $boxid_right[$ii] = $boxarray[$ii]->box_id;
 			// Affichage boite ii
 			$box=$boxarray[$ii];
 			$box->loadBox();
@@ -604,6 +600,8 @@ if (sizeof($boxarray))
 
 if ($conf->use_ajax && $conf->browser->firefox)
 {
+	$boxid = join(',',$boxid_left).','.join(',',$boxid_right);
+	
 	print '<script type="text/javascript" language="javascript">
 	function updateOrder(){
     var left_list = cleanSerialize(Sortable.serialize(\'left\'));
