@@ -601,15 +601,15 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 	// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
 	// est positionne A appeler avant tout.
 	if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=dol_microtime_float(true);
-    
-    if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
+	
+	if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
 
-    //header("Content-type: text/html; charset=UTF-8");
+  //header("Content-type: text/html; charset=UTF-8");
  	header("Content-type: text/html; charset=".$conf->character_set_client);
 
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-    print "\n";
+  print "\n";
 	print "<html>\n";
 	if ($disablehead == 0)
 	{
