@@ -32,7 +32,7 @@ require('../main.inc.php');
 $langs->load("products");
 $langs->load("main");
 
-top_htmlhead("", "", 1);
+//top_htmlhead("", "", 1);
 
 print '<body class="nocellnopadd">'."\n";
 
