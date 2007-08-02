@@ -176,6 +176,7 @@ class Translate {
         
         if ($filelangexists)
         {
+			//dolibarr_syslog("Translate::load open file ".$file_lang);
             if($fp = @fopen($file_lang,"rt"))
             {
                 $finded = 0;
