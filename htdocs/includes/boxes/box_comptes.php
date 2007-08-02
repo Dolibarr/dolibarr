@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Christophe
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Christophe
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,14 +67,18 @@ class box_comptes extends ModeleBoxes {
 
 		if ($user->rights->banque->lire)
 		{
-			$sql  = "SELECT rowid, label, bank, number, currency_code";
-			$sql .= " FROM ".MAIN_DB_PREFIX."bank_account";
-			$sql .= " WHERE clos = 0 AND courant = 1";
-			$sql .= " ORDER BY label";
-			$sql .= $db->plimit($max, 0);
+	        $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
+	        $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
+	        $sql.= " domiciliation, proprio, adresse_proprio,";
+	        $sql.= " account_number, currency_code,";
+	        $sql.= " min_allowed, min_desired, comment";
+			$sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
+			$sql.= " WHERE clos = 0 AND courant = 1";
+			$sql.= " ORDER BY label";
+			$sql.= $db->plimit($max, 0);
 
+			dolibarr_syslog("box_comptes::loadBox sql=".$sql);
 			$result = $db->query($sql);
-
 			if ($result)
 			{
 				$num = $db->num_rows($result);
@@ -82,12 +86,15 @@ class box_comptes extends ModeleBoxes {
 				$i = 0;
 				$solde_total = 0;
 
+				$account_static = new Account($db);
 				while ($i < $num)
 				{
 					$objp = $db->fetch_object($result);
-					$acc = new Account($db);
-					$acc->fetch($objp->rowid);
-					$solde_total += $acc->solde();
+					
+					$account_static->id = $objp->rowid;
+					$solde=$account_static->solde();
+					
+					$solde_total += $solde;
 
 					$this->info_box_contents[$i][0] = array('align' => 'left',
 					'logo' => $this->boximg,
@@ -105,7 +112,7 @@ class box_comptes extends ModeleBoxes {
 					);
 
 					$this->info_box_contents[$i][2] = array('align' => 'right',
-					'text' => price($acc->solde()).' '.$langs->trans("Currency".$objp->currency_code)
+					'text' => price($solde).' '.$langs->trans("Currency".$objp->currency_code)
 					);
 
 					$i++;

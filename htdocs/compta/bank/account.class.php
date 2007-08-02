@@ -424,7 +424,7 @@ class Account
     
     
     /*
-     *      \brief      Charge en memoire depuis la base le compte
+     *      \brief      Charge un compte en memoire depuis la base
      *      \param      id      Id du compte à récupérer
      */
     function fetch($id)
