@@ -115,7 +115,7 @@ $sql.= " WHERE 1=1 ";
 
 if ($_GET["userid"])    // statut commercial
 {
-    $sql .= " AND p.fk_user=".$_GET["userid"];
+    $sql .= " AND p.fk_user_creat=".$_GET["userid"];
 }
 if (!$user->rights->commercial->client->voir && !$socid) //restriction
 {
