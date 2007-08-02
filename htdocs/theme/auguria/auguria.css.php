@@ -230,6 +230,20 @@ font.tmenudisabled
   font-size:12px;
 }
 
+a.tmenu:active
+{
+	background:#4F9EC9;
+}
+
+div.tmenu  .tmenudisabled
+{
+  color: #757575;
+  font-size: 13px;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top:3px;
+}
+
 
 /* Pour menu TOP auguria */
 
@@ -296,20 +310,6 @@ div.tmenu li a:link
 {
 	
 	font-weight: normal;
-}
-
-.tmenu a:active
-{
-	background:#4F9EC9;
-}
-
-div.tmenu  .tmenudisabled
-{
-  color: #757575;
-  font-size: 13px;
-  padding-left:10px;
-  padding-right:10px;
-  padding-top:3px;
 }
 
 

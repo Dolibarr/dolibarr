@@ -199,7 +199,7 @@ a.tmenu:link
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   font: 12px helvetica, verdana, arial, sans-serif;
-  font-weight: bold;
+  font-weight: normal;
 }
 a.tmenu:visited
 {
@@ -208,30 +208,35 @@ a.tmenu:visited
   margin: 0px 1px 2px 1px;
   border: 0px solid #b3c5cc;
   font: 12px helvetica, verdana, arial, sans-serif;
-  font-weight: bold;
+  font-weight: normal;
 }
 a.tmenu#sel
 {
   color: #234046;
   padding: 0px 5px 0px 5px;
-  margin: 0px 0px 2px 0px;
+  margin: 0px 0px 0px 0px;
   font: 12px helvetica, verdana, arial, sans-serif;
-  font-weight: bold;
-  background: #dee7ec;
-  background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>);
+  font-weight: normal;
+  background: #F4F4F4;
+/*  background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>); */
   border-right: 1px solid #555555;
   border-top: 1px solid #D8D8D8;
   border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #F4F4F4;
 }
 a.tmenu:hover
 {
   color: #234046;
   padding: 0px 5px 0px 5px;
-  margin: 0px 1px 2px 1px;
+  margin: 0px 0px 0px 0px;
   text-decoration: none;
   font: 12px helvetica, verdana, arial, sans-serif;
-  font-weight: bold;
+  font-weight: normal;
   background: #dee7ec;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #dee7ec;
 }
 
 font.tmenudisabled
@@ -239,13 +244,37 @@ font.tmenudisabled
   color: #93a5aa;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 2px 0px;
-  font-weight:bold;
+  font-weight: normal;
   font-size:12px;
+}
+
+.tmenu a:active
+{
+  padding: 0px 5px 0px 5px;
+  margin: 0px 0px 0px 0px;
+  text-decoration: none;
+  font: 12px helvetica, verdana, arial, sans-serif;
+  font-weight: normal;
+  background:#F4F4F4;
+  border-right: 1px solid #555555;
+  border-top: 1px solid #D8D8D8;
+  border-left: 1px solid #D8D8D8;
+  border-bottom: 2px solid #dee7ec;
+}
+
+div.tmenu  .tmenudisabled
+{
+  color: #757575;
+  font-size: 13px;
+  padding-left:10px;
+  padding-right:10px;
+  padding-top:3px;
 }
 
 
 /* Pour menu top auguria */
 
+/*
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -255,8 +284,8 @@ div.tmenu ul {
 
 div.tmenu li {
 	float: left;
-	border-right: solid 1px #4F9EC9;
-	height: 22px;
+	border-right: solid 1px #7699A9;
+	height: 18px;
 	position:relative;
 	liste-style:none;
 	display: block;
@@ -266,12 +295,12 @@ div.tmenu li {
 
 div.tmenu li a{
   	font-size: 13px;
-	color:#FFFFFF;
+	color:#000000;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
 	padding-top: 2px;
-	height: 22px;
+	height: 18px;
 	display: block;
 	font-weight: normal;
 }
@@ -282,20 +311,20 @@ div.tmenu li a{
 
 div.tmenu li a#sel
 {
-	background:#FFFFFF;
-	color:#4F9EC9;
+	background:#F4F4F4;
+	color:#000000;
 	font-weight: normal;
 }
 div.tmenu li a:visited
 {
-	color:#FFFFFF;
+	color:#000000;
 	font-weight: normal;
 }
 
 div.tmenu li a:hover
 {
-	background:#FFFFFF;
-	color:#4F9EC9;
+	background:#F4F4F4;
+	color:#000000;
 	font-weight: normal;
 }
 
@@ -311,19 +340,8 @@ div.tmenu li a:link
 	font-weight: normal;
 }
 
-.tmenu a:active
-{
-	background:#4F9EC9;
-}
+*/
 
-div.tmenu  .tmenudisabled
-{
-  color: #757575;
-  font-size: 13px;
-  padding-left:10px;
-  padding-right:10px;
-  padding-top:3px;
-}
 
 
 /* Login */

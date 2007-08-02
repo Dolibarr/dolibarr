@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -411,7 +411,7 @@ if ($resql)
 		print '<td>'.$customerstatic->getNomUrl(1,'',24).'</td>';
 
 		// Date
-		print '<td width="100">'.dolibarr_print_date($obj->da);
+		print '<td width="100" align="right">'.dolibarr_print_date($obj->da,'day');
 		print "</td>";	
 
 		// Statut
@@ -472,7 +472,7 @@ if ($user->rights->societe->lire)
                 $objp = $db->fetch_object($resql);
                 print "<tr $bc[$var]>";
                 print "<td nowrap><a href=\"".DOL_URL_ROOT."/comm/fiche.php?socid=".$objp->rowid."\">".img_object($langs->trans("ShowCustomer"),"company")." ".$objp->nom."</a></td>";
-                print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec)."</td>";
+                print '<td align="right" nowrap>'.dolibarr_print_date($objp->datec,'day')."</td>";
                 print '</tr>';
                 $i++;
                 $var=!$var;
@@ -575,35 +575,31 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $obj = $db->fetch_object($result);
                 $var=!$var;
                 print "<tr $bc[$var]>";
-                print '<td width="20%" nowrap="nowrap">';
+                print '<td nowrap="nowrap" width="140">';
                 
                 $propalstatic->id=$obj->propalid;
                 $propalstatic->ref=$obj->ref;
                 
                 print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-                print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+                print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
                 print $propalstatic->getNomUrl(1);
                 print '</td>';
-                
-                print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+                print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
                 if ($obj->dp < (time() - $conf->propal->cloture->warning_delay)) print img_warning($langs->trans("Late"));
                 print '</td>';
-                
-                print '<td width="16" align="right" class="nobordernopadding">';
-                
+                print '<td width="16" align="center" class="nobordernopadding">';
                 $filename=sanitize_string($obj->ref);
                 $filedir=$conf->propal->dir_output . '/' . sanitize_string($obj->ref);
                 $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$obj->propalid;
                 $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-                
                 print '</td></tr></table>';
                 
                 print "</td>";
-                print "<td><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
+                print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
-                print dolibarr_print_date($obj->dp)."</td>\n";
+                print dolibarr_print_date($obj->dp,'day')."</td>\n";
                 print "<td align=\"right\">".price($obj->price)."</td>";
-				        print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
+				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
                 print "</tr>\n";
                 $i++;
                 $total += $obj->price;
@@ -653,34 +649,30 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 	  {
 	  	$objp = $db->fetch_object();		  
 		  print "<tr $bc[$var]>";
-		  print '<td width="20%" nowrap="nowrap">';
+		  print '<td nowrap="nowrap" width="140">';
 		  
 		  $propalstatic->id=$objp->propalid;
       $propalstatic->ref=$objp->ref;
                 
       print '<table class="nobordernopadding"><tr class="nocellnopadd">';
-      print '<td width="90" class="nobordernopadding" nowrap="nowrap">';
+      print '<td width="100" class="nobordernopadding" nowrap="nowrap">';
       print $propalstatic->getNomUrl(1);
       print '</td>';
-      
-      print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-      print '&nbsp;';
-      print '</td>';
-                
-      print '<td width="16" align="right" class="nobordernopadding">';
-                
+		print '<td width="18" class="nobordernopadding" nowrap="nowrap">';
+		print '&nbsp;';
+		print '</td>';
+      print '<td width="16" align="center" class="nobordernopadding">';
       $filename=sanitize_string($objp->ref);
       $filedir=$conf->propal->dir_output . '/' . sanitize_string($objp->ref);
       $urlsource=$_SERVER['PHP_SELF'].'?propalid='.$objp->propalid;
       $html->show_documents('propal',$filename,$filedir,$urlsource,'','','','','',1);
-                
       print '</td></tr></table>';
       
       print '</td>';
 		  
-		  print '<td><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
+		  print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
 		  print "<td align=\"right\">";
-		  print dolibarr_print_date($objp->dp)."</td>\n";	  
+		  print dolibarr_print_date($objp->dp,'day')."</td>\n";	  
 		  print "<td align=\"right\">".price($objp->price)."</td>\n";
 		  print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 		  print "</tr>\n";
