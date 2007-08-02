@@ -59,9 +59,8 @@ create table `llx_categorie_societe` (
 
 -- 
 alter table `llx_categorie_societe` drop foreign key fk_societe;
-alter table `llx_categorie_societe`
-  add constraint `llx_categorie_societe_ibfk_1` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE,
-  add constraint `llx_categorie_societe_ibfk_2` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`) ON DELETE CASCADE ON UPDATE CASCADE;
+alter table `llx_categorie_societe` add constraint `fk_categorie_societe_categorie_rowid` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`);
+alter table `llx_categorie_societe` add constraint `fk_categorie_societe_fk_soc` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`);
 
 create table `llx_categorie_product` (
   `fk_categorie` int(11) not null,
