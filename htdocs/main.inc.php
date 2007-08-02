@@ -487,6 +487,12 @@ if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
     $conf->theme=$user->conf->MAIN_THEME;
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
+// Cas de forcage du style depuis url
+if (isset($_GET["theme"]) && $_GET["theme"])
+{
+    $conf->theme=$_GET["theme"];
+    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+}
 // Si feuille de style en php existe
 if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
