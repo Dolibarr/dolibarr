@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,7 +22,7 @@
 
 /**
         \file       htdocs/ajaxbox.php
-        \brief      Fichier de reponse sur evenement Ajax
+        \brief      Fichier de reponse sur evenement Ajax deplacement boxes
         \version    $Revision$
 */
 
@@ -29,18 +30,12 @@ require('master.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/boxes.php");
 
 // Enregistrement de la position des boxes
-if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['boxid']) && !empty($_GET['boxid'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
+if((isset($_GET['boxorder']) && !empty($_GET['boxorder'])) && (isset($_GET['userid']) && !empty($_GET['userid'])))
 {
+	dolibarr_syslog("AjaxBox boxorder=".$_GET['boxorder']." userid=".$_GET['userid'], LOG_DEBUG);
+
 	$infobox=new InfoBox($db);
-	
-	dolibarr_syslog("InfoBox::Ajax.Request list=".$_GET['boxorder']." boxid=".$_GET['boxid']." userid=".$_GET['userid'], LOG_DEBUG);
-	
-	$boxid = explode(',',$_GET['boxid']);
-	$boxorder = explode(',',$_GET['boxorder']);
-	
-	$infobox->saveboxorder("0",$boxid,$boxorder,$_GET['userid']);
-
+	$result=$infobox->saveboxorder("0",$_GET['boxorder'],$_GET['userid']);
 }
-
 
 ?>

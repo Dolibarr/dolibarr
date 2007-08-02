@@ -876,6 +876,10 @@ border: 0px;
 /*
  *  Boxes
  */
+table.box {
+margin: 2px;
+}
+
 tr.box_titre {
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
@@ -884,6 +888,8 @@ font: 12px arial, helvetica, verdana, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
+-moz-border-radius-topleft:6px;
+-moz-border-radius-topright:6px;
 }
 
 tr.box_impair {

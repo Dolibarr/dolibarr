@@ -113,7 +113,7 @@ class ModeleBoxes
 
         print "\n\n<!-- Box start -->\n";
         print '<table width="100%" class="noborder"';
-        if (isset($this->boxid)) print ' id="boxobject_'.$this->boxid.'"';
+        if (isset($this->box_id)) print ' id="boxobject_'.$this->box_id.'"';
         print '>';
 
         // Affiche titre de la boite

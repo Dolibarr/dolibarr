@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -74,7 +73,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = ".$user->id;
 			$sql.= " ORDER BY b.box_order";
 		
-			dolibarr_syslog("InfoBox::listBoxes sql=$sql");
+			dolibarr_syslog("InfoBox::listBoxes get user box list sql=$sql");
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -91,7 +90,7 @@ class InfoBox
 					$box->position=$obj->position;
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
-					$boxes[$j]=$box;
+					$boxes[]=$box;
 					$j++;
 				}
 			}
@@ -112,7 +111,7 @@ class InfoBox
 			$sql.= " AND b.fk_user = 0";
 			$sql.= " ORDER BY b.box_order";
 
-			dolibarr_syslog("InfoBox::listBoxes sql=$sql");
+			dolibarr_syslog("InfoBox::listBoxes get default box list sql=$sql");
 			$result = $this->db->query($sql);
 			if ($result)
 			{
@@ -129,7 +128,7 @@ class InfoBox
 					$box->position=$obj->position;
 					$box->box_order=$obj->box_order;
 					$box->fk_user=$obj->fk_user;
-					$boxes[$j]=$box;
+					$boxes[]=$box;
 					$j++;
 				}
 			}
@@ -147,12 +146,11 @@ class InfoBox
     /**
      *      \brief      Sauvegarde sequencement des boites pour la zone et le user
      *      \param      $zone       ID de la zone (0 pour la Homepage, ...)
-     *      \param      $boxid      Id des boites
-     *      \param      $boxorder  Liste des boites dans le bon ordre
+     *      \param      $boxorder   Liste des boites dans le bon ordre 'A:123,456,...-B:789,321...'
      *      \param      $userid     Id du user
      *      \return     int         <0 si ko, >= 0 si ok
      */
-	function saveboxorder($zone,$boxid,$boxorder,$userid=0)
+	function saveboxorder($zone,$boxorder,$userid=0)
 	{
 		dolibarr_syslog("InfoBoxes::saveboxorder zone=".$zone." user=".$userid);
 
@@ -176,26 +174,43 @@ class InfoBox
 		$sql.=" WHERE fk_user = ".$userid;
 		$sql.=" AND position = ".$zone;
 		$result = $this->db->query($sql);
+		
+		dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
 		if ($result)
 		{
-			for ($ii=0, $ni=sizeof($boxid); $ii < $ni; $ii++)
+			$colonnes=split('-',$boxorder);
+			foreach ($colonnes as $collist)
 			{
-				$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
-		    $sql.= "(box_id, position, box_order, fk_user)";
-		    $sql.= " values (";
-		    $sql.= " ".$boxid[$ii].",";
-		    $sql.= " ".$zone.",";
-		    $sql.= " ".($boxorder[$ii]+1).",";
-		    $sql.= " ".$userid;
-		    $sql.= ")";
-		    $result = $this->db->query($sql);
-				if ($result < 0)
+				$part=split(':',$collist);
+				$colonne=$part[0];
+				$list=$part[1];
+				dolibarr_syslog('InfoBox::saveboxorder colonne='.$colonne.' list='.$list);
+				
+				$i=0;
+				$listarray=split(',',$list);
+				foreach ($listarray as $id)
 				{
-					$error++;
-					break;
-				}			
+					//dolibarr_syslog("aaaaa".sizeof($listarray));
+					$i++;
+					$ii=sprintf('%02d',$i);
+					$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
+				    $sql.= "(box_id, position, box_order, fk_user)";
+				    $sql.= " values (";
+				    $sql.= " ".$id.",";
+				    $sql.= " ".$zone.",";
+				    $sql.= " '".$colonne.$ii."',";
+				    $sql.= " ".$userid;
+				    $sql.= ")";
+
+					dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+				    $result = $this->db->query($sql);
+					if ($result < 0)
+					{
+						$error++;
+						break;
+					}			
+				}
 			}
-	
 			if ($error)
 			{
 				$this->error=$this->db->error();
@@ -214,7 +229,6 @@ class InfoBox
 			$this->db->rollback();
 			return -1;
 		}
-		
 	}  
 }
 ?>

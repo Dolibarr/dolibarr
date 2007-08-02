@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -35,8 +35,8 @@ if (!$user->admin)
   accessforbidden();
 
 // Définition des positions possibles pour les boites
-$pos_array = array(0);                          // Positions possibles pour une boite (0,1,2,...)
-$pos_name = array($langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
+$pos_array = array(0);                             // Positions possibles pour une boite (0,1,2,...)
+$pos_name = array(0=>$langs->trans("Home"));       // Nom des positions 0=Homepage, 1=...
 $boxes = array();
 
 /*
@@ -59,12 +59,13 @@ if ($_POST["action"] == 'add')
 
 			// Si la boite n'est pas deja active
 	        $sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes (box_id, position, fk_user) values (".$_POST["boxid"].",".$_POST["pos"].", 0)";
-			dolibarr_syslog("boxes.php::activation boite sql=".$sql);
+			dolibarr_syslog("boxes.php activate box sql=".$sql);
 	        $resql = $db->query($sql);
 
 		    // Remove all personalized setup when a box is activated or disabled
 			$sql = "DELETE FROM ".MAIN_DB_PREFIX."user_param";
 		    $sql.= " WHERE param like 'MAIN_BOXES_%'";
+			dolibarr_syslog("boxes.php delete user_param sql=".$sql);
 		    $resql = $db->query($sql);
 
 			$db->commit();
@@ -108,11 +109,11 @@ if ($_GET["action"] == 'switch')
     
     if (is_object($objfrom) && is_object($objto))
     {
-        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objto->box_order." WHERE rowid=".$objfrom->rowid;
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objto->box_order."' WHERE rowid=".$objfrom->rowid;
 		//print "xx".$sql;
         $resultupdatefrom = $db->query($sql);
         if (! $resultupdatefrom) { dolibarr_print_error($db); }
-        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$objfrom->box_order." WHERE rowid=".$objto->rowid;
+        $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order='".$objfrom->box_order."' WHERE rowid=".$objto->rowid;
 		//print "xx".$sql;
         $resultupdateto = $db->query($sql);
         if (! $resultupdateto) { dolibarr_print_error($db); }
@@ -137,9 +138,11 @@ print_fiche_titre($langs->trans("Boxes"),'','setup');
 print $langs->trans("BoxesDesc")."<br>\n";
 
 /*
- * Recherche des boites actives par position possible
- * On stocke les boites actives par $boxes[position][id_boite]=1
+ * Recherche des boites actives par defaut pour chaque position possible
+ * On stocke les boites actives par defaut dans $boxes[position][id_boite]=1
  */
+
+$actives = array();
 
 $sql  = "SELECT b.rowid, b.box_id, b.position, b.box_order, d.name, d.rowid as boxid";
 $sql .= " FROM ".MAIN_DB_PREFIX."boxes as b, ".MAIN_DB_PREFIX."boxes_def as d";
@@ -147,33 +150,41 @@ $sql .= " WHERE b.box_id = d.rowid AND fk_user=0";
 $sql .= " ORDER by position, box_order";
 
 $resql = $db->query($sql);
-
-$actives = array();
-
 if ($resql)
 {
-  $num = $db->num_rows($resql);
-  $i = 0;
-  $decalage=0;
-  while ($i < $num)
-    {
-      $var = ! $var;
-      $obj = $db->fetch_object($resql);
-      $boxes[$obj->position][$obj->box_id]=1;
-      $i++;
-      
-      array_push($actives,$obj->boxid);
-
-      // On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
-      if ($obj->box_order==0) $decalage++;
-      if ($decalage)
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$decalage=0;
+	while ($i < $num)
 	{
-	  $sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=box_order+".$decalage." WHERE rowid=".$obj->rowid;
-	  $db->query($sql);
+		$var = ! $var;
+		$obj = $db->fetch_object($resql);
+		$boxes[$obj->position][$obj->box_id]=1;
+		$i++;
+		
+		array_push($actives,$obj->box_id);
+
+		if ($obj->box_order == '' || $obj->box_order == '0' || $decalage) $decalage++;
+		// On renumérote l'ordre des boites si l'une d'elle est à 0 (Ne doit arriver que sur des anciennes versions)
+		if ($decalage)
+		{
+			$sql="UPDATE ".MAIN_DB_PREFIX."boxes set box_order=".$decalage." WHERE rowid=".$obj->rowid;
+			$db->query($sql);
+		}
 	}
-    }
-  
-  $db->free($resql);
+	if ($decalage)
+	{
+		// Si on a renumerote, on corrige champ box_order (Ne doit arriver que sur des anciennes versions)
+		$sql="update llx_boxes set box_order = concat('A0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('1','3','5','7','9')";
+		$resql = $db->query($sql);
+		$sql="update llx_boxes set box_order = concat('B0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('0','2','4','6','8')";
+		$resql = $db->query($sql);
+		$sql="update llx_boxes set box_order = concat('A',box_order) where length(box_order) = 2 and substr(box_order,-1) in ('1','3','5','7','9')";
+		$resql = $db->query($sql);
+		$sql="update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substr(box_order,-1) in ('0','2','4','6','8')";
+		$resql = $db->query($sql);
+	}
+	$db->free($resql);
 }
 
 

@@ -644,7 +644,7 @@ function ac_return(field, item){
 ==================================================================*/
 function cleanSerialize(expr) {
 	var reg = new RegExp("(&)", "g");
-	var reg2 = new RegExp("[^0-9,]", "g");
+	var reg2 = new RegExp("[^A-Z0-9,]", "g");
 	var liste1 = expr.replace(reg, ",");
 	var liste = liste1.replace(reg2, "");
 	return liste;

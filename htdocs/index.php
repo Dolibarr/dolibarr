@@ -539,6 +539,8 @@ print '</td></tr></table>';
  *
  */
 $boxarray=$infobox->listboxes("0",$user);       // 0=valeur pour la page accueil
+$boxid_left = array();
+$boxid_right = array();
 
 if (sizeof($boxarray))
 {
@@ -547,49 +549,47 @@ if (sizeof($boxarray))
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<td>'."\n";
 	
-	$boxid_left = Array();
-	$boxid_right = Array();
-	
 	// Affichage colonne gauche (boites paires)
 	print '<div id="left" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
-	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+	$ii=0;
+	foreach ($boxarray as $key => $box)
 	{
-		if ($ii%2 != 1) // pair
+		//print "xxx".$key."-".$value;
+		if (eregi('^A',$box->box_order)) // colonne A
 		{
-			print '<div style="padding-right: 2px; padding-bottom: 4px;" id="boxto_'.$ii.'">';
+			$ii++;
+			print '<div style="padding-right: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		  $boxid_left[$ii] = $boxarray[$ii]->box_id;
-			// Affichage boite ii
-			$box=$boxarray[$ii];
+		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+		    $boxid_left[$key] = $boxarray[$key]->box_id;
+			// Affichage boite key
 			$box->loadBox();
-			$box->boxid="$ii";
 			$box->showBox();
 			
 			print '</div>';
-    }
+		}
 	}
-  print '</div>';
-  print "\n";
+    print '</div>';
+    print "\n";
   
-  // Affichage colonne droite (boites impaires)
-  print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
-  for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+	// Affichage colonne droite (boites impaires)
+	print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
+	$ii=0;
+	foreach ($boxarray as $key => $box)
 	{
-		if ($ii%2 == 1) //impair
+		if (eregi('^B',$box->box_order)) // colonne B
 		{
-			print '<div style="padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$ii.'">';
+			$ii++;
+			print '<div style="padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		  $boxid_right[$ii] = $boxarray[$ii]->box_id;
-			// Affichage boite ii
-			$box=$boxarray[$ii];
+		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+		    $boxid_right[$key] = $boxarray[$key]->box_id;
+			// Affichage boite key
 			$box->loadBox();
-			$box->boxid="$ii";
 			$box->showBox();
 			
 			print '</div>';
-    }
+		}
 	}
   print '</div>';
   print "\n";
@@ -600,19 +600,18 @@ if (sizeof($boxarray))
 
 if ($conf->use_ajax)
 {
-	$boxid = join(',',$boxid_left).','.join(',',$boxid_right);
+	//$boxid = join(',',$boxid_left).'-'.join(',',$boxid_right);
 	
 	print '<script type="text/javascript" language="javascript">
 	function updateOrder(){
     var left_list = cleanSerialize(Sortable.serialize(\'left\'));
     var right_list = cleanSerialize(Sortable.serialize(\'right\'));
-    var boxid = \''.$boxid.'\';
-    var boxorder = left_list + \',\' + right_list;
-    //alert( \'boxorder = \' + boxorder );
+    var boxorder = \'A:\' + left_list + \'-B:\' + right_list;
+    //alert( \'boxorder=\' + boxorder );
     var userid = \''.$user->id.'\';
     var url = "ajaxbox.php";
     o_options = new Object();
-    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&boxid=\' + boxid + \'&userid=\' + userid};
+    o_options = {asynchronous:true,method: \'get\',parameters: \'boxorder=\' + boxorder + \'&userid=\' + userid};
     var myAjax = new Ajax.Request(url, o_options);
   }'."\n";
 	print '// <![CDATA['."\n";
