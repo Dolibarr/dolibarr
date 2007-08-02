@@ -103,7 +103,7 @@ class box_prospect extends ModeleBoxes {
 
                     $this->info_box_contents[$i][2] = array('align' => 'right',
 					'width' => 18,
-                    'text' => $prospectstatic->LibStatut($objp->fk_stcomm,3));
+                    'text' => eregi_replace('img ','img height="14px" ',$prospectstatic->LibStatut($objp->fk_stcomm,3)));
 
                     $i++;
                 }
