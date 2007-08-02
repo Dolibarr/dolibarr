@@ -551,12 +551,12 @@ if (sizeof($boxarray))
 	$boxid_right = Array();
 	
 	// Affichage colonne gauche (boites paires)
-	print '<div id="left"  style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
+	print '<div id="left" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
 	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
 		if ($ii%2 != 1) // pair
 		{
-			print '<div id="boxto_'.$ii.'">';
+			print '<div style="padding-right: 2px; padding-bottom: 4px;" id="boxto_'.$ii.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		  $boxid_left[$ii] = $boxarray[$ii]->box_id;
@@ -573,12 +573,12 @@ if (sizeof($boxarray))
   print "\n";
   
   // Affichage colonne droite (boites impaires)
-  print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
-	for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
+  print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
+  for ($ii=0, $ni=sizeof($boxarray); $ii < $ni; $ii++)
 	{
 		if ($ii%2 == 1) //impair
 		{
-			print '<div id="boxto_'.$ii.'">';
+			print '<div style="padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$ii.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		  $boxid_right[$ii] = $boxarray[$ii]->box_id;
