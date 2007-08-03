@@ -559,7 +559,7 @@ if (sizeof($boxarray))
 		if (eregi('^A',$box->box_order)) // colonne A
 		{
 			$ii++;
-			print '<div style="padding-right: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
+			print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		    $boxid_left[$key] = $boxarray[$key]->box_id;
@@ -581,7 +581,7 @@ if (sizeof($boxarray))
 		if (eregi('^B',$box->box_order)) // colonne B
 		{
 			$ii++;
-			print '<div style="padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
+			print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		    $boxid_right[$key] = $boxarray[$key]->box_id;

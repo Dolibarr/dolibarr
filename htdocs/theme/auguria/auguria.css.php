@@ -879,6 +879,10 @@ border: 0px;
 /*
  *  Boxes
  */
+ table.box {
+margin: 2px;
+}
+ 
 tr.box_titre {
 background: #68ACCF;
 color: #FFFFFF;
