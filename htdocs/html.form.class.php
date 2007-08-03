@@ -75,7 +75,7 @@ class Form
   */
   function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$option='')
   {
-  	global $conf,$langs;
+  	global $conf;
 		
 		if (! $htmltext) return $text;
 		
