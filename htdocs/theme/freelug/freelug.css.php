@@ -242,6 +242,68 @@ font.tmenudisabled
   font-size:12px;
 }
 
+
+/* Pour menu TOP auguria uniquement */
+div.tmenu ul {
+	padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+	list-style: none;
+	
+}
+div.tmenu li {
+	float: left;
+	border-right: solid 1px #000000;
+	height: 18px;
+	position:relative;
+	liste-style:none;
+	display: block;
+	margin:0;
+	padding:0;
+}
+div.tmenu li a{
+  	font-size: 13px;
+	color:#00000;
+	text-decoration:none;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top: 2px;
+	height: 18px;
+	display: block;
+	font-weight: normal;
+}
+* html div.tmenu li a{
+	width:40px;
+}
+div.tmenu li a#sel
+{
+	background:#FFFFFF;
+	color:#000000;
+	font-weight: normal;
+}
+div.tmenu li a:visited
+{
+	color:#00000;
+	font-weight: normal;
+}
+div.tmenu li a:hover
+{
+	background:#FFFFFF;
+	color:#000000;
+	font-weight: normal;
+}
+div.tmenu li a:active
+{
+	color:#000000;
+	font-weight: normal;
+}
+div.tmenu li a:link
+{
+	
+	font-weight: normal;
+}
+
+
+
 /* Login */
 
 a.login

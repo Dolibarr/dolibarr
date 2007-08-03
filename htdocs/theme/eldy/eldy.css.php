@@ -186,6 +186,14 @@ div.tmenu
     color: #000000;
     text-decoration: none;
 }
+div.tmenu  .tmenudisabled
+{
+	color: #757575;
+	font-size: 13px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:3px;
+}
 
 table.tmenu
 {
@@ -262,25 +270,15 @@ a.tmenu:active
   border-bottom: 2px solid #dee7ec;
 }
 
-div.tmenu  .tmenudisabled
-{
-  color: #757575;
-  font-size: 13px;
-  padding-left:10px;
-  padding-right:10px;
-  padding-top:3px;
-}
 
 
-/* Pour menu top auguria */
-
+/* Pour menu TOP auguria uniquement */
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
 	
 }
-
 div.tmenu li {
 	float: left;
 	border-right: solid 1px #7699A9;
@@ -291,7 +289,6 @@ div.tmenu li {
 	margin:0;
 	padding:0;
 	}
-
 div.tmenu li a{
   	font-size: 13px;
 	color:#000000;
@@ -303,11 +300,9 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-
 * html div.tmenu li a{
 	width:40px;
 }
-
 div.tmenu li a#sel
 {
 	background:#F4F4F4;
@@ -319,26 +314,22 @@ div.tmenu li a:visited
 	color:#000000;
 	font-weight: normal;
 }
-
 div.tmenu li a:hover
 {
 	background:#F4F4F4;
 	color:#000000;
 	font-weight: normal;
 }
-
 div.tmenu li a:active
 {
 	color:#4F9EC9;
 	font-weight: normal;
 }
-
 div.tmenu li a:link
 {
 	
 	font-weight: normal;
 }
-
 
 
 

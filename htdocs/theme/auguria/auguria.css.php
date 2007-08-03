@@ -164,6 +164,14 @@ div.tmenu
     background-image : url(<?php echo $dolibarr_main_url_root.'/theme/auguria/img/nav.jpg' ?>) ;
     height: 22px;
 }
+div.tmenu  .tmenudisabled
+{
+	color: #757575;
+	font-size: 13px;
+	padding-left:10px;
+	padding-right:10px;
+	padding-top:3px;
+}
 
 table.tmenu
 {
@@ -235,25 +243,14 @@ a.tmenu:active
 	background:#4F9EC9;
 }
 
-div.tmenu  .tmenudisabled
-{
-  color: #757575;
-  font-size: 13px;
-  padding-left:10px;
-  padding-right:10px;
-  padding-top:3px;
-}
 
 
-/* Pour menu TOP auguria */
-
+/* Pour menu TOP auguria uniquement */
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 	list-style: none;
-	
 }
-
 div.tmenu li {
 	float: left;
 	border-right: solid 1px #4F9EC9;
@@ -263,8 +260,7 @@ div.tmenu li {
 	display: block;
 	margin:0;
 	padding:0;
-	}
-
+}
 div.tmenu li a{
   	font-size: 13px;
 	color:#FFFFFF;
@@ -276,11 +272,9 @@ div.tmenu li a{
 	display: block;
 	font-weight: normal;
 }
-
 * html div.tmenu li a{
 	width:40px;
 }
-
 div.tmenu li a#sel
 {
 	background:#FFFFFF;
@@ -292,25 +286,22 @@ div.tmenu li a:visited
 	color:#FFFFFF;
 	font-weight: normal;
 }
-
 div.tmenu li a:hover
 {
 	background:#FFFFFF;
 	color:#4F9EC9;
 	font-weight: normal;
 }
-
 div.tmenu li a:active
 {
 	color:#4F9EC9;
 	font-weight: normal;
 }
-
 div.tmenu li a:link
 {
-	
 	font-weight: normal;
 }
+
 
 
 /* Login */
