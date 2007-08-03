@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -600,8 +601,6 @@ if (sizeof($boxarray))
 
 if ($conf->use_ajax)
 {
-	//$boxid = join(',',$boxid_left).'-'.join(',',$boxid_right);
-	
 	print '<script type="text/javascript" language="javascript">
 	function updateOrder(){
     var left_list = cleanSerialize(Sortable.serialize(\'left\'));
