@@ -550,7 +550,7 @@ if (sizeof($boxarray))
 	print '<table width="100%" class="notopnoleftnoright">';
 	print '<td>'."\n";
 	
-	// Affichage colonne gauche (boites paires)
+	// Affichage colonne gauche
 	print '<div id="left" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
 	$ii=0;
 	foreach ($boxarray as $key => $box)
@@ -573,7 +573,7 @@ if (sizeof($boxarray))
     print '</div>';
     print "\n";
   
-	// Affichage colonne droite (boites impaires)
+	// Affichage colonne droite
 	print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	$ii=0;
 	foreach ($boxarray as $key => $box)
