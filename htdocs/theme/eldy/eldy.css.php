@@ -248,7 +248,7 @@ font.tmenudisabled
   font-size:12px;
 }
 
-.tmenu a:active
+a.tmenu:active
 {
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
