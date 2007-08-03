@@ -274,7 +274,6 @@ div.tmenu  .tmenudisabled
 
 /* Pour menu top auguria */
 
-/*
 div.tmenu ul {
 	padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
@@ -340,7 +339,6 @@ div.tmenu li a:link
 	font-weight: normal;
 }
 
-*/
 
 
 
