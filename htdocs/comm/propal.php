@@ -1075,7 +1075,7 @@ if ($_GET['propalid'] > 0)
 					}
 					else
 					{
-						print $html->textwithtooltip($text,$objp->description,4,'','',$i+1,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
+						print $html->textwithtooltip($text,$objp->description,4,'','',$i,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
 					}
 					print_date_range($objp->date_start,$objp->date_end);
 

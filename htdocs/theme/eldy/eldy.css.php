@@ -1367,22 +1367,3 @@ div.menuFleche
 	position:relative;
 
 }
-
-/* ============================================================================== */
-/*  Ajax - Tooltip                                                                */
-/* ============================================================================== */
-.tooltip {
-     width: 500px;
-     color: #fff;
-     }
-.tooltip .title {
-     background: #0F6788;
-     font: 15px Arial, Helvetica, sans-serif;
-     font-weight: bold;
-     padding: 5px;
-     }
-.tooltip .content {
-     background: dodgerblue;
-     font: 11px Arial, Helvetica, sans-serif;
-     padding: 5px;
-     }
