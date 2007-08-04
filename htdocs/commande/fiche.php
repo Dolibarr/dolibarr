@@ -1321,7 +1321,8 @@ else
 							{
 								print $html->textwithtooltip($text,$objp->description,4,'','',$i,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
 							}
-							print_date_range($objp->date_start,$objp->date_end);
+							// Todo: voir si on insert ou pas en option les dates de début et de fin de service
+							//print_date_range($objp->date_start,$objp->date_end);
 							
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
