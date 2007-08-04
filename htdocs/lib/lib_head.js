@@ -669,7 +669,7 @@ function confirmDelete(linkurl,message,ok,cancel) {
 
 /*=================================================================
 	Purpose:  Affiche un message d'information
-	Input:    linkurl,message,ok,cancel
+	Input:    message
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/

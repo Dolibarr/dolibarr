@@ -304,7 +304,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 /*
  *  Cloture de la propale
  */
-if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
+if ($_REQUEST['action'] == 'setstatut' && $user->rights->propale->cloturer)
 {
     if (! $_POST['cancel'])
     {
@@ -312,7 +312,7 @@ if ($_POST['action'] == 'setstatut' && $user->rights->propale->cloturer)
         $propal->fetch($_GET['propalid']);
 	// prevent browser refresh from closing proposal several times
 	if ($propal->statut==1) {
-        $propal->cloture($user, $_POST['statut'], $_POST['note']);
+        $propal->cloture($user, $_REQUEST['statut'], $_REQUEST['note']);
     }
 }
 }
@@ -1414,10 +1414,12 @@ if ($_GET['propalid'] > 0)
 	/*
 	* Formulaire cloture (signé ou non)
 	*/
-	$form_close = '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
+	$form_close = '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
+	$form_close.= '<table class="border" width="100%">';
+	$form_close.= '<tr><td width="150" align="left">'.$langs->trans('Note').'</td><td align="left"><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
 	$form_close.= $propal->note;
 	$form_close.= '</textarea></td></tr>';
-	$form_close.= '<tr><td>'.$langs->trans("CloseAs").'</td><td>';
+	$form_close.= '<tr><td width="150"  align="left">'.$langs->trans("CloseAs").'</td><td align="left">';
 	$form_close.= '<input type="hidden" name="action" value="setstatut">';
 	$form_close.= '<select name="statut">';
 	$form_close.= '<option value="0">&nbsp;</option>';
@@ -1425,17 +1427,22 @@ if ($_GET['propalid'] > 0)
 	$form_close.= '<option value="3">'.$propal->labelstatut[3].'</option>';
 	$form_close.= '</select>';
 	$form_close.= '</td></tr>';
+	$form_close.= '<tr><td align="center" colspan="2">';
+	$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
+	if ($conf->use_ajax)
+	{
+		$form_close.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	}
+	else
+	{
+		$form_close.= ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
+	}
+	$form_close.= '</td>';
+	$form_close.= '</tr></table></form>';
 	
 	if ($_GET['action'] == 'statut')
 	{
-		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
-		print '<table class="border" width="100%">';
 		print $form_close;
-		print '<tr><td align="center" colspan="2">';
-		print '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
-		print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
-		print '</td>';
-		print '</tr></table></form>';
 	}
 
 
@@ -1496,7 +1503,20 @@ if ($_GET['propalid'] > 0)
 		// Close
 		if ($propal->statut == 1 && $user->rights->propale->cloturer)
 		{
-			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
+			print '<div id="confirm_close" style="display:none">';
+			print $form_close."\n";
+			print '</div>'."\n";
+			
+			print '<a class="butAction" ';
+			if ($conf->use_ajax)
+			{
+				print 'href="#" onClick="info($(\'confirm_close\').innerHTML)"'."\n";
+			}
+			else
+			{
+				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut"';
+			}
+			print '>'.$langs->trans('Close').'</a>';
 		}
 
 		// Delete
