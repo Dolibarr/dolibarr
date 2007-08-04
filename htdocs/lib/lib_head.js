@@ -666,3 +666,13 @@ function confirmDelete(linkurl,message,ok,cancel) {
 		ok:function(win) {window.location.href=linkurl; return true;} 
 	});
 }
+
+/*=================================================================
+	Purpose:  Affiche un message d'information
+	Input:    linkurl,message,ok,cancel
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+function info(message) {
+	Dialog.info(message, {width:700});
+}
