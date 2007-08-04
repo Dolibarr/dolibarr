@@ -1308,11 +1308,19 @@ else
 						{
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-							print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
-							if ($objp->fk_product_type==1) print img_object($langs->trans('ShowService'),'service');
-							else print img_object($langs->trans('ShowProduct'),'product');
-							print ' '.$objp->ref.'</a>';
-							print ' - '.nl2br(stripslashes($objp->product));
+							$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+							if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
+							else $text.= img_object($langs->trans('ShowProduct'),'product');
+							$text.= ' '.$objp->ref.'</a>';
+							$text.= ' - '.nl2br(stripslashes($objp->product));
+							if ($conf->global->PRODUIT_DESC_IN_FORM)
+							{
+								print $text;
+							}
+							else
+							{
+								print $html->textwithtooltip($text,$objp->description,4,'','',$i,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
+							}
 							print_date_range($objp->date_start,$objp->date_end);
 							
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
@@ -1381,33 +1389,46 @@ else
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)
 						{
-							print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-							print img_edit();
-							print '</a></td>';
-							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+							print '<td align="center">';
+							if (($objp->info_bits & 2) == 2)
 							{
-								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+								// Ligne remise prédéfinie, on permet pas modif
 							}
 							else
 							{
-								print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
-							}
-							print img_delete();
-							print '</a></td>';
-							print '<td align="right">';
-							if ($i > 0)
-							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
-								print img_up();
-								print '</a>';
-							}
-							if ($i < $num-1)
-							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
-								print img_down();
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+								print img_edit();
 								print '</a>';
 							}
 							print '</td>';
+							print '<td align="center">';
+							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+							}
+							else
+							{
+								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
+							}
+							print img_delete();
+							print '</a></td>';
+							if ($num > 1)
+							{
+								print '<td align="center">';
+								if ($i > 0)
+								{
+									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+									print img_up();
+									print '</a>';
+								}
+								if ($i < $num-1)
+								{
+									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+									print img_down();
+									print '</a>';
+								}
+								print '</td>';
+							}
 						}
 						else
 						{

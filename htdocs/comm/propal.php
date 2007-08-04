@@ -1147,7 +1147,7 @@ if ($_GET['propalid'] > 0)
 				// Icone d'edition et suppression
 				if ($propal->statut == 0  && $user->rights->propale->creer)
 				{
-					print '<td align="right">';
+					print '<td align="center">';
 					if (($objp->info_bits & 2) == 2)
 					{
 						// Ligne remise prédéfinie, on permet pas modif
@@ -1159,30 +1159,34 @@ if ($_GET['propalid'] > 0)
 						print '</a>';
 					}
 					print '</td>';
+					print '<td align="center">';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
-						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_line&amp;ligne='.$objp->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_line&amp;ligne='.$objp->rowid.'">';
 					}
 					else
 					{
-						print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
 					}
 					print img_delete();
 					print '</a></td>';
-					print '<td align="right">';
-					if ($i > 0)
+					if ($num > 1)
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
-						print img_up();
-						print '</a>';
+						print '<td align="center">';
+						if ($i > 0)
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=up&amp;rowid='.$objp->rowid.'">';
+							print img_up();
+							print '</a>';
+						}
+						if ($i < $num-1)
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
+							print img_down();
+							print '</a>';
+						}
+						print '</td>';
 					}
-					if ($i < $num-1)
-					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=down&amp;rowid='.$objp->rowid.'">';
-						print img_down();
-						print '</a>';
-					}
-					print '</td>';
 				}
 				else
 				{
