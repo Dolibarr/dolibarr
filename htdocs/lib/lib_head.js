@@ -656,7 +656,7 @@ function cleanSerialize(expr) {
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function confirmDelete(linkurl,message,ok,cancel) {
+function dialogConfirm(linkurl,message,ok,cancel) {
 	Dialog.confirm(message, {
 		width:300,
 		okLabel: ok,
@@ -673,6 +673,6 @@ function confirmDelete(linkurl,message,ok,cancel) {
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function info(message) {
+function dialogInfo(message) {
 	Dialog.info(message, {width:700});
 }

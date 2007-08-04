@@ -1167,7 +1167,7 @@ if ($_GET['propalid'] > 0)
 						if ($conf->use_ajax)
 						{
 							$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&ligne='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
-							print '<a href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')">';
+							print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')">';
 							print img_delete();
 						}
 						else
@@ -1461,7 +1461,7 @@ if ($_GET['propalid'] > 0)
 			if ($conf->use_ajax)
 			{
 				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
-				print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
+				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
 			}
 			else
 			{
@@ -1510,7 +1510,7 @@ if ($_GET['propalid'] > 0)
 			print '<a class="butAction" ';
 			if ($conf->use_ajax)
 			{
-				print 'href="#" onClick="info($(\'confirm_close\').innerHTML)"'."\n";
+				print 'href="#" onClick="dialogInfo($(\'confirm_close\').innerHTML)"'."\n";
 			}
 			else
 			{
@@ -1526,7 +1526,7 @@ if ($_GET['propalid'] > 0)
 			if ($conf->use_ajax)
 			{
 				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
-				print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
+				print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
 			}
 			else
 			{
