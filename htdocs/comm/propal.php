@@ -81,7 +81,7 @@ $form=new Form($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
   if ($user->rights->propale->supprimer)
     {
@@ -132,7 +132,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
   exit;
 }
 
-if ($_POST['action'] == 'confirm_validate' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 {
     if ($user->rights->propale->valider)
     {
@@ -1450,11 +1450,21 @@ if ($_GET['propalid'] > 0)
 		{
 			if ($user->rights->propale->valider && $propal->total_ttc > 0)
 			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate">'.$langs->trans('Validate').'</a>';
+				print '<a class="butAction" ';
+				if ($conf->use_ajax)
+				{
+					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
+					print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
+				}
+				print '>'.$langs->trans('Validate').'</a>';
 			}
 		}
 
-		// Save
+		// Edit
 		if ($propal->statut == 1)
 		{
 			if ($user->rights->propale->creer)
@@ -1504,7 +1514,17 @@ if ($_GET['propalid'] > 0)
 		{
 			if ($user->rights->propale->supprimer)
 			{
-				print '<a class="butActionDelete" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+				print '<a class="butActionDelete" ';
+				if ($conf->use_ajax)
+				{
+					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
+					print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
+				}
+				else
+				{
+					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
+				}
+				print '>'.$langs->trans('Delete').'</a>';
 			}
 		}
 
