@@ -582,59 +582,59 @@ class Propal extends CommonObject
      */
     function update_price()
     {
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-
-        // Liste des lignes factures a sommer
-        $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
-        $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
-        $sql.= " WHERE fk_propal = ".$this->id;
-		
-		dolibarr_syslog("Propal::update_price sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
+    	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+    	
+    	// Liste des lignes factures a sommer
+      $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
+      $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
+      $sql.= " WHERE fk_propal = ".$this->id;
+      
+      dolibarr_syslog("Propal::update_price sql=".$sql);
+      $result = $this->db->query($sql);
+      if ($result)
+      {
+      	$this->total_ht  = 0;
+      	$this->total_tva = 0;
+      	$this->total_ttc = 0;
+      	
+      	$num = $this->db->num_rows($result);
+        $i = 0;
+        while ($i < $num)
         {
-			$this->total_ht  = 0;
-			$this->total_tva = 0;
-			$this->total_ttc = 0;
-			
-            $num = $this->db->num_rows($result);
-            $i = 0;
-            while ($i < $num)
-            {
-                $obj = $this->db->fetch_object($result);
-
-				$this->total_ht    += $obj->total_ht;
-				$this->total_tva   += $obj->total_tva;
-				$this->total_ttc   += $obj->total_ttc;
-
-				// Anciens indicateurs
-				$this->amount_ht      += $obj->price * $obj->qty;	// \TODO A virer
-				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-                $i++;
-            }
-
-			$this->db->free($result);
+        	$obj = $this->db->fetch_object($result);
+        	
+        	$this->total_ht    += $obj->total_ht;
+        	$this->total_tva   += $obj->total_tva;
+        	$this->total_ttc   += $obj->total_ttc;
+        	
+        	// Anciens indicateurs
+        	$this->amount_ht      += $obj->price * $obj->qty;	// \TODO A virer
+        	$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
+        	$i++;
         }
+        
+        $this->db->free($result);
+      }
 
         // Met a jour en base
         $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
         $sql .= " total_ht=".price2num($this->total_ht).",";
         $sql .= " tva=".     price2num($this->total_tva).",";
         $sql .= " total=".   price2num($this->total_ttc).",";
-        $sql .= " remise=".  price2num($this->total_remise).",";	// \TODO A virer
+        //$sql .= " remise=".  price2num($this->total_remise).",";	// \TODO A virer
         $sql .= " price=".   price2num($this->total_ht);			// \TODO A virer
         $sql .=" WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Propal::update_price sql=".$sql);
+		    dolibarr_syslog("Propal::update_price sql=".$sql);
         if ( $this->db->query($sql) )
         {
             return 1;
         }
         else
         {
-            $this->error=$this->db->error();
-			dolibarr_syslog("Propal::update_price error=".$this->error);
-            return -1;
+        	$this->error=$this->db->error();
+        	dolibarr_syslog("Propal::update_price error=".$this->error);
+        	return -1;
         }
     }
 

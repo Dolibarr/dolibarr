@@ -1414,21 +1414,23 @@ if ($_GET['propalid'] > 0)
 	/*
 	* Formulaire cloture (signé ou non)
 	*/
+	$form_close = '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
+	$form_close.= $propal->note;
+	$form_close.= '</textarea></td></tr>';
+	$form_close.= '<tr><td>'.$langs->trans("CloseAs").'</td><td>';
+	$form_close.= '<input type="hidden" name="action" value="setstatut">';
+	$form_close.= '<select name="statut">';
+	$form_close.= '<option value="0">&nbsp;</option>';
+	$form_close.= '<option value="2">'.$propal->labelstatut[2].'</option>';
+	$form_close.= '<option value="3">'.$propal->labelstatut[3].'</option>';
+	$form_close.= '</select>';
+	$form_close.= '</td></tr>';
+	
 	if ($_GET['action'] == 'statut')
 	{
 		print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">';
 		print '<table class="border" width="100%">';
-		print '<tr><td>'.$langs->trans('Note').'</td><td><textarea cols="70" rows="'.ROWS_3.'" wrap="soft" name="note">';
-		print $propal->note;
-		print '</textarea></td></tr>';
-		print '<tr><td>'.$langs->trans("CloseAs").'</td><td>';
-		print '<input type="hidden" name="action" value="setstatut">';
-		print '<select name="statut">';
-		print '<option value="0">&nbsp;</option>';
-		print '<option value="2">'.$propal->labelstatut[2].'</option>';
-		print '<option value="3">'.$propal->labelstatut[3].'</option>';
-		print '</select>';
-		print '</td></tr>';
+		print $form_close;
 		print '<tr><td align="center" colspan="2">';
 		print '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
 		print ' &nbsp; <input type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
@@ -1446,31 +1448,25 @@ if ($_GET['propalid'] > 0)
 	{
 
 		// Valid
-		if ($propal->statut == 0)
+		if ($propal->statut == 0 && $propal->total_ttc > 0 && $user->rights->propale->valider)
 		{
-			if ($user->rights->propale->valider && $propal->total_ttc > 0)
+			print '<a class="butAction" ';
+			if ($conf->use_ajax)
 			{
-				print '<a class="butAction" ';
-				if ($conf->use_ajax)
-				{
-					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
-					print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
-				}
-				print '>'.$langs->trans('Validate').'</a>';
+				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_validate&confirm=yes';
+				print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmValidateProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
 			}
+			else
+			{
+				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=validate"';
+			}
+			print '>'.$langs->trans('Validate').'</a>';
 		}
 
 		// Edit
-		if ($propal->statut == 1)
+		if ($propal->statut == 1 && $user->rights->propale->creer)
 		{
-			if ($user->rights->propale->creer)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
-			}
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
 		}
 
 		// Build PDF
@@ -1487,45 +1483,36 @@ if ($_GET['propalid'] > 0)
 		}
 
 		// Send
-		if ($propal->statut == 1)
+		if ($propal->statut == 1 && $user->rights->propale->envoyer)
 		{
-			if ($user->rights->propale->envoyer)
+			$propref = sanitize_string($propal->ref);
+			$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
+			if (file_exists($file))
 			{
-				$propref = sanitize_string($propal->ref);
-				$file = $conf->propal->dir_output . '/'.$propref.'/'.$propref.'.pdf';
-				if (file_exists($file))
-				{
-					print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
-				}
+				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=presend">'.$langs->trans('SendByMail').'</a>';
 			}
 		}
 
 		// Close
-		if ($propal->statut != 0)
+		if ($propal->statut == 1 && $user->rights->propale->cloturer)
 		{
-			if ($propal->statut == 1 && $user->rights->propale->cloturer)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
-			}
+			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=statut">'.$langs->trans('Close').'</a>';
 		}
 
 		// Delete
-		if ($propal->statut == 0)
+		if ($propal->statut == 0 && $user->rights->propale->supprimer)
 		{
-			if ($user->rights->propale->supprimer)
+			print '<a class="butActionDelete" ';
+			if ($conf->use_ajax)
 			{
-				print '<a class="butActionDelete" ';
-				if ($conf->use_ajax)
-				{
-					$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
-					print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
-				}
-				else
-				{
-					print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
-				}
-				print '>'.$langs->trans('Delete').'</a>';
+				$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&action=confirm_delete&confirm=yes';
+				print 'href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProp').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')"';
 			}
+			else
+			{
+				print 'href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete"';
+			}
+			print '>'.$langs->trans('Delete').'</a>';
 		}
 
 	}
