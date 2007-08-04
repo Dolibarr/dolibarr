@@ -95,20 +95,39 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
   exit;
 }
 
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+/*
+ *  Supprime une ligne produit SANS confirmation
+ */
+if ($_GET['action'] == 'deleteline' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+{
+	$propal = new Propal($db);
+	$propal->fetch($_GET['propalid']);
+	$propal->delete_product($_GET['ligne']);
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+}
+
+/*
+ *  Supprime une ligne produit AVEC confirmation
+ */
+if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
   if ($user->rights->propale->creer)
+  {
+  	$propal = new Propal($db);
+    $propal->fetch($_GET['propalid']);
+    $result=$propal->delete_product($_GET['ligne']);
+    if ($_REQUEST['lang_id'])
     {
-      $propal = new Propal($db);
-      $propal->fetch($_GET['propalid']);
-      $result=$propal->delete_product($_GET['ligne']);
-      if ($_REQUEST['lang_id'])
-	{
-	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-      propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+    	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
+    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+  }
   Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
   exit;
 }
@@ -598,23 +617,6 @@ if ($_REQUEST['action'] == 'builddoc' && $user->rights->propale->creer)
 	} 
 }
 
-
-if ($_GET['action'] == 'del_ligne' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-{
-	/*
-	*  Supprime une ligne produit dans la propale
-	*/
-	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
-	$propal->delete_product($_GET['ligne']);
-	if ($_REQUEST['lang_id'])
-	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-}
-
 if ($_POST['action'] == 'classin')
 {
   $propal = new Propal($db);
@@ -726,11 +728,11 @@ if ($_GET['propalid'] > 0)
     }
   
   /*
-   * Confirmation de la suppression d'une ligne produit
+   * Confirmation de la suppression d'une ligne produit/service
    */
-  if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+  if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
     {
-      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
       print '<br>';
     }
   
@@ -1162,13 +1164,23 @@ if ($_GET['propalid'] > 0)
 					print '<td align="center">';
 					if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=delete_product_line&amp;ligne='.$objp->rowid.'">';
+						if ($conf->use_ajax)
+						{
+							$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&ligne='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
+							print '<a href="#" onClick="confirmDelete(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\')">';
+							print img_delete();
+						}
+						else
+						{
+							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
+							print img_delete();
+						}
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=del_ligne&amp;ligne='.$objp->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=deleteline&amp;ligne='.$objp->rowid.'">';
+						print img_delete();
 					}
-					print img_delete();
 					print '</a></td>';
 					if ($num > 1)
 					{

@@ -649,3 +649,20 @@ function cleanSerialize(expr) {
 	var liste = liste1.replace(reg2, "");
 	return liste;
 }
+
+/*=================================================================
+	Purpose:  Affiche un message de confirmation
+	Input:    linkurl,message,ok,cancel
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+function confirmDelete(linkurl,message,ok,cancel) {
+	Dialog.confirm(message, {
+		width:300,
+		okLabel: ok,
+		cancelLabel: cancel,
+		buttonClass: "button",
+		cancel:function(win){},
+		ok:function(win) {window.location.href=linkurl; return true;} 
+	});
+}
