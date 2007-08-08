@@ -54,13 +54,14 @@ body {
     margin-left: 0;
 }
 
-a:link    { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:visited { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:active  { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:hover   { font: verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:link    { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:visited { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:active  { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:hover   { font-family: helvetica, verdana, arial, helvetica, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
 input
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -68,14 +69,16 @@ input
 }
 input.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+	font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -83,7 +86,8 @@ textarea  {
 }
 textarea.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FDFDFD;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
@@ -91,14 +95,16 @@ textarea.flat
 }
 select.flat
 {
-    font: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px helvetica, verdana, arial, sans-serif;
+    font-size: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px;
+	font-family: helvetica, verdana, arial, sans-serif;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 .button
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
 	border: 0px;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
 	background-position: bottom;
@@ -106,7 +112,8 @@ select.flat
     margin: 0px 0px 0px 0px;
 }
 .button:focus  {
-    font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
 	color: #222244;
 	border: 0px;
 	background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/button_bg.png' ?>);
@@ -169,7 +176,6 @@ div.fiche
 div.tmenu
 {
     position: relative;
-    float: top;
     display: block;
     white-space: nowrap;
     border-top: 1px solid #D3E5EC;
@@ -206,7 +212,8 @@ a.tmenu:link
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
-  font: 12px helvetica, verdana, arial, sans-serif;
+  font-size: 12px; 
+  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
 a.tmenu:visited
@@ -215,7 +222,8 @@ a.tmenu:visited
   padding: 0px 5px 0px 5px;
   margin: 0px 1px 2px 1px;
   border: 0px solid #b3c5cc;
-  font: 12px helvetica, verdana, arial, sans-serif;
+  font-size: 12px; 
+  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
 }
 a.tmenu#sel
@@ -223,7 +231,8 @@ a.tmenu#sel
   color: #234046;
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
-  font: 12px helvetica, verdana, arial, sans-serif;
+  font-size: 12px;
+  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background: #F4F4F4;
 /*  background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu_inverse.jpg' ?>); */
@@ -238,7 +247,8 @@ a.tmenu:hover
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
   text-decoration: none;
-  font: 12px helvetica, verdana, arial, sans-serif;
+  font-size: 12px;
+  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background: #dee7ec;
   border-right: 1px solid #555555;
@@ -261,7 +271,8 @@ a.tmenu:active
   padding: 0px 5px 0px 5px;
   margin: 0px 0px 0px 0px;
   text-decoration: none;
-  font: 12px helvetica, verdana, arial, sans-serif;
+    font-size: 12px;
+  font-family: helvetica, verdana, arial, sans-serif;
   font-weight: normal;
   background:#F4F4F4;
   border-right: 1px solid #555555;
@@ -284,7 +295,6 @@ div.tmenu li {
 	border-right: solid 1px #7699A9;
 	height: 18px;
 	position:relative;
-	liste-style:none;
 	display: block;
 	margin:0;
 	padding:0;
@@ -344,12 +354,12 @@ a.login
   color: #234046;
   padding: 0px 8px;
   margin: 0px 0px 1px 0px;
-  font-weight:bold;
-  font-size:12px;
+  font-weight: bold;
+  font-size: 12px;
 }
 a.login:hover
 {
-  color:black;
+  color: black;
 }
 
 img.login
@@ -358,9 +368,9 @@ img.login
   right: 8px;
   top: 3px;
 
-  text-decoration:none;
-  color:white;
-  font-weight:bold;
+  text-decoration: none;
+  color: white;
+  font-weight: bold;
 }
 
 
@@ -368,22 +378,22 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link        { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:visited     { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:active      { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover       { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-font.vmenudisabled  { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; color: #93a5aa; }
+a.vmenu:link        { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+font.vmenudisabled  { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited    { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active     { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover      { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1em 1em 1em 1em; }
+a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1em 1em 1em 1em; }
 
-a.help:link         { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited      { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active       { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover        { font-size:11px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active       { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover        { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 
 
@@ -402,7 +412,7 @@ div.menu
 	border-spacing: 0px;
 	padding: 0px;
 	width: 165px;
-    border : 0x solid #68ACCF;	
+    border: 0px solid #68ACCF;
 }
 
 
@@ -448,7 +458,7 @@ div.blockvmenupair
     width:158px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -465,7 +475,7 @@ div.blockvmenuimpair
     width:158px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -483,7 +493,7 @@ div.help
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -496,7 +506,7 @@ td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -550,11 +560,11 @@ div.tabsAction {
     text-align: right;
 }
 
+
 /* onglet_inf ne sert qu'a telephonie. A virer */
 div.onglet_inf
 {
     position: relative;
-    float: top;
     display: block;
     white-space: nowrap;
     padding: 0px 0px 0px 0px;
@@ -565,7 +575,6 @@ div.onglet_inf
     color: #000000;
     text-decoration: none;
 }
-
 a.onglet_inf {
     background: white;
     color: #436976;
@@ -585,6 +594,7 @@ a.onglet_inf {
 a.tabTitle {
     background: #436976;
     color: white;
+	font-family: helvetica, verdana, arial, sans-serif;
     font-weight: normal;
     padding: 0px 6px;
     margin: 0px 6px;
@@ -598,6 +608,7 @@ a.tabTitle {
 a.tab:link {
     background: white;
     color: #436976;
+	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -612,6 +623,7 @@ a.tab:link {
 a.tab:visited {
     background: white;
     color: #436976;
+	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -626,6 +638,7 @@ a.tab:visited {
 a.tab#active {
     background: #dee7ec;
     border-bottom: #dee7ec 1px solid;
+	font-family: helvetica, verdana, arial, sans-serif;
     color: #436976;
     padding: 0px 6px;
     margin: 0em 0.2em;
@@ -640,6 +653,7 @@ a.tab#active {
 a.tab:hover {
     background: #dee7ec;
     color: #436976;
+	font-family: helvetica, verdana, arial, sans-serif;
     padding: 0px 6px;
     margin: 0em 0.2em;
     text-decoration: none;
@@ -653,6 +667,7 @@ a.tab:hover {
 
 a.tabimage {
     color: #436976;
+	font-family: helvetica, verdana, arial, sans-serif;
     text-decoration: none;
     white-space: nowrap;
 }
@@ -664,7 +679,8 @@ a.tabimage {
 
 /* Nouvelle syntaxe à utiliser */
 
-a.butAction:link    { font: 12px helvetica, verdana, arial, sans-serif;
+a.butAction:link    {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
                       border: 1px solid #8CACBB;
@@ -674,7 +690,8 @@ a.butAction:link    { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:visited { font: 12px helvetica, verdana, arial, sans-serif;
+a.butAction:visited {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
                       border: 1px solid #8CACBB;
@@ -684,7 +701,8 @@ a.butAction:visited { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:active  { font: 12px helvetica, verdana, arial, sans-serif;
+a.butAction:active  {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
                       border: 1px solid #8CACBB;
@@ -694,7 +712,8 @@ a.butAction:active  { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif;
+a.butAction:hover   {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: #dee7ec;
                       border: 1px solid #8CACBB;
@@ -704,7 +723,8 @@ a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-.butActionRefused    { font: 12px helvetica, verdana, arial, sans-serif;
+.butActionRefused    {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
                       border: 1px solid #AAAAAA;
@@ -714,7 +734,8 @@ a.butAction:hover   { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionDelete    { font: 12px helvetica, verdana, arial, sans-serif;
+a.butActionDelete    {     font-size: 12px;
+					  font-family: helvetica, verdana, arial, sans-serif;
                       font-weight: bold;
                       background: white;
                       border: 1px solid red;
@@ -724,10 +745,10 @@ a.butActionDelete    { font: 12px helvetica, verdana, arial, sans-serif;
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionDelete:link    { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:active  { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:visited { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:link    { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:active  { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:visited { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: white; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:hover   { font-size: 12px; font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #436976; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 /* ============================================================================== */
@@ -738,7 +759,6 @@ a.butActionDelete:hover   { font: 12px helvetica, verdana, arial, sans-serif; fo
 list-style-type:none;
 margin:0px;
 padding:0px;
-spacing:0px;
 }
 
 .notopnoleft {
@@ -800,7 +820,7 @@ tr.liste_titre {
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -809,7 +829,7 @@ td.liste_titre {
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -819,7 +839,7 @@ td.liste_titre_sel
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #F5FFFF;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -840,7 +860,7 @@ white-space: nowrap;
 th {
 background: #7699A9;
 color: #334444;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 font-weight: bold;
 border-left: 1px solid #FFFFFF;
 border-right: 1px solid #FFFFFF;
@@ -858,7 +878,7 @@ border-left: 1px solid #000000;
 
 .pair	{
 background: #e6ebed;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
 /*
@@ -870,7 +890,7 @@ border: 0px;
 
 .impair {
 background: #d0d4d7;
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 border: 0px;
 }
 /*
@@ -891,7 +911,8 @@ tr.box_titre {
 background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px; 
+font-family: arial, helvetica, verdana, sans-serif;
 font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -901,16 +922,18 @@ white-space: nowrap;
 
 tr.box_impair {
 background: #e6ebed;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px; 
+font-family: arial, helvetica, verdana, sans-serif;
 }
 
 tr.box_pair {
 background: #d0d4d7;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px; 
+font-family: arial, helvetica, verdana, sans-serif;
 }
 
 tr.fiche {
-font: helvetica, verdana, arial, sans-serif;
+font-family: helvetica, verdana, arial, sans-serif;
 }
 
 
@@ -971,7 +994,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Lignes titre espace
  */
 div.titre {
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	font-weight: bold;
 	color: #336666;
 	text-decoration: none }
