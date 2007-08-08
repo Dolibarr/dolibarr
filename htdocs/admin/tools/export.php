@@ -119,8 +119,8 @@ if ($what == 'mysql')
 	$outputfile=DOL_DATA_ROOT.$relativepathfile;
 	$outputerror=DOL_DATA_ROOT.$relativepatherr;
 	
-	print $langs->trans("RunCommandSummary").':<br>';
-	print '<textarea rows="1" cols="120">'.$command." ".$param.'</textarea><br>';
+	print $langs->trans("RunCommandSummary").':<br>'."\n";
+	print '<textarea rows="1" cols="120">'.$command." ".$param.'</textarea><br>'."\n";
 
 	print '<br>';
 

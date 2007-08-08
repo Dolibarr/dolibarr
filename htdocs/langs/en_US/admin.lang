@@ -82,6 +82,8 @@ NoBackupFileAvailable=No backup files available.
 ExportMethod=Export method
 ImportMethod=Import method
 ToBuildBackupFileClickHere=To build a backup file, click <a href="%s">here</a>.
+ImportMySqlDesc=To import a backup file, you must use mysql command from command line:
+ImportMySqlCommand=%s %s < mybackupfile.sql
 Yes=Yes
 No=No
 AutoDetectLang=Autodetect (browser language)
