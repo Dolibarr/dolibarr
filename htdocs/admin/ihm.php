@@ -258,12 +258,14 @@ else
     // Disable ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
-    print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
+    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("Yes").' ('.$langs->trans("JavascriptDisabled").')';
+    else print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
     // Confirm ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
-    print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
+    if ($conf->global->MAIN_DISABLE_JAVASCRIPT) print $langs->trans("No").' ('.$langs->trans("JavascriptDisabled").')';
+    else print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
     
     // Calendrier en popup
     $var=!$var;
