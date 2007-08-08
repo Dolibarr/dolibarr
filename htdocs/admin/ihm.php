@@ -52,6 +52,7 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_SIZE_LISTE_LIMIT",   $_POST["main_size_liste_limit"]);
 	dolibarr_set_const($db, "MAIN_DISABLE_JAVASCRIPT", $_POST["main_disable_javascript"]);
 	dolibarr_set_const($db, "MAIN_DISABLE_AJAX",       $_POST["main_disable_ajax"]);
+	dolibarr_set_const($db, "MAIN_CONFIRM_AJAX",       $_POST["main_confirm_ajax"]);
 	dolibarr_set_const($db, "MAIN_POPUP_CALENDAR",     $_POST["main_popup_calendar"]);
 	dolibarr_set_const($db, "MAIN_USE_PREVIEW_TABS",   $_POST["main_use_preview_tabs"]);
 	
@@ -131,6 +132,14 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';
     print $html->selectyesno('main_disable_ajax',isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1,1);
+    print ' ('.$langs->trans("AutomaticIfJavascriptDisabled").')';
+    print '</td></tr>';
+    
+    // Confirmation par popup ajax
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
+    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,0);
+    print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
     print '</td></tr>';
     
     // Désactiver le calendrier popup
@@ -251,6 +260,11 @@ else
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableAjax").'</td><td>';   
     print yn(isset($conf->global->MAIN_DISABLE_AJAX)?$conf->global->MAIN_DISABLE_AJAX:1)."</td></tr>";
     
+    // Confirm ajax
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';   
+    print yn(isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0)."</td></tr>";
+    
     // Calendrier en popup
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("UsePopupCalendar").'</td><td>';   
@@ -301,7 +315,7 @@ else
     print '<div class="tabsAction">';
     print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit">'.$langs->trans("Edit").'</a>';
     print '</div>';
-
+	print '<br>';
 }
 
 

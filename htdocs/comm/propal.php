@@ -1429,7 +1429,7 @@ if ($_GET['propalid'] > 0)
 	$form_close.= '</td></tr>';
 	$form_close.= '<tr><td align="center" colspan="2">';
 	$form_close.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">';
-	if ($conf->use_ajax)
+	if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 	{
 		$form_close.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">';
 	}
