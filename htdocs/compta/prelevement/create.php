@@ -142,7 +142,7 @@ if ($result)
       print "<tr $bc[$var]><td>";
       print '<img border="0" src="./statut'.$obj->statut.'.png"></a>&nbsp;';
       print '<a href="fiche.php?id='.$obj->rowid.'">'.$obj->ref."</a></td>\n";
-      print '<td align="center">'.strftime("%d/%m/%Y",$obj->datec)."</td>\n";
+      print '<td align="center">'.dolibarr_print_date($obj->datec,'day')."</td>\n";
 
       print '<td align="right">'.price($obj->amount).' '.$langs->trans("Currency".$conf->monnaie)."</td>\n";
 

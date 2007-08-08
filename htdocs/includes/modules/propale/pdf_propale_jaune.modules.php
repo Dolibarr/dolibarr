@@ -341,7 +341,7 @@ class pdf_propale_jaune extends ModelePDFPropales
       $pdf->SetXY(10,90);
       $pdf->MultiCell(110, 10, "Numéro : ".$propale->ref);
       $pdf->SetXY(110,90);
-      $pdf->MultiCell(100, 10, "Date : " . strftime("%d %B %Y", $propale->date));
+      $pdf->MultiCell(100, 10, "Date : " . dolibarr_print_date($propale->date,'day'));
     }
 }
 ?>

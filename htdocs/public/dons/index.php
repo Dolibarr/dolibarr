@@ -83,7 +83,7 @@ if ($conf->don->enabled)
 	  
 	  if ($ref_commande)
 	    {
-	      $date_limite = strftime("%A %d %B %Y",time() + (3 * 7 * 24 * 3600));
+	      $date_limite = dolibarr_print_date(time() + (3 * 7 * 24 * 3600), 'dayhourtext');
 
 	      include ("mail.php");
 

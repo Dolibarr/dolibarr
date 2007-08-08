@@ -100,7 +100,7 @@ class mod_facture_neptune extends ModeleNumRefFactures
 
         //on vérifie si il y a une année précédente
         //sinon le delta sera appliqué de nouveau sur la nouvelle année
-        $lastyy = 'FA'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $lastyy = 'FA'.strftime("%y",dolibarr_mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         $sql = "SELECT MAX(facnumber)";
         $sql.= " FROM ".MAIN_DB_PREFIX."facture";
         $sql.= " WHERE facnumber like '${lastyy}%'";

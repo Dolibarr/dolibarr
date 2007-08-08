@@ -91,7 +91,7 @@ class mod_propale_rubis extends ModeleNumRefPropales
         $current_month = date("n");
         if($conf->global->SOCIETE_FISCAL_MONTH_START > 1 && $current_month >= $conf->global->SOCIETE_FISCAL_MONTH_START)
         {
-        	$yy = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")+1));
+        	$yy = strftime("%y",dolibarr_mktime(0,0,0,date("m"),date("d"),date("Y")+1));
         }
         else
         {

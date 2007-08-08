@@ -215,7 +215,7 @@ if ($_GET["action"] == 'create')
       print "</td></tr>";
       
       print "<tr><td>".$langs->trans("Date")."</td>";
-      print "<td>".strftime("%A %d %B %Y",$commande->date)."</td>\n";
+      print "<td>".dolibarr_print_date($commande->date,'dayhourtext')."</td>\n";
       
       print '<td>'.$langs->trans("Order").'</td><td><a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$commande->id.'">'.img_object($langs->trans("ShowOrder"),'order').' '.$commande->ref.'</a>';
       print "</td></tr>\n";

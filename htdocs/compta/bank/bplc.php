@@ -95,5 +95,5 @@ print "</table>";
 
 $db->close();
 
-llxFooter(strftime("%H:%M",time()). " - <em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>

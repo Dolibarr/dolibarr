@@ -116,8 +116,6 @@ if ($_socid > 0)
 	$objsoc->id=$_socid;
 	$objsoc->fetch($_socid,$to);
 	
-	$dac = strftime("%Y-%m-%d %H:%M", time());
-	  
 	/*
 	 * Affichage onglets
 	 */

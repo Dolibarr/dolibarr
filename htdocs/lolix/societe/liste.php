@@ -91,7 +91,7 @@ if ($result)
       print "</a>&nbsp;<a href=\"offre.php?id=$obj->idp\">$obj->ref</A></td>\n";     
       print "<TD>".$obj->ville."&nbsp;</TD>\n";
 
-      print '<td align="center">'.strftime("%d/%m/%Y",$obj->da)."</td>\n";
+      print '<td align="center">'.dolibarr_print_date($obj->da,'day')."</td>\n";
 
       print "</TR>\n";
       $i++;

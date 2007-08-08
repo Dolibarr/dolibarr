@@ -126,7 +126,7 @@ if (sizeof($factures)>0 && is_array($factures))
         $var=!$var;
         print "<tr $bc[$var]>";
         print "<td><a href=\"../compta/facture.php?facid=$facture->id\">$facture->ref</a></td>\n";
-        print '<td>'.strftime("%d %B %Y",$facture->date).'</td>';
+        print '<td>'.dolibarr_print_date($facture->date,'day').'</td>';
         print '<td align="right">'.price($facture->total_ht).'</td><td>&nbsp;</td></tr>';
 
         $total = $total + $facture->total_ht;

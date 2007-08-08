@@ -112,7 +112,7 @@ else
   
   print '<table class="border" width="100%">';
   print '<tr><td width="20%">Nom</td><td width="30%">'.$soc->nom.'</td>';
-  print '<td>Mise à jour</td><td>'.strftime("%d %B %Y %H:%M",$socdet->date_fiche_update).' ';
+  print '<td>Mise à jour</td><td>'.dolibarr_print_date($socdet->date_fiche_update,'dayhour').' ';
   print '</td></tr>';
 
 
@@ -131,7 +131,7 @@ else
   print '<tr><td>Forme juridique</td><td colspan="3">'.$soc->forme_juridique.'</td></tr>';
 
   print '<tr><td>'.$langs->trans("Staff").'</td><td>'.$soc->effectif.'</td>';
-  print '<td>Création</td><td>'.strftime("%d %B %Y",$soc->date_creation).'</td></tr>';
+  print '<td>Création</td><td>'.dolibarr_print_date($soc->date_creation,'day').'</td></tr>';
   
   print '<tr><td>Contact</td><td>'.$socdet->contact_nom.' '.$socdet->contact_email.'</td>';
   print '<td>&nbsp;</td><td>&nbsp;</td></tr>';
@@ -144,7 +144,7 @@ else
     {
       print '<td><a href="'.DOL_URL_ROOT.'/document/sl/catalogue-'.$soc->id.'.pdf">'.img_pdf().'</a></td>';
       print '<td>'.filesize($file). ' bytes</td>';
-      print '<td>'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+      print '<td>'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
     }
   print '</tr>';
 /*

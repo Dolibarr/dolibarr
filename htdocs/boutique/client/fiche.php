@@ -80,7 +80,7 @@ if ($_GET['id'])
 	    
 	    print '<td><a href="'.DOL_URL_ROOT.'/boutique/commande/fiche.php?id='.$objp->orders_id.'"><img src="/theme/'.$conf->theme.'/img/filenew.png" border="0" alt="Fiche">&nbsp;';
 	    
-	    print strftime("%d %B %Y",$objp->date_purchased)."</a>\n";
+	    print dolibarr_print_date($objp->date_purchased,'dayhour')."</a>\n";
 	    print $objp->total . "</a></TD>\n";
 	    print "</tr>\n";
 	    $i++;

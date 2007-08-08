@@ -355,7 +355,7 @@ class BonPrelevement
                         $subject = "Crédit prélèvement ".$this->ref." à la banque";
                         $message = "Le bon de prélèvement ".$this->ref;
                         $message .= " a été crédité par la banque.\n";
-                        $message .= "Date crédit : ".strftime("%A %e %B %Y", $date);
+                        $message .= "Date crédit : ".dolibarr_print_date($date,'dayhour');
 
                         $this->Notify($user, "cr", $subject, $message);
                     }
@@ -427,7 +427,7 @@ class BonPrelevement
                 $message .= "\n\n";
                 $message .= "\nMontant : ".price($this->amount);
                 $message .= "\nMéthode : ".$this->methodes_trans[$this->method_trans];
-                $message .= "\nDate  : ".strftime("%A %e %B %Y", $date);
+                $message .= "\nDate  : ".dolibarr_print_date($date,'day');
 
                 $this->Notify($user,"tr", $subject, $message, 1);
             }

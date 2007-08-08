@@ -60,7 +60,7 @@ if ( $db->query( $sql) )
 	  print "<TR $bc[$var]>";
 	  print "<td>".stripslashes($objp->nom)."</TD>\n";
 	  	  
-	  print "<TD>".strftime("%d %B %Y",$objp->datef)."</td>\n";
+	  print "<TD>".dolibarr_print_date($objp->datef,'dayhour')."</td>\n";
 	  print '<TD align="right">'.number_format($objp->total,2,'.','').' '.$langs->trans("Currency".$conf->monnaie);
 
 	  if ($objp->paye == 1)

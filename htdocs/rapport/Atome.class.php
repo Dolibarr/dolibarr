@@ -77,7 +77,7 @@ class Atome
                     $value = $this->datas[$index];
                 }
     
-                $libelle = ucfirst(strftime("%b", mktime(12,0,0,($i+1),1,2004)));
+                $libelle = ucfirst(strftime("%b", dolibarr_mktime(12,0,0,($i+1),1,2004)));
     
                 $this->graph_values[$i] = array($libelle, $value);
             }

@@ -108,7 +108,7 @@ class mod_commande_diamant extends ModeleNumRefCommandes
     
         //on vérifie si il y a une année précédente
         //sinon le delta sera appliqué de nouveau sur la nouvelle année
-        $lastyy = 'C'.strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $lastyy = 'C'.strftime("%y",dolibarr_mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         $sql = "SELECT MAX(ref)";
         $sql.= " FROM ".MAIN_DB_PREFIX."commande";
         $sql.= " WHERE ref like '${lastyy}%'";

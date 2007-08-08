@@ -408,7 +408,7 @@ if ($account > 0)
 	{
 		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-		$labels[$i] = strftime("%b",mktime(1,1,1,$i+1,1,2000));
+		$labels[$i] = strftime("%b",dolibarr_mktime(1,1,1,$i+1,1,2000));
 		$datamin[$i] = $acct->min_desired;
 	}
 

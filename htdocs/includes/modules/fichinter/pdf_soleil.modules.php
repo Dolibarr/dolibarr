@@ -178,7 +178,7 @@ class pdf_soleil extends ModelePDFFicheinter
 
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',14);
-                $pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $fich->date));
+                $pdf->Text(11, 88, "Date : " . dolibarr_print_date($fich->date,'day'));
                 $pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fich->ref);
 
                 $pdf->SetFillColor(220,220,220);

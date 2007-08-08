@@ -159,7 +159,7 @@ if ($_GET["facid"] > 0)
 
             print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=facture&file='.urlencode($relativepath).'">'.$fac->ref.'.pdf</a></td>';
             print '<td align="right">'.filesize($file). ' bytes</td>';
-            print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+            print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
             print '</tr>';
 
             // Si fichier detail PDF existe

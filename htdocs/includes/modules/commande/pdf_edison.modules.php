@@ -363,7 +363,7 @@ class pdf_edison extends ModelePDFCommandes
 	
 		$pdf->SetTextColor(200,0,0);
 		$pdf->SetFont('Arial','B',12);
-		$pdf->Text(11, 88, "Date : " . strftime("%d %b %Y", $com->date));
+		$pdf->Text(11, 88, "Date : " . dolibarr_print_date($com->date,'day'));
 		$pdf->Text(11, 94, $langs->transnoentities("Order")." ".$com->ref);
 	
 	

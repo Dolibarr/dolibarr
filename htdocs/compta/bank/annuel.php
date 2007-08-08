@@ -138,11 +138,11 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
 {
     $var=!$var;
     print '<tr '.$bc[$var].'>';
-    print "<td>".strftime("%B",mktime(1,1,1,$mois,1,2000))."</td>";
+    print "<td>".strftime("%B",dolibarr_mktime(1,1,1,$mois,1,2000))."</td>";
     for ($annee = $year_start ; $annee <= $year_end ; $annee++)
     {
         print '<td align="right" width="10%">&nbsp;';
-        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+        $case = strftime("%Y-%m",dolibarr_mktime(1,1,1,$mois,1,$annee));
         if ($decaiss[$case]>0)
         {
             print price($decaiss[$case]);
@@ -151,7 +151,7 @@ for ($mois = 1 ; $mois < 13 ; $mois++)
         print "</td>";
 
         print '<td align="right" width="10%">&nbsp;';
-        $case = strftime("%Y-%m",mktime(1,1,1,$mois,1,$annee));
+        $case = strftime("%Y-%m",dolibarr_mktime(1,1,1,$mois,1,$annee));
         if ($encaiss[$case]>0)
         {
             print price($encaiss[$case]);

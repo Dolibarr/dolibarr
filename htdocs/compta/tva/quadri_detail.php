@@ -249,7 +249,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 		$x_coll_ht = 0;
 		$x_paye_sum = 0;
 		$x_paye_ht = 0;
-		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",mktime(0,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",mktime(0,0,0,($q*3),1,$y)).')</td></tr>';
+		print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("Quadri")." $q (".strftime("%b %Y",dolibarr_mktime(0,0,0,(($q-1)*3)+1,1,$y)).' - '.strftime("%b %Y",mktime(0,0,0,($q*3),1,$y)).')</td></tr>';
 		print '<tr class="liste_titre">';
 		print '<td align="left">'.$langs->trans("CustomersInvoices").'</td>';
 		print '<td align="left"> '.$langs->trans("Description").'</td>';

@@ -219,7 +219,7 @@ if ($_GET["id"] > 0)
 					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=actions&file='.$act->id.'/'.urlencode($file).'">'.$file.'</a>';
 					print "</td>\n";
 					print '<td align="right">'.filesize($upload_dir.'/'.$file). ' bytes</td>';
-					print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+					print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
 					print '<td align="center">';
 					print '<a href="'.DOL_URL_ROOT.'/comm/action/document.php?id='.$act->id.'&action=delete&urlfile='.urlencode($file).'">'.img_delete($langs->trans('Delete')).'</a>';
 					print "</td></tr>\n";

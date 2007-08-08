@@ -106,7 +106,7 @@ if ($_GET["id"])
 		}
 	      else
 		{
-		  print strftime("%d %B %Y",$rej->date_rejet);
+		  print dolibarr_print_date($rej->date_rejet,'day');
 		}
 	      print '</td></tr>';
 	    }

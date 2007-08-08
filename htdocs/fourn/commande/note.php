@@ -134,7 +134,7 @@ if ($_GET["id"] > 0)
 
 			if ($commande->date_commande)
 			{
-				print strftime("%A %d %B %Y",$commande->date_commande)."\n";
+				print dolibarr_print_date($commande->date_commande,'dayhourtext')."\n";
 			}
 
 			print '&nbsp;</td><td width="50%">';

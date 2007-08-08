@@ -76,7 +76,7 @@ class mod_propale_ivoire extends ModeleNumRefPropales
 
         $prefix='PR';
         $current_year = strftime("%y",time());
-        $last_year = strftime("%y",mktime(0,0,0,date("m"),date("d"),date("Y")-1));
+        $last_year = strftime("%y",dolibarr_mktime(0,0,0,date("m"),date("d"),date("Y")-1));
         
         $pryy = $prefix.$current_year;
         

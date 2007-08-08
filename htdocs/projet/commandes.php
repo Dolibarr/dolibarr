@@ -128,7 +128,7 @@ if (sizeof($commandes)>0 && is_array($commandes))
         $var=!$var;
         print "<tr $bc[$var]>";
         print "<td><a href=\"../commande/fiche.php?id=$commande->id\">$commande->ref</a></td>\n";
-        print '<td>'.strftime("%d %B %Y",$commande->date).'</td>';
+        print '<td>'.dolibarr_print_date($commande->date,'day').'</td>';
         print '<td align="right">'.price($commande->total_ht).'</td><td>&nbsp;</td></tr>';
     
         $total = $total + $commande->total_ht;

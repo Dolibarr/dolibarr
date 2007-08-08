@@ -433,7 +433,7 @@ class pdf_oursin extends ModelePDFFactures
 	  $row = $this->db->fetch_row();
 
 	  $pdf->SetXY ($tab3_posx, $tab3_top+$y );
-	  $pdf->MultiCell(20, 4, strftime("%d/%m/%y",$row[0]), 0, 'L', 0);
+	  $pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day'), 0, 'L', 0);
 	  $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
 	  $pdf->MultiCell(20, 4, $row[1], 0, 'L', 0);
 	  $pdf->SetXY ($tab3_posx+41, $tab3_top+$y);

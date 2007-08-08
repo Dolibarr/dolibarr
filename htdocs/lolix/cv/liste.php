@@ -99,7 +99,7 @@ if ($result)
       print img_file();
       print "</a>&nbsp;<a href=\"offre.php?id=$obj->idp\">$obj->nom</A></td>\n";      print "<TD>".$obj->prenom."&nbsp;</TD>\n";
 
-      print '<td align="center">'.strftime("%d/%m/%Y",$obj->da)."</td>\n";
+      print '<td align="center">'.dolibarr_print_date($obj->da,'day')."</td>\n";
       print '<td align="center"><a href="liste.php?id='.$obj->idp.'&amp;action=deac">Deac</a></td>';
       print "</TR>\n";
       $i++;

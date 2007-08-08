@@ -194,7 +194,7 @@ if ($facid > 0)
 						echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=facture&file='.$facref.'/'.urlencode($file).'">'.$file.'</a>';
 						print "</td>\n";
 						print '<td align="right">'.filesize($upload_dir.'/'.$file). ' '.$langs->trans("bytes").'</td>';
-						print '<td align="center">'.strftime('%d %b %Y %H:%M:%S',filemtime($upload_dir.'/'.$file)).'</td>';
+						print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir.'/'.$file),'dayhour').'</td>';
 						print '<td align="center">';
 						if ($file == $facref . '.pdf')
 						{

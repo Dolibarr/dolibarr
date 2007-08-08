@@ -231,7 +231,7 @@ function facture_meta_create($db, $facid, $message="")
 		  	$nblignes = sizeof($fac->lignes);
 		  	$client = $fac->client->nom . " " . $fac->client->adresse . " " . $fac->client->cp . " " . $fac->client->ville;
 		  	$meta = "REFERENCE=\"" . $fac->ref . "\"
-DATE=\"" . strftime("%d/%m/%Y",$fac->date) . "\"
+DATE=\"" . dolibarr_print_date($fac->date) . "\"
 NB_ITEMS=\"" . $nblignes . "\"
 CLIENT=\"" . $client . "\"
 TOTAL_HT=\"" . $fac->total_ht . "\"

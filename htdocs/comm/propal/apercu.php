@@ -176,7 +176,7 @@ if ($_GET["propalid"] > 0)
 
 					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepath).'">'.$propal->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
-					print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($file)).'</td>';
+					print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
@@ -185,7 +185,7 @@ if ($_GET["propalid"] > 0)
 
 						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=propal&file='.urlencode($relativepathdetail).'">'.$propal->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
-						print '<td align="right">'.strftime("%d %b %Y %H:%M:%S",filemtime($filedetail)).'</td>';
+						print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
 					}
 					print "</table>\n";

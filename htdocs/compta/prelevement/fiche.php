@@ -149,7 +149,7 @@ if ($_GET["id"])
       print '<table class="border" width="100%">';
 
       print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td>'.$bon->ref.'</td></tr>';
-      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.strftime("%e %B %Y",$bon->datec).'</td></tr>';
+      print '<tr><td width="20%">'.$langs->trans("Date").'</td><td>'.dolibarr_print_date($bon->datec,'dayhour').'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("Amount").'</td><td>'.price($bon->amount).'</td></tr>';
       print '<tr><td width="20%">'.$langs->trans("File").'</td><td>';
 
@@ -169,7 +169,7 @@ if ($_GET["id"])
 	  $muser->fetch();
 
 	  print '<tr><td width="20%">Date Transmission / Par</td><td>';
-	  print strftime("%e %B %Y",$bon->date_trans);
+	  print dolibarr_print_date($bon->date_trans,'dayhour');
 	  print ' par '.$muser->fullname.'</td></tr>';
 	  print '<tr><td width="20%">Méthode Transmission</td><td>';
 	  print $bon->methodes_trans[$bon->method_trans];
@@ -178,7 +178,7 @@ if ($_GET["id"])
       if($bon->date_credit <> 0)
 	{
 	  print '<tr><td width="20%">Crédité le</td><td>';
-	  print strftime("%e %B %Y",$bon->date_credit);
+	  print dolibarr_print_date($bon->date_credit,'dayhour');
 	  print '</td></tr>';
 	}
 

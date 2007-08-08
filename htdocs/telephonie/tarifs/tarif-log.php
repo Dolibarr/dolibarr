@@ -101,7 +101,7 @@ if ($resql)
       print "<td>".$obj->tarif."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
-      print "<td>".strftime('%d/%m/%y %H:%M',$obj->date)."</td>\n";
+      print "<td>".dolibarr_print_date($obj->date,'dayhour')."</td>\n";
       print "<td>".stripslashes($obj->firstname)." ".stripslashes($obj->name)."</td>\n";
       print "</tr>\n";
       $i++;
@@ -167,7 +167,7 @@ if ($resql)
       print "<td>".$obj->tarif."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->temporel)."</td>\n";
       print "<td>".sprintf("%01.4f",$obj->fixe)."</td>\n";
-      print "<td>".strftime('%d/%m/%y %H:%M',$obj->date)."</td>\n";
+      print "<td>".dolibarr_print_date($obj->date,'dayhour')."</td>\n";
       print "<td>".stripslashes($obj->firstname)." ".stripslashes($obj->name)."</td>\n";
       print "</tr>\n";
       $i++;
