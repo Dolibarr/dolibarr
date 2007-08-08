@@ -25,6 +25,7 @@ English Dolibarr changelog
 - Traduction more complete.
 - Better code comments for Doxygen documentation.
 - Better support of vcard export format.
+- Themes are full CSS compliant.
 
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
