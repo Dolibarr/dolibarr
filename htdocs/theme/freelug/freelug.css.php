@@ -54,13 +54,14 @@ body {
 
 }
 
-a:link    { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:visited { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:active  { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
-a:hover   { font: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
+a:link    { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:visited { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:active  { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: none; }
+a:hover   { font-family: helvetica, verdana, arial, sans-serif; font-weight: bold; color: #000000; text-decoration: underline; }
 input
 { 
-    font: 12px helvetica, verdana, arial, sans-serif; 
+	font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
@@ -68,14 +69,16 @@ input
 }
 input.flat
 { 
-    font: 12px helvetica, verdana, arial, sans-serif; 
+	font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif; 
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 textarea  {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
@@ -83,7 +86,8 @@ textarea  {
 }
 textarea.flat
 {
-    font: 12px helvetica, verdana, arial, sans-serif;
+	font-size: 12px;
+    font-family: helvetica, verdana, arial, sans-serif;
     background: #FFFFFF;
     border: 1px solid #8C9C9B;
     padding: 0px 0px 0px 0px;
@@ -91,13 +95,15 @@ textarea.flat
 }
 select.flat
 {
-    font: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px helvetica, verdana, arial, sans-serif;
+    font-size: <?php print (eregi('MSIE 6',$_SERVER['HTTP_USER_AGENT']) ? "11" : "12"); ?>px;
+	font-family: helvetica, verdana, arial, sans-serif;
     border: 1px solid #ACBCBB;
     padding: 0px 0px 0px 0px;
     margin: 0px 0px 0px 0px;
 }
 .button  {
-	font: 11px arial,verdana,heletica, sans-serif;
+	font-size: 11px;
+	font-family: arial,verdana,heletica, sans-serif;
     padding: 0px 2px 0px 2px;
     margin: 0px 0px 0px 0px; 
 	border-left: 1px solid #cccccc;
@@ -144,7 +150,6 @@ div.vmenu
 
 div.fiche
 {
-	float: right top;
 <?php
 	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
 	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
@@ -164,7 +169,6 @@ div.fiche
 div.tmenu
 {
     position: relative;
-    float: top;
     display: block;
     white-space: nowrap;
     border-top: 1px solid #D3E5EC;
@@ -255,14 +259,13 @@ div.tmenu li {
 	border-right: solid 1px #000000;
 	height: 18px;
 	position:relative;
-	liste-style:none;
 	display: block;
 	margin:0;
 	padding:0;
 }
 div.tmenu li a{
   	font-size: 13px;
-	color:#00000;
+	color:#000000;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
@@ -282,7 +285,7 @@ div.tmenu li a#sel
 }
 div.tmenu li a:visited
 {
-	color:#00000;
+	color:#000000;
 	font-weight: normal;
 }
 div.tmenu li a:hover
@@ -341,29 +344,29 @@ img.login
 /* Barre de gauche                                                                */
 /* ============================================================================== */
 
-a.vmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-a.vmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
-font.vmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
+a.vmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+a.vmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
+font.vmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; }
 
-a.vsmenu:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-font.vsmenudisabled { font-size:12px; font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1em 1em 1em 1em; }
+a.vsmenu:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+a.vsmenu:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #a3a590; margin: 1em 1em 1em 1em; }
 
-a.help:link    { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:visited { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:active  { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
-a.help:hover   { font: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:link    { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:visited { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:active  { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
+a.help:hover   { font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 
 div.blockvmenupair
 { 
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
 	background: #dddddd;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #202020; 
 	text-align:left;
 	text-decoration: none;
@@ -376,7 +379,7 @@ div.blockvmenuimpair
 	border-right: 1px solid #555555;
 	border-bottom: 1px solid #555555;
 	background: #dddddd;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #202020; 
 	text-align:left;
 	text-decoration: none;
@@ -389,7 +392,7 @@ div.help
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
-	font: helvetica, verdana, arial, sans-serif;
+	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -401,7 +404,8 @@ td.barre {
            border-right: 1px solid #000000;
            border-bottom: 1px solid #000000;
            background: #DDDDDD;
-           font: 12px helvetica, verdana; 
+		   font-size: 12px;
+           font-family: helvetica, verdana; 
            color: #000000; 
            text-align:left;
            text-decoration: none
@@ -499,14 +503,14 @@ a.tabimage {
 
 /* Nouvelle syntaxe à utiliser */
 
-a.butAction:link    { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butAction:visited { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butAction:active  { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butAction:hover   { font: helvetica, verdana, arial, sans-serif; background: #eeeedd; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:link    { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:visited { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:active  { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butAction:hover   { font-family: helvetica, verdana, arial, sans-serif; background: #eeeedd; border: 1px solid #999999; color: #436969; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-.butActionRefused         { font: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+.butActionRefused         { font-family: helvetica, verdana, arial, sans-serif; background: white; border: 1px solid #AAAAAA; color: #AAAAAA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
-a.butActionDelete:link    { font: helvetica, verdana, arial, sans-serif;
+a.butActionDelete:link    { font-family: helvetica, verdana, arial, sans-serif;
                       background: white; 
                       border: 1px solid #997777; 
                       color: #436976; 
@@ -515,7 +519,7 @@ a.butActionDelete:link    { font: helvetica, verdana, arial, sans-serif;
                       text-decoration: none; 
                       white-space: nowrap; }
 
-a.butActionDelete:active    { font: helvetica, verdana, arial, sans-serif;
+a.butActionDelete:active    { font-family: helvetica, verdana, arial, sans-serif;
                       background: white; 
                       border: 1px solid #997777; 
                       color: #436976; 
@@ -524,7 +528,7 @@ a.butActionDelete:active    { font: helvetica, verdana, arial, sans-serif;
                       text-decoration: none; 
                       white-space: nowrap; }
 
-a.butActionDelete:visited    { font: helvetica, verdana, arial, sans-serif;
+a.butActionDelete:visited    { font-family: helvetica, verdana, arial, sans-serif;
                       background: white; 
                       border: 1px solid #997777; 
                       color: #436976; 
@@ -533,7 +537,7 @@ a.butActionDelete:visited    { font: helvetica, verdana, arial, sans-serif;
                       text-decoration: none; 
                       white-space: nowrap; }
 
-a.butActionDelete:hover    { font: helvetica, verdana, arial, sans-serif;
+a.butActionDelete:hover    { font-family: helvetica, verdana, arial, sans-serif;
                       background: #FFe7ec; 
                       border: 1px solid #997777; 
                       color: #436976; 
@@ -551,7 +555,6 @@ a.butActionDelete:hover    { font: helvetica, verdana, arial, sans-serif;
 list-style-type:none;
 margin:0px;
 padding:0px;
-spacing:0px;
 }
 
 .notopnoleft {
@@ -694,7 +697,7 @@ a.impayee:hover { font-weight: bold; color: #550000; }
  *  Lignes titre espace
  */
 div.titre {
-    font: helvetica, verdana, arial, sans-serif;
+    font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     color: #777799; 
     text-decoration: none
@@ -712,7 +715,7 @@ input.liste_titre {
 tr.liste_titre { 
     color: #FFFFFF;
     background: #777799; 
-    font: helvetica, verdana, arial, sans-serif;
+    font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
@@ -724,7 +727,7 @@ tr.liste_titre {
 td.liste_titre { 
     color: #FFFFFF;
     background: #777799; 
-    font: helvetica, verdana, arial, sans-serif;
+    font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
@@ -735,7 +738,7 @@ td.liste_titre {
 { 
     color: #DCCCBB;
     background: #777799; 
-    font: helvetica, verdana, arial, sans-serif;
+    font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-top: 1px solid #FFFFFF;
     border-bottom: 1px solid #FFFFFF;
@@ -752,7 +755,7 @@ tr.liste_total td {
 th { 
     color: #FFFFFF;
     background: #777799; 
-    font: helvetica, verdana, arial, sans-serif;
+    font-family: helvetica, verdana, arial, sans-serif;
     font-weight: bold;
     border-left: 1px solid #FFFFFF;
     border-right: 1px solid #FFFFFF;
@@ -956,7 +959,3 @@ td.hidden {
     display: none;
 }
 
-// Utilise dans smarty uniquement. A virer
-td.alerte {
- background: #FF99A9;
-}
