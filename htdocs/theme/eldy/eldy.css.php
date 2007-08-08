@@ -151,7 +151,7 @@ div.vmenu
 
 div.fiche
 {
-	float: right top;
+	float: right;
 <?php
 	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
 	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
