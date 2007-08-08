@@ -162,30 +162,30 @@ print '</script>'."\n";
 print '</head>'."\n";
 
 // Body
-print '<body class="body" onload="donnefocus();">';
+print '<body class="body" onload="donnefocus();">'."\n";
 
 // Form
-print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="login">';
-print '<input type="hidden" name="action" value="buildnewpassword">';
+print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="login">'."\n";
+print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
+print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
-  print '<img src="/logo.png"></td></tr>';
+  print '<img src="/logo.png"></td></tr>'."\n";
 }
 else
 {
-  print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
+  print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>'."\n";
 }
-print '</table>';
-print '<br>';
+print '</table>'."\n";
+print '<br>'."\n";
 
 // Table 2
-print '<table cellpadding="2" align="center" width="400">';
+print '<table cellpadding="2" align="center" width="400">'."\n";
 
-print '<tr><td colspan="3">&nbsp;</td></tr>';
+print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 $disabled='disabled';
@@ -193,37 +193,42 @@ if ($mode == 'dolibarr') $disabled='';
 
 print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
+$title='';
 // Affiche logo du theme si existe, sinon logo commun
-if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
+if (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
 {
-	print '<td><img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo);
+	$height=100;	// \TODO Forcer la hauteur uniquement si hauteur > 100 ou largeur > 100
 }
-else
+elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 {
-	print '<td><img src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
+	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
+	$height=80;
 }
+print '<td><img title="'.$title.'" height="'.$height.'" src="'.$urllogo.'"></td>';
 
-print '</tr>';
+print '</tr>'."\n";
 
 
-print "<tr>".'<td align="center" colspan="3"><input class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>';
-print "</table>\n";
+print "<tr>".'<td align="center" colspan="3"><input class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
+print "</table>"."\n";
 
-print "</form>";
+print "</form>"."\n";
 
-print '<center>';
+print '<center>'."\n";
 if ($mode == 'dolibarr')
 {
-	print '<table width="90%"><tr><td><font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font></td></tr></table><br>';
+	print '<table width="90%"><tr><td><font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font></td></tr></table><br>'."\n";
 }
 else
 {
-	print '<div class="warning">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>';
+	print '<div class="warning">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>'."\n";
 }
-print '<br>';
+print '<br>'."\n";
 if ($message) { print $message.'<br>'; }
 print '<a href="'.DOL_URL_ROOT.'/">'.$langs->trans("BackToLoginPage").'</a>';
-print '</center>';
+print '</center>'."\n";
 
 print "<br>";
 print "<br>";
