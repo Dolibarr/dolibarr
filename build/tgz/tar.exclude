@@ -36,6 +36,7 @@ htdocs/includes/modules/modClickToDial.class.php
 htdocs/includes/modules/modBookmark4u.class.php 
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
+htdocs/theme/rodolphe
 scripts/lolix
 CVS
 *~
