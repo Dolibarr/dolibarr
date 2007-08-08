@@ -4,6 +4,7 @@ Products=Produits
 Services=Services
 Product=Produit
 Service=Service
+ProductId=Id produit/service
 Reference=Référence
 NewProduct=Nouveau produit
 NewBook=Nouveau livre

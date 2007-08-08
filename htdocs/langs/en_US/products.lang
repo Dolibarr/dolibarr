@@ -4,6 +4,7 @@ Products=Products
 Services=Services
 Product=Product
 Service=Service
+ProductId=Product/service id
 Create=Create
 Reference=Reference
 NewProduct=New product
