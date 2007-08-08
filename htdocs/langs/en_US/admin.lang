@@ -80,6 +80,7 @@ BackupFileSuccessfullyCreated=Backup file successfully generated
 YouCanDownloadBackupFile=Generated files can now be downlaoded
 NoBackupFileAvailable=No backup files available.
 ExportMethod=Export method
+ImportMethod=Import method
 ToBuildBackupFileClickHere=To build a backup file, click <a href="%s">here</a>.
 Yes=Yes
 No=No
