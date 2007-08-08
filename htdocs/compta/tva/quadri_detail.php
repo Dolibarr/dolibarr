@@ -234,7 +234,7 @@ if ($conf->compta->mode == "CREANCES-DETTES")
 				$x_both[$my_paye_rate]['paye']['detail'][] = array(
 					'id'=>$x_paye[$my_paye_rate]['facid'][$id],
 					'descr'=>$x_paye[$my_paye_rate]['descr'][$id],
-					'link'=>'<a href="../facture.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$langs->trans("Invoice").' '.$x_paye[$my_paye_rate]['facnum'][$id].'">'.$x_paye[$my_paye_rate]['facnum'][$id].'</a> ',
+					'link'=>'<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$langs->trans("Invoice").' '.$x_paye[$my_paye_rate]['facnum'][$id].'">'.$x_paye[$my_paye_rate]['facnum'][$id].'</a> ',
 					'totalht'=>$x_paye[$my_paye_rate]['totalht_list'][$id],
 					'vat'=>$x_paye[$my_paye_rate]['vat_list'][$id]);				
 				//$x_both[$my_paye_rate]['paye']['links'] .= '<a href="../../fourn/facture/fiche.php?facid='.$x_paye[$my_paye_rate]['facid'][$id].'" title="'.$x_paye[$my_paye_rate]['facnum'][$id].'">..'.substr($x_paye[$my_paye_rate]['facnum'][$id],-2).'</a> ';
