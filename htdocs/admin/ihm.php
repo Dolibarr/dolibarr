@@ -349,7 +349,16 @@ function show_theme($edit=0)
             print '<td align="center">';
             $file=$dirtheme."/".$subdir."/thumb.png";
             if (! file_exists($file)) $file=$dirtheme."/common/nophoto.jpg";
-            print '<table><tr><td><img src="'.$file.'" width="80" height="60"></td></tr><tr><td align="center">';
+            print '<table><tr><td>';
+			if ($edit) print '<a href="'.$_SERVER["PHP_SELF"].($edit?'?action=edit&theme=':'?theme=').$subdir.'" style="font-weight: normal;" alt="'.$langs->trans("Preview").'">';
+			if ($edit) 
+			{
+				if ($subdir == $conf->global->MAIN_THEME) $title=$langs->trans("ThemeCurrentlyActive");
+				else $title=$langs->trans("ShowPreview");
+			}
+			print '<img src="'.$file.'" width="80" height="60" border="0" title="'.$title.'">';
+			if ($edit) print '</a>';
+			print '</td></tr><tr><td align="center">';
             if ($subdir == $conf->global->MAIN_THEME)
             {
                 print '<input '.($edit?'':'disabled').' type="radio" '.$bc[$var].' style="border: 0px;" checked name="main_theme" value="'.$subdir.'"> <b>'.$subdir.'</b>';
