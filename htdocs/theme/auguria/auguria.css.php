@@ -136,7 +136,6 @@ div.vmenu
 
 div.fiche
 {
-    float: right top;
     display: block;
     margin-top: 1em;
     margin-left: 180px;
@@ -156,7 +155,6 @@ div.fiche
 div.tmenu
 {
     position: relative;
-    float: top;
     white-space: nowrap;
     border-left: 0px;
     padding: 0px 0px 0px 0px;
@@ -256,7 +254,6 @@ div.tmenu li {
 	border-right: solid 1px #4F9EC9;
 	height: 22px;
 	position:relative;
-	liste-style:none;
 	display: block;
 	margin:0;
 	padding:0;
@@ -370,7 +367,7 @@ div.menu
 	border-spacing: 0px;
 	padding: 0px;
 	width: 165px;
-    border : 0x solid #68ACCF;	
+    border : 0px solid #68ACCF;	
 }
 
 
@@ -456,7 +453,6 @@ td.barre {
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #b3c5cc;
-	font:;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
@@ -513,7 +509,6 @@ div.tabsAction {
 div.onglet_inf
 {
     position: relative;
-    float: top;
     display: block;
     white-space: nowrap;
     padding: 0px 0px 0px 0px;
@@ -688,10 +683,10 @@ a.butActionDelete    {
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionDelete:link    {  font-weight: bold; background: white; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:active  {  font-weight: bold; background: white; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:visited {  font-weight: bold; background: white; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
-a.butActionDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #red; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:link    {  font-weight: bold; background: white; border: 1px solid #997777; color: #801111; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:active  {  font-weight: bold; background: white; border: 1px solid #997777; color: #801111; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:visited {  font-weight: bold; background: white; border: 1px solid #997777; color: #801111; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+a.butActionDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px solid #997777; color: #801111; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 
 
 /* ============================================================================== */
@@ -702,7 +697,6 @@ a.butActionDelete:hover   {  font-weight: bold; background: #FFe7ec; border: 1px
 list-style-type:none;
 margin:0px;
 padding:0px;
-spacing:0px;
 }
 
 .notopnoleft {
@@ -783,7 +777,8 @@ border:0px;
 tr.liste_titre {
 background: #68ACCF;
 color: #FFFFFF;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px;
+font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -793,7 +788,8 @@ white-space: nowrap;
 td.liste_titre {
 background: #68ACCF;
 color: #FFFFFF;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px;
+font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
@@ -804,7 +800,8 @@ td.liste_titre_sel
 {
 background: #68ACCF;
 color: #FFFFFF;
-font: 12px arial, helvetica, verdana, sans-serif;
+font-size: 12px;
+font-family: arial, helvetica, verdana, sans-serif;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: normal;
@@ -877,7 +874,7 @@ margin: 2px;
 tr.box_titre {
 background: #68ACCF;
 color: #FFFFFF;
-font: 12px;
+font-size: 12px;
 font-weight: normal;
 border-bottom: 1px solid #FDFFFF;
 white-space: normal;
@@ -887,12 +884,12 @@ white-space: normal;
 
 tr.box_impair {
 background: #e6ebed;
-font: 12px;
+font-size: 12px;
 }
 
 tr.box_pair {
 background: #d0d4d7;
-font: 12px;
+font-size: 12px;
 }
 
 
