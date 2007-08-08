@@ -2624,7 +2624,7 @@ else
 				}
 				
 				// Envoyer
-				if ($fac->statut == 1 && $user->rights->facture->envoyer)
+				if (($fac->statut == 1 || $fac->statut == 2) && $user->rights->facture->envoyer)
 				{
 					if ($facidnext)
 					{
@@ -2637,7 +2637,7 @@ else
 				}
 
 				// Envoyer une relance
-				if ($fac->statut == 1 && $resteapayer > 0 && $user->rights->facture->envoyer)
+				if (($fac->statut == 1 || $fac->statut == 2) && $resteapayer > 0 && $user->rights->facture->envoyer)
 				{
 					if ($facidnext)
 					{
