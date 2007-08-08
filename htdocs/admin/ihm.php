@@ -138,7 +138,7 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     // Confirmation par popup ajax
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ConfirmAjax").'</td><td>';
-    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,0);
+    print $html->selectyesno('main_confirm_ajax',isset($conf->global->MAIN_CONFIRM_AJAX)?$conf->global->MAIN_CONFIRM_AJAX:0,1);
     print ' ('.$langs->trans("AvailableOnlyIfJavascriptAndAjaxNotDisabled").')';
     print '</td></tr>';
     
