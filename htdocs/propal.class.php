@@ -253,14 +253,15 @@ class Propal extends CommonObject
 
     /**
      *    	\brief     	Ajout d'un produit dans la proposition, en base
-	 * 		\param    	propalid        id de la propale
-	 * 		\param    	desc            description de la ligne
-	 * 		\param    	pu              prix unitaire
-	 * 		\param    	qty             quantité
-	 * 		\param    	txtva           taux de tva forcé, sinon -1
-	 *		\param    	fk_product      id du produit/service predéfini
-	 * 		\param    	remise_percent  pourcentage de remise de la ligne
-     *    	\return    	int             >0 si ok, <0 si ko
+	 * 		\param    	propalid        	Id de la propale
+	 * 		\param    	desc            	Description de la ligne
+	 * 		\param    	pu              	Prix unitaire
+	 * 		\param    	qty             	Quantité
+	 * 		\param    	txtva           	Taux de tva forcé, sinon -1
+	 *		\param    	fk_product      	Id du produit/service predéfini
+	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
+	 * 		\param    	price_base_type		HT or TTC
+     *    	\return    	int             	>0 si ok, <0 si ko
      *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
 	 *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
@@ -269,7 +270,7 @@ class Propal extends CommonObject
      */
     function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
     {
-    	dolibarr_syslog("Propal.class::addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
+    	dolibarr_syslog("Propal.class::addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $price_base_type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
@@ -511,8 +512,7 @@ class Propal extends CommonObject
 						$this->products[$i]->tva_tx,
 						$this->products[$i]->fk_product,
 						$this->products[$i]->remise_percent,
-						$this->products[$i]->date_start,
-						$this->products[$i]->date_end
+						'HT'
 						);
 						
 					if ($resql < 0)
@@ -1906,7 +1906,8 @@ class Propal extends CommonObject
 						$ligne->qty,
 						$ligne->tva_tx,
 						$ligne->fk_product,
-						$ligne->remise_percent
+						$ligne->remise_percent,
+						'HT'
 						);
 
 					if ($resql < 0)
