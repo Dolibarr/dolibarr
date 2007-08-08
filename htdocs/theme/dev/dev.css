@@ -131,14 +131,13 @@ div.tmenu li {
 	border-right: solid 1px #000000;
 	height: 18px;
 	position:relative;
-	liste-style:none;
 	display: block;
 	margin:0;
 	padding:0;
 }
 div.tmenu li a{
   	font-size: 13px;
-	color:#00000;
+	color:#000000;
 	text-decoration:none;
 	padding-left:10px;
 	padding-right:10px;
@@ -158,7 +157,7 @@ div.tmenu li a#sel
 }
 div.tmenu li a:visited
 {
-	color:#00000;
+	color:#000000;
 	font-weight: normal;
 }
 div.tmenu li a:hover
@@ -572,7 +571,6 @@ a.butActionDelete:hover    {
 list-style-type:none;
 margin:0px;
 padding:0px;
-spacing:0px;
 cursor:move;
 }
 
