@@ -1124,77 +1124,78 @@ function info_admin($texte)
 */
 function dol_loginfunction($notused,$pearstatus)
 {
-    global $langs,$conf;
-    $langs->load("main");
-    $langs->load("other");
+	global $langs,$conf,$mysoc;
+	$langs->load("main");
+	$langs->load("other");
 
-    $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
-    // Si feuille de style en php existe
-    if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+	$conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
+	// Si feuille de style en php existe
+	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
-    // Ce DTD est KO car inhibe document.body.scrollTop
-    //print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
-    // Ce DTD est OK
-    print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
+	// Ce DTD est KO car inhibe document.body.scrollTop
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+	// Ce DTD est OK
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 
 	// En tete html
-    print "<html>\n";
-    print "<head>\n";
-    print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+	print "<html>\n";
+	print "<head>\n";
+	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
 	print "<title>Dolibarr Authentification</title>\n";
 
-    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
-    print '<style type="text/css">'."\n";
-    print '<!--'."\n";
-    print '#login {';
-    print '  margin-top: 70px;';
-    print '  margin-bottom: 30px;';
-    print '  text-align: center;';
-    print '  font: 12px arial,helvetica;';
-    print '}'."\n";
-    print '#login table {';
-    print '  border: 1px solid #C0C0C0;';
-    if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
-    {
-      print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
-    }
-    else
-    {
-      print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
-    }
-    print 'font-size: 12px;';
-    print '}'."\n";
-    print '-->'."\n";
-    print '</style>'."\n";
-    print '<script language="javascript" type="text/javascript">'."\n";
-    print "function donnefocus() {\n";
-    print "document.getElementsByTagName('INPUT')[0].focus();";
-    print "}\n";
-    print '</script>'."\n";
-    print '</head>'."\n";
+	print '<style type="text/css">'."\n";
+	print '<!--'."\n";
+	print '#login {';
+	print '  margin-top: 70px;';
+	print '  margin-bottom: 30px;';
+	print '  text-align: center;';
+	print '  font: 12px arial,helvetica;';
+	print '}'."\n";
+	print '#login table {';
+	print '  border: 1px solid #C0C0C0;';
+	if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_background.png'))
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_background.png) repeat-x;';
+	}
+	else
+	{
+		print 'background: #F0F0F0 url('.DOL_URL_ROOT.'/theme/login_background.png) repeat-x;';
+	}
+	print 'font-size: 12px;';
+	print '}'."\n";
+	print '-->'."\n";
+	print '</style>'."\n";
+	print '<script language="javascript" type="text/javascript">'."\n";
+	print "function donnefocus() {\n";
+	print "document.getElementsByTagName('INPUT')[0].focus();";
+	print "}\n";
+	print '</script>'."\n";
+	print '</head>'."\n";
 
-    // Body
+	// Body
 	print '<body class="body" onload="donnefocus();">';
 
 	// Start Form
-    print '<form id="login" name="login" method="post" action="';
-    print $_SERVER['PHP_SELF'];
-    print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-    print '">';
+	print '<form id="login" name="login" method="post" action="';
+	print $_SERVER['PHP_SELF'];
+	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	print '">';
 
 	// Table 1
-    print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
-    if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
-    {
-      print '<tr><td colspan="3" style="text-align:center;">';
-      print '<img src="/logo.png"></td></tr>';
-    }
-    else
-    {
-      print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
-    }
-    print '</table>';
+	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
+	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
+	{
+		// Cas qui ne devrait pas arriver (pour compatibilité)
+		print '<tr><td colspan="3" style="text-align:center;">';
+		print '<img src="/logo.png"></td></tr>';
+	}
+	else
+	{
+		print '<tr class="vmenu"><td align="center">Dolibarr '.DOL_VERSION.'</td></tr>';
+	}
+	print '</table>';
 	print '<br>';
 
 	// Table 2
@@ -1205,41 +1206,45 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<tr><td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
-    // Affiche logo du theme si existe, sinon logo commun
-    if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
-    if (file_exists(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
-    {
-        print '<td rowspan="2"><img title="'.$title.'" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png"></td>';
-    }
-    else
-    {
-        print '<td rowspan="2"><img title="'.$title.'" src="'.DOL_URL_ROOT.'/theme/login_logo.png"></td>';
-    }
+	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
+	// Affiche logo du theme si existe, sinon logo commun
+	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
+	if (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo);
+		$height=100;	// \TODO Forcer la hauteur uniquement si hauteur > 100 ou largeur > 100
+	}
+	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
+	{
+		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
+		$height=80;
+	}
+	print '<td rowspan="2"><img title="'.$title.'" height="'.$height.'" src="'.$urllogo.'"></td>';
 
-    print '</tr>';
+	print '</tr>';
 
-    print '<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
-    print '<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
+	print '<tr><td align="left" valign="top"> &nbsp; <b>'.$langs->trans("Password").'</b> &nbsp; </td>';
+	print '<td valign="top" nowrap="nowrap"><input name="password" class="flat" type="password" size="15" maxlength="30" tabindex="2">';
 	print '</td></tr>';
 
-    print '<tr><td colspan="3" style="text-align:center;"><br>';
-    print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
-    print '</td></tr>';
+	print '<tr><td colspan="3" style="text-align:center;"><br>';
+	print '<input type="submit" class="button" value="&nbsp; '.$langs->trans("Connection").' &nbsp;" tabindex="4" />';
+	print '</td></tr>';
 
 	if (! $conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
 	{
 		print '<tr><td colspan="3" align="center"><a style="color: #888888; font-size: 10px" href="'.DOL_URL_ROOT.'/user/passwordforgotten.php">('.$langs->trans("PasswordForgotten").')</a></td></tr>';
 	}
 
-    print '</table>';
-    print '<input type="hidden" name="loginfunction" value="loginfunction" />';
+	print '</table>';
+	print '<input type="hidden" name="loginfunction" value="loginfunction" />';
 
-    print '</form>';
+	print '</form>';
 
 	// Message
-    if ($_SESSION["loginmesg"] || ! empty($pearstatus))
-    {
-    	print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
+	if ($_SESSION["loginmesg"] || ! empty($pearstatus))
+	{
+		print '<center><table width="60%"><tr><td align="center" class="small"><div class="error">';
 		if ($pearstatus == AUTH_EXPIRED) print "<i>Your session expired. Please login again!</i>\n";
 		elseif ($pearstatus == AUTH_IDLED) print "<i>You have been idle for too long. Please login again!</i>\n";
 		elseif ($pearstatus == AUTH_WRONG_LOGIN) print $langs->trans("ErrorBadLoginPassword");
@@ -1252,11 +1257,11 @@ function dol_loginfunction($notused,$pearstatus)
 	}
 	if ($conf->global->MAIN_HOME)
 	{
-	    print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
-	    print nl2br($conf->global->MAIN_HOME);
-	    print '</td></tr></table></center><br>';
+		print '<center><table cellpadding="0" cellspacing="0" border="0" align="center" width="750"><tr><td align="center">';
+		print nl2br($conf->global->MAIN_HOME);
+		print '</td></tr></table></center><br>';
 	}
-    
+	
 	// Fin entete html
 	print "\n</body>\n</html>";
 }

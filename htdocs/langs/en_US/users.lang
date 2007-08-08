@@ -74,7 +74,6 @@ LoginAccountDisable=Account disabled, put a new login to activate it.
 LoginAccountDisableInDolibarr=Account disabled in Dolibarr.
 LoginAccountDisableInLdap=Account disabled in the domain.
 UsePersonalValue=Use personal value
-ErrorFailedToSaveFile=Error - Failed to save file
 GuiLanguage=Interface language
 InternalUser=Internal user
 MyInformations=My data

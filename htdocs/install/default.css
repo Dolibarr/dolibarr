@@ -55,6 +55,14 @@ border-right: 1px solid #8CACBB;
 text-align: right;
 }
 
+inputdisabled
+{
+    background: #FDFDFD;
+    border: 1px solid #ACBCBB;
+    padding: 0px 0px 0px 0px;
+    margin: 0px 0px 0px 0px;
+}
+
 table.main {
 background: #dcdcd3;
 text-align: left;
@@ -62,8 +70,8 @@ border: 1px solid #8CACBB;
 }
 
 table.main-inside {
-padding-left: 20px;
-padding-right: 20px;
+padding-left: 10px;
+padding-right: 10px;
 margin-bottom: 20px;
 margin-top: 10px;
 }
@@ -150,7 +158,7 @@ background-color: #B5C5C5;
 td.label {
 background: #dcdcd3;
 color: #5945A3;
-padding: 0.5em 0.5em 0.5em;
+padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 border-bottom: 1px solid #8CACBB;
 }
@@ -158,7 +166,7 @@ border-bottom: 1px solid #8CACBB;
 td.comment {
 background: #dcdcd3;
 color: black;
-padding: 0.5em 0.5em 0.5em;
+padding: 5px 5px 5px 5px;
 margin: 0em 0em 0em 0em;
 text-decoration:none;
 font-size: 13px;
@@ -166,7 +174,7 @@ border-bottom: 1px solid #8CACBB;
 }
 
 table {
-font-size: 13px;
+font-size: 12px;
 }
 
 .install

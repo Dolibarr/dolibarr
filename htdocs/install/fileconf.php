@@ -271,7 +271,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("CreateDatabase"); ?>
 </td>
 
-<td class="label"><input type="checkbox" name="db_create_database"></td>
+<td class="label" valign="top"><input type="checkbox" name="db_create_database"></td>
 <td class="comment">
 <?php echo $langs->trans("CheckToCreateDatabase"); ?>
 </td>
@@ -302,7 +302,7 @@ while (($file = readdir($handle))!==false)
 <?php echo $langs->trans("CreateUser"); ?>
 </td>
 
-<td class="label"><input type="checkbox" name="db_create_user"></td>
+<td class="label" valign="top"><input type="checkbox" name="db_create_user"></td>
 <td class="comment">
 <?php echo $langs->trans("CheckToCreateUser"); ?>
 </td>

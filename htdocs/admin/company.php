@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,62 +37,70 @@ if (!$user->admin)
 if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
   || (isset($_POST["action"]) && $_POST["action"] == 'updateedit') )
 {
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
-    dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"]);
-    if ($_FILES["logo"]["tmp_name"])
-      {
-        if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
-	  {
-            $original_file=$reg[1];
-	    
-            dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
-	    if (! is_dir($conf->societe->dir_logos))
-	      {
-		create_exdir($conf->societe->dir_logos);
-	      }        
-            if (doliMoveFileUpload($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file))
-	      {
-                dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
-	      }
-	    else
-	      {
-                $message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
-	      }	    
-	  }
-      }
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOM",$_POST["nom"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_ADRESSE",$_POST["address"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_VILLE",$_POST["ville"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_CP",$_POST["cp"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_PAYS",$_POST["pays_id"]);
+	dolibarr_set_const($db, "MAIN_MONNAIE",$_POST["currency"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_TEL",$_POST["tel"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FAX",$_POST["fax"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_MAIL",$_POST["mail"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_WEB",$_POST["web"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_NOTE",$_POST["note"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_GENCOD",$_POST["gencod"]);
+	if ($_FILES["logo"]["tmp_name"])
+	{
+		if (eregi('([^\\\/:]+)$',$_FILES["logo"]["name"],$reg))
+		{
+			$original_file=$reg[1];
+			
+			if (eregi('(\.png|\.jpg|\.jpeg)$',$original_file))
+			{
+				dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
+				if (! is_dir($conf->societe->dir_logos))
+				{
+					create_exdir($conf->societe->dir_logos);
+				}        
+				if (doliMoveFileUpload($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file))
+				{
+					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
+				}
+				else
+				{
+					$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+				}
+			}
+			else
+			{
+				$message .= '<div class="error">'.$langs->trans("ErrorOnlyPngJpgSupported").'</div>';
+			}	    
+		}
+	}
 
-    dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
-    dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
-    dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
-    dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
-    dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
-    dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
-    dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+	dolibarr_set_const($db, "MAIN_INFO_CAPITAL",$_POST["capital"]);
+	dolibarr_set_const($db, "MAIN_INFO_SOCIETE_FORME_JURIDIQUE",$_POST["forme_juridique_code"]);
+	dolibarr_set_const($db, "MAIN_INFO_SIREN",$_POST["siren"]);
+	dolibarr_set_const($db, "MAIN_INFO_SIRET",$_POST["siret"]);
+	dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
+	dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
+	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
 
-    dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
+	dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
 
-    if ($_POST['action'] != 'updateedit')
-    {
-        Header("Location: ".$_SERVER["PHP_SELF"]);
-        exit;
-    }
+	if ($_POST['action'] != 'updateedit' && ! $message)
+	{
+		Header("Location: ".$_SERVER["PHP_SELF"]);
+		exit;
+	}
 }
 
 if ($_GET["action"] == 'removelogo')
 {
-  $logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
-  @unlink($logofile);
-  dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
+	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
+	@unlink($logofile);
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
+	$mysoc->logo='';
 }
 
 /*
@@ -183,7 +191,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     {
       print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
         print ' &nbsp; ';
-        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
+        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo).'">';
     }
   else
     {

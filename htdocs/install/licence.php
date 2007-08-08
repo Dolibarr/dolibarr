@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org> 
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net> 
+/* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net> 
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 /**
@@ -40,9 +39,13 @@ dolibarr_install_syslog("licence: Entering licence.php page");
 
 pHeader($langs->trans("License"),"fileconf");
 
-print '<pre style="align: center; font-size: 12px">';
+print '<center>'."\n";
+//print '<pre style="align: center; font-size: 12px">';
+print '<textarea readonly="1" rows="26" cols="80">';
 $langs->print_file("html/gpl.txt",1);
-print '</pre>';
+//print '</pre>';
+print '</textarea>';
+print '</center>'."\n";
 
 pFooter(0,$setuplang);
 

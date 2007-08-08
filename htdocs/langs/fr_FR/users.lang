@@ -74,7 +74,6 @@ LoginAccountDisable=Le compte est désactivé, mettre un nouveau login pour l'acti
 LoginAccountDisableInDolibarr=Le compte est désactivé sur Dolibarr.
 LoginAccountDisableInLdap=Le compte est désactivé sur le domaine.
 UsePersonalValue=Utiliser valeur personalisée
-ErrorFailedToSaveFile=Erreur - l'enregistrement du fichier a échoué
 GuiLanguage=Langage de l'interface
 InternalUser=Utilisateur interne
 MyInformations=Mes informations
