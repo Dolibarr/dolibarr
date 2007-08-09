@@ -719,7 +719,8 @@ function img_object($alt, $object)
         \brief      Affiche picto (fonction générique)
         \param      alt         Texte sur le alt de l'image
         \param      picto       Nom de l'image a afficher (Si pas d'extension, on met '.png')
-        \return     string      Retourne tag img
+        \param		options		Attribut supplémentaire a la balise img
+		\return     string      Retourne tag img
 */
 function img_picto($alt, $picto, $options='')
 {
