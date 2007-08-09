@@ -261,6 +261,7 @@ if (! $accessallowed)
 // les noms de fichiers.
 if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 {
+	$langs->load("main");
 	dolibarr_syslog("Refused to deliver file ".$original_file);
 	// Do no show plain path in shown error message
 	dolibarr_print_error(0,$langs->trans("ErrorFileNameInvalid",$_GET["file"]));
@@ -277,6 +278,7 @@ dolibarr_syslog("viewimage.php download $original_file $filename content-type=$t
 
 if (! file_exists($original_file))
 {
+	$langs->load("main");
 	dolibarr_print_error(0,$langs->trans("ErrorFileDoesNotExists",$_GET["file"]));
 	exit;
 }
