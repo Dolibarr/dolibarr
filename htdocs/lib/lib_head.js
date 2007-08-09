@@ -652,16 +652,17 @@ function cleanSerialize(expr) {
 
 /*=================================================================
 	Purpose:  Affiche un message de confirmation
-	Input:    linkurl,message,ok,cancel
+	Input:    linkurl,message,ok,cancel,objectID
 	Author:   Regis Houssin
 	Licence:  GPL
 ==================================================================*/
-function dialogConfirm(linkurl,message,ok,cancel) {
+function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 	Dialog.confirm(message, {
 		width:300,
 		okLabel: ok,
 		cancelLabel: cancel,
 		buttonClass: "button",
+		id: objectID,
 		cancel:function(win){},
 		ok:function(win) {window.location.href=linkurl; return true;} 
 	});
