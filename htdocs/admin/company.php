@@ -65,6 +65,22 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				if (doliMoveFileUpload($_FILES["logo"]["tmp_name"],$conf->societe->dir_logos.'/'.$original_file))
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
+					
+					// Création de la vignette de la page login
+					$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small',80);
+					if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+					{
+						$imgThumbSmall = $reg[1];
+						dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+					}
+					
+					// Création de la vignette de la page "Société/Institution"
+					$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini',80);
+					if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+					{
+						$imgThumbMini = $reg[1];
+						dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+					}
 				}
 				else
 				{
@@ -95,12 +111,46 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 	}
 }
 
+if ($_GET["action"] == 'addthumb')
+{
+	if (file_exists($conf->societe->dir_logos.'/'.$_GET["file"]))
+  {			
+		// Création de la vignette de la page login
+		$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 200, 100, '_small',80);
+		if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+		{
+			$imgThumbSmall = $reg[1];
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+		}
+		
+		// Création de la vignette de la page "Société/Institution"
+		$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
+		if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+		{
+		  $imgThumbMini = $reg[1];
+			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+		}
+  }
+  Header("Location: ".$_SERVER["PHP_SELF"]);
+  exit;
+}
+
 if ($_GET["action"] == 'removelogo')
 {
 	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
 	@unlink($logofile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
 	$mysoc->logo='';
+	
+	$logosmallfile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small;
+	@unlink($logosmallfile);
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL");
+	$mysoc->logo_small='';
+	
+	$logominifile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini;
+	@unlink($logominifile);
+	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI");
+	$mysoc->logo_mini='';
 }
 
 /*
@@ -187,16 +237,16 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
   print '<input type="file" class="flat" name="logo" size="50">';
   print '</td><td valign="middle" align="right">';
-  if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
-    {
-      print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
-        print ' &nbsp; ';
-        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo).'">';
-    }
+  if ($mysoc->logo_mini && file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+  {
+  	print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
+    print ' &nbsp; ';
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo_mini).'">';
+  }
   else
-    {
-      print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-    }
+  {
+    print '<img height="30" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+  }
   print '</td></tr></table>';
   print '</td></tr>';
   
@@ -425,9 +475,15 @@ else
     print '<table width="100%" class="notopnoleftnoright"><tr><td valign="center">';
     print $mysoc->logo;
     print '</td><td valign="center" align="right">';
-    if ($mysoc->logo && file_exists($conf->societe->dir_logos.'/'.$mysoc->logo))
+    
+    // On propose la génération de la vignette si elle n'existe pas
+    if (!file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
     {
-        print '<img height="30" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo.'">';
+     	print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
+    }
+    else if ($mysoc->logo_mini && file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+    {
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo_mini.'">';
     }
     else
     {

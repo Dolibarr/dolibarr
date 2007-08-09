@@ -269,6 +269,8 @@ $mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
 $mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
 $mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
 $mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
+$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
+$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 
 
 // Sert uniquement dans module telephonie

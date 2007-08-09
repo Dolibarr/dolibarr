@@ -1185,7 +1185,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print '">';
 
 	// Table 1
-	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">';
+	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 	{
 		// Cas qui ne devrait pas arriver (pour compatibilité)
@@ -1200,7 +1200,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<br>';
 
 	// Table 2
-	print '<table cellpadding="2" align="center" width="400">';
+	print '<table cellpadding="2" align="center" width="450">';
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
@@ -1210,17 +1210,15 @@ function dol_loginfunction($notused,$pearstatus)
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 	// Affiche logo du theme si existe, sinon logo commun
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	if (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	if (is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
 	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo);
-		$height=100;	// \TODO Forcer la hauteur uniquement si hauteur > 100 ou largeur > 100
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo_small);
 	}
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
-		$height=80;
 	}
-	print '<td rowspan="2"><img title="'.$title.'" height="'.$height.'" src="'.$urllogo.'"></td>';
+	print '<td rowspan="2"><img title="'.$title.'" src="'.$urllogo.'"></td>';
 
 	print '</tr>';
 
@@ -2951,9 +2949,11 @@ function print_date_range($date_start,$date_end)
  *    \param     file           Chemin du fichier image à redimensionner
  *    \param     maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
  *    \param     maxHeight      Hauteur maximum que dois faire l'image (120 par défaut)
+ *    \param     extName        Extension pour différencier le nom de la vignette
+ *    \param     quality        Qualité de compression jpeg
  *    \return    imgThumbName   Chemin de la vignette
  */
-function vignette($file, $maxWidth = 160, $maxHeight = 120){
+function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50){
 
    // Vérification des erreurs dans les paramètres de la fonction
    //============================================================
@@ -2961,7 +2961,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
       // Si le fichier passé en paramètre n'existe pas
       return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
    }
-   elseif(!eregi('(\.jpg|\.png)$',$file))
+   elseif(!eregi('(\.jpg|\.jpeg|\.png)$',$file))
    {
    	  // Todo: Ajouter création vignette pour les autres formats d'images
       return 'Le fichier '.$file.' n\'ai pas géré pour le moment.';
@@ -3035,7 +3035,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
    imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
 
    $fileName = basename($file, $extImg); // Nom du fichier sans son extension
-   $imgThumbName = $dirthumb.$fileName.'_small'.$extImg; // Chemin complet du fichier de la vignette
+   $imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
    
    //Création du fichier de la vignette
    $fp = fopen($imgThumbName, "w");
@@ -3044,7 +3044,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120){
    // Renvoi la vignette créée
    switch($infoImg[2]){
       case 2:
-         imagejpeg($imgThumb, $imgThumbName, 50); // Renvoi d'une image jpeg avec une qualité de 50
+         imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50
          break;
       case 3:
          imagepng($imgThumb, $imgThumbName);

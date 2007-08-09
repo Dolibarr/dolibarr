@@ -62,20 +62,22 @@ if ($modulepart)
     // Wrapping pour les photo utilisateurs
     if ($modulepart == 'companylogo')
     {
-        $accessallowed=1;
-        //}
-        $original_file=$conf->societe->dir_logos.'/'.$original_file;
+    	$accessallowed=1;
+    	if (eregi('_small',$original_file) || eregi('_mini',$original_file))
+    	{
+    		$original_file=$conf->societe->dir_logos.'/thumbs/'.$original_file;
+    	}
+    	else
+    	{
+    		$original_file=$conf->societe->dir_logos.'/'.$original_file;
+    	}
     }
 
     // Wrapping pour les photos utilisateurs
     if ($modulepart == 'userphoto')
     {
-        //$user->getrights('facture');
-        //if ($user->rights->facture->lire)
-        //{
-            $accessallowed=1;
-        //}
-        $original_file=$conf->users->dir_output.'/'.$original_file;
+    	$accessallowed=1;
+    	$original_file=$conf->users->dir_output.'/'.$original_file;
     }
     
     // Wrapping pour les apercu factures
