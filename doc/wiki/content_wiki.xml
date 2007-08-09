@@ -3,8 +3,8 @@
   <page>
     <title>Accueil</title>
     <revision>
-      <timestamp>2007-01-27T07:35:33Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
+      <timestamp>2007-07-30T09:02:24Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>[http://www.dolibarr.com Le site officiel francophone Dolibarr] (non maintenu)
 
 [http://www.dolibarr.org Le site officiel anglophone Dolibarr]
@@ -21,19 +21,20 @@ Prochaines versions [[Roadmap|ici]]
 * [[FAQ_Utilisateur|FAQ Utilisateur]]
 * [http://www.dolibarr.org/demo/htdocs/ Demo Dolibarr 2.1alpha]
 * [http://forum.dolibarr.com Forum général]
-* [[Suggestions utilisateurs]]
+** [http://forum.dolibarr.com/viewforum.php?f=15 Retour experience]
+** [http://forum.dolibarr.com/viewforum.php?f=11 Suggestions utilisateurs]
 
 == Développeurs ==
-* [[Développement|Toutes les ressources pour suivre ou aider le développement de Dolibarr]]
 * [[Documentation Développeur]]
 * [[FAQ Développeur]]
+* [[Développement|Les ressources pour suivre ou aider le développement de Dolibarr]]
+
+== Traducteurs ==
+* [[Documentation traducteur]]
 
 == Testeurs ==
 * [[Sauvegarder ses données avant mise-à-jour]]
 * [[Utiliser ses données pour tester la dernière version]]
-
-== Traducteurs ==
-* [[Documentation traducteur]]
 
 == Revue de presse ==
 * [[Presse en ligne]]
@@ -330,6 +331,81 @@ all types of &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; cheap ph
 [http://www.gayhomes.net/debil/motrin.html motrin]
 [http://buyambienonline.blogspirit.com/ buy ambien]
 &lt;/div&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Adherents</title>
+    <revision>
+      <timestamp>2007-05-11T08:39:13Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <comment>/* Résiliation adhérent */</comment>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+Les fonctions du module Adhérent sont centralisées dans le menu du haut &quot;Adhérents&quot;.
+
+
+== Création d'un type d'adhérent ==
+
+Avant de commencer, il est nécessaire de définir les profils d'adhérents.
+Pour cela, il faut créer un type d'adhérent via le menu ''Type d'adhérents'' puis ''Nouveau type''.
+
+
+== Création des attributs personnalisés d'adhérent ==
+
+Si vous avez besoin de gérer des attributs particuliers sur les fiches adhérents qui ne seraient pas prévus (age du capitaine, tour de poitrine), vous pouvez définir par le menu ''Attributs d'adhérents'' puis ''Nouvel attribut''.
+Choisissez le libellé de l'attribut qui sera visible, son code (qui sera utilisé comme nom de champ dans la base DB2), son type et la taille maximale.
+
+
+== Création d'un adhérent ==
+
+Un adhérent passe par le cycle de vie suivant:
+Brouillon -&gt; Validé -&gt; Saisie d'une adhésion x n -&gt; Résiliation
+
+Pour créer un adhérent on va dans le menu ''Adhérents - Nouvel adhérent''. Un formulaire de création est alors proposé.
+Renseignez tous les champs et cliquez ''Créer''.
+Ensuite, on passe l'adhérent à l'état ''Validé'' en cliquant sur le bouton ''Valider'' sur la fiche adhérent.
+
+
+== Saisie d'une nouvelle adhésion ou d'un renouvèlement ==
+
+Une adhésion peut être vue comme une cotisation (un paiement). Toutefois, on emploie le terme d'adhésion pour certains types d'adhérents non soumis à cotisation et dans ce cas la cotisation est gratuite. Cela n'exclut pas que leur présence en tant que membre est limitée dans le temps au même titre que celui qui paie une cotisation. Le terme &quot;adhésion&quot; caractérise donc un renouvèlement à l'association à partir d'une date et pour une durée fixe, que ce renouvèlement soit payant ou pas.
+
+Pour saisir une adhésion, aller dans le menu ''Adhésion'' puis ''Nouvelle adhésion'' et saisir l'adhérent recherché.
+Ou bien, aller sur la ''fiche adhérent'' puis ''onglet adhésion'' puis ''Nouvelle adhésion''.
+
+
+L'historique des adhésions est conservé également l'onglet ''Adhésion'' de la fiche adhérent.
+
+
+
+== Résiliation d'adhérent ==
+
+Aller sur la fiche adhérent et cliquer sur le bouton ''Résilier''.
+
+== Exemples de cas d'utilisations ==
+
+'''L'association défini un nouveau type d'adhérent'''
+
+Je crée un type d'adhérent par Menu gauche - Types d'adhérents - Nouvel adhérent.
+
+
+'''Un nouvel adhérent se présente avec un chèque ou en liquide'''
+
+Je crée un adhérent par ''Menu gauche - Nouvel adhérent''.
+Je crée une adhésion par onglet ''Adhésion''.
+
+
+'''Un adhérent vient renouveler son adhésion avec un chèque ou en liquide'''
+
+Je vais sur la fiche adhérent.
+Je saisie une nouvelle adhésion.
+
+
+'''Un adhérent a son adhésion expirée et non renouvelée depuis longtemps'''
+
+Je vais sur la fiche adhérent.
+Je clique sur ''Résilier''.</text>
     </revision>
   </page>
   <page>
@@ -645,6 +721,146 @@ Voilà. Je n'irai pas jusqu'à expliquer le fonctionnement de cette dernière m�
     </revision>
   </page>
   <page>
+    <title>Bank (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:44:52Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_bank''' stocke les opérations effectuées sur les comptes bancaires.
+
+Contains the transactions operated on bank accounts.
+
+= Structure =
+
+
+&lt;pre&gt;
++----------------+--------------+------+-----+---------+----------------+
+| Field          | Type         | Null | Key | Default | Extra          |
++----------------+--------------+------+-----+---------+----------------+
+| rowid          | int(11)      |      | PRI | NULL    | auto_increment | index technique
+| datec          | datetime     | YES  |     | NULL    |                | date de creation technique
+| datev          | date         | YES  |     | NULL    |                | date de valeur de l'opération
+| dateo          | date         | YES  |     | NULL    |                | date de l'opération
+| amount         | double       |      |     | 0       |                | montant de l'opération
+| label          | varchar(255) | YES  |     | NULL    |                | Libellé
+| fk_account     | int(11)      | YES  |     | NULL    |                | numéro du compte sur lequel s'est effectué l'opération
+| fk_user_author | int(11)      | YES  |     | NULL    |                | auteur de l'information
+| fk_user_rappro | int(11)      | YES  |     | NULL    |                | auteur du rapprochement
+| fk_type        | varchar(4)   | YES  |     | NULL    |                | Type d'opération
+| num_releve     | varchar(50)  | YES  |     | NULL    |                | Numéro du relevé bancaire sur lequel figure l'opération
+| num_chq        | int(11)      | YES  |     | NULL    |                | Numéro du chèque si significatif
+| rappro         | tinyint(4)   | YES  |     | 0       |                | Indique si la ligne a été rapprochée ou non
+| note           | text         | YES  |     | NULL    |                | Note 
+| author         | varchar(40)  | YES  |     | NULL    |                | 
+| fk_bordereau   | int(11)      | YES  |     | 0       |                | Id du bordereau de remise de cheque
+| banque         | varchar(255) | YES  |     | NULL    |                | Nom de la banque du cheque reçu
+| emetteur       | varchar(255) | YES  |     | NULL    |                | Nom de l'emetteur du cheque
++----------------+--------------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank account (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:47:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Contenu */</comment>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_bank_account''' stocke les informations sur les comptes bancaires.
+
+Contains bank accounts definitions.
+
+= Structure =
+
+&lt;pre&gt;
++-----------------+--------------+------+-----+-------------------+----------------+
+| Field           | Type         | Null | Key | Default           | Extra          |
++-----------------+--------------+------+-----+-------------------+----------------+
+| rowid           | int(11)      |      | PRI | NULL              | auto_increment |
+| datec           | datetime     | YES  |     | NULL              |                |
+| tms             | timestamp    | YES  |     | CURRENT_TIMESTAMP |                |
+| ref             | varchar(12)  |      |     |                   |                |
+| label           | varchar(30)  |      | UNI |                   |                |
+| bank            | varchar(60)  | YES  |     | NULL              |                |
+| code_banque     | varchar(7)   | YES  |     | NULL              |                |
+| code_guichet    | varchar(6)   | YES  |     | NULL              |                |
+| number          | varchar(255) | YES  |     | NULL              |                |
+| cle_rib         | varchar(5)   | YES  |     | NULL              |                |
+| bic             | varchar(11)  | YES  |     | NULL              |                |
+| iban_prefix     | varchar(5)   | YES  |     | NULL              |                |
+| domiciliation   | varchar(255) | YES  |     | NULL              |                |
+| proprio         | varchar(60)  | YES  |     | NULL              |                |
+| adresse_proprio | varchar(255) | YES  |     | NULL              |                |
+| courant         | smallint(6)  |      |     | 0                 |                |
+| clos            | smallint(6)  |      |     | 0                 |                |
+| rappro          | smallint(6)  | YES  |     | 1                 |                |
+| url             | varchar(128) | YES  |     | NULL              |                |
+| account_number  | varchar(8)   | YES  |     | NULL              |                |
+| currency_code   | char(2)      |      |     |                   |                |
+| min_allowed     | int(11)      | YES  |     | 0                 |                |
+| min_desired     | int(11)      | YES  |     | 0                 |                |
+| comment         | varchar(254) | YES  |     | NULL              |                |
++-----------------+--------------+------+-----+-------------------+----------------+
+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank categ (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:48:08Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank class (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:48:20Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bank url (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:48:38Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Benoit Mortier</title>
     <revision>
       <timestamp>2004-07-28T22:00:13Z</timestamp>
@@ -683,6 +899,62 @@ La gestion des produits : gestion de gammes de produits, remise, plusieurs type 
 La gestion du stock : gestion des différents entrepots avec livraison intra entrepots, insertion avec gestion de codes barres ..etc
 
 La gestion d'un parc informatique : hardware, logciel, licenses</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bookmark4u login (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:06:09Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Bookmark (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T01:48:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Boxes (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:06:19Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Calendrier</title>
+    <revision>
+      <timestamp>2006-11-17T01:38:03Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+A compléter</text>
     </revision>
   </page>
   <page>
@@ -827,7 +1099,7 @@ ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_author (fk_user_author);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_user_valid (fk_user_valid);
 ALTER TABLE llx_facture ADD INDEX idx_facture_fk_projet (fk_projet);
 
-ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_valid     FOREIGN KEY (fk_user_valid) REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_projet         FOREIGN KEY (fk_projet) REFERENCES llx_projet (rowid);
@@ -839,9 +1111,9 @@ ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_projet         FOREIGN KEY 
   <page>
     <title>Commande</title>
     <revision>
-      <timestamp>2005-11-21T13:54:01Z</timestamp>
-      <contributor><username>Rhum1</username></contributor>
-      <comment>Ajout de la navigation</comment>
+      <timestamp>2007-05-11T09:04:26Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <comment>/* Supprimer une commande */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -857,13 +1129,38 @@ Une fois qu'une commande a été entièrement expédiée, il faut retourner sur 
 
 ==Supprimer une commande==
 
-Pour supprimer une commande il vous faut ouvrir la fiche de celle-ci. Une commande ne peut être supprimée que si celle-ci est à l'état de '''brouillon'''. Une fois validée, elle peut seulement être annulée. La suppression d'un commande entraine l'effacement de toutes les données s'y afférant. 
+Pour supprimer une commande il vous faut ouvrir la fiche de celle-ci. Une commande ne peut être supprimée que si celle-ci est à l'état de '''brouillon'''. Une fois validée, elle peut seulement être annulée. La suppression d'un commande entraine l'effacement de toutes les données s'y référant. 
 
 '''Une commande supprimée ne peut pas être récupérée'''.
 
 ==Modifier une commande==
 
 Pour modifier une commande il vous faut ouvrir la fiche de celle-ci. Une commande ne peut être modifiée que si celle-ci est à l'état de brouillon.</text>
+    </revision>
+  </page>
+  <page>
+    <title>CommandeFournisseur</title>
+    <revision>
+      <timestamp>2007-08-09T15:47:13Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>
+Documentation a completer.
+
+
+== Cas d'utilisations ==
+
+'''UCSOR01: Commande fournisseur'''</text>
+    </revision>
+  </page>
+  <page>
+    <title>Comptabilité</title>
+    <revision>
+      <timestamp>2006-11-17T01:34:53Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+A compléter</text>
     </revision>
   </page>
   <page>
@@ -951,25 +1248,28 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
   <page>
     <title>Developpement module</title>
     <revision>
-      <timestamp>2007-01-22T13:33:46Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <text>= Développer son propre module =
+      <timestamp>2007-08-09T15:43:19Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>== Développer son propre module ==
 
 Pour créer un nouveau module, la première chose à faire est de créer un fichier descripteur du module.
 Pour cela...
 A compléter.
 
+Dans un second temps, creer vos pages php qui se base sur les donnes de vos tables en utilisant les squelettes fournis comme exemple dans le repertoire '''dev/skeletons'''.
+
+
+
+== Déclencher du code sur un evenement Dolibarr ==
 Voir aussi [http://www.dolibarr.com/wikidev/index.php/Interfaces_Dolibarr_vers_exterieur Interfaces_Dolibarr_vers_exterieur]
 et [http://www.dolibarr.com/wikidev/index.php/Interfaces_Exterieur_vers_Dolibarr Interfaces_Exterieur_vers_Dolibarr]
 
 
-= Règles =
+== Règles ==
 
-* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un nouveau module qui n'est pas encore intégré dans le code de Dolibarr, veillez à 
-** créer vos tables (dans l'ordre de préférence):
-*** à l'installation ou l'upgrade de Dolibarr
-*** à l'installation du module
-** ajouter la définition de vos tables dans un fichier par table dans htdocs/lib/databases/ (voir les fichiers existants pour exemples)</text>
+* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un nouveau module qui n'est pas encore intégré dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou bien à l'activation du module.
+
+* Ajouter la définition de vos tables dans un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour mysql qui font fois. Les fichiers des autres bases sont generes à partir de ces derniers via le script''' build/dolibarr_mysql2autrebase.pl'''</text>
     </revision>
   </page>
   <page>
@@ -980,6 +1280,15 @@ et [http://www.dolibarr.com/wikidev/index.php/Interfaces_Exterieur_vers_Dolibarr
       <comment>Devenir développeur déplacé vers Outils et principe</comment>
       <text>#REDIRECT [[Outils et principe]]
 </text>
+    </revision>
+  </page>
+  <page>
+    <title>Diagramme Dolibarr 2.2</title>
+    <revision>
+      <timestamp>2007-06-18T21:25:28Z</timestamp>
+      <contributor><username>Luistar15</username></contributor>
+      <text>http://glouglou.beeznest.org/dolibarr-2.2-diagram.dia
+http://glouglou.beeznest.org/dolibarr-2.2-diagram.png</text>
     </revision>
   </page>
   <page>
@@ -1109,12 +1418,12 @@ Merci à David, Florent et surtout ozit pour leur aide.</text>
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2007-02-06T02:48:24Z</timestamp>
+      <timestamp>2007-08-09T15:21:44Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Général */</comment>
       <text>== Général ==
 # [[Outils et principe]]
-# [[Langages]] de développement
+# [[Langages|Langage et normes de développement]]
 # [[Fichier de configuration]]
 # [[Librairies externes et dépendances]]
 
@@ -1150,7 +1459,8 @@ Voir la page [[Système de traduction]]
 La liste des modules est défini sur la page [[Modules]]
 
 == La [[Gestion d'erreur]] ==
-# [[Gestion d'erreur dans les classes]]
+
+Voir la page [[Gestion d'erreur]]
 
 == Le stockage des fichiers/documents ==
 Voir la page [[Document générés]]
@@ -1161,7 +1471,10 @@ Voir la page [[Document générés]]
 # [[Imports de masse]]
 
 == Scripts cron ==
-# [[Scripts cron]]</text>
+# [[Scripts cron]]
+
+== FAQ ==
+# [[FAQ Développeur]]</text>
     </revision>
   </page>
   <page>
@@ -1265,7 +1578,7 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
   <page>
     <title>Documentation utilisateur</title>
     <revision>
-      <timestamp>2007-01-21T20:08:44Z</timestamp>
+      <timestamp>2007-07-31T03:08:26Z</timestamp>
       <contributor><username>Ywarnier</username></contributor>
       <text>* Installation/Démarrage
 # [[Prérequis]]
@@ -1273,23 +1586,25 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
 # [[Premiers paramétrages]]
 
 * Utilisation
-# [[Sociétés]]
+# [[Sociétés | Tiers]]
 # [[Produits]] / [[Services]]
 ## [[Produits associés]]
 ## [[Sous-Produits]]
-# [[Proposition commerciale]]
-# [[Commande]]
-# [[Facturation]]
+# [[Proposition commerciale|Propositions commerciales, devis]]
+# [[Commande|Commandes clients]]
+# [[Facturation|Factures clients]]
+# [[CommandeFournisseur|Commandes fournisseurs]]
+# [[FactureFournisseur|Factures fournisseurs]]
+# [[Contrat|Contrats de service]]
+# [[Projet|Projets]]
 # [[Comptabilité]]
 ## [[Rapports TVA]]
-# [[Projet]]
-# [[Contrat]]
-# [[Téléphonie]]
-# [[Fournisseur]]
-## [[CommandeFournisseur]]
-## [[FactureFournisseur]]
-# [[Mailing]]
+# [[Mailing|EMailing]]
 # [[Calendrier]]
+# [[Exports]]
+# [[Adherents]]
+# [[Téléphonie]]
+# [[Stock]]
 
 * Divers
 # [[Glossaire]]</text>
@@ -1314,6 +1629,35 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
     </revision>
   </page>
   <page>
+    <title>Dolibarr modules (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:44:04Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_dolibarr_modules''' contient la liste des modules activé, avec la date de l'activation et le numéro de version du module activé.
+
+Contains the list of activated modules, with the activation date and the activated module's version.
+
+= Structure =
+
+&lt;pre&gt;
++----------------+-------------+------+-----+---------------------+-------+
+| Field          | Type        | Null | Key | Default             | Extra |
++----------------+-------------+------+-----+---------------------+-------+
+| numero         | int(11)     |      | PRI | 0                   |       |
+| active         | tinyint(4)  |      |     | 0                   |       |
+| active_date    | datetime    |      |     | 0000-00-00 00:00:00 |       |
+| active_version | varchar(25) |      |     |                     |       |
++----------------+-------------+------+-----+---------------------+-------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
     <title>Dépendances</title>
     <revision>
       <timestamp>2004-09-27T07:47:32Z</timestamp>
@@ -1326,12 +1670,13 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
   <page>
     <title>Développement</title>
     <revision>
-      <timestamp>2007-02-06T02:54:28Z</timestamp>
+      <timestamp>2007-03-06T19:49:14Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Développeurs officiels */</comment>
+      <comment>/* Download */</comment>
       <text>==Download==
-* Télécharger la [http://dolibarrint.jexiste.fr/en/index.php?module=documents&amp;JAS_DocumentManager_op=downloadFile&amp;JAS_File_id=17 dernière version stable]
-* Télécharger le snapshot de la [http://forum.dolibarr.com/files/dolibarr_lastcvs.tar.gz version CVS]
+* Télécharger la [http://www.dolibarr.org/en/index.php?module=documents&amp;JAS_DocumentManager_op=downloadFile&amp;JAS_File_id=17 dernière version stable]
+* Télécharger le snapshot de la [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz version CVS]
+* La procedure manuelle pour le CVs est ici : http://forum.dolibarr.com/viewtopic.php?t=24
 
 ==Ressources==
 * [[Documentation développeur]]
@@ -1381,6 +1726,154 @@ Je tiens à remercier pour leur contribution au code et leurs conseils avisés :
     </revision>
   </page>
   <page>
+    <title>Entrepot (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:45:56Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Stock]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+La table '''llx_entrepot''' contient la liste des entrepôts et des informations de localisation les concernant
+
+Contains the list of warehouses and related localisation information.
+
+= Structure =
+
+
+&lt;pre&gt;
++----------------+--------------+------+-----+-------------------+----------------+
+| Field          | Type         | Null | Key | Default           | Extra          |
++----------------+--------------+------+-----+-------------------+----------------+
+| rowid          | int(11)      |      | PRI | NULL              | auto_increment |
+| datec          | datetime     | YES  |     | NULL              |                |
+| tms            | timestamp    | YES  |     | CURRENT_TIMESTAMP |                |
+| label          | varchar(255) |      | UNI |                   |                |
+| description    | text         | YES  |     | NULL              |                |
+| lieu           | varchar(64)  | YES  |     | NULL              |                |
+| address        | varchar(255) | YES  |     | NULL              |                |
+| cp             | varchar(10)  | YES  |     | NULL              |                |
+| ville          | varchar(50)  | YES  |     | NULL              |                |
+| fk_pays        | int(11)      | YES  |     | 0                 |                |
+| statut         | tinyint(4)   | YES  |     | 1                 |                |
+| fk_user_author | int(11)      | YES  |     | NULL              |                |
++----------------+--------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Entrepot valorisation (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:45:14Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Stock]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_entrepot_valorisation'''
+contient la valeur du stock entreposé dans chaque entrepôt pour une date donnée.
+
+Contains the stock value for each warehouse for a given date.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Expedition (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:46:08Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Expedition methode (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:46:18Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Expeditiondet (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:46:29Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Export Compta</title>
+    <revision>
+      <timestamp>2006-12-09T15:39:41Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>Export des lignes de factures et des paiements pour intégration dans une comptabilité.
+
+== Présentation ==
+La spécifité de traitement des différentes compta obligent à écrire une classe spécifique pour chaque entreprise comme cela est fait pour les modèles de factures et de propales. Cependant une classe export compta fait office de front end.
+
+== Processus ==
+
+Chaque nouvel export contient toutes les lignes de factures et de paiements validées qui n'ont pas encore été exportées.
+
+Les tables [[Table llx_paiement|llx_paiement]] et [[facturedet (Table SQL)|llx_facturedet]] ont un champ fk_export_compta, lors de l'export une ligne est créée dans [[Table llx_export_compta|llx_export_compta]], le rowid affecté est alors utilisé pour taggé les lignes exportées.
+
+== Format d'échange ==
+
+Les lignes a exporter sont fournies par un tableau de la forme 
+
+ linec[$i][0] : date de la facture
+ linec[$i][1] : identifiant numérique dolibarr la facture
+ linec[$i][2] : Code client
+ linec[$i][3] : Nom du client
+ linec[$i][4] : Numéro de compte dans le plan comptable
+ linec[$i][5] : Numéro de la facture
+ linec[$i][6] : Montant tva totale de la facture
+ linec[$i][7] : Montant total ttc de la facture
+ linec[$i][8] : Montant de la ligne</text>
+    </revision>
+  </page>
+  <page>
+    <title>Exports</title>
+    <revision>
+      <timestamp>2007-08-09T15:46:11Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+La fonction Exports permet de réaliser des exports personalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
+La première étape est de choisir un des lots de données prédéfinis, ensuite de choisir les champs que vous voulez dans votre fichier résultat, et dans quel ordre. Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
+
+Les formats existants sont csv (Fichier texte) ou xls (Format Excel natif)</text>
+    </revision>
+  </page>
+  <page>
     <title>FAQUtilisateur</title>
     <revision>
       <timestamp>2005-06-29T19:07:17Z</timestamp>
@@ -1393,54 +1886,29 @@ Je tiens à remercier pour leur contribution au code et leurs conseils avisés :
   <page>
     <title>FAQ Développeur</title>
     <revision>
-      <timestamp>2007-02-06T02:52:24Z</timestamp>
+      <timestamp>2007-08-09T15:36:54Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Comment devenir développeur */</comment>
-      <text>== Mettre à jour la version développeur ==
+      <text>== Récupérer/mettre à jour la version CVS développeur ==
 
-La première opération consiste à récupérer les dernières versions CVS (Voir FAQ [http://forum.dolibarr.com/viewforum.php?f=13 Forum cvs] pour cela). Les nouveaux fichiers doivent écraser les anciens.
+'''Utilisation du CVS'''
 
-Le deuxième étape consiste à migrer la base. Pour celà, il suffit d'appeler la page
+La première opération consiste à récupérer les dernières versions des sources CVS.
+Pour cela, voir la [http://forum.dolibarr.com/viewforum.php?f=13 FAQ CVS du forum].
+Les nouveaux fichiers doivent écraser les anciens.
+
+'''Mise a jour de la base'''
+
+La deuxième étape consiste à migrer la base. Pour celà, il suffit d'appeler la page
 http://maracinedolibarr/install/
 et choisir l'option &quot;Mise à jour&quot;.
 
 Cette procédure de migration/mise à jour est conçue pour fonctionner quel que soit l'état de départ et peut être repassée plusieurs fois sans risque.
 
-== Soumettre une modification ou participer au développement ==
 
-* '''Avec accès CVS en écriture '''
-A ce jour, les accès en écriture au CVS sont restreints (le nombre de commit étant déjà suffisamment dynamique). Il n'est pas exclu d'accueillir d'autres développeurs en modification à d'autres horizons. Si vous bénéficiez donc à l'heure actuelle d'un accès CVS en écriture, utilisez-le. Sinon, il est nécessaire de suivre la procédure qui suit (Modification du code, sans accès CVS en ecriture)
+== Démarrer le développement ==
 
-* '''Sans accès CVS en écriture'''
-Si vous n'avez pas de compte développeur, il est nécessaire de fournir par mail, votre fichier patch. 
-
-Sous tout OS:
-
-Voici la ''méthode Pro'' selon laquelle travailler pour pouvoir générer un tel fichier patch:
-
-- Avoir un répertoire qui contient la version de Dolibarr de référence (résultat de la mise à jour CVS ou bien tout simplement l'arborescence résultant de la décompression d'un snapshot tgz de Dolibarr). On appelera ce répertoire '''ancien_rep'''. Vous pouvez récuperer le snapshot de la version de dev en cours en cliquant [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz ce lien].
-
-- Avoir un autre répertoire qui contient l'arborescence de Dolibarr mais dans laquelle vous faites ou avez fait vos modifications. On appelera ce répertoire '''nouveau_rep'''.
-
-Pour générer le fichier patch, il suffit alors de lancer la commande ''diff'' (en standard sous Linux, fourni dans cygwin sous Windows) de la manière suivante:
-&lt;pre&gt;
-diff -Naur --exclude=CVS --exclude=.#  --exclude=~  ancien_rep  nouveau_rep  &gt; fichier.patch
-&lt;/pre&gt;
-Envoyer votre patch sur la ML.
-L'intégration de votre patch n'est toutefois pas garantie, pas plus que le délai.
-
-Sous Windows:
-
-Si vous êtes sous Windows, une ''méthode moins Pro'' mais qui donne le même résultat est la suivante. Installer l'excellent outil open source de comparaison Winmerge qui sait fabriquer des patchs au format ''diff -Naur''. Pour cela, comparer avec Winmerge le fichier référence et le fichier modifié et choisir dans le menu ''&quot;Tools - Generate patch&quot;'' (''Générer des retouches'' en version française). Saisir un nom de fichier comme ''&quot;resultat.patch&quot;'', cocher la case ''&quot;Append&quot;'' et choisir l'option ''&quot;Format Unified&quot;'' (''Style : unifié'' en version française). Cliquer sur ''&quot;Ok&quot;''.
-Éventuellement recommencer pour chaque fichier modifié.
-Au final, on obtient un beau fichier ''resultat.patch'' qui contient toutes les modifications au bon format.
-
-Au lieu de rechercher manuellement vos fichiers, si vous avez installé conjointement ''TortoiseCVS'' et ''Winmerge'', vous pouvez vous contenter de votre version modifiée sur votre ordinateur, et de la version CVS en ligne. Sous l'explorateur Windows, faites un clic droit sur le fichier qui doit être patché, et choisissez &quot;CVS comparer&quot; (pas WinMerge qui se trouve quelques lignes plus bas). Tortoise va lui-même lancer WinMerge. Puis reprenez la procédure décrite ci-dessus.
-
-== Utilisation du cvs ==
-
-Sur le forum dolibarr:
-[http://forum.dolibarr.com/viewforum.php?f=12 Forum cvs]
+Consulter '''intégralement''' la [[Documentation Développeur]] pour assimiler toutes les regles et principes imposees aux developpeurs.
+Vous pouvez aussi consulter les FAQ suivantes.
 
 
 == Comment créer un nouveau theme ==
@@ -1474,7 +1942,41 @@ update llx_facture set facnumber=concat('FA',substr(facnumber,3,4),'-',substr(CO
 where facnumber like 'FA%' and facnumber not like '%-%';
 &lt;/pre&gt;
 
-== Comment devenir développeur ==
+
+== Soumettre une modification ou participer au développement ==
+
+* '''Avec accès CVS en écriture '''
+A ce jour, les accès en écriture au CVS sont restreints (le nombre de commit étant déjà suffisamment dynamique). Il n'est pas exclu d'accueillir d'autres développeurs en modification à d'autres horizons. Si vous bénéficiez donc à l'heure actuelle d'un accès CVS en écriture, utilisez-le. Sinon, il est nécessaire de suivre la procédure qui suit (Modification du code, sans accès CVS en ecriture)
+
+* '''Sans accès CVS en écriture'''
+Si vous n'avez pas de compte développeur, il est nécessaire de fournir par mail, votre fichier patch. 
+
+Sous tout OS:
+
+Voici la ''méthode Pro'' selon laquelle travailler pour pouvoir générer un tel fichier patch:
+
+- Avoir un répertoire qui contient la version de Dolibarr de référence (résultat de la mise à jour CVS ou bien tout simplement l'arborescence résultant de la décompression d'un snapshot tgz de Dolibarr). On appelera ce répertoire '''ancien_rep'''. Vous pouvez récuperer le snapshot de la version de dev en cours en cliquant [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz ce lien].
+
+- Avoir un autre répertoire qui contient l'arborescence de Dolibarr mais dans laquelle vous faites ou avez fait vos modifications. On appelera ce répertoire '''nouveau_rep'''.
+
+Pour générer le fichier patch, il suffit alors de lancer la commande ''diff'' (en standard sous Linux, fourni dans cygwin sous Windows) de la manière suivante:
+&lt;pre&gt;
+diff -Naur --exclude=CVS --exclude=&quot;.#*&quot; --exclude=&quot;*~&quot; --exclude=documents  ancien_rep  nouveau_rep  &gt; fichier.patch
+&lt;/pre&gt;
+Envoyer votre patch sur la ML.
+L'intégration de votre patch n'est toutefois pas garantie, pas plus que le délai.
+
+Sous Windows:
+
+Si vous êtes sous Windows, une ''méthode moins Pro'' mais qui donne le même résultat est la suivante. Installer l'excellent outil open source de comparaison Winmerge qui sait fabriquer des patchs au format ''diff -Naur''. Pour cela, comparer avec Winmerge le fichier référence et le fichier modifié et choisir dans le menu ''&quot;Tools - Generate patch&quot;'' (''Générer des retouches'' en version française). Saisir un nom de fichier comme ''&quot;resultat.patch&quot;'', cocher la case ''&quot;Append&quot;'' et choisir l'option ''&quot;Format Unified&quot;'' (''Style : unifié'' en version française). Cliquer sur ''&quot;Ok&quot;''.
+Éventuellement recommencer pour chaque fichier modifié.
+Au final, on obtient un beau fichier ''resultat.patch'' qui contient toutes les modifications au bon format.
+
+Au lieu de rechercher manuellement vos fichiers, si vous avez installé conjointement ''TortoiseCVS'' et ''Winmerge'', vous pouvez vous contenter de votre version modifiée sur votre ordinateur, et de la version CVS en ligne. Sous l'explorateur Windows, faites un clic droit sur le fichier qui doit être patché, et choisissez &quot;CVS comparer&quot; (pas WinMerge qui se trouve quelques lignes plus bas). Tortoise va lui-même lancer WinMerge. Puis reprenez la procédure décrite ci-dessus.
+
+
+== Comment devenir développeur officiel ==
+
 Voir pour cela la page [[Documentation Développeur]]</text>
     </revision>
   </page>
@@ -1588,9 +2090,9 @@ D'autres sont recensées ici. N'hésitez pas à compléter.
   <page>
     <title>Facturation</title>
     <revision>
-      <timestamp>2006-11-11T18:24:37Z</timestamp>
+      <timestamp>2007-07-30T08:39:48Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Generation PDF, Impression */</comment>
+      <comment>/* Exemples de cas d'utilisations */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -1615,8 +2117,11 @@ Il n'y a aucun prérequis.
 * Les factures de doit de remplacement
 Une facture de remplacement permet de refaire une facture sur laquelle il y aurait des erreurs et sur laquelle rien n'aurait été fait (aucun paiement saisi).
 
-On ne peut créer qu'une seule facture de remplacement pour une facture de doit donnée. Quand on a créé une facture de remplacement R, on choisit la facture de doit F qui doit être remplacée. Il n'est alors plus possible de faire d'actions sur la facture F, bien que cette dernière ne change pas de statut après que la facture de remplacement R ait été créée.
-C'est une fois que la facture de remplacement R est validée que la facture F passe au statut abandonnée automatiquement.
+On ne peut créer qu'une seule facture de remplacement pour une facture de doit donnée. Quand on a créé une facture de remplacement R, on choisit la facture de doit F qui doit être remplacée. Il n'est alors plus possible de faire d'actions sur la facture F, bien que cette dernière ne change pas de statut après que la facture de remplacement R ait été créée au statut '''brouillon'''.
+
+Si la facture de remplacement R est supprimée, la facture F reprends son état initial et le cycle de vie de la facture F peut reprendre.
+
+Si la facture de remplacement R est '''validée''', la facture F passe alors au statut '''abandonnée''' automatiquement. Le cycle de vie continue sur la facture R.
 
 * Les factures d'avoir
 On crée une facture d'avoir sur une facture de doit.
@@ -1630,13 +2135,12 @@ Pour chaque ligne de la facture vous définissez aussi une quantité et éventue
 Une fois la facture prête vous devez la valider. '''Attention''' cette opération est irréversible. Quand vous validez la facture un numéro lui est attribué selon le modèle de numérotation que vous avez choisi dans la configuration du module Facture.
 Si une erreur est détectée après avoir validé la facture, il faudra soit faire une facture de remplacement, soit faire une facture d'avoir.
 
-
 == Generation PDF, Impression ==
 
 A compléter...
-Lorsqu'un document est généré, il est fabriquer suivant un modèle choisi dans les écrans Accueil - Configuration - Modules - Factrue
+Lorsqu'un document est généré, il est fabriqué suivant un modèle choisi parmi une liste activée dans les écrans Accueil - Configuration - Modules - Facture
 
-Voici des [[FactureModele| exmeples de modèles]]
+Voici des [[FactureModele| exemples de modèles]]
 
 == Saisir les paiements ==
 
@@ -1645,15 +2149,142 @@ A compléter...
 
 == Classer la facture ==
 
-Une facture peut etre définitivement classer à l'état:
+Une facture validée peut etre définitivement classer à l'état:
 * Payé
+Si la somme des paiements est supérieure ou égale au montant réclamé.
 * Payé partiellement
+Si la somme des paiements et supérieure à 0 mais strictement inférieure au montant réclamé.
 * Abandonné
+Si aucun paiement n'a eu lieu.
 
 == Exporter les factures ==
 
 Dolibarr fournit un outil générique vous permettant d'exporter les données de vos factures.
-Pour cela, il faut utiliser l'assistant Export qui se trouve dans le menu Outils - Nouvel export.</text>
+Pour cela, il faut utiliser l'assistant Export qui se trouve dans le menu Outils - Nouvel export.
+
+Voir la page [[Exports]] pour plus d'informations.
+
+== Cas d'utilisations ==
+
+'''UCIN00: Erreur sur le contenu de la facture corrigée par facture remplacement'''
+
+Je crée une facture.
+Je valide.
+Je me rend compte de l'erreur après validation.
+Je classe la facture abandonnée pour motif 'autre' (opération non obligatoire car automatique avec étape suivante).
+Je crée une nouvelle facture en choisissant '''facture de remplacement''' et en selectionnant la facture remplacée comme facture.
+
+
+'''UCIN00b: Erreur sur le client détecté avant envoi facture'''
+
+Je crée une facture.
+Je valide.
+Je me rend compte que la facture a été crée sur le mauvais client.
+Je classe la facture abandonnée pour motif 'autre' (opération non obligatoire car automatique avec étape suivante).
+Je crée une nouvelle facture sur le bon client.
+
+
+'''UCIN00c: Erreur sur le libellé client détecté après paiement'''
+
+Je crée une facture sur le client de libellé X.
+Je valide.
+Je saisi les paiements.
+Je classe la facture payée.
+Je me rend compte que la facture a été crée sur le mauvais client et le client me demande une contrefacture sur l'ancien nom X et une nouvelle sur le nouveau nom Y.
+Je crée un avoir sur la facture en erreur avec toutes les lignes en inverse.
+Je transforme l'avoir en réduction. L'avoir se retrouve ainsi &quot;traité&quot;.
+Je corrige le libelle client X par Y.
+Je crée la nouvelle facture sur le nouveau client Y en incluant toutes les lignes
+ainsi que la réduction issue de l'avoir. Le total est alors à 0 (aucun du) et je valide ainsi.
+Je peux classer la facture à payée sans saisir de réglement (le client a déjà payé).
+
+
+'''UCIN01: Facturation et paiement intégral'''
+
+Je crée une facture.
+Je reçois l'intégralité des paiements. Je les saisis et le solde devient à 0.
+Je clos la facture à l'état '''Payé'''.
+
+
+'''UCIN02: Facturation et paiement supérieur reçu'''
+
+Je crée une facture.
+Je reçois un paiement supérieur au montant réclamé. Je saisi le montant reçu.
+Je clos la facture à l'état '''Payé'''.
+Je crée un avoir du trop perçu.
+
+TODO: Sur avoir: vérifier que bouton 'transformer avoir' en réduc pour prochaine facture marche dans ce cas.
+
+
+'''UCIN03: Facturation et paiement intégral puis produit retourné'''
+
+Je crée une facture.
+Je reçois l'intégralité des paiements. Je les saisis et le solde devient 0.
+Je clos la facture à l'état '''Payé'''.
+Plus tard, je reçois un retour de produit suite à rétractation légale. Je saisi un avoir sur cette facture.
+Cet avoir peut etre converti en réduction pour la prochaine facture ou rembourser en monétaire.
+
+
+'''UCIN04: Facturation et paiement partiel car anticipé (escompte)'''
+
+Je crée une facture.
+Je reçois un paiement du montant de la facture moins un escompte accordé pour paiement anticipé. Je saisi le paiment reçu.
+Je classe la facture à '''Payé partiellement''' et renseigne le motif '''Escompte'''.
+
+
+'''UCIN05: Facturation et paiement partiel car mauvais payeur'''
+
+Je crée une facture.
+Je reçois un paiement partiel, je le saisi.
+Après une longue attente, la suite des paiements n'est pas reçue. J'abandonne tout espoir et je classe la facture à l'état '''Payé partiellement''' et renseigne le motif '''Mauvais payeur'''.
+
+
+'''UCIN06: Facturation et paiement partiel car retour produit ou attente correction anomalie'''
+
+Je crée une facture.
+Je reçois un paiement partiel, je le saisi.
+Je reçois un retour d'une partie des produits (retractation du client).
+Le client attend un avoir pour payer la fin de la facture.
+Je saisie un avoir sur la facture au statut &quot;Réglement commencé&quot;
+--&gt; TODO: Ce cas est à gérer. Quand l'avoir est fait sur une facture à ce statut, il faut mettre un message disant &quot;Attention, ne crée un avoir sur une facture en cours de paiement que si le client a cessé le paiement et attend cette avoir pour poursuivre la suite&quot;.
+Ensuite il faut vérifier que le montant de l'avoir est inférieur au montant de la facture auquel il s'applique - montant deja reçu. Sinon, refuser création avoir. Ensuite, à la création de l'avoir, ce dernier doit automatiquement etre convertie en réduction qui doit automatiquement etre appliquée sur la facture. Ceci a pour effet de mettre à jour la facture initiale avec une info indiquant que la facture a été corrigé par un avoir et que le montant du est plus faible.
+J'envoie l'avoir.
+Je saisi la suite des paiements reçus.
+Je classe la facture à l'état '''Payé'''.
+
+
+'''UCIN07: Facturation et aucun paiement reçu car mauvais payeur'''
+
+Je crée une facture.
+Après une longue attente, la suite des paiements n'est pas reçu. J'abandonne tout espoir et je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Mauvais payeur'''.
+
+
+'''UCIN08: Facturation et aucun paiement reçu car facture saisie par erreur'''
+
+Je crée une facture.
+Je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Autre'''.
+Eventuellement, je peux saisir tout de suite ou plus tard une facture de remplacement qui remplace celle-ci.
+
+== Factures récurrentes ==
+
+Une facture récurrente est une facture qui est appliquée de façon répétée dans le temps. Par exemple, l'entretien de machinerie ou la mise-à-jour régulière d'un site web peuvent être l'objet de factures récurrentes.
+Dans Dolibarr, une facture désignée comme récurrente est simplement une facture dont on réutilise la plupart des données pour émettre d'autres factures sur base de ces informations, ce qui permet un gain de temps non-négligeable.
+
+Dans le cas de la mise en oeuvre des contrats, une facture récurrente peut être définie et correspondant aux éléments récurrents du contrat. Ceci est très intéressant. Le seul bémol, la période indiquée pour chaque élément de la facture résultante couvre toute la période du contrat. Elle ne devrait porter que sur le mois de facturation.
+
+== Cas d'utilisation de factures récurrentes ==
+
+'''UCRIN01: Création d'une facture récurrente'''
+
+Il n'est pas possible de créer une facture récurrente en soi. Il s'agit d'une facture normale que l'on réutilise par la suite.
+
+'''UCRIN02: Transformation d'une facture normale en facture récurrente'''
+
+J'ouvre une facture existante. Je clique sur le bouton &quot;Modifier en récurrente&quot;. J'entre un titre (par exemple, &quot;Mise-à-jour trimestrielle&quot;) et éventuellement une note, qui pourrait être une explication de la raison de la répétition de cette facture. Ma facture est à présent une facture récurrente. Cela ne sera visible que si je demande l'affichage des factures récurrentes ou que je crée une nouvelle facture.
+
+'''UCRIN03: Utilisation d'une facture récurrente pour la création d'une nouvelle facture'''
+
+Je crée une nouvelle facture (&quot;Créer facture&quot;), et j'utilise la boîte de sélection en bas de page pour sélectionner la facture récurrente que je veux utiliser comme gabarit (template). Ma nouvelle facture est pré-remplie, les modifications à apporter sont mineures.</text>
     </revision>
   </page>
   <page>
@@ -1706,11 +2337,21 @@ Pour visualiser les modèles de facture actuellement disponible, suivez ce lien 
   <page>
     <title>FactureFournisseur</title>
     <revision>
-      <timestamp>2005-11-21T13:57:23Z</timestamp>
-      <contributor><username>Rhum1</username></contributor>
-      <comment>Ajout de la navigation</comment>
+      <timestamp>2007-07-30T08:48:09Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>Page facture fournisseurs</comment>
       <text>{{Navigation documentation}}
-{{TemplateDocUtil}}</text>
+{{TemplateDocUtil}}
+
+== Cas d'utilisations ==
+
+'''UCSIN02: Facturation fournisseur puis reception avoir suite erreur facture'''
+
+Je saisi la facture fournisseur (facture de doit).
+Je reçois l'avoir fournisseur (facture avoir), aussi je saisi une facture fournisseur normal mais avec montant négatif.
+Je paie.
+Je saisi le paiement sur facture fournisseur et un paiement négatif sur facture avoir fournisseur.
+Un paiement supérieur et un autre négatif pour corriger apparaitront dans le relevé bancaire.</text>
     </revision>
   </page>
   <page>
@@ -1725,6 +2366,82 @@ Pour visualiser les modèles de facture actuellement disponible, suivez ce lien 
 * http://www.dolibarr.com/img/bernique.pdf
 * http://www.dolibarr.com/img/bigorneau.pdf
 * http://www.dolibarr.com/img/tourteau.pdf</text>
+    </revision>
+  </page>
+  <page>
+    <title>Facture (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-05T02:43:30Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>Facture (Table SQL) déplacé vers Table llx facture</comment>
+      <text>#REDIRECT [[Table llx facture]]
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Facturedet (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:51:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Facturation]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les lignes des factures clients.
+
+Contains the lines of customer invoices.
+
+= Structure =
+
+* rowid : identifiant technique
+* fk_facture
+* fk_product
+* description
+* tva_taux : taux de TVA de la ligne
+* qty : quantité
+* remise_percent : remise en pourcentage
+* remise : remise en valeur
+* fk_remise_except
+* subprice
+* price
+* total_ht
+* total_tva
+* total_ttc
+* date_start
+* date_end
+* info_bits
+* fk_code_ventilation
+* fk_export_compta
+* rang : numero d'ordre dans lequel sont affichées et imprimées les lignes de la facture
+
+&lt;pre&gt;
++---------------------+----------+------+-----+---------+----------------+
+| Field               | Type     | Null | Key | Default | Extra          |
++---------------------+----------+------+-----+---------+----------------+
+| rowid               | int(11)  |      | PRI | NULL    | auto_increment |
+| fk_facture          | int(11)  |      | MUL | 0       |                |
+| fk_product          | int(11)  | YES  |     | NULL    |                |
+| description         | text     | YES  |     | NULL    |                |
+| tva_taux            | double   | YES  |     | NULL    |                |
+| qty                 | double   | YES  |     | NULL    |                |
+| remise_percent      | double   | YES  |     | 0       |                |
+| remise              | double   | YES  |     | 0       |                |
+| fk_remise_except    | int(11)  | YES  |     | NULL    |                |
+| subprice            | double   | YES  |     | NULL    |                |
+| price               | double   | YES  |     | NULL    |                |
+| total_ht            | double   | YES  |     | NULL    |                |
+| total_tva           | double   | YES  |     | NULL    |                |
+| total_ttc           | double   | YES  |     | NULL    |                |
+| date_start          | datetime | YES  |     | NULL    |                |
+| date_end            | datetime | YES  |     | NULL    |                |
+| info_bits           | int(11)  | YES  |     | 0       |                |
+| fk_code_ventilation | int(11)  |      |     | 0       |                |
+| fk_export_compta    | int(11)  |      |     | 0       |                |
+| rang                | int(11)  | YES  |     | 0       |                |
++---------------------+----------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
     </revision>
   </page>
   <page>
@@ -1753,6 +2470,94 @@ Vous pouvez ajouter le paramètre supplémentaire optionnel :
      $dolibarr_auto_user=&quot;demo&quot;;
 
 Si vous souhaitez utiliser Dolibarr en mono-utilisateur, il faut quand même que cet utilisateur existe dans la base de données.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Fichinter (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:53:05Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table contient les enregistrements des interventions du module interventions.
+
+Contains the interventions of the interventions module.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Fournisseur ca (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:55:14Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Fournisseur]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_fournisseur_ca''' est remplie par un script cron qui calcule tous les jours le chiffre d'affaire généré par chaque fournisseur.
+
+Contains the turnover generated for the providers by our company, as calculated by a daily cron script.
+
+= Structure =
+
+* fk_societe : clef étrangère sur idp de [[societe (Table SQL)|llx_societe]]
+* date_calcul : date/heure à laquelle a été effectué le calcul
+* year : année du chiffre d'affaire
+* ca_genere : chiffre d'affaire généré par les produits du fournisseurs
+
+&lt;pre&gt;
++-------------+----------------------+------+-----+---------+-------+
+| Field       | Type                 | Null | Key | Default | Extra |
++-------------+----------------------+------+-----+---------+-------+
+| fk_societe  | int(11)              | YES  |     | NULL    |       |
+| date_calcul | datetime             | YES  |     | NULL    |       |
+| year        | smallint(5) unsigned | YES  |     | NULL    |       |
+| ca_genere   | float                | YES  |     | NULL    |       |
++-------------+----------------------+------+-----+---------+-------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Gestion d'erreur</title>
+    <revision>
+      <timestamp>2007-03-16T19:41:10Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>== Les fonctions ==
+
+dolibarr_print_error($db,texte)
+
+
+
+== Gestion d'erreur dans les classes ==
+
+&lt;pre&gt; 
+0256-0511  Produit       htdocs/product.class.php
+0512-1023  Facture
+1024-1279  RemiseCheque  htdocs/compta/paiement/cheque/resimecheque.class.php
+1280-1535  ProduitLivre
+1536-1791  SocieteAuteur
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Gestion d'erreur dans les classes</title>
+    <revision>
+      <timestamp>2007-01-05T15:12:09Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>&lt;pre&gt; 
+0256-0511  Produit       htdocs/product.class.php
+0512-1023  Facture
+1024-1279  RemiseCheque  htdocs/compta/paiement/cheque/resimecheque.class.php
+1280-1535  ProduitLivre
+1536-1791  SocieteAuteur
+&lt;/pre&gt;</text>
     </revision>
   </page>
   <page>
@@ -1907,10 +2712,9 @@ Elle est applicable dès lors que la mise à jour se fait pour une version de Do
   <page>
     <title>Interface OSCommerce</title>
     <revision>
-      <timestamp>2007-02-01T02:59:52Z</timestamp>
-      <contributor><username>Tiaris</username></contributor>
-      <comment>/* Les fonctions prévues */</comment>
-      <text>Le but de cette [[interface OSCommerce]] est de pouvoir utiliser [[Dolibarr]] pour la gestion des ventes sur un site e-commerce fonctionnant avec [http://fr.wikipedia.org/wiki/osCcommerce osCommerce].
+      <timestamp>2007-05-11T14:00:42Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <text>Le but de cette [[interface OSCommerce]] est de pouvoir utiliser [[Dolibarr]] pour la gestion des ventes sur un site e-commerce fonctionnant avec [http://fr.wikipedia.org/wiki/osCommerce osCommerce].
 
 == Présentation ==
 
@@ -2003,11 +2807,11 @@ Les valeurs des paramètres utilisés dans les appels des web-services sont déf
 
 On arrive sur une page listant les articles du site (à affiner, car s'il y a beaucoup d'articles ...)
 
-Possibilité d'ouvrir les détails d'un article et accès à un bouton importer qui créé un nouvel article dans la base de Dolibarr. Si l'article existe déjà (contrôle sur la référence) on met à jour l'article dans Dolibarr.
+Possibilité d'ouvrir les détails d'un article et accès à un bouton importer qui créé un nouvel article dans la base de Dolibarr. Si l'article existe déjà (contrôle sur la référence) on met à jour l'article dans Dolibarr (pas encore fonctionnel).
 
-Il n'y pas encore de fonction permettant l'import de tous les articles depuis OSC dans Dolibarr, il faut donc les importer un par un.
+Il n'y pas encore de fonction permettant l'import de tous les articles depuis OSC dans Dolibarr, il faut donc les importer un par un. 
 
-; TODO : Une table de correspondance article OSC - article Dolibarr sera nécessaire pour la suite (gestion des commandes).
+Cette fonction ne devriat servir que pour initialiser un système Dolibarr avec un site OSC. Au quotidien, il s'agira plutôt d'alimenter le site OSC avec les articles gérés dans Dolibarr (fonction pas encore réalisée).
 
 === Le menu clients ===
 
@@ -2015,15 +2819,19 @@ Il est construit sur le même modèle que la gestion des produits : on affiche l
 
 Il n'y a pas encore de fonction d'import de tous les clients.
 
-; TODO : Une table de correspondance client OSC - client Dolibarr sera nécessaire pour la suite.
+NB : Lors de l'import d'une commande (voir plus loin), le client est automatiquement créé s'il n'existe pas encore.
 
 === Le menu commandes ===
 
-Le schéma est le même : en cliquant le menu on affiche la liste des commandes du site OSC. On peut ensuite visualiser les détails de la commande et avoir accès à l'import dans Dolibarr (c'est ici que les tables de correspondances sur les articles et clients vont être nécessaires...).
+Le schéma est le même : en cliquant le menu on affiche la liste des commandes du site OSC. On peut ensuite visualiser les détails de la commande et avoir accès à l'import dans Dolibarr. Si le client de la commande n'existe pas, il est créé. Par contre, mes articles commandés doivent exister (ou avoir été importés auparavant)
 
-Il n'y a pas encore de fonction d'import de toutes les commandes.
+'''Frais de port :'''
+Il faut créer un service pour gèrer les frais de port (gestion des services) et renseigner la variable dans le fichier de configuration de l'interface.
 
-; TODO : Ici interviendront des règles de gestion pour contrôler la validité des commandes OSC selon le type de livraison, le moyen de paiement (ex : si payée par CB, la commande est déjà payée, si c'est en contre remboursement, elle doit être envoyée et on est payé plus tard, si elle est payée par virement, elle est en attente jusqu'à réception du paiement) et probablement d'autres auxquelles je n'ai pas encore pensé... Vos avis sont les bienvenus.
+Dans l'état actuel, une commande est importée et reçoit le statut &quot;brouillon&quot;, il faut ensuite suivre les fonctions habituelles de Dolibarr pour la valider, gèrer l'expédition, le paiement...
+
+; TODO : Ici interviendront des règles de gestion pour automatiser encore plus cette gestion dans dolibarr : contrôler la validité des commandes OSC selon le type de livraison, le moyen de paiement (ex : si payée par CB, la commande est déjà payée, si c'est en contre remboursement, elle doit être envoyée et on est payé plus tard, si elle est payée par virement, elle est en attente jusqu'à réception du paiement) et probablement d'autres auxquelles je n'ai pas encore pensé... Vos avis sont les bienvenus.
+Pour le moment, on va tester comme cela.
 
 == Les tests à effectuer ==
 
@@ -2057,20 +2865,20 @@ Il y aura beaucoup de tests à prévoir pour valider le bon fonctionnement (en v
 Ce qui peut être testé est écrit ''en italique'' :
 
 # La gestion des articles :
-#* ''leur récupération depuis OSC (et leur gestion ensuite come tout article Dolibarr)''
+#* ''leur récupération depuis OSC (et leur gestion ensuite comme tout article Dolibarr)''
 #* la création d'un article sur OSC depuis Dolibarr (suite à commande et livraison fournisseur)
 #* ''la gestion du stock''
 # La gestion des clients - prospects :
 #* OSC ne distingue pas les clients (qui ont commandé) des prospects (inscrits mais sans commande)
 #* ''récupération des clients''
 #* récupération des prospects
-#* la gestion de ces clients / prospects dans Dolibarr
+#* ''la gestion de ces clients / prospects dans Dolibarr''
 #* la gestion des mises à jour client
 # La récupération des commandes
 #*''leur intégration dans les commandes Dolibarr''
-#*le suivi du paiement (maj de la commande sur OSC à prévoir)
-#*le suivi de l'expédition (maj de la commande sur OSC à prévoir)
-#*l'intégration dans la gestion comptable de Dolibarr (compte bancaire, CA, frais, TVA...)
+#*''le suivi du paiement'' (maj de la commande sur OSC à prévoir)
+#*''le suivi de l'expédition'' (maj de la commande sur OSC à prévoir)
+#*''l'intégration dans la gestion comptable de Dolibarr (compte bancaire, CA, frais, TVA...)''
 
 ==== Site osCommerce (côté serveur) ====
 
@@ -2265,9 +3073,9 @@ Cette technique est préférable à la précédente.
   <page>
     <title>Langages et normes</title>
     <revision>
-      <timestamp>2007-02-06T02:49:41Z</timestamp>
+      <timestamp>2007-08-09T15:28:30Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Syntaxe PHP */</comment>
+      <comment>/* Autre */</comment>
       <text>Voici les quelques règles sur le langage, la syntaxe et normes de développement en vigueur pour le projet Dolibarr:
 
 == Syntaxe PHP et objet ==
@@ -2317,11 +3125,15 @@ A ce jour, très peu de fonctions respectent ce standard mais c'est celui vers l
 
 == Autre ==
 
-* Les fichiers doivent etre sauvés en format Unix (LF) et non Windows (CR/LF). Le format Unix étant compatible sur les OS Unix like, Windows, Mac, alors que le format fichier texte Windows pose problème sus certains PHP sous Unix.
-
-* Les popups windows ne doivent pas être utilisées.
+* Les fichiers doivent etre sauvés en format Unix (LF) et non Windows (CR/LF). Le format Unix étant compatible sur les OS Unix like, Windows, Mac, alors que le format fichier texte Windows pose problème sous certains PHP sous Unix.
 
 * Tous les attributs dans les balises HTML doivent être *en minuscule* et quottés avec des *doubles quote* (Norme xhtml)
+
+* Les liens href doivent etre absolu et se baser pour les pages sur la constante DOL_URL_ROOT qui pointe sur htdocs et pour les images se base sur l'appel de la fonction img_picto.
+Par exemple:
+&lt;pre&gt;
+print '&lt;a href=&quot;'.DOL_URL_ROOT.'/monrep/mapage.php&quot;&gt;'.img_picto('Texte alt','nompictopng','').'&lt;/a&gt;';
+&lt;/pre&gt;
 
 * Le javascript et l'appel aux scripts java dans les pages php est à proscrire. Si toutefois du code javascript est inclus, il doit être conditionné par le test sur &quot;$conf-&gt;use_javascript&quot;
 &lt;pre&gt;
@@ -2331,7 +3143,17 @@ if ($conf-&gt;use_javascript)
 }
 &lt;/pre&gt;
 
-* Les scripts externes sont écrits en Perl s'ils ne peuvent l'être en php, l'utilisation d'un autre langage n'est pas interdit mais doit être discuté au préalable dans la mailing list des développeurs. Le langage devra être maitrisé par au moins 2 développeurs pour en assurer la maintenance.</text>
+* Les popups windows ne doivent pas être utilisées.
+
+* Les scripts externes sont écrits en Perl s'ils ne peuvent l'être en php, l'utilisation d'un autre langage n'est pas interdit mais doit être discuté au préalable dans la mailing list des développeurs. Le langage devra être maitrisé par au moins 2 développeurs pour en assurer la maintenance.
+
+== Squelettes de code ==
+
+Afin d'uniformiser le code et d'accélérer le développement de nouveaux composants dans Dolibarr, se trouve dans le répertoire '''dev/skeletons''', 3 squelettes de code tout préparé.
+
+* 1 qui sert d'exemple de code pour faire une nouvelle classe: '''skeleton_class.class.php'''
+* 1 qui sert d'exemple de code pour faire une nouvelle page: '''skeleton_page.php'''
+* 1 qui sert d'exemple de code pour faire un script à exécuter en ligne de commande: '''skeleton_script.php'''</text>
     </revision>
   </page>
   <page>
@@ -2446,9 +3268,11 @@ Aucune librairie particulière requise.
   <page>
     <title>Liste des tables</title>
     <revision>
-      <timestamp>2006-12-09T21:37:34Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
+      <timestamp>2007-08-05T02:44:22Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>[[Catégorie:Table SQL]]
+
+[[Diagramme des bases de données]]
 
 #[[Table llx_action_def]]
 #[[Table llx_actioncomm]]
@@ -2456,9 +3280,7 @@ Aucune librairie particulière requise.
 #[[Table llx_adherent_options]]
 #[[Table llx_adherent_options_label]]
 #[[Table llx_adherent_type]]
-#[[Table llx_album]]
 #[[Table llx_appro]]
-#[[Table llx_auteur]]
 #[[bank (Table SQL)|bank]]
 #[[bank_account (Table SQL)|bank_account]]
 #[[bank_categ (Table SQL)|bank_categ]]
@@ -2468,11 +3290,11 @@ Aucune librairie particulière requise.
 #[[bookmark4u_login (Table SQL)|bookmark4u_login]]
 #[[boxes (Table SQL)|boxes]]
 #[[boxes_def (Table SQL)|boxes_def]]
-#[[Table llx_c_accountingsystem]]
 #[[Table llx_c_actioncomm]]
 #[[Table llx_c_ape]]
 #[[Table llx_c_chargesociales]]
 #[[Table llx_c_civilite]]
+#[[Table llx_c_currencies]]
 #[[Table llx_c_departements]]
 #[[Table llx_c_effectif]]
 #[[Table llx_c_forme_juridique]]
@@ -2482,13 +3304,17 @@ Aucune librairie particulière requise.
 #[[Table llx_c_propalst]]
 #[[Table llx_c_regions]]
 #[[Table llx_c_stcomm]]
+#[[Table llx_c_tva]]
+#[[Table llx_c_type_contact]]
 #[[Table llx_c_typent]]
 #[[Table llx_categorie]]
 #[[Table llx_categorie_association]]
+#[[Table llx_categorie_fournisseur]]
 #[[Table llx_categorie_product]]
 #[[Table llx_chargesociales]]
 #[[Table llx_co_fa]]
 #[[Table llx_co_pr]]
+#[[Table llx_comfourn_facfourn]]
 #[[Table llx_commande]]
 #[[Table llx_commande_fournisseur]]
 #[[Table llx_commande_fournisseur_log]]
@@ -2497,7 +3323,6 @@ Aucune librairie particulière requise.
 #[[Table llx_compta]]
 #[[Table llx_compta_account]]
 #[[Table llx_compta_compte_generaux]]
-#[[Table llx_concert]]
 #[[Table llx_cond_reglement]]
 #[[Table llx_const]]
 #[[Table llx_contact_facture]]
@@ -2517,7 +3342,7 @@ Aucune librairie particulière requise.
 #[[expeditiondet (Table SQL)|expeditiondet]]
 #[[Table llx_export_compta]]
 #[[Table llx_fa_pr]]
-#[[facture (Table SQL)|facture]]
+#[[Table llx_facture]]
 #[[Table llx_facture_fourn]]
 #[[Table llx_facture_fourn_det]]
 #[[Table llx_facture_rec]]
@@ -2530,7 +3355,6 @@ Aucune librairie particulière requise.
 #[[livraison_det (Table SQL)|livraison_det]]
 #[[Table llx_mailing]]
 #[[Table llx_mailing_cibles]]
-#[[Table llx_newsletter]]
 #[[Table llx_notify]]
 #[[Table llx_notify_def]]
 #[[Table llx_paiement]]
@@ -2538,7 +3362,6 @@ Aucune librairie particulière requise.
 #[[Table llx_paiementcharge]]
 #[[Table llx_paiementfourn]]
 #[[Table llx_paiementfourn_facturefourn]]
-#[[Table llx_pointmort]]
 #[[Table llx_prelevement_bons]]
 #[[Table llx_prelevement_lignes]]
 #[[Table llx_prelevement_facture]]
@@ -2555,8 +3378,6 @@ Aucune librairie particulière requise.
 #[[Table llx_propal_model_pdf]]
 #[[Table llx_propaldet]]
 #[[Table llx_rights_def]]
-#[[Table llx_soc_events]]
-#[[Table llx_soc_recontact]]
 #[[Table llx_societe]]
 #[[Table llx_societe_commerciaux]]
 #[[Table llx_societe_remise]]
@@ -2564,7 +3385,6 @@ Aucune librairie particulière requise.
 #[[Table llx_societe_rib]]
 #[[Table llx_socpeople]]
 #[[Table llx_socstatutlog]]
-#[[Table llx_sqltables]]
 #[[Table llx_stock_mouvement]]
 #[[Table llx_telephonie_adsl_fournisseur]]
 #[[Table llx_telephonie_adsl_ligne]]
@@ -2597,8 +3417,6 @@ Aucune librairie particulière requise.
 #[[Table llx_telephonie_tarif_client]]
 #[[Table llx_telephonie_tarif_fournisseur]]
 #[[Table llx_telephonie_tarif_vente]]
-#[[Table llx_todocomm]]
-#[[Table llx_transaction_bplc]]
 #[[Table llx_tva]]
 #[[Table llx_user]]
 #[[user_alert (Table SQL)|user_alert]]
@@ -2609,14 +3427,27 @@ Aucune librairie particulière requise.
 #[[Table llx_usergroup]]
 #[[Table llx_usergroup_user]]
 #[[Table llx_usergroup_rights]]
-#[[Table llx_ventes]]
-#[[Table llx_voyage]]
-#[[Table llx_voyage_reduc]]
+
 
 == Anciennes Tables supprimées ==
 Ces tables ont été présentes à un moment ou un autre dans Dolibarr
 
 * [[Table llx_prelevement]]</text>
+    </revision>
+  </page>
+  <page>
+    <title>Livraison (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:55:27Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
     </revision>
   </page>
   <page>
@@ -2942,9 +3773,9 @@ Statut des contrats:
   <page>
     <title>Module Facture</title>
     <revision>
-      <timestamp>2006-05-16T19:58:53Z</timestamp>
-      <contributor><username>Dilaroga</username></contributor>
-      <comment>/* Entité Facture */</comment>
+      <timestamp>2007-04-26T15:51:35Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Fonction du module */</comment>
       <text>[[Catégorie:Facture]]
 {{Tableau soft|
 nom=Facture| 
@@ -2958,6 +3789,14 @@ Le module Facture permet de gérer dans Dolibarr les entités suivantes:
 * Factures clients
 * Lignes de factures
 Les factures fournisseurs sont gérées par le module Fournisseur.
+
+Les arrondis de calcul de TVA doivent se faire &quot;au plus près&quot;.
+
+Exemple:
+
+de 0,0000 à 0,0049 --&gt; 0,00
+
+de 0,0050 à 0,0099 --&gt; 0,01
 
 == Entité Facture ==
 
@@ -3546,6 +4385,72 @@ Il est possible de réajuster le contenu de ces entrepots suite à des inventair
     </revision>
   </page>
   <page>
+    <title>Module Téléphonie</title>
+    <revision>
+      <timestamp>2005-08-16T08:54:07Z</timestamp>
+      <contributor><ip>81.56.183.189</ip></contributor>
+      <text>[[Catégorie:Téléphonie]]
+{{Tableau soft|
+nom=Téléphonie| 
+module=[[Module Téléphonie]] |}}
+Module de facturation spéciale pour les revendeurs de téléphonie. Permet la gestion des lignes en préselection, l'emission des factures comptables et des factures détaillées. Le suivi des consommations. Le calcul des commissions des distributeurs.
+
+== Procédures ==
+
+#[[Module Téléphonie Procédure Facturation]]
+
+== Scripts mis en oeuvre ==
+
+#[[Script import-cdr.php]]
+#[[Script facturation-verif.php]]
+#[[Script facturation-calcul.php]]
+#[[Script facturation-emission.php]]
+
+
+== Tables spécifique à ce module ==
+
+#[[Table llx_telephonie_adsl_fournisseur]]
+#[[Table llx_telephonie_adsl_ligne]]
+#[[Table llx_telephonie_adsl_ligne_statut]]
+#[[Table llx_telephonie_adsl_type]]
+#[[Table llx_telephonie_client_statistique]]
+#[[Table llx_telephonie_client_stats]]
+#[[Table llx_telephonie_commande]]
+#[[Table llx_telephonie_ligne]]
+#[[Table llx_telephonie_commande_retour]]
+#[[Table llx_telephonie_commission]]
+#[[Table llx_telephonie_commission_avance]]
+#[[Table llx_telephonie_commission_conso]] 
+#[[Table llx_telephonie_communications_details]]
+#[[Table llx_telephonie_concurrents]]
+#[[Table llx_telephonie_contact_facture]]
+#[[Table llx_telephonie_contrat]]
+#[[Table llx_telephonie_contrat_contact_facture]]
+#[[Table llx_telephonie_contrat_priseordre]]
+#[[Table llx_telephonie_contrat_service]]
+#[[Table llx_telephonie_facture]]
+#[[Table llx_telephonie_fournisseur]]
+#[[Table llx_telephonie_groupe_ligne]]
+#[[Table llx_telephonie_groupeligne]]
+#[[Table llx_telephonie_import_cdr]]
+#[[Table llx_telephonie_ligne_statistique]]
+#[[Table llx_telephonie_numdata]]
+#[[Table llx_telephonie_prefix]]
+#[[Table llx_telephonie_service]]
+#[[Table llx_telephonie_societe_ligne]]
+#[[Table llx_telephonie_societe_ligne_remise]]
+#[[Table llx_telephonie_societe_ligne_statut]]
+#[[Table llx_telephonie_tarif]]
+#[[Table llx_telephonie_tarif_achat]]
+#[[Table llx_telephonie_tarif_client]]
+#[[Table llx_telephonie_tarif_client_log]]
+#[[Table llx_telephonie_tarif_grille]]
+#[[Table llx_telephonie_tarif_grille_rights]]
+#[[Table llx_telephonie_tarif_montant]]
+#[[Table llx_telephonie_tarif_montant_log]]</text>
+    </revision>
+  </page>
+  <page>
     <title>Module Utilisateurs</title>
     <revision>
       <timestamp>2006-05-13T11:34:42Z</timestamp>
@@ -3583,9 +4488,9 @@ Il a pour vocation de permettre de gérer dans Dolibarr les entités suivantes:
   <page>
     <title>Modules</title>
     <revision>
-      <timestamp>2006-11-11T17:59:40Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Liste de modules */</comment>
+      <timestamp>2007-08-04T02:03:45Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Définition de la classe */</comment>
       <text>== Liste de modules ==
 
 # [[Module Facture]]
@@ -3618,9 +4523,9 @@ Cette classe est une extension de la classe modDolibarrModules, son nom doit com
 
 === Définition de la classe ===
 
-La classe doit comporter une fonction d'initialisation qui a le même nom que la class en elle-même (fonctionnalité de php).
+La classe doit comporter une fonction d'initialisation qui a le même nom que la classe en elle-même (fonctionnalité de php).
 
-Elle comporte les proprietes depends, const et boxes qui sont toutes trois des tableaux à une ou plusieurs dimensions. Elle a aussi un numéro dans le champ numero qui doit être unique.
+Elle comporte les propriétés depends, const et boxes qui sont toutes trois des tableaux à une ou plusieurs dimensions. Elle a aussi un numéro dans le champ numero qui doit être unique.
 
 {| style=&quot;border:2px solid black; border-collapse:collapse&quot;
 !style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|Propriété
@@ -3664,6 +4569,8 @@ Elle comporte les proprietes depends, const et boxes qui sont toutes trois des t
 |}
 
 Inspirez-vous des classes existantes pour écrire votre propre classe.
+
+Dans le cas de l'utilisation (involontaire) d'un '''numero''' non-unique, l'indexation de la liste des modules à afficher dans la page d'administration des modules provoquera une superposition des définitions de ces modules, ce qui pourrait avoir pour effet de faire apparaître un des modules deux fois, ou une seule fois mais à un autre endroit qu'habituellement.
 
 === Numéros de modules recensés ===
 
@@ -3770,6 +4677,9 @@ Inspirez-vous des classes existantes pour écrire votre propre classe.
 |style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|700
 |style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|[[Module Don]]
 |-
+|style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|900
+|style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|[[Module OSCommerce2]]
+|-
 |style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|1780
 |style=&quot;border-left:1px solid black; border-right:1px solid black; border-bottom:2px solid black&quot;|[[Module Catégories]]
 |}</text>
@@ -3808,28 +4718,6 @@ La liste des électeurs est ouvertes à la communauté Dolibarr.
 * [[Utilisateur:Syl20|Sylvain Scattolini - Syl20]]
 * [[Utilisateur:Tiaris|Jean Heimburger - Tiaris]]
 * [[Utilisateur:Mfauveau|Matthieu Fauveau]]</text>
-    </revision>
-  </page>
-  <page>
-    <title>Module Stock</title>
-    <revision>
-      <timestamp>2005-11-03T12:13:51Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>Ajout page sur module Stock</comment>
-      <text>(Généralités sur les [[Modules]])
-
-Le module stock permet de gérer une liste d'entrepots (ou tout autre &quot;contenant&quot;) et de répertorier, à tout moment, la liste et quantité des produits qu'il contient.
-Quand un produit est livré, le choix de l'entrepot source est réalisé est la quantité est automatiquement décrémentée.
-Il est possible de réajuster le contenu de ces entrepots suite à des inventaires.
-
-
-== Permissions ==
-
-* A compléter
-
-
-== Tables SQL ==
-* [[llx_entrepot]] Contient la liste des entrepots</text>
     </revision>
   </page>
   <page>
@@ -3908,10 +4796,44 @@ Identification des classes :
     </revision>
   </page>
   <page>
+    <title>PhpLangEditor</title>
+    <revision>
+      <timestamp>2007-01-08T09:41:33Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* phpLangEditor - Modification pour Dolibarr */</comment>
+      <text>= phpLangEditor - Modification pour Dolibarr =
+
+== Version courte ==
+
+* Installez l'extension [https://addons.mozilla.org/firefox/687/ phplangeditor (2.1.1)] dans votre Firefox
+* Trouvez où se cache phplangeditor.jar sur votre disque
+* Remplacez-le par [http://glouglou.beeznest.org/phplangeditor.jar cette version-ci]
+* Redémarrez Firefox et cliquez sur Outils -&gt; PHP lang editor
+
+== Version longue ==
+
+phpLangEditor est une extension pour Firefox (disponible [https://addons.mozilla.org/firefox/687/ sur le site de Mozilla]) qui permet la traduction de fichiers de langue au &quot;format PHP&quot;. Toutefois, ce format est peu pratique pour toute une série de raisons.
+
+Comme Dolibarr utilise une forme de &quot;format INI&quot; pour ses traductions, il est impossible d'utiliser phpLangEditor telle quelle pour les traductions. Toutefois, quelques petites modifications permettent d'aboutir à une version de phpLangEditor qui nous convient (mais qui ne permet plus, dès lors, d'utiliser des fichiers au format PHP).
+
+Afin d'utiliser la modification fournie ci-dessous, il est d'abord nécessaire d'installer l'extension, en suivant le lien [https://addons.mozilla.org/firefox/687/ sur le site de Mozilla].
+
+Une fois que c'est fait, téléchargez la version modifiée du fichier d'extension (voir lien en fin de page) et copiez-la dans votre répertoire Firefox. C'est une procédure un peu laborieuse (on espère que l'auteur de phpLangEditor intégrera bientôt les modifications à la source) mais si vous suivez attentivement les instructions cela ne devrait pas poser de problème.
+
+La difficulté réside dans le fait de trouver où se trouve l'extension sur votre disque. Sous Linux, il s'agit d'un chemin du genre de '''.mozilla/firefox/i7xfinu9.default/extensions/\{77e8295d-7048-8367-1c67-378514e06d74\}/chrome/phplangeditor.jar'''. Pour le trouver, placez-vous dans votre répertoire home ou dans votre répertoire .mozilla/ et tapez dans un terminal:
+  find . -name &quot;phplangeditor.jar&quot;
+
+Vous devriez voir s'afficher le répertoire complet dans lequel se trouve le fichier. C'est ce fichier phplangeditor.jar que vous devez remplacer par celui fourni [http://glouglou.beeznest.org/phplangeditor.jar ici]. Désolé pour l'utilisation d'un autre serveur, mais je n'ai pas le droit d'uploader autre chose que des images sur le wiki.
+
+Redémarrez Firefox et cliquez sur Outils -&gt; PHP lang editor</text>
+    </revision>
+  </page>
+  <page>
     <title>Premiers paramétrages</title>
     <revision>
-      <timestamp>2006-06-13T23:19:12Z</timestamp>
-      <contributor><username>Jwarnier</username></contributor>
+      <timestamp>2007-05-11T08:56:12Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <comment>/* Modules */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -3928,12 +4850,12 @@ Cette partie vous permet de choisir la langue et la présentation des pages. Dan
 
 == Modules ==
 
-L'activation des modules est très importante. Elle dépend de l'utilisation que vous prévoyez faire de Dolibarr. Il est très peu probable que vous ayez besoin de la totalité des modules.
+L'activation des modules est très importante. Elle dépend de l'utilisation que vous prévoyez de faire de Dolibarr. Il est très peu probable que vous ayez besoin de la totalité des modules.
 Il vous faut donc activer les modules dont vous aurez très probablement besoin. Par exemple: Sociétés, Factures éventuellement Comptabilité.
 
 Si vous n'êtes pas sûr de vous, activez les modules les uns après les autres et voyez les fonctionnalités qu'ils ajoutent dans Dolibarr (vérifiez avant les droits, voir ci-dessous). Il est bien sûr possible de désactiver des modules après coup.
 
-Une fois activés, certains modules nécessitent une configuration supplémentaire (cliquer sur l'icone qui apparait tout à droite sur la même ligne). Voir en particulier pour les factures [[FactureConfiguration]]
+Une fois activés, certains modules nécessitent une configuration supplémentaire (cliquer sur l'icône qui apparait tout à droite sur la même ligne). Voir en particulier pour les factures [[FactureConfiguration]]
 
 == Autre ==
 Les autres entrées du menu Configuration sont des options avancées.
@@ -3968,8 +4890,8 @@ Pour certaines actions, si vous n'avez pas les droits pour faire une action, Dol
   <page>
     <title>Produits</title>
     <revision>
-      <timestamp>2006-02-25T02:06:45Z</timestamp>
-      <contributor><ip>202.22.158.102</ip></contributor>
+      <timestamp>2007-05-11T09:10:13Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
       <comment>/* Définition de Produit */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
@@ -3979,22 +4901,37 @@ Un produit Dolibarr est un bien à gérer, soit parce qu'il caractérise un obje
 Il s'agit de biens matériels, contrairement aux [[Services]].
 
 Un produit répond, en résumé, aux règles suivantes:
-* Un produit peut se stocker dans un entrepot (seuls les produits dailleurs aparraissent dans le module [[Module_Stock|Stock]]. Les services n'y apparaissent pas).
-* Un produit peut se livrer (seuls les produits dailleurs aparraissent dans le module [[Module_Stock|Stock]]. Les services n'y apparaissent pas. Ces derniers sont réalisés ou non, mais pas livrés).
+* Un produit peut se stocker dans un entrepôt (seuls les produits d'ailleurs apparaissent dans le module [[Module_Stock|Stock]]. Les services n'y apparaissent pas).
+* Un produit peut se livrer (seuls les produits d'ailleurs apparaissent dans le module [[Module_Stock|Stock]]. Les services n'y apparaissent pas. Ces derniers sont réalisés ou non, mais pas livrés).
 * Un produit est en général un bien matériel. Sa valeur souvent se déprécie avec le temps (Un produit d'occasion vaut moins que le même produit neuf).</text>
+    </revision>
+  </page>
+  <page>
+    <title>Produits associés</title>
+    <revision>
+      <timestamp>2006-12-02T12:26:59Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+== Définition d'un produit associés ==
+Un produit associés est un [[Produits|produit]] à part entière. Le fait d'associer un produit à un autre entraîne les actions suivantes :
+
+
+* lors de l'ajout d'un produit dans un document (propale, facture, commande) tous ses produits associés y sont eux-même ajouté</text>
     </revision>
   </page>
   <page>
     <title>Projet</title>
     <revision>
-      <timestamp>2005-11-21T13:54:52Z</timestamp>
-      <contributor><username>Rhum1</username></contributor>
-      <comment>Ajout de la navigation</comment>
+      <timestamp>2007-05-15T16:23:37Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <comment>/* Présentation */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
 == Présentation ==
-Un projet permet de regrouper des [[Propal|propositions commerciales]], des [[Commande|commandes]] et des [[Facture|factures]] pour une société. Un projet est lié à une société, il ne peut contenir que des éléments relatifs à cette société.
+Un projet permet de regrouper des [[Proposition commerciale|propositions commerciales]], des [[Commande|commandes]] et des [[Facture|factures]] pour une société. Un projet est lié à une société, il ne peut contenir que des éléments relatifs à cette société.
 
 == Créer un projet ==
 
@@ -4076,13 +5013,12 @@ Pour l'initiative compta expert Dolibarr:
   <page>
     <title>Proposition commerciale</title>
     <revision>
-      <timestamp>2005-11-21T13:53:23Z</timestamp>
-      <contributor><username>Rhum1</username></contributor>
-      <comment>Ajout de la navigation</comment>
+      <timestamp>2007-05-15T16:22:22Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
-Si le mot vous parle plus, on peut dire qu'une proposition commercale est un devis.
+Si le mot vous parle plus, on peut dire qu'une proposition commerciale est un devis.
 
 ==Créer une proposition commerciale==
 
@@ -4125,12 +5061,29 @@ Dolibarr sait gérer plusieurs modèles de propositions, qui doivent être activ
     </revision>
   </page>
   <page>
+    <title>Rapports TVA</title>
+    <revision>
+      <timestamp>2007-03-05T23:05:08Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>Les rapports TVA actuellement disponibles sont utilisables mais encore imparfaits. Il vaut mieux vérifier les calculs/totaux avant de les utiliser pour remplir une déclaration.
+
+Par exemple, dans le rapport TVA *quadri*, les totaux calculés:
+* ne font pas de distinction entre produits et services, 
+* ne déterminent pas de manière sûre s'il s'agit d'une TVA intra-communautaire ou autre
+* ne prennent pas compte de l'encodage d'une facture fournisseur après un quadri, ce qui signifie que les totaux du quadri précédent sont modifiés de telle sorte que la TVA à récupérer ne s'affiche pas comme une modification au dernier quadri
+
+En termes clair, les rapports de TVA sont à utiliser à titre indicatif mais ne sauraient en aucun cas avoir valeur légale.
+
+Il existe désormais (version 2.1) un rapport '''quadri détail''' qui permet d'exporter une liste des recettes et dépenses de TVA utilisable par un comptable (classées par ligne de facture).</text>
+    </revision>
+  </page>
+  <page>
     <title>Roadmap</title>
     <revision>
-      <timestamp>2006-12-20T12:52:01Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
+      <timestamp>2007-08-08T13:51:36Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>* [[Roadmap 2.0.0]] - Disponible depuis février 2005
-* [[Roadmap 2.1.0]]
+* [[Roadmap 2.1.0]] - Abandonnée car mauvaise gestion des arrondis bloquant
 * [[Roadmap 2.2.0]]
 * [[Roadmap 2.4.0]]
 * [[Roadmap 2.6.0]]</text>
@@ -4290,17 +5243,17 @@ R: Le support de postgres n'est pas encore opérationnel. Je ne l'intègre pas e
   <page>
     <title>Roadmap 2.1.0</title>
     <revision>
-      <timestamp>2006-12-16T20:04:24Z</timestamp>
+      <timestamp>2007-05-16T18:05:40Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Modèles à inclure/exclure pour la release */</comment>
+      <comment>/* Modules à inclure/exclure pour la release */</comment>
       <text>[[Roadmap]] Dolibarr pour la version 2.1.0
 
 
 == Les fonctionnalités ==
 
-* Corrections des retours de la 2.0 (En cours - Tous)
+* &lt;strike&gt;Corrections des retours de la 2.0&lt;strike&gt; (Fait - Tous)
 * &lt;strike&gt;Ajout de gestion des remises fixes et relatives&lt;/strike&gt; (Fait - LaurentDestailleur)
-* Ajout de gestion des factures avoirs (En cours - LaurentDestailleur)
+* &lt;strike&gt;Ajout de gestion des factures avoirs&lt;/strike&gt; (Fait - LaurentDestailleur)
 * &lt;strike&gt;Rendre le &quot;modules de comptabilité standard&quot; optionnel afin de permettre de faire disparaitre les notions purement comptables&lt;/strike&gt; (Fait - LaurentDestailleur)
 * &lt;strike&gt;Simplification du code. Utilisation d'un modèle unique de table pour tous les modules qui &quot;active&quot; des sous-modules de génération de document afin de réduire le code redondant&lt;/strike&gt; (Fait - LaurentDestailleur).
 
@@ -4311,21 +5264,23 @@ Tous les modules du CVS peuvent être inclus dans la release 2.1.0 à l'exceptio
 Non stable
 
 * Telephonie
-Trop spécifique
+Trop spécifique, présente des failles de sécurité graves
 
 * ClicktoDial
 Non car hack grossier sur un système peu répandu
 
-* bookmark4u
+* Bookmark4u
 Non car peu utile
 
-* barcode
+* Barcode
 Q: Est-il fini ?
 R: non je n'ai pas encore eu le temps (Régis)
 
-* Catégorie
-Q : Semble stable maintenant. Quelqu'un l'utilise ?
-R : oui je l'utilise et je pense l'améliorer (Régis)
+* Editeur
+En cours de dev, non requis pour la 2.1
+
+* Document
+En cours de dev, non requis pour la 2.1
 
 == Modèles à inclure/exclure pour la release ==
 '''Modèle numérotation facture'''
@@ -4334,35 +5289,103 @@ Afin de simplifier et éviter doublons, je propose de supprimer de la livraison 
 
 deneb: non réglementaire
 
-janus: non réglementaire, pas de plus-value par rapport à jupiter, saturne, lune
-
 jupiter: non réglementaire, exemple coincide pas avec desc
 
-lune: non réglementaire
-
-mars: non réglementaire
-
-pluton: non réglementaire, pas de plus-value par rapport à terre
-
-saturne: non réglementaire
-
-
-
-'''Modèle génération facture'''
-
-bigorneau: non reglementaire
-
-tourteau: non reglementaire
-
-bulot: non reglementaire
-
-'''Modèle numérotation commande'''
-
-ivoire: a virer car buggué. Ne peut fonctionner car basé sur compatge et non un max. Donc retombe sur doublons dès qu'une commande est supprimée.
+pluton: non opérationnel
 
 == Autre ==
 
 * Le support PosgreSQL n'est pas stable (Manque de testeurs) et ne sera donc pas intégré à la 2.1</text>
+    </revision>
+  </page>
+  <page>
+    <title>Roadmap 2.2.0</title>
+    <revision>
+      <timestamp>2007-08-08T13:58:51Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Les fonctionnalités */</comment>
+      <text>[[Roadmap]] Dolibarr pour la version 2.2.0
+
+
+== Fonctionnalités ==
+
+* &lt;strike&gt;Corrections des retours de la 2.1.0&lt;/strike&gt;
+* &lt;strike&gt;
+- Add more statistics on main page.
+- Add option to add message on login page.
+- Management of categories for third parties.
+- Add volume on products properties.
+- Support for LDAP authentication.
+- Full member synchronisation with LDAP database in fundation module.
+- More LDAP fields supported for user synchronization.
+- Better logger for install.
+- First changes to support UTF8.
+- Add a &quot;forget password&quot; feature.
+- Setup process can run several migrate files if need to jump several versions to upgrade.
+- Support for webcalendar 1.1 in webcalendar module.
+- Support for menu in database.
+- Better support for using Dolibarr on more WHP.
+- Removed some deprecated files and clean code.
+- New theme: Auguria
+- Removed PHP warnings.
+- Some bugs fixes.
+- Traduction more complete.
+- Better code comments for Doxygen documentation.
+- Better support of vcard export format.
+- Themes are full CSS compliant.
+&lt;/strike&gt;
+* Correction pb avoir client
+
+== Features (english version) ==
+
+* Fix bug reports of 2.1.0
+* Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)
+* Addition of documents history (if invoice generated and sent to the client, keep that precise invoice in this form at all costs - with date)
+* Better database input filtering (prevent easy attacks by disatisfied employees) (continual effort)
+* Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)
+* Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)
+* Manage members language (e-mail sending)
+
+
+== Modules à inclure/exclure pour la release ==
+Tous les modules du CVS peuvent être inclus dans la release 2.2.0 à l'exception des suivants:
+
+* Postnuke                
+Non stable
+
+* Telephonie
+Trop spécifique, présente des failles de sécurité graves
+
+* ClicktoDial
+Hack grossier sur un système peu répandu
+
+* Bookmark4u
+Peu utile
+
+* Barcode
+Non fini
+
+* Editeur
+En cours de dev, non requis
+
+* Document
+En cours de dev, non requis
+
+
+== Modèles à inclure/exclure pour la release ==
+'''Modèle numérotation facture'''
+
+Aucun modele a exclure.
+
+
+== Themes à inclure/exclure pour la release ==
+
+Tous les themes sont opérationnels sauf 'rodolphe' qui n'a aucun picto.
+
+
+== Autre ==
+
+* Le support PosgreSQL n'est pas stable (Manque de testeurs) et ne sera donc pas intégré à la 2.2</text>
     </revision>
   </page>
   <page>
@@ -4378,13 +5401,18 @@ ivoire: a virer car buggué. Ne peut fonctionner car basé sur compatge et non u
   <page>
     <title>Roadmap 2.4.0</title>
     <revision>
-      <timestamp>2006-06-03T12:05:27Z</timestamp>
+      <timestamp>2007-08-08T13:59:31Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <text>[[Roadmap]] Dolibarr pour la version 2.4.0
 
+* Ajout de la gestion multi-devise en mode informatif seulement dans un premier temps (Yannick Warnier)
+* Ajout d'historique de documents générés pour les factures (si une facture est générée et envoyée au client, la conserver à tout prix sous cette forme - avec date)
+* Meilleur filtrage des données à l'insertion dans la DB (effort continu)
+* Améliorations au niveau de l'envoi d'e-mail liés à une facture: champs par défaut configurables, CC automatique à une adresse, drop-down, langue du titre et du corps dans la langue du contact (introduire concept de langue du contact)
+* Amélioration de la flexibilité de la partie commerciale. Introduction des notes datées, de l'appartenance d'un contact à plus d'une société, du suivi de &quot;parrainage&quot; (référencement d'un client par un autre)
+* Gérer la langue des adhérents également (envoi d'e-mail en plusieurs langues également)
 * La gestion des produits (BenoitMortier)
 * La gestion du stock (BenoitMortier)
-* L'intégration de LDAP au niveau du login dans dolibarr afin de faire un single logon au niveau de webcalendar, egroupware (BenoitMortier)
 * Création d'un package debian (BenoitMortier)
 * La notion de Projets doit pouvoir contenir plusieurs sociétés et ne pas etre propre à une société (LaurentDestailleur)</text>
     </revision>
@@ -4561,6 +5589,22 @@ $ php import-cdr.php -f NOM_FICHIER -i ID_DU_FOURNISSEUR
     </revision>
   </page>
   <page>
+    <title>Scripts cron</title>
+    <revision>
+      <timestamp>2006-12-06T13:24:00Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>Les scripts à faire tourner dans la crontab se trouvent dans le répertoire
+&lt;pre&gt;
+/scripts/cron/
+&lt;/pre&gt;
+== Listes des scripts ==
+
+# [[facture-paye-stats.php (script)]]
+# [[stock-valorisation.php (script)]]
+# [[stock-graph.php (script)]]</text>
+    </revision>
+  </page>
+  <page>
     <title>Services</title>
     <revision>
       <timestamp>2006-06-13T23:06:10Z</timestamp>
@@ -4582,12 +5626,12 @@ Voici les caractéristiques qui identifient un service:
   <page>
     <title>Sociétés</title>
     <revision>
-      <timestamp>2006-06-13T23:17:18Z</timestamp>
-      <contributor><username>Jwarnier</username></contributor>
+      <timestamp>2007-08-09T15:44:31Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
-Le module société permet de gérer les entités clients, prospects et/ou fournisseurs.
+Le module Tiers-Société permet de gérer les entités clients, prospects et/ou fournisseurs.
 
 Il est un prérequis indispensable pour de nombreux autres [[Premiers paramétrages#Modules|modules]] qui se basent sur ces notions (factures, commandes, contrats, proposition commerciales, etc...).
 
@@ -4623,30 +5667,41 @@ Une société supprimée ne change pas d'état, mais elle disparait complètemen
     </revision>
   </page>
   <page>
-    <title>Suggestions utilisateurs</title>
+    <title>Sous-Produits</title>
     <revision>
-      <timestamp>2006-11-17T21:19:30Z</timestamp>
-      <contributor><username>Kmel</username></contributor>
-      <comment>import de données dans Dolibarr</comment>
-      <text>Ce serait super si on pouvait importer des données dans la BDD Dolibarr.
-De même, de pouvoir passer un appel à partir de la fiche Client ou Contact.
-----
-Il serait intéressant de pouvoir regrouper ensemble, pour un même projet/dossier :
-* Les devis
-* Les commandes et factures clients
-* Les commandes et factures fournisseurs
-* Connaître les interventions (gestion de temps passés par projet)
-* Y intéger les frais généraux
-* Pouvoir cloturer un projet/dossier afin de le bloquer.
-Ca permettrait notamment de présenter la marge par projet (factures client - factures fourn.)
-----
-&lt;strike&gt;Dans les factures clients, il y a un champ pour noter des commentaires privés.
-Il serait utile d'avoir un autre champ pour écrire des commentaires à inclure sur la facture.&lt;/strike&gt; Fait.
-----
-Peut-etre manque-t'il un moyen de comptabiliser les frais ? Càd les dépenses à rembourser aux salariés ou collaborateurs, ou gérants, etc.
-(quoique non, il suffit de créer un compte banque (non courant), dans lequel on compte les dépenses personnelles, puis de faire un virement sur le compte courant lors du remboursement)..
-----
-Au niveau de la création de proposition commerciale, il serait interressant de rapprocher la table fournisseur / prix d'achat avec les propositions commerciale, afin de savoir la marge potentielle générée au moment de la création de la proposition. (marge qui varie bien entendu suivant les pourcentages de remise accordé</text>
+      <timestamp>2006-12-02T12:25:12Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+== Définition d'un Sous-Produit ==
+Un sous-produit Dolibarr est une partie d'un [[Produits|produit]] qui répond aux règles suivantes :
+
+
+* le stock d'un sous-produit est décrémenté par l'expédition d'un produit
+* un sous-produit n'apparait pas dans les documents (propale, facture, bon d'expedition, ...)</text>
+    </revision>
+  </page>
+  <page>
+    <title>Stock-graph.php (script)</title>
+    <revision>
+      <timestamp>2006-12-06T13:24:46Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>[[Catégorie:Stock]][[Catégorie:cron]]
+
+Génère les graphiques afférants à la gestion des stocks
+
+# Graphiques de valorisation du stock</text>
+    </revision>
+  </page>
+  <page>
+    <title>Stock-valorisation.php (script)</title>
+    <revision>
+      <timestamp>2006-12-06T13:27:39Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text>[[Catégorie:Stock]][[Catégorie:cron]]
+
+Ce script doit être éxécuté une fois par jour, il remplit la [[entrepot_valorisation (Table SQL)|entrepot_valorisation]]</text>
     </revision>
   </page>
   <page>
@@ -4779,6 +5834,31 @@ Exemple de fichier htdocs/includes/menus/barre_left/monmenu.php
     </revision>
   </page>
   <page>
+    <title>Système de traduction</title>
+    <revision>
+      <timestamp>2006-12-20T01:24:55Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>== Principe développement ==
+Dans le code les traductions se font par appel de methode sur l'objet $langs avec en paramètre la clé de la chaine à traduire. lo'bjet $langs contient la définition de la langue de l'utilisateur. Il est définit dans toutes les pages.
+
+On trouve 2 méthodes:
+* $langs-&gt;trans('TRAD_STRING');
+Cette méthode renvoi la traduction de l'entrée TRAD_STRING, tout en codant le résultat en entities HTML pour permettre un affichage des caractères spéciaux correct dans une page HTML.
+* $langs-&gt;transnoentities('TRAD_STRING');
+Cette méthode renvoi la traduction de l'entrée TRAD_STRING, mais ne code pas le résultat.
+
+Ces 2 méthodes peuvent accepter des arguments complémentaires qui sont substitués aux valeurs %s dans la chaine résultante de la traduction.
+
+
+Note: Si en paramètre, on met un résultat de traduction, il convient que ce résultat soit renvoyé par la fonction $langs-&gt;transnoentities, sinon il sera codé en HTML puis le sera une deuxième fois par l'appel $langs-&gt;trans initiale. Exemple:
+print $langs-&gt;trans(&quot;STRING_TO_TRANSLATE&quot;,$langs-&gt;transnoentities(&quot;STRING_PARAM1&quot;))
+
+
+== Traduire Dolibarr dans une autre langue ==
+Voir la page [http://www.dolibarr.com/wikidev/index.php/Documentation_traducteur Documentation_traducteur]</text>
+    </revision>
+  </page>
+  <page>
     <title>Système des boites</title>
     <revision>
       <timestamp>2006-11-11T18:12:57Z</timestamp>
@@ -4789,31 +5869,567 @@ Chaque fichier est une classe qui hérite de la classe ModeleBoxes.</text>
     </revision>
   </page>
   <page>
-    <title>Table llx adherent</title>
+    <title>Table llx action def</title>
     <revision>
-      <timestamp>2006-11-18T01:33:35Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <text></text>
+      <timestamp>2007-08-06T01:42:06Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Liste des actions
+
+= Structure =</text>
     </revision>
   </page>
   <page>
-    <title>Table llx action def</title>
+    <title>Table llx actioncomm</title>
     <revision>
-      <timestamp>2005-10-03T21:23:02Z</timestamp>
-      <contributor><ip>82.254.118.19</ip></contributor>
-      <text>Liste des actions</text>
+      <timestamp>2007-08-06T01:42:20Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table contient la liste des actions commerciales
+
+This table contains all the commercial actions (looks unused in many cases)
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx adherent</title>
+    <revision>
+      <timestamp>2007-08-09T16:12:05Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>Table llx adherent déplacé vers Adherent (Table SQL)</comment>
+      <text>#REDIRECT [[Adherent (Table SQL)]]
+</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx adherent options</title>
+    <revision>
+      <timestamp>2007-08-06T01:42:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx adherent options label</title>
+    <revision>
+      <timestamp>2007-08-06T01:43:06Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx adherent type</title>
+    <revision>
+      <timestamp>2007-08-06T01:43:24Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx appro</title>
+    <revision>
+      <timestamp>2007-08-06T01:43:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c actioncomm</title>
+    <revision>
+      <timestamp>2007-08-06T02:07:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les types d'actions que vous pouvez trouvez dans Dolibarr (appels téléphoniques, e-mail, envoi de facture, ...). Utilisée pour générer des listes déroulantes. Les titres sont en français uniquement pour le moment.
+
+This table contains the types of actions that you can find in the system (phonecall, e-mail, invoice sending, ...). Used to generate dropdown boxes. Titles are in french at the moment.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c ape</title>
+    <revision>
+      <timestamp>2007-08-06T02:07:57Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c departements</title>
+    <revision>
+      <timestamp>2007-08-06T02:25:05Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient une liste des départments proposés pour certains pays. 
+
+Contains a list of departments for some countries.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c civilite</title>
+    <revision>
+      <timestamp>2007-08-05T17:20:44Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+
+Cette table contient les civilités des contacts (M., Mme, ...)
+
+This table contains all the contact people's civility (Mr,Ms.,...)</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c currencies</title>
+    <revision>
+      <timestamp>2007-08-06T02:09:58Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les différentes devises proposées à l'utilisateur. Uniquement utilisée à ce jour (version 2.1) au moment de l'installation pour demander quelle devise utiliser partout pour la suite.
+
+Contains the list of currencies proposed to the user. To date (version 2.1), only used to ask the installator what currency to use globally.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c departements</title>
+    <revision>
+      <timestamp>2007-08-06T02:25:05Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient une liste des départments proposés pour certains pays. 
+
+Contains a list of departments for some countries.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c effectif</title>
+    <revision>
+      <timestamp>2007-08-06T02:11:58Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les différentes tranches de nombres d'employés dans une entreprise. Utilisée pour générer des listes déroulantes.
+
+Contains ranges of number of employees in a company. Used to generate drop-down lists
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c forme juridique</title>
+    <revision>
+      <timestamp>2007-08-06T02:12:57Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient la liste des formes juridiques possibles d'une entreprise. Utilisée pour générer des listes déroulantes.
+
+Contains the list of possible juridical forms of a company. Used to generate drop-down lists.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c paiement</title>
+    <revision>
+      <timestamp>2007-08-06T02:14:30Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient la liste des types de paiements disponibles selon votre configuration du système. Utilisée pour générer des listes déroulantes et pour filtrer des listes de résultats.
+
+Contains the list of possible payment types, depending on your Dolibarr configuration. Used to generate drop-down lists, and to filter down lists of results.
+
+= Structure =
+
+&lt;pre&gt;
++---------+-------------+------+-----+---------+-------+
+| Field   | Type        | Null | Key | Default | Extra |
++---------+-------------+------+-----+---------+-------+
+| id      | int(11)     | NO   | PRI |         |       | 
+| code    | varchar(6)  | NO   | UNI |         |       | 
+| libelle | varchar(30) | YES  |     | NULL    |       | 
+| type    | smallint(6) | YES  |     | NULL    |       | 
+| active  | tinyint(4)  | NO   |     | 1       |       | 
++---------+-------------+------+-----+---------+-------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c pays</title>
+    <revision>
+      <timestamp>2007-08-06T02:15:30Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_c_pays''' contient la liste des pays disponibles. Utilisée pour générer des listes déroulantes et filtrer des résultats.
+
+Contains the list of countries available. Used to generate drop-down list and filter results.
+
+= Structure =
+
+&lt;pre&gt;
++----------+-------------+------+-----+---------+-------+
+| Field    | Type        | Null | Key | Default | Extra |
++----------+-------------+------+-----+---------+-------+
+| rowid    | int(11)     | NO   | PRI |         |       | 
+| code     | varchar(2)  | NO   | UNI |         |       | 
+| code_iso | varchar(3)  | YES  | UNI | NULL    |       | 
+| libelle  | varchar(50) | NO   | UNI |         |       | 
+| active   | tinyint(4)  | NO   |     | 1       |       | 
++----------+-------------+------+-----+---------+-------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c regions</title>
+    <revision>
+      <timestamp>2007-08-06T02:24:38Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c stcomm</title>
+    <revision>
+      <timestamp>2007-08-06T02:27:13Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les statuts de contact de chaque contact commercial. Par exemple &quot;ne pas contacter&quot;, &quot;contact en cours&quot;, &quot;à contacter au plus tôt&quot;, ...
+Utilisée pour pour afficher des icônes de statut pour les listes de clients.
+
+This table contains the contact status of each commercial contact. i.e. &quot;do not contact&quot;, &quot;contact pending&quot;, &quot;to contact asap&quot;,...
+Used to display quick icon status in the clients lists.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c tva</title>
+    <revision>
+      <timestamp>2007-08-06T02:28:31Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les taux de TVA applicables. Utilisé pour générer des listes déroulantes et trier des résultats.
+
+Contains the possible VAT rates. Used to generate drop-down lists and filter results.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx c type contact</title>
+    <revision>
+      <timestamp>2007-08-06T02:28:59Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx categorie</title>
+    <revision>
+      <timestamp>2007-08-06T02:30:11Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_categorie''' contient les différentes catégories des différents &quot;objets&quot; de Dolibarr (fournisseurs, produits, clients, ...)
+
+Contains the categories used for the various objects of Dolibarr (providers, products, clients, ...)
+
+= Structure =
+
+&lt;pre&gt;
++-------------------------+--------------+------+-----+---------+----------------+
+| Field                   | Type         | Null | Key | Default | Extra          |
++-------------------------+--------------+------+-----+---------+----------------+
+| rowid                   | int(11)      | NO   | PRI | NULL    | auto_increment | index technique 
+| label                   | varchar(255) | YES  | MUL | NULL    |                | libellé (nom)
+| description             | text         | YES  |     | NULL    |                | description un peu plus longue. Pourrait contenir du code HTML
+| visible                 | tinyint(4)   | NO   |     | 1       |                | visibilité (0=caché, 1=visible)
+| type                    | tinyint(4)   | NO   |     | 1       |                | type d'objet auquel cette catégorie se réfère (0=produits,2=fournisseurs,...)
++-------------------------+--------------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx categorie association</title>
+    <revision>
+      <timestamp>2007-08-06T02:30:21Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx categorie fournisseur</title>
+    <revision>
+      <timestamp>2007-08-06T02:31:39Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_categorie_fournisseur''' contient une relation &quot;n to m&quot; entre les fournisseurs (llx_societe avec fournisseur=1) et les catégories.
+Il existe également une table llx_fournisseur_categorie à l'utilité douteuse... (jusqu'à preuve du contraire)
+
+Contains a &quot;n to m&quot; relationship between providers (see [[Table llx_societe]] with ''fournisseur'' field set to ''1'') and the categories.
+
+= Structure =
+
+&lt;pre&gt;
++--------------+---------+------+-----+---------+-------+
+| Field        | Type    | Null | Key | Default | Extra |
++--------------+---------+------+-----+---------+-------+
+| fk_categorie | int(11) | NO   | PRI |         |       | Clef étrangère vers la table llx_categorie
+| fk_societe   | int(11) | NO   | PRI |         |       | Clef étrangère vers la table llx_societe
++--------------+---------+------+-----+---------+-------+
+&lt;/pre&gt;
+
+Note: c'est le champ &quot;type&quot; de la table llx_categorie qui détermine s'il s'agit d'une catégorie de fournisseurs ou d'autre chose, puisque le lien se fait avec la table llx_societe qui peut aussi contenir des clients</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx categorie product</title>
+    <revision>
+      <timestamp>2007-08-06T02:31:57Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx chargesociales</title>
+    <revision>
+      <timestamp>2007-08-06T02:32:10Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx co fa</title>
+    <revision>
+      <timestamp>2007-08-06T02:33:23Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_co_fa''' contient les liens entre commandes clients et factures clients. Pour les liens entre les commandes fournisseurs et les factures fournisseurs, il faut consulter la [[Table llx_comfourn_facfourn]]
+
+Contains the link between customer orders and customer invoices. For the link between provider orders and provider invoices, look into [[Table llx_comfourn_facfourn]].
+
+= Structure =
+
+
+&lt;pre&gt;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| rowid       | int(11) | NO   | PRI | NULL    | auto_increment | 
+| fk_commande | int(11) | NO   | MUL |         |                | 
+| fk_facture  | int(11) | NO   | MUL |         |                | 
++-------------+---------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx co pr</title>
+    <revision>
+      <timestamp>2007-08-06T02:33:35Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx comfourn facfourn</title>
+    <revision>
+      <timestamp>2007-08-06T02:34:38Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+La table '''llx_comfourn_facfourn''' contient les relations entre les commandes fournisseurs et les factures fournisseurs correspondantes. Pour l'équivalent côté client, merci de consulter la [[Table llx_co_fa]]
+
+Contains the link between provider orders and provider invoices. For the equivalent on the customer side, have a look at [[Table llx_co_fa]]
+
+= Structure =
+
+&lt;pre&gt;
++-------------+---------+------+-----+---------+----------------+
+| Field       | Type    | Null | Key | Default | Extra          |
++-------------+---------+------+-----+---------+----------------+
+| rowid       | int(11) | NO   | PRI | NULL    | auto_increment | 
+| fk_commande | int(11) | NO   | MUL |         |                | 
+| fk_facture  | int(11) | NO   | MUL |         |                | 
++-------------+---------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
     </revision>
   </page>
   <page>
     <title>Table llx commande</title>
     <revision>
-      <timestamp>2005-04-09T08:31:15Z</timestamp>
-      <contributor><ip>82.249.137.106</ip></contributor>
-      <text>[[Catégorie: Table SQL]]
+      <timestamp>2007-08-06T02:35:31Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
 
 Table principales des commandes clients, les détails de la commande sont dans la [[Table llx_commandedet]]
 
-== Structure ==
+Contains customer orders. The order details are in [[Table llx_commandedet]]
+
+= Structure =
+
 &lt;pre&gt;
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
@@ -4862,7 +6478,7 @@ create table llx_commande
   total_ttc        real      default 0,
   note             text,
   model_pdf        varchar(50),
-  facture          tinyint default 0,   
+  facture          tinyint default 0,     -- flag indiquant si cette commande a été facturée
   UNIQUE INDEX (ref)
 )type=innodb;
 
@@ -4870,14 +6486,104 @@ create table llx_commande
     </revision>
   </page>
   <page>
+    <title>Table llx commande fournisseur</title>
+    <revision>
+      <timestamp>2007-08-06T02:37:19Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table llx_commande_fournisseur contient les commandes fournisseurs (les commandes effectuées auprès des fournisseurs). Ces commandes peuvent plus tard être étendues sous forme de factures fournisseurs, auquel cas c'est la table llx_facture_fourn qui est utilisée, en combinaison (s'il y a un lien entre commande et facture) avec la table llx_comfourn_facfourn.
+
+Contains the provider orders (orders made to the providers). These orders may be later extended as (provider-) invoices, in which case [[Table llx_facture_fourn]] is used, in combination (if there is a link between order and invoice) with [[Table llx_comfourn_facfourn]].
+
+= Structure =
+
+&lt;pre&gt;
++---------------------+-------------+------+-----+-------------------+----------------+
+| Field               | Type        | Null | Key | Default           | Extra          |
++---------------------+-------------+------+-----+-------------------+----------------+
+| rowid               | int(11)     | NO   | PRI | NULL              | auto_increment | 
+| tms                 | timestamp   | NO   |     | CURRENT_TIMESTAMP |                | 
+| fk_soc              | int(11)     | NO   | MUL |                   |                | 
+| fk_projet           | int(11)     | YES  |     | 0                 |                | 
+| ref                 | varchar(30) | NO   | UNI |                   |                | 
+| date_creation       | datetime    | YES  |     | NULL              |                | 
+| date_valid          | datetime    | YES  |     | NULL              |                | 
+| date_cloture        | datetime    | YES  |     | NULL              |                | 
+| date_commande       | date        | YES  |     | NULL              |                | 
+| fk_user_author      | int(11)     | YES  |     | NULL              |                | 
+| fk_user_valid       | int(11)     | YES  |     | NULL              |                | 
+| fk_user_cloture     | int(11)     | YES  |     | NULL              |                | 
+| source              | smallint(6) | NO   |     |                   |                | 
+| fk_statut           | smallint(6) | YES  |     | 0                 |                | 0 pour brouillon, 1 pour validée, 2 pour &quot;approuvée&quot;, 5 pour &quot;reçu complètement&quot;
+| amount_ht           | double      | YES  |     | 0                 |                | 
+| remise_percent      | double      | YES  |     | 0                 |                | 
+| remise              | double      | YES  |     | 0                 |                | 
+| tva                 | double      | YES  |     | 0                 |                | 
+| total_ht            | double      | YES  |     | 0                 |                | 
+| total_ttc           | double      | YES  |     | 0                 |                | 
+| note                | text        | YES  |     | NULL              |                | 
+| note_public         | text        | YES  |     | NULL              |                | 
+| model_pdf           | varchar(50) | YES  |     | NULL              |                | 
+| fk_methode_commande | int(11)     | YES  |     | 0                 |                | 
++---------------------+-------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx commande fournisseur log</title>
+    <revision>
+      <timestamp>2007-08-06T02:37:38Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx commande fournisseurdet</title>
+    <revision>
+      <timestamp>2007-08-06T02:38:34Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient le détail des lignes de commandes fournisseurs.
+
+Contains the details of provider orders lines.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx commandedet</title>
     <revision>
-      <timestamp>2005-04-09T08:31:56Z</timestamp>
-      <contributor><ip>82.249.137.106</ip></contributor>
-      <text>Détails des commandes clients, cette table est liée avec la [[Table llx_commande]]
+      <timestamp>2007-08-06T02:39:18Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
 
+= Contenu =
 
-== Structure ==
+Détails des commandes clients, cette table est liée avec la [[Table llx_commande]]
+
+Contains details of customer orders. This table is linked to [[Table llx_commande]]
+
+= Structure =
+
 &lt;pre&gt;
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
@@ -4919,19 +6625,82 @@ create table llx_commandedet
     </revision>
   </page>
   <page>
+    <title>Table llx compta</title>
+    <revision>
+      <timestamp>2007-08-06T02:39:32Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx compta account</title>
+    <revision>
+      <timestamp>2007-08-06T02:39:41Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx compta compte generaux</title>
+    <revision>
+      <timestamp>2007-08-06T02:39:51Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx const</title>
     <revision>
-      <timestamp>2006-11-16T00:36:24Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <text>Cette table permet de sauvegarder le paramétrage global de l'application, c'est-à-dire les paramètres dont la valeur est commune à tous les utilisateurs.</text>
+      <timestamp>2007-08-06T02:42:08Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table permet de sauvegarder le paramétrage global de l'application, c'est-à-dire les paramètres dont la valeur est commune à tous les utilisateurs.
+
+Contains the global application parameters (parameters for which the value is the same for all users).
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx contrat</title>
     <revision>
-      <timestamp>2005-01-07T14:05:38Z</timestamp>
-      <contributor><ip>82.101.11.28</ip></contributor>
-      <text>== Structure ==
+      <timestamp>2007-08-06T02:42:34Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =
+
 
 &lt;pre&gt;
 -- ============================================================================
@@ -4977,6 +6746,66 @@ create table llx_contrat
     </revision>
   </page>
   <page>
+    <title>Table llx contratdet</title>
+    <revision>
+      <timestamp>2007-08-06T02:42:44Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx contratdet log</title>
+    <revision>
+      <timestamp>2007-08-06T02:42:53Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx cotisation</title>
+    <revision>
+      <timestamp>2007-08-06T02:43:03Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx deplacement</title>
+    <revision>
+      <timestamp>2007-08-06T02:43:14Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx dolibarr modules</title>
     <revision>
       <timestamp>2006-12-06T14:09:53Z</timestamp>
@@ -4985,11 +6814,72 @@ create table llx_contrat
     </revision>
   </page>
   <page>
+    <title>Table llx domain</title>
+    <revision>
+      <timestamp>2007-08-06T02:44:14Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx don</title>
+    <revision>
+      <timestamp>2007-08-06T02:44:23Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx don projet</title>
+    <revision>
+      <timestamp>2007-08-06T02:44:34Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx entrepot valorisation</title>
+    <revision>
+      <timestamp>2006-12-06T13:28:51Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <text></text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx export compta</title>
     <revision>
-      <timestamp>2005-03-23T10:51:27Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
-      <text>== Structure ==
+      <timestamp>2007-08-06T02:46:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =
+
 &lt;pre&gt;
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
@@ -5027,6 +6917,174 @@ create table llx_export_compta
     </revision>
   </page>
   <page>
+    <title>Table llx fa pr</title>
+    <revision>
+      <timestamp>2007-08-06T02:47:21Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient le lien entre factures et projets.
+
+Contains the link between invoices and projects.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx facture</title>
+    <revision>
+      <timestamp>2007-08-06T02:47:57Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Facturation]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les factures clients.
+
+Contains the customer invoices.
+
+= Structure =
+
+&lt;pre&gt;
++--------------------+--------------+------+-----+---------+----------------+
+| Field              | Type         | Null | Key | Default | Extra          |
++--------------------+--------------+------+-----+---------+----------------+
+| rowid              | int(11)      |      | PRI | NULL    | auto_increment |
+| facnumber          | varchar(30)  |      | UNI |         |                |
+| type               | smallint(6)  |      |     | 0       |                |
+| ref_client         | varchar(30)  | YES  |     | NULL    |                |
+| increment          | varchar(10)  | YES  |     | NULL    |                |
+| fk_soc             | int(11)      |      | MUL | 0       |                |
+| datec              | datetime     | YES  |     | NULL    |                |
+| datef              | date         | YES  |     | NULL    |                |
+| date_valid         | date         | YES  |     | NULL    |                |
+| paye               | smallint(6)  |      |     | 0       |                |
+| amount             | double       |      |     | 0       |                |
+| remise_percent     | double       | YES  |     | 0       |                |
+| remise_absolue     | double       | YES  |     | 0       |                |
+| remise             | double       | YES  |     | 0       |                |
+| close_code         | varchar(16)  | YES  |     | NULL    |                |
+| close_note         | varchar(128) | YES  |     | NULL    |                |
+| tva                | double       | YES  |     | 0       |                |
+| total              | double       | YES  |     | 0       |                |
+| total_ttc          | double       | YES  |     | 0       |                |
+| fk_statut          | smallint(6)  |      |     | 0       |                |
+| fk_user_author     | int(11)      | YES  | MUL | NULL    |                |
+| fk_user_valid      | int(11)      | YES  | MUL | NULL    |                |
+| fk_facture_source  | int(11)      | YES  | MUL | NULL    |                |
+| fk_projet          | int(11)      | YES  | MUL | NULL    |                |
+| fk_cond_reglement  | int(11)      |      |     | 1       |                |
+| fk_mode_reglement  | int(11)      | YES  |     | NULL    |                |
+| date_lim_reglement | date         | YES  |     | NULL    |                |
+| note               | text         | YES  |     | NULL    |                |
+| note_public        | text         | YES  |     | NULL    |                |
+| model_pdf          | varchar(50)  | YES  |     | NULL    |                |
++--------------------+--------------+------+-----+---------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx facture fourn</title>
+    <revision>
+      <timestamp>2007-08-06T02:49:12Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table contient la liste des factures émises par les fournisseurs. Une facture fournisseur peut être liée à une commande fournisseur ([[Table llx_commande_fournisseur]]) au travers de la [[Table llx_comfourn_facfourn]])
+
+Contains invoices sent by providers. A provider invoice can be linked to a provider order ([[Table llx_commande_fournisseur]]) by the [[Table llx_comfourn_facfourn]].
+
+= Structure =
+
+&lt;pre&gt;
++--------------------+--------------+------+-----+------------+----------------+
+| Field              | Type         | Null | Key | Default    | Extra          |
++--------------------+--------------+------+-----+------------+----------------+
+| rowid              | int(11)      | NO   | PRI | NULL       | auto_increment | 
+| facnumber          | varchar(50)  | NO   | MUL |            |                | 
+| type               | smallint(6)  | NO   |     | 0          |                | 
+| fk_soc             | int(11)      | NO   | MUL |            |                | 
+| datec              | datetime     | YES  |     | NULL       |                | 
+| datef              | date         | YES  |     | NULL       |                | 
+| libelle            | varchar(255) | YES  |     | NULL       |                | 
+| paye               | smallint(6)  | NO   |     | 0          |                | 1 si la facture a été payée, 0 sinon
+| amount             | double(16,8) | NO   |     | 0.00000000 |                | 
+| remise             | double(16,8) | YES  |     | 0.00000000 |                | 
+| tva                | double(16,8) | YES  |     | 0.00000000 |                | 
+| total              | double(16,8) | YES  |     | 0.00000000 |                | 
+| total_ht           | double(16,8) | YES  |     | 0.00000000 |                | 
+| total_tva          | double(16,8) | YES  |     | 0.00000000 |                | 
+| total_ttc          | double(16,8) | YES  |     | 0.00000000 |                | 
+| fk_statut          | smallint(6)  | NO   |     | 0          |                |  0= brouillon, 1=impayée, 2=payée, 3=abandonnée
+| fk_user_author     | int(11)      | YES  | MUL | NULL       |                | 
+| fk_user_valid      | int(11)      | YES  | MUL | NULL       |                | 
+| fk_projet          | int(11)      | YES  | MUL | NULL       |                | 
+| fk_cond_reglement  | int(11)      | NO   |     | 1          |                | 
+| date_lim_reglement | date         | YES  | MUL | NULL       |                | 
+| note               | text         | YES  |     | NULL       |                | 
+| note_public        | text         | YES  |     | NULL       |                | 
++--------------------+--------------+------+-----+------------+----------------+
+&lt;/pre&gt;
+
+Attention, si le statut est à 1 (impayée) mais le champ &quot;paye&quot; est à 1 également (payée), ce qui ne devrait jamais arriver dans des conditions normales d'utilisation, la facture est indiquée comme payée.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx facture fourn det</title>
+    <revision>
+      <timestamp>2007-08-06T02:50:30Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx facture rec</title>
+    <revision>
+      <timestamp>2007-08-06T02:50:44Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx facture tva sum</title>
+    <revision>
+      <timestamp>2007-08-06T02:50:55Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx facturedet</title>
     <revision>
       <timestamp>2006-12-09T15:43:57Z</timestamp>
@@ -5035,11 +7093,82 @@ create table llx_export_compta
     </revision>
   </page>
   <page>
+    <title>Table llx mailing</title>
+    <revision>
+      <timestamp>2007-08-06T02:55:54Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx mailing cibles</title>
+    <revision>
+      <timestamp>2007-08-06T02:56:06Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx notify</title>
+    <revision>
+      <timestamp>2007-08-06T02:56:18Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx notify def</title>
+    <revision>
+      <timestamp>2007-08-06T02:56:28Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx paiement</title>
     <revision>
-      <timestamp>2005-03-23T10:49:56Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
-      <text>== Structure ==
+      <timestamp>2007-08-06T02:57:41Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les paiements relatifs aux factures clients. La relation entre une facture client et le paiement correspondant se trouve dans la [[Table llx_paiement_facture]]
+
+Contains the payments made for client invoices. The relation between a client invoice and the corresponding payment is in [[Table llx_paiement_facture]]
+
+= Structure =
+
 &lt;pre&gt;
 -- ===================================================================
 -- Copyright (C) 2001-2002,2004 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
@@ -5070,16 +7199,16 @@ create table llx_export_compta
 create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  fk_facture       integer,
+  fk_facture       integer,            -- left NULL since the creation of llx_paiement_facture
   datec            datetime,           -- date de creation
   tms              timestamp,
   datep            datetime,           -- payment date
   amount           real DEFAULT 0,
   author           varchar(50),
-  fk_paiement      integer NOT NULL,
+  fk_paiement      integer NOT NULL,   -- payment type (cheque, cash, ...) - see llx_c_paiement
   num_paiement     varchar(50),
   note             text,
-  fk_bank          integer NOT NULL,
+  fk_bank          integer NOT NULL,   -- bank account id - see llx_bank
   fk_user_creat    integer,            -- utilisateur qui a cr l'info
   fk_user_modif    integer,            -- utilisateur qui a modifi l'info
   statut           smallint DEFAULT 0 NOT NULL,
@@ -5090,11 +7219,67 @@ create table llx_paiement
     </revision>
   </page>
   <page>
+    <title>Table llx paiement facture</title>
+    <revision>
+      <timestamp>2007-08-06T02:58:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient la relation entre les factures clients et son (ou ses) paiement. Voir [[Table llx_paiement]] pour les paiements.
+
+Contains the relation between a client invoice and its (single or multiple) payments. See [[Table llx_paiement]] for more about payment details.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx paiementcharge</title>
+    <revision>
+      <timestamp>2007-08-06T02:57:53Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx paiementfourn</title>
+    <revision>
+      <timestamp>2007-08-06T02:59:13Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Table llx paiementfourn facturefourn</title>
     <revision>
-      <timestamp>2005-12-04T23:26:03Z</timestamp>
-      <contributor><username>Marc ocebo</username></contributor>
-      <text>== Structure ==
+      <timestamp>2007-08-06T02:59:30Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =
+
 &lt;pre&gt;
 -- ============================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville  &lt;rodolphe@quiedeville.org&gt;
@@ -5195,9 +7380,12 @@ create table llx_prelevement
   <page>
     <title>Table llx prelevement bons</title>
     <revision>
-      <timestamp>2005-02-22T09:57:25Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
+      <timestamp>2007-08-06T03:00:21Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
 == Présentation ==
 
 Liste des bons de prélèvement envoyé à la banque.
@@ -5222,9 +7410,11 @@ Liste des bons de prélèvement envoyé à la banque.
   <page>
     <title>Table llx prelevement facture</title>
     <revision>
-      <timestamp>2005-02-22T09:42:27Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
+      <timestamp>2007-08-06T03:01:16Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
 
 == Presentation ==
 
@@ -5282,17 +7472,27 @@ create table llx_prelevement_facture
   <page>
     <title>Table llx prelevement facture demande</title>
     <revision>
-      <timestamp>2005-02-22T09:43:20Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
-      <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]</text>
+      <timestamp>2007-08-06T03:01:32Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx prelevement lignes</title>
     <revision>
-      <timestamp>2005-02-22T09:58:28Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
+      <timestamp>2007-08-06T03:00:53Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
 == Présentation ==
 
 Liste des lignes de prélèvement.
@@ -5316,53 +7516,546 @@ Liste des lignes de prélèvement.
   <page>
     <title>Table llx prelevement rejet</title>
     <revision>
-      <timestamp>2005-02-22T09:45:32Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
-      <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]</text>
+      <timestamp>2007-08-06T03:01:47Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Prélèvements bancaires]][[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product</title>
+    <revision>
+      <timestamp>2007-08-06T03:02:35Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table contient les produits et services.
+
+Contains the list of products and services.
+
+= Structure =
+
+&lt;pre&gt;
++--------------------+--------------+------+-----+-------------------+----------------+
+| Field              | Type         | Null | Key | Default           | Extra          |
++--------------------+--------------+------+-----+-------------------+----------------+
+| rowid              | int(11)      | NO   | PRI | NULL              | auto_increment | 
+| datec              | datetime     | YES  |     | NULL              |                | 
+| tms                | timestamp    | NO   |     | CURRENT_TIMESTAMP |                | 
+| ref                | varchar(32)  | NO   | UNI |                   |                | 
+| label              | varchar(255) | NO   |     |                   |                | 
+| description        | text         | YES  |     | NULL              |                | 
+| note               | text         | YES  |     | NULL              |                | 
+| price              | double(16,8) | YES  |     | NULL              |                | 
+| price_ttc          | double(16,8) | YES  |     | 0.00000000        |                | 
+| price_base_type    | varchar(3)   | YES  |     | HT                |                | 
+| tva_tx             | double(6,3)  | YES  |     | NULL              |                | 
+| fk_user_author     | int(11)      | YES  |     | NULL              |                | 
+| envente            | tinyint(4)   | YES  |     | 1                 |                | 
+| nbvente            | int(11)      | YES  |     | 0                 |                | 
+| fk_product_type    | int(11)      | YES  |     | 0                 |                | 
+| duration           | varchar(6)   | YES  |     | NULL              |                | 
+| stock_propale      | int(11)      | YES  |     | 0                 |                | 
+| stock_commande     | int(11)      | YES  |     | 0                 |                | 
+| seuil_stock_alerte | int(11)      | YES  |     | 0                 |                | 
+| stock_loc          | varchar(10)  | YES  |     | NULL              |                | 
+| gencode            | varchar(255) | YES  |     | NULL              |                | 
+| weight             | float        | YES  |     | NULL              |                | 
+| weight_units       | tinyint(4)   | YES  |     | NULL              |                | 
+| volume             | float        | YES  |     | NULL              |                | 
+| volume_units       | tinyint(4)   | YES  |     | NULL              |                | 
+| canvas             | varchar(15)  | YES  |     |                   |                | 
++--------------------+--------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product fournisseur</title>
+    <revision>
+      <timestamp>2007-08-06T03:02:45Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product fournisseur price</title>
+    <revision>
+      <timestamp>2007-08-06T03:02:55Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product fournisseur price log</title>
+    <revision>
+      <timestamp>2007-08-06T03:03:05Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product price</title>
+    <revision>
+      <timestamp>2007-08-06T03:03:15Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx product stock</title>
+    <revision>
+      <timestamp>2007-08-06T03:03:56Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+La table '''llx_product_stock''' contient les stocks rattachés à un produit (et aux entrepôts dans lesquels il est stocké)
+
+Contains the stock levels related to products (and warehouses where they are stored)
+
+= Structure =
+&lt;pre&gt;
++-------------+-----------+------+-----+-------------------+----------------+
+| Field       | Type      | Null | Key | Default           | Extra          |
++-------------+-----------+------+-----+-------------------+----------------+
+| rowid       | int(11)   | NO   | PRI | NULL              | auto_increment | 
+| tms         | timestamp | NO   |     | CURRENT_TIMESTAMP |                | timestamp
+| fk_product  | int(11)   | NO   | MUL |                   |                | ID du produit concerné
+| fk_entrepot | int(11)   | NO   | MUL |                   |                | ID de l'entrepôt 
+| reel        | int(11)   | YES  |     | NULL              |                | stock réel courant (notons que le stock doit être un entier)
++-------------+-----------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx projet</title>
+    <revision>
+      <timestamp>2007-08-06T03:04:07Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx propal</title>
+    <revision>
+      <timestamp>2007-08-06T03:04:17Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx propaldet</title>
+    <revision>
+      <timestamp>2007-08-06T03:04:35Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx rights def</title>
     <revision>
-      <timestamp>2005-04-11T08:34:20Z</timestamp>
-      <contributor><ip>192.104.245.12</ip></contributor>
-      <text>Table qui contient la liste des droits disponibles. Tous les droits des modules actifs y sont stockés.</text>
+      <timestamp>2007-08-06T03:06:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+Table qui contient la liste des droits disponibles. Tous les droits des modules actifs y sont stockés. Lorsqu'un nouveau module est activé, sa classe d'activation (htdocs/includes/modules/modXXX.class.php) a la responsabilité d'ajouter les permissions relatives au module dans cette table.
+
+Contains the various permissions available. All the active modules are stored in there. When a new module is activated, its activation class (htdocs/includes/modules/modXXX.class.php) has the responsibility of adding the permissions related to the module in this table.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx societe</title>
+    <revision>
+      <timestamp>2007-08-06T03:08:10Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient les tiers enregistrés dans Dolibarr. Un tiers peut être:
+* une entreprises cliente ou fournisseur (ou les deux)
+* une personne physique
+* une association/fondation
+
+This table contains the list of third parties stored in Dolibarr.
+Third parties can be:
+* suppliers or customers companies (depending on the sub-elements defined) or both.
+* A normal person.
+* A fundation.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx societe commerciaux</title>
+    <revision>
+      <timestamp>2007-08-06T03:08:23Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx societe remise</title>
+    <revision>
+      <timestamp>2007-08-06T03:08:33Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx societe remise except</title>
+    <revision>
+      <timestamp>2007-08-06T03:08:41Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx societe rib</title>
+    <revision>
+      <timestamp>2007-08-06T03:08:51Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx socpeople</title>
+    <revision>
+      <timestamp>2007-08-06T03:09:39Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_socpeople''' contient les contacts (personnes) des sociétés (clients et fournisseurs)
+
+Contains the contact people of companies (clients or providers).
+
+= Structure =
+&lt;pre&gt;
++---------------------+--------------+------+-----+-------------------+----------------+
+| Field               | Type         | Null | Key | Default           | Extra          |
++---------------------+--------------+------+-----+-------------------+----------------+
+| rowid               | int(11)      | NO   | PRI | NULL              | auto_increment | identifiant unique interne
+| datec               | datetime     | YES  |     | NULL              |                | date de création
+| tms                 | timestamp    | NO   |     | CURRENT_TIMESTAMP |                | timestamp (date dernière modification)
+| fk_soc              | int(11)      | YES  | MUL | NULL              |                | clef étrangère vers llx_societe
+| civilite            | varchar(6)   | YES  |     | NULL              |                | civilité (en texte ex: MR, MME,...)
+| name                | varchar(50)  | YES  |     | NULL              |                | nom de famille
+| firstname           | varchar(50)  | YES  |     | NULL              |                | prénom
+| address             | varchar(255) | YES  |     | NULL              |                | adresse
+| cp                  | varchar(25)  | YES  |     | NULL              |                | code postal
+| ville               | varchar(255) | YES  |     | NULL              |                | ville
+| fk_pays             | int(11)      | YES  |     | 0                 |                | clef étrangère vers llx_c_pays
+| birthday            | date         | YES  |     | NULL              |                | anniversaire/date de naissance
+| poste               | varchar(80)  | YES  |     | NULL              |                | fonction au sein de l'entreprise
+| phone               | varchar(30)  | YES  |     | NULL              |                | téléphone
+| phone_perso         | varchar(30)  | YES  |     | NULL              |                | téléphone personnel
+| phone_mobile        | varchar(30)  | YES  |     | NULL              |                | téléphone mobile (GSM)
+| fax                 | varchar(30)  | YES  |     | NULL              |                | fax
+| email               | varchar(255) | YES  |     | NULL              |                | e-mail
+| jabberid            | varchar(255) | YES  |     | NULL              |                | identifiant sur le réseau Jabber (pourrait être un autre réseau également)
+| fk_user_creat       | int(11)      | YES  | MUL | 0                 |                | clef étrangère vers llx_user (utilisateur qui a créé ce contact)
+| fk_user_modif       | int(11)      | YES  |     | NULL              |                | clef étrangère vers llx_user (utilisateur qui a modifié ce contact)
+| note                | text         | YES  |     | NULL              |                | note
++---------------------+--------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx socstatutlog</title>
+    <revision>
+      <timestamp>2007-08-06T03:09:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx stock mouvement</title>
+    <revision>
+      <timestamp>2007-08-06T03:10:42Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table '''llx_stock_mouvement''' contient les mouvements de stock rattachés à un entrepôt
+
+Contains the stock movements attached to a warehouse.
+
+= Structure =
+
+&lt;pre&gt;
++----------------+-------------+------+-----+-------------------+----------------+
+| Field          | Type        | Null | Key | Default           | Extra          |
++----------------+-------------+------+-----+-------------------+----------------+
+| rowid          | int(11)     | NO   | PRI | NULL              | auto_increment | identifiant interne unique
+| tms            | timestamp   | NO   |     | CURRENT_TIMESTAMP |                | date de dernière modification
+| datem          | datetime    | YES  |     | NULL              |                | date de création ( devrait être datec?)
+| fk_product     | int(11)     | NO   | MUL |                   |                | produit défini dans llx_product 
+| fk_entrepot    | int(11)     | NO   | MUL |                   |                | entrepôt défini dans llx_entrepot
+| value          | int(11)     | YES  |     | NULL              |                | valeur attribué au stock
+| price          | float(13,4) | YES  |     | 0.0000            |                | prix
+| type_mouvement | smallint(6) | YES  |     | NULL              |                | type de mouvement [1]
+| fk_user_author | int(11)     | YES  |     | NULL              |                | utilisateur auteur de cet enregistrement
++----------------+-------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;
+
+[1]  mouvement manuel = 0, sortie = 2, entrée = 3, cfr product/stock/mouvementstock.class.php::livraison</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx tva</title>
+    <revision>
+      <timestamp>2007-08-06T03:21:23Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+La table llx_tva garde une liste de montants de TVA. Informations à préciser...
+
+Contains a list of VAT amounts. To be further described...
+
+= Structure =
+
+&lt;pre&gt;
++--------+--------------+------+-----+-------------------+----------------+
+| Field  | Type         | Null | Key | Default           | Extra          |
++--------+--------------+------+-----+-------------------+----------------+
+| rowid  | int(11)      | NO   | PRI | NULL              | auto_increment | 
+| tms    | timestamp    | NO   |     | CURRENT_TIMESTAMP |                | 
+| datep  | date         | YES  |     | NULL              |                | 
+| datev  | date         | YES  |     | NULL              |                | 
+| amount | double       | NO   |     | 0                 |                | 
+| label  | varchar(255) | YES  |     | NULL              |                | 
+| note   | text         | YES  |     | NULL              |                | 
++--------+--------------+------+-----+-------------------+----------------+
+&lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx user</title>
+    <revision>
+      <timestamp>2007-08-06T03:22:21Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Contient la listes des utilisateurs avec leur login et leur mot de passe. C'est une table essentielle.
+
+Contains the users, together with their login and password. This is a mandatory table.
+
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx user param</title>
     <revision>
-      <timestamp>2006-11-16T00:35:02Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <text>Cette table contient la liste des paramétrages propres aux utilisateurs</text>
+      <timestamp>2007-08-06T03:25:07Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Cette table contient la liste des paramétrages propres aux utilisateurs
+
+Contains a list of parameters for each user.
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Table llx user rights</title>
+    <revision>
+      <timestamp>2007-08-06T03:26:13Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Table qui contient l'association entre un utilisateur et ses droits ([[Table llx_user]] et [[Table llx_rights_def]])
+
+Contains the link between a user and his permissions ([[Table llx_user]] and [[Table llx_rights_def]])
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx usergroup</title>
     <revision>
-      <timestamp>2005-04-11T08:25:41Z</timestamp>
-      <contributor><ip>192.104.245.12</ip></contributor>
-      <text>Contient la liste des groupes d'utilisateurs.
-Il est possible de créer autant de groupe que voulu. Chaque groupe peut contnir plusieurs utilisateurs.
-On peut attribuer des droits à un groupe, ce qui a pour effet d'attribuer ces droits à tous les utilisateurs inclus dans ce groupe.</text>
+      <timestamp>2007-08-06T03:27:46Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+Contient la liste des groupes d'utilisateurs.
+Il est possible de créer autant de groupe que voulu. Chaque groupe peut contenir plusieurs utilisateurs.
+On peut attribuer des droits à un groupe, ce qui a pour effet d'attribuer ces droits à tous les utilisateurs inclus dans ce groupe.
+
+Contains the list of user groups. It is possible to create as many groups as you need. Each group can contain several users. One can assign permissions to a group, which has the effect of giving these permissions to all the users included in this group.
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx usergroup rights</title>
     <revision>
-      <timestamp>2005-04-11T08:32:14Z</timestamp>
-      <contributor><ip>192.104.245.12</ip></contributor>
-      <text>Table qui contient l'association entre un groupe et ces droits ([[Table llx_usergroup]] et [[Table llx_rights_def]])</text>
+      <timestamp>2007-08-06T03:29:34Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Table qui contient l'association entre un groupe et ses droits ([[Table llx_usergroup]] et [[Table llx_rights_def]])
+
+Contains the link between a group and its permissions ([[Table llx_usergroup]] and [[Table llx_rights_def]])
+
+= Structure =</text>
     </revision>
   </page>
   <page>
     <title>Table llx usergroup user</title>
     <revision>
-      <timestamp>2005-02-15T15:39:37Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
-      <text>Contient les liens entre [[Table llx_user]] et [[Table llx_usergroup]]
+      <timestamp>2007-08-06T03:28:41Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Contenu */</comment>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
 
-== Structure ==
+= Contenu =
+
+
+Contient les liens entre [[Table llx_user]] et [[Table llx_usergroup]]
+
+Contains the link between [[Table llx_user|llx_user]] and [[Table llx_usergroup|llx_usergroup]]
+
+= Structure =
+
 &lt;pre&gt;
 -- ============================================================================
 -- Copyright (C) 2005 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
@@ -5425,14 +8118,16 @@ Quand vous avez créer un nouveau theme, vous pouvez fabriquer un package pour l
   <page>
     <title>Téléphonie</title>
     <revision>
-      <timestamp>2005-11-21T13:56:54Z</timestamp>
-      <contributor><username>Rhum1</username></contributor>
-      <comment>Ajout de la navigation</comment>
+      <timestamp>2007-04-27T11:56:16Z</timestamp>
+      <contributor><username>Rodo</username></contributor>
+      <comment>/* Présentation */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
 == Présentation ==
-Module spécifique pour la facturation de la téléphonie</text>
+Module spécifique pour la facturation de la téléphonie
+
+[[TelephonieProcedureFacturation|Procédure de facturation]]</text>
     </revision>
   </page>
   <page>
