@@ -663,6 +663,7 @@ function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 		cancelLabel: cancel,
 		buttonClass: "button",
 		id: objectID,
+		destroyOnClose: true,
 		cancel:function(win){},
 		ok:function(win) {window.location.href=linkurl; return true;} 
 	});
