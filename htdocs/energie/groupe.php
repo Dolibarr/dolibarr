@@ -79,9 +79,9 @@ if ($_GET["action"] == 'create')
   
   print '<td><input type="text" size="40" maxlength="255" name="libelle"></td></tr>';
   
-  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
   
-  print "</table></form><br>";
+  print "</table></form>";
 	  
   print '</div>';
   

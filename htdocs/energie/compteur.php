@@ -107,9 +107,9 @@ if ($_GET["action"] == 'create')
   print $html->select_array("energie", $compteur->energies);
   print '</td></tr>';
 
-  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+  print '<tr><td colspan="2" align="center"><input type="submit" value="'.$langs->trans("Add").'" class="button"></td></tr>';
   
-  print "</table></form><br>";	  
+  print "</table></form>";	  
   print '</div>';
   
 } 
@@ -167,14 +167,14 @@ else
 	  print '</td><td>Valeur relevée</td>';
 
 	  print '<td align="center"><input type="text" size="11" maxlength="10" name="releve"></td>';
-	  print '<td align="center"><input type="submit" value="'.$langs->trans("Add").'"></td></tr>';
+	  print '<td align="center"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 	  print "</table></form><br>";
 	
 	  print '<table class="noborder" width="100%">';
 	  print '<tr><td><a href="compteur_graph.php?id='.$compteur->id.'">';
 	  $file = "all.".$compteur->id.".png";
 	  print '<img border="0" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file='.$file.'" alt="" title="">';
-	  print '</a></td></tr></table><br>';
+	  print '</a></td></tr></table>';
 
 	  print '</div>';
 

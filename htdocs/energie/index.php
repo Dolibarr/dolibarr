@@ -31,11 +31,11 @@ require("./pre.inc.php");
 
 llxHeader($langs,"",$langs->trans("Energy"),$langs->trans("Energy"));
 
-print_titre($langs->trans("Energy"));
+print_fiche_titre($langs->trans("Energy"));
 
-print '<table class="noborder" width="100%">';
+print '<table class="notopnoleftnoright" width="100%">';
 
-print '<tr><td valign="top" width="30%">';
+print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Groupe
@@ -95,7 +95,7 @@ if ( $resql)
     }
 }
 
-print '</td><td valign="top" width="70%">';
+print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=energie&file=month.png" alt="" title=""><br /><br />'."\n";
 
@@ -103,5 +103,5 @@ print '</td></tr></table>';
 
 $db->close();
 
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
