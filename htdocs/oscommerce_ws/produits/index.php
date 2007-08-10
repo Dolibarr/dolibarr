@@ -1,6 +1,6 @@
 <?php
-/*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
- *
+/* Copyright (C) 2006 Jean Heimburger     <jean@tiaris.info>
+ * Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  *
  * $Id$
  * $Source$
- *
  */
 
 require("./pre.inc.php");
@@ -61,7 +60,7 @@ elseif (!($err = $client->getError()) )
 	$OscProd = new Osc_Product($db);
 	
   	if ($num > 0) {
-		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
 		print "<td>id</td>";
 		print "<td>Ref</td>";

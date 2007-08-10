@@ -1,5 +1,6 @@
 <?php
-/*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
+/* Copyright (C) 2006 Jean Heimburger     <jean@tiaris.info>
+ * Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,13 +15,13 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
  */
 
 require("./pre.inc.php");
 
 $langs->load("companies");
+$langs->load("orders");
+
 
 llxHeader();
 
@@ -61,13 +62,13 @@ elseif (!($err = $client->getError()) )
 	$OscOrder = new Osc_Order($db);
 	
   	if ($num > 0) {
-		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
-		print "<td>id</td>";
-		print '<TD align="center">Commande</TD>';
-		print "<td>Client</td>";
-		print "<td>Date</td>";
-		print "<td>Montant</td>";
+		print "<td>Id</td>";
+		print '<TD align="center">'.$langs->trans("Order").'</TD>';
+		print '<td>'.$langs->trans("Customer").'</td>';
+		print '<td>'.$langs->trans("Date").'</td>';
+		print '<td>'.$langs->trans("Amount").'</td>';
 		print '<td align="center">Paiement</td>';
 		print '<td align="center">Statut</td>';
 		print '<TD align="center">Importer</TD>';

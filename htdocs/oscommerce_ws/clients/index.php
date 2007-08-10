@@ -1,5 +1,6 @@
 <?php
-/*  Copyright (C) 2006      Jean Heimburger     <jean@tiaris.info>
+/* Copyright (C) 2006 Jean Heimburger     <jean@tiaris.info>
+ * Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -14,8 +15,6 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
- *
  */
 
 require("./pre.inc.php");
@@ -62,15 +61,15 @@ elseif (!($err = $client->getError()) )
 	$OscClient = new Osc_Customer($db);
 	
   	if ($num > 0) {
-		print "<p><TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
+		print "<TABLE width=\"100%\" class=\"noborder\">";
 		print '<TR class="liste_titre">';
-		print "<td>Oscid</td>";
-		print "<td>clientId</td>";
-		print '<TD align="center">Société</TD>';
-		print "<td>Nom</td>";
-		print "<td>Ville</td>";
-		print "<td>Pays</td>";
-		print '<td align="center">Téléphone</td>';
+		print "<td>OscId</td>";
+		print "<td>".$langs->trans("IdCustomer")."</td>";
+		print '<TD align="left">'.$langs->trans("ThirdParty").'</TD>';
+		print '<td>'.$langs->trans("Name").'</td>';
+		print '<td>'.$langs->trans("Town").'</td>';
+		print '<td>'.$langs->trans("Country").'</td>';
+		print '<td align="center">'.$langs->trans("Phone").'</td>';
 		print '<TD align="center">Importer</TD>';
   		print "</TR>\n";
 	   
@@ -84,7 +83,7 @@ elseif (!($err = $client->getError()) )
     		print "<TD>".$result[$i][entry_company]."</TD>\n";
     		print "<TD>".$result[$i][entry_lastname]."</TD>\n";
     		print "<TD>".$result[$i][entry_city]."</TD>\n";
-    		print '<TD align="center">'.$result[$i][countries_name]."</TD>\n";
+    		print '<TD align="left">'.$result[$i][countries_name]."</TD>\n";
     		print '<TD align="center">'.$result[$i][customers_telephone]."</TD>\n";
     		if ($custid) $lib = "modifier";
     		else $lib = "<u>importer</u>";

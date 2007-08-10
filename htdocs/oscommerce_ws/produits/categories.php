@@ -116,7 +116,7 @@ llxHeader();
 
 $html=new Form($db);
 
-if ($mesg) print "<p>".$mesg."</p>";
+if ($mesg) print '<div class="ok">'.$mesg.'</div>';
 
 // Put here content of your page
 // ...
@@ -138,7 +138,7 @@ print_barre_liste("Correspondance des catégories", $page, "categories.php");
 	   $i = 0;
 
 		//titre
-		print '<table border="0" width="100%" cellspacing="0" cellpadding="4">';
+		print '<table width="100%" class="noborder">';
 		print '<tr class="liste_titre">';
 		print '<td>Id</td><td>Label</td><td>Osc_id</td><td>Action</td>';
 		print '</tr>'."\n";
