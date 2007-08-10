@@ -2964,7 +2964,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
    elseif(!eregi('(\.jpg|\.jpeg|\.png)$',$file))
    {
    	  // Todo: Ajouter création vignette pour les autres formats d'images
-      return 'Le fichier '.$file.' n\'ai pas géré pour le moment.';
+      return 'Le fichier '.$file.' n\'est pas géré pour le moment.';
    }
    elseif(empty($file)){
       // Si le fichier n'a pas été indiqué
@@ -3034,7 +3034,8 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
    
    imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
 
-   $fileName = basename($file, $extImg); // Nom du fichier sans son extension
+   $fileName = eregi_replace('(\.jpeg|\.jpg|\.png)$','',$file);	// On enleve extension quelquesoit la casse
+   $fileName = basename($fileName);
    $imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
    
    //Création du fichier de la vignette
