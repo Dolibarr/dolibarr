@@ -197,10 +197,9 @@ if ($conf->use_javascript)
 		
 		// Affiche arbre
 		print '<script src="'.DOL_URL_ROOT.'/includes/treemenu/TreeMenu.js" language="JavaScript" type="text/javascript"></script>';
-		
 		$treeMenu = new HTML_TreeMenu_DHTML($menu,
 			array(
-			'images' => DOL_URL_ROOT.'/includes/treemenu/images',
+			'images' => DOL_URL_ROOT.'/theme/common/treemenu',
 			'defaultClass' => 'treeMenuDefault',
 			'noTopLevelImages' => false,
 			'jsObjectName' => 'tree_categories',
