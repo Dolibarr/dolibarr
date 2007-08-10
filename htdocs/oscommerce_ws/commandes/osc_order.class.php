@@ -98,7 +98,7 @@ class Osc_order
 		$parameters = array("orderid"=>$id);
 
 		// Set the WebService URL
-		$client = new soapclient(OSCWS_DIR."/ws_orders.php");
+		$client = new soapclient_nusoap(OSCWS_DIR."/ws_orders.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Order",$parameters );

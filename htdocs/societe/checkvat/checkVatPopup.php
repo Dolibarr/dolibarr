@@ -65,8 +65,8 @@ else
 						"vatNumber" => $_REQUEST["vatNumber"]);
 	
 	// Set the WebService URL
-	dolibarr_syslog("Create soapclient for URL=".$WS_DOL_URL);
-	$soapclient = new soapclient($WS_DOL_URL);
+	dolibarr_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
+	$soapclient = new soapclient_nusoap($WS_DOL_URL);
 	
 	// Call the WebService and store its result in $result.
 	dolibarr_syslog("Call method ".$WS_METHOD);

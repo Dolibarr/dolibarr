@@ -35,8 +35,8 @@ $WS_METHOD  = 'getVersions';
 $parameters = array("param1"=>"value1");
 
 // Set the WebService URL
-dolibarr_syslog("Create soapclient for URL=".$WS_DOL_URL);
-$soapclient = new soapclient($WS_DOL_URL);
+dolibarr_syslog("Create soapclient_nusoap for URL=".$WS_DOL_URL);
+$soapclient = new soapclient_nusoap($WS_DOL_URL);
 if ($soapclient)
 {
 	

@@ -104,7 +104,7 @@ if ($_GET["action"] == 'vendre' )
 		$parameters = array("prod"=>$prod);
 
 		// Set the WebService URL
-		$client = new soapclient(OSCWS_DIR."ws_articles.php");
+		$client = new soapclient_nusoap(OSCWS_DIR."ws_articles.php");
 	
 		// Call the WebService and store its result in $result.
 		$result = $client->call("create_article",$parameters );	

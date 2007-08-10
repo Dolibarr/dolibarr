@@ -52,7 +52,7 @@ require_once("./includes/configure.php");
 $parameters = array();
 
 // Set the WebService URL
-$client = new soapclient(OSCWS_DIR."ws_orders.php");
+$client = new soapclient_nusoap(OSCWS_DIR."ws_orders.php");
 
 /* 
 /* Chiffre d'affaire 

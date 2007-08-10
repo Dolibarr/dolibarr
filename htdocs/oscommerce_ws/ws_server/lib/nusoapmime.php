@@ -45,7 +45,7 @@ require_once('Mail/mimePart.php');
 * @version  $Id$
 * @access   public
 */
-class soapclientmime extends soapclient {
+class soapclientmime extends soapclient_nusoap {
 	/**
 	 * @var array Each array element in the return is an associative array with keys
 	 * data, filename, contenttype, cid

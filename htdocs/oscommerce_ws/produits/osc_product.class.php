@@ -93,7 +93,7 @@ class Osc_product
 		$parameters = array("id"=>$id,"ref"=>$ref);
 
 		// Set the WebService URL
-		$client = new soapclient(OSCWS_DIR."/ws_articles.php");
+		$client = new soapclient_nusoap(OSCWS_DIR."/ws_articles.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_article",$parameters );

@@ -39,6 +39,7 @@ htdocs/includes/modules/modEditeur.class.php
 htdocs/includes/modules/modPostnuke.class.php
 htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
+htdocs/oscommerce_ws/ws_client_demo
 htdocs/theme/rodolphe
 scripts/lolix
 CVS

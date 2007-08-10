@@ -2824,7 +2824,7 @@ class soap_transport_http extends nusoap_base {
 			($http_status >= 400 && $http_status <= 417) ||
 			($http_status >= 501 && $http_status <= 505)
 		   ) {
-			$this->setError("Unsupported HTTP response status $http_status $http_reason (soapclient->response has contents of the response)");
+			$this->setError("Unsupported HTTP response status $http_status $http_reason (soapclient_nusoap->response has contents of the response)");
 			return false;
 		}
 
@@ -6387,12 +6387,12 @@ class soap_parser extends nusoap_base {
 
 /**
 *
-* soapclient higher level class for easy usage.
+* soapclient_nusoap higher level class for easy usage.
 *
 * usage:
 *
 * // instantiate client with server info
-* $soapclient = new soapclient( string path [ ,boolean wsdl] );
+* $soapclient = new soapclient_nusoap( string path [ ,boolean wsdl] );
 *
 * // call method, get results
 * echo $soapclient->call( string methodname [ ,array parameters] );
@@ -6404,7 +6404,7 @@ class soap_parser extends nusoap_base {
 * @version  $Id$
 * @access   public
 */
-class soapclient extends nusoap_base  {
+class soapclient_nusoap extends nusoap_base  {
 
 	var $username = '';
 	var $password = '';
@@ -6471,7 +6471,7 @@ class soapclient extends nusoap_base  {
 	* @param	integer $response_timeout set the response timeout
 	* @access   public
 	*/
-	function soapclient($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30){
+	function soapclient_nusoap($endpoint,$wsdl = false,$proxyhost = false,$proxyport = false,$proxyusername = false, $proxypassword = false, $timeout = 0, $response_timeout = 30){
 		parent::nusoap_base();
 		$this->endpoint = $endpoint;
 		$this->proxyhost = $proxyhost;
@@ -7051,7 +7051,7 @@ class soapclient extends nusoap_base  {
 				unset($paramCommentStr);
 			}
 		}
-		$evalStr = 'class soap_proxy_'.$r.' extends soapclient {
+		$evalStr = 'class soap_proxy_'.$r.' extends soapclient_nusoap {
 	'.$evalStr.'
 }';
 		return $evalStr;

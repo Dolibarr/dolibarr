@@ -99,7 +99,7 @@ class Osc_customer
 		$parameters = array("custid"=>$id);
 
 		// Set the WebService URL
-		$client = new soapclient(OSCWS_DIR."/ws_customers.php");
+		$client = new soapclient_nusoap(OSCWS_DIR."/ws_customers.php");
 
 		// Call the WebSeclient->fault)rvice and store its result in $obj
 		$obj = $client->call("get_Client",$parameters );

@@ -832,7 +832,7 @@ class soap_transport_http extends nusoap_base {
 			($http_status >= 400 && $http_status <= 417) ||
 			($http_status >= 501 && $http_status <= 505)
 		   ) {
-			$this->setError("Unsupported HTTP response status $http_status $http_reason (soapclient->response has contents of the response)");
+			$this->setError("Unsupported HTTP response status $http_status $http_reason (soapclient_nusoap->response has contents of the response)");
 			return false;
 		}
 

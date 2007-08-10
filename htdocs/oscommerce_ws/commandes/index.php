@@ -41,7 +41,7 @@ require_once("../includes/configure.php");
 $parameters = array("orderid"=>"0");
 
 // Set the WebService URL
-$client = new soapclient(OSCWS_DIR."ws_orders.php");
+$client = new soapclient_nusoap(OSCWS_DIR."ws_orders.php");
 
 $result = $client->call("get_Order",$parameters );
 

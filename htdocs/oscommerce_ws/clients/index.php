@@ -42,7 +42,7 @@ require_once("../includes/configure.php");
 $parameters = array("custid"=>"0");
 
 // Set the WebService URL
-$client = new soapclient(OSCWS_DIR."ws_customers.php");
+$client = new soapclient_nusoap(OSCWS_DIR."ws_customers.php");
 
 $result = $client->call("get_Client",$parameters );
 
