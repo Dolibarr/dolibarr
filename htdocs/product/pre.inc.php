@@ -118,7 +118,7 @@ function llxHeader($head = "", $urlp = "", $title="")
   
   if ($conf->categorie->enabled)
     {
-      $menu->add(DOL_URL_ROOT."/categories/", $langs->trans("Categories"));
+      $menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
     }
   
   left_menu($menu->liste);
