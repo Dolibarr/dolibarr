@@ -1871,7 +1871,7 @@ function dol_delete_dir_recursive($dir,$count=0)
 */
 function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $sortorder='', $center='', $num=-1)
 {
-    global $conf;
+    global $conf,$langs;
 
     if ($num > $conf->liste_limit or $num == -1)
     {
@@ -1886,7 +1886,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
     if ($page > 0 || $num > $conf->liste_limit)
     {
-        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.' - page '.($page+1);
+        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.' - '.$langs->trans('page').' '.($page+1);
         print '</div></td>';
     }
     else
@@ -3045,7 +3045,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
    // Renvoi la vignette créée
    switch($infoImg[2]){
       case 2:
-         imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50
+         imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50 par défaut
          break;
       case 3:
          imagepng($imgThumb, $imgThumbName);
