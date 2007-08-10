@@ -2,7 +2,7 @@
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -520,11 +520,11 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	print $contact->pays;
 	print '</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.$contact->phone_pro.'</td>';
-	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.$contact->phone_perso.'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhonePro").'</td><td>'.dolibarr_print_phone($contact->phone_pro,$objsoc->pays_code).'</td>';
+	print '<td>'.$langs->trans("PhonePerso").'</td><td>'.dolibarr_print_phone($contact->phone_perso,$objsoc->pays_code).'</td></tr>';
 
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.$contact->phone_mobile.'</td>';
-	print '<td>'.$langs->trans("Fax").'</td><td>'.$contact->fax.'</td></tr>';
+	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td>'.dolibarr_print_phone($contact->phone_mobile,$objsoc->pays_code).'</td>';
+	print '<td>'.$langs->trans("Fax").'</td><td>'.dolibarr_print_phone($contact->fax,$objsoc->pays_code).'</td></tr>';
 
 	print '<tr><td>'.$langs->trans("EMail").'</td><td>';
 	if ($contact->email && ! ValidEmail($contact->email))
