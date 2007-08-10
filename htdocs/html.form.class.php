@@ -1561,7 +1561,7 @@ class Form
 		$cate_arbo = $cat->get_full_arbo($type);
 
 		$output = '<select class="flat" name="'.$select_name.'">';
-		$output.= '<option value="-1" id="choix" disabled="disabled">'.$langs->trans("NoCategoriesDefined").'</option>';
+		$output.= '<option value="-1" id="choix">'.$langs->trans("NoCategoriesDefined").'</option>';
 		
 		if ($cate_arbo)
 		{
