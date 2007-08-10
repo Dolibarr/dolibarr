@@ -47,7 +47,6 @@ alter table llx_adherent_type modify libelle varchar(50) NOT NULL;
 -- Extention de la gestion des catégories
 alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
-ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 drop table if exists `llx_categorie_societe`;
 create table `llx_categorie_societe` (
