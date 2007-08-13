@@ -816,7 +816,7 @@ ALTER TABLE llx_propaldet ADD COLUMN marque_tx real DEFAULT NULL after marge_tx;
 
 -- Nouveau mode de stockage de l'ordre des box (X99 ou X = colonne et 99 position dans colonne)
 alter table llx_boxes modify box_order varchar(3) NOT NULL;
-update llx_boxes set box_order = concat('A0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('1','3','5','7','9');
-update llx_boxes set box_order = concat('B0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('0','2','4','6','8');
-update llx_boxes set box_order = concat('A',box_order) where length(box_order) = 2 and substr(box_order,-1) in ('1','3','5','7','9');
-update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substr(box_order,-1) in ('0','2','4','6','8');
+update llx_boxes set box_order = concat('A0',box_order) where length(box_order) = 1 and substring(box_order,-1) in ('1','3','5','7','9');
+update llx_boxes set box_order = concat('B0',box_order) where length(box_order) = 1 and substring(box_order,-1) in ('0','2','4','6','8');
+update llx_boxes set box_order = concat('A',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('1','3','5','7','9');
+update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('0','2','4','6','8');
