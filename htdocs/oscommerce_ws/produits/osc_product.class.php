@@ -204,9 +204,9 @@ class Osc_product
 
 	function get_osc_productid($productidp)
 	{
-		$sql = "SELECT osc_prodid";
+		$sql = "SELECT rowid";
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
-		$sql.= " WHERE doli_prodidp = ".$productidp;
+		$sql.= " WHERE fk_product = ".$productidp;
 		$result=$this->db->query($sql);
 		$row = $this->db->fetch_row($result);
 // test d'erreurs
