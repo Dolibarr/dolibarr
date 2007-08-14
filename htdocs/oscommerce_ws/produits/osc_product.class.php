@@ -69,15 +69,15 @@ class Osc_product
      *      \param      ref     Ref du produit dans OsC (doit être unique dans OsC)
      *      \return     int     <0 si ko, >0 si ok
      */
-   function fetch($id='',$ref='')
+   	function fetch($id='',$ref='')
     {
         global $langs;
 		global $conf;
 	
-	$this->error = '';
+		$this->error = '';
 		dolibarr_syslog("Osc_product::fetch $id=$id ref=$ref");
-      // Verification parametres
-      if (! $id && ! $ref)
+      	// Verification parametres
+      	if (! $id && ! $ref)
         {
             $this->error=$langs->trans('ErrorWrongParameters');
             return -1;
@@ -112,7 +112,7 @@ class Osc_product
 			$this->osc_image = $obj[image];
   			}
   		else {
-		    $this->error = 'Erreur '.$err ;
+		    $this->error = 'Erreur '.$client->getError();
 			return -1;
 		} 
 		return 0;
@@ -126,7 +126,7 @@ class Osc_product
 	  if ( !$result )
 	  {
 	  		$product = new Product($this->db);
-	    	if ($_error == 1)
+	    	if ($this->error == 1)
 	    	{
 	      	print '<br>erreur 1</br>';
 				return '';
@@ -208,7 +208,7 @@ class Osc_product
 		$sql.= " FROM ".MAIN_DB_PREFIX."osc_product";
 		$sql.= " WHERE doli_prodidp = ".$productidp;
 		$result=$this->db->query($sql);
-		$row = $this->db->fetch_row($resql);
+		$row = $this->db->fetch_row($result);
 // test d'erreurs
 		if ($row) return $row[0];	
 		else return -1;	
