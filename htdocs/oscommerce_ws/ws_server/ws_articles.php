@@ -85,9 +85,9 @@ $sql_data_array = array('products_quantity' => $prod['quant'],
             $sql_data_array = array('products_name' => $prod['nom'],
                                     'products_description' => $prod['desc'],
                                     'products_url' => $prod['url'],
-                                    'products_head_title_tag' => $prod['nom'],
-                                    'products_head_desc_tag' => $prod['desc'],
-                                    'products_head_keywords_tag' => '',
+                                    //'products_head_title_tag' => $prod['nom'],
+                                    //'products_head_desc_tag' => $prod['desc'],
+                                    //'products_head_keywords_tag' => '',
                                  	'products_id' => $products_id,
                                     'language_id' => $language_id
                                     );  
