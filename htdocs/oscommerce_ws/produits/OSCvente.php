@@ -62,7 +62,7 @@ if ($_GET["action"] == 'vendre' )
 	$oscprod = new Osc_product($db);
 
 	$oscid = $oscprod->get_osc_productid($_POST["idprod"]);
-	if ( $oscid < 0)
+	if ( $oscid <= 0)
 	{
 		$prod = array();
 		$prod['ref'] = $product->ref;
