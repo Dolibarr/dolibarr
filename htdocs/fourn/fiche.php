@@ -126,7 +126,7 @@ if ( $societe->fetch($socid) )
   print '</td><td valign="top" width="50%" class="notopnoleftnoright">';
   $var=true;
   
-  $MAXLIST=4;
+  $MAXLIST=5;
   
   // Lien recap
   print '<table class="noborder" width="100%">';
@@ -145,7 +145,7 @@ if ( $societe->fetch($socid) )
   $sql  = "SELECT p.rowid,p.ref,".$db->pdate("p.date_commande")." as dc, p.fk_statut";
   $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as p ";
 	$sql.= " WHERE p.fk_soc =".$societe->id;
-	$sql.= " ORDER BY p.rowid";
+	$sql.= " ORDER BY p.date_commande DESC";
 	$sql.= " ".$db->plimit($MAXLIST);
 	$resql=$db->query($sql);
 	if ($resql)
@@ -157,7 +157,7 @@ if ( $societe->fetch($socid) )
 			print '<table class="noborder" width="100%">';
 			print '<tr class="liste_titre">';
 			print '<td colspan="3">';
-			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<=$MAXLIST?"":$MAXLIST)).'</td>';
+			print '<table class="noborder" width="100%"><tr><td>'.$langs->trans("LastOrders",($num<$MAXLIST?$num:$MAXLIST)).'</td>';
 			print '<td align="right"><a href="commande/liste.php?socid='.$societe->id.'">'.$langs->trans("AllOrders").' ('.$num.')</td></tr></table>';
 			print '</td></tr>';
 		}
