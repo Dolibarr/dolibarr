@@ -3,7 +3,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -282,7 +282,7 @@ class MDB2
         if (is_array($options)) {
             foreach ($options as $option => $value) {
                 $test = $db->setOption($option, $value);
-                if (DOLIPEAR::isError($test)) {
+                if (PEAR::isError($test)) {
                     return $test;
                 }
             }
@@ -299,7 +299,7 @@ class MDB2
      * @param   string  classname
      *
      * @return  bool    true success and false on error
-     *
+     * @static
      * @access  public
      */
     function classExists($classname)
@@ -319,7 +319,7 @@ class MDB2
      * @param   string  classname to load
      * @param   bool    if errors should be suppressed
      *
-     * @return  bool    true success or false on failure
+     * @return  mixed   true success or PEAR_Error on failure
      *
      * @access  public
      */
@@ -384,14 +384,14 @@ class MDB2
 
         $debug = (!empty($options['debug']));
         $err = MDB2::loadClass($class_name, $debug);
-        if (DOLIPEAR::isError($err)) {
+        if (PEAR::isError($err)) {
             return $err;
         }
 
         $db =& new $class_name();
         $db->setDSN($dsninfo);
         $err = MDB2::setOptions($db, $options);
-        if (DOLIPEAR::isError($err)) {
+        if (PEAR::isError($err)) {
             return $err;
         }
 
@@ -432,12 +432,12 @@ class MDB2
     function &connect($dsn, $options = false)
     {
         $db =& MDB2::factory($dsn, $options);
-        if (DOLIPEAR::isError($db)) {
+        if (PEAR::isError($db)) {
             return $db;
         }
 
         $err = $db->connect();
-        if (DOLIPEAR::isError($err)) {
+        if (PEAR::isError($err)) {
             $dsn = $db->getDSN('string', 'xxx');
             $db->disconnect();
             $err->addUserInfo($dsn);
@@ -486,10 +486,12 @@ class MDB2
             $dsninfo = array_merge($GLOBALS['_MDB2_dsninfo_default'], $dsninfo);
             $keys = array_keys($GLOBALS['_MDB2_databases']);
             for ($i=0, $j=count($keys); $i<$j; ++$i) {
-                $tmp_dsn = $GLOBALS['_MDB2_databases'][$keys[$i]]->getDSN('array');
-                if (count(array_diff($tmp_dsn, $dsninfo)) == 0) {
-                    MDB2::setOptions($GLOBALS['_MDB2_databases'][$keys[$i]], $options);
-                    return $GLOBALS['_MDB2_databases'][$keys[$i]];
+                if (isset($GLOBALS['_MDB2_databases'][$keys[$i]])) {
+                    $tmp_dsn = $GLOBALS['_MDB2_databases'][$keys[$i]]->getDSN('array');
+                    if (count(array_diff_assoc($tmp_dsn, $dsninfo)) == 0) {
+                        MDB2::setOptions($GLOBALS['_MDB2_databases'][$keys[$i]], $options);
+                        return $GLOBALS['_MDB2_databases'][$keys[$i]];
+                    }
                 }
             }
         } elseif (is_array($GLOBALS['_MDB2_databases']) && reset($GLOBALS['_MDB2_databases'])) {
@@ -538,7 +540,7 @@ class MDB2
      */
     function apiVersion()
     {
-        return '2.3.0';
+        return '2.4.1';
     }
 
     // }}}
@@ -546,24 +548,22 @@ class MDB2
 
     /**
      * This method is used to communicate an error and invoke error
-     * callbacks etc.  Basically a wrapper for DOLIPEAR::raiseError
+     * callbacks etc.  Basically a wrapper for PEAR::raiseError
      * without the message string.
      *
-     * @param   mixed   int error code
+     * @param   mixed  int error code
      *
-     * @param   int     error mode, see PEAR_Error docs
+     * @param   int    error mode, see PEAR_Error docs
      *
-     * @param   mixed   If error mode is PEAR_ERROR_TRIGGER, this is the
+     * @param   mixed  If error mode is PEAR_ERROR_TRIGGER, this is the
      *                 error level (E_USER_NOTICE etc).  If error mode is
      *                 PEAR_ERROR_CALLBACK, this is the callback function,
      *                 either as a function name, or as an array of an
      *                 object and method name.  For other error modes this
      *                 parameter is ignored.
      *
-     * @param   string  Extra debug information.  Defaults to the last
+     * @param   string Extra debug information.  Defaults to the last
      *                 query and native error code.
-     *
-     * @param   object  a PEAR error object
      *
      * @return PEAR_Error instance of a PEAR Error object
      *
@@ -572,7 +572,7 @@ class MDB2
      */
     function &raiseError($code = null, $mode = null, $options = null, $userinfo = null)
     {
-        $err =& DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
+        $err =& PEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
         return $err;
     }
 
@@ -741,7 +741,7 @@ class MDB2
             return $errorMessages;
         }
 
-        if (DOLIPEAR::isError($value)) {
+        if (PEAR::isError($value)) {
             $value = $value->getCode();
         }
 
@@ -850,7 +850,16 @@ class MDB2
             if (strpos($dsn, '+') !== false) {
                 list($proto, $dsn) = explode('+', $dsn, 2);
             }
-            if (strpos($dsn, '/') !== false) {
+            if (   strpos($dsn, '//') === 0
+                && strpos($dsn, '/', 2) !== false
+                && $parsed['phptype'] == 'oci8'
+            ) {
+                //oracle's "Easy Connect" syntax:
+                //"username/password@[//]host[:port][/service_name]"
+                //e.g. "scott/tiger@//mymachine:1521/oracle"
+                $proto_opts = $dsn;
+                $dsn = null;
+            } elseif (strpos($dsn, '/') !== false) {
                 list($proto_opts, $dsn) = explode('/', $dsn, 2);
             } else {
                 $proto_opts = $dsn;
@@ -943,7 +952,7 @@ class MDB2
  * @category    Database
  * @author Stig Bakken <ssb@fast.no>
  */
-class MDB2_Error extends DOLIPEAR_Error
+class MDB2_Error extends PEAR_Error
 {
     // {{{ constructor: function MDB2_Error($code = MDB2_ERROR, $mode = PEAR_ERROR_RETURN, $level = E_USER_NOTICE, $debuginfo = null)
 
@@ -958,6 +967,9 @@ class MDB2_Error extends DOLIPEAR_Error
     function MDB2_Error($code = MDB2_ERROR, $mode = PEAR_ERROR_RETURN,
               $level = E_USER_NOTICE, $debuginfo = null)
     {
+        if (is_null($code)) {
+            $code = MDB2_ERROR;
+        }
         $this->PEAR_Error('MDB2 Error: '.MDB2::errorMessage($code), $code,
             $mode, $level, $debuginfo);
     }
@@ -975,7 +987,7 @@ class MDB2_Error extends DOLIPEAR_Error
  * @category    Database
  * @author      Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Common extends DOLIPEAR
+class MDB2_Driver_Common extends PEAR
 {
     // {{{ Variables (Properties)
 
@@ -1144,6 +1156,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         'emulate_prepared' => false,
         'datatype_map' => array(),
         'datatype_map_callback' => array(),
+        'nativetype_map_callback' => array(),
     );
 
     /**
@@ -1236,14 +1249,14 @@ class MDB2_Driver_Common extends DOLIPEAR
     /**
      * Database backend used in PHP (mysql, odbc etc.)
      * @var     string
-     * @access  protected
+     * @access  public
      */
     var $phptype;
 
     /**
      * Database used with regards to SQL syntax etc.
      * @var     string
-     * @access  protected
+     * @access  public
      */
     var $dbsyntax;
 
@@ -1371,7 +1384,7 @@ class MDB2_Driver_Common extends DOLIPEAR
 
     /**
      * This method is used to communicate an error and invoke error
-     * callbacks etc.  Basically a wrapper for DOLIPEAR::raiseError
+     * callbacks etc.  Basically a wrapper for PEAR::raiseError
      * without the message string.
      *
      * @param   mixed   integer error code, or a PEAR error object (all other
@@ -1396,8 +1409,8 @@ class MDB2_Driver_Common extends DOLIPEAR
     {
         $userinfo = "[Error message: $userinfo]\n";
         // The error is yet a MDB2 error object
-        if (DOLIPEAR::isError($code)) {
-            // because we use the static DOLIPEAR::raiseError, our global
+        if (PEAR::isError($code)) {
+            // because we use the static PEAR::raiseError, our global
             // handler should be used if it is set
             if (is_null($mode) && !empty($this->_default_error_mode)) {
                 $mode    = $this->_default_error_mode;
@@ -1407,6 +1420,9 @@ class MDB2_Driver_Common extends DOLIPEAR
                 $userinfo = $code->getUserinfo();
             }
             $code = $code->getCode();
+        } elseif ($code == MDB2_ERROR_NOT_FOUND) {
+            // extension not loaded: don't call $this->errorInfo() or the script
+            // will die
         } elseif (isset($this->connection)) {
             if (!empty($this->last_query)) {
                 $userinfo.= "[Last executed query: {$this->last_query}]\n";
@@ -1424,8 +1440,8 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
         }
 
-        $err =& DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
-        if ($err->getMode() !== DOLIPEAR_ERROR_RETURN
+        $err =& PEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
+        if ($err->getMode() !== PEAR_ERROR_RETURN
             && isset($this->nested_transaction_counter) && !$this->has_transaction_error) {
             $this->has_transaction_error =& $err;
         }
@@ -1718,7 +1734,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function getConnection()
     {
         $result = $this->connect();
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
         return $this->connection;
@@ -1812,17 +1828,16 @@ class MDB2_Driver_Common extends DOLIPEAR
      * loads a module
      *
      * @param   string  name of the module that should be loaded
-     *      (only used for error messages)
+     *                  (only used for error messages)
      * @param   string  name of the property into which the class will be loaded
-     * @param   bool    if the class to load for the module
-     *                                  is specific to the phptype
+     * @param   bool    if the class to load for the module is specific to the
+     *                  phptype
      *
      * @return  object  on success a reference to the given module is returned
-     *                and on failure a PEAR error
+     *                  and on failure a PEAR error
      *
      * @access  public
      */
-
     function &loadModule($module, $property = null, $phptype_specific = null)
     {
         if (!$property) {
@@ -1845,7 +1860,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
 
             $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-            if (DOLIPEAR::isError($err)) {
+            if (PEAR::isError($err)) {
                 return $err;
             }
 
@@ -1856,14 +1871,14 @@ class MDB2_Driver_Common extends DOLIPEAR
                     if ($class_name != $class_name_new) {
                         $class_name = $class_name_new;
                         $err = MDB2::loadClass($class_name, $this->getOption('debug'));
-                        if (DOLIPEAR::isError($err)) {
+                        if (PEAR::isError($err)) {
                             return $err;
                         }
                     }
                 }
             }
 
-            if (!class_exists($class_name)) {
+            if (!MDB2::classExists($class_name)) {
                 $err =& $this->raiseError(MDB2_ERROR_LOADMODULE, null, null,
                     "unable to load module '$module' into property '$property'", __FUNCTION__);
                 return $err;
@@ -1902,7 +1917,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             $method = strtolower($match[2]).$match[3];
             if (!isset($this->modules[$module]) || !is_object($this->modules[$module])) {
                 $result =& $this->loadModule($module);
-                if (DOLIPEAR::isError($result)) {
+                if (PEAR::isError($result)) {
                     return $result;
                 }
             }
@@ -2089,7 +2104,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             if ($this->supports('savepoints') && $savepoint) {
                 if ($force_rollback || $this->has_transaction_error) {
                     $result = $this->rollback($savepoint);
-                    if (!DOLIPEAR::isError($result)) {
+                    if (!PEAR::isError($result)) {
                         $result = false;
                         $this->has_transaction_error = false;
                     }
@@ -2110,7 +2125,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         if ($this->in_transaction) {
             if ($force_rollback || $this->has_transaction_error) {
                 $result = $this->rollback();
-                if (!DOLIPEAR::isError($result)) {
+                if (!PEAR::isError($result)) {
                     $result = false;
                 }
             } else {
@@ -2212,10 +2227,10 @@ class MDB2_Driver_Common extends DOLIPEAR
      * Log out and disconnect from the database.
      *
      * @param   bool    if the disconnect should be forced even if the
-     *                        connection is opened persistently
+     *                  connection is opened persistently
      *
      * @return  mixed   true on success, false if not connected and error
-     *                object on error
+     *                  object on error
      *
      * @access  public
      */
@@ -2227,7 +2242,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         $this->opened_persistent = null;
         $this->connected_server_info = '';
         $this->in_transaction = null;
-        $this->nested_transaction_counter = 0;
+        $this->nested_transaction_counter = null;
         return MDB2_OK;
     }
 
@@ -2351,12 +2366,12 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, $is_manip, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIPEAR::isError($connection)) {
+        if (PEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, $is_manip, $connection, false);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
 
@@ -2407,7 +2422,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         $this->last_query = $query;
         $result = $this->debug($query, 'query', array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (DOLIPEAR::isError($result)) {
+            if (PEAR::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -2437,18 +2452,18 @@ class MDB2_Driver_Common extends DOLIPEAR
     }
 
     // }}}
-    // {{{ function exec($query)
+    // {{{ function &exec($query)
 
     /**
-     * Execute a manipulation query to the database and return any the affected rows
+     * Execute a manipulation query to the database and return the number of affected rows
      *
      * @param   string  the SQL query
      *
-     * @return  mixed   affected rows on success, a MDB2 error on failure
+     * @return  mixed   number of affected rows on success, a MDB2 error on failure
      *
      * @access  public
      */
-    function exec($query)
+    function &exec($query)
     {
         $offset = $this->offset;
         $limit = $this->limit;
@@ -2456,16 +2471,17 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, true, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIPEAR::isError($connection)) {
+        if (PEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, true, $connection, $this->database_name);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
 
-        return $this->_affectedRows($connection, $result);
+        $affectedRows = $this->_affectedRows($connection, $result);
+        return $affectedRows;
     }
 
     // }}}
@@ -2479,9 +2495,8 @@ class MDB2_Driver_Common extends DOLIPEAR
      *                        the result set
      * @param   mixed   string which specifies which result class to use
      * @param   mixed   string which specifies which class to wrap results in
-     * @param   object  a result handle on success, a MDB2 error on failure
      *
-     * @return mixed   an MDB2_Result, a MDB2 error on failure
+     * @return mixed   an MDB2_Result handle on success, a MDB2 error on failure
      *
      * @access  public
      */
@@ -2493,12 +2508,12 @@ class MDB2_Driver_Common extends DOLIPEAR
         $query = $this->_modifyQuery($query, false, $limit, $offset);
 
         $connection = $this->getConnection();
-        if (DOLIPEAR::isError($connection)) {
+        if (PEAR::isError($connection)) {
             return $connection;
         }
 
         $result =& $this->_doQuery($query, false, $connection, $this->database_name);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
 
@@ -2531,7 +2546,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             if ($this->supports('result_introspection')) {
                 $this->loadModule('Reverse', null, true);
                 $tableInfo = $this->reverse->tableInfo($result);
-                if (DOLIPEAR::isError($tableInfo)) {
+                if (PEAR::isError($tableInfo)) {
                     return $tableInfo;
                 }
                 $types = array();
@@ -2550,7 +2565,7 @@ class MDB2_Driver_Common extends DOLIPEAR
 
         if ($result_class) {
             $class_name = sprintf($result_class, $this->phptype);
-            if (!class_exists($class_name)) {
+            if (!MDB2::classExists($class_name)) {
                 $err =& $this->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                     'result class does not exist '.$class_name, __FUNCTION__);
                 return $err;
@@ -2563,7 +2578,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
             if (!empty($types)) {
                 $err = $result->setResultTypes($types);
-                if (DOLIPEAR::isError($err)) {
+                if (PEAR::isError($err)) {
                     $result->free();
                     return $err;
                 }
@@ -2573,7 +2588,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             $result_wrap_class = $this->options['result_wrap_class'];
         }
         if ($result_wrap_class) {
-            if (!class_exists($result_wrap_class)) {
+            if (!MDB2::classExists($result_wrap_class)) {
                 $err =& $this->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
                     'result wrap class does not exist '.$result_wrap_class, __FUNCTION__);
                 return $err;
@@ -2589,7 +2604,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     /**
      * return version information about the server
      *
-     * @param   string  determines if the raw version string should be returned
+     * @param   bool    determines if the raw version string should be returned
      *
      * @return  mixed   array with version information or row string
      *
@@ -2664,7 +2679,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         }
 
         $col = $this->queryCol($query, $type);
-        if (DOLIPEAR::isError($col)) {
+        if (PEAR::isError($col)) {
             return $col;
         }
         if (!is_array($col) || count($col) == 0) {
@@ -2775,38 +2790,38 @@ class MDB2_Driver_Common extends DOLIPEAR
 
         $result = null;
         $in_transaction = $this->in_transaction;
-        if (!$in_transaction && DOLIPEAR::isError($result = $this->beginTransaction())) {
+        if (!$in_transaction && PEAR::isError($result = $this->beginTransaction())) {
             return $result;
         }
 
         $connection = $this->getConnection();
-        if (DOLIPEAR::isError($connection)) {
+        if (PEAR::isError($connection)) {
             return $connection;
         }
 
         $condition = ' WHERE '.implode(' AND ', $condition);
         $query = "DELETE FROM $table$condition";
         $result =& $this->_doQuery($query, true, $connection);
-        if (!DOLIPEAR::isError($result)) {
+        if (!PEAR::isError($result)) {
             $affected_rows = $this->_affectedRows($connection, $result);
             $insert = implode(', ', array_keys($values));
             $values = implode(', ', $values);
             $query = "INSERT INTO $table ($insert) VALUES ($values)";
             $result =& $this->_doQuery($query, true, $connection);
-            if (!DOLIPEAR::isError($result)) {
+            if (!PEAR::isError($result)) {
                 $affected_rows += $this->_affectedRows($connection, $result);;
             }
         }
 
         if (!$in_transaction) {
-            if (DOLIPEAR::isError($result)) {
+            if (PEAR::isError($result)) {
                 $this->rollback();
             } else {
                 $result = $this->commit();
             }
         }
 
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
 
@@ -2832,8 +2847,8 @@ class MDB2_Driver_Common extends DOLIPEAR
      *                        MDB2_PREPARE_MANIP the query is handled as a manipulation query
      * @param   mixed   key (field) value (parameter) pair for all lob placeholders
      *
-     * @return  mixed   resource handle for the prepared query on success, a MDB2
-     *        error on failure
+     * @return  mixed   resource handle for the prepared query on success, 
+     *                  a MDB2 error on failure
      *
      * @access  public
      * @see     bindParam, execute
@@ -2846,7 +2861,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         $this->offset = $this->limit = 0;
         $result = $this->debug($query, __FUNCTION__, array('is_manip' => $is_manip, 'when' => 'pre'));
         if ($result) {
-            if (DOLIPEAR::isError($result)) {
+            if (PEAR::isError($result)) {
                 return $result;
             }
             $query = $result;
@@ -2876,7 +2891,7 @@ class MDB2_Driver_Common extends DOLIPEAR
             }
 
             $new_pos = $this->_skipDelimitedStrings($query, $position, $p_position);
-            if (DOLIPEAR::isError($new_pos)) {
+            if (PEAR::isError($new_pos)) {
                 return $new_pos;
             }
             if ($new_pos != $position) {
@@ -2929,7 +2944,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     }
 
     // }}}
-    // {{{ function _skipDelimitedStrings($value, $type = null, $quote = true)
+    // {{{ function _skipDelimitedStrings($query, $position, $p_position)
     
     /**
      * Utility method, used by prepare() to avoid replacing placeholders within delimited strings.
@@ -2937,9 +2952,9 @@ class MDB2_Driver_Common extends DOLIPEAR
      * If so, skip it and advance the position, otherwise return the current position,
      * which is valid
      *
-     * @param $query
-     * @param $position current string cursor position
-     * @param $p_position placeholder position
+     * @param string $query
+     * @param integer $position current string cursor position
+     * @param integer $p_position placeholder position
      *
      * @return mixed integer $new_position on success
      *               MDB2_Error on failure
@@ -2984,6 +2999,7 @@ class MDB2_Driver_Common extends DOLIPEAR
      *
      * @param   string  text string value that is intended to be converted.
      * @param   string  type to which the value should be converted to
+     * @param   bool    quote
      * @param   bool    escape wildcards
      *
      * @return  string  text string that represents the given argument value in
@@ -2994,7 +3010,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function quote($value, $type = null, $quote = true, $escape_wildcards = false)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
 
@@ -3020,7 +3036,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function getDeclaration($type, $name, $field)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
         return $this->datatype->getDeclaration($type, $name, $field);
@@ -3042,7 +3058,7 @@ class MDB2_Driver_Common extends DOLIPEAR
     function compareDefinition($current, $previous)
     {
         $result = $this->loadModule('Datatype', null, true);
-        if (DOLIPEAR::isError($result)) {
+        if (PEAR::isError($result)) {
             return $result;
         }
         return $this->datatype->compareDefinition($current, $previous);
@@ -3391,11 +3407,11 @@ class MDB2_Result_Common extends MDB2_Result
     function setResultTypes($types)
     {
         $load = $this->db->loadModule('Datatype', null, true);
-        if (DOLIPEAR::isError($load)) {
+        if (PEAR::isError($load)) {
             return $load;
         }
         $types = $this->db->datatype->checkResultTypes($types);
-        if (DOLIPEAR::isError($types)) {
+        if (PEAR::isError($types)) {
             return $types;
         }
         $this->types = $types;
@@ -3464,7 +3480,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         $fetchmode = is_numeric($colnum) ? MDB2_FETCHMODE_ORDERED : MDB2_FETCHMODE_ASSOC;
         $row = $this->fetchRow($fetchmode, $rownum);
-        if (!is_array($row) || DOLIPEAR::isError($row)) {
+        if (!is_array($row) || PEAR::isError($row)) {
             return $row;
         }
         if (!array_key_exists($colnum, $row)) {
@@ -3500,7 +3516,7 @@ class MDB2_Result_Common extends MDB2_Result
                 $column[] = $row[$colnum];
             } while (is_array($row = $this->fetchRow($fetchmode)));
         }
-        if (DOLIPEAR::isError($row)) {
+        if (PEAR::isError($row)) {
             return $row;
         }
         return $column;
@@ -3537,7 +3553,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         $all = array();
         $row = $this->fetchRow($fetchmode);
-        if (DOLIPEAR::isError($row)) {
+        if (PEAR::isError($row)) {
             return $row;
         } elseif (!$row) {
             return $all;
@@ -3630,13 +3646,10 @@ class MDB2_Result_Common extends MDB2_Result
     /**
      * Move the internal result pointer to the next available result
      *
-     * @param   a valid result resource
-     *
      * @return  true on success, false if there is no more result set or an error object on failure
      *
      * @access  public
      */
-
     function nextResult()
     {
         return $this->db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
@@ -3663,7 +3676,7 @@ class MDB2_Result_Common extends MDB2_Result
     {
         if (!isset($this->column_names)) {
             $result = $this->_getColumnNames();
-            if (DOLIPEAR::isError($result)) {
+            if (PEAR::isError($result)) {
                 return $result;
             }
             $this->column_names = $result;
@@ -3951,7 +3964,7 @@ class MDB2_Statement_Common
         $parameters = array_keys($values);
         foreach ($parameters as $key => $parameter) {
             $err = $this->bindValue($parameter, $values[$parameter], $types[$key]);
-            if (DOLIPEAR::isError($err)) {
+            if (PEAR::isError($err)) {
                 return $err;
             }
         }
@@ -4012,7 +4025,7 @@ class MDB2_Statement_Common
         $parameters = array_keys($values);
         foreach ($parameters as $key => $parameter) {
             $err = $this->bindParam($parameter, $values[$parameter], $types[$key]);
-            if (DOLIPEAR::isError($err)) {
+            if (PEAR::isError($err)) {
                 return $err;
             }
         }
@@ -4044,7 +4057,11 @@ class MDB2_Statement_Common
 
         $values = (array)$values;
         if (!empty($values)) {
-            $this->bindValueArray($values);
+            $err = $this->bindValueArray($values);
+            if (PEAR::isError($err)) {
+                return $this->db->raiseError(MDB2_ERROR, null, null,
+                                            'Binding Values failed with message: ' . $err->getMessage(), __FUNCTION__);
+            }
         }
         $result =& $this->_execute($result_class, $result_wrap_class);
         return $result;
@@ -4080,7 +4097,7 @@ class MDB2_Statement_Common
             } else {
                 $type = !empty($this->types[$parameter]) ? $this->types[$parameter] : null;
                 $value_quoted = $this->db->quote($value, $type);
-                if (DOLIPEAR::isError($value_quoted)) {
+                if (PEAR::isError($value_quoted)) {
                     return $value_quoted;
                 }
             }
