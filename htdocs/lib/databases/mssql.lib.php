@@ -571,7 +571,7 @@ class DoliDb
     */
     function last_insert_id($tab)
     {
-		return query("SELECT @@identity ');
+		return query("SELECT @@identity ");
 
 		//return mssql_insert_id($this->db);
     }    
@@ -601,13 +601,15 @@ class DoliDb
   */
   function getGrantForUserQuery($databaseuser)
   {
-	  /*$query = "DECLARE @tables TABLE(ROWID int IDENTITY(1,1), SQLSTR varchar(500)) INSERT INTO @tables SELECT '"
+	  /*
+	  $query = "DECLARE @tables TABLE(ROWID int IDENTITY(1,1), SQLSTR varchar(500)) INSERT INTO @tables SELECT '"
 	  $query .= "GRANT SELECT ON '+NAME+' TO ".$databaseuser." FROM sysobjects WHERE TYPE = 'U' AND "
 	  $query .= "NAME NOT LIKE 'SYNC%' DECLARE   @rowid int, @sqlstr varchar(500) SET @rowid = 0 "
 	  $query .= "SET @sqlstr = '' DECLARE grant_tbl_cursor CURSOR FOR SELECT ROWID, SQLSTR FROM @tables ORDER BY ROWID"
 	  $query .= "OPEN grant_tbl_cursor FETCH NEXT FROM grant_tbl_cursor INTO @rowid,@sqlstr WHILE @@FETCH_STATUS = 0 "
 	  $query .= "BEGIN EXECUTE (@sqlstr) FETCH NEXT FROM grant_tbl_cursor INTO @rowid,@sqlstr END CLOSE grant_tbl_cursor "
-	  $query .= "DEALLOCATE grant_tbl_cursor"*/
+	  $query .= "DEALLOCATE grant_tbl_cursor"
+	  */
     return '';
   }
   
