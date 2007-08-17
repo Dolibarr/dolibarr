@@ -249,14 +249,14 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    {
 	        // Authentification Auth OK, on va chercher le login
 			$login=$aDol->getUsername();
-	        dolibarr_syslog ("Authentification ok (en mode Pear Base Dolibarr)");
+	        dolibarr_syslog ("Authentification ok (en mode Pear Base Dolibarr_mdb2)");
 		}
 		else
 		{
 	        if (isset($_POST["loginfunction"]))
 	        {
 	            // Echec authentification
-	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr) pour '".$_POST["username"]."'");
+	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr_mdb2) pour '".$_POST["username"]."'");
 	        }
 	        else 
 	        {
