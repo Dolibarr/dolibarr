@@ -474,13 +474,13 @@ class DB_pgsql extends DB_common
         $seqname = $this->getSequenceName($seq_name);
         $repeat = false;
         do {
-            $this->pushErrorHandling(PEAR_ERROR_RETURN);
+            $this->pushErrorHandling(DOLIPEAR_ERROR_RETURN);
             $result = $this->query("SELECT NEXTVAL('${seqname}')");
             $this->popErrorHandling();
             if ($ondemand && DB::isError($result) &&
                 $result->getCode() == DB_ERROR_NOSUCHTABLE) {
                 $repeat = true;
-                $this->pushErrorHandling(PEAR_ERROR_RETURN);
+                $this->pushErrorHandling(DOLIPEAR_ERROR_RETURN);
                 $result = $this->createSequence($seq_name);
                 $this->popErrorHandling();
                 if (DB::isError($result)) {

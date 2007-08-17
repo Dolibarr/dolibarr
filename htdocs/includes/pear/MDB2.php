@@ -964,7 +964,7 @@ class MDB2_Error extends DOLIPEAR_Error
      * @param   int     what error level to use for $mode & PEAR_ERROR_TRIGGER
      * @param   smixed   additional debug info, such as the last query
      */
-    function MDB2_Error($code = MDB2_ERROR, $mode = PEAR_ERROR_RETURN,
+    function MDB2_Error($code = MDB2_ERROR, $mode = DOLIPEAR_ERROR_RETURN,
               $level = E_USER_NOTICE, $debuginfo = null)
     {
         if (is_null($code)) {
@@ -1441,7 +1441,7 @@ class MDB2_Driver_Common extends DOLIPEAR
         }
 
         $err =& DOLIPEAR::raiseError(null, $code, $mode, $options, $userinfo, 'MDB2_Error', true);
-        if ($err->getMode() !== PEAR_ERROR_RETURN
+        if ($err->getMode() !== DOLIPEAR_ERROR_RETURN
             && isset($this->nested_transaction_counter) && !$this->has_transaction_error) {
             $this->has_transaction_error =& $err;
         }

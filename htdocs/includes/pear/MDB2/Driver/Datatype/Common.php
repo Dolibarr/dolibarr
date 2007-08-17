@@ -45,7 +45,7 @@
 // $Id$
 
 //require_once 'MDB2/LOB.php';
-require_once PEAR_PATH."/MDB2/LOB.php';
+require_once PEAR_PATH."/MDB2/LOB.php";
 
 /**
  * @package  MDB2

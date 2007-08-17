@@ -488,7 +488,7 @@ class DB_mysql extends DB_common
         $seqname = $this->getSequenceName($seq_name);
         do {
             $repeat = 0;
-            $this->pushErrorHandling(PEAR_ERROR_RETURN);
+            $this->pushErrorHandling(DOLIPEAR_ERROR_RETURN);
             $result = $this->query("UPDATE ${seqname} ".
                                    'SET id=LAST_INSERT_ID(id+1)');
             $this->popErrorHandling();

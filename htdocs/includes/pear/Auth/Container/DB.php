@@ -102,7 +102,7 @@ class Auth_Container_DB extends Auth_Container
         } else {
             return DOLIPEAR::raiseError('The given dsn was not valid in file ' . __FILE__ . ' at line ' . __LINE__,
                                     41,
-                                    PEAR_ERROR_RETURN,
+                                    DOLIPEAR_ERROR_RETURN,
                                     null,
                                     null
                                     );
