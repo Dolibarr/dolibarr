@@ -45,8 +45,7 @@
 // $Id$
 //
 
-//require_once 'MDB2/Driver/Function/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Function/Common.php";
+require_once 'MDB2/Driver/Function/Common.php';
 
 // {{{ class MDB2_Driver_Function_mssql
 /**
@@ -142,6 +141,20 @@ class MDB2_Driver_Function_mssql extends MDB2_Driver_Function_Common
     {
         $args = func_get_args();
         return "(".implode(' + ', $args).")";
+    }
+
+    // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        return 'NEWID()';
     }
 
     // }}}

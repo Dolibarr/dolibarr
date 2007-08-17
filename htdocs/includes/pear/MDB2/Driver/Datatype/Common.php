@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -44,8 +44,7 @@
 //
 // $Id$
 
-//require_once 'MDB2/LOB.php';
-require_once PEAR_PATH."/MDB2/LOB.php";
+require_once 'MDB2/LOB.php';
 
 /**
  * @package  MDB2
@@ -129,7 +128,7 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
      * function is not called, the type of all result set columns is assumed
      * to be text, thus leading to not perform any conversions.
      *
-     * @param string $types array variable that lists the
+     * @param array $types array variable that lists the
      *       data types to be expected in the result set columns. If this array
      *       contains less types than the number of columns that are returned
      *       in the result set, the remaining columns are assumed to be of the
@@ -160,11 +159,12 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
     // {{{ _baseConvertResult()
 
     /**
-     * general type conversion method
+     * General type conversion method
      *
-     * @param mixed $value refernce to a value to be converted
-     * @param string $type specifies which type to convert to
-     * @return object a MDB2 error on failure
+     * @param mixed   $value reference to a value to be converted
+     * @param string  $type  specifies which type to convert to
+     * @param boolean $rtrim [optional] when TRUE [default], apply rtrim() to text
+     * @return object an MDB2 error on failure
      * @access protected
      */
     function _baseConvertResult($value, $type, $rtrim = true)
@@ -219,11 +219,11 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
     // {{{ convertResult()
 
     /**
-     * convert a value to a RDBMS indepdenant MDB2 type
+     * Convert a value to a RDBMS indipendent MDB2 type
      *
-     * @param mixed $value value to be converted
-     * @param string $type specifies which type to convert to
-     * @param bool   $rtrim   if to rtrim text values or not
+     * @param mixed   $value value to be converted
+     * @param string  $type  specifies which type to convert to
+     * @param boolean $rtrim [optional] when TRUE [default], apply rtrim() to text
      * @return mixed converted value
      * @access public
      */
@@ -250,40 +250,73 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
     // {{{ convertResultRow()
 
     /**
-     * convert a result row
+     * Convert a result row
      *
-     * @param array $types 
-     * @param array $row specifies the types to convert to
-     * @param bool   $rtrim   if to rtrim text values or not
-     * @return mixed MDB2_OK on success,  a MDB2 error on failure
+     * @param array   $types
+     * @param array   $row   specifies the types to convert to
+     * @param boolean $rtrim [optional] when TRUE [default], apply rtrim() to text
+     * @return mixed MDB2_OK on success, an MDB2 error on failure
      * @access public
      */
     function convertResultRow($types, $row, $rtrim = true)
     {
-        reset($types);
-        $current_column = -1;
+        $types = $this->_sortResultFieldTypes(array_keys($row), $types);
         foreach ($row as $key => $value) {
-            ++$current_column;
-            if (!isset($value)) {
+            if (empty($types[$key])) {
                 continue;
             }
-            if (isset($types[$current_column])) {
-                $type = $types[$current_column];
-            } elseif (isset($types[$key])) {
-                $type = $types[$key];
-            } elseif (current($types)) {
-                $type = current($types);
-                next($types);
-            } else {
-                continue;
-            }
-            $value = $this->convertResult($row[$key], $type, $rtrim);
+            $value = $this->convertResult($row[$key], $types[$key], $rtrim);
             if (PEAR::isError($value)) {
                 return $value;
             }
             $row[$key] = $value;
         }
         return $row;
+    }
+
+    // }}}
+    // {{{ _sortResultFieldTypes()
+
+    /**
+     * convert a result row
+     *
+     * @param array $types
+     * @param array $row specifies the types to convert to
+     * @param bool   $rtrim   if to rtrim text values or not
+     * @return mixed MDB2_OK on success,  a MDB2 error on failure
+     * @access public
+     */
+    function _sortResultFieldTypes($columns, $types)
+    {
+        $n_cols = count($columns);
+        $n_types = count($types);
+        if ($n_cols > $n_types) {
+            for ($i= $n_cols - $n_types; $i >= 0; $i--) {
+                $types[] = null;
+            }
+        }
+        $sorted_types = array();
+        foreach ($columns as $col) {
+            $sorted_types[$col] = null;
+        }
+        foreach ($types as $name => $type) {
+            if (array_key_exists($name, $sorted_types)) {
+                $sorted_types[$name] = $type;
+                unset($types[$name]);
+            }
+        }
+        // if there are left types in the array, fill the null values of the
+        // sorted array with them, in order.
+        if (count($types)) {
+            reset($types);
+            foreach (array_keys($sorted_types) as $k) {
+                if (is_null($sorted_types[$k])) {
+                    $sorted_types[$k] = current($types);
+                    next($types);
+                }
+            }
+        }
+        return $sorted_types;
     }
 
     // }}}
@@ -313,6 +346,7 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
                 $parameter = array('type' => $type, 'name' => $name, 'field' => $field);
                 return call_user_func_array($db->options['datatype_map_callback'][$type], array(&$db, __FUNCTION__, $parameter));
             }
+            $field['type'] = $type;
         }
 
         if (!method_exists($this, "_get{$type}Declaration")) {
@@ -411,7 +445,7 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
      *      collation
      *          Text value with the default COLLATION for this field.
      * @return string  DBMS specific SQL code portion that should be used to
-     *      declare the specified field.
+     *      declare the specified field, or a MDB2_Error on failure
      * @access protected
      */
     function _getDeclaration($name, $field)
@@ -421,11 +455,58 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
             return $db;
         }
 
+        $name = $db->quoteIdentifier($name, true);
+        $declaration_options = $db->datatype->_getDeclarationOptions($field);
+        if (PEAR::isError($declaration_options)) {
+            return $declaration_options;
+        }
+        return $name.' '.$this->getTypeDeclaration($field).$declaration_options;
+    }
+
+    // }}}
+    // {{{ _getDeclarationOptions()
+
+    /**
+     * Obtain DBMS specific SQL code portion needed to declare a generic type
+     * field to be used in statement like CREATE TABLE, without the field name
+     * and type values (ie. just the character set, default value, if the
+     * field is permitted to be NULL or not, and the collation options).
+     *
+     * @param array  $field  associative array with the name of the properties
+     *      of the field being declared as array indexes. Currently, the types
+     *      of supported field properties are as follows:
+     *
+     *      default
+     *          Text value to be used as default for this field.
+     *      notnull
+     *          Boolean flag that indicates whether this field is constrained
+     *          to not be set to null.
+     *      charset
+     *          Text value with the default CHARACTER SET for this field.
+     *      collation
+     *          Text value with the default COLLATION for this field.
+     * @return string  DBMS specific SQL code portion that should be used to
+     *      declare the specified field's options.
+     * @access protected
+     */
+    function _getDeclarationOptions($field)
+    {
+        $charset = empty($field['charset']) ? '' :
+            ' '.$this->_getCharsetFieldDeclaration($field['charset']);
+
         $default = '';
         if (array_key_exists('default', $field)) {
             if ($field['default'] === '') {
-                $field['default'] = empty($field['notnull'])
-                    ? null : $this->valid_default_values[$field['type']];
+                $db =& $this->getDBInstance();
+                if (PEAR::isError($db)) {
+                    return $db;
+                }
+                if (empty($field['notnull'])) {
+                    $field['default'] = null;
+                } else {
+                    $valid_default_values = $this->getValidTypes();
+                    $field['default'] = $valid_default_values[$field['type']];
+                }
                 if ($field['default'] === ''
                     && ($db->options['portability'] & MDB2_PORTABILITY_EMPTY_TO_NULL)
                 ) {
@@ -437,15 +518,11 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
             $default = ' DEFAULT NULL';
         }
 
-        $charset = empty($field['charset']) ? '' :
-            ' '.$this->_getCharsetFieldDeclaration($field['charset']);
+        $notnull = empty($field['notnull']) ? '' : ' NOT NULL';
         
         $collation = empty($field['collation']) ? '' :
             ' '.$this->_getCollationFieldDeclaration($field['collation']);
-        
-        $notnull = empty($field['notnull']) ? '' : ' NOT NULL';
-        $name = $db->quoteIdentifier($name, true);
-        return $name.' '.$this->getTypeDeclaration($field).$charset.$default.$notnull.$collation;
+        return $charset.$default.$notnull.$collation;
     }
 
     // }}}
@@ -805,7 +882,11 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
             if (PEAR::isError($db)) {
                 return $db;
             }
-
+            if (!empty($db->options['datatype_map_callback'][$type])) {
+                $parameter = array('current' => $current, 'previous' => $previous);
+                $change =  call_user_func_array($db->options['datatype_map_callback'][$type], array(&$db, __FUNCTION__, $parameter));
+                return $change;
+            }
             return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
                 'type "'.$current['type'].'" is not yet supported', __FUNCTION__);
         }
@@ -1146,6 +1227,9 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
         }
 
         $value = $db->escape($value, $escape_wildcards);
+        if (PEAR::isError($value)) {
+            return $value;
+        }
         return "'".$value."'";
     }
 
@@ -1208,6 +1292,9 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
     function _quoteLOB($value, $quote, $escape_wildcards)
     {
         $value = $this->_readFile($value);
+        if (PEAR::isError($value)) {
+            return $value;
+        }
         return $this->_quoteText($value, $quote, $escape_wildcards);
     }
 
@@ -1399,6 +1486,7 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
     function _quoteDecimal($value, $quote, $escape_wildcards)
     {
         $value = (string)$value;
+        $value = preg_replace('/[^\d\.,\-+eE]/', '', $value);
         if (preg_match('/[^.0-9]/', $value)) {
             if (strpos($value, ',')) {
                 // 1000,00
@@ -1617,7 +1705,7 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
                         'case insensitive LIKE matching requires passing the field name', __FUNCTION__);
                 }
                 $db->loadModule('Function', null, true);
-                $match = $db->function->lower($field).' '.'LIKE ';
+                $match = $db->function->lower($field).' LIKE ';
                 break;
             // case sensitive
             case 'LIKE':
@@ -1636,7 +1724,11 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
                 if ($operator === 'ILIKE') {
                     $value = strtolower($value);
                 }
-                $match.= $db->escapePattern($db->escape($value));
+                $escaped = $db->escape($value);
+                if (PEAR::isError($escaped)) {
+                    return $escaped;
+                }
+                $match.= $db->escapePattern($escaped);
             }
         }
         $match.= "'";
@@ -1681,6 +1773,35 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
             return $db;
         }
 
+        // If the user has specified an option to map the native field
+        // type to a custom MDB2 datatype...
+        $db_type = strtok($field['type'], '(), ');
+        if (!empty($db->options['nativetype_map_callback'][$db_type])) {
+            return call_user_func_array($db->options['nativetype_map_callback'][$db_type], array($db, $field));
+        }
+
+        // Otherwise perform the built-in (i.e. normal) MDB2 native type to
+        // MDB2 datatype conversion
+        return $this->_mapNativeDatatype($field);
+    }
+
+    // }}}
+    // {{{ _mapNativeDatatype()
+
+    /**
+     * Maps a native array description of a field to a MDB2 datatype and length
+     *
+     * @param array  $field native field description
+     * @return array containing the various possible types, length, sign, fixed
+     * @access public
+     */
+    function _mapNativeDatatype($field)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
         return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
             'method not implemented', __FUNCTION__);
     }
@@ -1713,5 +1834,4 @@ class MDB2_Driver_Datatype_Common extends MDB2_Module_Common
         return $type;
     }
 }
-
 ?>

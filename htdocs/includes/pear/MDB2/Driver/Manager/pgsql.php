@@ -63,7 +63,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
      * @param string $name name of the database that should be created
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function createDatabase($name)
     {
         $db =& $this->getDBInstance();
@@ -84,7 +84,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
      * @param string $name name of the database that should be dropped
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function dropDatabase($name)
     {
         $db =& $this->getDBInstance();
@@ -187,7 +187,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
      *                             actually perform them otherwise.
      * @access public
      *
-      * @return mixed MDB2_OK on success, a MDB2 error on failure
+     * @return mixed MDB2_OK on success, a MDB2 error on failure
      */
     function alterTable($name, $changes, $check)
     {
@@ -299,9 +299,9 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all databases
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of database names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listDatabases()
     {
         $db =& $this->getDBInstance();
@@ -332,9 +332,9 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all users
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of user names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listUsers()
     {
         $db =& $this->getDBInstance();
@@ -357,11 +357,11 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     // {{{ listViews()
 
     /**
-     * list the views in the database
+     * list all views in the current database
      *
-     * @return mixed MDB2_OK on success, a MDB2 error on failure
+     * @return mixed array of view names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listViews()
     {
         $db =& $this->getDBInstance();
@@ -369,7 +369,10 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
             return $db;
         }
 
-        $query = 'SELECT viewname FROM pg_views';
+        $query = "SELECT viewname
+                    FROM pg_views
+                   WHERE schemaname NOT IN ('pg_catalog', 'information_schema')
+                     AND viewname !~ '^pg_'";
         $result = $db->queryCol($query);
         if (PEAR::isError($result)) {
             return $result;
@@ -386,10 +389,10 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list the views in the database that reference a given table
      *
-     * @param string table for which all references views should be found
-     * @return mixed MDB2_OK on success, a MDB2 error on failure
+     * @param string table for which all referenced views should be found
+     * @return mixed array of view names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listTableViews($table)
     {
         $db =& $this->getDBInstance();
@@ -415,7 +418,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all functions in the current database
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of function names on success, a MDB2 error on failure
      * @access public
      */
     function listFunctions()
@@ -448,14 +451,49 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     }
 
     // }}}
+    // {{{ listTableTriggers()
+
+    /**
+     * list all triggers in the database that reference a given table
+     *
+     * @param string table for which all referenced triggers should be found
+     * @return mixed array of trigger names on success, a MDB2 error on failure
+     * @access public
+     */
+    function listTableTriggers($table = null)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = 'SELECT trg.tgname AS trigger_name
+                    FROM pg_trigger trg,
+                         pg_class tbl
+                   WHERE trg.tgrelid = tbl.oid';
+        if (!is_null($table)) {
+            $table = $db->quote(strtoupper($table), 'text');
+            $query .= " AND tbl.relname = $table";
+        }
+        $result = $db->queryCol($query);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            $result = array_map(($db->options['field_case'] == CASE_LOWER ? 'strtolower' : 'strtoupper'), $result);
+        }
+        return $result;
+    }
+
+    // }}}
     // {{{ listTables()
 
     /**
      * list all tables in the current database
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of table names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listTables()
     {
         $db =& $this->getDBInstance();
@@ -497,10 +535,10 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     // {{{ listTableFields()
 
     /**
-     * list all fields in a tables in the current database
+     * list all fields in a table in the current database
      *
      * @param string $table name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of field names on success, a MDB2 error on failure
      * @access public
      */
     function listTableFields($table)
@@ -530,8 +568,8 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all indexes in a table
      *
-     * @param string    $table      name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string $table name of table that should be used in method
+     * @return mixed array of index names on success, a MDB2 error on failure
      * @access public
      */
     function listTableIndexes($table)
@@ -570,8 +608,8 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all constraints in a table
      *
-     * @param string    $table      name of table that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string $table name of table that should be used in method
+     * @return mixed array of constraint names on success, a MDB2 error on failure
      * @access public
      */
     function listTableConstraints($table)
@@ -616,7 +654,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
      * @param string $start start value of the sequence; default is 1
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function createSequence($seq_name, $start = 1)
     {
         $db =& $this->getDBInstance();
@@ -638,7 +676,7 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
      * @param string $seq_name name of the sequence to be dropped
      * @return mixed MDB2_OK on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function dropSequence($seq_name)
     {
         $db =& $this->getDBInstance();
@@ -656,9 +694,9 @@ class MDB2_Driver_Manager_pgsql extends MDB2_Driver_Manager_Common
     /**
      * list all sequences in the current database
      *
-     * @return mixed data array on success, a MDB2 error on failure
+     * @return mixed array of sequence names on success, a MDB2 error on failure
      * @access public
-     **/
+     */
     function listSequences()
     {
         $db =& $this->getDBInstance();

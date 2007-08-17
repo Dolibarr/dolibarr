@@ -73,11 +73,14 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getTableFieldDefinition()
 
     /**
-     * Get the stucture of a field into an array
+     * Get the structure of a field into an array
      *
-     * @param string    $table         name of table that should be used in method
-     * @param string    $fields     name of field that should be used in method
-     * @return mixed data array on success, a MDB2 error on failure
+     * @param string    $table     name of table that should be used in method
+     * @param string    $field     name of field that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure.
+     *          The returned array contains an array for each field definition,
+     *          with all or some of these indices, depending on the field data type:
+     *          [notnull] [nativetype] [length] [fixed] [default] [type] [mdb2type]
      * @access public
      */
     function getTableFieldDefinition($table, $field)
@@ -95,11 +98,23 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getTableIndexDefinition()
 
     /**
-     * Get the stucture of an index into an array
+     * Get the structure of an index into an array
      *
      * @param string    $table      name of table that should be used in method
      * @param string    $index      name of index that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          </pre>
+     *          array (
+     *              [fields] => array (
+     *                  [field1name] => array() // one entry per each field covered
+     *                  [field2name] => array() // by the index
+     *                  [field3name] => array(
+     *                      [sorting] => ascending
+     *                  )
+     *              )
+     *          );
+     *          </pre>
      * @access public
      */
     function getTableIndexDefinition($table, $index)
@@ -117,11 +132,24 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getTableConstraintDefinition()
 
     /**
-     * Get the stucture of an constraints into an array
+     * Get the structure of an constraints into an array
      *
      * @param string    $table      name of table that should be used in method
      * @param string    $index      name of index that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [primary] => 1
+     *              [fields] => array (
+     *                  [field1name] => array() // one entry per each field covered
+     *                  [field2name] => array() // by the index
+     *                  [field3name] => array(
+     *                      [sorting] => ascending
+     *                  )
+     *              )
+     *          );
+     *          </pre>
      * @access public
      */
     function getTableConstraintDefinition($table, $index)
@@ -139,10 +167,16 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getSequenceDefinition()
 
     /**
-     * Get the stucture of a sequence into an array
+     * Get the structure of a sequence into an array
      *
      * @param string    $sequence   name of sequence that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [start] => n
+     *          );
+     *          </pre>
      * @access public
      */
     function getSequenceDefinition($sequence)
@@ -173,10 +207,29 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     // {{{ getTriggerDefinition()
 
     /**
-     * Get the stucture of an trigger into an array
+     * Get the structure of a trigger into an array
+     *
+     * EXPERIMENTAL
+     *
+     * WARNING: this function is experimental and may change the returned value 
+     * at any time until labelled as non-experimental
      *
      * @param string    $trigger    name of trigger that should be used in method
      * @return mixed data array on success, a MDB2 error on failure
+     *          The returned array has this structure:
+     *          <pre>
+     *          array (
+     *              [trigger_name]    => 'trigger name',
+     *              [table_name]      => 'table name',
+     *              [trigger_body]    => 'trigger body definition',
+     *              [trigger_type]    => 'BEFORE' | 'AFTER',
+     *              [trigger_event]   => 'INSERT' | 'UPDATE' | 'DELETE'
+     *                  //or comma separated list of multiple events, when supported
+     *              [trigger_enabled] => true|false
+     *              [trigger_comment] => 'trigger comment',
+     *          );
+     *          </pre>
+     *          The oci8 driver also returns a [when_clause] index.
      * @access public
      */
     function getTriggerDefinition($trigger)

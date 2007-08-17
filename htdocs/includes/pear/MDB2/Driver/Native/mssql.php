@@ -45,8 +45,7 @@
 // $Id$
 //
 
-//require_once 'MDB2/Driver/Native/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Native/Common.php";
+require_once 'MDB2/Driver/Native/Common.php';
 
 /**
  * MDB2 MSSQL driver for the native module
@@ -55,7 +54,7 @@ require_once PEAR_PATH."/MDB2/Driver/Native/Common.php";
  * @category Database
  * @author  Lukas Smith <smith@dybnet.de>
  */
-class MDB2_Driver_Native_mssql extends MDB2_Module_Common
+class MDB2_Driver_Native_mssql extends MDB2_Driver_Native_Common
 {
 }
 ?>

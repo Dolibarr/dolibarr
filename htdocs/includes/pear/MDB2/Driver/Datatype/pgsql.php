@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith                                         |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -44,8 +44,7 @@
 //
 // $Id$
 
-//require_once 'MDB2/Driver/Datatype/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Datatype/Common.php";
+require_once 'MDB2/Driver/Datatype/Common.php';
 
 /**
  * MDB2 PostGreSQL driver
@@ -59,11 +58,11 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
     // {{{ _baseConvertResult()
 
     /**
-     * general type conversion method
+     * General type conversion method
      *
-     * @param mixed $value refernce to a value to be converted
-     * @param string $type specifies which type to convert to
-     * @param string $rtrim if text should be rtrimmed
+     * @param mixed   $value refernce to a value to be converted
+     * @param string  $type  specifies which type to convert to
+     * @param boolean $rtrim [optional] when TRUE [default], apply rtrim() to text
      * @return object a MDB2 error on failure
      * @access protected
      */
@@ -383,7 +382,7 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
     }
 
     // }}}
-    // {{{ mapNativeDatatype()
+    // {{{ _mapNativeDatatype()
 
     /**
      * Maps a native array description of a field to a MDB2 datatype and length
@@ -392,16 +391,10 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
      * @return array containing the various possible types, length, sign, fixed
      * @access public
      */
-    function mapNativeDatatype($field)
+    function _mapNativeDatatype($field)
     {
         $db_type = strtolower($field['type']);
         $length = $field['length'];
-        if ($length == '-1' && !empty($field['atttypmod'])) {
-            $length = $field['atttypmod'] - 4;
-        }
-        if ((int)$length <= 0) {
-            $length = null;
-        }
         $type = array();
         $unsigned = $fixed = null;
         switch ($db_type) {
@@ -472,6 +465,7 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
             $length = null;
             break;
         case 'float':
+        case 'float8':
         case 'double':
         case 'real':
             $type[] = 'float';
@@ -480,6 +474,9 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
         case 'money':
         case 'numeric':
             $type[] = 'decimal';
+            if ($field['scale']) {
+                $length = $length.','.$field['scale'];
+            }
             break;
         case 'tinyblob':
         case 'mediumblob':
@@ -504,9 +501,12 @@ class MDB2_Driver_Datatype_pgsql extends MDB2_Driver_Datatype_Common
             if (PEAR::isError($db)) {
                 return $db;
             }
-
             return $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
                 'unknown database attribute type: '.$db_type, __FUNCTION__);
+        }
+
+        if ((int)$length <= 0) {
+            $length = null;
         }
 
         return array($type, $length, $unsigned, $fixed);

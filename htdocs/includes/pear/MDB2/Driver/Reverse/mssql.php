@@ -2,7 +2,7 @@
 // +----------------------------------------------------------------------+
 // | PHP versions 4 and 5                                                 |
 // +----------------------------------------------------------------------+
-// | Copyright (c) 1998-2006 Manuel Lemos, Tomas V.V.Cox,                 |
+// | Copyright (c) 1998-2007 Manuel Lemos, Tomas V.V.Cox,                 |
 // | Stig. S. Bakken, Lukas Smith, Frank M. Kromann                       |
 // | All rights reserved.                                                 |
 // +----------------------------------------------------------------------+
@@ -39,14 +39,14 @@
 // | WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE          |
 // | POSSIBILITY OF SUCH DAMAGE.                                          |
 // +----------------------------------------------------------------------+
-// | Author: Lukas Smith <smith@pooteeweet.org>                           |
+// | Authors: Lukas Smith <smith@pooteeweet.org>                          |
+// |          Lorenzo Alberton <l.alberton@quipo.it>                      |
 // +----------------------------------------------------------------------+
 //
 // $Id$
 //
 
-//require_once 'MDB2/Driver/Reverse/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Reverse/Common.php";
+require_once 'MDB2/Driver/Reverse/Common.php';
 
 /**
  * MDB2 MSSQL driver for the schema reverse engineering module
@@ -54,9 +54,349 @@ require_once PEAR_PATH."/MDB2/Driver/Reverse/Common.php";
  * @package MDB2
  * @category Database
  * @author  Lukas Smith <smith@dybnet.de>
+ * @author  Lorenzo Alberton <l.alberton@quipo.it>
  */
 class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
 {
+    // {{{ getTableFieldDefinition()
+
+    /**
+     * Get the structure of a field into an array
+     *
+     * @param string    $table       name of table that should be used in method
+     * @param string    $field_name  name of field that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTableFieldDefinition($table, $field_name)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $result = $db->loadModule('Datatype', null, true);
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+        $table = $db->quoteIdentifier($table, true);
+        $fldname = $db->quoteIdentifier($field_name, true);
+
+        $query = "SELECT t.table_name,
+                         c.column_name 'name',
+                         c.data_type 'type',
+                         CASE c.is_nullable WHEN 'YES' THEN 1 ELSE 0 END AS 'is_nullable',
+                		 c.column_default,
+                		 c.character_maximum_length 'length',
+                         c.numeric_precision,
+                         c.numeric_scale,
+                         c.character_set_name,
+                         c.collation_name
+                    FROM INFORMATION_SCHEMA.TABLES t,
+                         INFORMATION_SCHEMA.COLUMNS c
+                   WHERE t.table_name = c.table_name
+                     AND t.table_name = '$table'
+                     AND c.column_name = '$fldname'
+                ORDER BY t.table_name";
+        $column = $db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
+        if (PEAR::isError($column)) {
+            return $column;
+        }
+        if (empty($column)) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'it was not specified an existing table column', __FUNCTION__);
+        }
+
+        if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+            if ($db->options['field_case'] == CASE_LOWER) {
+                $column['name'] = strtolower($column['name']);
+            } else {
+                $column['name'] = strtoupper($column['name']);
+            }
+        } else {
+            $column = array_change_key_case($column, $db->options['field_case']);
+        }
+        $mapped_datatype = $db->datatype->mapNativeDatatype($column);
+        if (PEAR::IsError($mapped_datatype)) {
+            return $mapped_datatype;
+        }
+        list($types, $length, $unsigned, $fixed) = $mapped_datatype;
+        $notnull = true;
+        if ($column['is_nullable']) {
+            $notnull = false;
+        }
+        $default = false;
+        if (array_key_exists('column_default', $column)) {
+            $default = $column['column_default'];
+            if (is_null($default) && $notnull) {
+                $default = '';
+            } elseif (strlen($default) > 4
+                   && substr($default, 0, 1) == '('
+                   &&  substr($default, -1, 1) == ')'
+            ) {
+                //mssql wraps the default value in parentheses: "((1234))", "(NULL)"
+                $default = trim($default, '()');
+                if ($default == 'NULL') {
+                    $default = null;
+                }
+            }
+        }
+        $definition[0] = array(
+            'notnull' => $notnull,
+            'nativetype' => preg_replace('/^([a-z]+)[^a-z].*/i', '\\1', $column['type'])
+        );
+        if (!is_null($length)) {
+            $definition[0]['length'] = $length;
+        }
+        if (!is_null($unsigned)) {
+            $definition[0]['unsigned'] = $unsigned;
+        }
+        if (!is_null($fixed)) {
+            $definition[0]['fixed'] = $fixed;
+        }
+        if ($default !== false) {
+            $definition[0]['default'] = $default;
+        }
+        foreach ($types as $key => $type) {
+            $definition[$key] = $definition[0];
+            if ($type == 'clob' || $type == 'blob') {
+                unset($definition[$key]['default']);
+            }
+            $definition[$key]['type'] = $type;
+            $definition[$key]['mdb2type'] = $type;
+        }
+        return $definition;
+    }
+
+    // }}}
+    // {{{ getTableIndexDefinition()
+
+    /**
+     * Get the structure of an index into an array
+     *
+     * @param string    $table      name of table that should be used in method
+     * @param string    $index_name name of index that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTableIndexDefinition($table, $index_name)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        //$idxname = $db->quoteIdentifier($index_name, true);
+
+        $query = "SELECT OBJECT_NAME(i.id) tablename,
+                         i.name indexname,
+                         c.name field_name,
+                         CASE INDEXKEY_PROPERTY(i.id, i.indid, ik.keyno, 'IsDescending')
+                           WHEN 1 THEN 'DESC' ELSE 'ASC'
+                         END 'collation',
+                         ik.keyno 'position'
+                    FROM sysindexes i
+                    JOIN sysindexkeys ik ON ik.id = i.id AND ik.indid = i.indid
+                    JOIN syscolumns c ON c.id = ik.id AND c.colid = ik.colid
+                   WHERE OBJECT_NAME(i.id) = '$table'
+                     AND i.name = '%s'
+                     AND NOT EXISTS (
+                            SELECT *
+                              FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+                             WHERE k.table_name = OBJECT_NAME(i.id)
+                               AND k.constraint_name = i.name)
+                ORDER BY tablename, indexname, ik.keyno";
+
+        $index_name_mdb2 = $db->getIndexName($index_name);
+        $result = $db->queryRow(sprintf($query, $index_name_mdb2));
+        if (!PEAR::isError($result) && !is_null($result)) {
+            // apply 'idxname_format' only if the query succeeded, otherwise
+            // fallback to the given $index_name, without transformation
+            $index_name = $index_name_mdb2;
+        }
+        $result = $db->query(sprintf($query, $index_name));
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+
+        $definition = array();
+        while (is_array($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC))) {
+            $column_name = $row['field_name'];
+            if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+                if ($db->options['field_case'] == CASE_LOWER) {
+                    $column_name = strtolower($column_name);
+                } else {
+                    $column_name = strtoupper($column_name);
+                }
+            }
+            $definition['fields'][$column_name] = array(
+                'position' => (int)$row['position'],
+            );
+            if (!empty($row['collation'])) {
+                $definition['fields'][$column_name]['sorting'] = ($row['collation'] == 'ASC'
+                    ? 'ascending' : 'descending');
+            }
+        }
+        $result->free();
+        if (empty($definition['fields'])) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                'it was not specified an existing table index', __FUNCTION__);
+        }
+        return $definition;
+    }
+
+    // }}}
+    // {{{ getTableConstraintDefinition()
+
+    /**
+     * Get the structure of a constraint into an array
+     *
+     * @param string    $table      name of table that should be used in method
+     * @param string    $constraint_name name of constraint that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTableConstraintDefinition($table, $constraint_name)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $table = $db->quoteIdentifier($table, true);
+        $query = "SELECT k.table_name,
+                         k.column_name field_name,
+                         CASE c.constraint_type WHEN 'PRIMARY KEY' THEN 1 ELSE 0 END 'primary',
+                         CASE c.constraint_type WHEN 'UNIQUE' THEN 1 ELSE 0 END 'unique',
+                         CASE c.constraint_type WHEN 'FOREIGN KEY' THEN 1 ELSE 0 END 'foreign',
+                         CASE c.constraint_type WHEN 'CHECK' THEN 1 ELSE 0 END 'check',
+                         k.ordinal_position
+                    FROM INFORMATION_SCHEMA.KEY_COLUMN_USAGE k
+                    LEFT JOIN INFORMATION_SCHEMA.TABLE_CONSTRAINTS c
+                      ON k.table_name = c.table_name
+                     AND k.constraint_name = c.constraint_name
+                     AND k.table_schema = c.table_schema
+                   WHERE k.constraint_catalog = DB_NAME()
+                    AND k.table_name = '$table'
+                    AND k.constraint_name = '%s'
+               ORDER BY k.constraint_name,
+                        k.ordinal_position";
+
+        $constraint_name_mdb2 = $db->getIndexName($constraint_name);
+        $result = $db->queryRow(sprintf($query, $constraint_name_mdb2));
+        if (!PEAR::isError($result) && !is_null($result)) {
+            // apply 'idxname_format' only if the query succeeded, otherwise
+            // fallback to the given $index_name, without transformation
+            $constraint_name = $constraint_name_mdb2;
+        }
+        $result = $db->query(sprintf($query, $constraint_name));
+        if (PEAR::isError($result)) {
+            return $result;
+        }
+
+        $definition = array();
+        while (is_array($row = $result->fetchRow(MDB2_FETCHMODE_ASSOC))) {
+            $column_name = $row['field_name'];
+            if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
+                if ($db->options['field_case'] == CASE_LOWER) {
+                    $column_name = strtolower($column_name);
+                } else {
+                    $column_name = strtoupper($column_name);
+                }
+            }
+            $definition['fields'][$column_name] = array(
+                'position' => (int)$row['ordinal_position']
+            );
+            /*
+            if (!empty($row['collation'])) {
+                $definition['fields'][$column_name]['sorting'] = ($row['collation'] == 'ASC'
+                    ? 'ascending' : 'descending');
+            }
+            */
+            $definition['primary'] = $row['primary'];
+            $definition['unique']  = $row['unique'];
+            $definition['foreign'] = $row['foreign'];
+            $definition['check']   = $row['check'];
+        }
+        $result->free();
+        if (empty($definition['fields'])) {
+            return $db->raiseError(MDB2_ERROR_NOT_FOUND, null, null,
+                $constraint_name . ' is not an existing table constraint', __FUNCTION__);
+        }
+        return $definition;
+    }
+
+    // }}}
+    // {{{ getTriggerDefinition()
+
+    /**
+     * Get the structure of a trigger into an array
+     *
+     * EXPERIMENTAL
+     *
+     * WARNING: this function is experimental and may change the returned value
+     * at any time until labelled as non-experimental
+     *
+     * @param string    $trigger    name of trigger that should be used in method
+     * @return mixed data array on success, a MDB2 error on failure
+     * @access public
+     */
+    function getTriggerDefinition($trigger)
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $query = "SELECT sys1.name trigger_name,
+                         sys2.name table_name,
+                         c.text trigger_body,
+                         c.encrypted is_encripted,
+                         CASE
+                           WHEN OBJECTPROPERTY(sys1.id, 'ExecIsTriggerDisabled') = 1
+                           THEN 0 ELSE 1
+                         END trigger_enabled,
+                         CASE
+                           WHEN OBJECTPROPERTY(sys1.id, 'ExecIsInsertTrigger') = 1
+                           THEN 'INSERT'
+                           WHEN OBJECTPROPERTY(sys1.id, 'ExecIsUpdateTrigger') = 1
+                           THEN 'UPDATE'
+                           WHEN OBJECTPROPERTY(sys1.id, 'ExecIsDeleteTrigger') = 1
+                           THEN 'DELETE'
+                         END trigger_event,
+                         CASE WHEN OBJECTPROPERTY(sys1.id, 'ExecIsInsteadOfTrigger') = 1
+                           THEN 'INSTEAD OF' ELSE 'AFTER'
+                         END trigger_type,
+                         '' trigger_comment
+                    FROM sysobjects sys1
+                    JOIN sysobjects sys2 ON sys1.parent_obj = sys2.id
+                    JOIN syscomments c ON sys1.id = c.id
+                   WHERE sys1.xtype = 'TR'
+                     AND sys1.name = ". $db->quote($trigger, 'text');
+
+        $types = array(
+            'trigger_name'    => 'text',
+            'table_name'      => 'text',
+            'trigger_body'    => 'text',
+            'trigger_type'    => 'text',
+            'trigger_event'   => 'text',
+            'trigger_comment' => 'text',
+            'trigger_enabled' => 'boolean',
+            'is_encripted'    => 'boolean',
+        );
+
+        $def = $db->queryRow($query, $types, MDB2_FETCHMODE_ASSOC);
+        if (PEAR::isError($def)) {
+            return $def;
+        }
+        $trg_body = $db->queryCol('EXEC sp_helptext '. $db->quote($trigger, 'text'), 'text');
+        if (!PEAR::isError($trg_body)) {
+            $def['trigger_body'] = implode('', $trg_body);
+        }
+        return $def;
+    }
+
     // }}}
     // {{{ tableInfo()
 
@@ -80,42 +420,19 @@ class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
      */
     function tableInfo($result, $mode = null)
     {
+        if (is_string($result)) {
+           return parent::tableInfo($result, $mode);
+        }
+
         $db =& $this->getDBInstance();
         if (PEAR::isError($db)) {
             return $db;
         }
 
-        if (is_string($result)) {
-            /*
-             * Probably received a table name.
-             * Create a result resource identifier.
-             */
-            $query = 'SELECT TOP 0 * FROM '.$db->quoteIdentifier($result);
-            $id =& $db->_doQuery($query, false);
-            if (PEAR::isError($id)) {
-                return $id;
-            }
-
-            $got_string = true;
-        } elseif (MDB2::isResultCommon($result)) {
-            /*
-             * Probably received a result object.
-             * Extract the result resource identifier.
-             */
-            $id = $result->getResource();
-            $got_string = false;
-        } else {
-            /*
-             * Probably received a result resource identifier.
-             * Copy it.
-             * Deprecated.  Here for compatibility only.
-             */
-            $id = $result;
-            $got_string = false;
-        }
-
-        if (!is_resource($id)) {
-            return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA);
+        $resource = MDB2::isResultCommon($result) ? $result->getResource() : $result;
+        if (!is_resource($resource)) {
+            return $db->raiseError(MDB2_ERROR_NEED_MORE_DATA, null, null,
+                'Could not generate result resource', __FUNCTION__);
         }
 
         if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -128,7 +445,7 @@ class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
             $case_func = 'strval';
         }
 
-        $count = @mssql_num_fields($id);
+        $count = @mssql_num_fields($resource);
         $res   = array();
 
         if ($mode) {
@@ -138,13 +455,11 @@ class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
         $db->loadModule('Datatype', null, true);
         for ($i = 0; $i < $count; $i++) {
             $res[$i] = array(
-                'table' => $got_string ? $case_func($result) : '',
-                'name'  => $case_func(@mssql_field_name($id, $i)),
-                'type'  => @mssql_field_type($id, $i),
-                'length'   => @mssql_field_length($id, $i),
-                // We only support flags for table
-                'flags' => $got_string
-                           ? $this->_mssql_field_flags($result, @mssql_field_name($id, $i)) : '',
+                'table' => '',
+                'name'  => $case_func(@mssql_field_name($resource, $i)),
+                'type'  => @mssql_field_type($resource, $i),
+                'length'   => @mssql_field_length($resource, $i),
+                'flags' => '',
             );
             $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
             if (PEAR::isError($mdb2type_info)) {
@@ -159,10 +474,6 @@ class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
             }
         }
 
-        // free the result only if we were called on a table
-        if ($got_string) {
-            @mssql_free_result($id);
-        }
         return $res;
     }
 
@@ -274,5 +585,7 @@ class MDB2_Driver_Reverse_mssql extends MDB2_Driver_Reverse_Common
             array_push($array, $value);
         }
     }
+
+    // }}}
 }
 ?>

@@ -44,8 +44,7 @@
 //
 // $Id$
 
-//require_once 'MDB2/Driver/Native/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Native/Common.php";
+require_once 'MDB2/Driver/Native/Common.php';
 
 /**
  * MDB2 PostGreSQL driver for the native module

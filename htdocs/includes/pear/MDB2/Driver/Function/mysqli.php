@@ -45,8 +45,7 @@
 // $Id$
 //
 
-//require_once 'MDB2/Driver/Function/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Function/Common.php";
+require_once 'MDB2/Driver/Function/Common.php';
 
 /**
  * MDB2 MySQLi driver for the function modules
@@ -109,5 +108,21 @@ class MDB2_Driver_Function_mysqli extends MDB2_Driver_Function_Common
         $args = func_get_args();
         return "CONCAT(".implode(', ', $args).")";
     }
+
+    // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        return 'UUID()';
+    }
+
+    // }}}
 }
 ?>

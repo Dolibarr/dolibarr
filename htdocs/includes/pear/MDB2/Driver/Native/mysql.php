@@ -45,8 +45,7 @@
 // $Id$
 //
 
-//require_once 'MDB2/Driver/Native/Common.php';
-require_once PEAR_PATH."/MDB2/Driver/Native/Common.php";
+require_once 'MDB2/Driver/Native/Common.php';
 
 /**
  * MDB2 MySQL driver for the native module

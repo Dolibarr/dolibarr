@@ -206,5 +206,26 @@ class MDB2_Driver_Function_Common extends MDB2_Module_Common
     }
 
     // }}}
+    // {{{ guid()
+
+    /**
+     * Returns global unique identifier
+     *
+     * @return string to get global unique identifier
+     * @access public
+     */
+    function guid()
+    {
+        $db =& $this->getDBInstance();
+        if (PEAR::isError($db)) {
+            return $db;
+        }
+
+        $error =& $db->raiseError(MDB2_ERROR_UNSUPPORTED, null, null,
+            'method not implemented', __FUNCTION__);
+        return $error;
+    }
+
+    // }}}
 }
 ?>
