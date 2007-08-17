@@ -1849,15 +1849,19 @@ class MDB2_Driver_Common extends DOLIPEAR
             if ($phptype_specific !== false) {
                 $version = true;
                 $class_name = 'MDB2_Driver_'.$module.'_'.$this->phptype;
-                $file_name = str_replace('_', DIRECTORY_SEPARATOR, $class_name).'.php';
+                $file_name = PEAR_PATH.str_replace('_', DIRECTORY_SEPARATOR, $class_name).'.php';
             }
+            
+            // Mise en commentaire car provoquait une erreur
+            /*
             if ($phptype_specific === false
                 || (!MDB2::classExists($class_name) && !MDB2::fileExists($file_name))
             ) {
                 $version = false;
                 $class_name = 'MDB2_'.$module;
-                $file_name = str_replace('_', DIRECTORY_SEPARATOR, $class_name).'.php';
+                $file_name = PEAR_PATH.str_replace('_', DIRECTORY_SEPARATOR, $class_name).'.php';
             }
+            */
 
             $err = MDB2::loadClass($class_name, $this->getOption('debug'));
             if (DOLIPEAR::isError($err)) {
