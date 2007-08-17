@@ -952,7 +952,7 @@ class MDB2
  * @category    Database
  * @author Stig Bakken <ssb@fast.no>
  */
-class MDB2_Error extends PEAR_Error
+class MDB2_Error extends DOLIPEAR_Error
 {
     // {{{ constructor: function MDB2_Error($code = MDB2_ERROR, $mode = PEAR_ERROR_RETURN, $level = E_USER_NOTICE, $debuginfo = null)
 
@@ -970,7 +970,7 @@ class MDB2_Error extends PEAR_Error
         if (is_null($code)) {
             $code = MDB2_ERROR;
         }
-        $this->PEAR_Error('MDB2 Error: '.MDB2::errorMessage($code), $code,
+        $this->DOLIPEAR_Error('MDB2 Error: '.MDB2::errorMessage($code), $code,
             $mode, $level, $debuginfo);
     }
 
@@ -987,7 +987,7 @@ class MDB2_Error extends PEAR_Error
  * @category    Database
  * @author      Lukas Smith <smith@pooteeweet.org>
  */
-class MDB2_Driver_Common extends PEAR
+class MDB2_Driver_Common extends DOLIPEAR
 {
     // {{{ Variables (Properties)
 

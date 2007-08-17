@@ -84,7 +84,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function getFieldDeclarationList($fields)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -94,7 +94,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
         }
         foreach ($fields as $field_name => $field) {
             $query = $db->getDeclaration($field['type'], $field_name, $field);
-            if (PEAR::isError($query)) {
+            if (DOLIPEAR::isError($query)) {
                 return $query;
             }
             $query_fields[] = $query;
@@ -116,7 +116,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function _fixSequenceName($sqn, $check = false)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -144,7 +144,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function _fixIndexName($idx)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -169,7 +169,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function createDatabase($database)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -190,7 +190,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function dropDatabase($database)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -212,7 +212,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function _getCreateTableQuery($name, $fields, $options = array())
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -225,7 +225,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
                 'no fields specified for table "'.$name.'"', __FUNCTION__);
         }
         $query_fields = $this->getFieldDeclarationList($fields);
-        if (PEAR::isError($query_fields)) {
+        if (DOLIPEAR::isError($query_fields)) {
             return $query_fields;
         }
         if (!empty($options['primary'])) {
@@ -301,11 +301,11 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function createTable($name, $fields, $options = array())
     {
         $query = $this->_getCreateTableQuery($name, $fields, $options);
-        if (PEAR::isError($query)) {
+        if (DOLIPEAR::isError($query)) {
             return $query;
         }
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
         return $db->exec($query);
@@ -324,7 +324,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function dropTable($name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -428,7 +428,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function alterTable($name, $changes, $check)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -448,7 +448,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listDatabases()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -468,7 +468,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listUsers()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -491,7 +491,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listViews($database = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -512,7 +512,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTableViews($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -533,7 +533,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTableTriggers($table = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -553,7 +553,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listFunctions()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -576,7 +576,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTables($database = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -597,7 +597,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTableFields($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -643,7 +643,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function createIndex($table, $name, $definition)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -672,7 +672,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function dropIndex($table, $name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -693,7 +693,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTableIndexes($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -729,7 +729,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function createConstraint($table, $name, $definition)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
         $table = $db->quoteIdentifier($table, true);
@@ -763,7 +763,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function dropConstraint($table, $name, $primary = false)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -785,7 +785,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listTableConstraints($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -807,7 +807,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function createSequence($seq_name, $start = 1)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -828,7 +828,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function dropSequence($name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -851,7 +851,7 @@ class MDB2_Driver_Manager_Common extends MDB2_Module_Common
     function listSequences($database = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 

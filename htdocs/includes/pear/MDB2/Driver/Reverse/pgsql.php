@@ -70,12 +70,12 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
     function getTableFieldDefinition($table, $field_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $result = $db->loadModule('Datatype', null, true);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -120,7 +120,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
                      AND a.attname = ".$db->quote($field_name, 'text')."
                 ORDER BY a.attnum";
         $column = $db->queryRow($query, null, MDB2_FETCHMODE_ASSOC);
-        if (PEAR::isError($column)) {
+        if (DOLIPEAR::isError($column)) {
             return $column;
         }
 
@@ -131,7 +131,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
 
         $column = array_change_key_case($column, CASE_LOWER);
         $mapped_datatype = $db->datatype->mapNativeDatatype($column);
-        if (PEAR::IsError($mapped_datatype)) {
+        if (DOLIPEAR::IsError($mapped_datatype)) {
             return $mapped_datatype;
         }
         list($types, $length, $unsigned, $fixed) = $mapped_datatype;
@@ -192,7 +192,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
     function getTableIndexDefinition($table, $index_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -202,11 +202,11 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
         $query.= ' AND pg_class.relname = %s';
         $index_name_mdb2 = $db->getIndexName($index_name);
         $row = $db->queryRow(sprintf($query, $db->quote($index_name_mdb2, 'text')), null, MDB2_FETCHMODE_ASSOC);
-        if (PEAR::isError($row) || empty($row)) {
+        if (DOLIPEAR::isError($row) || empty($row)) {
             // fallback to the given $index_name, without transformation
             $row = $db->queryRow(sprintf($query, $db->quote($index_name, 'text')), null, MDB2_FETCHMODE_ASSOC);
         }
-        if (PEAR::isError($row)) {
+        if (DOLIPEAR::isError($row)) {
             return $row;
         }
 
@@ -247,7 +247,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
     function getTableConstraintDefinition($table, $constraint_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
         
@@ -257,11 +257,11 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
         $query.= ' AND pg_class.relname = %s';
         $constraint_name_mdb2 = $db->getIndexName($constraint_name);
         $row = $db->queryRow(sprintf($query, $db->quote($constraint_name_mdb2, 'text')), null, MDB2_FETCHMODE_ASSOC);
-        if (PEAR::isError($row) || empty($row)) {
+        if (DOLIPEAR::isError($row) || empty($row)) {
             // fallback to the given $index_name, without transformation
             $row = $db->queryRow(sprintf($query, $db->quote($constraint_name, 'text')), null, MDB2_FETCHMODE_ASSOC);
         }
-        if (PEAR::isError($row)) {
+        if (DOLIPEAR::isError($row)) {
             return $row;
         }
 
@@ -314,7 +314,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
     function getTriggerDefinition($trigger)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -385,7 +385,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
         }
 
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -422,7 +422,7 @@ class MDB2_Driver_Reverse_pgsql extends MDB2_Driver_Reverse_Common
                 'flags' => '',
             );
             $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
-            if (PEAR::isError($mdb2type_info)) {
+            if (DOLIPEAR::isError($mdb2type_info)) {
                return $mdb2type_info;
             }
             $res[$i]['mdb2type'] = $mdb2type_info[0][0];

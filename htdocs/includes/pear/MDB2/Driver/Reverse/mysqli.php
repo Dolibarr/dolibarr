@@ -125,18 +125,18 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     function getTableFieldDefinition($table, $field_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $result = $db->loadModule('Datatype', null, true);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         $table = $db->quoteIdentifier($table, true);
         $query = "SHOW COLUMNS FROM $table LIKE ".$db->quote($field_name);
         $columns = $db->queryAll($query, null, MDB2_FETCHMODE_ASSOC);
-        if (PEAR::isError($columns)) {
+        if (DOLIPEAR::isError($columns)) {
             return $columns;
         }
         foreach ($columns as $column) {
@@ -154,7 +154,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             }
             if ($field_name == $column['name']) {
                 $mapped_datatype = $db->datatype->mapNativeDatatype($column);
-                if (PEAR::IsError($mapped_datatype)) {
+                if (DOLIPEAR::IsError($mapped_datatype)) {
                     return $mapped_datatype;
                 }
                 list($types, $length, $unsigned, $fixed) = $mapped_datatype;
@@ -223,7 +223,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     function getTableIndexDefinition($table, $index_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -231,13 +231,13 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         $query = "SHOW INDEX FROM $table /*!50002 WHERE Key_name = %s */";
         $index_name_mdb2 = $db->getIndexName($index_name);
         $result = $db->queryRow(sprintf($query, $db->quote($index_name_mdb2)));
-        if (!PEAR::isError($result) && !is_null($result)) {
+        if (!DOLIPEAR::isError($result) && !is_null($result)) {
             // apply 'idxname_format' only if the query succeeded, otherwise
             // fallback to the given $index_name, without transformation
             $index_name = $index_name_mdb2;
         }
         $result = $db->query(sprintf($query, $db->quote($index_name)));
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         $colpos = 1;
@@ -296,7 +296,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     function getTableConstraintDefinition($table, $constraint_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -305,14 +305,14 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         if (strtolower($constraint_name) != 'primary') {
             $constraint_name_mdb2 = $db->getIndexName($constraint_name);
             $result = $db->queryRow(sprintf($query, $db->quote($constraint_name_mdb2)));
-            if (!PEAR::isError($result) && !is_null($result)) {
+            if (!DOLIPEAR::isError($result) && !is_null($result)) {
                 // apply 'idxname_format' only if the query succeeded, otherwise
                 // fallback to the given $index_name, without transformation
                 $constraint_name = $constraint_name_mdb2;
             }
         }
         $result = $db->query(sprintf($query, $db->quote($constraint_name)));
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         $colpos = 1;
@@ -380,7 +380,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
     function getTriggerDefinition($trigger)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -399,7 +399,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
             'trigger_event'   => 'text',
         );
         $def = $db->queryRow($query, $types, MDB2_FETCHMODE_ASSOC);
-        if (PEAR::isError($def)) {
+        if (DOLIPEAR::isError($def)) {
             return $def;
         }
         $def['trigger_comment'] = '';
@@ -432,7 +432,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
         }
 
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -483,7 +483,7 @@ class MDB2_Driver_Reverse_mysqli extends MDB2_Driver_Reverse_Common
                 'flags'  => $flags,
             );
             $mdb2type_info = $db->datatype->mapNativeDatatype($res[$i]);
-            if (PEAR::isError($mdb2type_info)) {
+            if (DOLIPEAR::isError($mdb2type_info)) {
                return $mdb2type_info;
             }
             $res[$i]['mdb2type'] = $mdb2type_info[0][0];

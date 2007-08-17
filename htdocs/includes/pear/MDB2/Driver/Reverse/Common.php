@@ -86,7 +86,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function getTableFieldDefinition($table, $field)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -120,7 +120,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function getTableIndexDefinition($table, $index)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -155,7 +155,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function getTableConstraintDefinition($table, $index)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -182,12 +182,12 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function getSequenceDefinition($sequence)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $start = $db->currId($sequence);
-        if (PEAR::isError($start)) {
+        if (DOLIPEAR::isError($start)) {
             return $start;
         }
         if ($db->supports('current_id')) {
@@ -235,7 +235,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function getTriggerDefinition($trigger)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -369,7 +369,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
     function tableInfo($result, $mode = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -380,7 +380,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
 
         $db->loadModule('Manager', null, true);
         $fields = $db->manager->listTableFields($result);
-        if (PEAR::isError($fields)) {
+        if (DOLIPEAR::isError($fields)) {
             return $fields;
         }
 
@@ -390,14 +390,14 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
         $db->setOption('idxname_format', '%s');
 
         $indexes = $db->manager->listTableIndexes($result);
-        if (PEAR::isError($indexes)) {
+        if (DOLIPEAR::isError($indexes)) {
             $db->setOption('idxname_format', $idxname_format);
             return $indexes;
         }
 
         foreach ($indexes as $index) {
             $definition = $this->getTableIndexDefinition($result, $index);
-            if (PEAR::isError($definition)) {
+            if (DOLIPEAR::isError($definition)) {
                 $db->setOption('idxname_format', $idxname_format);
                 return $definition;
             }
@@ -409,13 +409,13 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
         }
 
         $constraints = $db->manager->listTableConstraints($result);
-        if (PEAR::isError($constraints)) {
+        if (DOLIPEAR::isError($constraints)) {
             return $constraints;
         }
 
         foreach ($constraints as $constraint) {
             $definition = $this->getTableConstraintDefinition($result, $constraint);
-            if (PEAR::isError($definition)) {
+            if (DOLIPEAR::isError($definition)) {
                 $db->setOption('idxname_format', $idxname_format);
                 return $definition;
             }
@@ -437,7 +437,7 @@ class MDB2_Driver_Reverse_Common extends MDB2_Module_Common
 
         foreach ($fields as $i => $field) {
             $definition = $this->getTableFieldDefinition($result, $field);
-            if (PEAR::isError($definition)) {
+            if (DOLIPEAR::isError($definition)) {
                 $db->setOption('idxname_format', $idxname_format);
                 return $definition;
             }

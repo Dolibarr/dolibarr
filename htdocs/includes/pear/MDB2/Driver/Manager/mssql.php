@@ -74,7 +74,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function createDatabase($name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -101,7 +101,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function dropDatabase($name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -265,7 +265,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function alterTable($name, $changes, $check)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -331,13 +331,13 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     {
         $db =& $this->getDBInstance();
 
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $query = 'EXEC sp_tables @table_type = "\'TABLE\'"';
         $table_names = $db->queryCol($query, null, 2);
-        if (PEAR::isError($table_names)) {
+        if (DOLIPEAR::isError($table_names)) {
             return $table_names;
         }
         $result = array();
@@ -366,19 +366,19 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listTableFields($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $table = $db->quoteIdentifier($table, true);
         $db->setLimit(1);
         $result2 = $db->query("SELECT * FROM $table");
-        if (PEAR::isError($result2)) {
+        if (DOLIPEAR::isError($result2)) {
             return $result2;
         }
         $result = $result2->getColumnNames();
         $result2->free();
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         return array_flip($result);
@@ -397,7 +397,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listTableIndexes($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -415,7 +415,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
         $table = $db->quote($table, 'text');
         $query = "EXEC sp_statistics @table_name=$table";
         $indexes = $db->queryCol($query, 'text', $key_name);
-        if (PEAR::isError($indexes)) {
+        if (DOLIPEAR::isError($indexes)) {
             return $indexes;
         }
         $query = "EXEC sp_pkeys @table_name=$table";
@@ -445,12 +445,12 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listDatabases()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $result = $db->queryCol('SELECT name FROM sys.databases');
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -471,12 +471,12 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listUsers()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $result = $db->queryCol('SELECT DISTINCT loginame FROM master..sysprocesses');
-        if (PEAR::isError($result) || empty($result)) {
+        if (DOLIPEAR::isError($result) || empty($result)) {
             return $result;
         }
         foreach (array_keys($result) as $k) {
@@ -497,7 +497,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listFunctions()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -512,7 +512,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
          WHERE ROUTINE_TYPE = 'FUNCTION'
         */
         $result = $db->queryCol($query);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
         if ($db->options['portability'] & MDB2_PORTABILITY_FIX_CASE) {
@@ -537,7 +537,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listTableTriggers($table = null)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -551,7 +551,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
         }
 
         $result = $db->queryCol($query);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -577,7 +577,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listViews()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -592,7 +592,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
         */
 
         $result = $db->queryCol($query);
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $result;
         }
 
@@ -619,7 +619,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function dropIndex($table, $name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -641,7 +641,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listTableConstraints($table)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
         $table = $db->quoteIdentifier($table, true);
@@ -651,7 +651,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
                    WHERE c.constraint_catalog = DB_NAME()
                     AND c.table_name = '$table'";
         $constraints = $db->queryCol($query);
-        if (PEAR::isError($constraints)) {
+        if (DOLIPEAR::isError($constraints)) {
             return $constraints;
         }
 
@@ -683,7 +683,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function createSequence($seq_name, $start = 1)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -693,7 +693,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
                  "INT PRIMARY KEY CLUSTERED IDENTITY($start,1) NOT NULL)";
 
         $res = $db->exec($query);
-        if (PEAR::isError($res)) {
+        if (DOLIPEAR::isError($res)) {
             return $res;
         }
 
@@ -701,12 +701,12 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
                  "INSERT INTO $sequence_name ($seqcol_name) VALUES ($start)";
         $res = $db->exec($query);
 
-        if (!PEAR::isError($res)) {
+        if (!DOLIPEAR::isError($res)) {
             return MDB2_OK;
         }
 
         $result = $db->exec("DROP TABLE $sequence_name");
-        if (PEAR::isError($result)) {
+        if (DOLIPEAR::isError($result)) {
             return $db->raiseError($result, null, null,
                 'could not drop inconsistent sequence table', __FUNCTION__);
         }
@@ -728,7 +728,7 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function dropSequence($seq_name)
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
@@ -748,13 +748,13 @@ class MDB2_Driver_Manager_mssql extends MDB2_Driver_Manager_Common
     function listSequences()
     {
         $db =& $this->getDBInstance();
-        if (PEAR::isError($db)) {
+        if (DOLIPEAR::isError($db)) {
             return $db;
         }
 
         $query = "SELECT name FROM sysobjects WHERE xtype = 'U'";
         $table_names = $db->queryCol($query);
-        if (PEAR::isError($table_names)) {
+        if (DOLIPEAR::isError($table_names)) {
             return $table_names;
         }
         $result = array();
