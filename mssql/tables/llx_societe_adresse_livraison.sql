@@ -1,0 +1,39 @@
+-- ========================================================================
+-- Copyright (C) 2000-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2006 Houssin Régis        <regis.houssin@cap-networks.com>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ========================================================================
+
+create table llx_societe_adresse_livraison
+(
+  rowid              int IDENTITY PRIMARY KEY,
+  datec	             datetime,                            -- creation date
+  tms                timestamp,                           -- modification date
+  label              varchar(30),                         --
+  fk_societe         int        DEFAULT 0,            --
+  nom                varchar(60),                         -- company name
+  address            varchar(255),                        -- company adresse
+  cp                 varchar(10),                         -- zipcode
+  ville              varchar(50),                         -- town
+  fk_pays            int        DEFAULT 0,            --
+  note               text,                                --
+  fk_user_creat      int,                             -- utilisateur qui a créé l'info
+  fk_user_modif      int                              -- utilisateur qui a modifié l'info
+);

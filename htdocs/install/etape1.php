@@ -269,8 +269,14 @@ if ($_POST["action"] == "set")
 			if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
 			{
 				$databasefortest='mysql';
-			}else{
+			}
+			else if ($conf->db->type == 'pgsql')
+			{
 				$databasefortest='postgres';
+			}
+			else if ($conf->db->type == 'mssql')
+			{
+				$databasefortest='mssql';
 			}
 			
 			// Creation handler de base, verification du support et connexion

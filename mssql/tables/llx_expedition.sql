@@ -1,0 +1,44 @@
+-- ===================================================================
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ===================================================================
+
+create table llx_expedition
+(
+  rowid                 int IDENTITY PRIMARY KEY,
+  tms                   timestamp,
+  ref                   varchar(30) NOT NULL,
+  fk_commande           int,
+  date_creation         datetime,              -- date de creation 
+  date_valid            datetime,              -- date de validation
+  date_expedition       datetime,                  -- date de l'expedition
+  fk_user_author        int,               -- createur
+  fk_user_valid         int,               -- valideur
+  fk_entrepot           int,
+  fk_expedition_methode int,
+  fk_statut             smallint  DEFAULT 0,
+  note                  text,
+  model_pdf             varchar(50)
+
+  --key(fk_expedition_methode),
+  --key(fk_commande)
+);
+
+CREATE UNIQUE INDEX ref ON llx_expedition(ref)

@@ -1,0 +1,62 @@
+-- ===========================================================================
+-- Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- 
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+-- ===========================================================================
+
+create table llx_facture
+(
+  rowid               int IDENTITY PRIMARY KEY,
+  facnumber           varchar(30)        NOT NULL,
+  type				  smallint DEFAULT 0 NOT NULL,
+  ref_client          varchar(30),
+  increment           varchar(10),
+  fk_soc              int            NOT NULL,
+  datec               datetime,  -- date de creation de la facture
+  datef               datetime,      -- date de la facture
+  date_valid          datetime,      -- date de validation
+  paye                smallint DEFAULT 0 NOT NULL,
+  amount              real     DEFAULT 0 NOT NULL,
+  remise_percent      real     DEFAULT 0,   -- remise relative
+  remise_absolue      real     DEFAULT 0,   -- remise absolue
+  remise              real     DEFAULT 0,   -- remise totale calculee
+
+  close_code          varchar(16),		-- Code motif cloture sans paiement complet
+  close_note          varchar(128),		-- Commentaire cloture sans paiement complet
+
+  tva                 real     DEFAULT 0,   -- montant tva apres remise totale
+  total               real     DEFAULT 0,   -- montant total ht apres remise totale
+  total_ttc           real     DEFAULT 0,   -- montant total ttc apres remise totale
+
+  fk_statut           smallint DEFAULT 0 NOT NULL,
+
+  fk_user_author      int,   -- createur de la facture
+  fk_user_valid       int,   -- valideur de la facture
+
+  fk_facture_source   int,   -- facture origine si facture avoir
+  fk_projet           int,   -- projet auquel est associée la facture
+
+  fk_cond_reglement   int  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement   int,                      -- mode de reglement (Virement, Prélèvement)
+  date_lim_reglement  datetime,                         -- date limite de reglement
+
+  note                text,
+  note_public         text,
+  model_pdf           varchar(50)
+);

@@ -51,7 +51,8 @@ $langs->load("install");
 
 if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
-if ($dolibarr_main_db_type == "pqsql") $choix=2;
+if ($dolibarr_main_db_type == "pqsql")  $choix=2;
+if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
 dolibarr_install_syslog("etape2: Entering etape2.php page");
 
@@ -113,7 +114,8 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         if ($choix==1) $dir = "../../mysql/tables/";
-        else $dir = "../../pgsql/tables/";
+        elseif ($choix==2) $dir = "../../pgsql/tables/";
+        elseif ($choix==3) $dir = "../../mssql/tables/";
 
         $ok = 0;
         $handle=opendir($dir);
@@ -183,7 +185,8 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         if ($choix==1) $dir = "../../mysql/tables/";
-        else $dir = "../../pgsql/tables/";
+        elseif ($choix==2) $dir = "../../pgsql/tables/";
+        elseif ($choix==3) $dir = "../../mssql/tables/";
 
         $okkeys = 0;
         $handle=opendir($dir);
@@ -302,7 +305,8 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         if ($choix==1) $dir = "../../mysql/functions/";
-        else $dir = "../../pgsql/functions/";
+        elseif ($choix==2) $dir = "../../pgsql/functions/";
+        elseif ($choix==3) $dir = "../../mssql/functions/";
 
         // Création données
         $file = "functions.sql";
@@ -368,7 +372,8 @@ if ($_POST["action"] == "set")
     if ($ok)
     {
         if ($choix==1) $dir = "../../mysql/data/";
-        else $dir = "../../pgsql/data/";
+        elseif ($choix==2) $dir = "../../pgsql/data/";
+        elseif ($choix==3) $dir = "../../mssql/data/";
 
         // Création données
         $file = "data.sql";

@@ -1,0 +1,44 @@
+-- ===================================================================
+-- Copyright (C) 2000-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005      Laurent Destailleur  <eldy@users.sourceforge.net>
+--
+-- $Id$
+-- $Source$
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- ===================================================================
+
+create table llx_bank
+(
+  rowid           int IDENTITY PRIMARY KEY,
+  datec           datetime,
+  datev           datetime,           -- date de valeur
+  dateo           datetime,           -- date operation
+  amount          real NOT NULL default 0,
+  label           varchar(255),
+  fk_account      int,
+  fk_user_author  int,
+  fk_user_rappro  int,
+  fk_type         varchar(4),     -- CB, Virement, cheque
+  num_releve      varchar(50),
+  num_chq         int,
+  rappro          tinyint default 0,
+  note            text,
+  fk_bordereau    int DEFAULT 0,
+  banque          varchar(255),   -- banque pour les cheques
+  emetteur        varchar(255),   -- emetteur du cheque
+  author          varchar(40) -- a supprimer apres migration
+);

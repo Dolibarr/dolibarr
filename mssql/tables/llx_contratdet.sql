@@ -1,0 +1,59 @@
+-- ============================================================================
+-- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ============================================================================
+
+create table llx_contratdet
+(
+  rowid                 int IDENTITY PRIMARY KEY,
+  tms                   timestamp,
+
+  fk_contrat            int NOT NULL,
+  fk_product            int NULL,   -- doit pouvoir etre nul pour ligne detail sans produits
+
+  statut                smallint DEFAULT 0,
+
+  label                 text, -- libellé du produit
+  description           text,
+
+  date_commande         datetime,
+  date_ouverture_prevue datetime,
+  date_ouverture        datetime, -- date d'ouverture du service chez le client
+  date_fin_validite     datetime,
+  date_cloture          datetime,
+
+  tva_tx                real DEFAULT 19.6, -- taux tva
+  qty                   real,              -- quantité
+  remise_percent        real DEFAULT 0,    -- pourcentage de remise
+  remise                real DEFAULT 0,    -- montant de la remise
+  fk_remise_except		int NULL,      -- Lien vers table des remises fixes
+  subprice              real,              -- prix avant remise
+  price_ht              real,              -- prix final
+  total_ht              real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva             real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc             real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits		        int DEFAULT 0, 	    -- TVA NPR ou non
+
+  fk_user_author        int NOT NULL default 0,
+  fk_user_ouverture     int,
+  fk_user_cloture       int,
+  commentaire           text
+
+);

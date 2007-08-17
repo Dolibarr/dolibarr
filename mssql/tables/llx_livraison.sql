@@ -1,0 +1,46 @@
+-- ===================================================================
+-- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+--
+-- This program is free software; you can redistribute it and/or modify
+-- it under the terms of the GNU General [public] License as published by
+-- the Free Software Foundation; either version 2 of the License, or
+-- (at your option) any later version.
+--
+-- This program is distributed in the hope that it will be useful,
+-- but WITHOUT ANY WARRANTY; without even the implied warranty of
+-- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+-- GNU General [public] License for more details.
+--
+-- You should have received a copy of the GNU General [public] License
+-- along with this program; if not, write to the Free Software
+-- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+--
+-- $Id$
+-- $Source$
+--
+-- ===================================================================
+
+create table llx_livraison
+(
+  rowid                 int IDENTITY PRIMARY KEY,
+  tms                   timestamp,
+  fk_commande           int DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  fk_expedition         int,                       -- expedition auquel est rattache le bon de livraison
+  ref                   varchar(30) NOT NULL,          -- delivery number
+  date_creation         datetime,                      -- date de creation 
+  date_valid            datetime,                      -- date de validation
+  fk_user_author        int,                       -- createur du bon de livraison
+  fk_user_valid         int,                       -- valideur du bon de livraison
+  fk_statut             smallint  default 0,
+  total_ht              real      default 0,
+  total_ttc             real      default 0,
+  note                  text,
+  note_public           text,
+  model_pdf             varchar(50),
+  date_livraison 	      datetime 	  default NULL,
+  fk_adresse_livraison  int                       -- adresse de livraison
+
+  --key(fk_commande)
+);
+
+CREATE UNIQUE INDEX ref ON llx_livraison(ref)

@@ -211,12 +211,14 @@ while (($file = readdir($handle))!==false)
 		if ($type=='mysql')  { $versionbasemin=array(3,1,0); $testfunction='mysql_connect'; }
 		if ($type=='mysqli') { $versionbasemin=array(4,1,0); $testfunction='mysqli_connect'; }
 		if ($type=='pgsql')  { $versionbasemin=array(8,1,0); $testfunction='pg_connect'; }
+		if ($type=='mssql')  { $versionbasemin=array(2000,0,0); $testfunction='mssql_connect'; }
 		
 		// Remarques
 		$note='';
 		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
 		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
 		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
+		if ($type=='mssql') 	$note='(MSDE >= '.versiontostring($versionbasemin).')';
 
 		// Affiche ligne dans liste
 		$option.='<option value="'.$type.'" '.($defaultype==$type?" selected":"");
