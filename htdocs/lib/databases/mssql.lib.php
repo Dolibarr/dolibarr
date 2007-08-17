@@ -782,6 +782,68 @@ class DoliDb
 		else
 			return 1;
 	}
+	
+	function getDefaultCharacterSetDatabase(){
+		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
+		  if (!$resql)
+	    {
+	    	// version Mysql < 4.1.1
+			  return $this->forcecharset;
+	    }
+	    $liste=$this->fetch_array($resql);
+	    return $liste['Value'];
+	}
+	
+	function getListOfCharacterSet(){
+		 $resql=$this->query('SHOW CHARSET');
+		$liste = array();
+		if ($resql) 
+		{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['charset'] = $obj->Charset;
+				$liste[$i]['description'] = $obj->Description;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  } else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
+	}
+	
+	function getDefaultCollationConnection(){
+		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
+		 if (!$resql)
+	      {
+			// version Mysql < 4.1.1
+			return $this->forcecollate;
+	      }
+	    $liste=$this->fetch_array($resql);
+	    return $liste['Value'];
+	}
+	
+	function getListOfCollation(){
+		 $resql=$this->query('SHOW COLLATION');
+		$liste = array();
+		if ($resql) 
+			{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['collation'] = $obj->Collation;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  	} else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
+	}
+	
 }
 
 ?>
