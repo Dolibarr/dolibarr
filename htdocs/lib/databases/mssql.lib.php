@@ -334,31 +334,31 @@ class DoliDb
     //print "<!--".$query."-->";
     
     if (! $this->database_name)
-      {
-	// Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
-	$ret = mssql_query($query, $this->db);
-      }
+    {
+    	// Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+	    $ret = mssql_query($query, $this->db);
+    }
     else
-      {
-	$ret = mssql_query($query, $this->db);
-      }
+    {
+    	$ret = mssql_query($query, $this->db);
+    }
     
     if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
-      {
-	// Si requete utilisateur, on la sauvegarde ainsi que son resultset
-	if (! $ret)
-	  {
-	    $this->lastqueryerror = $query;
+    {
+    	// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+	    if (! $ret)
+	    {
+	      $this->lastqueryerror = $query;
 
         $result = mssql_query("SELECT @@ERROR as code", $this->db);
         $row = mssql_fetch_array($result);
 	    
-	    $this->lasterror = $this->error();
-	    $this->lasterrno = $row["code"];
-	  }
-	$this->lastquery=$query;
-	$this->results = $ret;
-      }
+	      $this->lasterror = $this->error();
+	      $this->lasterrno = $row["code"];
+	    }
+	    $this->lastquery=$query;
+	    $this->results = $ret;
+    }
     
     return $ret;
     }
