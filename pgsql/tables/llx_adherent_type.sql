@@ -34,7 +34,7 @@ create table llx_adherent_type
   rowid SERIAL PRIMARY KEY,
   "tms"              timestamp,
   "statut"           smallint NOT NULL DEFAULT 0,
-  "libelle"          varchar(50),
+  "libelle"          varchar(50) NOT NULL,
   "cotisation" varchar(3) CHECK (cotisation IN ('yes','no'))  NOT NULL DEFAULT 'yes',
   "vote" varchar(3) CHECK (vote IN ('yes','no'))  NOT NULL DEFAULT 'yes',
   "note"             text,

@@ -3,7 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,10 +32,14 @@ create table llx_commande_fournisseurdet
   "ref"            varchar(50),
   "label"          varchar(255),
   "description"    text,
-  "tva_tx"         real DEFAULT 19.6, -- taux tva
+  "tva_tx"         real(6,3), 		-- taux tva
   "qty"            real,              -- quantité
   "remise_percent" real DEFAULT 0,    -- pourcentage de remise
   "remise"         real DEFAULT 0,    -- montant de la remise
-  "subprice"       real,              -- prix avant remise
-  "price"          real               -- prix final
+  "price"          real,                -- prix final
+  "subprice"       real(16,8),        -- prix unitaire
+  "total_ht"       real(16,8),        -- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  "total_tva"      real(16,8),	      -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  "total_ttc"      real(16,8),	      -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  "info_bits"	 integer DEFAULT 0    -- TVA NPR ou non
 );

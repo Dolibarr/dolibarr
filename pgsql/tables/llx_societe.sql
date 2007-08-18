@@ -26,7 +26,7 @@
 
 create table llx_societe
 (
-  idp SERIAL PRIMARY KEY,
+  rowid SERIAL PRIMARY KEY,
   "statut"             smallint        DEFAULT 0,            -- statut
   "parent"             integer,
   "tms"                timestamp,
@@ -36,7 +36,7 @@ create table llx_societe
   "code_client"        varchar(15),                         -- code client
   "code_fournisseur"   varchar(15),                         -- code founisseur
   "code_compta"        varchar(15),                         -- code compta client
-  "code_compta_fournisseur"  varchar(15),                         -- code compta founisseur
+  "code_compta_fournisseur"  varchar(15),                   -- code compta founisseur
   "address"            varchar(255),                        -- company adresse
   "cp"                 varchar(10),                         -- zipcode
   "ville"              varchar(50),                         -- town
@@ -50,9 +50,10 @@ create table llx_societe
   "fk_effectif"        integer        DEFAULT 0,            --
   "fk_typent"          integer        DEFAULT 0,            --
   "fk_forme_juridique" integer        DEFAULT 0,            -- forme juridique INSEE
-  "siren"	             varchar(9),                          -- siren ou RCS
-  "siret"              varchar(14),                         -- numero de siret
-  "ape"                varchar(4),                          -- code ape
+  "siren"	             varchar(16),                         -- IDProf1: siren ou RCS pour france
+  "siret"              varchar(16),                         -- IDProf2: siret pour france
+  "ape"                varchar(16),                         -- IDProf3: code ape pour france
+  "idprof4"            varchar(16),                         -- IDProf4: nu pour france
   "tva_intra"          varchar(20),                         -- tva intracommunautaire
   "capital"            real,                                -- capital de la société
   "description"        text,                                --
@@ -61,7 +62,10 @@ create table llx_societe
   "services"           smallint        DEFAULT 0,            --
   "prefix_comm"        varchar(5),                          -- prefix commercial
   "client"             smallint        DEFAULT 0,            -- client 0/1/2
-  "fournisseur"        smallint        DEFAULT 0,             -- fournisseur 0/1
+  "fournisseur"        smallint        DEFAULT 0,            -- fournisseur 0/1
+  "customer_bad"       smallint        DEFAULT 0,            -- mauvais payeur 0/1
+  "customer_rate"      real           DEFAULT 0,            -- taux fiabilié client (0 à 1)
+  "supplier_rate"      real           DEFAULT 0,            -- taux fiabilié fournisseur (0 à 1)
   "rubrique"           varchar(255),                        -- champ rubrique libre
   "fk_user_creat"      integer,                             -- utilisateur qui a créé l'info
   "fk_user_modif"      integer,                             -- utilisateur qui a modifié l'info

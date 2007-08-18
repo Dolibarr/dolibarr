@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,5 +32,5 @@ create table llx_bank_url
   "url_id"          integer,
   "url"             varchar(255),
   "label"           varchar(255),
-  "type" varchar(8) CHECK (type IN ('company','payment','member','donation','charge')) 
+  "type"            enum("?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc") NOT NULL
 );

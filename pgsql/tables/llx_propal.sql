@@ -42,13 +42,13 @@ create table llx_propal
   "fk_user_valid"   integer,               -- valideur de la propale
   "fk_user_cloture" integer,               -- cloture de la propale signee ou non signee
   "fk_statut"       smallint  DEFAULT 0 NOT NULL,
-  "price"           real      DEFAULT 0,
-  "remise_percent"  real      DEFAULT 0,  -- remise globale relative en pourcent
-  "remise_absolue"  real      DEFAULT 0,  -- remise globale absolue
-  "remise"          real      DEFAULT 0,  -- remise calculee
-  "tva"             real      DEFAULT 0,  -- montant tva apres remise globale
-  "total_ht"        real      DEFAULT 0,  -- montant total ht apres remise globale
-  "total"           real      DEFAULT 0,  -- montant total ttc apres remise globale
+  "price"           real      DEFAULT 0,  -- (obsolete)
+  "remise_percent"  real      DEFAULT 0,  -- remise globale relative en pourcent (obsolete)
+  "remise_absolue"  real      DEFAULT 0,  -- remise globale absolue (obsolete)
+  "remise"          real      DEFAULT 0,  -- remise calculee (obsolete)
+  "total_ht"        real(16,8)      DEFAULT 0,  -- montant total ht apres remise globale
+  "tva"             real(16,8)      DEFAULT 0,  -- montant total tva apres remise globale
+  "total"           real(16,8)      DEFAULT 0,  -- montant total ttc apres remise globale
   "fk_cond_reglement"   integer,  -- condition de reglement (30 jours, fin de mois ...)
   "fk_mode_reglement"   integer,  -- mode de reglement (Virement, Prélèvement)
  

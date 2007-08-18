@@ -27,21 +27,32 @@
 --
 -- ========================================================================
 
+
+
+
+
 create table llx_actioncomm
 (
   id SERIAL PRIMARY KEY,
   "datec"          timestamp,             -- date creation
-  "datep"          timestamp,             -- date 0%
-  "datea"          timestamp,             -- date 100%
+  "datep"          timestamp,             -- date debut planifiee
+  "datep2"         timestamp,             -- date fin planifiee si action non ponctuelle
+  "datea"          timestamp,             -- date debut realisation
+  "datea2"         timestamp,             -- date fin realisation si action non ponctuelle
   "tms"            timestamp,            -- date modif
-  "fk_action"      integer,
+  "fk_action"      integer,              -- type de l'action
   "label"          varchar(50) NOT NULL, -- libelle de l'action
+  "fk_project"     integer,
   "fk_soc"         integer,
-  "fk_contact"     integer default 0,
+  "fk_contact"     integer,
+  "fk_parent"      integer NOT NULL default 0,
   "fk_user_action" integer,              -- id de la personne qui doit effectuer l'action
-  "fk_user_author" integer,
+  "fk_user_author" integer,              -- id de la personne qui a effectuer l'action
   "priority"       smallint,
+  "punctual"       smallint NOT NULL default 1,
   "percent"        smallint NOT NULL default 0,
+  "durationp"      real,                 -- duree planifiee
+  "durationa"      real,                 -- duree reellement passee
   "note"           text,
   "propalrowid"    integer,
   "fk_commande"    integer,

@@ -34,5 +34,8 @@ create table llx_facturedet_rec
   "remise_percent"  real DEFAULT 0,    -- pourcentage de remise
   "remise"          real DEFAULT 0,    -- montant de la remise
   "subprice"        real,              -- prix avant remise
-  "price"           real               -- prix final
+  "price"           real,               -- prix final
+  "total_ht"        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  "total_tva"       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  "total_ttc"       real	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
 );

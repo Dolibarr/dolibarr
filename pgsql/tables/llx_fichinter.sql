@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -30,7 +30,9 @@ create table llx_fichinter
   rowid SERIAL PRIMARY KEY,
   "fk_soc"          integer NOT NULL,
   "fk_projet"       integer DEFAULT 0,     -- projet auquel est rattache la fiche
+  "fk_contrat"      integer DEFAULT 0,     -- contrat auquel est rattache la fiche
   "ref"             varchar(30) NOT NULL,  -- number
+  "tms"             timestamp,
   "datec"           timestamp,              -- date de creation 
   "date_valid"      timestamp,              -- date de validation
   "datei"           date,                  -- date de l'intervention
@@ -38,7 +40,9 @@ create table llx_fichinter
   "fk_user_valid"   integer,               -- valideur de la fiche
   "fk_statut"       smallint  DEFAULT 0,
   "duree"           real,
-  "note"            text,
+  "description"     text,
+  "note_private"    text,
+  "note_public"     text,
   UNIQUE(ref)
 );
 

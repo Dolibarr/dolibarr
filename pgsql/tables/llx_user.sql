@@ -4,6 +4,8 @@
 
 -- ============================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -29,11 +31,12 @@ create table llx_user
   rowid SERIAL PRIMARY KEY,
   "datec"             timestamp,
   "tms"               timestamp,
-  "login"             varchar(24),
+  "login"             varchar(24) NOT NULL,
   "pass"              varchar(32),
+  "pass_crypted"      varchar(128),
+  "pass_temp"         varchar(32),			-- temporary password when asked for forget password
   "name"              varchar(50),
   "firstname"         varchar(50),
-  "code"              varchar(4),
   "office_phone"      varchar(20),
   "office_fax"        varchar(20),
   "user_mobile"       varchar(20),
@@ -42,14 +45,14 @@ create table llx_user
   "webcal_login"      varchar(25),
   "module_comm"       smallint DEFAULT 1,
   "module_compta"     smallint DEFAULT 1,
-  "fk_societe"        integer DEFAULT 0,
-  "fk_socpeople"      integer DEFAULT 0,
-  "note"              text,
-  "datelastaccess"    timestamp,
+  "fk_societe"        integer,
+  "fk_socpeople"      integer,
+  "fk_member"         integer,
+  "note"              text DEFAULT NULL,
+  "datelastlogin"     timestamp,
+  "datepreviouslogin" timestamp,
   "egroupware_id"     integer,
   "ldap_sid"          varchar(255) DEFAULT NULL,
-  
-  UNIQUE(login)
+  "statut"			      smallint DEFAULT 1,
+  "lang"              varchar(6)
 );
-
-CREATE INDEX idx_llx_user_login ON llx_user (login);

@@ -42,11 +42,11 @@ create table llx_facture_rec
   "tva"                real     DEFAULT 0,
   "total"              real     DEFAULT 0,
   "total_ttc"          real     DEFAULT 0,
-  "fk_user_author"     integer,   -- createur
-  "fk_projet"          integer,   -- projet auquel est associé la facture
-  "fk_cond_reglement"  integer,   -- condition de reglement
-  "fk_mode_reglement"   integer,                      -- mode de reglement (Virement, Prélèvement)
-  "date_lim_reglement"  date,                         -- date limite de reglement
+  "fk_user_author"     integer,             -- createur
+  "fk_projet"          integer,             -- projet auquel est associé la facture
+  "fk_cond_reglement"  integer DEFAULT 0,   -- condition de reglement
+  "fk_mode_reglement"   integer DEFAULT 0,  -- mode de reglement (Virement, Prélèvement)
+  "date_lim_reglement"  date,               -- date limite de reglement
   "note"               text,
   "note_public"         text,
   "frequency"          varchar(2) DEFAULT NULL,

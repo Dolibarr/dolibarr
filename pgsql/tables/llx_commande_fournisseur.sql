@@ -4,6 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,7 +27,6 @@
 
 
 
-
 create table llx_commande_fournisseur
 (
   rowid SERIAL PRIMARY KEY,
@@ -46,14 +46,11 @@ create table llx_commande_fournisseur
   "amount_ht"           real      default 0,
   "remise_percent"      real      default 0,
   "remise"              real      default 0,
-  "tva"                 real      default 0,
-  "total_ht"            real      default 0,
-  "total_ttc"           real      default 0,
+  "tva"                 real(16,8)      default 0,
+  "total_ht"            real(16,8)      default 0,
+  "total_ttc"           real(16,8)      default 0,
   "note"                text,
   "note_public"         text,
   "model_pdf"           varchar(50),
-  "fk_methode_commande" integer default 0,
-  UNIQUE(ref)
+  "fk_methode_commande" integer default 0
 );
-
-CREATE INDEX idx_llx_commande_fournisseur_ref ON llx_commande_fournisseur (ref);

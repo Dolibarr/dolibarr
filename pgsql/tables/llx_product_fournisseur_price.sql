@@ -32,7 +32,9 @@ create table llx_product_fournisseur_price
   "tms"             timestamp,
   "fk_product"      integer,
   "fk_soc"          integer, -- lien sur llx_societe
-  "price"           real,
+  "ref_fourn"       varchar(30),
+  "price"           real(16,8),
   "quantity"        real,
+  "unitprice"       real(16,8),
   "fk_user"         integer
 );

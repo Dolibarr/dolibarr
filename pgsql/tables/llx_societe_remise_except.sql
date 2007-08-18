@@ -3,8 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+-- Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -31,8 +31,12 @@ create table llx_societe_remise_except
   rowid SERIAL PRIMARY KEY,
   "fk_soc"          integer NOT NULL, -- client
   "datec"           timestamp,
-  "amount_ht"       real NOT NULL,
-  "fk_user"         integer NOT NULL,
-  "fk_facture"      integer,
-  "description"     varchar(255) NOT NULL
+  "amount_ht"       real(16,8) NOT NULL,
+  "amount_tva" 	  real(16,8) DEFAULT 0 NOT NULL,
+  "amount_ttc" 	  real(16,8) DEFAULT 0 NOT NULL,
+  "tva_tx"   	      real(6,3)  DEFAULT 0 NOT NULL,
+  "fk_user"           integer NOT NULL,
+  "fk_facture"        integer,
+  "fk_facture_source" integer,
+  "description"       varchar(255) NOT NULL
 );

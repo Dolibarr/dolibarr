@@ -26,20 +26,21 @@
 create table llx_propaldet
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_propal"      integer,
-  "fk_product"     integer,
-  "description"    text,
-  "tva_tx"         real, 				-- taux tva
-  "qty"            real,              -- quantité
-  "remise_percent" real DEFAULT 0,    -- pourcentage de remise
-  "remise"         real DEFAULT 0,    -- montant de la remise
-  "fk_remise_except"	integer NULL,   -- Lien vers table des remises fixes
-  "subprice"       real,              -- prix avant remise
-  "price"          real,              -- prix final
-  "total_ht"       real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  "total_tva"      real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  "total_ttc"      real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  "info_bits"		 integer DEFAULT 0, 	-- TVA NPR ou non
-  "coef"           real,              -- coefficient de marge
-  "rang"           integer DEFAULT 0
+  "fk_propal"         integer,
+  "fk_product"        integer,
+  "description"       text,
+  "fk_remise_except"	integer NULL,      -- Lien vers table des remises fixes
+  "tva_tx"            real(6,3), 		   -- taux tva
+  "qty"               real,              -- quantité
+  "remise_percent"    real DEFAULT 0,    -- pourcentage de remise
+  "remise"            real DEFAULT 0,    -- montant de la remise (obsolete)
+  "price"             real,              -- prix final (obsolete)
+  "subprice"          real(16,8),      -- prix unitaire article
+  "total_ht"          real(16,8),      -- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  "total_tva"         real(16,8),      -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  "total_ttc"         real(16,8),      -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  "info_bits"		      integer DEFAULT 0, -- TVA NPR ou non
+  "marge_tx"          real,              -- taux de marge (marge sur prix d'achat)
+  "marque_tx"         real,              -- taux de marque (marge sur prix de vente)
+  "rang"              integer DEFAULT 0  -- ordre affichage sur la propal
 );

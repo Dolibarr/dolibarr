@@ -4,7 +4,8 @@
 
 -- ===================================================================
 -- Copyright (C) 2002-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2002-2003 Jean-Louis Bergamo <jlb@j1b.org>
+-- Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
+-- Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -26,37 +27,40 @@
 -- ===================================================================
 --
 -- statut
--- 0 : non adherent
--- 1 : adherent
+-- -1 : brouillon
+--  0 : resilie
+--  1 : valide
 
 create table llx_adherent
 (
   rowid SERIAL PRIMARY KEY,
-  "tms"              timestamp,
-  "statut"           smallint NOT NULL DEFAULT 0,
-  "public"           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
+  "nom"              varchar(50),
+  "prenom"           varchar(50),
+  "login"            varchar(50) NOT NULL, -- login
+  "pass"             varchar(50),          -- password
   "fk_adherent_type" smallint,
   "morphy" varchar(3) CHECK (morphy IN ('mor','phy'))  NOT NULL, -- personne morale / personne physique
-  "datevalid"        timestamp,  -- date de validation
-  "datec"            timestamp,  -- date de creation
-  "prenom"           varchar(50),
-  "nom"              varchar(50),
   "societe"          varchar(50),
   "adresse"          text,
   "cp"               varchar(30),
   "ville"            varchar(50),
   "pays"             varchar(50),
   "email"            varchar(255),
-  "login"            varchar(50) NOT NULL,      -- login utilise pour editer sa fiche
-  "pass"             varchar(50),      -- pass utilise pour editer sa fiche
+  "phone"            varchar(30),
+  "phone_perso"      varchar(30),
+  "phone_mobile"     varchar(30),
   "naiss"            date,             -- date de naissance
-  "photo"            varchar(255),     -- url vers la photo de l'adherent
-  "fk_user_author"   integer NOT NULL,
-  "fk_user_mod"      integer NOT NULL,
-  "fk_user_valid"    integer NOT NULL,
+  "photo"            varchar(255),     -- url vers photo
+  "statut"           smallint NOT NULL DEFAULT 0,
+  "public"           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils public ou pas ?
   "datefin"          timestamp,  -- date de fin de validité de la cotisation
   "note"             text,
- 
+  "datevalid"        timestamp,  -- date de validation
+  "datec"            timestamp,  -- date de creation
+  "tms"              timestamp, -- date de modification
+  "fk_user_author"   integer NOT NULL,
+  "fk_user_mod"      integer NOT NULL,
+  "fk_user_valid"    integer NOT NULL, 
   UNIQUE(login)
 );
 

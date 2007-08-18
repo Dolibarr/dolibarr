@@ -3,7 +3,7 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ============================================================================
--- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -24,18 +24,19 @@
 --
 -- ============================================================================
 
-
 create table llx_product
 (
   rowid SERIAL PRIMARY KEY,
   "datec"              timestamp,
   "tms"                timestamp,
-  "ref"                varchar(16) NOT NULL,
-  "label"              varchar(128),
-  "description"        varchar(255),
+  "ref"                varchar(32) NOT NULL,
+  "label"              varchar(255) NOT NULL,
+  "description"        text,
   "note"               text,
-  "price"              real,
-  "tva_tx"             real,
+  "price"              real(16,8),
+  "price_ttc"          real(16,8) DEFAULT 0,
+  "price_base_type"    varchar(3)  DEFAULT 'HT',
+  "tva_tx"             real(6,3),
   "fk_user_author"     integer,
   "envente"            smallint DEFAULT 1,
   "nbvente"            integer DEFAULT 0,
@@ -44,8 +45,11 @@ create table llx_product
   "stock_propale"      integer DEFAULT 0,
   "stock_commande"     integer DEFAULT 0,
   "seuil_stock_alerte" integer DEFAULT 0,
-  "gencode"            varchar(255) DEFAULT NULL
+  "stock_loc"          varchar(10),         -- emplacement dans le stock
+  "gencode"            varchar(255) DEFAULT NULL,
+  "weight"             float        DEFAULT NULL,
+  "weight_units"       smallint      DEFAULT NULL,
+  "volume"             float        DEFAULT NULL,
+  "volume_units"       smallint      DEFAULT NULL,
+  "canvas"             varchar(15)  DEFAULT ''
 );
-
-
-

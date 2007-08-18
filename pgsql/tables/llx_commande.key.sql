@@ -26,7 +26,7 @@
 
 
 -- Supprimme orphelins pour permettre montée de la clé
--- V4 DELETE llx_commande FROM llx_commande LEFT JOIN llx_societe ON llx_commande.fk_soc = llx_societe.idp WHERE llx_societe.idp IS NULL; 
+-- V4 DELETE llx_commande FROM llx_commande LEFT JOIN llx_societe ON llx_commande.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
 
 ALTER TABLE llx_commande ADD INDEX idx_commande_fk_soc (fk_soc);
-ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

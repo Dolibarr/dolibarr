@@ -28,7 +28,7 @@
 create table llx_paiementfourn_facturefourn
 (
   rowid SERIAL PRIMARY KEY,
-  "fk_paiementfourn" integer DEFAULT NULL,
-  "fk_facturefourn"  integer DEFAULT NULL,
+  "fk_paiementfourn" INT(11) DEFAULT NULL,
+  "fk_facturefourn"  INT(11) DEFAULT NULL,
   "amount" real DEFAULT '0'
 );

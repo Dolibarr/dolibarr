@@ -40,22 +40,22 @@ create table llx_contratdet
   "statut"                smallint DEFAULT 0,
   "label"                 text, -- libellé du produit
   "description"           text,
+  "fk_remise_except"		integer NULL,      -- Lien vers table des remises fixes
   "date_commande"         timestamp,
   "date_ouverture_prevue" timestamp,
   "date_ouverture"        timestamp, -- date d'ouverture du service chez le client
   "date_fin_validite"     timestamp,
   "date_cloture"          timestamp,
-  "tva_tx"                real DEFAULT 19.6, -- taux tva
-  "qty"                   real,              -- quantité
-  "remise_percent"        real DEFAULT 0,    -- pourcentage de remise
-  "remise"                real DEFAULT 0,    -- montant de la remise
-  "fk_remise_except"		integer NULL,      -- Lien vers table des remises fixes
-  "subprice"              real,              -- prix avant remise
-  "price_ht"              real,              -- prix final
-  "total_ht"              real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  "total_tva"             real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  "total_ttc"             real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  "info_bits"		        integer DEFAULT 0, 	    -- TVA NPR ou non
+  "tva_tx"                real(6,3) DEFAULT 0 NOT NULL, 	-- taux tva
+  "qty"                   real NOT NULL,              		-- quantité
+  "remise_percent"        real DEFAULT 0,    		-- pourcentage de remise
+  "subprice"              real(16,8),      		-- prix unitaire
+  "price_ht"              real,              		-- prix final (obsolete)
+  "remise"                real DEFAULT 0,    		-- montant de la remise (obsolete)
+  "total_ht"              real(16,8) NOT NULL,     		-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  "total_tva"             real(16,8) NOT NULL,	   		-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  "total_ttc"             real(16,8) NOT NULL,	   		-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  "info_bits"		        integer DEFAULT 0, 		-- TVA NPR ou non
   "fk_user_author"        integer NOT NULL default 0,
   "fk_user_ouverture"     integer,
   "fk_user_cloture"       integer,
