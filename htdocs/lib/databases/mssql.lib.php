@@ -822,7 +822,7 @@ class DoliDb
 			return $this->forcecollate;
 	   }
 	   $liste=$this->fetch_array($resql);
-	   return $liste['Value'];
+	   return $liste['computed'];
 	}
 	
 	function getListOfCollation(){
