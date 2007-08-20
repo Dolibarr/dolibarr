@@ -815,7 +815,7 @@ class DoliDb
 	}
 	
 	function getDefaultCollationConnection(){
-		$resql=$this->query('SELECT SERVERPROPERTY(''collation'')');
+		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
 		 if (!$resql)
 	   {
 			// version Mysql < 4.1.1
