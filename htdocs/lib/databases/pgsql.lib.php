@@ -598,7 +598,7 @@ class DoliDb
     function getGrantForUserQuery($databaseuser)
     {
         // Scan tables pour générer le grant
-        $dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
+        /*$dir = DOL_DOCUMENT_ROOT."/pgsql/tables";
 
         $handle=opendir($dir);
         $table_list="";
@@ -618,6 +618,8 @@ class DoliDb
         // Genere le grant_query
         $grant_query = 'GRANT ALL ON '.$table_list.' TO "'.$databaseuser.'";';
         return $grant_query;
+        */
+        return '';
     }
 
     /**
@@ -680,5 +682,56 @@ class DoliDb
 	    $liste=$this->fetch_array($resql);
 	    return $liste['server_encoding'];
 	}
+	
+	function getListOfCharacterSet(){
+		 $resql=$this->query('SHOW CHARSET');
+		$liste = array();
+		if ($resql) 
+			{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['charset'] = $obj->Charset;
+				$liste[$i]['description'] = $obj->Description;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  	} else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
+	}
+	
+	function getDefaultCollationConnection(){
+		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
+		 if (!$resql)
+	      {
+			// version Mysql < 4.1.1
+			return $this->forcecollate;
+	      }
+	    $liste=$this->fetch_array($resql);
+	    return $liste['Value'];
+	}
+	
+	function getListOfCollation(){
+		 $resql=$this->query('SHOW COLLATION');
+		$liste = array();
+		if ($resql) 
+			{
+			$i = 0;
+			while ($obj = $this->fetch_object($resql) )
+			{
+				$liste[$i]['collation'] = $obj->Collation;
+				$i++;           
+			}   
+	    	$this->free($resql);
+	  	} else {
+	  		// version Mysql < 4.1.1
+	   		return null;
+	  	}
+    	return $liste;
+	}
+	
 }
 ?>

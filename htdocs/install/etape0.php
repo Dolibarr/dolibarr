@@ -26,7 +26,7 @@
    \version    $Revision$
 */
 
-define('DONOTLOADCONF',1);	// To avoid loading conf by file inc..php
+define('DONOTLOADCONF',1);	// To avoid loading conf by file inc.php
 
 include_once("./inc.php");
 
@@ -69,7 +69,7 @@ $passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
 $main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
 /**
-* 	Si l'utilisateur n'est pas créé déjà créé, on se connecte à l'aide du login root'
+* 	Si l'utilisateur n'est pas déjà créé, on se connecte à l'aide du login root'
 */
 require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
 if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")

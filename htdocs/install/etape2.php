@@ -51,7 +51,7 @@ $langs->load("install");
 
 if ($dolibarr_main_db_type == "mysql")  $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
-if ($dolibarr_main_db_type == "pqsql")  $choix=2;
+if ($dolibarr_main_db_type == "pgsql")  $choix=2;
 if ($dolibarr_main_db_type == "mssql")  $choix=3;
 
 dolibarr_install_syslog("etape2: Entering etape2.php page");
