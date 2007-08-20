@@ -47,7 +47,7 @@ class DoliDb
   //! Collate
   var $forcecollate='latin1_swedish_ci';
   //! Version min database
-  var $versionmin=array(3,1,0);	
+  var $versionmin=array(2000);	
   //! Resultset de la dernière requete  
   var $results;
   //! 1 si connecté, 0 sinon  
@@ -787,7 +787,6 @@ class DoliDb
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		  if (!$resql)
 	    {
-	    	// version Mysql < 4.1.1
 			  return $this->forcecharset;
 	    }
 	    $liste=$this->fetch_array($resql);
@@ -808,7 +807,6 @@ class DoliDb
 			}   
 	    	$this->free($resql);
 	  } else {
-	  		// version Mysql < 4.1.1
 	   		return null;
 	  	}
     	return $liste;
@@ -818,7 +816,6 @@ class DoliDb
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
 		 if (!$resql)
 	   {
-			// version Mysql < 4.1.1
 			return $this->forcecollate;
 	   }
 	   $liste=$this->fetch_array($resql);
@@ -838,7 +835,6 @@ class DoliDb
 			}   
 	    	$this->free($resql);
 	  	} else {
-	  		// version Mysql < 4.1.1
 	   		return null;
 	  	}
     	return $liste;
