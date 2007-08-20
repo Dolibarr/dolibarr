@@ -784,6 +784,7 @@ class DoliDb
 	}
 	
 	function getDefaultCharacterSetDatabase(){
+		 /*
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		  if (!$resql)
 	    {
@@ -791,10 +792,13 @@ class DoliDb
 	    }
 	    $liste=$this->fetch_array($resql);
 	    return $liste['Value'];
+	    */
+	    return '';
 	}
 	
 	function getListOfCharacterSet(){
-		 $resql=$this->query('SHOW CHARSET');
+		/*
+		$resql=$this->query('SHOW CHARSET');
 		$liste = array();
 		if ($resql) 
 		{
@@ -810,6 +814,8 @@ class DoliDb
 	   		return null;
 	  	}
     	return $liste;
+    	*/
+    	return ''; // attente débuggage
 	}
 	
 	function getDefaultCollationConnection(){
@@ -823,7 +829,8 @@ class DoliDb
 	}
 	
 	function getListOfCollation(){
-		 $resql=$this->query('SHOW COLLATION');
+		/*
+		$resql=$this->query('SHOW COLLATION');
 		$liste = array();
 		if ($resql) 
 			{
@@ -838,6 +845,8 @@ class DoliDb
 	   		return null;
 	  	}
     	return $liste;
+    	*/
+    	return ''; // attente débugage
 	}
 	
 }
