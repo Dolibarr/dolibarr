@@ -815,14 +815,14 @@ class DoliDb
 	}
 	
 	function getDefaultCollationConnection(){
-		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
+		$resql=$this->query('SELECT SERVERPROPERTY(''collation'')');
 		 if (!$resql)
-	      {
+	   {
 			// version Mysql < 4.1.1
 			return $this->forcecollate;
-	      }
-	    $liste=$this->fetch_array($resql);
-	    return $liste['Value'];
+	   }
+	   $liste=$this->fetch_array($resql);
+	   return $liste['Value'];
 	}
 	
 	function getListOfCollation(){
