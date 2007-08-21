@@ -27,8 +27,6 @@
 		\version    $Revision$
 */
 
-require_once(FPDFI_PATH.'fpdi_protection.php');
-
 
 /**	
    \class      BordereauChequeBlochet
@@ -223,6 +221,7 @@ class BordereauChequeBlochet
 		// Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
     {
+     	require_once(FPDFI_PATH.'fpdi_protection.php');
      	$pdf = new FPDI_Protection('P','mm','A4');
      	$pdfrights = array('print'); // Ne permet que l'impression du document
     	$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
@@ -231,6 +230,7 @@ class BordereauChequeBlochet
     }
     else
     {
+    	require_once(FPDFI_PATH.'fpdi.php');
     	$pdf=new FPDI('P','mm',$this->format);
     }
 
