@@ -27,7 +27,7 @@
 		\version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+require_once(FPDFI_PATH.'fpdi_protection.php');
 
 
 /**	
@@ -220,15 +220,18 @@ class BordereauChequeBlochet
 		$year = sprintf("%04d",$year);
 		$_file = $dir . "bordereau-".$number.".pdf";
 		
-		$pdf = new FPDI_Protection('P','mm','A4');
-		
 		// Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
     {
+     	$pdf = new FPDI_Protection('P','mm','A4');
      	$pdfrights = array('print'); // Ne permet que l'impression du document
     	$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
      	$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
      	$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+    }
+    else
+    {
+    	$pdf=new FPDI('P','mm',$this->format);
     }
 
 		$pdf->Open();

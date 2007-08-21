@@ -187,6 +187,7 @@ $langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
  */
 // Les path racines
 if (! defined('FPDF_PATH'))           { define('FPDF_PATH',          DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdf/'); }
+if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMENT_ROOT .'/includes/fpdf/fpdfi/'); }
 if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
@@ -214,7 +215,7 @@ if (! defined('MAGPIE_CACHE_DIR'))    { define('MAGPIE_CACHE_DIR',   $conf->exte
 if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
 // require_once(FPDF_PATH . "fpdf.php");
 // dans le fichier pdfdetail_standard_modeles du module telephonie afin de pouvoir supprimer la ligne suivante
-if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDF_PATH . "fpdi_protection.php");
+if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FPDFI_PATH . "fpdi_protection.php");
 
 
 /* 
