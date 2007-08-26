@@ -196,7 +196,7 @@ class Facture extends CommonObject
 		$sql.= ' fk_facture_source, fk_user_author, fk_projet,';
 		$sql.= ' fk_cond_reglement, fk_mode_reglement, date_lim_reglement, model_pdf)';
 		$sql.= ' VALUES (';
-		$sql.= "'$number', '".$this->type."', '$socid', now(), '$totalht', '".$this->remise_absolue."'";
+		$sql.= "'(PROV)', '".$this->type."', '$socid', now(), '$totalht', '".$this->remise_absolue."'";
 		$sql.= ",'".$this->remise_percent."', ".$this->db->idate($this->date);
 		$sql.= ",".($this->note?"'".addslashes($this->note)."'":"null");
 		$sql.= ",".($this->note_public?"'".addslashes($this->note_public)."'":"null");
@@ -214,7 +214,8 @@ class Facture extends CommonObject
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX.'facture');
 
-			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='(PROV".$this->id.")' WHERE rowid=".$this->id;
+			$this->ref='(PROV'.$this->id.')';
+			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->ref."' WHERE rowid=".$this->id;
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
 			

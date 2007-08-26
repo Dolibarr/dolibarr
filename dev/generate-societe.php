@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,20 +18,26 @@
  *
  * $Id$
  * $Source$
+ *
+ * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**
         \file       htdocs/dev/generate-societe.php
-		\brief      Page de génération de données aléatoires pour les societes
+		\brief      Script de génération de données aléatoires pour les societes
 		\version    $Revision$
 */
 
-if (! file_exists("../htdocs/master.inc.php"))
-{
-	print "Error: This script must be run from its directory.\n"; 
-	exit -1;	
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
 }
-require ("../htdocs/master.inc.php");
+
+// Recupere root dolibarr
+$path=eregi_replace('generate-societe.php','',$_SERVER["PHP_SELF"]);
+require ($path."../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");

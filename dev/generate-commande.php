@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,26 @@
  *
  * $Id$
  * $Source$
+ *
+ * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**
 	    \file       htdocs/dev/generate-commande.php
-		\brief      Page de génération de données aléatoires pour les commandes
+		\brief      Script de génération de données aléatoires pour les commandes
 		\version    $Revision$
 */
 
-require ("../htdocs/master.inc.php");
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+// Recupere root dolibarr
+$path=eregi_replace('generate-commande.php','',$_SERVER["PHP_SELF"]);
+require ($path."../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -43,18 +54,27 @@ define (GEN_NUMBER_COMMANDE, 10);
 
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe"; $societesid = array();
-if ($db->query($sql)) { $num = $db->num_rows(); $i = 0;
+$resql=$db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
-		$row = $db->fetch_row($i);      $societesid[$i] = $row[0];      $i++;
+		$row = $db->fetch_row($resql);
+		$societesid[$i] = $row[0];
+		$i++;
 	}
 }
 else { print "err"; }
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."commande"; $commandesid = array();
-if ($db->query($sql)) {
-	$num = $db->num_rows(); $i = 0;
+$resql=$db->query($sql);
+if ($resql) {
+	$num = $db->num_rows($resql);
+	$i = 0;
 	while ($i < $num) {
-		$row = $db->fetch_row($i);      $commandesid[$i] = $row[0];      $i++;
+		$row = $db->fetch_row($resql);
+		$commandesid[$i] = $row[0];
+		$i++;
 	}
 }
 else { print "err"; }
@@ -132,10 +152,10 @@ $dates = array (mktime(12,0,0,1,3,2003),
 require(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 
-print "Génère ".GEN_NUMBER_COMMANDE." commandes\n";
+print "Build ".GEN_NUMBER_COMMANDE." orders\n";
 for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 {
-    print "Commande $s";
+    print "Order ".$s;
 
     $com = new Commande($db);
     
@@ -152,11 +172,28 @@ for ($s = 0 ; $s < GEN_NUMBER_COMMANDE ; $s++)
 	{
 	    // \TODO Utiliser addline plutot que add_product
 		$prodid = rand(1, $num_prods);
-	    $com->add_product($prodids[$prodid],rand(1,11),rand(1,6),rand(0,20));
+	    $result=$com->add_product($prodids[$prodid],rand(1,11),rand(1,6),rand(0,20));
+		if ($result < 0)
+		{
+			dolibarr_print_error($db,$propal->error);
+		}
+		$xnbp++;
 	}
 	
-    $com->create($user);
-	$com->valid($user);
+    $result=$com->create($user);
+	if ($result >= 0)
+	{
+		$result=$com->valid($user);
+		if ($result) print " OK";
+		else
+		{
+			dolibarr_print_error($db,$com->error);
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db,$facture->error);
+	}
 
 	print "\n";
 }

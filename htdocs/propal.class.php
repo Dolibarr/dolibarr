@@ -270,7 +270,7 @@ class Propal extends CommonObject
      */
     function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
     {
-    	dolibarr_syslog("Propal.class::addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $price_base_type");
+    	dolibarr_syslog("Propal::Addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $price_base_type");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)

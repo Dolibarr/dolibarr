@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,15 +18,26 @@
  *
  * $Id$
  * $Source$
+ *
+ * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
  */
 
 /**	
         \file       htdocs/dev/generate-produit.php
-		\brief      Page de génération de données aléatoires pour les produits
+		\brief      Script de génération de données aléatoires pour les produits
 		\version    $Revision$
 */
 
-require ("../htdocs/master.inc.php");
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+// Recupere root dolibarr
+$path=eregi_replace('generate-produit.php','',$_SERVER["PHP_SELF"]);
+require ($path."../htdocs/master.inc.php");
 include_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
@@ -34,11 +45,12 @@ include_once(DOL_DOCUMENT_ROOT."/product.class.php");
 include_once(DOL_DOCUMENT_ROOT."/paiement.class.php");
 include_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 
+
 /*
- * Parametre
+ * Parameters
  */
 
-define (GEN_NUMBER_PRODUIT, 10);
+define (GEN_NUMBER_PRODUIT, 5);
 
 
 $sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product"; $productsid = array();
@@ -58,7 +70,7 @@ while ($i < $num) { $row = $db->fetch_row($i);      $commandesid[$i] = $row[0]; 
 print "Génère ".GEN_NUMBER_PRODUIT." produits\n";
 for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
 {
-    print "Produit $s\n";
+    print "Produit ".$s;
     $produit = new Product($db);
     $produit->type = rand(0,1);
     $produit->status = 1;
@@ -68,7 +80,9 @@ for ($s = 0 ; $s < GEN_NUMBER_PRODUIT ; $s++)
     $produit->price = rand(1,1000);
     $produit->tva_tx = "19.6";
     $ret=$produit->create($user);
-    if ($ret < 0) print "Error $ret - ".$produit->error."\n";
+    if ($ret < 0) print "Error $ret - ".$produit->error;
+	else print " OK";
+	print "\n";
 }
 
 

@@ -18,25 +18,31 @@
  * $Id$
  * $Source$
  *
- *
  * ATTENTION DE PAS EXECUTER CE SCRIPT SUR UNE INSTALLATION DE PRODUCTION
- *
- * Genere un nombre aleatoire de facture
- *
  */
 
 /**
 	    \file       htdocs/dev/generate-facture.php
-		\brief      Page de génération de données aléatoires pour les factures
+		\brief      Script de génération de données aléatoires pour les factures
 		\version    $Revision$
 */
 
-require ("../htdocs/master.inc.php");
+// Test si mode batch
+$sapi_type = php_sapi_name();
+if (substr($sapi_type, 0, 3) == 'cgi') {
+    echo "Erreur: Vous utilisez l'interpreteur PHP pour le mode CGI. Pour executer mailing-send.php en ligne de commande, vous devez utiliser l'interpreteur PHP pour le mode CLI.\n";
+    exit;
+}
+
+// Recupere root dolibarr
+$path=eregi_replace('generate-facture.php','',$_SERVER["PHP_SELF"]);
+require ($path."../htdocs/master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 
+
 /*
- * Parametre
+ * Parameters
  */
 
 define (GEN_NUMBER_FACTURE, 5);
@@ -83,15 +89,15 @@ if ($resql)
 }
 
 $i=0;
-while ($i < GEN_NUMBER_FACTURE)
+$result=0;
+while ($i < GEN_NUMBER_FACTURE && $result >= 0)
 {
-	print "Facture $s";
-	
 	$i++;
 	$socid = rand(1, $num_socs);
+
+	print "Invoice ".$i." for socid ".$socid;
 	
 	$facture = new Facture($db, $socids[$socid]);
-	$facture->number = 'provisoire';
 	$facture->date = time();
 	$facture->cond_reglement_id = 3;
 	$facture->mode_reglement_id = 3;
@@ -106,8 +112,20 @@ while ($i < GEN_NUMBER_FACTURE)
 		$xnbp++;
 	}
 	
-	$facture->create($user);
-	$facture->set_valid($facture->id,$user,$socid);
+	$result=$facture->create($user);
+	if ($result >= 0)
+	{
+		$result=$facture->set_valid($facture->id,$user,$socid);
+		if ($result) print " OK";
+		else
+		{
+			dolibarr_print_error($db,$facture->error);
+		}
+	}
+	else
+	{
+		dolibarr_print_error($db,$facture->error);
+	}
 	
 	print "\n";
 }
