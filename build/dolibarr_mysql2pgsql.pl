@@ -170,7 +170,7 @@ foreach my $file (keys %filelist) {
     		} 
 
             # enum -> check
-    		if (/([\w\"]*)\s+enum\s*\(((?:['"]\w+['"]\s*,)+['"]\w+['"])\)(.*)$/i) {
+    		if (/([\w\"]*)\s+enum\s*\(((?:['"][\?\w]+['"]\s*,)+['"][\?\w]+['"])\)(.*)$/i) {
     			$enum_column=$1;
     			$enum_datafield{$enum_column}=$2;  # 'abc','def', ...
     			my $suite=$3;

@@ -927,7 +927,7 @@ create table llx_bordereau_cheque
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
   datec             datetime,
   date_bordereau    date,
-  number            mediumint ZEROFILL,
+  number            mediumint,
   amount            float(12,2),
   nbcheque          smallint UNSIGNED DEFAULT 0,
   fk_bank_account   integer,

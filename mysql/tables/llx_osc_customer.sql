@@ -20,10 +20,10 @@
 --
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_osc_customer` (
-  `rowid` int(11) NOT NULL default '0',
-  `datem` datetime default NULL,
-  `fk_soc` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  UNIQUE KEY `fk_soc` (`fk_soc`)
+CREATE TABLE llx_osc_customer (
+  rowid int(11) NOT NULL default '0',
+  datem datetime default NULL,
+  fk_soc int(11) NOT NULL default '0',
+  PRIMARY KEY  (rowid),
+  UNIQUE KEY fk_soc (fk_soc)
 ) TYPE=InnoDB COMMENT='Table transition client OSC - societe Dolibarr';

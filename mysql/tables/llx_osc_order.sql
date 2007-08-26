@@ -20,10 +20,10 @@
 --
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_osc_order` (
-  `rowid` int(11) NOT NULL default '0',
-  `datem` datetime default NULL,
-  `fk_commande` int(11) NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  UNIQUE KEY `fk_commande` (`fk_commande`)
+CREATE TABLE llx_osc_order (
+  rowid int(11) NOT NULL default '0',
+  datem datetime default NULL,
+  fk_commande int(11) NOT NULL default '0',
+  PRIMARY KEY  (rowid),
+  UNIQUE KEY fk_commande (fk_commande)
 ) TYPE=InnoDB COMMENT='Table transition commande OSC - commande Dolibarr';

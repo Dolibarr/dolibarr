@@ -820,3 +820,6 @@ update llx_boxes set box_order = concat('A0',box_order) where length(box_order) 
 update llx_boxes set box_order = concat('B0',box_order) where length(box_order) = 1 and substring(box_order,-1) in ('0','2','4','6','8');
 update llx_boxes set box_order = concat('A',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('1','3','5','7','9');
 update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('0','2','4','6','8');
+
+
+alter table llx_bordereau_cheque modify number integer;
