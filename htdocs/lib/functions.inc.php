@@ -2993,6 +2993,23 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
    	  return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
    }
 
+   $imgfonction='';
+   switch($infoImg[2]){
+      case 2:
+         $imgfonction = 'imagecreatefromjpeg';
+		 break;
+      case 3:
+         $imgfonction = 'imagecreatefrompng';
+   }
+   if ($imgfonction)
+   {
+		if (function_exists($imgfonction))
+		{
+			// Fonctions de conversion non presente dans ce PHP
+		    return 'Creation de vignette impossible. Ce PHP ne supporte pas les fonctions du module GD '.$imgfonction;
+		}
+   }
+   
    // On crée le répertoire contenant les vignettes
    if (! file_exists($dirthumb))
     {
@@ -3000,7 +3017,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
     	create_exdir($dirthumb);
     }
 
-   
    // Initialisation des variables selon l'extension de l'image
    switch($infoImg[2]){
       case 2:
