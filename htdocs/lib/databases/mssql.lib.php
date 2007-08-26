@@ -22,8 +22,8 @@
  */
 
 /**
-   \file       htdocs/lib/mysql.lib.php
-   \brief      Fichier de la classe permettant de gérer une base mysql
+   \file       htdocs/lib/mssql.lib.php
+   \brief      Fichier de la classe permettant de gérer une base mssql
    \author     Fabien Seisen
    \author     Rodolphe Quiedeville.
    \author     Laurent Destailleur.
