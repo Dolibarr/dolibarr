@@ -3003,7 +3003,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
    }
    if ($imgfonction)
    {
-		if (function_exists($imgfonction))
+		if (! function_exists($imgfonction))
 		{
 			// Fonctions de conversion non presente dans ce PHP
 		    return 'Creation de vignette impossible. Ce PHP ne supporte pas les fonctions du module GD '.$imgfonction;
