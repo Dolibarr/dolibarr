@@ -39,6 +39,7 @@ Dépendances
 Développement
 Entrepot_(Table_SQL)
 Entrepot_valorisation_(Table_SQL)
+Error_reporting
 Expedition_(Table_SQL)
 Expedition_methode_(Table_SQL)
 Expeditiondet_(Table_SQL)
