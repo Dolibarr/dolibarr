@@ -1546,9 +1546,11 @@ class Form
     }
      
     /**
-     *    \brief    Retourne la ou les listes déroulante des catégories en fonction 
-     *				du nombre choisi
-     *    \param    selected    nombre de catégorie à créer
+     *    \brief    Retourne la liste des catégories en fonction 
+     *				du nombre choisi.
+     *    \param    type			Type de categories
+     *    \param    selected    	Id categorie preselectionnee
+     *    \param    select_name		Nom formulaire HTML
      */
     function select_all_categories($type,$selected='',$select_name="")
     {
@@ -1557,28 +1559,30 @@ class Form
 
 		if ($select_name=="") $select_name="catMere";
 
-		$cat = new Categorie ($this -> db);
+		$cat = new Categorie($this->db);
 		$cate_arbo = $cat->get_full_arbo($type);
 
 		$output = '<select class="flat" name="'.$select_name.'">';
-		$output.= '<option value="-1" id="choix">'.$langs->trans("NoCategoriesDefined").'</option>';
-		
-		if ($cate_arbo)
+		if (is_array($cate_arbo))
 		{
-			foreach($cate_arbo as $key => $value)
+			if (! sizeof($cate_arbo)) $output.= '<option value="-1" disabled="true">'.$langs->trans("NoCategoriesDefined").'</option>';
+			else
 			{
-				if ($cate_arbo[$key]['id'] == $selected)
+				$output.= '<option value="-1">&nbsp;</option>';
+				foreach($cate_arbo as $key => $value)
 				{
-					$add = "selected='true' ";
+					if ($cate_arbo[$key]['id'] == $selected)
+					{
+						$add = 'selected="true" ';
+					}
+					else
+					{
+						$add = '';
+					}
+					$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
 				}
-				else
-				{
-					$add = "";
-				}
-				$output.= '<option '.$add.'value="'.$cate_arbo[$key]['id'].'">'.$cate_arbo[$key]['fulllabel'].'</option>';
 			}
 		}
-							 
 		$output.= '</select>';
 		$output.= "\n";
 		return $output; 

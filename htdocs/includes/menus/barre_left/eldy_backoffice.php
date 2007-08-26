@@ -231,6 +231,17 @@ class MenuLeft {
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/fiche.php?leftmenu=contacts&amp;action=create", $langs->trans("NewContact"), 1, $user->rights->societe->creer);
 				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=contacts", $langs->trans("List"), 1, $user->rights->societe->lire);
 
+				if ($conf->categorie->enabled)
+				{
+					$langs->load("categories");
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=2", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+					if ($user->societe_id == 0)
+					{
+						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					}
+					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
+				}
+
 			}
 
 			/*
@@ -596,7 +607,7 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=0", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
 					if ($user->societe_id == 0)
 					{
-						if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
 					}
 					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
@@ -644,6 +655,17 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/fourn/commande/index.php?leftmenu=suppliers",$langs->trans("Orders"), 0, $user->rights->fournisseur->commande->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=supplier", $langs->trans("NewOrder"), 1, $user->rights->fournisseur->commande->creer);
 					$newmenu->add_submenu(DOL_URL_ROOT."/fourn/commande/liste.php?leftmenu=suppliers", $langs->trans("List"), 1, $user->rights->fournisseur->commande->lire);
+				}
+
+				if ($conf->categorie->enabled)
+				{
+					$langs->load("categories");
+					$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("Categories"), 0, $user->rights->categorie->lire);
+					if ($user->societe_id == 0)
+					{
+						$newmenu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCat"), 1, $user->rights->categorie->creer);
+					}
+					//if ($leftmenu=="cat") $newmenu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"), 1, $user->rights->categorie->lire);
 				}
 
 			}

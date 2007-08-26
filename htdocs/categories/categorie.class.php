@@ -36,7 +36,7 @@ class Categorie
 	var $label;
 	var $description;
 	var $statut;
-	var $type;
+	var $type;					// 0=Produit, 1=Fournisseur, 2=Tiers
 
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
@@ -481,7 +481,7 @@ class Categorie
 		$res = $this->db->query ($sql);
 		if ($res)
 		{
-			$cats = array ();
+			$this->cats = array();
 			$i=0;
 			while ($obj = $this->db->fetch_object($res))
 			{

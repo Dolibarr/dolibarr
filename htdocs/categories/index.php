@@ -44,7 +44,8 @@ $c = new Categorie($db);
 $html = new Form($db);
 
 if (! $type)    $title=$langs->trans("ProductsCategoriesArea");
-if ($type == 1) $title=$langs->trans("ThirdPartyCategoriesArea");
+if ($type == 1) $title=$langs->trans("SuppliersCategoriesArea");
+if ($type == 2) $title=$langs->trans("ThirdPartyCategoriesArea");
 
 
 llxHeader("","",$title);
