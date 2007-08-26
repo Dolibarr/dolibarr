@@ -290,7 +290,7 @@ echo '</td><td valign="top" width="50%">';
 * Réglée
 */
 
-$sql = "SELECT amount, date_format(f.datev,'%Y-%m') as dm";
+$sql = "SELECT SUM(amount), date_format(f.datev,'%Y-%m') as dm";
 $sql .= " FROM ".MAIN_DB_PREFIX."tva as f WHERE f.datev >= '$y-01-01' AND f.datev <= '$y-12-31' ";
 $sql .= " GROUP BY dm DESC";
 
