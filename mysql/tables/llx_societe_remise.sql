@@ -18,8 +18,7 @@
 -- $Id$
 -- $Source$
 --
--- Historique des remises clients
--- 
+-- Historique evolution de la remise relative des tiers
 -- ========================================================================
 
 create table llx_societe_remise
