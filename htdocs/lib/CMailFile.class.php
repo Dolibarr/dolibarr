@@ -351,6 +351,10 @@ class CMailFile
 	        {
 	        	$out.= "Content-Type: text/html; charset=".$conf->charset_output.$this->eol;
 	        }
+	        else
+	        {
+	        	$out.= "Content-Type: text/plain; charset=".$conf->charset_output.$this->eol;	        	
+	        }
             $out.= $this->eol;
         }
         if ($this->msgishtml)
