@@ -823,4 +823,4 @@ alter table llx_boxes modify box_order varchar(3) NOT NULL;
 
 
 alter table llx_bordereau_cheque modify number integer;
-ALTER TABLE llx_facturedet ADD COLUM special_code tinyint unsigned default 0;
+ALTER TABLE llx_facturedet ADD COLUMN special_code tinyint unsigned default 0;
