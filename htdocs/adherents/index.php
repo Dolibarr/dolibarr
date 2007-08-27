@@ -279,7 +279,7 @@ krsort($Total);
 foreach ($Total as $key=>$value)
 {
     $var=!$var;
-    print "<tr $bc[$var]><td><a href=\"cotisations.php?date_select=$key\">$key</a></td><td align=\"right\">".price($value)."</td><td align=\"right\">".$Number[$key]."</td><td align=\"right\">".price($value/$Number[$key])."</td></tr>\n";
+    print "<tr $bc[$var]><td><a href=\"cotisations.php?date_select=$key\">$key</a></td><td align=\"right\">".price($value)."</td><td align=\"right\">".$Number[$key]."</td><td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td></tr>\n";
 }
 
 // Total

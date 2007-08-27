@@ -197,7 +197,7 @@ if ($result)
     while ($i < $num && $i < $conf->liste_limit)
     {
         $objp = $db->fetch_object($result);
-        $total+=price($objp->cotisation);
+        $total+=$objp->cotisation;
 
         $cotisation->ref=$objp->crowid;
         $cotisation->id=$objp->crowid;
