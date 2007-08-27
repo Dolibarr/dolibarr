@@ -42,5 +42,5 @@ create table llx_facturedet
   fk_code_ventilation integer DEFAULT 0 NOT NULL,
   fk_export_compta    integer DEFAULT 0 NOT NULL,
   rang                integer DEFAULT 0,         -- ordre d'affichage
-  special_code    tinyint UNSIGNED DEFAULT 0, -- code pour les lignes speciales (livraison=1, ecotaxe=2)
+  special_code    tinyint(4) DEFAULT 0   -- code pour les lignes speciales (livraison=1, ecotaxe=2)
 )type=innodb;
