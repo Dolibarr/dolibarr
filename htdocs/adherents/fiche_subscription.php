@@ -50,6 +50,7 @@ $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
 if (! $user->rights->adherent->cotisation->lire)
 	 accessforbidden();
 
+
 /*
  * 	Actions
  */
@@ -60,30 +61,69 @@ if ($user->rights->adherent->cotisation->creer && $_REQUEST["action"] == 'update
 	$result=$subscription->fetch($_POST["rowid"]);
 	if ($result > 0)
 	{
-		// Modifie valeures
-
+		$db->begin();
 		
-		$result=$subscription->update($user,0);
-		if ($result >= 0 && ! sizeof($subscription->errors))
+		$errmsg='';
+		
+		if ($subscription->fk_bank)
 		{
-			Header("Location: fiche_subscription.php?rowid=".$subscription->id);
-			exit;
-		}
-		else
-		{
-		    if ($adh->error)
+			$accountline=new AccountLine($db);
+			$result=$accountline->fetch($subscription->fk_bank);
+
+			// If transaction consolidated
+			if ($accountline->rappro)
 			{
-				$errmsg=$adh->error;
+				$errmsg=$langs->trans("SubscriptionLinkedToConciliatedTrnasaction");
 			}
 			else
 			{
-				foreach($adh->errors as $error)
+				$accountline->datev=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+				$accountline->dateo=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+				$accountline->amount=$_POST["amount"];
+				$result=$accountline->update($user);
+				if ($result < 0)
 				{
-					if ($errmsg) $errmsg.='<br>';
-					$errmsg.=$error;
+					$errmsg=$accountline->error;
 				}
 			}
-			$action='';
+		}
+		
+		if (! $errmsg)
+		{
+			// Modifie valeures
+			$subscription->dateh=dolibarr_mktime($_POST['datesubhour'], $_POST['datesubmin'], 0, $_POST['datesubmonth'], $_POST['datesubday'], $_POST['datesubyear']);
+			$subscription->amount=$_POST["amount"];
+
+			$result=$subscription->update($user);
+			if ($result >= 0 && ! sizeof($subscription->errors))
+			{
+				$db->commit();
+
+				header("Location: fiche_subscription.php?rowid=".$subscription->id);
+				exit;
+			}
+			else
+			{
+				$db->rollback();
+
+			    if ($subscription->error)
+				{
+					$errmsg=$subscription->error;
+				}
+				else
+				{
+					foreach($subscription->errors as $error)
+					{
+						if ($errmsg) $errmsg.='<br>';
+						$errmsg.=$error;
+					}
+				}
+				$action='';
+			}
+		}
+		else
+		{
+			$db->rollback();
 		}
 	}
 }
@@ -127,105 +167,42 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 	 *
 	 ********************************************/
 
-
-
+    $subscription->fetch($rowid);
+	 
 	/*
 	 * Affichage onglets
 	 */
-	$head = member_prepare_head($adh);
+	$h = 0;
+	$head = array();
 	
-	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
+	$head[$h][0] = DOL_URL_ROOT.'/adherents/fiche_subscription.php?rowid='.$subscription->id;
+	$head[$h][1] = $langs->trans("SubscriptionCard");
+	$head[$h][2] = 'general';
+	$h++;
 
+	dolibarr_fiche_head($head, 'general', $langs->trans("Subscription"));
 
+	print "\n";
 	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
-	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
-
+	print "<input type=\"hidden\" name=\"fk_bank\" value=\"".$subscription->fk_bank."\">";
 	print '<table class="border" width="100%">';
 	
 	$htmls = new Form($db);
 
     // Ref
-    print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
 	
-	// Nom
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
-	// Photo
-	$rowspan=17;
-	$rowspan+=sizeof($adho->attribute_label);
-	print '<td rowspan="'.$rowspan.'" valign="top">';
-	print '&nbsp;';
+    // Date
+    print '<tr><td>'.$langs->trans("Date").'</td><td class="valeur" colspan="2">';
+	$htmls->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
 	print '</td>';
-	print '</tr>';
+    print '</tr>';
 
-	// Prenom
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
-	print '</tr>';
-	
-	// Login
-	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
-	
-	// Password
-	print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
-
-	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td>';
-	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
-	print "</td></tr>";
-	
-	// Physique-Moral	
-	$morphys["phy"] = $langs->trans("Physical");
-	$morphys["mor"] = $langs->trans("Morale");
-	print "<tr><td>".$langs->trans("Person")."</td><td>";
-	$htmls->select_array("morphy",  $morphys, $adh->morphy);
-	print "</td></tr>";
-	
-	// Société
-	print '<tr><td>'.$langs->trans("Company").'</td><td><input type="text" name="societe" size="40" value="'.$adh->societe.'"></td></tr>';
-
-	// Adresse
-	print '<tr><td>'.$langs->trans("Address").'</td><td>';
-	print '<textarea name="adresse" wrap="soft" cols="40" rows="2">'.$adh->adresse.'</textarea></td></tr>';
-
-	// Cp
-	print '<tr><td>'.$langs->trans("Zip").'/'.$langs->trans("Town").'</td><td><input type="text" name="cp" size="6" value="'.$adh->cp.'"> <input type="text" name="ville" size="32" value="'.$adh->ville.'"></td></tr>';
-	
-	// Pays
-	print '<tr><td>'.$langs->trans("Country").'</td><td>';
-	$htmls->select_pays($adh->pays_code?$adh->pays_code:$mysoc->pays_code,'pays');
-	print '</td></tr>';
-	
-	// Tel
-	print '<tr><td>'.$langs->trans("PhonePro").'</td><td><input type="text" name="phone" size="20" value="'.$adh->phone.'"></td></tr>';
-
-	// Tel perso
-	print '<tr><td>'.$langs->trans("PhonePerso").'</td><td><input type="text" name="phone_perso" size="20" value="'.$adh->phone_perso.'"></td></tr>';
-
-	// Tel mobile
-	print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td><input type="text" name="phone_mobile" size="20" value="'.$adh->phone_mobile.'"></td></tr>';
-
-	// EMail
-	print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td><input type="text" name="email" size="40" value="'.$adh->email.'"></td></tr>';
-	
-	// Date naissance
-    print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
-    $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
-    print "</td></tr>\n";
-
-	// Url photo
-	print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
-
-	// Profil public
-    print "<tr><td>".$langs->trans("Public")."</td><td>\n";
-    print $htmls->selectyesno("public",$adh->public,1);
-    print "</td></tr>\n";
-
-	// Attributs supplémentaires
-	foreach($adho->attribute_label as $key=>$value)
-	{
-		print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\" value=\"".$adh->array_options["options_$key"]."\"></td></tr>\n";
-	}
+    // Amount
+    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="2">';
+	print '<input type="text" class="flat" size="10" name="amount" value="'.price($subscription->amount).'"></td></tr>';
 
 	print '<tr><td colspan="3" align="center">';
 	print '<input type="submit" class="button" name="submit" value="'.$langs->trans("Save").'">';
@@ -235,8 +212,10 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
 
 	print '</table>';
 	print '</form>';
+	print "\n";
 	
 	print '</div>'; 
+	print "\n";
 }
 
 if ($rowid && $action != 'edit')
@@ -289,7 +268,7 @@ if ($rowid && $action != 'edit')
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
 	print '<td class="valeur" colspan="2">';
 	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	print $subscription->id;
+	print $subscription->ref;
 	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
 	print '</td></tr>';
 
@@ -298,7 +277,7 @@ if ($rowid && $action != 'edit')
     print '</tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.$subscription->amount.'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($subscription->amount).'</td></tr>';
 
     print "</table>\n";
     print '</form>';
@@ -312,10 +291,10 @@ if ($rowid && $action != 'edit')
      */
     print '<div class="tabsAction">';
     
-//    if ($user->rights->adherent->cotisation->creer)
-//	{
-//		print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Edit")."</a>";
-//    }
+    if ($user->rights->adherent->cotisation->creer)
+	{
+		print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Edit")."</a>";
+    }
 	
     // Supprimer
     if ($user->rights->adherent->cotisation->creer)

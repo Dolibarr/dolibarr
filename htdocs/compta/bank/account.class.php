@@ -324,7 +324,7 @@ class Account
     {
         global $langs;
         
-		dolibarr_syslog("Account.class::update");
+		dolibarr_syslog("Account::update");
 
         if (! $this->ref)
         {
@@ -352,8 +352,7 @@ class Account
 
         $sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account.class::update sql=$sql");
-
+		dolibarr_syslog("Account::update sql=$sql");
         $result = $this->db->query($sql);
         if ($result)
         {
@@ -380,7 +379,7 @@ class Account
         // Chargement librairie pour acces fonction controle RIB
         require_once(DOL_DOCUMENT_ROOT.'/lib/bank.lib.php');
 
-		dolibarr_syslog("Account.class::update $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix");
+		dolibarr_syslog("Account::update $this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix");
 
         // Verification parametres
         if (! verif_rib($this->code_banque,$this->code_guichet,$this->number,$this->cle_rib,$this->iban_prefix)) {
@@ -407,7 +406,7 @@ class Account
         $sql .= ",adresse_proprio = '".addslashes($this->adresse_proprio)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Account.class::update_rib sql=$sql");
+		dolibarr_syslog("Account::update_rib sql=$sql");
 
         $result = $this->db->query($sql);
         if ($result)
@@ -726,11 +725,22 @@ class Account
 }
 
 
+/**
+   \class      AccountLine
+   \brief      Classe permettant la gestion des lignes de transactions bancaires
+*/
 class AccountLine
 {
     var $db;
     
+	var $rowid;
 	var $rappro;
+	var $datec;
+	var $dateo;
+	var $datev;
+	var $amount;
+	var $label;
+	var $note;
 	
 	
     /**
@@ -838,6 +848,39 @@ class AccountLine
 	}
 	
 	
+	/**
+	 *		\brief 		Met a jour en base la ligne
+	 *		\param 		user			Objet user qui met a jour
+	 *		\param 		notrigger		0=Desactive les triggers
+	 *		\param		int				<0 if KO, >0 if OK
+	 */
+	function update($user,$notrigger=0)
+	{
+		$this->db->begin();
+
+		$sql = "UPDATE ".MAIN_DB_PREFIX."bank SET";
+		$sql.= " amount = ".price2num($this->amount).",";
+		$sql.= " datev='".$this->db->idate($this->datev)."',";
+		$sql.= " dateo='".$this->db->idate($this->dateo)."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+		dolibarr_syslog("AccountLine::update sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->error();
+			dolibarr_syslog("AccountLine::update ".$this->error);
+			return -1;
+		}
+	}
+
+
 	/**
 	 *      \brief     Charge les informations d'ordre info dans l'objet facture
 	 *      \param     id       Id de la facture a charger

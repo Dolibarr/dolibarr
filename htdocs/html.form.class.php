@@ -2536,7 +2536,7 @@ class Form
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)
     {
         global $conf,$langs;
-    	
+
     	if($prefix=='') $prefix='re';
 		if($h == '') $h=0;
 		if($m == '') $m=0;
@@ -2579,11 +2579,11 @@ class Form
 	         * Affiche date en popup
 	         */
 			if ($conf->use_javascript && $conf->use_popup_calendar)
-	    {
-	    	//print "e".$set_time." t ".$conf->format_date_short;
-	      if ($set_time > 0)
-	      {
-		      $formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
+		    {
+				//print "e".$set_time." t ".$conf->format_date_short;
+				if ($set_time > 0)
+				{
+					$formated_date=dolibarr_print_date($set_time,$conf->format_date_short);
 				}
 	
 				// Calendrier popup version eldy
@@ -2593,7 +2593,7 @@ class Form
 					print '<input id="'.$prefix.'" name="'.$prefix.'" type="text" size="10" maxlength="11" value="'.$formated_date.'"';
 					print ' onChange="dpChangeDay(\''.$prefix.'\',\''.$conf->format_date_short_java.'\')"';
 					print '>';
-		            
+					
 					// Icone calendrier
 					print '<button id="'.$prefix.'Button" type="button" class="dpInvisibleButtons"';
 					$base=DOL_URL_ROOT.'/lib/';
@@ -2607,7 +2607,7 @@ class Form
 				{            
 					// Calendrier popup version defaut
 					if ($langs->defaultlang != "")
-				 	{
+					{
 						print '<script language="javascript" type="text/javascript">';
 						print 'selectedLanguage = "'.substr($langs->defaultlang,0,2).'"';
 						print '</script>';
@@ -2624,7 +2624,7 @@ class Form
 					else
 						print '<A HREF="javascript:showCalendar(document.forms[\''.$form_name.'\'].'.$prefix.')">'.img_cal().'</a>';
 				}
-	    }
+		    }
 	        
 	        /*
 	         * Affiche date en select

@@ -69,90 +69,20 @@ class Cotisation
         $sql .= " VALUES (".$this->fk_adherent.", now(), ".$this->db->idate($this->dateh).", ".$this->amount.",'".$this->note."')";
 
 		dolibarr_syslog("Cotisation::create sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
 			return $this->db->last_insert_id(MAIN_DB_PREFIX."cotisation");
 		}
 		else
 		{
-			$this->error=$this->db->error().' sql='.$sql;
-			return -1;
-		}
-	}
-
-	/*!
-	\TODO A ecrire
-	\brief fonction qui permet de mettre à jour le don
-	\param userid			userid de l'adhérent
-	*/
-	function update($userid)
-	{
-
-		$this->date = $this->db->idate($this->date);
-
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET ";
-		$sql .= "amount = " . $this->amount;
-		$sql .= ",fk_paiement = ".$this->modepaiementid;
-		$sql .= ",prenom = '".$this->prenom ."'";
-		$sql .= ",nom='".$this->nom."'";
-		$sql .= ",societe='".$this->societe."'";
-		$sql .= ",adresse='".$this->adresse."'";
-		$sql .= ",cp='".$this->cp."'";
-		$sql .= ",ville='".$this->ville."'";
-		$sql .= ",pays='".$this->pays."'";
-		$sql .= ",public=".$this->public;
-		$sql .= ",fk_don_projet=".$this->projetid;
-		$sql .= ",note='".$this->commentaire."'";
-		$sql .= ",datedon='".$this->date."'";
-		$sql .= ",email='".$this->email."'";
-		$sql .= ",fk_statut=".$this->statut;
-
-		$sql .= " WHERE rowid = $this->id";
-
-		$result = $this->db->query($sql);
-
-		if ($result)
-		{
-			return 1;
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-			return 0;
-		}
-	}
-
-	/**
-			\brief		Fonction qui permet de supprimer la cotisation
-			\param 		rowid	Id cotisation
-			\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
-	*/
-	function delete($rowid)
-	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$rowid;
-
-		dolibarr_syslog("Cotisation::delete sql=".$sql);
-		$resql=$this->db->query($sql);
-		if ($resql)
-		{
-			if ( $this->db->affected_rows($resql))
-			{
-				return 1;
-			}
-			else
-			{
-				return 0;
-			}
-		}
-		else
-		{
 			$this->error=$this->db->error();
+			dolibarr_syslog($this->error);
 			return -1;
 		}
 	}
 
-	
+
 	/**
 		\brief 		Fonction qui permet de récupèrer une cotisation
 		\param 		rowid		Id cotisation
@@ -160,7 +90,10 @@ class Cotisation
 	*/
 	function fetch($rowid)
 	{
-        $sql="SELECT rowid, fk_adherent, datec, tms, dateadh, cotisation, note, fk_bank";
+        $sql ="SELECT rowid, fk_adherent, ".$this->db->pdate("datec")." as datec,";
+		$sql.=" tms,";
+		$sql.=" ".$this->db->pdate("dateadh")." as dateadh,";
+		$sql.=" cotisation, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
 
@@ -194,25 +127,58 @@ class Cotisation
 			$this->error=$this->db->error();
 			return -1;
 		}
-
 	}
 
 
 	/**
-	\TODO a ecrire
-	\brief fonction qui permet de mettre un commentaire sur le don
-	\param	rowid
-	\param	commentaire
-	*/
-	function set_commentaire($rowid, $commentaire='')
+	 *		\brief 		Met a jour en base la cotisation
+	 *		\param 		user			Objet user qui met a jour
+	 *		\param 		notrigger		0=Desactive les triggers
+	 *		\param		int				<0 if KO, >0 if OK
+	 */
+	function update($user,$notrigger=0)
 	{
-		$sql = "UPDATE ".MAIN_DB_PREFIX."don SET note = '$commentaire'";
+		$this->db->begin();
+		
+		$sql = "UPDATE ".MAIN_DB_PREFIX."cotisation SET ";
+		$sql .= " fk_adherent = ".$this->fk_adherent.",";
+		$sql .= " fk_bank = ".($this->fk_bank ? $this->fk_bank : 'null').",";
+		$sql .= " note=".($this->note ? "'".addslashes($this->note)."'" : 'null').",";
+		$sql .= " cotisation = '".price2num($this->amount)."',";
+		$sql .= " dateadh='".$this->db->idate($this->dateh)."',";
+		$sql .= " datec='".$this->db->idate($this->datec)."'";
+		$sql .= " WHERE rowid = ".$this->id;
 
-		$sql .=  " WHERE rowid = $rowid ;";
-
-		if ( $this->db->query( $sql) )
+		dolibarr_syslog("Cotisation::update sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			if ( $this->db->affected_rows() )
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
+			$this->error=$this->db->error();
+			dolibarr_syslog("Cotisation::update ".$this->error);
+			return -1;
+		}
+	}
+
+	/**
+			\brief		Fonction qui permet de supprimer la cotisation
+			\param 		rowid	Id cotisation
+			\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
+	*/
+	function delete($rowid)
+	{
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$rowid;
+
+		dolibarr_syslog("Cotisation::delete sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			if ( $this->db->affected_rows($resql))
 			{
 				return 1;
 			}
@@ -223,8 +189,8 @@ class Cotisation
 		}
 		else
 		{
-			dolibarr_print_error($this->db);
-			return 0;
+			$this->error=$this->db->error();
+			return -1;
 		}
 	}
 
