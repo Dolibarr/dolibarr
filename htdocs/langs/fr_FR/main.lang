@@ -35,6 +35,7 @@ ErrorCantLoadUserFromDolibarrDatabase=Impossible de trouver l'utilisateur <b>%s<
 ErrorNoVATRateDefinedForSellerCountry=Erreur, aucun taux tva défini pour le pays '%s'.
 ErrorFailedToSaveFile=Erreur, l'enregistrement du fichier a échoué.
 ErrorOnlyPngJpgSupported=Erreur, seuls les formats images .jpg et .png sont supportés.
+ErrorImageFormatNotSupported=Votre PHP ne supporte pas les fonctions de conversion de ce format d'image.
 DolibarrInHttpAuthenticationSoPasswordUseless=Dolibarr est configuré en mode authentification <b>%s</b> dans son fichier de configuration <b>conf.php</b>.<br>Cela signifie que la base des mots de passe est externe à Dolibarr, aussi toute modification de ce champ peut s'avérer sans effet.
 Undefined=Non défini
 PasswordForgotten=Mot de passe oublié ?

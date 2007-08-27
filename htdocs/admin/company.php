@@ -55,7 +55,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 		{
 			$original_file=$reg[1];
 			
-			if (eregi('(\.png|\.jpg|\.jpeg)$',$original_file))
+			$isimage=image_format_supported($original_file);
+			if ($isimage >= 0)
 			{
 				dolibarr_syslog("Move file ".$_FILES["logo"]["tmp_name"]." to ".$conf->societe->dir_logos.'/'.$original_file);
 				if (! is_dir($conf->societe->dir_logos))
@@ -66,21 +67,27 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 				{
 					dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO",$original_file);
 					
-					// Création de la vignette de la page login
-					$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small',80);
-					if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+					// Create thumbs of logo
+					if ($isimage > 0)
 					{
-						$imgThumbSmall = $reg[1];
-						dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+						$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small',80);
+						if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+						{
+							$imgThumbSmall = $reg[1];
+							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+						}
+						else dolibarr_syslog($imgThumbSmall);
+						
+						// Création de la vignette de la page "Société/Institution"
+						$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini',80);
+						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+						{
+							$imgThumbMini = $reg[1];
+							dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+						}
+						else dolibarr_syslog($imgThumbMini);
 					}
-					
-					// Création de la vignette de la page "Société/Institution"
-					$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini',80);
-					if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
-					{
-						$imgThumbMini = $reg[1];
-						dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
-					}
+					else dolibarr_syslog($langs->trans("ErrorImageFormatNotSupported"),LOG_WARNING);
 				}
 				else
 				{
@@ -114,41 +121,60 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 if ($_GET["action"] == 'addthumb')
 {
 	if (file_exists($conf->societe->dir_logos.'/'.$_GET["file"]))
-  {			
-		// Création de la vignette de la page login
-		$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 200, 100, '_small',80);
-		if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+	{			
+		$isimage=image_format_supported($original_file);
+
+		// Create thumbs of logo
+		if ($isimage > 0)
 		{
-			$imgThumbSmall = $reg[1];
-			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+			// Création de la vignette de la page login
+			$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 200, 100, '_small',80);
+			if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+			{
+				$imgThumbSmall = $reg[1];
+				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
+			}
+			else dolibarr_syslog($imgThumbSmall);
+			
+			// Création de la vignette de la page "Société/Institution"
+			$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
+			if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+			{
+			  $imgThumbMini = $reg[1];
+				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+			}
+			else dolibarr_syslog($imgThumbMini);
+
+			Header("Location: ".$_SERVER["PHP_SELF"]);
+			exit;
 		}
-		
-		// Création de la vignette de la page "Société/Institution"
-		$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
-		if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+  		else 
 		{
-		  $imgThumbMini = $reg[1];
-			dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
+			$message .= '<div class="error">'.$langs->trans("ErrorImageFormatNotSupported").'</div>';
+			dolibarr_syslog($langs->transnoentities("ErrorImageFormatNotSupported"),LOG_WARNING);
 		}
-  }
-  Header("Location: ".$_SERVER["PHP_SELF"]);
-  exit;
+	}
+	else
+	{
+		$message .= '<div class="error">'.$langs->trans("ErrorFileDoesNotExists",$_GET["file"]).'</div>';
+		dolibarr_syslog($langs->transnoentities("ErrorFileDoesNotExists",$_GET["file"]),LOG_WARNING);
+	}
 }
 
 if ($_GET["action"] == 'removelogo')
 {
 	$logofile=$conf->societe->dir_logos.'/'.$mysoc->logo;
-	@unlink($logofile);
+	dol_delete_file($logofile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO");
 	$mysoc->logo='';
 	
 	$logosmallfile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small;
-	@unlink($logosmallfile);
+	dol_delete_file($logosmallfile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL");
 	$mysoc->logo_small='';
 	
 	$logominifile=$conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini;
-	@unlink($logominifile);
+	dol_delete_file($logominifile);
 	dolibarr_del_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI");
 	$mysoc->logo_mini='';
 }
@@ -241,7 +267,7 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
   {
   	print '<a href="'.$_SERVER["PHP_SELF"].'?action=removelogo">'.img_delete($langs->trans("Delete")).'</a>';
     print ' &nbsp; ';
-    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo_mini).'">';
+    print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
   }
   else
   {
@@ -483,7 +509,7 @@ else
     }
     else if ($mysoc->logo_mini && file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
     {
-      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.$mysoc->logo_mini.'">';
+      print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
     }
     else
     {

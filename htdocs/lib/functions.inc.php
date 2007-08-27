@@ -170,7 +170,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 
 	if ($conf->syslog->enabled)
 	{
-		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled;
+		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 		
 		// Ajout user a la log
@@ -184,7 +184,11 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			else $file=fopen(SYSLOG_FILE,"a+");
 			if ($file)
 			{
-				fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".$level." ".$message."\n");
+				$liblevelarray=array('0'=>'ERROR','1'=>'ERROR','2'=>'ERROR','3'=>'ERROR','4'=>'ERROR',
+								  '5'=>'WARN','6'=>'DEBUG','7'=>'DEBUG');
+				$liblevel=$liblevelarray[$level];
+				if (! $liblevel) $liblevel='UNDEF';
+				fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$message."\n");
 				fclose($file);
 			}
 			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
@@ -1104,6 +1108,34 @@ function img_allow($allow)
 
 
 /**
+        \brief      Return if a filename is file name of a supported image format
+        \param      file		Filename
+		\return		int			-1=Not image filename, 0=Image filename but format not supported by PHP, 1=Image filename with format supported
+*/
+function image_format_supported($file)
+{
+	// Case filename is not a format image
+	if (! eregi('(\.png|\.jpg|\.jpeg)$',$file,$reg)) return -1;
+
+	// Case filename is a format image but not supported by this PHP
+	$imgfonction='';
+	if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
+	if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+	if ($imgfonction)
+	{
+		if (! function_exists($imgfonction))
+		{
+			// Fonctions de conversion non presente dans ce PHP
+			return 0;
+		}
+	}
+
+	// Case filename is a format image and supported by this PHP
+	return 1;
+}
+
+/**
         \brief      Affiche info admin
         \param      text		Texte info
 */
@@ -1142,7 +1174,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print "<html>\n";
 	print "<head>\n";
 	print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-	print "<title>Dolibarr Authentification</title>\n";
+	print "<title>Dolibarr login</title>\n";
 
 	print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
 
@@ -1208,17 +1240,26 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
-	// Affiche logo du theme si existe, sinon logo commun
+
+	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
 	if (is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
 	{
-		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo_small);
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
+	}
+	elseif (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	{
+		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+		$width=96;
 	}
 	elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 	}
-	print '<td rowspan="2"><img title="'.$title.'" src="'.$urllogo.'"></td>';
+	print '<td rowspan="2"><img title="'.$title.'" src="'.$urllogo.'"';
+	if ($width) print ' width="'.$width.'"';
+	print '></td>';
 
 	print '</tr>';
 
@@ -1468,7 +1509,7 @@ function dolibarr_print_error($db='',$error='')
 		}
 	}
 
-    dolibarr_syslog("Error $syslog");
+    dolibarr_syslog("Error $syslog",LOG_ERROR);
 }
 
 
@@ -1807,8 +1848,8 @@ function dol_delete_file($file)
 	foreach (glob($file) as $filename)
 	{
 		$ok=unlink($filename);
-		if ($ok) dolibarr_syslog("Removed file $filename");
-		else dolibarr_syslog("Failed to remove file $filename");
+		if ($ok) dolibarr_syslog("Removed file $filename",LOG_DEBUG);
+		else dolibarr_syslog("Failed to remove file $filename",LOG_ERROR);
 	}
 	return $ok;
 }
@@ -2953,122 +2994,131 @@ function print_date_range($date_start,$date_end)
  *    \param     quality        Qualité de compression jpeg
  *    \return    imgThumbName   Chemin de la vignette
  */
-function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50){
+function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
+{
+	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName);
+	
+	// Vérification des erreurs dans les paramètres de la fonction
+	//============================================================
+	if(!file_exists($file)){
+		// Si le fichier passé en paramètre n'existe pas
+		return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
+	}
+	elseif(!eregi('(\.jpg|\.jpeg|\.png)$',$file))
+	{
+		// Todo: Ajouter création vignette pour les autres formats d'images
+		return 'Le fichier '.$file.' n\'est pas géré pour le moment.';
+	}
+	elseif(empty($file)){
+		// Si le fichier n'a pas été indiqué
+		return 'Nom du fichier non renseigné.';
+	}
+	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
+		// Si la largeur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
+		return 'Valeur de la largeur incorrecte.';
+	}
+	elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < 0){
+		// Si la hauteur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
+		return 'Valeur de la hauteur incorrecte.';
+	}
+	//============================================================
 
-   // Vérification des erreurs dans les paramètres de la fonction
-   //============================================================
-   if(!file_exists($file)){
-      // Si le fichier passé en paramètre n'existe pas
-      return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
-   }
-   elseif(!eregi('(\.jpg|\.jpeg|\.png)$',$file))
-   {
-   	  // Todo: Ajouter création vignette pour les autres formats d'images
-      return 'Le fichier '.$file.' n\'est pas géré pour le moment.';
-   }
-   elseif(empty($file)){
-      // Si le fichier n'a pas été indiqué
-      return 'Nom du fichier non renseigné.';
-   }
-   elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
-      // Si la largeur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
-      return 'Valeur de la largeur incorrecte.';
-   }
-   elseif(!is_numeric($maxHeight) || empty($maxHeight) || $maxHeight < 0){
-      // Si la hauteur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
-      return 'Valeur de la hauteur incorrecte.';
-   }
-   //============================================================
+	$fichier = realpath($file); // Chemin canonique absolu de l'image
+	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image
+	$dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
+	$infoImg = getimagesize($fichier); // Récupération des infos de l'image
+	$imgWidth = $infoImg[0]; // Largeur de l'image
+	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-   $fichier = realpath($file); // Chemin canonique absolu de l'image
-   $dir = dirname($file).'/'; // Chemin du dossier contenant l'image
-   $dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
-   $infoImg = getimagesize($fichier); // Récupération des infos de l'image
-   $imgWidth = $infoImg[0]; // Largeur de l'image
-   $imgHeight = $infoImg[1]; // Hauteur de l'image
+	// Si l'image est plus petite que la largeur et le hauteur max, on ne crée pas de vignette
+	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
+	{
+		return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
+	}
 
-   // Si l'image est plus petite que la largeur et le hauteur max, on ne crée pas de vignette
-   if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
-   {
-   	  return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
-   }
-
-   $imgfonction='';
-   switch($infoImg[2]){
-      case 2:
-         $imgfonction = 'imagecreatefromjpeg';
-		 break;
-      case 3:
-         $imgfonction = 'imagecreatefrompng';
-   }
-   if ($imgfonction)
-   {
+	$imgfonction='';
+	switch($infoImg[2]){
+	case 2:
+		$imgfonction = 'imagecreatefromjpeg';
+		break;
+	case 3:
+		$imgfonction = 'imagecreatefrompng';
+	}
+	if ($imgfonction)
+	{
 		if (! function_exists($imgfonction))
 		{
 			// Fonctions de conversion non presente dans ce PHP
-		    return 'Creation de vignette impossible. Ce PHP ne supporte pas les fonctions du module GD '.$imgfonction;
+			return 'Creation de vignette impossible. Ce PHP ne supporte pas les fonctions du module GD '.$imgfonction;
 		}
-   }
-   
-   // On crée le répertoire contenant les vignettes
-   if (! file_exists($dirthumb))
-    {
-    	dolibarr_syslog("Product Create $dirthumb");
-    	create_exdir($dirthumb);
-    }
+	}
 
-   // Initialisation des variables selon l'extension de l'image
-   switch($infoImg[2]){
-      case 2:
-         $img = imagecreatefromjpeg($fichier); // Création d'une nouvelle image jpeg à partir du fichier
-         $extImg = '.jpg'; // Extension de l'image
-      break;
-      case 3:
-         $img = imagecreatefrompng($fichier); // Création d'une nouvelle image png à partir du fichier
-         $extImg = '.png';
-   }
-   
-   // Initialisation des dimensions de la vignette si elles sont supérieures à l'original
-   if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
-   if($maxHeight > $imgHeight){ $maxHeight = $imgHeight; }
-   
-   $whFact = $maxWidth/$maxHeight; // Facteur largeur/hauteur des dimensions max de la vignette
-   $imgWhFact = $imgWidth/$imgHeight; // Facteur largeur/hauteur de l'original
-   
-   // Fixe les dimensions de la vignette
-   if($whFact < $imgWhFact){
-      // Si largeur déterminante
-      $thumbWidth  = $maxWidth;
-      $thumbHeight = $thumbWidth / $imgWhFact;
-   } else {
-      // Si hauteur déterminante
-      $thumbHeight = $maxHeight;
-      $thumbWidth  = $thumbHeight * $imgWhFact;
-   }
-   
-   $imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight); // Création de la vignette
-   
-   imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+	// On crée le répertoire contenant les vignettes
+	if (! file_exists($dirthumb))
+	{
+		dolibarr_syslog("Product Create $dirthumb");
+		create_exdir($dirthumb);
+	}
 
-   $fileName = eregi_replace('(\.jpeg|\.jpg|\.png)$','',$file);	// On enleve extension quelquesoit la casse
-   $fileName = basename($fileName);
-   $imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
-   
-   //Création du fichier de la vignette
-   $fp = fopen($imgThumbName, "w");
-   fclose($fp);
-   
-   // Renvoi la vignette créée
-   switch($infoImg[2]){
-      case 2:
-         imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50 par défaut
-         break;
-      case 3:
-         imagepng($imgThumb, $imgThumbName);
-   }
-   
-   return $imgThumbName;
+	// Initialisation des variables selon l'extension de l'image
+	switch($infoImg[2]){
+	case 2:
+		$img = imagecreatefromjpeg($fichier); // Création d'une nouvelle image jpeg à partir du fichier
+		$extImg = '.jpg'; // Extension de l'image
+		break;
+	case 3:
+		$img = imagecreatefrompng($fichier); // Création d'une nouvelle image png à partir du fichier
+		$extImg = '.png';
+	}
 
+	// Initialisation des dimensions de la vignette si elles sont supérieures à l'original
+	if($maxWidth > $imgWidth){ $maxWidth = $imgWidth; }
+	if($maxHeight > $imgHeight){ $maxHeight = $imgHeight; }
+
+	$whFact = $maxWidth/$maxHeight; // Facteur largeur/hauteur des dimensions max de la vignette
+	$imgWhFact = $imgWidth/$imgHeight; // Facteur largeur/hauteur de l'original
+
+	// Fixe les dimensions de la vignette
+	if($whFact < $imgWhFact){
+		// Si largeur déterminante
+		$thumbWidth  = $maxWidth;
+		$thumbHeight = $thumbWidth / $imgWhFact;
+	} else {
+		// Si hauteur déterminante
+		$thumbHeight = $maxHeight;
+		$thumbWidth  = $thumbHeight * $imgWhFact;
+	}
+
+	$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight); // Création de la vignette
+
+	// This is to keep transparent alpha channel if exists (PHP >= 4.2)
+	if (function_exists('imagesavealpha'))
+	{
+		imagesavealpha($imgThumb, true);
+		$trans_colour = imagecolorallocatealpha($imgThumb, 0, 0, 0, 127);
+		imagefill($imgThumb, 0, 0, $trans_colour);
+	}
+	
+	imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+
+	$fileName = eregi_replace('(\.jpeg|\.jpg|\.png)$','',$file);	// On enleve extension quelquesoit la casse
+	$fileName = basename($fileName);
+	$imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
+
+	//Création du fichier de la vignette
+	$fp = fopen($imgThumbName, "w");
+	fclose($fp);
+
+	// Renvoi la vignette créée
+	switch($infoImg[2]){
+	case 2:
+		imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50 par défaut
+		break;
+	case 3:
+		imagepng($imgThumb, $imgThumbName);
+	}
+
+	return $imgThumbName;
 }
 
 ?>

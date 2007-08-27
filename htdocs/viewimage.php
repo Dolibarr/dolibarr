@@ -63,14 +63,7 @@ if ($modulepart)
     if ($modulepart == 'companylogo')
     {
     	$accessallowed=1;
-    	if (eregi('_small',$original_file) || eregi('_mini',$original_file))
-    	{
-    		$original_file=$conf->societe->dir_logos.'/thumbs/'.$original_file;
-    	}
-    	else
-    	{
-    		$original_file=$conf->societe->dir_logos.'/'.$original_file;
-    	}
+   		$original_file=$conf->societe->dir_logos.'/'.$original_file;
     }
 
     // Wrapping pour les photos utilisateurs
@@ -274,7 +267,7 @@ if (eregi('\.\.',$original_file) || eregi('[<>|]',$original_file))
 clearstatcache(); 
 $filename = basename($original_file);
 
-dolibarr_syslog("viewimage.php download $original_file $filename content-type=$type");
+dolibarr_syslog("viewimage.php return file $original_file $filename content-type=$type");
 
 if (! file_exists($original_file))
 {

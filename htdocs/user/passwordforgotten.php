@@ -194,20 +194,27 @@ if ($mode == 'dolibarr') $disabled='';
 print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
 $title='';
-// Affiche logo du theme si existe, sinon logo commun
+
+// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
+$width=0;
 $urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-if (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+if (is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
 {
-	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&file='.urlencode($mysoc->logo);
-	$height=100;	// \TODO Forcer la hauteur uniquement si hauteur > 100 ou largeur > 100
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
+}
+elseif (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+{
+	$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
+	$width=96;
 }
 elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png'))
 {
 	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
-	$height=80;
 }
-print '<td><img title="'.$title.'" height="'.$height.'" src="'.$urllogo.'"></td>';
-
+print '<td><img title="'.$title.'" src="'.$urllogo.'"';
+if ($width) print ' width="'.$width.'"';
+print '></td>';
+	
 print '</tr>'."\n";
 
 
