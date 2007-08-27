@@ -1782,7 +1782,7 @@ class Adherent
 		if ($mode == 0)
 		{
 	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActive");
 	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate");
@@ -1793,7 +1793,7 @@ class Adherent
 		if ($mode == 1)
 		{
 	        if ($statut == -1) return $langs->trans("MemberStatusDraft");
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActiveShort");
 	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLateShort");
@@ -1804,7 +1804,7 @@ class Adherent
 		if ($mode == 2)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActiveShort");
 	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLateShort");
@@ -1815,7 +1815,7 @@ class Adherent
 		if ($mode == 3)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0');
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1');
 	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3');
@@ -1826,7 +1826,7 @@ class Adherent
 		if ($mode == 4)
 		{
 	        if ($statut == -1) return img_picto($langs->trans('MemberStatusDraft'),'statut0').' '.$langs->trans("MemberStatusDraft");
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return img_picto($langs->trans('MemberStatusActive'),'statut1').' '.$langs->trans("MemberStatusActive");
 	        	elseif ($date_end_subscription < time()) return img_picto($langs->trans('MemberStatusActiveLate'),'statut3').' '.$langs->trans("MemberStatusActiveLate");
@@ -1837,7 +1837,7 @@ class Adherent
         if ($mode == 5)
         {
 	        if ($statut == -1) return $langs->trans("MemberStatusDraft").' '.img_picto($langs->trans('MemberStatusDraft'),'statut0');
-	        if ($statut == 1)
+	        if ($statut >= 1)
 	        {
 	        	if (! $date_end_subscription)            return $langs->trans("MemberStatusActive").' '.img_picto($langs->trans('MemberStatusActive'),'statut1');
 	        	elseif ($date_end_subscription < time()) return $langs->trans("MemberStatusActiveLate").' '.img_picto($langs->trans('MemberStatusActiveLate'),'statut3');

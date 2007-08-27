@@ -215,6 +215,7 @@ if ($result >= 0)
 				$member->datevalid=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
 				$member->statut=$ldapuser[$conf->global->LDAP_FIELD_MEMBER_STATUS];
 			}
+			//if ($member->statut > 1) $member->statut=1;
 
 			//print_r($ldapuser);
 
@@ -238,36 +239,48 @@ if ($result >= 0)
 
 			//print_r($member);
 			
-			// Insertion première adhésion
 			$datefirst='';
 			if ($conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE)
 			{
 				$datefirst=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_DATE]);
-			}
-			if ($datefirst)
-			{
-				// Cree premiere cotisation et met a jour datefin dans adherent
-				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT]);
-				//print "xx".$datefirst."\n";
-				$crowid=$member->cotisation($datefirst, $price, 0);
+				$pricefirst=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_FIRSTSUBSCRIPTION_AMOUNT]);
 			}
 
-			// Insertion dernière adhésion
 			$datelast='';
 			if ($conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE)
 			{
 				$datelast=dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_DATE]);
+				$pricelast=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
 			}
 			elseif ($conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION)
 			{
 				$datelast=dolibarr_time_plus_duree(dolibarr_stringtotime($ldapuser[$conf->global->LDAP_FIELD_MEMBER_END_LASTSUBSCRIPTION]),-1,'y')+60*60*24;
+				$pricelast=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
+
+				// Cas special ou date derniere <= date premiere
+				if ($datefirst && $datelast && $datelast <= $datefirst)
+				{
+					// On ne va inserer que la premiere
+					$datelast=0;
+					if (! $pricefirst && $pricelast) $pricefirst = $pricelast;
+				}
 			}
+
+			
+			// Insertion première adhésion
+			if ($datefirst)
+			{
+				// Cree premiere cotisation et met a jour datefin dans adherent
+				//print "xx".$datefirst."\n";
+				$crowid=$member->cotisation($datefirst, $pricefirst, 0);
+			}
+
+			// Insertion dernière adhésion
 			if ($datelast)
 			{
 				// Cree derniere cotisation et met a jour datefin dans adherent
-				$price=price2num($ldapuser[$conf->global->LDAP_FIELD_MEMBER_LASTSUBSCRIPTION_AMOUNT]);
 				//print "yy".dolibarr_print_date($datelast)."\n";
-				$crowid=$member->cotisation($datelast, $price, 0);
+				$crowid=$member->cotisation($datelast, $pricelast, 0);
 			}
 			
 		}

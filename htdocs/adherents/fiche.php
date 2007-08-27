@@ -604,7 +604,6 @@ if ($action == 'edit')
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
 	print "<tr><td>".$langs->trans("Person")."</td><td>";
-	print $adh->morphy;
 	$htmls->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
 	
