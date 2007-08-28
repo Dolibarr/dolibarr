@@ -113,7 +113,7 @@ function get_lastOrderClients($id='',$name='',$limit='') {
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
 //on recherche
-	$sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut";
+	$sql = "SELECT o.orders_id, o.customers_name, o.delivery_country, o.date_purchased, t.value, s.orders_status_name as statut, o.payment_method ";
 	$sql .= " FROM orders_total as t JOIN orders as o on o.orders_id = t.orders_id ";
 	$sql .= " JOIN orders_status as s on o.orders_status = s.orders_status_id and s.language_id = 1";
 	$sql .= " WHERE t.class = 'ot_subtotal' and o.orders_status < 5 order by o.date_purchased desc";
