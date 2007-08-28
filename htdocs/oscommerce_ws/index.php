@@ -61,8 +61,8 @@ $client = new soapclient_nusoap(OSCWS_DIR."ws_orders.php");
 print_titre($langs->trans('SalesTurnover'));
 
 print '<table class="noborder" cellspacing="0" cellpadding="3" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("année").'</td>';
-print '<td>'.$langs->trans("mois").'</td>';
+print '<tr class="liste_titre"><td>'.$langs->trans("Year").'</td>';
+print '<td>'.$langs->trans("Month").'</td>';
 print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 
 // Call the WebService and store its result in $result.
@@ -110,7 +110,7 @@ print_titre($langs->trans("Orders"));
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("Dernières commandes").'</td></tr>';
+print '<td colspan="4">'.$langs->trans("LastOrders").'</td></tr>';
 	
 // Call the WebService and store its result in $result.
 $parameters = array("limit"=>OSC_MAXNBCOM);
@@ -148,7 +148,7 @@ print "</table><br>";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("En Attente").'</td></tr>';
+print '<td colspan="4">'.$langs->trans("OnStandBy").'</td></tr>';
 
 $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDWAIT);
 $result = $client->call("get_orders",$parameters );
@@ -185,7 +185,7 @@ print "</table><br>";
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="4">'.$langs->trans("A traiter").'</td></tr>';
+print '<td colspan="4">'.$langs->trans("TreatmentInProgress").'</td></tr>';
 		
 $parameters = array("limit"=>OSC_MAXNBCOM, "status"=>OSC_ORDPROCESS);
 $result = $client->call("get_orders",$parameters );
@@ -224,7 +224,7 @@ print '</td></tr><tr>';
 
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print '<td colspan="7">'.$langs->trans("Derniers clients").'</td></tr>';
+print '<td colspan="7">'.$langs->trans("LastCustomers").'</td></tr>';
 
 $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_lastOrderClients",$parameters );
