@@ -234,9 +234,9 @@ print '</tr>';
 
 // Phone perso
 $var=!$var;
-print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldPhonePerso").'</td><td>';
+print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldHomePhone").'</td><td>';
 print '<input size="25" type="text" name="fieldphoneperso" value="'.$conf->global->LDAP_FIELD_PHONE_PERSO.'">';
-print '</td><td>'.$langs->trans("LDAPFieldPhonePersoExample").'</td>';
+print '</td><td>'.$langs->trans("LDAPFieldHomePhoneExample").'</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
@@ -300,7 +300,7 @@ print '</tr>';
 $var=!$var;
 print '<tr '.$bc[$var].'><td>'.$langs->trans("LDAPFieldBirthdate").'</td><td>';
 print '<input size="25" type="text" name="fieldbirthdate" value="'.$conf->global->LDAP_FIELD_BIRTHDATE.'">';
-print '</td><td>'.$langs->trans("LDAPFieldBirthdateExample").'</td>';
+print '</td><td>&nbsp;</td>';
 print '<td align="right">&nbsp;</td>';
 print '</tr>';
 
