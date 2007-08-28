@@ -526,6 +526,8 @@ class Adherent
 			}
 		}
 
+		$this->fullname=trim($this->nom.' '.$this->prenom);
+		
 		if (! $notrigger)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
