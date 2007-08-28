@@ -269,8 +269,8 @@ if ($result)
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Year").'</td>';
-print '<td align="right">'.$langs->trans("Subscriptions").'</td>';
 print '<td align="right">'.$langs->trans("Number").'</td>';
+print '<td align="right">'.$langs->trans("AmountTotal").'</td>';
 print '<td align="right">'.$langs->trans("AmountAverage").'</td>';
 print "</tr>\n";
 
@@ -279,11 +279,21 @@ krsort($Total);
 foreach ($Total as $key=>$value)
 {
     $var=!$var;
-    print "<tr $bc[$var]><td><a href=\"cotisations.php?date_select=$key\">$key</a></td><td align=\"right\">".price($value)."</td><td align=\"right\">".$Number[$key]."</td><td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td></tr>\n";
+    print "<tr $bc[$var]>";
+	print "<td><a href=\"cotisations.php?date_select=$key\">$key</a></td>";
+	print "<td align=\"right\">".$Number[$key]."</td>";
+	print "<td align=\"right\">".price($value)."</td>";
+	print "<td align=\"right\">".price(price2num($value/$Number[$key],'MT'))."</td>";
+	print "</tr>\n";
 }
 
 // Total
-print '<tr class="liste_total"><td>'.$langs->trans("Total").'</td><td align="right">'.price($tot)."</td><td align=\"right\">".$numb."</td><td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td></tr>\n";
+print '<tr class="liste_total">';
+print '<td>'.$langs->trans("Total").'</td>';
+print "<td align=\"right\">".$numb."</td>";
+print '<td align="right">'.price($tot)."</td>";
+print "<td align=\"right\">".price(price2num($numb>0?($tot/$numb):0,'MT'))."</td>";
+print "</tr>\n";
 print "</table><br>\n";
 
 print '</td></tr>';
