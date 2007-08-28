@@ -29,7 +29,7 @@
 
 require("./pre.inc.php");
 
-$langs->load("boutique");
+$langs->load("shop");
 $langs->load("orders");
 
 
