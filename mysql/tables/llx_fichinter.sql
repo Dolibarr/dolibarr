@@ -30,14 +30,15 @@ create table llx_fichinter
   tms             timestamp,
   datec           datetime,              -- date de creation 
   date_valid      datetime,              -- date de validation
-  datei           date,                  -- date de l'intervention
+  datei           date,                  -- date de livraison du bon d'intervention
   fk_user_author  integer,               -- createur de la fiche
   fk_user_valid   integer,               -- valideur de la fiche
   fk_statut       smallint  DEFAULT 0,
-  duree           real,
+  duree           real,                  -- durée totale de l'intervention
   description     text,
   note_private    text,
   note_public     text,
+  model_pdf       varchar(50),
 
   UNIQUE INDEX (ref)
 )type=innodb;

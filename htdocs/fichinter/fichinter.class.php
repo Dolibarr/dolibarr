@@ -46,11 +46,13 @@ class Fichinter extends CommonObject
     var $author;
     var $ref;
     var $date;
+    var $date_delivery;
     var $duree;
     var $description;
     var $note_private;
     var $note_public;
     var $projet_id;
+    var $modelpdf;
 
 
     /**
@@ -92,33 +94,34 @@ class Fichinter extends CommonObject
 		  
 		  $this->db->begin();
 		
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, duree";
-        if ($this->projet_id) {
-            $sql .=  ",fk_projet";
-        }
-        $sql .= ") ";
-        $sql .= " VALUES ($this->socid, $this->date, now(), '$this->ref', $this->author, '".addslashes($this->description)."', $this->duree";
-        if ($this->projet_id) {
-            $sql .= ", ".$this->projet_id;
-        }
-        $sql .= ")";
-        $sqlok = 0;
+      $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
+      if ($this->projet_id) {
+          $sql .=  ", fk_projet";
+      }
+      $sql .= ") ";
+      $sql .= " VALUES (".$this->socid.", ".$this->date.", now(), '".$this->ref."', ".$this->author;
+      $sql .= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
+      if ($this->projet_id) {
+          $sql .= ", ".$this->projet_id;
+      }
+      $sql .= ")";
+      $sqlok = 0;
 
-		dolibarr_syslog("Fichinter::create sql=".$sql);
-        $result=$this->db->query($sql);
-        if ($result)
-        {
-            $this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-			$this->db->commit();
-			return $this->id;
-        }
-        else
-        {
-            $this->error=$this->db->error();
-			dolibarr_syslog("Fichinter::create ".$this->error);
-			$this->db->rollback();
-			return -1;
-        }
+		  dolibarr_syslog("Fichinter::create sql=".$sql);
+      $result=$this->db->query($sql);
+      if ($result)
+      {
+      	$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+      	$this->db->commit();
+      	return $this->id;
+      }
+      else
+      {
+        $this->error=$this->db->error();
+			  dolibarr_syslog("Fichinter::create ".$this->error);
+			  $this->db->rollback();
+			  return -1;
+      }
 
     }
 
@@ -160,8 +163,8 @@ class Fichinter extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT ref, description, fk_soc, fk_statut, duree";
-        $sql.= ", ".$this->db->pdate(datei)." as di, fk_projet, note_public, note_private";
+        $sql = "SELECT ref, description, fk_soc, fk_statut";
+        $sql.= ", ".$this->db->pdate(datei)." as di, fk_projet, note_public, note_private, model_pdf";
         $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
         $sql.= " WHERE rowid=".$rowid;
 
@@ -176,14 +179,16 @@ class Fichinter extends CommonObject
 
                 $this->id           = $rowid;
                 $this->date         = $obj->di;
-                $this->duree        = $obj->duree;
                 $this->ref          = $obj->ref;
                 $this->description  = $obj->description;
                 $this->socid        = $obj->fk_soc;
-                $this->projet_id    = $obj->fk_projet;
+                $this->projetidp    = $obj->fk_projet;
                 $this->statut       = $obj->fk_statut;
                 $this->note_public  = $obj->note_public;
                 $this->note_private = $obj->note_private;
+                $this->modelpdf     = $obj->model_pdf;
+                
+                if ($this->statut == 0) $this->brouillon = 1;
                 
                 $this->db->free($resql);
                 return 1;
@@ -429,5 +434,537 @@ class Fichinter extends CommonObject
     	dolibarr_print_error($this->db);
     }
   }
-}  
+  
+  /**
+   *      \brief     Classe la fiche d'intervention dans un projet
+   *      \param     project_id       Id du projet dans lequel classer la facture
+   */
+	function set_project($user, $project_id)
+	{
+		if ($user->rights->ficheinter->creer)
+		{
+			//verif que le projet et la société concordent
+			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
+			$sqlres = $this->db->query($sql);
+			if ($sqlres)
+			{
+				$numprojet = $this->db->num_rows($sqlres);
+				if ($numprojet > 0)
+				{
+					$this->projetidp=$project_id;
+					$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinter SET fk_projet = '.$project_id;
+					$sql .= ' WHERE rowid = '.$this->id.' AND fk_statut = 0 ;';
+					$this->db->query($sql);
+				}
+			}
+			else
+			{
+	
+				dolibarr_syslog("Fichinter.class::set_project Erreur SQL");
+			}
+		}
+	}
+	
+/**
+	*    \brief      Efface fiche intervention
+	*    \param      user        Objet du user qui efface
+	*/
+	function delete($user)
+	{
+		global $conf;
+	
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE fk_fichinter = ".$this->id;
+		if ( $this->db->query($sql) )
+		{
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinter WHERE rowid = ".$this->id;
+			if ( $this->db->query($sql) )
+			{
+	
+				// On efface le répertoire du pdf
+				$fichinterref = sanitize_string($this->ref);
+				if ($conf->fichinter->dir_output)
+				{
+					$dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
+					$file = $conf->fichinter->dir_output . "/" . $fichinterref . "/" . $fichinterref . ".pdf";
+					if (file_exists($file))
+					{
+						fichinter_delete_preview($this->db, $this->id, $this->ref);
+	
+						if (!dol_delete_file($file))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteFile",$file);
+							return 0;
+						}
+					}
+					if (file_exists($dir))
+					{
+						if (!dol_delete_dir($dir))
+						{
+							$this->error=$langs->trans("ErrorCanNotDeleteDir",$dir);
+							return 0;
+						}
+					}
+				}
+	
+				dolibarr_syslog("Suppression de la fiche intervention $this->id par $user->fullname ($user->id)");
+				return 1;
+			}
+			else
+			{
+				return -2;
+			}
+		}
+		else
+		{
+			return -1;
+		}
+	}
+	
+/**
+ *      \brief      Définit une date de livraison du bon d'intervention
+ *      \param      user        		Objet utilisateur qui modifie
+ *      \param      date_creation   date de livraison
+ *      \return     int         		<0 si ko, >0 si ok
+ */
+ function set_date_delivery($user, $date_delivery)
+ {
+   if ($user->rights->ficheinter->creer)
+   {
+     $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+     $sql.= " SET datei = ".$this->db->idate($date_delivery);
+     $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+     if ($this->db->query($sql))
+     {
+       $this->date_delivery = $date_delivery;
+       return 1;
+     }
+     else
+     {
+       $this->error=$this->db->error();
+       dolibarr_syslog("Fichinter.class::set_date_delivery Erreur SQL");
+       return -1;
+     }
+   }
+ }
+ 
+/**
+ *      \brief      Définit le label de l'intervention
+ *      \param      user        		Objet utilisateur qui modifie
+ *      \param      description     description
+ *      \return     int         		<0 si ko, >0 si ok
+ */
+ function set_description($user, $description)
+ {
+   if ($user->rights->ficheinter->creer)
+   {
+     $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter ";
+     $sql.= " SET description = '".addslashes($description)."'";
+     $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+     if ($this->db->query($sql))
+     {
+       $this->description = $description;
+       return 1;
+     }
+     else
+     {
+       $this->error=$this->db->error();
+       dolibarr_syslog("Fichinter.class::set_description Erreur SQL");
+       return -1;
+     }
+   }
+ }
+ 
+ /**
+   *  	\brief     	Ajout d'une ligne d'intervention, en base
+	 * 		\param    	fichinterid      	  Id de la fiche d'intervention
+	 * 		\param    	desc            	  Description de la ligne
+	 *    \param      date_intervention   Date de l'intervention
+	 *    \param      duration            Durée de l'intervention
+   *    	\return    	int             	>0 si ok, <0 si ko
+   */
+    function addline($fichinterid, $desc, $date_intervention, $duration)
+    {
+    	dolibarr_syslog("Fichinter::Addline $fichinterid, $desc, $date_intervention, $duration");
+    	
+    	if ($this->statut == 0)
+      {
+      	$this->db->begin();
+      	
+      	// Insertion ligne
+      	$ligne=new FichinterLigne($this->db);
+      	
+      	$ligne->fk_fichinter = $fichinterid;
+      	$ligne->desc         = $desc;
+      	$ligne->datei        = $date_intervention;
+      	$ligne->duration     = $duration;
+      	
+      	$result=$ligne->insert();			
+      	if ($result > 0)
+      	{
+      		$this->db->commit();
+					return 1;
+        }
+        else
+        {
+        	$this->error=$this->db->error();
+	        dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					$this->db->rollback();
+					return -1;
+        }
+      }
+    }
+
+  /**
+   *    \brief      Mise à jour d'une ligne d'intervention
+   *    \param      fichinterid      	Id de la ligne
+   *    \param      desc	        	  Description
+   *    \param      date             	Date d'intervention
+   *    \param      duration          Durée de l'intervention
+   *    \return     int             	0 en cas de succès
+   */
+    function updateline($fichinterid, $desc, $date_intervention, $duration)
+    {
+    	dolibarr_syslog("Fichinter::UpdateLine $fichinterid, $desc, $date_intervention, $duration");
+    	
+    	if ($this->statut == 0)
+      {
+      	$this->db->begin();
+      	
+      	$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet ";
+        $sql.= " SET description='".addslashes($desc)."'";
+        $sql.= " , date=".$date_intervention;
+        $sql.= " , duree=".$duration;
+        $sql.= " WHERE rowid = '".$fichinterid."';";
+
+        $result=$this->db->query($sql);
+        if ($result > 0)
+        {
+        	//Todo: mise à jour du total de la durée
+        	//$this->update_price();
+        	$this->db->commit();
+        	return 0;
+        }
+        else
+        {
+        	$this->error=$this->db->error();
+        	$this->db->rollback();
+        	dolibarr_syslog("Fichinter.class::UpdateLine Erreur sql=$sql, error=".$this->error);
+        	return -1;
+        }
+      }
+      else
+      {
+      	dolibarr_syslog("Fichinter.class::UpdateLigne Erreur -2 Fiche intervention en mode incompatible pour cette action");
+        return -2;
+      }
+    }
+
+    /**
+     *      \brief      Supprime une ligne d'intervention
+     *      \param      idligne     Id de la ligne detail à supprimer
+     *      \return     int         >0 si ok, <0 si ko
+     */
+    function delete_line($idligne)
+    {
+        if ($this->statut == 0)
+        {
+            $sql = "DELETE FROM ".MAIN_DB_PREFIX."fichinterdet WHERE rowid = ".$idligne;
+
+            if ($this->db->query($sql) )
+            {
+                //Todo : faire un update du total de la durée
+                //$this->update_price();
+
+                return 1;
+            }
+            else
+            {
+                return -1;
+            }
+        }
+        else
+        {
+            return -2;
+        }
+    }
+
+	/**
+	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
+	 *                  detail d'une fiche d'intervention qui n'en ont pas.
+	 */
+	function line_order()
+	{
+		$sql = 'SELECT count(rowid) FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql .= ' WHERE fk_fichinter='.$this->id;
+		$sql .= ' AND rang = 0';
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$nl = $row[0];
+		}
+		if ($nl > 0)
+		{
+			$sql = 'SELECT rowid FROM '.MAIN_DB_PREFIX.'fichinterdet';
+			$sql .= ' WHERE fk_fichinter='.$this->id;
+			$sql .= ' ORDER BY rang ASC, rowid ASC';
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$num = $this->db->num_rows($resql);
+				$i = 0;
+				while ($i < $num)
+				{
+					$row = $this->db->fetch_row($resql);
+					$li[$i] = $row[0];
+					$i++;
+				}
+			}
+			for ($i = 0 ; $i < sizeof($li) ; $i++)
+			{
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinterdet SET rang = '.($i+1);
+				$sql .= ' WHERE rowid = '.$li[$i];
+				if (!$this->db->query($sql) )
+				{
+					dolibarr_syslog($this->db->error());
+				}
+			}
+		}
+	}
+ 
+	function line_up($rowid)
+	{
+		$this->line_order();
+
+		/* Lecture du rang de la ligne */
+		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql .= ' WHERE rowid ='.$rowid;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$rang = $row[0];
+		}
+
+		if ($rang > 1 )
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinterdet SET rang = '.$rang ;
+			$sql .= ' WHERE fk_fichinter  = '.$this->id;
+			$sql .= ' AND rang = '.($rang - 1);
+			if ($this->db->query($sql) )
+			{
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinterdet SET rang  = '.($rang - 1);
+				$sql .= ' WHERE rowid = '.$rowid;
+				if (! $this->db->query($sql) )
+				{
+					dolibarr_print_error($this->db);
+				}
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+			}
+		}
+	}
+
+	function line_down($rowid)
+	{
+		$this->line_order();
+
+		/* Lecture du rang de la ligne */
+		$sql = 'SELECT rang FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql .= ' WHERE rowid ='.$rowid;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$rang = $row[0];
+		}
+
+		/* Lecture du rang max de la propale */
+		$sql = 'SELECT max(rang) FROM '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql .= ' WHERE fk_fichinter ='.$this->id;
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$row = $this->db->fetch_row($resql);
+			$max = $row[0];
+		}
+
+		if ($rang < $max )
+		{
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinterdet SET rang = '.$rang;
+			$sql .= ' WHERE fk_fichinter  = '.$this->id;
+			$sql .= ' AND rang = '.($rang+1);
+			if ($this->db->query($sql) )
+			{
+				$sql = 'UPDATE '.MAIN_DB_PREFIX.'fichinterdet SET rang = '.($rang+1);
+				$sql .= ' WHERE rowid = '.$rowid;
+				if (! $this->db->query($sql) )
+				{
+					dolibarr_print_error($this->db);
+				}
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+			}
+		}
+	}
+}
+
+
+/**
+    \class      FichinterLigne
+		\brief      Classe permettant la gestion des lignes d'intervention
+*/
+
+class FichinterLigne
+{
+	var $db;
+	var $error;
+
+  // From llx_fichinterdet
+	var $rowid;
+	var $fk_fichinter;
+  var $desc;          	// Description ligne
+  var $datei;           // Date intervention
+  var $duration;        // Durée de l'intervention
+  var $rang = 0;
+
+
+	/**
+	 *      \brief     Constructeur d'objets ligne d'intervention
+	 *      \param     DB      handler d'accès base de donnée
+	 */
+	function FichinterLigne($DB)
+	{
+		$this->db= $DB;
+	}
+
+	/**
+	 *      \brief     Recupére l'objet ligne d'intervention
+	 *      \param     rowid           id de la ligne
+	 */
+	function fetch($rowid)
+	{
+		$sql = 'SELECT ft.rowid, ft.fk_fichinter, ft.description, ft.duree, ft.rang';
+		$sql.= ', '.$db->pdate('ft.date').' as date_intervention';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pd';
+		$sql.= ' WHERE ft.rowid = '.$rowid;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$objp = $this->db->fetch_object($result);
+			$this->rowid          = $objp->rowid;
+			$this->fk_fichinter   = $objp->fk_fichinter;
+			$this->datei					= $objp->date_intervention;
+			$this->desc           = $objp->description;
+			$this->duration       = $objp->duree;
+			$this->rang           = $objp->rang;
+
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
+	}
+	
+	/**
+	 *      \brief     	Insère l'objet ligne d'intervention en base
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function insert()
+	{
+		dolibarr_syslog("FichinterLigne.class::insert rang=".$this->rang);
+		$this->db->begin();
+		
+		$rangToUse=$this->rang;
+		if ($rangToUse == -1)
+		{
+			// Récupère rang max de la ligne d'intervention dans $rangmax
+			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
+			$sql.= ' WHERE fk_fichinter ='.$this->fk_fichinter;
+			$resql = $this->db->query($sql);
+			if ($resql)
+			{
+				$obj = $this->db->fetch_object($resql);
+				$rangToUse = $obj->max + 1;
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				$this->db->rollback();
+				return -1;
+			}
+		}	
+
+		// Insertion dans base de la ligne
+		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fichinterdet';
+		$sql.= ' (fk_fichinter, description, date, duree, rang)';
+		$sql.= " VALUES (".$this->fk_fichinter.",";
+		$sql.= " '".addslashes($this->desc)."',";
+		$sql.= " ".$this->datei.",";
+		$sql.= " ".$this->duration.",";
+		$sql.= ' '.$rangToUse;
+		$sql.= ')';
+
+    dolibarr_syslog("fichinterLigne.class::insert sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->rang=$rangToUse;
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+			$this->error=$this->db->error()." sql=".$sql;
+      dolibarr_syslog("FichinterLigne::insert Error ".$this->error);
+			$this->db->rollback();
+      return -1;
+		}
+	}
+	
+	
+	/**
+	 *      \brief     	Mise a jour de l'objet ligne d'intervention en base
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
+	function update()
+	{
+		$this->db->begin();
+
+		// Mise a jour ligne en base
+		$sql = "UPDATE ".MAIN_DB_PREFIX."fichinterdet SET";
+		$sql.= " description='".addslashes($this->desc)."'";
+		$sql.= ",date=".$this->datei;
+		$sql.= ",duree=".$this->duration;
+		$sql.= ",rang='".$this->rang."'";
+		$sql.= " WHERE rowid = ".$this->rowid;
+
+    dolibarr_syslog("FichinterLigne::update sql=$sql");
+
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$this->db->commit();
+			return 1;	
+		}
+		else
+		{
+			$this->error=$this->db->error();
+      dolibarr_syslog("FichinterLigne::update Error ".$this->error);
+			$this->db->rollback();
+      return -2;
+		}
+	}
+	
+}
+
+  
 ?>

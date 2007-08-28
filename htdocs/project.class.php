@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -315,7 +316,7 @@ class Project extends CommonObject
 	}
 
 	/*
-	*    \brief    Supprime l'projet dans la base
+	*    \brief    Supprime le projet dans la base
 	*    \param    Utilisateur
 	*/
 
@@ -363,7 +364,7 @@ class Project extends CommonObject
 				$result = -2;
 			}
 
-			if ($result ==0)
+			if ($result == 0)
 			{
 
 				$sql = "INSERT INTO ".MAIN_DB_PREFIX."projet_task_actors (fk_projet_task, fk_user) ";

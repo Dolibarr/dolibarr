@@ -247,7 +247,7 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1406, 'commercial', '$leftmenu=="contracts"', 1402, '/contrat/services.php?leftmenu=contracts&mode=4&filter=expired', 'MenuExpiredServices', 2, 'contracts', '$user->rights->contrat->lire', '', 2, 2);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1407, 'commercial', '$leftmenu=="contracts"', 1402, '/contrat/services.php?leftmenu=contracts&mode=5', 'MenuClosedServices', 2, 'contracts', '$user->rights->contrat->lire', '', 2, 3);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1500, 'commercial', '', 5, '/fichinter/index.php?leftmenu=ficheinter', 'Interventions', 0, 'interventions', '$user->rights->ficheinter->lire', '', 2, 8);
-insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1501, 'commercial', '$leftmenu=="ficheinter"', 1500, '/societe.php?leftmenu=ficheinter', 'NewIntervention', 1, 'interventions', '$user->rights->ficheinter->creer', '', 2, 0);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1501, 'commercial', '$leftmenu=="ficheinter"', 1500, '/fichinter/fiche.php?action=create&leftmenu=ficheinter', 'NewIntervention', 1, 'interventions', '$user->rights->ficheinter->creer', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1502, 'commercial', '$leftmenu=="ficheinter"', 1500, '/fichinter/index.php?leftmenu=ficheinter', 'List', 1, 'interventions', '$user->rights->ficheinter->lire', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1600, 'accountancy', '', 6, '/compta/index.php?leftmenu=suppliers', 'Suppliers', 0, 'companies', '$user->rights->societe->lire && $user->rights->fournisseur->lire', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (1601, 'accountancy', '', 1600, '/soc.php?leftmenu=suppliers&action=create&type=f', 'NewSupplier', 1, 'companies', '$user->rights->societe->creer && $user->rights->fournisseur->lire', '', 2, 0);
@@ -821,6 +821,17 @@ alter table llx_boxes modify box_order varchar(3) NOT NULL;
 -- V4.1 update llx_boxes set box_order = concat('A',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('1','3','5','7','9');
 -- V4.1 update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substring(box_order,-1) in ('0','2','4','6','8');
 
+create table llx_fichinterdet
+(
+  rowid             integer AUTO_INCREMENT PRIMARY KEY,
+  fk_fichinter      integer,
+  date              date,
+  description       text,
+  duree             integer,
+  rang              integer DEFAULT 0
+)type=innodb;
+
+ALTER TABLE llx_fichinter ADD COLUMN model_pdf varchar(50) after note_public;
 
 alter table llx_bordereau_cheque modify number integer;
 ALTER TABLE llx_facturedet ADD COLUMN special_code tinyint(4) default 0;

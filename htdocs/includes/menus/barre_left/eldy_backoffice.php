@@ -341,7 +341,7 @@ class MenuLeft {
 				{
 					$langs->load("interventions");
 					$newmenu->add(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("Interventions"), 0, $user->rights->ficheinter->lire);
-					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/societe.php?leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
+					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/fiche.php?action=create&leftmenu=ficheinter", $langs->trans("NewIntervention"), 1, $user->rights->ficheinter->creer);
 					if ($leftmenu=="ficheinter") $newmenu->add_submenu(DOL_URL_ROOT."/fichinter/index.php?leftmenu=ficheinter", $langs->trans("List"), 1 ,$user->rights->ficheinter->lire);
 				}
 

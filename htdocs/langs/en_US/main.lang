@@ -249,6 +249,7 @@ ChartNotGenerated=Chart not generated
 GeneratedOn=Build on %s
 Generate=Generate
 Duration=Duration
+TotalDuration=Total duration
 Summary=Summary
 MyBookmarks=My bookmarks
 OtherInformationsBoxes=Other information boxes

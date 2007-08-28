@@ -11,6 +11,12 @@ AllInterventions=Toutes les interventions
 CreateDaftIntervention=Créer brouillon
 CustomerDoesNotHavePrefix=Le client n'a pas de préfixe de défini
 InterventionContact=Contact intervention
+DeleteIntervention=Supprimer intervention
+ValidateIntervention=Valider intervention
+DeleteInterventionLine=Supprimer ligne d'intervention
+ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
+ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention ?
+ConfirmDeleteInterventionLine=Êtes-vous sûr de vouloir effacer cette ligne ?
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant

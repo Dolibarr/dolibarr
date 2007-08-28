@@ -48,6 +48,14 @@ function fichinter_prepare_head($fichinter)
 	$head[$h][2] = 'contact';
 	$h++;
 	
+	if ($conf->use_preview_tabs)
+	{
+		$head[$h][0] = DOL_URL_ROOT.'/fichinter/apercu.php?id='.$fichinter->id;
+		$head[$h][1] = $langs->trans('Preview');
+		$head[$h][2] = 'preview';
+		$h++;
+	}
+	
 	$head[$h][0] = DOL_URL_ROOT.'/fichinter/note.php?id='.$fichinter->id;
 	$head[$h][1] = $langs->trans('Note');
 	$head[$h][2] = 'note';

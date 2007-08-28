@@ -195,4 +195,54 @@ function fichinter_pdf_create($db, $id, $modele='', $outputlangs='')
 	}
 }
 
+/**
+   \brief     Supprime l'image de prévisualitation, pour le cas de régénération de propal
+   \param	    db  		objet base de donnée
+   \param	    propalid	id de la propal à effacer
+   \param     propalref référence de la propal si besoin
+*/
+function fichinter_delete_preview($db, $fichinterid, $fichinterref='')
+{
+	global $langs,$conf;
+	
+	if (!$fichinterref)
+  {
+  	$fichinter = new Fichinter($db,"",$fichinterid);
+    $fichinter->fetch($fichinterid);
+    $fichinterref = $fichinter->ref;
+   }
+   
+   if ($conf->fichinter->dir_output)
+   {
+   	$fichinterref = sanitize_string($fichinterref);
+    $dir = $conf->fichinter->dir_output . "/" . $fichinterref ;
+    $file = $dir . "/" . $fichinterref . ".pdf.png";
+    $multiple = $file . ".";
+
+    if ( file_exists( $file ) && is_writable( $file ) )
+    {
+    	if ( ! unlink($file) )
+    	{
+    		$this->error=$langs->trans("ErrorFailedToOpenFile",$file);
+    		return 0;
+    	}
+   	}
+   	else
+    {
+    	for ($i = 0; $i < 20; $i++)
+    	{
+    		$preview = $multiple.$i;
+     		if ( file_exists( $preview ) && is_writable( $preview ) )
+     		{
+    			if ( ! unlink($preview) )
+     			{
+    				$this->error=$langs->trans("ErrorFailedToOpenFile",$preview);
+     				return 0;
+     			}
+     		}
+     	}
+    }
+  }
+}
+
 ?>

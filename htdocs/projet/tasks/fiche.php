@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -151,23 +152,23 @@ Function PLineSelect(&$inc, $parent, $lines, &$level)
 
 if ($_POST["action"] == 'createtask' && $user->rights->projet->creer)
 {
-  $pro = new Project($db);
+  $project = new Project($db);
 
-  $result = $pro->fetch($_GET["id"]);
+  $result = $project->fetch($_GET["id"]);
   
   if ($result == 0)
-    {
+  {
+  	$task_parent = $_POST["task_parent"]?$_POST["task_parent"]:0;
+  	$project->CreateTask($user, $_POST["task_name"], $task_parent);
 
-      $pro->CreateTask($user, $_POST["task_name"], $_POST["task_parent"]);
-
-      Header("Location:fiche.php?id=".$pro->id);
-    }
+    Header("Location:fiche.php?id=".$project->id);
+  }
 }
 
 if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 {
-  $pro = new Project($db);
-  $result = $pro->fetch($_GET["id"]);
+  $project = new Project($db);
+  $result = $project->fetch($_GET["id"]);
   
   if ($result == 0)
     {
@@ -181,12 +182,12 @@ if ($_POST["action"] == 'addtime' && $user->rights->projet->creer)
 		  $id = ereg_replace("task","",$key);
 
 		  $date = mktime(12,12,12,$_POST["$id"."month"],$_POST["$id"."day"],$_POST["$id"."year"]);
-		  $pro->TaskAddTime($user, $id , $post, $date);
+		  $project->TaskAddTime($user, $id , $post, $date);
 		}
 	    }
 	}
       
-      Header("Location:fiche.php?id=".$pro->id);
+      Header("Location:fiche.php?id=".$project->id);
       exit;
     }
 }
@@ -253,11 +254,14 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 	/* Nouvelle tâche */
 	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
 	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
-	print '<select class="flat" name="task_parent">';
-	print '<option value="0" selected="true">&nbsp;</option>';
-	PLineSelect($j, 0, $tasksarray, $level);
-	print '</select>&nbsp;';
-	print '<input type="submit" class="button" value="'.$langs->trans("Add").'">';
+	if ($tasksarray)
+	{
+		print '<select class="flat" name="task_parent">';
+		print '<option value="0" selected="true">&nbsp;</option>';
+		PLineSelect($j, 0, $tasksarray, $level);
+		print '</select>';
+	}
+	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Add").'">';
 	print '</td></tr>';
 
 	print '</table></form><br />';
