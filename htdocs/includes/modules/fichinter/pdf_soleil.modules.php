@@ -69,24 +69,29 @@ class pdf_soleil extends ModelePDFFicheinter
 
     /**
             \brief      Fonction générant la fiche d'intervention sur le disque
-            \param	    id		id de la fiche intervention à générer
+            \param	    fich	Object fichinter
             \return	    int     1=ok, 0=ko
     */
-    function write_pdf_file($id)
+    function write_pdf_file($fich)
     {
         global $user,$langs,$conf,$mysoc;
 
         if ($conf->fichinter->dir_output)
         {
-	        $fich = new Fichinter($this->db,"",$id);
-	        $result=$fich->fetch($id);
-        	if ($result < 0)
-        	{
-        		dolibarr_print_error($db,$fich->error);
-        	}
-        
+			// If $fich is id instead of object
+			if (! is_object($fich))
+			{
+				$fich = new Fichinter($this->db,"",$id);
+		        $result=$fich->fetch($id);
+	        	if ($result < 0)
+	        	{
+	        		dolibarr_print_error($db,$fich->error);
+	        	}
+			}
+			
             $fichref = sanitize_string($fich->ref);
-            $dir = $conf->fichinter->dir_output . "/" . $fichref;
+            $dir = $conf->fichinter->dir_output;
+			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
             $file = $dir . "/" . $fichref . ".pdf";
 
             if (! file_exists($dir))
@@ -133,8 +138,8 @@ class pdf_soleil extends ModelePDFFicheinter
 					{
 		                $pdf->SetTextColor(200,0,0);
 		                $pdf->SetFont('Arial','B',8);
-		                $pdf->MultiCell(100, 3, $langs->trans("ErrorLogoFileNotFound",$logo), 0, 'L');
-		                $pdf->MultiCell(100, 3, $langs->trans("ErrorGoToModuleSetup"), 0, 'L');
+		                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+		                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
 		            }
 		        }
 
@@ -147,12 +152,12 @@ class pdf_soleil extends ModelePDFFicheinter
                 if (defined("FAC_PDF_TEL"))
                 {
                     $pdf->SetFont('Arial','',10);
-                    $pdf->MultiCell(40, 5, "Tél : ".FAC_PDF_TEL);
+                    $pdf->MultiCell(40, 5, $langs->transnoentities("Tel").": ".FAC_PDF_TEL);
                 }
                 if (defined("MAIN_INFO_SIREN"))
                 {
                     $pdf->SetFont('Arial','',10);
-                    $pdf->MultiCell(40, 5, "SIREN : ".MAIN_INFO_SIREN);
+                    $pdf->MultiCell(40, 5, $langs->transnoentities("SIREN").": ".MAIN_INFO_SIREN);
                 }
 
                 if (defined("FAC_PDF_INTITULE2"))
@@ -189,7 +194,7 @@ class pdf_soleil extends ModelePDFFicheinter
                 $tab_height = 110;
 
                 $pdf->SetXY (10, $tab_top);
-                $pdf->MultiCell(190,8,$langs->trans("Description"),0,'L',0);
+                $pdf->MultiCell(190,8,$langs->transnoentities("Description"),0,'L',0);
                 $pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
 
                 $pdf->Rect(10, $tab_top, 190, $tab_height);
