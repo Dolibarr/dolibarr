@@ -61,6 +61,13 @@ class pdf_soleil extends ModelePDFFicheinter
         $this->marge_droite=10;
         $this->marge_haute=10;
         $this->marge_basse=10;
+		
+        $this->option_logo = 1;                    // Affiche logo
+        $this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
+        $this->option_modereg = 0;                 // Affiche mode règlement
+        $this->option_condreg = 0;                 // Affiche conditions règlement
+        $this->option_codeproduitservice = 0;      // Affiche code produit-service
+        $this->option_multilang = 0;               // Dispo en plusieurs langues
         
         // Recupere code pays de l'emmetteur
         $this->emetteur=$mysoc;

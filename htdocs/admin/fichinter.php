@@ -45,7 +45,35 @@ if (!$user->admin)
 /*
  * Actions
  */
- 
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$inter = new Fichinter($db);
+	$inter->initAsSpecimen();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/includes/modules/fichinter/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_pdf_file($inter,$langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+	}
+}
+
 if ($_GET["action"] == 'set')
 {
 	$type='ficheinter';
