@@ -381,11 +381,11 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 			// On recherche le user dolibarr en fonction de son SID ldap
 		  $user->search_sid = $ldap->getObjectSid($login);
 		  if ($ldapdebug) print "DEBUG: search_sid = ".$user->search_sid."<br>\n";
-		  $result=$user->fetch();
+		  $result=$user->fetch($login);
 		  if ($result)
 		  {
-		  	//TODO: on vérifie si le login à changer et on met à jour les attributs dolibarr
-		  	if ($user->login != $ldap->login)
+		  	//TODO: on vérifie si le login a changé et on met à jour les attributs dolibarr
+		  	if ($user->login != $ldap->login && $ldap->login)
 		  	{
 		  		$user->login = $ldap->login;
 		  		$user->update();

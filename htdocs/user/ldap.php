@@ -96,7 +96,7 @@ $form = new Form($db);
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("User").": ".$fuser->fullname);
+dolibarr_fiche_head($head, 'ldap', $langs->trans("User"));
 
 
 
@@ -107,7 +107,9 @@ print '<table class="border" width="100%">';
 
 // Ref
 print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-print '<td>'.$fuser->id.'</td>';
+print '<td>';
+print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print '</td>';
 print '</tr>';
 
 // Nom

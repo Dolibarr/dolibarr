@@ -48,6 +48,7 @@ $searchform=array("main_searchform_societe","main_searchform_contact","main_sear
 $searchformconst=array($conf->global->MAIN_SEARCHFORM_SOCIETE,$conf->global->MAIN_SEARCHFORM_CONTACT,$conf->global->MAIN_SEARCHFORM_PRODUITSERVICE);
 $searchformtitle=array($langs->trans("Companies"),$langs->trans("Contacts"),$langs->trans("ProductsAndServices"));
 
+$html = new Form($db);
 
 
 /*
@@ -98,7 +99,29 @@ llxHeader();
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'guisetup', $langs->trans("User").": ".$fuser->fullname);
+dolibarr_fiche_head($head, 'guisetup', $langs->trans("User"));
+
+
+print '<table class="border" width="100%">';
+
+// Ref
+print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<td colspan="2">';
+print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print '</td>';
+print '</tr>';
+
+// Nom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+print '<td colspan="2">'.$fuser->nom.'</td>';
+print "</tr>\n";
+
+// Prenom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+print '<td colspan="2">'.$fuser->prenom.'</td>';
+print "</tr>\n";
+
+print '</table><br>';
 
 
 if ($_GET["action"] == 'edit')

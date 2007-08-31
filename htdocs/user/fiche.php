@@ -34,6 +34,7 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 $user->getrights('user');
 
@@ -721,7 +722,7 @@ else
 		 */
 		$head = user_prepare_head($fuser);
 	
-		dolibarr_fiche_head($head, 'user', $langs->trans("User").": ".$fuser->fullname);
+		dolibarr_fiche_head($head, 'user', $langs->trans("User"));
 
 
         /*
@@ -777,40 +778,26 @@ else
         {
             print '<table class="border" width="100%">';
 
-            $rowspan=15;
-
             // Ref
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-            print '<td width="50%">';
-
-			if ($previous_ref || $next_ref) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-			print $fuser->id;
-			if ($previous_ref || $next_ref) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_ref.'</td><td class="nobordernopadding" align="center" width="20">'.$next_ref.'</td></tr></table>';
-			
+            print '<td colspan="2">';
+			print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 			print '</td>';
-			
-            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-            }
-            else
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-            }
-            print '</td></tr>';
+			print '</tr>';
 
             // Nom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
-            print '<td width="50%">'.$fuser->nom.'</td>';
+            print '<td colspan="2">'.$fuser->nom.'</td>';
             print "</tr>\n";
 
             // Prenom
             print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td width="50%">'.$fuser->prenom.'</td>';
+            print '<td colspan="2">'.$fuser->prenom.'</td>';
             print "</tr>\n";
 
-			      // Login
+            $rowspan=12;
+
+			// Login
             print '<tr><td width="25%" valign="top">'.$langs->trans("Login").'</td>';
             if ($fuser->ldap_sid && $fuser->statut==0)
             {
@@ -820,6 +807,16 @@ else
             {
             	print '<td width="50%">'.$fuser->login.'</td>';
             }
+			print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+            {
+                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+            }
+            else
+            {
+                print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+            }
+            print '</td>';
             print '</tr>';
 
             // Password
@@ -841,7 +838,7 @@ else
             }
             else
             {
-            	print '<td width="50%">';
+            	print '<td>';
             	if ($fuser->pass) print eregi_replace('.','*',$fuser->pass);
             	else
             	{
@@ -900,15 +897,15 @@ else
 
             // Tel, fax, portable
 			print '<tr><td width="25%" valign="top">'.$langs->trans("Phone").'</td>';
- 			print '<td width="50%">'.$fuser->office_phone.'</td>';
+ 			print '<td>'.$fuser->office_phone.'</td>';
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td width="50%">'.$fuser->office_fax.'</td>';
+ 			print '<td>'.$fuser->office_fax.'</td>';
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Mobile").'</td>';
- 			print '<td width="50%">'.$fuser->user_mobile.'</td>';
+ 			print '<td>'.$fuser->user_mobile.'</td>';
 
 			// EMail
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
-            print '<td width="50%"><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
+            print '<td><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
 
 			// Statut
@@ -937,6 +934,25 @@ else
                 print '<tr><td width="25%" valign="top">'.$langs->trans("LoginWebcal").'</td>';
                 print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
                 print "</tr>\n";
+            }
+            if ($conf->adherent->enabled)
+            {
+				$langs->load("members");
+				print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
+				print '<td colspan="2">';
+				if ($fuser->fk_member)
+				{
+					$adh=new Adherent($db);
+					$adh->fetch($fuser->fk_member);
+					$adh->ref=$adh->login;	// Force to show login instead of id
+					print $adh->getNomUrl(1);
+				}
+				else
+				{
+					print $langs->trans("UserNotLinkedToMember");
+				}
+				print '</td>';
+				print "</tr>\n";
             }
 
             print "</table>\n";
@@ -1119,33 +1135,17 @@ else
             print '<input type="hidden" name="action" value="update">';
             print '<table width="100%" class="border">';
 
-            $rowspan=13;
+            $rowspan=10;
 
             print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
-            print '<td width="50%">';
+            print '<td colspan="2">';
             print $fuser->id;
             print '</td>';
-            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
-            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
-            {
-                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
-            }
-            else
-            {
-                print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
-            }
-            if ($caneditfield)
-            {
-	            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
-	            print '<tr><td>';
-	            print '<input type="file" class="flat" name="photo">';
-	            print '</td></tr></table>';
-        	}
-            print '</td></tr>';
+			print '</tr>';
 
             // Nom
             print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
-            print '<td>';
+            print '<td colspan="2">';
             if ($caneditfield && !$fuser->ldap_sid)
             {
             	print '<input size="30" type="text" class="flat" name="nom" value="'.$fuser->nom.'">';
@@ -1159,7 +1159,7 @@ else
 
 			      // Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
-            print '<td>';
+            print '<td colspan="2">';
             if ($caneditfield && !$fuser->ldap_sid)
             {
             	print '<input size="30" type="text" class="flat" name="prenom" value="'.$fuser->prenom.'">';
@@ -1183,7 +1183,25 @@ else
             	print '<input type="hidden" name="login" value="'.$fuser->login.'">';
             	print $fuser->login;
             }
-            print '</td></tr>';
+            print '</td>';
+            print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+            if (file_exists($conf->users->dir_output."/".$fuser->id.".jpg"))
+            {
+                print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=userphoto&file='.$fuser->id.'.jpg">';
+            }
+            else
+            {
+                print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+            }
+            if ($caneditfield)
+            {
+	            print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+	            print '<tr><td>';
+	            print '<input type="file" class="flat" name="photo">';
+	            print '</td></tr></table>';
+        	}
+            print '</td>';
+			print '</tr>';
 
             // Pass
             print '<tr><td valign="top">'.$langs->trans("Password").'</td>';

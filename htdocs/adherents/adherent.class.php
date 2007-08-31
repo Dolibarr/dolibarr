@@ -737,7 +737,8 @@ class Adherent
         $sql.= " FROM ".MAIN_DB_PREFIX."adherent_type as t, ".MAIN_DB_PREFIX."adherent as d";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."c_pays as p ON d.pays = p.rowid";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."user as u ON d.rowid = u.fk_member";
-        $sql.= " WHERE d.rowid = ".$rowid." AND d.fk_adherent_type = t.rowid";
+        $sql.= " WHERE d.fk_adherent_type = t.rowid";
+		$sql.= " AND d.rowid = ".$rowid;
 		dolibarr_syslog("Adherent::fetch sql=".$sql);
 		
         $resql=$this->db->query($sql);
@@ -747,7 +748,7 @@ class Adherent
             {
                 $obj = $this->db->fetch_object($resql);
 
-		$this->ref            = $obj->rowid;
+				$this->ref            = $obj->rowid;
                 $this->id             = $obj->rowid;
                 $this->prenom         = $obj->prenom;
                 $this->nom            = $obj->nom;

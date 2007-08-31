@@ -55,7 +55,7 @@ $user->info($_GET["id"]);
 
 $head = user_prepare_head($user);
 
-dolibarr_fiche_head($head, 'info', $langs->trans("User").': '.$user->fullname);
+dolibarr_fiche_head($head, 'info', $langs->trans("User"));
 
 
 print '<table width="100%"><tr><td>';

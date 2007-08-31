@@ -122,7 +122,7 @@ class User
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
-		$sql.= " u.fk_societe, u.fk_socpeople, u.ldap_sid,";
+		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
 		$sql.= " u.statut, u.lang,";
 		$sql.= " ".$this->db->pdate("u.datec")." as datec,";
 		$sql.= " ".$this->db->pdate("u.tms")." as datem,";
@@ -132,7 +132,7 @@ class User
 		if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && $this->search_sid != '')
 		{
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " WHERE u.ldap_sid = '".$this->search_sid."'";
+			$sql .= " WHERE (u.ldap_sid = '".$this->search_sid."' || u.login = '".$login."') LIMIT 1";
 		}
 		else if ($login)
 		{
@@ -151,6 +151,8 @@ class User
 			if ($obj)
 			{
 				$this->id = $obj->rowid;
+				$this->ref = $obj->rowid;
+
 				$this->ldap_sid = $obj->ldap_sid;
 				$this->nom = $obj->name;
 				$this->prenom = $obj->firstname;
@@ -166,7 +168,6 @@ class User
 				$this->user_mobile  = $obj->user_mobile;
 				$this->email = $obj->email;
 				$this->admin = $obj->admin;
-				$this->contact_id = $obj->fk_socpeople;
 				$this->note = $obj->note;
 				$this->statut = $obj->statut;
 				$this->lang = $obj->lang;
@@ -178,6 +179,8 @@ class User
 				
 				$this->webcal_login = $obj->webcal_login;
 				$this->societe_id = $obj->fk_societe;
+				$this->contact_id = $obj->fk_socpeople;
+				$this->fk_member = $obj->fk_member;
 				
 				if (! $this->lang) $this->lang='fr_FR';
 
@@ -1036,6 +1039,7 @@ class User
 			}
 	        $sql.= " WHERE rowid = ".$this->id;
 
+			// dolibarr_syslog("User::update sql=".$sql);  Pas de trace
 	        $result = $this->db->query($sql);
 	        if ($result)
 	        {
@@ -1074,6 +1078,8 @@ class User
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
 			$sql.= " SET pass_temp = '".addslashes($password)."'";
 	        $sql.= " WHERE rowid = ".$this->id;
+
+			// dolibarr_syslog("User::update sql=".$sql);  Pas de trace
 	        $result = $this->db->query($sql);
 	        if ($result)
 			{
@@ -1574,6 +1580,41 @@ class User
             dolibarr_print_error($this->db);
         }
     }
+	
+
+	/**
+	*      \brief      Charge les propriétés id_previous et id_next
+	*      \param      filter      filtre
+	*      \return     int         <0 si ko, >0 si ok
+	*/
+	function load_previous_next_ref($filter='')
+	{
+		$sql = "SELECT MAX(rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE rowid < '".addslashes($this->id)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->ref_previous = $row[0];
+		
+		$sql = "SELECT MIN(rowid)";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE rowid > '".addslashes($this->id)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -2;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->ref_next = $row[0];
+	}	
 }
 
 

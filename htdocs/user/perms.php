@@ -95,7 +95,7 @@ $fuser->getrights();
  */
 $head = user_prepare_head($fuser);
 
-dolibarr_fiche_head($head, 'rights', $langs->trans("User").": ".$fuser->fullname);
+dolibarr_fiche_head($head, 'rights', $langs->trans("User"));
 
 
 $db->begin();
@@ -184,6 +184,29 @@ else
 /*
  * Ecran ajout/suppression permission
  */
+
+print '<table class="border" width="100%">';
+
+// Ref
+print '<tr><td width="25%" valign="top">'.$langs->trans("Ref").'</td>';
+print '<td colspan="2">';
+print $form->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
+print '</td>';
+print '</tr>';
+
+// Nom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Lastname").'</td>';
+print '<td colspan="2">'.$fuser->nom.'</td>';
+print "</tr>\n";
+
+// Prenom
+print '<tr><td width="25%" valign="top">'.$langs->trans("Firstname").'</td>';
+print '<td colspan="2">'.$fuser->prenom.'</td>';
+print "</tr>\n";
+
+
+print '</table><br>';
+
 
 print '<table width="100%" class="noborder">';
 print '<tr class="liste_titre">';
