@@ -802,13 +802,14 @@ class User
    */
   function create_from_member($member)
   {
-        global $langs;
+        global $user,$langs;
 
         // Positionne paramètres
         $this->nom = $member->nom;
         $this->prenom = $member->prenom;
 
         $this->login = $member->login;
+		$this->pass = $member->pass;
         $this->admin = 0;
 
         $this->email = $member->email;
@@ -817,10 +818,11 @@ class User
 
         // Crée et positionne $this->id
         $result=$this->create();
-
         if ($result > 0)
         {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."user";
+			$result=$this->password($user,$this->pass,0,0,1);
+
+			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
             $sql.= " SET fk_member=".$member->id;
             $sql.= " WHERE rowid=".$this->id;
             $resql=$this->db->query($sql);
@@ -829,7 +831,7 @@ class User
             {
 				$this->db->commit();
 				return $this->id;
-           }
+            }
             else
             {
                 $this->error=$this->db->error()." - ".$sql;
@@ -998,9 +1000,10 @@ class User
 	*   \param     	password         		Nouveau mot de passe (à générer si non communiqué)
 	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
 	*	\param		changelater				1=Change password only after clicking on confirm email
+	*	\param		notrigger				1=Ne declenche pas les triggers
 	*   \return    	string           		Mot de passe non crypté, < 0 si erreur
 	*/
-    function password($user, $password='', $noclearpassword=0, $changelater=0)
+    function password($user, $password='', $noclearpassword=0, $changelater=0, $notrigger=0)
     {
         global $langs;
 
@@ -1042,13 +1045,16 @@ class User
 			        $this->pass_indatabase=$password;
 			        $this->pass_indatabase_crypted=$password_crypted;
 
-	                // Appel des triggers
-	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	                $interface=new Interfaces($this->db);
-	                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
-	                if ($result < 0) $this->errors=$interface->errors;
-	                // Fin appel triggers
-
+					if (! $notrigger)
+					{
+		                // Appel des triggers
+						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		                $interface=new Interfaces($this->db);
+		                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
+		                if ($result < 0) $this->errors=$interface->errors;
+		                // Fin appel triggers
+					}
+					
 	                return $this->pass;
 	            }
 	            else {
