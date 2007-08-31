@@ -101,9 +101,9 @@ class box_external_rss extends ModeleBoxes {
         else
         {         
         	$this->info_box_head = array('text' => $title,
-        		'sublink' => $link, 'subtext'=>'WWW', 'subpicto'=>'object_bookmark');
+        		'sublink' => $link, 'subtext'=>$langs->trans("LastRefreshDate").': '.(isset($rss->date)?dolibarr_print_date($rss->date,"dayhourtext"):$langs->trans("Unknown")), 'subpicto'=>'object_bookmark');
 		}
-		
+
 		// INFO sur le élements
         for($i = 0; $i < $max && $i < sizeof($rss->items); $i++)
         {

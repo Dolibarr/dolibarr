@@ -96,8 +96,11 @@ class RSSCache {
         if ($filesize = filesize($cache_file) ) {
         	$data = fread( $fp, filesize($cache_file) );
         	$rss = $this->unserialize( $data );
-        
-        	return $rss;
+			
+			// LDR
+			$rss->date=filemtime($cache_file); 
+        	
+			return $rss;
     	}
     	
     	return 0;
