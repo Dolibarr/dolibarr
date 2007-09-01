@@ -30,13 +30,13 @@ create table llx_facture_fourn
   datef      SMALLDATETIME,        -- SMALLDATETIME de la facture
   libelle    varchar(255),
   paye       smallint DEFAULT 0 NOT NULL,
-  amount     real     DEFAULT 0 NOT NULL,
-  remise     real     DEFAULT 0,
-  tva        real     DEFAULT 0,
-  total      real     DEFAULT 0,
-  total_ht   real     DEFAULT 0,
-  total_tva  real     DEFAULT 0,
-  total_ttc  real     DEFAULT 0,
+  amount     float     DEFAULT 0 NOT NULL,
+  remise     float     DEFAULT 0,
+  tva        float     DEFAULT 0,
+  total      float     DEFAULT 0,
+  total_ht   float     DEFAULT 0,
+  total_tva  float     DEFAULT 0,
+  total_ttc  float     DEFAULT 0,
 
   fk_statut  smallint DEFAULT 0 NOT NULL,
 

@@ -41,9 +41,9 @@ create table llx_propal
   remise_percent  real      DEFAULT 0,  -- remise globale relative en pourcent
   remise_absolue  real      DEFAULT 0,  -- remise globale absolue
   remise          real      DEFAULT 0,  -- remise calculee
-  tva             real      DEFAULT 0,  -- montant tva apres remise globale
-  total_ht        real      DEFAULT 0,  -- montant total ht apres remise globale
-  total           real      DEFAULT 0,  -- montant total ttc apres remise globale
+  tva             float      DEFAULT 0,  -- montant tva apres remise globale
+  total_ht        float      DEFAULT 0,  -- montant total ht apres remise globale
+  total           float      DEFAULT 0,  -- montant total ttc apres remise globale
 
   fk_cond_reglement   integer,  -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement   integer,  -- mode de reglement (Virement, Prélèvement)

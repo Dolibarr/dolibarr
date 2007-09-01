@@ -29,10 +29,10 @@ create table llx_product
   label              varchar(255) NOT NULL,
   description        text,
   note               text,
-  price              FLOAT(25),
-  price_ttc          float(12) DEFAULT 0,
+  price              FLOAT,
+  price_ttc          float DEFAULT 0,
   price_base_type    varchar(3)  DEFAULT 'HT',
-  tva_tx             FLOAT(25),
+  tva_tx             FLOAT,
   fk_user_author     integer,
   envente            tinyint DEFAULT 1,
   nbvente            integer DEFAULT 0,
@@ -45,5 +45,7 @@ create table llx_product
   gencode            varchar(255) DEFAULT NULL,
   weight             float        DEFAULT NULL,
   weight_units       tinyint      DEFAULT NULL,
+  volume             float        DEFAULT NULL,
+  volume_units       tinyint      DEFAULT NULL,
   canvas             varchar(15)  DEFAULT ''
 );

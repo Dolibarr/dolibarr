@@ -22,7 +22,7 @@
 
 create table llx_socpeople
 (
-  idp            integer IDENTITY PRIMARY KEY,
+  rowid            integer IDENTITY PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
   fk_soc         integer,           -- lien vers la societe
@@ -41,7 +41,7 @@ create table llx_socpeople
   fax            varchar(30),
   email          varchar(255),
   jabberid       varchar(255),
-  fk_user        integer DEFAULT 0, -- user qui a créé l'enregistrement
+  fk_user_creat        integer DEFAULT 0, -- user qui a créé l'enregistrement
   fk_user_modif  integer,
   note           text
 );

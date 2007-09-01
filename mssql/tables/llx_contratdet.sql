@@ -32,6 +32,7 @@ create table llx_contratdet
 
   label                 text, -- libellé du produit
   description           text,
+  fk_remise_except		integer NULL,      -- Lien vers table des remises fixes
 
   date_commande         datetime,
   date_ouverture_prevue datetime,
@@ -39,16 +40,15 @@ create table llx_contratdet
   date_fin_validite     datetime,
   date_cloture          datetime,
 
-  tva_tx                real DEFAULT 19.6, -- taux tva
+  tva_tx                float DEFAULT 19.6, -- taux tva
   qty                   real,              -- quantité
   remise_percent        real DEFAULT 0,    -- pourcentage de remise
-  remise                real DEFAULT 0,    -- montant de la remise
-  fk_remise_except		integer NULL,      -- Lien vers table des remises fixes
-  subprice              real,              -- prix avant remise
+  subprice              float,              -- prix avant remise
   price_ht              real,              -- prix final
-  total_ht              real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva             real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc             real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  remise                real DEFAULT 0,    -- montant de la remise
+  total_ht              float,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva             float,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc             float,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
   info_bits		        integer DEFAULT 0, 	    -- TVA NPR ou non
 
   fk_user_author        integer NOT NULL default 0,

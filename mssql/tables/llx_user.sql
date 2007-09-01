@@ -30,6 +30,7 @@ create table llx_user
   login             varchar(24) NOT NULL,
   pass              varchar(32),
   pass_crypted      varchar(128),
+  pass_temp         varchar(32),			-- temporary password when asked for forget password
   name              varchar(50),
   firstname         varchar(50),
   office_phone      varchar(20),

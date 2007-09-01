@@ -32,7 +32,6 @@ create table llx_paiement
   tms              timestamp,
   datep            datetime,           -- payment SMALLDATETIME
   amount           real DEFAULT 0,
-  author           varchar(50),
   fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
   note             text,
