@@ -31,6 +31,10 @@ create table llx_commande_fournisseurdet
   qty            real,              -- quantité
   remise_percent real DEFAULT 0,    -- pourcentage de remise
   remise         real DEFAULT 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
+  price          real,                -- prix final
+  subprice       float,              -- prix avant remise
+  total_ht       float,        -- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva      float,	      -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc      float,	      -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits	 integer DEFAULT 0    -- TVA NPR ou non
 );

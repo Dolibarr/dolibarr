@@ -24,7 +24,7 @@ create table llx_fichinterdet
 (
   rowid             integer IDENTITY PRIMARY KEY,
   fk_fichinter      integer,
-  SMALLDATETIME              SMALLDATETIME,              -- SMALLDATETIME de la ligne d'intervention
+  date              SMALLDATETIME,              -- SMALLDATETIME de la ligne d'intervention
   description       text,              -- description de la ligne d'intervention
   duree             integer,           -- duree de la ligne d'intervention
   rang              integer DEFAULT 0  -- ordre affichage sur la fiche

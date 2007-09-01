@@ -27,7 +27,7 @@ create table llx_facture_fourn
   type		 smallint DEFAULT 0 NOT NULL,
   fk_soc     integer NOT NULL,
   datec      datetime,    -- SMALLDATETIME de creation de la facture
-  datef      datetime,        -- SMALLDATETIME de la facture
+  datef      SMALLDATETIME,        -- SMALLDATETIME de la facture
   libelle    varchar(255),
   paye       smallint DEFAULT 0 NOT NULL,
   amount     real     DEFAULT 0 NOT NULL,
@@ -46,7 +46,7 @@ create table llx_facture_fourn
   fk_projet           integer,   -- projet auquel est associée la facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
-  date_lim_reglement  datetime,      -- SMALLDATETIME limite de reglement
+  date_lim_reglement  SMALLDATETIME,      -- SMALLDATETIME limite de reglement
 
   note       	text,
   note_public	text

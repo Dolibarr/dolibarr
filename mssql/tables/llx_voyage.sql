@@ -30,7 +30,7 @@ create table llx_voyage
   rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
 
-  dateo           datetime,                    -- SMALLDATETIME operation
+  dateo           SMALLDATETIME,                    -- SMALLDATETIME operation
   date_depart     datetime,                -- SMALLDATETIME du voyage
   date_arrivee    datetime,                -- SMALLDATETIME du voyage
   amount          real NOT NULL DEFAULT 0, -- prix du billet

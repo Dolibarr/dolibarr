@@ -24,8 +24,8 @@ create table llx_tva
 (
   rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  datep           datetime,           -- SMALLDATETIME de paiement
-  datev           datetime,           -- SMALLDATETIME de valeur
+  datep           SMALLDATETIME,           -- SMALLDATETIME de paiement
+  datev           SMALLDATETIME,           -- SMALLDATETIME de valeur
   amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
   note            text

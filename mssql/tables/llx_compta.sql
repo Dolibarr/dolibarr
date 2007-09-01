@@ -24,7 +24,7 @@ create table llx_compta
 (
   rowid             integer IDENTITY PRIMARY KEY,
   datec             datetime,
-  datev             datetime,           -- SMALLDATETIME de valeur
+  datev             SMALLDATETIME,           -- SMALLDATETIME de valeur
   amount            real DEFAULT 0 NOT NULL ,
   label             varchar(255),
   fk_compta_account integer,

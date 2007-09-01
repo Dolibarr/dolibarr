@@ -28,5 +28,5 @@ create table llx_bank_url
   url_id          integer,
   url             varchar(255),
   label           varchar(255),
-  type varchar(12) check (type in ('company','payment','member','subscription','donation','sc','payment_sc'))
+  type varchar(16) NOT NULL check (type in ('company','payment','payment_supplier','member','subscription','donation','sc','payment_sc'))
 );

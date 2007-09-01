@@ -24,7 +24,7 @@ create table llx_notify_def
 (
   rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  datec           datetime,             -- SMALLDATETIME de creation
+  datec           SMALLDATETIME,             -- SMALLDATETIME de creation
   fk_action       integer NOT NULL,
   fk_soc          integer NOT NULL,
   fk_contact      integer NOT NULL

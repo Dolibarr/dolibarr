@@ -26,11 +26,11 @@
 create table llx_actioncomm
 (
   id             integer IDENTITY PRIMARY KEY,
-  datec          datetime,             -- SMALLDATETIME creation
-  datep          datetime,             -- SMALLDATETIME debut planifiee
-  datep2         datetime,             -- SMALLDATETIME fin planifiee si action non ponctuelle
-  datea          datetime,             -- SMALLDATETIME debut realisation
-  datea2         datetime,             -- SMALLDATETIME fin realisation si action non ponctuelle
+  datec          SMALLDATETIME,             -- SMALLDATETIME creation
+  datep          SMALLDATETIME,             -- SMALLDATETIME debut planifiee
+  datep2         SMALLDATETIME,             -- SMALLDATETIME fin planifiee si action non ponctuelle
+  datea          SMALLDATETIME,             -- SMALLDATETIME debut realisation
+  datea2         SMALLDATETIME,             -- SMALLDATETIME fin realisation si action non ponctuelle
   tms            timestamp,            -- SMALLDATETIME modif
   fk_action      integer,              -- type de l'action
   label          varchar(50) NOT NULL, -- libelle de l'action

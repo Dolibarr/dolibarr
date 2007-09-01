@@ -24,9 +24,9 @@ create table llx_voyage_reduc
 (
   rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
-  datev           datetime,           -- SMALLDATETIME de valeur
-  date_debut      datetime,           -- SMALLDATETIME operation
-  date_fin        datetime,
+  datev           SMALLDATETIME,           -- SMALLDATETIME de valeur
+  date_debut      SMALLDATETIME,           -- SMALLDATETIME operation
+  date_fin        SMALLDATETIME,
   amount          real NOT NULL DEFAULT 0,
   label           varchar(255),
   numero          varchar(255),

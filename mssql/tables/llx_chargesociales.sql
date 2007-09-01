@@ -28,7 +28,7 @@ create table llx_chargesociales
   fk_type    integer,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
-  periode    datetime
+  periode    SMALLDATETIME
 );
 
 

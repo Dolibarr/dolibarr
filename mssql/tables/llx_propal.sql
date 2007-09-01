@@ -29,7 +29,7 @@ create table llx_propal
   ref_client      varchar(30),           -- customer order number
 
   datec           datetime,              -- SMALLDATETIME de creation 
-  datep           datetime,                  -- SMALLDATETIME de la propal
+  datep           SMALLDATETIME,                  -- SMALLDATETIME de la propal
   fin_validite    datetime,              -- SMALLDATETIME de fin de validite
   date_valid      datetime,              -- SMALLDATETIME de validation
   date_cloture    datetime,              -- SMALLDATETIME de cloture

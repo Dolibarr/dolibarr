@@ -22,7 +22,7 @@
 create table llx_facture_stats
 (
   date_full       datetime,
-  date_day        datetime,
+  date_day        SMALLDATETIME,
   data            varchar(50),
   value           real
 

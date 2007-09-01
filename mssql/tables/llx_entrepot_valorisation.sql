@@ -24,7 +24,7 @@ create table llx_entrepot_valorisation
 (
   rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,      -- SMALLDATETIME technique mise à jour automatiquement
-  date_calcul     datetime,           -- SMALLDATETIME auquel a ete calcule la valeur
+  date_calcul     SMALLDATETIME,           -- SMALLDATETIME auquel a ete calcule la valeur
   fk_entrepot     integer NOT NULL ,
   valo_pmp        float(12)    -- valoristaion du stock en PMP
   --key(fk_entrepot)

@@ -45,14 +45,14 @@ create table llx_adherent
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  naiss            datetime,             -- SMALLDATETIME de naissance
+  naiss            SMALLDATETIME,             -- SMALLDATETIME de naissance
   photo            varchar(255),     -- url vers photo
   statut           smallint NOT NULL DEFAULT 0,
   [public]           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils [public] ou pas ?
-  datefin          datetime,  -- SMALLDATETIME de fin de validité de la cotisation
+  datefin          SMALLDATETIME,  -- SMALLDATETIME de fin de validité de la cotisation
   note             text,
-  datevalid        datetime,  -- SMALLDATETIME de validation
-  datec            datetime,  -- SMALLDATETIME de creation
+  datevalid        SMALLDATETIME,  -- SMALLDATETIME de validation
+  datec            SMALLDATETIME,  -- SMALLDATETIME de creation
   tms              timestamp, -- SMALLDATETIME de modification
   fk_user_author   integer NOT NULL,
   fk_user_mod      integer NOT NULL,

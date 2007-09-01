@@ -39,7 +39,7 @@ create table llx_facture_rec
   fk_projet          integer,             -- projet auquel est associé la facture
   fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
   fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prélèvement)
-  date_lim_reglement  datetime,               -- SMALLDATETIME limite de reglement
+  date_lim_reglement  SMALLDATETIME,               -- SMALLDATETIME limite de reglement
 
   note               text,
   note_public         text,

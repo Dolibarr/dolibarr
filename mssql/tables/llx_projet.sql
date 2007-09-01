@@ -26,7 +26,7 @@ create table llx_projet
   fk_soc           integer  NOT NULL,
   fk_statut        smallint NOT NULL,
   tms              timestamp,
-  dateo            datetime,         -- SMALLDATETIME d'ouverture du projet
+  dateo            SMALLDATETIME,         -- SMALLDATETIME d'ouverture du projet
   ref              varchar(50),
   title            varchar(255),
   fk_user_resp     integer,      -- responsable du projet

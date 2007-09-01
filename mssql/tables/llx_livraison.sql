@@ -37,7 +37,7 @@ create table llx_livraison
   note                  text,
   note_public           text,
   model_pdf             varchar(50),
-  date_livraison 	      datetime 	  default NULL,
+  date_livraison 	      SMALLDATETIME 	  default NULL,
   fk_adresse_livraison  integer                       -- adresse de livraison
 
   --key(fk_commande)

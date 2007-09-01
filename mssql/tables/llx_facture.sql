@@ -29,8 +29,8 @@ create table llx_facture
   increment           varchar(10),
   fk_soc              integer            NOT NULL,
   datec               datetime,  -- SMALLDATETIME de creation de la facture
-  datef               datetime,      -- SMALLDATETIME de la facture
-  date_valid          datetime,      -- SMALLDATETIME de validation
+  datef               SMALLDATETIME,      -- SMALLDATETIME de la facture
+  date_valid          SMALLDATETIME,      -- SMALLDATETIME de validation
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
   remise_percent      real     DEFAULT 0,   -- remise relative
@@ -54,7 +54,7 @@ create table llx_facture
 
   fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
   fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
-  date_lim_reglement  datetime,                         -- SMALLDATETIME limite de reglement
+  date_lim_reglement  SMALLDATETIME,                         -- SMALLDATETIME limite de reglement
 
   note                text,
   note_public         text,

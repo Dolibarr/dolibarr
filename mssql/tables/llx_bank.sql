@@ -25,8 +25,8 @@ create table llx_bank
 (
   rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
-  datev           datetime,           -- SMALLDATETIME de valeur
-  dateo           datetime,           -- SMALLDATETIME operation
+  datev           SMALLDATETIME,           -- SMALLDATETIME de valeur
+  dateo           SMALLDATETIME,           -- SMALLDATETIME operation
   amount          real NOT NULL default 0,
   label           varchar(255),
   fk_account      integer,

@@ -24,7 +24,7 @@ create table llx_projet_task_time
 (
   rowid            integer IDENTITY PRIMARY KEY,
   fk_task          integer  NOT NULL,
-  task_date        datetime,
+  task_date        SMALLDATETIME,
   task_duration    FLOAT(25),
   fk_user          integer,
   note             text

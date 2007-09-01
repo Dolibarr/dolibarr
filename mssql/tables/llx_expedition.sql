@@ -28,7 +28,7 @@ create table llx_expedition
   fk_commande           integer,
   date_creation         datetime,              -- SMALLDATETIME de creation 
   date_valid            datetime,              -- SMALLDATETIME de validation
-  date_expedition       datetime,                  -- SMALLDATETIME de l'expedition
+  date_expedition       SMALLDATETIME,                  -- SMALLDATETIME de l'expedition
   fk_user_author        integer,               -- createur
   fk_user_valid         integer,               -- valideur
   fk_entrepot           integer,
