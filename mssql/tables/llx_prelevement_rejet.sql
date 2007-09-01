@@ -23,13 +23,13 @@
 
 create table llx_prelevement_rejet
 (
-  rowid                 int IDENTITY PRIMARY KEY,
-  fk_prelevement_lignes int,
+  rowid                 integer IDENTITY PRIMARY KEY,
+  fk_prelevement_lignes integer,
   date_rejet            datetime,
-  motif                 int,
+  motif                 integer,
   date_creation         datetime,
-  fk_user_creation      int,
+  fk_user_creation      integer,
   note                  text,
   afacturer             tinyint default 0,
-  fk_facture            int
+  fk_facture            integer
 );

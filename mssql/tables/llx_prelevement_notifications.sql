@@ -28,8 +28,8 @@
 
 create table llx_prelevement_notifications
 (
-  rowid     int IDENTITY PRIMARY KEY,
-  fk_user   int NOT NULL,
+  rowid     integer IDENTITY PRIMARY KEY,
+  fk_user   integer NOT NULL,
   action    varchar(2) 
 
 );

@@ -21,9 +21,9 @@
 
 create table llx_expeditiondet
 (
-  rowid             int IDENTITY PRIMARY KEY,
-  fk_expedition     int NOT NULL,
-  fk_commande_ligne int NOT NULL,
+  rowid             integer IDENTITY PRIMARY KEY,
+  fk_expedition     integer NOT NULL,
+  fk_commande_ligne integer NOT NULL,
   qty               real              -- quantité
 
 --  key(fk_expedition),

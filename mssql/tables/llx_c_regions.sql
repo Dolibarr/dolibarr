@@ -23,11 +23,11 @@
 
 create table llx_c_regions
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  code_region int UNIQUE NOT NULL,
-  fk_pays     int NOT NULL,
+  rowid       integer IDENTITY PRIMARY KEY,
+  code_region integer UNIQUE NOT NULL,
+  fk_pays     integer NOT NULL,
   cheflieu    varchar(7),
-  tncc        int,
+  tncc        integer,
   nom         varchar(50),
   active      tinyint DEFAULT 1 NOT NULL
 );

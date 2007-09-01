@@ -22,7 +22,7 @@
 
 create table llx_fournisseur_ca
 (
-  fk_societe    int,
+  fk_societe    integer,
   date_calcul   datetime,
   year          smallint,
   ca_genere     float,                  -- ca genere par les ventes des produits de ce fournisseur

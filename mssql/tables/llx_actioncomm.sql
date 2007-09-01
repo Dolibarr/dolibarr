@@ -25,23 +25,23 @@
 
 create table llx_actioncomm
 (
-  id             int IDENTITY PRIMARY KEY,
-  datec          datetime,             -- date creation
-  datep          datetime,             -- date debut planifiee
-  datep2         datetime,             -- date fin planifiee si action non ponctuelle
-  datea          datetime,             -- date debut realisation
-  datea2         datetime,             -- date fin realisation si action non ponctuelle
-  tms            timestamp,            -- date modif
-  fk_action      int,              -- type de l'action
+  id             integer IDENTITY PRIMARY KEY,
+  datec          datetime,             -- SMALLDATETIME creation
+  datep          datetime,             -- SMALLDATETIME debut planifiee
+  datep2         datetime,             -- SMALLDATETIME fin planifiee si action non ponctuelle
+  datea          datetime,             -- SMALLDATETIME debut realisation
+  datea2         datetime,             -- SMALLDATETIME fin realisation si action non ponctuelle
+  tms            timestamp,            -- SMALLDATETIME modif
+  fk_action      integer,              -- type de l'action
   label          varchar(50) NOT NULL, -- libelle de l'action
 
-  fk_project     int,
-  fk_soc         int,
-  fk_contact     int,
-  fk_parent      int NOT NULL default 0,
+  fk_project     integer,
+  fk_soc         integer,
+  fk_contact     integer,
+  fk_parent      integer NOT NULL default 0,
 
-  fk_user_action int,              -- id de la personne qui doit effectuer l'action
-  fk_user_author int,              -- id de la personne qui a effectuer l'action
+  fk_user_action integer,              -- id de la personne qui doit effectuer l'action
+  fk_user_author integer,              -- id de la personne qui a effectuer l'action
   priority       smallint,
   punctual       smallint NOT NULL default 1,
   [percent]        smallint NOT NULL default 0,
@@ -49,9 +49,9 @@ create table llx_actioncomm
   durationa      real,                 -- duree reellement passee
   note           text,
 
-  propalrowid    int,
-  fk_commande    int,
-  fk_facture     int
+  propalrowid    integer,
+  fk_commande    integer,
+  fk_facture     integer
 
 );
 

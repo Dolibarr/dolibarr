@@ -23,14 +23,14 @@
 
 create table llx_prelevement_facture_demande
 (
-  rowid               int IDENTITY PRIMARY KEY,
-  fk_facture          int NOT NULL,
+  rowid               integer IDENTITY PRIMARY KEY,
+  fk_facture          integer NOT NULL,
   amount              real NOT NULL,
   date_demande        datetime NOT NULL,
   traite              smallint DEFAULT 0,
   date_traite         datetime,
-  fk_prelevement_bons int,
-  fk_user_demande     int NOT NULL,
+  fk_prelevement_bons integer,
+  fk_user_demande     integer NOT NULL,
 
   code_banque         varchar(7),
   code_guichet        varchar(6),

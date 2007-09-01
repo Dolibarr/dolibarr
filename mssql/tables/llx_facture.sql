@@ -22,15 +22,15 @@
 
 create table llx_facture
 (
-  rowid               int IDENTITY PRIMARY KEY,
+  rowid               integer IDENTITY PRIMARY KEY,
   facnumber           varchar(30)        NOT NULL,
   type				  smallint DEFAULT 0 NOT NULL,
   ref_client          varchar(30),
   increment           varchar(10),
-  fk_soc              int            NOT NULL,
-  datec               datetime,  -- date de creation de la facture
-  datef               datetime,      -- date de la facture
-  date_valid          datetime,      -- date de validation
+  fk_soc              integer            NOT NULL,
+  datec               datetime,  -- SMALLDATETIME de creation de la facture
+  datef               datetime,      -- SMALLDATETIME de la facture
+  date_valid          datetime,      -- SMALLDATETIME de validation
   paye                smallint DEFAULT 0 NOT NULL,
   amount              real     DEFAULT 0 NOT NULL,
   remise_percent      real     DEFAULT 0,   -- remise relative
@@ -46,15 +46,15 @@ create table llx_facture
 
   fk_statut           smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author      int,   -- createur de la facture
-  fk_user_valid       int,   -- valideur de la facture
+  fk_user_author      integer,   -- createur de la facture
+  fk_user_valid       integer,   -- valideur de la facture
 
-  fk_facture_source   int,   -- facture origine si facture avoir
-  fk_projet           int,   -- projet auquel est associée la facture
+  fk_facture_source   integer,   -- facture origine si facture avoir
+  fk_projet           integer,   -- projet auquel est associée la facture
 
-  fk_cond_reglement   int  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   int,                      -- mode de reglement (Virement, Prélèvement)
-  date_lim_reglement  datetime,                         -- date limite de reglement
+  fk_cond_reglement   integer  DEFAULT 1 NOT NULL,  -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement   integer,                      -- mode de reglement (Virement, Prélèvement)
+  date_lim_reglement  datetime,                         -- SMALLDATETIME limite de reglement
 
   note                text,
   note_public         text,

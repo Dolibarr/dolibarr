@@ -23,7 +23,7 @@
 
 create table llx_c_ape
 (
-  rowid       int       IDENTITY PRIMARY KEY,
+  rowid       integer       IDENTITY PRIMARY KEY,
   code_ape    varchar(5)    NOT NULL,
   libelle     varchar(255),
   active      tinyint       DEFAULT 1  NOT NULL,

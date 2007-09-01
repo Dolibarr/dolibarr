@@ -22,15 +22,15 @@
 
 create table llx_stock_mouvement
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
   datem           datetime,
-  fk_product      int NOT NULL,
-  fk_entrepot     int NOT NULL,
-  value           int,
+  fk_product      integer NOT NULL,
+  fk_entrepot     integer NOT NULL,
+  value           integer,
   price           float(13) DEFAULT 0,
   type_mouvement  smallint,
-  fk_user_author  int
+  fk_user_author  integer
 
   --key(fk_product),
   --key(fk_entrepot)

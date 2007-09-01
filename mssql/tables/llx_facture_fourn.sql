@@ -22,12 +22,12 @@
 
 create table llx_facture_fourn
 (
-  rowid      int IDENTITY PRIMARY KEY,
+  rowid      integer IDENTITY PRIMARY KEY,
   facnumber  varchar(50) NOT NULL,
   type		 smallint DEFAULT 0 NOT NULL,
-  fk_soc     int NOT NULL,
-  datec      datetime,    -- date de creation de la facture
-  datef      datetime,        -- date de la facture
+  fk_soc     integer NOT NULL,
+  datec      datetime,    -- SMALLDATETIME de creation de la facture
+  datef      datetime,        -- SMALLDATETIME de la facture
   libelle    varchar(255),
   paye       smallint DEFAULT 0 NOT NULL,
   amount     real     DEFAULT 0 NOT NULL,
@@ -40,13 +40,13 @@ create table llx_facture_fourn
 
   fk_statut  smallint DEFAULT 0 NOT NULL,
 
-  fk_user_author  int,   -- createur de la facture
-  fk_user_valid   int,   -- valideur de la facture
+  fk_user_author  integer,   -- createur de la facture
+  fk_user_valid   integer,   -- valideur de la facture
 
-  fk_projet           int,   -- projet auquel est associée la facture
+  fk_projet           integer,   -- projet auquel est associée la facture
 
-  fk_cond_reglement   int  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
-  date_lim_reglement  datetime,      -- date limite de reglement
+  fk_cond_reglement   integer  DEFAULT 1 NOT NULL,   -- condition de reglement (30 jours, fin de mois ...)
+  date_lim_reglement  datetime,      -- SMALLDATETIME limite de reglement
 
   note       	text,
   note_public	text

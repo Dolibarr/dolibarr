@@ -22,9 +22,9 @@
 
 create table llx_comfourn_facfourn
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  fk_commande int NOT NULL,
-  fk_facture  int NOT NULL,
+  rowid       integer IDENTITY PRIMARY KEY,
+  fk_commande integer NOT NULL,
+  fk_facture  integer NOT NULL,
 
 );
 

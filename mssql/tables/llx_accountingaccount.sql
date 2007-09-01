@@ -21,7 +21,7 @@
 
 create table llx_accountingaccount
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   fk_pcg_version  varchar(12)  NOT NULL,
   pcg_type        varchar(20)  NOT NULL,
   pcg_subtype     varchar(20)  NOT NULL,

@@ -25,5 +25,5 @@
 CREATE INDEX idx_propal_fk_soc ON llx_propal(fk_soc);
 
 
-ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 

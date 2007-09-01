@@ -22,7 +22,7 @@
 
 create table llx_product_ca
 (
-  fk_product    int,
+  fk_product    integer,
   date_calcul   datetime,
   year          smallint,
   ca_genere     float,

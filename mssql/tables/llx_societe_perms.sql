@@ -22,8 +22,8 @@
 
 create table llx_societe_perms
 (
-  fk_soc    int,
-  fk_user   int,
+  fk_soc    integer,
+  fk_user   integer,
   pread     tinyint DEFAULT 0, -- permission de lecture
   pwrite    tinyint DEFAULT 0, -- permission d'ecriture
   pperms    tinyint DEFAULT 0, -- permission sur les permissions

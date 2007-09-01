@@ -22,9 +22,9 @@
 
 create table llx_user_entrepot
 (
-  rowid        int IDENTITY PRIMARY KEY,
-  fk_entrepot  int, -- pointe sur llx_entrepot
-  fk_user      int, -- pointe sur llx_user
+  rowid        integer IDENTITY PRIMARY KEY,
+  fk_entrepot  integer, -- pointe sur llx_entrepot
+  fk_user      integer, -- pointe sur llx_user
   consult      tinyint,
   send         tinyint
 );

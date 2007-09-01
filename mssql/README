@@ -1,0 +1,8 @@
+# Makefile Options
+#####################
+
+- mssql.sql  Génère un fichier sql unique pour l'installation (Contient les 
+             ordres de création des tables + clés et index + données)
+
+- load       Charge les données minimales définies dans data/data.sql
+

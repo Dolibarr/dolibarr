@@ -22,12 +22,12 @@
 
 create table llx_energie_compteur_releve
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_compteur     int NOT NULL,
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_compteur     integer NOT NULL,
   date_releve     datetime,
   valeur          real,
   datec           datetime,
-  fk_user_author  int NOT NULL,
+  fk_user_author  integer NOT NULL,
 
   note            text
 );

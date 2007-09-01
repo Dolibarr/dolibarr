@@ -23,9 +23,9 @@
 
 create table llx_prelevement_lignes
 (
-  rowid               int IDENTITY PRIMARY KEY,
-  fk_prelevement_bons int,
-  fk_soc              int NOT NULL,
+  rowid               integer IDENTITY PRIMARY KEY,
+  fk_prelevement_bons integer,
+  fk_soc              integer NOT NULL,
   statut              smallint DEFAULT 0,
 
   client_nom          varchar(255),

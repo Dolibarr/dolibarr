@@ -24,8 +24,8 @@
 
 create table llx_societe_rib
 (
-  rowid          int IDENTITY PRIMARY KEY,
-  fk_soc         int NOT NULL,
+  rowid          integer IDENTITY PRIMARY KEY,
+  fk_soc         integer NOT NULL,
   datec          datetime,
   tms            timestamp,
   label          varchar(30),

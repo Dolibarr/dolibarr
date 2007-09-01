@@ -23,9 +23,9 @@
 
 create table llx_adherent_options
 (
-  optid            int IDENTITY PRIMARY KEY,
+  optid            integer IDENTITY PRIMARY KEY,
   tms              timestamp,
-  adhid            int NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
+  adhid            integer NOT NULL, -- id de l'adherent auquel correspond ces attributs optionnel 
 );
 
 CREATE UNIQUE INDEX adhid ON llx_adherent_options(adhid)

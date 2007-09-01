@@ -23,7 +23,7 @@
 
 create table llx_c_chargesociales
 (
-  id          int IDENTITY PRIMARY KEY,
+  id          integer IDENTITY PRIMARY KEY,
   libelle     varchar(80),
   deductible  smallint DEFAULT 0 NOT NULL,
   active      tinyint DEFAULT 1  NOT NULL

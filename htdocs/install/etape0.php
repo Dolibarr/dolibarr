@@ -78,8 +78,12 @@ if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
 	if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
 	{
 		$databasefortest='mysql';
-	}else{
+	}elseif ($_POST["db_type"] == 'pgsql')
+	{
 		$databasefortest='postgres';
+	}
+	else{
+		$databasefortest='mssql';
 	}
 	$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
 }else{	

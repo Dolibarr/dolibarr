@@ -22,7 +22,7 @@
 create table llx_accountingsystem
 (
   pcg_version       varchar(12)     PRIMARY KEY,
-  fk_pays           int         NOT NULL,
+  fk_pays           integer         NOT NULL,
   label             varchar(128)    NOT NULL,
   datec             varchar(12)     NOT NULL,
   fk_author         varchar(20),

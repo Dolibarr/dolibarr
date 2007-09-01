@@ -22,10 +22,10 @@
 
 create table llx_soc_events
 (
-  rowid         int IDENTITY PRIMARY KEY,  -- [public] id
-  fk_soc        int          NOT NULL,               --
-  dateb	        datetime    NOT NULL,                -- begin date
-  datee	        datetime    NOT NULL,                -- end date
+  rowid         integer IDENTITY PRIMARY KEY,  -- [public] id
+  fk_soc        integer          NOT NULL,               --
+  dateb	        datetime    NOT NULL,                -- begin SMALLDATETIME
+  datee	        datetime    NOT NULL,                -- end SMALLDATETIME
   title         varchar(100) NOT NULL,
   url           varchar(255),
   description   text

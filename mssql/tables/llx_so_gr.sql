@@ -23,9 +23,9 @@
 
 create table llx_so_gr
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  fk_soc      int,
-  fk_groupe   int,
+  rowid       integer IDENTITY PRIMARY KEY,
+  fk_soc      integer,
+  fk_groupe   integer,
 
   UNIQUE(fk_soc, fk_groupe)
 

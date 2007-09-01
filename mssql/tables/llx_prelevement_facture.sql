@@ -23,8 +23,8 @@
 
 create table llx_prelevement_facture
 (
-  rowid                  int IDENTITY PRIMARY KEY,
-  fk_facture             int NOT NULL,
-  fk_prelevement_lignes  int NOT NULL
+  rowid                  integer IDENTITY PRIMARY KEY,
+  fk_facture             integer NOT NULL,
+  fk_prelevement_lignes  integer NOT NULL
 
 );

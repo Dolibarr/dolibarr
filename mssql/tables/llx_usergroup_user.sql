@@ -22,9 +22,9 @@
 
 create table llx_usergroup_user
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_user       int NOT NULL,
-  fk_usergroup  int NOT NULL,
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_user       integer NOT NULL,
+  fk_usergroup  integer NOT NULL,
 
   UNIQUE(fk_user,fk_usergroup)
 );

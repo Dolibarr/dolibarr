@@ -22,6 +22,6 @@
 
 create table llx_energie_compteur_groupe
 (
-  fk_energie_compteur int NOT NULL,
-  fk_energie_groupe   int NOT NULL
+  fk_energie_compteur integer NOT NULL,
+  fk_energie_groupe   integer NOT NULL
 );

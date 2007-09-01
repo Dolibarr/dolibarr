@@ -25,7 +25,7 @@
 
 create table llx_document_model
 (
-  	rowid         int IDENTITY PRIMARY KEY,
+  	rowid         integer IDENTITY PRIMARY KEY,
   	nom         	varchar(50),
   	type			    varchar(20) NOT NULL,
   	libelle		    varchar(255),

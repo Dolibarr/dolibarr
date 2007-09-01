@@ -22,9 +22,9 @@
 
 create table llx_user_rights
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_user       int NOT NULL,
-  fk_id         int NOT NULL,
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_user       integer NOT NULL,
+  fk_id         integer NOT NULL,
 );
 
 CREATE UNIQUE INDEX fk_user_fk_id ON llx_user_rights(fk_user, fk_id)

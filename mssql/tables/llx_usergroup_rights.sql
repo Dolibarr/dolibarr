@@ -22,9 +22,9 @@
 
 create table llx_usergroup_rights
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_usergroup  int NOT NULL,
-  fk_id         int NOT NULL,
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_usergroup  integer NOT NULL,
+  fk_id         integer NOT NULL,
 
   UNIQUE(fk_usergroup,fk_id)
 );

@@ -21,9 +21,9 @@
 
 create table llx_facturedet_rec
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_facture      int NOT NULL,
-  fk_product      int,
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_facture      integer NOT NULL,
+  fk_product      integer,
   description     text,
   tva_taux        real DEFAULT 19.6, -- taux tva
   qty             real,              -- quantité

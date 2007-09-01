@@ -22,10 +22,10 @@
 
 create table llx_don_projet
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
   datec           datetime,
   libelle         varchar(255),
-  fk_user_author  int NOT NULL,
+  fk_user_author  integer NOT NULL,
   note            text
 );

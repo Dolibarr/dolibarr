@@ -23,7 +23,7 @@
 
 create table llx_c_methode_commande_fournisseur
 (
-  rowid    int IDENTITY PRIMARY KEY,
+  rowid    integer IDENTITY PRIMARY KEY,
   code     varchar(30),
   libelle  varchar(60),
   active   tinyint default 1  NOT NULL,

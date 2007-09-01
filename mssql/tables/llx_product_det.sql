@@ -22,8 +22,8 @@
 
 create table llx_product_det
 (
-  rowid          int IDENTITY PRIMARY KEY,
-  fk_product     int      DEFAULT 0 NOT NULL,
+  rowid          integer IDENTITY PRIMARY KEY,
+  fk_product     integer      DEFAULT 0 NOT NULL,
   lang           varchar(5)   DEFAULT 0 NOT NULL,
   label          varchar(255) NOT NULL,
   description    text,

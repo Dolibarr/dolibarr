@@ -27,19 +27,19 @@
 
 create table llx_voyage
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
 
-  dateo           datetime,                    -- date operation
-  date_depart     datetime,                -- date du voyage
-  date_arrivee    datetime,                -- date du voyage
+  dateo           datetime,                    -- SMALLDATETIME operation
+  date_depart     datetime,                -- SMALLDATETIME du voyage
+  date_arrivee    datetime,                -- SMALLDATETIME du voyage
   amount          real NOT NULL DEFAULT 0, -- prix du billet
   reduction       real NOT NULL DEFAULT 0, -- montant de la reduction obtenue
   depart          varchar(255),
   arrivee         varchar(255),
   fk_type         smallint,                -- Train, Avion, Bateaux
-  fk_reduc        int,
-  distance        int,                 -- distance en kilometre
+  fk_reduc        integer,
+  distance        integer,                 -- distance en kilometre
   dossier         varchar(50),             -- numero de dossier
   note            text
 );

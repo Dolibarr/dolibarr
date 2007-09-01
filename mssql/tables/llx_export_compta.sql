@@ -23,10 +23,10 @@
 
 create table llx_export_compta
 (
-  rowid            int IDENTITY PRIMARY KEY,
+  rowid            integer IDENTITY PRIMARY KEY,
   ref              varchar(12) NOT NULL,
-  date_export      datetime NOT NULL,        -- date de creation
-  fk_user          int NOT NULL,
+  date_export      datetime NOT NULL,        -- SMALLDATETIME de creation
+  fk_user          integer NOT NULL,
   note             text
 
 );

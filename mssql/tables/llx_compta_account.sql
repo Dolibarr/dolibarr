@@ -22,11 +22,11 @@
 
 create table llx_compta_account
 (
-  rowid             int IDENTITY PRIMARY KEY,
+  rowid             integer IDENTITY PRIMARY KEY,
   datec             datetime,
   number            varchar(12),
   label             varchar(255),
-  fk_user_author    int,
+  fk_user_author    integer,
   note              text
 
 );

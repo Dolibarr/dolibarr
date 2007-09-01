@@ -22,12 +22,12 @@
 
 create table llx_appro
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  fk_product      int NOT NULL, 
+  fk_product      integer NOT NULL, 
   quantity        smallint NOT NULL,
   price           real,
-  fk_user_author  int
+  fk_user_author  integer
 );
 

@@ -23,8 +23,8 @@
 
 create table llx_paiementfourn_facturefourn
 (
-  rowid int IDENTITY PRIMARY KEY,
-  fk_paiementfourn INT DEFAULT NULL,
-  fk_facturefourn  INT DEFAULT NULL,
+  rowid integer IDENTITY PRIMARY KEY,
+  fk_paiementfourn integer DEFAULT NULL,
+  fk_facturefourn  integer DEFAULT NULL,
   amount FLOAT(25) DEFAULT '0'
 );

@@ -21,7 +21,7 @@
 
 create table llx_fa_pr
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_facture    int,
-  fk_propal     int
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_facture    integer,
+  fk_propal     integer
 );

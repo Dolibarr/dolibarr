@@ -22,19 +22,19 @@
 
 create table llx_commande_fournisseur
 (
-  rowid               int IDENTITY PRIMARY KEY,
+  rowid               integer IDENTITY PRIMARY KEY,
   tms                 timestamp,
-  fk_soc              int NOT NULL,
-  fk_projet           int DEFAULT 0,     -- projet auquel est rattache la commande
+  fk_soc              integer NOT NULL,
+  fk_projet           integer DEFAULT 0,     -- projet auquel est rattache la commande
   ref                 varchar(30) NOT NULL,  -- order number
 
-  date_creation       datetime,              -- date de creation 
-  date_valid          datetime,              -- date de validation
-  date_cloture        datetime,              -- date de cloture
-  date_commande       datetime,                  -- date de la commande
-  fk_user_author      int,               -- createur de la commande
-  fk_user_valid       int,               -- valideur de la commande
-  fk_user_cloture     int,               -- auteur cloture
+  date_creation       datetime,              -- SMALLDATETIME de creation 
+  date_valid          datetime,              -- SMALLDATETIME de validation
+  date_cloture        datetime,              -- SMALLDATETIME de cloture
+  date_commande       datetime,                  -- SMALLDATETIME de la commande
+  fk_user_author      integer,               -- createur de la commande
+  fk_user_valid       integer,               -- valideur de la commande
+  fk_user_cloture     integer,               -- auteur cloture
   source              smallint NOT NULL,
   fk_statut           smallint  default 0,
   amount_ht           real      default 0,
@@ -47,7 +47,7 @@ create table llx_commande_fournisseur
   note_public         text,
   model_pdf           varchar(50),
 
-  fk_methode_commande int default 0,
+  fk_methode_commande integer default 0,
 
 );
 

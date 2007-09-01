@@ -21,12 +21,12 @@
 
 create table llx_cotisation
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
   datec           datetime,
-  fk_adherent     int,
+  fk_adherent     integer,
   dateadh         datetime,
   cotisation      real,
-  fk_bank         int DEFAULT NULL,
+  fk_bank         integer DEFAULT NULL,
   note            text
 );

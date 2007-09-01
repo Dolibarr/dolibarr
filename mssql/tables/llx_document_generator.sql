@@ -21,7 +21,7 @@
 
 create table llx_document_generator
 (
-  rowid           int NOT NULL PRIMARY KEY,
+  rowid           integer NOT NULL PRIMARY KEY,
   name            varchar(255) NOT NULL,
   classfile       varchar(255) NOT NULL,
   class           varchar(255) NOT NULL

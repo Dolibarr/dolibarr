@@ -22,4 +22,4 @@
 
 
 CREATE INDEX idx_fichinter_fk_soc ON llx_fichinter(fk_soc);
-ALTER TABLE llx_fichinter ADD CONSTRAINT fk_fichinter_fk_soc	FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_fichinter ADD CONSTRAINT fk_fichinter_fk_soc	FOREIGN KEY (fk_soc)     REFERENCES llx_societe (rowid);

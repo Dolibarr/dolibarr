@@ -1,17 +1,17 @@
 -- ===================================================================
--- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
 -- This program is free software; you can redistribute it and/or modify
--- it under the terms of the GNU General [public] License as published by
+-- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
 -- (at your option) any later version.
 --
 -- This program is distributed in the hope that it will be useful,
 -- but WITHOUT ANY WARRANTY; without even the implied warranty of
 -- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General [public] License for more details.
+-- GNU General Public License for more details.
 --
--- You should have received a copy of the GNU General [public] License
+-- You should have received a copy of the GNU General Public License
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
@@ -22,18 +22,23 @@
 
 create table llx_fichinter
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_soc          int NOT NULL,
-  fk_projet       int DEFAULT 0,     -- projet auquel est rattache la fiche
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_soc          integer NOT NULL,
+  fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la fiche
+  fk_contrat      integer DEFAULT 0,     -- contrat auquel est rattache la fiche
   ref             varchar(30) NOT NULL,  -- number
-  datec           datetime,              -- date de creation 
-  date_valid      datetime,              -- date de validation
-  datei           datetime,                  -- date de l'intervention
-  fk_user_author  int,               -- createur de la fiche
-  fk_user_valid   int,               -- valideur de la fiche
+  tms             timestamp,
+  datec           datetime,              -- SMALLDATETIME de creation 
+  date_valid      datetime,              -- SMALLDATETIME de validation
+  datei           SMALLDATETIME,                  -- SMALLDATETIME de livraison du bon d'intervention
+  fk_user_author  integer,               -- createur de la fiche
+  fk_user_valid   integer,               -- valideur de la fiche
   fk_statut       smallint  DEFAULT 0,
-  duree           real,
-  note            text,
+  duree           real,                  -- durée totale de l'intervention
+  description     text,
+  note_private    text,
+  note_public     text,
+  model_pdf       varchar(50),
 );
 
 CREATE UNIQUE INDEX ref ON llx_fichinter(ref)

@@ -22,11 +22,11 @@
 
 create table llx_notify
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  daten           datetime,           -- date de la notification
-  fk_action       int NOT NULL,
-  fk_contact      int NOT NULL,
+  daten           datetime,           -- SMALLDATETIME de la notification
+  fk_action       integer NOT NULL,
+  fk_contact      integer NOT NULL,
   objet_type varchar(12) check(objet_type in ('ficheinter','facture','propale')),
-  objet_id        int NOT NULL
+  objet_id        integer NOT NULL
 );

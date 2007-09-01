@@ -24,8 +24,8 @@
 --
 create table llx_societe_consult
 (
-  fk_soc             int,
-  fk_user            int,
+  fk_soc             integer,
+  fk_user            integer,
   datec	             timestamp,
   action char check (action in ('w','r'))
 );

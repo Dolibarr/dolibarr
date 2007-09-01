@@ -22,7 +22,7 @@
 
 create table llx_rights_def
 (
-  id            int PRIMARY KEY,
+  id            integer PRIMARY KEY,
   libelle       varchar(255),
   module        varchar(12),
   perms         varchar(50),

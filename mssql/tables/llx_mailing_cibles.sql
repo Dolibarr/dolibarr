@@ -24,9 +24,9 @@
 
 create table llx_mailing_cibles
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  fk_mailing         int NOT NULL,
-  fk_contact         int NOT NULL,
+  rowid              integer IDENTITY PRIMARY KEY,
+  fk_mailing         integer NOT NULL,
+  fk_contact         integer NOT NULL,
   nom                varchar(160),
   prenom             varchar(160),
   email              varchar(160) NOT NULL,

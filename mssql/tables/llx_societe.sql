@@ -22,12 +22,12 @@
 
 create table llx_societe
 (
-  idp                int IDENTITY PRIMARY KEY,
+  rowid                integer IDENTITY PRIMARY KEY,
   statut             tinyint        DEFAULT 0,            -- statut
-  parent             int,
+  parent             integer,
   tms                timestamp,
-  datec	             datetime,                            -- creation date
-  datea	             datetime,                            -- activation date
+  datec	             datetime,                            -- creation SMALLDATETIME
+  datea	             datetime,                            -- activation SMALLDATETIME
   nom                varchar(60),                         -- company name
   code_client        varchar(15),                         -- code client
   code_fournisseur   varchar(15),                         -- code founisseur
@@ -36,16 +36,16 @@ create table llx_societe
   address            varchar(255),                        -- company adresse
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
-  fk_departement     int        DEFAULT 0,            --
-  fk_pays            int        DEFAULT 0,            --
+  fk_departement     integer        DEFAULT 0,            --
+  fk_pays            integer        DEFAULT 0,            --
   tel                varchar(20),                         -- phone number
   fax                varchar(20),                         -- fax number
   url                varchar(255),                        --
   email              varchar(128),                        --
-  fk_secteur         int        DEFAULT 0,            --
-  fk_effectif        int        DEFAULT 0,            --
-  fk_typent          int        DEFAULT 0,            --
-  fk_forme_juridique int        DEFAULT 0,            -- forme juridique INSEE
+  fk_secteur         integer        DEFAULT 0,            --
+  fk_effectif        integer        DEFAULT 0,            --
+  fk_typent          integer        DEFAULT 0,            --
+  fk_forme_juridique integer        DEFAULT 0,            -- forme juridique INSEE
   siren	             varchar(16),                         -- IDProf1: siren ou RCS pour france
   siret              varchar(16),                         -- IDProf2: siret pour france
   ape                varchar(16),                         -- IDProf3: code ape pour france
@@ -63,8 +63,8 @@ create table llx_societe
   customer_rate      real           DEFAULT 0,            -- taux fiabilié client (0 à 1)
   supplier_rate      real           DEFAULT 0,            -- taux fiabilié fournisseur (0 à 1)
   rubrique           varchar(255),                        -- champ rubrique libre
-  fk_user_creat      int,                             -- utilisateur qui a créé l'info
-  fk_user_modif      int,                             -- utilisateur qui a modifié l'info
+  fk_user_creat      integer,                             -- utilisateur qui a créé l'info
+  fk_user_modif      integer,                             -- utilisateur qui a modifié l'info
   remise_client      real           DEFAULT 0,            -- remise systématique pour le client
   mode_reglement     tinyint, 					          -- mode de réglement
   cond_reglement     tinyint, 							  -- condition de réglement

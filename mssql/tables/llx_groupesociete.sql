@@ -22,14 +22,14 @@
 
 create table llx_groupesociete
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  parent          int UNIQUE,
+  rowid           integer IDENTITY PRIMARY KEY,
+  parent          integer UNIQUE,
   tms             timestamp,
-  datec	          datetime,                            -- creation date
+  datec	          datetime,                            -- creation SMALLDATETIME
   nom             varchar(60),                         -- company name
   note            text,                                --
   remise          real           DEFAULT 0,            -- remise systématique pour le client
-  fk_user_author  int
+  fk_user_author  integer
 
 );
 

@@ -22,4 +22,4 @@
 
 
 CREATE INDEX idx_socpeople_fk_soc ON llx_socpeople(fk_soc);
-ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_fk_soc    FOREIGN KEY (fk_soc)     REFERENCES llx_societe (idp);
+ALTER TABLE llx_socpeople ADD CONSTRAINT fk_socpeople_fk_soc    FOREIGN KEY (fk_soc)     REFERENCES llx_societe (rowid);

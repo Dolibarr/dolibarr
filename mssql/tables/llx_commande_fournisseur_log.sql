@@ -22,10 +22,10 @@
 
 create table llx_commande_fournisseur_log
 (
-  rowid            int IDENTITY PRIMARY KEY,
+  rowid            integer IDENTITY PRIMARY KEY,
   tms              timestamp,
   datelog          datetime NOT NULL,
-  fk_commande      int NOT NULL,
+  fk_commande      integer NOT NULL,
   fk_statut        smallint NOT NULL,
-  fk_user          int NOT NULL
+  fk_user          integer NOT NULL
 );

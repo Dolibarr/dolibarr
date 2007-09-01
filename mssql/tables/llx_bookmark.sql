@@ -20,9 +20,9 @@
 
 create table llx_bookmark
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  fk_soc      int,
-  fk_user     int NOT NULL,
+  rowid       integer IDENTITY PRIMARY KEY,
+  fk_soc      integer,
+  fk_user     integer NOT NULL,
   dateb       datetime,
   url         varchar(128) NOT NULL,
   target      varchar(16),

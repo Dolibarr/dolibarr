@@ -22,14 +22,14 @@
 
 create table llx_deplacement
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime NOT NULL,
   tms             timestamp,
   dated           datetime,
-  fk_user	        int NOT NULL,
-  fk_user_author  int,
+  fk_user	        integer NOT NULL,
+  fk_user_author  integer,
   type            smallint NOT NULL,
   km              smallint,
-  fk_soc          int,
+  fk_soc          integer,
   note            text
 );

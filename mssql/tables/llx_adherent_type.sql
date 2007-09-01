@@ -27,7 +27,7 @@
 
 create table llx_adherent_type
 (
-  rowid            int IDENTITY PRIMARY KEY,
+  rowid            integer IDENTITY PRIMARY KEY,
   tms              timestamp,
   statut           smallint NOT NULL DEFAULT 0,
   libelle          varchar(50),

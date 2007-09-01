@@ -23,7 +23,7 @@
 
 create table llx_usergroup
 (
-  rowid         int IDENTITY PRIMARY KEY,
+  rowid         integer IDENTITY PRIMARY KEY,
   datec         datetime,
   tms           timestamp,
   nom           varchar(255) NOT NULL UNIQUE,

@@ -23,7 +23,7 @@
 
 create table llx_c_pays
 (
-  rowid    int            PRIMARY KEY,
+  rowid    integer            PRIMARY KEY,
   code     varchar(2)         NOT NULL,
   code_iso varchar(3)         ,
   libelle  varchar(50)        NOT NULL,

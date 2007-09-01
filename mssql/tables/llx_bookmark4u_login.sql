@@ -22,9 +22,9 @@
 
 create table llx_bookmark4u_login
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_user       int,
-  bk4u_uid      int,
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_user       integer,
+  bk4u_uid      integer,
 
 );
 

@@ -25,12 +25,12 @@
 
 create table llx_element_contact
 (
-  rowid           int IDENTITY PRIMARY KEY,  
-  datecreate      datetime NULL, 			-- date de creation de l'enregistrement
+  rowid           integer IDENTITY PRIMARY KEY,  
+  datecreate      datetime NULL, 			-- SMALLDATETIME de creation de l'enregistrement
   statut          smallint DEFAULT 5, 		-- 5 inactif, 4 actif
   
-  element_id		int NOT NULL, 		    -- la reference de l'element.
-  fk_c_type_contact	int NOT NULL,	        -- nature du contact.
-  fk_socpeople      int NOT NULL
+  element_id		integer NOT NULL, 		    -- la reference de l'element.
+  fk_c_type_contact	integer NOT NULL,	        -- nature du contact.
+  fk_socpeople      integer NOT NULL
 );
 

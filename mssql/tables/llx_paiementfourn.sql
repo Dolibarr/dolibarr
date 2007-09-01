@@ -22,16 +22,16 @@
 
 create table llx_paiementfourn
 (
-  rowid             int IDENTITY PRIMARY KEY,
+  rowid             integer IDENTITY PRIMARY KEY,
   tms               timestamp,
-  datec             datetime,          -- date de creation de l'enregistrement
-  fk_facture_fourn  int,           -- facture
-  datep             datetime,          -- date de paiement
+  datec             datetime,          -- SMALLDATETIME de creation de l'enregistrement
+  fk_facture_fourn  integer,           -- facture
+  datep             datetime,          -- SMALLDATETIME de paiement
   amount            real DEFAULT 0,    -- montant
-  fk_user_author    int,           -- auteur
-  fk_paiement       int NOT NULL,  -- moyen de paiement
+  fk_user_author    integer,           -- auteur
+  fk_paiement       integer NOT NULL,  -- moyen de paiement
   num_paiement      varchar(50),       -- numéro de paiement (cheque)
   note              text,
-  fk_bank           int NOT NULL,
+  fk_bank           integer NOT NULL,
   statut			smallint NOT NULL DEFAULT 0
 );

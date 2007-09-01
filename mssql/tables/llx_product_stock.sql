@@ -22,11 +22,11 @@
 
 create table llx_product_stock
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  fk_product      int NOT NULL,
-  fk_entrepot     int NOT NULL,
-  reel            int          -- stock réel
+  fk_product      integer NOT NULL,
+  fk_entrepot     integer NOT NULL,
+  reel            integer          -- stock réel
 
   --key(fk_product),
   --key(fk_entrepot)

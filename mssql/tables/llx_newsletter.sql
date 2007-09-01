@@ -22,7 +22,7 @@
 
 create table llx_newsletter
 (
-  rowid              int IDENTITY PRIMARY KEY,
+  rowid              integer IDENTITY PRIMARY KEY,
   datec              datetime,
   tms                timestamp,
   email_subject      varchar(32) NOT NULL,
@@ -36,10 +36,10 @@ create table llx_newsletter
   date_send_request  datetime,   -- debut de l'envoi demandé
   date_send_begin    datetime,   -- debut de l'envoi
   date_send_end      datetime,   -- fin de l'envoi
-  nbsent             int,    -- nombre de mails envoyés
-  nberror            int,    -- nombre de mails envoyés
-  fk_user_author     int,
-  fk_user_valid      int,
-  fk_user_modif      int
+  nbsent             integer,    -- nombre de mails envoyés
+  nberror            integer,    -- nombre de mails envoyés
+  fk_user_author     integer,
+  fk_user_valid      integer,
+  fk_user_modif      integer
 );
 

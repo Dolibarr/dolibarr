@@ -21,7 +21,7 @@
 
 create table llx_co_pr
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  fk_commande int,
-  fk_propale  int
+  rowid       integer IDENTITY PRIMARY KEY,
+  fk_commande integer,
+  fk_propale  integer
 );

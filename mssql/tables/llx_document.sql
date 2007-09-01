@@ -21,13 +21,13 @@
 
 create table llx_document
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   name            varchar(255) NOT NULL,
   file_name       varchar(255) NOT NULL,
   file_extension  varchar(5)   NOT NULL,
   date_generation datetime     NULL,
-  fk_owner        int      NULL,
-  fk_group        int      NULL,
+  fk_owner        integer      NULL,
+  fk_group        integer      NULL,
   permissions     char(9)      DEFAULT 'rw-rw-rw'
 
 );

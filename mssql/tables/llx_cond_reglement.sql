@@ -22,7 +22,7 @@
 
 create table llx_cond_reglement
 (
-  rowid           int PRIMARY KEY,
+  rowid           integer PRIMARY KEY,
   code            varchar(16),
   sortorder       smallint,
   active          tinyint DEFAULT 1,

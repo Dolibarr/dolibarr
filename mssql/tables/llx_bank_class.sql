@@ -20,8 +20,8 @@
 
 create table llx_bank_class
 (
-  lineid   int NOT NULL,
-  fk_categ int NOT NULL,
+  lineid   integer NOT NULL,
+  fk_categ integer NOT NULL,
 );
 
 CREATE INDEX lineid ON llx_bank_class(lineid)

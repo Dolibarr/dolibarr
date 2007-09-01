@@ -22,7 +22,7 @@
 
 create table llx_boxes_def
 (
-  rowid       int IDENTITY PRIMARY KEY,
+  rowid       integer IDENTITY PRIMARY KEY,
   name        varchar(255) NOT NULL,
   [file]        varchar(255) NOT NULL,
   note        text

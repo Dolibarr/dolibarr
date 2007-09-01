@@ -21,8 +21,8 @@
 
 create table llx_accountingdebcred
 (
-	fk_transaction  int		NOT NULL,
-	fk_account      int		NOT NULL,
+	fk_transaction  integer		NOT NULL,
+	fk_account      integer		NOT NULL,
 	amount          real		NOT NULL,
 	direction       varchar(1)	NOT NULL
 );

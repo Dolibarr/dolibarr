@@ -22,15 +22,15 @@
 
 create table llx_projet
 (
-  rowid            int IDENTITY PRIMARY KEY,
-  fk_soc           int  NOT NULL,
+  rowid            integer IDENTITY PRIMARY KEY,
+  fk_soc           integer  NOT NULL,
   fk_statut        smallint NOT NULL,
   tms              timestamp,
-  dateo            datetime,         -- date d'ouverture du projet
+  dateo            datetime,         -- SMALLDATETIME d'ouverture du projet
   ref              varchar(50),
   title            varchar(255),
-  fk_user_resp     int,      -- responsable du projet
-  fk_user_creat    int,      -- createur du projet
+  fk_user_resp     integer,      -- responsable du projet
+  fk_user_creat    integer,      -- createur du projet
   note             text,
 );
 

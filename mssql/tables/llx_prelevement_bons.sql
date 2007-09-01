@@ -26,18 +26,18 @@
 --
 create table llx_prelevement_bons
 (
-  rowid          int IDENTITY PRIMARY KEY,
+  rowid          integer IDENTITY PRIMARY KEY,
   ref            varchar(12),        -- reference
-  datec          datetime,           -- date de creation
+  datec          datetime,           -- SMALLDATETIME de creation
   amount         real DEFAULT 0,     -- montant total du prélèvement
   statut         smallint DEFAULT 0, -- statut
   credite        smallint DEFAULT 0, -- indique si le prelevement a été credité
   note           text,
-  date_trans     datetime,           -- date de transmission à la banque
+  date_trans     datetime,           -- SMALLDATETIME de transmission à la banque
   method_trans   smallint,           -- méthode de transmission
-  fk_user_trans  int,            -- user qui a effectué la transmission
-  date_credit    datetime,           -- date de crédit sur le compte
-  fk_user_credit int,            -- user qui a remonté l'info de crédit
+  fk_user_trans  integer,            -- user qui a effectué la transmission
+  date_credit    datetime,           -- SMALLDATETIME de crédit sur le compte
+  fk_user_credit integer,            -- user qui a remonté l'info de crédit
   
   UNIQUE(ref)
 );

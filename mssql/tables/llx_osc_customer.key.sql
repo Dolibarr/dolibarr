@@ -9,5 +9,4 @@
 -- 
 
 
-ALTER TABLE llx_osc_customer
-  ADD CONSTRAINT llx_osc_customer_societe_idp FOREIGN KEY (doli_socidp) REFERENCES llx_societe (idp);
+ALTER TABLE llx_osc_customer ADD CONSTRAINT fk_osc_customer_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

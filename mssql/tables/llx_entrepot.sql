@@ -23,7 +23,7 @@
 
 create table llx_entrepot
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
   label           varchar(255) UNIQUE NOT NULL,
@@ -32,9 +32,9 @@ create table llx_entrepot
   address         varchar(255),
   cp              varchar(10),
   ville           varchar(50),
-  fk_pays         int DEFAULT 0,
+  fk_pays         integer DEFAULT 0,
   statut          tinyint DEFAULT 1, -- 1 ouvert, 0 fermé
   valo_pmp        float(12),    -- valoristaion du stock en PMP
-  fk_user_author  int
+  fk_user_author  integer
 );
 

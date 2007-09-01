@@ -21,17 +21,17 @@
 
 create table llx_paiementcharge
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_charge       int,
-  datec           datetime,           -- date de creation
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_charge       integer,
+  datec           datetime,           -- SMALLDATETIME de creation
   tms             timestamp,
-  datep           datetime,           -- payment date
+  datep           datetime,           -- payment SMALLDATETIME
   amount          real DEFAULT 0,
-  fk_typepaiement int NOT NULL,
+  fk_typepaiement integer NOT NULL,
   num_paiement    varchar(50),
   note            text,
-  fk_bank         int NOT NULL,
-  fk_user_creat   int,            -- utilisateur qui a créé l'info
-  fk_user_modif   int             -- utilisateur qui a modifié l'info
+  fk_bank         integer NOT NULL,
+  fk_user_creat   integer,            -- utilisateur qui a créé l'info
+  fk_user_modif   integer             -- utilisateur qui a modifié l'info
 
 );

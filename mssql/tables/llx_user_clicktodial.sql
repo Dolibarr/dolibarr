@@ -24,7 +24,7 @@
 --
 create table llx_user_clicktodial
 (
-  fk_user       int PRIMARY KEY,
+  fk_user       integer PRIMARY KEY,
   login         varchar(32),
   pass          varchar(64),
   poste         varchar(20)

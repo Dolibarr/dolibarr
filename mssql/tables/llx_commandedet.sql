@@ -22,24 +22,24 @@
 
 create table llx_commandedet
 (
-  rowid          int IDENTITY PRIMARY KEY,
-  fk_commande    int,
-  fk_product     int,
+  rowid          integer IDENTITY PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
   description    text,
   tva_tx         real, 				-- taux tva
   qty            real,              -- quantité
   remise_percent real DEFAULT 0,    -- pourcentage de remise
   remise         real DEFAULT 0,    -- montant de la remise
-  fk_remise_except	int NULL,   -- Lien vers table des remises fixes
+  fk_remise_except	integer NULL,   -- Lien vers table des remises fixes
   subprice       real,              -- prix avant remise
   price          real,              -- prix final
   total_ht        real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
   total_tva       real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
   total_ttc       real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  info_bits		  int DEFAULT 0, 	-- TVA NPR ou non
+  info_bits		  integer DEFAULT 0, 	-- TVA NPR ou non
   coef           real,              -- coefficient de marge
   special_code        tinyint DEFAULT 0, -- code pour les lignes speciales
-  rang           int DEFAULT 0
+  rang           integer DEFAULT 0
 );
 
 -- 

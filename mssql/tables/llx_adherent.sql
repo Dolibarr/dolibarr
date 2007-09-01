@@ -29,7 +29,7 @@
 
 create table llx_adherent
 (
-  rowid            int IDENTITY PRIMARY KEY,
+  rowid            integer IDENTITY PRIMARY KEY,
   nom              varchar(50),
   prenom           varchar(50),
   login            varchar(50) NOT NULL, -- login
@@ -45,18 +45,18 @@ create table llx_adherent
   phone            varchar(30),
   phone_perso      varchar(30),
   phone_mobile     varchar(30),
-  naiss            datetime,             -- date de naissance
+  naiss            datetime,             -- SMALLDATETIME de naissance
   photo            varchar(255),     -- url vers photo
   statut           smallint NOT NULL DEFAULT 0,
   [public]           smallint NOT NULL DEFAULT 0, -- certain champ de la fiche sont ils [public] ou pas ?
-  datefin          datetime,  -- date de fin de validité de la cotisation
+  datefin          datetime,  -- SMALLDATETIME de fin de validité de la cotisation
   note             text,
-  datevalid        datetime,  -- date de validation
-  datec            datetime,  -- date de creation
-  tms              timestamp, -- date de modification
-  fk_user_author   int NOT NULL,
-  fk_user_mod      int NOT NULL,
-  fk_user_valid    int NOT NULL, 
+  datevalid        datetime,  -- SMALLDATETIME de validation
+  datec            datetime,  -- SMALLDATETIME de creation
+  tms              timestamp, -- SMALLDATETIME de modification
+  fk_user_author   integer NOT NULL,
+  fk_user_mod      integer NOT NULL,
+  fk_user_valid    integer NOT NULL, 
 );
 
 CREATE UNIQUE INDEX login ON llx_adherent(login)

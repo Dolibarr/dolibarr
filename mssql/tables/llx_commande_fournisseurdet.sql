@@ -21,9 +21,9 @@
 
 create table llx_commande_fournisseurdet
 (
-  rowid          int IDENTITY PRIMARY KEY,
-  fk_commande    int,
-  fk_product     int,
+  rowid          integer IDENTITY PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
   ref            varchar(50),
   label          varchar(255),
   description    text,

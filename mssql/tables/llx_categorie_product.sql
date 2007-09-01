@@ -20,6 +20,6 @@
 
 create table llx_categorie_product
 (
-  fk_categorie  int NOT NULL,
-  fk_product    int NOT NULL
+  fk_categorie  integer NOT NULL,
+  fk_product    integer NOT NULL
 );

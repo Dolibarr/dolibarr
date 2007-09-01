@@ -22,10 +22,10 @@
 
 create table llx_societe_prices
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  fk_soc             int   DEFAULT 0,
+  rowid              integer IDENTITY PRIMARY KEY,
+  fk_soc             integer   DEFAULT 0,
   tms                timestamp NOT NULL, 
   datec	             datetime,
-  fk_user_author     int,
+  fk_user_author     integer,
   price_level        tinyint   DEFAULT 1
 );

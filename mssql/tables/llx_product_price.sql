@@ -22,16 +22,16 @@
 
 create table llx_product_price
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  fk_product      int NOT NULL,
+  fk_product      integer NOT NULL,
   date_price      datetime NOT NULL,
   price_level	    tinyint NULL DEFAULT 1,
   price           FLOAT(25),
   price_ttc       float(12) DEFAULT 0,
   price_base_type varchar(3)  DEFAULT 'HT',
   tva_tx          FLOAT(25) NOT NULL,
-  fk_user_author  int,
+  fk_user_author  integer,
   envente         tinyint DEFAULT 1
 );
 

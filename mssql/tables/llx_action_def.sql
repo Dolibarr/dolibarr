@@ -24,7 +24,7 @@
 
 create table llx_action_def
 (
-  rowid           int NOT NULL PRIMARY KEY,
+  rowid           integer NOT NULL PRIMARY KEY,
   code            varchar(25) UNIQUE NOT NULL,
   tms             timestamp,
   titre           varchar(255) NOT NULL,

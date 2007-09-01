@@ -22,11 +22,11 @@
 
 create table llx_compta_compte_generaux
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   date_creation   datetime,
   numero          varchar(50),
   intitule        varchar(255),
-  fk_user_author  int,
+  fk_user_author  integer,
   note            text,
 
   UNIQUE(numero)

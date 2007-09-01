@@ -22,7 +22,7 @@
 
 create table llx_domain
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
   label           varchar(255),
   note            text

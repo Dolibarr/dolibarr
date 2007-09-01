@@ -22,11 +22,11 @@
 
 create table llx_projet_task_time
 (
-  rowid            int IDENTITY PRIMARY KEY,
-  fk_task          int  NOT NULL,
+  rowid            integer IDENTITY PRIMARY KEY,
+  fk_task          integer  NOT NULL,
   task_date        datetime,
   task_duration    FLOAT(25),
-  fk_user          int,
+  fk_user          integer,
   note             text
 
   --key(fk_task),

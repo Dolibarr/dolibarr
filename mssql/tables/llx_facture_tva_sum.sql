@@ -21,7 +21,7 @@
 
 create table llx_facture_tva_sum
 (
-  fk_facture    int NOT NULL,
+  fk_facture    integer NOT NULL,
   amount        real  NOT NULL,
   tva_tx        real  NOT NULL
 );

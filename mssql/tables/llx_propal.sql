@@ -22,20 +22,20 @@
 
 create table llx_propal
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_soc          int,
-  fk_projet       int DEFAULT 0,     -- projet auquel est rattache la propale
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_soc          integer,
+  fk_projet       integer DEFAULT 0,     -- projet auquel est rattache la propale
   ref             varchar(30) NOT NULL,  -- propal number
   ref_client      varchar(30),           -- customer order number
 
-  datec           datetime,              -- date de creation 
-  datep           datetime,                  -- date de la propal
-  fin_validite    datetime,              -- date de fin de validite
-  date_valid      datetime,              -- date de validation
-  date_cloture    datetime,              -- date de cloture
-  fk_user_author  int,               -- createur de la propale
-  fk_user_valid   int,               -- valideur de la propale
-  fk_user_cloture int,               -- cloture de la propale signee ou non signee
+  datec           datetime,              -- SMALLDATETIME de creation 
+  datep           datetime,                  -- SMALLDATETIME de la propal
+  fin_validite    datetime,              -- SMALLDATETIME de fin de validite
+  date_valid      datetime,              -- SMALLDATETIME de validation
+  date_cloture    datetime,              -- SMALLDATETIME de cloture
+  fk_user_author  integer,               -- createur de la propale
+  fk_user_valid   integer,               -- valideur de la propale
+  fk_user_cloture integer,               -- cloture de la propale signee ou non signee
   fk_statut       smallint  DEFAULT 0 NOT NULL,
   price           real      DEFAULT 0,
   remise_percent  real      DEFAULT 0,  -- remise globale relative en pourcent
@@ -45,14 +45,14 @@ create table llx_propal
   total_ht        real      DEFAULT 0,  -- montant total ht apres remise globale
   total           real      DEFAULT 0,  -- montant total ttc apres remise globale
 
-  fk_cond_reglement   int,  -- condition de reglement (30 jours, fin de mois ...)
-  fk_mode_reglement   int,  -- mode de reglement (Virement, Prélèvement)
+  fk_cond_reglement   integer,  -- condition de reglement (30 jours, fin de mois ...)
+  fk_mode_reglement   integer,  -- mode de reglement (Virement, Prélèvement)
  
   note            text,
   note_public     text,
   model_pdf       varchar(50),
   date_livraison datetime default NULL,
-  fk_adresse_livraison  int,  -- adresse de livraison
+  fk_adresse_livraison  integer,  -- adresse de livraison
 );
 
 CREATE UNIQUE INDEX ref ON llx_propal(ref)

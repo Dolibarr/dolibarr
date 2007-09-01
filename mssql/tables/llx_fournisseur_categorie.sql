@@ -22,7 +22,7 @@
 
 create table llx_fournisseur_categorie
 (
-  rowid         int IDENTITY PRIMARY KEY,
+  rowid         integer IDENTITY PRIMARY KEY,
   label         varchar(255)
 
 );

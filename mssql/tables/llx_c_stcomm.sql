@@ -23,7 +23,7 @@
 
 create table llx_c_stcomm
 (
-  id       int      PRIMARY KEY,
+  id       integer      PRIMARY KEY,
   code     varchar(12)  UNIQUE NOT NULL,
   libelle  varchar(30),
   active   tinyint default 1  NOT NULL

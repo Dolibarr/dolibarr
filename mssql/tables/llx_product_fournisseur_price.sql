@@ -22,13 +22,13 @@
 
 create table llx_product_fournisseur_price
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  fk_product      int,
-  fk_soc          int, -- lien sur llx_societe
+  fk_product      integer,
+  fk_soc          integer, -- lien sur llx_societe
   price           real,
   quantity        real,
-  fk_user         int
+  fk_user         integer
 
 );

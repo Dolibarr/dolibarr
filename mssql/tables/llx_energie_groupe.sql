@@ -22,10 +22,10 @@
 
 create table llx_energie_groupe
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   libelle         varchar(100),
   datec           datetime,
-  fk_user_author  int NOT NULL,
+  fk_user_author  integer NOT NULL,
 
   note            text
 );

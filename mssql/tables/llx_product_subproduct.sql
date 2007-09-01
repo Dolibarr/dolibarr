@@ -22,9 +22,9 @@
 
 create table llx_product_subproduct
 (
-  rowid                 int IDENTITY PRIMARY KEY,
-  fk_product            int NOT NULL, -- id du produit maitre
-  fk_product_subproduct int NOT NULL, -- id du sous-produit
+  rowid                 integer IDENTITY PRIMARY KEY,
+  fk_product            integer NOT NULL, -- id du produit maitre
+  fk_product_subproduct integer NOT NULL, -- id du sous-produit
   UNIQUE(fk_product, fk_product_subproduct)
 );
 

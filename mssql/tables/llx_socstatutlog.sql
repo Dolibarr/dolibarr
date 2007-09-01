@@ -22,9 +22,9 @@
 
 create table llx_socstatutlog
 (
-  id          int IDENTITY PRIMARY KEY,
+  id          integer IDENTITY PRIMARY KEY,
   datel       datetime,
-  fk_soc      int,
-  fk_statut   int,
+  fk_soc      integer,
+  fk_statut   integer,
   author      varchar(30)
 );

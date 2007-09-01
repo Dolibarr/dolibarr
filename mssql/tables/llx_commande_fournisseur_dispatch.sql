@@ -21,11 +21,11 @@
 
 create table llx_commande_fournisseur_dispatch
 (
-  rowid          int IDENTITY PRIMARY KEY,
-  fk_commande    int,
-  fk_product     int,
+  rowid          integer IDENTITY PRIMARY KEY,
+  fk_commande    integer,
+  fk_product     integer,
   qty            float,              -- quantité
-  fk_entrepot    int,
-  fk_user        int,
+  fk_entrepot    integer,
+  fk_user        integer,
   datec          datetime
 );

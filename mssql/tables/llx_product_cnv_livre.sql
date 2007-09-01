@@ -24,7 +24,7 @@
 --
 create table llx_product_cnv_livre
 (
-  rowid              int PRIMARY KEY,
+  rowid              integer PRIMARY KEY,
   isbn               varchar(13),       -- code ISBN
   ean                varchar(13),       -- code EAN
   format             varchar(7),        -- format de l'ouvrage
@@ -37,9 +37,9 @@ create table llx_product_cnv_livre
 
   pages              smallint, -- nombre de page
 
-  fk_couverture      int,
-  fk_contrat         int,
-  fk_auteur          int DEFAULT 0           -- auteur lien vers llx_societe
+  fk_couverture      integer,
+  fk_contrat         integer,
+  fk_auteur          integer DEFAULT 0           -- auteur lien vers llx_societe
 );
 
 

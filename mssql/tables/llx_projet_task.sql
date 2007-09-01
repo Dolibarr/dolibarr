@@ -22,12 +22,12 @@
 
 create table llx_projet_task
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  fk_projet          int NOT NULL,
-  fk_task_parent     int NOT NULL,
+  rowid              integer IDENTITY PRIMARY KEY,
+  fk_projet          integer NOT NULL,
+  fk_task_parent     integer NOT NULL,
   title              varchar(255),
   duration_effective real NOT NULL,
-  fk_user_creat      int,      -- createur
+  fk_user_creat      integer,      -- createur
   statut varchar(6) check (statut in ('open','closed')) DEFAULT 'open',
   note               text
 

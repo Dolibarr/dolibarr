@@ -22,17 +22,17 @@
 
 create table llx_expedition
 (
-  rowid                 int IDENTITY PRIMARY KEY,
+  rowid                 integer IDENTITY PRIMARY KEY,
   tms                   timestamp,
   ref                   varchar(30) NOT NULL,
-  fk_commande           int,
-  date_creation         datetime,              -- date de creation 
-  date_valid            datetime,              -- date de validation
-  date_expedition       datetime,                  -- date de l'expedition
-  fk_user_author        int,               -- createur
-  fk_user_valid         int,               -- valideur
-  fk_entrepot           int,
-  fk_expedition_methode int,
+  fk_commande           integer,
+  date_creation         datetime,              -- SMALLDATETIME de creation 
+  date_valid            datetime,              -- SMALLDATETIME de validation
+  date_expedition       datetime,                  -- SMALLDATETIME de l'expedition
+  fk_user_author        integer,               -- createur
+  fk_user_valid         integer,               -- valideur
+  fk_entrepot           integer,
+  fk_expedition_methode integer,
   fk_statut             smallint  DEFAULT 0,
   note                  text,
   model_pdf             varchar(50)

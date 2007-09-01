@@ -23,7 +23,7 @@
 
 create table llx_user_param
 (
-  fk_user       int      NOT NULL,
+  fk_user       integer      NOT NULL,
   page          varchar(255) NOT NULL,
   param         varchar(64)  NOT NULL,
   value         varchar(255) NOT NULL,

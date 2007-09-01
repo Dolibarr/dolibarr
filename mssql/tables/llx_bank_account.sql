@@ -27,7 +27,7 @@
 
 create table llx_bank_account
 (
-  rowid          int IDENTITY PRIMARY KEY,
+  rowid          integer IDENTITY PRIMARY KEY,
   datec          datetime,
   tms            timestamp,
   ref            varchar(12) NOT NULL,
@@ -48,7 +48,7 @@ create table llx_bank_account
   url			       varchar(128),
   account_number varchar(8),
   currency_code  varchar(2) NOT NULL,
-  min_allowed    int DEFAULT 0,
-  min_desired    int DEFAULT 0,
+  min_allowed    integer DEFAULT 0,
+  min_desired    integer DEFAULT 0,
   comment        varchar(254)
 );

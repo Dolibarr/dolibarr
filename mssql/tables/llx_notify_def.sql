@@ -22,10 +22,10 @@
 
 create table llx_notify_def
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
-  datec           datetime,             -- date de creation
-  fk_action       int NOT NULL,
-  fk_soc          int NOT NULL,
-  fk_contact      int NOT NULL
+  datec           datetime,             -- SMALLDATETIME de creation
+  fk_action       integer NOT NULL,
+  fk_soc          integer NOT NULL,
+  fk_contact      integer NOT NULL
 );

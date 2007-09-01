@@ -22,9 +22,9 @@
 
 create table llx_societe_commerciaux
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_soc        int,
-  fk_user       int,
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_soc        integer,
+  fk_user       integer,
 );
 
 CREATE UNIQUE INDEX fk_soc_fk_user ON llx_societe_commerciaux(fk_soc, fk_user)

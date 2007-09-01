@@ -22,7 +22,7 @@
 
 create table llx_expedition_methode
 (
-  rowid            int PRIMARY KEY,
+  rowid            integer PRIMARY KEY,
   tms              timestamp,
   code             varchar(30) NOT NULL,
   libelle          varchar(50) NOT NULL,

@@ -24,7 +24,7 @@
 
 create table llx_categorie
 (
-	rowid 		    int IDENTITY PRIMARY KEY,
+	rowid 		    integer IDENTITY PRIMARY KEY,
 	label 		    VARCHAR(255),                       -- nom de la catégorie
 	description 	text,                               -- description de la catégorie
 	visible       tinyint DEFAULT 1 NOT NULL          -- determine si les produits sont visible ou pas

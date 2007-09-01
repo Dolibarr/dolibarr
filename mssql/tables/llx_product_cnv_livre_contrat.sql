@@ -22,13 +22,13 @@
 
 create table llx_product_cnv_livre_contrat
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  fk_cnv_livre       int,
+  rowid              integer IDENTITY PRIMARY KEY,
+  fk_cnv_livre       integer,
 
-  quantite           int,   -- quantite achete
+  quantite           integer,   -- quantite achete
   taux               float(3),  -- taux contractuel
 
-  date_app           datetime,  -- date d'application
+  date_app           datetime,  -- SMALLDATETIME d'application
   duree              varchar(50) -- duree du contrat
   
 );

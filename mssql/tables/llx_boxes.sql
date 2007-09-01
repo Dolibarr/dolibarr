@@ -27,9 +27,9 @@
 
 create table llx_boxes
 (
-  rowid       int IDENTITY PRIMARY KEY,
-  box_id      int NOT NULL,
+  rowid       integer IDENTITY PRIMARY KEY,
+  box_id      integer NOT NULL,
   position    smallint NOT NULL,
   box_order   smallint default 0 NOT NULL,
-  fk_user	  int default 0 NOT NULL
+  fk_user	  integer default 0 NOT NULL
 );

@@ -27,7 +27,7 @@
 
 create table llx_mailing
 (
-  rowid              int IDENTITY PRIMARY KEY,
+  rowid              integer IDENTITY PRIMARY KEY,
 
   statut             smallint       DEFAULT 0,            --
 
@@ -36,20 +36,20 @@ create table llx_mailing
   body               text,
   cible              varchar(60),
 
-  nbemail            int,
+  nbemail            integer,
 
   email_from         varchar(160),                        -- company name
   email_replyto      varchar(160),                        -- company name
   email_errorsto     varchar(160),                        -- company name
 
-  date_creat         datetime,                            -- creation date
+  date_creat         datetime,                            -- creation SMALLDATETIME
   date_valid         datetime,                            -- 
   date_appro         datetime,                            -- 
-  date_envoi         datetime,                            -- date d'envoi
+  date_envoi         datetime,                            -- SMALLDATETIME d'envoi
 
-  fk_user_creat      int,                             -- utilisateur qui a créé l'info
-  fk_user_valid      int,                             -- utilisateur qui a créé l'info
-  fk_user_appro      int                              -- utilisateur qui a créé l'info
+  fk_user_creat      integer,                             -- utilisateur qui a créé l'info
+  fk_user_valid      integer,                             -- utilisateur qui a créé l'info
+  fk_user_appro      integer                              -- utilisateur qui a créé l'info
 
 );
 

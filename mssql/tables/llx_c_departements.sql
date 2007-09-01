@@ -23,11 +23,11 @@
 
 create table llx_c_departements
 (
-  rowid            int    IDENTITY PRIMARY KEY,
+  rowid            integer    IDENTITY PRIMARY KEY,
   code_departement varchar(6) NOT NULL,
-  fk_region        int,
+  fk_region        integer,
   cheflieu         varchar(7),
-  tncc             int,
+  tncc             integer,
   ncc              varchar(50),
   nom              varchar(50),
   active           tinyint DEFAULT 1  NOT NULL

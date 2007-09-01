@@ -23,21 +23,21 @@
 
 create table llx_bank
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
-  datev           datetime,           -- date de valeur
-  dateo           datetime,           -- date operation
+  datev           datetime,           -- SMALLDATETIME de valeur
+  dateo           datetime,           -- SMALLDATETIME operation
   amount          real NOT NULL default 0,
   label           varchar(255),
-  fk_account      int,
-  fk_user_author  int,
-  fk_user_rappro  int,
+  fk_account      integer,
+  fk_user_author  integer,
+  fk_user_rappro  integer,
   fk_type         varchar(4),     -- CB, Virement, cheque
   num_releve      varchar(50),
-  num_chq         int,
+  num_chq         integer,
   rappro          tinyint default 0,
   note            text,
-  fk_bordereau    int DEFAULT 0,
+  fk_bordereau    integer DEFAULT 0,
   banque          varchar(255),   -- banque pour les cheques
   emetteur        varchar(255),   -- emetteur du cheque
   author          varchar(40) -- a supprimer apres migration

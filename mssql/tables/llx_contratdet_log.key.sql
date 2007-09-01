@@ -21,6 +21,6 @@
 -- ============================================================================
 
 CREATE INDEX idx_contratdet_log_fk_contratdet ON llx_contratdet_log(fk_contratdet);
-CREATE INDEX idx_contratdet_log_date ON llx_contratdet_log(date);
+CREATE INDEX idx_contratdet_log_date ON llx_contratdet_log(SMALLDATETIME);
 
 ALTER TABLE llx_contratdet_log ADD CONSTRAINT fk_contratdet_log_fk_contratdet FOREIGN KEY (fk_contratdet) REFERENCES llx_contratdet (rowid);

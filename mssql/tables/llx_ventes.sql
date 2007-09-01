@@ -22,11 +22,11 @@
 
 create table llx_ventes
 (
-  rowid         int IDENTITY PRIMARY KEY,
-  fk_soc        int NOT NULL,
-  fk_product    int NOT NULL,
-  dated         datetime,         -- date debut
-  datef         datetime,         -- date fin
+  rowid         integer IDENTITY PRIMARY KEY,
+  fk_soc        integer NOT NULL,
+  fk_product    integer NOT NULL,
+  dated         datetime,         -- SMALLDATETIME debut
+  datef         datetime,         -- SMALLDATETIME fin
   price         real,
   author        varchar(30),
   active        smallint DEFAULT 0 NOT NULL,

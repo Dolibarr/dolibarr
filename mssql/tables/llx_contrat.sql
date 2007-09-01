@@ -23,22 +23,22 @@
 
 create table llx_contrat
 (
-  rowid           int IDENTITY PRIMARY KEY,  
+  rowid           integer IDENTITY PRIMARY KEY,  
   ref         	  varchar(30),		-- reference de contrat
   tms             timestamp,
-  datec           datetime, -- date de creation de l'enregistrement
+  datec           datetime, -- SMALLDATETIME de creation de l'enregistrement
   date_contrat    datetime,
   statut          smallint DEFAULT 0,
   mise_en_service datetime,
   fin_validite    datetime,
   date_cloture    datetime,
-  fk_soc          int NOT NULL,
-  fk_projet       int,
-  fk_commercial_signature int NOT NULL,  	-- obsolete
-  fk_commercial_suivi     int NOT NULL,	-- obsolete
-  fk_user_author          int NOT NULL default 0,
-  fk_user_mise_en_service int,
-  fk_user_cloture int,
+  fk_soc          integer NOT NULL,
+  fk_projet       integer,
+  fk_commercial_signature integer NOT NULL,  	-- obsolete
+  fk_commercial_suivi     integer NOT NULL,	-- obsolete
+  fk_user_author          integer NOT NULL default 0,
+  fk_user_mise_en_service integer,
+  fk_user_cloture integer,
   note                text,
   note_public         text
 );

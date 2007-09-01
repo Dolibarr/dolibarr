@@ -25,8 +25,8 @@
 
 create table llx_export_model
 (
-  	rowid         int IDENTITY PRIMARY KEY,
-	fk_user		  int DEFAULT 0 NOT NULL,
+  	rowid         integer IDENTITY PRIMARY KEY,
+	fk_user		  integer DEFAULT 0 NOT NULL,
   	label         varchar(50) NOT NULL,
   	type		  varchar(20) NOT NULL,
   	field         text NOT NULL

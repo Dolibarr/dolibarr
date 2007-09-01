@@ -22,11 +22,11 @@
 
 create table llx_contratdet
 (
-  rowid                 int IDENTITY PRIMARY KEY,
+  rowid                 integer IDENTITY PRIMARY KEY,
   tms                   timestamp,
 
-  fk_contrat            int NOT NULL,
-  fk_product            int NULL,   -- doit pouvoir etre nul pour ligne detail sans produits
+  fk_contrat            integer NOT NULL,
+  fk_product            integer NULL,   -- doit pouvoir etre nul pour ligne detail sans produits
 
   statut                smallint DEFAULT 0,
 
@@ -35,7 +35,7 @@ create table llx_contratdet
 
   date_commande         datetime,
   date_ouverture_prevue datetime,
-  date_ouverture        datetime, -- date d'ouverture du service chez le client
+  date_ouverture        datetime, -- SMALLDATETIME d'ouverture du service chez le client
   date_fin_validite     datetime,
   date_cloture          datetime,
 
@@ -43,17 +43,17 @@ create table llx_contratdet
   qty                   real,              -- quantité
   remise_percent        real DEFAULT 0,    -- pourcentage de remise
   remise                real DEFAULT 0,    -- montant de la remise
-  fk_remise_except		int NULL,      -- Lien vers table des remises fixes
+  fk_remise_except		integer NULL,      -- Lien vers table des remises fixes
   subprice              real,              -- prix avant remise
   price_ht              real,              -- prix final
   total_ht              real,	             	-- Total HT de la ligne toute quantité et incluant remise ligne et globale
   total_tva             real,	             	-- Total TVA de la ligne toute quantité et incluant remise ligne et globale
   total_ttc             real,	             	-- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  info_bits		        int DEFAULT 0, 	    -- TVA NPR ou non
+  info_bits		        integer DEFAULT 0, 	    -- TVA NPR ou non
 
-  fk_user_author        int NOT NULL default 0,
-  fk_user_ouverture     int,
-  fk_user_cloture       int,
+  fk_user_author        integer NOT NULL default 0,
+  fk_user_ouverture     integer,
+  fk_user_cloture       integer,
   commentaire           text
 
 );

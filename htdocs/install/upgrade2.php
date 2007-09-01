@@ -61,6 +61,7 @@ $langs->load("suppliers");
 if ($dolibarr_main_db_type == 'mysql')  $choix=1;
 if ($dolibarr_main_db_type == 'mysqli') $choix=1;
 if ($dolibarr_main_db_type == 'pgsql')  $choix=2;
+if ($dolibarr_main_db_type == 'mssql')  $choix=3;
 
 
 dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");

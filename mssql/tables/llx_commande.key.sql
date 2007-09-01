@@ -26,4 +26,4 @@
 
 CREATE INDEX idx_commande_fk_soc ON llx_commande(fk_soc);
 
-ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_commande ADD CONSTRAINT fk_commande_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);

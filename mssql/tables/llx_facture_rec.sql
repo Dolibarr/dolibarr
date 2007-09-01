@@ -22,10 +22,10 @@
 
 create table llx_facture_rec
 (
-  rowid              int IDENTITY PRIMARY KEY,
+  rowid              integer IDENTITY PRIMARY KEY,
   titre              varchar(50) NOT NULL,
-  fk_soc             int NOT NULL,
-  datec              datetime,  -- date de creation
+  fk_soc             integer NOT NULL,
+  datec              datetime,  -- SMALLDATETIME de creation
 
   amount             real     DEFAULT 0 NOT NULL,
   remise             real     DEFAULT 0,
@@ -35,11 +35,11 @@ create table llx_facture_rec
   total              real     DEFAULT 0,
   total_ttc          real     DEFAULT 0,
 
-  fk_user_author     int,             -- createur
-  fk_projet          int,             -- projet auquel est associé la facture
-  fk_cond_reglement  int DEFAULT 0,   -- condition de reglement
-  fk_mode_reglement   int DEFAULT 0,  -- mode de reglement (Virement, Prélèvement)
-  date_lim_reglement  datetime,               -- date limite de reglement
+  fk_user_author     integer,             -- createur
+  fk_projet          integer,             -- projet auquel est associé la facture
+  fk_cond_reglement  integer DEFAULT 0,   -- condition de reglement
+  fk_mode_reglement   integer DEFAULT 0,  -- mode de reglement (Virement, Prélèvement)
+  date_lim_reglement  datetime,               -- SMALLDATETIME limite de reglement
 
   note               text,
   note_public         text,

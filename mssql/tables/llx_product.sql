@@ -22,7 +22,7 @@
 
 create table llx_product
 (
-  rowid              int IDENTITY PRIMARY KEY,
+  rowid              integer IDENTITY PRIMARY KEY,
   datec              datetime,
   tms                timestamp,
   ref                varchar(16) NOT NULL,
@@ -33,14 +33,14 @@ create table llx_product
   price_ttc          float(12) DEFAULT 0,
   price_base_type    varchar(3)  DEFAULT 'HT',
   tva_tx             FLOAT(25),
-  fk_user_author     int,
+  fk_user_author     integer,
   envente            tinyint DEFAULT 1,
-  nbvente            int DEFAULT 0,
-  fk_product_type    int DEFAULT 0,
+  nbvente            integer DEFAULT 0,
+  fk_product_type    integer DEFAULT 0,
   duration           varchar(6),
-  stock_propale      int DEFAULT 0,
-  stock_commande     int DEFAULT 0,
-  seuil_stock_alerte int DEFAULT 0,
+  stock_propale      integer DEFAULT 0,
+  stock_commande     integer DEFAULT 0,
+  seuil_stock_alerte integer DEFAULT 0,
   stock_loc          varchar(10),         -- emplacement dans le stock
   gencode            varchar(255) DEFAULT NULL,
   weight             float        DEFAULT NULL,

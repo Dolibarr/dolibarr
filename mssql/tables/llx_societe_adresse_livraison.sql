@@ -23,17 +23,17 @@
 
 create table llx_societe_adresse_livraison
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  datec	             datetime,                            -- creation date
-  tms                timestamp,                           -- modification date
+  rowid              integer IDENTITY PRIMARY KEY,
+  datec	             datetime,                            -- creation SMALLDATETIME
+  tms                timestamp,                           -- modification SMALLDATETIME
   label              varchar(30),                         --
-  fk_societe         int        DEFAULT 0,            --
+  fk_societe         integer        DEFAULT 0,            --
   nom                varchar(60),                         -- company name
   address            varchar(255),                        -- company adresse
   cp                 varchar(10),                         -- zipcode
   ville              varchar(50),                         -- town
-  fk_pays            int        DEFAULT 0,            --
+  fk_pays            integer        DEFAULT 0,            --
   note               text,                                --
-  fk_user_creat      int,                             -- utilisateur qui a créé l'info
-  fk_user_modif      int                              -- utilisateur qui a modifié l'info
+  fk_user_creat      integer,                             -- utilisateur qui a créé l'info
+  fk_user_modif      integer                              -- utilisateur qui a modifié l'info
 );

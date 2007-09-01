@@ -22,10 +22,10 @@
 
 create table llx_chargesociales
 (
-  rowid      int IDENTITY PRIMARY KEY,
-  date_ech   datetime NOT NULL, -- date d'echeance
+  rowid      integer IDENTITY PRIMARY KEY,
+  date_ech   datetime NOT NULL, -- SMALLDATETIME d'echeance
   libelle    varchar(80),
-  fk_type    int,
+  fk_type    integer,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
   periode    datetime

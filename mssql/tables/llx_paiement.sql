@@ -26,20 +26,20 @@
 
 create table llx_paiement
 (
-  rowid            int IDENTITY PRIMARY KEY,
-  fk_facture       int,
-  datec            datetime,           -- date de creation
+  rowid            integer IDENTITY PRIMARY KEY,
+  fk_facture       integer,
+  datec            datetime,           -- SMALLDATETIME de creation
   tms              timestamp,
-  datep            datetime,           -- payment date
+  datep            datetime,           -- payment SMALLDATETIME
   amount           real DEFAULT 0,
   author           varchar(50),
-  fk_paiement      int NOT NULL,
+  fk_paiement      integer NOT NULL,
   num_paiement     varchar(50),
   note             text,
-  fk_bank          int NOT NULL,
-  fk_user_creat    int,            -- utilisateur qui a créé l'info
-  fk_user_modif    int,            -- utilisateur qui a modifié l'info
+  fk_bank          integer NOT NULL,
+  fk_user_creat    integer,            -- utilisateur qui a créé l'info
+  fk_user_modif    integer,            -- utilisateur qui a modifié l'info
   statut           smallint DEFAULT 0 NOT NULL,
-  fk_export_compta int DEFAULT 0 NOT NULL
+  fk_export_compta integer DEFAULT 0 NOT NULL
 
 );

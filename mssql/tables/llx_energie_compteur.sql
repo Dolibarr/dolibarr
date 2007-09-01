@@ -22,11 +22,11 @@
 
 create table llx_energie_compteur
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   libelle         varchar(50),
-  fk_energie      int NOT NULL,
+  fk_energie      integer NOT NULL,
   datec           datetime,
-  fk_user_author  int NOT NULL,
+  fk_user_author  integer NOT NULL,
 
   note            text
 );

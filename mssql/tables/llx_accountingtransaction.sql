@@ -21,13 +21,13 @@
 
 create table llx_accountingtransaction
 (
-	rowid           int 		IDENTITY PRIMARY KEY,
+	rowid           integer 		IDENTITY PRIMARY KEY,
 	label           varchar(128)    NOT NULL,
 	datec           datetime 			NOT NULL,
 	fk_author       varchar(20)		NOT NULL,
 	tms             timestamp,
-	fk_facture			int,
-	fk_facture_fourn	int,
-	fk_paiement			int,
-	fk_paiement_fourn	int
+	fk_facture			integer,
+	fk_facture_fourn	integer,
+	fk_paiement			integer,
+	fk_paiement_fourn	integer
 );

@@ -22,7 +22,7 @@
 
 create table llx_transaction_bplc
 (
-  rowid             int IDENTITY PRIMARY KEY,
+  rowid             integer IDENTITY PRIMARY KEY,
   tms               timestamp,
   ipclient          varchar(20),
   num_transaction   varchar(10), 
@@ -30,7 +30,7 @@ create table llx_transaction_bplc
   heure_transaction varchar(10), 
   num_autorisation  varchar(10),
   cle_acceptation   varchar(5),
-  code_retour       int,
-  ref_commande      int
+  code_retour       integer,
+  ref_commande      integer
 
 );

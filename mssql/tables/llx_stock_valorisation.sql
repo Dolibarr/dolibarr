@@ -22,17 +22,17 @@
 
 create table llx_stock_valorisation
 (
-  rowid              int IDENTITY PRIMARY KEY,
-  tms                timestamp,             -- date technique mise à jour automatiquement
-  date_valo          datetime,              -- date de valorisation
-  fk_product         int NOT NULL,      -- id du produit concerne par l'operation
+  rowid              integer IDENTITY PRIMARY KEY,
+  tms                timestamp,             -- SMALLDATETIME technique mise à jour automatiquement
+  date_valo          datetime,              -- SMALLDATETIME de valorisation
+  fk_product         integer NOT NULL,      -- id du produit concerne par l'operation
   qty_ope            float(9),            -- quantité de l'operation
   price_ope          float(12),           -- prix unitaire du produit concerne par l'operation
   valo_ope           float(12),           -- valorisation de l'operation
   price_pmp          float(12),           -- valeur PMP de l'operation
   qty_stock          float(9) DEFAULT 0,  -- qunatite en stock
   valo_pmp           float(12),           -- valorisation du stock en PMP
-  fk_stock_mouvement int               -- id du mouvement de stock
+  fk_stock_mouvement integer               -- id du mouvement de stock
 
   --key(fk_product)
 );

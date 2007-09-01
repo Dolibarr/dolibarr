@@ -23,8 +23,8 @@
 
 create table llx_user_alert
 (
-  rowid        int IDENTITY PRIMARY KEY,
-  type         int,
-  fk_contact   int, -- pointe sur llx_socpeople
-  fk_user      int
+  rowid        integer IDENTITY PRIMARY KEY,
+  type         integer,
+  fk_contact   integer, -- pointe sur llx_socpeople
+  fk_user      integer
 );

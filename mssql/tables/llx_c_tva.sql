@@ -22,10 +22,10 @@
 
 create table llx_c_tva
 (
-  rowid             int NOT NULL IDENTITY PRIMARY KEY,
-  fk_pays           int NOT NULL,
+  rowid             integer NOT NULL IDENTITY PRIMARY KEY,
+  fk_pays           integer NOT NULL,
   taux              FLOAT(25)  NOT NULL,
-  recuperableonly   int NOT NULL DEFAULT 0,
+  recuperableonly   integer NOT NULL DEFAULT 0,
   note              varchar(128),
   active            tinyint DEFAULT 1 NOT NULL
 

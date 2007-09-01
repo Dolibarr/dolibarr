@@ -56,6 +56,7 @@ $langs->load("install");
 if ($dolibarr_main_db_type == "mysql") $choix=1;
 if ($dolibarr_main_db_type == "mysqli") $choix=1;
 if ($dolibarr_main_db_type == "pgsql") $choix=2;
+if ($dolibarr_main_db_type == "mssql") $choix=3;
 
 
 dolibarr_install_syslog("upgrade: Entering upgrade.php page");
@@ -191,7 +192,8 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	if ($ok)
 	{
 		if ($choix==1) $dir = "../../mysql/migration/";
-		else $dir = "../../pgsql/migration/";
+		elseif ($choix==2) $dir = "../../pgsql/migration/";
+		else $dir = "../../mssql/migration/";
 		
 		$filelist=array();
 		$i = 0;

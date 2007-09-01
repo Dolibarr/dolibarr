@@ -32,7 +32,7 @@
 
 create table llx_c_type_contact
 (
-  rowid      	int     PRIMARY KEY,
+  rowid      	integer     PRIMARY KEY,
   element       varchar(30) NOT NULL,
   source        varchar(8)  DEFAULT 'external' NOT NULL,
   code          varchar(16) NOT NULL,

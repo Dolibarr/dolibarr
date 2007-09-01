@@ -22,14 +22,14 @@
 
 create table llx_compta
 (
-  rowid             int IDENTITY PRIMARY KEY,
+  rowid             integer IDENTITY PRIMARY KEY,
   datec             datetime,
-  datev             datetime,           -- date de valeur
+  datev             datetime,           -- SMALLDATETIME de valeur
   amount            real DEFAULT 0 NOT NULL ,
   label             varchar(255),
-  fk_compta_account int,
-  fk_user_author    int,
-  fk_user_valid     int,
+  fk_compta_account integer,
+  fk_user_author    integer,
+  fk_user_valid     integer,
   valid             tinyint DEFAULT 0,
   note              text
 

@@ -22,10 +22,10 @@
 
 create table llx_voyage_reduc
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
-  datev           datetime,           -- date de valeur
-  date_debut      datetime,           -- date operation
+  datev           datetime,           -- SMALLDATETIME de valeur
+  date_debut      datetime,           -- SMALLDATETIME operation
   date_fin        datetime,
   amount          real NOT NULL DEFAULT 0,
   label           varchar(255),

@@ -22,15 +22,15 @@
 
 create table llx_livraison
 (
-  rowid                 int IDENTITY PRIMARY KEY,
+  rowid                 integer IDENTITY PRIMARY KEY,
   tms                   timestamp,
-  fk_commande           int DEFAULT 0,             -- commande auquel est rattache le bon de livraison
-  fk_expedition         int,                       -- expedition auquel est rattache le bon de livraison
+  fk_commande           integer DEFAULT 0,             -- commande auquel est rattache le bon de livraison
+  fk_expedition         integer,                       -- expedition auquel est rattache le bon de livraison
   ref                   varchar(30) NOT NULL,          -- delivery number
-  date_creation         datetime,                      -- date de creation 
-  date_valid            datetime,                      -- date de validation
-  fk_user_author        int,                       -- createur du bon de livraison
-  fk_user_valid         int,                       -- valideur du bon de livraison
+  date_creation         datetime,                      -- SMALLDATETIME de creation 
+  date_valid            datetime,                      -- SMALLDATETIME de validation
+  fk_user_author        integer,                       -- createur du bon de livraison
+  fk_user_valid         integer,                       -- valideur du bon de livraison
   fk_statut             smallint  default 0,
   total_ht              real      default 0,
   total_ttc             real      default 0,
@@ -38,7 +38,7 @@ create table llx_livraison
   note_public           text,
   model_pdf             varchar(50),
   date_livraison 	      datetime 	  default NULL,
-  fk_adresse_livraison  int                       -- adresse de livraison
+  fk_adresse_livraison  integer                       -- adresse de livraison
 
   --key(fk_commande)
 );

@@ -28,7 +28,7 @@ CREATE INDEX idx_facture_fk_user_valid ON llx_facture(fk_user_valid);
 CREATE INDEX idx_facture_fk_facture_source ON llx_facture(fk_facture_source);
 CREATE INDEX idx_facture_fk_projet ON llx_facture(fk_projet);
 
-ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (idp);
+ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc            FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_author    FOREIGN KEY (fk_user_author) REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_user_valid     FOREIGN KEY (fk_user_valid)  REFERENCES llx_user (rowid);
 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_facture_source FOREIGN KEY (fk_facture_source) REFERENCES llx_facture (rowid);

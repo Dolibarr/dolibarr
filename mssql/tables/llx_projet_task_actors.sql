@@ -22,8 +22,8 @@
 
 create table llx_projet_task_actors
 (
-  fk_projet_task int NOT NULL,
-  fk_user        int NOT NULL,
+  fk_projet_task integer NOT NULL,
+  fk_user        integer NOT NULL,
   role varchar(5) check (role in ('admin','read','acto','info')) DEFAULT 'admin',
   
   --key (role)

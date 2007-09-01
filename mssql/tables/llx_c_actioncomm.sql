@@ -23,7 +23,7 @@
 
 create table llx_c_actioncomm
 (
-  id         int     PRIMARY KEY,
+  id         integer     PRIMARY KEY,
   code       varchar(12) UNIQUE NOT NULL,
   type       varchar(10) DEFAULT 'system' NOT NULL,
   libelle    varchar(30) NOT NULL,

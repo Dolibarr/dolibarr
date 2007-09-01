@@ -21,8 +21,8 @@
 
 create table llx_paiement_facture
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_paiement     int,
-  fk_facture      int,
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_paiement     integer,
+  fk_facture      integer,
   amount          real     DEFAULT 0
 );

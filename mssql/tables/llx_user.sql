@@ -24,7 +24,7 @@
 
 create table llx_user
 (
-  rowid             int IDENTITY PRIMARY KEY,
+  rowid             integer IDENTITY PRIMARY KEY,
   datec             datetime,
   tms               timestamp,
   login             varchar(24) NOT NULL,
@@ -40,13 +40,13 @@ create table llx_user
   webcal_login      varchar(25),
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
-  fk_societe        int,
-  fk_socpeople      int,
-  fk_member         int,
+  fk_societe        integer,
+  fk_socpeople      integer,
+  fk_member         integer,
   note              text DEFAULT NULL,
   datelastlogin     datetime,
   datepreviouslogin datetime,
-  egroupware_id     int,
+  egroupware_id     integer,
   ldap_sid          varchar(255) DEFAULT NULL,
   statut			tinyint DEFAULT 1,
   lang              varchar(6)
@@ -58,18 +58,20 @@ GO
 
 CREATE FUNCTION [dbo].[unix_timestamp]
 (
-	@Date datetime
+	@SMALLDATETIME datetime
 )
 RETURNS datetime
 AS
 BEGIN
-	DECLARE @Result int
+	DECLARE @Result integer
 
 	--SET @Result = NULL
-	--IF @Date IS NOT NULL SET @Result = DATEDIFF(s, '19700101', @Date)
+	--IF @SMALLDATETIME IS NOT NULL SET @Result = DATEDIFF(s, '19700101', @SMALLDATETIME)
 
-	RETURN @Date
+	RETURN @SMALLDATETIME
 END
+
+GO
 
 set ANSI_NULLS ON
 set QUOTED_IDENTIFIER ON
@@ -77,7 +79,7 @@ GO
 
 CREATE FUNCTION [dbo].[from_unixtime]
 (
-	@Epoch int
+	@Epoch integer
 )
 RETURNS datetime
 AS
@@ -85,6 +87,8 @@ BEGIN
 	RETURN DATEADD(s, @Epoch, '19700101')
 
 END
+
+GO
 
 set ANSI_NULLS ON
 set QUOTED_IDENTIFIER ON

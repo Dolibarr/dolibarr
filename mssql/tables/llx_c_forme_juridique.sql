@@ -23,9 +23,9 @@
 
 create table llx_c_forme_juridique
 (
-  rowid      int       IDENTITY PRIMARY KEY,
+  rowid      integer       IDENTITY PRIMARY KEY,
   code       varchar(12)   UNIQUE NOT NULL,
-  fk_pays    int       NOT NULL,
+  fk_pays    integer       NOT NULL,
   libelle    varchar(255),
   active     tinyint DEFAULT 1  NOT NULL
 

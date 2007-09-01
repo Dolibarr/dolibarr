@@ -22,11 +22,11 @@
 
 create table llx_models
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   tms             timestamp,
   type            varchar(32),                  -- Fonction destinee au modele
   [public]          smallint DEFAULT 1 NOT NULL,  -- Model publique ou privee
-  fk_user         int,                      -- Id utilisateur si privee, sinon null
+  fk_user         integer,                      -- Id utilisateur si privee, sinon null
   title           varchar(128),                 -- Titre modele
   content         text                          -- Texte du modele
 );

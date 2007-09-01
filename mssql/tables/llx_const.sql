@@ -26,7 +26,7 @@
 
 create table llx_const
 (
-  rowid       int IDENTITY PRIMARY KEY,
+  rowid       integer IDENTITY PRIMARY KEY,
   name        varchar(255),
   value       text, -- max 65535 caracteres
   type varchar(6) check (type in ('yesno','texte','chaine')),

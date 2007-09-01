@@ -23,9 +23,9 @@
 
 create table llx_bank_url
 (
-  rowid           int IDENTITY PRIMARY KEY,
-  fk_bank         int,
-  url_id          int,
+  rowid           integer IDENTITY PRIMARY KEY,
+  fk_bank         integer,
+  url_id          integer,
   url             varchar(255),
   label           varchar(255),
   type varchar(12) check (type in ('company','payment','member','subscription','donation','sc','payment_sc'))

@@ -22,13 +22,13 @@
 
 create table llx_product_fournisseur
 (
-  rowid           int IDENTITY PRIMARY KEY,
+  rowid           integer IDENTITY PRIMARY KEY,
   datec           datetime,
   tms             timestamp,
-  fk_product      int,
-  fk_soc          int,
+  fk_product      integer,
+  fk_soc          integer,
   ref_fourn       varchar(30),
-  fk_user_author  int
+  fk_user_author  integer
 
   --key(fk_product),
   --key(fk_soc)

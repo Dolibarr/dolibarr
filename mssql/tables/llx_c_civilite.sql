@@ -22,7 +22,7 @@
 
 create table llx_c_civilite
 (
-  rowid       int    PRIMARY KEY,
+  rowid       integer    PRIMARY KEY,
   code        varchar(6) UNIQUE NOT NULL,
   civilite	  varchar(50),
   active      tinyint DEFAULT 1  NOT NULL
