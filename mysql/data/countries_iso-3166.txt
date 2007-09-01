@@ -1,4 +1,8 @@
 # File of all ISO-3166 countries codes (http://www.iso.org/iso/en/prods-services/iso3166ma/02iso-3166-code-lists/list-en1-semic.txt)
+# ISO-3166 alpha 2: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-2
+# ISO-3166 alpha 3: http://en.wikipedia.org/wiki/ISO_3166-1_alpha-3
+#
+# Alpha 2:
 AF;AFGHANISTAN
 AX;ÅLAND ISLANDS
 AL;ALBANIA
