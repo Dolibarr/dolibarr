@@ -19,17 +19,19 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_osc_product.sql,v 1.3 2007/06/11 22:52:15 hregis Exp $
+-- $Id: llx_osc_product.sql,v 1.4 2007/08/26 19:21:41 eldy Exp $
 -- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_osc_product.sql,v $
 --
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_osc_product` (
-  "`rowid`" int4 NOT NULL default '0',
-  "`datem`" timestamp default NULL,
-  "`fk_product`" int4 NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  "UNIQUE"   UNIQUE  (`fk_product`)
+CREATE TABLE llx_osc_product (
+  "rowid" int4 NOT NULL default '0',
+  "datem" timestamp default NULL,
+  "fk_product" int4 NOT NULL default '0',
+  UNIQUE(fk_product)
 ) TYPE=InnoDB COMMENT='Table transition produit OSC - produit Dolibarr';
+
+CREATE INDEX idx_llx_osc_product_rowid ON llx_osc_product (rowid);
+CREATE INDEX fk_product ON llx_osc_product (fk_product);
 
 

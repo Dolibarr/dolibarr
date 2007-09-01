@@ -19,15 +19,17 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_osc_order.sql,v 1.3 2007/06/11 22:52:15 hregis Exp $
+-- $Id: llx_osc_order.sql,v 1.4 2007/08/26 19:21:40 eldy Exp $
 -- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_osc_order.sql,v $
 --
 -- ===================================================================
 
-CREATE TABLE IF NOT EXISTS `llx_osc_order` (
-  "`rowid`" int4 NOT NULL default '0',
-  "`datem`" timestamp default NULL,
-  "`fk_commande`" int4 NOT NULL default '0',
-  PRIMARY KEY  (`rowid`),
-  "UNIQUE"   UNIQUE  (`fk_commande`)
+CREATE TABLE llx_osc_order (
+  "rowid" int4 NOT NULL default '0',
+  "datem" timestamp default NULL,
+  "fk_commande" int4 NOT NULL default '0',
+  UNIQUE(fk_commande)
 ) TYPE=InnoDB COMMENT='Table transition commande OSC - commande Dolibarr';
+
+CREATE INDEX idx_llx_osc_order_rowid ON llx_osc_order (rowid);
+CREATE INDEX fk_commande ON llx_osc_order (fk_commande);

@@ -3,10 +3,8 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ===================================================================
--- Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
---
--- $Id: llx_bordereau_cheque.sql,v 1.4 2007/08/26 19:21:40 eldy Exp $
--- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_bordereau_cheque.sql,v $
+-- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -22,20 +20,16 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id: llx_fichinterdet.sql,v 1.1 2007/08/28 07:46:40 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_fichinterdet.sql,v $
 -- ===================================================================
---
--- Bordereaux de remise de cheque
---
-create table llx_bordereau_cheque
+
+create table llx_fichinterdet
 (
   rowid SERIAL PRIMARY KEY,
-  "datec"             timestamp,
-  "date_bordereau"    date,
-  "number"            integer,
-  "amount"            float(12,2),
-  "nbcheque"          smallint DEFAULT 0,
-  "fk_bank_account"   integer,
-  "fk_user_author"    integer,
-  "note"              text,
-  "statut"            int2 DEFAULT 0
+  "fk_fichinter"      integer,
+  "date"              date,              -- date de la ligne d'intervention
+  "description"       text,              -- description de la ligne d'intervention
+  "duree"             integer,           -- duree de la ligne d'intervention
+  "rang"              integer DEFAULT 0  -- ordre affichage sur la fiche
 );

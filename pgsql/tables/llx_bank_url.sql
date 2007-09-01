@@ -32,5 +32,5 @@ create table llx_bank_url
   "url_id"          integer,
   "url"             varchar(255),
   "label"           varchar(255),
-  "type"            enum("?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc") NOT NULL
+  "type" varchar(16) CHECK (type IN ('?','company','payment','payment_supplier','member','subscription','donation','sc','payment_sc'))  NOT NULL
 );

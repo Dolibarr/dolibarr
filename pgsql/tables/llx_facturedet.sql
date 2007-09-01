@@ -45,6 +45,6 @@ create table llx_facturedet
   "info_bits"		  integer DEFAULT 0, 	-- TVA NPR ou non
   "fk_code_ventilation" integer DEFAULT 0 NOT NULL,
   "fk_export_compta"    integer DEFAULT 0 NOT NULL,
-  "rang"                integer DEFAULT 0,  -- ordre d'affichage
-  "special_code"    smallint unsiDEFAULT 0, -- code pour les lignes speciales (livraison=1, ecotaxe=2)
+  "rang"                integer DEFAULT 0,         -- ordre d'affichage
+  "special_code"    int2 DEFAULT 0   -- code pour les lignes speciales (livraison=1, ecotaxe=2)
 );

@@ -22,8 +22,7 @@
 -- $Id$
 -- $Source$
 --
--- Historique des remises clients
--- 
+-- Historique evolution de la remise relative des tiers
 -- ========================================================================
 
 
