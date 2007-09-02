@@ -58,10 +58,16 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
   $sqls[1] = "SHOW STATUS";
   $base=1;
 }
-if ($conf->db->type == 'pgsql')
+else if ($conf->db->type == 'pgsql')
 {
   $sqls[0] = "select name,setting from pg_settings;";
   $base=2;
+}
+else if ($conf->db->type == 'mssql')
+{
+	//TODO: récupérer les infos du serveur
+	//$sqls[0] = "";
+  //$base=3;
 }
 
 if (! $base)

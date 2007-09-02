@@ -48,10 +48,16 @@ if ($conf->db->type == 'mysql' || $conf->db->type == 'mysqli')
     $sql = "SHOW TABLE STATUS";
     $base=1;
 }
-if ($conf->db->type == 'pgsql')
+else if ($conf->db->type == 'pgsql')
 {
     $sql = "SELECT conname, contype FROM pg_constraint;";
     $base=2;
+}
+else if ($conf->db->type == 'mssql')
+{
+	//TODO: récupérer les infos du serveur
+	//$sqls[0] = "";
+  //$base=3;
 }
 
 if (! $base)
