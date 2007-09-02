@@ -71,7 +71,7 @@ class box_actions extends ModeleBoxes {
 		
 		if ($user->rights->commercial->main->lire)
 		{
-			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent,";
+			$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp , a.percent as percentage,";
 			$sql.= " ta.code,";
 			$sql.= " s.nom, s.rowid as socid";
 			if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -119,11 +119,11 @@ class box_actions extends ModeleBoxes {
 					'text' => dolibarr_print_date($objp->dp, "dayhour"));
 	
 					$this->info_box_contents[$i][3] = array('align' => 'right',
-					'text' => $objp->percent. "%");
+					'text' => $objp->percentage. "%");
 	
           $this->info_box_contents[$i][4] = array(
           'align' => 'right',
-          'text' => $actionstatic->LibStatut($objp->percent,3));
+          'text' => $actionstatic->LibStatut($objp->percentage,3));
 
 					$i++;
 					}

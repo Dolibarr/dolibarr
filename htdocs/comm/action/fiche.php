@@ -139,16 +139,16 @@ if ($_POST["action"] == 'add_action')
 			// RDV
 			if ($actioncomm->date)
 			{
-				$actioncomm->percent = 100;
+				$actioncomm->percentage = 100;
 			}
 			else
 			{
-				$actioncomm->percent = 0;
+				$actioncomm->percentage = 0;
 			}
 		}
 		else
 		{
-        	$actioncomm->percent = isset($_POST["percentage"])?$_POST["percentage"]:0;
+        	$actioncomm->percentage = isset($_POST["percentage"])?$_POST["percentage"]:0;
 	    }
         $actioncomm->duree=(($_POST["dureehour"] * 60) + $_POST["dureemin"]) * 60;
         $actioncomm->user = $user;
@@ -255,10 +255,10 @@ if ($_POST["action"] == 'update')
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
 		//print $action->datep;
         $action->label       = $_POST["label"];
-        $action->percent     = $_POST["percent"];
+        $action->percentage  = $_POST["percentage"];
         $action->contact->id = $_POST["contactid"];
         $action->note        = $_POST["note"];
-		if ($action->type_code == 'AC_RDV' && $action->percent == 100 && ! $action->date)
+		if ($action->type_code == 'AC_RDV' && $action->percentage == 100 && ! $action->date)
 		{
 			$action->date = $action->datep;
 		}
@@ -642,7 +642,7 @@ if ($_GET["id"])
 		// Date planification
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
 		$html->select_date(($act->datep?$act->datep:-1),'ap',1,1,1,"action");
-		if ($act->percent < 100 && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		if ($act->percentage < 100 && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
 		// Date done
@@ -652,7 +652,7 @@ if ($_GET["id"])
 
 
 		// Etat
-        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percent" value="'.$act->percent.'" size="4">%</td></tr>';
+        print '<tr><td nowrap>'.$langs->trans("Status").' / '.$langs->trans("Percentage").'</td><td colspan="3"><input name="percentage" value="'.$act->percentage.'" size="4">%</td></tr>';
 
 		// Objet lié
         if ($act->objet_url)
@@ -730,7 +730,7 @@ if ($_GET["id"])
         // Date planification
 		print '<tr><td>'.$langs->trans("DateActionPlanned").'</td><td colspan="3">';
 		print dolibarr_print_date($act->datep,'dayhour');
-		if ($act->percent < 100 && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
+		if ($act->percentage < 100 && $act->datep < (time() - $conf->global->MAIN_DELAY_ACTIONS_TODO)) print img_warning($langs->trans("Late"));
 		print '</td></tr>';
 
         // Date fin real

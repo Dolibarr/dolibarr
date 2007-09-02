@@ -56,7 +56,7 @@ class ActionComm
     var $societe;
     var $contact;
     var $note;
-    var $percent;
+    var $percentage;
     
     /**
      *      \brief      Constructeur
@@ -83,7 +83,7 @@ class ActionComm
     {
         global $langs,$conf;
     
-        if (! $this->percent)  $this->percent = 0;
+        if (! $this->percentage)  $this->percentage = 0;
         if (! $this->priority) $this->priority = 0;
         
 		$this->db->begin();
@@ -122,7 +122,7 @@ class ActionComm
         if ($this->date) $sql.= "'".$this->db->idate($this->date)."',";
         $sql.= "'".$this->type_id."', '".$this->societe->id."' ,'".addslashes($this->note)."',";
         $sql.= ($this->contact->id?$this->contact->id:"null").",";
-        $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percent."','".$this->priority."',";
+        $sql.= "'$author->id', '".$this->user->id ."', '".addslashes($this->label)."','".$this->percentage."','".$this->priority."',";
         $sql.= ($this->facid?$this->facid:"null").",";
         $sql.= ($this->propalrowid?$this->propalrowid:"null").",";
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
@@ -167,7 +167,7 @@ class ActionComm
 		$sql.= " ".$this->db->pdate("a.datep")." as datep,";
 		$sql.= " ".$this->db->pdate("a.datec")." as datec, tms as datem,";
 		$sql.= " a.note, a.label, a.fk_action as type_id,";
-		$sql.= " fk_soc, fk_user_author, fk_contact, fk_facture, a.percent, a.fk_commande,";
+		$sql.= " fk_soc, fk_user_author, fk_contact, fk_facture, a.percent as percentage, a.fk_commande,";
 		$sql.= " c.id as type_id, c.code as type_code, c.libelle";
 		$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c";
 		$sql.= " WHERE a.id=".$id." AND a.fk_action=c.id";
@@ -193,7 +193,7 @@ class ActionComm
 				$this->datec = $obj->datec;
 				$this->datem = $obj->datem;
 				$this->note =$obj->note;
-				$this->percent =$obj->percent;
+				$this->percentage =$obj->percentage;
 				$this->societe->id = $obj->fk_soc;
 				$this->author->id = $obj->fk_user_author;
 				$this->contact->id = $obj->fk_contact;
@@ -249,17 +249,17 @@ class ActionComm
 
 	/**
  	 *    \brief      	Met a jour l'action en base.
- 	 *					Si percent = 100, on met a jour date 100%
+ 	 *					Si percentage = 100, on met a jour date 100%
  	 *    \return     	int     <0 si ko, >0 si ok
 	 */
     function update()
     {
         $this->label=trim($this->label);
         $this->note=trim($this->note);
-        if ($this->percent > 100) $this->percent = 100;
+        if ($this->percentage > 100) $this->percentage = 100;
     
         $sql = "UPDATE ".MAIN_DB_PREFIX."actioncomm ";
-        $sql.= " SET percent='".$this->percent."'";
+        $sql.= " SET percent='".$this->percentage."'";
         if ($this->label) 		$sql.= ", label = '".addslashes($this->label)."'";
         $sql.= ", datep = ".($this->datep ? "'".$this->db->idate($this->datep)."'" : 'null');
         $sql.= ", datea = ".($this->date ? "'".$this->db->idate($this->date)."'" : 'null');
@@ -359,7 +359,7 @@ class ActionComm
 	 */
 	function getLibStatut($mode)
 	{
-		return $this->LibStatut($this->percent,$mode);
+		return $this->LibStatut($this->percentage,$mode);
 	}
 
 	/**

@@ -630,7 +630,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	$numaction = 0 ;
 
 	// Recherche histo sur actioncomm
-	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.note, a.percent as percent,";
+	$sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, a.note, a.percent as percentage,";
 	$sql.= " c.code as acode, c.libelle,";
 	$sql.= " u.rowid as user_id, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -648,7 +648,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
+			$histo[$numaction]=array('type'=>'action','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
 			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 			'userid'=>$obj->user_id,'login'=>$obj->login);
 			$numaction++;
@@ -661,7 +661,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 	}
 
 	// Recherche histo sur mailing
-	$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percent,";
+	$sql = "SELECT m.rowid as id, ".$db->pdate("mc.date_envoi")." as da, m.titre as note, '100' as percentage,";
 	$sql.= " 'AC_EMAILING' as acode,";
 	$sql.= " u.rowid as user_id, u.login";
 	$sql.= " FROM ".MAIN_DB_PREFIX."mailing as m, ".MAIN_DB_PREFIX."mailing_cibles as mc, ".MAIN_DB_PREFIX."user as u ";
@@ -680,7 +680,7 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		while ($i < $num)
 		{
 			$obj = $db->fetch_object($resql);
-			$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percent,
+			$histo[$numaction]=array('type'=>'mailing','id'=>$obj->id,'date'=>$obj->da,'note'=>$obj->note,'percent'=>$obj->percentage,
 			'acode'=>$obj->acode,'libelle'=>$obj->libelle,
 			'userid'=>$obj->user_id,'login'=>$obj->login);
 			$numaction++;
