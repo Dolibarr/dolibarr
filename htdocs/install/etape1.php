@@ -148,8 +148,15 @@ if ($_POST["action"] == "set")
 			fputs($fp,"\n");
 
 			/* Authentication */
-                        fputs($fp, '$dolibarr_main_authentication="dolibarr";');
-                        fputs($fp,"\n");
+      if ($_POST["db_type"] == 'mssql')
+      {
+      	fputs($fp, '$dolibarr_main_authentication="dolibarr_mdb2";');
+      }
+      else
+      {
+      	fputs($fp, '$dolibarr_main_authentication="dolibarr";');
+      }
+      fputs($fp,"\n");
 
 			/* Preparation integration SMARTY */
 			fputs($fp, '$dolibarr_smarty_libs_dir="";');
