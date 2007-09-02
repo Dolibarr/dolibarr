@@ -321,7 +321,9 @@ class DoliDb
     $query = str_ireplace(" file ", " [file] ", $query);
     $query = str_ireplace(" file,", " [file],", $query);
 	// Idem file
-    $query = str_ireplace("percent", "[percent]", $query);
+    $query = str_ireplace(".percent", "[percent]", $query);
+    $query = str_ireplace(" percent ", "[percent]", $query);
+    $query = str_ireplace("percent,", "[percent]", $query);
     $query = str_ireplace("\'", "''", $query);
     
     
