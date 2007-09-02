@@ -215,7 +215,9 @@ class DoliDb
   */
   function getVersion()
   {
-    return '?';
+    $resql=$this->query("SELECT @@VERSION");
+    $version=$this->fetch_array($resql);
+	  return $version['computed'];
   }
   
   
