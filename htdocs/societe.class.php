@@ -1356,28 +1356,28 @@ class Societe
      */
     function effectif_array($mode=0)
     {
-        $effs = array();
+    	$effs = array();
 
-        $sql = "SELECT id, code, libelle";
-        $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
-        $sql .= " ORDER BY id ASC";
-        if ($this->db->query($sql))
+      $sql = "SELECT id, code, libelle";
+      $sql .= " FROM ".MAIN_DB_PREFIX."c_effectif";
+      $sql .= " ORDER BY id ASC";
+      if ($this->db->query($sql))
+      {
+      	$num = $this->db->num_rows();
+        $i = 0;
+
+        while ($i < $num)
         {
-            $num = $this->db->num_rows();
-            $i = 0;
+        	$objp = $this->db->fetch_object();
+        	if (! $mode) $key=$objp->id;
+        	else $key=$objp->code;
 
-            while ($i < $num)
-            {
-                $objp = $this->db->fetch_object();
-				if (! $mode) $key=$objp->id;
-				else $key=$objp->code;
-
-                $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
-                $i++;
-            }
-            $this->db->free();
+          $effs[$key] = $objp->libelle!='-'?$objp->libelle:'';
+          $i++;
         }
-        return $effs;
+        $this->db->free();
+      }
+      return $effs;
     }
 
     /**

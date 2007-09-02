@@ -573,11 +573,16 @@ class DoliDb
     */
     function last_insert_id($tab)
     {
-		return query("SELECT @@identity ");
-
-		//return mssql_insert_id($this->db);
-    }    
-    
+    	$res = $this->query("SELECT @@IDENTITY as id");
+    	if ($data = $this->fetch_array($res))
+    	{
+    		return $data["id"];
+    	}
+    	else
+    	{
+    		return -1;
+    	}
+    }
 
 
   // Next function are not required. Only minor features use them.

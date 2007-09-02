@@ -489,10 +489,10 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '</td></tr>';
 		
 		print '<tr><td>'.$langs->trans("Type").'</td><td>'."\n";
-		$form->select_array("typent_id",$soc->typent_array(1), $soc->typent_id);
+		$form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
 		print '</td>';
 		print '<td>'.$langs->trans("Staff").'</td><td>';
-		$form->select_array("effectif_id",$soc->effectif_array(1), $soc->effectif_id);
+		$form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
 		print '</td></tr>';
 		
 		// Assujeti TVA
@@ -828,10 +828,10 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '</td></tr>';
 
         print '<tr><td>'.$langs->trans("Type").'</td><td>';
-        $form->select_array("typent_id",$soc->typent_array(), $soc->typent_id);
+        $form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
         print '</td>';
         print '<td>'.$langs->trans("Staff").'</td><td>';
-        $form->select_array("effectif_id",$soc->effectif_array(), $soc->effectif_id);
+        $form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
         print '</td></tr>';
 
         print '<tr><td align="center" colspan="4">';
