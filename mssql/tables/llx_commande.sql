@@ -32,7 +32,7 @@ create table llx_commande
   date_creation         datetime,                      -- SMALLDATETIME de creation 
   date_valid            datetime,                      -- SMALLDATETIME de validation
   date_cloture          datetime,                      -- SMALLDATETIME de cloture
-  date_commande         SMALLDATETIME,                          -- SMALLDATETIME de la commande
+  date_commande         SMALLDATETIME,                 -- SMALLDATETIME de la commande
   fk_user_author        integer,                       -- createur de la commande
   fk_user_valid         integer,                       -- valideur de la commande
   fk_user_cloture       integer,                       -- auteur cloture
@@ -42,9 +42,9 @@ create table llx_commande
   remise_percent        real      default 0,
   remise_absolue      	real      default 0,
   remise                real      default 0,
-  tva                   float      default 0,
-  total_ht              float      default 0,
-  total_ttc             float      default 0,
+  tva                   float     default 0,
+  total_ht              float     default 0,
+  total_ttc             float     default 0,
   note                  text,
   note_public           text,
   model_pdf             varchar(50),
@@ -52,8 +52,8 @@ create table llx_commande
   facture               tinyint   default 0,
   fk_cond_reglement     integer,                       -- condition de réglement
   fk_mode_reglement     integer,                       -- mode de réglement
-  date_livraison 	    SMALLDATETIME 	  default NULL,
-  fk_adresse_livraison  integer,                       -- adresse de livraison
+  date_livraison 	      SMALLDATETIME default NULL,
+  fk_adresse_livraison  integer                        -- adresse de livraison
 
 );
 

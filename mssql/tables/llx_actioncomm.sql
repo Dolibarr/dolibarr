@@ -26,11 +26,11 @@
 create table llx_actioncomm
 (
   id             integer IDENTITY PRIMARY KEY,
-  datec          SMALLDATETIME,             -- SMALLDATETIME creation
-  datep          SMALLDATETIME,             -- SMALLDATETIME debut planifiee
-  datep2         SMALLDATETIME,             -- SMALLDATETIME fin planifiee si action non ponctuelle
-  datea          SMALLDATETIME,             -- SMALLDATETIME debut realisation
-  datea2         SMALLDATETIME,             -- SMALLDATETIME fin realisation si action non ponctuelle
+  datec          SMALLDATETIME,        -- SMALLDATETIME creation
+  datep          SMALLDATETIME,        -- SMALLDATETIME debut planifiee
+  datep2         SMALLDATETIME,        -- SMALLDATETIME fin planifiee si action non ponctuelle
+  datea          SMALLDATETIME,        -- SMALLDATETIME debut realisation
+  datea2         SMALLDATETIME,        -- SMALLDATETIME fin realisation si action non ponctuelle
   tms            timestamp,            -- SMALLDATETIME modif
   fk_action      integer,              -- type de l'action
   label          varchar(50) NOT NULL, -- libelle de l'action
@@ -44,7 +44,7 @@ create table llx_actioncomm
   fk_user_author integer,              -- id de la personne qui a effectuer l'action
   priority       smallint,
   punctual       smallint NOT NULL default 1,
-  [percent]        smallint NOT NULL default 0,
+  [percent]      smallint NOT NULL default 0,
   durationp      real,                 -- duree planifiee
   durationa      real,                 -- duree reellement passee
   note           text,
