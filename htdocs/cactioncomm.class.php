@@ -112,8 +112,6 @@ class CActionComm {
 		$repid = array();
 		$repcode = array();
 		
-		dolibarr_syslog("CActionComm.class::liste_array active=$active idorcode=$idorcode");
-		
 		$sql = "SELECT id, code, libelle, module";
 		$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm";
 		if ($active != '')
@@ -121,6 +119,7 @@ class CActionComm {
 			$sql.=" WHERE active=".$active;
 		}
 	
+		dolibarr_syslog("CActionComm::liste_array sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
