@@ -26,11 +26,11 @@ create table llx_product_fournisseur_price
   datec           datetime,
   tms             timestamp,
   fk_product      integer,
-  fk_soc          integer, -- lien sur llx_societe
+  fk_soc          integer,                 -- lien sur llx_societe
   ref_fourn       varchar(30),
-  price           double(16,8),
+  price           double(16,8) DEFAULT 0,
   quantity        double,
-  unitprice       double(16,8),
+  unitprice       double(16,8) DEFAULT 0,
   fk_user         integer
 
 )type=innodb;
