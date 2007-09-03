@@ -104,10 +104,9 @@ if ($_GET["id"] > 0) {
 		    // Ref
 		    print '<tr><td width="18%">'.$langs->trans("Ref")."</td>";
 		    print '<td colspan="2">'.$fichinter->ref.'</td>';
-		    print "</tr>";
 
-		    $nbrow=6;
-				print '<td rowspan="'.$nbrow.'" valign="top">';
+		    $nbrow=4;
+				print '<td rowspan="'.$nbrow.'" valign="top" width="50%">';
 
 				/*
   			 * Documents
@@ -134,18 +133,18 @@ if ($_GET["id"] > 0) {
 					print_titre($langs->trans("Documents"));
 					print '<table class="border" width="100%">';
 
-					print "<tr $bc[$var]><td>".$langs->trans("Order")." PDF</td>";
+					print "<tr $bc[$var]><td>".$langs->trans("Intervention")." PDF</td>";
 
-					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepath).'">'.$commande->ref.'.pdf</a></td>';
+					print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepath).'">'.$fichinter->ref.'.pdf</a></td>';
 					print '<td align="right">'.filesize($file). ' bytes</td>';
 					print '<td align="right">'.dolibarr_print_date(filemtime($file),'dayhour').'</td>';
 					print '</tr>';
 
 					// Si fichier detail PDF existe
-					if (file_exists($filedetail)) { // commande détaillée supplémentaire
-						print "<tr $bc[$var]><td>Commande détaillée</td>";
+					if (file_exists($filedetail)) { // fichinter détaillée supplémentaire
+						print "<tr $bc[$var]><td>Fiche d'intervention détaillée</td>";
 
-						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=commande&file='.urlencode($relativepathdetail).'">'.$commande->ref.'-detail.pdf</a></td>';
+						print '<td><a href="'.DOL_URL_ROOT . '/document.php?modulepart=ficheinter&file='.urlencode($relativepathdetail).'">'.$fichinter->ref.'-detail.pdf</a></td>';
 						print '<td align="right">'.filesize($filedetail). ' bytes</td>';
 						print '<td align="right">'.dolibarr_print_date(filemtime($filedetail),'dayhour').'</td>';
 						print '</tr>';
@@ -192,25 +191,14 @@ if ($_GET["id"] > 0) {
 
 		        // Statut
 		        print '<tr><td>'.$langs->trans("Status").'</td>';
-		        print "<td colspan=\"2\">".$commande->getLibStatut(4)."</td>\n";
+		        print "<td colspan=\"2\">".$fichinter->getLibStatut(4)."</td>\n";
 		        print '</tr>';
 
 		        // Date
 		        print '<tr><td>'.$langs->trans("Date").'</td>';
-		        print "<td colspan=\"2\">".dolibarr_print_date($commande->date,"daytext")."</td>\n";
+		        print "<td colspan=\"2\">".dolibarr_print_date($fichinter->date,"daytext")."</td>\n";
 		        print '</tr>';
 
-				// ligne 6
-				// partie Gauche
-				print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-				print '<td colspan="2">'.$commande->remise_percent.'%</td>';
-				print '</tr>';
-
-				// ligne 7
-				// partie Gauche
-				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-				print '<td align="right" colspan="1"><b>'.price($commande->total_ht).'</b></td>';
-				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 				print '</table>';
 			}
 		} else {
@@ -218,14 +206,14 @@ if ($_GET["id"] > 0) {
 		}
 	} else {
 	// Commande non trouvée
-	print $langs->trans("ErrorPropalNotFound",$_GET["id"]);
+	print $langs->trans("ErrorFichinterNotFound",$_GET["id"]);
 	}
 }
 
 // Si fichier png PDF d'1 page trouvé
 if (file_exists($fileimage))
 	{
-	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($relativepathimage).'">';
+	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($relativepathimage).'">';
 	}
 // Si fichier png PDF de plus d'1 page trouvé
 elseif (file_exists($fileimagebis))
@@ -238,7 +226,7 @@ elseif (file_exists($fileimagebis))
 			
 			if (file_exists($dir_output.$preview))
       {
-      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercucommande&file='.urlencode($preview).'"><p>';
+      	print '<img src="'.DOL_URL_ROOT . '/viewimage.php?modulepart=apercufichinter&file='.urlencode($preview).'"><p>';
       }
 		}
 	}
