@@ -79,26 +79,34 @@ class pdf_soleil extends ModelePDFFicheinter
             \param	    fich	Object fichinter
             \return	    int     1=ok, 0=ko
     */
-    function write_pdf_file($fich)
+    function write_pdf_file($fichinter,$outputlangs='')
     {
-        global $user,$langs,$conf,$mysoc;
+    	global $user,$langs,$conf,$mysoc;
+    	
+    	if (! is_object($outputlangs)) $outputlangs=$langs;
+    	$outputlangs->load("main");
+      $outputlangs->load("companies");
+      $outputlangs->load("interventions");
+      
+      $outputlangs->setPhpLang();
 
-        if ($conf->fichinter->dir_output)
-        {
-			// If $fich is id instead of object
-			if (! is_object($fich))
-			{
-				$fich = new Fichinter($this->db,"",$id);
-		        $result=$fich->fetch($id);
-	        	if ($result < 0)
-	        	{
-	        		dolibarr_print_error($db,$fich->error);
-	        	}
-			}
-			
-            $fichref = sanitize_string($fich->ref);
-            $dir = $conf->fichinter->dir_output;
-			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
+      if ($conf->fichinter->dir_output)
+      {
+      	// If $fich is id instead of object
+      	if (! is_object($fichinter))
+      	{
+      		$id = $fichinter;
+      		$fichinter = new Fichinter($this->db,"",$id);
+      		$result=$fichinter->fetch($id);
+      		if ($result < 0)
+      		{
+      			dolibarr_print_error($db,$fichinter->error);
+      		}
+      	}
+      	
+      	$fichref = sanitize_string($fichinter->ref);
+      	$dir = $conf->fichinter->dir_output;
+      	if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
             $file = $dir . "/" . $fichref . ".pdf";
 
             if (! file_exists($dir))
@@ -179,19 +187,19 @@ class pdf_soleil extends ModelePDFFicheinter
                  */
                 $pdf->SetTextColor(0,0,0);
                 $pdf->SetFont('Arial','B',12);
-                $fich->fetch_client();
+                $fichinter->fetch_client();
                 $pdf->SetXY(102,42);
-                $pdf->MultiCell(66,5, $fich->client->nom);
+                $pdf->MultiCell(66,5, $fichinter->client->nom);
                 $pdf->SetFont('Arial','B',11);
                 $pdf->SetXY(102,47);
-                $pdf->MultiCell(66,5, $fich->client->adresse . "\n" . $fich->client->cp . " " . $fich->client->ville);
+                $pdf->MultiCell(66,5, $fichinter->client->adresse . "\n" . $fichinter->client->cp . " " . $fichinter->client->ville);
                 $pdf->rect(100, 40, 100, 40);
 
 
                 $pdf->SetTextColor(200,0,0);
                 $pdf->SetFont('Arial','B',14);
-                $pdf->Text(11, 88, "Date : " . dolibarr_print_date($fich->date,'day'));
-                $pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fich->ref);
+                $pdf->Text(11, 88, "Date : " . dolibarr_print_date($fichinter->date,'day'));
+                $pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fichinter->ref);
 
                 $pdf->SetFillColor(220,220,220);
                 $pdf->SetTextColor(0,0,0);
@@ -209,7 +217,7 @@ class pdf_soleil extends ModelePDFFicheinter
                 $pdf->SetFont('Arial','', 10);
 
                 $pdf->SetXY (10, $tab_top + 8 );
-                $pdf->MultiCell(190, 5, $fich->description, 0, 'J', 0);
+                $pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
 
                 $pdf->Close();
 

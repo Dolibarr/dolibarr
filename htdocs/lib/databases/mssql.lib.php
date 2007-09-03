@@ -324,6 +324,7 @@ class DoliDb
     $query = str_ireplace(".percent", ".[percent]", $query);
     $query = str_ireplace(" percent ", " [percent] ", $query);
     $query = str_ireplace("percent,", "[percent],", $query);
+    $query = str_ireplace("percent=", "[percent]=", $query);
     $query = str_ireplace("\'", "''", $query);
     
     
