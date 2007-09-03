@@ -809,10 +809,15 @@ INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et équipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systèmes', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
 
-ALTER TABLE `llx_commandedet` CHANGE `coef` `marge_tx` real DEFAULT NULL;
-ALTER TABLE `llx_propaldet` CHANGE `coef` `marge_tx` real DEFAULT NULL;
-ALTER TABLE llx_commandedet ADD COLUMN marque_tx real DEFAULT NULL after marge_tx;
-ALTER TABLE llx_propaldet ADD COLUMN marque_tx real DEFAULT NULL after marge_tx;
+ALTER TABLE llx_commandedet CHANGE coef marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN marque_tx double(6,3) DEFAULT 0 after marge_tx;
+ALTER TABLE llx_commandedet MODIFY marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_commandedet MODIFY marque_tx double(6,3) DEFAULT 0;
+
+ALTER TABLE llx_propaldet CHANGE coef marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_propaldet ADD COLUMN marque_tx double(6,3) DEFAULT 0 after marge_tx;
+ALTER TABLE llx_propaldet MODIFY marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY marque_tx double(6,3) DEFAULT 0;
 
 -- Nouveau mode de stockage de l'ordre des box (X99 ou X = colonne et 99 position dans colonne)
 alter table llx_boxes modify box_order varchar(3) NOT NULL;
@@ -835,3 +840,5 @@ ALTER TABLE llx_fichinter ADD COLUMN model_pdf varchar(50) after note_public;
 
 alter table llx_bordereau_cheque modify number integer;
 ALTER TABLE llx_facturedet ADD COLUMN special_code tinyint(4) default 0;
+
+ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(16,8) DEFAULT 0 after info_bits;
