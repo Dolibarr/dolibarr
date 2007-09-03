@@ -1027,7 +1027,7 @@ if ($_GET['propalid'] > 0)
 
 	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
+	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx,';
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1044,6 +1044,7 @@ if ($_GET['propalid'] > 0)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans('Description').'</td>';
+			if ($conf->global->PRODUIT_USE_MARKUP) print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
 			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
 			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
@@ -1125,6 +1126,15 @@ if ($_GET['propalid'] > 0)
 					}
 					print "</td>\n";
 				}
+				if ($conf->global->PRODUIT_USE_MARKUP)
+				{
+					print '<td align="right">';
+				  print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
+          print '<td class="nobordernopadding" nowrap="nowrap" align="left">'.img_calc($langs->trans("ToCalculateMarkup")).'</td>';
+          print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
+          print '</tr></table>';
+          print '</td>';
+        }
 				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
@@ -1239,6 +1249,7 @@ if ($_GET['propalid'] > 0)
 					print '<textarea name="desc" cols="70" class="flat" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
 				}
 				print '</td>';
+				if ($conf->global->PRODUIT_USE_MARKUP) print '<td>&nbsp;</td>';
 				print '<td align="right">';
 				if($societe->tva_assuj == "0")
 				print '<input type="hidden" name="tva_tx" value="0">0';
@@ -1293,8 +1304,9 @@ if ($_GET['propalid'] > 0)
 	*/
 	if ($propal->statut == 0 && $user->rights->propale->creer && $_GET["action"] <> 'editline')
 	{
+		if ($conf->global->PRODUIT_USE_MARKUP) $colspan = 'colspan="2"';
 		print '<tr class="liste_titre">';
-		print '<td>';
+		print '<td '.$colspan.'>';
 		print '<a name="add"></a>'; // ancre
 		print $langs->trans('Description').'</td>';
 		print '<td align="right">'.$langs->trans('VAT').'</td>';
@@ -1312,7 +1324,7 @@ if ($_GET['propalid'] > 0)
 		$var=true;
 
 		print '<tr '.$bc[$var].">\n";
-		print '<td>';
+		print '<td '.$colspan.'>';
 		// éditeur wysiwyg
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 		{
@@ -1346,8 +1358,16 @@ if ($_GET['propalid'] > 0)
 		// Ajout de produits/services prédéfinis
 		if ($conf->produit->enabled)
 		{
+			if ($conf->global->PRODUIT_USE_MARKUP)
+			{
+				$colspan = 'colspan="4"';
+			}
+			else
+			{
+				$colspan = 'colspan="3"';
+			}
 			print '<tr class="liste_titre">';
-		  print '<td colspan="3">';
+		  print '<td '.$colspan.'>';
 		  if ($conf->service->enabled)
 		  {
 		  	print $langs->trans('RecordedProductsAndServices');
@@ -1368,7 +1388,7 @@ if ($_GET['propalid'] > 0)
 			$var=!$var;
 
 			print '<tr '.$bc[$var].'>';
-			print '<td colspan="3">';
+			print '<td '.$colspan.'>';
 			// multiprix
 			if($conf->global->PRODUIT_MULTIPRICES == 1)
 			{

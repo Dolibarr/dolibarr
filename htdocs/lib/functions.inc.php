@@ -928,6 +928,18 @@ function img_info($alt = "default")
 }
 
 /**
+        \brief      Affiche logo calculatrice
+        \param      alt         Texte sur le alt de l'image
+        \return     string      Retourne tag img
+*/
+function img_calc($alt = "default")
+{
+  global $conf,$langs;
+  if ($alt=="default") $alt=$langs->trans("Calculate");
+  return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/calc.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+}
+
+/**
         \brief      Affiche logo warning
         \param      alt         Texte sur le alt de l'image
         \param      float       Si il faut afficher le style "float: right"

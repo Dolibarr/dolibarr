@@ -29,10 +29,10 @@ create table llx_commande
   ref                   varchar(30) NOT NULL,          -- order number
   ref_client            varchar(30),                   -- customer order number
 
-  date_creation         datetime,                      -- SMALLDATETIME de creation 
-  date_valid            datetime,                      -- SMALLDATETIME de validation
-  date_cloture          datetime,                      -- SMALLDATETIME de cloture
-  date_commande         SMALLDATETIME,                 -- SMALLDATETIME de la commande
+  date_creation         datetime,                      -- date de creation 
+  date_valid            datetime,                      -- date de validation
+  date_cloture          datetime,                      -- date de cloture
+  date_commande         SMALLDATETIME,                 -- date de la commande
   fk_user_author        integer,                       -- createur de la commande
   fk_user_valid         integer,                       -- valideur de la commande
   fk_user_cloture       integer,                       -- auteur cloture
