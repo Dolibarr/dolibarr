@@ -205,7 +205,7 @@ if ($_GET["id"] > 0) {
 			dolibarr_print_error($db);
 		}
 	} else {
-	// Commande non trouvée
+	// Intervention non trouvée
 	print $langs->trans("ErrorFichinterNotFound",$_GET["id"]);
 	}
 }
