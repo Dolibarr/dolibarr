@@ -278,8 +278,8 @@ class Contrat extends CommonObject
         $sql.= " note, note_public";
         $sql.= " FROM ".MAIN_DB_PREFIX."contrat WHERE rowid = $id";
     
+		dolibarr_syslog("Contrat::fetch sql=".$sql);
         $resql = $this->db->query($sql) ;
- 
         if ($resql)
         {
             $result = $this->db->fetch_array($resql);
@@ -1219,6 +1219,8 @@ class ContratLigne
     var $date_fin_prevue;
     var $date_fin_reel;
 
+	var $datem;
+	
 
 	/**
 	 *      \brief     Constructeur d'objets ligne de contrat
@@ -1293,7 +1295,54 @@ class ContratLigne
 		}
     }    
 
-		/**
+    /**
+     *    \brief      Chargement depuis la base des données du contrat
+     *    \param      id      Id du contrat à charger
+     *    \return     int     <0 si ko, id du contrat chargé si ok
+     */
+    function fetch($id)
+    {
+        $sql = "SELECT rowid, fk_contrat, fk_product, ".$this->db->pdate("tms")." as datem,";
+        $sql.= " statut,";
+        $sql.= " label,";
+        $sql.= " description";
+        $sql.= " FROM ".MAIN_DB_PREFIX."contratdet WHERE rowid = ".$id;
+    
+		dolibarr_syslog("ContratLigne::fetch sql=".$sql);
+		$resql = $this->db->query($sql) ;
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            if ($obj)
+            {
+                $this->id                = $obj->rowid;
+                $this->fk_contrat        = $obj->fk_contrat;
+                $this->fk_product        = $obj->fk_product;
+                $this->datem             = $obj->datem;
+                $this->statut            = $obj->statut;
+                $this->label             = $obj->label;
+                $this->description       = $obj->description;
+        
+                $this->db->free($resql);
+                return $this->id;
+            }
+            else
+            {
+                $this->error="Contract line not found";
+                dolibarr_syslog("ContratLigne::Fetch ".$this->error,LOG_ERROR);
+                return -2;
+            }
+        }
+        else
+        {
+            $this->error=$this->db->error();
+            dolibarr_syslog("ContratLigne::Fetch ".$this->error,LOG_ERROR);
+            return -1;
+        }
+    }
+
+
+	/**
 	 *      \brief     	Mise a jour en base des champs total_xxx de ligne
 	 *		\remarks	Utilisé par migration
 	 *		\return		int		<0 si ko, >0 si ok

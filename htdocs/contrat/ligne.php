@@ -106,11 +106,16 @@ $html = new Form($db);
 /*                                                                             */
 /* *************************************************************************** */
 
-$id = $_GET["id"];
-if ($id > 0)
+$lineid = $_GET["ligne"];
+if ($lineid > 0)
 {
+	$line = new ContratLigne($db);
+	$result=$line->fetch($lineid);
+
     $contrat = New Contrat($db);
-    if ( $contrat->fetch($id) > 0)
+    $result=$contrat->fetch($line->fk_contrat);
+	
+	if ($result > 0)
     {
         $soc = new Societe($db);
         $soc->fetch($contrat->socid);
@@ -123,7 +128,7 @@ if ($id > 0)
 		$h=sizeof($head);
 		
         // On ajout onglet service
-        $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$_GET["ligne"];
+        $head[$h][0] = DOL_URL_ROOT.'/contrat/ligne.php?id='.$contrat->id."&ligne=".$line->id;
         $head[$h][1] = $langs->trans($langs->trans("EditServiceLine"));
         $hselected = $h;
 
@@ -233,8 +238,8 @@ if ($id > 0)
         $sql.= " p.ref, p.label";
         $sql.= " FROM ".MAIN_DB_PREFIX."contratdet as cd";
         $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON cd.fk_product = p.rowid";
-        $sql.= " WHERE cd.fk_contrat = ".$id;
-        $sql.= " AND cd.rowid = ".$_GET["ligne"];
+        $sql.= " WHERE cd.fk_contrat = ".$contrat->id;
+        $sql.= " AND cd.rowid = ".$line->id;
         $sql.= " ORDER BY cd.rowid";
 
         $result = $db->query($sql);
@@ -420,7 +425,7 @@ if ($id > 0)
              */
             $form = new Form($db);
 
-            print '<form name="close" action="ligne.php?id='.$contrat->id.'&amp;ligne='.$_GET["ligne"].'&amp;action=close" method="post">';
+            print '<form name="close" action="ligne.php?id='.$contrat->id.'&amp;ligne='.$line->id.'&amp;action=close" method="post">';
 
             print '<table class="noborder" width="100%">';
             print '<tr class="liste_titre"><td colspan="3">'.$langs->trans("CloseService").'</td></tr>';
@@ -449,7 +454,7 @@ if ($id > 0)
 
             print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Close").'"></td></tr>';
 
-            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="70" type="text" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
+            print '<tr '.$bc[$var].'><td>'.$langs->trans("Comment").'</td><td colspan="3"><input size="70" type="text" class="flat" name="commentaire" value="'.$_POST["commentaire"].'"></td></tr>';
             print '</table>';
 
             print '</form>';
