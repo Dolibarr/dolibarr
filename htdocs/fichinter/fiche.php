@@ -864,7 +864,7 @@ elseif ($_GET["id"] > 0)
     $genallowed=$user->rights->ficheinter->creer;
     $delallowed=$user->rights->ficheinter->supprimer;
     $genallowed=1;
-    $delallowed=0;
+    $delallowed=1;
 
     $var=true;
 
