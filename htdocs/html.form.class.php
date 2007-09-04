@@ -1144,16 +1144,17 @@ class Form
 		global $langs,$conf;
 		
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
-		$sql.= " pfp.price as fprice, pfp.quantity, pfp.unitprice";
+		$sql.= " pf.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
-		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON p.rowid = pfp.fk_product";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " WHERE p.envente = 1";
-		if ($socid) $sql.= " AND pfp.fk_soc = ".$socid;
+		if ($socid) $sql.= " AND pf.fk_soc = ".$socid;
 		if ($filtretype && $filtretype != '') $sql.=" AND p.fk_product_type=".$filtretype;
 		if ($filtre) $sql.="$filtre";
-		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND p.ref like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%'";
-		$sql.= " ORDER BY p.ref DESC";
-		
+		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
+		$sql.= " ORDER BY pf.ref_fourn DESC";
+
 		dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
 		
 		$result=$this->db->query($sql);
@@ -1187,10 +1188,10 @@ class Form
 			{
 				$objp = $this->db->fetch_object($result);
 				
-				$opt = '<option value="'.$objp->rowid.'"';
-				if ($selected == $objp->rowid) $opt.= ' selected="true"';
+				$opt = '<option value="'.$objp->idprodfournprice.'"';
+				if ($selected == $objp->idprodfournprice) $opt.= ' selected="true"';
 				if ($objp->fprice == '') $opt.=' disabled="disabled"';
-				$opt.= '>'.$objp->ref.' - ';
+				$opt.= '>'.$objp->ref_fourn.' - ';
 				$opt.= dolibarr_trunc($objp->label,18).' - ';
 				if ($objp->fprice != '') 
 				{

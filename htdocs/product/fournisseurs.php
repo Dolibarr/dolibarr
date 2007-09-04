@@ -106,7 +106,7 @@ if ($_POST["action"] == 'updateprice' && $_POST["cancel"] <> $langs->trans("Canc
 			{
 				if ($_POST["price"] >= 0)
 				{
-					$ret=$product->update_buyprice($_POST["id_fourn"], $_POST["qty"], $_POST["price"], $user);
+					$ret=$product->update_buyprice($_POST["qty"], $_POST["price"], $user);
 					if ($ret < 0)
 					{
 						$error++;
@@ -228,6 +228,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$langs->load("suppliers");
 				
 				if ($_GET["rowid"]) {
+					$product->fetch_product_fournisseur_price($_GET["rowid"]);
 					print_fiche_titre($langs->trans("ChangeSupplierPrice"));
 				} else {
 					print_fiche_titre($langs->trans("AddSupplierPrice"));
@@ -239,7 +240,8 @@ if ($_GET["id"] || $_GET["ref"])
 				if ($_GET["rowid"])
 				{
 					print '<input type="hidden" name="id_fourn" value="'.$_GET["socid"].'">';
-					print '<input type="hidden" name="ref_fourn" value="'.$product->ref_fourn.'">';
+					print '<input type="hidden" name="ref_fourn" value="'.$product->fourn_ref.'">';
+					print '<input type="hidden" name="ref_fourn_price_id" value="'.$_GET["rowid"].'">';
 				}
 				else
 				{
@@ -252,7 +254,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr><td>'.$langs->trans("SupplierRef").'</td><td>';
 				if ($_GET["rowid"])
 				{
-					print $product->ref_fourn;
+					print $product->fourn_ref;
 				}
 				else
 				{
@@ -264,8 +266,8 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<td>';
 				if ($_GET["rowid"])
 				{
-					print '<input type="hidden" name="qty" value="'.$quantity.'">';
-					print $quantity;
+					print '<input type="hidden" name="qty" value="'.$product->fourn_qty.'">';
+					print $product->fourn_qty;
 				}
 				else
 				{
@@ -273,7 +275,6 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td>';
 				print '<td>'.$langs->trans("PriceQtyHT").'</td>';
-				$product->fetch_product_fournisseur_price($_GET["rowid"]);
 				print '<td><input class="flat" name="price" size="8" value="'.price($product->fourn_price).'"></td></tr>';
 				
 				print '<tr><td colspan="6" align="center"><input class="button" type="submit" value="'.$langs->trans("Save").'">';
@@ -326,7 +327,7 @@ if ($_GET["id"] || $_GET["ref"])
 				$sql.= " pfp.rowid, pfp.price, pfp.quantity, pfp.unitprice";
 				$sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp";
-				$sql.= " ON pf.fk_soc = pfp.fk_soc AND pf.fk_product = pfp.fk_product";
+				$sql.= " ON pf.rowid = pfp.fk_product_fournisseur";
 				$sql.= " WHERE pf.fk_soc = s.rowid AND pf.fk_product = ".$product->id;
 				$sql.= " ORDER BY lower(s.nom), pfp.quantity";
 

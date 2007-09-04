@@ -112,10 +112,12 @@ class CommandeFournisseur extends Commande
 			// export pdf -----------
 			
 			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
+			$sql = 'SELECT l.fk_prod_fourn_price, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
 			$sql.= ' p.label, p.description as product_desc, p.ref, p.rowid as prodid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
-			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product=p.rowid';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp ON l.fk_prod_fourn_price = pfp.rowid';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON pfp.fk_product_fournisseur = pf.rowid';
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pf.fk_product = p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$this->id;
 			$sql.= ' ORDER BY l.rowid';
 			$result = $this->db->query($sql);
@@ -130,17 +132,17 @@ class CommandeFournisseur extends Commande
 					
 					$ligne                 = new CommandeFournisseurLigne();
 					
-					$ligne->desc           = $objp->description;  // Description ligne
-					$ligne->qty            = $objp->qty;
-					$ligne->tva_tx         = $objp->tva_tx;
-					$ligne->subprice       = $objp->subprice;
-					$ligne->remise_percent = $objp->remise_percent;
-					$ligne->price          = $objp->price;
-					$ligne->fk_product     = $objp->fk_product;
+					$ligne->desc                = $objp->description;  // Description ligne
+					$ligne->qty                 = $objp->qty;
+					$ligne->tva_tx              = $objp->tva_tx;
+					$ligne->subprice            = $objp->subprice;
+					$ligne->remise_percent      = $objp->remise_percent;
+					$ligne->price               = $objp->price;
+					$ligne->fk_prod_fourn_price = $objp->fk_prod_fourn_price;
 					
-					$ligne->libelle        = $objp->label;        // Label produit
-					$ligne->product_desc   = $objp->product_desc; // Description produit
-					$ligne->ref            = $objp->ref;
+					$ligne->libelle             = $objp->label;        // Label produit
+					$ligne->product_desc        = $objp->product_desc; // Description produit
+					$ligne->ref                 = $objp->ref;
 					
 					$this->lignes[$i]      = $ligne;
 					//dolibarr_syslog("1 ".$ligne->desc);
@@ -648,7 +650,7 @@ class CommandeFournisseur extends Commande
 	*      \param      price_base_type	HT or TTC
 	*      \param      int             	<0 si ko, >0 si ok
 	*/
-	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
+	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $remise_percent=0, $price_base_type='HT')
 	{
 		global $langs;
 		
@@ -682,7 +684,7 @@ class CommandeFournisseur extends Commande
 						$desc  = $prod->description;
 						$txtva = $prod->tva_tx;
 						$pu    = $prod->fourn_pu;
-						$ref   = $prod->ref;
+						$ref   = $prod->ref_fourn;
 					}
 					if ($result == 0 || $result == -1)
 					{
@@ -717,8 +719,8 @@ class CommandeFournisseur extends Commande
 				$price = $pu - $remise;
 			}
 			
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-			$sql .= " VALUES ($this->id, '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_prod_fourn_price, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+			$sql .= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_prod_fourn_price.",".price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
 			dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
 			$resql=$this->db->query($sql);
 			if ($resql)

@@ -22,20 +22,20 @@
 
 create table llx_commande_fournisseurdet
 (
-  rowid          integer AUTO_INCREMENT PRIMARY KEY,
-  fk_commande    integer,
-  fk_product     integer,
-  ref            varchar(50),
-  label          varchar(255),
-  description    text,
-  tva_tx         double(6,3)  DEFAULT 0,    -- taux tva
-  qty            real,                      -- quantité
-  remise_percent real         DEFAULT 0,    -- pourcentage de remise
-  remise         real         DEFAULT 0,    -- montant de la remise
-  price          real,                      -- prix final
-  subprice       double(16,8) DEFAULT 0,    -- prix unitaire
-  total_ht       double(16,8) DEFAULT 0,    -- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva      double(16,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc      double(16,8) DEFAULT 0,	  -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
-  info_bits	     integer      DEFAULT 0     -- TVA NPR ou non
+  rowid                      integer AUTO_INCREMENT PRIMARY KEY,
+  fk_commande                integer      NOT NULL,
+  fk_prod_fourn_price        integer      NOT NULL,
+  ref                        varchar(50),
+  label                      varchar(255),
+  description                text,
+  tva_tx                     double(6,3)  DEFAULT 0,    -- taux tva
+  qty                        real,                      -- quantité
+  remise_percent             real         DEFAULT 0,    -- pourcentage de remise
+  remise                     real         DEFAULT 0,    -- montant de la remise
+  price                      real,                      -- prix final
+  subprice                   double(16,8) DEFAULT 0,    -- prix unitaire
+  total_ht                   double(16,8) DEFAULT 0,    -- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva                  double(16,8) DEFAULT 0,	  -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc                  double(16,8) DEFAULT 0,	  -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  info_bits	                 integer      DEFAULT 0     -- TVA NPR ou non
 )type=innodb;

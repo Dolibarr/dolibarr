@@ -720,7 +720,6 @@ ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 -- V4 ALTER TABLE llx_facture ADD CONSTRAINT fk_facture_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_facture_fourn ADD CONSTRAINT fk_facture_fourn_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_fichinter ADD CONSTRAINT fk_fichinter_fk_soc	FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
--- V4 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_propal ADD CONSTRAINT fk_propal_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 -- V4 ALTER TABLE llx_categorie_societe ADD CONSTRAINT fk_categorie_societe_fk_soc   FOREIGN KEY (fk_societe) REFERENCES llx_societe (rowid);
@@ -753,7 +752,6 @@ drop table if exists `llx_accountingsystem_det`;
 update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');
 
 alter table llx_product_fournisseur_price add unitprice double(16,8);
-alter table llx_product_fournisseur_price add ref_fourn varchar(30) after fk_soc;
 update llx_product_fournisseur_price set unitprice = ROUND(price/quantity,8) where unitprice IS NULL;
 
 update llx_fichinter set tms=datec where tms < datec;
@@ -850,3 +848,27 @@ ALTER TABLE llx_commandedet MODIFY special_code tinyint(4) unsigned default 0;
 
 ALTER TABLE llx_propaldet ADD COLUMN special_code tinyint(4) unsigned default 0 after marque_tx;
 ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(16,8) DEFAULT 0 after info_bits;
+
+-- Nouveau fonctionnement de la table llx_product_fournisseur_price
+-- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_user;
+-- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_soc;
+-- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_product;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_price_fk_user;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_price_fk_soc;
+ALTER TABLE llx_product_fournisseur_price DROP INDEX idx_product_fournisseur_price_fk_product;
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN ref_fourn;
+-- V4.1 UPDATE llx_product_fournisseur_price as pfp SET pfp.fk_product = (SELECT pf.rowid FROM llx_product_fournisseur AS pf WHERE pfp.fk_product = pf.fk_product AND pfp.fk_soc = pf.fk_soc);
+ALTER TABLE llx_product_fournisseur_price DROP COLUMN fk_soc;
+ALTER TABLE llx_product_fournisseur_price CHANGE fk_product fk_product_fournisseur integer NOT NULL;
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_user (fk_user);
+ALTER TABLE llx_product_fournisseur_price ADD INDEX idx_product_fournisseur_price_fk_product_fournisseur (fk_product_fournisseur);
+-- V4 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_user    FOREIGN KEY (fk_user)    REFERENCES llx_user (rowid);
+-- V4 ALTER TABLE llx_product_fournisseur_price ADD CONSTRAINT fk_product_fournisseur_price_fk_product_fournisseur FOREIGN KEY (fk_product_fournisseur) REFERENCES llx_product_fournisseur (rowid);
+
+-- Nouveau fonctionnement de la table llx_product_fournisseur_price_log
+-- V4.1 UPDATE llx_product_fournisseur_price_log as pfpl SET pfpl.fk_product = (SELECT pf.rowid FROM llx_product_fournisseur AS pf WHERE pfpl.fk_product = pf.fk_product AND pfpl.fk_soc = pf.fk_soc);
+ALTER TABLE llx_product_fournisseur_price_log DROP COLUMN fk_soc;
+ALTER TABLE llx_product_fournisseur_price_log CHANGE fk_product fk_product_fournisseur integer NOT NULL;
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY fk_commande integer NOT NULL;
+ALTER TABLE llx_commande_fournisseurdet CHANGE fk_product fk_prod_fourn_price integer NOT NULL;

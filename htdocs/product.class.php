@@ -93,6 +93,10 @@ class Product
   var $canvas; 
   //! Nombre de piece en commande, non expedie
   var $stock_in_command;
+  
+  //! Id du fournisseur
+  var $product_fourn_id;
+  
   /**
    *    \brief      Constructeur de la classe
    *    \param      DB          Handler accès base de données
@@ -664,12 +668,13 @@ class Product
 	function get_buyprice($fourn_id, $qty)
 	{
 		$result = 0;
-		$sql = "SELECT pf.rowid, pf.price as price, pf.quantity as quantity";
-		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
-		$sql.= " WHERE pf.fk_soc = ".$fourn_id;
+		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pf.ref_fourn";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
+		$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
+		$sql.= " AND pf.fk_soc = ".$fourn_id;
 		$sql.= " AND pf.fk_product =" .$this->id;
-		$sql.= " AND quantity <= ".$qty;
-		$sql.= " ORDER BY quantity DESC";
+		$sql.= " AND pfp.quantity <= ".$qty;
+		$sql.= " ORDER BY pfp.quantity DESC";
 		$sql.= " LIMIT 1";
 	
 		dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
@@ -682,17 +687,19 @@ class Product
 			{
 				$this->buyprice = $obj->price;                      // \deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+				$this->ref_fourn = $obj->ref_fourn;
 				return 1;
 			}
 			else
 			{
 				// On refait le meme select mais sans critere de quantite
-				$sql = "SELECT pf.price as price, pf.quantity as quantity";
-				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pf";
-				$sql.= " WHERE pf.fk_soc = ".$fourn_id;
+				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc";
+				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
+				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
+				$sql.= " AND pf.fk_soc = ".$fourn_id;
 				$sql.= " AND pf.fk_product =" .$this->id;
 				//$sql.= " AND quantity <= ".$qty;
-				$sql.= " ORDER BY quantity DESC";
+				$sql.= " ORDER BY pfp.quantity DESC";
 				$sql.= " LIMIT 1";
 	
 				$resql = $this->db->query($sql);
@@ -1536,36 +1543,49 @@ class Product
   {
     $sql = "SELECT count(*) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
-    $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn;
-    //$sql.= " AND ref_fourn = '".$ref_fourn."'"; // crée des doublons
+    $sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn." AND ref_fourn = '".$ref_fourn."'";
 
     $resql=$this->db->query($sql);
     if ($resql)
-      {
-	$obj = $this->db->fetch_object($resql);
-	if ($obj->nb == 0)
-	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
-	    $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
-	    $sql .= " VALUES (now(), $this->id, $id_fourn, '$ref_fourn', $user->id)";
-
-	    if ($this->db->query($sql))
+    {
+    	$obj = $this->db->fetch_object($resql);
+    	if ($obj->nb == 0)
+    	{
+    		$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur ";
+	      $sql .= " (datec, fk_product, fk_soc, ref_fourn, fk_user_author)";
+	      $sql .= " VALUES (now(), ".$this->id.", ".$id_fourn.", '".$ref_fourn."', ".$user->id.")";
+	      
+	      if ($this->db->query($sql))
 	      {
-		return 1;
+	      	$this->product_fourn_id = $this->db->last_insert_id(MAIN_DB_PREFIX."product_fournisseur");
+	      	return 1;
 	      }
+	      else
+	      {
+	      	$this->error=$this->db->error();
+	      	return -1;
+	      }
+	    }
 	    else
-	      {
-		$this->error=$this->db->error();
-		return -1;
-	      }
+	    {
+	    	$sql = "SELECT rowid";
+	    	$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur";
+	    	$sql.= " WHERE fk_product = ".$this->id." AND fk_soc = ".$id_fourn." AND ref_fourn = '".$ref_fourn."'";
+   	
+	    	$resql=$this->db->query($sql);
+	    	if ($resql)
+	    	{
+	    		$obj = $this->db->fetch_object($resql);
+	    		$this->product_fourn_id = $obj->rowid;
+	    	}
+	    }
+	    $this->db->free($resql);
 	  }
-	$this->db->free($resql);
-      }
     else
-      {
-	$this->error=$this->db->error();
-	return -2;
-      }
+    {
+    	$this->error=$this->db->error();
+    	return -2;
+    }
   }
 
 

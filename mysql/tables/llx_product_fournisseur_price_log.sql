@@ -22,12 +22,11 @@
 
 create table llx_product_fournisseur_price_log
 (
-  rowid           integer AUTO_INCREMENT PRIMARY KEY,
-  datec           datetime,
-  fk_product      integer,
-  fk_soc          integer,                  -- lien sur llx_societe
-  price           double(16,8) DEFAULT 0,
-  quantity        double,
-  fk_user         integer
+  rowid                       integer AUTO_INCREMENT PRIMARY KEY,
+  datec                       datetime,
+  fk_product_fournisseur      integer      NOT NULL,
+  price                       double(16,8) DEFAULT 0,
+  quantity                    double,
+  fk_user                     integer
 
 )type=innodb;

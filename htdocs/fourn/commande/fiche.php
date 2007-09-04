@@ -30,6 +30,7 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/fourn/commande/modules/modules_commandefournisseur.php');
+require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.product.class.php";
 if ($conf->projet->enabled)	require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 
 $langs->load('orders');
@@ -90,71 +91,75 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
  */
 if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprodfournprice']))
+  {
+  	$commande =	new	CommandeFournisseur($db);
+    $ret=$commande->fetch($_POST["id"]);
+
+    $soc = new Societe($db,	$commande->socid);
+    $soc->fetch($commande->socid);
+    if ($ret < 0)
     {
-      $commande =	new	CommandeFournisseur($db);
-      $ret=$commande->fetch($_POST["id"]);
-
-      $soc = new Societe($db,	$commande->socid);
-      $soc->fetch($commande->socid);
-      if ($ret < 0)
-	{
-	  dolibarr_print_error($db,$commande->error);
-	  exit;
-	}
-
-      // Ecrase $pu par celui	du produit
-      // Ecrase $desc	par	celui du produit
-      // Ecrase $txtva  par celui du produit
-      if ($_POST["idprod"] > 0)
-	{
-	  $prod =	new	Product($db, $_POST['idprod']);
-	  $prod->fetch($_POST['idprod']);
-
-	  $libelle = $prod->libelle;
-
-	  // La description de la ligne est celle saisie ou
-	  // celle du	produit	si (non	saisi +	PRODUIT_CHANGE_PROD_DESC défini)
-	  // \todo Ne	faut-il	pas	rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours	a on
-	  $desc=$_POST['np_desc'];
-	  if (! $desc	&& $conf->global->PRODUIT_CHANGE_PROD_DESC)
+    	dolibarr_print_error($db,$commande->error);
+    	exit;
+    }
+    
+    // Ecrase $pu par celui	du produit
+    // Ecrase $desc	par	celui du produit
+    // Ecrase $txtva  par celui du produit
+    if ($_POST["idprodfournprice"] > 0)
+    {
+    	$prodfournprice = new ProductFournisseur($db);
+    	$prodfournprice->fetch_product_fournisseur_price($_POST["idprodfournprice"]);
+    	
+    	$prod =	new	Product($db, $prodfournprice->product_id);
+    	$prod->fetch($prodfournprice->product_id);
+    	
+    	$libelle = $prod->libelle;
+    	
+    	// La description de la ligne est celle saisie ou
+	    // celle du	produit	si (non	saisi +	PRODUIT_CHANGE_PROD_DESC défini)
+	    // \todo Ne	faut-il	pas	rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours	a on
+	    $desc=$_POST['np_desc'];
+	    if (! $desc	&& $conf->global->PRODUIT_CHANGE_PROD_DESC)
 	    {
 	      $desc =	$prod->description;
 	    }
 
-	  $tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
-	}
-      else
-	{
-	  $pu=$_POST['pu'];
-	  $tva_tx=$_POST['tva_tx'];
-	  $desc=$_POST['desc'];
-	}
+	    $tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
+	  }
+	  else
+	  {
+	  	$pu=$_POST['pu'];
+	    $tva_tx=$_POST['tva_tx'];
+	    $desc=$_POST['desc'];
+	  }
 
-      $result=$commande->addline(
+    $result=$commande->addline(
 				 $desc,
 				 $pu,
 				 $_POST['qty'],
 				 $tva_tx,
-				 $_POST['idprod'],
+				 $prodfournprice->product_id,
+				 $_POST['idprodfournprice'],
 				 $_POST['remise_percent'],
 				 'HT'
 				 );
 
-      if ($result > 0)
-	{
-	  if ($_REQUEST['lang_id'])
+    if ($result > 0)
+	  {
+	    if ($_REQUEST['lang_id'])
 	    {
 	      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 	      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	    }
-	  supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-	}
-      else
-	{
-	  $mesg='<div class="error">'.$commande->error.'</div>';
-	}
-    }
+	    supplier_order_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+	  }
+    else
+	  {
+	    $mesg='<div class="error">'.$commande->error.'</div>';
+	  }
+  }
 }
 
 /*
@@ -620,16 +625,16 @@ else
 	   */
 	  print '<table class="noborder" width="100%">';
 	
-	  $sql = "SELECT l.ref, l.fk_product,	l.description, l.price,	l.qty";
+	  $sql = "SELECT l.ref as ref_fourn, l.fk_prod_fourn_price,	l.description, l.price,	l.qty";
 	  $sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql.= ", p.label";
-	  //$sql.= ", pf.ref_fourn";
+	  $sql.= ", p.rowid as product_id, p.label, p.ref";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
-	  $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as	p ON l.fk_product =	p.rowid";
-	  //$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as	pf ON l.fk_product =	pf.fk_product";
+	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp ON l.fk_prod_fourn_price = pfp.rowid';
+	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON pfp.fk_product_fournisseur = pf.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pf.fk_product = p.rowid';
 	  $sql.= " WHERE l.fk_commande = ".$commande->id;
 	  $sql.= " ORDER BY l.rowid";
-	
+
 	  $resql = $db->query($sql);
 	  if ($resql)
 	    {
@@ -653,21 +658,21 @@ else
 		  $objp =	$db->fetch_object($resql);
 		  print "<tr $bc[$var]>";
 		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
-		  //print ' ('.$objp->ref_fourn.') - '.$objp->label;
+		  print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref_fourn.'</a>';
+		  print ' ('.$objp->ref.')';
 		  print ' - '.$objp->label;
 		  if ($objp->description) print '<br>'.nl2br($objp->description);
 		  print "</td>";
 		  print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
 		  print '<td align="center">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent >	0)
-		    {
-		      print '<td align="right">'.$objp->remise_percent."%</td>\n";
-		    }
+		  {
+		    print '<td align="right">'.$objp->remise_percent."%</td>\n";
+		  }
 		  else
-		    {
-		      print '<td>&nbsp;</td>';
-		    }
+		  {
+		    print '<td>&nbsp;</td>';
+		  }
 		  print '<td align="right">'.price($objp->subprice)."</td>\n";
 		  if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid' &&	$_GET["action"]	!= 'editline')
 		    {
@@ -734,7 +739,7 @@ else
 	
 	      $var=false;
 	      print "<tr $bc[$var]>".'<td colspan="2">';
-	      $html->select_produits_fournisseurs($commande->fourn_id,'','idprod',$filtre);
+	      $html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice',$filtre);
 	      print '</td>';
 	      print '<td align="center"><input type="text" size="2" name="qty" value="1"></td>';
 	      print '<td align="right"><input	type="text"	size="3" name="remise_percent"	value="0">%</td>';

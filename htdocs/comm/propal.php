@@ -1126,11 +1126,18 @@ if ($_GET['propalid'] > 0)
 					}
 					print "</td>\n";
 				}
-				if ($conf->global->PRODUIT_USE_MARKUP)
+				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 				{
+					print '<div id="calc_markup'.$i.'" style="display:none">';
+					print 'Produit '.$i;
+					print '</div>'."\n";
+					
 					print '<td align="right">';
 				  print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
-          print '<td class="nobordernopadding" nowrap="nowrap" align="left">'.img_calc($langs->trans("ToCalculateMarkup")).'</td>';
+          print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
+          print '<a href="#" onClick="dialogInfo($(\'calc_markup'.$i.'\').innerHTML)">';
+          print img_calc($langs->trans("ToCalculateMarkup"));
+          print '</a></td>';
           print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
           print '</tr></table>';
           print '</td>';
