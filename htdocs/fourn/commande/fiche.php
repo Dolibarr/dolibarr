@@ -674,7 +674,7 @@ else
 		  {
 		    print '<td>&nbsp;</td>';
 		  }
-		  print '<td>&nbsp;</td>';
+		  print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
 		  if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid' &&	$_GET["action"]	!= 'editline')
 		    {
 		      print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
