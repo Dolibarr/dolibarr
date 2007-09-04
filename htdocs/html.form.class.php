@@ -1143,6 +1143,8 @@ class Form
 	{
 		global $langs,$conf;
 		
+		$langs->load('stocks');
+		
 		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
 		$sql.= " pf.ref_fourn, pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -1196,11 +1198,19 @@ class Form
 				if ($objp->fprice != '') 
 				{
 					$opt.= price($objp->fprice);
-					$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity.$langs->trans("Units");
+					$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
+					if ($objp->quantity == 1)
+					{
+						$opt.= strtolower($langs->trans("Unit"));
+					}
+					else
+					{
+						$opt.= strtolower($langs->trans("Units"));
+					}
 					if ($objp->quantity > 1)
 					{
 						$opt.=" - ";
-						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".$langs->trans("Unit");
+						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
 					}
 					if ($objp->duration) $opt .= " - ".$objp->duration;
 				}
