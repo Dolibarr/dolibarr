@@ -677,7 +677,7 @@ class CommandeFournisseur extends Commande
 				$prod = new Product($this->db, $fk_product);
 				if ($prod->fetch($fk_product) > 0)
 				{
-					$result=$prod->get_buyprice($this->fourn_id,$qty);
+					$result=$prod->get_buyprice($fk_prod_fourn_price,$qty);
 					if ($result > 0)
 					{
 						$label = $prod->libelle;

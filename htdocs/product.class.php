@@ -661,23 +661,20 @@ class Product
 
 	/**
 	*    \brief      Lit le prix pratiqué par un fournisseur
-	*    \param      fourn_id        Id du fournisseur
-	*    \param      qty             Quantite recherchée
+	*    \param      prodfournprice        Id du tarif
+	*    \param      qty                   Quantité du produit
 	*    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
 	*/
-	function get_buyprice($fourn_id, $qty)
+	function get_buyprice($prodfournprice,$qty)
 	{
 		$result = 0;
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pf.ref_fourn";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 		$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
-		$sql.= " AND pf.fk_soc = ".$fourn_id;
-		$sql.= " AND pf.fk_product =" .$this->id;
+		$sql.= " AND pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
-		$sql.= " ORDER BY pfp.quantity DESC";
-		$sql.= " LIMIT 1";
 	
-		dolibarr_syslog("Product::get_buyprice $fourn_id,$qty sql=$sql");
+		dolibarr_syslog("Product::get_buyprice $prodfournprice,$qty sql=$sql");
 	
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -696,11 +693,7 @@ class Product
 				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
-				$sql.= " AND pf.fk_soc = ".$fourn_id;
-				$sql.= " AND pf.fk_product =" .$this->id;
-				//$sql.= " AND quantity <= ".$qty;
-				$sql.= " ORDER BY pfp.quantity DESC";
-				$sql.= " LIMIT 1";
+				$sql.= " AND pfp.rowid = ".$prodfournprice;
 	
 				$resql = $this->db->query($sql);
 				if ($resql)
