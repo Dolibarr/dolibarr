@@ -626,13 +626,11 @@ else
 	   */
 	  print '<table class="noborder" width="100%">';
 	
-	  $sql = "SELECT l.ref as ref_fourn, l.fk_prod_fourn_price,	l.description, l.price,	l.qty";
+	  $sql = "SELECT l.ref as ref_fourn, l.fk_product, l.description, l.price,	l.qty";
 	  $sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
 	  $sql.= ", p.rowid as product_id, p.label, p.ref";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
-	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur_price as pfp ON l.fk_prod_fourn_price = pfp.rowid';
-	  $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON pfp.fk_product_fournisseur = pf.rowid';
-		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pf.fk_product = p.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 	  $sql.= " WHERE l.fk_commande = ".$commande->id;
 	  $sql.= " ORDER BY l.rowid";
 
