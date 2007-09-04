@@ -142,6 +142,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 				 $tva_tx,
 				 $prodfournprice->product_id,
 				 $_POST['idprodfournprice'],
+				 $prodfournprice->fourn_ref,
 				 $_POST['remise_percent'],
 				 'HT'
 				 );

@@ -96,6 +96,8 @@ class Product
   
   //! Id du fournisseur
   var $product_fourn_id;
+  //! Ref fournisseur
+  var $fourn_ref;
   
   /**
    *    \brief      Constructeur de la classe
@@ -665,7 +667,7 @@ class Product
 	*    \param      qty                   Quantité du produit
 	*    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
 	*/
-	function get_buyprice($prodfournprice,$qty)
+	function get_buyprice($prodfournprice,$qty,$product_id,$fourn_ref)
 	{
 		$result = 0;
 		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pf.ref_fourn";
@@ -689,23 +691,30 @@ class Product
 			}
 			else
 			{
-				// On refait le meme select mais sans critere de quantite
-				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc";
+				// On refait le meme select sur la ref et l'id du produit
+				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc, pf.ref_fourn";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
-				$sql.= " AND pfp.rowid = ".$prodfournprice;
-	
+				$sql.= " AND pf.ref_fourn = '".$fourn_ref."'";
+				$sql.= " AND pf.fk_product = ".$product_id;
+				$sql.= " AND quantity <= ".$qty; 	 
+	      $sql.= " ORDER BY pfp.quantity DESC"; 	 
+	      $sql.= " LIMIT 1";
+
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{
-					$num=$this->db->num_rows($result);
-					if ($num)
+					$obj = $this->db->fetch_object($resql);
+					if ($obj && $obj->quantity > 0)
 					{
-						return -1;	// Ce produit existe chez ce fournisseur mais qté insuffisante
+						$this->buyprice = $obj->price;                      // \deprecated
+						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
+						$this->ref_fourn = $obj->ref_fourn;
+						return 1;
 					}
 					else
 					{
-						return 0;	// Ce produit n'existe pas chez ce fournisseur
+						return -1;	// Ce produit existe chez ce fournisseur mais qté insuffisante
 					}
 				}
 				else

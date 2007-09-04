@@ -650,7 +650,7 @@ class CommandeFournisseur extends Commande
 	*      \param      price_base_type	HT or TTC
 	*      \param      int             	<0 si ko, >0 si ok
 	*/
-	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $remise_percent=0, $price_base_type='HT')
+	function addline($desc, $pu, $qty, $txtva, $fk_product=0, $fk_prod_fourn_price=0, $fourn_ref='', $remise_percent=0, $price_base_type='HT')
 	{
 		global $langs;
 		
@@ -677,7 +677,7 @@ class CommandeFournisseur extends Commande
 				$prod = new Product($this->db, $fk_product);
 				if ($prod->fetch($fk_product) > 0)
 				{
-					$result=$prod->get_buyprice($fk_prod_fourn_price,$qty);
+					$result=$prod->get_buyprice($fk_prod_fourn_price,$qty,$fk_product,$fourn_ref);
 					if ($result > 0)
 					{
 						$label = $prod->libelle;
