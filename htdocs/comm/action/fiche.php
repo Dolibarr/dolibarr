@@ -59,13 +59,13 @@ if ($_POST["action"] == 'add_action')
 	if ($_POST["apmin"] == -1) $_POST["apmin"]='0';
 	if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 	if ($_POST["admin"] == -1) $_POST["admin"]='0';
-	$datep=dolibarr_mktime($_POST["aphour"],
+	$datep=@mktime($_POST["aphour"],
                    $_POST["apmin"],
                    0,
                    $_POST["apmonth"],
                    $_POST["apday"],
                    $_POST["apyear"]);
-	$datea=dolibarr_mktime($_POST["adhour"],
+	$datea=@mktime($_POST["adhour"],
                    $_POST["admin"],
                    0,
                    $_POST["admonth"],
@@ -240,13 +240,13 @@ if ($_POST["action"] == 'update')
         $action = new Actioncomm($db);
         $action->fetch($_POST["id"]);
 
-    	$action->datep = dolibarr_mktime($_POST["aphour"],
+    	$action->datep = @mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$action->date = dolibarr_mktime($_POST["adhour"],
+    	$action->date = @mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
