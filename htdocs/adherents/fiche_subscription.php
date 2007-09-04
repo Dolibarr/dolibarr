@@ -194,9 +194,15 @@ if ($user->rights->adherent->cotisation->creer && $action == 'edit')
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$subscription->ref.'&nbsp;</td></tr>';
 	
-    // Date
-    print '<tr><td>'.$langs->trans("Date").'</td><td class="valeur" colspan="2">';
+    // Date start subscription
+    print '<tr><td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="2">';
 	$htmls->select_date($subscription->dateh,'datesub',1,1,0,'update',1);
+	print '</td>';
+    print '</tr>';
+
+    // Date end subscription
+    print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="2">';
+	$htmls->select_date($subscription->datef,'datesubend',0,0,0,'update',1);
 	print '</td>';
     print '</tr>';
 
@@ -226,8 +232,9 @@ if ($rowid && $action != 'edit')
 	/*                                                                            */
 	/* ************************************************************************** */
 
-    $subscription->fetch($rowid);
-
+    $result=$subscription->fetch($rowid);
+	$result=$adh->fetch($subscription->fk_adherent);
+	
     $html = new Form($db);
 
 	/*
@@ -272,8 +279,20 @@ if ($rowid && $action != 'edit')
 	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
 	print '</td></tr>';
 
-    // Date
-    print '<tr><td>'.$langs->trans("Date").'</td><td class="valeur">'.dolibarr_print_date($subscription->dateh,'dayhour').'</td>';
+    // Member
+	$adh->ref=$adh->fullname;
+    print '<tr>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+    print '</tr>';
+
+    // Date subscription
+    print '<tr>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dolibarr_print_date($subscription->dateh,'dayhour').'</td>';
+    print '</tr>';
+
+    // Date end subscription
+    print '<tr>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dolibarr_print_date($subscription->datef,'day').'</td>';
     print '</tr>';
 
     // Amount

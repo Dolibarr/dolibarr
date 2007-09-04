@@ -26,6 +26,7 @@ create table llx_cotisation
   datec           datetime,
   fk_adherent     integer,
   dateadh         datetime,
+  datef           date,
   cotisation      real,
   fk_bank         int(11) DEFAULT NULL,
   note            text

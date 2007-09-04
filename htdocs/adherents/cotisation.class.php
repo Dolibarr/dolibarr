@@ -93,6 +93,7 @@ class Cotisation
         $sql ="SELECT rowid, fk_adherent, ".$this->db->pdate("datec")." as datec,";
 		$sql.=" tms,";
 		$sql.=" ".$this->db->pdate("dateadh")." as dateadh,";
+		$sql.=" ".$this->db->pdate("datef")." as datef,";
 		$sql.=" cotisation, note, fk_bank";
 		$sql.=" FROM ".MAIN_DB_PREFIX."cotisation";
 		$sql.="	WHERE rowid=".$rowid;
@@ -112,6 +113,7 @@ class Cotisation
 				$this->datec          = $obj->datec;
 				$this->datem          = $obj->tms;
 				$this->dateh          = $obj->dateadh;
+				$this->datef          = $obj->datef;
 				$this->amount         = $obj->cotisation;
 				$this->note           = $obj->note;
 				$this->fk_bank        = $obj->fk_bank;

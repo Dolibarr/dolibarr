@@ -362,15 +362,27 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 
 	print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
 
+	$today=mktime();
+	$defaultdelay=1;
+	$defaultdelayunit='y';
+
+	// Date start subscription
 	print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
 	if ($adh->datefin > 0)
 	{
-		$html->select_date(dolibarr_time_plus_duree($adh->datefin,1,'d'),'','','','',"cotisation");
+		$datefrom=dolibarr_time_plus_duree($adh->datefin,1,'d');
 	}
 	else
 	{
-		$html->select_date('','','','','',"cotisation");
+		$datefrom=mktime();
 	}
+	$html->select_date($datefrom,'','','','',"cotisation");
+	print "</td></tr>";
+
+	// Date end subscription
+	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
+	$dateto=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
+	$html->select_date($dateto,'end','','','',"cotisation");
 	print "</td></tr>";
 
 	if ($adht->cotisation)

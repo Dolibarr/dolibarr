@@ -31,7 +31,10 @@ alter table llx_paiement drop column author;
 
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
 
+ALTER TABLE llx_cotisation ADD COLUMN datef date after dateadh;
+ALTER TABLE llx_cotisation modify datef date;
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
+update llx_cotisation set datef = ADDDATE(ADDDATE(dateadh, INTERVAL 1 YEAR),INTERVAL -1 DAY);
 
 update llx_const set name='MAIN_ENABLE_DEVELOPMENT' where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
