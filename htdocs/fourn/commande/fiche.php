@@ -643,12 +643,13 @@ else
 	      if ($num)
 		{
 		  print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans("Description").'</td>';
-		  print '<td align="center">'.$langs->trans("VAT").'</td>';
-		  print '<td align="center">'.$langs->trans("Qty").'</td>';
-		  print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
-		  print '<td align="right">'.$langs->trans("PriceU").'</td>';
-		  print '<td width="18">&nbsp;</td><td width="18">&nbsp;</td>';
+		  print '<td>'.$langs->trans('Description').'</td>';
+		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+			print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+			print '<td width="48" colspan="3">&nbsp;</td>';
 		  print "</tr>\n";
 		}
 	      $var=false;
@@ -662,8 +663,9 @@ else
 		  print ' - '.$objp->label;
 		  if ($objp->description) print '<br>'.nl2br($objp->description);
 		  print "</td>";
-		  print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
-		  print '<td align="center">'.$objp->qty.'</td>';
+		  print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
+		  print '<td align="right">'.price($objp->subprice)."</td>\n";
+		  print '<td align="right">'.$objp->qty.'</td>';
 		  if ($objp->remise_percent >	0)
 		  {
 		    print '<td align="right">'.$objp->remise_percent."%</td>\n";
@@ -672,14 +674,14 @@ else
 		  {
 		    print '<td>&nbsp;</td>';
 		  }
-		  print '<td align="right">'.price($objp->subprice)."</td>\n";
+		  print '<td>&nbsp;</td>';
 		  if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid' &&	$_GET["action"]	!= 'editline')
 		    {
-		      print '<td align="right"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+		      print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
 		      print img_edit();
 		      print '</a></td>';
 	
-		      print '<td align="right"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+		      print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
 		      print img_delete();
 		      print '</a></td>';
 		    }
@@ -701,7 +703,7 @@ else
 		      print '<td>';
 		      $html->select_tva('tva_tx',$objp->tva_tx);
 		      print '</td>';
-		      print '<td align="center"><input size="3" type="text" name="qty" value="'.$objp->qty.'"></td>';
+		      print '<td align="right"><input size="3" type="text" name="qty" value="'.$objp->qty.'"></td>';
 		      print '<td align="right"><input	size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
 		      print '<td align="right"><input	size="6" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
 		      print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
@@ -729,20 +731,20 @@ else
 	      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
 
 	      print '<tr class="liste_titre">';
-	      print '<td>'.$langs->trans("Description").'</td>';
-	      print '<td align="center">'.$langs->trans("VAT").'</td>';
-	      print '<td align="center">'.$langs->trans("Qty").'</td>';
-	      print '<td align="right">'.$langs->trans("ReductionShort").'</td>';
-	      print '<td align="right">'.$langs->trans("PriceU").'</td>';
-	      print '<td>&nbsp;</td><td>&nbsp;</td>'."</tr>\n";
+	      print '<td>'.$langs->trans('Description').'</td>';
+		    print '<td align="right">'.$langs->trans('VAT').'</td>';
+			  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
+			  print '<td align="right">'.$langs->trans('Qty').'</td>';
+			  print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+			  print '<td colspan="4">&nbsp;</td>';
+	      print '</tr>';
 	
 	      $var=false;
-	      print "<tr $bc[$var]>".'<td colspan="2">';
+	      print "<tr $bc[$var]>".'<td colspan="3">';
 	      $html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice',$filtre);
 	      print '</td>';
-	      print '<td align="center"><input type="text" size="2" name="qty" value="1"></td>';
-	      print '<td align="right"><input	type="text"	size="3" name="remise_percent"	value="0">%</td>';
-	      print '<td>&nbsp;</td>';
+	      print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+	      print '<td align="right"><input	type="text"	size="1" name="remise_percent"	value="0">%</td>';
 	      print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
 	      print "</tr>\n";
 	
