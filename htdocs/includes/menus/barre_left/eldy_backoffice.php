@@ -296,7 +296,7 @@ class MenuLeft {
 					if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=3", $langs->trans("PropalStatusNotSigned"), 1, $user->rights->propale->lire);
 					if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=4", $langs->trans("PropalStatusBilled"), 1, $user->rights->propale->lire);
 					//if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal.php?viewstatut=2,3,4", $langs->trans("PropalStatusClosedShort"), 1, $user->rights->propale->lire);
-					if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
+					if ($leftmenu=="propals") $newmenu->add_submenu(DOL_URL_ROOT."/comm/propal/stats/index.php?leftmenu=propals", $langs->trans("Statistics"), 1, $user->rights->propale->lire);
 				}
 
 				// Commandes
