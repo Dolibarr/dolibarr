@@ -1129,7 +1129,7 @@ if ($_GET['propalid'] > 0)
 				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 				{
 					print '<div id="calc_markup'.$i.'" style="display:none">';
-					print 'Produit '.$i;
+					$html->select_product_fourn_price($objp->fk_product);
 					print '</div>'."\n";
 					
 					print '<td align="right">';

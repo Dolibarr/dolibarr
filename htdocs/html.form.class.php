@@ -1232,6 +1232,94 @@ class Form
 			dolibarr_print_error($db);
 		}
 	}
+	
+	/**
+		\brief      Retourne la liste des tarifs fournisseurs pour un produit
+		\param		  productid   		    Id du produit
+	*/
+	function select_product_fourn_price($productid)
+	{
+		global $langs,$conf;
+		
+		$langs->load('stocks');
+		
+		$sql = "SELECT p.rowid, p.label, p.ref, p.price, p.duration,";
+		$sql.= " pf.ref_fourn,";
+		$sql.= " pfp.rowid as idprodfournprice, pfp.price as fprice, pfp.quantity, pfp.unitprice,";
+		$sql.= " s.nom";
+		$sql.= " FROM ".MAIN_DB_PREFIX."product as p";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as pfp ON pf.rowid = pfp.fk_product_fournisseur";
+		$sql.= " WHERE p.envente = 1";
+		$sql.= " AND s.fournisseur = 1";
+		$sql.= " AND p.rowid = ".$productid;
+		$sql.= " ORDER BY s.nom, pf.ref_fourn DESC";
+
+		dolibarr_syslog("Form::select_product_fourn_price sql=$sql",LOG_DEBUG);
+		
+		$result=$this->db->query($sql);
+		
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
+			
+			print '<select class="flat" name="'.$htmlname.'">';
+			
+			if (! $num)
+			{
+				print '<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
+			}
+			else
+			{
+				print '<option value="0">&nbsp;</option>';
+				
+				$i = 0;
+				while ($i < $num)
+				{
+					$objp = $this->db->fetch_object($result);
+					
+					$opt = '<option value="'.$objp->idprodfournprice.'"';
+					if ($objp->fprice == '') $opt.=' disabled="disabled"';
+					$opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
+					if ($objp->fprice != '')
+					{
+						$opt.= price($objp->fprice);
+						$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
+						if ($objp->quantity == 1)
+						{
+							$opt.= strtolower($langs->trans("Unit"));
+						}
+						else
+						{
+							$opt.= strtolower($langs->trans("Units"));
+						}
+						if ($objp->quantity > 1)
+						{
+							$opt.=" - ";
+							$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+						}
+						if ($objp->duration) $opt .= " - ".$objp->duration;
+					}
+					else
+					{
+						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+					}
+					$opt .= "</option>\n";
+					
+					print $opt;
+					$i++;
+				}
+				print '</select>';
+				
+				$this->db->free($result);
+			}
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	}
 
     /**
      *    \brief      Retourne la liste déroulante des adresses de livraison
