@@ -1268,7 +1268,7 @@ class Form
 			
 			if (! $num)
 			{
-				print '<option value="0">-- '.$langs->trans("NoProductMatching").' --</option>';
+				print '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
 			}
 			else
 			{
@@ -1280,37 +1280,30 @@ class Form
 					$objp = $this->db->fetch_object($result);
 					
 					$opt = '<option value="'.$objp->idprodfournprice.'"';
-					if ($objp->fprice == '') $opt.=' disabled="disabled"';
 					$opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
-					if ($objp->fprice != '')
+					
+					if ($objp->quantity == 1)
 					{
-						if ($objp->quantity == 1)
-						{
-							$opt.= price($objp->fprice);
-							$opt.= $langs->trans("Currency".$conf->monnaie)."/";
-						}
+						$opt.= price($objp->fprice);
+						$opt.= $langs->trans("Currency".$conf->monnaie)."/";
+					}
 						
-						$opt.= $objp->quantity;
+					$opt.= $objp->quantity;
 						
-						if ($objp->quantity == 1)
-						{
-							$opt.= strtolower($langs->trans("Unit"));
-						}
-						else
-						{
-							$opt.= strtolower($langs->trans("Units"));
-						}
-						if ($objp->quantity > 1)
-						{
-							$opt.=" - ";
-							$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
-						}
-						if ($objp->duration) $opt .= " - ".$objp->duration;
+					if ($objp->quantity == 1)
+					{
+						$opt.= strtolower($langs->trans("Unit"));
 					}
 					else
 					{
-						$opt.= $langs->trans("NoPriceDefinedForThisSupplier");
+						$opt.= strtolower($langs->trans("Units"));
 					}
+					if ($objp->quantity > 1)
+					{
+						$opt.=" - ";
+						$opt.= price($objp->unitprice).$langs->trans("Currency".$conf->monnaie)."/".strtolower($langs->trans("Unit"));
+					}
+					if ($objp->duration) $opt .= " - ".$objp->duration;
 					$opt .= "</option>\n";
 					
 					print $opt;

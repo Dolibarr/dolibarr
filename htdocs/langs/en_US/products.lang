@@ -116,6 +116,7 @@ PriceQty=Price for this quantity
 PriceQtyHT=Price for this quantity HT
 PriceQtyTTC=Price for this quantity TTC
 NoPriceDefinedForThisSupplier=No price/qty defined for this supplier/product
+NoSupplierPriceDefinedForThisProduct=No supplier price/qty defined for this product
 RecordedProducts=Products recorded
 RecordedProductsAndServices=Products/services recorded
 GenerateThumb=Generate thumb

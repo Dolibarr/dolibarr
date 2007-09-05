@@ -116,6 +116,7 @@ PriceQty=Prix pour la quantité
 PriceQtyHT=Prix pour la quantité HT
 PriceQtyTTC=Prix pour la quantité TTC
 NoPriceDefinedForThisSupplier=Aucun prix/qté défini pour ce fournisseur/produit
+NoSupplierPriceDefinedForThisProduct=Aucun prix/qté fournisseur défini pour ce produit
 RecordedProducts=Produits en vente
 RecordedProductsAndServices=Produits/services en vente
 GenerateThumb=Générer la vignette
