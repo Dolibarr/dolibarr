@@ -41,7 +41,8 @@ class Cotisation
 
 	var $datec;
 	var $datem;
-	var $dateh;
+	var $dateh;				// Subscription start date
+	var $datef;				// Subscription end date
 	var $fk_adherent;
 	var $amount;
 	var $note;
@@ -65,8 +66,18 @@ class Cotisation
 	*/
 	function create($userid)
 	{
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, cotisation, note)";
-        $sql .= " VALUES (".$this->fk_adherent.", now(), ".$this->db->idate($this->dateh).", ".$this->amount.",'".$this->note."')";
+		// Check parameters
+		if ($this->datef <= $this->dateh)
+		{
+			$this->error="Error: Bad value for datef or dateh";
+			return -1;
+		}
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."cotisation (fk_adherent, datec, dateadh, datef, cotisation, note)";
+        $sql.= " VALUES (".$this->fk_adherent.", now(),";
+		$sql.= " ".$this->db->idate($this->dateh).",";
+		$sql.= " ".$this->db->idate($this->datef).",";
+		$sql.= " ".$this->amount.",'".$this->note."')";
 
 		dolibarr_syslog("Cotisation::create sql=".$sql);
 		$resql = $this->db->query($sql);

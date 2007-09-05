@@ -50,6 +50,9 @@ $adho = new AdherentOptions($db);
 $adht = new AdherentType($db);
 $errmsg='';
 
+$defaultdelay=1;
+$defaultdelayunit='y';
+
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $typeid=isset($_GET["typeid"])?$_GET["typeid"]:$_POST["typeid"];
@@ -71,12 +74,15 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 
 	$adht->fetch($adh->typeid);
 
-    $reday=$_POST["reday"];
-    $remonth=$_POST["remonth"];
-    $reyear=$_POST["reyear"];
+    $datecotisation=0;
+	$datesubend=0;
     if ($_POST["reyear"] && $_POST["remonth"] && $_POST["reday"])
     {
- 		$datecotisation=dolibarr_mktime(12, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+ 		$datecotisation=dolibarr_mktime(0, 0, 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
+    }
+    if ($_POST["endyear"] && $_POST["endmonth"] && $_POST["endday"])
+    {
+ 		$datesubend=dolibarr_mktime(0, 0, 0, $_POST["endmonth"], $_POST["endday"], $_POST["endyear"]);
     }
     $cotisation=$_POST["cotisation"];
 
@@ -92,7 +98,11 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 		$errmsg=$langs->trans("BadDateFormat");
 	    $action='addsubscription';
 	}
-
+	if (! $datesubend)
+	{
+		$datesubend=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datecotisation,$defaultdelay,$defaultdelayunit),-1,'d');
+	}
+	
 	if ($adht->cotisation)	// Type adherent soumis a cotisation
 	{
 	    if (! is_numeric($_POST["cotisation"]))
@@ -124,7 +134,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
     {
         $db->begin();
 
-		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque);
+		$crowid=$adh->cotisation($datecotisation, $cotisation, $accountid, $operation, $label, $num_chq, $emetteur_nom, $emetteur_banque, $datesubend);
 		
         if ($crowid > 0)
         {
@@ -160,13 +170,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 /* ************************************************************************** */
 
 llxHeader();
-$html = new Form($db);
 
-if ($errmsg)
-{
-    print '<div class="error">'.$errmsg.'</div>';
-    print "\n";
-}
+$html = new Form($db);
 
 $adh->id = $rowid;
 $result=$adh->fetch($rowid);
@@ -216,6 +221,13 @@ print "</table>\n";
 print '</form>';
 
 print "</div>\n";
+
+
+if ($errmsg)
+{
+    print '<div class="error">'.$errmsg.'</div>';
+    print "\n";
+}
 
 
 /*
@@ -363,25 +375,40 @@ if ($action == 'addsubscription' && $user->rights->adherent->cotisation->creer)
 	print '<tr><td colspan="2"><b>'.$langs->trans("NewCotisation").'</b></td></tr>';
 
 	$today=mktime();
-	$defaultdelay=1;
-	$defaultdelayunit='y';
+	$datefrom=0;
+	$dateto=0;
 
 	// Date start subscription
 	print '<tr><td>'.$langs->trans("DateSubscription").'</td><td>';
-	if ($adh->datefin > 0)
+	if ($_POST["reday"])
 	{
-		$datefrom=dolibarr_time_plus_duree($adh->datefin,1,'d');
+		$datefrom=dolibarr_mktime(0,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	}
-	else
+	if (! $datefrom)
 	{
-		$datefrom=mktime();
+		if ($adh->datefin > 0)
+		{
+			$datefrom=dolibarr_time_plus_duree($adh->datefin,1,'d');
+		}
+		else
+		{
+			$datefrom=mktime();
+		}
 	}
 	$html->select_date($datefrom,'','','','',"cotisation");
 	print "</td></tr>";
 
 	// Date end subscription
+	if ($_POST["endday"])
+	{
+		$dateto=dolibarr_mktime(0,0,0,$_POST["endmonth"],$_POST["endday"],$_POST["endyear"]);
+	}
+	if (! $dateto)
+	{
+		//$dateto=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
+		$dateto=-1;		// By default, no date is suggested
+	}
 	print '<tr><td>'.$langs->trans("DateEndSubscription").'</td><td>';
-	$dateto=dolibarr_time_plus_duree(dolibarr_time_plus_duree($datefrom,$defaultdelay,$defaultdelayunit),-1,'d');
 	$html->select_date($dateto,'end','','','',"cotisation");
 	print "</td></tr>";
 

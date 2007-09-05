@@ -941,9 +941,10 @@ class Adherent
     		\param		num_chq			Numero cheque (si Id compte bancaire fourni)
     		\param		emetteur_nom	Nom emetteur chèque
     		\param		emetteur_banque	Nom banque emetteur chèque
+			\param		datesubend		Date fin adhesion
             \return     int         	rowid de l'entrée ajoutée, <0 si erreur
     */
-    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='')
+    function cotisation($date, $montant, $accountid=0, $operation='', $label='', $num_chq='', $emetteur_nom='', $emetteur_banque='', $datesubend=0)
     {
         global $conf,$langs,$user;
 
@@ -956,6 +957,7 @@ class Adherent
 		$cotisation=new Cotisation($this->db);
 		$cotisation->fk_adherent=$this->id;
 		$cotisation->dateh=$date;
+		$cotisation->datef=$datesubend;
 		$cotisation->amount=$montant;
 		$cotisation->note=$label;
 
@@ -963,10 +965,17 @@ class Adherent
 		
         if ($rowid > 0)
         {
-			// datefin = date + 1 an - 1 jour
-            $datefin = dolibarr_time_plus_duree($date,1,'y');
-            $datefin = dolibarr_time_plus_duree($datefin,-1,'d');
-
+			if ($datesubend)
+			{
+				$datefin=$datesubend;
+			}
+			else
+			{
+				// If no end date, end date = date + 1 year - 1 day
+				$datefin = dolibarr_time_plus_duree($date,1,'y');
+	            $datefin = dolibarr_time_plus_duree($datefin,-1,'d');
+			}
+			
             $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET datefin = ".$this->db->idate($datefin);
             $sql.= " WHERE rowid =". $this->id;
             
