@@ -1284,8 +1284,14 @@ class Form
 					$opt.= '>'.$objp->nom.' - '.$objp->ref_fourn.' - ';
 					if ($objp->fprice != '')
 					{
-						$opt.= price($objp->fprice);
-						$opt.= $langs->trans("Currency".$conf->monnaie)."/".$objp->quantity;
+						if ($objp->quantity == 1)
+						{
+							$opt.= price($objp->fprice);
+							$opt.= $langs->trans("Currency".$conf->monnaie)."/";
+						}
+						
+						$opt.= $objp->quantity;
+						
 						if ($objp->quantity == 1)
 						{
 							$opt.= strtolower($langs->trans("Unit"));
