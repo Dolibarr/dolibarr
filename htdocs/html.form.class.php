@@ -1237,7 +1237,7 @@ class Form
 		\brief      Retourne la liste des tarifs fournisseurs pour un produit
 		\param		  productid   		    Id du produit
 	*/
-	function select_product_fourn_price($productid)
+	function select_product_fourn_price($productid,$htmlname='productfournpriceid')
 	{
 		global $langs,$conf;
 		
