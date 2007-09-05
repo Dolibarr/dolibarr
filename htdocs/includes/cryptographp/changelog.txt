@@ -1,0 +1,36 @@
+Version 1.4
+
+
+Ajouts:
+-------
+- Image de fond aleatoire: si vous indiquez un répertoire plutot qu'un fichier dans la variable $bgimg
+  l'image de fond sera choisie au hasard parmi celles du répertoire. 
+- Possibilité d'autoriser ou d'interdire la revalidation de la page de verification en cas de réactualisation 
+  (variable $cryptoneuse)  => (merci Aurélien)
+- Ajout d'un fichier index.html dans chaque sous-répertoire
+- Bruits: Ajout de brouillage par cercles aléatoires
+- Bruits: Ajout de l'épaisseur variable du traits (variable $brushsize)
+- Bruits: Ajout possibilité de couleur de brouillage aléatoire.
+
+
+Modifications:
+--------------
+- Suppression des espaces saisis par erreurs lors de la copie du cryptogramme (merci Emmanuel)
+- Changement du nom du fichier de configuration: config.inc.php => cryptographp.cfg.php
+- Changement du nom du fichier functions.php => cryptographp.fct.php
+- L'image du bouton régénerer (fichier reload.png) est transparente et de meilleure compression
+  => Vous pouvez la remplacez par votre propre image si vous le souhaitez (fichier reload.png)
+- Les images de messages d'erreurs (répertoire images) sont de meilleure compression
+
+
+Corrections:
+------------
+- Changement de la méthode de détection du répertoire d'installation. 
+- Gestion des sites avec configuration "safe_mode=on"
+- correction de la balise <img> dans functions.php (Merci Lionel)
+- Correction de la casse et du nom des polices.
+
+
+Suppressions:
+-------------
+- suppression d'une portion de code deja en commentaire dans la version précédente.
