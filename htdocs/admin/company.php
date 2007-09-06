@@ -503,11 +503,11 @@ else
     print '</td><td valign="center" align="right">';
     
     // On propose la génération de la vignette si elle n'existe pas
-    if (!file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
+    if (!is_file($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini) && eregi('(\.jpg|\.jpeg|\.png)$',$mysoc->logo))
     {
      	print '<a href="'.$_SERVER["PHP_SELF"].'?action=addthumb&amp;file='.urlencode($mysoc->logo).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
     }
-    else if ($mysoc->logo_mini && file_exists($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
+    else if ($mysoc->logo_mini && is_file($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_mini))
     {
       print '<img src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_mini).'">';
     }
