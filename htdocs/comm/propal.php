@@ -1046,10 +1046,6 @@ if ($_GET['propalid'] > 0)
 			print '<td>'.$langs->trans('Description').'</td>';
 			if ($conf->global->PRODUIT_USE_MARKUP)
 			{
-				if ($_GET["action"] == 'editmarkup')
-				{
-					print '<td align="right" width="80">'.$langs->trans('PuchasePrice').'</td>';
-				}
 				print '<td align="right" width="80">'.$langs->trans('Markup').'</td>';
 			}
 			print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
@@ -1067,7 +1063,7 @@ if ($_GET['propalid'] > 0)
 			$var=!$var;
 
 			// Ligne en mode visu
-			if (($_GET['action'] != 'editline' && $_GET['action'] != 'editmarkup') || $_GET['ligne'] != $objp->rowid)
+			if ($_GET['action'] != 'editline' || $_GET['ligne'] != $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
 				if ($objp->fk_product > 0)
@@ -1085,7 +1081,7 @@ if ($_GET['propalid'] > 0)
 					}
 					else
 					{
-						print $html->textwithtooltip($text,$objp->description,3,'','',$i,500,100,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
+						print $html->textwithtooltip($text,$objp->description,4,'','',$i,500,100,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
 					}
 					print_date_range($objp->date_start,$objp->date_end);
 
@@ -1176,7 +1172,7 @@ if ($_GET['propalid'] > 0)
 						$picto = '<a href="#" onClick="dialogWindow($(\'calc_markup'.$i.'\').innerHTML,\''.$langs->trans('ToCalculateMarkup').'\')">';
 						$picto.= img_calc();
 						$picto.= '</a>';
-						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),4,'','',$i);
+						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
 					}
           print '</td>';
           print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
