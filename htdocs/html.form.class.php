@@ -73,7 +73,7 @@ class Form
      \param		img					  Code img du picto
      \return	string				Code html du texte,picto
   */
-  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$option='')
+  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10',$option='')
   {
   	global $conf;
 		
@@ -95,7 +95,7 @@ class Form
     	$s.= $htmltext."\n";
     	$s.= '</div>'."\n";
     	$s.= '<script type=\'text/javascript\'>'."\n";
-    	$s.= 'TooltipManager.init("","",{width:500, shiftX:100});'."\n";
+    	$s.= 'TooltipManager.init("","",{width:'.$width.', shiftX:'.$shiftX.'});'."\n";
       $s.= 'TooltipManager.addHTML("tip'.$i.'", "tooltip_content");'."\n";
     	$s.= '</script>'."\n";
     }
@@ -1264,15 +1264,15 @@ class Form
 		{
 			$num = $this->db->num_rows($result);
 			
-			print '<select class="flat" name="'.$htmlname.'">';
+			$form = '<select class="flat" name="'.$htmlname.'">';
 			
 			if (! $num)
 			{
-				print '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
+				$form.= '<option value="0">-- '.$langs->trans("NoSupplierPriceDefinedForThisProduct").' --</option>';
 			}
 			else
 			{
-				print '<option value="0">&nbsp;</option>';
+				$form.= '<option value="0">&nbsp;</option>';
 				
 				$i = 0;
 				while ($i < $num)
@@ -1288,7 +1288,7 @@ class Form
 						$opt.= $langs->trans("Currency".$conf->monnaie)."/";
 					}
 						
-					$opt.= $objp->quantity;
+					$opt.= $objp->quantity.' ';
 						
 					if ($objp->quantity == 1)
 					{
@@ -1306,13 +1306,14 @@ class Form
 					if ($objp->duration) $opt .= " - ".$objp->duration;
 					$opt .= "</option>\n";
 					
-					print $opt;
+					$form.= $opt;
 					$i++;
 				}
-				print '</select>';
+				$form.= '</select>';
 				
 				$this->db->free($result);
 			}
+			return $form;
 		}
 		else
 		{

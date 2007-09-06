@@ -49,6 +49,20 @@ if(isset($_GET['keysearch']) && !empty($_GET['keysearch']))
 		$form->select_produits_fournisseurs_do($_GET["socid"],"",$_GET["htmlname"],"","",$_GET["keysearch"]);
 	}
 }
+else if(isset($_GET['markup']) && !empty($_GET['markup']))
+{
+	print $_GET['markup'];
+	//print $_GET['count'];
+	//$field = "<input size='10' type='text' class='flat' id='sellingdata_ht".$_GET['count']."' name='sellingdata_ht".$_GET['count']."' value='".$_GET['markup']."'>";
+	//print '<input size="10" type="text" class="flat" id="sellingdata_ht'.$_GET['count'].'" name="sellingdata_ht'.$_GET['count'].'" value="'.$field.'">';
+	//print $field;
+}
+else if(isset($_GET['selling']) && !empty($_GET['selling']))
+{
+	//print $_GET['markup'];
+	//print $_GET['count'];
+	print '<input size="10" type="text" class="flat" name="cashflow'.$_GET['count'].'" value="'.$_GET['selling'].'">';
+}
 
 print "</body>"; 
 print "</html>"; 

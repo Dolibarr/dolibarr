@@ -678,3 +678,26 @@ function dialogConfirm(linkurl,message,ok,cancel,objectID) {
 function dialogInfo(message) {
 	Dialog.info(message, {width:700});
 }
+
+/*=================================================================
+	Purpose:  Affiche une fenetre
+	Input:    message
+	Author:   Regis Houssin
+	Licence:  GPL
+==================================================================*/
+function dialogWindow(message,windowTitle) {
+var win = new Window({className: "dialog",  
+	                    width:600,
+	                    height:400,
+	                    zIndex: 100,
+	                    resizable: false,
+	                    title: windowTitle,
+	                    showEffect:Effect.BlindDown,
+	                    hideEffect: Effect.SwitchOff,
+	                    draggable:true
+                    })
+/*win.setHTMLContent(message);*/
+/*win.getContent().innerHTML = message;*/
+win.getContent().update(message);
+win.showCenter();
+}

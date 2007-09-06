@@ -108,10 +108,10 @@
 
 .dialog_content {
 	overflow:auto;
-	color: #DDD;
+	color: #000;
 	font-family: Tahoma, Arial, sans-serif;
-	font-size: 10px;
-	background-color:#123;
+	font-size: 12px;
+	background-color:#e6ebed;
 }
 
 .top_draggable, .bottom_draggable {

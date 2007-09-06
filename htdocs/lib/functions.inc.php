@@ -2908,6 +2908,48 @@ function ajax_updater($htmlname,$keysearch,$url,$option='',$indicator='working')
 /**
    \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
    \param	    htmlname            nom et id du champ
+   \param     keysearch           nom et id complémentaire du champ de collecte
+   \param     id                  ID du champ à modifier
+   \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
+   \param     option              champ supplémentaire de recherche dans les paramètres
+   \param     indicator           Nom de l'image gif sans l'extension
+   \return    script              script complet
+*/
+function ajax_updaterWithID($htmlname,$keysearch,$id,$url,$option='',$indicator='working')
+{
+	$script = '<input type="hidden" name="'.$htmlname.'" id="'.$htmlname.'" value="">';
+	if ($indicator) $script.=ajax_indicator($htmlname,$indicator);
+	$script.='<script type="text/javascript">';
+	$script.='var myIndicator'.$htmlname.' = {
+                     onCreate: function(){
+                            if($F("'.$keysearch.$htmlname.'")){
+                                  Element.show(\'indicator'.$htmlname.'\');
+                            }
+                     },
+                     
+                     onComplete: function() {
+                            if(Ajax.activeRequestCount == 0){
+                                  Element.hide(\'indicator'.$htmlname.'\');
+                            }
+                     }
+             };';
+	$script.='Ajax.Responders.register(myIndicator'.$htmlname.');';
+	$script.='new Form.Element.DelayedObserver($("'.$keysearch.$htmlname.'"), 1,
+			   function(){
+			   var elementHTML = $(\''.$id.'\');
+			   var url = \''.DOL_URL_ROOT.$url.'\';
+			   o_options = new Object();
+			   o_options = {method: \'get\',parameters: "'.$keysearch.'="+$F("'.$keysearch.$htmlname.'")+"'.$option.'"};
+				 var myAjax = new Ajax.Updater(elementHTML,url,o_options);
+				 });';
+	$script.='</script>';
+  
+	return $script;
+}
+
+/**
+   \brief     Récupère la valeur d'un champ, effectue un traitement Ajax et affiche le résultat
+   \param	    htmlname            nom et id du champ
    \param	    url                 chemin du fichier de réponse : /chemin/fichier.php
    \param     indicator           nom de l'image gif sans l'extension
    \return    script              script complet
