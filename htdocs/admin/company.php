@@ -121,8 +121,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 if ($_GET["action"] == 'addthumb')
 {
 	if (file_exists($conf->societe->dir_logos.'/'.$_GET["file"]))
-	{			
-		$isimage=image_format_supported($original_file);
+	{
+		$isimage=image_format_supported($_GET["file"]);
 
 		// Create thumbs of logo
 		if ($isimage > 0)
