@@ -871,3 +871,5 @@ ALTER TABLE llx_product_fournisseur_price_log DROP COLUMN fk_soc;
 ALTER TABLE llx_product_fournisseur_price_log CHANGE fk_product fk_product_fournisseur integer NOT NULL;
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_commande integer NOT NULL;
+
+ALTER TABLE llx_product_fournisseur ADD COLUMN partnumber varchar(30) after ref_fourn;

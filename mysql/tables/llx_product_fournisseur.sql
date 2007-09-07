@@ -28,6 +28,7 @@ create table llx_product_fournisseur
   fk_product      integer,
   fk_soc          integer,
   ref_fourn       varchar(30),
+  partnumber      varchar(30),
   fk_user_author  integer,
 
   key(fk_product),
