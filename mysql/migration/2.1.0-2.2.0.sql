@@ -872,4 +872,4 @@ ALTER TABLE llx_product_fournisseur_price_log CHANGE fk_product fk_product_fourn
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_commande integer NOT NULL;
 
-ALTER TABLE llx_product_fournisseur ADD COLUMN partnumber varchar(30) after ref_fourn;
+ALTER TABLE llx_product ADD COLUMN partnumber varchar(30) after gencode;
