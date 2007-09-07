@@ -38,6 +38,8 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+
 
 /**
    \class      User
@@ -56,7 +58,7 @@ class User
   var $prenom;
   var $note;
   var $email;
-  var $office_tel;
+  var $office_phone;
   var $office_fax;
   var $user_mobile;
   var $admin;
@@ -72,6 +74,7 @@ class User
   var $datec;
   var $datem;
   var $societe_id;
+  var $fk_member;
   var $webcal_login;
   
   var $datelastlogin;
@@ -913,6 +916,8 @@ class User
         dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
         $error=0;
 
+		$this->db->begin();
+
 		// Mise a jour mot de passe
         if ($this->pass)
         {
@@ -938,12 +943,35 @@ class User
         $sql .= ", note = '".addslashes($this->note)."'";
         $sql .= " WHERE rowid = ".$this->id;
 
+        dolibarr_syslog("User::update sql=".$sql);
         $resql = $this->db->query($sql);
         if ($resql)
         {
-            if ($this->db->affected_rows($resql))
+            $nbrowsaffected=$this->db->affected_rows($resql);
+
+			if ($nbrowsaffected)
             {
-                if (! $notrigger)
+				if ($this->fk_member && ! $notrigger)
+				{
+					// This user is linked with a member, so we also update members informations
+					// if this is an update (notrigger = 0).
+					$adh=new Adherent($this->db);
+					$result=$adh->fetch($this->fk_member);
+
+					// \TODO Mettre parametres
+					$adh->phone=$this->office_phone;
+					$adh->phone_perso=$this->office_fax;
+					$adh->phone_mobile=$this->user_mobile;
+
+					$result=$adh->update($user,0);
+					if ($result < 0)
+					{
+						$this->error=$adh->error;
+						$error++;
+					}
+				}
+
+                if (! $error && ! $notrigger)
                 {
                     // Appel des triggers
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
@@ -952,14 +980,24 @@ class User
                     if ($result < 0) $error++;
                     // Fin appel triggers
                 }
-
-                return 1;
             }
-            return 0;
+
+			if (! $error)
+			{
+				$this->db->commit();
+			}
+			else
+			{
+				$this->db->rollback();
+			}
+
+			return $nbrowsaffected;
         }
         else
         {
-            $this->error=$this->db->error();
+			$this->db->rollback();
+
+            $this->error=$this->db->lasterror();
             return -1;
         }
 
@@ -1494,7 +1532,7 @@ class User
 		$this->fullname=trim($this->prenom.' '.$this->nom);
 		$this->note='This is a note';
 		$this->email='email@specimen.com';
-		$this->office_tel='0999999999';
+		$this->office_phone='0999999999';
 		$this->office_fax='0999999998';
 		$this->user_mobile='0999999997';
 		$this->admin=0;

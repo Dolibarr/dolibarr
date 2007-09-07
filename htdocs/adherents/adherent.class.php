@@ -451,7 +451,7 @@ class Adherent
 	{
 		global $conf,$langs;
 
-		dolibarr_syslog("Adherent::update user=".$user->id." notrigger=".$notrigger);
+		dolibarr_syslog("Adherent::update user->id=".$user->id.", notrigger=".$notrigger);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -488,7 +488,7 @@ class Adherent
 
 		$sql .= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Adherent::update sql=$sql");
+		dolibarr_syslog("Adherent::update sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
 		{

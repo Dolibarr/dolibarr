@@ -29,8 +29,8 @@
 */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 
 $langs->load("members");
 
