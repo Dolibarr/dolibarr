@@ -3072,7 +3072,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 {
 	global $langs;
 
-	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName);
+	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName." maxWidth=".$maxWidth." maxHeight=".$maxHeight." quality=".$quality);
 	
 	// Nettoyage parametres
 	$file=trim($file);
