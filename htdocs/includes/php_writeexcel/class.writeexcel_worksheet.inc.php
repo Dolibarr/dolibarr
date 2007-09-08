@@ -1901,7 +1901,7 @@ function set_row() {
      * Writes Excel DIMENSIONS to define the area in which there is data.
      */
     function _store_dimensions() {
-        $record    = 0x0000;               // Record identifier
+        $record    = 0x0200;               // Record identifier
         $length    = 0x000A;               // Number of bytes to follow
         $row_min   = $this->_dim_rowmin;   // First row
         $row_max   = $this->_dim_rowmax;   // Last row plus 1
