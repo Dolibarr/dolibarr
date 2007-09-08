@@ -72,6 +72,13 @@ if ($modulepart)
     	$accessallowed=1;
     	$original_file=$conf->users->dir_output.'/'.$original_file;
     }
+
+    // Wrapping pour les photos adherents
+    if ($modulepart == 'memberphoto')
+    {
+    	$accessallowed=1;
+    	$original_file=$conf->adherent->dir_output.'/'.$original_file;
+    }
     
     // Wrapping pour les apercu factures
     if ($modulepart == 'apercufacture')

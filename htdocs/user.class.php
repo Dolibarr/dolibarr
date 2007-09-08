@@ -958,10 +958,21 @@ class User
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 
-					// \TODO Mettre parametres
+					$adh->prenom=$this->prenom;
+					$adh->nom=$this->nom;
+					$adh->login=$this->login;
+					$adh->pass=$this->pass;
+					$adh->societe=$this->societe_id;
+
+					$adh->email=$this->email;
 					$adh->phone=$this->office_phone;
 					$adh->phone_perso=$this->office_fax;
 					$adh->phone_mobile=$this->user_mobile;
+					
+					$adh->commentaire=$user->note;
+
+					$adh->user_id=$this->id;
+					$adh->user_login=$this->login;
 
 					$result=$adh->update($user,0);
 					if ($result < 0)

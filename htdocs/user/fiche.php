@@ -267,7 +267,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 
 		if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 		{
-			// Si une photo est fournie avec le formulaire
+			// If photo is provided
 			if (! is_dir($conf->users->dir_output))
 			{
 				create_exdir($conf->users->dir_output);
@@ -1157,7 +1157,7 @@ else
             }
             print '</td></tr>';
 
-			      // Prenom
+			// Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td colspan="2">';
             if ($caneditfield && !$fuser->ldap_sid)

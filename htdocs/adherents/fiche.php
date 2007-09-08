@@ -44,6 +44,20 @@ $langs->load("users");
 
 $user->getrights('adherent');
 
+// Defini si peux creer un utilisateur ou gerer groupe sur un utilisateur
+$canadduser=$user->rights->adherent->creer;
+// Defini si peux lire/modifier info user ou mot de passe
+if ($_GET["rowid"])
+{
+  $caneditfield=$user->rights->adherent->creer;
+  $caneditpassword=$user->rights->adherent->creer;
+}
+if (! $user->rights->adherent->lire)
+{
+  accessforbidden();
+}
+
+
 $adh = new Adherent($db);
 $adho = new AdherentOptions($db);
 $errmsg='';
@@ -128,7 +142,6 @@ if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POS
 		$adh->phone_mobile= $_POST["phone_mobile"];
 		$adh->email       = $_POST["email"];
 		$adh->naiss       = $datenaiss;
-		$adh->photo       = $_POST["photo"];
 
 		$adh->typeid      = $_POST["type"];
 		$adh->commentaire = $_POST["comment"];
@@ -149,6 +162,7 @@ if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POS
 				$adh->array_options[$key]=addslashes($_POST[$key]);
 			}
 		}
+
 		$result=$adh->update($user,0);
 		if ($result >= 0 && ! sizeof($adh->errors))
 		{
@@ -158,6 +172,23 @@ if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POS
 				if ($ret < 0)
 				{
 					$message.='<div class="error">'.$edituser->error.'</div>';
+				}
+			}
+
+			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
+			{
+				// If photo is provided
+				if (! is_dir($conf->adherent->dir_output))
+				{
+					create_exdir($conf->adherent->dir_output);
+				}
+				if (is_dir($conf->adherent->dir_output))
+				{
+					$newfile=$conf->adherent->dir_output . "/" . $adh->id . ".jpg";
+					if (! doliMoveFileUpload($_FILES['photo']['tmp_name'],$newfile))
+					{
+						$message .= '<div class="error">'.$langs->trans("ErrorFailedToSaveFile").'</div>';
+					}
 				}
 			}
 
@@ -563,7 +594,7 @@ if ($action == 'edit')
 	dolibarr_fiche_head($head, 'general', $langs->trans("Member"));
 
 
-	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post">';
+	print '<form name="update" action="'.$_SERVER["PHP_SELF"].'" method="post" enctype="multipart/form-data">';
 	print "<input type=\"hidden\" name=\"action\" value=\"update\">";
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
@@ -576,34 +607,49 @@ if ($action == 'edit')
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
 	
 	// Nom
-	print '<tr><td>'.$langs->trans("Lastname").'</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+	print '<tr><td>'.$langs->trans("Lastname").'*</td><td><input type="text" name="nom" size="40" value="'.$adh->nom.'"></td>';
+
 	// Photo
-	$rowspan=17;
+	$rowspan=16;
 	$rowspan+=sizeof($adho->attribute_label);
-	print '<td rowspan="'.$rowspan.'" valign="top">';
-	print '&nbsp;';
+    print '<td align="center" valign="middle" width="25%" rowspan="'.$rowspan.'">';
+    if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
+    {
+        print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=memberphoto&file='.$adh->id.'.jpg">';
+    }
+    else
+    {
+        print '<img src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+    }
+    if ($caneditfield)
+    {
+        print '<br><br><table class="noborder"><tr><td>'.$langs->trans("PhotoFile").'</td></tr>';
+        print '<tr><td>';
+        print '<input type="file" class="flat" name="photo">';
+        print '</td></tr></table>';
+	}
 	print '</td>';
 	print '</tr>';
 
 	// Prenom
-	print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
+	print '<tr><td width="20%">'.$langs->trans("Firstname").'*</td><td width="35%"><input type="text" name="prenom" size="40" value="'.$adh->prenom.'"></td>';
 	print '</tr>';
 	
 	// Login
-	print '<tr><td>'.$langs->trans("Login").'</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
 	
 	// Password
-	print '<tr><td>'.$langs->trans("Password").'</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
 
 	// Type
-	print '<tr><td>'.$langs->trans("Type").'</td><td>';
+	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
 	$htmls->select_array("type",  $adht->liste_array(), $adh->typeid);
 	print "</td></tr>";
 	
 	// Physique-Moral	
 	$morphys["phy"] = $langs->trans("Physical");
 	$morphys["mor"] = $langs->trans("Morale");
-	print "<tr><td>".$langs->trans("Person")."</td><td>";
+	print "<tr><td>".$langs->trans("Person")."*</td><td>";
 	$htmls->select_array("morphy",  $morphys, $adh->morphy);
 	print "</td></tr>";
 	
@@ -638,9 +684,6 @@ if ($action == 'edit')
     print "<tr><td>".$langs->trans("Birthday")."</td><td>\n";
     $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'update');
     print "</td></tr>\n";
-
-	// Url photo
-	print '<tr><td>URL photo</td><td><input type="text" name="photo" size="40" value="'.$adh->photo.'"></td></tr>';
 
 	// Profil public
     print "<tr><td>".$langs->trans("Public")."</td><td>\n";
@@ -678,7 +721,7 @@ if ($action == 'create')
 
     print_titre($langs->trans("NewMember"));
 
-    print "<form name='add' action=\"fiche.php\" method=\"post\">\n";
+    print '<form name="add" action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<input type="hidden" name="action" value="add">';
 
     print '<table class="border" width="100%">';
@@ -759,8 +802,7 @@ if ($action == 'create')
     $htmls->select_date(($adh->naiss ? $adh->naiss : -1),'naiss','','',1,'add');
     print "</td></tr>\n";
 
-	// Url photo
-    print '<tr><td>Url photo</td><td><input type="text" name="photo" size="40"></td></tr>';
+	// Attribut optionnels
     foreach($adho->attribute_label as $key=>$value)
     {
         print "<tr><td>$value</td><td><input type=\"text\" name=\"options_$key\" size=\"40\"></td></tr>\n";
@@ -875,7 +917,7 @@ if ($rowid && $action != 'edit')
     }
 
 
-    print '<form action="fiche.php" method="post">';
+    print '<form action="fiche.php" method="post" enctype="multipart/form-data">';
     print '<table class="border" width="100%">';
 
     // Ref
@@ -885,17 +927,26 @@ if ($rowid && $action != 'edit')
 	print '</td></tr>';
 
     // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur">'.$adh->nom.'&nbsp;</td>';
-    $rowspan=19+sizeof($adho->attribute_label);
-	print '<td rowspan="'.$rowspan.'" valign="top" width="50%">';
-    print '&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="2">'.$adh->nom.'&nbsp;</td>';
 	print '</tr>';
 
     // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="2">'.$adh->prenom.'&nbsp;</td></tr>';
 
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur">'.$adh->login.'&nbsp;</td>';
+    $rowspan=16+sizeof($adho->attribute_label);
+	print '<td rowspan="'.$rowspan.'" align="center" valign="middle" width="25%">';
+    if (file_exists($conf->adherent->dir_output."/".$adh->id.".jpg"))
+    {
+        print '<img width="100" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=memberphoto&file='.$adh->id.'.jpg">';
+    }
+    else
+    {
+        print '<img width="100" src="'.DOL_URL_ROOT.'/theme/common/nophoto.jpg">';
+    }
+    print '</td>';
+	print '</tr>';
 
 	// Password
 	print '<tr><td>'.$langs->trans("Password").'</td><td>'.eregi_replace('.','*',$adh->pass).'</td></tr>';
@@ -928,13 +979,10 @@ if ($rowid && $action != 'edit')
     print '<tr><td>'.$langs->trans("PhoneMobile").'</td><td class="valeur">'.$adh->phone_mobile.'</td></tr>';
     
     // EMail
-    print '<tr><td>'.$langs->trans("EMail").($conf->global->ADHERENT_MAIL_REQUIRED?'*':'').'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("EMail").'</td><td class="valeur">'.$adh->email.'&nbsp;</td></tr>';
 
 	// Date naissance
     print '<tr><td>'.$langs->trans("Birthday").'</td><td class="valeur">'.dolibarr_print_date($adh->naiss,'day').'&nbsp;</td></tr>';
-    
-    // URL
-    print '<tr><td>URL Photo</td><td class="valeur">'.$adh->photo.'&nbsp;</td></tr>';
     
     // Public
     print '<tr><td>'.$langs->trans("Public").'</td><td class="valeur">'.yn($adh->public).'</td></tr>';
