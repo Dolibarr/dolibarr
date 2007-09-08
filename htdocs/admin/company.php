@@ -129,7 +129,7 @@ if ($_GET["action"] == 'addthumb')
 		{
 			// Création de la vignette de la page login
 			$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 200, 100, '_small',80);
-			if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
+			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 			{
 				$imgThumbSmall = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_SMALL",$imgThumbSmall);
@@ -138,9 +138,9 @@ if ($_GET["action"] == 'addthumb')
 			
 			// Création de la vignette de la page "Société/Institution"
 			$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$_GET["file"], 100, 30, '_mini',80);
-			if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
+			if (image_format_supported($imgThumbSmall) >= 0 && eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 			{
-			  $imgThumbMini = $reg[1];
+				$imgThumbMini = $reg[1];
 				dolibarr_set_const($db, "MAIN_INFO_SOCIETE_LOGO_MINI",$imgThumbMini);
 			}
 			else dolibarr_syslog($imgThumbMini);

@@ -3066,26 +3066,31 @@ function print_date_range($date_start,$date_end)
  *    \param     maxHeight      Hauteur maximum que dois faire l'image (120 par défaut)
  *    \param     extName        Extension pour différencier le nom de la vignette
  *    \param     quality        Qualité de compression jpeg
- *    \return    imgThumbName   Chemin de la vignette
+ *    \return    string			Chemin de la vignette
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
 {
+	global $langs;
+
 	dolibarr_syslog("functions.inc::vignette file=".$file." extName=".$extName);
 	
-	// Vérification des erreurs dans les paramètres de la fonction
-	//============================================================
-	if(!file_exists($file)){
-		// Si le fichier passé en paramètre n'existe pas
-		return 'Le fichier '.$file.' n\'a pas été trouvé sur le serveur.';
-	}
-	elseif(!eregi('(\.jpg|\.jpeg|\.png)$',$file))
+	// Nettoyage parametres
+	$file=trim($file);
+
+	// Vérification des paramètres
+	if (! $file)
 	{
-		// Todo: Ajouter création vignette pour les autres formats d'images
-		return 'Le fichier '.$file.' n\'est pas géré pour le moment.';
-	}
-	elseif(empty($file)){
 		// Si le fichier n'a pas été indiqué
 		return 'Nom du fichier non renseigné.';
+	}
+	elseif (! file_exists($file))
+	{
+		// Si le fichier passé en paramètre n'existe pas
+		return $langs->trans("ErrorFileNotFound",$file);
+	}
+	elseif(image_format_supported($file) < 0)
+	{
+		return 'This file '.$file.' does not seem to be an image format file name.';
 	}
 	elseif(!is_numeric($maxWidth) || empty($maxWidth) || $maxWidth < 0){
 		// Si la largeur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
@@ -3095,7 +3100,6 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 		// Si la hauteur max est incorrecte (n'est pas numérique, est vide, ou est inférieure à 0)
 		return 'Valeur de la hauteur incorrecte.';
 	}
-	//============================================================
 
 	$fichier = realpath($file); // Chemin canonique absolu de l'image
 	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image
@@ -3107,7 +3111,9 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// Si l'image est plus petite que la largeur et le hauteur max, on ne crée pas de vignette
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
 	{
-		return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
+		// On cree toujours les vignettes
+		dolibarr_syslog("File size is smaller than thumb size",LOG_DEBUG);
+		//return 'Le fichier '.$file.' ne nécessite pas de création de vignette';
 	}
 
 	$imgfonction='';
