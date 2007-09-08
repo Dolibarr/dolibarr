@@ -1226,7 +1226,7 @@ function dol_loginfunction($notused,$pearstatus)
 	// Start Form
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
-		print '<form id="login" name="login" method="post" action="'.DOL_URL_ROOT.'/verifier.php?'.SID.'">';
+		print '<form id="login" name="login" method="post" action="'.DOL_URL_ROOT.'/verifier.php">';
 	}
 	else
 	{
@@ -1293,7 +1293,7 @@ function dol_loginfunction($notused,$pearstatus)
 	{
 		$cryptinstall = DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php';
 		include_once $cryptinstall;
-		print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Code").'</b></td>';
+		print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td><input type="text" size="15" maxlength="10" name="code"></td>';
 		dsp_crypt(0,1);
 		print '</tr>';
