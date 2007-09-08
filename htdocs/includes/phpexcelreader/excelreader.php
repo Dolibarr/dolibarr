@@ -725,22 +725,24 @@ class Spreadsheet_Excel_Reader
         $spos += $length + 4;
         //var_dump($this->formatRecords);
     //echo "code $code $length";
+    //echo 'code dimension '.base_convert(SPREADSHEET_EXCEL_READER_TYPE_DIMENSION,10,16).'<br>';
         while($cont) {
             //echo "mem= ".memory_get_usage()."\n";
 //            $r = &$this->file->nextRecord();
             $lowcode = ord($this->data[$spos]);
+            //echo 'lowcode '.$lowcode.'<br>';
             if ($lowcode == SPREADSHEET_EXCEL_READER_TYPE_EOF) break;
             $code = $lowcode | ord($this->data[$spos+1])<<8;
             $length = ord($this->data[$spos+2]) | ord($this->data[$spos+3])<<8;
             $spos += 4;
             $this->sheets[$this->sn]['maxrow'] = $this->_rowoffset - 1;
             $this->sheets[$this->sn]['maxcol'] = $this->_coloffset - 1;
-            //echo "Code=".base_convert($code,10,16)." $code\n";
+            //echo "Code=".base_convert($code,10,16)." - base16=".$code."<br>";
             unset($this->rectype);
             $this->multiplier = 1; // need for format with %
             switch ($code) {
                 case SPREADSHEET_EXCEL_READER_TYPE_DIMENSION:
-                    //echo 'Type_DIMENSION ';
+                    //echo 'Type_DIMENSION <br>';
                     if (!isset($this->numRows)) {
                         if (($length == 10) ||  ($version == SPREADSHEET_EXCEL_READER_BIFF7)){
                             $this->sheets[$this->sn]['numRows'] = ord($this->data[$spos+2]) | ord($this->data[$spos+3]) << 8;
@@ -751,6 +753,8 @@ class Spreadsheet_Excel_Reader
                         }
                     }
                     //echo 'numRows '.$this->numRows.' '.$this->numCols."\n";
+                    //echo 'numRows '.$this->sheets[$this->sn]['numRows'].'<br>';
+                    //echo 'numRows '.$this->sheets[$this->sn]['numCols'].'<br>';
                     break;
                 case SPREADSHEET_EXCEL_READER_TYPE_MERGEDCELLS:
                     $cellRanges = ord($this->data[$spos]) | ord($this->data[$spos+1])<<8;

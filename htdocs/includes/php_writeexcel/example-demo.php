@@ -17,10 +17,10 @@ $worksheet3 =& $workbook->addworksheet('And another');
 #
 $worksheet->set_column('A:B', 32);
 $heading  =& $workbook->addformat(array(
-                                        bold    => 1,
-                                        color   => 'blue',
-                                        size    => 18,
-                                        merge   => 1,
+                                        'bold'    => 1,
+                                        'color'   => 'blue',
+                                        'size'    => 18,
+                                        'merge'   => 1,
                                         ));
 
 $headings = array('Features of php_writeexcel', '');
@@ -31,11 +31,11 @@ $worksheet->write_row('A1', $headings, $heading);
 # Some text examples
 #
 $text_format =& $workbook->addformat(array(
-                                            bold    => 1,
-                                            italic  => 1,
-                                            color   => 'red',
-                                            size    => 18,
-                                            font    => 'Comic Sans MS'
+                                            'bold'    => 1,
+                                            'italic'  => 1,
+                                            'color'   => 'red',
+                                            'size'    => 18,
+                                            'font'    => 'Comic Sans MS'
                                         ));
 
 $worksheet->write('A2', "Text");
@@ -47,8 +47,8 @@ $worksheet->write('B3', "Hello Excel", $text_format);
 #
 # Some numeric examples
 #
-$num1_format =& $workbook->addformat(array(num_format => '$#,##0.00'));
-$num2_format =& $workbook->addformat(array(num_format => ' d mmmm yyy'));
+$num1_format =& $workbook->addformat(array('num_format' => '$#,##0.00'));
+$num2_format =& $workbook->addformat(array('num_format' => ' d mmmm yyy'));
 
 $worksheet->write('A4', "Numbers");
 $worksheet->write('B4', 1234.56);

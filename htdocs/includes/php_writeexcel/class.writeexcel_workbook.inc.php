@@ -663,7 +663,7 @@ function _store_all_xfs() {
     # The default font index is 0
     #
     $format = $this->_tmp_format;
-    $xf;
+    $xf=NULL;
 
     for ($c=0;$c<15;$c++) {
         $xf = $format->get_xf('style'); # Style XF
@@ -1114,7 +1114,7 @@ function _store_palette() {
     $record          = 0x0092;                  # Record identifier
     $length          = 2 + 4 * sizeof($aref);   # Number of bytes to follow
     $ccv             =         sizeof($aref);   # Number of RGB values to follow
-    //$data;                                      # The RGB data
+    $data=NULL;                                      # The RGB data
 
     # Pack the RGB data
     foreach($aref as $dat) {

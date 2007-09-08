@@ -432,8 +432,16 @@ function set_column() {
         return;
     }
 
-    $width  = $_[4] ? 0 : $_[2]; # Set width to zero if column is hidden
-    $format = $_[3];
+    if (isset($_[4])) {
+    		$width  = $_[4];
+    } else {
+    		$width = 0 ; # Set width to zero if column is hidden
+    }
+    if (isset($_[3])) {
+    	$format = $_[3];
+    } else {
+    	$format = NULL;
+    }    	
 
     list($firstcol, $lastcol) = $_;
 
@@ -1149,8 +1157,12 @@ function write_number() {
     $col     = $_[1];                         # Zero indexed column
     $num     = $_[2];
 //!!!
-    $xf      = $this->_XF($row, $col, $_[3]); # The cell format
-
+    if (isset($_[3])) {
+    	$xf      = $this->_XF($row, $col, $_[3]); # The cell format
+    } else {
+    	$xf      = $this->_XF($row, $col, NULL); # The cell format
+    }
+    
     # Check that row and col are valid and store max and min values
     if ($row >= $this->_xls_rowmax) { return -2; }
     if ($col >= $this->_xls_colmax) { return -2; }
@@ -1206,7 +1218,11 @@ function write_string() {
     $col     = $_[1];                         # Zero indexed column
     $strlen  = strlen($_[2]);
     $str     = $_[2];
-    $xf      = $this->_XF($row, $col, $_[3]); # The cell format
+    if (isset($_[3])) {
+    	$xf      = $this->_XF($row, $col, $_[3]); # The cell format
+    } else {
+    	$xf      = $this->_XF($row, $col, NULL); # The cell format
+    }    
 
     $str_error = 0;
 
@@ -1331,7 +1347,11 @@ function write_formula() {
     # we set $num to zero and set the option flags in $grbit to ensure
     # automatic calculation of the formula when the file is opened.
     #
-    $xf        = $this->_XF($row, $col, $_[3]); # The cell format
+    if (isset($_[3])) {
+    	$xf        = $this->_XF($row, $col, $_[3]); # The cell format
+    } else {
+    	$xf        = $this->_XF($row, $col, NULL); # The cell format
+    }
     $num       = 0x00;                          # Current value of formula
     $grbit     = 0x03;                          # Option flags
     $chn       = 0x0000;                        # Must be zero
@@ -1467,7 +1487,11 @@ function _write_url_web() {
     if (isset($_[5])) {
         $str         = $_[5];                        # Alternative label
     }
-    $xf          = $_[6] ? $_[6] : $this->_url_format;  # The cell format
+   if (isset($_[6])) {
+   	$xf          = $_[6] ;  # The cell format
+   } else {
+   	$xf          = $this->_url_format;  # The cell format
+   }
 
     # Write the visible label using the write_string() method.
     if(!isset($str)) {
@@ -1971,10 +1995,17 @@ function _store_colinfo($_) {
     $coldx       += 0.72;           # Fudge. Excel subtracts 0.72 !?
     $coldx       *= 256;            # Convert to units of 1/256 of a char
 
-    //$ixfe;                       # XF index
-    $grbit    = $_[4] || 0;      # Option flags
+    $ixfe=NULL;                       # XF index
+    $grbit    = 0;
+    if (isset($_[4])) {
+    	$grbit    = $_[4] ;      # Option flags
+    }
     $reserved = 0x00;            # Reserved
-    $format   = $_[3];           # Format object
+    
+    $format   = 0x0F;
+    if (isset($_[3])) {
+	    $format   = $_[3];           # Format object
+    }
 
     # Check for a format object
     if (isset($_[3])) {
@@ -2008,8 +2039,15 @@ function _store_selection($_) {
 
     $rwFirst  = $_[0];                   # First row in reference
     $colFirst = $_[1];                   # First col in reference
-    $rwLast   = $_[2] ? $_[2] : $rwFirst;       # Last  row in reference
-    $colLast  = $_[3] ? $_[3] : $colFirst;      # Last  col in reference
+    $rwLast   = $rwFirst;       # Last  row in reference
+    if (isset($_[2])) {
+    	$rwLast   = $_[2];       # Last  row in reference
+    }
+
+    $colLast  = $colFirst;      # Last  col in reference
+    if (isset($_[3])) {
+    	$colLast  = $_[3] ;      # Last  col in reference
+    }
 
     # Swap last row/col for first row/col as necessary
     if ($rwFirst > $rwLast) {
@@ -2595,8 +2633,14 @@ function insert_bitmap() {
     $bitmap      = $_[2];
     $x           = $_[3] ? $_[3] : 0;
     $y           = $_[4] ? $_[4] : 0;
-    $scale_x     = $_[5] ? $_[5] : 1;
-    $scale_y     = $_[6] ? $_[6] : 1;
+    $scale_x     =  1;
+    $scale_y     =  1;
+    if (isset($_[5])) {
+    	$scale_x     = $_[5] ;
+    }
+    if (isset($_[6])) {
+	$scale_y     = $_[6] ;
+    }
 
     list($width, $height, $size, $data) = $this->_process_bitmap($bitmap);
 

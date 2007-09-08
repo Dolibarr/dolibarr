@@ -1456,6 +1456,7 @@ function _func()
  {
     $num_args = 0; // number of arguments received
     $function = $this->_current_token;
+    $result=0;
     $this->_advance();
     $this->_advance();         // eat the "("
     while ($this->_current_token != ')')

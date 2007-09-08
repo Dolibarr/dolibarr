@@ -13,10 +13,11 @@ require_once "class.writeexcel_workbook.inc.php";
 require_once "class.writeexcel_worksheet.inc.php";
 
 $fname = tempnam("/tmp", "colors.xls");
-$workbook = &new writeexcel_workbook($fname);
+$workbook = new writeexcel_workbook($fname);
 
 # Some common formats
 $center  =& $workbook->addformat(array('align' => 'center'));
+
 $heading =& $workbook->addformat(array('align' => 'center', 'bold' => 1));
 
 # Try this to see the default Excel 5 palette
@@ -47,6 +48,7 @@ $colors = array(
 
 $worksheet1 =& $workbook->addworksheet('Named colors');
 
+
 $worksheet1->set_column(0, 3, 15);
 
 $worksheet1->write(0, 0, "Index", $heading);
@@ -69,6 +71,10 @@ foreach ($colors as $color=>$index) {
     $worksheet1->write($i+1, 3, '',                        $format);
     $i++;
 }
+
+
+
+
 
 
 ######################################################################
@@ -103,6 +109,7 @@ for ($i=8;$i<=63;$i++) {
       }
     }
 }
+
 
 $workbook->close();
 
