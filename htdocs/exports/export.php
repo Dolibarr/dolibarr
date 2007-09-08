@@ -445,7 +445,7 @@ if ($step == 3 && $datatoexport)
     
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Entities").'</td>';
+    print '<td>'.$langs->trans("Entities").'</td>';
     print '<td>'.$langs->trans("ExportedFields").'</td>';
     print '<td align="right" colspan="2">'.$langs->trans("Position").'</td>';
     print '<td>&nbsp;</td>';
@@ -618,6 +618,13 @@ if ($step == 4 && $datatoexport)
     
     print '</td><td width="50%">&nbsp;</td></tr>';
     print '</table>';
+    
+    // test d'affichage du tableau excel
+    /*    
+    print '<table width="100%"><tr><td>';
+    viewExcelFileContent($conf->export->dir_temp.'/1/export_commande_1.xls');
+    print '</td></tr></table>';
+    */
 }
 
    

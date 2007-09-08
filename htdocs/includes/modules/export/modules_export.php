@@ -148,19 +148,19 @@ class ModeleExports
         
         // Execute requete export        
         $sql=$this->array_export_sql[0];
-		$resql = $this->db->query($sql);
-		if ($resql)
-		{
+		    $resql = $this->db->query($sql);
+		    if ($resql)
+		    {
             // Genere en-tete
             $obj->write_header();		    
 		    
             // Genere ligne de titre
             $obj->write_title();
 
-			while ($objp = $this->db->fetch_object($resql))
-			{
-				$var=!$var;
-                $obj->write_record($objp,$array_selected);
+			     while ($objp = $this->db->fetch_object($resql))
+			     {
+				      $var=!$var;
+              $obj->write_record($objp,$array_selected);
             }
             
             // Genere en-tete

@@ -1390,3 +1390,48 @@ div.menuFleche
 	position:relative;
 
 }
+
+/* ============================================================================== */
+/*  PHP_ExcelReader                                                               */
+/* ============================================================================== */
+
+.table_data
+{
+	border-style:ridge;
+	border-width:1;
+}
+.tab_base
+{
+	background:#C5D0DD;
+	font-weight:bold;
+	border-style:ridge;
+	border-width:1;
+	cursor:pointer;
+}
+.table_sub_heading
+{
+	background:#CCCCCC;
+	font-weight:bold;
+	border-style:ridge;
+	border-width:1;
+}
+.table_body
+{
+	background:#F0F0F0;
+	font-wieght:normal;
+	font-size:12;
+	font-family:sans-serif;
+	border-style:ridge;
+	border-width:1;
+	border-spacing: 0px;
+	border-collapse: collapse;
+}
+.tab_loaded
+{
+	background:#222222;
+	color:white;
+	font-weight:bold;
+	border-style:groove;
+	border-width:1;
+	cursor:pointer;
+}
