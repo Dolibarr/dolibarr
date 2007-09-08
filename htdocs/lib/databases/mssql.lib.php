@@ -2,6 +2,7 @@
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2007      Simon Desee          <simon@dedisoft.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -426,11 +427,13 @@ class DoliDb
     */
     function affected_rows($resultset=0)
     {
-        // Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
-        if (! is_resource($resultset)) { $resultset=$this->results; }
-        // mssql necessite un link de base pour cette fonction contrairement
-        // a pqsql qui prend un resultset
-        return mssql_affected_rows($this->db);
+    	// Si le resultset n'est pas fourni, on prend le dernier utilisé sur cette connexion
+      if (! is_resource($resultset)) { $resultset=$this->results; }
+      // mssql necessite un link de base pour cette fonction contrairement
+      // a pqsql qui prend un resultset
+      $rsRows = mssql_query("select @@rowcount as rows", $db);
+      return mssql_result($rsRows, 0, "rows");
+      //return mssql_affected_rows($this->db);
     }
 
 
