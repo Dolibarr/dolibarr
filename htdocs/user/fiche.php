@@ -241,7 +241,6 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->office_fax    = trim($_POST["office_fax"]);
 		$edituser->user_mobile   = trim($_POST["user_mobile"]);
 		$edituser->email         = trim($_POST["email"]);
-		$edituser->note          = trim($_POST["note"]);
 		$edituser->webcal_login  = trim($_POST["webcal_login"]);
 
 		$ret=$edituser->update();
@@ -922,11 +921,6 @@ else
             print '<td>'.dolibarr_print_date($fuser->datepreviouslogin,"dayhour").'</td>';
             print "</tr>\n";
 
-            // Note
-            print "<tr>".'<td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td colspan="2">'.nl2br($fuser->note).'&nbsp;</td>';
-            print "</tr>\n";
-
             // Autres caractéristiques issus des autres modules
             if ($conf->webcal->enabled)
             {
@@ -1346,29 +1340,6 @@ else
             print $fuser->getLibStatut(4);
             print '</td></tr>';
             
-            // Note
-            print '<tr><td valign="top">'.$langs->trans("Note").'</td><td colspan="2">';
-            if ($caneditfield) 
-            {
-            	if ($conf->fckeditor->enabled)
-            	{
-            		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-            		$doleditor=new DolEditor('note',$fuser->note,180,'dolibarr_notes','',false);
-            		$doleditor->Create();
-            	}
-            	else
-            	{
-            		print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
-		            print $fuser->note;
-		            print '</textarea>';
-		          }
-		        }
-		        else
-		        {
-		        	print nl2br($fuser->note);
-		        }
-		        print '</td></tr>';
-
             // Autres caractéristiques issus des autres modules
             if ($conf->webcal->enabled)
             {
