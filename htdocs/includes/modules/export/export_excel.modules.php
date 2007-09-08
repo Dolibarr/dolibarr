@@ -23,7 +23,7 @@
 /**
        	\file       htdocs/includes/modules/export/export_excel.modules.php
 		\ingroup    export
-		\brief      Fichier de la classe permettant de générer les export au format CSV
+		\brief      Fichier de la classe permettant de générer les export au format Excel
 		\author	    Laurent Destailleur
 		\version    $Revision$
 */
@@ -34,8 +34,8 @@ require_once(PHP_WRITEEXCEL_PATH."/class.writeexcel_worksheet.inc.php");
 
 
 /**
-	    \class      ExportCsv
-		\brief      Classe permettant de générer les factures au modèle Crabe
+	    \class      ExportExcel
+		\brief      Classe permettant de générer les export au format Excel
 */
 
 class ExportExcel extends ModeleExports
@@ -109,8 +109,11 @@ class ExportExcel extends ModeleExports
 
     function open_file($file)
     {
+        global $langs;
+        $langs->load("exports");
         dolibarr_syslog("ExportExcel::open_file file=$file");
         $this->workbook = &new writeexcel_workbookbig($file);
+        $this->workbook->set_sheetname($langs->trans("Sheet"));
         $this->worksheet = &$this->workbook->addworksheet();
 
         // $this->worksheet->set_column(0, 50, 18);

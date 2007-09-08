@@ -430,6 +430,18 @@ function set_codepage($cp) {
       $this->_codepage = $codepage;
 }
 
+###############################################################################
+#
+# set_sheetname()
+#
+# Set the sheetname
+#
+function set_sheetname($sheetname) {
+
+    if($sheetname)
+    $this->_sheetname = $sheetname;
+}
+
 
 ###############################################################################
 #

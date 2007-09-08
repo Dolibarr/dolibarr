@@ -24,3 +24,4 @@ FormatedExport=Assistant export
 FormatedExportDesc1=Cet espace permet de réaliser des exports personalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
 FormatedExportDesc2=La première étape est de choisir un des lots de données prédéfinis, ensuite de choisir les champs que vous voulez dans votre fichier résultat, et dans quel ordre.
 FormatedExportDesc3=Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
+Sheet=Feuille
