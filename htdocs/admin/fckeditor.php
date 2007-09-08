@@ -37,30 +37,33 @@ if (!$user->admin)
 
 // Constante et traduction de la description du module
 $modules = array(
-'SOCIETE' => 'FCKeditorForCompany',
+'USER' => 'FCKeditorForUsers',
+'SOCIETE' => 'FCKeditorForCompany',			// TODO Regrouper les 4 parm sur edit notes en 1 seul
 'PRODUCTDESC' => 'FCKeditorForProduct',
-'DETAILS' => 'FCKeditorForProductDetails',
-'DETAILS_PERSO' => 'FCKeditorForProductDetailsPerso',
+'MEMBER' => 'FCKeditorForMembers',
 'MAILING' => 'FCKeditorForMailing',
-'MEMBER' => 'FCKeditorForMembers'
+'DETAILS' => 'FCKeditorForProductDetails',
+'DETAILS_PERSO' => 'FCKeditorForProductDetailsPerso'
 );
 // Conditions pour que l'option soit proposée
 $conditions = array(
+'USER' => 1,
 'SOCIETE' => $conf->societe->enabled,
 'PRODUCTDESC' => ($conf->produit->enabled||$conf->service->enabled),
-'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
-'DETAILS_PERSO' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
+'MEMBER' => $conf->adherent->enabled,
 'MAILING' => $conf->mailing->enabled,
-'MEMBER' => $conf->adherent->enabled
+'DETAILS' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled),
+'DETAILS_PERSO' => ($conf->facture->enabled||$conf->propal->enabled||$conf->commande->enabled)
 );
 // Picto
 $picto = array(
+'USER' => 'user',
 'SOCIETE' => 'company',
 'PRODUCTDESC' => 'product',
-'DETAILS' => 'generic',
-'DETAILS_PERSO' => 'generic',
+'MEMBER' => 'user',
 'MAILING' => 'email',
-'MEMBER' => 'user'
+'DETAILS' => 'generic',
+'DETAILS_PERSO' => 'generic'
 );
 
 
@@ -70,7 +73,7 @@ foreach($modules as $const => $desc)
 	{
 	    dolibarr_set_const($db, "FCKEDITOR_ENABLE_".$const, "1");
 	    // Si fckeditor est activé dans la description produit/service, on l'active dans les formulaires
-	    if ($const == 'PRODUCTDESC')
+	    if ($const == 'PRODUCTDESC' && $conf->global->PRODUIT_DESC_IN_FORM)
 	    {
 	    	dolibarr_set_const($db, "FCKEDITOR_ENABLE_DETAILS", "1");
 	    }

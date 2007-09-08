@@ -76,6 +76,11 @@ function user_prepare_head($user)
         $h++;
     }
 
+    $head[$h][0] = DOL_URL_ROOT.'/user/note.php?id='.$user->id;
+    $head[$h][1] = $langs->trans("Note");
+    $head[$h][2] = 'note';
+    $h++;
+
     $head[$h][0] = DOL_URL_ROOT.'/user/info.php?id='.$user->id;
     $head[$h][1] = $langs->trans("Info");
     $head[$h][2] = 'info';

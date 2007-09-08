@@ -157,6 +157,15 @@ insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_
 insert into llx_const (name, value, type, note, visible) values ('ADHERENT_CARD_TEXT','%TYPE% n° %ID%\r\n%PRENOM% %NOM%\r\n<%EMAIL%>\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%','texte','Texte imprime sur la carte adherent',0);
 
 --
+-- FCKEditor
+--
+insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_USER',       1,'yesno','Activation fckeditor sur notes utilisateurs',0);
+insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_SOCIETE',    1,'yesno','Activation fckeditor sur notes societe',0);
+insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_PRODUCTDESC',1,'yesno','Activation fckeditor sur notes produits',0);
+insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_MEMBER',     1,'yesno','Activation fckeditor sur notes adherent',0);
+insert into llx_const (name, value, type, note, visible) values ('FCKEDITOR_ENABLE_MAILING',    1,'yesno','Activation fckeditor sur emailing',0);
+
+--
 -- OsCommerce 1
 --
 insert into llx_const (name, value, type, note, visible) values ('OSC_DB_HOST','localhost','chaine', 'Host for OSC database for OSCommerce module 1', 0);

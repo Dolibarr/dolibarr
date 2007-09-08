@@ -21,42 +21,42 @@
  */
 
 /**
-        \file       htdocs/adherents/note.php
-        \ingroup    member
-        \brief      Fiche de notes sur un adherent
+        \file       htdocs/user/note.php
+        \ingroup    usergroup
+        \brief      Fiche de notes sur un utilisateur Dolibarr
 		\version    $Revision$
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT.'/lib/member.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/adherents/adherent.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/usergroups.lib.php');
+require_once(DOL_DOCUMENT_ROOT.'/user.class.php');
 
 $action=isset($_GET["action"])?$_GET["action"]:(isset($_POST["action"])?$_POST["action"]:"");
 $id=isset($_GET["id"])?$_GET["id"]:(isset($_POST["id"])?$_POST["id"]:"");
 
-$user->getrights('adherent');
+$user->getrights('user');
 
 $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
 
-if (!$user->rights->adherent->lire)
+if (!$user->rights->user->user->lire)
   accessforbidden();
 
-$adh = new Adherent($db);
-$adh->id = $id;
-$adh->fetch($id);
+$fuser = new User($db);
+$fuser->id = $id;
+$fuser->fetch();
 
 
 /******************************************************************************/
 /*                     Actions                                                */
 /******************************************************************************/
 
-if ($_POST["action"] == 'update' && $user->rights->adherent->creer && ! $_POST["cancel"])
+if ($_POST["action"] == 'update' && $user->rights->user->user->creer && ! $_POST["cancel"])
 {
 	$db->begin();
 	
-	$res=$adh->update_note($_POST["note"],$user);
+	$res=$fuser->update_note($_POST["note"],$user);
 	if ($res < 0)
 	{
 		$mesg='<div class="error">'.$adh->error.'</div>';
@@ -80,9 +80,9 @@ $html = new Form($db);
 
 if ($id)
 {
-	$head = member_prepare_head($adh);
+	$head = user_prepare_head($fuser);
 	
-	dolibarr_fiche_head($head, 'note', $langs->trans("Member"));
+	dolibarr_fiche_head($head, 'note', $langs->trans("User"));
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
@@ -93,42 +93,42 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($adh,'id');
+	print $html->showrefnav($fuser,'id');
 	print '</td>';
 	print '</tr>';
 
     // Nom
-    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$adh->nom.'&nbsp;</td>';
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td class="valeur" colspan="3">'.$fuser->nom.'&nbsp;</td>';
 	print '</tr>';
 
     // Prenom
-    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$adh->prenom.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Firstname").'</td><td class="valeur" colspan="3">'.$fuser->prenom.'&nbsp;</td></tr>';
 
     // Login
-    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$adh->login.'&nbsp;</td></tr>';
+    print '<tr><td>'.$langs->trans("Login").'</td><td class="valeur" colspan="3">'.$fuser->login.'&nbsp;</td></tr>';
 
 	// Note
     print '<tr><td valign="top">'.$langs->trans("Note").'</td>';
 	print '<td valign="top" colspan="3">';
-	if ($action == 'edit' && $user->rights->adherent->creer)
+	if ($action == 'edit' && $user->rights->user->user->creer)
 	{
 		print "<input type=\"hidden\" name=\"action\" value=\"update\">";
-		print "<input type=\"hidden\" name=\"id\" value=\"".$adh->id."\">";
-		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MEMBER)
+		print "<input type=\"hidden\" name=\"id\" value=\"".$fuser->id."\">";
+		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 	    {
 		    // Editeur wysiwyg
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('note',$adh->commentaire,280,'dolibarr_notes','In',true);
+			$doleditor=new DolEditor('note',$fuser->note,280,'dolibarr_notes','In',true);
 			$doleditor->Create();
 	    }
 	    else
 	    {
-			print '<textarea name="note" cols="80" rows="10">'.$adh->commentaire.'</textarea>';
+			print '<textarea name="note" cols="80" rows="10">'.$fuser->note.'</textarea>';
 	    }
 	}
 	else
 	{
-		print nl2br($adh->commentaire);
+		print nl2br($fuser->note);
 	}
 	print "</td></tr>";
 
@@ -151,9 +151,9 @@ if ($id)
     print '</div>';
     print '<div class="tabsAction">';
 
-    if ($user->rights->adherent->creer && $action != 'edit')
+    if ($user->rights->user->user->creer && $action != 'edit')
     {
-        print "<a class=\"butAction\" href=\"note.php?id=$adh->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
+        print "<a class=\"butAction\" href=\"note.php?id=$fuser->id&amp;action=edit\">".$langs->trans('Edit')."</a>";
     }
 
     print "</div>";
