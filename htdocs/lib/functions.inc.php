@@ -3346,6 +3346,31 @@ function make_alpha_from_numbers($number)
 }
 
 /*
+ *    \brief      Affiche le contenu d'un fichier CSV sous forme de tableau
+ *    \param      file_to_include     Fichier CSV à afficher
+ *    \param      max_rows            Nombre max de lignes à afficher (0 = illimité)  	
+ */
+function viewCsvFileContent($file_to_include='',$max_rows=0)
+{
+	$fic = fopen($file_to_include, 'rb');
+	$count = 0;
+	
+	print '<table border="1">';
+	for ($ligne = fgetcsv($fic, 1024); (!feof($fic) && (($max_rows > 0)?($count<=$max_rows):1==1)); $ligne = fgetcsv($fic, 1024))
+	{
+		print '<tr>';
+		$j = sizeof($ligne);
+		for ($i = 0; $i < $j; $i++)
+		{
+			print '<td>'.$ligne[$i].'</td>';
+		}
+		print '</tr>';
+		$count++;
+	}
+	print '</table>';
+}
+
+/*
  *    \brief      Affiche le contenu d'un fichier Excel (avec les feuilles de calcul) sous forme de tableau
  *    \param      file_to_include     Fichier Excel à afficher
  *    \param      max_rows            Nombre max de lignes à afficher (0 = illimité)
