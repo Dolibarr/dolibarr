@@ -3360,6 +3360,7 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 	      var sheet_HTML = Array();\n";
 	      for($sheet=0;$sheet<count($data->sheets);$sheet++)
 	      {
+	      	$table_output[$sheet] .= $data->sheets[$sheet]['numCols'];
 	      	$table_output[$sheet] .= "<TABLE CLASS='table_body'>
 	      	<TR>
 	      	  <TD>&nbsp;</TD>";

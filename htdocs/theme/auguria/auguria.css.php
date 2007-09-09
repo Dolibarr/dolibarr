@@ -1264,14 +1264,14 @@ form.inplaceeditor-form a { /* The cancel link */
 .table_data
 {
 	border-style:ridge;
-	border-width:1;
+	border-width: 1px;
 }
 .tab_base
 {
 	background:#C5D0DD;
 	font-weight:bold;
 	border-style:ridge;
-	border-width:1;
+	border: 1px;
 	cursor:pointer;
 }
 .table_sub_heading
@@ -1279,16 +1279,15 @@ form.inplaceeditor-form a { /* The cancel link */
 	background:#CCCCCC;
 	font-weight:bold;
 	border-style:ridge;
-	border-width:1;
+	border-width: 1px;
 }
 .table_body
 {
 	background:#F0F0F0;
-	font-wieght:normal;
-	font-size:12;
+	font-weight:normal;
 	font-family:sans-serif;
 	border-style:ridge;
-	border-width:1;
+	border-width: 1px;
 	border-spacing: 0px;
 	border-collapse: collapse;
 }
@@ -1298,6 +1297,6 @@ form.inplaceeditor-form a { /* The cancel link */
 	color:white;
 	font-weight:bold;
 	border-style:groove;
-	border-width:1;
+	border: 1px;
 	cursor:pointer;
 }
