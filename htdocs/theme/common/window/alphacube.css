@@ -1,6 +1,6 @@
 .overlay_alphacube {
 	background-color: #85BBEF;
-	filter:alpha(opacity=60);
+/*	filter:alpha(opacity=60); 	*/
 	-moz-opacity: 0.6;
 	opacity: 0.6;
 }
@@ -142,7 +142,7 @@
 
 .alphacube_wired_frame {
 	background: #FFF;
-	filter:alpha(opacity=60);
+/*	filter:alpha(opacity=60);	*/
 	-moz-opacity: 0.6;
 	opacity: 0.6;	
 }
