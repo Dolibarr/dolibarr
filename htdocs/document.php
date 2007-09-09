@@ -29,7 +29,10 @@
    \version    $Revision$
 */
 
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+
 require_once("main.inc.php");
+
 
 function llxHeader()
 {

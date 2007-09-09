@@ -113,8 +113,10 @@ $dir = "../includes/modules/societe/";
 $handle = opendir($dir);
 if ($handle)
 {
-  $var = true;
-  while (($file = readdir($handle))!==false)
+	$var = true;
+	
+	// Loop on each module find in opened directory
+	while (($file = readdir($handle))!==false)
     {
       if (substr($file, 0, 15) == 'mod_codeclient_' && substr($file, -3) == 'php')
 	{

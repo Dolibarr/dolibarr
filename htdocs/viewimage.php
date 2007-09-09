@@ -28,6 +28,8 @@
 		\version    $Revision$
 */
 
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+
 
 // C'est un wrapper, donc header vierge
 function llxHeader() { }

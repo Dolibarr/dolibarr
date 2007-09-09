@@ -27,9 +27,16 @@
         \brief      Fichier de gestion de la popup de selection de date eldy
         \version    $Revision$
 */
+if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
+if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
+if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
+//if (! defined('NOREQUIREDB'))   define('NOREQUIREDB','1');	// Not disabled cause need to load personalized language
+if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
+//if (! defined('NOREQUIRETRAN')) define('NOREQUIRETRAN','1');	// Not disabled cause need to do translations
 
-require_once("../conf/conf.php");
 require_once("../master.inc.php");
+
+
 $langs->trans("main");
 
 if(!isset($_GET["cm"])) $_GET["cm"]="shw";

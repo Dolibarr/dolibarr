@@ -31,14 +31,11 @@
         \version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
-
 
 /**
         \class 		Societe
         \brief 		Classe permettant la gestion des societes
 */
-
 class Societe
 {
 	var $db;
@@ -982,6 +979,8 @@ class Societe
 		
 		if ($this->id)
 		{
+			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+
 			$discount = new DiscountAbsolute($this->db);
 			$discount->fk_soc=$this->id;
 			$discount->amount_ht=price2num($remise,'MT');
@@ -1012,8 +1011,10 @@ class Societe
 	{
 		if ($this->id)
 		{
+			require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+			
 			$discount = new DiscountAbsolute($this->db);
-			$discount->fetch($id);
+			$result=$discount->fetch($id);
 			$result=$discount->delete();
 			return $result;
 		}

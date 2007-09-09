@@ -136,42 +136,58 @@ if (isset($_SERVER["HTTP_USER_AGENT"]))
 }
 
 // Chargement des includes principaux
-require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
-require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
+if (! defined('NOREQUIREUSER')) require_once(DOL_DOCUMENT_ROOT ."/user.class.php");
+if (! defined('NOREQUIREMENU')) require_once(DOL_DOCUMENT_ROOT ."/menu.class.php");
+if (! defined('NOREQUIREHTML')) require_once(DOL_DOCUMENT_ROOT ."/html.form.class.php");
+if (! defined('NOREQUIREDB'))   require_once(DOL_DOCUMENT_ROOT ."/lib/databases/".$conf->db->type.".lib.php");
+if (! defined('NOREQUIRETRAN')) require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
+if (! defined('NOREQUIRESOC'))  require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
 
 /*
  * Creation objet $langs
  */
-require_once(DOL_DOCUMENT_ROOT ."/translate.class.php");
-$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);	// A mettre apres lecture de la conf
+if (! defined('NOREQUIRETRAN')) 
+{
+	$langs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);	// A mettre apres lecture de la conf
+}
 
 /*
  * Creation objet $db
  */
-$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-if (! $db->connected) {
-  dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-  exit;   
+if (! defined('NOREQUIREDB'))   
+{
+	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+	if (! $db->connected)
+	{
+		dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
+	exit;   
+	}
 }
 
 /*
  * Creation objet $user
  */
-$user = new User($db);
+if (! defined('NOREQUIREUSER')) 
+{
+	$user = new User($db);
+}
 
 /*
  * Chargement objet $conf
  */
-$conf->setValues($db);
+if (! defined('NOREQUIREDB'))   
+{
+	$conf->setValues($db);
+}
 
 /*
  * Chargement langage par défaut
  */
-$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
-$langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
-
+if (! defined('NOREQUIRETRAN')) 
+{
+	$langs->setDefaultLang($conf->global->MAIN_LANG_DEFAULT);
+	$langs->setPhpLang($conf->global->MAIN_LANG_DEFAULT);
+}
 
 /*
  * Pour utiliser d'autres versions des librairies externes que les
@@ -222,57 +238,58 @@ if (defined("MAIN_MODULE_TELEPHONIE") && MAIN_MODULE_TELEPHONIE) require_once(FP
  * Creation objet mysoc
  * Objet Societe qui contient carac de l'institution géré par Dolibarr.
  */
-require_once(DOL_DOCUMENT_ROOT ."/societe.class.php");
-$mysoc=new Societe($db);
-$mysoc->id=0;
-$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
-$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
-$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
-$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
-// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
-if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
+if (! defined('NOREQUIRESOC'))
 {
-	$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-    $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
-    $result=$db->query($sql);
-    if ($result)
-    {
-        $obj = $db->fetch_object();
-        $mysoc->pays_code=$obj->code;
-    }
-    else {
-        dolibarr_print_error($db);
-    }
+	$mysoc=new Societe($db);
+	$mysoc->id=0;
+	$mysoc->nom=$conf->global->MAIN_INFO_SOCIETE_NOM;
+	$mysoc->adresse=$conf->global->MAIN_INFO_SOCIETE_ADRESSE;
+	$mysoc->cp=$conf->global->MAIN_INFO_SOCIETE_CP;
+	$mysoc->ville=$conf->global->MAIN_INFO_SOCIETE_VILLE;
+	// Si dans MAIN_INFO_SOCIETE_PAYS on a un id de pays, on recupere code
+	if (is_numeric($conf->global->MAIN_INFO_SOCIETE_PAYS))
+	{
+		$mysoc->pays_id=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+	    $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
+	    $sql .= " WHERE rowid = ".$conf->global->MAIN_INFO_SOCIETE_PAYS;
+	    $result=$db->query($sql);
+	    if ($result)
+	    {
+	        $obj = $db->fetch_object();
+	        $mysoc->pays_code=$obj->code;
+	    }
+	    else {
+	        dolibarr_print_error($db);
+	    }
+	}
+	// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
+	else
+	{
+		$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
+	}
+	$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
+	$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
+	$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
+	// Anciens id prof
+	$mysoc->siren=$conf->global->MAIN_INFO_SIREN;
+	$mysoc->siret=$conf->global->MAIN_INFO_SIRET;
+	$mysoc->ape=$conf->global->MAIN_INFO_APE;
+	$mysoc->rcs=$conf->global->MAIN_INFO_RCS;
+	// Id prof génériques
+	$mysoc->profid1=$conf->global->MAIN_INFO_SIREN;
+	$mysoc->profid2=$conf->global->MAIN_INFO_SIRET;
+	$mysoc->profid3=$conf->global->MAIN_INFO_APE;
+	$mysoc->profid4=$conf->global->MAIN_INFO_RCS;
+	$mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
+	$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
+	$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
+	$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
+	$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
+	$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
+	$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
+	$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
+	$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
 }
-// Si dans MAIN_INFO_SOCIETE_PAYS on a deja un code, tout est fait
-else
-{
-	$mysoc->pays_code=$conf->global->MAIN_INFO_SOCIETE_PAYS;
-}
-$mysoc->tel=$conf->global->MAIN_INFO_SOCIETE_TEL;
-$mysoc->fax=$conf->global->MAIN_INFO_SOCIETE_FAX;
-$mysoc->url=$conf->global->MAIN_INFO_SOCIETE_WEB;
-// Anciens id prof
-$mysoc->siren=$conf->global->MAIN_INFO_SIREN;
-$mysoc->siret=$conf->global->MAIN_INFO_SIRET;
-$mysoc->ape=$conf->global->MAIN_INFO_APE;
-$mysoc->rcs=$conf->global->MAIN_INFO_RCS;
-// Id prof génériques
-$mysoc->profid1=$conf->global->MAIN_INFO_SIREN;
-$mysoc->profid2=$conf->global->MAIN_INFO_SIRET;
-$mysoc->profid3=$conf->global->MAIN_INFO_APE;
-$mysoc->profid4=$conf->global->MAIN_INFO_RCS;
-$mysoc->tva_assuj=$conf->global->FACTURE_TVAOPTION;
-$mysoc->tva_intra=$conf->global->MAIN_INFO_TVAINTRA;
-$mysoc->capital=$conf->global->MAIN_INFO_CAPITAL;
-$mysoc->forme_juridique_code=$conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE;
-$mysoc->email=$conf->global->MAIN_INFO_SOCIETE_MAIL;
-$mysoc->adresse_full=$mysoc->adresse."\n".$mysoc->cp." ".$mysoc->ville;
-$mysoc->logo=$conf->global->MAIN_INFO_SOCIETE_LOGO;
-$mysoc->logo_small=$conf->global->MAIN_INFO_SOCIETE_LOGO_SMALL;
-$mysoc->logo_mini=$conf->global->MAIN_INFO_SOCIETE_LOGO_MINI;
-
 
 // Sert uniquement dans module telephonie
 $yesno[0]="no";
