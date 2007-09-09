@@ -528,7 +528,12 @@ function dolibarr_print_date($time,$format='')
         $shour = $reg[4];
         $smin = $reg[5];
 
-        if ($syear < 1970 && isset($_SERVER["WINDIR"]))
+		$usealternatemethod=false;
+		if ($year <= 1970) $usealternatemethod=true;
+		if ($year >= 2038) $usealternatemethod=true;
+		//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+
+        if ($usealternatemethod)
         {
             return strftime($format,dolibarr_mktime($shour,$smin,0,$smonth,$sday,$syear));
         }
@@ -554,7 +559,7 @@ function dolibarr_stringtotime($string)
 {
 	$string=eregi_replace('[^0-9]','',$string);
 	$tmp=$string.'000000';					// Si date YYYYMMDD
-	$date=mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
+	$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 	return $date;
 }
 
@@ -591,9 +596,9 @@ function dolibarr_stringtotime($string)
 function dolibarr_getdate($timestamp,$fast=false)
 {
 	$usealternatemethod=false;
-	if ($year <= 1901) $usealternatemethod=true;
+	if ($year <= 1970) $usealternatemethod=true;
 	if ($year >= 2038) $usealternatemethod=true;
-	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
 	
 	if ($usealternatemethod)
 	{
@@ -624,9 +629,9 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
 	$usealternatemethod=false;
-	if ($year <= 1901) $usealternatemethod=true;
+	if ($year <= 1970) $usealternatemethod=true;
 	if ($year >= 2038) $usealternatemethod=true;
-	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
 	
 	if ($usealternatemethod)
 	{
@@ -650,7 +655,7 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 
 
 /**
-		\brief  	Returna formated date
+		\brief  	Returns formated date
 		\param		fmt				Format
 		\param		timestamp		Date
 		\return		string			Formated date
@@ -658,9 +663,9 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 function dolibarr_date($fmt,$timestamp)
 {
 	$usealternatemethod=false;
-	if ($year <= 1901) $usealternatemethod=true;
+	if ($year <= 1970) $usealternatemethod=true;
 	if ($year >= 2038) $usealternatemethod=true;
-	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
 	
 	if ($usealternatemethod)
 	{
