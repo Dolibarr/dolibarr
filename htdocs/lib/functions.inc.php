@@ -39,7 +39,13 @@
    Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
-include_once("../includes/adodbtime/adodb-time.inc.php");
+// Pour compatibilité lors de l'upgrade
+if (!defined('DOL_DOCUMENT_ROOT'))
+{
+	define('DOL_DOCUMENT_ROOT', '..');
+}
+
+include_once(DOL_DOCUMENT_ROOT."/includes/adodbtime/adodb-time.inc.php");
 
 
 /**
