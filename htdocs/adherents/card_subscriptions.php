@@ -265,7 +265,10 @@ print '<td valign="top" width="50%">';
 *
 */
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
-$sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank,";
+$sql.= " c.rowid as crowid, c.cotisation,";
+$sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
+$sql.= " ".$db->pdate("c.datef")." as datef,";
+$sql.= " c.fk_bank,";
 $sql.= " b.rowid as bid,";
 $sql.= " ba.rowid as baid, ba.label, ba.bank";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
@@ -286,7 +289,8 @@ print "<table class=\"noborder\" width=\"100%\">\n";
 
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Ref").'</td>';
-print '<td>'.$langs->trans("DateSubscription").'</td>';
+print '<td align="center">'.$langs->trans("DateSubscription").'</td>';
+print '<td align="center">'.$langs->trans("DateEnd").'</td>';
 print '<td align="right">'.$langs->trans("Amount").'</td>';
 if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 {
@@ -303,7 +307,8 @@ while ($i < $num)
 	$cotisationstatic->ref=$objp->crowid;
 	$cotisationstatic->id=$objp->crowid;
 	print '<td>'.$cotisationstatic->getNomUrl(1).'</td>';
-	print "<td>".dolibarr_print_date($objp->dateadh,'day')."</td>\n";
+	print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
+	print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
 	print '<td align="right">'.price($objp->cotisation).'</td>';
 	if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
 	{

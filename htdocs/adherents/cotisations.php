@@ -151,7 +151,10 @@ if ($msg)	print $msg.'<br>';
 
 // Liste des cotisations
 $sql = "SELECT d.rowid, d.prenom, d.nom, d.societe,";
-$sql.= " c.rowid as crowid, c.cotisation, ".$db->pdate("c.dateadh")." as dateadh, c.fk_bank as bank, c.note,";
+$sql.= " c.rowid as crowid, c.cotisation,";
+$sql.= " ".$db->pdate("c.dateadh")." as dateadh,";
+$sql.= " ".$db->pdate("c.datef")." as datef,";
+$sql.= " c.fk_bank as bank, c.note,";
 $sql.= " b.fk_account";
 $sql.= " FROM ".MAIN_DB_PREFIX."adherent as d, ".MAIN_DB_PREFIX."cotisation as c";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank as b ON c.fk_bank=b.rowid";
@@ -177,13 +180,14 @@ if ($result)
 
     print '<tr class="liste_titre">';
     print_liste_field_titre($langs->trans("Ref"),"cotisations.php","c.rowid",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Name"),"cotisations.php","d.nom",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield);
     if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
     {
         print_liste_field_titre($langs->trans("Bank"),"cotisations.php","b.fk_account",$pram,"","",$sortfield);
     }
-    print_liste_field_titre($langs->trans("Label"),"cotisations.php","c.note",$param,"",'align="left"',$sortfield);
+    print_liste_field_titre($langs->trans("Date"),"cotisations.php","c.dateadh",$param,"",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("DateEnd"),"cotisations.php","c.datef",$param,"",'align="center"',$sortfield);
     print_liste_field_titre($langs->trans("Amount"),"cotisations.php","c.cotisation",$param,"",'align="right"',$sortfield);
     print "</tr>\n";
 
@@ -212,9 +216,29 @@ if ($result)
 			print "<form method=\"post\" action=\"cotisations.php\">";
 		}
         print "<tr $bc[$var]>";
-        print '<td>'.$cotisation->getNomUrl(1).'</td>';
-        print '<td>'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
-        print '<td>'.$adherent->getNomUrl(1).'</td>';
+        
+		// Ref
+		print '<td>'.$cotisation->getNomUrl(1).'</td>';
+        
+		// Nom
+		print '<td>'.$adherent->getNomUrl(1).'</td>';
+        
+		// Libelle
+		print '<td>';
+        if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
+		{
+			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.strftime("%Y",$objp->dateadh)."\" >\n";
+	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
+	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
+			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
+		}
+		else
+		{
+			print dolibarr_trunc($objp->note,32);
+		}
+		print '</td>';
+
+		// Banque
         if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
         {
             if ($objp->fk_account)
@@ -244,20 +268,16 @@ if ($result)
 				print "</td>\n";
             }
         }
-		print '<td>';
-        if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
-		{
-			print "<input name=\"label\" type=\"text\" class=\"flat\" size=\"30\" value=\"".$langs->trans("Subscriptions").' '.strftime("%Y",$objp->dateadh)."\" >\n";
-	                //	print "<td><input name=\"debit\" type=\"text\" size=8></td>";
-	                //	print "<td><input name=\"credit\" type=\"text\" size=8></td>";
-			print '<input type="submit" class="button" value="'.$langs->trans("Save").'">';
-		}
-		else
-		{
-			print dolibarr_trunc($objp->note,32);
-		}
-		print '</td>';
+
+		// Date start
+		print '<td align="center">'.dolibarr_print_date($objp->dateadh,'day')."</td>\n";
+        
+		// Date end
+		print '<td align="center">'.dolibarr_print_date($objp->datef,'day')."</td>\n";
+
+		// Price
 		print '<td align="right">'.price($objp->cotisation).'</td>';
+		
         print "</tr>";
         if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
@@ -269,6 +289,7 @@ if ($result)
     $var=!$var;
     print '<tr class="liste_total">';
     print "<td>".$langs->trans("Total")."</td>\n";
+    print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     print "<td align=\"right\">&nbsp;</td>\n";
     if ($conf->banque->enabled && $conf->global->ADHERENT_BANK_USE)
