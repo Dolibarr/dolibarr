@@ -1092,7 +1092,20 @@ class Form
 						$opt.= price2num($objp->price_ttc,'MU').' '.$langs->trans("Currency".$conf->monnaie).' '.$langs->trans("TTC");
 				}
 				
-				if ($objp->duration) $opt.= ' - '.$objp->duration;
+				if ($objp->duration)
+				{
+					$duration_value = substr($objp->duration,0,strlen($objp->duration)-1);
+					$duration_unit = substr($objp->duration,-1);
+					if ($duration_value > 1)
+					{
+						$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+					}
+					else
+					{
+						$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+					}
+					$opt.= ' - '.$duration_value.' '.$langs->trans($dur[$duration_unit]);
+				}
 				
 				$opt.= "</option>\n";
 				print $opt;

@@ -487,44 +487,45 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
       print '</select>';
       print '</td></tr>';
       
-      if ($_GET["type"] != 1 && $conf->stock->enabled)
+  if ($_GET["type"] != 1 && $conf->stock->enabled)
 	{
 	  print '<tr><td>Seuil stock</td><td>';
 	  print '<input name="seuil_stock_alerte" size="4" value="0">';
 	  print '</td></tr>';
 	}
-      else
+  else
 	{
 	  print '<input name="seuil_stock_alerte" type="hidden" value="0">';
 	}
       
-      // Description (utilisé dans facture, propale...)
-      print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
+  // Description (utilisé dans facture, propale...)
+  print '<tr><td valign="top">'.$langs->trans("Description").'</td><td>';
       
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
 	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	  $doleditor=new DolEditor('desc','',160,'dolibarr_notes','',false);
 	  $doleditor->Create();
 	}
-      else
+  else
 	{
 	  print '<textarea name="desc" rows="4" cols="90">';
 	  print '</textarea>';
 	}
       
-      print "</td></tr>";
+  print "</td></tr>";
       
-      if ($_GET["type"] == 1)
+  if ($_GET["type"] == 1)
 	{
 	  print '<tr><td>'.$langs->trans("Duration").'</td><td><input name="duration_value" size="6" maxlength="5" value="'.$product->duree.'"> &nbsp;';
+	  print '<input name="duration_unit" type="radio" value="h">'.$langs->trans("Hour").'&nbsp;';
 	  print '<input name="duration_unit" type="radio" value="d">'.$langs->trans("Day").'&nbsp;';
 	  print '<input name="duration_unit" type="radio" value="w">'.$langs->trans("Week").'&nbsp;';
 	  print '<input name="duration_unit" type="radio" value="m">'.$langs->trans("Month").'&nbsp;';
 	  print '<input name="duration_unit" type="radio" value="y">'.$langs->trans("Year").'&nbsp;';
 	  print '</td></tr>';
 	}
-      else
+  else
 	{
 	  // Le poids et le volume ne concerne que les produits et pas les services
 	  print '<tr><td>'.$langs->trans("Weight").'</td><td>';
@@ -537,15 +538,15 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 	  print '</td></tr>';
 	}
       
-      // Note (invisible sur facture, propales...)
-      print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
-      if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
+  // Note (invisible sur facture, propales...)
+  print '<tr><td valign="top">'.$langs->trans("NoteNotVisibleOnBill").'</td><td>';
+  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_PRODUCTDESC)
 	{
 	  require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 	  $doleditor=new DolEditor('note','',200,'dolibarr_notes','',false);
 	  $doleditor->Create();
 	}
-      else
+  else
 	{
 	  print '<textarea name="note" rows="8" cols="70">';
 	  print '</textarea>';
@@ -766,11 +767,11 @@ if ($_GET["id"] || $_GET["ref"])
 	  	print '<tr><td>'.$langs->trans("Duration").'</td><td>'.$product->duration_value.'&nbsp;';
 	    if ($product->duration_value > 1)
 	    {
-	    	$dur=array("d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
+	    	$dur=array("h"=>$langs->trans("Hours"),"d"=>$langs->trans("Days"),"w"=>$langs->trans("Weeks"),"m"=>$langs->trans("Months"),"y"=>$langs->trans("Years"));
 	    }
 	    else
 	    {
-	    	$dur=array("d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
+	    	$dur=array("h"=>$langs->trans("Hour"),"d"=>$langs->trans("Day"),"w"=>$langs->trans("Week"),"m"=>$langs->trans("Month"),"y"=>$langs->trans("Year"));
 	    }
 	    print $langs->trans($dur[$product->duration_unit])."&nbsp;";
 	      
@@ -880,6 +881,8 @@ if ($_GET["id"] || $_GET["ref"])
 	  if ($product->isservice())
 	    {
 	      print '<tr><td>'.$langs->trans("Duration").'</td><td colspan="2"><input name="duration_value" size="3" maxlength="5" value="'.$product->duration_value.'">';
+	      print '&nbsp; ';
+	      print '<input name="duration_unit" type="radio" value="h"'.($product->duration_unit=='h'?' checked':'').'>'.$langs->trans("Hour");
 	      print '&nbsp; ';
 	      print '<input name="duration_unit" type="radio" value="d"'.($product->duration_unit=='d'?' checked':'').'>'.$langs->trans("Day");
 	      print '&nbsp; ';
