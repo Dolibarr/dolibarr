@@ -452,7 +452,7 @@ if ($_POST["action"] == "set")
 				}
 				else
 				{
-					dolibarr_install_syslog("etape1: la connection au serveur par le user ".$conf->db->user." est reussie");
+					dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est reussie");
 					print "<tr><td>";
 					print $langs->trans("ServerConnection")." : ";
 					print $dolibarr_main_db_host;
@@ -479,7 +479,7 @@ if ($_POST["action"] == "set")
 			}
 			else
 			{
-				dolibarr_install_syslog("etape1: la connection au serveur par le user ".$conf->db->user." est rate");
+				dolibarr_install_syslog("etape1: la connexion au serveur par le user ".$conf->db->user." est rate");
 				print "<tr><td>";
 				print $langs->trans("ServerConnection")." : ";
 				print $dolibarr_main_db_host;

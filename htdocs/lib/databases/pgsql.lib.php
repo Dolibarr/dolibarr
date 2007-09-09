@@ -64,7 +64,7 @@ class DoliDb
 
 
     /**
-        \brief      Ouverture d'une connection vers le serveur et une database.
+        \brief      Ouverture d'une connexion vers le serveur et une database.
         \param		type		type de base de données (mysql ou pgsql)
         \param		host		addresse de la base de données
     	\param	    user		nom de l'utilisateur autorisé
@@ -233,7 +233,7 @@ class DoliDb
     }
 
     /**
-            \brief      Fermeture d'une connection vers une database.
+            \brief      Fermeture d'une connexion vers une database.
             \return	    resource
     */
     function close()
@@ -581,8 +581,8 @@ class DoliDb
 
 
     /**
-            \brief          Renvoie l'id de la connection
-            \return	        string      Id connection
+            \brief          Renvoie l'id de la connexion
+            \return	        string      Id connexion
     */
     function getConnectId()
     {

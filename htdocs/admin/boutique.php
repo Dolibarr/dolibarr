@@ -71,7 +71,7 @@ elseif ($_POST["test"])
     //$resql=$db->query("select count(*) from llx_const");
     //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 
-    // Test de la connection a la database webcalendar
+    // Test de la connexion a la database webcalendar
     $conf->oscommerce->db->type=$dolibarr_main_db_type;
     $conf->oscommerce->db->host=$_POST["oscommerce_dbhost"];
     $conf->oscommerce->db->name=$_POST["oscommerce_dbname"];

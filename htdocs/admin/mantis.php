@@ -75,7 +75,7 @@ elseif ($actiontest)
     //$resql=$db->query("select count(*) from llx_const");
     //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 
-    // Test de la connection a la database mantis
+    // Test de la connexion a la database mantis
     $conf->mantis->db->type=$dolibarr_main_db_type;
     $conf->mantis->db->host=$_POST["phpmantis_host"];
     $conf->mantis->db->user=$_POST["phpmantis_user"];

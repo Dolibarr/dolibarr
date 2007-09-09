@@ -82,7 +82,7 @@ elseif ($actiontest)
     //$resql=$db->query("select count(*) from llx_const");
     //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 
-    // Test de la connection a la database webcalendar
+    // Test de la connexion a la database webcalendar
     $conf->webcal->db->type=$dolibarr_main_db_type;
     $conf->webcal->db->host=$_POST["phpwebcalendar_host"];
     $conf->webcal->db->user=$_POST["phpwebcalendar_user"];

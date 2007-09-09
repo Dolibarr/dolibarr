@@ -49,7 +49,7 @@ $result = $client->call("get_Order",$parameters );
 //		echo '<h2>Result</h2><pre>'; print_r($result); echo '</pre>';
 
 if ($client->fault) {
-  		dolibarr_print_error('',"erreur de connection ");
+  		dolibarr_print_error('',"erreur de connexion ");
 }
 elseif (!($err = $client->getError()) )
 {

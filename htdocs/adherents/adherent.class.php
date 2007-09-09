@@ -1420,7 +1420,7 @@ class Adherent
 			}
 			return 1;
 		}else{
-			$this->error="Constantes de connection non definies";
+			$this->error="Constantes de connexion non definies";
 			return 0;
 		}
 	}
@@ -1524,7 +1524,7 @@ class Adherent
 	  return 0;
 	}
       }else{
-	$this->error="Constantes de connection non definies";
+	$this->error="Constantes de connexion non definies";
 	return 0;
       }
     }
@@ -1581,7 +1581,7 @@ class Adherent
 	  return 0;
 	}
       }else{
-	$this->error="Constantes de connection non definies";
+	$this->error="Constantes de connexion non definies";
 	return 0;
       }
     }
@@ -1658,7 +1658,7 @@ class Adherent
 		}
 		else
 		{
-			$this->error="Constantes de connection non definies";
+			$this->error="Constantes de connexion non definies";
 			return -1;
 		}
 	}
@@ -1726,7 +1726,7 @@ class Adherent
 		}
 		else
 		{
-			$this->error="Constantes de connection non definies";
+			$this->error="Constantes de connexion non definies";
 			return 0;
 		}
 	}

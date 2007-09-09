@@ -96,8 +96,8 @@ class modAdherent extends DolibarrModules
         $this->const[14] = array("ADHERENT_GLASNOST_PASS","chaine","","password de l'administrateur");
         $this->const[15] = array("ADHERENT_USE_GLASNOST_AUTO","yesno","","inscription automatique a glasnost ?");
         $this->const[16] = array("ADHERENT_USE_SPIP_AUTO","yesno","","Utilisation de SPIP automatiquement");
-        $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connection a la base spip");
-        $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connection a la base spip");
+        $this->const[17] = array("ADHERENT_SPIP_USER","chaine","","Utilisateur de connexion a la base spip");
+        $this->const[18] = array("ADHERENT_SPIP_PASS","chaine","","Mot de passe de connexion a la base spip");
         $this->const[19] = array("ADHERENT_SPIP_SERVEUR","chaine","","serveur spip");
         $this->const[20] = array("ADHERENT_SPIP_DB","chaine","","db spip");
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");

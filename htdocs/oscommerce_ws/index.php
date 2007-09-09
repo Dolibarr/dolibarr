@@ -68,7 +68,7 @@ print '<td align="right">'.$langs->trans("Total").'</td></tr>';
 // Call the WebService and store its result in $result.
 $result = $client->call("get_CAmensuel",$parameters );
 if ($client->fault) {
-  dolibarr_print_error('',"Erreur de connection ");
+  dolibarr_print_error('',"Erreur de connexion ");
   print_r($client->faultstring);
 }
 elseif (!($err = $client->getError()) )
@@ -117,7 +117,7 @@ $parameters = array("limit"=>OSC_MAXNBCOM);
 $result = $client->call("get_orders",$parameters );
 
 if ($client->fault) {
-  dolibarr_print_error('',"Erreur de connection ");
+  dolibarr_print_error('',"Erreur de connexion ");
 }
 elseif (!($err = $client->getError()) ) {
 	$num=0;

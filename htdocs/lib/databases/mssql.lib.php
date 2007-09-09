@@ -102,7 +102,7 @@ class DoliDb
   
   
   /**
-     \brief      Ouverture d'une connection vers le serveur et éventuellement une database.
+     \brief      Ouverture d'une connexion vers le serveur et éventuellement une database.
      \param      type		Type de base de données (mysql ou pgsql)
      \param	    host		Addresse de la base de données
      \param	    user		Nom de l'utilisateur autorisé
@@ -233,7 +233,7 @@ class DoliDb
   
     
   /**
-     \brief      Fermeture d'une connection vers une database.
+     \brief      Fermeture d'une connexion vers une database.
      \return	    resource
      \seealso	connect
   */
@@ -545,7 +545,7 @@ class DoliDb
     function errno()
     {
         if (! $this->connected) {
-            // Si il y a eu echec de connection, $this->db n'est pas valide.
+            // Si il y a eu echec de connexion, $this->db n'est pas valide.
             return 'DB_ERROR_FAILED_TO_CONNECT';
         }
         else {
@@ -564,7 +564,7 @@ class DoliDb
     function error()
     {
         if (! $this->connected) {
-            // Si il y a eu echec de connection, $this->db n'est pas valide pour mssql_get_last_message.
+            // Si il y a eu echec de connexion, $this->db n'est pas valide pour mssql_get_last_message.
             return 'Not connected. Check setup parameters in conf/conf.php file and your mssql client and server versions';
         }
         else {
@@ -597,8 +597,8 @@ class DoliDb
 
 
   /**
-     \brief          Renvoie l'id de la connection
-     \return	        string      Id connection
+     \brief          Renvoie l'id de la connexion
+     \return	        string      Id connexion
   */
   function getConnectId()
   {

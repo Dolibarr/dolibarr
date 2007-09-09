@@ -47,7 +47,7 @@ $client = new soapclient_nusoap(OSCWS_DIR."ws_articles.php");
 
 $result = $client->call("get_listearticles",$parameters );
 if ($client->fault) {
-  		dolibarr_print_error('',"erreur de connection ");
+  		dolibarr_print_error('',"erreur de connexion ");
 }
 elseif (!($err = $client->getError()) )
 {

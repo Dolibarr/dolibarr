@@ -22,7 +22,7 @@
 
 /**
    \file       htdocs/install/etape1.php
-   \brief      Pemet d'afficher et de confirmer le charset par rapport aux informations précedntes -> sélection suite à connection'
+   \brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
    \version    $Revision$
 */
 
