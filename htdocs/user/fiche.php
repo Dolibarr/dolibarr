@@ -243,7 +243,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->email         = trim($_POST["email"]);
 		$edituser->webcal_login  = trim($_POST["webcal_login"]);
 
-		$ret=$edituser->update();
+		$ret=$edituser->update($user);
 		if ($ret < 0)
 		{
 			if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')

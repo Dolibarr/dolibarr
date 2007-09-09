@@ -1562,7 +1562,7 @@ class Propal extends CommonObject
 					}
 				}
 	
-				dolibarr_syslog("Suppression de la proposition $this->id par $user->fullname ($user->id)");
+				dolibarr_syslog("Suppression de la proposition $this->id par $user->id");
 				return 1;
 			}
 			else

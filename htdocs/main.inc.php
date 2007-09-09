@@ -388,7 +388,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  	if ($user->login != $ldap->login && $ldap->login)
 		  	{
 		  		$user->login = $ldap->login;
-		  		$user->update();
+		  		$user->update($user);
 		  	}
 		    //$resultUpdate = $user->update_ldap2dolibarr();
 		  }

@@ -78,7 +78,7 @@ if ($_GET["id"])
 	 */
 	$head = user_prepare_head($fuser);
 
-	dolibarr_fiche_head($head, 'bookmark4u', $langs->trans("User").": ".$fuser->fullname);
+	dolibarr_fiche_head($head, 'bookmark4u', $langs->trans("User"));
 
 
     /*

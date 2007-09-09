@@ -70,7 +70,7 @@ if ($_GET["id"])
 	 */
 	$head = user_prepare_head($fuser);
 
-	dolibarr_fiche_head($head, 'clicktodial', $langs->trans("User").": ".$fuser->fullname);
+	dolibarr_fiche_head($head, 'clicktodial', $langs->trans("User"));
 
     /*
      * Fiche en mode visu

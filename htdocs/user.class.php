@@ -656,59 +656,69 @@ class User
    *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
    *  \return     int         	<0 si KO, id compte créé si OK
    */
-  function create($user='',$notrigger=0)
-  {
-    global $conf,$langs;
-    
-    // Nettoyage parametres
-    $this->login = trim($this->login);
-    
-	dolibarr_syslog("User::Create login=".$this->login.", user=".$user->id);
-	
-    $this->db->begin();
-    
-    $sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
-    $sql.= " WHERE login ='".addslashes($this->login)."'";
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$num = $this->db->num_rows($resql);
-	$this->db->free($resql);
-	
-	if ($num)
-	  {
-	    $this->error = $langs->trans("ErrorLoginAlreadyExists");
-	    return -6;
-	  }
-	else
-	  {
-	    $sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
-	    $result=$this->db->query($sql);
-	    
-	    dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
-	    if ($result)
-	      {
-		$table =  "".MAIN_DB_PREFIX."user";
-		$this->id = $this->db->last_insert_id($table);
+	function create($user='',$notrigger=0)
+	{
+		global $conf,$langs;
 		
-		// Set default rights
-		if ($this->set_default_rights() < 0)
-		  {
-		    $this->error=$this->db->error();
-		    $this->db->rollback();
-		    return -5;
-		  }
+		// Nettoyage parametres
+		$this->login = trim($this->login);
 		
-		// Update minor fields
-		if ($this->update(1) < 0)
-		  {
-		    $this->error=$this->db->error();
+		dolibarr_syslog("User::Create login=".$this->login.", user=".$user->id);
+		
+		$this->db->begin();
+		
+		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
+		$sql.= " WHERE login ='".addslashes($this->login)."'";
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$this->db->free($resql);
+			
+			if ($num)
+			{
+				$this->error = $langs->trans("ErrorLoginAlreadyExists");
+				return -6;
+			}
+			else
+			{
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."user (datec,login,ldap_sid) VALUES(now(),'".addslashes($this->login)."','".$this->ldap_sid."')";
+				$result=$this->db->query($sql);
+				
+				dolibarr_syslog("User::Create sql=".$sql, LOG_DEBUG);
+				if ($result)
+				{
+					$table =  "".MAIN_DB_PREFIX."user";
+					$this->id = $this->db->last_insert_id($table);
+					
+					// Set default rights
+					if ($this->set_default_rights() < 0)
+					{
+						$this->error=$this->db->error();
+						$this->db->rollback();
+						return -5;
+					}
+					
+					// Update minor fields
+					if ($this->update($user,1,1) < 0)
+					{
+						$this->error=$this->db->error();
 						$this->db->rollback();
 						return -4;
 					}
-	
-		            if (! $notrigger)
-		            {
+
+					if ($conf->global->STOCK_USERSTOCK == 1 && $conf->global->STOCK_USERSTOCK_AUTOCREATE == 1)
+					{
+						require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+						$entrepot = new Entrepot($this->db);
+						$entrepot->libelle = 'Stock Personnel '.$this->nom;
+						$entrepot->description = 'Cet entrepot représente le stock personnel de '.$this->prenom.' '.$this->nom;
+						$entrepot->statut = 1;
+						$entrepot->create($user);
+					}
+					
+					if (! $notrigger)
+					{
 						// Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 						$interface = new Interfaces($this->db);
@@ -746,13 +756,13 @@ class User
 	}
 
 
-  /**
-   *      \brief      Créé en base un utilisateur depuis l'objet contact
-   *      \param      contact     Objet du contact source
-   *      \return     int         si erreur <0, si ok renvoie id compte créé
-   */
-  function create_from_contact($contact)
-  {
+	/**
+	*      \brief      Créé en base un utilisateur depuis l'objet contact
+	*      \param      contact     Objet du contact source
+	*      \return     int         si erreur <0, si ok renvoie id compte créé
+	*/
+	function create_from_contact($contact)
+	{
         global $langs;
 
         // Positionne paramètres
@@ -896,12 +906,17 @@ class User
 
   /**
    *    \brief      Mise à jour en base d'un utilisateur
+   *	\param		user			User qui fait la mise a jour
    *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
+   *	\param		nosyncmember	Do not synchronize linked member
    *    \return     int         	<0 si KO, >=0 si OK
    */
-  function update($notrigger=0)
+  function update($user,$notrigger=0,$nosyncmember=0)
     {
         global $conf,$langs,$user;
+        $error=0;
+
+        dolibarr_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
         // Nettoyage parametres
         $this->nom=trim($this->nom);
@@ -913,35 +928,21 @@ class User
         $this->note=trim($this->note);
         $this->admin=$this->admin?$this->admin:0;
 
-        dolibarr_syslog("User::update notrigger=".$notrigger." nom=".$this->nom.", prenom=".$this->prenom);
-        $error=0;
-
 		$this->db->begin();
 
-		// Mise a jour mot de passe
-        if ($this->pass)
-        {
-       		if ($this->pass != $this->pass_indatabase &&
-				$this->pass != $this->pass_indatabase_crypted)
-       		{
-       			// Si mot de passe saisi et différent de celui en base
-				$this->password($user,$this->pass,$conf->password_encrypted);
-			}
-		}
-
 		// Mise a jour autres infos
-        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET ";
-        $sql .= " name = '".addslashes($this->nom)."'";
-        $sql .= ", firstname = '".addslashes($this->prenom)."'";
-        $sql .= ", login = '".addslashes($this->login)."'";
-        $sql .= ", admin = ".$this->admin;
-        $sql .= ", office_phone = '$this->office_phone'";
-        $sql .= ", office_fax = '$this->office_fax'";
-        $sql .= ", user_mobile = '$this->user_mobile'";
-        $sql .= ", email = '".addslashes($this->email)."'";
-        $sql .= ", webcal_login = '$this->webcal_login'";
-        $sql .= ", note = '".addslashes($this->note)."'";
-        $sql .= " WHERE rowid = ".$this->id;
+        $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
+        $sql.= " name = '".addslashes($this->nom)."'";
+        $sql.= ", firstname = '".addslashes($this->prenom)."'";
+        $sql.= ", login = '".addslashes($this->login)."'";
+        $sql.= ", admin = ".$this->admin;
+        $sql.= ", office_phone = '$this->office_phone'";
+        $sql.= ", office_fax = '$this->office_fax'";
+        $sql.= ", user_mobile = '$this->user_mobile'";
+        $sql.= ", email = '".addslashes($this->email)."'";
+        $sql.= ", webcal_login = '$this->webcal_login'";
+        $sql.= ", note = '".addslashes($this->note)."'";
+        $sql.= " WHERE rowid = ".$this->id;
 
         dolibarr_syslog("User::update sql=".$sql);
         $resql = $this->db->query($sql);
@@ -949,33 +950,53 @@ class User
         {
             $nbrowsaffected=$this->db->affected_rows($resql);
 
+			// Mise a jour mot de passe
+	        if ($this->pass)
+	        {
+	       		if ($this->pass != $this->pass_indatabase &&
+					$this->pass != $this->pass_indatabase_crypted)
+	       		{
+	       			// Si mot de passe saisi et différent de celui en base
+					$this->password($user,$this->pass,$conf->password_encrypted);
+
+					if (! $nbrowsaffected) $nbrowsaffected++;
+				}
+			}
+
 			if ($nbrowsaffected)
             {
-				if ($this->fk_member && ! $notrigger)
+				if ($this->fk_member && ! $nosyncmember)
 				{
 					// This user is linked with a member, so we also update members informations
-					// if this is an update (notrigger = 0).
+					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
-
-					$adh->prenom=$this->prenom;
-					$adh->nom=$this->nom;
-					$adh->login=$this->login;
-					$adh->pass=$this->pass;
-					$adh->societe=$this->societe_id;
-
-					$adh->email=$this->email;
-					$adh->phone=$this->office_phone;
-					$adh->phone_perso=$this->office_fax;
-					$adh->phone_mobile=$this->user_mobile;
 					
-					$adh->commentaire=$user->note;
+					if ($result >= 0)
+					{
+						$adh->prenom=$this->prenom;
+						$adh->nom=$this->nom;
+						$adh->login=$this->login;
+						$adh->pass=$this->pass;
+						$adh->societe=$this->societe_id;
 
-					$adh->user_id=$this->id;
-					$adh->user_login=$this->login;
+						$adh->email=$this->email;
+						$adh->phone=$this->office_phone;
+						$adh->phone_mobile=$this->user_mobile;
+						
+						$adh->commentaire=$this->note;
 
-					$result=$adh->update($user,0);
-					if ($result < 0)
+						$adh->user_id=$this->id;
+						$adh->user_login=$this->login;
+
+						$result=$adh->update($user,0,1);
+						if ($result < 0)
+						{
+							$this->error=$adh->error;
+							$error++;
+						}
+					}
+					else
 					{
 						$this->error=$adh->error;
 						$error++;

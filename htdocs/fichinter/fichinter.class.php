@@ -506,7 +506,7 @@ class Fichinter extends CommonObject
 					}
 				}
 	
-				dolibarr_syslog("Suppression de la fiche intervention $this->id par $user->fullname ($user->id)");
+				dolibarr_syslog("Suppression de la fiche intervention $this->id par $user->id");
 				return 1;
 			}
 			else

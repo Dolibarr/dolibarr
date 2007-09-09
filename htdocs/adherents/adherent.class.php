@@ -370,7 +370,7 @@ class Adherent
 				$this->id=$id;
 				
 				// Mise a jour
-				$result=$this->update($user,1);
+				$result=$this->update($user,1,1);
 				if ($result < 0)
 				{
 					$this->db->rollback();
@@ -445,13 +445,15 @@ class Adherent
 			\brief 		Fonction qui met à jour l'adhérent
 			\param		user			Utilisateur qui réalise la mise a jour
 			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
+			\param		nosyncuser		Do not synchronize linked user
 			\return		int				<0 si KO, >0 si OK
 	*/
-	function update($user,$notrigger=0)
+	function update($user,$notrigger=0,$nosyncuser=0)
 	{
 		global $conf,$langs;
-
-		dolibarr_syslog("Adherent::update user->id=".$user->id.", notrigger=".$notrigger);
+		$error=0;
+		
+		dolibarr_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser);
 
 		// Verification parametres
 		if ($conf->global->ADHERENT_MAIL_REQUIRED && ! ValidEMail($this->email))
@@ -463,36 +465,37 @@ class Adherent
 		$this->db->begin();
 
 		$sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET";
-		$sql .= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
-		$sql .= ",nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
-		$sql .= ",login="   .($this->login?"'".addslashes($this->login)."'":"null");
-		$sql .= ",pass="    .($this->pass?"'".addslashes($this->pass)."'":"null");
-		$sql .= ",societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
-		$sql .= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
-		$sql .= ",cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
-		$sql .= ",ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
-		$sql .= ",pays="    ."'".$this->pays_id."'";
-		$sql .= ",email="   ."'".$this->email."'";
-		$sql .= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
-		$sql .= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
-		$sql .= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
-		$sql .= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
-		$sql .= ",photo="   .($this->photo?"'".$this->photo."'":"null");
-		$sql .= ",public="  ."'".$this->public."'";
-		$sql .= ",statut="  .$this->statut;
-		$sql .= ",fk_adherent_type=".$this->typeid;
-		$sql .= ",morphy="  ."'".$this->morphy."'";
-		$sql .= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
-		if ($this->datefin)   $sql .= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
-		if ($this->datevalid) $sql .= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
+		$sql.= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
+		$sql.= ",nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
+		$sql.= ",login="   .($this->login?"'".addslashes($this->login)."'":"null");
+		$sql.= ",pass="    .($this->pass?"'".addslashes($this->pass)."'":"null");
+		$sql.= ",societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
+		$sql.= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
+		$sql.= ",cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
+		$sql.= ",ville="   .($this->ville?"'".addslashes($this->ville)."'":"null");
+		$sql.= ",pays="    ."'".$this->pays_id."'";
+		$sql.= ",email="   ."'".$this->email."'";
+		$sql.= ",phone="   .($this->phone?"'".addslashes($this->phone)."'":"null");
+		$sql.= ",phone_perso="  .($this->phone_perso?"'".addslashes($this->phone_perso)."'":"null");
+		$sql.= ",phone_mobile=" .($this->phone_mobile?"'".addslashes($this->phone_mobile)."'":"null");
+		$sql.= ",note="    .($this->commentaire?"'".addslashes($this->commentaire)."'":"null");
+		$sql.= ",photo="   .($this->photo?"'".$this->photo."'":"null");
+		$sql.= ",public="  ."'".$this->public."'";
+		$sql.= ",statut="  .$this->statut;
+		$sql.= ",fk_adherent_type=".$this->typeid;
+		$sql.= ",morphy="  ."'".$this->morphy."'";
+		$sql.= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
+		if ($this->datefin)   $sql.= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
+		if ($this->datevalid) $sql.= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
 
-		$sql .= " WHERE rowid = ".$this->id;
+		$sql.= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=".$sql);
 		$result = $this->db->query($sql);
 		if (! $result)
 		{
 			$this->error=$this->db->error();
+			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
 			$this->db->rollback();
 			return -1;
 		}
@@ -500,6 +503,7 @@ class Adherent
 		if (sizeof($this->array_options) > 0)
 		{
 			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
+			dolibarr_syslog("Adherent::update sql=".$sql_del);
 			$this->db->query($sql_del);
 
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
@@ -516,19 +520,59 @@ class Adherent
 			}
 			$sql.=")";
 
+			dolibarr_syslog("Adherent::update sql=".$sql);
 			$result = $this->db->query($sql);
 			if (! $result)
 			{
 				$this->error=$this->db->error();
-				dolibarr_syslog("Adherent::update ".$this->error);
+				dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
 				$this->db->rollback();
 				return -2;
 			}
 		}
 
+		if ($this->user_id && ! $nosyncuser)
+		{
+			// This member is linked with a user, so we also update users informations
+			// if this is an update.
+			$luser=new User($this->db);
+			$luser->id=$this->user_id;
+			$result=$luser->fetch();
+
+			if ($result >= 0)
+			{
+				$luser->prenom=$this->prenom;
+				$luser->nom=$this->nom;
+				$luser->login=$this->user_login;
+				$luser->pass=$this->pass;
+				$luser->societe_id=$this->societe;
+
+				$luser->email=$this->email;
+				$luser->office_phone=$this->phone;
+				$luser->user_mobile=$this->phone_mobile;
+				
+				$luser->note=$this->commentaire;
+
+				$luser->fk_member=$this->id;
+
+				$result=$luser->update($user,0,1);
+				if ($result < 0)
+				{
+					$this->error=$luser->error;
+					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+					$error++;
+				}
+			}
+			else
+			{
+				$this->error=$luser->error;
+				$error++;
+			}
+		}	
+		
 		$this->fullname=trim($this->nom.' '.$this->prenom);
 		
-		if (! $notrigger)
+		if (! $error && ! $notrigger)
 		{
 			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
@@ -540,7 +584,14 @@ class Adherent
  	        // Fin appel triggers
 		}
 
-		$this->db->commit();
+		if (! $error)
+		{
+			$this->db->commit();
+		}
+		else
+		{
+			$this->db->rollback();
+		}
 
 		return 1;
 	}
