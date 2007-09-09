@@ -67,7 +67,7 @@
 		\version    $Revision$
 */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+require_once(FPDFI_PATH.'fpdi_protection.php');
 
 
 /**

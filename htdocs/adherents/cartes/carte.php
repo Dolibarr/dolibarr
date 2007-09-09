@@ -29,7 +29,7 @@
 */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
 
 require_once('PDF_card.class.php');
 
