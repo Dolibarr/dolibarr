@@ -118,18 +118,6 @@ class Societe
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
 
-    // Définit selon les modules codeclient et codefournisseur
-	
-    // definit module code client
-    $varclient = $conf->global->SOCIETE_CODECLIENT_ADDON;
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varclient.'.php';
-    $this->mod_codeclient = new $varclient;
-
-    // definit module code fournisseur
-    $varfournisseur = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
-	require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$varfournisseur.'.php';
-   	$this->mod_codefournisseur = new $varfournisseur;
-
     return 1;
   }
 
