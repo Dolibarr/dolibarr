@@ -39,6 +39,8 @@
    Ensemble de fonctions de base de dolibarr sous forme d'include
 */
 
+include_once(DOL_DOCUMENT_ROOT ."/includes/adodbtime/adodb-time.inc.php");
+
 
 /**
    \brief      Renvoi une version en chaine depuis une version en tableau
@@ -558,6 +560,54 @@ function dolibarr_stringtotime($string)
 
 
 /**
+		\brief  	Return an array with date info
+		\param		timestamp		Timestamp
+		\param		fast			Fast mode
+		\return		array			Array of informations
+					If no fast mode:
+						'seconds' => $secs,
+						'minutes' => $min,
+						'hours' => $hour,
+						'mday' => $day,
+						'wday' => $dow,
+						'mon' => $month,
+						'year' => $year,
+						'yday' => floor($secsInYear/$_day_power),
+						'weekday' => gmdate('l',$_day_power*(3+$dow)),
+						'month' => gmdate('F',mktime(0,0,0,$month,2,1971)),
+						0 => $origd
+					If fast mode:
+						'seconds' => $secs,
+						'minutes' => $min,
+						'hours' => $hour,
+						'mday' => $day,
+						'mon' => $month,
+						'year' => $year,
+						'yday' => floor($secsInYear/$_day_power),
+						'leap' => $leaf,
+						'ndays' => $ndays		
+		\remarks	PHP getdate is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows  
+*/
+function dolibarr_getdate($timestamp,$fast=false)
+{
+	$usealternatemethod=false;
+	if ($year <= 1901) $usealternatemethod=true;
+	if ($year >= 2038) $usealternatemethod=true;
+	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	
+	if ($usealternatemethod)
+	{
+		$arrayinfo=adodb_getdate($timestamp,$fast);
+	}
+	else
+	{
+		$arrayinfo=getdate($timestamp);
+	}
+	
+	return $arrayinfo;
+}
+
+/**
 		\brief  	Retourne une date fabriquée depuis infos.
 					Remplace la fonction mktime non implémentée sous Windows si année < 1970
 		\param		hour			Heure
@@ -567,26 +617,61 @@ function dolibarr_stringtotime($string)
 		\param		day				Jour
 		\param		year			Année
 		\return		date			Date
+		\remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows  
 */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 {
-	$montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
-					  7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
-					  
-	if ($year <= 1970 && $_SERVER["WINDIR"])
+	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
+
+	$usealternatemethod=false;
+	if ($year <= 1901) $usealternatemethod=true;
+	if ($year >= 2038) $usealternatemethod=true;
+	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	
+	if ($usealternatemethod)
 	{
-		// Sous Windows, mktime ne fonctionne pas quand année < 1970.
-		// On utilise strtotime pour obtenir la traduction.
-		$string=$day." ".$montharray[0+$month]." ".$year;
+		/*
+		// On peut utiliser strtotime pour obtenir la traduction.
+		// strtotime is ok for range: Vendredi 13 Décembre 1901 20:45:54 GMT au Mardi 19 Janvier 2038 03:14:07 GMT.
+		$montharray=array(1=>'january',2=>'february',3=>'march',4=>'april',5=>'may',6=>'june',
+					  7=>'july',8=>'august',9=>'september',10=>'october',11=>'november',12=>'december');
+		$string=$day." ".$montharray[0+$month]." ".$year." ".$hour.":".$minute.":".$second." GMT";
 		$date=strtotime($string);
-		//print "x".($month)."y".(0+$month)." ".$string." ".$date."e";
-		//print "eee".$db->idate($date);
-		return $date;
+		print "- ".$string." ".$date." -";
+		*/
+		$date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,1);
 	}
  	else
  	{
-		return mktime($hour,$minute,$second,$month,$day,$year);
- 	}
+		$date=gmmktime($hour,$minute,$second,$month,$day,$year);
+	}
+	return $date;
+}
+
+
+/**
+		\brief  	Returna formated date
+		\param		fmt				Format
+		\param		timestamp		Date
+		\return		string			Formated date
+*/
+function dolibarr_date($fmt,$timestamp)
+{
+	$usealternatemethod=false;
+	if ($year <= 1901) $usealternatemethod=true;
+	if ($year >= 2038) $usealternatemethod=true;
+	if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	
+	if ($usealternatemethod)
+	{
+		$string=adodb_date($fmt,$timestamp,1);
+	}
+	else
+	{
+		$string=date($fmt,$timestamp);
+	}
+
+	return $string;
 }
 
 

@@ -1,8 +1,9 @@
 <?php
 /* Copyright (C) phpBSM
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
- * This file is a modified version of datepicker.php from phpBSM
+ * This file is a modified version of datepicker.php from phpBSM to fix some
+ * bugs, to add new features and to dramatically increase speed.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,6 +38,15 @@ if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
 require_once("../master.inc.php");
 
 
+// URL http://mydolibarr/lib/datepicker.php?mode=test&cm=shw&m=10&y=2038 can be used for tests
+if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
+{
+	print '<html><head>';
+	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+	print '</head>';
+}
+
+
 $langs->trans("main");
 
 if(!isset($_GET["cm"])) $_GET["cm"]="shw";
@@ -55,7 +65,7 @@ function xyzToUnixTimestamp($mysqldate){
 	$year=substr($mysqldate,0,4);
 	$month=substr($mysqldate,4,2);
 	$day=substr($mysqldate,6,2);
-	$unixtimestamp=mktime(0,0,0,$month,$day,$year);
+	$unixtimestamp=dolibarr_mktime(0,0,0,$month,$day,$year);
 	return $unixtimestamp;
 }
 
@@ -64,13 +74,14 @@ function displayBox($selectedDate,$month,$year){
 	$langs->load("main");
 	
 	//print "$selectedDate,$month,$year";
-	$thedate=mktime(0,0,0,$month,1,$year);
-	$today=mktime(0,0,0);
-	$todayArray=getdate($today);
+	$thedate=dolibarr_mktime(0,0,0,$month,1,$year);
+	//print "thedate=$thedate";
+	$today=mktime();
+	$todayArray=dolibarr_getdate($today);
 	if($selectedDate != "00000000")
 	{ 
 		$selDate=xyzToUnixTimestamp($selectedDate);
-		$xyz=date("Ymd",$selDate);
+		$xyz=dolibarr_date("Ymd",$selDate);
 	}
 	else
 	{
@@ -82,8 +93,8 @@ function displayBox($selectedDate,$month,$year){
 	<tr>
 		<td colspan=6 class="dpHead">
 		<?php
-		$selectMonth = date("F", $thedate);
-		$selectYear = date("Y", $thedate);
+		$selectMonth = dolibarr_date("F", $thedate);
+		$selectYear = dolibarr_date("Y", $thedate);
 		echo $langs->trans($selectMonth).", ".$selectYear;
 		?>
 		</td>
@@ -92,7 +103,7 @@ function displayBox($selectedDate,$month,$year){
 	<tr>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
-		<td colspan=3 class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("Today") ?></td>
+		<td colspan=3 class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dolibarr_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("Today") ?></td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
@@ -106,7 +117,8 @@ function displayBox($selectedDate,$month,$year){
 		<td width="14.286%"><?php echo $langs->trans("ShortSaturday") ?></td>
 	</tr>
 	<?php 
-		$firstdate=getdate($thedate);
+		//print "x ".$thedate." y";
+		$firstdate=dolibarr_getdate($thedate);
 		$mydate=$firstdate;
 		$tradTemp=Array($langs->trans("January"),
 		                $langs->trans("February"),
@@ -122,12 +134,15 @@ function displayBox($selectedDate,$month,$year){
 		                $langs->trans("December")
 		                );
 
-    print '<script language="Javascript">';
-    print 'var tradMonths = '.php2js($tradTemp);
-    print '</script>';
+	    print '<script language="Javascript">';
+	    print 'var tradMonths = '.php2js($tradTemp);
+	    print '</script>';
 
+		// Loop on each day of month
+		$day=1;
 		while($firstdate["month"]==$mydate["month"])
 		{
+			//print_r($mydate);
 			if($mydate["wday"]==0) echo "<TR class=\"dpWeek\">";
 			if($firstdate==$mydate){
 				// firstdate, so we may have to put in blanks
@@ -142,13 +157,15 @@ function displayBox($selectedDate,$month,$year){
 			
 			// Sur click dans calendrier, appelle fonction dpClickDay
 			echo "<TD class=\"".$dayclass."\"";
-			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
-			echo " onClick=\"dpClickDay(".$mydate["year"].",".date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
+			echo " onMouseOver=\"dpHighlightDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",tradMonths)\"";
+			echo " onClick=\"dpClickDay(".$mydate["year"].",".dolibarr_date("n",$thedate).",".$mydate["mday"].",'".$conf->format_date_short_java."')\"";
 			echo ">".sprintf("%02s",$mydate["mday"])."</TD>";
 			
 			if($mydate["wday"]==6) echo "</tr>";
-			$thedate=strtotime("tomorrow",$thedate);
-			$mydate=getdate($thedate);
+			//$thedate=strtotime("tomorrow",$thedate);
+			$day++;
+			$thedate=dolibarr_mktime(0,0,0,$month,$day,$year);
+			$mydate=dolibarr_getdate($thedate);
 		}
 		
 		if($mydate["wday"]!=0){
@@ -160,7 +177,7 @@ function displayBox($selectedDate,$month,$year){
 	<tr><td id="dpExp" class="dpExplanation" colspan="7"><?php 
 		if($selDate)
 		{
-			$tempDate=getdate($selDate);
+			$tempDate=dolibarr_getdate($selDate);
 			print $langs->trans($tempDate["month"])." ";
 			print sprintf("%02s",$tempDate["mday"]);
 			print ", ".$tempDate["year"];
