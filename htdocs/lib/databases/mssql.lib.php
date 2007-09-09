@@ -431,7 +431,7 @@ class DoliDb
       if (! is_resource($resultset)) { $resultset=$this->results; }
       // mssql necessite un link de base pour cette fonction contrairement
       // a pqsql qui prend un resultset
-      $rsRows = mssql_query("select @@rowcount as rows", $db);
+      $rsRows = mssql_query("select @@rowcount as rows", $this->db);
       return mssql_result($rsRows, 0, "rows");
       //return mssql_affected_rows($this->db);
     }
