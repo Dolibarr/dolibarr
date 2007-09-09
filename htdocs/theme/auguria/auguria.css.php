@@ -722,20 +722,18 @@ margin: 0px 0px;
 
 table.border {
 border: 0px solid #9CACBB;
-border-width: 0px;
+border: 0px;
 border-collapse: collapse;
 }
 table.border td {
 padding: 2px 2px;
 padding-left: 4px;
 border: 1px solid #9CACBB;
-border-width: 1px;
 border-collapse: collapse;
 }
 
 table.list {
 border: 0px solid #9CACBB;
-border-width: 0px;
 border-collapse: collapse;
 }
 table.list td {
@@ -744,7 +742,6 @@ padding-left: 4px;
 padding-top:0px;
 padding-bottom:0px;
 border: 0px solid;
-border-width: 0px;
 border-collapse: collapse;
 }
 
@@ -1168,7 +1165,7 @@ border-style:none;
 background-color:transparent;
 padding:0px;
 font-size:9px;
-border-width:0px;
+border:0px;
 color:#0B63A2;
 vertical-align:middle;
 cursor: pointer;
@@ -1264,7 +1261,7 @@ form.inplaceeditor-form a { /* The cancel link */
 .table_data
 {
 	border-style:ridge;
-	border-width: 1px;
+	border:1px;
 }
 .tab_base
 {
@@ -1279,7 +1276,7 @@ form.inplaceeditor-form a { /* The cancel link */
 	background:#CCCCCC;
 	font-weight:bold;
 	border-style:ridge;
-	border-width: 1px;
+	border: 1px;
 }
 .table_body
 {
@@ -1287,7 +1284,7 @@ form.inplaceeditor-form a { /* The cancel link */
 	font-weight:normal;
 	font-family:sans-serif;
 	border-style:ridge;
-	border-width: 1px;
+	border: 1px;
 	border-spacing: 0px;
 	border-collapse: collapse;
 }
