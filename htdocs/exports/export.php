@@ -622,7 +622,7 @@ if ($step == 4 && $datatoexport)
     // test d'affichage du tableau excel
     /*
     print '<table width="100%"><tr><td>';
-    viewExcelFileContent($conf->export->dir_temp.'/1/export_commande_1.xls');
+    viewExcelFileContent($conf->export->dir_temp.'/1/export_commande_1.xls',5);
     print '</td></tr></table>';
     */
 }

@@ -3355,7 +3355,7 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 	$data->setOutputEncoding('CPa25a');
 	$data->read($file_to_include);
 	error_reporting(E_ALL ^ E_NOTICE);
-	
+
 	echo "<script language='Javascript'>
 	      var sheet_HTML = Array();\n";
 	      for($sheet=0;$sheet<count($data->sheets);$sheet++)
@@ -3363,7 +3363,7 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 	      	$table_output[$sheet] .= "<TABLE CLASS='table_body'>
 	      	<TR>
 	      	  <TD>&nbsp;</TD>";
-	      	for($i=0;$i<$data->sheets[$sheet]['numCols']&&($i<=$max_cols||$max_cols==0);$i++)
+	      	for($i=0;$i < $data->sheets[$sheet]['numCols'] && (($i < $max_cols) || ($max_cols == 0));$i++)
 	      	{
 	      		$table_output[$sheet] .= "<TD CLASS='table_sub_heading' ALIGN=CENTER>" . make_alpha_from_numbers($i) . "</TD>";
 	      	}

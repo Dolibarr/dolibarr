@@ -1904,9 +1904,9 @@ function set_row() {
         $record    = 0x0200;               // Record identifier
         $length    = 0x000A;               // Number of bytes to follow
         $row_min   = $this->_dim_rowmin;   // First row
-        $row_max   = $this->_dim_rowmax;   // Last row plus 1
+        $row_max   = $this->_dim_rowmax + 1;   // Last row plus 1
         $col_min   = $this->_dim_colmin;   // First column
-        $col_max   = $this->_dim_colmax;   // Last column plus 1
+        $col_max   = $this->_dim_colmax + 1;   // Last column plus 1
         $reserved  = 0x0000;               // Reserved by Excel
 
         $header    = pack("vv",    $record, $length);
