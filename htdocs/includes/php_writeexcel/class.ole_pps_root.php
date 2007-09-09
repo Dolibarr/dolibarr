@@ -302,7 +302,7 @@ function _savePpsSetPnt2(&$aThis, &$raList, $rhInfo) {
       return 0xFFFFFFFF;
   } elseif (sizeof($aThis)==1) {
 #1.2 Just Only one
-      array_push($raList, &$aThis[0]);
+      array_push($raList, $aThis[0]);
       $aThis[0]->No = sizeof($raList)-1;
       $aThis[0]->PrevPps = 0xFFFFFFFF;
       $aThis[0]->NextPps = 0xFFFFFFFF;
@@ -339,7 +339,7 @@ function _savePpsSetPnt2s(&$aThis, &$raList, $rhInfo) {
       return 0xFFFFFFFF;
   } elseif (sizeof($aThis)==1) {
 #1.2 Just Only one
-      array_push($raList, &$aThis[0]);
+      array_push($raList, $aThis[0]);
       $aThis[0]->No = sizeof($raList)-1;
       $aThis[0]->PrevPps = 0xFFFFFFFF;
       $aThis[0]->NextPps = 0xFFFFFFFF;
@@ -377,7 +377,7 @@ function _savePpsSetPnt(&$aThis, &$raList, $rhInfo) {
       return 0xFFFFFFFF;
   } elseif (sizeof($aThis)==1) {
 #1.2 Just Only one
-      array_push($raList, &$aThis[0]);
+      array_push($raList, $aThis[0]);
       $aThis[0]->No = sizeof($raList)-1;
       $aThis[0]->PrevPps = 0xFFFFFFFF;
       $aThis[0]->NextPps = 0xFFFFFFFF;
@@ -411,7 +411,7 @@ function _savePpsSetPnt1(&$aThis, &$raList, $rhInfo) {
       return 0xFFFFFFFF;
   } elseif (sizeof($aThis)==1) {
 #1.2 Just Only one
-      array_push($raList, &$aThis[0]);
+      array_push($raList, $aThis[0]);
       $aThis[0]->No = sizeof($raList)-1;
       $aThis[0]->PrevPps = 0xFFFFFFFF;
       $aThis[0]->NextPps = 0xFFFFFFFF;
