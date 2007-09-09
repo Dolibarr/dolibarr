@@ -204,7 +204,7 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 				$pdf->Text(186, $curY, $outputlangs->transnoentities("Qty"));
 				$pdf->Text(186, $curY+4, "Livrée");
 
-				$this->expe->fetch_lignes();
+				$this->expe->fetch_lines();
 				for ($i = 0 ; $i < sizeof($this->expe->lignes) ; $i++)
 				{
 					$curY = $this->tableau_top + 14 + ($i * 7);
