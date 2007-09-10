@@ -1255,20 +1255,20 @@ form.inplaceeditor-form a { /* The cancel link */
 }
 
 /* ============================================================================== */
-/*  PHP_ExcelReader                                                               */
+/*  Affichage tableau Excel                                                       */
 /* ============================================================================== */
 
 .table_data
 {
 	border-style:ridge;
-	border:1px;
+	border:1px solid;
 }
 .tab_base
 {
 	background:#C5D0DD;
 	font-weight:bold;
 	border-style:ridge;
-	border: 1px;
+	border: 1px solid;
 	cursor:pointer;
 }
 .table_sub_heading
@@ -1276,7 +1276,7 @@ form.inplaceeditor-form a { /* The cancel link */
 	background:#CCCCCC;
 	font-weight:bold;
 	border-style:ridge;
-	border: 1px;
+	border: 1px solid;
 }
 .table_body
 {
@@ -1284,7 +1284,7 @@ form.inplaceeditor-form a { /* The cancel link */
 	font-weight:normal;
 	font-family:sans-serif;
 	border-style:ridge;
-	border: 1px;
+	border: 1px solid;
 	border-spacing: 0px;
 	border-collapse: collapse;
 }
@@ -1294,6 +1294,6 @@ form.inplaceeditor-form a { /* The cancel link */
 	color:white;
 	font-weight:bold;
 	border-style:groove;
-	border: 1px;
+	border: 1px solid;
 	cursor:pointer;
 }
