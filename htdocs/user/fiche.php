@@ -591,7 +591,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '</td></tr>';
 	
 	// Tel
-	print '<tr><td valign="top">'.$langs->trans("Phone").'</td>';
+	print '<tr><td valign="top">'.$langs->trans("PhonePro").'</td>';
 	print '<td>';
 	if ($ldap_phone)
 	{
@@ -601,6 +601,20 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	else
 	{
 		print '<input size="20" type="text" name="office_phone" value="">';
+	}
+	print '</td></tr>';
+	
+	// Tel portable
+	print '<tr><td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+	print '<td>';
+	if ($ldap_mobile)
+	{
+		print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
+		print $ldap_mobile;
+	}
+	else
+	{
+		print '<input size="20" type="text" name="user_mobile" value="">';
 	}
 	print '</td></tr>';
 	
@@ -615,20 +629,6 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	else
 	{
 		print '<input size="20" type="text" name="office_fax" value="">';
-	}
-	print '</td></tr>';
-	
-	// Tel portable
-	print '<tr><td valign="top">'.$langs->trans("Mobile").'</td>';
-	print '<td>';
-	if ($ldap_mobile)
-	{
-		print '<input type="hidden" name="user_mobile" value="'.$ldap_mobile.'">';
-		print $ldap_mobile;
-	}
-	else
-	{
-		print '<input size="20" type="text" name="user_mobile" value="">';
 	}
 	print '</td></tr>';
 	
@@ -894,13 +894,17 @@ else
             print '</td>';
             print "</tr>\n";
 
-            // Tel, fax, portable
-			print '<tr><td width="25%" valign="top">'.$langs->trans("Phone").'</td>';
+            // Tel pro
+			print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
  			print '<td>'.$fuser->office_phone.'</td>';
+
+			// Tel mobile
+ 			print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
+ 			print '<td>'.$fuser->user_mobile.'</td>';
+
+			// Fax
  			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
  			print '<td>'.$fuser->office_fax.'</td>';
- 			print '<tr><td width="25%" valign="top">'.$langs->trans("Mobile").'</td>';
- 			print '<td>'.$fuser->user_mobile.'</td>';
 
 			// EMail
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
@@ -1280,46 +1284,48 @@ else
             print '</td>';
             print "</tr>\n";
 
-            // Tel, fax, portable
-            print "<tr>".'<td valign="top">'.$langs->trans("Phone").'</td>';
-			      print '<td>';
-			      if ($caneditfield  && !$fuser->ldap_sid)
-			      {
-			      	print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
-			      }
-			      else
-			      {
-			      	print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
-			      	print $fuser->office_phone; 
-			      }
-			      print '</td></tr>';
-			      
-			      print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
-			      print '<td>';
-			      if ($caneditfield  && !$fuser->ldap_sid)
-			      {
-			      	print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
-			      }
-			      else
-			      {
-			      	print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
-			      	print $fuser->office_fax; 
-			      }
-			      print '</td></tr>';
-			      
-			      print "<tr>".'<td valign="top">'.$langs->trans("Mobile").'</td>';
-			      print '<td>';
-			      if ($caneditfield && !$fuser->ldap_sid)
-			      {
-			      	print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
-			      }
-			      else
-			      {
-			      	print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
-			      	print $fuser->user_mobile; 
-			      }
-			      print '</td></tr>';
+            // Tel pro
+			print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
+			print '<td>';
+			if ($caneditfield  && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
+				print $fuser->office_phone; 
+			}
+			print '</td></tr>';
+			
+			// Tel mobile
+			print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+			print '<td>';
+			if ($caneditfield && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
+				print $fuser->user_mobile; 
+			}
+			print '</td></tr>';
 
+			// Fax
+			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+			print '<td>';
+			if ($caneditfield  && !$fuser->ldap_sid)
+			{
+				print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+			}
+			else
+			{
+				print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
+				print $fuser->office_fax; 
+			}
+			print '</td></tr>';
+			
             // EMail
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
             print '<td>';
