@@ -233,9 +233,10 @@ if ($_GET["id"] > 0)
 	// Si edition contact deja existant
 	$contact = new Contact($db);
 	$return=$contact->fetch($_GET["id"], $user);
-	if ($return < 0)
+	if ($return <= 0)
 	{
 		dolibarr_print_error('',$contact->error);
+		$_GET["id"]=0;
 	}
 
 	/*

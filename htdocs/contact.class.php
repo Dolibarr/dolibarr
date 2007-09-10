@@ -365,7 +365,7 @@ class Contact
      *    \brief      Charge l'objet contact
      *    \param      id          id du contact
      *    \param      user        Utilisateur lié au contact pour une alerte
-     *    \return     int         1 si ok, -1 si erreur
+     *    \return     int         -1 if KO, 0 if OK but not found, 1 if OK
      */
     function fetch($id, $user=0)
     {
@@ -424,59 +424,63 @@ class Contact
 
                 $this->user_id        = $obj->user_id;
                 $this->user_login     = $obj->user_login;
-            }
-            $this->db->free($resql);
 
-            // Recherche le user Dolibarr lié à ce contact
-            $sql = "SELECT u.rowid ";
-            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
-            $sql .= " WHERE u.fk_socpeople = ". $id;
-    
-            $resql=$this->db->query($sql);
-            if ($resql)
-            {
-                if ($this->db->num_rows($resql))
-                {
-                    $uobj = $this->db->fetch_object($resql);
-    
-                    $this->user_id = $uobj->rowid;
-                }
-                $this->db->free($resql);
-            }
-            else
-            {
-                dolibarr_syslog("Error in Contact::fetch() selectuser sql=$sql");
-           	    $this->error="Error in Contact::fetch() selectuser - ".$this->db->error()." - ".$sql;
-                return -1;
-            }
-    
-            // Charge alertes du user
-            if ($user)
-            {
-                $sql = "SELECT fk_user";
-                $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
-                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$id;
-    
-                $resql=$this->db->query($sql);
-                if ($resql)
-                {
-                    if ($this->db->num_rows($resql))
-                    {
-                        $obj = $this->db->fetch_object($resql);
-    
-                        $this->birthday_alert = 1;
-                    }
-                    $this->db->free($resql);
-                 }
-                else
-                {
-                    dolibarr_syslog("Error in Contact::fetch() selectuseralert sql=$sql");
-            	    $this->error="Error in Contact::fetch() selectuseralert - ".$this->db->error()." - ".$sql;
-                    return -1;
-                }
-            }
-            
-            return 1;
+	            // Recherche le user Dolibarr lié à ce contact
+	            $sql = "SELECT u.rowid ";
+	            $sql .= " FROM ".MAIN_DB_PREFIX."user as u";
+	            $sql .= " WHERE u.fk_socpeople = ". $this->id;
+	    
+	            $resql=$this->db->query($sql);
+	            if ($resql)
+	            {
+	                if ($this->db->num_rows($resql))
+	                {
+	                    $uobj = $this->db->fetch_object($resql);
+	    
+	                    $this->user_id = $uobj->rowid;
+	                }
+	                $this->db->free($resql);
+	            }
+	            else
+	            {
+	                dolibarr_syslog("Error in Contact::fetch() selectuser sql=$sql");
+	           	    $this->error="Error in Contact::fetch() selectuser - ".$this->db->error()." - ".$sql;
+	                return -1;
+	            }
+	    
+	            // Charge alertes du user
+	            if ($user)
+	            {
+	                $sql = "SELECT fk_user";
+	                $sql .= " FROM ".MAIN_DB_PREFIX."user_alert";
+	                $sql .= " WHERE fk_user = $user->id AND fk_contact = ".$id;
+	    
+	                $resql=$this->db->query($sql);
+	                if ($resql)
+	                {
+	                    if ($this->db->num_rows($resql))
+	                    {
+	                        $obj = $this->db->fetch_object($resql);
+	    
+	                        $this->birthday_alert = 1;
+	                    }
+	                    $this->db->free($resql);
+	                 }
+	                else
+	                {
+	                    dolibarr_syslog("Error in Contact::fetch() selectuseralert sql=$sql");
+	            	    $this->error="Error in Contact::fetch() selectuseralert - ".$this->db->error()." - ".$sql;
+	                    return -1;
+	                }
+	            }
+
+				return 1;
+			}
+			else
+			{
+				$this->error=$langs->trans("RecordNotFound");
+				return 0;
+			}
         }
         else
         {
