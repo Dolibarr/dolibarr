@@ -37,6 +37,7 @@ MaxSizeForUploadedFiles=Taille maximum des documents uploadés (0 pour interdire 
 ComptaSetup=Configuration du module Comptabilité
 UserSetup=Configuration gestion des utilisateurs
 MenuSetup=Administration des menus par base de données
+NotConfigured=Non configuré
 Setup=Configuration
 Activation=Activation
 SetupShort=Config

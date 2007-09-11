@@ -36,6 +36,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 class mod_facture_terre extends ModeleNumRefFactures
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 	var $prefixinvoice='FA';
 	var $prefixcreditnote='AV';
 	var $error='';

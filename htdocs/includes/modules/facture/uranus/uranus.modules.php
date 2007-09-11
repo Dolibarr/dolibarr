@@ -38,6 +38,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 
 class mod_facture_uranus extends ModeleNumRefFactures
 {
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 
     /*!     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif

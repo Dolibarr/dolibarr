@@ -1048,7 +1048,7 @@ padding: 2px;
 #dhtmltooltip
 {
 position: absolute;
-width: 300px;
+width: 420px;
 border-top: solid 1px #BBBBBB;
 border-left: solid 1px #BBBBBB;
 border-right: solid 1px #444444;

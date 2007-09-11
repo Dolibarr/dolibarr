@@ -783,7 +783,7 @@ table.valid {
 #dhtmltooltip
 {
 position: absolute;
-width: 300px;
+width: 420px;
 border: 1px solid #444444;
 padding: 2px;
 background-color: lightyellow;

@@ -38,6 +38,7 @@ require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php")
 */
 class mod_facture_pluton extends ModeleNumRefFactures
 {
+	var $version='development';		// 'development', 'experimental', 'dolibarr'
 	var $prefixinvoice;
 	var $prefixcreditnote;
 	var $matrice;
@@ -46,14 +47,14 @@ class mod_facture_pluton extends ModeleNumRefFactures
 	var $mm;
 	var $numbitcounter;
 	var $searchLast;
-  var $searchLastWithNoYear;
-  var $searchLastWithPreviousYear;
+	var $searchLastWithNoYear;
+	var $searchLastWithPreviousYear;
 	var $error = '';
 
     /**     \brief      Renvoi la description du modele de numérotation
      *      \return     string      Texte descripif
      */
-function info()
+	function info()
     {
     	global $conf,$langs;
 

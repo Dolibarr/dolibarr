@@ -338,7 +338,8 @@ MarsNumRefModelDesc2=Le nombre final est formaté sur 3 chiffres ou plus.
 MarsNumRefModelDesc3=Si la constante FACTURE_MARS_DELTA est définie, un offset est appliqué sur le compteur
 
 # mercure
-MercureNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, la première facture porte le numéro 1, la quinzième facture ayant le numéro 15, le numéro est préfixé par la lettre F, ce module peut être utilisé avec dans le cas d'une numérotaion double.
+MercureNumRefModelDesc1=Renvoie un numéro de facture personalisable selon un masque à définir.
+MercureMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent etre utilisées:<br><b>{000000}</b> correspond a un numéro qui sera incrémenté à chaque facture. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{000000+000}</b> idem précédemment mais un offset correpondant au nombre à droite du + est appliqué.<br><b>{dd}</b> jour de la facture (01 à 31).<br><b>{mm}</b> jour de la facture (01 à 12).<br><b>{yy}</b> ou {yyyy} annee sur 2 ou 4 chiffres de la facture.<br><b>{pre}</b> prefix du tiers.<br>Tout autre caractère dans le masque sera laissé inchangé.<br>Les espaces ne sont pas permis.<br><br><u>Exemple sur la 99eme facture du tiers SFR faite le 31/01/2007:</u><br><b>ABC-{yy}{mm}-{000000}</b> donnera <b>ABC-0701-000099</b><br><b>{0000}-{pre}/{dd}/INV</b> donnera <b>0099-SFR/31/INV</b><br>
 
 # neptune
 NeptuneNumRefModelDesc1=Renvoie le numéro de facture sous une forme du préfix FA suivi de l'année sur 2 chiffres et d'un compteur simple sur 4 chiffres.
@@ -367,4 +368,4 @@ UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique sim
 VenusNumRefModelDesc1=Renvoie le numéro de facture sous la forme, FA-PREF-030202, où PREF est le préfixe commercial de la société, et est suivi de la date sur un format de 6 digits avec Année, Mois et Jour
 
 # pluton
-PlutonNumRefModelDesc1=Modèle de numérotation paramétrable - EN PHASE DE TEST !!!
+PlutonNumRefModelDesc1=Renvoie un numéro de facture personalisable selon un masque à définir.

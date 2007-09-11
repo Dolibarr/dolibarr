@@ -37,6 +37,7 @@ MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any uploa
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 MenuSetup=Menus management setup
+NotConfigured=Not configured
 Setup=Setup
 Activation=Activation
 SetupShort=Setup

@@ -224,15 +224,18 @@ while (($file = readdir($handle))!==false)
         $filebis = $file."/".$file.".modules.php";
 		if (is_readable($dir.$filebis))
 		{
+	        // Chargement de la classe de numérotation
+	        require_once($dir.$filebis);
+	        $classname = "mod_facture_".$file;
+	        $module = new $classname($db);
+
+			if ($module->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT) continue;
+			
 	        $var = !$var;
 	        print '<tr '.$bc[$var].'><td width="100">';
 	        echo "$file";
 	        print "</td><td>\n";
 
-	        // Chargement de la classe de numérotation
-	        require_once($dir.$filebis);
-	        $classname = "mod_facture_".$file;
-	        $module = new $classname($db);
 	        print $module->info();
 
 	        print '</td>';
@@ -251,11 +254,12 @@ while (($file = readdir($handle))!==false)
 	        }
 	        print '</td>';
 
-			    $facture=new Facture($db);
+			$facture=new Facture($db);
 
-			    // Info
-			    $htmltooltip='';
-			    $facture->type=0;
+			// Info
+			$htmltooltip='';
+			$htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+			$facture->type=0;
 	        $nextval=$module->getNextValue($mysoc,$facture);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
