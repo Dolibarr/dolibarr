@@ -215,7 +215,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	}
 	
 	// MODE DOLIBARR MDB2
-	// Ajout du mode MDB2 pour test uniquement
+	//Todo: voir pour l'utiliser par défaut
 	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
 	{
     	require_once(PEAR_PATH."/Auth/Auth.php");

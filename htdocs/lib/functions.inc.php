@@ -1322,18 +1322,10 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<body class="body" onload="donnefocus();">';
 
 	// Start Form
-/*	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
-	{
-		print '<form id="login" name="login" method="post" action="'.DOL_URL_ROOT.'/verifier.php">';
-	}
-	else
-	{
-	*/
-		print '<form id="login" name="login" method="post" action="';
-		print $_SERVER['PHP_SELF'];
-		print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
-		print '">';
-//	}
+	print '<form id="login" name="login" method="post" action="';
+	print $_SERVER['PHP_SELF'];
+	print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
+	print '">';
 
 	// Table 1
 	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
