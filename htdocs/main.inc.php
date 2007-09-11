@@ -358,6 +358,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 			session_name($sessionname);
 			session_start();
 			$langs->load('main');
+			$langs->load('other');
 			$_SESSION["loginmesg"]=$langs->trans("ErrorBadValueForCode");
 			header('Location: '.DOL_URL_ROOT.'/index.php');
 			exit;
