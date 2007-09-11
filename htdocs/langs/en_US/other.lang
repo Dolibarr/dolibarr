@@ -14,6 +14,7 @@ ErrorFailedToRunExternalCommand=Failed to run external command. Check it is avai
 ErrorFailedToChangePassword=Failed to change password
 ErrorLoginDoesNotExists=User with login <b>%s</b> could not be found.
 ErrorLoginHasNoEmail=This user has no email address. Process aborted.
+ErrorBadValueForCode=Bad value types for code. Try again with a new value...
 SecurityCode=Security code
 Calendar=Calendar
 AddTrip=Add trip

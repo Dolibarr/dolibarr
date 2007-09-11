@@ -248,7 +248,7 @@ print '<center>'."\n";
 print '<table width="90%"><tr><td>';
 if (! $mode == 'dolibarr' || $conf->global->MAIN_SECURITY_FORCEFORGETPASSLINK)
 {
-	print '<font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
+	print '<font style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 }
 else
 {
