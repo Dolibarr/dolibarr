@@ -121,6 +121,9 @@ class User
 	{
 		global $conf;
 
+		// Nettoyage parametres
+		$login=trim($login);
+		
 		// Recupere utilisateur
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
 		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
@@ -135,11 +138,11 @@ class User
 		if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr' && $this->search_sid != '')
 		{
 			// permet une recherche du user par son SID ActiveDirectory ou Samba
-			$sql .= " WHERE (u.ldap_sid = '".$this->search_sid."' || u.login = '".$login."') LIMIT 1";
+			$sql .= " WHERE (u.ldap_sid = '".$this->search_sid."' || u.login = '".addslashes($login)."') LIMIT 1";
 		}
 		else if ($login)
 		{
-			$sql .= " WHERE u.login = '".$login."'";
+			$sql .= " WHERE u.login = '".addslashes($login)."'";
 		}
 		else
 		{
