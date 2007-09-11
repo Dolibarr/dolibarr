@@ -29,6 +29,7 @@ require("../master.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/usergroups.lib.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
 
 $user->getrights('user');
 
@@ -76,40 +77,50 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 // Action modif mot de passe
 if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 {
-    $edituser = new User($db);
-    $result=$edituser->fetch($_POST["username"]);
-	if ($result < 0)
+	// Verifie code
+	if (! chk_crypt($_POST['code']))
 	{
-        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';
+		$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 	}
 	else
 	{
-		if (! $edituser->email)
+	    $edituser = new User($db);
+	    $result=$edituser->fetch($_POST["username"]);
+		if ($result < 0)
 		{
-	        $message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+	        $message = '<div class="error">'.$langs->trans("ErrorLoginDoesNotExists",$_POST["username"]).'</div>';
+			$_POST["username"]='';
 		}
 		else
 		{
-			$newpassword=$edituser->password($user,'',$conf->password_encrypted,1);
-		    if ($newpassword < 0)
-		    {
-		        // Echec
-		        $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
-		    }
-		    else 
-		    {
-		        // Succes
-		        if ($edituser->send_password($user,$newpassword,1) > 0)
-		        {
-		        	$message = '<div class="ok">'.$langs->trans("PasswordChangedAndSentTo",$edituser->email).'</div>';
-					    //$message.=$newpassword;
-					  }
-					  else
-				    {
-				    	//$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
+			if (! $edituser->email)
+			{
+		        $message = '<div class="error">'.$langs->trans("ErrorLoginHasNoEmail").'</div>';
+			}
+			else
+			{
+				$newpassword=$edituser->password($user,'',$conf->password_encrypted,1);
+			    if ($newpassword < 0)
+			    {
+			        // Echec
+			        $message = '<div class="error">'.$langs->trans("ErrorFailedToChangePassword").'</div>';
+			    }
+			    else 
+			    {
+			        // Succes
+			        if ($edituser->send_password($user,$newpassword,1) > 0)
+			        {
+			        	$message = '<div class="ok">'.$langs->trans("PasswordChangeRequestSent",$edituser->login,$edituser->email).'</div>';
+						//$message.=$newpassword;
+						$_POST["username"]='';
+					}
+					else
+					{
+					   	//$message = '<div class="ok">'.$langs->trans("PasswordChangedTo",$newpassword).'</div>';
 					    $message.= '<div class="error">'.$edituser->error.'</div>';
-				    }
-		    }
+					}
+			    }
+			}
 		}
 	}
 }
@@ -123,6 +134,8 @@ if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 // Si feuille de style en php existe
 if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
+
+header('Cache-Control: Public, must-revalidate');
 
 print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN">'."\n";
 
@@ -191,7 +204,7 @@ print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</t
 $disabled='disabled';
 if ($mode == 'dolibarr') $disabled='';
 
-print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
+print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
 
@@ -211,12 +224,20 @@ elseif (is_readable(DOL_DOCUMENT_ROOT.'/theme/'.$conf->theme.'/img/login_logo.pn
 {
 	$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 }
-print '<td><img title="'.$title.'" src="'.$urllogo.'"';
+print '<td align="center"><img title="'.$title.'" src="'.$urllogo.'"';
 if ($width) print ' width="'.$width.'"';
 print '></td>';
-	
+
 print '</tr>'."\n";
 
+//print "Info session: ".session_name().session_id();print_r($_SESSION);
+$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
+print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
+print '<td align="center">';
+dsp_crypt('dolibarr.cfg.php',1);
+print '</td>';
+print '</tr>';
 
 print "<tr>".'<td align="center" colspan="3"><input class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
 print "</table>"."\n";
@@ -224,16 +245,24 @@ print "</table>"."\n";
 print "</form>"."\n";
 
 print '<center>'."\n";
-if ($mode == 'dolibarr')
+print '<table width="90%"><tr><td>';
+if (! $mode == 'dolibarr' || $conf->global->MAIN_SECURITY_FORCEFORGETPASSLINK)
 {
-	print '<table width="90%"><tr><td><font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font></td></tr></table><br>'."\n";
+	print '<font class="warning" style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 }
 else
 {
 	print '<div class="warning">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>'."\n";
 }
+print '</td></tr></table><br>';
+
+if ($message)
+{ 
+	print '<table width="90%"><tr><td>';
+	print $message.'</td></tr></table><br>';
+}
+
 print '<br>'."\n";
-if ($message) { print $message.'<br>'; }
 print '<a href="'.DOL_URL_ROOT.'/">'.$langs->trans("BackToLoginPage").'</a>';
 print '</center>'."\n";
 
