@@ -1320,17 +1320,18 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<body class="body" onload="donnefocus();">';
 
 	// Start Form
-	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
+/*	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
 		print '<form id="login" name="login" method="post" action="'.DOL_URL_ROOT.'/verifier.php">';
 	}
 	else
 	{
+	*/
 		print '<form id="login" name="login" method="post" action="';
 		print $_SERVER['PHP_SELF'];
 		print $_SERVER["QUERY_STRING"]?'?'.$_SERVER["QUERY_STRING"]:'';
 		print '">';
-	}
+//	}
 
 	// Table 1
 	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
@@ -1388,10 +1389,11 @@ function dol_loginfunction($notused,$pearstatus)
 	// Code de sécurité
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
+		//print "Info session: ".session_name().session_id();print_r($_SESSION);
 		include_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
 		$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
 		print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-		print '<td><input type="text" size="15" maxlength="10" name="code"></td>';
+		print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
 		print '<td align="center">';
 		dsp_crypt('dolibarr.cfg.php',1);
 		print '</td>';
