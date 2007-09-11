@@ -78,7 +78,7 @@ VolumeUnitmm3=mm<SUP>3</SUP>
 BugTracker=Bug tracker
 SendNewPasswordDesc=This form allows you to request a new passord. It will be send to your email address. Change will be effective only after clicking on confirmation link inside this email. Check your email reader software.
 BackToLoginPage=Back to login page
-AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>. In this mode, Dolibarr can't know nor change your password. Contact your system administrator if you want to change your password.
+AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar

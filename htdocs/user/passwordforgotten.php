@@ -182,7 +182,7 @@ print '<form id="login" action="'.$_SERVER["PHP_SELF"].'" method="post" name="lo
 print '<input type="hidden" name="action" value="buildnewpassword">'."\n";
 
 // Table 1
-print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="400">'."\n";
+print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">'."\n";
 if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 {
   print '<tr><td colspan="3" style="text-align:center;">';
@@ -196,13 +196,13 @@ print '</table>'."\n";
 print '<br>'."\n";
 
 // Table 2
-print '<table cellpadding="2" align="center" width="400">'."\n";
+print '<table cellpadding="2" align="center" width="450">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 $disabled='disabled';
-if ($mode == 'dolibarr') $disabled='';
+if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
 
 print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
@@ -230,29 +230,32 @@ print '></td>';
 
 print '</tr>'."\n";
 
-//print "Info session: ".session_name().session_id();print_r($_SESSION);
-$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
-print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
-print '<td align="center">';
-dsp_crypt('dolibarr.cfg.php',1);
-print '</td>';
-print '</tr>';
+if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA && !$disabled)
+{
+	//print "Info session: ".session_name().session_id();print_r($_SESSION);
+  $cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
+  print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+  print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
+  print '<td align="center">';
+  dsp_crypt('dolibarr.cfg.php',1);
+  print '</td>';
+  print '</tr>';
+}
 
-print "<tr>".'<td align="center" colspan="3"><input class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
+print "<tr>".'<td align="center" colspan="3"><input '.$disabled.' class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
 print "</table>"."\n";
 
 print "</form>"."\n";
 
 print '<center>'."\n";
-print '<table width="90%"><tr><td>';
-if (! $mode == 'dolibarr' || $conf->global->MAIN_SECURITY_FORCEFORGETPASSLINK)
+print '<table width="90%"><tr><td align="center">';
+if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2'))
 {
 	print '<font style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 }
 else
 {
-	print '<div class="warning">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>'."\n";
+	print '<div class="warning" align="center">'.$langs->trans("AuthenticationDoesNotAllowSendNewPassword",$mode).'</div>'."\n";
 }
 print '</td></tr></table><br>';
 
