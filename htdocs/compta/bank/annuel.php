@@ -182,7 +182,7 @@ print "</tr>\n";
 // Solde actuel
 $balance=0;
 $sql = "SELECT sum(f.amount) as total";
-$sql .= " FROM llx_bank as f";
+$sql.= " FROM ".MAIN_DB_PREFIX."bank as f";
 if ($_GET["account"]) { $sql .= " WHERE fk_account = ".$_GET["account"]; }
 $resql=$db->query($sql);
 if ($resql)

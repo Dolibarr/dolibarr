@@ -57,10 +57,15 @@ function bank_prepare_head($obj)
     $head[$h][1] = $langs->trans("IOMonthlyReporting");
     $head[$h][2] = 'annual';
     $h++;
-    
+
     $head[$h][0] = DOL_URL_ROOT."/compta/bank/graph.php?account=".$obj->id;
     $head[$h][1] = $langs->trans("Graph");
     $head[$h][2] = 'graph';
+    $h++;
+    
+    $head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
+    $head[$h][1] = $langs->trans("CashBudget");
+    $head[$h][2] = 'cash';
     $h++;
 
     if ($obj->courant != 2) 
