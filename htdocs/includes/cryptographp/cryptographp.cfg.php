@@ -16,7 +16,7 @@
 // Configuration du fond du cryptogramme
 // -------------------------------------
 
-$cryptwidth  = 140;  // Largeur du cryptogramme (en pixels)
+$cryptwidth  = 130;  // Largeur du cryptogramme (en pixels)
 $cryptheight = 40;   // Hauteur du cryptogramme (en pixels)
 
 $bgR  = 255;         // Couleur du fond au format RGB: Red (0->255)
@@ -35,7 +35,7 @@ $bgimg = '';                 // Le fond du cryptogramme peut-être une image
                              // fichier l'image sera prise au hasard parmi 
                              // celles disponibles dans le répertoire
 
-$bgframe = false;    // Ajoute un cadre de l'image (true/false)
+$bgframe = true;    // Ajoute un cadre de l'image (true/false)
 
 
 // ----------------------------
@@ -46,7 +46,7 @@ $bgframe = false;    // Ajoute un cadre de l'image (true/false)
 
 $charR = 0;     // Couleur des caractères au format RGB: Red (0->255)
 $charG = 0;     // Couleur des caractères au format RGB: Green (0->255)
-$charB = 255;     // Couleur des caractères au format RGB: Blue (0->255)
+$charB = 0;     // Couleur des caractères au format RGB: Blue (0->255)
 
 $charcolorrnd = true;      // Choix aléatoire de la couleur.
 $charcolorrndlevel = 2;    // Niveau de clarté des caractères si choix aléatoire (0->4)
@@ -56,7 +56,7 @@ $charcolorrndlevel = 2;    // Niveau de clarté des caractères si choix aléatoire
                            // 3: Couleurs claires
                            // 4: Couleurs très claires (surtout pour fonds sombres)
 
-$charclear = 0;   // Intensité de la transparence des caractères (0->127)
+$charclear = 10;   // Intensité de la transparence des caractères (0->127)
                   // 0=opaques; 127=invisibles
 	                // interessant si vous utilisez une image $bgimg
 	                // Uniquement si PHP >=3.2.1
@@ -87,14 +87,14 @@ $charelv = 'AEIOUY';              // Voyelles utilisées si $crypteasy = true
 
 $difuplow = false;          // Différencie les Maj/Min lors de la saisie du code (true, false)
 
-$charnbmin = 5;         // Nb minimum de caracteres dans le cryptogramme
-$charnbmax = 5;         // Nb maximum de caracteres dans le cryptogramme
+$charnbmin = 4;         // Nb minimum de caracteres dans le cryptogramme
+$charnbmax = 4;         // Nb maximum de caracteres dans le cryptogramme
 
-$charspace = 22;        // Espace entre les caracteres (en pixels)
-$charsizemin = 16;      // Taille minimum des caractères
-$charsizemax = 18;      // Taille maximum des caractères
+$charspace = 20;        // Espace entre les caracteres (en pixels)
+$charsizemin = 14;      // Taille minimum des caractères
+$charsizemax = 16;      // Taille maximum des caractères
 
-$charanglemax  = 10;     // Angle maximum de rotation des caracteres (0-360)
+$charanglemax  = 25;     // Angle maximum de rotation des caracteres (0-360)
 $charup   = true;        // Déplacement vertical aléatoire des caractères (true/false)
 
 // Effets supplémentaires
@@ -108,16 +108,16 @@ $cryptgrayscal = false;     // Transforme l'image finale en dégradé de gris (tru
 // Configuration du bruit
 // ----------------------
 
-$noisepxmin = 500;      // Bruit: Nb minimum de pixels aléatoires
-$noisepxmax = 1000;      // Bruit: Nb maximum de pixels aléatoires
+$noisepxmin = 10;      // Bruit: Nb minimum de pixels aléatoires
+$noisepxmax = 10;      // Bruit: Nb maximum de pixels aléatoires
 
-$noiselinemin = 5;     // Bruit: Nb minimum de lignes aléatoires
-$noiselinemax = 10;     // Bruit: Nb maximum de lignes aléatoires
+$noiselinemin = 1;     // Bruit: Nb minimum de lignes aléatoires
+$noiselinemax = 1;     // Bruit: Nb maximum de lignes aléatoires
 
-$nbcirclemin = 3;      // Bruit: Nb minimum de cercles aléatoires 
-$nbcirclemax = 3;      // Bruit: Nb maximim de cercles aléatoires
+$nbcirclemin = 1;      // Bruit: Nb minimum de cercles aléatoires 
+$nbcirclemax = 1;      // Bruit: Nb maximim de cercles aléatoires
 
-$noisecolorchar  = 1;  // Bruit: Couleur d'ecriture des pixels, lignes, cercles: 
+$noisecolorchar  = 3;  // Bruit: Couleur d'ecriture des pixels, lignes, cercles: 
                        // 1: Couleur d'écriture des caractères
                        // 2: Couleur du fond
                        // 3: Couleur aléatoire
@@ -127,7 +127,7 @@ $brushsize = 1;        // Taille d'ecriture du princeaiu (en pixels)
                        // Internal Server Error sur certaines versions de PHP/GD)
                        // Ne fonctionne pas sur les anciennes configurations PHP/GD
 
-$noiseup = true;      // Le bruit est-il par dessus l'ecriture (true) ou en dessous (false) 
+$noiseup = false;      // Le bruit est-il par dessus l'ecriture (true) ou en dessous (false) 
 
 // --------------------------------
 // Configuration système & sécurité
@@ -142,7 +142,7 @@ $cryptsecure = "md5";    // Méthode de crytpage utilisée: "md5", "sha1" ou "" (a
                          // Si aucune méthode n'est indiquée, le code du cyptogramme est stocké 
                          // en clair dans la session.
                        
-$cryptusetimer = 10;        // Temps (en seconde) avant d'avoir le droit de regénérer un cryptogramme
+$cryptusetimer = 0;        // Temps (en seconde) avant d'avoir le droit de regénérer un cryptogramme
 
 $cryptusertimererror = 3;  // Action à réaliser si le temps minimum n'est pas respecté:
                            // 1: Ne rien faire, ne pas renvoyer d'image.

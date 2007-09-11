@@ -1352,7 +1352,8 @@ function dol_loginfunction($notused,$pearstatus)
 
 	print '<tr><td colspan="3">&nbsp;</td></tr>';
 
-	print '<tr><td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
+	print '<tr>';
+	print '<td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
 	print '<td><input name="username" class="flat" size="15" maxlength="25" value="" tabindex="1" /></td>';
 
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
@@ -1373,7 +1374,7 @@ function dol_loginfunction($notused,$pearstatus)
 	{
 		$urllogo=DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/login_logo.png';
 	}
-	print '<td rowspan="2"><img title="'.$title.'" src="'.$urllogo.'"';
+	print '<td rowspan="2" align="center"><img title="'.$title.'" src="'.$urllogo.'"';
 	if ($width) print ' width="'.$width.'"';
 	print '></td>';
 	print '</tr>';
@@ -1387,11 +1388,13 @@ function dol_loginfunction($notused,$pearstatus)
 	// Code de sécurité
 	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
 	{
-		$cryptinstall = DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php';
-		include_once $cryptinstall;
+		include_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
+		$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
 		print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
 		print '<td><input type="text" size="15" maxlength="10" name="code"></td>';
-		dsp_crypt(0,1);
+		print '<td align="center">';
+		dsp_crypt('dolibarr.cfg.php',1);
+		print '</td>';
 		print '</tr>';
 	}
 
