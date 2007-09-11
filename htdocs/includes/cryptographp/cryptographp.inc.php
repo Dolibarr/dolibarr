@@ -22,9 +22,14 @@ if  ((!isset($_COOKIE['cryptcookietest'])) and ($_GET[$_GET['sn']]==""))
     exit;
     }
 
-if ($_GET[$_GET['sn']]=="") unset ($_GET['sn']); 
-session_start();
+// FIX LDR. Le bon nom de session n'etait pas positionne faisant stocker les variable dans la mauvaise.
+session_name($_GET['sn']);
+//print "zz".session_name().session_id();print_r($_SESSION);exit;
 
+
+if ($_GET[$_GET['sn']]=="") unset ($_GET['sn']);
+
+session_start();
 
 // N'accepte que les fichiers de config du meme répertoire
 if (is_file($_GET['cfg']) and dirname($_GET['cfg'])=='.' ) $_SESSION['configfile']=$_GET['cfg']; 
