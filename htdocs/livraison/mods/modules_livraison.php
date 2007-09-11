@@ -132,7 +132,24 @@ class ModeleNumRefDeliveryOrder
         return $langs->trans("NotAvailable");
     }
     
+	/**     \brief      Renvoi version du module numerotation
+	*      	\return     string      Valeur
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		return $langs->trans("NotAvailable");
+	}	
 }
+
+
+
+
 function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs='')
 {
   global $langs;
@@ -181,6 +198,8 @@ function delivery_order_pdf_create($db, $deliveryid, $modele='', $outputlangs=''
       return 0;
     }
 }
+
+
 function delivery_order_delete_preview($db, $deliveryid)
 {
         global $langs,$conf;

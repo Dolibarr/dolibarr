@@ -130,6 +130,19 @@ class ModeleNumRefPropales
         return $langs->trans("NotAvailable");
     }
 
+	/**     \brief      Renvoi version du module numerotation
+	*      	\return     string      Valeur
+	*/
+	function getVersion()
+	{
+		global $langs;
+		$langs->load("admin");
+
+		if ($this->version == 'development') return $langs->trans("VersionDevelopment");
+		if ($this->version == 'experimental') return $langs->trans("VersionExperimental");
+		if ($this->version == 'dolibarr') return DOL_VERSION;
+		return $langs->trans("NotAvailable");
+	}	
 }
 
 

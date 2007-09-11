@@ -35,17 +35,17 @@ require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
             \class      methode_expedition
             \brief      Classe mère des methodes expeditions
 */
-Class methode_expedition
+class methode_expedition
 {
 
-  Function methode_expedition($db=0)
+  function methode_expedition($db=0)
     { 
       $this->db = $db;
       $this->name = "NON DEFINIT";
       $this->description = "ERREUR DANS LA DEFINITION DU MODULE.";
     }
 
-  Function Active($statut)
+  function Active($statut)
     {
       // Mise a jour du statut
       $sql = "UPDATE ".MAIN_DB_PREFIX."expedition_methode set statut = $statut ";
@@ -79,7 +79,7 @@ Class methode_expedition
 	}
     }
 
-  Function write_pdf_file($id)
+  function write_pdf_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);
@@ -217,7 +217,7 @@ Class methode_expedition
 	}
     }
 
-  Function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
+  function _tableau(&$pdf, $tab_top, $tab_height, $nexY)
     {
 
       $pdf->SetFont('Arial','',11);
@@ -247,7 +247,7 @@ Class methode_expedition
 
     }
 
-  Function _pagehead(&$pdf, $propale)
+  function _pagehead(&$pdf, $propale)
     {
       $pdf->SetXY(10,5);
       if (defined("FAC_PDF_INTITULE"))
