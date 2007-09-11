@@ -716,7 +716,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$sql.= " WHERE s.rowid = ff.fk_soc";
 	$sql.= " AND ff.paye=0 AND ff.fk_statut = 1";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
-	if ($socid) $sql .= " AND f.fk_soc = ".$socid;
+	if ($socid) $sql .= " AND ff.fk_soc = ".$socid;
 	$sql.= " GROUP BY ff.rowid, ff.facnumber, ff.fk_statut, ff.total, ff.total_ttc, s.nom, s.rowid";
 
 	$resql=$db->query($sql);
