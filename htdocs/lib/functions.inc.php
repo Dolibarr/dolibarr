@@ -1274,6 +1274,8 @@ function dol_loginfunction($notused,$pearstatus)
 	// Si feuille de style en php existe
 	if (file_exists(DOL_DOCUMENT_ROOT.'/'.$conf->css.".php")) $conf->css.=".php";
 
+	header('Cache-Control: Public, must-revalidate');
+
 	// Ce DTD est KO car inhibe document.body.scrollTop
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	// Ce DTD est OK

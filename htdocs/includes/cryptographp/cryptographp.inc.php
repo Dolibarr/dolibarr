@@ -252,6 +252,7 @@ $_SESSION['cryptcptuse']++;
   
 
 // Envoi de l'image finale au navigateur 
+header('Cache-Control: Public, must-revalidate');
 switch (strtoupper($cryptformat)) {  
        case "JPG"  :
 	     case "JPEG" : if (imagetypes() & IMG_JPG)  {

@@ -203,7 +203,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        {
 	            // Echec authentification
 	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr) pour '".$_POST["username"]."'");
-				sleep(2);
+				sleep(1);
 	        }
 	        else 
 	        {
@@ -257,6 +257,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        {
 	            // Echec authentification
 	            dolibarr_syslog("Authentification ko (en mode Pear Base Dolibarr_mdb2) pour '".$_POST["username"]."'");
+				sleep(1);
 	        }
 	        else 
 	        {
@@ -343,7 +344,28 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    }
     }
 
+	// Verification du code
+	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA)
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/includes/cryptographp/cryptographp.fct.php');
+		//print "Info session: ".session_name().session_id();print_r($_SESSION);
+		if (! chk_crypt($_POST['code']))
+		{
+			session_destroy();
+			dolibarr_syslog('Bad value for code, connexion refused');
+
+			// On repart sur page accueil
+			session_name($sessionname);
+			session_start();
+			$langs->load('main');
+			$_SESSION["loginmesg"]=$langs->trans("ErrorBadValueForCode");
+			header('Location: '.DOL_URL_ROOT.'/index.php');
+			exit;
+		}
+	}
+	
 	// Charge l'objet user depuis son login ou son SID
+	$result=0;
 	if ($conf->ldap->enabled && $conf->global->LDAP_SYNCHRO_ACTIVE == 'ldap2dolibarr')
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
@@ -413,7 +435,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	{
 		$result=$user->fetch($login);
 	}
-	
+
 	if ($result <= 0)
 	{
 		session_destroy();
@@ -431,11 +453,11 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 else
 {
 	// On est déjà en session qui a sauvegardé login
-	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal idnetifiés
+	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifiés
 	$login=$_SESSION["dol_login"];
-  dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
+	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
 	$user->fetch($login);
-  $login=$user->login;
+	$login=$user->login;
 }
 
 // Est-ce une nouvelle session

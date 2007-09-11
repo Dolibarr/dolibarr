@@ -17,5 +17,6 @@ session_name($_GET['sn']);
 session_start();
 error_reporting(E_ALL ^ E_NOTICE);
 SetCookie("cryptcookietest", "1");
+header('Cache-Control: Public, must-revalidate');
 Header("Location: cryptographp.inc.php?cfg=".$_GET['cfg']."&sn=".session_name()."&".SID);
 ?>
