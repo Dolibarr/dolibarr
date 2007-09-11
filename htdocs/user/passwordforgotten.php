@@ -261,7 +261,7 @@ print '</td></tr></table><br>';
 
 if ($message)
 { 
-	print '<table width="90%"><tr><td>';
+	print '<table width="90%"><tr><td align="center">';
 	print $message.'</td></tr></table><br>';
 }
 
