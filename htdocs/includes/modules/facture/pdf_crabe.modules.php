@@ -196,7 +196,7 @@ class pdf_crabe extends ModelePDFFactures
                 $tab_height = 110;
                 $tab_height_newpage = 180;
 
-				// Affiche notes
+				        // Affiche notes
                 if ($fac->note_public)
                 {
 	                $tab_top = 88;
@@ -207,9 +207,9 @@ class pdf_crabe extends ModelePDFFactures
 	                $nexY = $pdf->GetY();
 	                $height_note=$nexY-$tab_top;
 
-			        // Rect prend une longueur en 3eme param
-			        $pdf->SetDrawColor(192,192,192);
-			        $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+			            // Rect prend une longueur en 3eme param
+			            $pdf->SetDrawColor(192,192,192);
+			            $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
 
 	                $tab_height = $tab_height - $height_note;
                 	$tab_top = $nexY+6;
@@ -226,45 +226,56 @@ class pdf_crabe extends ModelePDFFactures
                 // Boucle sur les lignes
                 for ($i = 0 ; $i < $nblignes ; $i++)
                 {
-                    $curY = $nexY;
-
-                    // Description de la ligne produit
-					$libelleproduitservice=_dol_htmlentities($fac->lignes[$i]->libelle,0);
-                    if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
+                	$curY = $nexY;
+                	
+                	// Description de la ligne produit
+                	$libelleproduitservice=_dol_htmlentities($fac->lignes[$i]->libelle,0);
+                  if ($fac->lignes[$i]->desc&&$fac->lignes[$i]->desc!=$fac->lignes[$i]->libelle)
+                  {
+                  	if ($libelleproduitservice) $libelleproduitservice.="\n";
+                  	
+                  	if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
+                  	{
+                  		$discount=new DiscountAbsolute($this->db);
+                  		$discount->fetch($fac->lignes[$i]->fk_remise_except);
+                  		$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
+                  	}
+                  	else
+                  	{ 
+                  		if ($fac->lignes[$i]->produit_id)
+                  		{
+                  			$libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+                  		}
+                  		else
+                  		{
+                  			// On vérifie si les lignes personnalisées sont formatées avec fckeditor
+                  			$libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO);
+                  		}
+                  	}
+                  }
+                  // Si ligne associée à un code produit
+                  if ($fac->lignes[$i]->produit_id)
+                  {
+                  	$prodser = new Product($this->db);
+                    $prodser->fetch($fac->lignes[$i]->produit_id);
+                    // On ajoute la ref
+                    if ($prodser->ref)
                     {
-                        if ($libelleproduitservice) $libelleproduitservice.="\n";
+                    	$prefix_prodserv = "";
+                      if($prodser->isservice())
+                      {
+                      	$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+                      }
+                      else
+                      {
+                      	$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
+                      }
 
-	                    if ($fac->lignes[$i]->desc == '(CREDIT_NOTE)' && $fac->lignes[$i]->fk_remise_except)
-						{
-							$discount=new DiscountAbsolute($this->db);
-							$discount->fetch($fac->lignes[$i]->fk_remise_except);
-							$libelleproduitservice=$langs->trans("DiscountFromCreditNote",$discount->ref_facture_source);
-						}
-						else
-						{
-							$libelleproduitservice.=_dol_htmlentities($fac->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
-						}
-					}
-                    // Si ligne associée à un code produit
-                    if ($fac->lignes[$i]->produit_id)
-                    {
-                        $prodser = new Product($this->db);
-                        $prodser->fetch($fac->lignes[$i]->produit_id);
-
-						// On ajoute la ref
-                        if ($prodser->ref)
-						{
-							$prefix_prodserv = "";
-                        	if($prodser->isservice())
-                        		$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
-							else
-                        		$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
-
-                            $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
-                        }
-
-						// Ajoute description du produit
-						if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+                        $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+                    }
+                    
+                    // Ajoute description du produit
+                    if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
                         {
                             if ($fac->lignes[$i]->product_desc&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$fac->lignes[$i]->product_desc!=$fac->lignes[$i]->desc)
                             {
