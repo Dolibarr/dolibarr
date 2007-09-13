@@ -30,6 +30,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
 require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 

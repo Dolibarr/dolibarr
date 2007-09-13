@@ -27,6 +27,8 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
+
 
 /**
    \class      ModeleGenPassword

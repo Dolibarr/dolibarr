@@ -1,7 +1,7 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Regis Houssin        <regis.houssin@cap-networks.com>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,12 +20,25 @@
  *
  * $Id$
  * $Source$
- *
  */
 
+/**
+   \file       htdocs/expedition/mods/pdf/ModelePdfExpedition.class.php
+   \ingroup    shipping
+   \brief      Fichier contenant la classe mère de generation des expeditions
+   \version    $Revision$
+*/
+
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
 require_once DOL_DOCUMENT_ROOT.'/includes/fpdf/DolibarrPdfBarCode.class.php';
 
-Class ModelePdfExpedition extends DolibarrPdfBarCode
+
+/**
+   \class      ModelePdfExpedition
+   \brief      Classe mère des modèles de bon d'expedition
+*/
+
+class ModelePdfExpedition extends DolibarrPdfBarCode
 {
     var $error='';
 

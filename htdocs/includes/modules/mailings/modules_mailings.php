@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -28,6 +28,8 @@
 		\brief      Fichier contenant la classe mère des classes de liste de destinataires mailing
 		\version    $Revision$
 */
+
+require_once(DOL_DOCUMENT_ROOT.'/lib/functions.inc.php');
 
 
 /**
