@@ -1297,7 +1297,7 @@ if ($_GET['action'] == 'create')
 	if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
@@ -1836,7 +1836,19 @@ else
 			print '<table class="border" width="100%">';
 			
 			// Reference
-			print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="5">'.$fac->ref.'</td></tr>';
+			print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
+			print '<td colspan="5">'.$fac->ref;
+			$discount=new DiscountAbsolute($db);
+			$result=$discount->fetch(0,$fac->id);
+			if ($result > 0)
+			{
+				print ' ('.$langs->trans("CreditNoteConvertedIntoDiscount",$discount->getNomUrl(1,'discount')).')';
+			}
+			if ($result < 0)
+			{
+				dolibarr_print_error('',$discount->error);
+			}
+			print '</td></tr>';
 			
 			// Ref client
 			/*

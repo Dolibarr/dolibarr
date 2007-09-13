@@ -741,7 +741,7 @@ class Form
         
         // On recherche les societes
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
-		$sql.= " re.description";
+		$sql.= " re.description, re.fk_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
         $sql.= " WHERE fk_soc = ".$socid;
         if ($filter) $sql.= " AND ".$filter;
@@ -760,7 +760,11 @@ class Form
                 {
                     $obj = $this->db->fetch_object($resql);
                     $desc=dolibarr_trunc($obj->description,40);
-					if ($desc=='(CREDIT_NOTE)') $desc=$langs->trans("CreditNote");
+					if ($desc=='(CREDIT_NOTE)') 
+					{
+						$desc=$langs->trans("CreditNote");
+						//$desc.=$obj->fk_facture_source;
+					}
 					
 					if ($selected > 0 && $selected == $obj->rowid)
                     {

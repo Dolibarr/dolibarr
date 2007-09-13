@@ -59,15 +59,23 @@ class DiscountAbsolute
 		$this->db = $DB;
 	}
 
-	
+
 	/**
 	 *    	\brief      Charge objet remise depuis la base
-	 *    	\param      rowid       id du projet à charger
-	 *		\return		int			<0 si ko, =0 si non trouvé, >0 si ok
+	 *    	\param      rowid       		id du projet à charger
+	 *    	\param      fk_facture_source	fk_facture_source
+	 *		\return		int					<0 si ko, =0 si non trouvé, >0 si ok
 	 */
-	function fetch($rowid)
+	function fetch($rowid,$fk_facture_source=0)
 	{
-		$sql = "SELECT sr.fk_soc,";
+		// Check parameters
+		if (! $rowid && ! $fk_facture_source)
+		{
+			$this->error='ErrorBadParameters';
+			return -1;
+		}
+
+		$sql = "SELECT sr.rowid, sr.fk_soc,";
 		$sql.= " sr.fk_user,";
 		$sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
 		$sql.= " sr.fk_facture, sr.fk_facture_source, sr.description,";
@@ -75,8 +83,10 @@ class DiscountAbsolute
 		$sql.= " f.facnumber as ref_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as f ON sr.fk_facture_source = f.rowid";
-		$sql.= " WHERE sr.rowid=".$rowid;
-	
+		$sql.= " WHERE";
+		if ($rowid) $sql.= " sr.rowid=".$rowid;
+		if ($fk_facture_source) $sql.= " sr.fk_facture_source=".$fk_facture_source;
+
 		dolibarr_syslog("DiscountAbsolute::fetch sql=".$sql);
  		$resql = $this->db->query($sql);
 		if ($resql)
@@ -85,7 +95,7 @@ class DiscountAbsolute
 			{
 				$obj = $this->db->fetch_object($resql);
 	
-				$this->id = $rowid;
+				$this->id = $obj->rowid;
 				$this->fk_soc = $obj->fk_soc;
 				$this->amount_ht = $obj->amount_ht;
 				$this->amount_tva = $obj->amount_tva;
@@ -213,21 +223,33 @@ class DiscountAbsolute
 		\param		option			Sur quoi pointe le lien
 		\return		string			Chaine avec URL
 	*/
-	function getNomUrl($withpicto,$option='')
+	function getNomUrl($withpicto,$option='invoice')
 	{
 		global $langs;
 		
 		$result='';
 		
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'">';
-		$lienfin='</a>';
+		if ($option == 'invoice')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/compta/facture.php?facid='.$this->fk_facture_source.'">';
+			$lienfin='</a>';
+			$label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
+			$ref=$this->ref_facture_source;
+			$picto='bill';
+		}
+		if ($option == 'discount')
+		{
+			$lien = '<a href="'.DOL_URL_ROOT.'/comm/remx.php?id='.$this->fk_soc.'">';
+			$lienfin='</a>';
+			$label=$langs->trans("Discount");
+			$ref=$langs->trans("Discount");
+			$picto='generic';
+		}
 		
-		$picto='bill';
-		$label=$langs->trans("ShowDiscount").': '.$this->ref_facture_source;
 		
 		if ($withpicto) $result.=($lien.img_object($label,$picto).$lienfin);
 		if ($withpicto && $withpicto != 2) $result.=' ';
-		$result.=$lien.$this->ref_facture_source.$lienfin;
+		$result.=$lien.$ref.$lienfin;
 		return $result;
 	}
 	
