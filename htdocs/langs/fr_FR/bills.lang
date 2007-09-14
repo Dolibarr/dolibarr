@@ -288,6 +288,7 @@ ChequesArea=Espace remises de chèques
 ChequeDeposits=Dépots de chèques
 Cheques=Chèques
 CreditNoteConvertedIntoDiscount=Cet avoir a été converti en %s
+UsBillingContactAsIncoiveRecipientIfExist=Utiliser l'adresse du contact facturation client de la facture plutot que l'adresse du tiers comme destinataire des factures
 
 # oursin PDF model
 Of=du

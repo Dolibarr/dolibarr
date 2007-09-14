@@ -323,55 +323,65 @@ class CommonObject
     /** 	
     *		\brief      Charge le contact d'id $id dans this->contact
     *		\param      contactid          Id du contact
+	*		\return		int			<0 if KO, >0 if OK
     */
     function fetch_contact($contactid) 	
     { 	
-       $contact = new Contact($this->db); 	
-       $contact->fetch($contactid); 	
-       $this->contact = $contact; 	
-     }
+		$contact = new Contact($this->db); 	
+		$result=$contact->fetch($contactid); 	
+		$this->contact = $contact; 	
+		return $result;
+    }
 
     /**
      *    	\brief      Charge le tiers d'id $this->socid dans this->client
+	*		\return		int			<0 if KO, >0 if OK
      */
     function fetch_client()
     {
         $client = new Societe($this->db);
-        $client->fetch($this->socid);
+        $result=$client->fetch($this->socid);
         $this->client = $client;
+		return $result;
     }
 
     /**
     *		\brief      Charge le projet d'id $this->projet_id dans this->projet
+	*		\return		int			<0 if KO, >0 if OK
     */
     function fetch_projet()
     {
         $projet = new Project($this->db);
-        $projet->fetch($this->projet_id);
+        $result=$projet->fetch($this->projet_id);
         $this->projet = $projet;
+		return $result;
     }
 
 	/** 	
     *		\brief      Charge le user d'id userid dans this->user
     *		\param      userid 		Id du contact
+	*		\return		int			<0 if KO, >0 if OK
     */
     function fetch_user($userid) 	
     {	
-       $user = new User($this->db, $userid); 	
-       $user->fetch();
-       $this->user = $user; 	
+		$user = new User($this->db, $userid); 	
+		$result=$user->fetch();
+		$this->user = $user; 	
+		return $result;
     }
     
- /**
-   *		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->deliveryaddress
-   *		\param      userid 		Id du contact
-   */
+	/**
+	*		\brief      Charge l'adresse de livraison d'id $this->adresse_livraison_id dans this->deliveryaddress
+	*		\param      userid 		Id du contact
+	*		\return		int			<0 if KO, >0 if OK
+	*/
 	function fetch_adresse_livraison($deliveryaddressid)
-  {
-  	$address = new Societe($this->db);
-    $address->fetch_adresse_livraison($deliveryaddressid);
-    $this->deliveryaddress = $address;
-  }
+	{
+		$address = new Societe($this->db);
+		$result=$address->fetch_adresse_livraison($deliveryaddressid);
+		$this->deliveryaddress = $address;
+		return $result;
+	}
   
 /**
   *    \brief      Retourne la liste déroulante des sociétés
