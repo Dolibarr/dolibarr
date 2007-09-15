@@ -31,14 +31,14 @@
 
 require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
  
 /**
    \class      Commande
    \brief      Classe de gestion de commande
 */
-class Commande extends CommonObject
+//class Commande extends CommonObject
+class Commande
 {
   var $db ;
   var $element='commande';

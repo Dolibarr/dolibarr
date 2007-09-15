@@ -954,7 +954,12 @@ function llxFooter($foot='',$limitIEbug=1)
     if (isset($_SERVER['DOL_TUNING']))
     {
 		$micro_end_time=dol_microtime_float(true);
-		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms"</script>';
+		print '<script language="javascript" type="text/javascript">window.status="Build time: '.ceil(1000*($micro_end_time-$micro_start_time)).' ms';
+		if (function_exists("memory_get_usage"))
+		{
+			print ' - Memory usage: '.memory_get_usage();
+		}	
+		print '"</script>';
         print "\n";
     } 
 

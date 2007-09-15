@@ -196,7 +196,9 @@ if ($user->societe_id == 0)
                  DOL_URL_ROOT.'/compta/facture.php?mainmenu=accountancy',
                  DOL_URL_ROOT.'/telephonie/ligne/index.php');
    
-    // Boucle et affiche chaque ligne du tableau
+	//print memory_get_usage()."<br>";
+
+	// Boucle et affiche chaque ligne du tableau
     foreach ($keys as $key=>$val)
     {
         if ($conditions[$key])
@@ -217,6 +219,8 @@ if ($user->societe_id == 0)
             print '<td>'.$titres[$key].'</td>';
             print '<td align="right"><a href="'.$links[$key].'">'.$board->nb[$val].'</a></td>';
             print '</tr>';
+
+			//print $includes[$key].' '.memory_get_usage()."<br>";
         }
     }
 

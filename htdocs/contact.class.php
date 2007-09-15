@@ -30,9 +30,6 @@
         \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
-
-
 
 /**
         \class      Contact
@@ -136,7 +133,7 @@ class Contact
     }
 
     /*
-     *      \brief      Mise à jour des infos
+     *      \brief      Mise à jour des infos en base
      *      \param      id          	Id du contact à mettre à jour
      *      \param      user        	Objet utilisateur qui effectue la mise à jour
      *      \param      notrigger	    0=non, 1=oui
@@ -536,7 +533,7 @@ class Contact
     }
 
 	/*
-	*   \brief      Efface le contact de la base et éventuellement de l'annuaire LDAP
+	*   \brief      Efface le contact de la base
 	*   \param      id      id du contact a effacer
 	*	\return		int		<0 si ko, >0 si ok
 	*/
