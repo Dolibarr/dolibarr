@@ -243,3 +243,11 @@ CivilityMME=Madame
 CivilityMR=Monsieur
 CivilityMLE=Mademoiselle
 CivilityMTRE=Maître
+
+##### Currencies #####
+Currencyeuros=Euros
+CurrencyCHF=Francs suisses
+CurrencyEUR=Euros
+CurrencyFRF=Francs Français
+CurrencyGBP=Livre sterling
+CurrencyUSD=Dollar US

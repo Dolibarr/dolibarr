@@ -385,20 +385,6 @@ DetectedVersion=Detected version
 FollowingConstantsWillBeSubstituted=Following constants will be substitute with corresponding value.
 Refresh=Refresh
 BackToList=Back to list
-# Countries
-CountryFR=France
-CountryBE=Belgium
-CountryES=Spain
-CountryDE=Germany
-CountryCH=Switzerland
-CountryCA=Canada
-# Currencies
-Currencyeuros=Euros
-CurrencyCHF=Swiss Francs
-CurrencyEUR=Euros
-CurrencyFRF=Francs Français
-CurrencyGBP=GB Pounds
-CurrencyUSD=Dollar US
 # Week day
 Monday=Monday
 Tuesday=Tuesday

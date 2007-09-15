@@ -386,20 +386,6 @@ DetectedVersion=Version détectée
 FollowingConstantsWillBeSubstituted=Les constantes suivantes seront substituées par leur valeur correspondante.
 Refresh=Rafraichir
 BackToList=Retour liste
-# Countries
-CountryFR=France
-CountryBE=Belgique
-CountryES=Espagne
-CountryDE=Allemagne
-CountryCH=Suisse
-CountryCA=Canada
-# Currencies
-Currencyeuros=Euros
-CurrencyCHF=Francs suisses
-CurrencyEUR=Euros
-CurrencyFRF=Francs Français
-CurrencyGBP=Livre sterling
-CurrencyUSD=Dollar US
 # Week day
 Monday=Lundi
 Tuesday=Mardi
