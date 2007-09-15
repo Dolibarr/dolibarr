@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2001-2002 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -28,9 +29,9 @@
 */
 
 require("./pre.inc.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
-require(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
+require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 
 $adho = new AdherentOptions($db);
 $errmsg='';

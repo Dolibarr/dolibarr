@@ -599,10 +599,10 @@ if ($action == 'edit')
 	print "<input type=\"hidden\" name=\"rowid\" value=\"$rowid\">";
 	print "<input type=\"hidden\" name=\"statut\" value=\"".$adh->statut."\">";
 
-	print '<table class="border" width="100%">';
-	
 	$htmls = new Form($db);
 
+	print '<table class="border" width="100%">';
+	
     // Ref
     print '<tr><td>'.$langs->trans("Ref").'</td><td class="valeur" colspan="2">'.$adh->id.'&nbsp;</td></tr>';
 	
@@ -636,10 +636,10 @@ if ($action == 'edit')
 	print '</tr>';
 	
 	// Login
-	print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="40" value="'.$adh->login.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Login").'*</td><td><input type="text" name="login" size="30" value="'.$adh->login.'"></td></tr>';
 	
 	// Password
-	print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="40" value="'.$adh->pass.'"></td></tr>';
+	print '<tr><td>'.$langs->trans("Password").'*</td><td><input type="password" name="pass" size="30" value="'.$adh->pass.'"></td></tr>';
 
 	// Type
 	print '<tr><td>'.$langs->trans("Type").'*</td><td>';
@@ -703,6 +703,7 @@ if ($action == 'edit')
 	print '</td></tr>';
 
 	print '</table>';
+
 	print '</form>';
 	
 	print '</div>'; 
