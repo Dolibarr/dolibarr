@@ -399,6 +399,7 @@ class Contact
                 $this->fullname       = trim($this->firstname . ' ' . $this->name);
 
                 $this->address        = $obj->address;
+                $this->adresse        = $obj->address; // Todo: uniformiser le nom des variables
                 $this->cp             = $obj->cp;
                 $this->ville          = $obj->ville;
                 $this->fk_pays        = $obj->fk_pays;

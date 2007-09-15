@@ -1028,6 +1028,7 @@ class pdf_crabe extends ModelePDFFactures
 					$result=$object->fetch_contact($idcontact);
 					if ($result > 0) $receiver=$object->contact;
 					$receiver=$object->contact;
+					$receiver->nom = $receiver->fullname;
 				}
 			}
 			if (! $receiver) $receiver=$object->client;
