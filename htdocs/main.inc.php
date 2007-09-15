@@ -626,6 +626,8 @@ else
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {
     global $user, $conf, $langs, $db, $micro_start_time;
+    
+    $langs->load("dict");
 
 	// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
 	// est positionne A appeler avant tout.
