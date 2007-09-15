@@ -338,7 +338,7 @@ if ($id > 0)
 
 				// Icon update et delete
 				print '<td align="center" nowrap>';
-				if ($propal->statut < 5 && $user->rights->propale->creer)
+				if ($user->rights->propale->creer)
 				{
 					print '&nbsp;';
 					print '<a href="contact.php?propalid='.$propal->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';

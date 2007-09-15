@@ -330,7 +330,7 @@ if ($id > 0)
 
 				// Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
 				print '<td align="center" nowrap>';
-				if ($facture->statut == 0 && $user->rights->facture->creer)
+				if ($user->rights->facture->creer)
 				{
 					print '&nbsp;';
 					print '<a href="contact.php?facid='.$facture->id.'&amp;action=deleteline&amp;lineid='.$tab[$i]['rowid'].'">';
