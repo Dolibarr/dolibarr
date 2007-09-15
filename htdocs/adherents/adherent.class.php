@@ -73,7 +73,7 @@ class Adherent
 	var $morphy;
 	var $public;
 	var $commentaire;		// Note
-	var $statut;			// -1=brouillon, 0=résilié, 1=validé,payé
+	var $statut;			// -1:brouillon, 0:résilié, >=1:validé,payé
 	var $photo;
 
 	var $datec;

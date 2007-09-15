@@ -1056,7 +1056,7 @@ if ($rowid && $action != 'edit')
     if ($user->rights->adherent->supprimer)
 	{
 		// Résilier
-	    if ($adh->statut == 1)
+	    if ($adh->statut >= 1)
 	    {
 	        print "<a class=\"butAction\" href=\"fiche.php?rowid=$rowid&action=resign\">".$langs->trans("Resiliate")."</a>\n";
 	    }
