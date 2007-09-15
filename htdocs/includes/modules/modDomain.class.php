@@ -86,12 +86,26 @@ class modDomain extends DolibarrModules
         $this->rights_class = 'domain';
         $r=0;
 
-        // $this->rights[$r][0]     Id permission (unique tous modules confondus)
-        // $this->rights[$r][1]     Libellé par défaut si traduction de clé "PermissionXXX" non trouvée (XXX = Id permission)
-        // $this->rights[$r][2]     Non utilisé
-        // $this->rights[$r][3]     1=Permis par defaut, 0=Non permis par defaut
-        // $this->rights[$r][4]     Niveau 1 pour nommer permission dans code
-        // $this->rights[$r][5]     Niveau 2 pour nommer permission dans code
+	    $r++;
+	    $this->rights[$r][0] = 1301;
+	    $this->rights[$r][1] = 'Read domain names';
+	    $this->rights[$r][2] = 'r';
+	    $this->rights[$r][3] = 1;    
+	    $this->rights[$r][4] = 'read';
+        
+	    $r++;
+	    $this->rights[$r][0] = 1302;
+	    $this->rights[$r][1] = 'Create/modify domain names';
+	    $this->rights[$r][2] = 'w';
+	    $this->rights[$r][3] = 0;    
+	    $this->rights[$r][4] = 'create';
+        
+	    $r++;
+	    $this->rights[$r][0] = 1303;
+	    $this->rights[$r][1] = 'Delete domain names';
+	    $this->rights[$r][2] = 'd';
+	    $this->rights[$r][3] = 0;    
+	    $this->rights[$r][4] = 'delete';
         
         // Exports
         //--------

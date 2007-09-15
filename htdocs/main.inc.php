@@ -958,7 +958,11 @@ function llxFooter($foot='',$limitIEbug=1)
 		if (function_exists("memory_get_usage"))
 		{
 			print ' - Memory usage: '.memory_get_usage();
-		}	
+		}
+		if (function_exists("zend_loader_file_encoded"))
+		{
+			print ' - Zend encoded file: '.(zend_loader_file_encoded()?'yes':'no');
+		}
 		print '"</script>';
         print "\n";
     } 

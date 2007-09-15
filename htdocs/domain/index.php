@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * $Id$
  * $Source$
@@ -17,23 +18,27 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
- *
  */
 
 require("./pre.inc.php");
 
+
+/*
+ * Affichage
+ */
+ 
 llxHeader();
-
-
-
-print_titre("Noms de domaines internet");
 
 
 $sql = "SELECT label ";
 $sql .= " FROM ".MAIN_DB_PREFIX."domain ORDER BY label ASC";
 
 $result = $db->query($sql);
-if ($result) {
+if ($result)
+{
+  $num = $db->num_rows($result);
+
+  print_barre_liste($langs->trans("DomainNames"), $page, "liste.php","",$sortfield,$sortorder,"",$num);
 
   print "<form method=\"post\" action=\"index.php?viewall=$viewall&vline=$vline&account=$account\">";
   print "<input type=\"hidden\" name=\"action\" value=\"add\">";
