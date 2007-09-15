@@ -31,7 +31,6 @@
 
 require("./pre.inc.php");
 
-$langs->load("main");
 $langs->load("other");
 $langs->load("admin");
 $langs->load("companies");

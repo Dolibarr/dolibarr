@@ -38,7 +38,6 @@ $user->getrights('banque');
 if (!$user->rights->facture->lire)
 accessforbidden();
 
-$langs->load("main"); // BUG De chargement de traduction ne pas modifier cette ligne
 $langs->load("companies");
 $langs->load("bills");
 

@@ -577,8 +577,9 @@ if (! defined('MAIN_INFO_SOCIETE_PAYS'))
   define('MAIN_INFO_SOCIETE_PAYS','1');
 }
 
-// On charge le fichier lang principal
+// On charge les fichiers lang principaux
 $langs->load("main");
+$langs->load("dict");
 
 /*
  *
@@ -625,90 +626,88 @@ else
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {
-    global $user, $conf, $langs, $db, $micro_start_time;
-    
-    $langs->load("dict");
-
+	global $user, $conf, $langs, $db, $micro_start_time;
+	
 	// Pour le tuning optionnel. Activer si la variable d'environnement DOL_TUNING
 	// est positionne A appeler avant tout.
 	if (isset($_SERVER['DOL_TUNING'])) $micro_start_time=dol_microtime_float(true);
 	
 	if (! $conf->css)  $conf->css ='/theme/eldy/eldy.css.php';
 
-  //header("Content-type: text/html; charset=UTF-8");
- 	header("Content-type: text/html; charset=".$conf->character_set_client);
+	//header("Content-type: text/html; charset=UTF-8");
+	header("Content-type: text/html; charset=".$conf->character_set_client);
 
-  print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
+	print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">';
 	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01//EN" http://www.w3.org/TR/1999/REC-html401-19991224/strict.dtd>';
-  print "\n";
+	print "\n";
 	print "<html>\n";
 	if ($disablehead == 0)
 	{
 		print "<head>\n";
-	
-    print $langs->lang_header();
-    print $head;
+		
+		print $langs->lang_header();
+		print $head;
 
-    // Affiche meta
-    print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
-    print '<meta name="author" content="Dolibarr Development Team">'."\n";
+		// Affiche meta
+		print '<meta name="robots" content="noindex,nofollow">'."\n";      // Evite indexation par robots
+		print '<meta name="author" content="Dolibarr Development Team">'."\n";
 
-    // Affiche title
-    if ($title)
-    {
-        print '<title>Dolibarr - '.$title.'</title>';
-    }
-    else
-    {
-        if (defined("MAIN_TITLE"))
-        {
-            print "<title>".MAIN_TITLE."</title>";
-        }
-        else
-        {
-            print '<title>Dolibarr</title>';
-        }
-    }
-    print "\n";
+		// Affiche title
+		if ($title)
+		{
+			print '<title>Dolibarr - '.$title.'</title>';
+		}
+		else
+		{
+			if (defined("MAIN_TITLE"))
+			{
+				print "<title>".MAIN_TITLE."</title>";
+			}
+			else
+			{
+				print '<title>Dolibarr</title>';
+			}
+		}
+		print "\n";
 
-    // Affiche style sheets et link
-    print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
-    print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
-    
-    // Style sheets pour la class Window
-    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
-    print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
+		// Affiche style sheets et link
+		print '<link rel="stylesheet" type="text/css" title="default" href="'.DOL_URL_ROOT.'/'.$conf->css.'">'."\n";
+		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
+		
+		// Style sheets pour la class Window
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
+		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
 
-    // Definition en alternate style sheet des feuilles de styles les plus maintenues
-    // Les navigateurs qui supportent sont rares. Plus aucun connu.
-	/*
-    print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
-    print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css.php">'."\n";
-    print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
-	*/
-	
-    print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
-    print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
-    print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
+		// Definition en alternate style sheet des feuilles de styles les plus maintenues
+		// Les navigateurs qui supportent sont rares. Plus aucun connu.
+		/*
+		print '<link rel="alternate stylesheet" type="text/css" title="Eldy" href="'.DOL_URL_ROOT.'/theme/eldy/eldy.css.php">'."\n";
+		print '<link rel="alternate stylesheet" type="text/css" title="Freelug" href="'.DOL_URL_ROOT.'/theme/freelug/freelug.css.php">'."\n";
+		print '<link rel="alternate stylesheet" type="text/css" title="Yellow" href="'.DOL_URL_ROOT.'/theme/yellow/yellow.css">'."\n";
+		*/
+		
+		print '<link rel="top" title="'.$langs->trans("Home").'" href="'.DOL_URL_ROOT.'/">'."\n";
+		print '<link rel="copyright" title="GNU General Public License" href="http://www.gnu.org/copyleft/gpl.html#SEC1">'."\n";
+		print '<link rel="author" title="Dolibarr Development Team" href="http://www.dolibarr.org">'."\n";
 
-    if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
-    {
-    	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-    }
-    if (! $disablejs && $conf->use_ajax)
-    {
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/window.js"></script>'."\n";
-        print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
-        
-    }
-    
-    print "</head>\n";
-  }
+		if (! $disablejs && ($conf->use_javascript || $conf->use_ajax))
+		{
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
+		}
+		if (! $disablejs && $conf->use_ajax)
+		{
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/lib/prototype.js"></script>'."\n";
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/scriptaculous.js"></script>'."\n";
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/effects.js"></script>'."\n";
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/controls.js"></script>'."\n";
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/window.js"></script>'."\n";
+			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
+			
+		}
+		
+		print "</head>\n";
+	}
 }
 
 /**

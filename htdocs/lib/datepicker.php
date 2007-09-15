@@ -71,7 +71,6 @@ function xyzToUnixTimestamp($mysqldate){
 
 function displayBox($selectedDate,$month,$year){
 	global $dolibarr_main_url_root,$langs,$conf;
-	$langs->load("main");
 	
 	//print "$selectedDate,$month,$year";
 	$thedate=dolibarr_mktime(0,0,0,$month,1,$year);

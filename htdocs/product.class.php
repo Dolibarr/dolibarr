@@ -313,8 +313,6 @@ class Product
 	function update($id, $user)
 	{
 		global $langs, $conf;
-		$langs->load("main");
-		$langs->load("products");
 
 		// Verification parametres
 		if (! $this->libelle) $this->libelle = 'LIBELLE MANQUANT';
