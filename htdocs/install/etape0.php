@@ -21,7 +21,7 @@
  */
 
 /**
-   \file       htdocs/install/etape1.php
+   \file       htdocs/install/etape0.php
    \brief      Permet d'afficher et de confirmer le charset par rapport aux informations précédentes -> sélection suite à connexion'
    \version    $Revision$
 */
@@ -53,7 +53,7 @@ pHeader($langs->trans("ConfigurationFile"),"etape1");
 // On reporte champ formulaire précédent pour propagation
 if ($_POST["action"] == "set")
 {
-  umask(0);
+	umask(0);
     foreach($_POST as $cle=>$valeur)
     {
     echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
@@ -113,8 +113,8 @@ if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_databa
 
 if ($db->connected)
 {
-?>
-<table border="0" cellpadding="1" cellspacing="0">
+	?>
+	<table border="0" cellpadding="1" cellspacing="0">
 	
 	<tr><td align="center" class="label" colspan="3"><h3><?php echo $langs->trans("CharsetChoice");?></h3></td></tr>
 	
@@ -221,6 +221,9 @@ if ($db->connected)
 		</tr>
 		<?php
 	}
+	?>
+	</table>
+	<?php
 }
 else
 {
@@ -241,9 +244,6 @@ else
 	}
 }
 
-?>
-</table>
 
-<?php
 pFooter($error,$setuplang);
 ?>

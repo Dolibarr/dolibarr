@@ -84,6 +84,7 @@ class DoliDb
 	    1007 => 'DB_ERROR_ALREADY_EXISTS',
 	    1008 => 'DB_ERROR_CANNOT_DROP',
 	    1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+		1044 => 'DB_ERROR_ACCESSDENIED',
 	    1046 => 'DB_ERROR_NODBSELECTED',
 	    1048 => 'DB_ERROR_CONSTRAINT',
 	    1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
@@ -241,9 +242,12 @@ class DoliDb
 		// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
 		//$this->query('SET NAMES '.$this->forcecharset);
         //print "Resultat fonction connect: ".$this->db;
-        $this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-		$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-        return $this->db;
+		if ($this->db)
+		{
+			$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+			$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
+		}
+		return $this->db;
     }
 
     /**

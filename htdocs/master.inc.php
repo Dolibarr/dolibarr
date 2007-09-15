@@ -157,10 +157,11 @@ if (! defined('NOREQUIRETRAN'))
 if (! defined('NOREQUIREDB'))   
 {
 	$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-	if (! $db->connected)
+
+	if ($db->error)
 	{
 		dolibarr_print_error($db,"host=".$conf->db->host.", user=".$conf->db->user.", databasename=".$conf->db->name.", ".$db->error);
-	exit;   
+		exit;   
 	}
 }
 

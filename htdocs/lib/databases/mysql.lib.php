@@ -85,6 +85,7 @@ class DoliDb
 			     1007 => 'DB_ERROR_ALREADY_EXISTS',
 			     1008 => 'DB_ERROR_CANNOT_DROP',
 			     1025 => 'DB_ERROR_NO_FOREIGN_KEY_TO_DROP',
+			     1044 => 'DB_ERROR_ACCESSDENIED',
 			     1046 => 'DB_ERROR_NODBSELECTED',
 			     1048 => 'DB_ERROR_CONSTRAINT',
 			     1050 => 'DB_ERROR_TABLE_ALREADY_EXISTS',
@@ -116,99 +117,99 @@ class DoliDb
      \param	    newlink     ???
      \return     int			1 en cas de succès, 0 sinon
   */
-  function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
-  {
+	function DoliDb($type='mysql', $host, $user, $pass, $name='', $newlink=0)
+	{
 		global $conf,$langs;
 
-        /* Ce test est inutile. En effet, si DOL_DOCUMENT_ROOT est défini, cela signifie      */
+		/* Ce test est inutile. En effet, si DOL_DOCUMENT_ROOT est défini, cela signifie      */
 		/* obligatoirement que le fichier conf a deja été chargée puisque cette constante est */
 		/* definie a partir du contenu du fichier conf.php                                    */
 		/* Et toutes les infos sont chargés dans l'objet conf                                 */
 		/*
-        if (file_exists($conffile)) {
-	    	include($conffile);
-	    	$this->forcecharset=$character_set_database;
-	    	$this->forcecollate=$collation_connection;
-	    	$this->db_user=$dolibarr_main_db_user;
-		}
-		*/
+			if (file_exists($conffile)) {
+				include($conffile);
+				$this->forcecharset=$character_set_database;
+				$this->forcecollate=$collation_connection;
+				$this->db_user=$dolibarr_main_db_user;
+			}
+			*/
 		if ($conf->db->character_set  && $conf->db->character_set != null && $conf->db->character_set !=""){
 			$this->forcecharset=$conf->db->character_set;
-  		}
-  		if ($conf->db->collation_connection  && $conf->db->collation_connection != null && $conf->db->collation_connection !=""){
-	    	$this->forcecollate=$conf->db->collation_connection;
-  		}
-	    $this->db_user=$conf->db->user;
+		}
+		if ($conf->db->collation_connection  && $conf->db->collation_connection != null && $conf->db->collation_connection !=""){
+			$this->forcecollate=$conf->db->collation_connection;
+		}
+		$this->db_user=$conf->db->user;
 
 		$this->transaction_opened=0;
-        
-    if (! function_exists("mysql_connect"))
-      {
-	$this->connected = 0;
-	$this->ok = 0;
-	$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
-	dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP");
-	return $this->ok;
-      }
-    
-    if (! $host)
-      {
-	$this->connected = 0;
-	$this->ok = 0;
-	$this->error=$langs->trans("ErrorWrongHostParameter");
-	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
-	return $this->ok;
-      }
-    
-    // Essai connexion serveur
-    $this->db = $this->connect($host, $user, $pass, $name, $newlink);
-    if ($this->db)
-      {
-	// Si client connecté avec charset different de celui de la base Dolibarr
-	// (La base Dolibarr a été forcée en this->forcecharset à l'install)
-	if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
-	  {
-	    $this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-	    $this->query("SET CHARACTER SET ". $this->forcecharset);
-	  }
-	$this->connected = 1;
-	$this->ok = 1;
-      }
-    else
-      {
-	// host, login ou password incorrect
-	$this->connected = 0;
-	$this->ok = 0;
-	$this->error=mysql_error();
-	dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
+		
+		if (! function_exists("mysql_connect"))
+		{
+			$this->connected = 0;
+			$this->ok = 0;
+			$this->error="Mysql PHP functions for using MySql driver are not available in this version of PHP";
+			dolibarr_syslog("DoliDB::DoliDB : Mysql PHP functions for using Mysql driver are not available in this version of PHP");
+			return $this->ok;
+		}
+		
+		if (! $host)
+		{
+			$this->connected = 0;
+			$this->ok = 0;
+			$this->error=$langs->trans("ErrorWrongHostParameter");
+			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect, wrong host parameters");
+			return $this->ok;
+		}
+
+		// Essai connexion serveur
+		$this->db = $this->connect($host, $user, $pass, $name, $newlink);
+		if ($this->db)
+		{
+			// Si client connecté avec charset different de celui de la base Dolibarr
+			// (La base Dolibarr a été forcée en this->forcecharset à l'install)
+			if (mysql_client_encoding ( $this->db ) != $this->forcecharset)
+			{
+				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+				$this->query("SET CHARACTER SET ". $this->forcecharset);
+			}
+			$this->connected = 1;
+			$this->ok = 1;
+		}
+		else
+		{
+			// host, login ou password incorrect
+			$this->connected = 0;
+			$this->ok = 0;
+			$this->error=mysql_error();
+			dolibarr_syslog("DoliDB::DoliDB : Erreur Connect mysql_error=".mysql_error());
+		}
+
+		// Si connexion serveur ok et si connexion base demandée, on essaie connexion base
+		if ($this->connected && $name)
+		{
+			if ($this->select_db($name))
+			{
+				$this->database_selected = 1;
+				$this->database_name = $name;
+				$this->ok = 1;
+			}
+			else
+			{
+				$this->database_selected = 0;
+				$this->database_name = '';
+				$this->ok = 0;
+				$this->error=$this->error();
+				dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
+			}
+		}
+		else
+		{
+			// Pas de selection de base demandée, ok ou ko
+			$this->database_selected = 0;
+		}
+		
+		return $this->ok;
 	}
-    
-    // Si connexion serveur ok et si connexion base demandée, on essaie connexion base
-    if ($this->connected && $name)
-      {
-	if ($this->select_db($name))
-	  {
-	    $this->database_selected = 1;
-	    $this->database_name = $name;
-	    $this->ok = 1;
-	  }
-	else
-	  {
-	    $this->database_selected = 0;
-	    $this->database_name = '';
-	    $this->ok = 0;
-	    $this->error=$this->error();
-	    dolibarr_syslog("DoliDB::DoliDB : Erreur Select_db");
-	  }
-      }
-    else
-      {
-	// Pas de selection de base demandée, ok ou ko
-	$this->database_selected = 0;
-      }
-    
-    return $this->ok;
-  }
   
 
   /**
@@ -221,27 +222,30 @@ class DoliDb
     return mysql_select_db($database, $this->db);
   }
 
-  /**
-     \brief		Connection vers le serveur
-     \param	    host		addresse de la base de données
-     \param	    login		nom de l'utilisateur autoris
-     \param	    passwd		mot de passe
-     \param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
-     \return	resource	handler d'accès à la base
-     \seealso	close
-  */
-  function connect($host, $login, $passwd, $name)
-  {
-    dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
-    $this->db  = @mysql_connect($host, $login, $passwd);
-    //force les enregistrement en latin1 si la base est en utf8 par défaut
-    // Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
-	// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
-	$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-	$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-    //print "Resultat fonction connect: ".$this->db;
-    return $this->db;
-  }
+	/**
+		\brief		Connection vers le serveur
+		\param	    host		addresse de la base de données
+		\param	    login		nom de l'utilisateur autoris
+		\param	    passwd		mot de passe
+		\param		name		nom de la database (ne sert pas sous mysql, sert sous pgsql)
+		\return	resource	handler d'accès à la base
+		\seealso	close
+	*/
+	function connect($host, $login, $passwd, $name)
+	{
+		dolibarr_syslog("DoliDB::connect host=$host, login=$login, passwd=--hidden--, name=$name");
+		$this->db  = @mysql_connect($host, $login, $passwd);
+		//force les enregistrement en latin1 si la base est en utf8 par défaut
+		// Supprimé car plante sur mon PHP-Mysql. De plus, la base est forcement en latin1 avec
+		// les nouvelles version de Dolibarr car forcé par l'install Dolibarr.
+		if ($this->db)
+		{
+			$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+			$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
+		}
+		//print "Resultat fonction connect: ".$this->db;
+		return $this->db;
+	}
     
   /**
      \brief          Renvoie la version du serveur
@@ -356,35 +360,35 @@ class DoliDb
      \param	    query	    Contenu de la query
      \return	    resource    Resultset de la reponse
   */
-  function query($query)
-  {
-    $query = trim($query);
-    
-    if (! $this->database_name)
-      {
-	// Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
-	$ret = mysql_query($query, $this->db);
-      }
-    else
-      {
-	$ret = mysql_db_query($this->database_name, $query, $this->db);
-      }
-    
-    if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
-      {
-	// Si requete utilisateur, on la sauvegarde ainsi que son resultset
-	if (! $ret)
-	  {
-	    $this->lastqueryerror = $query;
-	    $this->lasterror = $this->error();
-	    $this->lasterrno = $this->errno();
-	  }
-	$this->lastquery=$query;
-	$this->results = $ret;
-      }
-    
-    return $ret;
-    }
+	function query($query)
+	{
+		$query = trim($query);
+		
+		if (! $this->database_name)
+		{
+			// Ordre SQL ne nécessitant pas de connexion à une base (exemple: CREATE DATABASE)
+			$ret = mysql_query($query, $this->db);
+		}
+		else
+		{
+			$ret = mysql_db_query($this->database_name, $query, $this->db);
+		}
+		
+		if (! eregi("^COMMIT",$query) && ! eregi("^ROLLBACK",$query))
+		{
+			// Si requete utilisateur, on la sauvegarde ainsi que son resultset
+			if (! $ret)
+			{
+				$this->lastqueryerror = $query;
+				$this->lasterror = $this->error();
+				$this->lasterrno = $this->errno();
+			}
+			$this->lastquery=$query;
+			$this->results = $ret;
+		}
+		
+		return $ret;
+	}
 
     /**
         \brief      Renvoie la ligne courante (comme un objet) pour le curseur resultset.
