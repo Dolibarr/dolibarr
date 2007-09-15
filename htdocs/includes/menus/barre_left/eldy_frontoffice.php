@@ -711,12 +711,12 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
 				}
 
-				if ($conf->global->MAIN_MODULE_DOMAIN)
+				if ($conf->domain->enabled)
 				{
 					$langs->load("domains");
-					$newmenu->add_submenu(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("DomainNames"),0, $user->rights->domain->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("Domains"),0, $user->rights->domain->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/domain/fiche.php?action=create&leftmenu=export",$langs->trans("NewDomain"),1, $user->rights->domain->create);
-					$newmenu->add_submenu(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("List"),1, $user->rights->domain->read);
+					$newmenu->add_submenu(DOL_URL_ROOT."/domain/index.php?leftmenu=export",$langs->trans("List"),0, $user->rights->domain->lire);
 				}
 			}
 
