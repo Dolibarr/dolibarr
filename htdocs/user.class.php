@@ -1248,7 +1248,7 @@ class User
         }
         else
         {
-            $this->error=$langs->trans("ErrorFailedToSendPassword");
+            $this->error=$langs->trans("ErrorFailedToSendPassword").' '.$mailfile->error;
 			//print nl2br($mesg);
             return -1;
         }

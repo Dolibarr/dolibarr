@@ -78,7 +78,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 if ($_POST["action"] == 'buildnewpassword' && $_POST["username"])
 {
 	// Verifie code
-	if (! chk_crypt($_POST['code']))
+	if (function_exists("imagecreatefrompng") && ! chk_crypt($_POST['code']))
 	{
 		$message = '<div class="error">'.$langs->trans("ErrorBadValueForCode").'</div>';
 	}
@@ -195,15 +195,17 @@ else
 print '</table>'."\n";
 print '<br>'."\n";
 
+// Send password button enabled ?
+$disabled='disabled';
+if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
+if ($conf->global->MAIN_SECURITY_ENABLE_SENDPASSWORD) $disabled='';				// To force button enabled
+
 // Table 2
 print '<table cellpadding="2" align="center" width="450">'."\n";
 
 print '<tr><td colspan="3">&nbsp;</td></tr>'."\n";
 
 print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-$disabled='disabled';
-if ($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') $disabled='';
-
 print '<td><input '.$disabled.' name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
 
 $title='';
@@ -230,16 +232,16 @@ print '></td>';
 
 print '</tr>'."\n";
 
-if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA && !$disabled)
+if (function_exists("imagecreatefrompng") && ! $disabled)
 {
 	//print "Info session: ".session_name().session_id();print_r($_SESSION);
-  $cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
-  print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
-  print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
-  print '<td align="center">';
-  dsp_crypt('dolibarr.cfg.php',1);
-  print '</td>';
-  print '</tr>';
+	$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';
+	print '<tr><td align="left"> &nbsp; <b>'.$langs->trans("SecurityCode").'</b></td>';
+	print '<td><input type="text" size="15" maxlength="10" name="code" tabindex="3"></td>';
+	print '<td align="center">';
+	dsp_crypt('dolibarr.cfg.php',1);
+	print '</td>';
+	print '</tr>';
 }
 
 print "<tr>".'<td align="center" colspan="3"><input '.$disabled.' class="button" value="'.$langs->trans("SendNewPassword").'" type="submit"></td></tr>'."\n";
@@ -249,7 +251,7 @@ print "</form>"."\n";
 
 print '<center>'."\n";
 print '<table width="90%"><tr><td align="center">';
-if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2'))
+if (($mode == 'dolibarr' || $mode == 'dolibarr_mdb2') || (! $disabled))
 {
 	print '<font style="font-size: 14px;">'.$langs->trans("SendNewPasswordDesc").'</font>'."\n";
 }
