@@ -874,3 +874,10 @@ ALTER TABLE llx_product_fournisseur_price_log CHANGE fk_product fk_product_fourn
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_commande integer NOT NULL;
 
 ALTER TABLE llx_product ADD COLUMN partnumber varchar(32) after gencode;
+
+
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_element_contact FROM llx_element_contact LEFT JOIN llx_socpeople ON llx_element_contact.fk_socpeople = llx_socpeople.rowid WHERE llx_socpeople.rowid IS NULL;
+
+ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
+ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);

@@ -1,5 +1,6 @@
 -- ============================================================================
--- Copyright (C) 2005 patrick Rouillon <patrick@rouillon.net>
+-- Copyright (C) 2005 patrick Rouillon    <patrick@rouillon.net>
+-- Copyright (C) 2007 Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -17,7 +18,6 @@
 --
 -- $Id$
 -- $Source$
---
 -- ============================================================================
 
 
@@ -27,3 +27,9 @@ ALTER TABLE llx_element_contact
 ALTER TABLE llx_element_contact 
 	ADD CONSTRAINT fk_element_contact_fk_c_type_contact
 	FOREIGN KEY (fk_c_type_contact)     REFERENCES llx_c_type_contact(rowid);
+
+	
+ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
+
+ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
+	

@@ -1017,38 +1017,61 @@ class pdf_crabe extends ModelePDFFactures
             // Cadre client destinataire
             $pdf->rect(100, $posy, 100, $hautcadre);
 
-			// If invoice contact defined on invoice, we use it
-			$receiver=0;
+			// If BILLING contact defined on invoice, we use it
+			$usecontact=false;
 			if ($conf->global->FACTURE_USE_BILL_CONTACT_AS_RECIPIENT)
 			{
 				$arrayidcontact=$object->getIdContact('external','BILLING');
 				if (sizeof($arrayidcontact) > 0)
 				{
-					$idcontact=$arrayidcontact[0];
-					$result=$object->fetch_contact($idcontact);
-					if ($result > 0) $receiver=$object->contact;
-					$receiver=$object->contact;
-					$receiver->nom = $receiver->fullname;
+					$usecontact=true;
+					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
 			}
-			if (! $receiver) $receiver=$object->client;
-
-			// Nom client
-			$pdf->SetXY(102,$posy+3);
-			$pdf->SetFont('Arial','B',11);
-			$pdf->MultiCell(106,4, $receiver->nom, 0, 'L');
-
-			// Caractéristiques client
-			$carac_client=$receiver->adresse;
-			$carac_client.="\n".$receiver->cp . " " . $receiver->ville."\n";
-			if ($this->emetteur->pays_code != $receiver->pays_code)
+			if ($usecontact)
 			{
-				$carac_client.=$receiver->pays."\n";
+				// Nom societe
+				$pdf->SetXY(102,$posy+3);
+				$pdf->SetFont('Arial','B',11);
+				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+				$posy+=4;
+				
+				// Nom client
+				$pdf->SetXY(102,$posy+4);
+				$pdf->SetFont('Arial','',9);
+				$pdf->MultiCell(106,4, $object->contact->nom, 0, 'L');
+
+				// Caractéristiques client
+				$carac_client=$object->contact->adresse;
+				$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+				if ($this->emetteur->pays_code != $object->contact->pays_code)
+				{
+					$carac_client.=$object->contact->pays."\n";
+				}
+				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+				$pdf->SetFont('Arial','',9);
+				$pdf->SetXY(102,$posy+8);
+				$pdf->MultiCell(86,4, $carac_client);
 			}
-			if ($receiver->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$receiver->tva_intra;
-			$pdf->SetFont('Arial','',9);
-			$pdf->SetXY(102,$posy+8);
-			$pdf->MultiCell(86,4, $carac_client);
+			else
+			{
+				// Nom client
+				$pdf->SetXY(102,$posy+3);
+				$pdf->SetFont('Arial','B',11);
+				$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+
+				// Caractéristiques client
+				$carac_client=$object->client->adresse;
+				$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+				if ($this->emetteur->pays_code != $object->client->pays_code)
+				{
+					$carac_client.=$object->client->pays."\n";
+				}
+				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+				$pdf->SetFont('Arial','',9);
+				$pdf->SetXY(102,$posy+8);
+				$pdf->MultiCell(86,4, $carac_client);
+			}
         }
 
     }

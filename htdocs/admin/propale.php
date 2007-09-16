@@ -107,6 +107,16 @@ if ($_POST["action"] == 'setclassifiedinvoiced')
     exit;
 }
 
+if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
+{
+    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"]);
+    Header("Location: propale.php");
+    exit;
+}
+
+
+
+
 if ($_GET["action"] == 'set')
 {
 	$type='propal';
@@ -233,12 +243,13 @@ if ($handle)
             
             $propale=new Propal($db);
 			     
-			     // Info
-			    $htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc,$propale);
+			// Info
+			$htmltooltip='';
+	        $htmltooltip.='<b>'.$langs->trans("Version").'</b>: '.$module->getVersion().'<br>';
+			$nextval=$module->getNextValue($mysoc,$propale);
 	        if ($nextval != $langs->trans("NotAvailable"))
 	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+	            $htmltooltip.='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
 	        }
 	    	print '<td align="center">';
 	    	print $html->textwithhelp('',$htmltooltip,1,0);
@@ -382,26 +393,16 @@ $var=true;
 print "<table class=\"noborder\" width=\"100%\">";
 print "<tr class=\"liste_titre\">";
 print "<td>".$langs->trans("Parameter")."</td>\n";
-print "<td align=\"left\">".$langs->trans("Value")."</td>\n";
+print '<td width="60" align="center">'.$langs->trans("Value")."</td>\n";
 print "<td>&nbsp;</td>\n";
 print "</tr>";
-
-$var=!$var;
-print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
-print "<input type=\"hidden\" name=\"action\" value=\"setnbprod\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("NumberOfProductLines").'</td>';
-print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_NEW_FORM_NB_PRODUCT."\"></td>";
-print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
-print '</tr>';
-print '</form>';
 
 $var=!$var;
 print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print "<input type=\"hidden\" name=\"action\" value=\"setdefaultduration\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("DefaultProposalDurationValidity").'</td>';
-print "<td align=\"left\"><input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
+print '<td width="60" align="center">'."<input size=\"3\" class=\"flat\" type=\"text\" name=\"value\" value=\"".$conf->global->PROPALE_VALIDITY_DURATION."\"></td>";
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -411,7 +412,7 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print "<input type=\"hidden\" name=\"action\" value=\"setaddshippingdate\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("AddShippingDateAbility").'</td>';
-print '<td>'.$html->selectyesno('value',$conf->global->PROPALE_ADD_SHIPPING_DATE,1).'</td>';
+print '<td width="60" align="center">'.$html->selectyesno('value',$conf->global->PROPALE_ADD_SHIPPING_DATE,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
 print '</form>';
@@ -421,9 +422,21 @@ print "<form method=\"post\" action=\"".$_SERVER["PHP_SELF"]."\">";
 print "<input type=\"hidden\" name=\"action\" value=\"setadddeliveryaddress\">";
 print "<tr ".$bc[$var].">";
 print '<td>'.$langs->trans("AddDeliveryAddressAbility").'</td>';
-print '<td>'.$html->selectyesno('value',$conf->global->PROPALE_ADD_DELIVERY_ADDRESS,1).'</td>';
+print '<td width="60" align="center">'.$html->selectyesno('value',$conf->global->PROPALE_ADD_DELIVERY_ADDRESS,1).'</td>';
 print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 print '</tr>';
+print '</form>';
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
+print '</td><td width="60" align="center">';
+print $html->selectyesno("use_customer_contact_as_recipient",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
 print '</form>';
 
 if ($conf->commande->enabled)
@@ -433,7 +446,7 @@ if ($conf->commande->enabled)
 	print "<input type=\"hidden\" name=\"action\" value=\"setclassifiedinvoiced\">";
 	print "<tr ".$bc[$var].">";
 	print '<td>'.$langs->trans("ClassifiedInvoicedWithOrder").'</td>';
-	print "<td align=\"left\">";
+	print '<td width="60" align="center">';
 	print $html->selectyesno('value',$conf->global->PROPALE_CLASSIFIED_INVOICED_WITH_ORDER,1);
 	print "</td>";
 	print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';

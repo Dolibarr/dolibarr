@@ -184,6 +184,7 @@ class CommonObject
         if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
         $sql.=" ORDER BY t.name ASC";
 
+		dolibarr_syslog("CommonObject::liste_contact sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -281,7 +282,7 @@ class CommonObject
     }
 
     /**
-     *      \brief      Retourne id des contacts d'une source et d'un type donné
+     *      \brief      Retourne id des contacts d'une source et d'un type actif donné
      *                  Exemple: contact client de facturation ('external', 'BILLING')
      *                  Exemple: contact client de livraison ('external', 'SHIPPING')
      *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
@@ -298,8 +299,10 @@ class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
         $sql.= " AND tc.source = '".$source."'";
+        $sql.= " AND tc.active = 1";
         $sql.= " AND tc.code = '".$code."'";
 
+		dolibarr_syslog("CommonObject::getIdContact sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -550,7 +550,6 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td></tr>\n";
 print '</form>';
 
-// Active la possibilité d'éditer/supprimer une facture validée sans paiement
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="set_use_bill_contact_as_recipient">';
