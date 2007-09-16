@@ -899,7 +899,8 @@ class pdf_propale_azur extends ModelePDFPropales
 				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
 				{
-					$usecontact=true;
+print_r($arrayidcontact);
+				$usecontact=true;
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
 			}
