@@ -30,6 +30,5 @@ ALTER TABLE llx_element_contact
 
 	
 ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
-
-ALTER TABLE llx_element_contact ADD CONSTRAINT fk_element_contact_fk_socpeople FOREIGN KEY (fk_socpeople) REFERENCES llx_socpeople (rowid);
+-- Pas de contraite sur fk_socpeople car point sur llx_socpeople mais aussi llx_user
 	
