@@ -170,17 +170,16 @@ class CommonObject
         if ($source == 'external') $sql.=" t.fk_soc as socid,";
         $sql.=" t.name as nom,";
         $sql.= "tc.source, tc.element, tc.code, tc.libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
-        if ($source == 'internal') $sql.=" ".MAIN_DB_PREFIX."user t,";
-        if ($source == 'external') $sql.=" ".MAIN_DB_PREFIX."socpeople t,";
-        $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
+        $sql.= " FROM (".MAIN_DB_PREFIX."element_contact ec,";
+        $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc)";
+        if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
+        if ($source == 'external') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
         $sql.= " WHERE ec.element_id =".$this->id;
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element='".$this->element."'";
         if ($source == 'internal') $sql.= " AND tc.source = 'internal'";
         if ($source == 'external') $sql.= " AND tc.source = 'external'";
         $sql.= " AND tc.active=1";
-        $sql.= " AND ec.fk_socpeople = t.rowid";
         if ($statut >= 0) $sql.= " AND ec.statut = '".$statut."'";
         $sql.=" ORDER BY t.name ASC";
 
@@ -286,6 +285,8 @@ class CommonObject
      *                  Exemple: contact client de facturation ('external', 'BILLING')
      *                  Exemple: contact client de livraison ('external', 'SHIPPING')
      *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
+	 *		\param		source		'external' or 'internal'
+	 *		\param		source		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
      *      \return     array       Liste des id contacts
      */
     function getIdContact($source,$code)
@@ -299,8 +300,8 @@ class CommonObject
         $sql.= " AND ec.fk_c_type_contact=tc.rowid";
         $sql.= " AND tc.element = '".$this->element."'";
         $sql.= " AND tc.source = '".$source."'";
-        $sql.= " AND tc.active = 1";
         $sql.= " AND tc.code = '".$code."'";
+        $sql.= " AND tc.active = 1";
 
 		dolibarr_syslog("CommonObject::getIdContact sql=".$sql);
         $resql=$this->db->query($sql);

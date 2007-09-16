@@ -534,45 +534,93 @@ class Contact
 
 	/*
 	*   \brief      Efface le contact de la base
-	*   \param      id      id du contact a effacer
 	*	\return		int		<0 si ko, >0 si ok
 	*/
-	function delete($id)
+	function delete($notrigger=0)
 	{
 		global $conf, $langs;
+		
+		$error=0;
+		
+		$this->old_name           = $obj->name;
+		$this->old_firstname      = $obj->firstname;
 	
-		$sql = "SELECT c.name, c.firstname FROM ".MAIN_DB_PREFIX."socpeople as c";
-		$sql .= " WHERE c.rowid = ". $id;
-		$resql=$this->db->query($sql);
-		if ($resql)
+		$this->db->begin();
+		
+		if (! $error)
 		{
-			if ($this->db->num_rows($resql))
+			// Get all rowid of element_contact linked to a type that is link to llx_socpeople
+			$sql = "SELECT ec.rowid";
+			$sql.= " FROM ".MAIN_DB_PREFIX."element_contact ec,";
+			$sql.= " ".MAIN_DB_PREFIX."c_type_contact tc";
+			$sql.= " WHERE ec.fk_socpeople=".$this->id;
+			$sql.= " AND ec.fk_c_type_contact=tc.rowid";
+			$sql.= " AND tc.source='external'";
+			dolibarr_syslog("Contact::delete sql=".$sql);
+			$resql = $this->db->query($sql);
+			if ($resql)
 			{
-				$obj = $this->db->fetch_object($resql);
-	
-				$this->old_name           = $obj->name;
-				$this->old_firstname      = $obj->firstname;
+                $num=$this->db->num_rows($resql);
+				
+				$i=0;
+				while ($i < $num && ! $error)
+				{
+					$obj = $this->db->fetch_object($resql);
+
+					$sqldel = "DELETE FROM ".MAIN_DB_PREFIX."element_contact";
+					$sqldel.=" WHERE rowid = ".$obj->rowid;
+					dolibarr_syslog("Contact::delete sql=".$sqldel);
+					$result = $this->db->query($sqldel);
+					if (! $result)
+					{
+						$error++;
+						$this->error=$this->db->error().' sql='.$sqldel;
+					}
+
+					$i++;
+				}
+			}
+			else
+			{
+				$error++;
+				$this->error=$this->db->error().' sql='.$sql;
 			}
 		}
-	
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
-		$sql .= " WHERE rowid=".$id;
-	
-		$result = $this->db->query($sql);
-		if (! $result)
+		
+		if (! $error)
 		{
-			$this->error=$this->db->error().' sql='.$sql;
+			$sql = "DELETE FROM ".MAIN_DB_PREFIX."socpeople";
+			$sql .= " WHERE rowid=".$this->id;
+			dolibarr_syslog("Contact::delete sql=".$sql);
+			$result = $this->db->query($sql);
+			if (! $result)
+			{
+				$error++;
+				$this->error=$this->db->error().' sql='.$sql;
+			}
+		}
+
+		if (! $error && ! $notrigger)
+		{
+			// Appel des triggers
+			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			$interface=new Interfaces($this->db);
+			$result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
+			if ($result < 0) $error++;
+			// Fin appel triggers
+		}
+		
+		if (! $error)
+		{
+		
+			$this->db->commit();
+			return 1;
+		}
+		else
+		{
+			$this->db->rollback();
 			return -1;
 		}
-	
-        // Appel des triggers
-        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-        $interface=new Interfaces($this->db);
-        $result=$interface->run_triggers('CONTACT_DELETE',$this,$user,$langs,$conf);
-		if ($result < 0) $error++;
-        // Fin appel triggers
-
-		return 1;
 	}
 
   
