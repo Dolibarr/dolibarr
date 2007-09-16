@@ -876,3 +876,7 @@ ALTER TABLE llx_commande_fournisseurdet MODIFY fk_commande integer NOT NULL;
 ALTER TABLE llx_product ADD COLUMN partnumber varchar(32) after gencode;
 
 ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_socpeople);
+
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
+
