@@ -301,7 +301,7 @@ class Societe
 		    $this->fax = ereg_replace(" ","",$this->fax);
 		    $this->fax = ereg_replace("\.","",$this->fax);
         $this->email=trim($this->email);
-        $this->url=clean_url($this->url);
+        $this->url=clean_url($this->url,0);
         $this->siren=trim($this->siren);
         $this->siret=trim($this->siret);
         $this->ape=trim($this->ape);

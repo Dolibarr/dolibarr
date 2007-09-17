@@ -2670,18 +2670,20 @@ function dol_entity_decode($StringHtml)
 /**
    \brief   Nettoie une url
    \param   string      url
+   \param   string      http (1: avec http, 0: sans http)
    \return  string	    CleanUrl
 */
-function clean_url($url)
+function clean_url($url,$http=1)
 {
 	//Todo: voir plus tard pour les url avec accent
 	$url = unaccent(trim($url));
 
-	// On supprime le http
-	$url = eregi_replace('^http(s)?:[\\\/]+','',$url);
+	// Si défini on supprime le http
+	// TODO: supprimer les slashs en trop
+	if ($http==0) $url = eregi_replace('^http(s)?:[\\\/]+','',$url);
 
 	// On récupère le nom de domaine
-	$domain = eregi('^[0-9A-Z-]+\.([0-9A-Z-]+\.)+[A-Z]{2,4}(:[0-9]+)?',$url,$regs);
+	$domain = eregi('^(http(s)?:[\\\/]+)?[0-9A-Z-]+\.([0-9A-Z-]+\.)+[A-Z]{2,4}(:[0-9]+)?',$url,$regs);
 
 	// On passe le nom de domaine en minuscule
 	$url = eregi_replace($regs[0],strtolower($regs[0]),$url);
