@@ -2676,10 +2676,16 @@ function clean_url($url)
 {
 	//Todo: voir plus tard pour les url avec accent
 	$url = unaccent(trim($url));
-	//$url = strtolower($url);		// Une url est sensible a la casse http://sever/Dir/Page.html != http://server/dir/page.html (sauf sur le nom de serveur)
-	//Todo: voir pour améliorer
-	$url = ereg_replace('^http:[\\\/]+','',$url);
-	//print "url=".$url;
+
+	// On supprime le http
+	$url = eregi_replace('^http(s)?:[\\\/]+','',$url);
+
+	// On récupère le nom de domaine
+	$domain = eregi('^[0-9A-Z]+\.([0-9A-Z]+\.)+[A-Z]{2,4}(:[0-9]+)?',$url,$regs);
+
+	// On passe le nom de domaine en minuscule
+	$url = eregi_replace($regs[0],strtolower($regs[0]),$url);
+
 	return $url;
 }
 
