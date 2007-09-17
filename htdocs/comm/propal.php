@@ -1129,14 +1129,17 @@ if ($_GET['propalid'] > 0)
 					}
 					print "</td>\n";
 				}
-				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_ajax)
+				if ($objp->fk_product_type==0 && $conf->global->PRODUIT_USE_MARKUP && $conf->use_ajax)
 				{
 					
 					$formMarkup = '<form id="formMarkup" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">'."\n";
 					$formMarkup.= '<table class="border" width="100%">'."\n";
-					$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
-					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SupplierPrice').'</td>'."\n";
-					$formMarkup.= '<td align="left">'.$html->select_product_fourn_price($objp->fk_product,'productfournpriceid').'</td></tr>'."\n";
+					if ($objp->fk_product > 0)
+					{
+						$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
+						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SupplierPrice').'</td>'."\n";
+						$formMarkup.= '<td align="left">'.$html->select_product_fourn_price($objp->fk_product,'productfournpriceid').'</td></tr>'."\n";
+					}
 					$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
 					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('PurchasePrice').' '.$langs->trans('HT').'</td>'."\n";
 					$formMarkup.= '<td align="left"><input size="10" type="text" class="flat" name="purchaseprice_ht" value=""></td></tr>'."\n";
@@ -1179,6 +1182,11 @@ if ($_GET['propalid'] > 0)
           print '</tr></table>';
           print '</td>';
         }
+        else
+        {
+        	print '<td>&nbsp;</td>';
+        }
+
 				print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
 				print '<td align="right">'.price($objp->subprice)."</td>\n";
 
