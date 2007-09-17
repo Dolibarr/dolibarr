@@ -2668,6 +2668,21 @@ function dol_entity_decode($StringHtml)
 }
 
 /**
+   \brief   Nettoie une url
+   \param   string      url
+   \return  string	    CleanUrl
+*/
+function clean_url($url)
+{
+	//Todo: voir plus tard pour les url avec accent
+	$url = unaccent(trim($url));
+	$url = strtolower($url);
+	//Todo: voir pour améliorer
+	$url = ereg_replace('^http://','',$url);
+	return $url;
+}
+
+/**
    \brief   Supprime le code html
    \param   string      StringHtml
    \return  string	    CleanString
