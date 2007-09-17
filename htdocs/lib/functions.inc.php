@@ -2676,9 +2676,10 @@ function clean_url($url)
 {
 	//Todo: voir plus tard pour les url avec accent
 	$url = unaccent(trim($url));
-	$url = strtolower($url);
+	//$url = strtolower($url);		// Une url est sensible a la casse http://sever/Dir/Page.html != http://server/dir/page.html (sauf sur le nom de serveur)
 	//Todo: voir pour améliorer
-	$url = ereg_replace('^http://','',$url);
+	$url = ereg_replace('^http:[\\\/]+','',$url);
+	//print "url=".$url;
 	return $url;
 }
 
