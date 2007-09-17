@@ -42,7 +42,8 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+	var $version;		// 'development', 'experimental', 'dolibarr'
+	var $code_auto; // Numérotation automatique
 
 	
 	/**		\brief      Constructeur classe
@@ -50,10 +51,12 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	function mod_codeclient_lion()
 	{
 		$this->nom = "Lion";
+		$this->version = "dolibarr";
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
 		$this->code_null = 0;
+		$this->code_auto = 0;
 	}
 
 	
