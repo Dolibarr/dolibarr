@@ -49,7 +49,8 @@ class mod_codeclient_leopard extends ModeleThirdPartyCode
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif	
+	var $code_null;						// Code facultatif
+	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
 
 	
 	/**		\brief      Constructeur classe

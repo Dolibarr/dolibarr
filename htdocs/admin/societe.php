@@ -125,6 +125,9 @@ if ($handle)
 	  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$file.".php");
 
 	  $modCodeTiers = new $file;
+	  
+	  if ($modCodeTiers->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT) continue;
+	  
 	  $var = !$var;
 	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";
 	  print $modCodeTiers->info($langs);

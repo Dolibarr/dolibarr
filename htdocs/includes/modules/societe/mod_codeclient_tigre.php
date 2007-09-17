@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -22,9 +23,9 @@
  */
 
 /**
-        \file       htdocs/includes/modules/societe/mod_codeclient_lion.class.php
+        \file       htdocs/includes/modules/societe/mod_codeclient_tigre.class.php
         \ingroup    societe
-        \brief      Fichier de la classe des gestion lion des codes clients
+        \brief      Fichier de la classe des gestion tigre des codes clients
         \version    $Revision$
 */
 
@@ -32,24 +33,24 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 
 
 /**
-        \class 		mod_codeclient_lion
-        \brief 		Classe permettant la gestion lion des codes tiers
+        \class 		mod_codeclient_tigre
+        \brief 		Classe permettant la gestion tigre des codes tiers
 */
-class mod_codeclient_lion extends ModeleThirdPartyCode
+class mod_codeclient_tigre extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
 	var $code_modifiable;				// Code modifiable
 	var $code_modifiable_invalide;		// Code modifiable si il est invalide
 	var $code_modifiable_null;			// Code modifiables si il est null
 	var $code_null;						// Code facultatif
-	var $version='dolibarr';		// 'development', 'experimental', 'dolibarr'
+	var $version='development';		// 'development', 'experimental', 'dolibarr'
 
 	
 	/**		\brief      Constructeur classe
 	*/
-	function mod_codeclient_lion()
+	function mod_codeclient_tigre()
 	{
-		$this->nom = "Lion";
+		$this->nom = "Tigre";
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
@@ -62,7 +63,32 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*/
 	function info($langs)
 	{
-		return "Vérifie si le code client est de la forme numérique 999 et sur au moins 3 chiffres.";
+		global $conf,$langs;
+
+		  $langs->load("companies");
+		  
+		  $form = new Form($db);
+    	
+      $texte = $langs->trans('TigreNumRefModelDesc1')."<br>\n";
+      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
+      $texte.= '<input type="hidden" name="action" value="updateMask">';
+      $texte.= '<table class="nobordernopadding" width="100%">';
+      
+      // Paramétrage du masque
+      $texte.= '<tr><td>Modele code client</td>';
+      $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcustomer" value="'.$conf->global->CODE_TIGRE_MASK_CUSTOMER.'">',$langs->trans("TigreMaskCodes"),1,1).'</td>';
+      $texte.= '</tr>';
+      
+      $texte.= '<tr><td>Modele code fournisseur</td>';
+      $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="masksupplier" value="'.$conf->global->CODE_TIGRE_MASK_SUPPLIER.'">',$langs->trans("TigreMaskCodes"),1,1).'</td>';
+      $texte.= '</tr>';
+     
+      $texte.= '<tr><td>&nbsp;</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td></tr>';
+
+      $texte.= '</table>';
+      $texte.= '</form>';
+
+      return $texte;
 	}
 
 
@@ -71,7 +97,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 	*/
 	function getExample($langs)
 	{
-		return "001";
+		return "CC0001<br>CF0001";
 	}
 
 
@@ -117,7 +143,7 @@ class mod_codeclient_lion extends ModeleThirdPartyCode
 				}
 			}
 		}
-		dolibarr_syslog("mod_codeclient_lion::verif result=".$result);
+		dolibarr_syslog("mod_codeclient_tigre::verif result=".$result);
 		return $result;
 	}
 
