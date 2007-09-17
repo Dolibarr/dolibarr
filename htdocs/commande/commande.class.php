@@ -37,8 +37,7 @@ require_once(DOL_DOCUMENT_ROOT."/product.class.php");
    \class      Commande
    \brief      Classe de gestion de commande
 */
-//class Commande extends CommonObject
-class Commande
+class Commande extends CommonObject
 {
   var $db ;
   var $element='commande';
