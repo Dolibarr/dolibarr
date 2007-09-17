@@ -2681,7 +2681,7 @@ function clean_url($url)
 	$url = eregi_replace('^http(s)?:[\\\/]+','',$url);
 
 	// On récupère le nom de domaine
-	$domain = eregi('^[0-9A-Z]+\.([0-9A-Z]+\.)+[A-Z]{2,4}(:[0-9]+)?',$url,$regs);
+	$domain = eregi('^[0-9A-Z-]+\.([0-9A-Z-]+\.)+[A-Z]{2,4}(:[0-9]+)?',$url,$regs);
 
 	// On passe le nom de domaine en minuscule
 	$url = eregi_replace($regs[0],strtolower($regs[0]),$url);
