@@ -142,7 +142,7 @@ if ($user->rights->facture->lire)
 		}
 
 		$titre=($socid?$langs->trans("BillsCustomersUnpayedForCompany",$soc->nom):$langs->trans("BillsCustomersUnpayed"));
-		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',$num);
+		print_barre_liste($titre,$page,"impayees.php","&amp;socid=$socid",$sortfield,$sortorder,'',0);
 		$i = 0;
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre">';
