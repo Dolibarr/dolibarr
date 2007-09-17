@@ -528,7 +528,7 @@ class Societe
 
 				$this->pays_id = $obj->fk_pays;
 				$this->pays_code = $obj->fk_pays?$obj->pays_code:'';
-				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper($langs->trans('Country'.$obj->pays_code)):$obj->pays):'';
+				$this->pays = $obj->fk_pays?($langs->trans('Country'.$obj->pays_code)!='Country'.$obj->pays_code?strtoupper(html_entity_decode($langs->trans('Country'.$obj->pays_code))):$obj->pays):'';
 
 				$this->departement_id = $obj->fk_departement;
 				$this->departement= $obj->fk_departement?$obj->departement:'';
