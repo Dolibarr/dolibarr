@@ -48,6 +48,8 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
+	var $substrBegin;
+	var $substrEnd;
 
 	
 	/**		\brief      Constructeur classe
@@ -114,7 +116,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 		}
 		else
 		{
-			$example = $this->getNextValue($objsoc,1)."<br>".$this->getNextValue($objsoc,2);
+			$example = $this->getNextValue($objsoc,1);//."<br>".$this->getNextValue($objsoc,2);
 		}
 		return $example;
 	}
@@ -140,6 +142,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 
     // On récupère la valeur max (réponse immédiate car champ indéxé)
     $posindice  = $this->numbitcounter;
+    if ($this->substrEnd > 0) $substrEnd = ',-'.$this->substrEnd;
     $searchyy='';
     $sql = "SELECT MAX(".$field.")";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe";
@@ -148,8 +151,11 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
     if ($resql)
     {
     	$row = $db->fetch_row($resql);
-    	//print $row[0];
-      //if ($row) $searchyy = substr($row[0],0,-$posindice);
+    	//print 'row='.$row[0].'<br>';
+    	//print 'begin='.$this->substrBegin.'<br>';
+    	//print 'end='.$this->substrEnd.'<br>';
+      if ($row) $count = substr($row[0],$this->substrBegin.$substrEnd);
+      //print 'count='.$count.'<br>';
     }
 /*
         // Si au moins un champ respectant le modèle a été trouvée
@@ -200,65 +206,159 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		$mask = $conf->global->CODE_TIGRE_MASK_SUPPLIER;
   	}
   	
-  	// Ajout du jour en cours
-  	if (eregi('(\{d{2}\})',$mask))
-  	{
-  		$mask = eregi_replace('(\{d{2}\})',strftime("%d",time()),$mask);
-  	}
-  	else if (eregi('\{d+\}',$mask) && (eregi('\{d+\}',$mask) != '{dd}'))
-  	{
-  		return -1;
-  	}
+  	$maskElement = preg_split('/[|]{1}/', $mask);
+
+  	$foundCounter = 0;
+  	$substrBegin = 0;
+  	$substrEnd = 0;
+  	$maskRebuild = '';
+  	$error = 0;
+
+  	for ($i = 0; $i < count($maskElement); $i++)
+    {
+      	// Ajout du jour en cours
+      	if ($maskElement[$i] == '{dd}')
+  	    {
+  		    $maskRebuild .= strftime("%d",time());
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += 2;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += 2;
+  		    }
+  	    }
+  	    else if (eregi('\{d+\}',$mask) && (eregi('\{d+\}',$mask) != '{dd}'))
+  	    {
+  		    $error++;
+  	    }
   	
-  	// Ajout du mois en cours
-  	if (eregi('(\{m{2}\})',$mask))
-  	{
-  		$mask = eregi_replace('(\{m{2}\})',strftime("%m",time()),$mask);
-  	}
-  	else if (eregi('\{m+\}',$mask) && (eregi('\{m+\}',$mask) != '{mm}'))
-  	{
-  		return -2;
-  	}
+  	    // Ajout du mois en cours
+  	    if ($maskElement[$i] == '{mm}')
+  	    {
+  		    $maskRebuild .= strftime("%m",time());
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += 2;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += 2;
+  		    }
+  	    }
+  	    else if (eregi('\{m+\}',$mask) && (eregi('\{m+\}',$mask) != '{mm}'))
+  	    {
+  		    $error++;
+  	    }
   	
-  	// Ajout de l'année en cours
-  	if (eregi('\{a{2}\}',$mask))
-  	{
-  		$mask = eregi_replace('\{a{2}\}',substr(strftime("%Y",time()),2),$mask);
-  	}
-  	else if (eregi('\{a{4}\}',$mask))
-  	{
-  		$mask = eregi_replace('\{a{4}\}',strftime("%Y",time()),$mask);
-  	}
-  	else if (eregi('\{a+\}',$mask) && ((eregi('\{a+\}',$mask) != '{aa}') || (eregi('\{a+\}',$mask) != '{aaa}')))
-  	{
-  		return -3;
-  	}
+  	    // Ajout de l'année en cours
+  	    if ($maskElement[$i] == '{aa}')
+  	    {
+  		    $maskRebuild .= substr(strftime("%Y",time()),2);
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += 2;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += 2;
+  		    }
+  	    }
+  	    else if ($maskElement[$i] == '{aaaa}')
+  	    {
+  		    $maskRebuild .= strftime("%Y",time());
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += 4;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += 4;
+  		    }
+  	    }
+  	    else if (eregi('\{a+\}',$maskElement[$i]) && ((eregi('\{a+\}',$maskElement[$i]) != '{aa}') || (eregi('\{a+\}',$maskElement[$i]) != '{aaa}')))
+  	    {
+  		    $error++;
+  	    }
   	
-  	// Ajout du préfix de la société
-  	if (is_object($objsoc) && $objsoc->prefix_comm && eregi('\{pre\}',$mask))
-  	{
-  		$mask = eregi_replace('\{pre\}',strtoupper($objsoc->prefix_comm),$mask);
-  	}
-  	else if (is_object($objsoc) && !$objsoc->prefix_comm && eregi('\{pre\}',$mask))
-  	{
-  		return -4;
-  	}
-  	else if (!is_object($objsoc) && eregi('\{pre\}',$mask))
-  	{
-  		$mask = eregi_replace('\{pre\}','ABC',$mask);
-  	}
+  	    // Ajout du préfix de la société
+  	    if (is_object($objsoc) && $objsoc->prefix_comm && $maskElement[$i] == '{pre}')
+  	    {
+  		    $maskRebuild .= strtoupper($objsoc->prefix_comm);
+  		    $prefixLength = strlen($objsoc->prefix_comm);
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += $prefixLength;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += $prefixLength;
+  		    }
+  	    }
+  	    else if (is_object($objsoc) && !$objsoc->prefix_comm && $maskElement[$i] == '{pre}')
+  	    {
+  		    $error++;
+  	    }
+  	    else if (!is_object($objsoc) && $maskElement[$i] == '{pre}')
+  	    {
+  		    $maskRebuild .= 'ABC';
+  		    if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += 3;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += 3;
+  		    }
+  	    }
+  	    
+  	    // Ajout des séparateurs éventuels
+  	    if (eregi('[\/-]{1}',$maskElement[$i]))
+  	    {
+  	    	$maskRebuild .= $maskElement[$i];
+  	    	if ($foundCounter==0)
+  		    {
+  		    	$substrBegin++;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd++;
+  		    }
+  	    }
+  	    
+  	    // Ajout des champs libres éventuels
+  	    if (eregi('^[0-9A-Z]+$',$maskElement[$i]))
+  	    {
+  	    	$maskRebuild .= $maskElement[$i];
+  	    	$MaskElementLength = strlen($maskElement[$i]);
+  	    	if ($foundCounter==0)
+  		    {
+  		    	$substrBegin += $MaskElementLength;
+  		    }
+  		    else
+  		    {
+  		    	$substrEnd += $MaskElementLength;
+  		    }
+  	    }
   	
-  	// Définition du compteur
-  	if (eregi('\{0+\}',$mask))
-  	{
-  		preg_match('/\{0+\}/',$mask,$regs);
-  		// Défini le nombre de chiffres du compteur
-  		$this->numbitcounter = strlen(substr($regs[0],1,-1));
-  		// Permettra d'effectuer une recherche dans la table
-  		$this->searchcode = eregi_replace('\{0{'.$this->numbitcounter.'}\}','([0-9]{'.$this->numbitcounter.'})',$mask);
+  	    // Définition du compteur
+  	    if (eregi('\{0+\}',$maskElement[$i]))
+  	    {
+  		    // Défini le nombre de chiffres du compteur
+  		    $this->numbitcounter = strlen(substr($maskElement[$i],1,-1));
+  		    // Permettra d'effectuer une recherche dans la table
+  		    $this->searchcode = $maskRebuild . '([0-9]{'.$this->numbitcounter.'})';
+  		    
+  		    $maskRebuild .= $maskElement[$i];
+  		    $foundCounter = 1;
+  	    }
   	}
-  	
-  	return $mask;
+  	$this->substrBegin = $substrBegin;
+  	$this->substrEnd = $substrEnd;
+  	//print 'begin='.$this->substrBegin.'<br>';
+  	//print 'end='.$this->substrEnd.'<br>';
+  	return $maskRebuild;
   }
 
 
