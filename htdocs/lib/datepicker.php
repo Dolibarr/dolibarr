@@ -47,7 +47,7 @@ if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 }
 
 
-$langs->trans("main");
+$langs->load("main");
 
 if(!isset($_GET["cm"])) $_GET["cm"]="shw";
 if(!isset($_GET["sd"])) $_GET["sd"]="00000000";
