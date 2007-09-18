@@ -116,7 +116,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 		}
 		else
 		{
-			$example = $this->getNextValue($objsoc,1);//."<br>".$this->getNextValue($objsoc,2);
+			$example = $this->getNextValue($objsoc,1)."<br>".$this->getNextValue($objsoc,2);
 		}
 		return $example;
 	}
