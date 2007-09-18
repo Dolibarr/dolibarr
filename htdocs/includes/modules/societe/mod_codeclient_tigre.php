@@ -45,6 +45,9 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	var $code_null;						// Code facultatif
 	var $version;		// 'development', 'experimental', 'dolibarr'
 	var $code_auto; // Numérotation automatique
+	
+	var $searchcode; // String de recherche
+	var $numbitcounter; // Nombre de chiffres du compteur
 
 	
 	/**		\brief      Constructeur classe
@@ -103,15 +106,15 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	{
 		if ($type == 1)
 		{
-			$example = $this->buildMask($objsoc,1);
+			$example = $this->getNextValue($objsoc,1);
 		}
 		else if ($type == 2)
 		{
-			$example = $this->buildMask($objsoc,2);
+			$example = $this->getNextValue($objsoc,2);
 		}
 		else
 		{
-			$example = $this->buildMask($objsoc,1)."<br>".$this->buildMask($objsoc,2);
+			$example = $this->getNextValue($objsoc,1)."<br>".$this->getNextValue($objsoc,2);
 		}
 		return $example;
 	}
@@ -120,31 +123,35 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Valeur
 	*/
-  function getNextValue($type=0)
+  function getNextValue($objsoc=0,$type=0)
   {
   	global $db,$conf;
-  		
+  	
+  	$mask = $this->buildMask($objsoc,$type);
+  	
+  	if ($type == 1)
+  	{
+  		$field = 'code_client';
+  	}
+  	else if ($type == 2)
+  	{
+  		$field = 'code_fournisseur';
+  	}
 
     // On récupère la valeur max (réponse immédiate car champ indéxé)
     $posindice  = $this->numbitcounter;
-        $searchyy='';
-        $sql = "SELECT MAX(facnumber)";
-        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
-        {
-        	$sql.= " WHERE facnumber REGEXP '^".$this->searchLast."'";
-        }
-        else if ($facture->type == 2)
-        {
-        	$sql.= " WHERE type = 2 AND facnumber REGEXP '^".$this->prefixcreditnote."'";
-        }
-        $resql=$db->query($sql);
-        if ($resql)
-        {
-        	$row = $db->fetch_row($resql);
-          if ($row) $searchyy = substr($row[0],0,-$posindice);
-        }
-
+    $searchyy='';
+    $sql = "SELECT MAX(".$field.")";
+    $sql.= " FROM ".MAIN_DB_PREFIX."societe";
+    $sql.= " WHERE ".$field." REGEXP '^".$this->searchcode."$'";
+    $resql=$db->query($sql);
+    if ($resql)
+    {
+    	$row = $db->fetch_row($resql);
+    	//print $row[0];
+      //if ($row) $searchyy = substr($row[0],0,-$posindice);
+    }
+/*
         // Si au moins un champ respectant le modèle a été trouvée
         if (eregi('^'.$this->searchLastWithNoYear.'',$searchyy))
         {
@@ -163,12 +170,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
         {
         	$max=0;
         }
-
-        // On replace le prefix de l'avoir
-        if ($conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
-        {
-        	$this->prefix = $this->prefixcreditnote;
-        }
+*/
     	  
     	  // On applique le nombre de chiffres du compteur
         $arg = '%0'.$this->numbitcounter.'s';
@@ -176,7 +178,8 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
         $numFinal = ''; 
         
         dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$numFinal);
-        return  $numFinal;
+        //return  $numFinal;
+        return $mask;
   }
   
  /**		\brief      Construction du masque de numérotation
@@ -231,10 +234,10 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		return -3;
   	}
   	
-  	//Ajout du préfix de la société
+  	// Ajout du préfix de la société
   	if (is_object($objsoc) && $objsoc->prefix_comm && eregi('\{pre\}',$mask))
   	{
-  		$mask = ereg_replace('\{pre\}',strtoupper($objsoc->prefix_comm),$mask);
+  		$mask = eregi_replace('\{pre\}',strtoupper($objsoc->prefix_comm),$mask);
   	}
   	else if (is_object($objsoc) && !$objsoc->prefix_comm && eregi('\{pre\}',$mask))
   	{
@@ -243,6 +246,16 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	else if (!is_object($objsoc) && eregi('\{pre\}',$mask))
   	{
   		$mask = eregi_replace('\{pre\}','ABC',$mask);
+  	}
+  	
+  	// Définition du compteur
+  	if (eregi('\{0+\}',$mask))
+  	{
+  		preg_match('/\{0+\}/',$mask,$regs);
+  		// Défini le nombre de chiffres du compteur
+  		$this->numbitcounter = strlen(substr($regs[0],1,-1));
+  		// Permettra d'effectuer une recherche dans la table
+  		$this->searchcode = eregi_replace('\{0{'.$this->numbitcounter.'}\}','([0-9]{'.$this->numbitcounter.'})',$mask);
   	}
   	
   	return $mask;
