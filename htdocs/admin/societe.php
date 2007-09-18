@@ -78,6 +78,13 @@ if ($_POST["action"] == 'usesearchtoselectcompany')
   }
 }
 
+// défini les constantes du modèle tigre
+if ($_POST["action"] == 'updateMask')
+{
+	dolibarr_set_const($db, "CODE_TIGRE_MASK_CUSTOMER",$_POST["maskcustomer"]);
+	dolibarr_set_const($db, "CODE_TIGRE_MASK_SUPPLIER",$_POST["masksupplier"]);
+}
+
 
 /*
  * 	Affichage page configuration module societe

@@ -341,12 +341,19 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
 		print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 		print '<table class="nobordernopadding"><tr><td>';
-		print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+		if ($modCodeClient->code_auto == 1)
+		{
+			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+		}
+		else
+		{
+			print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+		}
 		print '</td><td>';
 		$s=$langs->trans("CustomerCodeDesc").'<br>';
 		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
 		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
 		print $form->textwithhelp('',$s,1);
 		print '</td></tr></table>';
 
@@ -358,14 +365,20 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print $form->selectyesno("fournisseur",$soc->fournisseur,1);
 		print '</td>';
 		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
-		
 		print '<table class="nobordernopadding"><tr><td>';
-		print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+		if ($modCodeFournisseur->code_auto == 1)
+		{
+			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+		}
+		else
+		{
+			print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+		}
 		print '</td><td>';
 		$s=$langs->trans("SupplierCodeDesc").'<br>';
 		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
 		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
 		print $form->textwithhelp('',$s,1);
 		print '</td></tr></table>';
 
@@ -673,7 +686,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		$s=$langs->trans("CustomerCodeDesc").'<br>';
 		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
 		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs).'</b>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
 		print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
@@ -700,7 +713,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		$s=$langs->trans("SupplierCodeDesc").'<br>';
 		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
 		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs).'</b>';
+		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
 		print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 

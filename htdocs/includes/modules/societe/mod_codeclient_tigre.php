@@ -96,12 +96,157 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 
 
 	/**		\brief      Renvoi la description du module
-	*      	\return     string      Texte descripif
+	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	*     \return     string      Texte descripif
 	*/
-	function getExample($langs)
+	function getExample($langs,$objsoc=0,$type=0)
 	{
-		return "CC0001<br>CF0001";
+		if ($type == 1)
+		{
+			$example = $this->buildMask($objsoc,1);
+		}
+		else if ($type == 2)
+		{
+			$example = $this->buildMask($objsoc,2);
+		}
+		else
+		{
+			$example = $this->buildMask($objsoc,1)."<br>".$this->buildMask($objsoc,2);
+		}
+		return $example;
 	}
+	
+	/**		\brief      Renvoi prochaine valeur attribuée
+	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	*     \return     string      Valeur
+	*/
+  function getNextValue($type=0)
+  {
+  	global $db,$conf;
+  		
+
+    // On récupère la valeur max (réponse immédiate car champ indéxé)
+    $posindice  = $this->numbitcounter;
+        $searchyy='';
+        $sql = "SELECT MAX(facnumber)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+        if ($conf->global->FACTURE_NUM_RESTART_BEGIN_YEAR)
+        {
+        	$sql.= " WHERE facnumber REGEXP '^".$this->searchLast."'";
+        }
+        else if ($facture->type == 2)
+        {
+        	$sql.= " WHERE type = 2 AND facnumber REGEXP '^".$this->prefixcreditnote."'";
+        }
+        $resql=$db->query($sql);
+        if ($resql)
+        {
+        	$row = $db->fetch_row($resql);
+          if ($row) $searchyy = substr($row[0],0,-$posindice);
+        }
+
+        // Si au moins un champ respectant le modèle a été trouvée
+        if (eregi('^'.$this->searchLastWithNoYear.'',$searchyy))
+        {
+            // Recherche rapide car restreint par un like sur champ indexé
+            $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
+            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
+            $sql.= " WHERE facnumber REGEXP '^".$searchyy."'";
+            $resql=$db->query($sql);
+            if ($resql)
+            {
+                $row = $db->fetch_row($resql);
+                $max = $row[0];
+            }
+        }
+        else
+        {
+        	$max=0;
+        }
+
+        // On replace le prefix de l'avoir
+        if ($conf->global->AVOIR_NUM_WITH_INVOICE && $facture->type == 2)
+        {
+        	$this->prefix = $this->prefixcreditnote;
+        }
+    	  
+    	  // On applique le nombre de chiffres du compteur
+        $arg = '%0'.$this->numbitcounter.'s';
+        $num = sprintf($arg,$max+1);
+        $numFinal = ''; 
+        
+        dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$numFinal);
+        return  $numFinal;
+  }
+  
+ /**		\brief      Construction du masque de numérotation
+ 	*     \param      objsoc      Objet société
+	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
+	*     \return     string      Valeur
+	*/
+  function buildMask($objsoc=0,$type='')
+  {
+  	global $conf;
+  	
+  	if ($type==1)
+  	{
+  		$mask = $conf->global->CODE_TIGRE_MASK_CUSTOMER;
+  	}
+  	else if ($type==2)
+  	{
+  		$mask = $conf->global->CODE_TIGRE_MASK_SUPPLIER;
+  	}
+  	
+  	// Ajout du jour en cours
+  	if (ereg('(\{d{2}\})',$mask))
+  	{
+  		$mask = ereg_replace('(\{d{2}\})',strftime("%d",time()),$mask);
+  	}
+  	else if (ereg('\{d+\}',$mask) && (ereg('\{d+\}',$mask) != '{dd}'))
+  	{
+  		return -1;
+  	}
+  	
+  	// Ajout du mois en cours
+  	if (ereg('(\{m{2}\})',$mask))
+  	{
+  		$mask = ereg_replace('(\{m{2}\})',strftime("%m",time()),$mask);
+  	}
+  	else if (ereg('\{m+\}',$mask) && (ereg('\{m+\}',$mask) != '{mm}'))
+  	{
+  		return -2;
+  	}
+  	
+  	// Ajout de l'année en cours
+  	if (ereg('\{a{2}\}',$mask))
+  	{
+  		$mask = ereg_replace('\{a{2}\}',substr(strftime("%Y",time()),2),$mask);
+  	}
+  	else if (ereg('\{a{4}\}',$mask))
+  	{
+  		$mask = ereg_replace('\{a{4}\}',strftime("%Y",time()),$mask);
+  	}
+  	else if (ereg('\{a+\}',$mask) && ((ereg('\{a+\}',$mask) != '{aa}') || (ereg('\{a+\}',$mask) != '{aaa}')))
+  	{
+  		return -3;
+  	}
+  	
+  	//Ajout du préfix de la société
+  	if (is_object($objsoc) && $objsoc->prefix_comm && ereg('\{pre\}',$mask))
+  	{
+  		$mask = ereg_replace('\{pre\}',strtoupper($objsoc->prefix_comm),$mask);
+  	}
+  	else if (is_object($objsoc) && !$objsoc->prefix_comm && ereg('\{pre\}',$mask))
+  	{
+  		return -4;
+  	}
+  	else if (!is_object($objsoc) && ereg('\{pre\}',$mask))
+  	{
+  		$mask = ereg_replace('\{pre\}','ABC',$mask);
+  	}
+  	
+  	return $mask;
+  }
 
 
 	/**
