@@ -198,51 +198,51 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	}
   	
   	// Ajout du jour en cours
-  	if (ereg('(\{d{2}\})',$mask))
+  	if (eregi('(\{d{2}\})',$mask))
   	{
-  		$mask = ereg_replace('(\{d{2}\})',strftime("%d",time()),$mask);
+  		$mask = eregi_replace('(\{d{2}\})',strftime("%d",time()),$mask);
   	}
-  	else if (ereg('\{d+\}',$mask) && (ereg('\{d+\}',$mask) != '{dd}'))
+  	else if (eregi('\{d+\}',$mask) && (eregi('\{d+\}',$mask) != '{dd}'))
   	{
   		return -1;
   	}
   	
   	// Ajout du mois en cours
-  	if (ereg('(\{m{2}\})',$mask))
+  	if (eregi('(\{m{2}\})',$mask))
   	{
-  		$mask = ereg_replace('(\{m{2}\})',strftime("%m",time()),$mask);
+  		$mask = eregi_replace('(\{m{2}\})',strftime("%m",time()),$mask);
   	}
-  	else if (ereg('\{m+\}',$mask) && (ereg('\{m+\}',$mask) != '{mm}'))
+  	else if (eregi('\{m+\}',$mask) && (eregi('\{m+\}',$mask) != '{mm}'))
   	{
   		return -2;
   	}
   	
   	// Ajout de l'année en cours
-  	if (ereg('\{a{2}\}',$mask))
+  	if (eregi('\{a{2}\}',$mask))
   	{
-  		$mask = ereg_replace('\{a{2}\}',substr(strftime("%Y",time()),2),$mask);
+  		$mask = eregi_replace('\{a{2}\}',substr(strftime("%Y",time()),2),$mask);
   	}
-  	else if (ereg('\{a{4}\}',$mask))
+  	else if (eregi('\{a{4}\}',$mask))
   	{
-  		$mask = ereg_replace('\{a{4}\}',strftime("%Y",time()),$mask);
+  		$mask = eregi_replace('\{a{4}\}',strftime("%Y",time()),$mask);
   	}
-  	else if (ereg('\{a+\}',$mask) && ((ereg('\{a+\}',$mask) != '{aa}') || (ereg('\{a+\}',$mask) != '{aaa}')))
+  	else if (eregi('\{a+\}',$mask) && ((eregi('\{a+\}',$mask) != '{aa}') || (eregi('\{a+\}',$mask) != '{aaa}')))
   	{
   		return -3;
   	}
   	
   	//Ajout du préfix de la société
-  	if (is_object($objsoc) && $objsoc->prefix_comm && ereg('\{pre\}',$mask))
+  	if (is_object($objsoc) && $objsoc->prefix_comm && eregi('\{pre\}',$mask))
   	{
   		$mask = ereg_replace('\{pre\}',strtoupper($objsoc->prefix_comm),$mask);
   	}
-  	else if (is_object($objsoc) && !$objsoc->prefix_comm && ereg('\{pre\}',$mask))
+  	else if (is_object($objsoc) && !$objsoc->prefix_comm && eregi('\{pre\}',$mask))
   	{
   		return -4;
   	}
-  	else if (!is_object($objsoc) && ereg('\{pre\}',$mask))
+  	else if (!is_object($objsoc) && eregi('\{pre\}',$mask))
   	{
-  		$mask = ereg_replace('\{pre\}','ABC',$mask);
+  		$mask = eregi_replace('\{pre\}','ABC',$mask);
   	}
   	
   	return $mask;
