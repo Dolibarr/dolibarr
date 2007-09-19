@@ -33,6 +33,10 @@ if (!$user->admin)
   accessforbidden();
 
 
+/*
+* Affichage page
+*/
+
 llxHeader();
 
 
@@ -44,7 +48,6 @@ if (!function_exists('eaccelerator_info'))
 }
 
 
-/* {{{ process any commands */
 $info = eaccelerator_info();
 if (isset($_POST['caching'])) {
     if ($info['cache']) {
@@ -70,7 +73,8 @@ if (!is_array($info)) {
 	dolibarr_print_error('','An error occured getting eAccelerator information, this is caused if eAccelerator isn\'t initalised properly');
 	exit;
 }
-/* }}} */
+
+
 
 function compare($x, $y)
 {
@@ -84,9 +88,10 @@ function compare($x, $y)
     return 1;
 }
 
+
 function revcompare($x, $y)
 {
-  global $sortby;
+  global $sortby, $langs;
 
   if ( $x[$sortby] == $y[$sortby] )
     return 0;
@@ -96,11 +101,12 @@ function revcompare($x, $y)
     return -1;
 }
    
-/* {{{ create_script_table */
-function create_script_table($list)
-{
-	global $sortby;
 
+   function create_script_table($list)
+{
+	global $sortby,$bc,$langs;
+	$var=true;
+	
 	if (isset($_GET['order']) && ($_GET['order'] == "asc" || $_GET['order'] =="desc")) {
 		$order = $_GET['order'];
 	} else {
@@ -123,13 +129,13 @@ function create_script_table($list)
 	}
 
 	?>
-    <table>
+    <table class="noborder">
         <tr>
-            <th><a href="<?php echo $_SERVER['PHP_SELF']?>?sort=file&order=<?php echo ($order == "asc" ? "desc" : "asc")?>">Filename</a>&nbsp;<? if($sortby == "file") echo ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php echo $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php echo ($order == "asc" ? "desc" : "asc")?>">MTime</a>&nbsp;<? if($sortby == "mtime") echo ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php echo $_SERVER['PHP_SELF']?>?sort=size&order=<?php echo ($order == "asc" ? "desc" : "asc")?>">Size</a>&nbsp;<? if($sortby == "size") echo ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php echo $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php echo ($order == "asc" ? "desc" : "asc")?>">Reloads</a>&nbsp;<? if($sortby == "reloads") echo ($order == "asc" ? "&darr;" : "&uarr;")?></th>
-            <th><a href="<?php echo $_SERVER['PHP_SELF']?>?sort=hits&order=<?php echo ($order == "asc" ? "desc" : "asc")?>">Hits</a>&nbsp;<? if($sortby == "hits") echo ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=file&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Filename"); ?></a>&nbsp;<? if($sortby == "file") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=mtime&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Date"); ?></a>&nbsp;<? if($sortby == "mtime") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=size&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Size"); ?></a>&nbsp;<? if($sortby == "size") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=reloads&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Reloads"); ?></a>&nbsp;<? if($sortby == "reloads") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
+            <th><a href="<?php print $_SERVER['PHP_SELF']?>?sort=hits&order=<?php print ($order == "asc" ? "desc" : "asc")?>"><?php print $langs->trans("Hits"); ?></a>&nbsp;<? if($sortby == "hits") print ($order == "asc" ? "&darr;" : "&uarr;")?></th>
         </tr>
     <?php
           switch ($sortby) {
@@ -147,47 +153,46 @@ function create_script_table($list)
           }
 
           foreach($list as $script) { ?>
-        <tr>
-    <?php   if (function_exists('eaccelerator_dasm_file')) { ?>
-            <td><a href="dasm.php?file=<?php echo $script['file']; ?>"><?php echo $script['file']; ?></a></td>
-    <?php   } else { ?>
-            <td><?php echo $script['file']; ?></td>
-    <?php   } ?>
-            <td class="vr"><?php echo date('Y-m-d H:i', $script['mtime']); ?></td>
-            <td class="vr"><?php echo number_format($script['size'] / 1024, 2); ?> KB</td>
-            <td class="vr"><?php echo $script['reloads']; ?> (<?php echo $script['usecount']; ?>)</td>
-            <td class="vr"><?php echo $script['hits']; ?></td>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
+            <td><?php print dolibarr_trunc($script['file'],80,'left'); ?></td>
+            <td align="center" nowrap="nowrap"><?php print dolibarr_print_date($script['mtime'],'dayhour'); ?></td>
+            <td align="right" nowrap="nowrap"><?php print number_format($script['size'] / 1024, 2); ?> KB</td>
+            <td align="right" nowrap="nowrap"><?php print $script['reloads']; ?> (<?php print $script['usecount']; ?>)</td>
+            <td align="right" nowrap="nowrap"><?php print $script['hits']; ?></td>
         </tr>
     <?php } ?>
     </table>
 <?php 
 }
-/* }}} */
 
-/* {{{ create_key_table */
-function create_key_table($list) {
+
+
+function create_key_table($list)
+{
+	global $bc,$langs;
+	$var=true;
 ?>
-    <table class="key">
-        <tr>
+    <table class="noborder">
+        <tr class="liste_titre">
             <th>Name</th>
             <th>Created</th>
-            <th>Size</th>
+            <th><?php print $langs->trans("Size"); ?></th>
             <th>ttl</th>
         </tr>
 <?php
     foreach($list as $key) {
 ?>
-        <tr>
-            <td><?php echo $key['name']; ?></td>
-            <td class="vr"><?php echo date('Y-m-d H:i', $key['created']); ?></td>
-            <td class="vr"><?php echo number_format($key['size']/1024, 3); ?>KB</td>
-            <td class="vr"><?php 
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
+            <td><?php print dolibarr_trunc($key['name'],80,'left'); ?></td>
+            <td align="center" nowrap="nowrap"><?php dolibarr_print_date($key['created'],'dayhour'); ?></td>
+            <td align="right" nowrap="nowrap"><?php print number_format($key['size']/1024, 3); ?> KB</td>
+            <td align="right" nowrap="nowrap"><?php 
                 if ($key['ttl'] == -1) {
-                    echo 'expired';
+                    print 'expired';
                 } elseif ($key['ttl'] == 0) {
-                    echo 'none';
+                    print 'none';
                 } else {
-                    echo date('Y-m-d H:i', $key['ttl']);
+                    print dolibarr_print_date($key['ttl'],'dayhour');
                 }
             ?></td>
         </tr>
@@ -201,77 +206,82 @@ function create_key_table($list) {
 
 $html=new Form($db);
 print_fiche_titre('Dolibarr eAccelerator '.$info['version'].' control panel','','setup');
+
+$var=true;
+
 ?>
 <br>
 
-<!-- {{{ information -->
-<table>
+
+<table class="noborder">
 <tr class="liste_titre"><td colspan="2">Information</td></tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Caching enabled</td> 
-    <td align="right"><?php echo $info['cache'] ? 'yes':'no' ?></td>
+    <td align="right"><?php print $info['cache'] ? 'yes':'no' ?></td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Optimizer enabled</td>
-    <td align="right"><?php echo $info['optimizer'] ? 'yes':'no' ?></td>
+    <td align="right"><?php print $info['optimizer'] ? 'yes':'no' ?></td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Memory usage</td>
-    <td align="right"><?php echo number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>% 
-        (<?php echo number_format($info['memoryAllocated'] / (1024*1024), 2); ?>MB/
-        <?php echo number_format($info['memorySize'] / (1024*1024), 2); ?>MB)</td>
+    <td align="right"><?php print number_format(100 * $info['memoryAllocated'] / $info['memorySize'], 2); ?>% 
+        (<?php print number_format($info['memoryAllocated'] / (1024*1024), 2); ?> MB /
+        <?php print number_format($info['memorySize'] / (1024*1024), 2); ?> MB)</td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Free memory in reserved cache</td>
-    <td align="right"><?php echo number_format($info['memoryAvailable'] / (1024*1024), 2); ?>MB</td>
+    <td align="right"><?php print number_format($info['memoryAvailable'] / (1024*1024), 2); ?>MB</td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Cached scripts</td>
-    <td align="right"><?php echo $info['cachedScripts']; ?></td>
+    <td align="right"><?php print $info['cachedScripts']; ?></td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Removed scripts</td> 
-    <td align="right"><?php echo $info['removedScripts']; ?></td>
+    <td align="right"><?php print $info['removedScripts']; ?></td>
 </tr>
-<tr>
+<tr <?php $var = ! $var; print $bc[$var]; ?>>
     <td>Cached keys</td>
-    <td align="right"><?php echo $info['cachedKeys']; ?></td>
+    <td align="right"><?php print $info['cachedKeys']; ?></td>
 </tr>
 </table>
-<!-- }}} -->
+<?php
 
-<!-- {{{ control -->
+$var=true;
+
+?>
 <br>
 <form name="ea_control" method="post">
-    <table>
+    <table class="noborder">
 		<tr class="liste_titre"><td colspan="2">Actions</td></tr>
-        <tr>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
             <td>Caching</td>
-            <td align="right"><input type="submit" name="caching" value="<?php echo $info['cache']?'disable':'enable'; ?>" /></td>
+            <td align="right"><input type="submit" class="butAction" name="caching" value="<?php print $info['cache']?'disable':'enable'; ?>" /></td>
         </tr>
-        <tr>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
             <td>Optimizer</td>
-            <td align="right"><input type="submit" name="optimizer" value="<?php echo $info['optimizer']?'disable':'enable'; ?>" /></td>
+            <td align="right"><input type="submit" class="butAction" name="optimizer" value="<?php print $info['optimizer']?'disable':'enable'; ?>" /></td>
         </tr>
-        <tr>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
             <td>Clear cache</td>
-            <td align="right"><input type="submit" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>
+            <td align="right"><input type="submit" class="butAction" name="clear" value="clear" title="remove all unused scripts and data from shared memory and disk cache" /></td>
         </tr>
-        <tr>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
             <td>Clean cache</td>
-            <td align="right"><input type="submit" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>
+            <td align="right"><input type="submit" class="butAction" name="clean" value="clean" title=" remove all expired scripts and data from shared memory and disk cache" /></td>
         </tr>
-        <tr>
+        <tr <?php $var = ! $var; print $bc[$var]; ?>>
             <td>Purge cache</td>
-            <td align="right"><input type="submit" name="purge" value="purge" title="remove all 'removed' scripts from shared memory" /></td>
+            <td align="right"><input type="submit" class="butAction" name="purge" value="purge" title="remove all 'removed' scripts from shared memory" /></td>
         </tr>
     </table>
 </form>
 <!-- }}} -->
 
 <br><br>
+<b>Cached scripts</b><br>
 <table>
-<tr class="liste_titre"><td colspan="2">Cached scripts</td></tr></table>
 <?php
 $res=eaccelerator_cached_scripts();			// If success return an array
 if (is_array($res)) create_script_table($res);
@@ -279,8 +289,8 @@ else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path
 ?>
  
 <br><br>
+<b>Removed scripts</b><br>
 <table>
-<tr class="liste_titre"><td colspan="2">Removed scripts</td></tr></table>
 <?php
 $res=eaccelerator_removed_scripts();
 if (is_array($res)) create_script_table($res);
@@ -290,8 +300,8 @@ else print "Check in your <b>php.ini</b> that <b>eaccelerator.allowed_admin_path
 if (function_exists('eaccelerator_get')) {
 ?>
 	<br><br>
+	<b>Cached keys</b><br>
 	<table>
-	<tr class="liste_titre"><td colspan="2">Cached keys</td></tr></table>
 <?php
     $res=eaccelerator_list_keys();
 	create_key_table($res);
