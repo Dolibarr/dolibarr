@@ -155,7 +155,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
     	//print 'row='.$row[0].'<br>';
     	//print 'begin='.$this->substrBegin.'<br>';
     	//print 'end='.$this->substrEnd.'<br>';
-      if ($row) $count = substr($row[0],$this->substrBegin.$substrEnd);
+      if ($row[0]) $count = substr($row[0],$this->substrBegin.$substrEnd);
     }
     	  
     	  // On applique le nombre de chiffres du compteur
