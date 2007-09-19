@@ -775,18 +775,37 @@ function dolibarr_print_phone($phone,$country="FR")
         \param      size		Longueur max de la chaine. Si 0, pas de limite.
         \return     string		Chaine tronquée
 */
-function dolibarr_trunc($string,$size=40)
+function dolibarr_trunc($string,$size=40,$trunc='right')
 {
 	if ($size==0) return $string;
 	if ((!defined('USE_SHORT_TITLE')) || defined('USE_SHORT_TITLE') &&  USE_SHORT_TITLE)
 	{
-		if (strlen($string) > $size)
-			return substr($string,0,$size).'...';
-		else
+		// We go always here
+		if ($trunc == 'right')
+		{
+			if (strlen($string) > $size)
+				return substr($string,0,$size).'...';
+			else
+				return $string;
+		}
+		if ($trunc == 'center')
+		{
+			// \TODO A developper.
+			
 			return $string;
+		}
+		if ($trunc == 'left')
+		{
+			if (strlen($string) > $size)
+				return '...'.substr($string,strlen($string) - $size,$size);
+			else
+				return $string;
+		}
 	}
 	else
+	{
 		return $string;
+	}
 }
 
 /**
