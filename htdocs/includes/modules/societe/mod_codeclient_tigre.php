@@ -130,6 +130,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	global $db,$conf;
   	
   	$mask = $this->buildMask($objsoc,$type);
+  	$count = 0;
   	
   	if ($type == 1)
   	{
@@ -155,36 +156,15 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
     	//print 'begin='.$this->substrBegin.'<br>';
     	//print 'end='.$this->substrEnd.'<br>';
       if ($row) $count = substr($row[0],$this->substrBegin.$substrEnd);
-      //print 'count='.$count.'<br>';
     }
-/*
-        // Si au moins un champ respectant le modèle a été trouvée
-        if (eregi('^'.$this->searchLastWithNoYear.'',$searchyy))
-        {
-            // Recherche rapide car restreint par un like sur champ indexé
-            $sql = "SELECT MAX(0+SUBSTRING(facnumber,-".$posindice."))";
-            $sql.= " FROM ".MAIN_DB_PREFIX."facture";
-            $sql.= " WHERE facnumber REGEXP '^".$searchyy."'";
-            $resql=$db->query($sql);
-            if ($resql)
-            {
-                $row = $db->fetch_row($resql);
-                $max = $row[0];
-            }
-        }
-        else
-        {
-        	$max=0;
-        }
-*/
     	  
     	  // On applique le nombre de chiffres du compteur
         $arg = '%0'.$this->numbitcounter.'s';
-        $num = sprintf($arg,$max+1);
-        $numFinal = ''; 
+        $count = sprintf($arg,$count+1);
+        $mask = eregi_replace('\{0+\}',$count,$mask);
         
-        dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$numFinal);
-        //return  $numFinal;
+        dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$mask);
+        //print 'count='.$count.'<br>';
         return $mask;
   }
   
@@ -328,7 +308,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    }
   	    else if (eregi('[\/-]{2,}',$maskElement[$i]))
   	    {
-  	    	$error++
+  	    	$error++;
   	    }
   	    
   	    // Ajout des champs libres éventuels
