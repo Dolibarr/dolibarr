@@ -32,12 +32,13 @@
 
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
-if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
+if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 
 $langs->load('orders');
 $langs->load('sendings');
@@ -182,7 +183,7 @@ if ($_POST['action'] == 'setremise' && $user->rights->commande->creer)
   $commande->set_remise($user, $_POST['remise']);
 }
 
-if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
+if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 {
   if ($_POST["remise_id"])
     {
@@ -329,7 +330,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 }
 
 /*
- *  Mise à jour d'une ligne dans la propale
+ *  Mise à jour d'une ligne dans la commande
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
@@ -749,7 +750,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 	  print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 	  
 	  /*
-	   * Contact de la propale
+	   * Contact de la commande
 	   */
 	  print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 	  $html->select_contacts($soc->id,$setcontact,'contactidp',1);
@@ -1109,7 +1110,7 @@ else
 			print '<tr><td>'.$langs->trans('Date').'</td>';
 			print '<td colspan="2">'.dolibarr_print_date($commande->date,'daytext').'</td>';
 			print '<td width="50%">'.$langs->trans('Source').' : ' . $commande->sources[$commande->source] ;
-			if ($commande->source == 0)
+			if ($commande->source == 0 && $conf->propal->enabled)
 			{
 				// Si source = propal
 				$propal = new Propal($db);
@@ -1351,6 +1352,7 @@ else
 								{
 									if ($objp->description == '(CREDIT_NOTE)')
 									{
+										include_once(
 										$discount=new DiscountAbsolute($db);
 										$discount->fetch($objp->fk_remise_except);
 										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
