@@ -38,14 +38,11 @@
    \version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
-
 
 /**
    \class      User
    \brief      Classe permettant la gestion d'un utilisateur
 */
-
 class User
 {
   var $db;
