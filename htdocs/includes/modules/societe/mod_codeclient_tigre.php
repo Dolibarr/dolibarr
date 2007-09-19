@@ -313,7 +313,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    }
   	    }
   	    
-  	    // Ajout des séparateurs éventuels
+  	    // Ajout des séparateurs éventuels : \ / -
   	    if (eregi('[\/-]{1}',$maskElement[$i]))
   	    {
   	    	$maskRebuild .= $maskElement[$i];
