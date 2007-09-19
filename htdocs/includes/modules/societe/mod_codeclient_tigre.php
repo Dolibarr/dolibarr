@@ -229,7 +229,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    	$substrEnd += 2;
   		    }
   	    }
-  	    else if (eregi('\{d+\}',$mask) && (eregi('\{d+\}',$mask) != '{dd}'))
+  	    else if (eregi('\{d+\}',$maskElement[$i]) && (eregi('\{d+\}',$$maskElement[$i]) != '{dd}'))
   	    {
   		    $error++;
   	    }
@@ -247,7 +247,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    	$substrEnd += 2;
   		    }
   	    }
-  	    else if (eregi('\{m+\}',$mask) && (eregi('\{m+\}',$mask) != '{mm}'))
+  	    else if (eregi('\{m+\}',$maskElement[$i]) && (eregi('\{m+\}',$maskElement[$i]) != '{mm}'))
   	    {
   		    $error++;
   	    }
@@ -352,6 +352,10 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    
   		    $maskRebuild .= $maskElement[$i];
   		    $foundCounter = 1;
+  	    }
+  	    else
+  	    {
+  	    	$error++;
   	    }
   	}
   	$this->substrBegin = $substrBegin;
