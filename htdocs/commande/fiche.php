@@ -33,7 +33,6 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
@@ -1352,7 +1351,7 @@ else
 								{
 									if ($objp->description == '(CREDIT_NOTE)')
 									{
-										include_once(
+										require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 										$discount=new DiscountAbsolute($db);
 										$discount->fetch($objp->fk_remise_except);
 										print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
