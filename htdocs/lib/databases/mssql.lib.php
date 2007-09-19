@@ -88,7 +88,8 @@ class DoliDb
 			     1060 => 'DB_ERROR_COLUMN_ALREADY_EXISTS',
 			     1061 => 'DB_ERROR_KEY_NAME_ALREADY_EXISTS',
 			     2627 => 'DB_ERROR_RECORD_ALREADY_EXISTS',
-			     1064 => 'DB_ERROR_SYNTAX',
+			     102  => 'DB_ERROR_SYNTAX',
+			     8120 => 'DB_ERROR_GROUP_BY_SYNTAX',
 			     1068 => 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS',
 			     1075 => 'DB_ERROR_CANT_DROP_PRIMARY_KEY',
 			     1091 => 'DB_ERROR_NOSUCHFIELD',
@@ -329,12 +330,34 @@ class DoliDb
     $query = str_ireplace("\'", "''", $query);
     
     
-    $limitfound = stripos($query, " limit ");
-    if ($limitfound !== false) {
+    $itemfound = stripos($query, " limit ");
+    if ($itemfound !== false) {
+	    // Extraire le nombre limite
 	    $number = stristr($query, " limit ");
 	    $number = substr($number, 7);
+	    // Insérer l'instruction TOP et le nombre limite
 	    $query = str_ireplace("select ", "select top ".$number." ", $query);
+	    // Supprimer l'instruction MySql
 	    $query = str_ireplace(" limit ".$number, "", $query);
+    }
+    
+    $itemfound = stripos($query, " week(");
+    if ($itemfound !== false) {
+	    // Recréer une requête sans instruction Mysql
+	    $positionMySql = stripos($query, " week(");
+	    $newquery = substr($query, 0, $positionMySql);
+
+	    // Récupérer la date passée en paramètre
+	    $extractvalue = stristr($query, " week(");
+	    $extractvalue = substr($extractvalue, 6);
+	    $positionMySql = stripos($extractvalue, ")");
+	    // Conserver la fin de la requête
+	    $endofquery = substr($extractvalue, $positionMySql);
+	    $extractvalue = substr($extractvalue, 0, $positionMySql);
+
+	    // Remplacer l'instruction MySql en Sql Server
+	    // Insérer la date en paramètre et le reste de la requête
+	    $query = $newquery." DATEPART(week, ".$extractvalue.$endofquery;
     }
     
     //print "<!--".$query."-->";
