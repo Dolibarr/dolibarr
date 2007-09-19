@@ -880,3 +880,4 @@ ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_s
 -- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 
+ALTER TABLE llx_societe ADD COLUMN supplier_account varchar(32) after fournisseur;
