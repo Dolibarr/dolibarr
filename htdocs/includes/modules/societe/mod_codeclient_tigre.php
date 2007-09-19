@@ -326,11 +326,15 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    	$substrEnd++;
   		    }
   	    }
+  	    else if (eregi('[\/-]{2,}',$maskElement[$i]))
+  	    {
+  	    	$error++
+  	    }
   	    
   	    // Ajout des champs libres éventuels
   	    if (eregi('^[0-9A-Z]+$',$maskElement[$i]))
   	    {
-  	    	$maskRebuild .= $maskElement[$i];
+  	    	$maskRebuild .= strtoupper($maskElement[$i]);
   	    	$MaskElementLength = strlen($maskElement[$i]);
   	    	if ($foundCounter==0)
   		    {
