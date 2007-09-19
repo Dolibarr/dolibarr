@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 
 $langs->load("orders");
@@ -355,6 +355,7 @@ if ($_GET["id"] > 0)
 						{
 							if ($objp->description == '(CREDIT_NOTE)')
 							{
+								require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 								$discount=new DiscountAbsolute($db);
 								$discount->fetch($objp->fk_remise_except);
 								print ' - '.$langs->transnoentities("DiscountFromCreditNote",$discount->getNomUrl(0));
