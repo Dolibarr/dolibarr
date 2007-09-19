@@ -87,7 +87,7 @@ if ($_socid > 0)
 
 	$head = societe_prepare_head($objsoc);
 
-    dolibarr_fiche_head($head, 'notify', $objsoc->nom);
+    dolibarr_fiche_head($head, 'customer', $objsoc->nom);
 
 
     print '<form method="POST" action="multiprix.php?id='.$objsoc->id.'">';
