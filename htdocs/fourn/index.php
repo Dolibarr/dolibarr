@@ -111,8 +111,7 @@ else
  *
  */
 $commande = new CommandeFournisseur($db);
-$sql = "SELECT count(cf.rowid), fk_statut,";
-$sql.= " cf.rowid,cf.ref";
+$sql = "SELECT count(cf.rowid), fk_statut";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s,";
 $sql.= " ".MAIN_DB_PREFIX."commande_fournisseur as cf";
 $sql.= " WHERE cf.fk_soc = s.rowid ";
