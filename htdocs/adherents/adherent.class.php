@@ -35,7 +35,6 @@
 		\version    $Revision$
 */
 
-require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
 
@@ -1415,6 +1414,8 @@ class Adherent
 	{
 		global $conf,$langs;
 
+		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
+
 		dolibarr_syslog("Adherent::add_to_glasnost");
 		
 		if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
@@ -1481,6 +1482,8 @@ class Adherent
 	*/
 	function del_to_glasnost()
     {
+		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
+		
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
 	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&
@@ -1586,6 +1589,8 @@ class Adherent
 
   function is_in_glasnost()
     {
+		require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
+
       if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST ==1 &&
 	  defined('ADHERENT_GLASNOST_SERVEUR') && ADHERENT_GLASNOST_SERVEUR != '' &&
 	  defined('ADHERENT_GLASNOST_USER') && ADHERENT_GLASNOST_USER != '' &&

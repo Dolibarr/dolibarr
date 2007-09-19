@@ -35,7 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
 
 $langs->load("companies");
 $langs->load("bills");

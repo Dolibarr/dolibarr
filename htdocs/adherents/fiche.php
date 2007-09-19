@@ -35,7 +35,6 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_type.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/adherent_options.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
-require_once(DOL_DOCUMENT_ROOT."/includes/xmlrpc/xmlrpc.php");
 
 $langs->load("companies");
 $langs->load("bills");
@@ -498,11 +497,9 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_add_glasnost'
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
 	    if ($adht->vote == 'yes'){
-	        define("XMLRPC_DEBUG", 1);
 	        if (!$adh->add_to_glasnost()){
 	            $errmsg.="Echec du rajout de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
 	        }
-	        XMLRPC_debug_print();
 	    }
 	}
 }
@@ -515,11 +512,9 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_del_glasn
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
 	    if ($adht->vote == 'yes'){
-	        define("XMLRPC_DEBUG", 1);
 	        if(!$adh->del_to_glasnost()){
 	            $errmsg.="Echec de la suppression de l'utilisateur dans glasnost: ".$adh->error."<BR>\n";
 	        }
-	        XMLRPC_debug_print();
 	    }
 	}
 }
@@ -1083,7 +1078,6 @@ if ($rowid && $action != 'edit')
     // Action Glasnost
     if ($adht->vote == 'yes' && $conf->global->ADHERENT_USE_GLASNOST)
     {
-        define("XMLRPC_DEBUG", 1);
         $isinglasnost=$adh->is_in_glasnost();
         if ($isinglasnost == 1)
         {
