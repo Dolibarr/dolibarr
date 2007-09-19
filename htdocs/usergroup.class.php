@@ -27,7 +27,7 @@
 	 \version    $Revision$
 */
 
-require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
+if ($conf->ldap->enabled) require_once (DOL_DOCUMENT_ROOT."/lib/ldap.class.php");
 
 
 /**
