@@ -353,7 +353,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   		    $maskRebuild .= $maskElement[$i];
   		    $foundCounter = 1;
   	    }
-  	    else
+  	    else if ($i == count($maskElement) && !eregi('\{0+\}',$maskElement[$i]) && $foundCounter == 0)
   	    {
   	    	$error++;
   	    }
