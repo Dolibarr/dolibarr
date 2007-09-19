@@ -485,7 +485,8 @@ class DoliDb
     */
     function idate($param)
     {
-        return "dbo.from_unixtime(".$param.")";
+        //return "dbo.from_unixtime(".$param.")";
+        return strftime("%d/%m/%Y %H:%M:%S",$param);
     }
 
 
