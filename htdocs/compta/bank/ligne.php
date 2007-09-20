@@ -100,7 +100,7 @@ if ($_POST["action"] == "update")
     $dateop = $_POST["dateoyear"].'-'.$_POST["dateomonth"].'-'.$_POST["dateoday"];
     $dateval= $_POST["datevyear"].'-'.$_POST["datevmonth"].'-'.$_POST["datevday"];
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET label='".$_POST["label"]."',";
+    $sql.= " SET label='".addslashes($_POST["label"])."',"; // Todo: créer une classe pour séparer les requêtes sql
     if (isset($_POST['amount'])) $sql.=" amount='$amount',";
     $sql.= " dateo = '".$dateop."', datev = '".$dateval."',";
     $sql.= " fk_account = ".$_POST['accountid'];
