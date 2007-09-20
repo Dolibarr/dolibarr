@@ -57,10 +57,10 @@ $offset = $limit * $page ;
 
 $sql = "SELECT f.facnumber, f.rowid as facid, l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_taux, l.fk_code_ventilation, c.intitule, c.numero,";
 $sql.= " p.rowid as product_id, p.ref as product_ref, p.label as product_label, p.fk_product_type as type";
-$sql.= " FROM (".MAIN_DB_PREFIX."facturedet as l";
-$sql.= " , ".MAIN_DB_PREFIX."facture as f";
-$sql.= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c)";
-$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON (p.rowid = l.fk_product)";
+$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+$sql.= " , ".MAIN_DB_PREFIX."compta_compte_generaux as c";
+$sql.= " , ".MAIN_DB_PREFIX."facturedet as l";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product as p ON p.rowid = l.fk_product";
 $sql.= " WHERE f.rowid = l.fk_facture AND f.fk_statut = 1 AND l.fk_code_ventilation <> 0 ";
 $sql.= " AND c.rowid = l.fk_code_ventilation";
 if (strlen(trim($_GET["search_facture"])))
