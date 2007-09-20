@@ -217,8 +217,8 @@ while (($file = readdir($handle))!==false)
 		$note='';
 		if ($type=='mysql') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
 		if ($type=='mysqli') 	$note='(Mysql >= '.versiontostring($versionbasemin).')';
-		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).')';
-		if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).')';
+		if ($type=='pgsql') 	$note='(Postgresql >= '.versiontostring($versionbasemin).') '.$langs->trans("Experimental");
+		if ($type=='mssql') 	$note='(SQL Server >= '.versiontostring($versionbasemin).') '.$langs->trans("Experimental");
 
 		// Affiche ligne dans liste
 		$option.='<option value="'.$type.'" '.($defaultype==$type?" selected":"");
