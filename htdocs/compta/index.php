@@ -433,7 +433,7 @@ if ($user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -493,7 +493,7 @@ if ($user->rights->societe->lire)
 		}
 		else
 		{
-			print '<tr colspan="2" '.$bc[$var].'><td>'.$langs->trans("None").'</td></tr>';
+			print '<tr '.$bc[$var].'><td colspan="2">'.$langs->trans("None").'</td></tr>';
 		}
 		print '</table><br>';
 	}
@@ -511,9 +511,9 @@ if ($conf->facture->enabled && $conf->commande->enabled && $user->rights->comman
 	$sql.= " s.nom, s.rowid as socid,";
 	$sql.= " p.rowid, p.ref, p.facture, p.fk_statut, p.total_ht, p.total_ttc";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
-	$sql.= " FROM (".MAIN_DB_PREFIX."societe AS s, ".MAIN_DB_PREFIX."commande AS p";
-	if ($user->rights->commercial->client->voir || $socid) $sql .= ")";
-	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc)";
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe AS s";
+	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+	$sql.= ", ".MAIN_DB_PREFIX."commande AS p";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."co_fa AS co_fa ON co_fa.fk_commande = p.rowid";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture AS f ON co_fa.fk_facture = f.rowid";
 	$sql.= " WHERE p.fk_soc = s.rowid";

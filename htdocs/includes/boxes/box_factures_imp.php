@@ -78,7 +78,7 @@ class box_factures_imp extends ModeleBoxes {
             $sql .= " FROM ".MAIN_DB_PREFIX."societe as s,".MAIN_DB_PREFIX."facture as f";
             if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
             $sql .= " WHERE f.fk_soc = s.rowid AND f.paye=0 AND fk_statut = 1";
-            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.idp = sc.fk_soc AND sc.fk_user = " .$user->id;
+            if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
             if($user->societe_id)
             {
                 $sql .= " AND s.rowid = ".$user->societe_id;
