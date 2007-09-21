@@ -445,8 +445,8 @@ elseif ($_GET["id"] > 0)
 	{
 		$debug = '<div class="error">';
 		$debug.= 'Mode Debugage<br>';
-		$debug.= 'Module intervention: lire='.$user->rights->ficheinter->lire.', creer='.$user->rights->ficheinter->creer;
-		$debug.= ', supprimer='.$user->rights->ficheinter->supprimer;
+		$debug.= 'Module intervention: lire='.yn($user->rights->ficheinter->lire).', creer='.yn($user->rights->ficheinter->creer);
+		$debug.= ', supprimer='.yn($user->rights->ficheinter->supprimer);
 		$debug.= '</div>';
 		print $debug;
 	}
