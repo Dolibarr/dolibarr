@@ -333,6 +333,10 @@ class Conf
 		 * Modification de quelques variable de conf en fonction des Constantes
 		 */
 
+		// Debug Mode
+		$this->use_debug_mode=0;
+		if ($this->global->MAIN_ENABLE_DEBUG_MODE) $this->use_debug_mode=$this->global->MAIN_ENABLE_DEBUG_MODE;
+		
 		// outils systemes
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
 

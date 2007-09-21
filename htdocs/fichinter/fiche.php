@@ -318,7 +318,7 @@ if ($_GET["action"] == 'create')
 	}
 
 	print_titre($langs->trans("AddIntervention"));
-
+	
 	if (! $conf->global->FICHEINTER_ADDON)
 	{
 		dolibarr_print_error($db,$langs->trans("Error")." ".$langs->trans("Error_FICHEINTER_ADDON_NotDefined"));
@@ -438,6 +438,18 @@ elseif ($_GET["id"] > 0)
     exit;
   }
   $fichinter->fetch_client();
+  
+  // Debug mode
+	// TODO: créer une fonction debug générique
+	if ($conf->use_debug_mode)
+	{
+		$debug = '<div class="error">';
+		$debug.= 'Mode Debugage<br>';
+		$debug.= 'Module intervention: lire='.$user->rights->ficheinter->lire.', creer='.$user->rights->ficheinter->creer;
+		$debug.= ', supprimer='.$user->rights->ficheinter->supprimer;
+		$debug.= '</div>';
+		print $debug;
+	}
 
   if ($mesg) print $mesg."<br>";
 
