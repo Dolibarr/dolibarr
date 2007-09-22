@@ -78,52 +78,54 @@ class Fichinter extends CommonObject
 
 
     /*
-     *    \brief      Crée une fiche intervention en base
-     *
+     *    	\brief      Crée une fiche intervention en base
+     *		\return		int		<0 if KO, >0 if OK
      */
     function create()
-    {
-    	if (! is_numeric($this->duree)) { $this->duree = 0; }
+	{
+		dolibarr_syslog("Fichinter.class::create ref=".$this->ref);
 
-		  // on vérifie si la ref n'est pas utilisée
-		  $soc = new Societe($this->db);
-	    $soc->fetch($this->socid);
-	    $this->verifyNumRef($soc);
-	    
-	    dolibarr_syslog("Fichinter.class::create ref=".$this->ref);
-		  
-		  $this->db->begin();
+		if (! is_numeric($this->duree)) { $this->duree = 0; }
+		if ($this->socid <= 0) 
+		{
+			$this->error='ErrorBadParameterForFunc';
+			dolibarr_syslog("Fichinter::create ".$this->error,LOG_ERR);
+			return -1;
+		}
 		
-      $sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
-      if ($this->projet_id) {
-          $sql .=  ", fk_projet";
-      }
-      $sql .= ") ";
-      $sql .= " VALUES (".$this->socid.", ".$this->date.", now(), '".$this->ref."', ".$this->author;
-      $sql .= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
-      if ($this->projet_id) {
-          $sql .= ", ".$this->projet_id;
-      }
-      $sql .= ")";
-      $sqlok = 0;
+		$this->db->begin();
 
-		  dolibarr_syslog("Fichinter::create sql=".$sql);
-      $result=$this->db->query($sql);
-      if ($result)
-      {
-      	$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
-      	$this->db->commit();
-      	return $this->id;
-      }
-      else
-      {
-        $this->error=$this->db->error();
-			  dolibarr_syslog("Fichinter::create ".$this->error);
-			  $this->db->rollback();
-			  return -1;
-      }
+		// on vérifie si la ref n'est pas utilisée
+		$soc = new Societe($this->db);
+		$result=$soc->fetch($this->socid);
+		$this->verifyNumRef($soc);
+		
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
+		if ($this->projet_id) $sql .=  ", fk_projet";
+		$sql .= ") ";
+		$sql .= " VALUES (".$this->socid.", ".$this->date.", now(), '".$this->ref."', ".$this->author;
+		$sql .= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
+		if ($this->projet_id) $sql .= ", ".$this->projet_id;
+		$sql .= ")";
+		$sqlok = 0;
 
-    }
+		dolibarr_syslog("Fichinter::create sql=".$sql);
+		$result=$this->db->query($sql);
+		if ($result)
+		{
+			$this->id=$this->db->last_insert_id(MAIN_DB_PREFIX."fichinter");
+			$this->db->commit();
+			return $this->id;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Fichinter::create ".$this->error,LOG_ERR);
+			$this->db->rollback();
+			return -1;
+		}
+
+	}
 
     /*
      *	\brief		Met a jour une intervention
@@ -145,11 +147,13 @@ class Fichinter extends CommonObject
         $sql .= ", description  = '".addslashes($this->description)."'";
         $sql .= ", duree = ".$this->duree;
         $sql .= ", fk_projet = ".$this->projet_id;
-        $sql .= " WHERE rowid = $id";
+        $sql .= " WHERE rowid = ".$id;
 
-        if (! $this->db->query($sql) )
+		dolibarr_syslog("Fichinter::update sql=".$sql);
+        if (! $this->db->query($sql))
         {
-			$this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->error();
+			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
 			return -1;
         }
 
@@ -168,8 +172,7 @@ class Fichinter extends CommonObject
         $sql.= " FROM ".MAIN_DB_PREFIX."fichinter";
         $sql.= " WHERE rowid=".$rowid;
 
-		    dolibarr_syslog("Fichinter.class::fetch rowid=$rowid sql=$sql");
-
+		dolibarr_syslog("Fichinter::fetch sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -196,7 +199,8 @@ class Fichinter extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->error();
+			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -211,6 +215,8 @@ class Fichinter extends CommonObject
         $sql = "UPDATE ".MAIN_DB_PREFIX."fichinter";
         $sql.= " SET fk_statut = 1, date_valid=now(), fk_user_valid=".$user->id;
         $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+
+		dolibarr_syslog("Fichinter::valid sql=".$sql);
 		$resql=$this->db->query($sql);
         if ($resql)
         {
@@ -224,7 +230,8 @@ class Fichinter extends CommonObject
         }
         else
         {
-            $this->error=$this->db->error().' sql='.$sql;
+			$this->error=$this->db->error();
+			dolibarr_syslog("Fichinter::update error ".$this->error,LOG_ERR);
             return -1;
         }
     }
@@ -377,7 +384,7 @@ class Fichinter extends CommonObject
 		$sql.= " SET ".$type." = '".addslashes($note)."'";
 		$sql.= " WHERE rowid =". $this->id;
 
-		dolibarr_syslog("Fichinter.class::update_note type=".$type." sql=".$sql);
+		dolibarr_syslog("Fichinter::update_note type=".$type." sql=".$sql);
 
 		if ($this->db->query($sql))
 		{
@@ -460,7 +467,7 @@ class Fichinter extends CommonObject
 			else
 			{
 	
-				dolibarr_syslog("Fichinter.class::set_project Erreur SQL");
+				dolibarr_syslog("Fichinter::set_project Erreur SQL");
 			}
 		}
 	}
@@ -542,7 +549,7 @@ class Fichinter extends CommonObject
      else
      {
        $this->error=$this->db->error();
-       dolibarr_syslog("Fichinter.class::set_date_delivery Erreur SQL");
+       dolibarr_syslog("Fichinter::set_date_delivery Erreur SQL");
        return -1;
      }
    }
@@ -570,7 +577,7 @@ class Fichinter extends CommonObject
      else
      {
        $this->error=$this->db->error();
-       dolibarr_syslog("Fichinter.class::set_description Erreur SQL");
+       dolibarr_syslog("Fichinter::set_description Erreur SQL");
        return -1;
      }
    }
@@ -650,13 +657,13 @@ class Fichinter extends CommonObject
         {
         	$this->error=$this->db->error();
         	$this->db->rollback();
-        	dolibarr_syslog("Fichinter.class::UpdateLine Erreur sql=$sql, error=".$this->error);
+        	dolibarr_syslog("Fichinter::UpdateLine Erreur sql=$sql, error=".$this->error);
         	return -1;
         }
       }
       else
       {
-      	dolibarr_syslog("Fichinter.class::UpdateLigne Erreur -2 Fiche intervention en mode incompatible pour cette action");
+      	dolibarr_syslog("Fichinter::UpdateLigne Erreur -2 Fiche intervention en mode incompatible pour cette action");
         return -2;
       }
     }
@@ -953,7 +960,7 @@ class FichinterLigne
 	 */
 	function insert()
 	{
-		dolibarr_syslog("FichinterLigne.class::insert rang=".$this->rang);
+		dolibarr_syslog("FichinterLigne::insert rang=".$this->rang);
 		$this->db->begin();
 		
 		$rangToUse=$this->rang;
@@ -1021,7 +1028,7 @@ class FichinterLigne
 		$sql.= ",rang='".$this->rang."'";
 		$sql.= " WHERE rowid = ".$this->rowid;
 
-    dolibarr_syslog("FichinterLigne::update sql=$sql");
+    dolibarr_syslog("FichinterLigne::update sql=".$sql);
 
 		$resql=$this->db->query($sql);
 		if ($resql)

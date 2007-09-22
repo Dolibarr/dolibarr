@@ -35,7 +35,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
 if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php"))
 {
-  require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php");
+	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");
@@ -75,7 +75,7 @@ if ($_POST["action"] == 'add')
 {
 	$fichinter = new Fichinter($db);
 	
-	$fichinter->date = $db->idate(dolibarr_mktime(12, 1 , 1, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]));
+	$fichinter->date = dolibarr_mktime(12, 0 , 0, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]);
 	$fichinter->socid = $_POST["socid"];
 	$fichinter->duree = $_POST["duree"];
 	$fichinter->projet_id = $_POST["projetidp"];
@@ -84,16 +84,24 @@ if ($_POST["action"] == 'add')
 	$fichinter->ref = $_POST["ref"];
 	$fichinter->modelpdf = $_POST["model"];
 
-	$result = $fichinter->create();
-
-	if ($result > 0)
+	if ($fichinter->socid > 0)
 	{
-		$_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre créée
-		$fichinterid=$result;
+		$result = $fichinter->create();
+		if ($result > 0)
+		{
+			$_GET["id"]=$result;      // Force raffraichissement sur fiche venant d'etre créée
+			$fichinterid=$result;
+		}
+		else
+		{
+			$mesg='<div class="error">'.$fichinter->error.'</div>';
+			$_GET["action"] = 'create';
+		}
 	}
 	else
 	{
-		$mesg='<div class="error">'.$fichinter->error.'</div>';
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ThirdParty")).'</div>';
+			$_GET["action"] = 'create';
 	}
 }
 
@@ -225,7 +233,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
     fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
 }
 
-
 /*
  *  Supprime une ligne d'intervention SANS confirmation
  */
@@ -310,14 +317,15 @@ if ($_GET["action"] == 'create')
 	 * Mode creation
 	 * Creation d'une nouvelle fiche d'intervention
 	 */
-	 
-	if ($_GET["socid"])
+	if ($_GET["socid"] > 0)
 	{
 		$societe=new Societe($db); 	 
-	  $societe->fetch($_GET["socid"]);
+		$societe->fetch($_GET["socid"]);
 	}
 
 	print_titre($langs->trans("AddIntervention"));
+
+	if ($mesg) print $mesg.'<br>';
 	
 	if (! $conf->global->FICHEINTER_ADDON)
 	{
@@ -336,8 +344,6 @@ if ($_GET["action"] == 'create')
 
 	print "<form name='fichinter' action=\"fiche.php\" method=\"post\">";
 
-	$smonth = 1;
-	$syear = date("Y", time());
 	print '<table class="border" width="100%">';
 
 	if ($_GET["socid"])
@@ -411,7 +417,7 @@ if ($_GET["action"] == 'create')
 	}
 	else
 	{
-		print '<textarea name="description" wrap="soft" cols="70" rows="15"></textarea>';
+		print '<textarea name="description" wrap="soft" cols="70" rows="12"></textarea>';
 	}
 
 	print '</td></tr>';
