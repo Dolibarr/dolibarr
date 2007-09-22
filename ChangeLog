@@ -25,7 +25,10 @@ English Dolibarr changelog
 - Traduction more complete.
 - Better code comments for Doxygen documentation.
 - Better support of vcard export format.
+- A lot of security enhancements (no more password in log files,
+  crypted password in database, in config file...).
 - Themes are full CSS compliant.
+- A lot of other minor changes...
 
 
 ***** Changelog for 2.1 compared to 2.0.1 *****

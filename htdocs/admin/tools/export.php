@@ -87,7 +87,8 @@ if ($what == 'mysql')
 	// Parameteres execution	
 	$command=escapeshellarg($mysqldump);
 	//$param=escapeshellarg($dolibarr_main_db_name)." -h ".escapeshellarg($dolibarr_main_db_host)." -u ".escapeshellarg($dolibarr_main_db_user)." -p".escapeshellarg($dolibarr_main_db_pass);
-	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host." -u ".$dolibarr_main_db_user." -p".$dolibarr_main_db_pass;
+	$param=$dolibarr_main_db_name." -h ".$dolibarr_main_db_host;
+	$param.=" -u ".$dolibarr_main_db_user;
 	$compression=isset($_POST['compression']) ? $_POST['compression'] : 'none';
 	if (! $_POST["use_transaction"]) $param.=" -l --single-transaction";
 	if ($_POST["disable_fk"])        $param.=" -K";
@@ -114,6 +115,9 @@ if ($what == 'mysql')
 	{
 		$param.=" -d";
 	}
+	$paramcrypted=$param." -p".eregi_replace('.','*',$dolibarr_main_db_pass);
+	$paramclear=$param." -p".$dolibarr_main_db_pass;
+
 	$relativepathfile='/admin/temp/'.$file;
 	// for compression format, we add extension
 	if ($compression == 'gz') $relativepathfile.='.gz';
@@ -123,20 +127,21 @@ if ($what == 'mysql')
 	$outputerror=DOL_DATA_ROOT.$relativepatherr;
 	
 	print $langs->trans("RunCommandSummary").':<br>'."\n";
-	print '<textarea rows="1" cols="120">'.$command." ".$param.'</textarea><br>'."\n";
+	print '<textarea rows="1" cols="120">'.$command." ".$paramcrypted.'</textarea><br>'."\n";
 
 	print '<br>';
 
 	print $langs->trans("BackupResult").': ';
 
 	// Debut appel methode execution
-	$fullcommand=$command." ".$param." 2>&1";
+	$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
+	$fullcommandclear=$command." ".$paramclear." 2>&1";
 	if ($compression == 'none') $handle = fopen($outputfile, 'w');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
 	
-	dolibarr_syslog("Run command ".$fullcommand);
-	$handlein = popen($fullcommand, 'r');
+	dolibarr_syslog("Run command ".$fullcommandcrypted);
+	$handlein = popen($fullcommandclear, 'r');
 	while (!feof($handlein))
 	{
 		$read = fgets($handlein);
