@@ -115,6 +115,9 @@ if ($what == 'mysql')
 		$param.=" -d";
 	}
 	$relativepathfile='/admin/temp/'.$file;
+	// for compression format, we add extension
+	if ($compression == 'gz') $relativepathfile.='.gz';
+	if ($compression == 'bz') $relativepathfile.='.bz2';
 	$relativepatherr=$relativepathfile.'.err';
 	$outputfile=DOL_DATA_ROOT.$relativepathfile;
 	$outputerror=DOL_DATA_ROOT.$relativepatherr;
@@ -149,8 +152,7 @@ if ($what == 'mysql')
 	if ($compression == 'none') $handle = fopen($outputfile, 'r');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
-	$handle = fopen($outputfile, "r");
-	$errormsg = fgets($handle);
+	$errormsg = fgets($handle,10);
 	if ($compression == 'none') fclose($handle);
 	if ($compression == 'gz')   gzclose($handle);
 	if ($compression == 'bz')   bzclose($handle);

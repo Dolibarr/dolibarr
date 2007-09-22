@@ -512,8 +512,8 @@ print $langs->trans("Compression").': &nbsp; ';
 $compression=array(
 	'none' => array('function' => '',         'id' => 'radio_compression_none', 'label' => $langs->trans("None")),
 //	'zip'  => array('function' => 'zip_open', 'id' => 'radio_compression_zip',  'label' => $langs->trans("Zip")),		Not open source
-	'gz'   => array('function' => 'gz_open',  'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
-	'bz'   => array('function' => 'bz_open',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"))
+	'gz'   => array('function' => 'gzopen',  'id' => 'radio_compression_gzip', 'label' => $langs->trans("Gzip")),
+	'bz'   => array('function' => 'bzopen',  'id' => 'radio_compression_bzip', 'label' => $langs->trans("Bzip2"))
 );
 
 foreach($compression as $key => $val)
