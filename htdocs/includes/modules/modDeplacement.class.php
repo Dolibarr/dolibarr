@@ -50,16 +50,16 @@ class modDeplacement extends DolibarrModules
     $this->id = 'deplacement';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 75 ;
 
-    $this->family = "crm";
-    $this->name = "Déplacement";                        // Si traduction Module75Name non trouvée
-    $this->description = "Gestion des déplacements";    // Si traduction Module75Desc non trouvée
+    $this->family = "financial";
+    $this->name = "Déplacement et frais";                        			// Si traduction Module75Name non trouvée
+    $this->description = "Gestion des notes de frais et déplacements";		// Si traduction Module75Desc non trouvée
 
     $this->revision = explode(' ','$Revision$');
     $this->version = $this->revision[1];
 
     $this->const_name = 'MAIN_MODULE_DEPLACEMENT';
     $this->special = 0;
-    $this->picto = "trip";
+    $this->picto = "generic";
     
     // Dir
     $this->dirs = array();

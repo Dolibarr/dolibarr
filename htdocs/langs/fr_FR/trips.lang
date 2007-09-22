@@ -1,6 +1,7 @@
 # Dolibarr language file - fr_FR - trips
 Trip=Déplacement
 Trips=Déplacements
+TripsAndExpenses=Déplacements et frais
 TripCard=Fiche déplacement
 AddTrip=Ajouter déplacement
 ListOfTrips=Liste des déplacements

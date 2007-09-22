@@ -449,7 +449,9 @@ class MenuLeft {
 				if ($conf->deplacement->enabled)
 				{
 					$langs->load("trips");
-					$newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=deplacement&amp;mainmenu=accountancy", $langs->trans("Trips"), 0, $user->rights->deplacement->lire);
+					$newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("TripsAndExpenses"), 0, $user->rights->deplacement->lire);
+					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/fiche.php?action=create&amp;leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("New"), 1, $user->rights->deplacement->lire);
+					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("List"), 1, $user->rights->deplacement->lire);
 				}
 				// Charges sociales
 				if ($conf->tax->enabled)

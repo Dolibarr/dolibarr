@@ -1,6 +1,7 @@
 # Dolibarr language file - en_US - trips
 Trip=Trip
 Trips=Trips
+TripsAndExpenses=Trips and expenses
 TripCard=Trip card
 AddTrip=Add trip
 ListOfTrips=List of trips
