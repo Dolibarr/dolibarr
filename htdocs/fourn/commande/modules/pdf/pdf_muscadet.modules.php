@@ -51,7 +51,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     {
         global $conf,$langs,$mysoc;
 
-		$langs->load("main");
+		    $langs->load("main");
         $langs->load("bills");
 
         $this->db = $db;
@@ -702,7 +702,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
         $pdf->SetXY($this->marge_gauche,$posy-5);
-        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillTo").":");
+        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
 
 
         $pdf->SetXY($this->marge_gauche,$posy);
@@ -747,8 +747,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $posy=42;
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
-        $pdf->SetXY(102,$posy-5);
-        $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillFrom").":");
+        $pdf->SetXY(100,$posy-5);
+        $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
 		//
 		$client = new Societe($this->db);
      	$client->fetch($com->socid);
@@ -782,40 +782,42 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     {
         global $conf;
         
+        $outputlangs->load("dict");
+        
         $html=new Form($this->db);
         
         // Premiere ligne d'info réglementaires
         $ligne1="";
-        if ($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE)
+        if ($this->emetteur->forme_juridique_code)
         {
-            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($conf->global->MAIN_INFO_SOCIETE_FORME_JURIDIQUE);
+            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
         }
-        if ($conf->global->MAIN_INFO_CAPITAL)
+        if ($this->emetteur->capital)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$conf->global->MAIN_INFO_CAPITAL)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$this->emetteur->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
         }
-        if ($conf->global->MAIN_INFO_SIRET)
+        if ($this->emetteur->profid2)
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
         }
-        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
+        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
-        }
-        if ($conf->global->MAIN_INFO_APE)
-        {
-            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
-        if ($conf->global->MAIN_INFO_RCS)
+        if ($this->emetteur->profid3)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
         }
-        if ($conf->global->MAIN_INFO_TVAINTRA != '')
+        if ($this->emetteur->profid4)
         {
-            $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$conf->global->MAIN_INFO_TVAINTRA;
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
+        }
+        if ($this->emetteur->tva_intra != '')
+        {
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
         }
 
         $pdf->SetFont('Arial','',8);

@@ -347,15 +347,15 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
   $commande =	new	CommandeFournisseur($db, 0, $_REQUEST['id']);
   $commande->fetch($_REQUEST['id']);
   if ($_REQUEST['model'])
-    {
-      $commande->set_pdf_model($user,	$_REQUEST['model']);
-    }
+  {
+    $commande->set_pdf_model($user,	$_REQUEST['model']);
+  }
 
   if ($_REQUEST['lang_id'])
-    {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    }
+  {
+    $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  }
   $result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
   if ($result	<= 0)
     {
