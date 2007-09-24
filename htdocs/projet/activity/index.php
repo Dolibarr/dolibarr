@@ -121,7 +121,8 @@ $dateendy=dolibarr_mktime(23,59,59,12,31,$info["year"]);
 //print dolibarr_print_date($datestartw,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendw,'dayhour').'<br>';
 //print dolibarr_print_date($datestartm,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendm,'dayhour').'<br>';
 //print dolibarr_print_date($datestarty,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendy,'dayhour').'<br>';
-
+//print 'xx '.dolibarr_date('Y-m-d H:i:s',$dateendy);
+//print ' zz '.dolibarr_print_date($dateendy,'dayhour');
 
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
