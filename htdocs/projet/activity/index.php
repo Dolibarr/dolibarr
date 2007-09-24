@@ -101,14 +101,36 @@ print "</table>";
 
 print '</td><td width="70%" valign="top" class="notopnoleft">';
 
+$var=true;
+
+// Defini les bornes date debut et fin de semaines, mois et annee pour le jour courant
+$now=mktime();
+$info=dolibarr_getdate($now);
+$daystartw=$now-(($info['wday'] - 1)*24*3600);
+$dayendw  =$now+((7 - $info['wday'])*24*3600);
+$infostartw=dolibarr_getdate($daystartw);
+$infoendw  =dolibarr_getdate($dayendw);
+$datestartw=dolibarr_mktime(0,0,0,$infostarwt["mon"],$infostartw["mday"],$infostartw["year"]);
+$dateendw=dolibarr_mktime(23,59,59,$infoendw["mon"],$infoendw["mday"],$infoendw["year"]);
+$datestartm=dolibarr_mktime(0,0,0,$info["mon"],1,$info["year"]);
+$dateendm=dolibarr_mktime(23,59,59,$info["mon"],30,$info["year"]);
+$datestarty=dolibarr_mktime(0,0,0,1,1,$info["year"]);
+$dateendy=dolibarr_mktime(23,59,59,12,31,$info["year"]);
+//print mktime()." - ".gmmktime().'<br>';
+//print dolibarr_print_date(mktime(0,0,0,1,1,1970),'dayhour')." - ".dolibarr_print_date(gmmktime(0,0,0,1,1,1970),'dayhour').'<br>';
+//print dolibarr_print_date($datestartw,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendw,'dayhour').'<br>';
+//print dolibarr_print_date($datestartm,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendm,'dayhour').'<br>';
+//print dolibarr_print_date($datestarty,'dayhour')." - ".dolibarr_print_date($now,'dayhour')." - ".dolibarr_print_date($dateendy,'dayhour').'<br>';
+
+
 /* Affichage de la liste des projets du mois */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">Activité sur les projets cette semaine</td>';
-print '<td width="50%" align="center">Temps</td>';
+print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
@@ -117,10 +139,10 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql .= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND week(task_date) = ".strftime("%W",time());
+$sql .= " AND task_date >= '".$db->idate($datestartw)."' AND task_date <= '".$db->idate($dateendw)."'";
 $sql .= " GROUP BY p.rowid";
 
-$var=true;
+dolibarr_syslog("Index: sql=".$sql);
 $resql = $db->query($sql);
 if ( $resql )
 {
@@ -129,11 +151,11 @@ if ( $resql )
 
   while ($i < $num)
     {
-      $row = $db->fetch_row( $resql);
+      $obj = $db->fetch_object( $resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+      print '<td align="right">'.$obj->total.'</td>';
       print "</tr>\n";    
       $i++;
     }
@@ -150,10 +172,10 @@ print "</table><br />";
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans("Project").' ce mois : '.strftime("%B %Y", $now).'</td>';
-print '<td width="50%" align="center">Nb heures</td>';
+print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
@@ -162,7 +184,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql .= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND month(task_date) = ".strftime("%m",$now);
+$sql .= " AND task_date >= '".$db->idate($datestartm)."' AND task_date <= '".$db->idate($dateendm)."'";
 $sql .= " GROUP BY p.rowid";
 
 $var=true;
@@ -174,11 +196,11 @@ if ( $resql )
 
   while ($i < $num)
     {
-      $row = $db->fetch_row( $resql);
+      $obj = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+      print '<td align="right">'.$obj->total.'</td>';
       print "</tr>\n";    
       $i++;
     }
@@ -195,10 +217,10 @@ print "</table>";
 print '<br /><table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td width="50%">'.$langs->trans("Project").' cette année : '.strftime("%Y", $now).'</td>';
-print '<td width="50%" align="center">Nb heures</td>';
+print '<td width="50%" align="right">'.$langs->trans("Hours").'</td>';
 print "</tr>\n";
 
-$sql = "SELECT p.title, p.rowid, sum(tt.task_duration)";
+$sql = "SELECT p.title, p.rowid, sum(tt.task_duration) as total";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql .= " FROM ".MAIN_DB_PREFIX."projet as p";
 $sql .= " , ".MAIN_DB_PREFIX."projet_task as t";
@@ -207,7 +229,7 @@ if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PR
 $sql .= " WHERE t.fk_projet = p.rowid";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 $sql .= " AND tt.fk_task = t.rowid";
-$sql .= " AND YEAR(task_date) = ".strftime("%Y",$now);
+$sql .= " AND task_date >= '".$db->idate($datestarty)."' AND task_date <= '".$db->idate($dateendy)."'";
 $sql .= " GROUP BY p.rowid";
 
 $var=true;
@@ -219,11 +241,11 @@ if ( $resql )
 
   while ($i < $num)
     {
-      $row = $db->fetch_row( $resql);
+      $obj = $db->fetch_object($resql);
       $var=!$var;
       print "<tr $bc[$var]>";
-      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$row[1].'">'.$row[0].'</a></td>';
-      print '<td align="center">'.$row[2].'</td>';
+      print '<td><a href="'.DOL_URL_ROOT.'/projet/tasks/fiche.php?id='.$obj->rowid.'">'.$obj->title.'</a></td>';
+      print '<td align="right">'.$obj->total.'</td>';
       print "</tr>\n";    
       $i++;
     }
@@ -239,6 +261,5 @@ print "</table>";
 print '</td></tr></table>';
 
 $db->close();
-
-llxFooter("<em>Derni&egrave;re modification $Date$ r&eacute;vision $Revision$</em>");
+llxFooter('$Date$ - $Revision$');
 ?>
