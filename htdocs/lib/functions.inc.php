@@ -529,10 +529,10 @@ function dolibarr_print_date($time,$format='')
 	if (! $format) $format='%Y-%m-%d %H:%M:%S';
 
     // Si date non définie, on renvoie ''
-    if (! $time) return '';
+    if ("$time" == "") return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
 
     // Analyse de la date
-    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?',$time,$reg))
+    if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
     {
         // Date est au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
         $syear = $reg[1];
@@ -540,20 +540,9 @@ function dolibarr_print_date($time,$format='')
         $sday = $reg[3];
         $shour = $reg[4];
         $smin = $reg[5];
+        $ssec = $reg[6];
 
-		$usealternatemethod=false;
-		if ($year <= 1970) $usealternatemethod=true;
-		if ($year >= 2038) $usealternatemethod=true;
-		//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
-
-        if ($usealternatemethod)
-        {
-            return strftime($format,dolibarr_mktime($shour,$smin,0,$smonth,$sday,$syear));
-        }
-        else
-        {
-            return strftime($format,mktime($shour,$smin,0,$smonth,$sday,$syear));
-        }
+        return strftime($format,dolibarr_mktime($shour,$smin,$ssec,$smonth,$sday,$syear));
     }
     else
     {
@@ -609,9 +598,8 @@ function dolibarr_stringtotime($string)
 function dolibarr_getdate($timestamp,$fast=false)
 {
 	$usealternatemethod=false;
-	if ($year <= 1970) $usealternatemethod=true;
-	if ($year >= 2038) $usealternatemethod=true;
-	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
+	if ($timestamp >= 2145913200) $usealternatemethod=true;		// >= 2038
 	
 	if ($usealternatemethod)
 	{
@@ -629,24 +617,23 @@ function dolibarr_getdate($timestamp,$fast=false)
 		\brief  	Retourne une date fabriquée depuis infos.
 					Remplace la fonction mktime non implémentée sous Windows si année < 1970
 		\param		hour			Heure
-		\param		minute		Minute
-		\param		second		Seconde
+		\param		minute			Minute
+		\param		second			Seconde
 		\param		month			Mois
 		\param		day				Jour
 		\param		year			Année
 		\return		date			Date
 		\remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows  
 */
-function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
+function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
 
 	$usealternatemethod=false;
-	if ($year <= 1970) $usealternatemethod=true;
-	if ($year >= 2038) $usealternatemethod=true;
-	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
+	if ($timestamp >= 2145913200) $usealternatemethod=true;		// >= 2038
 	
-	if ($usealternatemethod)
+	if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
 	{
 		/*
 		// On peut utiliser strtotime pour obtenir la traduction.
@@ -657,11 +644,11 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 		$date=strtotime($string);
 		print "- ".$string." ".$date." -";
 		*/
-		$date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,1);
+		$date=adodb_mktime($hour,$minute,$second,$month,$day,$year,0,$gm);
 	}
  	else
  	{
-		$date=gmmktime($hour,$minute,$second,$month,$day,$year);
+		$date=mktime($hour,$minute,$second,$month,$day,$year);
 	}
 	return $date;
 }
@@ -669,20 +656,21 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year)
 
 /**
 		\brief  	Returns formated date
-		\param		fmt				Format
-		\param		timestamp		Date
+		\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
+		\param		timestamp		Date. Si 0 et gm=1, renvoi 01/01/1970 00:00:00
+		\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
 		\return		string			Formated date
 */
-function dolibarr_date($fmt,$timestamp)
+function dolibarr_date($fmt, $timestamp, $gm=0)
 {
 	$usealternatemethod=false;
 	if ($year <= 1970) $usealternatemethod=true;
 	if ($year >= 2038) $usealternatemethod=true;
 	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
 	
-	if ($usealternatemethod)
+	if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
 	{
-		$string=adodb_date($fmt,$timestamp,1);
+		$string=adodb_date($fmt,$timestamp,$gm);
 	}
 	else
 	{
