@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -52,7 +52,7 @@ print '<br>';
 // Language
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("LanguageDolibarrParameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE")."</td><td>".$_SERVER["HTTP_ACCEPT_LANGUAGE"]."</td></tr>\n";
 $var=!$var;
@@ -63,6 +63,10 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("DolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("OffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -77,8 +81,6 @@ $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
 $var=!$var;
 print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
-$var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
 print '</table>';
 print '<br>';
 
