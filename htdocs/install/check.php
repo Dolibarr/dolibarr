@@ -107,6 +107,25 @@ else
 */
 }
 
+
+// Check memory
+$memrequired=16*1024*1024;
+$memmax=ini_get("memory_limit");
+eregi('([0-9]+)([a-zA-Z]*)',$memmax,$reg);
+if ($reg[2])
+{
+	if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
+	if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
+}
+if ($memmax >= $memrequired)
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmax,$memrequired)."<br>\n";
+}
+else
+{ 
+    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmax,$memrequired)."<br>\n";
+}
+
 // Si fichier présent et lisible et renseigné
 clearstatcache();
 if (is_readable($conffile) && filesize($conffile) > 8)
