@@ -123,7 +123,7 @@ class MenuLeft {
 				// My Informations
 				$newmenu->add(DOL_URL_ROOT.'/user/fiche.php?id='.$user->id.'&amp;leftmenu=home', $langs->trans("MyInformations"));
 
-				if($user->admin)
+				if ($user->admin)
 				{
 					$langs->load("admin");
 
@@ -137,6 +137,8 @@ class MenuLeft {
 
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
+					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 
@@ -158,6 +160,8 @@ class MenuLeft {
 					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_export.php", $langs->trans("Backup"),1);
 					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/dolibarr_import.php", $langs->trans("Restore"),1);
 					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/purge.php", $langs->trans("Purge"),1);
+					if ($leftmenu=="admintools") $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/update.php", $langs->trans("Upgrade"),1);
+					if ($leftmenu=="admintools" && function_exists('eaccelerator_info')) $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
 				}
 
 				/*
