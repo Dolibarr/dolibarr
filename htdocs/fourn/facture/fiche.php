@@ -248,60 +248,60 @@ if ($_REQUEST['action'] == 'update_line')
 
 if ($_GET['action'] == 'add_ligne')
 {
-    $facfou = new FactureFournisseur($db, '', $_GET['facid']);
+	$facfou = new FactureFournisseur($db, '', $_GET['facid']);
 
-    if ($_POST['idprod'])
-    {
-    	$nv_prod = new Product($db);
-    	$nv_prod->fetch($_POST['idprod']);
-    	
-    	// cas spécial pour lequel on a les meme référence que le fournisseur
-    	// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
-    	$label = $nv_prod->libelle;
-    	
-    	$result=$nv_prod->get_buyprice($_POST['socid'], $_POST['qty']);
-    	if ($result > 0)
-      {
-      	$societe='';
-      	if ($_POST['socid'])
-      	{
-      		$societe=new Societe($db);
-      		$societe->fetch($_POST['socid']);
-      	}
+	if ($_POST['prodfournpriceid'])
+	{
+		$nv_prod = new Product($db);
+		$idprod=$nv_prod->get_buyprice($_POST['prodfournpriceid'], $_POST['qty']);
+		if ($idprod > 0)
+		{
+			$result=$nv_prod->fetch($idprod);
+			
+			// cas spécial pour lequel on a les meme référence que le fournisseur
+			// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
+			$label = $nv_prod->libelle;
 
-      	$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
+			$societe='';
+			if ($_POST['socid'])
+			{
+				$societe=new Societe($db);
+				$societe->fetch($_POST['socid']);
+			}
 
-      	$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $_POST['idprod']);
-      }
-      if ($result == -1)
-      {
-      	// Quantité insuffisante
-        $mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
-      }
-    }
-    else
-    {
-        $tauxtva = price2num($_POST['tauxtva']);
-        if (! $_POST['label'])
-        {
-        	$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
-        }
-        else
-        {
-	        if (!empty($_POST['amount']))
-	        {
-	            $ht = price2num($_POST['amount']);
-	            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-	        }
-	        else
-	        {
-	            $ttc = price2num($_POST['amountttc']);
-	            $ht = $ttc / (1 + ($tauxtva / 100));
-	            $facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
-	        }
+			$tvatx=get_default_tva($societe,$mysoc,$nv_prod->tva_tx);
+
+			$result=$facfou->addline($label, $nv_prod->fourn_pu, $tvatx, $_POST['qty'], $idprod);
 		}
-    }
-    $_GET['action'] = '';
+		if ($idprod == -1)
+		{
+			// Quantité insuffisante
+			$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
+		}
+	}
+	else
+	{
+		$tauxtva = price2num($_POST['tauxtva']);
+		if (! $_POST['label'])
+		{
+			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label")).'</div>';
+		}
+		else
+		{
+			if (!empty($_POST['amount']))
+			{
+				$ht = price2num($_POST['amount']);
+				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+			}
+			else
+			{
+				$ttc = price2num($_POST['amountttc']);
+				$ht = $ttc / (1 + ($tauxtva / 100));
+				$facfou->addline($_POST['label'], $ht, $tauxtva, $_POST['qty']);
+			}
+		}
+	}
+	$_GET['action'] = '';
 }
 
 
@@ -817,7 +817,7 @@ else
 	                $var=! $var;
 	                print '<tr '.$bc[$var].'>';
 	                print '<td colspan="4">';
-	                $html->select_produits_fournisseurs($fac->socid,'','idprod',$filtre);
+	                $html->select_produits_fournisseurs($fac->socid,'','prodfournpriceid',$filtre);
 	                print '</td>';
 	                print '<td align="right"><input type="text" name="qty" value="1" size="1"></td>';
 	                print '<td>&nbsp;</td>';

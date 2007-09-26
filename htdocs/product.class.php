@@ -96,8 +96,6 @@ class Product
   
   //! Id du fournisseur
   var $product_fourn_id;
-  //! Ref fournisseur
-  var $fourn_ref;
   
   /**
    *    \brief      Constructeur de la classe
@@ -660,21 +658,23 @@ class Product
 
 
 	/**
-	*    \brief      Lit le prix pratiqué par un fournisseur
-	*    \param      prodfournprice        Id du tarif
-	*    \param      qty                   Quantité du produit
-	*    \return     int             <0 si ko, 0 si ok mais rien trouvé, 1 si ok et trouvé
+	*    \brief		Lit le prix pratiqué par un fournisseur
+	*				On renseigne le couple prodfournprice/qty ou le triplet qty/product_id/fourn_ref)
+	*    \param     prodfournprice      Id du tarif = rowid table product_fournisseur_price
+	*    \param     qty                 Quantité du produit
+	*    \return    int 				<0 si ko, 0 si ok mais rien trouvé, id_product si ok et trouvé
 	*/
-	function get_buyprice($prodfournprice,$qty,$product_id,$fourn_ref)
+	function get_buyprice($prodfournprice,$qty,$product_id=0,$fourn_ref=0)
 	{
 		$result = 0;
-		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity, pf.ref_fourn";
+		$sql = "SELECT pfp.rowid, pfp.price as price, pfp.quantity as quantity,";
+		$sql.= " pf.fk_product, pf.ref_fourn";
 		$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 		$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
 		$sql.= " AND pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
 	
-		dolibarr_syslog("Product::get_buyprice $prodfournprice,$qty sql=$sql");
+		dolibarr_syslog("Product::get_buyprice $prodfournprice,$qty sql=".$sql);
 	
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -685,19 +685,21 @@ class Product
 				$this->buyprice = $obj->price;                      // \deprecated
 				$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
 				$this->ref_fourn = $obj->ref_fourn;
-				return 1;
+				$result=$obj->fk_product;
+				return $result;
 			}
 			else
 			{
 				// On refait le meme select sur la ref et l'id du produit
-				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc, pf.ref_fourn";
+				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc";
+				$sql.= " pf.fk_product, pf.ref_fourn";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
 				$sql.= " AND pf.ref_fourn = '".$fourn_ref."'";
 				$sql.= " AND pf.fk_product = ".$product_id;
 				$sql.= " AND quantity <= ".$qty; 	 
-	      $sql.= " ORDER BY pfp.quantity DESC"; 	 
-	      $sql.= " LIMIT 1";
+				$sql.= " ORDER BY pfp.quantity DESC"; 	 
+				$sql.= " LIMIT 1";
 
 				$resql = $this->db->query($sql);
 				if ($resql)
@@ -708,7 +710,8 @@ class Product
 						$this->buyprice = $obj->price;                      // \deprecated
 						$this->fourn_pu = $obj->price / $obj->quantity;     // Prix unitaire du produit pour le fournisseur $fourn_id
 						$this->ref_fourn = $obj->ref_fourn;
-						return 1;
+						$result=$obj->fk_product;
+						return $result;
 					}
 					else
 					{

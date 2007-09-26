@@ -1149,7 +1149,7 @@ class Form
   
 	/**
 		\brief      Retourne la liste des produits de fournisseurs
-		\param		socid   		Id société (0 pour aucun filtre)
+		\param		socid   		Id société fournisseur (0 pour aucun filtre)
 		\param      selected        Produit présélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
@@ -1174,7 +1174,7 @@ class Form
 		if ($ajaxkeysearch && $ajaxkeysearch != '') $sql.=" AND (pf.ref_fourn like '%".$ajaxkeysearch."%' OR p.label like '%".$ajaxkeysearch."%')";
 		$sql.= " ORDER BY pf.ref_fourn DESC";
 
-		dolibarr_syslog("Form::select_produits_fournisseurs sql=$sql",LOG_DEBUG);
+		dolibarr_syslog("Form::select_produits_fournisseurs sql=".$sql,LOG_DEBUG);
 		
 		$result=$this->db->query($sql);
 		if ($result)
