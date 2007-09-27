@@ -94,8 +94,8 @@ $var=true;
       print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567&encoding=EAN&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567&encoding=EAN&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "EAN8")
@@ -119,8 +119,8 @@ $var=true;
       print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789012&encoding=EAN&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789012&encoding=EAN&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "EAN13")
@@ -144,8 +144,8 @@ $var=true;
       print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789012&encoding=UPC&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789012&encoding=UPC&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "UPC")
@@ -166,8 +166,8 @@ $var=true;
       print "Le code ISBN est un code dédié au milieu de la presse écrite.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=123456789&encoding=ISBN&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789&encoding=ISBN&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "ISBN")
@@ -192,8 +192,8 @@ $var=true;
 			print "La longueur est variable mais en général ne dépasse pas 32 caractères.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567890&encoding=39&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567890&encoding=39&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "code39")
@@ -219,8 +219,8 @@ $var=true;
 			print "La longueur est variable mais en général ne dépasse pas 20 caractères.";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=ABCD1234567890&encoding=128&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=ABCD1234567890&encoding=128&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "code128")
@@ -241,8 +241,8 @@ $var=true;
       print "information";
       print '</td>';
 
-      // Affiche example
-      print '<td><img src="http://ns32126.ovh.net/barcode/barcode.php?code=1234567890&encoding=I25&scale=1"></td>';
+      // Affiche exemple
+      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567890&encoding=I25&scale=1"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "I25")
@@ -254,20 +254,6 @@ $var=true;
           print '<a href="barcode.php?action=settype&amp;value=I25">'.$langs->trans("Default").'</a>';
 	    }
 	    print "</td></tr>\n";
-
-
-
-
-/*
-print '<td>'.$langs->trans('Name').'</td><td>'.$langs->trans('Description').'</td>';
-print '<td><input type="submit" value="'.$langs->trans('Modify').'"></td>';
-print "</tr>\n";
-print '<tr '.$bc[false].'><td width="200"><input type="radio" name="compta_mode" value="RECETTES-DEPENSES"'.($compta_mode != 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeTrue').'</td>';
-print '<td colspan="2">'.nl2br($langs->trans('OptionModeTrueDesc'))."</td></tr>\n";
-print '<tr '.$bc[true].'><td width="200"><input type="radio" name="compta_mode" value="CREANCES-DETTES"'.($compta_mode == 'CREANCES-DETTES' ? ' checked' : '').'> '.$langs->trans('OptionModeVirtual').'</td>';
-print '<td colspan="2">'.$langs->trans('OptionModeVirtualDesc')."</td></tr>\n";
-print '</form>';
-*/
 
 print "</table>\n";
 

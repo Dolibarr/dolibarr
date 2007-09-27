@@ -1,0 +1,122 @@
+Genbarcode 0.4
+
+Genbarcode can't generate barcode-images, but a string which can
+be used by image-creators, such as my PHP-Barcode
+
+Encoding is done using GNU-Barcode (libbarcode), which can be found
+at http://www.gnu.org/software/barcode/
+
+(C) 2001,2002,2003 by Folke Ashberg <folke@ashberg.de>
+
+The newest Version can be found at http://www.ashberg.de/bar
+
+
+UNIX-INSTALLATION:
+
+First of all you need GNU barcode, a barcode creation/encoding library.
+GNU barcode can be foud at http://www.gnu.org/software/barcode/ , or
+install it using your favourite package-manager, e.g.
+    debian: # apt-get install barcode
+    SuSE  : # rpm -i /path-to/barcode.rpm ; rpm -i /path-to/barcode/devel.rpm 
+Or compile and install the source yourself:
+    $ tar xfvz barcode-0.98.tar.gz
+    $ cd barcode-0.98
+    $ ./configure
+    $ make
+    become root ( $ su )
+    # make install
+    # ldconfig
+
+Then compile genbarcode:
+    Just type 
+    $ make
+    become root ( $ su )
+    # make install
+
+BSD Notice:
+You have to use gmake (GNU version of make), which can be found in the
+ports-collection. Take a look at /usr/ports/devel/gmake and 'make install'.
+Then type instead of 'make' 'gmake'
+
+
+WINDOWS-INSTALLATION:
+
+You can compile genbarcode with Borlands Free C++Builder Command Lines Tools 5.5
+You need the windows-source-package, which includes gnu-barcode-0.98 and libpaper
+Make-win.inc assumes that C++Builder has been installed to c:\borland\bcc55
+run 
+   c:\borland\bcc55\bin\bcc32 -f Makefile-win
+and copy the created file genarcode.exe to any directory.
+
+
+
+That's all.
+
+
+USAGE:
+
+$ genbarcode 
+Genbarcode 0.4, Copyright (C) 2001,2002,2003 by Folke Ashberg
+Genbarcode comes with ABSOLUTELY NO WARRANTY.
+
+Usage genbarcode <code> [<encoding>]
+
+You can use the following types:
+ANY    choose best-fit (default)
+EAN    8 or 13 EAN-Code
+UPC    12-digit EAN 
+ISBN   isbn numbers (still EAN-13) 
+39     code 39 
+128    code 128 (a,b,c: autoselection) 
+128C   code 128 (compact form for digits)
+128B   code 128, full printable ascii 
+I25    interleaved 2 of 5 (only digits) 
+128RAW Raw code 128 (by Leonid A. Broukhis)
+CBR    Codabar (by Leonid A. Broukhis) 
+MSI    MSI (by Leonid A. Broukhis) 
+PLS    Plessey (by Leonid A. Broukhis)
+
+Example:
+
+$ genbarcode 012345678901
+9a1a2221212214111132123111141a1a1131212133112321122212122a1a
+0:12:0 12:12:1 19:12:2 26:12:3 33:12:4 40:12:5 47:12:6 59:12:7 66:12:8 73:12:9 80:12:0 87:12:1 94:12:2
+EAN-13
+
+The three lines:
+Line 1: The bars
+Line 2: The positions for the single characters
+Line 3: What encoding has been used
+
+The bar-string:
+Read char by char, all odd chars represent a space, all even a bar:
+<space-width><bar-width><space-width><bar-width>...
+
+An alphabetic character defines a tall bar, all others small ones.
+
+The character-string:
+<position>:<font-size>:<character> ...
+ 
+For programmers:
+1. Count the total width using bar-string
+2. Allocate the image
+3. Paint the bars (bar-string)
+4. Write the Text
+
+
+
+This program is free software; you can redistribute it and/or modify
+it under the terms of the GNU General Public License as published by
+the Free Software Foundation; either version 2 of the License, or
+(at your option) any later version.
+
+This program is distributed in the hope that it will be useful,
+but WITHOUT ANY WARRANTY; without even the implied warranty of
+MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+GNU General Public License for more details.
+
+You should have received a copy of the GNU General Public License
+along with this program; if not, write to the Free Software
+Foundation, Inc., 675 Mass Ave, Cambridge, MA 02139, USA.
+
+
