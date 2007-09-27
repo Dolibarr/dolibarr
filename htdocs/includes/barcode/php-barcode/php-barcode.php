@@ -35,6 +35,8 @@
 
  */
 
+require_once('master.inc.php');
+
 /* CONFIGURATION */
 
 /* ******************************************************************** */
@@ -55,12 +57,12 @@ $text_color=Array(0,0,0);
  * use arialbd.ttf located in same directory like the script
  * which includes/requires php-barcode.php
  */
-$font_loc=dirname($_SERVER["PATH_TRANSLATED"])."/"."arialbd.ttf";
+//$font_loc=dirname($_SERVER["PATH_TRANSLATED"])."/"."arialbd.ttf";
 
 /* SAMPLE2 :
  * use font specified by full-path
  */
-//$font_loc="/path/font.ttf"
+$font_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/fonts/AerialBd.ttf';
 
 /* Automatic-Detection of Font if running Windows
  * kick this lines if you don't need them! */
@@ -77,7 +79,6 @@ if (isset($_ENV['windir']) && file_exists($_ENV['windir'])){
  */
 if (isset($_ENV['windir']) && file_exists($_ENV['windir']))
 {
-	require_once('master.inc.php');
 	$genbarcode_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/genbarcode/genbarcode.exe';
 }
 else
