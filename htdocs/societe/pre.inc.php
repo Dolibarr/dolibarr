@@ -47,7 +47,7 @@ function llxHeader($head = "")
 			$menu->add_submenu(DOL_URL_ROOT."/soc.php?&action=create", $langs->trans("NewCompany"));
 		}
 
-		$menu->add_submenu(DOL_URL_ROOT."/contact.php", $langs->trans("Contacts"));
+		$menu->add_submenu(DOL_URL_ROOT."/contact/index.php", $langs->trans("Contacts"));
 
 		$menu->add_submenu("notify/index.php", $langs->trans("Notifications"));
 	}
