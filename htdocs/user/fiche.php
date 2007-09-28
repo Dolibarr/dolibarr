@@ -650,7 +650,7 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print '<tr><td valign="top">';
 	print $langs->trans("Note");
 	print '</td><td>';
-	if ($conf->fckeditor->enabled)
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
 		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);

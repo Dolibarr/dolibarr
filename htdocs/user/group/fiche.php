@@ -181,10 +181,10 @@ if ($action == 'create')
     print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-	if ($conf->fckeditor->enabled)
+	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 	{
 		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+		$doleditor=new DolEditor('note','',240,'dolibarr_notes','',true);
 		$doleditor->Create();
 	}
 	else
@@ -404,15 +404,15 @@ else
             print "</tr>\n";
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
             print '<td class="valeur">';
-			if ($conf->fckeditor->enabled)
+			if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_USER)
 			{
 				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				$doleditor=new DolEditor('note',$group->note,180,'dolibarr_notes','',false);
+				$doleditor=new DolEditor('note',$group->note,240,'dolibarr_notes','',true);
 				$doleditor->Create();
 			}
 			else
 			{
-				print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+				print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
 				print $group->note;
 				print '</textarea>';
 			}
