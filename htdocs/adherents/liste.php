@@ -89,6 +89,10 @@ if ($_GET["search_nom"])
 {
     $sql.= " AND (d.prenom LIKE '%".$_GET["search_nom"]."%' OR d.nom LIKE '%".$_GET["search_nom"]."%')";
 }
+if ($_GET["search_email"])
+{
+    $sql.= " AND (d.email LIKE '%".$_GET["search_email"]."%')";
+}
 if ($filter == 'uptodate')
 {
     $sql.=" AND datefin >= sysdate()";
@@ -146,14 +150,15 @@ if ($result)
 	print '<form method="GET" action="'.$_SERVER["PHP_SELF"].'">';
 	print '<tr class="liste_titre">';
 
-	print '<td align="left" class="liste_titre">';
-	print '<input class="flat" type="text" name="search_nom" value="'.$_GET["search_nom"].'"></td>';
+	print '<td align="left">';
+	print '<input class="flat" type="text" name="search_nom" value="'.$_REQUEST["search_nom"].'" size="12"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
-	print '<td class="liste_titre">&nbsp;</td>';
+	print '<td align="left">';
+	print '<input class="flat" type="text" name="search_email" value="'.$_REQUEST["search_email"].'" size="12"></td>';
 
 	print '<td class="liste_titre">&nbsp;</td>';
 
