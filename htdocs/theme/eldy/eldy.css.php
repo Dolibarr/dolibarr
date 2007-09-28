@@ -821,7 +821,6 @@ background: #7699A9;
 background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/liste_titre.png' ?>);
 color: #334444;
 font-family: helvetica, verdana, arial, sans-serif;
-font-weight: bold;
 border-bottom: 1px solid #FDFFFF;
 white-space: nowrap;
 }

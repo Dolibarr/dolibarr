@@ -181,7 +181,17 @@ if ($action == 'create')
     print '<td class="valeur"><input size="30" type="text" name="nom" value=""></td></tr>';
 
     print "<tr>".'<td valign="top">'.$langs->trans("Note").'</td><td>';
-    print "<textarea name=\"note\" rows=\"12\" cols=\"80\">";
+	if ($conf->fckeditor->enabled)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+		$doleditor=new DolEditor('note','',180,'dolibarr_notes','',false);
+		$doleditor->Create();
+	}
+	else
+	{
+		print '<textarea class="flat" name="note" rows="'.ROWS_8.'" cols="90">';
+		print '</textarea>';
+	}
     print "</textarea></td></tr>\n";
 
     print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateGroup").'" type="submit"></td></tr>';
@@ -304,9 +314,9 @@ else
                 print '<input type="hidden" name="action" value="adduser">';
                 print '<table class="noborder" width="100%">'."\n";
                 //	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-                print '<tr class="liste_titre"><td width="25%">'.$langs->trans("UsersToAdd").'</td>'."\n";
+                print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("UsersToAdd").'</td>'."\n";
                 print '<td>';
-                print $form->select_array("user",$uss);
+                print $form->select_array("user",$uss,'',1);
                 print ' &nbsp; ';
                 print '<input type="submit" class=button value="'.$langs->trans("Add").'">';
                 print '</td></tr>'."\n";
@@ -332,9 +342,9 @@ else
     
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
-                print '<td width="25%">'.$langs->trans("Login").'</td>';
-                print '<td width="25%">'.$langs->trans("Lastname").'</td>';
-                print '<td width="25%">'.$langs->trans("Firstname").'</td>';
+                print '<td class="liste_titre" width="25%">'.$langs->trans("Login").'</td>';
+                print '<td class="liste_titre" width="25%">'.$langs->trans("Lastname").'</td>';
+                print '<td class="liste_titre" width="25%">'.$langs->trans("Firstname").'</td>';
                 print '<td>&nbsp;</td>';
                 print "<td>&nbsp;</td></tr>\n";
                 if ($num) {
@@ -393,11 +403,23 @@ else
             print '<td width="75%" class="valeur"><input size="15" type="text" name="group" value="'.$group->nom.'"></td>';
             print "</tr>\n";
             print '<tr><td width="25%" valign="top">'.$langs->trans("Note").'</td>';
-            print '<td class="valeur"><textarea name="note" rows="12" cols="80">'.nl2br($group->note).'</textarea></td>';
+            print '<td class="valeur">';
+			if ($conf->fckeditor->enabled)
+			{
+				require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				$doleditor=new DolEditor('note',$group->note,180,'dolibarr_notes','',false);
+				$doleditor->Create();
+			}
+			else
+			{
+				print '<textarea class="flat" name="note" rows="'.ROWS_4.'" cols="90">';
+				print $group->note;
+				print '</textarea>';
+			}
+			print '</td>';
             print "</tr>\n";
             print '<tr><td align="center" colspan="2"><input class="button" value="'.$langs->trans("Save").'" type="submit"></td></tr>';
             print "</table>\n";
-            print "<br>\n";
             print '</form>';
     
             print '</div>';

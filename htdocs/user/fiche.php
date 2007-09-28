@@ -1051,7 +1051,7 @@ else
                 print '<input type="hidden" name="action" value="addgroup">';
                 print '<table class="noborder" width="100%">'."\n";
                 //	  print '<tr class="liste_titre"><td width="25%">'.$langs->trans("NonAffectedUsers").'</td>'."\n";
-                print '<tr class="liste_titre"><td width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
+                print '<tr class="liste_titre"><td class="liste_titre" width="25%">'.$langs->trans("GroupsToAdd").'</td>'."\n";
                 print '<td>';
                 print $form->select_array("group",$uss);
                 print ' &nbsp; ';
@@ -1080,7 +1080,7 @@ else
 
                 print '<table class="noborder" width="100%">';
                 print '<tr class="liste_titre">';
-                print '<td width="25%">'.$langs->trans("Group").'</td>';
+                print '<td class="liste_titre" width="25%">'.$langs->trans("Group").'</td>';
                 print "<td>&nbsp;</td></tr>\n";
 
                 if ($num) {
