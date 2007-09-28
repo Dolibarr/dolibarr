@@ -523,7 +523,7 @@ class pi_barcode
 			$ifw = imagefontwidth(2);
             imagestring($img, 2, floor(($this->WIDTH/2)-(($ifw * strlen(implode('',$this->CODE)))/2)), 13, implode('',$this->CODE), $color[1]); 
 			$ifw = imagefontwidth(1);
-            imagestring($img, 1, ($this->WIDTH)-($ifw * 9)-2, 26, "Pitoo.com", $color[2]); 
+            //imagestring($img, 1, ($this->WIDTH)-($ifw * 9)-2, 26, "Pitoo.com", $color[2]); 
           break;
 		  case "EAN" :
                 if(strlen($this->HR) > 10) imagestring($img, 3, 3, $this->HEIGHT - $ifh, substr($this->HR,-13,1), $color[1]); 
@@ -546,7 +546,7 @@ class pi_barcode
         
 		$ifw = imagefontwidth(1) * 9;
         if( (rand(0,50)<1) AND ($this->HEIGHT >= $ifw) ) {
-		    imagestringup($img, 1, $nb_elem + 12, $this->HEIGHT - 2, "Pitoo.com", $color[2]); 
+		    imagestringup($img, 1, $nb_elem + 12, $this->HEIGHT - 2, "", $color[2]); 
 		}
         if( $this->SHOWTYPE == "Y" ) {
 			if(($this->TYPE == "EAN") AND (substr($this->HR,-13,1) != "0") AND (strlen($this->HR) > 10)) {
