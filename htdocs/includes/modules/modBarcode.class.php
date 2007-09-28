@@ -23,7 +23,7 @@
 
 /**
         \defgroup   barcode         Module code barre
-        \brief      Module pour gérer les codes barres des produits
+        \brief      Module pour gérer les codes barres
 */
 
 /**
@@ -52,16 +52,12 @@ class modBarcode extends DolibarrModules
     $this->id = 'barcode';   // Same value xxx than in file modXxx.class.php file
     $this->numero = 55 ;
     
-    $this->family = "products";
+    $this->family = "other";
     $this->name = "Codes barres";
-    $this->description = "Gestion des codes barres des produits";
-
-    //$this->revision = explode(' ','$Revision$');
-    //$this->version = $this->revision[1];
+    $this->description = "Gestion des codes barres";
     $this->version = 'development';		// 'development' or 'experimental' or 'dolibarr' or version
-
     $this->const_name = 'MAIN_MODULE_BARCODE';
-    $this->special = 0;
+    $this->special = 2;
     $this->picto='barcode';
 
     // Dir
@@ -69,24 +65,16 @@ class modBarcode extends DolibarrModules
 
     // Dépendances
     $this->depends = array("modProduit");
-	$this->requiredby = array();
+	  $this->requiredby = array();
 	
 	  // Config pages
     $this->config_page_url = array("barcode.php");
 	
     // Constantes
     $this->const = array();
-    
-    $this->const[0][0] = "BARCODE_ENCODE_TYPE";
-    $this->const[0][1] = "chaine";
-    $this->const[0][2] = "EAN13";
 
     // Boxes
     $this->boxes = array();
-    // $this->boxes[0][0] = "Derniers produits/services enregistrés";
-    // $this->boxes[0][1] = "box_produits.php";
-    // $this->boxes[1][0] = "Derniers produits/services vendus";
-    // $this->boxes[1][1] = "box_services_vendus.php";
 
     // Permissions
     $this->rights = array();
