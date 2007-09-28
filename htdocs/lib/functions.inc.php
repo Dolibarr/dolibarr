@@ -554,13 +554,32 @@ function dolibarr_print_date($time,$format='')
 
 /**
 		\brief  	Retourne une date fabriquée depuis une chaine
-		\param		string			Date formatée en chaine (YYYYMMDD ou YYYYMMDDHHMMSS)
+		\param		string			Date formatée en chaine
+									YYYYMMDD
+									YYYYMMDDHHMMSS
+									DD/MM/YY ou DD/MM/YYYY
+									DD/MM/YY HH:MM:SS ou DD/MM/YYYY HH:MM:SS
 		\return		date			Date
 */
 function dolibarr_stringtotime($string)
 {
+    if (eregi('^([0-9]+)\/([0-9]+)\/([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$string,$reg))
+    {
+        // Date est au format 'DD/MM/YY' ou 'DD/MM/YY HH:MM:SS'
+        // Date est au format 'DD/MM/YYYY' ou 'DD/MM/YYYY HH:MM:SS'
+        $sday = $reg[1];
+        $smonth = $reg[2];
+        $syear = $reg[3];
+        $shour = $reg[4];
+        $smin = $reg[5];
+        $ssec = $reg[6];
+		if ($syear < 50) $syear+=1900;
+		if ($syear >= 50 && $syear < 100) $syear+=2000;
+        $string=sprintf("%04d%02d%02d%02d%02d%02d",$syear,$smonth,$sday,$shour,$smin,$ssec);
+    }
+
 	$string=eregi_replace('[^0-9]','',$string);
-	$tmp=$string.'000000';					// Si date YYYYMMDD
+	$tmp=$string.'000000';
 	$date=dolibarr_mktime(substr($tmp,8,2),substr($tmp,10,2),substr($tmp,12,2),substr($tmp,4,2),substr($tmp,6,2),substr($tmp,0,4));
 	return $date;
 }
