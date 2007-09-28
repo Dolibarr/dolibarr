@@ -35,7 +35,7 @@
 
  */
 
-require_once('master.inc.php');
+require_once('../../../master.inc.php');
 
 /* CONFIGURATION */
 
@@ -79,7 +79,7 @@ if (isset($_ENV['windir']) && file_exists($_ENV['windir'])){
  */
 if (isset($_ENV['windir']) && file_exists($_ENV['windir']))
 {
-	$genbarcode_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/genbarcode/genbarcode.exe';
+	$genbarcode_loc = DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/genbarcode/genbarcode.exe';
 }
 else
 {

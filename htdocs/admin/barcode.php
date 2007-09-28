@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -46,16 +46,6 @@ if ($_GET["action"] == 'settype' && $user->admin)
 	$barcode_encode_type_set = $_GET["value"];
 }
 
-/*
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = 'BARCODE_ENCODE_TYPE';";
-  $db->query($sql);
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const (name,value,visible) VALUES
-	('BARCODE_ENCODE_TYPE','".$_POST["host"]."',0);";
-	$db->query($sql);
-}
-*/
-
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
 print_fiche_titre($langs->trans("BarcodeSetup"),'','setup');
@@ -68,9 +58,6 @@ print '<br>';
 print_titre($langs->trans("BarcodeEncodeModule"));
 
 print '<table class="noborder" width="100%">';
-
-//print '<form action="barcode.php" method="post">';
-//print '<input type="hidden" name="action" value="settype">';
 
 print '<tr class="liste_titre">';
 
@@ -95,7 +82,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567&encoding=EAN&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('1234567','EAN',2).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "EAN8")
@@ -120,7 +107,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789012&encoding=EAN&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('123456789012','EAN',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "EAN13")
@@ -145,7 +132,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789012&encoding=UPC&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('123456789012','UPC',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "UPC")
@@ -167,7 +154,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=123456789&encoding=ISBN&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('123456789','ISBN',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "ISBN")
@@ -193,7 +180,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567890&encoding=39&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('1234567890','39',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "code39")
@@ -220,7 +207,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=ABCD1234567890&encoding=128&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('ABCD1234567890','128',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "code128")
@@ -242,7 +229,7 @@ $var=true;
       print '</td>';
 
       // Affiche exemple
-      print '<td align="center"><img src="'.DOL_URL_ROOT.'/genbarcode.php?code=1234567890&encoding=I25&scale=1"></td>';
+      print '<td align="center"><img src="'.dol_genbarcode('1234567890','I25',1).'"></td>';
       
       print '<td align="center">';
       if ($barcode_encode_type_set == "I25")
@@ -256,99 +243,6 @@ $var=true;
 	    print "</td></tr>\n";
 
 print "</table>\n";
-
-
-
-/*
- * FORMAT PAPIER
- */
-/*
-print_titre($langs->trans("PaperFormatModule"));
-
-$def = array();
-
-$sql = "SELECT nom FROM ".MAIN_DB_PREFIX."barcode_format_paper_model_pdf";
-$resql=$db->query($sql);
-if ($resql)
-{
-  $i = 0;
-  $num_rows=$db->num_rows($resql);
-  while ($i < $num_rows)
-    {
-      $array = $db->fetch_array($resql);
-      array_push($def, $array[0]);
-      $i++;
-    }
-}
-else
-{
-  dolibarr_print_error($db);
-}
-
-$dir = "../includes/modules/formatpaper/";
-
-print "<table class=\"noborder\" width=\"100%\">\n";
-print "<tr class=\"liste_titre\">\n";
-print "  <td width=\"140\">".$langs->trans("Name")."</td>\n";
-print "  <td>".$langs->trans("Description")."</td>\n";
-print '  <td align="center" width="60">'.$langs->trans("Activated")."</td>\n";
-print '  <td align="center" width="60">'.$langs->trans("Default")."</td>\n";
-print "</tr>\n";
-
-clearstatcache();
-
-$handle=opendir($dir);
-
-$var=true;
-while (($file = readdir($handle))!==false)
-{
-  if (substr($file, strlen($file) -12) == '.modules.php' && substr($file,0,12) == 'pdf_paper_')
-    {
-      $name = substr($file, 12, strlen($file) - 24);
-      $classname = substr($file, 0, strlen($file) -12);
-
-      $var=!$var;
-      print "<tr ".$bc[$var].">\n  <td>";
-      print "$name";
-      print "</td>\n  <td>\n";
-      require_once($dir.$file);
-      $obj = new $classname($db);
-      
-      print $obj->description;
-
-      print "</td>\n  <td align=\"center\">\n";
-
-      if (in_array($name, $def))
-	{
-	  print img_tick();
-	  print "</td>\n  <td>";
-	  print '<a href="barcode.php?action=del&amp;value='.$name.'">'.$langs->trans("Disable").'</a>';
-	}
-      else
-	{
-	  print "&nbsp;";
-	  print "</td>\n  <td>";
-	  print '<a href="barcode.php?action=set&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	}
-
-      print "</td>\n  <td align=\"center\">";
-
-      if ($barcode_addon_var_pdf == "$name")
-	{
-	  print img_tick();
-	}
-      else
-	{
-      print '<a href="barcode.php?action=setpdf&amp;value='.$name.'">'.$langs->trans("Activate").'</a>';
-	}
-      print '</td></tr>';
-    }
-}
-closedir($handle);
-
-print '</table>';
-
-*/
 
 print "<br>";
 

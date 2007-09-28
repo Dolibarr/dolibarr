@@ -26,8 +26,7 @@
    \version    $Revision$
 */
 
-require_once('master.inc.php');
-require_once(DOL_DOCUMENT_ROOT.'/includes/barcode/php-barcode/php-barcode.php');
+require_once('php-barcode.php');
 
 function getvar($name){
     global $_GET, $_POST;

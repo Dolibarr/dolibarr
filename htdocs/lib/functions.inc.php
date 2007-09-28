@@ -3545,4 +3545,22 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
   </SCRIPT>";
 }
 
+/**
+   \brief   Générateur de codes barres
+   \param   
+   \return  url
+*/
+function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
+{
+	if ($generator == 1)
+	{
+		$url = DOL_URL_ROOT.'/includes/barcode/php-barcode/genbarcode.php?code='.$code.'&encoding='.$encoding.'&scale=1';
+	}
+	else if ($generator == 2)
+	{
+		$url = DOL_URL_ROOT.'/includes/barcode/pi_barcode/pi_barcode.php?code='.$code.'&type='.$encoding.'&height=50&readable='.$readable;
+	}
+	return $url;
+}
+
 ?>
