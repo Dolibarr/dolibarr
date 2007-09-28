@@ -1575,3 +1575,13 @@ INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (36, 'ES-A-F', 'Jouets et équipements de loisirs et de sports < 0,5 kg', 0.04200000, 'Eco-systèmes', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (37, 'ES-A-G', 'Jouets et équipements de loisirs et de sports > 0,5 kg', 0.17000000, 'Eco-systèmes', 1, 1);
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
+
+--
+-- Codes barres
+--
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (1, 'EAN8', 'EAN8', 0, '1234567');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (2, 'EAN13', 'EAN13', 0, '123456789012');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (3, 'UPC', 'UPC', 0, '123456789012');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (4, 'ISBN', 'ISBN', 0, '123456789');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (5, 'C39', 'Code 39', 0, '1234567890');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (6, 'C128', 'Code 128', 0, 'ABCD1234567890');

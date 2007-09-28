@@ -881,3 +881,19 @@ ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_s
 -- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
 
 ALTER TABLE llx_societe ADD COLUMN supplier_account varchar(32) after fournisseur;
+
+create table llx_c_barcode
+(
+  rowid    integer            AUTO_INCREMENT PRIMARY KEY,
+  code     varchar(16)        NOT NULL,
+  libelle  varchar(50)        NOT NULL,
+  coder    integer            NOT NULL DEFAULT 0,
+  example  varchar(16)        NOT NULL
+)type=innodb;
+
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (1, 'EAN8', 'EAN8', 0, '1234567');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (2, 'EAN13', 'EAN13', 0, '123456789012');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (3, 'UPC', 'UPC', 0, '123456789012');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (4, 'ISBN', 'ISBN', 0, '123456789');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (5, 'C39', 'Code 39', 0, '1234567890');
+INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (6, 'C128', 'Code 128', 0, 'ABCD1234567890');

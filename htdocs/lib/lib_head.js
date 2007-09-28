@@ -16,6 +16,13 @@ function dolibarr_type_reload(param)
     document.formsoc.submit();
 }
 
+function barcode_coder_save(formNameID)
+{
+    var formName = document.getElementById(formNameID);
+    formName.action.value='setcoder';
+    formName.submit();
+}
+
 /*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
 	Input:    postalcode,objectville

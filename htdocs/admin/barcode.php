@@ -31,20 +31,19 @@
 require("./pre.inc.php");
 
 $langs->load("admin");
-$langs->load("bills");
 
 if (!$user->admin)
   accessforbidden();
 
-$barcode_encode_type_set = BARCODE_ENCODE_TYPE;
-
-$typeconst=array('yesno','texte','chaine');
-
-if ($_GET["action"] == 'settype' && $user->admin)
+if ($_POST["action"] == 'setcoder' && $user->admin)
 {
-	if (dolibarr_set_const($db, "BARCODE_ENCODE_TYPE",$_GET["value"]))
-	$barcode_encode_type_set = $_GET["value"];
+	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode";
+  $sqlp.= " SET coder = " . $_POST["coder"];
+  $sqlp.= " WHERE rowid = ". $_POST["code_id"];
+  $resql=$db->query($sqlp);
 }
+
+$html = new Form($db);
 
 llxHeader('',$langs->trans("BarcodeSetup"),'BarcodeConfiguration');
 
@@ -53,48 +52,51 @@ print_fiche_titre($langs->trans("BarcodeSetup"),'','setup');
 /*
  *  CHOIX ENCODAGE
  */
- 
+
 print '<br>';
 print_titre($langs->trans("BarcodeEncodeModule"));
 
 print '<table class="noborder" width="100%">';
-
 print '<tr class="liste_titre">';
-
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td>'.$langs->trans("Example").'</td>';
+print '<td width="200">'.$langs->trans("Example").'</td>';
 print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
-clearstatcache();
-$var=true;
+$sql = "SELECT rowid, code, libelle, coder, example";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode";
+$resql=$db->query($sql);
+if ($resql)
+{
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$var=true;
+	
+	while ($i <	$num)
+	{
+		$obj = $db->fetch_object($resql);
 
-//EAN8
-      $var=!$var;
-      print '<tr '.$bc[$var].'><td width="100">';
-      print "EAN8";
-      print "</td><td>\n";
-      
-      print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
-      print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
-      print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
-      print '</td>';
+    print '<tr '.$bc[$var].'><td width="100">';
+    print $obj->libelle;
+    print "</td><td>\n";
+    print $langs->trans('BarcodeDesc'.$obj->code);  
+    //print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
+    //print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
+    //print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+    print '</td>';
 
-      // Affiche exemple
-      print '<td align="center"><img src="'.dol_genbarcode('1234567','EAN',2).'"></td>';
-      
-      print '<td align="center">';
-      if ($barcode_encode_type_set == "EAN8")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=EAN8">'.$langs->trans("Default").'</a>';
-	    }
-	    print "</td></tr>\n";
-
+    // Affiche exemple
+    print '<td align="center"><img src="'.dol_genbarcode($obj->example,$obj->code,$obj->coder).'"></td>';
+    
+    print '<td align="center">';
+    print $html->setBarcodeEncoder($obj->coder,$obj->rowid,'form'.$i);
+	  print "</td></tr>\n";
+	  $var=!$var;
+	  $i++;
+	}
+}
+/*
 //EAN13
       $var=!$var;
       print '<tr '.$bc[$var].'><td width="100">';
@@ -110,15 +112,9 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('123456789012','EAN',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "EAN13")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=EAN13">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('EAN13','form'.$i);
 	    print "</td></tr>\n";
+	    $i++;
 
 //UPC
       $var=!$var;
@@ -135,15 +131,9 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('123456789012','UPC',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "UPC")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=UPC">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('UPC','form'.$i);
 	    print "</td></tr>\n";
+	    $i++;
 	    
 //ISBN
       $var=!$var;
@@ -157,15 +147,9 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('123456789','ISBN',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "ISBN")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=ISBN">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('ISBN','form'.$i);
 	    print "</td></tr>\n";
+	    $i++;
 	    
 //code 39
       $var=!$var;
@@ -183,15 +167,9 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('1234567890','39',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "code39")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=code39">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('C39','form'.$i);
 	    print "</td></tr>\n";
+	    $i++;
 	    
 	    
 //code 128
@@ -210,15 +188,9 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('ABCD1234567890','128',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "code128")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=code128">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('C128','form'.$i);
 	    print "</td></tr>\n";
+	    $i++;
 	    
 //I25
       $var=!$var;
@@ -232,16 +204,10 @@ $var=true;
       print '<td align="center"><img src="'.dol_genbarcode('1234567890','I25',1).'"></td>';
       
       print '<td align="center">';
-      if ($barcode_encode_type_set == "I25")
-	    {
-	        print img_tick();
-	    }
-      else
-	    {
-          print '<a href="barcode.php?action=settype&amp;value=I25">'.$langs->trans("Default").'</a>';
-	    }
+      print $html->setBarcodeEncoder('I25','form'.$i);
 	    print "</td></tr>\n";
-
+	    $i++;
+*/
 print "</table>\n";
 
 print "<br>";

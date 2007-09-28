@@ -3571,8 +3571,11 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 */
 function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
 {
+	if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
+	
 	if ($generator == 1)
 	{
+		if ($encoding == 'C39' || $encoding == 'C128') $encoding = substr($encoding,1);
 		$url = DOL_URL_ROOT.'/includes/barcode/php-barcode/genbarcode.php?code='.$code.'&encoding='.$encoding.'&scale=1';
 	}
 	else if ($generator == 2)
