@@ -3519,8 +3519,9 @@ class Form
 		$select_encoder.= '<input type="hidden" name="code_id" value="'.$code_id.'">';
 		$select_encoder.= '<select class="flat" name="coder" onChange="barcode_coder_save(\''.$formName.'\')">';
 		$select_encoder.= '<option value="0"'.($selected==0?' selected="true"':'').'>'.$langs->trans('Disable').'</option>';
-		$select_encoder.= '<option value="1"'.($selected==1?' selected="true"':'').'>php-barcode</option>';
-		$select_encoder.= '<option value="2"'.($selected==2?' selected="true"':'').'>pi_barcode</option>';
+		$select_encoder.= '<option value="-1" disabled="disabled">--------------------</option>';
+		$select_encoder.= '<option value="1"'.($selected==1?' selected="true"':'').'>PHP-Barcode</option>';
+		$select_encoder.= '<option value="2"'.($selected==2?' selected="true"':'').'>PI_Barcode</option>';
 		$select_encoder.= '</select></form>';
 		return $select_encoder;
 	}
