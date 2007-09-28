@@ -8,10 +8,10 @@
 // \version    $Revision$
 
 
-function dolibarr_type_reload(param)
+function dolibarr_type_reload(param,formAction,elementName)
 {
-    document.formsoc.action.value="create";
-    document.formsoc.private.value=param;
+    document.formsoc.action.value=formAction;
+    document.formsoc.elementName.value=param;
     document.formsoc.cleartype.value=1;
     document.formsoc.submit();
 }

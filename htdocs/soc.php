@@ -297,11 +297,11 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print "<br>\n";
 			print $langs->trans("ThirdPartyType").': &nbsp; ';
 			print '<input type="radio" class="flat" name="private" value="0"'.(! $_REQUEST["private"]?' checked="true"':'');
-			print 'onclick="dolibarr_type_reload(0)"';
+			print 'onclick="dolibarr_type_reload(0,\'create\',\'private\')"';
 			print '> '.$langs->trans("Company/Fundation");
 			print ' &nbsp; &nbsp; ';
 			print '<input type="radio" class="flat" name="private" value="1"'.(! $_REQUEST["private"]?'':' checked="true"');
-			print 'onclick="dolibarr_type_reload(1)"';
+			print 'onclick="dolibarr_type_reload(1,\'create\',\'private\')"';
 			print '> '.$langs->trans("Individual");
 			print ' ('.$langs->trans("ToCreateContactWithSameName").')';		
 			print "<br>\n";
