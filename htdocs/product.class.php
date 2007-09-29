@@ -74,6 +74,13 @@ class Product
   var $volume;
   var $volume_units;
   
+  //! Codes barres
+  var $barcode;
+  var $barcode_type;
+  var $barcode_type_code;
+  var $barcode_type_label;
+  var $barcode_type_coder;
+  
   var $stats_propale=array();
   var $stats_commande=array();
   var $stats_contrat=array();
@@ -823,7 +830,7 @@ class Product
     
     $sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_base_type, tva_tx, envente,";
     $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
-    $sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units";
+    $sql.= " stock_commande, stock_loc, weight, weight_units, volume, volume_units, barcode, fk_barcode_type";
     $sql.= " FROM ".MAIN_DB_PREFIX."product";
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
@@ -856,6 +863,8 @@ class Product
 	$this->weight_units       = $result["weight_units"];
 	$this->volume             = $result["volume"];
 	$this->volume_units       = $result["volume_units"];
+	$this->barcode            = $result["barcode"];
+	$this->barcode_type       = $result["fk_barcode_type"];
 
 	$this->stock_in_command   = $result["stock_commande"];
 
@@ -863,22 +872,47 @@ class Product
 	
 	$this->db->free();
 	// multilangs
-	if( $conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
-		
+	if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
+	
+	// Barcode
+	if ($conf->barcode->enabled)
+	{
+		if ($this->barcode_type == 0)
+		{
+			$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
+		}
+		$sql = "SELECT code, libelle, coder";
+		$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+		$sql.= " WHERE rowid = ".$this->barcode_type;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$result = $this->db->fetch_array();
+			$this->barcode_type_code = $result["code"];
+			$this->barcode_type_label = $result["libelle"];
+			$this->barcode_type_coder = $result["coder"];
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		  return -1;
+		}
+	}
+
 	// multiprix
 	if ($conf->global->PRODUIT_MULTIPRICES)
+	{
+		if ($ref)
 	  {
-	    if ($ref)
-	      {
-		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
-		$sql.=  "WHERE ref = '".addslashes($ref)."'";
-		$result = $this->db->query($sql) ;
-		if ($result)
+	  	$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."product ";
+		  $sql.=  "WHERE ref = '".addslashes($ref)."'";
+		  $result = $this->db->query($sql) ;
+		  if ($result)
 		  {
 		    $result = $this->db->fetch_array();
 		    $prodid = $result["rowid"];
 		  }
-		else
+		  else
 		  {
 		    dolibarr_print_error($this->db);
 		    return -1;

@@ -65,7 +65,7 @@ print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, code, libelle, coder, example";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode";
+$sql .= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
 $resql=$db->query($sql);
 if ($resql)
 {

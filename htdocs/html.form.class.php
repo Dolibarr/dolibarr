@@ -3535,7 +3535,7 @@ class Form
     function select_barcode_type($selected='',$htmlname='coder_id',$useempty=0)
     {
         $sql = "SELECT rowid, code, libelle";
-        $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql.= " WHERE coder > 0";
         $sql.= " ORDER BY rowid";
         $result = $this->db->query($sql);

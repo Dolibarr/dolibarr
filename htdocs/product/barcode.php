@@ -88,6 +88,11 @@ print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 print $product->getLibStatut(2);
 print '</td></tr>';
 
+// Barcode type	 
+print '<tr><td>'.$langs->trans("BarcodeType").'</td><td colspan="2">';
+print $product->barcode_type_label;
+print '</td></tr>';
+
 print "</table>\n";
       
 print "</div>\n";
