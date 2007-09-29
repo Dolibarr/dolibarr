@@ -897,3 +897,5 @@ INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (3, 'UPC
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (4, 'ISBN', 'ISBN', 0, '123456789');
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (5, 'C39', 'Code 39', 0, '1234567890');
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (6, 'C128', 'Code 128', 0, 'ABCD1234567890');
+
+ALTER TABLE llx_product ADD COLUMN gencode_type integer DEFAULT 0 after gencode;
