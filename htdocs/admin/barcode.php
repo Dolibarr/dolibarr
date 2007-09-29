@@ -135,7 +135,7 @@ if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
 	print '<td width="60" align="center">';
-	print '<input type="text" size="100" name="genbarcodelocation" value="'.$conf->global->GENBARCODE_LOCATION.'">';
+	print '<input type="text" size="40" name="genbarcodelocation" value="'.$conf->global->GENBARCODE_LOCATION.'">';
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
 	print '</tr>';
