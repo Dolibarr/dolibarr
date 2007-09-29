@@ -35,12 +35,24 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
-if ($_POST["action"] == 'setcoder' && $user->admin)
+if ($_POST["action"] == 'setcoder')
 {
 	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
   $sqlp.= " SET coder = " . $_POST["coder"];
   $sqlp.= " WHERE rowid = ". $_POST["code_id"];
   $resql=$db->query($sqlp);
+}
+else if ($_POST["action"] == 'setgenbarcodelocation')
+{
+	dolibarr_set_const($db, "GENBARCODE_LOCATION",$_POST["genbarcodelocation"]);
+  Header("Location: barcode.php");
+  exit;
+}
+else if ($_POST["action"] == 'setproductusebarcode')
+{
+  dolibarr_set_const($db, "PRODUIT_USE_BARCODE",$_POST["value"]);
+  Header("Location: barcode.php");
+  exit;
 }
 
 $html = new Form($db);
@@ -96,6 +108,57 @@ if ($resql)
 	  $i++;
 	}
 }
+print "</table>\n";
+
+print "<br>";
+
+/*
+ * Autres options
+ *
+ */
+print_titre($langs->trans("OtherOptions"));
+
+$var=true;
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td>'.$langs->trans("Parameter").'</td>';
+print '<td width="60" align="center">'.$langs->trans("Value").'</td>';
+print '<td>&nbsp;</td>';
+print '</tr>';
+
+// Chemin du binaire genbarcode sous linux
+if (!isset($_ENV['windir']) && !file_exists($_ENV['windir']))
+{
+	$var=!$var;
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="action" value="setgenbarcodelocation">';
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("GenbarcodeLocation").'</td>';
+	print '<td width="60" align="center">';
+	print '<input type="text" size="100" name="genbarcodelocation" value="'.$conf->global->GENBARCODE_LOCATION.'">';
+	print '</td>';
+	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '</tr>';
+	print '</form>';
+}
+
+// Module produits
+if ($conf->produit->enabled)
+{
+	$var=!$var;
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
+	print '<input type="hidden" name="action" value="setproductusebarcode">';
+	print '<tr '.$bc[$var].'>';
+	print '<td>'.$langs->trans("UseBarcodeInProductModule").'</td>';
+	print '<td width="60" align="center">';
+	print $html->selectyesno('value',$conf->global->PRODUIT_USE_BARCODE,1);
+	print '</td>';
+	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+	print '</tr>';
+	print '</form>';
+}
+
+print '</table>';
 /*
 //EAN13
       $var=!$var;
@@ -208,7 +271,6 @@ if ($resql)
 	    print "</td></tr>\n";
 	    $i++;
 */
-print "</table>\n";
 
 print "<br>";
 

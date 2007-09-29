@@ -210,6 +210,12 @@ insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CR
 
 
 --
+-- Barcode
+--
+insert into llx_const (name, value, type, note, visible) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
+
+
+--
 -- Descriptif des plans comptables FR PCG99-ABREGE
 --
 

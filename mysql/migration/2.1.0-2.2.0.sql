@@ -902,3 +902,5 @@ INSERT INTO llx_c_barcode_type (rowid, code, libelle, coder, example) VALUES (6,
 
 ALTER TABLE llx_product CHANGE gencode barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN fk_barcode_type integer DEFAULT 0 after barcode;
+
+INSERT INTO llx_const (name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);

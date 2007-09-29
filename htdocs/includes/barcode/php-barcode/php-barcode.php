@@ -83,7 +83,8 @@ if (isset($_ENV['windir']) && file_exists($_ENV['windir']))
 }
 else
 {
-	$genbarcode_loc="/usr/local/bin/genbarcode";
+	//$genbarcode_loc = "/usr/local/bin/genbarcode";
+	$genbarcode_loc = $conf->global->GENBARCODE_LOCATION;
 }
 
 

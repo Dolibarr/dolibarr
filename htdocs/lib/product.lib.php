@@ -50,26 +50,21 @@ function product_prepare_head($product, $user)
   
   //affichage onglet catégorie
   if ($conf->categorie->enabled)
-    {
-      $head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
-      $head[$h][1] = $langs->trans('Categories');
-      $head[$h][2] = 'category';
-      $h++;
-    }
+  {
+  	$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
+    $head[$h][1] = $langs->trans('Categories');
+    $head[$h][2] = 'category';
+    $h++;
+  }
   
-  if($product->isproduct())
-    {
-      if ($user->rights->barcode->lire)
-	{
-	  if ($conf->barcode->enabled)
-	    {
-	      $head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
-	      $head[$h][1] = $langs->trans("BarCode");
-	      $head[$h][2] = 'barcode';
-	      $h++;
-	    }
+  // Affichage onglet code barre
+  if ($product->isproduct() && $conf->barcode->enabled && $user->rights->barcode->lire && $conf->global->PRODUIT_USE_BARCODE)
+  {
+  	$head[$h][0] = DOL_URL_ROOT."/product/barcode.php?id=".$product->id;
+	   $head[$h][1] = $langs->trans("BarCode");
+	   $head[$h][2] = 'barcode';
+	   $h++;
 	}
-    }
   
   // Multilangs
   // TODO Ecran a virer et à remplacer par 
