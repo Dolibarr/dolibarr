@@ -881,21 +881,25 @@ class Product
 		{
 			$this->barcode_type = $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE;
 		}
-		$sql = "SELECT code, libelle, coder";
-		$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
-		$sql.= " WHERE rowid = ".$this->barcode_type;
-		$result = $this->db->query($sql);
-		if ($result)
+		
+		if ($this->barcode_type > 0)
 		{
-			$result = $this->db->fetch_array();
-			$this->barcode_type_code = $result["code"];
-			$this->barcode_type_label = $result["libelle"];
-			$this->barcode_type_coder = $result["coder"];
-		}
-		else
-		{
-			dolibarr_print_error($this->db);
-		  return -1;
+			$sql = "SELECT code, libelle, coder";
+			$sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
+			$sql.= " WHERE rowid = ".$this->barcode_type;
+			$result = $this->db->query($sql);
+			if ($result)
+			{
+				$result = $this->db->fetch_array();
+				$this->barcode_type_code = $result["code"];
+				$this->barcode_type_label = $result["libelle"];
+				$this->barcode_type_coder = $result["coder"];
+			}
+			else
+			{
+				dolibarr_print_error($this->db);
+				return -1;
+			}
 		}
 	}
 
