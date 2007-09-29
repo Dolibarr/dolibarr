@@ -3525,6 +3525,52 @@ class Form
 		$select_encoder.= '</select></form>';
 		return $select_encoder;
 	}
+   
+   /**
+     *    \brief      Retourne la liste des types de codes barres
+     *    \param      selected          Id code présélectionné
+     *    \param      htmlname          Nom de la zone select
+     *    \param      useempty          Affiche valeur vide dans liste
+     */
+    function select_barcode_type($selected='',$htmlname='coder_id',$useempty=0)
+    {
+        $sql = "SELECT rowid, code, libelle";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode";
+        $sql.= " WHERE coder > 0";
+        $sql.= " ORDER BY rowid";
+        $result = $this->db->query($sql);
+        if ($result)
+        {
+            print '<select class="flat" name="'.$htmlname.'">';
+            if ($useempty) 
+            {
+                print '<option value="0">&nbsp;</option>';
+            }
+
+            $num = $this->db->num_rows($result);
+            $i = 0;
+            while ($i < $num)
+            {
+                $obj = $this->db->fetch_object($result);
+                if ($selected == $obj->rowid)
+                {
+                    print '<option value="'.$obj->rowid.'" selected="true">';
+                }
+                else
+                {
+                    print '<option value="'.$obj->rowid.'">';
+                }
+                print $obj->libelle;
+                print '</option>';
+                $i++;
+            }
+            print "</select>";
+        }
+        else {
+            dolibarr_print_error($this->db);
+        }
+    }
+	
 }
 
 ?>

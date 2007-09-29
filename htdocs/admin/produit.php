@@ -3,6 +3,7 @@
  * Copyright (C)      2006 Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2006-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C)      2007 Auguria SARL         <info@auguria.org>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -149,6 +150,12 @@ else if ($_POST["action"] == 'useecotaxe')
   Header("Location: produit.php");
   exit;
 }
+else if ($_POST["action"] == 'setdefaultbarcodetype')
+{
+  dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $_POST["coder_id"]);
+  Header("Location: produit.php");
+  exit;
+}
 
 
 /*
@@ -291,6 +298,23 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td>";
 print '</tr>';
 print '</form>';
+
+// Barcode
+if ($conf->barcode->enabled)
+{
+	$var=!$var;
+	print "<form method=\"post\" action=\"produit.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"setdefaultbarcodetype\">";
+  print "<tr ".$bc[$var].">";
+  print '<td width="80%">'.$langs->trans("SetDefaultBarcodeType").'</td>';
+  print '<td width="60" align="right">';
+  print $html->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
+  print '</td><td align="right">';
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</td>";
+  print '</tr>';
+  print '</form>';
+}
 
 print '<tr class="liste_titre">';
 print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
