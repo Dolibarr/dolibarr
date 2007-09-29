@@ -300,7 +300,7 @@ print '</tr>';
 print '</form>';
 
 // Barcode
-if ($conf->barcode->enabled)
+if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";
