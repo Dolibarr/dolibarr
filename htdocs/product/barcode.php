@@ -135,7 +135,7 @@ if ($_GET['action'] == 'editbarcodetype')
 }
 else
 {
-	print $product->barcode_type_label;
+	print $product->barcode_type_label?$product->barcode_type_label:'<div class="warning">'.$langs->trans("SetDefaultBarcodeTypeInConfigurationModule").'<div>';
 }
 print '</td></tr>';
 
