@@ -327,6 +327,8 @@ class Conf
 		// Module FCKeditor
 		$this->fckeditor->enabled=defined("MAIN_MODULE_FCKEDITOR")?MAIN_MODULE_FCKEDITOR:0;
 		$this->fckeditor->dir_output=DOL_DATA_ROOT."/fckeditor";
+		// Module etiquette
+		$this->label->enabled=defined("MAIN_MODULE_LABEL")?MAIN_MODULE_LABEL:0;
 
 
 		/*
