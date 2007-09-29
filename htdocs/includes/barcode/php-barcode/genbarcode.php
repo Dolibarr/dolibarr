@@ -40,7 +40,7 @@ if (get_magic_quotes_gpc()){
 } else {
     $code=getvar('code');
 }
-if (!$code) $code='123456789012';
+//if (!$code) $code='123456789012';
 
 barcode_print($code,getvar('encoding'),getvar('scale'),getvar('mode'));
 
