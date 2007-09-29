@@ -3567,7 +3567,7 @@ class Form
             }
             else
             {
-            	print '<option value="0" disabled="disabled">'.$langs->trans('NoActivatedBarcode').'</option>';
+            	print '<option value="0" disabled="disabled" selected="true">'.$langs->trans('NoActivatedBarcode').'</option>';
             }
  
             while ($i < $num)
