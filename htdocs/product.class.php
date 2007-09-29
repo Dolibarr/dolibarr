@@ -875,7 +875,7 @@ class Product
 	if ($conf->global->MAIN_MULTILANGS) $this->getMultiLangs();
 	
 	// Barcode
-	if ($conf->barcode->enabled)
+	if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 	{
 		if ($this->barcode_type == 0)
 		{
