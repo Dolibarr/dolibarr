@@ -216,7 +216,7 @@ class BordereauChequeBlochet
 		
 		$month = sprintf("%02d",$month);
 		$year = sprintf("%04d",$year);
-		$_file = $dir . "bordereau-".$number.".pdf";
+		$_file = $dir . "bordereau-00".$number.".pdf"; //Todo: réparation provisoire, ajout de 2 zero
 		
 		// Protection et encryption du pdf
     if ($conf->global->PDF_SECURITY_ENCRYPTION)
