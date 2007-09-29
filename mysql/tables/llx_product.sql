@@ -42,8 +42,8 @@ create table llx_product
   stock_commande     integer      DEFAULT 0,
   seuil_stock_alerte integer      DEFAULT 0,
   stock_loc          varchar(10),               -- emplacement dans le stock
-  gencode            varchar(255) DEFAULT NULL,
-  gencode_type       integer      DEFAULT 0,
+  barcode            varchar(255) DEFAULT NULL,
+  fk_barcode_type    integer      DEFAULT 0,
   partnumber         varchar(32),
   weight             float        DEFAULT NULL,
   weight_units       tinyint      DEFAULT NULL,
