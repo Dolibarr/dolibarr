@@ -150,7 +150,7 @@ if ($conf->produit->enabled)
 	print '<input type="hidden" name="action" value="setproductusebarcode">';
 	print '<tr '.$bc[$var].'>';
 	print '<td>'.$langs->trans("UseBarcodeInProductModule").'</td>';
-	print '<td width="60" align="center">';
+	print '<td width="60" align="right">';
 	print $html->selectyesno('value',$conf->global->PRODUIT_USE_BARCODE,1);
 	print '</td>';
 	print '<td width="60" align="center"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
