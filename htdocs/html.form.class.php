@@ -3556,18 +3556,18 @@ class Form
         $result = $this->db->query($sql);
         if ($result)
         {
-            print '<select class="flat" name="'.$htmlname.'">';
-
             $num = $this->db->num_rows($result);
             $i = 0;
             
             if ($useempty && $num > 0) 
             {
+            	print '<select class="flat" name="'.$htmlname.'">';
             	print '<option value="0">&nbsp;</option>';
             }
             else
             {
-            	print '<option value="0" disabled="disabled" selected="true">'.$langs->trans('NoActivatedBarcode').'</option>';
+            	print '<select disabled="disabled" class="flat" name="'.$htmlname.'">';
+            	print '<option value="0" selected="true">'.$langs->trans('NoActivatedBarcode').'</option>';
             }
  
             while ($i < $num)
