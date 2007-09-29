@@ -62,13 +62,17 @@ print '<table class="border" width="100%">';
 
 // Reference
 print '<tr>';
-print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
+print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="3">';
 print $html->showrefnav($product,'ref');
 print '</td>';
 print '</tr>';
 
 // Libelle
 print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td>';
+
+// Barcode image
+print '<td width="300" align="center" rowspan="5"><img src="'.dol_genbarcode($product->barcode,$product->barcode_type_code,$product->barcode_type_coder).'"></td>';
+
 print '</tr>';
 
  // Prix
@@ -91,6 +95,11 @@ print '</td></tr>';
 // Barcode type	 
 print '<tr><td>'.$langs->trans("BarcodeType").'</td><td colspan="2">';
 print $product->barcode_type_label;
+print '</td></tr>';
+
+// Barcode	 
+print '<tr><td>'.$langs->trans("Barcode").'</td><td colspan="2">';
+print $product->barcode;
 print '</td></tr>';
 
 print "</table>\n";

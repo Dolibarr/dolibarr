@@ -37,7 +37,7 @@ if (!$user->admin)
 
 if ($_POST["action"] == 'setcoder' && $user->admin)
 {
-	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode";
+	$sqlp = "UPDATE ".MAIN_DB_PREFIX."c_barcode_type";
   $sqlp.= " SET coder = " . $_POST["coder"];
   $sqlp.= " WHERE rowid = ". $_POST["code_id"];
   $resql=$db->query($sqlp);
