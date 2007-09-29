@@ -3547,6 +3547,8 @@ class Form
      */
     function select_barcode_type($selected='',$htmlname='coder_id',$useempty=0)
     {
+        global $langs;
+        
         $sql = "SELECT rowid, code, libelle";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_barcode_type";
         $sql.= " WHERE coder > 0";
@@ -3555,13 +3557,19 @@ class Form
         if ($result)
         {
             print '<select class="flat" name="'.$htmlname.'">';
-            if ($useempty) 
-            {
-                print '<option value="0">&nbsp;</option>';
-            }
 
             $num = $this->db->num_rows($result);
             $i = 0;
+            
+            if ($useempty && $num > 0) 
+            {
+            	print '<option value="0">&nbsp;</option>';
+            }
+            else
+            {
+            	print '<option value="0" disabled="disabled">'.$langs->trans('NoActivatedBarcode').'</option>';
+            }
+ 
             while ($i < $num)
             {
                 $obj = $this->db->fetch_object($result);
