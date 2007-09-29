@@ -568,6 +568,7 @@ class pi_barcode
 }
 extract($_GET);
 $type = strtoupper($type);
+if ($code){
 switch( $type ) {
     case "C128C" :
 	
@@ -767,6 +768,10 @@ switch( $type ) {
 		
 	  break;
 }
+} else {
+          $type = "";
+          $code = "";
+        }
 
 // ***** Largeur par défaut
 if( isset( $width ) && ( $width >= 10 ) ) { $hw = $width ; }
