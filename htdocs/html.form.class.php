@@ -3570,6 +3570,28 @@ class Form
             dolibarr_print_error($this->db);
         }
     }
+    
+   /**
+     *    	\brief      Affiche formulaire de selection du type de code barre
+     *    	\param      page        	Page
+     *    	\param      selected    	Id condition présélectionnée
+     *    	\param      htmlname    	Nom du formulaire select
+     */
+    function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')
+    {
+        global $langs,$conf;
+        if ($htmlname != "none")
+        {
+            print '<form method="post" action="'.$page.'">';
+            print '<input type="hidden" name="action" value="setbarcodetype">';
+            print '<table class="noborder" cellpadding="0" cellspacing="0">';
+            print '<tr><td>';
+            $this->select_barcode_type($selected, $htmlname, 1);
+            print '</td>';
+            print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+            print '</td></tr></table></form>';
+        }
+    }
 	
 }
 

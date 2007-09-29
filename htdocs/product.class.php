@@ -2493,6 +2493,52 @@ class Product
 	return -1;
       }
   }
+  
+ /**
+   *    \brief      Mise à jour du code barre
+   *    \param      user        Utilisateur qui fait la modification
+   */
+  function update_barcode($user)
+  {
+  	$sql = "UPDATE ".MAIN_DB_PREFIX."product";
+		$sql .= " SET barcode = '".$this->barcode."'";
+		$sql .= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("Product::update_barcode sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
+	
+/**
+   *    \brief      Mise à jour du type de code barre
+   *    \param      user        Utilisateur qui fait la modification
+   */
+  function update_barcode_type($user)
+  {
+  	$sql = "UPDATE ".MAIN_DB_PREFIX."product";
+		$sql .= " SET fk_barcode_type = '".$this->barcode_type."'";
+		$sql .= " WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("Product::update_barcode_type sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
 
   /**
      \brief Affecte les valeurs smarty

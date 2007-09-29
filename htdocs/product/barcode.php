@@ -41,8 +41,37 @@ if (!$user->rights->barcode->lire)
 accessforbidden();
 
 /*
- * Affiche historique prix
+ * Actions
  */
+
+// Modification du type de code barre
+if ($_POST['action'] ==	'setbarcodetype'	&& $user->rights->barcode->creer)
+{
+  $product =	new	Product($db);
+  $product->fetch($_GET["id"]);
+  $product->barcode_type = $_POST['barcodetype_id'];
+  $result = $product->update_barcode_type($user);
+  Header("Location: barcode.php?id=".$_GET["id"]);
+  exit;
+}
+
+// Modification du code barre
+if ($_POST['action'] ==	'setbarcode'	&& $user->rights->barcode->creer)
+{
+  $product =	new	Product($db);
+  $product->fetch($_GET["id"]);
+  $product->barcode = $_POST['barcode']; //Todo: ajout vérification de la validité du code barre en fonction du type
+  $result = $product->update_barcode($user);
+  Header("Location: barcode.php?id=".$_GET["id"]);
+  exit;
+}
+
+
+/* *****************************************/
+/*																			   */
+/* Mode vue et edition										 */
+/*																			   */
+/* *************************************** */
 
 llxHeader("","",$langs->trans("BarCode"));
 
@@ -92,18 +121,46 @@ print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 print $product->getLibStatut(2);
 print '</td></tr>';
 
-// Barcode type	 
-print '<tr><td>'.$langs->trans("BarcodeType").'</td><td colspan="2">';
-print $product->barcode_type_label;
+// Barcode type
+print '<tr><td nowrap>';
+print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+print $langs->trans("BarcodeType");
+print '<td>';
+if (($_GET['action'] != 'editbarcodetype') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcodetype&amp;id='.$product->id.'">'.img_edit($langs->trans('SetBarcodeType'),1).'</a></td>';
+print '</tr></table>';
+print '</td><td colspan="2">';
+if ($_GET['action'] == 'editbarcodetype')
+{
+	$html->form_barcode_type($_SERVER['PHP_SELF'].'?id='.$product->id,$product->barcode_type,'barcodetype_id');
+}
+else
+{
+	print $product->barcode_type_label;
+}
 print '</td></tr>';
 
 // Barcode	 
-print '<tr><td>'.$langs->trans("Barcode").'</td><td colspan="2">';
-print $product->barcode;
+print '<tr><td nowrap>';
+print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
+print $langs->trans("Barcode");
+print '<td>';
+if (($_GET['action'] != 'editbarcode') && $user->rights->barcode->creer) print '<td align="right"><a href="'.$_SERVER["PHP_SELF"].'?action=editbarcode&amp;id='.$product->id.'">'.img_edit($langs->trans('SetBarcode'),1).'</a></td>';
+print '</tr></table>';
+print '</td><td colspan="2">';
+if ($_GET['action'] == 'editbarcode')
+{
+	print '<form method="post" action="'.$_SERVER["PHP_SELF"].'?id='.$product->id.'">';
+  print '<input type="hidden" name="action" value="setbarcode">';
+	print '<input size="40" type="text" name="barcode" value="'.$product->barcode.'">';
+	print '&nbsp;<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+}
+else
+{
+	print $product->barcode;
+}
 print '</td></tr>';
 
 print "</table>\n";
-      
 print "</div>\n";
 
 
