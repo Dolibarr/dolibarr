@@ -49,7 +49,7 @@ $active = 1;
 // Mettre ici tous les caractéristiques des dictionnaires
 
 // Ordres d'affichage des dictionnaires (0 pour espace)
-$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,13,0,14,0,7);
+$taborder=array(9,0,4,3,2,0,1,8,0,5,11,0,6,0,10,12,13,0,14,0,7,0,15);
 
 // Nom des tables des dictionnaires
 $tabname[1] = MAIN_DB_PREFIX."c_forme_juridique";
@@ -66,6 +66,7 @@ $tabname[11]= MAIN_DB_PREFIX."c_type_contact";
 $tabname[12]= MAIN_DB_PREFIX."cond_reglement";
 $tabname[13]= MAIN_DB_PREFIX."c_paiement";
 $tabname[14]= MAIN_DB_PREFIX."c_ecotaxe";
+$tabname[15]= MAIN_DB_PREFIX."c_paper_format";
 
 // Libellé des dictionnaires
 $tablib[1] = $langs->trans("DictionnaryCompanyJuridicalType");
@@ -82,6 +83,7 @@ $tablib[11]= $langs->trans("DictionnaryTypeContact");
 $tablib[12]= $langs->trans("DictionnaryPaymentConditions");
 $tablib[13]= $langs->trans("DictionnaryPaymentModes");
 $tablib[14]= $langs->trans("DictionnaryEcotaxe");
+$tablib[15]= $langs->trans("DictionnaryPaperFormat");
 
 // Requete pour extraction des données des dictionnaires
 $tabsql[1] = "SELECT f.rowid as rowid, f.code, f.libelle, p.libelle as pays, f.active FROM ".MAIN_DB_PREFIX."c_forme_juridique as f, ".MAIN_DB_PREFIX."c_pays as p WHERE f.fk_pays=p.rowid";
@@ -98,6 +100,7 @@ $tabsql[11]= "SELECT t.rowid as rowid, element, source, code, libelle, active FR
 $tabsql[12]= "SELECT c.rowid as rowid, code, sortorder, c.libelle, c.libelle_facture, nbjour, fdm, decalage, active FROM ".MAIN_DB_PREFIX."cond_reglement AS c";
 $tabsql[13]= "SELECT id      as rowid, code, c.libelle, type, active FROM ".MAIN_DB_PREFIX."c_paiement AS c";
 $tabsql[14]= "SELECT e.rowid as rowid, e.code as code, e.libelle, e.price, e.organization, e.fk_pays as pays_id, p.libelle as pays, e.active FROM ".MAIN_DB_PREFIX."c_ecotaxe AS e, ".MAIN_DB_PREFIX."c_pays as p WHERE e.fk_pays=p.rowid and p.active=1";
+$tabsql[15]= "SELECT rowid   as rowid, code, label as libelle, width, height, unit, active FROM ".MAIN_DB_PREFIX."c_paper_format";
 
 // Critere de tri du dictionnaire
 $tabsqlsort[1] ="pays, code ASC";
@@ -114,6 +117,7 @@ $tabsqlsort[11]="element ASC, source ASC, code ASC";
 $tabsqlsort[12]="sortorder ASC, code ASC";
 $tabsqlsort[13]="code ASC";
 $tabsqlsort[14]="pays, e.organization ASC, code ASC";
+$tabsqlsort[15]="rowid ASC";
  
 // Nom des champs en resultat de select pour affichage du dictionnaire
 $tabfield[1] = "code,libelle,pays";
@@ -130,6 +134,7 @@ $tabfield[11]= "element,source,code,libelle";
 $tabfield[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfield[13]= "code,libelle,type";
 $tabfield[14]= "code,libelle,price,organization,pays_id,pays";
+$tabfield[15]= "code,libelle,width,height,unit";
 
 // Nom des champs d'édition pour modification du dictionnaire
 $tabfieldvalue[1] = "code,libelle,pays";
@@ -146,6 +151,7 @@ $tabfieldvalue[11]= "element,source,code,libelle";
 $tabfieldvalue[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldvalue[13]= "code,libelle,type";
 $tabfieldvalue[14]= "code,libelle,price,organization,pays";
+$tabfieldvalue[15]= "code,libelle,width,height,unit";
 
 // Nom des champs dans la table pour insertion d'un enregistrement
 $tabfieldinsert[1] = "code,libelle,fk_pays";
@@ -162,6 +168,7 @@ $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
 $tabfieldinsert[13]= "code,libelle,type";
 $tabfieldinsert[14]= "code,libelle,price,organization,fk_pays";
+$tabfieldinsert[15]= "code,label,width,height,unit";
 
 // Nom du rowid si le champ n'est pas de type autoincrément
 $tabrowid[1] = "";
@@ -178,6 +185,7 @@ $tabrowid[11]= "rowid";
 $tabrowid[12]= "rowid";
 $tabrowid[13]= "id";
 $tabrowid[14]= "";
+$tabrowid[15]= "";
 
 // Condition to show dictionnary in setup page
 $tabcond[1] = $conf->societe->enabled;
@@ -194,6 +202,7 @@ $tabcond[11]= true;
 $tabcond[12]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[13]= $conf->facture->enabled||$conf->fournisseur->enabled;
 $tabcond[14]= $conf->produit->enabled&&$conf->global->PRODUIT_USE_ECOTAXE;
+$tabcond[15]= true;
 
 $msg='';
 
@@ -381,6 +390,8 @@ if ($_GET["action"] == $acts[1])       // disable
 
 llxHeader();
 
+$html = new Form($db);
+
 $titre=$langs->trans("DictionnarySetup");
 if ($_GET["id"])
 {
@@ -465,8 +476,11 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
             if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+            if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
+            if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+            if ($fieldlist[$field]=='unit  ')          { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
-            
+
             if ($valuetoshow != '')
             {
             	print '<td>';
@@ -510,7 +524,7 @@ if ($_GET["id"])
                 // Determine le nom du champ par rapport aux noms possibles
                 // dans les dictionnaires de données
                 $showfield=1;							  	// Par defaut
-				$valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
+				        $valuetoshow=ucfirst($fieldlist[$field]);   // Par defaut
                 if ($fieldlist[$field]=='source')          { $valuetoshow=$langs->trans("Contact"); }
                 if ($fieldlist[$field]=='price')           { $valuetoshow=$langs->trans("PriceUHT"); }
                 if ($fieldlist[$field]=='organization')    { $valuetoshow=$langs->trans("Organization"); }
@@ -524,6 +538,9 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='nbjour')          { $valuetoshow=$langs->trans("NbOfDays"); }
                 if ($fieldlist[$field]=='fdm')             { $valuetoshow=$langs->trans("AtEndOfMonth"); }
                 if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
+                if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
+                if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
+                if ($fieldlist[$field]=='unit  ')          { $valuetoshow=$langs->trans("MeasuringUnit"); }
                 if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
                 
                 // Affiche nom du champ
@@ -727,6 +744,11 @@ function fieldList($fieldlist,$obj='')
     elseif ($fieldlist[$field] == 'code') {
     	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" size="10" name="'.$fieldlist[$field].'"></td>';
     }
+    elseif ($fieldlist[$field]=='unit') {
+	    print '<td>';
+	    $html->select_array('unit',array('mm','cm','point','inch'),$obj->$fieldlist[$field],0,0,1);
+	    print '</td>';
+	  }
     else
     {
     	print '<td><input type="text" class="flat" value="'.$obj->$fieldlist[$field].'" name="'.$fieldlist[$field].'" ></td>';
