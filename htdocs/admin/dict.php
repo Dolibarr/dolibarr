@@ -478,7 +478,7 @@ if ($_GET["id"])
             if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
             if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
             if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-            if ($fieldlist[$field]=='unit  ')          { $valuetoshow=$langs->trans("MeasuringUnit"); }
+            if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
             if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $valuetoshow=''; }
 
             if ($valuetoshow != '')
@@ -540,7 +540,7 @@ if ($_GET["id"])
                 if ($fieldlist[$field]=='decalage')        { $valuetoshow=$langs->trans("Offset"); }
                 if ($fieldlist[$field]=='width')           { $valuetoshow=$langs->trans("Width"); }
                 if ($fieldlist[$field]=='height')          { $valuetoshow=$langs->trans("Height"); }
-                if ($fieldlist[$field]=='unit  ')          { $valuetoshow=$langs->trans("MeasuringUnit"); }
+                if ($fieldlist[$field]=='unit')            { $valuetoshow=$langs->trans("MeasuringUnit"); }
                 if ($fieldlist[$field]=='region_id' || $fieldlist[$field]=='pays_id') { $showfield=0; }
                 
                 // Affiche nom du champ

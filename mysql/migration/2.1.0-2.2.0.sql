@@ -904,3 +904,24 @@ ALTER TABLE llx_product CHANGE gencode barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN fk_barcode_type integer DEFAULT 0 after barcode;
 
 INSERT INTO llx_const (name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
+
+create table llx_c_paper_format
+(
+  rowid    integer                          AUTO_INCREMENT PRIMARY KEY,
+  code     varchar(16)                      NOT NULL,
+  label    varchar(50)                      NOT NULL,
+  width    float(6,2)                       DEFAULT 0,
+  height   float(6,2)                       DEFAULT 0,
+  unit     enum('mm','cm','point','inch')   NOT NULL,
+  active   tinyint DEFAULT 1                NOT NULL
+)type=innodb;
+
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (1, '4A0', 'Format 4A0', '1682', '2378', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (2, '2A0', 'Format 2A0', '1189', '1682', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (3, 'A0', 'Format A0', '840', '1189', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (4, 'A1', 'Format A1', '594', '840', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (5, 'A2', 'Format A2', '420', '594', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (6, 'A3', 'Format A3', '297', '420', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (7, 'A4', 'Format A4', '210', '297', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (8, 'A5', 'Format A5', '148', '210', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (9, 'A6', 'Format A6', '105', '148', 'mm', 1);

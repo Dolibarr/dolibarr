@@ -1591,3 +1591,16 @@ INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (3, 'UPC
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (4, 'ISBN', 'ISBN', 0, '123456789');
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (5, 'C39', 'Code 39', 0, '1234567890');
 INSERT INTO llx_c_barcode (rowid, code, libelle, coder, example) VALUES (6, 'C128', 'Code 128', 0, 'ABCD1234567890');
+
+--
+-- Formats de papier
+--
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (1, '4A0', 'Format 4A0', '1682', '2378', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (2, '2A0', 'Format 2A0', '1189', '1682', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (3, 'A0', 'Format A0', '840', '1189', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (4, 'A1', 'Format A1', '594', '840', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (5, 'A2', 'Format A2', '420', '594', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (6, 'A3', 'Format A3', '297', '420', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (7, 'A4', 'Format A4', '210', '297', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (8, 'A5', 'Format A5', '148', '210', 'mm', 1);
+INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (9, 'A6', 'Format A6', '105', '148', 'mm', 1);

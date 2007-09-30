@@ -2943,7 +2943,7 @@ class Form
         {
             print '<option value="'.($value_as_key?$value:$key).'"';
             // Si il faut présélectionner une valeur
-            if ($id && $id == $key)
+            if ($id && ($id == $key || $id == $value))
             {
                 print ' selected="true"';
             }
