@@ -97,36 +97,39 @@ $sql_data_array = array('products_quantity' => $prod['quant'],
 return $products_id;
 } 
 
-function get_article($id='',$ref='') {
 
-//on se connecte
+function get_article($id='',$ref='')
+{
+	//on se connecte
 	if (!($connexion = mysql_connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD)))   return new soap_fault("Server", "MySQL 1", "connexion impossible");
 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
 
-//on recherche
-		$sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, concat('".OSC_IMG_URL."',p.products_image) as image, p.products_price, d.products_name, d.products_description, m.manufacturers_name, m.manufacturers_id";
-		$sql .= " FROM products as p ";
-		$sql .= " JOIN products_description as d ON p.products_id = d.products_id "; 			$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
-		$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
-      if ($id) $sql.= " AND p.products_id = ".$id;
-      if ($ref) $sql.= " AND p.products_model = '".addslashes($ref)."'";
+	//on recherche
+	$sql = "SELECT p.products_id, p.products_model, p.products_quantity, p.products_status, concat('".OSC_IMG_URL."',p.products_image) as image, p.products_price, d.products_name, d.products_description, m.manufacturers_name, m.manufacturers_id, pc.categories_id";
+	$sql .= " FROM products as p ";
+	$sql .= " JOIN products_description as d ON p.products_id = d.products_id ";
+	$sql .= " JOIN products_to_categories pc ON p.products_id = pc.products_id ";
+	$sql .= " LEFT JOIN manufacturers as m ON p.manufacturers_id=m.manufacturers_id";
+	$sql .= " WHERE d.language_id =" . OSC_LANGUAGE_ID;
+	if ($id) $sql.= " AND p.products_id = ".$id;
+	if ($ref) $sql.= " AND p.products_model = '".addslashes($ref)."'";
 
 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL 3 ".$sql, mysql_error());
 
-		switch (mysql_numrows($resquer)) {
-		case 0 : 
-			return new soap_fault("Server", "MySQL 4", "produit inexistant");
-			break;
-		case 1 : 
-			$res_article =   @mysql_fetch_array($resquer, MYSQL_ASSOC);
-  			$res_article["time"] = time();
-			break;
+	switch (mysql_numrows($resquer)) {
+	case 0 : 
+		return new soap_fault("Server", "MySQL 4", "produit inexistant");
+		break;
+	case 1 : 
+		$res_article =   @mysql_fetch_array($resquer, MYSQL_ASSOC);
+		$res_article["time"] = time();
+		break;
 		default : 
-			return new soap_fault("Server", "MySQL 5", "erreur requete");
-		}		
+		return new soap_fault("Server", "MySQL 5", "erreur requete");
+	}		
 	mysql_close($connexion);
- /* Sends the results to the client */
-return $res_article;
+	/* Sends the results to the client */
+	return $res_article;
 }
 
 function get_listearticles() {

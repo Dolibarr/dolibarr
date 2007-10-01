@@ -46,6 +46,7 @@ class Osc_product
 	var $osc_stock;
 	var $osc_four;
 	var $osc_image;
+	var $osc_catid;
 	
 	var $error;
 	
@@ -110,6 +111,7 @@ class Osc_product
   			$this->osc_four = $obj[manufacturers_id];
 			$this->osc_price = $obj[products_price];
 			$this->osc_image = $obj[image];
+			$this->osc_catid = $obj[categories_id];
   			}
   		else {
 		    $this->error = 'Erreur '.$client->getError();
@@ -140,7 +142,7 @@ class Osc_product
 	    		$product->type = 0;
 	    		$product->seuil_stock_alerte = 0; /* on force */
 	/* on force */
-				$product->catid = 0; /* à voir avec la gestion des catégories */
+				/* à voir avec la gestion des catégories */
 				$product->status = 1; /* en vente */
 
 		 return $product; 		  
@@ -201,7 +203,21 @@ class Osc_product
 		if ($obj) return $obj->fk_product;	
 		else return '';	
 	}
+	
+	function get_catid($osccatid)
+	{
+		require_once(DOL_DOCUMENT_ROOT."/oscommerce_ws/produits/osc_categories.class.php");
+		$mycat=new Osc_categorie($this->db);		
 
+		if ($mycat->fetch_osccat($osccatid) > 0) 
+		{
+			$x = $mycat->dolicatid;
+			print'<p>'.$x.'</p>';			
+			return $x ;
+		}
+		else return 0;
+	}
+	
 	function get_osc_productid($productidp)
 	{
 		$sql = "SELECT rowid";
