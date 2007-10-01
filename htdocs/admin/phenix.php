@@ -221,10 +221,10 @@ if ($conf->societe->enabled)
     print '<td>'.$langs->trans("PhenixAddEventOnCreateActions").'</td>';
     print '<td>';
     print '<select name="phpphenix_syncro" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_SYNCRO=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="yesbydefault"'.($conf->global->PHPPHENIX_SYNCRO=='yesbydefault'?' selected="true"':'').'>'.$langs->trans("PhenixYesByDefault").'</option>';
-    print '<option value="nobydefault"'.((! $conf->global->PHPPHENIX_SYNCRO || $conf->global->PHPPHENIX_SYNCRO=='nobydefault')?' selected="true"':'').'>'.$langs->trans("PhenixNoByDefault").'</option>';
-    print '<option value="never"'.($conf->global->PHPPHENIX_SYNCRO=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_SYNCRO=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="yesbydefault"'.($conf->global->PHPPHENIX_SYNCRO=='yesbydefault'?' selected="true"':'').'>'.$langs->trans("YesByDefault").'</option>';
+    print '<option value="nobydefault"'.((! $conf->global->PHPPHENIX_SYNCRO || $conf->global->PHPPHENIX_SYNCRO=='nobydefault')?' selected="true"':'').'>'.$langs->trans("NoByDefault").'</option>';
+    print '<option value="never"'.($conf->global->PHPPHENIX_SYNCRO=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -235,8 +235,8 @@ if ($conf->societe->enabled)
     print '<td>'.$langs->trans("PhenixAddEventOnCreateCompany").'</td>';
     print '<td>';
     print '<select name="phpphenix_companycreate" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_COMPANYCREATE=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPPHENIX_COMPANYCREATE || $conf->global->PHPPHENIX_COMPANYCREATE=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_COMPANYCREATE=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPPHENIX_COMPANYCREATE || $conf->global->PHPPHENIX_COMPANYCREATE=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -247,8 +247,8 @@ if ($conf->propal->enabled)
     print '<td>'.$langs->trans("PhenixAddEventOnStatusPropal").'</td>';
     print '<td>';
     print '<select name="phpphenix_propalstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_PROPALSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPPHENIX_PROPALSTATUS || $conf->global->PHPPHENIX_PROPALSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_PROPALSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPPHENIX_PROPALSTATUS || $conf->global->PHPPHENIX_PROPALSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -259,8 +259,8 @@ if ($conf->contrat->enabled)
     print '<td>'.$langs->trans("phenixAddEventOnStatusContract").'</td>';
     print '<td>';
     print '<select name="phpphenix_contractstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_CONTRACTSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPPHENIX_CONTRACTSTATUS || $conf->global->PHPPHENIX_CONTRACTSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_CONTRACTSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPPHENIX_CONTRACTSTATUS || $conf->global->PHPPHENIX_CONTRACTSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -271,8 +271,8 @@ if ($conf->facture->enabled)
     print '<td>'.$langs->trans("PhenixAddEventOnStatusBill").'</td>';
     print '<td>';
     print '<select name="phpphenix_billstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_BILLSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPPHENIX_BILLSTATUS || $conf->global->PHPPHENIX_BILLSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_BILLSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPPHENIX_BILLSTATUS || $conf->global->PHPPHENIX_BILLSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
@@ -283,8 +283,8 @@ if ($conf->adherent->enabled)
     print '<td>'.$langs->trans("PhenixAddEventOnStatusMember").'</td>';
     print '<td>';
     print '<select name="phpphenix_memberstatus" class="flat">';
-    print '<option value="always"'.($conf->global->PHPPHENIX_MEMBERSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("PhenixAllways").'</option>';
-    print '<option value="never"'.(! $conf->global->PHPPHENIX_MEMBERSTATUS || $conf->global->PHPPHENIX_MEMBERSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("PhenixNever").'</option>';
+    print '<option value="always"'.($conf->global->PHPPHENIX_MEMBERSTATUS=='always'?' selected="true"':'').'>'.$langs->trans("Always").'</option>';
+    print '<option value="never"'.(! $conf->global->PHPPHENIX_MEMBERSTATUS || $conf->global->PHPPHENIX_MEMBERSTATUS=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
 }
