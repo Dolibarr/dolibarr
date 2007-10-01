@@ -223,7 +223,7 @@ if ($conf->societe->enabled)
     print '<select name="phpphenix_syncro" class="flat">';
     print '<option value="always"'.($conf->global->PHPPHENIX_SYNCRO=='always'?' selected="true"':'').'>'.$langs->trans("WebCalAllways").'</option>';
     print '<option value="yesbydefault"'.($conf->global->PHPPHENIX_SYNCRO=='yesbydefault'?' selected="true"':'').'>'.$langs->trans("WebCalYesByDefault").'</option>';
-    print '<option value="nobydefault"'.((! $conf->global->PHPPHENIX_SYNCRO || $conf->global->PHPPHENIX_SYNCRO=='WebCalnobydefault')?' selected="true"':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
+    print '<option value="nobydefault"'.((! $conf->global->PHPPHENIX_SYNCRO || $conf->global->PHPPHENIX_SYNCRO=='nobydefault')?' selected="true"':'').'>'.$langs->trans("WebCalNoByDefault").'</option>';
     print '<option value="never"'.($conf->global->PHPPHENIX_SYNCRO=='never'?' selected="true"':'').'>'.$langs->trans("Never").'</option>';
     print '</select>';
     print '</td></tr>';
