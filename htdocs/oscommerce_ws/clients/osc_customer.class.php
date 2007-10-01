@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/oscommerce_ws/clients/osc_customer.class.php
-        \ingroup    oscommerce_ws/clients
+        \ingroup    oscommerce2
         \brief      Fichier de la classe des clients issus de OsCommerce
         \version    $Revision$
 */

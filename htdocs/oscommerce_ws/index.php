@@ -21,8 +21,8 @@
  */
  
 /**
-        \file       htdocs/boutique/index.php
-        \ingroup    boutique
+        \file       htdocs/oscommerce_ws/index.php
+        \ingroup    oscommerce2
 		\brief      Page accueil zone boutique
 		\version    $Revision$
 */

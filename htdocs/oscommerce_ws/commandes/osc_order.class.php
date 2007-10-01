@@ -20,7 +20,7 @@
  */
 
 /**
-        \file       htdocs/oscommerce_ws/orders/osc_order.class.php
+        \file       htdocs/oscommerce_ws/commandes/osc_order.class.php
         \ingroup    oscommerce_ws/orders
         \brief      Fichier de la classe des commandes issus de OsCommerce
         \version    $Revision$

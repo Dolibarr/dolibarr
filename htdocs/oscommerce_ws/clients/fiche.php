@@ -17,11 +17,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Source$
- *
  */
+
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/societe.class.php");
 require_once("../includes/configure.php");
+
+
 
 llxHeader();
 

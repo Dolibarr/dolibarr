@@ -40,10 +40,10 @@ define(OSC_ORDPROCESS,'1'); // code du statut de commande en traitement
 //
 
 define(OSC_ENTREPOT, 1); //l'entrepot lié au stock du site web
-define(TX_CURRENCY, 119.33); // le taux de conversion monnaie site osc - monnaie dolibarr (1 euro = 119.33 XPF)
-define(NB_DECIMALS, 0);
+define(TX_CURRENCY, 1); // le taux de conversion monnaie site osc - monnaie dolibarr (1 euro = 119.33 XPF)
+define(NB_DECIMALS, 2);
 define(NB_DECIMALSITE, 2); // nb de décimales sur le site
-define(FK_PORT, 159); // l'id du service frais de port défini. 
+define(FK_PORT, 2); // l'id du service frais de port défini. 
 
 // fonctions
 

@@ -225,8 +225,9 @@ class Product
 								{
 									if ($this->catid > 0)
 									{
+										require_once(DOL_DOCUMENT_ROOT ."/categories/categorie.class.php");										
 										$cat = new Categorie ($this->db, $this->catid);
-										$cat->add_product($this);
+										$cat->add_type($this,"product");
 									}
 								}
 								else

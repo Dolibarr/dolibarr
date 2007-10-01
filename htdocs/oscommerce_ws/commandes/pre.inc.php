@@ -22,7 +22,7 @@
  */
  
 /**
-        \file       htdocs/oscommerce_ws/clients/pre.inc.php
+        \file       htdocs/oscommerce_ws/commandes/pre.inc.php
 		\brief      Fichier gestionnaire du menu de gauche
 		\version    $Revision$
 */
