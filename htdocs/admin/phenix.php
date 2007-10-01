@@ -28,7 +28,7 @@
 */
 
 require("./pre.inc.php");
-//require_once(DOL_DOCUMENT_ROOT.'/lib/webcal.class.php');
+require_once(DOL_DOCUMENT_ROOT.'/lib/phenix.class.php');
 
 
 if (!$user->admin)
@@ -74,7 +74,6 @@ if ($actionsave)
         exit;
     }
 }
-/*
 elseif ($actiontest)
 {
     //$resql=$db->query("select count(*) from llx_const");
@@ -95,6 +94,7 @@ elseif ($actiontest)
     if ($phenix->localdb->connected == 1 && $phenix->localdb->database_selected == 1)
     {
     	// Vérifie si bonne base
+      /*
       $sql="SELECT cal_value FROM webcal_config WHERE cal_setting='application_name'";
       $resql=$phenix->localdb->query($sql);
       if ($resql)
@@ -111,39 +111,41 @@ elseif ($actiontest)
       			$webcal->version=$obj->cal_value;
       		}
       	}
-      	
+      	*/
       	$mesg ="<div class=\"ok\">";
-        $mesg.=$langs->trans("WebCalTestOk",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"],$_POST["phpwebcalendar_user"]);
-        $mesg.='<br>'.$langs->trans("DetectedVersion").': '.($webcal->version?$webcal->version:$langs->trans("NotAvailable"));
+        $mesg.=$langs->trans("WebCalTestOk",$_POST["phpphenix_host"],$_POST["phpphenix_dbname"],$_POST["phpphenix_user"]);
+        //$mesg.='<br>'.$langs->trans("DetectedVersion").': '.($webcal->version?$webcal->version:$langs->trans("NotAvailable"));
         $mesg.="</div>";
+        /*
         }
         else {
             $mesg ="<div class=\"error\">";
             $mesg.=$langs->trans("WebCalErrorConnectOkButWrongDatabase");
             $mesg.="</div>";
         }
+        */
 		// Ne pas fermer car la conn de webcal est la meme que dolibarr si
 		// parametre host/user/pass identique.
         //$webcal->localdb->close();
     }
-    elseif ($webcal->connected == 1 && $webcal->database_selected != 1)
+    elseif ($phenix->connected == 1 && $phenix->database_selected != 1)
     {
-        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo1",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_dbname"]);
-        $mesg.="<br>".$webcal->localdb->error();
+        $mesg ="<div class=\"error\">".$langs->trans("PhenixTestKo1",$_POST["phpphenix_host"],$_POST["phpphenix_dbname"]);
+        $mesg.="<br>".$phenix->localdb->error();
         $mesg.="</div>";
         //$webcal->localdb->close();    Ne pas fermer car la conn de webcal est la meme que dolibarr si parametre host/user/pass identique
     }
     else
     {
-        $mesg ="<div class=\"error\">".$langs->trans("WebCalTestKo2",$_POST["phpwebcalendar_host"],$_POST["phpwebcalendar_user"]);
-        $mesg.="<br>".$webcal->localdb->error();
+        $mesg ="<div class=\"error\">".$langs->trans("PhenixTestKo2",$_POST["phpphenix_host"],$_POST["phpphenix_user"]);
+        $mesg.="<br>".$phenix->localdb->error();
         $mesg.="</div>";
     }
 
     //$resql=$db->query("select count(*) from llx_const");
     //print "< ".$db." - ".$db->db." - ".$resql." - ".$db->error()."><br>\n";
 }
-*/
+
 
 /**
  * Affichage du formulaire de saisie
@@ -300,7 +302,7 @@ print "</form>\n";
 
 clearstatcache();
 
-if ($mesg) print "<br>$mesg<br>";
+if ($mesg) print "<br>".$mesg."<br>";
 print "<br>";
 
 $db->close();

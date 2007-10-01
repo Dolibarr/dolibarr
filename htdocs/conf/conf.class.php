@@ -284,6 +284,13 @@ class Conf
 		$this->webcal->db->user=defined('PHPWEBCALENDAR_USER')?PHPWEBCALENDAR_USER:'';
 		$this->webcal->db->pass=defined('PHPWEBCALENDAR_PASS')?PHPWEBCALENDAR_PASS:'';
 		$this->webcal->db->name=defined('PHPWEBCALENDAR_DBNAME')?PHPWEBCALENDAR_DBNAME:'';
+		// Module phenix
+		$this->phenix->enabled=defined('MAIN_MODULE_PHENIX')?MAIN_MODULE_PHENIX:0;
+		$this->phenix->db->type=defined('PHPPHENIX_TYPE')?PHPPHENIX_TYPE:'__dolibarr_main_db_type__';
+		$this->phenix->db->host=defined('PHPPHENIX_HOST')?PHPPHENIX_HOST:'';
+		$this->phenix->db->user=defined('PHPPHENIX_USER')?PHPPHENIX_USER:'';
+		$this->phenix->db->pass=defined('PHPPHENIX_PASS')?PHPPHENIX_PASS:'';
+		$this->phenix->db->name=defined('PHPPHENIX_DBNAME')?PHPPHENIX_DBNAME:'';
 		// Module mantis
 		$this->mantis->enabled=defined('MAIN_MODULE_MANTIS')?MAIN_MODULE_MANTIS:0;
 		$this->mantis->db->type=defined('PHPMANTIS_TYPE')?PHPMANTIS_TYPE:'__dolibarr_main_db_type__';
