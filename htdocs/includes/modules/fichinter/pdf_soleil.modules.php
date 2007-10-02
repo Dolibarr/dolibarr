@@ -76,169 +76,265 @@ class pdf_soleil extends ModelePDFFicheinter
 
     /**
             \brief      Fonction générant la fiche d'intervention sur le disque
-            \param	    fich	Object fichinter
-            \return	    int     1=ok, 0=ko
+            \param	    fichinter		Object fichinter
+            \return	    int     		1=ok, 0=ko
     */
     function write_pdf_file($fichinter,$outputlangs='')
-    {
-    	global $user,$langs,$conf,$mysoc;
-    	
-    	if (! is_object($outputlangs)) $outputlangs=$langs;
-    	$outputlangs->load("main");
-      $outputlangs->load("companies");
-      $outputlangs->load("interventions");
-      
-      $outputlangs->setPhpLang();
+	{
+		global $user,$langs,$conf,$mysoc;
+		
+		if (! is_object($outputlangs)) $outputlangs=$langs;
+		$outputlangs->load("main");
+		$outputlangs->load("companies");
+		$outputlangs->load("interventions");
+		
+		$outputlangs->setPhpLang();
 
-      if ($conf->fichinter->dir_output)
-      {
-      	// If $fich is id instead of object
-      	if (! is_object($fichinter))
-      	{
-      		$id = $fichinter;
-      		$fichinter = new Fichinter($this->db,"",$id);
-      		$result=$fichinter->fetch($id);
-      		if ($result < 0)
-      		{
-      			dolibarr_print_error($db,$fichinter->error);
-      		}
-      	}
-      	
-      	$fichref = sanitize_string($fichinter->ref);
-      	$dir = $conf->fichinter->dir_output;
-      	if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
-            $file = $dir . "/" . $fichref . ".pdf";
+		if ($conf->fichinter->dir_output)
+		{
+			// If $fichinter is id instead of object
+			if (! is_object($fichinter))
+			{
+				$id = $fichinter;
+				$fichinter = new Fichinter($this->db);
+				$result=$fichinter->fetch($id);
+				if ($result < 0)
+				{
+					dolibarr_print_error($db,$fichinter->error);
+				}
+			}
+			
+			$fichref = sanitize_string($fichinter->ref);
+			$dir = $conf->fichinter->dir_output;
+			if (! eregi('specimen',$fichref)) $dir.= "/" . $fichref;
+			$file = $dir . "/" . $fichref . ".pdf";
 
-            if (! file_exists($dir))
-            {
-                if (create_exdir($dir) < 0)
-                {
-                    $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
-            }
+			if (! file_exists($dir))
+			{
+				if (create_exdir($dir) < 0)
+				{
+					$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+					return 0;
+				}
+			}
 
-            if (file_exists($dir))
-            {
-	           // Protection et encryption du pdf
-               if ($conf->global->PDF_SECURITY_ENCRYPTION)
-               {
+			if (file_exists($dir))
+			{
+				// Protection et encryption du pdf
+				if ($conf->global->PDF_SECURITY_ENCRYPTION)
+				{
 					$pdf=new FPDI_Protection('P','mm',$this->format);
-     	           $pdfrights = array('print'); // Ne permet que l'impression du document
-    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
-     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-               }
-			   else
-			   {
-                   $pdf=new FPDI('P','mm',$this->format);
+					$pdfrights = array('print'); // Ne permet que l'impression du document
+					$pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+					$pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+					$pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+				}
+				else
+				{
+					$pdf=new FPDI('P','mm',$this->format);
 				}
 
-                $pdf->Open();
-                $pdf->AddPage();
+				$pdf->Open();
+				$pdf->AddPage();
 
-		        $posy=$this->marge_haute;
-		
-		        $pdf->SetXY($this->marge_gauche,$posy);
+				$posy=$this->marge_haute;
+				
+				$pdf->SetXY($this->marge_gauche,$posy);
 
 				// Logo
-        		$logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
-		        if ($mysoc->logo)
-		        {
-		            if (is_readable($logo))
+				$logo=$conf->societe->dir_logos.'/'.$mysoc->logo;
+				if ($mysoc->logo)
+				{
+					if (is_readable($logo))
 					{
-		                $pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
-		            }
-		            else
+						$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+					}
+					else
 					{
-		                $pdf->SetTextColor(200,0,0);
-		                $pdf->SetFont('Arial','B',8);
-		                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-		                $pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
-		            }
-		        }
+						$pdf->SetTextColor(200,0,0);
+						$pdf->SetFont('Arial','B',8);
+						$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+						$pdf->MultiCell(100, 3, $langs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
+					}
+				}
 
-                $pdf->SetTextColor(70,70,170);
-                if (defined("FAC_PDF_ADRESSE"))
-                {
-                    $pdf->SetFont('Arial','',12);
-                    $pdf->MultiCell(40, 5, FAC_PDF_ADRESSE);
-                }
-                if (defined("FAC_PDF_TEL"))
-                {
-                    $pdf->SetFont('Arial','',10);
-                    $pdf->MultiCell(40, 5, $langs->transnoentities("Tel").": ".FAC_PDF_TEL);
-                }
-                if (defined("MAIN_INFO_SIREN"))
-                {
-                    $pdf->SetFont('Arial','',10);
-                    $pdf->MultiCell(40, 5, $langs->transnoentities("SIREN").": ".MAIN_INFO_SIREN);
-                }
+				// Nom emetteur
+				$posy=40;
+				$hautcadre=40;
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','',8);
 
-                if (defined("FAC_PDF_INTITULE2"))
-                {
-                    $pdf->SetXY(100,5);
-                    $pdf->SetFont('Arial','B',14);
-                    $pdf->SetTextColor(0,0,200);
-                    $pdf->MultiCell(100, 10, FAC_PDF_INTITULE2, '' , 'R');
-                }
-                /*
-                 * Adresse Client
-                 */
-                $pdf->SetTextColor(0,0,0);
-                $pdf->SetFont('Arial','B',12);
-                $fichinter->fetch_client();
-                $pdf->SetXY(102,42);
-                $pdf->MultiCell(66,5, $fichinter->client->nom);
-                $pdf->SetFont('Arial','B',11);
-                $pdf->SetXY(102,47);
-                $pdf->MultiCell(66,5, $fichinter->client->adresse . "\n" . $fichinter->client->cp . " " . $fichinter->client->ville);
-                $pdf->rect(100, 40, 100, 40);
+				$pdf->SetXY($this->marge_gauche,$posy);
+				$pdf->SetFillColor(230,230,230);
+				$pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
 
-                $pdf->SetTextColor(200,0,0);
-                $pdf->SetFont('Arial','B',14);
-                $pdf->Text(11, 88, "Date : " . dolibarr_print_date($fichinter->date,'day'));
-                $pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fichinter->ref);
+				$pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-                $pdf->SetFillColor(220,220,220);
-                $pdf->SetTextColor(0,0,0);
-                $pdf->SetFont('Arial','',12);
+				$pdf->SetTextColor(0,0,60);
+				$pdf->SetFont('Arial','B',11);
+				if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+				else $pdf->MultiCell(80, 4, $mysoc->nom, 0, 'L');
 
-                $tab_top = 100;
-                $tab_height = 110;
+				// Caracteristiques emetteur
+				$carac_emetteur = '';
+				if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+				else {
+					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->adresse;
+					$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$mysoc->cp.' '.$mysoc->ville;
+				}
+				$carac_emetteur .= "\n";
+				// Tel
+				if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
+				elseif ($mysoc->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$mysoc->tel;
+				// Fax
+				if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
+				elseif ($mysoc->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$mysoc->fax;
+				// EMail
+				if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
+				elseif ($mysoc->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$mysoc->email;
+				// Web
+				if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
+				elseif ($mysoc->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$mysoc->url;
 
-                $pdf->SetXY (10, $tab_top);
-                $pdf->MultiCell(190,8,$langs->transnoentities("Description"),0,'L',0);
-                $pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
+				$pdf->SetFont('Arial','',9);
+				$pdf->SetXY($this->marge_gauche+2,$posy+8);
+				$pdf->MultiCell(80,4, $carac_emetteur);
 
-                $pdf->Rect(10, $tab_top, 190, $tab_height);
 
-                $pdf->SetFont('Arial','', 10);
+				/*
+				* Adresse Client
+				*/
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','B',12);
+				$fichinter->fetch_client();
+				$pdf->SetXY(102,42);
+				$pdf->MultiCell(66,5, $fichinter->client->nom);
+				$pdf->SetFont('Arial','B',11);
+				$pdf->SetXY(102,47);
+				$pdf->MultiCell(66,5, $fichinter->client->adresse . "\n" . $fichinter->client->cp . " " . $fichinter->client->ville);
+				$pdf->rect(100, 40, 100, 40);
 
-                $pdf->SetXY (10, $tab_top + 8 );
-                $pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
 
-                $pdf->Close();
+				$pdf->SetTextColor(200,0,0);
+				$pdf->SetFont('Arial','B',14);
+				$pdf->Text(11, 88, "Date : " . dolibarr_print_date($fichinter->date,'day'));
+				$pdf->Text(11, 94, $langs->trans("InterventionCard")." : ".$fichinter->ref);
 
-                $pdf->Output($file);
+				$pdf->SetFillColor(220,220,220);
+				$pdf->SetTextColor(0,0,0);
+				$pdf->SetFont('Arial','',12);
 
-                return 1;
-            }
-            else
-            {
-                $this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
-                return 0;
-            }
-        }
-        else
+				$tab_top = 100;
+				$tab_height = 110;
+
+				$pdf->SetXY (10, $tab_top);
+				$pdf->MultiCell(190,8,$langs->transnoentities("Description"),0,'L',0);
+				$pdf->line(10, $tab_top + 8, 200, $tab_top + 8 );
+
+				$pdf->Rect(10, $tab_top, 190, $tab_height);
+
+				$pdf->SetFont('Arial','', 10);
+
+				$pdf->SetXY (10, $tab_top + 8 );
+				$pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
+
+				$pdf->SetFont('Arial','', 9);   // On repositionne la police par d?faut
+				$this->_pagefoot($pdf,$outputlangs);
+				$pdf->Close();
+
+				$pdf->Output($file);
+
+				return 1;
+			}
+			else
+			{
+				$this->error=$langs->trans("ErrorCanNotCreateDir",$dir);
+				return 0;
+			}
+		}
+		else
+		{
+			$this->error=$langs->trans("ErrorConstantNotDefined","FICHEINTER_OUTPUTDIR");
+			return 0;
+		}
+		$this->error=$langs->trans("ErrorUnknown");
+		return 0;   // Erreur par defaut
+	}
+
+    /*
+     *   \brief      Affiche le pied de page
+     *   \param      pdf     objet PDF
+     */
+    function _pagefoot(&$pdf,$outputlangs)
+    {
+        global $conf;
+
+        $outputlangs->load("dict");
+
+        $html=new Form($this->db);
+
+        // Premiere ligne d'info r?glementaires
+        $ligne1="";
+        if ($this->emetteur->forme_juridique_code)
         {
-            $this->error=$langs->trans("ErrorConstantNotDefined","FICHEINTER_OUTPUTDIR");
-            return 0;
+            $ligne1.=($ligne1?" - ":"").$html->forme_juridique_name($this->emetteur->forme_juridique_code);
         }
-        $this->error=$langs->trans("ErrorUnknown");
-        return 0;   // Erreur par defaut
+        if ($this->emetteur->capital)
+        {
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transnoentities("CapitalOf",$this->emetteur->capital)." ".$outputlangs->transnoentities("Currency".$conf->monnaie);
+        }
+        if ($this->emetteur->profid2)
+        {
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$this->emetteur->profid2;
+        }
+        if ($this->emetteur->profid1 && (! $this->emetteur->profid2 || $this->emetteur->pays_code != 'FR'))
+        {
+            $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
+        }
+
+        // Deuxieme ligne d'info r?glementaires
+        $ligne2="";
+        if ($this->emetteur->profid3)
+        {
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId3",$this->emetteur->pays_code).": ".$this->emetteur->profid3;
+        }
+        if ($this->emetteur->profid4)
+        {
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$this->emetteur->profid4;
+        }
+        if ($this->emetteur->tva_intra != '')
+        {
+            $ligne2.=($ligne2?" - ":"").$outputlangs->transnoentities("VATIntraShort").": ".$this->emetteur->tva_intra;
+        }
+
+        $pdf->SetFont('Arial','',8);
+        $pdf->SetDrawColor(224,224,224);
+
+        // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
+        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
+
+        $pdf->SetY(-$posy);
+        $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);
+        $posy--;
+
+        if ($ligne1)
+        {
+            $pdf->SetXY($this->marge_gauche,-$posy);
+            $pdf->MultiCell(200, 2, $ligne1, 0, 'C', 0);
+        }
+
+        if ($ligne2)
+        {
+            $posy-=3;
+            $pdf->SetXY($this->marge_gauche,-$posy);
+            $pdf->MultiCell(200, 2, $ligne2, 0, 'C', 0);
+        }
+
+        //$pdf->SetXY(-20,-$posy);
+        //$pdf->MultiCell(10, 2, $pdf->PageNo().'/{nb}', 0, 'R', 0);
     }
+
 }
 
 ?>
