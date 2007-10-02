@@ -40,6 +40,7 @@ create table llx_user
   admin             smallint DEFAULT 0,
   webcal_login      varchar(25),
   phenix_login      varchar(25),
+  phenix_pass       varchar(128),
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
   fk_societe        integer,

@@ -54,6 +54,7 @@ if ($actionsave)
     $i+=dolibarr_set_const($db,'PHPPHENIX_DBNAME',trim($_POST["phpphenix_dbname"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPPHENIX_USER',trim($_POST["phpphenix_user"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPPHENIX_PASS',trim($_POST["phpphenix_pass"]),'chaine',0);
+    $i+=dolibarr_set_const($db,'PHPPHENIX_COOKIE',trim($_POST["phpphenix_cookie"]),'chaine',0);
 
     $i+=dolibarr_set_const($db,'PHPPHENIX_SYNCRO',trim($_POST["phpphenix_syncro"]),'chaine',0);
     $i+=dolibarr_set_const($db,'PHPPHENIX_COMPANYCREATE',trim($_POST["phpphenix_companycreate"]),'chaine',0);
@@ -204,6 +205,13 @@ print "<td><input type=\"password\" class=\"flat\" name=\"phpphenix_pass\" value
 print '<td>';
 //if ($dolibarr_main_db_pass) print '__dolibarr_main_db_pass__ <i>('.eregi_replace('.','*',$dolibarr_main_db_pass).')</i>';
 print '&nbsp;</td>';
+print "</tr>";
+
+print "<tr class=\"pair\">";
+print "<td>".$langs->trans("PhenixCookie")."</td>";
+print "<td><input type=\"text\" class=\"flat\" name=\"phpphenix_cookie\" value=\"". ($_POST["phpphenix_cookie"]?$_POST["phpphenix_cookie"]:$conf->global->PHPPHENIX_COOKIE) . "\" size=\"30\"></td>";
+print "<td>PXlogin";
+print "</td>";
 print "</tr>";
 
 print "</table>";

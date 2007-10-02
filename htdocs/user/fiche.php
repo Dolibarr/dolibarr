@@ -152,6 +152,7 @@ if ($_POST["action"] == 'add' && $canadduser)
 		$edituser->email         = $_POST["email"];
 		$edituser->webcal_login  = $_POST["webcal_login"];
 		$edituser->phenix_login  = $_POST["phenix_login"];
+		$edituser->phenix_pass   = $_POST["phenix_pass"];
 		$edituser->note          = $_POST["note"];
 		$edituser->ldap_sid      = $_POST["ldap_sid"];
 		
@@ -244,6 +245,7 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 		$edituser->email         = $_POST["email"];
 		$edituser->webcal_login  = $_POST["webcal_login"];
 		$edituser->phenix_login  = $_POST["phenix_login"];
+		$edituser->phenix_pass   = $_POST["phenix_pass"];
 
 		$ret=$edituser->update($user);
 		if ($ret < 0)
@@ -679,6 +681,8 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginPenix").'</td>';
 		print '<td><input size="30" type="text" name="phenix_login" value=""></td></tr>';
+		print "<tr>".'<td valign="top">'.$langs->trans("PassPenix").'</td>';
+		print '<td><input size="30" type="text" name="phenix_pass" value=""></td></tr>';
 	}
 	
 	print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
@@ -953,6 +957,9 @@ else
                 $langs->load("other");
                 print '<tr><td width="25%" valign="top">'.$langs->trans("LoginPhenix").'</td>';
                 print '<td colspan="2">'.$fuser->phenix_login.'&nbsp;</td>';
+                print "</tr>\n";
+                print '<tr><td width="25%" valign="top">'.$langs->trans("PassPhenix").'</td>';
+                print '<td colspan="2">'.eregi_replace('.','*',$fuser->phenix_pass_crypted).'&nbsp;</td>';
                 print "</tr>\n";
             }
             
@@ -1391,6 +1398,11 @@ else
             		print '<td colspan="2">';
             		if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$fuser->phenix_login.'">';
             		else print $fuser->phenix_login;
+            		print '</td></tr>';
+            		print "<tr>".'<td valign="top">'.$langs->trans("PassPhenix").'</td>';
+            		print '<td colspan="2">';
+            		if ($caneditfield) print '<input size="30" type="password" class="flat" name="phenix_pass" value="'.$fuser->phenix_pass_crypted.'">';
+            		else print eregi_replace('.','*',$fuser->phenix_pass_crypted);
             		print '</td></tr>';
             }
 

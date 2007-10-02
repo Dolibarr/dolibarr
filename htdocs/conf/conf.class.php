@@ -291,6 +291,7 @@ class Conf
 		$this->phenix->db->user=defined('PHPPHENIX_USER')?PHPPHENIX_USER:'';
 		$this->phenix->db->pass=defined('PHPPHENIX_PASS')?PHPPHENIX_PASS:'';
 		$this->phenix->db->name=defined('PHPPHENIX_DBNAME')?PHPPHENIX_DBNAME:'';
+		$this->phenix->cookie=defined('PHPPHENIX_COOKIE')?PHPPHENIX_COOKIE:'';
 		// Module mantis
 		$this->mantis->enabled=defined('MAIN_MODULE_MANTIS')?MAIN_MODULE_MANTIS:0;
 		$this->mantis->db->type=defined('PHPMANTIS_TYPE')?PHPMANTIS_TYPE:'__dolibarr_main_db_type__';

@@ -34,6 +34,12 @@ include_once("../conf/conf.php");
 require_once("../master.inc.php");
 require_once(PEAR_PATH."/Auth/Auth.php");
 
+// Module Phenix
+if ($conf->phenix->enabled && $conf->phenix->cookie)
+{
+	// Destruction du cookie
+	setcookie($conf->phenix->cookie, '', 1, "/");
+}
 
 dolibarr_syslog("End session in DOLSESSID_".$dolibarr_main_db_name);
 

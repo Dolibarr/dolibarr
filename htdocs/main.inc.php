@@ -470,6 +470,15 @@ if (! isset($_SESSION["dol_login"]))
     $user->update_last_login_date();
 }
 
+// Module Phenix
+if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
+{
+	// Création du cookie permettant la connexion automatique, valide jusqu'à la fermeture du browser
+	if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
+	{
+		setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
+	}
+}
 
 // Si user admin, on force droits sur les modules base
 if ($user->admin)

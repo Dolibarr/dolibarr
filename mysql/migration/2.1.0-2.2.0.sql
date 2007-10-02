@@ -932,3 +932,4 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (9, 'A6', 'Format A6', '105', '148', 'mm', 1);
 
 ALTER TABLE llx_user ADD COLUMN phenix_login varchar(25) after webcal_login;
+ALTER TABLE llx_user ADD COLUMN phenix_pass varchar(128) after phenix_login;

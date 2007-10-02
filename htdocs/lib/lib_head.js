@@ -23,6 +23,12 @@ function barcode_coder_save(formNameID)
     formName.submit();
 }
 
+function formSubmit(formNameID)
+{
+    var formName = parent.document.frames['main'].document.getElementById(formNameID);
+    formName.submit();
+}
+
 /*=================================================================
 	Purpose:  Pour la fonction de saisie auto des villes
 	Input:    postalcode,objectville
