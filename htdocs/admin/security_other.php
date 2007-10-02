@@ -153,7 +153,7 @@ if (function_exists("imagecreatefrompng"))
 	{
 		print '<a href="security_other.php?action=activate_captcha">'.$langs->trans("Activate").'</a>';
 	}
-	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1 && function_exists("imagecreatefrompng"))
+	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
 	{
 		print '<a href="security_other.php?action=disable_captcha">'.$langs->trans("Disable").'</a>';
 	}
