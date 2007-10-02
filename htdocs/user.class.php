@@ -73,6 +73,7 @@ class User
   var $societe_id;
   var $fk_member;
   var $webcal_login;
+  var $phenix_login;
   
   var $datelastlogin;
   var $datepreviouslogin;
@@ -123,7 +124,7 @@ class User
 		
 		// Recupere utilisateur
 		$sql = "SELECT u.rowid, u.name, u.firstname, u.email, u.office_phone, u.office_fax, u.user_mobile,";
-		$sql.= " u.admin, u.login, u.webcal_login, u.note,";
+		$sql.= " u.admin, u.login, u.webcal_login, u.phenix_login, u.note,";
 		$sql.= " u.pass, u.pass_crypted, u.pass_temp,";
 		$sql.= " u.fk_societe, u.fk_socpeople, u.fk_member, u.ldap_sid,";
 		$sql.= " u.statut, u.lang,";
@@ -145,7 +146,7 @@ class User
 		{
 			$sql .= " WHERE u.rowid = ".$this->id;
 		}
-		
+	
 		dolibarr_syslog("User::Fetch sql=".$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
@@ -181,6 +182,7 @@ class User
 				$this->datepreviouslogin = $obj->datep;
 				
 				$this->webcal_login = $obj->webcal_login;
+				$this->phenix_login = $obj->phenix_login;
 				$this->societe_id = $obj->fk_societe;
 				$this->contact_id = $obj->fk_socpeople;
 				$this->fk_member = $obj->fk_member;
@@ -919,29 +921,35 @@ class User
         dolibarr_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
         // Nettoyage parametres
-        $this->nom=trim($this->nom);
-        $this->prenom=trim($this->prenom);
-        $this->fullname=trim($this->prenom." ".$this->nom);
-        $this->login=trim($this->login);
-        $this->pass=trim($this->pass);
-        $this->email=trim($this->email);
-        $this->note=trim($this->note);
-        $this->admin=$this->admin?$this->admin:0;
-
-		$this->db->begin();
-
-		// Mise a jour autres infos
+        $this->nom          = addslashes(trim($this->nom));
+        $this->prenom       = addslashes(trim($this->prenom));
+        $this->fullname     = $this->prenom." ".$this->nom;
+        $this->login        = addslashes(trim($this->login));
+        $this->pass         = trim($this->pass);
+        $this->office_phone = trim($this->office_phone);
+        $this->office_fax   = trim($this->office_fax);
+        $this->user_mobile  = trim($this->user_mobile);
+        $this->email        = addslashes(trim($this->email));
+        $this->note         = addslashes(trim($this->note));
+        $this->webcal_login = addslashes(trim($this->webcal_login));
+        $this->phenix_login = addslashes(trim($this->phenix_login));
+        $this->admin        = $this->admin?$this->admin:0;
+        
+        $this->db->begin();
+        
+        // Mise a jour autres infos
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-        $sql.= " name = '".addslashes($this->nom)."'";
-        $sql.= ", firstname = '".addslashes($this->prenom)."'";
-        $sql.= ", login = '".addslashes($this->login)."'";
+        $sql.= " name = '".$this->nom."'";
+        $sql.= ", firstname = '".$this->prenom."'";
+        $sql.= ", login = '".$this->login."'";
         $sql.= ", admin = ".$this->admin;
-        $sql.= ", office_phone = '$this->office_phone'";
-        $sql.= ", office_fax = '$this->office_fax'";
-        $sql.= ", user_mobile = '$this->user_mobile'";
-        $sql.= ", email = '".addslashes($this->email)."'";
-        $sql.= ", webcal_login = '$this->webcal_login'";
-        $sql.= ", note = '".addslashes($this->note)."'";
+        $sql.= ", office_phone = '".$this->office_phone."'";
+        $sql.= ", office_fax = '".$this->office_fax."'";
+        $sql.= ", user_mobile = '".$this->user_mobile."'";
+        $sql.= ", email = '".$this->email."'";
+        $sql.= ", webcal_login = '".$this->webcal_login."'";
+        $sql.= ", phenix_login = '".$this->phenix_login."'";
+        $sql.= ", note = '".$this->note."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dolibarr_syslog("User::update sql=".$sql);

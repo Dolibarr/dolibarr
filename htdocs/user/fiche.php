@@ -3,7 +3,7 @@
  * Copyright (C) 2002-2003 Jean-Louis Bergamo   <jlb@j1b.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2005      Lionel COUSTEIX      <etm_ltd@tiscali.co.uk>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -142,17 +142,18 @@ if ($_POST["action"] == 'add' && $canadduser)
 	{
 		$edituser = new User($db);
 
-		$edituser->nom           = trim($_POST["nom"]);
-		$edituser->prenom        = trim($_POST["prenom"]);
-		$edituser->login         = trim($_POST["login"]);
-		$edituser->admin         = trim($_POST["admin"]);
-		$edituser->office_phone  = trim($_POST["office_phone"]);
-		$edituser->office_fax    = trim($_POST["office_fax"]);
-		$edituser->user_mobile   = trim($_POST["user_mobile"]);
-		$edituser->email         = trim($_POST["email"]);
-		$edituser->webcal_login  = trim($_POST["webcal_login"]);
-		$edituser->note          = trim($_POST["note"]);
-		$edituser->ldap_sid      = trim($_POST["ldap_sid"]);
+		$edituser->nom           = $_POST["nom"];
+		$edituser->prenom        = $_POST["prenom"];
+		$edituser->login         = $_POST["login"];
+		$edituser->admin         = $_POST["admin"];
+		$edituser->office_phone  = $_POST["office_phone"];
+		$edituser->office_fax    = $_POST["office_fax"];
+		$edituser->user_mobile   = $_POST["user_mobile"];
+		$edituser->email         = $_POST["email"];
+		$edituser->webcal_login  = $_POST["webcal_login"];
+		$edituser->phenix_login  = $_POST["phenix_login"];
+		$edituser->note          = $_POST["note"];
+		$edituser->ldap_sid      = $_POST["ldap_sid"];
 		
 		$db->begin();
 		
@@ -232,16 +233,17 @@ if ($_POST["action"] == 'update' && ! $_POST["cancel"] && $caneditfield)
 
 		//$edituser->oldpass_indatabase = $edituser->pass_indatabase;
 
-		$edituser->nom           = trim($_POST["nom"]);
-		$edituser->prenom        = trim($_POST["prenom"]);
-		$edituser->login         = trim($_POST["login"]);
-		$edituser->pass          = trim($_POST["pass"]);
-		$edituser->admin         = trim($_POST["admin"]);
-		$edituser->office_phone  = trim($_POST["office_phone"]);
-		$edituser->office_fax    = trim($_POST["office_fax"]);
-		$edituser->user_mobile   = trim($_POST["user_mobile"]);
-		$edituser->email         = trim($_POST["email"]);
-		$edituser->webcal_login  = trim($_POST["webcal_login"]);
+		$edituser->nom           = $_POST["nom"];
+		$edituser->prenom        = $_POST["prenom"];
+		$edituser->login         = $_POST["login"];
+		$edituser->pass          = $_POST["pass"];
+		$edituser->admin         = $_POST["admin"];
+		$edituser->office_phone  = $_POST["office_phone"];
+		$edituser->office_fax    = $_POST["office_fax"];
+		$edituser->user_mobile   = $_POST["user_mobile"];
+		$edituser->email         = $_POST["email"];
+		$edituser->webcal_login  = $_POST["webcal_login"];
+		$edituser->phenix_login  = $_POST["phenix_login"];
 
 		$ret=$edituser->update($user);
 		if ($ret < 0)
@@ -664,10 +666,19 @@ if (($action == 'create') || ($action == 'adduserldap'))
 	print "</td></tr>\n";
 	
 	// Autres caractéristiques issus des autres modules
+	
+	// Module Webcalendar
 	if ($conf->webcal->enabled)
 	{
 		print "<tr>".'<td valign="top">'.$langs->trans("LoginWebcal").'</td>';
 		print '<td><input size="30" type="text" name="webcal_login" value=""></td></tr>';
+	}
+	
+	// Module Phenix
+	if ($conf->phenix->enabled)
+	{
+		print "<tr>".'<td valign="top">'.$langs->trans("LoginPenix").'</td>';
+		print '<td><input size="30" type="text" name="phenix_login" value=""></td></tr>';
 	}
 	
 	print "<tr>".'<td align="center" colspan="2"><input class="button" value="'.$langs->trans("CreateUser").'" type="submit"></td></tr>';
@@ -895,27 +906,27 @@ else
             print "</tr>\n";
 
             // Tel pro
-			print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
- 			print '<td>'.$fuser->office_phone.'</td>';
-
-			// Tel mobile
- 			print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
- 			print '<td>'.$fuser->user_mobile.'</td>';
-
-			// Fax
- 			print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
- 			print '<td>'.$fuser->office_fax.'</td>';
-
-			// EMail
+            print '<tr><td width="25%" valign="top">'.$langs->trans("PhonePro").'</td>';
+            print '<td>'.$fuser->office_phone.'</td>';
+            
+            // Tel mobile
+            print '<tr><td width="25%" valign="top">'.$langs->trans("PhoneMobile").'</td>';
+            print '<td>'.$fuser->user_mobile.'</td>';
+            
+            // Fax
+            print '<tr><td width="25%" valign="top">'.$langs->trans("Fax").'</td>';
+            print '<td>'.$fuser->office_fax.'</td>';
+            
+            // EMail
             print '<tr><td width="25%" valign="top">'.$langs->trans("EMail").'</td>';
             print '<td><a href="mailto:'.$fuser->email.'">'.$fuser->email.'</a></td>';
             print "</tr>\n";
-
-			// Statut
-		    print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
-		    print '<td>';
-		   	print $fuser->getLibStatut(4);
-		    print '</td></tr>';
+            
+            // Statut
+            print '<tr><td valign="top">'.$langs->trans("Status").'</td>';
+            print '<td>';
+            print $fuser->getLibStatut(4);
+            print '</td></tr>';
 		
             print '<tr><td width="25%" valign="top">'.$langs->trans("LastConnexion").'</td>';
             print '<td>'.dolibarr_print_date($fuser->datelastlogin,"dayhour").'</td>';
@@ -926,6 +937,8 @@ else
             print "</tr>\n";
 
             // Autres caractéristiques issus des autres modules
+            
+            // Module Webcalendar
             if ($conf->webcal->enabled)
             {
                 $langs->load("other");
@@ -933,24 +946,35 @@ else
                 print '<td colspan="2">'.$fuser->webcal_login.'&nbsp;</td>';
                 print "</tr>\n";
             }
+            
+            // Module Phenix
+            if ($conf->phenix->enabled)
+            {
+                $langs->load("other");
+                print '<tr><td width="25%" valign="top">'.$langs->trans("LoginPhenix").'</td>';
+                print '<td colspan="2">'.$fuser->phenix_login.'&nbsp;</td>';
+                print "</tr>\n";
+            }
+            
+            // Module Adhérent
             if ($conf->adherent->enabled)
             {
-				$langs->load("members");
-				print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
-				print '<td colspan="2">';
-				if ($fuser->fk_member)
-				{
-					$adh=new Adherent($db);
-					$adh->fetch($fuser->fk_member);
-					$adh->ref=$adh->login;	// Force to show login instead of id
-					print $adh->getNomUrl(1);
-				}
-				else
-				{
-					print $langs->trans("UserNotLinkedToMember");
-				}
-				print '</td>';
-				print "</tr>\n";
+            	$langs->load("members");
+            	print '<tr><td width="25%" valign="top">'.$langs->trans("MemberAccount").'</td>';
+            	print '<td colspan="2">';
+            	if ($fuser->fk_member)
+            	{
+            		$adh=new Adherent($db);
+            		$adh->fetch($fuser->fk_member);
+            		$adh->ref=$adh->login;	// Force to show login instead of id
+            		print $adh->getNomUrl(1);
+            	}
+            	else
+            	{
+            		print $langs->trans("UserNotLinkedToMember");
+            	}
+            	print '</td>';
+            	print "</tr>\n";
             }
 
             print "</table>\n";
@@ -1139,7 +1163,7 @@ else
             print '<td colspan="2">';
             print $fuser->id;
             print '</td>';
-			print '</tr>';
+            print '</tr>';
 
             // Nom
             print "<tr>".'<td valign="top">'.$langs->trans("Name").'*</td>';
@@ -1154,8 +1178,8 @@ else
             	print $fuser->nom;
             }
             print '</td></tr>';
-
-			// Prenom
+            
+            // Prenom
             print "<tr>".'<td valign="top">'.$langs->trans("Firstname").'</td>';
             print '<td colspan="2">';
             if ($caneditfield && !$fuser->ldap_sid)
@@ -1197,9 +1221,9 @@ else
 	            print '<tr><td>';
 	            print '<input type="file" class="flat" name="photo">';
 	            print '</td></tr></table>';
-        	}
+	          }
             print '</td>';
-			print '</tr>';
+            print '</tr>';
 
             // Pass
             print '<tr><td valign="top">'.$langs->trans("Password").'</td>';
@@ -1285,46 +1309,46 @@ else
             print "</tr>\n";
 
             // Tel pro
-			print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
-			print '<td>';
-			if ($caneditfield  && !$fuser->ldap_sid)
-			{
-				print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
-				print $fuser->office_phone; 
-			}
-			print '</td></tr>';
-			
-			// Tel mobile
-			print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
-			print '<td>';
-			if ($caneditfield && !$fuser->ldap_sid)
-			{
-				print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
-				print $fuser->user_mobile; 
-			}
-			print '</td></tr>';
-
-			// Fax
-			print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
-			print '<td>';
-			if ($caneditfield  && !$fuser->ldap_sid)
-			{
-				print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
-			}
-			else
-			{
-				print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
-				print $fuser->office_fax; 
-			}
-			print '</td></tr>';
+            print "<tr>".'<td valign="top">'.$langs->trans("PhonePro").'</td>';
+            print '<td>';
+            if ($caneditfield  && !$fuser->ldap_sid)
+            {
+            	print '<input size="20" type="text" name="office_phone" class="flat" value="'.$fuser->office_phone.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="office_phone" value="'.$fuser->office_phone.'">';
+            	print $fuser->office_phone; 
+            }
+            print '</td></tr>';
+            
+            // Tel mobile
+            print "<tr>".'<td valign="top">'.$langs->trans("PhoneMobile").'</td>';
+            print '<td>';
+            if ($caneditfield && !$fuser->ldap_sid)
+            {
+            	print '<input size="20" type="text" name="user_mobile" class="flat" value="'.$fuser->user_mobile.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="user_mobile" value="'.$fuser->user_mobile.'">';
+            	print $fuser->user_mobile; 
+            }
+            print '</td></tr>';
+            
+            // Fax
+            print "<tr>".'<td valign="top">'.$langs->trans("Fax").'</td>';
+            print '<td>';
+            if ($caneditfield  && !$fuser->ldap_sid)
+            {
+            	print '<input size="20" type="text" name="office_fax" class="flat" value="'.$fuser->office_fax.'">';
+            }
+            else
+            {
+            	print '<input type="hidden" name="office_fax" value="'.$fuser->office_fax.'">';
+            	print $fuser->office_fax; 
+            }
+            print '</td></tr>';
 			
             // EMail
             print "<tr>".'<td valign="top">'.$langs->trans("EMail").'</td>';
@@ -1347,6 +1371,8 @@ else
             print '</td></tr>';
             
             // Autres caractéristiques issus des autres modules
+            
+            // Module Webcalendar
             if ($conf->webcal->enabled)
             {
             		$langs->load("other");
@@ -1354,6 +1380,17 @@ else
             		print '<td colspan="2">';
             		if ($caneditfield) print '<input size="30" type="text" class="flat" name="webcal_login" value="'.$fuser->webcal_login.'">';
             		else print $fuser->webcal_login;
+            		print '</td></tr>';
+            }
+            
+            // Module Phenix
+            if ($conf->phenix->enabled)
+            {
+            		$langs->load("other");
+            		print "<tr>".'<td valign="top">'.$langs->trans("LoginPhenix").'</td>';
+            		print '<td colspan="2">';
+            		if ($caneditfield) print '<input size="30" type="text" class="flat" name="phenix_login" value="'.$fuser->phenix_login.'">';
+            		else print $fuser->phenix_login;
             		print '</td></tr>';
             }
 
