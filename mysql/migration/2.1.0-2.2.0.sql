@@ -8,6 +8,10 @@
 -- sans AUCUNE erreur ni warning
 --
 
+-- Corrige mauvaise insertion du a champ trop court
+alter table llx_action_def modify code varchar(28) UNIQUE NOT NULL;
+update llx_action_def set code = 'NOTIFY_VAL_ORDER_SUPPLIER' where code = 'NOTIFY_VAL_ORDER_SUUPLIE';
+
 -- Nettoyage champ ref table llx_bank_account
 update llx_bank_account set ref=concat('ACCOUNT',rowid) where (ref='' or ref is null);
 

@@ -51,7 +51,7 @@ insert into llx_cond_reglement(rowid, code, sortorder, active, libelle, libelle_
 delete from llx_action_def;
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (1,'NOTIFY_VAL_FICHINTER','Validation fiche intervention','Déclenché lors de la validation d\'une fiche d\'intervention','ficheinter');
 insert into llx_action_def (rowid,code,titre,description,objet_type) values (2,'NOTIFY_VAL_FAC','Validation facture','Déclenché lors de la validation d\'une facture','facture');
-insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUUPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
+insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'NOTIFY_VAL_ORDER_SUPPLIER','Validation commande fournisseur','Déclenché lors de la validation d\'une commande fournisseur','order_supplier');
 
 --
 -- Constantes de configuration
