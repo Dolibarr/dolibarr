@@ -79,6 +79,7 @@ BugTracker=Bug tracker
 SendNewPasswordDesc=Ce formulaire permet d'envoyer un nouveau mot de passe. Il sera envoyé à l'adresse email de votre user.<br>La modification du mot de passe ne sera effective qu'après clic par le destinataire du lien de confirmation inclut dans ce mail.<br>Surveillez votre messagerie.
 BackToLoginPage=Retour page de connexion
 AuthenticationDoesNotAllowSendNewPassword=Le mode d'authentification de Dolibarr est configuré à "<b>%s</b>".<br>Dans ce mode, Dolibarr n'a pas la possibilité de connaitre ni modifier votre mot de passe.<br>Contacter votre administrateur pour connaitre les modalités de changement.
+EnableGDLibraryDesc=Vous devez activer ou installer la librairie GD avec votre PHP pour pouvoir activer cette option.
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

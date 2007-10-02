@@ -34,6 +34,7 @@ NextValueForCreditNotes=Next value (credit notes)
 MustBeLowerThanPHPLimit=Note: your PHP limits upload size to <b>%s</b> %s, whatever is this parameter's value
 NoMaxSizeByPHPLimit=Note: No limit are built in your PHP
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
+UseCaptchaCode=Use Captcha code
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 MenuSetup=Menus management setup

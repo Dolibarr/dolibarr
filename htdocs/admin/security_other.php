@@ -136,32 +136,38 @@ print '<td align="center" width="80">'.$langs->trans("Activated").'</td>';
 print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
 print '</tr>';
 
-// Disable clear password in database
+// Enable Captcha code
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
+print '<td align="center" width="60">';
+if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
+{
+ print img_tick();
+}
+print '</td>';
+print '<td align="center" width="100">';
 if (function_exists("imagecreatefrompng"))
 {
-	$var=!$var;
-	print "<tr ".$bc[$var].">";
-  print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
-  print '<td align="center" width="60">';
-  if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
-  {
-	  print img_tick();
-  }
-  print '</td>';
-  print '<td align="center" width="100">';
-  if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
-  {
-	  print '<a href="security_other.php?action=activate_captcha">'.$langs->trans("Activate").'</a>';
-  }
-  if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
-  {
-	  print '<a href="security_other.php?action=disable_captcha">'.$langs->trans("Disable").'</a>';
-  }
-  print "</td>";
-
-  print "</td>";
-  print '</tr>';
+	if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
+	{
+		print '<a href="security_other.php?action=activate_captcha">'.$langs->trans("Activate").'</a>';
+	}
+	if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1 && function_exists("imagecreatefrompng"))
+	{
+		print '<a href="security_other.php?action=disable_captcha">'.$langs->trans("Disable").'</a>';
+	}
 }
+else
+{
+	$html = new Form($db);
+	$desc = $html->textwithwarning('',$langs->transnoentities("EnableGDLibraryDesc"),1);
+	print $desc;
+}
+print "</td>";
+
+print "</td>";
+print '</tr>';
 
 print '</table>';
 
