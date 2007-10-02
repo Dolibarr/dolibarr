@@ -232,7 +232,7 @@ print '></td>';
 
 print '</tr>'."\n";
 
-if (function_exists("imagecreatefrompng") && ! $disabled)
+if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA && ! $disabled)
 {
 	//print "Info session: ".session_name().session_id();print_r($_SESSION);
 	$cryptinstall = DOL_URL_ROOT.'/includes/cryptographp';

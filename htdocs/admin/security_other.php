@@ -51,6 +51,18 @@ if ($_GET["action"] == 'set_main_upload_doc')
 	}
 }
 
+if ($_GET["action"] == 'activate_captcha')
+{
+	dolibarr_set_const($db, "MAIN_SECURITY_ENABLECAPTCHA", '1');
+	Header("Location: security_other.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_captcha')
+{
+	dolibarr_del_const($db, "MAIN_SECURITY_ENABLECAPTCHA");
+	Header("Location: security_other.php");
+	exit;
+}
 
 
 /*
@@ -111,7 +123,47 @@ print '</td>';
 print '</tr></form>';
 print '</table>';
 
-//print '<tr><td colspan="2" align="center"><input type="submit" class="button" value="'.$langs->trans("Save").'"></td></tr>';
+print '<br>';
+
+// Autre Options
+
+$var=true;
+
+print '<table class="noborder" width="100%">';
+print '<tr class="liste_titre">';
+print '<td colspan="3">'.$langs->trans("Parameters").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Activated").'</td>';
+print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+print '</tr>';
+
+// Disable clear password in database
+if (function_exists("imagecreatefrompng"))
+{
+	$var=!$var;
+	print "<tr ".$bc[$var].">";
+  print '<td colspan="3">'.$langs->trans("UseCaptchaCode").'</td>';
+  print '<td align="center" width="60">';
+  if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
+  {
+	  print img_tick();
+  }
+  print '</td>';
+  print '<td align="center" width="100">';
+  if ($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 0)
+  {
+	  print '<a href="security_other.php?action=activate_captcha">'.$langs->trans("Activate").'</a>';
+  }
+  if($conf->global->MAIN_SECURITY_ENABLECAPTCHA == 1)
+  {
+	  print '<a href="security_other.php?action=disable_captcha">'.$langs->trans("Disable").'</a>';
+  }
+  print "</td>";
+
+  print "</td>";
+  print '</tr>';
+}
+
+print '</table>';
 
 print '</div>';
 
