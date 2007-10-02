@@ -187,6 +187,7 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (301, 'home', '$leftmenu=="admintools"', 300, '/admin/tools/dolibarr_export.php', 'Backup', 1, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (302, 'home', '$leftmenu=="admintools"', 300, '/admin/tools/dolibarr_import.php', 'Restore', 1, 'admin', '', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (303, 'home', '$leftmenu=="admintools"', 300, '/admin/tools/purge.php', 'Purge', 1, 'admin', '', '', 2, 2);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (304, 'home', '$leftmenu=="admintools"', 300, '/admin/tools/eaccelerator.php', 'EAccelerator', 1, 'admin', '', '', 2, 3);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (400, 'home', '', 1, '/user/home.php?leftmenu=users', 'MenuUsersAndGroups', 0, 'users', '', '', 2, 3);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (401, 'home', '$leftmenu=="users"', 400, '/user/index.php', 'Users', 1, 'users', '$user->rights->user->user->lire || $user->admin', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (402, 'home', '$leftmenu=="users"', 401, '/user/fiche.php?action=create', 'NewUser', 2, 'users', '$user->rights->user->user->creer || $user->admin', '', 2, 0);
@@ -451,6 +452,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (44, '$conf->droitp
 insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energie->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->telephonie->enabled');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (48, '($user->admin && function_exists("eaccelerator_info"))');
 
 -- 
 -- Contenu de la table `llx_menu_const`
@@ -458,12 +460,13 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->teleph
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (1, 100, 1, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (2, 200, 1, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (3, 300, 1, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (4, 501, 3, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (5, 502, 4, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (6, 504, 6, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (7, 503, 5, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (8, 504, 5, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (9, 505, 5, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (4, 304, 48, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (5, 501, 3, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (6, 502, 4, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (7, 504, 6, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (8, 503, 5, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (9, 504, 5, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (10, 505, 5, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (11, 500, 2, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (12, 1100, 7, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (13, 1200, 8, 2);
