@@ -446,7 +446,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		session_name($sessionname);
 		session_start();
 		$langs->load('main');
-		$_SESSION["loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($result == 0) $_SESSION["loginmesg"]=$langs->trans("ErrorCantLoadUserFromDolibarrDatabase",$login);
+		if ($result < 0) $_SESSION["loginmesg"]=$user->error;
 		header('Location: '.DOL_URL_ROOT.'/index.php');
 		exit;
 	}
@@ -457,7 +458,7 @@ else
 	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifiés
 	$login=$_SESSION["dol_login"];
 	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
-	$user->fetch($login);
+	$result=$user->fetch($login);
 	$login=$user->login;
 }
 

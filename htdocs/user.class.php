@@ -115,7 +115,7 @@ class User
 	/**
 	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
 	*	\param      login       Si défini, login a utiliser pour recherche
-	*	\return		int			<0 si ko, >0 si ok
+	*	\return		int			<0 if KO, 0 not found, >0 if OK
 	*/
 	function fetch($login='')
 	{
@@ -197,10 +197,10 @@ class User
 			else
 			{
 				$this->error="USERNOTFOUND";
-				dolibarr_syslog("User::fetch Error -2, fails to get user - ".$this->error." - sql=".$sql);
+				dolibarr_syslog("User::fetch Error 0, fails to get user - ".$this->error." - sql=".$sql);
 
 				$this->db->free($result);
-				return -2;
+				return 0;
 			} 			
 		}
 		else
@@ -924,18 +924,18 @@ class User
         dolibarr_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
         // Nettoyage parametres
-        $this->nom          = addslashes(trim($this->nom));
-        $this->prenom       = addslashes(trim($this->prenom));
+        $this->nom          = trim($this->nom);
+        $this->prenom       = trim($this->prenom);
         $this->fullname     = $this->prenom." ".$this->nom;
-        $this->login        = addslashes(trim($this->login));
+        $this->login        = trim($this->login);
         $this->pass         = trim($this->pass);
         $this->office_phone = trim($this->office_phone);
         $this->office_fax   = trim($this->office_fax);
         $this->user_mobile  = trim($this->user_mobile);
-        $this->email        = addslashes(trim($this->email));
-        $this->note         = addslashes(trim($this->note));
-        $this->webcal_login = addslashes(trim($this->webcal_login));
-        $this->phenix_login = addslashes(trim($this->phenix_login));
+        $this->email        = trim($this->email);
+        $this->note         = trim($this->note);
+        $this->webcal_login = trim($this->webcal_login);
+        $this->phenix_login = trim($this->phenix_login);
         if ($this->phenix_pass != $this->phenix_pass_crypted)
         {
         	$this->phenix_pass  = md5(trim($this->phenix_pass));
@@ -946,18 +946,18 @@ class User
         
         // Mise a jour autres infos
         $sql = "UPDATE ".MAIN_DB_PREFIX."user SET";
-        $sql.= " name = '".$this->nom."'";
-        $sql.= ", firstname = '".$this->prenom."'";
-        $sql.= ", login = '".$this->login."'";
+        $sql.= " name = '".addslashes($this->nom)."'";
+        $sql.= ", firstname = '".addslashes($this->prenom)."'";
+        $sql.= ", login = '".addslashes($this->login)."'";
         $sql.= ", admin = ".$this->admin;
-        $sql.= ", office_phone = '".$this->office_phone."'";
-        $sql.= ", office_fax = '".$this->office_fax."'";
-        $sql.= ", user_mobile = '".$this->user_mobile."'";
-        $sql.= ", email = '".$this->email."'";
-        $sql.= ", webcal_login = '".$this->webcal_login."'";
-        $sql.= ", phenix_login = '".$this->phenix_login."'";
-        $sql.= ", phenix_pass = '".$this->phenix_pass."'";
-        $sql.= ", note = '".$this->note."'";
+        $sql.= ", office_phone = '".addslashes($this->office_phone)."'";
+        $sql.= ", office_fax = '".addslashes($this->office_fax)."'";
+        $sql.= ", user_mobile = '".addslashes($this->user_mobile)."'";
+        $sql.= ", email = '".addslashes($this->email)."'";
+        $sql.= ", webcal_login = '".addslashes($this->webcal_login)."'";
+        $sql.= ", phenix_login = '".addslashes($this->phenix_login)."'";
+        $sql.= ", phenix_pass = '".addslashes($this->phenix_pass)."'";
+        $sql.= ", note = '".addslashes($this->note)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
         dolibarr_syslog("User::update sql=".$sql);
