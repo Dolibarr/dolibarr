@@ -330,7 +330,7 @@ class MenuTop {
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
         }
         
-        // Webcal
+        // Phenix
         if ($conf->phenix->enabled)
         {
             $langs->load("other");
