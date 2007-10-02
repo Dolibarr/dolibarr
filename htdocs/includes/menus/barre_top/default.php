@@ -329,6 +329,28 @@ class MenuTop {
 
             print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/webcal/webcal.php?mainmenu=webcal"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
         }
+        
+        // Webcal
+        if ($conf->phenix->enabled)
+        {
+            $langs->load("other");
+
+            $class="";
+            if ($_SESSION["mainmenu"] && $_SESSION["mainmenu"] == "phenix")
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            elseif (ereg("^".DOL_URL_ROOT.".*\/phenix",$_SERVER["PHP_SELF"]))
+            {
+                $class='class="tmenu" id="sel"';
+            }
+            else
+            {
+                $class = 'class="tmenu"';
+            }
+
+            print '<td class="tmenu"><a '.$class.' href="'.DOL_URL_ROOT.'/phenix/phenix.php?mainmenu=phenix"'.($this->atarget?" target=$this->atarget":"").'>'.$langs->trans("Calendar").'</a></td>';
+        }
 
         // Mantis
         if ($conf->mantis->enabled)
