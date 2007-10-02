@@ -39,6 +39,7 @@ create table llx_user
   email             varchar(255),
   admin             smallint DEFAULT 0,
   webcal_login      varchar(25),
+  phenix_login      varchar(25),
   module_comm       smallint DEFAULT 1,
   module_compta     smallint DEFAULT 1,
   fk_societe        integer,

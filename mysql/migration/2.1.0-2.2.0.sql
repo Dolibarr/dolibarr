@@ -156,6 +156,7 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (13, 'webcal', '', 0, '/webcal/webcal.php?mainmenu=webcal&amp;leftmenu=', 'Calendar', -1, 'other', '', '', 0, 13);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (14, 'mantis', '', 0, '/mantis/mantis.php?mainmenu=mantis', 'BugTracker', -1, 'other', '', '', 2, 14);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (15, 'members', '', 0, '/adherents/index.php?mainmenu=members&amp;leftmenu=', 'Members', -1, 'members', '', '', 2, 15);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (16, 'phenix', '', 0, '/phenix/phenix.php?mainmenu=phenix&amp;leftmenu=', 'Calendar', -1, 'other', '', '', 0, 16);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (100, 'home', '', 1, '/admin/index.php?leftmenu=setup', 'Setup', 0, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (101, 'home', '$leftmenu=="setup"', 100, '/admin/company.php', 'MenuCompanySetup', 1, 'admin', '', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (102, 'home', '$leftmenu=="setup"', 100, '/admin/ihm.php', 'GUISetup', 1, 'admin', '', '', 2, 1);
@@ -929,3 +930,5 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (7, 'A4', 'Format A4', '210', '297', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (8, 'A5', 'Format A5', '148', '210', 'mm', 1);
 INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active) VALUES (9, 'A6', 'Format A6', '105', '148', 'mm', 1);
+
+ALTER TABLE llx_user ADD COLUMN phenix_login varchar(25) after webcal_login;
