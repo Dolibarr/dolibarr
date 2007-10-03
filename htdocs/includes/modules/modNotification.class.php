@@ -54,7 +54,7 @@ class modNotification extends DolibarrModules
     $this->family = "technic";
     $this->name = "Notifications";
     $this->description = "Gestion des notifications (par mail) sur évênement Dolibarr";
-    $this->version = 'experimental';	// 'experimental' or 'dolibarr' or version
+    $this->version = 'dolibarr';	// 'experimental' or 'dolibarr' or version
     $this->const_name = 'MAIN_MODULE_NOTIFICATION';
     $this->special = 1;
     $this->picto='email';
