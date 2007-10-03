@@ -197,7 +197,7 @@ class User
 			else
 			{
 				$this->error="USERNOTFOUND";
-				dolibarr_syslog("User::fetch Error 0, fails to get user - ".$this->error." - sql=".$sql);
+				dolibarr_syslog("User::fetch user not found", LOG_DEBUG);
 
 				$this->db->free($result);
 				return 0;
@@ -206,7 +206,7 @@ class User
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql);
+			dolibarr_syslog("User::fetch Error -1, fails to get user - ".$this->error." - sql=".$sql, LOG_ERR);
 			return -1;
 		}
 		
@@ -232,7 +232,7 @@ class User
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql);
+			dolibarr_syslog("User::fetch Error -2, fails to get setup user - ".$this->error." - sql=".$sql, LOG_ERR);
 			return -2;
 		}
 		

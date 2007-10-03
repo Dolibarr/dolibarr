@@ -1298,25 +1298,29 @@ class Facture extends CommonObject
 
   /**
    * 		\brief    	Ajoute une ligne de facture (associé à un produit/service prédéfini ou non)
-   * 		\param    	facid           Id de la facture
-   * 		\param    	desc            Description de la ligne
-   * 		\param    	pu              Prix unitaire
-   * 		\param    	qty             Quantité
-   * 		\param    	txtva           Taux de tva forcé, sinon -1
-   *		\param    	fk_product      Id du produit/service predéfini
-   * 		\param    	remise_percent  Pourcentage de remise de la ligne
-   * 		\param    	date_start      Date de debut de validité du service
-   * 		\param    	date_end        Date de fin de validité du service
-   * 		\param    	ventil          Code de ventilation comptable
-   * 		\param    	info_bits		Bits de type de lignes
+   * 		\param    	facid           	Id de la facture
+   * 		\param    	desc            	Description de la ligne
+   * 		\param    	pu_ht              	Prix unitaire HT
+   * 		\param    	qty             	Quantité
+   * 		\param    	txtva           	Taux de tva forcé, sinon -1
+   *		\param    	fk_product      	Id du produit/service predéfini
+   * 		\param    	remise_percent  	Pourcentage de remise de la ligne
+   * 		\param    	date_start      	Date de debut de validité du service
+   * 		\param    	date_end        	Date de fin de validité du service
+   * 		\param    	ventil          	Code de ventilation comptable
+   * 		\param    	info_bits			Bits de type de lignes
+   *		\param    	fk_remise_exscept	Id remise
+   *		\param		price_base_type		HT or TTC
+   * 		\param    	pu_ttc             	Prix unitaire TTC
+   *    	\return    	int             	>0 si ok, <0 si ko
    * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
    *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-	function addline($facid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
+	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
 	{
-		dolibarr_syslog("Facture::Addline $facid,$desc,$pu,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$fk_remise_except", LOG_DEBUG);
+		dolibarr_syslog("Facture::Addline $facid,$desc,$pu_ht,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$fk_remise_except,$price_base_type,$pu_ttc", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1329,9 +1333,11 @@ class Facture extends CommonObject
 			if (! $qty) $qty=1;
 			if (! $ventil) $ventil=0;
 			if (! $info_bits) $info_bits=0;
-			$pu = price2num($pu);
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
-			if ($price_base_type=='HT') $pu=$pu;
+
+			if ($price_base_type=='HT') $pu=$pu_ht;
 			else $pu=$pu_ttc;
 			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
@@ -1361,7 +1367,7 @@ class Facture extends CommonObject
 			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$pu;
+			$ligne->subprice=$pu_ht;
 			$ligne->date_start=$date_start;
 			$ligne->date_end=$date_end;
 			$ligne->ventil=$ventil;
@@ -1552,94 +1558,99 @@ class Facture extends CommonObject
      \return		int			<0 si ko, >0 si ok
    */
   function update_price($facid)
-  {
-    $tvas=array();
-    $err=0;
+	{
+		$tvas=array();
+		$err=0;
 
-    // Liste des lignes factures a sommer (Ne plus utiliser price)
-    $sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
-    $sql.= ' total_ht, total_tva, total_ttc';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
-    $sql.= ' WHERE fk_facture = '.$facid;
+		// Liste des lignes factures a sommer (Ne plus utiliser price)
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
+		$sql.= ' total_ht, total_tva, total_ttc';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
+		$sql.= ' WHERE fk_facture = '.$facid;
 
-    $resql = $this->db->query($sql);
-    if ($resql)
-      {
-	$this->total_ht  = 0;
-	$this->total_tva = 0;
-	$this->total_ttc = 0;
-	$num = $this->db->num_rows($resql);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object($resql);
+		dolibarr_syslog("Facture::update_price sql=".$sql);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			$this->total_ht  = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($resql);
 
-	    $this->total_ht       += $obj->total_ht;
-	    $this->total_tva      += ($obj->total_ttc - $obj->total_ht);
-	    $this->total_ttc      += $obj->total_ttc;
+				$this->total_ht       += $obj->total_ht;
+				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc      += $obj->total_ttc;
 
-	    // Ne plus utiliser amount, ni remise
-	    $this->amount_ht      += ($obj->price * $obj->qty);
-	    $this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-	    $tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
-	    $i++;
-	  }
+				// Ne plus utiliser amount, ni remise
+				$this->amount_ht      += ($obj->price * $obj->qty);
+				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
+				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
+				$i++;
+			}
 
-	$this->db->free($resql);
+			$this->db->free($resql);
 
-	// Met a jour indicateurs sur facture
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-	$sql .= "SET amount ='".price2num($this->amount_ht)."'";
-	$sql .= ", remise='".   price2num($this->total_remise)."'";
-	$sql .= ", total='".    price2num($this->total_ht)."'";
-	$sql .= ", tva='".      price2num($this->total_tva)."'";
-	$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-	$sql .= ' WHERE rowid = '.$facid;
-	$resql=$this->db->query($sql);
+			// Met a jour indicateurs
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
+			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
+			$sql .= ", remise='".   price2num($this->total_remise)."'";
+			$sql .= ", total='".    price2num($this->total_ht)."'";
+			$sql .= ", tva='".      price2num($this->total_tva)."'";
+			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
+			$sql .= ' WHERE rowid = '.$facid;
+			$resql=$this->db->query($sql);
 
-	if ($resql)
-	  {
-	    // \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable
-	    // dans un context compta propre. On utilisera plutot les lignes.
-	    $sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture='.$this->id;
-	    if ( $this->db->query($sql) )
-	      {
-		foreach ($tvas as $key => $value)
-		  {
-		    $sql_del = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum where fk_facture ='.$this->id;
-		    $this->db->query($sql_del);
-		    $sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".price2num($tvas[$key])."','".price2num($key)."');";
-		    if (! $this->db->query($sql) )
-		      {
-			dolibarr_print_error($this->db);
-			$err++;
-		      }
-		  }
-	      }
-	    else
-	      {
-		$err++;
-	      }
+			if ($resql)
+			{
+				// \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable
+				// dans un context compta propre. On utilisera plutot les lignes.
+				$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum WHERE fk_facture='.$this->id;
+				if ( $this->db->query($sql) )
+				{
+					foreach ($tvas as $key => $value)
+					{
+						$sql_del = 'DELETE FROM '.MAIN_DB_PREFIX.'facture_tva_sum where fk_facture ='.$this->id;
+						$this->db->query($sql_del);
+						$sql = 'INSERT INTO '.MAIN_DB_PREFIX."facture_tva_sum (fk_facture,amount,tva_tx) values ($this->id,'".price2num($tvas[$key])."','".price2num($key)."');";
+						if (! $this->db->query($sql) )
+						{
+							dolibarr_print_error($this->db);
+							$err++;
+						}
+					}
+				}
+				else
+				{
+					$err++;
+				}
 
-	    if ($err == 0)
-	      {
-		return 1;
-	      }
-	    else
-	      {
-		return -3;
-	      }
-	  }
-	else
-	  {
-	    dolibarr_print_error($this->db);
-	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);
-      }
-  }
+				if ($err == 0)
+				{
+					return 1;
+				}
+				else
+				{
+					return -3;
+				}
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Facture::update_price error=".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Facture::update_price error=".$this->error,LOG_ERR);
+			return -1;
+		}
+	}
 
   /**
    * 		\brief     	Applique une remise relative
@@ -2831,10 +2842,11 @@ class FactureLigne
 
 
 	/**
-	*    \brief     	Insère l'objet ligne de facture en base
-	*	\return		int		<0 si ko, >0 si ok
+	*   \brief     	Insère l'objet ligne de facture en base
+	*	\param      notrigger		1 ne declenche pas les triggers, 0 sinon
+	*	\return		int				<0 si ko, >0 si ok
 	*/
-	function insert()
+	function insert($notrigger=0)
 	{
 		global $langs;
 		
@@ -2945,12 +2957,15 @@ class FactureLigne
 				}
 			}
 			
-			// Appel des triggers
-			include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-			$interface=new Interfaces($this->db);
-			$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
-			// Fin appel triggers
-
+			if (! $notrigger)
+            {
+				// Appel des triggers
+				include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+				$interface=new Interfaces($this->db);
+				$result = $interface->run_triggers('LINEBILL_INSERT',$this,$user,$langs,$conf);
+				// Fin appel triggers
+			}
+			
 			$this->db->commit();
 			return $this->rowid;
 

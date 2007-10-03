@@ -256,76 +256,86 @@ if ($_REQUEST['action'] == 'setremiseabsolue' && $user->rights->facture->creer)
  */
 if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 {
-  if ($_POST['qty'] && (($_POST['pu'] && $_POST['np_desc']) || $_POST['idprod']))
-  {
-  	$commande = new Commande($db);
-    $ret=$commande->fetch($_POST['id']);
-    $soc = new Societe($db, $commande->socid);
-    $soc->fetch($commande->socid);
-    
-    if ($ret < 0)
-    {
-    	dolibarr_print_error($db,$commande->error);
-    	exit;
-    }
-
-    // Ecrase $pu par celui du produit
-    // Ecrase $desc par celui du produit
-    // Ecrase $txtva par celui du produit
-    if ($_POST['idprod'])
-    {
-    	$prod = new Product($db, $_POST['idprod']);
-    	$prod->fetch($_POST['idprod']);
-    	
-    	$libelle = $prod->libelle;
-    	
-    	// multiprix
-    	if ($conf->global->PRODUIT_MULTIPRICES == 1)
-	    {
-	      $pu = $prod->multiprices[$soc->price_level];
-	    }
-	    else
-	    {
-	      $pu=$prod->price;
-	    }
-	    
-	    // La description de la ligne est celle saisie ou
-	    // celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
-	    if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-	    {
-	      $desc = $prod->description;
-	    }
-	    else
-	    {
-	    	$desc=$_POST['np_desc'];
-	    }
-	    
-	    $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx); 
-	  }
-	  else
-	  {
-	  	$pu=$_POST['pu'];
-	  	$tva_tx=$_POST['tva_tx'];
-	  	$desc=$_POST['np_desc'];
-	  }
-
-      $commande->addline(
-			 $_POST['id'],
-			 $desc,
-			 $pu,
-			 $_POST['qty'],
-			 $tva_tx,
-			 $_POST['idprod'],
-			 $_POST['remise_percent']
-			 );
-
-      if ($_REQUEST['lang_id'])
+	if ($_POST['qty'] && (($_POST['pu'] != '' && $_POST['np_desc']) || $_POST['idprod']))
 	{
-	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		$commande = new Commande($db);
+		$ret=$commande->fetch($_POST['id']);
+		$ret=$commande->fetch_client();
+		if ($ret < 0)
+		{
+			dolibarr_print_error($db,$commande->error);
+			exit;
+		}
+
+		$price_base_type = 'HT';
+
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+		// Ecrase $base_price_type par celui du produit
+		if ($_POST['idprod'])
+		{
+			$prod = new Product($db, $_POST['idprod']);
+			$prod->fetch($_POST['idprod']);
+			
+			$price_base_type = $prod->price_base_type;
+			
+			$libelle = $prod->libelle;
+			
+			// multiprix
+			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+            	$pu = $prod->multiprices[$commande->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+			}
+			else
+			{
+				$pu = $prod->price;
+	            $pu_ttc = $prod->price_ttc;
+			}
+			
+			// La description de la ligne est celle saisie ou
+			// celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
+			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
+			{
+				$desc = $prod->description;
+			}
+			else
+			{
+				$desc=$_POST['np_desc'];
+			}
+			
+			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx); 
+		}
+		else
+		{
+			$pu=$_POST['pu'];
+			$tva_tx=$_POST['tva_tx'];
+			$desc=$_POST['np_desc'];
+		}
+
+		$commande->addline(
+			$_POST['id'],
+			$desc,
+			$pu,
+			$_POST['qty'],
+			$tva_tx,
+			$_POST['idprod'],
+			$_POST['remise_percent'],
+			'',
+			'',
+			$price_base_type,
+			$pu_ttc
+			);
+
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 	}
-      commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
-    }
 }
 
 /*
@@ -1268,6 +1278,7 @@ else
 			*/
 			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, ';
 			$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.info_bits,';
+			$sql.= ' l.total_ht, l.total_tva, l.total_ttc,';
 			$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid, ';
 			$sql.= ' p.description as product_desc';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
@@ -1386,7 +1397,7 @@ else
 						{
 							print '<td>&nbsp;</td>';
 						}
-						print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
+						print '<td align="right">'.price($objp->total_ht).'</td>';
 
 						// Icone d'edition et suppression
 						if ($commande->statut == 0  && $user->rights->commande->creer)

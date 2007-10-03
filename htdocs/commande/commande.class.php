@@ -605,102 +605,111 @@ class Commande extends CommonObject
   
   
   /**
-   *    	\brief     	Ajout d'un produit dans la commande, en base
-   * 		\param    	commandeid      id de la commande
-   * 		\param    	desc            description de la ligne
-   * 		\param    	pu              prix unitaire
-   * 		\param    	qty             quantité
-   * 		\param    	txtva           taux de tva forcé, sinon -1
-   *		\param    	fk_product      id du produit/service predéfini
-   * 		\param    	remise_percent  pourcentage de remise de la ligne
-   *    	\return    	int             >0 si ok, <0 si ko
+   *    	\brief     	Ajoute une ligne de produit (associé à un produit/service prédéfini ou non)
+   * 		\param    	commandeid      	Id de la commande
+   * 		\param    	desc            	Description de la ligne
+   * 		\param    	pu_ht              	Prix unitaire HT
+   * 		\param    	qty             	Quantité
+   * 		\param    	txtva           	Taux de tva forcé, sinon -1
+   *		\param    	fk_product      	Id du produit/service predéfini
+   * 		\param    	remise_percent  	Pourcentage de remise de la ligne
+   * 		\param    	info_bits			Bits de type de lignes
+   *		\param    	fk_remise_exscept	Id remise
+   *		\param		price_base_type		HT or TTC
+   * 		\param    	pu_ttc             	Prix unitaire TTC
+   *    	\return    	int             	>0 si ok, <0 si ko
    *    	\see       	add_product
    * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
    *					de cette methode. Aussi, pour le taux tva, il doit deja avoir ete défini
    *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
    *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
    */
-  function addline($commandeid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $fk_remise_except=0, $info_bits=0, $price_base_type='HT')
-  {
-    dolibarr_syslog("Commande.class.php::addline this->id=$this->id, $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent");
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-    
-    if ($this->statut == 0)
-      {
-	$this->db->begin();
-	
-	// Nettoyage paramètres
-	$remise_percent=price2num($remise_percent);
-	$qty=price2num($qty);
-	if (! $qty) $qty=1;
-	$pu = price2num($pu);
-	$txtva = price2num($txtva);
-	
-	// Calcul du total TTC et de la TVA pour la ligne a partir de
-	// qty, pu, remise_percent et txtva
-	// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
-	// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-	$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
-	$total_ht  = $tabprice[0];
-	$total_tva = $tabprice[1];
-	$total_ttc = $tabprice[2];
-	
-	// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-	$price = $pu;
-	if ($remise_percent > 0)
-	  {
-	    $remise = round(($pu * $remise_percent / 100), 2);
-	    $price = $pu - $remise;
-	  }
-	
-	// Insertion ligne
-	$ligne=new CommandeLigne($this->db);
-	
-	$ligne->fk_commande=$commandeid;
-	$ligne->desc=$desc;
-	$ligne->qty=$qty;
-	$ligne->tva_tx=$txtva;
-	$ligne->fk_product=$fk_product;
-	$ligne->fk_remise_except=$fk_remise_except;
-	$ligne->remise_percent=$remise_percent;
-	$ligne->subprice=$pu;
-	$ligne->rang=-1;
-	$ligne->info_bits=$info_bits;
-	$ligne->total_ht=$total_ht;
-	$ligne->total_tva=$total_tva;
-	$ligne->total_ttc=$total_ttc;
-	
-	// Ne plus utiliser
-	$ligne->price=$price;
-	$ligne->remise=$remise;
-	
-	$result=$ligne->insert();			
-	if ($result > 0)
-	  {
-	    // Mise a jour informations denormalisees au niveau de la commande meme
-	    $result=$this->update_price($this->id);
-	    
-	    if ($result > 0)
-	      {
-		$this->db->commit();
-		return 1;
-	      }
-	    else
-	      {
-		$this->error=$this->db->error();
-		dolibarr_syslog("Error sql=$sql, error=".$this->error);
-		$this->db->rollback();
-		return -1;
-	      }
-	  }
-	else
-	  {
-	    $this->error=$ligne->error;
-	    $this->db->rollback();
-	    return -2;
-	  }
-      }
-  }
+	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0)
+	{
+		dolibarr_syslog("Commande::addline $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc");
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		
+		if ($this->statut == 0)
+		{
+			$this->db->begin();
+			
+			// Nettoyage paramètres
+			$remise_percent=price2num($remise_percent);
+			$qty=price2num($qty);
+			if (! $qty) $qty=1;
+			if (! $info_bits) $info_bits=0;
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
+			$txtva = price2num($txtva);
+			
+			if ($price_base_type=='HT') $pu=$pu;
+			else $pu=$pu_ttc;
+
+			// Calcul du total TTC et de la TVA pour la ligne a partir de
+			// qty, pu, remise_percent et txtva
+			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			$tabprice = calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			$total_ht  = $tabprice[0];
+			$total_tva = $tabprice[1];
+			$total_ttc = $tabprice[2];
+			
+			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
+			$price = $pu;
+			$remise = 0;
+			if ($remise_percent > 0)
+			{
+				$remise = round(($pu * $remise_percent / 100), 2);
+				$price = $pu - $remise;
+			}
+			
+			// Insertion ligne
+			$ligne=new CommandeLigne($this->db);
+			
+			$ligne->fk_commande=$commandeid;
+			$ligne->desc=$desc;
+			$ligne->qty=$qty;
+			$ligne->tva_tx=$txtva;
+			$ligne->fk_product=$fk_product;
+			$ligne->fk_remise_except=$fk_remise_except;
+			$ligne->remise_percent=$remise_percent;
+			$ligne->subprice=$pu_ht;
+			$ligne->rang=-1;
+			$ligne->info_bits=$info_bits;
+			$ligne->total_ht=$total_ht;
+			$ligne->total_tva=$total_tva;
+			$ligne->total_ttc=$total_ttc;
+			
+			// Ne plus utiliser
+			$ligne->price=$price;
+			$ligne->remise=$remise;
+			
+			$result=$ligne->insert();			
+			if ($result > 0)
+			{
+				// Mise a jour informations denormalisees au niveau de la commande meme
+				$result=$this->update_price($this->id);
+				if ($result > 0)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					dolibarr_syslog("Error sql=$sql, error=".$this->error);
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->error=$ligne->error;
+				$this->db->rollback();
+				return -2;
+			}
+		}
+	}
   
   
   /**
@@ -1438,75 +1447,72 @@ class Commande extends CommonObject
    *    \brief      Mets à jour le prix total de la commnde
    *    \return     int     <0 si ko, >0 si ok
    */
-  function update_price()
-  {
-    include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-    
-    // Liste des lignes factures a sommer
-    $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
-    $sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
-    $sql.= " WHERE fk_commande = ".$this->id;
-    
-    dolibarr_syslog("Commande.class.php::update_price this->id=".$this->id);
-    
-    $result = $this->db->query($sql);
-    if ($result)
-      {
-	$this->total_ht  = 0;
-	$this->total_tva = 0;
-	$this->total_ttc = 0;
-	
-	$num = $this->db->num_rows($result);
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $obj = $this->db->fetch_object($result);
-	    
-	    $this->total_ht    += $obj->total_ht;
-	    $this->total_tva   += ($obj->total_ttc - $obj->total_ht);
-	    $this->total_ttc   += $obj->total_ttc;
-	    
-	    // Anciens indicateurs
-	    $this->amount_ht      += $obj->price * $obj->qty;
-	    $this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-	    /* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-	       $products[$i][0] = $obj->price;
-	       $products[$i][1] = $obj->qty;
-	       $products[$i][2] = $obj->tva_tx;
-	    */
-	    $i++;
-	  }
-	
-	$this->db->free($result);
-      }
-    /* \deprecated car simplifie par les 3 indicateurs total_ht, total_tva et total_ttc sur lignes
-        $calculs = calcul_price($products, $this->remise_percent, $this->remise_absolue);
-        $this->total_remise   = $calculs[3];
-		$this->amount_ht      = $calculs[4];
-        $this->total_ht       = $calculs[0];
-        $this->total_tva      = $calculs[1];
-        $this->total_ttc      = $calculs[2];
-		$tvas                 = $calculs[5];
-*/
-        // Met a jour en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
-        $sql .= "  amount_ht='".price2num($this->total_ht)."'";
-        $sql .= ", total_ht='". price2num($this->total_ht)."'";
-        $sql .= ", tva='".      price2num($this->total_tva)."'";
-        $sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-        $sql .= ", remise='".price2num($this->total_remise)."'";
-        $sql .=" WHERE rowid = ".$this->id;
-        if ( $this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-	  $this->error=$this->db->error();
-	  dolibarr_syslog("Commande::update_price error=".$this->error);
-	  return -1;
-        }
-    }
+	function update_price()
+	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		
+		$tvas=array();
+		$err=0;
+
+		// Liste des lignes factures a sommer
+		$sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."commandedet";
+		$sql.= " WHERE fk_commande = ".$this->id;
+		
+		dolibarr_syslog("Commande::update_price sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$this->total_ht  = 0;
+			$this->total_tva = 0;
+			$this->total_ttc = 0;
+			$num = $this->db->num_rows($result);
+			$i = 0;
+			while ($i < $num)
+			{
+				$obj = $this->db->fetch_object($result);
+				
+				$this->total_ht    += $obj->total_ht;
+				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
+				$this->total_ttc   += $obj->total_ttc;
+				
+				// Anciens indicateurs
+				$this->amount_ht      += ($obj->price * $obj->qty);
+				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
+				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
+				$i++;
+			}
+			
+			$this->db->free($result);
+
+			// Met a jour indicateurs
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
+			$sql .= "  amount_ht='".price2num($this->amount_ht)."'";
+			$sql .= ", total_ht='". price2num($this->total_ht)."'";
+			$sql .= ", tva='".      price2num($this->total_tva)."'";
+			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
+			$sql .= ", remise='".price2num($this->total_remise)."'";
+			$sql .=" WHERE rowid = ".$this->id;
+			$resql=$this->db->query($sql);
+			
+			if ($resql)
+			{
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Commande::update_price error=".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Commande::update_price error=".$this->error,LOG_ERR);
+			return -1;
+		}
+	}
 
 	/**
  	 *    \brief      Mets à jour les commentaires privés
@@ -2322,15 +2328,15 @@ class CommandeLigne
 	var $desc;          	// Description ligne
 	var $fk_product;		// Id produit prédéfini
 
-	var $qty;
-	var $tva_tx;
-	var $subprice;
-	var $remise_percent;
+	var $qty;		// Quantité (exemple 2)
+	var $tva_tx;		// Taux tva produit/service (exemple 19.6)
+	var $subprice;      	// P.U. HT (exemple 100)
+	var $remise_percent;	// % de la remise ligne (exemple 20%)
 	var $rang = 0;
 	var $marge_tx;
 	var $marque_tx;
 	var $info_bits = 0;		// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-	// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+							// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
@@ -2441,7 +2447,7 @@ class CommandeLigne
 	{
 		global $langs, $conf, $user;
 
-		dolibarr_syslog("CommandeLigne.class::insert rang=".$this->rang);
+		dolibarr_syslog("CommandeLigne::insert rang=".$this->rang);
 		$this->db->begin();
 		
 		$rangtouse=$this->rang;
@@ -2466,19 +2472,19 @@ class CommandeLigne
 		
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'commandedet';
-		$sql.= ' (fk_commande, description, price, qty, tva_tx,';
-		$sql.= ' fk_product, remise_percent, subprice, remise, fk_remise_except, ';
+		$sql.= ' (fk_commande, description, qty, tva_tx,';
+		$sql.= ' fk_product, remise_percent, subprice, price, remise, fk_remise_except,';
 		$sql.= ' rang, marge_tx, marque_tx,';
 		$sql.= ' info_bits, total_ht, total_tva, total_ttc)';
 		$sql.= " VALUES (".$this->fk_commande.",";
 		$sql.= " '".addslashes($this->desc)."',";
-		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->qty)."',";
 		$sql.= " '".price2num($this->tva_tx)."',";
 		if ($this->fk_product) { $sql.= "'".$this->fk_product."',"; }
 		else { $sql.='null,'; }
 		$sql.= " '".price2num($this->remise_percent)."',";
 		$sql.= " '".price2num($this->subprice)."',";
+		$sql.= " '".price2num($this->price)."',";
 		$sql.= " '".price2num($this->remise)."',";
 		if ($this->fk_remise_except) $sql.= $this->fk_remise_except.",";
 		else $sql.= 'null,';
@@ -2493,8 +2499,6 @@ class CommandeLigne
 		$sql.= " '".price2num($this->total_ttc)."'";
 		$sql.= ')';
 		
-		dolibarr_syslog("CommandeLigne.class.php::insert sql=$sql");
-
 		if ($this->fk_product) 
 		{
 			$product = new Product($this->db);
@@ -2502,9 +2506,12 @@ class CommandeLigne
 			$product->ajust_stock_commande($this->qty, 0);
 		}
 
+		dolibarr_syslog("CommandeLigne::insert sql=$sql");
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
+			$this->rowid=$this->db->last_insert_id(MAIN_DB_PREFIX.'commandedet');
+
             if (! $notrigger)
             {
 				// Appel des triggers
@@ -2515,7 +2522,7 @@ class CommandeLigne
 			}
 			
 			$this->db->commit();
-			return 1;	
+			return $this->rowid;
 		}
 		else
 		{

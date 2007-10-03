@@ -757,7 +757,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
 
-	          $price_base_type = $prod->price_base_type;
+	        $price_base_type = $prod->price_base_type;
 
             // multiprix
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -792,8 +792,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 	        $desc=$_POST['np_desc'];
         }
 
-	// Insere ligne
-	$result = $fac->addline(
+		// Insere ligne
+		$result = $fac->addline(
 				$_POST['facid'],
 				$desc,
 				$pu,
@@ -806,7 +806,8 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				0,
 				'',
 				'',
-				$price_base_type, $pu_ttc
+				$price_base_type,
+				$pu_ttc
 				);
 	}
 
