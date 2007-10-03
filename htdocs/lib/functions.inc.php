@@ -3567,11 +3567,16 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 
 /**
    \brief   Générateur de codes barres
-   \param   
+   \param   $code			Valeur numérique à coder
+   \param   $encoding		Mode de codage
+   \param   $generator		Generateur utilsé (1=php-barcode, 1=pi_barcode)
+   \param   $readable		Code lisible
    \return  url
 */
 function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
 {
+	$url='';
+	
 	if ($encoding == 'EAN8' || $encoding == 'EAN13') $encoding = 'EAN';
 	
 	if ($generator == 1)

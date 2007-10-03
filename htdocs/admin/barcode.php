@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -72,8 +72,8 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
-print '<td width="200">'.$langs->trans("Example").'</td>';
-print '<td align="center" width="60">'.$langs->trans("Default").'</td>';
+print '<td width="200" align="center">'.$langs->trans("Example").'</td>';
+print '<td align="center" width="60">'.$langs->trans("CodeBarGenerator").'</td>';
 print "</tr>\n";
 
 $sql = "SELECT rowid, code, libelle, coder, example";
@@ -89,23 +89,35 @@ if ($resql)
 	{
 		$obj = $db->fetch_object($resql);
 
-    print '<tr '.$bc[$var].'><td width="100">';
-    print $obj->libelle;
-    print "</td><td>\n";
-    print $langs->trans('BarcodeDesc'.$obj->code);  
-    //print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
-    //print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
-    //print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
-    print '</td>';
+		print '<tr '.$bc[$var].'><td width="100">';
+		print $obj->libelle;
+		print "</td><td>\n";
+		print $langs->trans('BarcodeDesc'.$obj->code);  
+		//print "L'EAN se compose de 8 caractères, 7 chiffres plus une clé de contrôle.<br>";
+		//print "L'utilisation des symbologies EAN8 impose la souscription et l'abonnement auprès d'organisme tel que GENCOD.<br>";
+		//print "Codes numériques utilisés exclusivement à l'identification des produits susceptibles d'être vendus au grand public.";
+		print '</td>';
 
-    // Affiche exemple
-    print '<td align="center"><img src="'.dol_genbarcode($obj->example,$obj->code,$obj->coder).'"></td>';
-    
-    print '<td align="center">';
-    print $html->setBarcodeEncoder($obj->coder,$obj->rowid,'form'.$i);
-	  print "</td></tr>\n";
-	  $var=!$var;
-	  $i++;
+		// Affiche exemple
+		print '<td align="center">';
+		if ($obj->coder)
+		{
+			$url=dol_genbarcode($obj->example,$obj->code,$obj->coder);
+			//print "x".$url."z";
+			if ($url) print '<img src="'.dol_genbarcode($obj->example,$obj->code,$obj->coder).'">';
+			else print $langs->trans("FormatNotSupportedByGenerator");
+		}
+		else
+		{
+			print $langs->trans("ChooseABarCode");
+		}
+		print '</td>';
+
+		print '<td align="center">';
+		print $html->setBarcodeEncoder($obj->coder,$obj->rowid,'form'.$i);
+		print "</td></tr>\n";
+		$var=!$var;
+		$i++;
 	}
 }
 print "</table>\n";
