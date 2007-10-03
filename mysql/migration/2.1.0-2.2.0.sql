@@ -736,13 +736,14 @@ ALTER TABLE `llx_osc_product` ADD UNIQUE KEY `fk_product` (`fk_product`);
 
 -- V4 ALTER TABLE llx_osc_customer ADD CONSTRAINT fk_osc_customer_fk_soc FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 
--- V4 ALTER TABLE llx_telephonie_adsl_fournisseur ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
--- V4 ALTER TABLE llx_telephonie_client_stats ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_contact_facture ADD FOREIGN KEY (fk_contact) REFERENCES llx_socpeople (rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_societe_ligne ADD FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
--- V4 ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_telephonie_adsl_fournisseur ADD CONSTRAINT fk_telephonie_adsl_fournisseur_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+-- V4 ALTER TABLE llx_telephonie_client_stats ADD CONSTRAINT fk_telephonie_client_stats_societe FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_contact_facture ADD CONSTRAINT fk_telephonie_contact_facture_contact FOREIGN KEY (fk_contact) REFERENCES llx_socpeople (rowid);
+-- V4 ALTER TABLE llx_telephonie_contact_facture ADD CONSTRAINT fk_telephonie_contact_facture_ligne FOREIGN KEY (fk_ligne) REFERENCES llx_telephonie_societe_ligne (rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD CONSTRAINT llx_telephonie_societe_ligne_client_comm FOREIGN KEY (fk_client_comm) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD CONSTRAINT llx_telephonie_societe_ligne_soc         FOREIGN KEY (fk_soc)         REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_societe_ligne ADD CONSTRAINT llx_telephonie_societe_ligne_soc_facture FOREIGN KEY (fk_soc_facture) REFERENCES llx_societe(rowid);
+-- V4 ALTER TABLE llx_telephonie_tarif_client ADD CONSTRAINT llx_telephonie_tarif_client_client FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
 -- fin du changement idp en rowid
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (120, 'fichinter','internal', 'INTERREPFOLL',  'Responsable suivi de l\'intervention', 1);

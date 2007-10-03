@@ -26,5 +26,5 @@
 ALTER TABLE llx_telephonie_adsl_fournisseur ADD INDEX (fk_soc);
 --
 --
-ALTER TABLE llx_telephonie_adsl_fournisseur ADD FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_telephonie_adsl_fournisseur ADD CONSTRAINT fk_telephonie_adsl_fournisseur_societe FOREIGN KEY (fk_soc) REFERENCES llx_societe (rowid);
 

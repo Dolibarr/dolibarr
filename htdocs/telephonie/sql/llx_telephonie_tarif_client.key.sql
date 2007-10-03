@@ -26,6 +26,6 @@ ALTER TABLE llx_telephonie_tarif_client ADD INDEX (fk_tarif);
 ALTER TABLE llx_telephonie_tarif_client ADD INDEX (fk_client);
 ALTER TABLE llx_telephonie_tarif_client ADD INDEX (fk_user);
 
-ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_tarif) REFERENCES llx_telephonie_tarif (rowid);
-ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
-ALTER TABLE llx_telephonie_tarif_client ADD FOREIGN KEY (fk_user) REFERENCES llx_user (rowid);
+ALTER TABLE llx_telephonie_tarif_client ADD CONSTRAINT llx_telephonie_tarif_client_tarif  FOREIGN KEY (fk_tarif)  REFERENCES llx_telephonie_tarif (rowid);
+ALTER TABLE llx_telephonie_tarif_client ADD CONSTRAINT llx_telephonie_tarif_client_client FOREIGN KEY (fk_client) REFERENCES llx_societe (rowid);
+ALTER TABLE llx_telephonie_tarif_client ADD CONSTRAINT llx_telephonie_tarif_client_user   FOREIGN KEY (fk_user)   REFERENCES llx_user (rowid);
