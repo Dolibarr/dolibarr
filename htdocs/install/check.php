@@ -109,6 +109,7 @@ else
 
 
 // Check memory
+$memrequiredorig='16M';
 $memrequired=16*1024*1024;
 $memmaxorig=ini_get("memory_limit");
 $memmax=ini_get("memory_limit");
@@ -120,11 +121,11 @@ if ($reg[2])
 }
 if ($memmax >= $memrequired)
 {
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequired)."<br>\n";
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
 }
 else
 { 
-    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequired)."<br>\n";
+    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
 }
 
 // Si fichier présent et lisible et renseigné
