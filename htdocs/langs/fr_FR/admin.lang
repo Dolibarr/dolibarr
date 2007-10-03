@@ -155,8 +155,8 @@ Module10Name=Comptabilité
 Module10Desc=Gestion simple de la comptabilité (ventilation de factures et paiements)
 Module20Name=Propositions commerciales
 Module20Desc=Gestion des devis/propositions commerciales
-Module22Name=Mailings
-Module22Desc=Administration et envoi de mailings
+Module22Name=EMailings
+Module22Desc=Administration et envoi d'emails en masse
 Module25Name=Commandes clients
 Module25Desc=Gestion des commandes clients
 Module30Name=Factures et avoirs
@@ -713,6 +713,16 @@ DonationsSetup=Configuration du module Dons
 BarcodeSetup=Configuration des codes barres
 PaperFormatModule=Modules de format d'impression
 BarcodeEncodeModule=Modules d'encodage des codes barres
+UseBarcodeInProductModule=Utiliser les codes barres pour les produits
+CodeBarGenerator=Générateur du code
+ChooseABarCode=Aucun générateur sélectionné
+FormatNotSupportedByGenerator=Format non géré par ce générateur
+BarcodeDescEAN8=Code barre de type EAN8
+BarcodeDescEAN13=Code barre de type EAN13
+BarcodeDescUPC=Code barre de type UPC
+BarcodeDescISBN=Code barre de type ISPN
+BarcodeDescC39=Code barre de type C39
+BarcodeDescC128=Code barre de type C128
 ##### Prelevements #####
 WithdrawalsSetup=Configuration du module prélèvement
 ##### ExternalRSS #####

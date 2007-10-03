@@ -225,6 +225,8 @@ Module1200Name=Mantis
 Module1200Desc=Mantis integration
 Module1780Name=Categories
 Module1780Desc=Categories' management (products, suppliers and customers)
+Module2200Name=Droit de prêts
+Module2200Desc=Gestion du droit de prêts
 Module2300Name=Menus
 Module2300Desc=Menus' management
 Permission11=Read invoices
@@ -711,13 +713,23 @@ DonationsSetup=Donation module setup
 BarcodeSetup=Barcode setup
 PaperFormatModule=Print format module
 BarcodeEncodeModule=Barcode encoding type
+UseBarcodeInProductModule=Use bar codes for products
+CodeBarGenerator=Barcode generator
+ChooseABarCode=No generator defined
+FormatNotSupportedByGenerator=Format not supported by this generator
+BarcodeDescEAN8=Barcode of type EAN8
+BarcodeDescEAN13=Barcode of type EAN13
+BarcodeDescUPC=Barcode of type UPC
+BarcodeDescISBN=Barcode of type ISPN
+BarcodeDescC39=Barcode of type C39
+BarcodeDescC128=Barcode of type C128
 ##### Prelevements #####
 WithdrawalsSetup=Withdrawal module setup
 ##### ExternalRSS #####
 ExternalRSSSetup=External RSS imports setup<textarea></textarea>
 NewRSS=New RSS Feed
 ##### Mailing #####
-MailingSetup=Mailing module setup
+MailingSetup=EMailing module setup
 MailingEMailFrom=Sender EMail (From) for emails sent by emailing module
 ##### Notification #####
 NotificationSetup=Mailing module setup
