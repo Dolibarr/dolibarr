@@ -111,21 +111,24 @@ else
 // Check memory
 $memrequiredorig='16M';
 $memrequired=16*1024*1024;
-$memmaxorig=ini_get("memory_limit");
-$memmax=ini_get("memory_limit");
-eregi('([0-9]+)([a-zA-Z]*)',$memmax,$reg);
-if ($reg[2])
+$memmaxorig=@ini_get("memory_limit");
+$memmax=@ini_get("memory_limit");
+if ($memmaxorig != '')
 {
-	if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
-	if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
-}
-if ($memmax >= $memrequired)
-{
-    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
-}
-else
-{ 
-    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
+	eregi('([0-9]+)([a-zA-Z]*)',$memmax,$reg);
+	if ($reg[2])
+	{
+		if (strtoupper($reg[2]) == 'M') $memmax=$reg[1]*1024*1024;
+		if (strtoupper($reg[2]) == 'K') $memmax=$reg[1]*1024;
+	}
+	if ($memmax >= $memrequired)
+	{
+	    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPMemoryOK",$memmaxorig,$memrequiredorig)."<br>\n";
+	}
+	else
+	{ 
+	    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
+	}
 }
 
 // Si fichier présent et lisible et renseigné
