@@ -40,8 +40,9 @@ ALTER TABLE llx_cotisation modify datef date;
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
 -- V4.1 update llx_cotisation set datef = ADDDATE(ADDDATE(dateadh, INTERVAL 1 YEAR),INTERVAL -1 DAY);
 
-update llx_const set name='MAIN_ENABLE_DEVELOPMENT' where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
+delete from llx_const where name='MAIN_ENABLE_DEVELOPMENT';
+insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
 
 update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_FROM';
 

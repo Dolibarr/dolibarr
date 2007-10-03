@@ -334,7 +334,7 @@ function migrate_paiements_orphelins_1($db,$langs,$conf)
 		$res = 0;
 		for ($i = 0 ; $i < sizeof($row) ; $i++)
 		{
-			if ($conf->MAIN_ENABLE_DEVELOPMENT) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
+			if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' pamount='.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' bamount='.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
 			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
 			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";
@@ -442,7 +442,7 @@ function migrate_paiements_orphelins_2($db,$langs,$conf)
 		$res = 0;
 		for ($i = 0 ; $i < sizeof($row) ; $i++)
 		{
-			if ($conf->MAIN_ENABLE_DEVELOPMENT) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
+			if ($conf->global->MAIN_FEATURES_LEVEL == 2) print '* '.$row[$i]['datec'].' paymentid='.$row[$i]['paymentid'].' '.$row[$i]['pamount'].' fk_bank='.$row[$i]['fk_bank'].' '.$row[$i]['bamount'].' socid='.$row[$i]['socid'].'<br>';
 
 			// On cherche facture sans lien paiement et du meme montant et pour meme societe.
 			$sql=" SELECT distinct f.rowid from ".MAIN_DB_PREFIX."facture as f";

@@ -234,7 +234,9 @@ while (($file = readdir($handle))!==false)
 	        $classname = "mod_facture_".$file;
 	        $module = new $classname($db);
 
-			if ($module->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT) continue;
+			// Show modules according to features level
+		    if ($module->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+		    if ($module->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 			
 	        $var = !$var;
 	        print '<tr '.$bc[$var].'><td width="100">';

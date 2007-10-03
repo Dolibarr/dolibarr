@@ -133,7 +133,9 @@ if ($handle)
 
 	  $modCodeTiers = new $file;
 	  
-	  if ($modCodeTiers->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT) continue;
+	  // Show modules according to features level
+	  if ($modCodeTiers->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+	  if ($modCodeTiers->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
 	  
 	  $var = !$var;
 	  print "<tr ".$bc[$var].">\n  <td width=\"140\">".$modCodeTiers->nom."</td>\n  <td>";

@@ -65,7 +65,7 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAI
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_UPLOAD_DOC','2048','chaine','Max size for file upload (0 means no upload allowed)',0);
 
-insert into llx_const(name,value,type,visible,note) values('MAIN_ENABLE_DEVELOPMENT','0','yesno',1,'Make development modules visible');
+insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
 
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMPANY','1','yesno',0,'Show form for quick company search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');

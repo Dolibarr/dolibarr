@@ -280,12 +280,9 @@ foreach ($orders as $key => $value)
     $modName = $filename[$key];
 	$objMod  = $modules[$key];
 
-    // On affiche pas les modules en version 'development' si
-    // constante MAIN_ENABLE_DEVELOPMENT non définie
-    if ($objMod->version == 'development' && ! $conf->global->MAIN_ENABLE_DEVELOPMENT)
-    {
-        continue;
-    }
+	// Show modules according to features level
+    if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
+    if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
     
     $const_name = $objMod->const_name;
 
