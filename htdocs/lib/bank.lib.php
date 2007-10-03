@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -63,11 +63,14 @@ function bank_prepare_head($obj)
     $head[$h][2] = 'graph';
     $h++;
     
-    $head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
-    $head[$h][1] = $langs->trans("CashBudget");
-    $head[$h][2] = 'cash';
-    $h++;
-
+    if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
+	{
+		$head[$h][0] = DOL_URL_ROOT."/compta/bank/treso.php?account=".$obj->id;
+		$head[$h][1] = $langs->trans("CashBudget");
+		$head[$h][2] = 'cash';
+		$h++;
+	}
+	
     if ($obj->courant != 2) 
     {
     	$head[$h][0] = DOL_URL_ROOT."/compta/bank/releve.php?account=".$obj->id;
