@@ -720,7 +720,7 @@ FormatNotSupportedByGenerator=Format not supported by this generator
 BarcodeDescEAN8=Barcode of type EAN8
 BarcodeDescEAN13=Barcode of type EAN13
 BarcodeDescUPC=Barcode of type UPC
-BarcodeDescISBN=Barcode of type ISPN
+BarcodeDescISBN=Barcode of type ISBN
 BarcodeDescC39=Barcode of type C39
 BarcodeDescC128=Barcode of type C128
 ##### Prelevements #####
