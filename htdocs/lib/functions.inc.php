@@ -3567,9 +3567,9 @@ function viewExcelFileContent($file_to_include='',$max_rows=0,$max_cols=0)
 
 /**
    \brief   Générateur de codes barres
-   \param   $code			Valeur numérique à coder
+   \param   $code			  Valeur numérique à coder
    \param   $encoding		Mode de codage
-   \param   $generator		Generateur utilsé (1=php-barcode, 1=pi_barcode)
+   \param   $generator  Générateur utilisé (1=php-barcode, 2=pi_barcode)
    \param   $readable		Code lisible
    \return  url
 */

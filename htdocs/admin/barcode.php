@@ -103,8 +103,7 @@ if ($resql)
 		if ($obj->coder)
 		{
 			$url=dol_genbarcode($obj->example,$obj->code,$obj->coder);
-			//print "x".$url."z";
-			if ($url) print '<img src="'.dol_genbarcode($obj->example,$obj->code,$obj->coder).'">';
+			if ($url) print '<img src="'.$url.'">';
 			else print $langs->trans("FormatNotSupportedByGenerator");
 		}
 		else
