@@ -462,6 +462,10 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 		{
 			$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
 		}
+		if ($result < 0)
+		{
+			$errmsg.=$adh->error;
+		}
 		
 	    // supprime l'utilisateur des divers abonnements ..
 	    if (! $adh->del_to_abo($adht))
