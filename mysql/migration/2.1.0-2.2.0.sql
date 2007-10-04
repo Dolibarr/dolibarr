@@ -669,6 +669,10 @@ ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(16,8) DEFAULT
 ALTER TABLE llx_societe_remise_except MODIFY  tva_tx        double(6,3)  DEFAULT 0;
 
 
+-- Supprimme orphelins pour permettre montée de la clé
+-- V4 DELETE llx_commande_fournisseur FROM llx_commande_fournisseur LEFT JOIN llx_societe ON llx_commande_fournisseur.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL; 
+
+
 -- Changement de idp en rowid
 -- V4 ALTER TABLE llx_propal DROP FOREIGN KEY llx_propal_ibfk1;
 -- V4 ALTER TABLE llx_socpeople DROP FOREIGN KEY fk_socpeople_fk_soc;
