@@ -158,7 +158,7 @@ class Adherent
 		       '/%PASSWORD%/'
 		       );
 	    $infos.= $langs->trans("Lastname").": $this->nom\n";
-	    $infos = $langs->trans("Firstname").": $this->prenom\n";
+	    $infos.= $langs->trans("Firstname").": $this->prenom\n";
 	    $infos.= $langs->trans("Company").": $this->societe\n";
 	    $infos.= $langs->trans("Address").": $this->adresse\n";
 	    $infos.= $langs->trans("Zip").": $this->cp\n";
