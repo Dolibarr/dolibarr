@@ -73,7 +73,7 @@ class CMailFile
             \param 	addr_cc             email cc
             \param 	addr_bcc            email bcc
             \param 	deliveryreceipt		demande accusé réception
-            \param	msgishtml			message is a html message
+            \param	msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
     */
     function CMailFile($subject,$to,$from,$msg,
                        $filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
@@ -99,7 +99,17 @@ class CMailFile
 		if (eregi('^mac',PHP_OS)) $this->eol="\r";
 
 		// On defini si message HTML
-		$this->msgishtml = $msgishtml;
+		if ($msgishtml == 2)
+		{
+			$this->msgishtml = 0;
+			if (eregi('<html',$msg))     $this->msgishtml = 1;
+			elseif (eregi('<body',$msg)) $this->msgishtml = 1;
+			elseif (eregi('<br',$msg))   $this->msgishtml = 1;
+		}
+		else
+		{
+			$this->msgishtml = $msgishtml;
+		}
 
 		$smtp_headers = "";
 		$mime_headers = "";

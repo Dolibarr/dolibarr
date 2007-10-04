@@ -142,7 +142,7 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
 	        // Envoi mail
 	        if ($_POST["sendmail"])
 	        {
-	            $result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT);
+	            $result=$adh->send_an_email($conf->global->ADHERENT_MAIL_COTIS,$conf->global->ADHERENT_MAIL_COTIS_SUBJECT,array(),array(),array(),"","",0,2);
 				if ($result < 0) $errmsg=$adh->error;
 			}
 

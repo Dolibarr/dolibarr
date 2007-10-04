@@ -105,7 +105,7 @@ if ($_POST["action"] == 'confirm_sendinfo' && $_POST["confirm"] == 'yes')
     
 	if ($adh->email)
 	{
-		$result=$adh->send_an_email($adh->email,"Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
+		$result=$adh->send_an_email("Voici le contenu de votre fiche\n\n%INFOS%\n\n","Contenu de votre fiche adherent");
 	}
 }
 
@@ -410,11 +410,11 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 		{
 			if (isset($adht->mail_valid) && $adht->mail_valid)
 		    {
-				$result=$adh->send_an_email($adh->email,$adht->mail_valid,$conf->adherent->email_valid_subject);
+				$result=$adh->send_an_email($adht->mail_valid,$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 		    }
 		    else
 		    {
-				$result=$adh->send_an_email($adh->email,$conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT);
+				$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_VALID,$conf->global->ADHERENT_MAIL_VALID_SUBJECT,array(),array(),array(),"","",0,2);
 		    }
 			if ($result < 0)
 			{
@@ -460,7 +460,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 	{
 		if ($adh->email && $_POST["send_mail"])
 		{
-			$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
+			$result=$adh->send_an_email($conf->global->ADHERENT_MAIL_RESIL,$conf->global->ADHERENT_MAIL_RESIL_SUBJECT,array(),array(),array(),"","",0,2);
 		}
 		if ($result < 0)
 		{

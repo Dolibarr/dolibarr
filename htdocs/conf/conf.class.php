@@ -439,40 +439,6 @@ class Conf
 		    $this->mailing->email_from=$conf->global->MAILING_EMAIL_FROM;
 		}
 
-		// $this->adherent->email_resil, ...
-		if (defined("MAIN_MAIL_RESIL"))
-		{
-		  $this->adherent->email_resil=MAIN_MAIL_RESIL;
-		}
-		if (defined("MAIN_MAIL_RESIL_SUBJECT"))
-		{
-		  $this->adherent->email_resil_subject=MAIN_MAIL_RESIL_SUBJECT;
-		}
-		if (defined("MAIN_MAIL_VALID"))
-		{
-		  $this->adherent->email_valid=MAIN_MAIL_VALID;
-		}
-		if (defined("MAIN_MAIL_VALID_SUBJECT"))
-		{
-		  $this->adherent->email_valid_subject=MAIN_MAIL_VALID_SUBJECT;
-		}
-		if (defined("MAIN_MAIL_EDIT"))
-		{
-		  $this->adherent->email_edit=MAIN_MAIL_EDIT;
-		}
-		if (defined("MAIN_MAIL_EDIT_SUBJECT"))
-		{
-		  $this->adherent->email_edit_subject=MAIN_MAIL_EDIT_SUBJECT;
-		}
-		if (defined("MAIN_MAIL_NEW"))
-		{
-		  $this->adherent->email_new=MAIN_MAIL_NEW;
-		}
-		if (defined("MAIN_MAIL_NEW_SUBJECT"))
-		{
-		  $this->adherent->email_new_subject=MAIN_MAIL_NEW_SUBJECT;
-		}
-
 		// Defini MAIN_GRAPH_LIBRARY
 		if (! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
 		{

@@ -116,11 +116,17 @@ class Adherent
 
 
 	/**
-		\brief	    Fonction envoyant un email au destinataire (recipient) avec le text fourni en parametre.
-		\param	    recipients		destinataires
-		\param	    text			contenu du message
-		\param	    subject			sujet du message
-		\return		int				<0 si ko, >0 si ok
+		\brief	    Fonction envoyant un email a l'adherent avec le texte fourni en parametre.
+		\param	    text				contenu du message
+		\param	    subject				sujet du message
+		\param 		filename_list       tableau de fichiers attachés
+		\param 		mimetype_list       tableau des types des fichiers attachés
+		\param 		mimefilename_list   tableau des noms des fichiers attachés
+		\param 		addr_cc             email cc
+		\param 		addr_bcc            email bcc
+		\param 		deliveryreceipt		demande accusé réception
+		\param		msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
+		\return		int					<0 si ko, >0 si ok
 		\remarks		La particularite de cette fonction est de remplacer certains champs
 		\remarks		par leur valeur pour l'adherent en l'occurrence :
 		\remarks		%PRENOM% : est remplace par le prenom
@@ -129,7 +135,9 @@ class Adherent
 		\remarks		%SERVEUR% : URL du serveur web
 		\remarks		etc..
 	*/
-	function send_an_email($recipients,$text,$subject="Vos coordonnees sur %SERVEUR%")
+	function send_an_email($text,$subject,
+					$filename_list=array(),$mimetype_list=array(),$mimefilename_list=array(),
+                    $addr_cc="",$addr_bcc="",$deliveryreceipt=0,$msgishtml=0, $errors_to='')
 	{
 		global $conf,$langs;
 
@@ -163,6 +171,16 @@ class Adherent
 	    $infos.= $langs->trans("Photo").": $this->photo\n";
 		$infos.= $langs->trans("Public").": ".yn($this->public)."\n";
 
+		// Is it an HTML Content ?
+		$html = $msgishtml;
+		if ($msgishtml == 2)
+		{
+			if (eregi('<html',$text))     $html = 1;
+			elseif (eregi('<body',$text)) $html = 1;
+			elseif (eregi('<br',$text))   $html = 1;
+		}
+		if ($html) $infos = nl2br($infos);
+		
 	    $replace = array (
 		      $this->prenom,
 		      $this->nom,
@@ -181,7 +199,6 @@ class Adherent
 		      );
 		$texttosend = preg_replace ($patterns, $replace, $text);
 		$subjectosend = preg_replace ($patterns, $replace, $subject);
-		$msgishtml=0;
 
 		// Envoi mail confirmation
         include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
@@ -190,8 +207,8 @@ class Adherent
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
 
 		$mailfile = new CMailFile($subjectosend,$this->email,$from,$texttosend,
-									array(),array(),array(),
-									'', '', 0, $msgishtml);
+									$filename_list,$mimetype_list,$mimefilename_list,
+									$addr_cc, $addr_bcc, $deliveryreceipt, $html);
         if ($mailfile->sendfile())
         {
             return 1;
