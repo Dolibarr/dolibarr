@@ -31,7 +31,6 @@ if (file_exists($conffile)) include_once($conffile);
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 
 $grant_query='';
 $etape = 2;
@@ -60,9 +59,11 @@ if ($dolibarr_main_db_type == "mssql") $choix=3;
 
 
 dolibarr_install_syslog("upgrade: Entering upgrade.php page");
+if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
 
 
 pHeader($langs->trans("DatabaseMigration"),"upgrade2","upgrade");
+
 
 if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 {
@@ -78,10 +79,9 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	$error=0;
 	
 	// on décode le mot de passe de la base si besoin
-	require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 	if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
-	$conf = new Conf();// on pourrait s'en passer
+	// $conf is already instancied inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->name = $dolibarr_main_db_name;
@@ -93,13 +93,13 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	{
 		print "<tr><td nowrap>";
 		print $langs->trans("ServerConnection")." : $dolibarr_main_db_host</td><td align=\"right\">".$langs->trans("OK")."</td></tr>";
-		dolibarr_install_syslog("upgrade: ".$langs->trans("ServerConnection")." : $dolibarr_main_db_host ".$langs->trans("OK"));
+		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerConnection")." : $dolibarr_main_db_host ".$langs->transnoentities("OK"));
 		$ok = 1;
 	}
 	else
 	{
-		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-		dolibarr_install_syslog("upgrade: ".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+		print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->transnoentities("Error")."</td></tr>";
+		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 		$ok = 0;
 	}
 
@@ -115,7 +115,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		else
 		{
 			print "<tr><td>".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name)."</td><td align=\"right\">".$langs->trans("Error")."</td></tr>";
-			dolibarr_install_syslog("upgrade: ".$langs->trans("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
+			dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ErrorFailedToConnectToDatabase",$dolibarr_main_db_name));
 			$ok=0;
 		}
 	}
@@ -127,7 +127,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		$versionarray=$db->getVersionArray();
 		print '<tr><td>'.$langs->trans("ServerVersion").'</td>';
 		print '<td align="right">'.$version.'</td></tr>';
-		dolibarr_install_syslog("upgrade: ".$langs->trans("ServerVersion")." : $version");
+		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
 		//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 	}
 
@@ -281,7 +281,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 				{
 					// Ajout trace sur requete (eventuellement à commenter si beaucoup de requetes)
 					print('<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n");
-					dolibarr_install_syslog("upgrade: ".$langs->trans("Request").' '.($i+1)." sql='".$sql);
+					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("Request").' '.($i+1)." sql='".$sql);
 
 					if ($db->query($sql))
 					{
@@ -310,7 +310,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 							print '<tr><td valign="top" colspan="2">';
 							print '<div class="error">'.$langs->trans("Error")." ".$db->errno().": ".$sql."<br>".$db->error()."</font></td>";
 							print '</tr>';
-							dolibarr_install_syslog("upgrade: ".$langs->trans("Request").' '.($i+1)." ".$langs->trans("Error")." ".$db->errno()." ".$sql."<br>".$db->error());
+							dolibarr_install_syslog("upgrade: ".$langs->transnoentities("Request").' '.($i+1)." ".$langs->transnoentities("Error")." ".$db->errno()." ".$sql."<br>".$db->error());
 							$error++;
 						}
 					}

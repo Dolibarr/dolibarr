@@ -29,7 +29,7 @@
 
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
-global $conf;
+
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
 if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
@@ -100,7 +100,8 @@ $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
 
 
-function conf($dolibarr_main_document_root){
+function conf($dolibarr_main_document_root)
+{
 		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
 		global $conf;
 		global $dolibarr_main_db_type;

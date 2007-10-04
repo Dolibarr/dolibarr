@@ -31,12 +31,11 @@ if (file_exists($conffile)) include_once($conffile);
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
-require_once($dolibarr_main_document_root . "/conf/conf.class.php");
-include_once('../facture.class.php');
-include_once('../propal.class.php');
-include_once('../contrat/contrat.class.php');
-include_once('../commande/commande.class.php');
-include_once('../lib/price.lib.php');
+require_once($dolibarr_main_document_root . '/facture.class.php');
+require_once($dolibarr_main_document_root . '/propal.class.php');
+require_once($dolibarr_main_document_root . '/contrat/contrat.class.php');
+require_once($dolibarr_main_document_root . '/commande/commande.class.php');
+require_once($dolibarr_main_document_root . '/lib/price.lib.php');
 
 $grant_query='';
 $etape = 2;
@@ -65,6 +64,7 @@ if ($dolibarr_main_db_type == 'mssql')  $choix=3;
 
 
 dolibarr_install_syslog("upgrade2: Entering upgrade2.php page");
+if (! is_object($conf)) dolibarr_install_syslog("upgrade2: conf file not initialized",LOG_ERR);
 
 
 pHeader($langs->trans('DataMigration'),'etape5','upgrade');
@@ -77,10 +77,9 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	
 	// on décode le mot de passe de la base si besoin
-	require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
 	if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
-	$conf = new Conf();// on pourrait s'en passer
+	// $conf is already instancied inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
 	$conf->db->host = $dolibarr_main_db_host;
 	$conf->db->name = $dolibarr_main_db_name;
