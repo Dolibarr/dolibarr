@@ -81,13 +81,9 @@ class modAdherent extends DolibarrModules
         $this->const = array();
         $this->const[0]= array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resiliee.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
         $this->const[1]=array("ADHERENT_MAIL_VALID","texte","Votre adhesion vient d'etre validee. \r\nVoici le rappel de vos coordonnees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante : \r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail de validation");
-        $this->const[2]= array("ADHERENT_MAIL_EDIT","texte","Voici le rappel des coordonnees que vous avez modifiees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail d'edition");
         $this->const[3] = array("ADHERENT_MAIL_RESIL","texte","Votre adhesion vient d'etre resilie.\r\nNous esperons vous revoir tres bientot","Mail de résiliation");
-        $this->const[4] = array("ADHERENT_MAIL_NEW","texte","Merci de votre inscription. Votre adhesion devrait etre rapidement validee.^M\nVoici le rappel des coordonnees que vous avez rentrees (toute information erronee entrainera la non validation de votre inscription) :\r\n\r\n%INFOS%\r\n\r\nVous pouvez a tout moment, grace a votre login et mot de passe, modifier vos coordonnees a l'adresse suivante :\r\n%DOL_MAIN_URL_ROOT%/public/adherents/","Mail de nouvel inscription");
-        $this->const[5] = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","sujet du mail de validation");
-        $this->const[6] = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","sujet du mail de resiliation");
-        $this->const[7] = array("ADHERENT_MAIL_NEW_SUBJECT","chaine","Bienvenue","Sujet du mail de nouvelle adhesion");
-        $this->const[8] = array("ADHERENT_MAIL_EDIT_SUBJECT","chaine","Votre fiche a ete editee","Sujet du mail d'edition");
+        $this->const[5] = array("ADHERENT_MAIL_VALID_SUBJECT","chaine","Votre adhesion a ete validee","Sujet du mail de validation");
+        $this->const[6] = array("ADHERENT_MAIL_RESIL_SUBJECT","chaine","Resiliation de votre adhesion","Sujet du mail de resiliation");
         $this->const[9] = array("ADHERENT_GLASNOST_SERVEUR","chaine","","serveur glasnost");
         $this->const[10] = array("ADHERENT_MAILMAN_UNSUB_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&user=%EMAIL%","Url de desinscription aux listes mailman");
         $this->const[11] = array("ADHERENT_MAILMAN_URL","chaine","http://lists.domain.com/cgi-bin/mailman/admin/%LISTE%/members?adminpw=%MAILMAN_ADMINPW%&send_welcome_msg_to_this_batch=1&subscribees=%EMAIL%","Url pour les inscriptions mailman");
@@ -103,7 +99,6 @@ class modAdherent extends DolibarrModules
         $this->const[21] = array("ADHERENT_MAIL_FROM","chaine","","From des mails");
         $this->const[22] = array("ADHERENT_MAIL_COTIS","texte","Bonjour %PRENOM%,\r\nCet email confirme que votre cotisation a ete recue\r\net enregistree","Mail de validation de cotisation");
         $this->const[23] = array("ADHERENT_MAIL_COTIS_SUBJECT","chaine","Recu de votre cotisation","Sujet du mail de validation de cotisation");
-        $this->const[24] = array("ADHERENT_TEXT_NEW_ADH","texte","","Texte d'entete du formulaire d'adhesion en ligne");
         $this->const[25] = array("ADHERENT_CARD_HEADER_TEXT","chaine","%ANNEE%","Texte imprime sur le haut de la carte adherent");
         $this->const[26] = array("ADHERENT_CARD_FOOTER_TEXT","chaine","Association AZERTY","Texte imprime sur le bas de la carte adherent");
         $this->const[27] = array("ADHERENT_CARD_TEXT","texte","%PRENOM% %NOM%\r\nMembre n° %ID%\r\n%EMAIL%\r\n%ADRESSE%\r\n%CP% %VILLE%\r\n%PAYS%","Texte imprime sur la carte adherent");

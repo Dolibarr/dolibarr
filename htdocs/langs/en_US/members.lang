@@ -114,3 +114,16 @@ MemberNotOrNoMoreExpectedToSubscribe=Member not or no more expected to subscribe
 AddSubscription=Add subscription
 ShowSubscription=Show subscription
 MemberModifiedInDolibarr=Member modified in Dolibarr
+SendAnEMailToMember=Send information email to member (EMail: <b>%s</b>)
+DescADHERENT_MAIL_VALID_SUBJECT=EMail subject for member validation
+DescADHERENT_MAIL_VALID=EMail for member validation
+DescADHERENT_MAIL_COTIS_SUBJECT=EMail subject for subscription
+DescADHERENT_MAIL_COTIS=EMail for subscription
+DescADHERENT_MAIL_RESIL_SUBJECT=EMail subject for member resiliation
+DescADHERENT_MAIL_RESIL=EMail for member resiliation
+DescADHERENT_MAIL_FROM=Sender EMail for automatic emails
+DescADHERENT_ETIQUETTE_TYPE=Labels format
+DescADHERENT_CARD_HEADER_TEXT=Text printed on top of member cards
+DescADHERENT_CARD_TEXT=Text printed on member cards
+DescADHERENT_CARD_FOOTER_TEXT=Text printed on bottom of member cards
+

@@ -406,7 +406,7 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'confirm_valid' && $_P
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
 		// Envoi mail validation (selon param du type adherent sinon generique)
-	    if ($adh->email)
+		if ($adh->email && $_POST["send_mail"])
 		{
 			if (isset($adht->mail_valid) && $adht->mail_valid)
 		    {
@@ -458,7 +458,7 @@ if ($user->rights->adherent->supprimer && $_POST["action"] == 'confirm_resign' &
 
 	if ($result >= 0 && ! sizeof($adh->errors))
 	{
-		if ($adh->email)
+		if ($adh->email && $_POST["send_mail"])
 		{
 			$result=$adh->send_an_email($adh->email,$conf->adherent->email_resil,$conf->adherent->email_resil_subject);
 		}
@@ -857,7 +857,11 @@ if ($rowid && $action != 'edit')
     // Confirmation de la validation
     if ($action == 'valid')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid");
+		// Crée un tableau formulaire
+		$formquestion=array();
+		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'true');
+
+        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ValidateMember"),$langs->trans("ConfirmValidateMember"),"confirm_valid",$formquestion);
         print '<br>';
     }
 
@@ -871,7 +875,11 @@ if ($rowid && $action != 'edit')
     // Confirmation de la Résiliation
     if ($action == 'resign')
     {
-        $html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign");
+		// Crée un tableau formulaire
+		$formquestion=array();
+		if ($adh->email) $formquestion[0]=array('type' => 'checkbox', 'name' => 'send_mail', 'label' => $langs->trans("SendAnEMailToMember",$adh->email),  'value' => 'false');
+
+		$html->form_confirm("fiche.php?rowid=$rowid",$langs->trans("ResiliateMember"),$langs->trans("ConfirmResiliateMember"),"confirm_resign",$formquestion);
         print '<br>';
     }
 

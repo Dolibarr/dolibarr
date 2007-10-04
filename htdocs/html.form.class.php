@@ -1996,6 +1996,17 @@ class Form
 	    	{
 	    		// TODO	
 	    	}
+	    	if ($input['type'] == 'checkbox') 
+	    	{
+	    		print '<tr>';
+				print '<td valign="top">'.$input['label'].' &nbsp;';
+    			print '<input type="checkbox" class="flat" name="'.$input['name'].'"';
+				if ($input['value'] != 'false') print ' checked="true"';
+				print '></td>';
+    			print '<td valign="top" align="left">&nbsp;</td>';
+    			print '<td valign="top" align="left">&nbsp;</td>';
+    			print '</tr>';
+	    	}
 	    	if ($input['type'] == 'radio') 
 	    	{
 	    		$i=0;
@@ -2014,6 +2025,8 @@ class Form
 		}
 	    print '</table>';
 	    print '</td></tr>';
+
+		//print '<tr class="valid"><td class="valid" colspan="3"><hr></td></tr>';
     }
 
     // Ligne message

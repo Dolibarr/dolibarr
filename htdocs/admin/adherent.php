@@ -102,6 +102,7 @@ if ($_GET["action"] == 'unset')
     }
 }
 
+
 llxHeader();
 
 /*
@@ -164,7 +165,7 @@ print '<br>';
 /*
  * Mailman
  */
-if (defined("ADHERENT_USE_MAILMAN") && ADHERENT_USE_MAILMAN == 1)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_MAILMAN)
 {
   $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
@@ -191,7 +192,7 @@ print "<hr>\n";
  * Spip
  */
 $var=!$var;
-if (defined("ADHERENT_USE_SPIP") && ADHERENT_USE_SPIP == 1)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_SPIP)
 {
   $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
@@ -217,7 +218,7 @@ print "<hr>\n";
  * Glasnost
  */
 $var=!$var;
-if (defined("ADHERENT_USE_GLASNOST") && ADHERENT_USE_GLASNOST == 1)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_GLASNOST)
 {
   $lien=img_tick().' ';
   $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
@@ -242,17 +243,12 @@ print "<hr>\n";
  * Edition des varibales globales non rattache a un theme specifique 
  */
 $constantes=array(
-          'ADHERENT_TEXT_NEW_ADH',
-		  'ADHERENT_MAIL_COTIS_SUBJECT',
-		  'ADHERENT_MAIL_COTIS',
-		  'ADHERENT_MAIL_EDIT_SUBJECT',
-		  'ADHERENT_MAIL_EDIT',
-		  'ADHERENT_MAIL_NEW_SUBJECT',
-		  'ADHERENT_MAIL_NEW',
-		  'ADHERENT_MAIL_RESIL_SUBJECT',
-		  'ADHERENT_MAIL_RESIL',
 		  'ADHERENT_MAIL_VALID_SUBJECT',
 		  'ADHERENT_MAIL_VALID',
+		  'ADHERENT_MAIL_COTIS_SUBJECT',
+		  'ADHERENT_MAIL_COTIS',
+		  'ADHERENT_MAIL_RESIL_SUBJECT',
+		  'ADHERENT_MAIL_RESIL',
 		  'ADHERENT_MAIL_FROM',
 		  'ADHERENT_CARD_HEADER_TEXT',
 		  'ADHERENT_CARD_TEXT',
@@ -275,65 +271,71 @@ print '<br>';
 llxFooter('$Date$ - $Revision$');
 
 
-function form_constantes($tableau){
-  // Variables globales
-  global $db,$bc,$langs;
-  $form = new Form($db);
-  print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre">';
-  print '<td>'.$langs->trans("Description").'</td>';
-  print '<td>'.$langs->trans("Value").'</td>';
-  print '<td>'.$langs->trans("Type").'</td>';
-  print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
-  print "</tr>\n";
-  $var=true;
-  
-  foreach($tableau as $const){
-    $sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
-    $result = $db->query($sql);
-    if ($result && ($db->num_rows() == 1)) {
-      $obj = $db->fetch_object($result);
-      $var=!$var;
-      print '<form action="adherent.php" method="POST">';
-      print '<input type="hidden" name="action" value="update">';
-      print '<input type="hidden" name="rowid" value="'.$rowid.'">';
-      print '<input type="hidden" name="constname" value="'.$obj->name.'">';
-      print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
-      
-      print "<tr $bc[$var]><td>".nl2br($obj->note)."</td>\n";
-      
-      print '<td>';
-      if ($obj->type == 'yesno')
-	{
-	  print $form->selectyesno('constvalue',$obj->value,1);
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),0);
+function form_constantes($tableau)
+{
+	// Variables globales
+	global $db,$bc,$langs;
+	$form = new Form($db);
+	print '<table class="noborder" width="100%">';
+	print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans("Description").'</td>';
+	print '<td>'.$langs->trans("Value").'</td>';
+	print '<td>'.$langs->trans("Type").'</td>';
+	print '<td align="center" width="80">'.$langs->trans("Action").'</td>';
+	print "</tr>\n";
+	$var=true;
+
+	foreach($tableau as $const){
+		$sql = "SELECT rowid, name, value, type, note FROM ".MAIN_DB_PREFIX."const WHERE name='$const'";
+		$result = $db->query($sql);
+		if ($result && ($db->num_rows() == 1)) {
+			$obj = $db->fetch_object($result);
+			$var=!$var;
+			print '<form action="adherent.php" method="POST">';
+			print '<input type="hidden" name="action" value="update">';
+			print '<input type="hidden" name="rowid" value="'.$rowid.'">';
+			print '<input type="hidden" name="constname" value="'.$obj->name.'">';
+			print '<input type="hidden" name="constnote" value="'.nl2br($obj->note).'">';
+			
+			print "<tr $bc[$var]>";
+			
+			// Affiche nom constante
+			print '<td>';
+			print $langs->trans("Desc".$obj->name) != ("Desc".$obj->name) ? $langs->trans("Desc".$obj->name) : $obj->note;
+			print "</td>\n";
+			
+			print '<td>';
+			if ($obj->type == 'yesno')
+			{
+				print $form->selectyesno('constvalue',$obj->value,1);
+				print '</td><td>';
+				$form->select_array('consttype',array('yesno','texte','chaine'),0);
+			}
+			elseif ($obj->type == 'texte')
+			{
+				print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
+				print $obj->value;
+				print "</textarea>\n";
+				print '</td><td>';
+				$form->select_array('consttype',array('yesno','texte','chaine'),1);
+			}
+			else
+			{
+				print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
+				print '</td><td>';
+				$form->select_array('consttype',array('yesno','texte','chaine'),2);
+			}
+			print '</td><td align="center">';
+			
+			print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
+			//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
+			print "</td></tr>\n";
+			
+			print '</form>';
+			$i++;
+		}    
 	}
-      elseif ($obj->type == 'texte')
-	{
-	  print '<textarea class="flat" name="constvalue" cols="35" rows="5" wrap="soft">';
-	  print $obj->value;
-	  print "</textarea>\n";
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),1);
-	}
-      else
-	{
-	  print '<input type="text" class="flat" size="30" name="constvalue" value="'.$obj->value.'">';
-	  print '</td><td>';
-	  $form->select_array('consttype',array('yesno','texte','chaine'),2);
-	}
-      print '</td><td align="center">';
-      
-      print '<input type="submit" class="button" value="'.$langs->trans("Update").'" name="Button"> &nbsp;';
-//      print '<a href="adherent.php?name='.$const.'&action=unset">'.img_delete().'</a>';
-      print "</td></tr>\n";
-      
-      print '</form>';
-      $i++;
-    }    
-  }
-  print '</table>';
+	print '</table>';
 }
 
 ?>
