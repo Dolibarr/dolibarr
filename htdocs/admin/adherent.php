@@ -165,79 +165,89 @@ print '<br>';
 /*
  * Mailman
  */
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_MAILMAN)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 {
-  $lien=img_tick().' ';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
-  // Edition des varibales globales rattache au theme Mailman 
-  $constantes=array('ADHERENT_MAILMAN_LISTS',
-		    'ADHERENT_MAILMAN_LISTS_COTISANT',
-		    'ADHERENT_MAILMAN_ADMINPW',
-		    'ADHERENT_MAILMAN_SERVER',
-		    'ADHERENT_MAILMAN_UNSUB_URL',
-		    'ADHERENT_MAILMAN_URL'
-		    );
-  print_fiche_titre("Mailman - Système de mailing listes",$lien);
-  form_constantes($constantes);
-}
-else
-{
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
-  print_fiche_titre("Mailman - Système de mailing listes",$lien);
-}
+	$var=!$var;
+	if ($conf->global->ADHERENT_USE_MAILMAN)
+	{
+	  $lien=img_tick().' ';
+	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Disable").'</a>';
+	  // Edition des varibales globales rattache au theme Mailman 
+	  $constantes=array('ADHERENT_MAILMAN_LISTS',
+			    'ADHERENT_MAILMAN_LISTS_COTISANT',
+			    'ADHERENT_MAILMAN_ADMINPW',
+			    'ADHERENT_MAILMAN_SERVER',
+			    'ADHERENT_MAILMAN_UNSUB_URL',
+			    'ADHERENT_MAILMAN_URL'
+			    );
+	  print_fiche_titre("Mailman - Système de mailing listes",$lien);
+	  form_constantes($constantes);
+	}
+	else
+	{
+	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_MAILMAN">'.$langs->trans("Activate").'</a>';
+	  print_fiche_titre("Mailman - Système de mailing listes",$lien);
+	}
 
-print "<hr>\n";
+	print "<hr>\n";
+}
 
 /*
  * Spip
  */
-$var=!$var;
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_SPIP)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 {
-  $lien=img_tick().' ';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
-  // Edition des varibales globales rattache au theme Mailman 
-  $constantes=array('ADHERENT_USE_SPIP_AUTO',
-		    'ADHERENT_SPIP_SERVEUR',
-		    'ADHERENT_SPIP_DB',
-		    'ADHERENT_SPIP_USER',
-		    'ADHERENT_SPIP_PASS'
-		    );
-  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
-  form_constantes($constantes);
-}
-else
-{
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
-  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
-}
+	$var=!$var;
+	if ($conf->global->ADHERENT_USE_SPIP)
+	{
+	  $lien=img_tick().' ';
+	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_SPIP">'.$langs->trans("Disable").'</a>';
+	  // Edition des varibales globales rattache au theme Mailman 
+	  $constantes=array('ADHERENT_USE_SPIP_AUTO',
+			    'ADHERENT_SPIP_SERVEUR',
+			    'ADHERENT_SPIP_DB',
+			    'ADHERENT_SPIP_USER',
+			    'ADHERENT_SPIP_PASS'
+			    );
+	  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
+	  form_constantes($constantes);
+	}
+	else
+	{
+	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_SPIP">'.$langs->trans("Activate").'</a>';
+	  print_fiche_titre("SPIP - Système de publication en ligne",$lien);
+	}
 
-print "<hr>\n";
+	print "<hr>\n";
+}
 
 /*
  * Glasnost
  */
-$var=!$var;
-if ($conf->global->MAIN_FEATURES_LEVEL >= 1 && $conf->global->ADHERENT_USE_GLASNOST)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 {
-  $lien=img_tick().' ';
-  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
-  // Edition des varibales globales rattache au theme Mailman 
-  $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
-		    'ADHERENT_GLASNOST_SERVEUR',
-		    'ADHERENT_GLASNOST_USER',
-		    'ADHERENT_GLASNOST_PASS'
-		    );
-  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
-  form_constantes($constantes);
-}
-else
-{
-  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Activate").'</a>';
-  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
-}
+	$var=!$var;
+	if ($conf->global->ADHERENT_USE_GLASNOST)
+	{
+	  $lien=img_tick().' ';
+	  $lien.='<a href="adherent.php?action=unset&value=0&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Disable").'</a>';
+	  // Edition des varibales globales rattache au theme Mailman 
+	  $constantes=array('ADHERENT_USE_GLASNOST_AUTO',
+			    'ADHERENT_GLASNOST_SERVEUR',
+			    'ADHERENT_GLASNOST_USER',
+			    'ADHERENT_GLASNOST_PASS'
+			    );
+	  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
+	  form_constantes($constantes);
+	}
+	else
+	{
+	  $lien='<a href="adherent.php?action=set&value=1&name=ADHERENT_USE_GLASNOST">'.$langs->trans("Activate").'</a>';
+	  print_fiche_titre("Glasnost - Système de vote en ligne",$lien);
+	}
 
-print "<hr>\n";
+	print "<hr>\n";
+}
 
 /*
  * Edition des varibales globales non rattache a un theme specifique 
