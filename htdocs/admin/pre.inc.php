@@ -59,6 +59,8 @@ function llxHeader($head = "", $title="", $help_url='')
 	$menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
 
 	$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+	
+	$menu->add(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
 
 	$menu->add(DOL_URL_ROOT."/user/home.php", $langs->trans("MenuUsersAndGroups"));
 
