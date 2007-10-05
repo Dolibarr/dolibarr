@@ -101,12 +101,14 @@ class Fichinter extends CommonObject
 		$this->verifyNumRef($soc);
 		
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."fichinter (fk_soc, datei, datec, ref, fk_user_author, description, model_pdf";
-		if ($this->projet_id) $sql .=  ", fk_projet";
-		$sql .= ") ";
-		$sql .= " VALUES (".$this->socid.", ".$this->date.", now(), '".$this->ref."', ".$this->author;
-		$sql .= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
+		if ($this->projet_id) $sql.=  ", fk_projet";
+		$sql.= ") ";
+		$sql.= " VALUES (".$this->socid.",";
+		$sql.= " ".$this->db->idate($this->date).",";
+		$sql.= " now(), '".$this->ref."', ".$this->author;
+		$sql.= ", '".addslashes($this->description)."', '".$this->modelpdf."'";
 		if ($this->projet_id) $sql .= ", ".$this->projet_id;
-		$sql .= ")";
+		$sql.= ")";
 		$sqlok = 0;
 
 		dolibarr_syslog("Fichinter::create sql=".$sql);
