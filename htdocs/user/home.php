@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,10 +40,7 @@ $langs->load("users");
 llxHeader();
 
 
-$lien="";
-if ($user->admin) $lien='<a href="'.DOL_URL_ROOT.'/admin/perms.php">'.img_picto($langs->trans("Setup"),"setup").' '.$langs->trans("Setup").'</a>';
-
-print_fiche_titre($langs->trans("MenuUsersAndGroups"),$lien);
+print_fiche_titre($langs->trans("MenuUsersAndGroups"));
 
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';

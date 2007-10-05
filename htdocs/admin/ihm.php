@@ -117,11 +117,6 @@ if (isset($_GET["action"]) && $_GET["action"] == 'edit')
     print $html->selectyesno('main_show_bugtrack_link',$conf->global->MAIN_SHOW_BUGTRACK_LINK,1);
     print '</td></tr>';
 
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';
-    print $html->selectyesno('main_show_workboard',$conf->global->MAIN_SHOW_WORKBOARD,1);
-    print '</td></tr>';
-
     // Désactiver javascript
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("DisableJavascript").'</td><td>';
@@ -245,10 +240,6 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'"><td width="35%">'.$langs->trans("ShowBugTrackLink").'</td><td>';   
     print yn($conf->global->MAIN_SHOW_BUGTRACK_LINK)."</td></tr>";
-
-    $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("ShowWorkBoard").'</td><td>';   
-    print yn($conf->global->MAIN_SHOW_WORKBOARD)."</td></tr>";
 
     // Disable javascript
     $var=!$var;
