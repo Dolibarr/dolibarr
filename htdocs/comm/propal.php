@@ -81,6 +81,7 @@ $form=new Form($db);
 /*                     Actions                                                */
 /******************************************************************************/
 
+// Suppression de la propale
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
   if ($user->rights->propale->supprimer)
@@ -96,42 +97,28 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 }
 
 /*
- *  Supprime une ligne produit SANS confirmation
+ *  Supprime une ligne produit AVEC OU SANS confirmation
  */
-if ($_GET['action'] == 'deleteline' && $user->rights->propale->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+     || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
-	$propal = new Propal($db);
-	$propal->fetch($_GET['propalid']);
-	$propal->delete_product($_GET['ligne']);
-	if ($_REQUEST['lang_id'])
-	{
-		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-}
-
-/*
- *  Supprime une ligne produit AVEC confirmation
- */
-if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-{
-  if ($user->rights->propale->creer)
+	if ($user->rights->propale->creer)
   {
   	$propal = new Propal($db);
-    $propal->fetch($_GET['propalid']);
-    $result=$propal->delete_product($_GET['ligne']);
-    if ($_REQUEST['lang_id'])
-    {
-    	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-    	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    }
-    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
-  }
-  Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
+  	$propal->fetch($_GET['propalid']);
+  	$result = $propal->delete_product($_GET['ligne']);
+  	if ($_REQUEST['lang_id'])
+  	{
+  		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+  		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  	}
+  	propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+	}
+	Header('Location: '.$_SERVER["PHP_SELF"].'?propalid='.$_GET['propalid']);
   exit;
 }
 
+// Validation de la propale
 if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes')
 {
     if ($user->rights->propale->valider)

@@ -77,9 +77,44 @@ if ($_GET["projetid"])
   $projetid = $_GET["projetid"];
 }
 
+/******************************************************************************/
+/*                     Actions                                                */
+/******************************************************************************/
+
+// Suppression de la commande
+if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+{
+  if ($user->rights->commande->supprimer )
+  {
+  	$commande = new Commande($db);
+    $commande->fetch($_GET['id']);
+    $commande->delete();
+    Header('Location: index.php');
+    exit;
+  }
+}
+
 /*
- * Actions
+ *  Supprime une ligne produit AVEC ou SANS confirmation
  */
+if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+     || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
+{
+  if ($user->rights->commande->creer)
+  {
+  	$commande = new Commande($db);
+  	$commande->fetch($_GET['id']);
+  	$result = $commande->delete_line($_GET['lineid']);
+  	if ($_REQUEST['lang_id'])
+  	{
+  		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+  		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  	}
+  	commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+  }
+  Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+  exit;
+}
 
 // Categorisation dans projet
 if ($_POST['action'] == 'classin' && $user->rights->commande->creer)
@@ -378,21 +413,6 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
   exit;
 }
 
-if ($_GET['action'] == 'deleteline' && $user->rights->commande->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-{
-  $commande = new Commande($db);
-  $commande->fetch($_GET['id']);
-  $result = $commande->delete_line($_GET['lineid']);
-  if ($_REQUEST['lang_id'])
-    {
-      $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-      $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    }
-  commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
-  Header('Location: fiche.php?id='.$_GET['id']);
-  exit;
-}
-
 if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
@@ -414,18 +434,6 @@ if ($_POST['action'] == 'confirm_cancel' && $_POST['confirm'] == 'yes' && $user-
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
   $result = $commande->cancel($user);
-}
-
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
-{
-  if ($user->rights->commande->supprimer )
-    {
-      $commande = new Commande($db);
-      $commande->fetch($_GET['id']);
-      $commande->delete();
-      Header('Location: index.php');
-      exit;
-    }
 }
 
 if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
