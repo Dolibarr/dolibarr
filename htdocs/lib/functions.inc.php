@@ -677,16 +677,15 @@ function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0)
 /**
 		\brief  	Returns formated date
 		\param		fmt				Format (Exemple: 'Y-m-d H:i:s')
-		\param		timestamp		Date. Si 0 et gm=1, renvoi 01/01/1970 00:00:00
+		\param		timestamp		Date. Exemple: Si timestamp=0 et gm=1, renvoi 01/01/1970 00:00:00
 		\param		gm				1 if timestamp was built with gmmktime, 0 if timestamp was build with mktime
 		\return		string			Formated date
 */
 function dolibarr_date($fmt, $timestamp, $gm=0)
 {
 	$usealternatemethod=false;
-	if ($year <= 1970) $usealternatemethod=true;
-	if ($year >= 2038) $usealternatemethod=true;
-	//if ($year <= 1970 && $_SERVER["WINDIR"]) $usealternatemethod=true;
+	if ($timestamp <= 0) $usealternatemethod=true;
+	if ($timestamp >= 2145913200) $usealternatemethod=true;
 	
 	if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
 	{
