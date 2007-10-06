@@ -59,6 +59,7 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Setup is running',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
+
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_EMAIL_FROM','dolibarr-robot@domain.com','chaine','EMail emetteur pour les emails automatiques Dolibarr',1);
@@ -70,6 +71,9 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL'
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMPANY','1','yesno',0,'Show form for quick company search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_PRODUCT','1','yesno',0,'Show form for quick product search');
+
+insert into llx_const(name,value,type,visible,note) values('SOCIETE_NOLIST_COURRIER','1','yesno',0,'Liste les fichiers du repertoire courrier');
+
 
 --
 -- IHM

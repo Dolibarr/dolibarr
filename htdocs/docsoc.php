@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -184,45 +184,48 @@ if ($socid > 0)
 		// Courriers
 		// Les courriers sont des documents speciaux generes par des scripts
 		// Voir Rodo
-		$filearray=array();	
-		$errorlevel=error_reporting();
-		error_reporting(0);
-		$handle=opendir($courrier_dir);
-		error_reporting($errorlevel);
-		if ($handle)
+		if ($conf->global->SOCIETE_NOLIST_COURRIER)
 		{
-			$i=0;
-			while (($file = readdir($handle))!==false)
+			$filearray=array();	
+			$errorlevel=error_reporting();
+			error_reporting(0);
+			$handle=opendir($courrier_dir);
+			error_reporting($errorlevel);
+			if ($handle)
+			{
+				$i=0;
+				while (($file = readdir($handle))!==false)
+				{
+					if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+					{
+						$filearray[$i]=$file;
+						$i++;
+					}
+				}
+				closedir($handle);
+			}       	       
+
+			print '<table width="100%" class="noborder">';
+			print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
+
+			$var=true;
+			foreach($filearray as $key => $file)
 			{
 				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 				{
-					$filearray[$i]=$file;
-					$i++;
+					$var=!$var;
+					print "<tr $bc[$var]><td>";
+					$loc = "courrier/".get_exdir($socid);
+					echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
+					print "</td>\n";
+
+					print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
+					print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
+					print "</tr>\n";
 				}
 			}
-			closedir($handle);
-		}       	       
-
-		print '<table width="100%" class="noborder">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Courriers").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td></tr>';
-
-		$var=true;
-		foreach($filearray as $key => $file)
-		{
-			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
-			{
-				$var=!$var;
-				print "<tr $bc[$var]><td>";
-				$loc = "courrier/".get_exdir($socid);
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($loc.'/'.$file).'">'.$file.'</a>';
-				print "</td>\n";
-
-				print '<td align="right">'.filesize($courrier_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($courrier_dir."/".$file),"dayhour").'</td>';
-				print "</tr>\n";
-			}
+			print "</table>";
 		}
-		print "</table>";
 	}
 	else
 	{
