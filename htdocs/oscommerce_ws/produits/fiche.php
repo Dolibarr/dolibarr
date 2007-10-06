@@ -90,6 +90,7 @@ if ($action == '' && !$cancel) {
 			//	exit;
 	    	}
 	    	$product = $osc_prod->osc2dolibarr($_GET['id']);
+
 		} 
 		else
 		{

@@ -50,6 +50,7 @@ class Osc_product
 	
 	var $error;
 	
+
     /**
      *    \brief      Constructeur de la classe
      *    \param      id          Id produit (0 par defaut)
@@ -103,15 +104,15 @@ class Osc_product
 			return -1;
 		}
 		elseif (!($err=$client->getError()) ) {
-  			$this->osc_id = $obj[products_id];
-  			$this->osc_ref = $obj[products_model];
-  			$this->osc_name = $obj[products_name];
-  			$this->osc_desc = $obj[products_description];
-  			$this->osc_stock = $obj[products_quantity];
-  			$this->osc_four = $obj[manufacturers_id];
-			$this->osc_price = $obj[products_price];
-			$this->osc_image = $obj[image];
-			$this->osc_catid = $obj[categories_id];
+  			$this->osc_id = $obj['products_id'];
+  			$this->osc_ref = $obj['products_model'];
+  			$this->osc_name = $obj['products_name'];
+  			$this->osc_desc = $obj['products_description'];
+  			$this->osc_stock = $obj['products_quantity'];
+  			$this->osc_four = $obj['manufacturers_id'];
+			$this->osc_price = $obj['products_price'];
+			$this->osc_image = $obj['image'];
+			$this->osc_catid = $obj['categories_id'];
   			}
   		else {
 		    $this->error = 'Erreur '.$client->getError();
@@ -140,9 +141,9 @@ class Osc_product
 	    		$product->price = convert_price($this->osc_price);
 	    		$product->tva_tx = $this->osc_tva;
 	    		$product->type = 0;
+	    		$product->catid = $this->get_catid($this->osc_catid) ;
 	    		$product->seuil_stock_alerte = 0; /* on force */
 	/* on force */
-				/* à voir avec la gestion des catégories */
 				$product->status = 1; /* en vente */
 
 		 return $product; 		  
@@ -158,18 +159,14 @@ class Osc_product
 	function transcode($oscid, $prodid)
 	{
 
-//		print "entree transcode <br>";
-
 		/* suppression et insertion */
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."osc_product WHERE rowid = ".$oscid.";";
 		$result=$this->db->query($sql);
         if ($result)
         {
-//			print "suppression ok ".$sql."  * ".$result;
 		}
         else
         {
-//			print "suppression rate ".$sql."  * ".$result;
             dolibarr_syslog("osc_product::transcode echec suppression");
 //            $this->db->rollback();
 //            return -1;
@@ -179,17 +176,16 @@ class Osc_product
 		$result=$this->db->query($sql);
         if ($result)
         {
-//			print "insertion ok ". $sql."  ". $result;
 		}
         else
         {
-//			print "insertion rate ".$sql." , ".$result;
             dolibarr_syslog("osc_product::transcode echec insert");
 //            $this->db->rollback();
 //            return -1;
 		}
 	return 0;	
      }
+
 // converti le produit osc en produit dolibarr
 
 	function get_productid($osc_product)
@@ -228,6 +224,21 @@ class Osc_product
 // test d'erreurs
 		if ($row) return $row[0];	
 		else return -1;	
+	}
+	
+	function get_catid($osccatid)
+	{
+      require_once("./osc_categories.class.php");
+		$mycat=new Osc_categorie($this->db);		
+
+		if ($mycat->fetch_osccat($osccatid) > 0) 
+		{
+			$x = $mycat->dolicatid;
+			print'<p>'.$x.'</p>';			
+			return $x ;
+		}
+		else return 0;
+		
 	}	
        
 	  /**
