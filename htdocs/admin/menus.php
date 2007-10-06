@@ -79,7 +79,7 @@ $head[$h][1] = $langs->trans("MenuHandlers");
 $head[$h][2] = 'handler';
 $h++;
 
-if ($conf->global->MAIN_LEVEL_FEATURES >= 1)
+if ($conf->global->MAIN_FEATURES_LEVEL >= 1)
 {
 	$head[$h][0] = DOL_URL_ROOT."/admin/menus/index.php";
 	$head[$h][1] = $langs->trans("MenuAdmin");
