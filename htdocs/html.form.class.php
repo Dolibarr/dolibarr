@@ -2455,8 +2455,8 @@ class Form
      *      \param      taux_produit        Taux par defaut du produit vendu
      *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
      *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
-     *                  Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
-     *                  Si vendeur et acheteur dans Communauté européenne et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+     *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+     *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
      *                  Sinon la TVA proposée par défaut=0. Fin de règle.
      */
     function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
@@ -2520,10 +2520,10 @@ class Form
 		}        	
 		
 		// Définition du taux à présélectionner
-		if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+		if (("".$defaulttx) == "") $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
 		// Si taux par defaut n'a pu etre trouvé, on prend dernier.
 		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
-		if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
+		if (("".$defaulttx) == "") $defaulttx = $txtva[sizeof($txtva)-1];
 		
 		$nbdetaux = sizeof($txtva);
 		
