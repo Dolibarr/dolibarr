@@ -52,7 +52,7 @@ $s->wsdl->schemaTargetNamespace=$ns;
 $s->register('get_article');
 $s->register('get_listearticles');
 $s->register('create_article');
-
+$s->register('get_categorylist');
 
 
 function create_article($prod)
@@ -170,6 +170,39 @@ function saveImage($name,$content)
 	fclose($fich);
 	return $name.' enregistré';
 }
+
+
+  
+// OSC categories list from $catid 
+function get_categorylist($catid)
+{
+ //on se connecte
+ 	if (!($connexion = mysql_connect(DB_SERVER, DB_SERVER_USERNAME, DB_SERVER_PASSWORD)))   return new soap_fault("Server", "MySQL 1", "connexion impossible");
+ 	if (!($db = mysql_select_db(DB_DATABASE, $connexion)))  return new soap_fault("Server", "MySQL 2", mysql_error());
+ 
+ 	$sql = "select c.categories_id, cd.categories_name, c.parent_id ";
+ 	$sql .= " FROM categories c, categories_description cd ";
+ 	$sql .= " WHERE c.parent_id = '".$catid."' and c.categories_id = cd.categories_id and cd.language_id='" . OSC_LANGUAGE_ID ."' order by sort_order, cd.categories_name";
+ 
+ 	if (!($resquer = mysql_query($sql,$connexion)))  return new soap_fault("Server", "MySQL gey_categorylist ".$sql, mysql_error());
+ 
+ 		switch ($numrows = mysql_numrows($resquer)) {
+ 		case 0 : 
+ 			return new soap_fault("Server", "MySQL gey_categorylist", "pas de categories");
+ 			break;
+ 		default : 
+ 			$i = 0;
+ 			while ( $i < $numrows)  
+ 			{
+ 				$liste_cat[$i] =  mysql_fetch_array($resquer, MYSQL_ASSOC);
+ 				$i++;
+ 			}
+ 		}		
+ 	mysql_close($connexion);
+  /* Sends the results to the client */
+return $liste_cat;		
+}
+ 
 
 // Return the results.
 $s->service($HTTP_RAW_POST_DATA);
