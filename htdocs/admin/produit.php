@@ -123,14 +123,18 @@ else if ($_POST["action"] == 'viewProdDescInForm')
   Header("Location: produit.php");
   exit;
 }
-
+else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
+{
+  dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"]);
+  Header("Location: produit.php");
+  exit;
+}
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
   dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
   Header("Location: produit.php");
   exit;
 }
-
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
   dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
@@ -284,6 +288,19 @@ print "</td>";
 print '</tr>';
 print '</form>';
 
+// Confirmation de suppression d'un ligne produit dans les formulaires activation/desactivation
+$var=!$var;
+print "<form method=\"post\" action=\"produit.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
+print '</tr>';
+print '</form>';
 
 // Utilisation de l'écotaxe
 $var=!$var;
