@@ -1512,44 +1512,44 @@ class Facture extends CommonObject
     dolibarr_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
 
     if ($this->brouillon)
-      {
-	$this->db->begin();
-			
-	// Libere remise liee a ligne de facture
-	$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-	$sql.= ' SET fk_facture = NULL where fk_facture = '.$rowid;
-	$result = $this->db->query($sql);
-	if ($result < 0)
-	  {
-	    $this->error=$this->db->error();
-	    dolibarr_syslog("Facture::Deleteline Error ".$this->error);
-	    $this->db->rollback();
-	    return -1;
-	  }
-
-	// Efface ligne de facture
-	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
-	$result = $this->db->query($sql);
-	if ($result < 0)
-	  {
-	    $this->error=$this->db->error();
-	    dolibarr_syslog("Facture::Deleteline  Error ".$this->error);
-	    $this->db->rollback();
-	    return -1;
-	  }
-
-	$result=$this->update_price($this->id);
-
-	// Appel des triggers
-	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	$interface=new Interfaces($this->db);
-	$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
-	// Fin appel triggers
-
-	$this->db->commit();
-
-	return 1;
-      }
+    {
+    	$this->db->begin();
+    	
+    	// Libere remise liee a ligne de facture
+    	$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
+    	$sql.= ' SET fk_facture = NULL where fk_facture = '.$rowid;
+    	$result = $this->db->query($sql);
+    	if ($result < 0)
+    	{
+    		$this->error=$this->db->error();
+    		dolibarr_syslog("Facture::Deleteline Error ".$this->error);
+    		$this->db->rollback();
+    		return -1;
+    	}
+    	
+    	// Efface ligne de facture
+    	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
+    	$result = $this->db->query($sql);
+    	if ($result < 0)
+    	{
+    		$this->error=$this->db->error();
+    		dolibarr_syslog("Facture::Deleteline  Error ".$this->error);
+    		$this->db->rollback();
+    		return -1;
+    	}
+    	
+    	$result=$this->update_price($this->id);
+    	
+    	// Appel des triggers
+    	include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+    	$interface=new Interfaces($this->db);
+    	$result = $interface->run_triggers('LINEBILL_DELETE',$this,$user,$langs,$conf);
+    	// Fin appel triggers
+    	
+    	$this->db->commit();
+    	
+    	return 1;
+    }
   }
 
   /**

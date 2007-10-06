@@ -85,13 +85,13 @@ $form=new Form($db);
 if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
   if ($user->rights->propale->supprimer)
-    {
-      $propal = new Propal($db, 0, $_GET['propalid']);
-      $propal->fetch($_GET['propalid']);
-      $propal->delete($user);
-      $propalid = 0;
-      $brouillon = 1;
-    }
+  {
+  	$propal = new Propal($db, 0, $_GET['propalid']);
+    $propal->fetch($_GET['propalid']);
+    $propal->delete($user);
+    $propalid = 0;
+    $brouillon = 1;
+  }
   Header('Location: '.$_SERVER["PHP_SELF"]);
   exit;
 }
@@ -106,7 +106,7 @@ if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes
   {
   	$propal = new Propal($db);
   	$propal->fetch($_GET['propalid']);
-  	$result = $propal->delete_product($_GET['ligne']);
+  	$result = $propal->delete_product($_GET['lineid']);
   	if ($_REQUEST['lang_id'])
   	{
   		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
@@ -558,7 +558,7 @@ if ($_POST['action'] == 'updateligne' && $user->rights->propale->creer && $_POST
     $propal = new Propal($db);
 	if (! $propal->fetch($_POST['propalid']) > 0) dolibarr_print_error($db);
 
-    $result = $propal->updateline($_POST['ligne'],
+    $result = $propal->updateline($_POST['lineid'],
     	$_POST['subprice'],
     	$_POST['qty'],
     	$_POST['remise_percent'],
@@ -719,7 +719,7 @@ if ($_GET['propalid'] > 0)
    */
   if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
     {
-      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;ligne='.$_GET["ligne"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
+      $html->form_confirm($_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
       print '<br>';
     }
   
@@ -1050,7 +1050,7 @@ if ($_GET['propalid'] > 0)
 			$var=!$var;
 
 			// Ligne en mode visu
-			if ($_GET['action'] != 'editline' || $_GET['ligne'] != $objp->rowid)
+			if ($_GET['action'] != 'editline' || $_GET['lineid'] != $objp->rowid)
 			{
 				print '<tr '.$bc[$var].'>';
 				
@@ -1216,7 +1216,7 @@ if ($_GET['propalid'] > 0)
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;ligne='.$objp->rowid.'#'.$objp->rowid.'">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=editline&amp;lineid='.$objp->rowid.'#'.$objp->rowid.'">';
 						print img_edit();
 						print '</a>';
 					}
@@ -1226,21 +1226,19 @@ if ($_GET['propalid'] > 0)
 					{
 						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 						{
-							$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&ligne='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
+							$url = $_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&lineid='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
 							print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
-							print img_delete();
 						}
 						else
 						{
-							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;ligne='.$objp->rowid.'">';
-							print img_delete();
+							print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
 						}
 					}
 					else
 					{
-						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=deleteline&amp;ligne='.$objp->rowid.'">';
-						print img_delete();
+						print '<a href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=deleteline&amp;lineid='.$objp->rowid.'">';
 					}
+					print img_delete();
 					print '</a></td>';
 					if ($num > 1)
 					{
@@ -1269,12 +1267,12 @@ if ($_GET['propalid'] > 0)
 			}
 
 			// Ligne en mode update
-			if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["ligne"] == $objp->rowid)
+			if ($propal->statut == 0 && $_GET["action"] == 'editline' && $user->rights->propale->creer && $_GET["lineid"] == $objp->rowid)
 			{
 				print '<form action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'#'.$objp->rowid.'" method="post">';
 				print '<input type="hidden" name="action" value="updateligne">';
 				print '<input type="hidden" name="propalid" value="'.$propal->id.'">';
-				print '<input type="hidden" name="ligne" value="'.$_GET["ligne"].'">';
+				print '<input type="hidden" name="lineid" value="'.$_GET["lineid"].'">';
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne

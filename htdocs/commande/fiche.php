@@ -82,7 +82,7 @@ if ($_GET["projetid"])
 /******************************************************************************/
 
 // Suppression de la commande
-if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
+if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 {
   if ($user->rights->commande->supprimer )
   {
@@ -97,7 +97,7 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 /*
  *  Supprime une ligne produit AVEC ou SANS confirmation
  */
-if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+if (($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
      || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
   if ($user->rights->commande->creer)
@@ -105,12 +105,19 @@ if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'ye
   	$commande = new Commande($db);
   	$commande->fetch($_GET['id']);
   	$result = $commande->delete_line($_GET['lineid']);
-  	if ($_REQUEST['lang_id'])
-  	{
-  		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-  		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+  	if ($result > 0)
+    {
+    	if ($_REQUEST['lang_id'])
+    	{
+    		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+    	}
+    	commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
   	}
-  	commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
+  	else
+  	{
+  		print $commande->error;
+  	}
   }
   Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
   exit;
@@ -320,16 +327,16 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
-            	$pu = $prod->multiprices[$commande->client->price_level];
-            	$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
-            	$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+				$pu = $prod->multiprices[$commande->client->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
+        $price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
 			}
 			else
 			{
 				$pu = $prod->price;
-	            $pu_ttc = $prod->price_ttc;
+	      $pu_ttc = $prod->price_ttc;
 			}
-			
+		
 			// La description de la ligne est celle saisie ou
 			// celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
@@ -350,7 +357,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$desc=$_POST['np_desc'];
 		}
 
-		$commande->addline(
+		$result = $commande->addline(
 			$_POST['id'],
 			$desc,
 			$pu,
@@ -364,12 +371,19 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$pu_ttc
 			);
 
-		if ($_REQUEST['lang_id'])
+		if ($result > 0)
 		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
 		}
-		commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+		else
+		{
+			print $commande->error;
+		}
 	}
 }
 
@@ -413,45 +427,35 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
   exit;
 }
 
-if ($_POST['action'] == 'confirm_valid' && $_POST['confirm'] == 'yes' && $user->rights->commande->valider)
+if ($_REQUEST['action'] == 'confirm_validate' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
   $soc = new Societe($db);
   $soc->fetch($commande->socid);
-  $result = $commande->valid($user);
+  if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+  commande_pdf_create($db, $commande->id, $commande->modelpdf, $outputlangs);
+  $result=$commande->valid($user);
+  Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
+  exit;
 }
 
-if ($_POST['action'] == 'confirm_close' && $_POST['confirm'] == 'yes' && $user->rights->commande->creer)
+if ($_REQUEST['action'] == 'confirm_close' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->creer)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
   $result = $commande->cloture($user);
 }
 
-if ($_POST['action'] == 'confirm_cancel' && $_POST['confirm'] == 'yes' && $user->rights->commande->valider)
+if ($_REQUEST['action'] == 'confirm_cancel' && $_REQUEST['confirm'] == 'yes' && $user->rights->commande->valider)
 {
   $commande = new Commande($db);
   $commande->fetch($_GET['id']);
   $result = $commande->cancel($user);
-}
-
-if ($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
-{
-  if ($user->rights->commande->creer)
-    {
-      $commande = new Commande($db);
-      $commande->fetch($_GET['id']);
-      $commande->delete_line($_GET['lineid']);
-      if ($_REQUEST['lang_id'])
-	{
-	  $outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-	  $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-	}
-      commande_pdf_create($db, $_GET['id'], $commande->modelpdf, $outputlangs);
-    }
-  Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
-  exit;
 }
 
 if ($_GET['action'] == 'modif' && $user->rights->commande->creer)
@@ -1013,30 +1017,29 @@ else
 	  /*
 	   * Confirmation de la validation
 	   */
-	  if ($_GET['action'] == 'valid')
+	  if ($_GET['action'] == 'validate')
+	  {
+	  	// on vérifie si la facture est en numérotation provisoire
+	    $ref = substr($commande->ref, 1, 4);
+	    if ($ref == 'PROV')
 	    {
-	      // on vérifie si la facture est en numérotation provisoire
-	      $ref = substr($commande->ref, 1, 4);
-	      if ($ref == 'PROV')
-		{
-		  $num = $commande->getNextNumRef($soc);
-		}
-	      else
-		{
-		  $num = $commande->ref;
-		}
-	      
-	      $text=$langs->trans('ConfirmValidateOrder',$num);
-	      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_valid');
-	      print '<br />';
+	    	$num = $commande->getNextNumRef($soc);
 	    }
+	    else
+	    {
+	    	$num = $commande->ref;
+	    }
+	    
+	    $text=$langs->trans('ConfirmValidateOrder',$num);
+	    $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('ValidateOrder'), $text, 'confirm_validate');
+	    print '<br />';
+	  }
 	  
 	  /*
 	   * Confirmation de la cloture
 	   */
-	  if ($_GET['action'] == 'cloture')
+	  if ($_GET['action'] == 'close')
 	    {
-	      //$numfa = commande_get_num($soc);
 	      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('CloseOrder'), $langs->trans('ConfirmCloseOrder'), 'confirm_close');
 	      print '<br />';
 	    }
@@ -1044,7 +1047,7 @@ else
 	  /*
 	   * Confirmation de l'annulation
 	   */
-	  if ($_GET['action'] == 'annuler')
+	  if ($_GET['action'] == 'cancel')
 	    {
 	      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id, $langs->trans('Cancel'), $langs->trans('ConfirmCancelOrder'), 'confirm_cancel');
 	      print '<br />';
@@ -1053,9 +1056,9 @@ else
 	  /*
 	   * Confirmation de la suppression d'une ligne produit
 	   */
-	  if ($_GET['action'] == 'delete_product_line' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
+	  if ($_GET['action'] == 'ask_deleteline' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 	    {
-	      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteproductline');
+	      $html->form_confirm($_SERVER["PHP_SELF"].'?id='.$id.'&amp;lineid='.$_GET["lineid"], $langs->trans('DeleteProductLine'), $langs->trans('ConfirmDeleteProductLine'), 'confirm_deleteline');
 	      print '<br>';
 	    }
 	  
@@ -1425,7 +1428,15 @@ else
 							print '<td align="center">';
 							if ($conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 							{
-								print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+								if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+								{
+									$url = $_SERVER["PHP_SELF"].'?id='.$id.'&lineid='.$objp->rowid.'&action=confirm_deleteline&confirm=yes';
+									print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteProductLine').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'deleteline'.$i.'\')">';
+								}
+								else
+								{
+									print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$id.'&amp;action=ask_deleteline&amp;lineid='.$objp->rowid.'">';
+								}
 							}
 							else
 							{
@@ -1649,12 +1660,29 @@ else
 				print '<div class="tabsAction">';
 
 				// Valid
-				if ($commande->statut == 0)
+				if ($commande->statut == 0 && $commande->total_ttc > 0 && $user->rights->commande->valider)
 				{
-					if ($user->rights->commande->valider)
+					print '<a class="butAction" ';
+					if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 					{
-						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=valid">'.$langs->trans('Valid').'</a>';
+						// on vérifie si la facture est en numérotation provisoire
+						$ref = substr($commande->ref, 1, 4);
+						if ($ref == 'PROV')
+						{
+							$num = $commande->getNextNumRef($soc);
+						}
+						else
+						{
+							$num = $commande->ref;
+						}
+						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_validate&confirm=yes';
+						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmValidateOrder',$num).'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'validate\')"';
 					}
+					else
+					{
+						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=validate"';
+					}
+					print '>'.$langs->trans('Validate').'</a>';
 				}
 
 				// Edit
@@ -1711,26 +1739,59 @@ else
 					}
 				}
 
+				// Cloturer
 				if ($commande->statut == 1 || $commande->statut == 2)
 				{
 					if ($user->rights->commande->cloturer)
 					{
-						print '<a class="butAction" href="fiche.php?id='.$id.'&amp;action=cloture">'.$langs->trans('Close').'</a>';
+						print '<a class="butAction" ';
+						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+						{
+							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_close&confirm=yes';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCloseOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'close\')"';
+						}
+						else
+						{
+							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=close"';
+						}
+						print '>'.$langs->trans('Close').'</a>';
 					}
 				}
 
+				// Annuler commande
 				if ($commande->statut == 1)
 				{
 					$nb_expedition = $commande->nb_expedition();
 					if ($user->rights->commande->annuler && $nb_expedition == 0)
 					{
-						print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=annuler">'.$langs->trans('CancelOrder').'</a>';
+						print '<a class="butActionDelete" ';
+						if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+						{
+							$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_cancel&confirm=yes';
+							print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmCancelOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'cancel\')"';
+						}
+						else
+						{
+							print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=cancel"';
+						}
+						print '>'.$langs->trans('CancelOrder').'</a>';
 					}
 				}
 
+				// Supprimer commande
 				if ($commande->statut == 0 && $user->rights->commande->supprimer)
 				{
-					print '<a class="butActionDelete" href="fiche.php?id='.$id.'&amp;action=delete">'.$langs->trans('Delete').'</a>';
+					print '<a class="butActionDelete" ';
+					if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+					{
+						$url = $_SERVER["PHP_SELF"].'?id='.$commande->id.'&action=confirm_delete&confirm=yes';
+						print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteOrder').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+					}
+					else
+					{
+						print 'href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete"';
+					}
+					print '>'.$langs->trans('Delete').'</a>';
 				}
 
 				print '</div>';
