@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 
 $langs->load("companies");
 
-$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/api/checkVatPort';
+$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/vieshome.do';
 $WS_METHOD  = 'checkVat';
 
 
