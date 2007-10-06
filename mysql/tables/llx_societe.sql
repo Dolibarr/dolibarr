@@ -50,7 +50,7 @@ create table llx_societe
   siret              varchar(16),                         -- IDProf2: siret pour france
   ape                varchar(16),                         -- IDProf3: code ape pour france
   idprof4            varchar(16),                         -- IDProf4: nu pour france
-  tva_intra          varchar(20),                         -- tva intracommunautaire
+  tva_intra          varchar(20),                         -- tva
   capital            real,                                -- capital de la société
   description        text,                                --
   fk_stcomm          tinyint        DEFAULT 0,            -- commercial statut

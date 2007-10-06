@@ -394,8 +394,9 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
 
     // TVA Intra
     $var=!$var;
-    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("TVAIntra").'</td><td>';
-    print '<input name="tva" size="20" value="' . $conf->global->MAIN_INFO_TVAINTRA . '"></td></tr>';
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("VATIntra").'</td><td>';
+    print '<input name="tva" size="20" value="' . $conf->global->MAIN_INFO_TVAINTRA . '">';
+	print '</td></tr>';
 
     print '</table>';
 
@@ -524,9 +525,12 @@ else
 
     print '</table>';
 
+	
     print '<br>';
 
+	
     // Identifiants de la société (propre au pays)
+	print '<form name="formsoc" method="post">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre"><td>'.$langs->trans("CompanyIds").'</td><td>'.$langs->trans("Value").'</td></tr>';
     $var=true;
@@ -607,12 +611,48 @@ else
         print '</td></tr>';
     }
     
-    // TVA Intracommunautaire
+    // TVA
+	if ($conf->use_javascript)
+	{
+		print "\n";
+		print '<script language="JavaScript" type="text/javascript">';
+		print "function CheckVAT(a,b) {\n";
+		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,260);\n";
+		print "}\n";
+		print '</script>';
+		print "\n";
+	}
     $var=!$var;
-    print '<tr '.$bc[$var].'><td>'.$langs->trans("TVAIntra").'</td><td>' . $conf->global->MAIN_INFO_TVAINTRA . '</td></tr>';
+    print '<tr '.$bc[$var].'><td>'.$langs->trans("VATIntra").'</td>';
+	print '<td>';
+	if ($conf->global->MAIN_INFO_TVAINTRA) 
+	{
+		$s='';
+		$code=substr($conf->global->MAIN_INFO_TVAINTRA,0,2);
+		$num=substr($conf->global->MAIN_INFO_TVAINTRA,2);
+		$s.=$conf->global->MAIN_INFO_TVAINTRA;
+		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
+		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
+		$s.=' &nbsp; ';
+		if ($conf->use_javascript)
+		{
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+		}
+		else
+		{
+			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+		}
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+	print '</td>';
+	print '</tr>';
 
     print '</table>';
-
+	print '</form>';
 
     /*
      *  Options fiscale

@@ -515,7 +515,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print $html->selectyesno('assujtva_value',1,1);		// Assujeti par défaut en creation
 		print '</td>';
 
-		// Code TVA intra
+		// Code TVA
 		if ($conf->use_javascript)
 		{
 			print "\n";
@@ -526,7 +526,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print '</script>';
 			print "\n";
 		}
-		print '<td nowrap="nowrap">'.$langs->trans('VATIntraShort').'</td>';
+		print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
 		print '<td nowrap="nowrap">';
 		$s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
 		$s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -806,18 +806,18 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		print $form->selectyesno('assujtva_value',$soc->tva_assuj,1);
 		print '</td>';
 
-		// Code TVA intra
+		// Code TVA
 		if ($conf->use_javascript)
 		{
 			print "\n";
 			print '<script language="JavaScript" type="text/javascript">';
 			print "function CheckVAT(a,b) {\n";
-			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,230);\n";
+			print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,260);\n";
 			print "}\n";
 			print '</script>';
 			print "\n";
 		}
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntraShort').'</td>';
+        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
         print '<td nowrap="nowrap">';
         $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
         $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
@@ -892,7 +892,8 @@ else
         print '</div>';
     }
 
-    print '<table class="border" width="100%">';
+	print '<form name="formsoc" method="post">';
+	print '<table class="border" width="100%">';
 
     print '<tr><td width="20%">'.$langs->trans('Name').'</td><td colspan="3">'.$soc->nom.'</td></tr>';
 
@@ -997,32 +998,49 @@ else
 	// Assujeti TVA
 	$html = new Form($db);
 	print '<tr><td>';
-/* Pas besoin de gérer l'icone "Modifier" car le champ est déja editable quand société en mode "Edit"
-			print '<table width="100%" class="nobordernopadding"><tr><td>';
-			print $langs->trans('VATIsUsed');
-			print '<td><td align="right">';
-			if ($user->rights->societe->creer && $_GET['action'] != 'editassujtva')
-				print '<a href="'.$_SERVER["PHP_SELF"].'?action=editassujtva&amp;socid='.$soc->id.'">'.img_edit($langs->trans('SetMode')).'</a>';
-			else
-				print '&nbsp;';
-			print '</td></tr></table>';
-			print '</td>';
-			print '<td colspan="3">';
-			if($_GET['action'] == 'editassujtva')
-				print $html->form_assujetti_tva($_SERVER['PHP_SELF'].'?socid='.$soc->id,$soc->tva_assuj,'assujtva_value');
-			else if($soc->tva_assuj == 1)
-				print 'oui';
-			else
-				print 'non';
-			print '';
-*/
 	print $langs->trans('VATIsUsed');
 	print '</td><td>';
 	print yn($soc->tva_assuj);
 	print '</td>';
-    print '<td nowrap="nowrpa">'.$langs->trans('VATIntraShort').'</td><td>';
-    print $soc->tva_intra;
-    print '</td></tr>';
+
+	// VAT Code
+	if ($conf->use_javascript)
+	{
+		print "\n";
+		print '<script language="JavaScript" type="text/javascript">';
+		print "function CheckVAT(a,b) {\n";
+		print "newpopup('".DOL_URL_ROOT."/societe/checkvat/checkVatPopup.php?countryCode='+a+'&vatNumber='+b,'".$langs->trans("VATIntraCheckableOnEUSite")."',500,260);\n";
+		print "}\n";
+		print '</script>';
+		print "\n";
+	}
+    print '<td nowrap="nowrpa">'.$langs->trans('VATIntra').'</td><td>';
+	if ($soc->tva_intra) 
+	{
+		$s='';
+		$code=substr($soc->tva_intra,0,2);
+		$num=substr($soc->tva_intra,2);
+		$s.=$soc->tva_intra;
+		$s.='<input type="hidden" name="tva_intra_code" size="1" maxlength="2" value="'.$code.'">';
+		$s.='<input type="hidden" name="tva_intra_num" size="12" maxlength="18" value="'.$num.'">';
+		$s.=' &nbsp; ';
+		if ($conf->use_javascript)
+		{
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+			print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+		}
+		else
+		{
+			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
+		}
+	}
+	else
+	{
+		print '&nbsp;';
+	}
+    print '</td>';
+	
+	print '</tr>';
 
     // Capital
     print '<tr><td>'.$langs->trans('Capital').'</td><td colspan="3">';
@@ -1106,6 +1124,7 @@ else
     print '</td></tr>';
 
     print '</table>';
+	print '</form>';
     print "</div>\n";
     /*
     *

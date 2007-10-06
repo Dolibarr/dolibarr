@@ -942,3 +942,5 @@ INSERT INTO llx_c_paper_format (rowid, code, label, width, height, unit, active)
 
 ALTER TABLE llx_user ADD COLUMN phenix_login varchar(25) after webcal_login;
 ALTER TABLE llx_user ADD COLUMN phenix_pass varchar(128) after phenix_login;
+
+update llx_propal set total_ht = price where total_ht = 0 and total > 0;

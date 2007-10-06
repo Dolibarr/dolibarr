@@ -641,16 +641,17 @@ function dolibarr_getdate($timestamp,$fast=false)
 		\param		month			Mois
 		\param		day				Jour
 		\param		year			Année
-		\return		date			Date
+		\return		timestamp		Date en timestamp, '' if error
 		\remarks	PHP mktime is restricted to the years 1901-2038 on Unix and 1970-2038 on Windows  
 */
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
-
+	if (! $month || ! $day) return '';
+	
 	$usealternatemethod=false;
-	if ($timestamp <= 0) $usealternatemethod=true;				// <= 1970
-	if ($timestamp >= 2145913200) $usealternatemethod=true;		// >= 2038
+	if ($year <= 1970) $usealternatemethod=true;		// <= 1970
+	if ($year >= 2038) $usealternatemethod=true;		// >= 2038
 	
 	if ($usealternatemethod || $gm)	// Si time gm, seule adodb peut convertir
 	{
@@ -2248,23 +2249,23 @@ function price2num($amount,$rounding='')
 
 
 /**
-   \brief      Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
-   \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
-   Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.
-   Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
-   Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.
-   Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.
-   Sinon TVA proposée par défaut=0. Fin de règle.
-   \param      societe_vendeuse    Objet société vendeuse
-   \param      societe_acheteuse   Objet société acheteuse
-   \param      taux_produit        Taux par defaut du produit vendu
-   \return     float               Taux de tva de la ligne
+   \brief      	Fonction qui renvoie la tva d'une ligne (en fonction du vendeur, acheteur et taux du produit)
+   \remarks    	Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
+				Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.
+				Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+				Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de règle.
+				Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA) intra alors TVA par défaut=0. Fin de règle.
+				Sinon TVA proposée par défaut=0. Fin de règle.
+   \param      	societe_vendeuse    	Objet société vendeuse
+   \param      	societe_acheteuse   	Objet société acheteuse
+   \param      	taux_produit        	Taux par defaut du produit vendu
+   \return     	float               	Taux de tva à appliquer, -1 si ne peut etre déterminé
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
 	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
 
-	if (!is_object($societe_vendeuse)) return 0;
+	if (!is_object($societe_vendeuse)) return -1;
 
 	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
@@ -2275,25 +2276,28 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercné si le test suivant n'est pas suffisant.
 	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id))
 	{
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
 	    return $taux_produit;
 	}
 
-	// Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+	// Si (vendeur et acheteur dans Communauté européenne) et (bien vendu = moyen de transports neuf comme auto, bateau, avion) alors TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
 	// Non géré
 
- 	// Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.
+ 	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de règle.
 	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
+		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
 	    return $taux_produit;
 	}
 
- 	// Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.
+ 	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA intra) alors TVA par défaut=0. Fin de règle.
 	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
 	{
 	    return 0;
 	}
 
 	// Sinon la TVA proposée par défaut=0. Fin de règle.
+	// Rem: Cela signifie qu'au moins un des 2 est hors Communauté européenne et que le pays diffère
     return 0;
 }
 

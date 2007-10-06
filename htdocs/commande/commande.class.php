@@ -626,7 +626,7 @@ class Commande extends CommonObject
    */
 	function addline($commandeid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $info_bits=0, $fk_remise_except=0, $price_base_type='HT', $pu_ttc=0)
 	{
-		dolibarr_syslog("Commande::addline $commandeid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $info_bits, $fk_remise_except, $price_base_type, $pu_ttc");
+		dolibarr_syslog("Commande::addline commandeid=$commandeid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_percent=$remise_percent, info_bits=$info_bits, fk_remise_except=$fk_remise_except, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 		
 		if ($this->statut == 0)
@@ -641,9 +641,15 @@ class Commande extends CommonObject
 			$pu_ht=price2num($pu_ht);
 			$pu_ttc=price2num($pu_ttc);
 			$txtva = price2num($txtva);
-
-			if ($price_base_type=='HT') $pu=$pu_ht;
-			else $pu=$pu_ttc;
+			
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -654,6 +660,7 @@ class Commande extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 			
+			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
@@ -680,7 +687,7 @@ class Commande extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 			
-			// Ne plus utiliser
+			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 			
@@ -688,7 +695,7 @@ class Commande extends CommonObject
 			if ($result > 0)
 			{
 				// Mise a jour informations denormalisees au niveau de la commande meme
-				$result=$this->update_price($this->id);
+				$result=$this->update_price($commandeid);
 				if ($result > 0)
 				{
 					$this->db->commit();
@@ -1476,9 +1483,6 @@ class Commande extends CommonObject
 				$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
 				$this->total_ttc   += $obj->total_ttc;
 				
-				// Anciens indicateurs
-				$this->amount_ht      += ($obj->price * $obj->qty);
-				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
 				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
 				$i++;
 			}
@@ -1487,14 +1491,13 @@ class Commande extends CommonObject
 
 			// Met a jour indicateurs
 			$sql = "UPDATE ".MAIN_DB_PREFIX."commande SET";
-			$sql .= "  amount_ht='".price2num($this->amount_ht)."'";
-			$sql .= ", total_ht='". price2num($this->total_ht)."'";
-			$sql .= ", tva='".      price2num($this->total_tva)."'";
-			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
-			$sql .= ", remise='".price2num($this->total_remise)."'";
+			$sql .= " total_ht='". price2num($this->total_ht)."',";
+			$sql .= " tva='".      price2num($this->total_tva)."',";
+			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
 			$sql .=" WHERE rowid = ".$this->id;
+
+			dolibarr_syslog("Facture::update_price sql=".$sql);
 			$resql=$this->db->query($sql);
-			
 			if ($resql)
 			{
 				return 1;
@@ -1566,32 +1569,33 @@ class Commande extends CommonObject
      *      \param      date_livraison      Date de livraison  
      *      \return     int         		<0 si ko, >0 si ok
      */
-    function set_date_livraison($user, $date_livraison)
-    {
-      if ($user->rights->commande->creer)
+	function set_date_livraison($user, $date_livraison)
 	{
-	  $sql = "UPDATE ".MAIN_DB_PREFIX."commande";
-	  $sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
-	  $sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
-	  
-	  $resql=$this->db->query($sql);
-	  if ($resql)
-            {
-	      $this->date_livraison = $date_livraison;
-	      return 1;
-            }
-	  else
-            {
-	      $this->error=$this->db->error();
-	      dolibarr_syslog("Commande::set_date_livraison Erreur SQL sql=$sql");
-	      return -1;
-            }
-        }
-      else
-        {
-	  return -2;
-        }
-    }
+		if ($user->rights->commande->creer)
+		{
+			$sql = "UPDATE ".MAIN_DB_PREFIX."commande";
+			$sql.= " SET date_livraison = ".($date_livraison ? $this->db->idate($date_livraison) : 'null');
+			$sql.= " WHERE rowid = ".$this->id." AND fk_statut = 0";
+			
+			dolibarr_syslog("Commande::set_date_livraison sql=$sql",LOG_DEBUG);
+			$resql=$this->db->query($sql);
+			if ($resql)
+			{
+				$this->date_livraison = $date_livraison;
+				return 1;
+			}
+			else
+			{
+				$this->error=$this->db->error();
+				dolibarr_syslog("Commande::set_date_livraison ".$this->error,LOG_ERR);
+				return -1;
+			}
+		}
+		else
+		{
+			return -2;
+		}
+	}
   
     /**
      *      \brief      Définit une adresse de livraison

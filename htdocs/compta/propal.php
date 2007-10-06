@@ -285,7 +285,7 @@ if ($_GET["propalid"] > 0)
 
     // Amount
     print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
-    print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
+    print '<td align="right" colspan="2"><b>'.price($propal->total_ht).'</b></td>';
     print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
     print '<tr><td height="10">'.$langs->trans('AmountVAT').'</td><td align="right" colspan="2">'.price($propal->total_tva).'</td>';
@@ -304,7 +304,8 @@ if ($_GET["propalid"] > 0)
     */
 	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
+	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
+	$sql.= ' p.rowid as prodid, p.label as product, p.ref, p.fk_product_type, ';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
 	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
@@ -424,16 +425,13 @@ if ($_GET["propalid"] > 0)
                 {
                     print '<td>&nbsp;</td>';
                 }
-                print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100)."</td>\n";
+                print '<td align="right">'.price($objp->total_ht)."</td>\n";
 
 				print '<td colspan="3">&nbsp;</td>';
 
                 print '</tr>';
             }
 
-
-
-            $total = $total + ($objp->qty * $objp->price);
             $i++;
         }
         $db->free($resql);
@@ -647,9 +645,12 @@ else
   $pageprev = $page - 1;
   $pagenext = $page + 1;
 
+  $year = $_REQUEST["year"];
+  $month = $_REQUEST["month"];
 
   $sql = "SELECT s.nom, s.rowid as socid, s.client,";
-  $sql.= " p.rowid as propalid, p.price, p.ref, p.fk_statut,";
+  $sql.= " p.rowid as propalid, p.ref, p.fk_statut,";
+  $sql.= " p.total_ht, p.tva, p.total,";
   $sql.= $db->pdate("p.datep")." as dp, ";
   $sql.= $db->pdate("p.fin_validite")." as dfin";
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
@@ -697,7 +698,7 @@ else
 		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'width=20%',$sortfield);
 		print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
 		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-		print_liste_field_titre($langs->trans("Price"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("AmountHT"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
 		print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="right"',$sortfield);
         print '<td class="liste_titre">&nbsp;</td>';
 		print "</tr>\n";
@@ -706,24 +707,23 @@ else
         print '<form method="get" action="'.$_SERVER["PHP_SELF"].'">';
     
         print '<tr class="liste_titre">';
-        print '<td class="liste_titre" valign="right">';
+        print '<td valign="right">';
         print '<input class="flat" size="10" type="text" name="search_ref" value="'.$_GET['search_ref'].'">';
         print '</td>';
-        print '<td class="liste_titre" align="left">';
+        print '<td align="left">';
         print '<input class="flat" type="text" size="40" name="search_societe" value="'.$_GET['search_societe'].'">';
         print '</td>';
-        print '<td class="liste_titre" colspan="1" align="right">';
-        print $langs->trans('Month').' : ' . '<input class="flat" type="text" size="3" name="month" value="'.$month.'">';
-        print '&nbsp;'.$langs->trans('Year').' : ' . '<input class="flat" type="text" size="5" name="year" value="'.$year.'">';
+        print '<td colspan="1" align="right">';
+        print $langs->trans('Month').': <input class="flat" type="text" size="1" name="month" value="'.$month.'">';
+        print '&nbsp;'.$langs->trans('Year').': <input class="flat" type="text" size="1" name="year" value="'.$year.'">';
         print '</td>';
-        print '<td class="liste_titre" align="right">';
+        print '<td align="right">';
         print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
         print '</td>';
-        print '<td class="liste_titre" align="right">';
-        //print '<input class="flat" type="text" size="10" name="search_montant_ht" value="'.$_GET['search_montant_ht'].'">';
+        print '<td align="right">';
         $html->select_propal_statut($viewstatut);
         print '</td>';
-        print '<td class="liste_titre" align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
+        print '<td align="right"><input class="liste_titre" type="image" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
         print '</td>';
         print "</tr>\n";
         print '</form>';
@@ -779,7 +779,7 @@ else
 			print strftime("%Y",$objp->dp)."</a></td>\n";
 		
 			// Prix
-			print "<td align=\"right\">".price($objp->price)."</td>\n";
+			print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 			print "<td align=\"right\">".$propalstatic->LibStatut($objp->fk_statut,5)."</td>\n";
 			print "<td>&nbsp;</td>";
             print "</tr>\n";

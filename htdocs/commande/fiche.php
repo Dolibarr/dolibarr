@@ -244,11 +244,13 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->commande->creer)
 
 if ($_POST['action'] == 'setdate_livraison' && $user->rights->commande->creer)
 {
-  $datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
-  $commande = new Commande($db);
-  $commande->fetch($_GET['id']);
-  $result=$commande->set_date_livraison($user,$datelivraison);
-  if ($result < 0)
+	//print "x ".$_POST['liv_month'].", ".$_POST['liv_day'].", ".$_POST['liv_year'];
+	$datelivraison=dolibarr_mktime(0, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']);
+
+	$commande = new Commande($db);
+	$commande->fetch($_GET['id']);
+	$result=$commande->set_date_livraison($user,$datelivraison);
+	if ($result < 0)
     {
       $mesg='<div class="error">'.$commande->error.'</div>';
     }
@@ -302,12 +304,12 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 	{
 		$commande = new Commande($db);
 		$ret=$commande->fetch($_POST['id']);
-		$ret=$commande->fetch_client();
 		if ($ret < 0)
 		{
 			dolibarr_print_error($db,$commande->error);
 			exit;
 		}
+		$ret=$commande->fetch_client();
 
 		$price_base_type = 'HT';
 
@@ -320,39 +322,52 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			$prod = new Product($db, $_POST['idprod']);
 			$prod->fetch($_POST['idprod']);
 			
-			$price_base_type = $prod->price_base_type;
-			
-			$libelle = $prod->libelle;
+			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx);
 			
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
-				$pu = $prod->multiprices[$commande->client->price_level];
-        $pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
-        $price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+            	$pu_ht = $prod->multiprices[$commande->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
 			}
 			else
 			{
-				$pu = $prod->price;
-	      $pu_ttc = $prod->price_ttc;
+				$pu_ht = $prod->price;
+	            $pu_ttc = $prod->price_ttc;
+				$price_base_type = $prod->price_base_type;
 			}
-		
+			
+			// On reevalue prix selon taux tva car taux tva transaction peut etre different
+			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			if ($tva_tx != $prod->tva_tx)
+			{
+				if ($price_base_type != 'HT')
+				{
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+				}
+				else
+				{
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+			}
+
 			// La description de la ligne est celle saisie ou
 			// celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
+			$libelle = $prod->libelle;
 			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
 			{
 				$desc = $prod->description;
 			}
 			else
 			{
-				$desc=$_POST['np_desc'];
+				$desc = $_POST['np_desc'];
 			}
 			
-			$tva_tx = get_default_tva($mysoc,$commande->client,$prod->tva_tx); 
 		}
 		else
 		{
-			$pu=$_POST['pu'];
+			$pu_ht=$_POST['pu'];
 			$tva_tx=$_POST['tva_tx'];
 			$desc=$_POST['np_desc'];
 		}
@@ -360,7 +375,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		$result = $commande->addline(
 			$_POST['id'],
 			$desc,
-			$pu,
+			$pu_ht,
 			$_POST['qty'],
 			$tva_tx,
 			$_POST['idprod'],
@@ -715,178 +730,176 @@ $html = new Form($db);
 *********************************************************************/
 if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 {
-  print_titre($langs->trans('CreateOrder'));
-  
-  if ($mesg) print $mesg.'<br>';
-  
-  $new_commande = new Commande($db);
-  
-  if ($propalid)
-    {
-      $sql = 'SELECT s.nom, s.prefix_comm, s.rowid';
-      $sql.= ', p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, p.fk_cond_reglement, p.fk_mode_reglement';
-      $sql.= ', '.$db->pdate('p.datep').' as dp';
-      $sql.= ', c.id as statut, c.label as lst';
-      $sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
-      $sql .= ' WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id';
-      $sql .= ' AND p.rowid = '.$propalid;
-    }
-  else
-    {
-      $sql = 'SELECT s.nom, s.prefix_comm, s.rowid, s.mode_reglement, s.cond_reglement ';
-      $sql .= 'FROM '.MAIN_DB_PREFIX.'societe as s ';
-      $sql .= 'WHERE s.rowid = '.$_GET['socid'];
-    }
-  $resql = $db->query($sql);
-  if ( $resql )
-    {
-      $num = $db->num_rows($resql);
-      if ($num)
-	{
-	  $obj = $db->fetch_object($resql);
-	  
-	  $soc = new Societe($db);
-	  $soc->fetch($obj->rowid);
-	  
-	  $nbrow=7;
-	  
-	  print '<form name="crea_commande" action="fiche.php" method="post">';
-	  print '<input type="hidden" name="action" value="add">';
-	  print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
-	  print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
-	  print '<input name="facnumber" type="hidden" value="provisoire">';
-	  
-	  print '<table class="border" width="100%">';
-	  
-	  // Reference
-	  print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td>';
-	  print '<td>'.$langs->trans('NotePublic').'</td></tr>';
-	  
-	  // Reference client
-	  print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
-	  print '<input type="text" name="ref_client" value=""></td>';
-	  print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" cols="70" rows="8"></textarea></td></tr>';
-	  
-	  // Client
-	  print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
-	  
-	  /*
-	   * Contact de la commande
-	   */
-	  print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
-	  $html->select_contacts($soc->id,$setcontact,'contactidp',1);
-	  print '</td></tr>';
-	  
-	  // Ligne info remises tiers
-	  print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
-	  if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
-	  else print $langs->trans("CompanyHasNoRelativeDiscount");
-	  $absolute_discount=$soc->getCurrentDiscount();
-	  print '. ';
-	  if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-	  else print $langs->trans("CompanyHasNoAbsoluteDiscount");
-	  print '.';
-	  print '</td></tr>';
-	  
-	  // Date
-	  print '<tr><td>'.$langs->trans('Date').'</td><td>';
-	  $html->select_date('','re','','','',"crea_commande");
-	  print '</td></tr>';
-	  
-	  // Date de livraison
-	  if ($conf->expedition->enabled)
-	    {
-	      print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
-	      if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
-		{
-		  $tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
-		  $html->select_date($tmpdte,'liv_','','',1,"crea_commande");
-		}
-	      else
-		{
-		  $html->select_date(-1,'liv_','','',1,"crea_commande");
-		}
-	      print "</td></tr>";
-	      
-	      // Adresse de livraison
-	      print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
-	      $numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
-	      
-	      if ($numaddress==0)
-		{
-		  print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
-		}
-	      
-	      print '</td></tr>';
-	    }
-	  
-	  // Conditions de réglement
-	  print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
-	  $html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
-	  print '</td></tr>';
-	  
-	  // Mode de réglement
-	  print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
-	  $html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
-	  print '</td></tr>';
-	  
-	  // Projet
-	  if ($conf->projet->enabled)
-	    {
-	      print '<tr><td>'.$langs->trans('Project').'</td><td>';
-	      $numprojet=$html->select_projects($soc->id,$projetid,'projetid');
-	      if ($numprojet==0)
-		{
-		  print ' &nbsp; <a href=../projet/fiche.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
-		}
-	      print '</td></tr>';
-	    }
+	print_titre($langs->trans('CreateOrder'));
 
-	  print '<tr><td>'.$langs->trans('Source').'</td><td>';
-	  $html->selectSourcesCommande('','source_id',1);
-	  print '</td></tr>';
-	  print '<tr><td>'.$langs->trans('Model').'</td>';
-	  print '<td>';
-	  // pdf
-	  include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
-	  $model=new ModelePDFCommandes();
-	  $liste=$model->liste_modeles($db);
-	  $html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
-	  print "</td></tr>";
-	  
-	  if ($propalid > 0)
-	    {
-	      $amount = ($obj->price);
-	      print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
-	      print '<input type="hidden" name="total"    value="'.$obj->total.'">'."\n";
-	      print '<input type="hidden" name="remise"   value="'.$obj->remise.'">'."\n";
-	      print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
-	      print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
-	      print '<input type="hidden" name="propalid" value="'.$propalid.'">';
-				
-	      print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$obj->ref.'</td></tr>';
-	      print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($amount).'</td></tr>';
-	      print '<tr><td>'.$langs->trans('VAT').'</td><td colspan="2">'.price($obj->tva).'</td></tr>';
-	      print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($obj->total).'</td></tr>';
-	    }
-	  else
-	    {
-	      if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+	if ($mesg) print $mesg.'<br>';
+
+	$new_commande = new Commande($db);
+
+	if ($propalid)
+	{
+		$sql = 'SELECT s.nom, s.prefix_comm, s.rowid';
+		$sql.= ', p.price, p.remise, p.remise_percent, p.tva, p.total, p.ref, p.fk_cond_reglement, p.fk_mode_reglement';
+		$sql.= ', '.$db->pdate('p.datep').' as dp';
+		$sql.= ', c.id as statut, c.label as lst';
+		$sql .= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p, '.MAIN_DB_PREFIX.'c_propalst as c';
+		$sql .= ' WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id';
+		$sql .= ' AND p.rowid = '.$propalid;
+	}
+	else
+	{
+		$sql = 'SELECT s.nom, s.prefix_comm, s.rowid, s.mode_reglement, s.cond_reglement ';
+		$sql .= 'FROM '.MAIN_DB_PREFIX.'societe as s ';
+		$sql .= 'WHERE s.rowid = '.$_GET['socid'];
+	}
+	$resql = $db->query($sql);
+	if ( $resql )
+	{
+		$num = $db->num_rows($resql);
+		if ($num)
 		{
-		  /*
-		   * Services/produits prédéfinis
-		   */
-		  $NBLINES=8;
-		  
-		  print '<tr><td colspan="3">';
-		  
-		  print '<table class="noborder">';
-		  print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
-		  print '<td>'.$langs->trans('Qty').'</td>';
-		  print '<td>'.$langs->trans('ReductionShort').'</td>';
-		  print '</tr>';
-		  for ($i = 1 ; $i <= $NBLINES ; $i++)
-		    {
+			$obj = $db->fetch_object($resql);
+			
+			$soc = new Societe($db);
+			$soc->fetch($obj->rowid);
+			
+			$nbrow=9;
+			
+			print '<form name="crea_commande" action="fiche.php" method="post">';
+			print '<input type="hidden" name="action" value="add">';
+			print '<input type="hidden" name="socid" value="'.$soc->id.'">' ."\n";
+			print '<input type="hidden" name="remise_percent" value="'.$soc->remise_client.'">';
+			print '<input name="facnumber" type="hidden" value="provisoire">';
+			
+			print '<table class="border" width="100%">';
+			
+			// Reference
+			print '<tr><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans("Draft").'</td>';
+			print '<td>'.$langs->trans('NotePublic').'</td></tr>';
+			
+			// Reference client
+			print '<tr><td>'.$langs->trans('RefCustomer').'</td><td>';
+			print '<input type="text" name="ref_client" value=""></td>';
+			print '<td rowspan="'.$nbrow.'" valign="top"><textarea name="note" cols="70" rows="8"></textarea></td></tr>';
+			
+			// Client
+			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
+			
+			/*
+	* Contact de la commande
+	*/
+			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
+			$html->select_contacts($soc->id,$setcontact,'contactidp',1);
+			print '</td></tr>';
+			
+			// Ligne info remises tiers
+			print '<tr><td>'.$langs->trans('Discounts').'</td><td>';
+			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
+			else print $langs->trans("CompanyHasNoRelativeDiscount");
+			$absolute_discount=$soc->getCurrentDiscount();
+			print '. ';
+			if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+			else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+			print '.';
+			print '</td></tr>';
+			
+			// Date
+			print '<tr><td>'.$langs->trans('Date').'</td><td>';
+			$html->select_date('','re','','','',"crea_commande");
+			print '</td></tr>';
+			
+			// Date de livraison
+			print "<tr><td>".$langs->trans("DateDelivery")."</td><td>";
+			if ($conf->global->DATE_LIVRAISON_WEEK_DELAY)
+			{
+				$tmpdte = time() + ((7*$conf->global->DATE_LIVRAISON_WEEK_DELAY) * 24 * 60 * 60);
+				$html->select_date($tmpdte,'liv_','','',1,"crea_commande");
+			}
+			else
+			{
+				$html->select_date(-1,'liv_','','',1,"crea_commande");
+			}
+			print "</td></tr>";
+
+			// Adresse de livraison
+			print '<tr><td nowrap="nowrap">'.$langs->trans('DeliveryAddress').'</td><td>';
+			$numaddress = $html->select_adresse_livraison($soc->adresse_livraison_id, $_GET['socid'],'adresse_livraison_id',1);
+
+			if ($numaddress==0)
+			{
+				print ' &nbsp; <a href="../comm/adresse_livraison.php?socid='.$soc->id.'&action=create">'.$langs->trans("AddAddress").'</a>';
+			}
+
+			print '</td></tr>';
+			
+			// Conditions de réglement
+			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
+			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
+			print '</td></tr>';
+			
+			// Mode de réglement
+			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
+			$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
+			print '</td></tr>';
+			
+			// Projet
+			if ($conf->projet->enabled)
+			{
+				print '<tr><td>'.$langs->trans('Project').'</td><td colspan="2">';
+				$numprojet=$html->select_projects($soc->id,$projetid,'projetid');
+				if ($numprojet==0)
+				{
+					print ' &nbsp; <a href=../projet/fiche.php?socid='.$soc->id.'&action=create>'.$langs->trans("AddProject").'</a>';
+				}
+				print '</td></tr>';
+			}
+
+			print '<tr><td>'.$langs->trans('Source').'</td><td colspan="2">';
+			$html->selectSourcesCommande('','source_id',1);
+			print '</td></tr>';
+			
+			print '<tr><td>'.$langs->trans('Model').'</td>';
+			print '<td colspan="2">';
+			// pdf
+			include_once(DOL_DOCUMENT_ROOT.'/includes/modules/commande/modules_commande.php');
+			$model=new ModelePDFCommandes();
+			$liste=$model->liste_modeles($db);
+			$html->select_array('model',$liste,$conf->global->COMMANDE_ADDON_PDF);
+			print "</td></tr>";
+			
+			if ($propalid > 0)
+			{
+				$amount = ($obj->price);
+				print '<input type="hidden" name="amount"   value="'.$amount.'">'."\n";
+				print '<input type="hidden" name="total"    value="'.$obj->total.'">'."\n";
+				print '<input type="hidden" name="remise"   value="'.$obj->remise.'">'."\n";
+				print '<input type="hidden" name="remise_percent"   value="'.$obj->remise_percent.'">'."\n";
+				print '<input type="hidden" name="tva"      value="'.$obj->tva.'">'."\n";
+				print '<input type="hidden" name="propalid" value="'.$propalid.'">';
+				
+				print '<tr><td>'.$langs->trans('Ref').'</td><td colspan="2">'.$obj->ref.'</td></tr>';
+				print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($amount).'</td></tr>';
+				print '<tr><td>'.$langs->trans('VAT').'</td><td colspan="2">'.price($obj->tva).'</td></tr>';
+				print '<tr><td>'.$langs->trans('TotalTTC').'</td><td colspan="2">'.price($obj->total).'</td></tr>';
+			}
+			else
+			{
+				if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
+				{
+					/*
+		* Services/produits prédéfinis
+		*/
+					$NBLINES=8;
+					
+					print '<tr><td colspan="3">';
+					
+					print '<table class="noborder">';
+					print '<tr><td>'.$langs->trans('ProductsAndServices').'</td>';
+					print '<td>'.$langs->trans('Qty').'</td>';
+					print '<td>'.$langs->trans('ReductionShort').'</td>';
+					print '</tr>';
+					for ($i = 1 ; $i <= $NBLINES ; $i++)
+					{
 						print '<tr><td>';
 						// multiprix
 						if($conf->global->PRODUIT_MULTIPRICES == 1)

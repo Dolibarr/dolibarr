@@ -2449,7 +2449,7 @@ class Form
     /**
      *      \brief      Selection du taux de tva appliqué par vendeur
      *      \param      name                Nom champ html
-     *      \param      defaulttx           Forçage du taux tva présélectionné. Mettre '' pour appliquer règle par défaut.
+     *      \param      defaulttx           Forçage du taux tva présélectionné. Mettre '' pour aucun forcage.
      *      \param      societe_vendeuse    Objet société vendeuse
      *      \param      societe_acheteuse   Objet société acheteuse
      *      \param      taux_produit        Taux par defaut du produit vendu
@@ -2519,11 +2519,11 @@ class Form
 			print '<font class="error">'.$this->db->error().'</font>';
 		}        	
 		
-		// Définition du taux à présélectionner
-		if (("".$defaulttx) == "") $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-		// Si taux par defaut n'a pu etre trouvé, on prend dernier.
+		// Définition du taux à présélectionner (si defaulttx non forcé et donc vaut -1 ou '')
+		if ($defaulttx < 0 || strlen($defaulttx) == 0) $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+		// Si taux par defaut n'a pu etre déterminé, on prend dernier de la liste.
 		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
-		if (("".$defaulttx) == "") $defaulttx = $txtva[sizeof($txtva)-1];
+		if ($defaulttx < 0 || strlen($defaulttx) == 0) $defaulttx = $txtva[sizeof($txtva)-1];
 		
 		$nbdetaux = sizeof($txtva);
 		

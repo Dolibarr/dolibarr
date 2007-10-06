@@ -141,7 +141,7 @@ if ($_GET["id"] > 0)
 			{
 				if ($commande->statut > 0)
 				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 				}
 				else
 				{

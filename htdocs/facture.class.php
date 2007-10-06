@@ -1309,7 +1309,7 @@ class Facture extends CommonObject
    * 		\param    	date_end        	Date de fin de validité du service
    * 		\param    	ventil          	Code de ventilation comptable
    * 		\param    	info_bits			Bits de type de lignes
-   *		\param    	fk_remise_exscept	Id remise
+   *		\param    	fk_remise_except	Id remise
    *		\param		price_base_type		HT or TTC
    * 		\param    	pu_ttc             	Prix unitaire TTC
    *    	\return    	int             	>0 si ok, <0 si ko
@@ -1320,7 +1320,7 @@ class Facture extends CommonObject
    */
 	function addline($facid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $date_start='', $date_end='', $ventil=0, $info_bits='', $fk_remise_except='', $price_base_type='HT', $pu_ttc=0)
 	{
-		dolibarr_syslog("Facture::Addline $facid,$desc,$pu_ht,$qty,$txtva,$fk_product,$remise_percent,$date_start,$date_end,$ventil,$info_bits,$fk_remise_except,$price_base_type,$pu_ttc", LOG_DEBUG);
+		dolibarr_syslog("Facture::Addline facid=$facid,desc=$desc,pu_ht=$pu_ht,qty=$qty,txtva=$txtva,fk_product=$fk_product,remise_percent=$remise_percent,date_start=$date_start,date_end=$date_end,ventil=$ventil,info_bits=$info_bits,fk_remise_except=$fk_remise_except,price_base_type=$price_base_type,pu_ttc=$pu_ttc", LOG_DEBUG);
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
 		if ($this->brouillon)
@@ -1337,8 +1337,14 @@ class Facture extends CommonObject
 			$pu_ttc=price2num($pu_ttc);
 			$txtva=price2num($txtva);
 
-			if ($price_base_type=='HT') $pu=$pu_ht;
-			else $pu=$pu_ttc;
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
 			
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -1349,6 +1355,7 @@ class Facture extends CommonObject
 			$total_tva = $tabprice[1];
 			$total_ttc = $tabprice[2];
 
+			// \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
 			$remise = 0;
@@ -1378,7 +1385,7 @@ class Facture extends CommonObject
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
 
-			// A ne plus utiliser
+			// \TODO Ne plus utiliser
 			$ligne->price=$price;
 			$ligne->remise=$remise;
 
@@ -1552,18 +1559,20 @@ class Facture extends CommonObject
     }
   }
 
-  /**
+	/**
      \brief     	Mise à jour des sommes de la facture et calculs denormalises
      \param     	facid      	id de la facture a modifier
      \return		int			<0 si ko, >0 si ok
-   */
-  function update_price($facid)
+	*/
+	function update_price($facid)
 	{
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		
 		$tvas=array();
 		$err=0;
 
-		// Liste des lignes factures a sommer (Ne plus utiliser price)
-		$sql = 'SELECT qty, tva_taux, subprice, remise_percent, price,';
+		// Liste des lignes a sommer
+		$sql = 'SELECT qty, tva_taux, subprice, remise_percent,';
 		$sql.= ' total_ht, total_tva, total_ttc';
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'facturedet';
 		$sql.= ' WHERE fk_facture = '.$facid;
@@ -1575,6 +1584,7 @@ class Facture extends CommonObject
 			$this->total_ht  = 0;
 			$this->total_tva = 0;
 			$this->total_ttc = 0;
+			
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			while ($i < $num)
@@ -1585,9 +1595,6 @@ class Facture extends CommonObject
 				$this->total_tva      += ($obj->total_ttc - $obj->total_ht);
 				$this->total_ttc      += $obj->total_ttc;
 
-				// Ne plus utiliser amount, ni remise
-				$this->amount_ht      += ($obj->price * $obj->qty);
-				$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
 				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
 				$i++;
 			}
@@ -1595,15 +1602,14 @@ class Facture extends CommonObject
 			$this->db->free($resql);
 
 			// Met a jour indicateurs
-			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture ';
-			$sql .= "SET amount ='".price2num($this->amount_ht)."'";
-			$sql .= ", remise='".   price2num($this->total_remise)."'";
-			$sql .= ", total='".    price2num($this->total_ht)."'";
-			$sql .= ", tva='".      price2num($this->total_tva)."'";
-			$sql .= ", total_ttc='".price2num($this->total_ttc)."'";
+			$sql = 'UPDATE '.MAIN_DB_PREFIX.'facture SET';
+			$sql .= " total='".    price2num($this->total_ht)."',";
+			$sql .= " tva='".      price2num($this->total_tva)."',";
+			$sql .= " total_ttc='".price2num($this->total_ttc)."'";
 			$sql .= ' WHERE rowid = '.$facid;
-			$resql=$this->db->query($sql);
 
+			dolibarr_syslog("Facture::update_price sql=".$sql);
+			$resql=$this->db->query($sql);
 			if ($resql)
 			{
 				// \TODO A supprimer car l'utilisation de facture_tva_sum non utilisable

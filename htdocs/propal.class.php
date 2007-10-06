@@ -255,12 +255,13 @@ class Propal extends CommonObject
      *    	\brief     	Ajout d'un produit dans la proposition, en base
 	 * 		\param    	propalid        	Id de la propale
 	 * 		\param    	desc            	Description de la ligne
-	 * 		\param    	pu              	Prix unitaire
+	 * 		\param    	pu_ht              	Prix unitaire
 	 * 		\param    	qty             	Quantité
 	 * 		\param    	txtva           	Taux de tva forcé, sinon -1
 	 *		\param    	fk_product      	Id du produit/service predéfini
 	 * 		\param    	remise_percent  	Pourcentage de remise de la ligne
 	 * 		\param    	price_base_type		HT or TTC
+     * 		\param    	pu_ttc             	Prix unitaire TTC
      *    	\return    	int             	>0 si ok, <0 si ko
      *    	\see       	add_product
 	 * 		\remarks	Les parametres sont deja censé etre juste et avec valeurs finales a l'appel
@@ -268,9 +269,9 @@ class Propal extends CommonObject
 	 *					par l'appelant par la methode get_default_tva(societe_vendeuse,societe_acheteuse,taux_produit)
  	 *					et le desc doit deja avoir la bonne valeur (a l'appelant de gerer le multilangue)
      */
-    function addline($propalid, $desc, $pu, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT')
+    function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc)
     {
-    	dolibarr_syslog("Propal::Addline $propalid, $desc, $pu, $qty, $txtva, $fk_product, $remise_percent, $price_base_type");
+    	dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
 		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
 
         if ($this->statut == 0)
@@ -281,8 +282,18 @@ class Propal extends CommonObject
             $remise_percent=price2num($remise_percent);
             $qty=price2num($qty);
 			if (! $qty) $qty=1;
-            $pu = price2num($pu,'MU');
-			$txtva = price2num($txtva,'MU');
+			$pu_ht=price2num($pu_ht);
+			$pu_ttc=price2num($pu_ttc);
+			$txtva=price2num($txtva);
+
+			if ($price_base_type=='HT')
+			{
+				$pu=$pu_ht;
+			}
+			else
+			{
+				$pu=$pu_ttc;
+			}
 
 			// Calcul du total TTC et de la TVA pour la ligne a partir de
 			// qty, pu, remise_percent et txtva
@@ -296,7 +307,8 @@ class Propal extends CommonObject
             // \TODO A virer
 			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
 			$price = $pu;
-            if ($remise_percent > 0)
+            $remise = 0;
+			if ($remise_percent > 0)
             {
                 $remise = round(($pu * $remise_percent / 100), 2);
                 $price = $pu - $remise;
@@ -311,9 +323,10 @@ class Propal extends CommonObject
 			$ligne->tva_tx=$txtva;
 			$ligne->fk_product=$fk_product;
 			$ligne->remise_percent=$remise_percent;
-			$ligne->subprice=$pu;
+			$ligne->subprice=$pu_ht;
 			$ligne->rang=-1;
 			$ligne->info_bits=$info_bits;
+			$ligne->fk_remise_except=$fk_remise_except;
 			$ligne->total_ht=$total_ht;
 			$ligne->total_tva=$total_tva;
 			$ligne->total_ttc=$total_ttc;
@@ -326,8 +339,7 @@ class Propal extends CommonObject
 			if ($result > 0)
             {
 				// Mise a jour informations denormalisees au niveau de la facture meme
-				$result=$this->update_price($facid);
-
+				$result=$this->update_price($propalid);
                 if ($result > 0)
                 {
 					$this->db->commit();
@@ -582,61 +594,67 @@ class Propal extends CommonObject
      */
     function update_price()
     {
-    	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+
+		$tvas=array();
+		$err=0;
     	
-    	// Liste des lignes factures a sommer
-      $sql = "SELECT price, qty, tva_tx, total_ht, total_tva, total_ttc";
-      $sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
-      $sql.= " WHERE fk_propal = ".$this->id;
-      
-      dolibarr_syslog("Propal::update_price sql=".$sql);
-      $result = $this->db->query($sql);
-      if ($result)
-      {
-      	$this->total_ht  = 0;
-      	$this->total_tva = 0;
-      	$this->total_ttc = 0;
-      	
-      	$num = $this->db->num_rows($result);
-        $i = 0;
-        while ($i < $num)
-        {
-        	$obj = $this->db->fetch_object($result);
-        	
-        	$this->total_ht    += $obj->total_ht;
-        	$this->total_tva   += $obj->total_tva;
-        	$this->total_ttc   += $obj->total_ttc;
-        	
-        	// Anciens indicateurs
-        	$this->amount_ht      += $obj->price * $obj->qty;	// \TODO A virer
-        	$this->total_remise   += 0;		// Plus de remise globale (toute remise est sur une ligne)
-        	$i++;
-        }
-        
-        $this->db->free($result);
-      }
+		// Liste des lignes a sommer
+		$sql = "SELECT qty, tva_tx, subprice, remise_percent,";
+		$sql.= " total_ht, total_tva, total_ttc";
+		$sql.= " FROM ".MAIN_DB_PREFIX."propaldet";
+		$sql.= " WHERE fk_propal = ".$this->id;
 
-        // Met a jour en base
-        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
-        $sql .= " total_ht=".price2num($this->total_ht).",";
-        $sql .= " tva=".     price2num($this->total_tva).",";
-        $sql .= " total=".   price2num($this->total_ttc).",";
-        //$sql .= " remise=".  price2num($this->total_remise).",";	// \TODO A virer
-        $sql .= " price=".   price2num($this->total_ht);			// \TODO A virer
-        $sql .=" WHERE rowid = ".$this->id;
+		dolibarr_syslog("Propal::update_price sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+	      	$this->total_ht  = 0;
+	      	$this->total_tva = 0;
+	      	$this->total_ttc = 0;
+	      	
+	      	$num = $this->db->num_rows($result);
+	        $i = 0;
+	        while ($i < $num)
+	        {
+	        	$obj = $this->db->fetch_object($result);
+	        	
+	        	$this->total_ht    += $obj->total_ht;
+	        	$this->total_tva   += ($obj->total_ttc - $obj->total_ht);
+	        	$this->total_ttc   += $obj->total_ttc;
+	        	
+				$tvas[$obj->tva_taux] += ($obj->total_ttc - $obj->total_ht);
+	        	$i++;
+	        }
+	        
+	        $this->db->free($result);
 
-		    dolibarr_syslog("Propal::update_price sql=".$sql);
-        if ( $this->db->query($sql) )
-        {
-            return 1;
-        }
-        else
-        {
-        	$this->error=$this->db->error();
-        	dolibarr_syslog("Propal::update_price error=".$this->error);
-        	return -1;
-        }
-    }
+			// Met a jour indicateurs
+	        $sql = "UPDATE ".MAIN_DB_PREFIX."propal SET";
+	        $sql.= " total_ht=".price2num($this->total_ht).",";
+	        $sql.= " tva=".     price2num($this->total_tva).",";
+	        $sql.= " total=".   price2num($this->total_ttc);
+	        $sql.= " WHERE rowid = ".$this->id;
+
+			dolibarr_syslog("Propal::update_price sql=".$sql);
+	        if ( $this->db->query($sql) )
+	        {
+	            return 1;
+	        }
+	        else
+	        {
+	        	$this->error=$this->db->error();
+	        	dolibarr_syslog("Propal::update_price error=".$this->error);
+	        	return -1;
+	        }
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("Propal::update_price error=".$this->error,LOG_ERR);
+			return -1;
+		}		
+	}
 
 
 	/**
@@ -770,7 +788,8 @@ class Propal extends CommonObject
      */
     function fetch($rowid)
     {
-        $sql = "SELECT p.rowid,ref,total,price,remise,remise_percent,remise_absolue,tva,fk_soc";
+        $sql = "SELECT p.rowid,ref,remise,remise_percent,remise_absolue,fk_soc";
+		$sql.= ", total, tva, total_ht";
         $sql.= ", ".$this->db->pdate("datep")." as dp";
         $sql.= ", ".$this->db->pdate("fin_validite")." as dfv";
         $sql.= ", ".$this->db->pdate("date_livraison")." as date_livraison";
@@ -782,12 +801,12 @@ class Propal extends CommonObject
         $sql.= ", p.fk_mode_reglement, cp.code as mode_reglement_code";
         $sql.= ", c.label as statut_label";
         $sql.= " FROM ".MAIN_DB_PREFIX."c_propalst as c, ".MAIN_DB_PREFIX."propal as p";
-		    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
-		    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'c_paiement as cp ON p.fk_mode_reglement = cp.id';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'cond_reglement as cr ON p.fk_cond_reglement = cr.rowid';
         $sql.= " WHERE p.fk_statut = c.id";
         $sql.= " AND p.rowid='".$rowid."'";
 
-		dolibarr_syslog("Propal.class::fecth rowid=".$rowid);
+		dolibarr_syslog("Propal::fecth rowid=".$rowid);
 		
         $resql=$this->db->query($sql);
         if ($resql)
@@ -803,12 +822,11 @@ class Propal extends CommonObject
                 $this->date                 = $obj->dp;
                 $this->ref                  = $obj->ref;
                 $this->ref_client           = $obj->ref_client;
-                $this->price                = $obj->price;
                 $this->remise               = $obj->remise;
                 $this->remise_percent       = $obj->remise_percent;
                 $this->remise_absolue       = $obj->remise_absolue;
                 $this->total                = $obj->total;
-                $this->total_ht             = $obj->price;
+                $this->total_ht             = $obj->total_ht;
                 $this->total_tva            = $obj->tva;
                 $this->total_ttc            = $obj->total;
                 $this->socid                = $obj->fk_soc;
@@ -906,7 +924,7 @@ class Propal extends CommonObject
                 else
                 {
                 	$this->error=$this->db->error();
-                    dolibarr_syslog("Propal.class::Fetch Error $this->error, sql=$sql");
+                    dolibarr_syslog("Propal::Fetch Error $this->error, sql=$sql");
                     return -1;
                 }
 
@@ -919,7 +937,7 @@ class Propal extends CommonObject
         else
         {
             $this->error=$this->db->error();
-            dolibarr_syslog("Propal.class::Fetch Error sql=$sql ".$this->error);
+            dolibarr_syslog("Propal::Fetch Error sql=$sql ".$this->error);
             return -1;
         }
     }
@@ -2272,7 +2290,7 @@ class PropaleLigne
 	 */
 	function insert()
 	{
-		dolibarr_syslog("PropaleLigne.class::insert rang=".$this->rang);
+		dolibarr_syslog("PropaleLigne::insert rang=".$this->rang);
 		$this->db->begin();
 
 		// Nettoyage parameteres
@@ -2301,7 +2319,7 @@ class PropaleLigne
 		// Insertion dans base de la ligne
 		$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'propaldet';
 		$sql.= ' (fk_propal, description, fk_product, fk_remise_except, qty, tva_tx,';
-		$sql.= ' subprice, remise_percent, price, remise,  ';
+		$sql.= ' subprice, remise_percent, ';
 		$sql.= ' info_bits, ';
 		$sql.= ' total_ht, total_tva, total_ttc, marge_tx, marque_tx, rang)';
 		$sql.= " VALUES (".$this->fk_propal.",";
@@ -2314,8 +2332,6 @@ class PropaleLigne
 		$sql.= " ".price2num($this->tva_tx).",";
 		$sql.= " ".price2num($this->subprice).",";
 		$sql.= " ".price2num($this->remise_percent).",";
-		$sql.= " ".price2num($this->price).",";				// \TODO A virer
-		$sql.= " ".price2num($this->remise).",";			// \TODO A virer
 		$sql.= " '".$this->info_bits."',";
 		$sql.= " ".price2num($this->total_ht).",";
 		$sql.= " ".price2num($this->total_tva).",";
@@ -2327,7 +2343,7 @@ class PropaleLigne
 		$sql.= ' '.$rangtouse;
 		$sql.= ')';
 
-       	dolibarr_syslog("PropaleLigne.class::insert sql=$sql");
+       	dolibarr_syslog("PropaleLigne::insert sql=$sql");
 
 		$resql=$this->db->query($sql);
 		if ($resql)

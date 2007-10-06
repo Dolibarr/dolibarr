@@ -728,6 +728,11 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
+		if ($ret < 0)
+		{
+			dolibarr_print_error($db,$fac->error);
+			exit;
+		}
 		$ret=$fac->fetch_client();
 
 		$date_start='';
@@ -768,21 +773,36 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
 
-	        $price_base_type = $prod->price_base_type;
+            $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
 
-            // multiprix
+            // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-            	$pu = $prod->multiprices[$fac->client->price_level];
+            	$pu_ht = $prod->multiprices[$fac->client->price_level];
             	$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
             	$price_base_type = $prod->multiprices_base_type[$fac->client->price_level];
             }
             else
             {
-            	$pu = $prod->price;
+            	$pu_ht = $prod->price;
 	            $pu_ttc = $prod->price_ttc;
+				$price_base_type = $prod->price_base_type;
             }
 
+			// On reevalue prix selon taux tva car taux tva transaction peut etre different
+			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			if ($tva_tx != $prod->tva_tx)
+			{
+				if ($price_base_type != 'HT')
+				{
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+				}
+				else
+				{
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+			}
+			
             // La description de la ligne est celle saisie ou
             // celle du produit si PRODUIT_CHANGE_PROD_DESC défini
             if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
@@ -793,12 +813,10 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
             {
             	$desc=$_POST['np_desc'];
             }
-
-            $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
         }
         else
         {
-	        $pu=$_POST['pu'];
+	        $pu_ht=$_POST['pu'];
 	        $tva_tx=$_POST['tva_tx'];
 	        $desc=$_POST['np_desc'];
         }
@@ -807,7 +825,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 		$result = $fac->addline(
 				$_POST['facid'],
 				$desc,
-				$pu,
+				$pu_ht,
 				$_POST['qty'],
 				$tva_tx,
 				$_POST['idprod'],
@@ -1637,14 +1655,14 @@ if ($_GET['action'] == 'create')
 }
 else
 {
-	/* *************************************************************************** */
-	/*                                                                             */
-	/* Fiche en mode visu                                                          */
-	/*                                                                             */
-	/* *************************************************************************** */
 	$id = $_GET['facid'];
 	if ($id > 0)
 	{
+		/* *************************************************************************** */
+		/*                                                                             */
+		/* Fiche en mode visu / edition                                                */
+		/*                                                                             */
+		/* *************************************************************************** */
 		if ($mesg) print $mesg.'<br>';
 		
 		$fac = New Facture($db);
@@ -1652,6 +1670,8 @@ else
 		{
 			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);
 
+			$result=$fac->fetch_client();
+			
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
 			$absolute_discount=$soc->getCurrentDiscount();
@@ -2391,9 +2411,9 @@ else
 						print '</td>';
 						print '<td align="right">';
 						if(! $soc->tva_assuj)
-						print '<input type="hidden" name="tva_tx" value="0">0';
+							print '<input type="hidden" name="tva_tx" value="0">0';
 						else
-						print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
+							print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
 						print '</td>';
 						print '<td align="right"><input size="6" type="text" class="flat" name="price" value="'.price($objp->subprice,0,'',0).'"></td>';
 						print '<td align="right">';
@@ -2475,9 +2495,9 @@ else
 				print '</td>';
 				print '<td align="right">';
 				if($soc->tva_assuj == "0")
-				print '<input type="hidden" name="tva_tx" value="0">0';
+					print '<input type="hidden" name="tva_tx" value="0">0';
 				else
-				$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+					$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
 				print '<td align="right"><input type="text" name="pu" size="6"></td>';
 				print '<td align="right"><input type="text" name="qty" value="'.($fac->type==2?'-1':'1').'" size="2"></td>';

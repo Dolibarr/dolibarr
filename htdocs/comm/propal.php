@@ -485,12 +485,18 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
  */
 if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 {
-	if ($_POST['qty'] && (($_POST['np_price']!=0 && $_POST['np_desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['np_price']!='' && $_POST['np_desc']) || $_POST['idprod']))
 	{
 	    $propal = new Propal($db);
 	    $ret=$propal->fetch($_POST['propalid']);
-	    $soc = new Societe($db, $propal->socid);
-	    $soc->fetch($propal->socid);
+		if ($ret < 0)
+		{
+			dolibarr_print_error($db,$propal->error);
+			exit;
+		}
+	    $ret=$propal->fetch_client();
+		
+		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
@@ -500,16 +506,36 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
             $prod = new Product($db, $_POST['idprod']);
             $prod->fetch($_POST['idprod']);
             
-            // multiprix
+			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
+
+		   // On defini prix unitaire
             if ($conf->global->PRODUIT_MULTIPRICES == 1)
             {
-            	$pu = $prod->multiprices[$soc->price_level];
+            	$pu_ht = $prod->multiprices[$fac->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$fac->client->price_level];
             }
             else
             {
-            	$pu=$prod->price;
+            	$pu_ht = $prod->price;
+	            $pu_ttc = $prod->price_ttc;
+				$price_base_type = $prod->price_base_type;
             }
-            
+
+			// On reevalue prix selon taux tva car taux tva transaction peut etre different
+			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			if ($tva_tx != $prod->tva_tx)
+			{
+				if ($price_base_type != 'HT')
+				{
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+				}
+				else
+				{
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+			}
+			
             // La description de la ligne est celle saisie ou
             // celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
             if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
@@ -520,12 +546,10 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
             {
             	$desc = $_POST['np_desc'];
             }
-            
-            $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
         }
         else
         {
-        	$pu=$_POST['np_price'];
+        	$pu_ht=$_POST['np_price'];
         	$tva_tx=$_POST['np_tva_tx'];
         	$desc=$_POST['np_desc'];
         }
@@ -533,12 +557,13 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
         $propal->addline(
 			$_POST['propalid'],
 			$desc,
-			$pu,
+			$pu_ht,
 			$_POST['qty'],
 			$tva_tx,
 			$_POST['idprod'],
 			$_POST['remise_percent'],
-			'HT'
+			$price_base_type,
+			$pu_ttc
 			);
 
 		if ($_REQUEST['lang_id'])
