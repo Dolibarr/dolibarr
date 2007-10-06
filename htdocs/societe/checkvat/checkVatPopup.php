@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/includes/nusoap/lib/nusoap.php");
 
 $langs->load("companies");
 
-$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/vieshome.do';
+$WS_DOL_URL='http://ec.europa.eu/taxation_customs/vies/api/checkVatPort';
 $WS_METHOD  = 'checkVat';
 
 
@@ -72,33 +72,38 @@ else
 	dolibarr_syslog("Call method ".$WS_METHOD);
 	$result = $soapclient->call($WS_METHOD,$parameters);
 
-//	print "x".$result['valid']."i";
+//	print "x".is_array($result)."i";
 //	print_r($result);
 //	print $soapclient->request.'<br>';
 //	print $soapclient->response.'<br>';
 	
+	$messagetoshow='';
 	print '<b>'.$langs->trans("Response").'</b>:<br>';
 
 	// Service indisponible
-	if (eregi('SERVICE_UNAVAILABLE',$result['faultstring']))
+	if (! is_array($result) || eregi('SERVICE_UNAVAILABLE',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';
+		$messagetoshow=$soapclient->response;
 	}
 	elseif (eregi('TIMEOUT',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';	
+		$messagetoshow=$soapclient->response;
 	}
 	elseif (eregi('SERVER_BUSY',$result['faultstring']))
 	{
 		print '<font class="error">'.$langs->trans("ErrorServiceUnavailableTryLater").'</font><br>';	
+		$messagetoshow=$soapclient->response;
 	}
 	// Syntaxe ko
 	elseif (eregi('INVALID_INPUT',$result['faultstring']) 
 			|| ($result['requestDate'] && ! $result['valid']))
 	{
 		if ($result['requestDate']) print $langs->trans("Date").': '.$result['requestDate'].'<br>';
-		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font><br>';
-		print $langs->trans("VATIntraValueIsValid").': <font class="error">'.$langs->trans("No").'</font><br>';
+		print $langs->trans("VATIntraSyntaxIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
+		print $langs->trans("VATIntraValueIsValid").': <font class="error">'.$langs->trans("No").'</font> (Might be a non europeen VAT)<br>';
+		//$messagetoshow=$soapclient->response;
 	}
 	else
 	{
@@ -133,6 +138,11 @@ print $langs->trans("VATIntraManualCheck",$langs->trans("VATIntraCheckURL"),$lan
 print '<br>';
 print '<center><input type="button" class="button" value="'.$langs->trans("CloseWindow").'" onclick="javascript: window.close()"></center>';
 
+if ($messagetoshow)
+{
+	print '<br><br>Error returned:<br>';
+	print nl2br($messagetoshow);
+}
 
 
 llxFooter('$Date$ - $Revision$',0);
