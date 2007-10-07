@@ -1261,13 +1261,15 @@ function img_allow($allow)
 function image_format_supported($file)
 {
 	// Case filename is not a format image
-	if (! eregi('(\.png|\.jpg|\.jpeg)$',$file,$reg)) return -1;
+	if (! eregi('(\.gif|\.jpg|\.jpeg|\.png|\.bmp)$',$file,$reg)) return -1;
 
 	// Case filename is a format image but not supported by this PHP
 	$imgfonction='';
+	if (strtolower($reg[1]) == '.gif')  $imgfonction = 'imagecreatefromgif';
 	if (strtolower($reg[1]) == '.png')  $imgfonction = 'imagecreatefrompng';
 	if (strtolower($reg[1]) == '.jpg')  $imgfonction = 'imagecreatefromjpeg';
 	if (strtolower($reg[1]) == '.jpeg') $imgfonction = 'imagecreatefromjpeg';
+	if (strtolower($reg[1]) == '.bmp')  $imgfonction = 'imagecreatefromwbmp';
 	if ($imgfonction)
 	{
 		if (! function_exists($imgfonction))
@@ -1277,7 +1279,7 @@ function image_format_supported($file)
 		}
 	}
 
-	// Case filename is a format image and supported by this PHP
+	// Filename is a format image and supported by this PHP
 	return 1;
 }
 
@@ -3223,13 +3225,13 @@ function print_date_range($date_start,$date_end)
 }
 
 /*
- *    \brief     Création d'une vignette à partir d'une image ($file)
+ *    \brief     Création de 2 vignettes à partir d'un fichier image (une small et un mini)
  *    \brief     Les extension prise en compte sont jpg et png
  *    \param     file           Chemin du fichier image à redimensionner
  *    \param     maxWidth       Largeur maximum que dois faire la miniature (160 par défaut)
  *    \param     maxHeight      Hauteur maximum que dois faire l'image (120 par défaut)
  *    \param     extName        Extension pour différencier le nom de la vignette
- *    \param     quality        Qualité de compression jpeg
+ *    \param     quality        Qualité de compression (0=worst, 100=best)
  *    \return    string			Chemin de la vignette
  */
 function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $quality=50)
@@ -3245,7 +3247,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	if (! $file)
 	{
 		// Si le fichier n'a pas été indiqué
-		return 'Nom du fichier non renseigné.';
+		return 'Bad parameter file';
 	}
 	elseif (! file_exists($file))
 	{
@@ -3268,11 +3270,12 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	$fichier = realpath($file); // Chemin canonique absolu de l'image
 	$dir = dirname($file).'/'; // Chemin du dossier contenant l'image
 	$dirthumb = $dir.'thumbs/'; // Chemin du dossier contenant les vignettes
+
 	$infoImg = getimagesize($fichier); // Récupération des infos de l'image
 	$imgWidth = $infoImg[0]; // Largeur de l'image
 	$imgHeight = $infoImg[1]; // Hauteur de l'image
 
-	// Si l'image est plus petite que la largeur et le hauteur max, on ne crée pas de vignette
+	// Si l'image est plus petite que la largeur et la hauteur max, on ne crée pas de vignette
 	if ($infoImg[0] < $maxWidth && $infoImg[1] < $maxHeight)
 	{
 		// On cree toujours les vignettes
@@ -3281,12 +3284,20 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	}
 
 	$imgfonction='';
-	switch($infoImg[2]){
-	case 2:
-		$imgfonction = 'imagecreatefromjpeg';
-		break;
-	case 3:
-		$imgfonction = 'imagecreatefrompng';
+	switch($infoImg[2])
+	{
+		case 1:	// IMG_GIF
+			$imgfonction = 'imagecreatefromgif';
+			break;
+		case 2:	// IMG_JPG
+			$imgfonction = 'imagecreatefromjpeg';
+			break;
+		case 3:	// IMG_PNG
+			$imgfonction = 'imagecreatefrompng';
+			break;
+		case 4:	// IMG_WBMP
+			$imgfonction = 'imagecreatefromwbmp';
+			break;
 	}
 	if ($imgfonction)
 	{
@@ -3300,19 +3311,33 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	// On crée le répertoire contenant les vignettes
 	if (! file_exists($dirthumb))
 	{
-		dolibarr_syslog("Product Create $dirthumb");
 		create_exdir($dirthumb);
 	}
 
 	// Initialisation des variables selon l'extension de l'image
-	switch($infoImg[2]){
-	case 2:
-		$img = imagecreatefromjpeg($fichier); // Création d'une nouvelle image jpeg à partir du fichier
-		$extImg = '.jpg'; // Extension de l'image
-		break;
-	case 3:
-		$img = imagecreatefrompng($fichier); // Création d'une nouvelle image png à partir du fichier
-		$extImg = '.png';
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			$img = imagecreatefromgif($fichier);
+			$extImg = '.gif'; // Extension de l'image
+			$newquality='NU';
+			break;
+		case 2:	// Jpg
+			$img = imagecreatefromjpeg($fichier);
+			$extImg = '.jpg'; // Extension de l'image
+			$newquality=$quality;
+			break;
+		case 3:	// Png
+			$img = imagecreatefrompng($fichier);
+			$extImg = '.png';
+			$newquality=$quality-100;
+			$newquality=round(abs($quality-100)*9/100);
+			break;
+		case 4:	// Bmp
+			$img = imagecreatefromwbmp($fichier);
+			$extImg = '.bmp';
+			$newquality='NU';
+			break;
 	}
 
 	// Initialisation des dimensions de la vignette si elles sont supérieures à l'original
@@ -3332,35 +3357,73 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 		$thumbHeight = $maxHeight;
 		$thumbWidth  = $thumbHeight * $imgWhFact;
 	}
+	$thumbHeight=round($thumbHeight);
+	$thumbWidth=round($thumbWidth);
+	
+	// Create empty image
+	$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
 
-	$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight); // Création de la vignette
+	// Activate antialiasing for better quality
+	if (function_exists('imageantialias'))
+	{
+		imageantialias($imgThumb, true);
+	}
 
 	// This is to keep transparent alpha channel if exists (PHP >= 4.2)
 	if (function_exists('imagesavealpha'))
 	{
 		imagesavealpha($imgThumb, true);
-		$trans_colour = imagecolorallocatealpha($imgThumb, 0, 0, 0, 127);
-		imagefill($imgThumb, 0, 0, $trans_colour);
 	}
 	
-	imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+	// Initialisation des variables selon l'extension de l'image
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);	// 0, not 127 because transparent channel bugged with gif
+			break;
+		case 2:	// Jpg
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			break;
+		case 3:	// Png
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
+			break;
+		case 4:	// Bmp
+			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
+			break;
+	}
+	imagefill($imgThumb, 0, 0, $trans_colour);
 
-	$fileName = eregi_replace('(\.jpeg|\.jpg|\.png)$','',$file);	// On enleve extension quelquesoit la casse
+	dolibarr_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
+	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+	imagecopyresampled($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
+
+	$fileName = eregi_replace('(\.gif|\.jpeg|\.jpg|\.png|\.bmp)$','',$file);	// On enleve extension quelquesoit la casse
 	$fileName = basename($fileName);
 	$imgThumbName = $dirthumb.$fileName.$extName.$extImg; // Chemin complet du fichier de la vignette
 
-	//Création du fichier de la vignette
-	$fp = fopen($imgThumbName, "w");
-	fclose($fp);
+	// Check if permission are ok
+	//$fp = fopen($imgThumbName, "w");
+	//fclose($fp);
 
-	// Renvoi la vignette créée
-	switch($infoImg[2]){
-	case 2:
-		imagejpeg($imgThumb, $imgThumbName, $quality); // Renvoi d'une image jpeg avec une qualité de 50 par défaut
-		break;
-	case 3:
-		imagepng($imgThumb, $imgThumbName);
+	// Create image on disk
+	switch($infoImg[2])
+	{
+		case 1:	// Gif
+			imagegif($imgThumb, $imgThumbName);
+			break;
+		case 2:	// Jpg
+			imagejpeg($imgThumb, $imgThumbName, $newquality);
+			break;
+		case 3:	// Png
+			imagepng($imgThumb, $imgThumbName, $newquality);
+			break;
+		case 4:	// Bmp
+			image2wmp($imgThumb, $imgThumbName);
+			break;
 	}
+
+	// Free memory
+	imagedestroy($imgThumb);
 
 	return $imgThumbName;
 }
