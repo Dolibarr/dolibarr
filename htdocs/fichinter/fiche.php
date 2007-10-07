@@ -786,7 +786,7 @@ elseif ($_GET["id"] > 0)
 		print "</tr>\n";
 
 		// Ajout ligne d'intervention
-		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" method="post">';
+		print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$fichinter->id.'#add" name="addinter" method="post">';
 		print '<input type="hidden" name="fichinterid" value="'.$fichinter->id.'">';
 		print '<input type="hidden" name="action" value="addligne">';
 
@@ -809,7 +809,7 @@ elseif ($_GET["id"] > 0)
 		
 		// Date d'intervention
 		print '<td>';
-		$html->select_date(time(),'di',0,0,0,"date_intervention");
+		$html->select_date(time(),'di',0,0,0,"addinter");
 		print '</td>';
 		
 		// Durée
