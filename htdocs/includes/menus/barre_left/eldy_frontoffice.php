@@ -451,26 +451,23 @@ class MenuLeft {
 					if ($leftmenu=="tripsandexpenses") $newmenu->add(DOL_URL_ROOT."/compta/deplacement/index.php?leftmenu=tripsandexpenses&amp;mainmenu=accountancy", $langs->trans("List"), 1, $user->rights->deplacement->lire);
 				}
 
-				// Charges sociales
-				/*
+				// Taxes et charges sociales
 				if ($conf->tax->enabled)
 				{
-					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=charges&amp;mainmenu=accountancy",$langs->trans("Charges"), 0, $user->rights->tax->charges->lire);
-					if ($leftmenu=="charges") $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php",$langs->trans("SocialContributions"), 1, $user->rights->tax->charges->lire);
+					$newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax&amp;mainmenu=accountancy",$langs->trans("MenuTaxAndDividends"), 0, $user->rights->tax->charges->lire);
+					if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/charges/index.php?leftmenu=tax_social&amp;mainmenu=accountancy",$langs->trans("MenuSocialContributions"),1,$user->rights->tax->charges->lire);
+					if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/charges.php?leftmenu=tax_social&action=create",$langs->trans("MenuNewSocialContribution"), 2, $user->rights->tax->charges->creer);
+					if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/sociales/index.php?leftmenu=tax_social",$langs->trans("List"), 2, $user->rights->tax->charges->lire);
+					// VAT
+					if ($conf->compta->tva)
+					{
+						if (eregi('^tax',$leftmenu)) $newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=tax_vat&amp;mainmenu=accountancy",$langs->trans("VAT"),1,$user->rights->tax->charges->lire);
+						if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?leftmenu=tax_vat&action=create",$langs->trans("NewPayment"),2,$user->rights->tax->charges->creer);
+						if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php?leftmenu=tax_vat",$langs->trans("List"),2,$user->rights->tax->charges->lire);
+						if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/clients.php?leftmenu=tax_vat", $langs->trans("ReportByCustomers"), 2, $user->rights->tax->charges->lire);
+						if (eregi('^tax',$leftmenu)) $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/quadri_detail.php?leftmenu=tax_vat", $langs->trans("ReportByQuarter"), 2, $user->rights->tax->charges->lire);
+					}
 				}
-				*/
-
-				// Charges tva
-				/*
-				if ($user->rights->tax->charges->lire && $conf->compta->tva && $user->societe_id == 0)
-				{
-					$newmenu->add(DOL_URL_ROOT."/compta/tva/index.php?leftmenu=vat&amp;mainmenu=accountancy",$langs->trans("VAT"),0,$user->rights->tax->charges->lire);
-					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/fiche.php?action=create",$langs->trans("NewPayment"),1,$user->rights->tax->charges->creer);
-					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/reglement.php",$langs->trans("Payments"),1,$user->rights->tax->charges->lire);
-					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/clients.php", $langs->trans("ReportByCustomers"), 1, $user->rights->tax->charges->lire);
-					if ($leftmenu=="vat") $newmenu->add_submenu(DOL_URL_ROOT."/compta/tva/quadri_detail.php", $langs->trans("ReportByQuarter"), 1, $user->rights->tax->charges->lire);
-				}
-				*/
 
 				// Compta simple
 				/*

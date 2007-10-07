@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -28,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
 
 $user->getrights('compta');
 $user->getrights('tax');
@@ -42,88 +43,125 @@ if (! $year) { $year=date("Y", time()); }
 
 llxHeader();
 
-print_fiche_titre($langs->trans("Charges"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
+print_fiche_titre($langs->trans("TaxAndDividendsArea"),($year?"<a href='index.php?year=".($year-1)."'>".img_previous()."</a> ".$langs->trans("Year")." $year <a href='index.php?year=".($year+1)."'>".img_next()."</a>":""));
 
 print "<br>";
+
+
+/*
+* Charges sociales
+*/
+print_titre($langs->trans("SocialContributions"));
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\">";
-print "<td>".$langs->trans("Group")."</td>";
+print "<td>".$langs->trans("Type")."</td>";
 print "<td align=\"right\">".$langs->trans("Nb")."</td>";
-print "<td align=\"right\">".$langs->trans("AmountTTC")."</td>";
+print "<td align=\"right\">".$langs->trans("Amount")."</td>";
 print "<td align=\"right\">".$langs->trans("AlreadyPayed")."</td>";
 print "</tr>\n";
 
-/*
- * Charges sociales
- */
-$sql = "SELECT c.libelle as lib, s.fk_type as type, count(s.rowid) as nb, sum(s.amount) as total, sum(IF(paye=1,s.amount,0)) as totalpaye";
-$sql .= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
-$sql .= " WHERE s.fk_type = c.id";
+$sql = "SELECT c.libelle as lib, s.fk_type as type,";
+$sql.=" count(s.rowid) as nb, sum(s.amount) as total, sum(IF(paye=1,s.amount,0)) as totalpaye";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_chargesociales as c, ".MAIN_DB_PREFIX."chargesociales as s";
+$sql.= " WHERE s.fk_type = c.id";
 if ($year > 0)
 {
-    $sql .= " AND (";
-    // Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
-    // ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
-    $sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
-    $sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
-    $sql .= ")";
+	$sql .= " AND (";
+	// Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
+	// ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
+	$sql .= "   (s.periode is not null and date_format(s.periode, '%Y') = $year) ";
+	$sql .= "or (s.periode is null     and date_format(s.date_ech, '%Y') = $year)";
+	$sql .= ")";
 }
-$sql .= " GROUP BY lower(c.libelle) ASC";
+$sql .= " GROUP BY c.libelle ASC";
 
-if ( $db->query($sql) )
+$resql=$db->query($sql);
+if ($resql)
 {
-  $num = $db->num_rows();
-  $i = 0;
-  $var=true;
-  
-  while ($i < $num) {
-    $obj = $db->fetch_object();
-    $var = !$var;
-    print "<tr $bc[$var]>";
-    print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
-    print '<td align="right">'.$obj->nb.'</td>';
-    print '<td align="right">'.price($obj->total).'</td>';
-    print '<td align="right">'.price($obj->totalpaye).'</td>';
-    print '</tr>';
-    $i++;
-  }
-} else {
-  dolibarr_print_error($db);
-}
+	$num = $db->num_rows($resql);
+	$i = 0;
+	$total = 0;
+	$totalpaye = 0;
+	$var=true;
 
-/**
- * Factures fournisseurs
- */
-$sql = "SELECT count(f.rowid) as nb, sum(total_ttc) as total, sum(IF(paye=1,total_ttc,0)) as totalpaye";
-$sql .= " FROM ".MAIN_DB_PREFIX."facture_fourn as f";
+	while ($i < $num)
+	{
+		$obj = $db->fetch_object($resql);
+		$var = !$var;
+		print "<tr $bc[$var]>";
+		print '<td><a href="../sociales/index.php?filtre=s.fk_type:'.$obj->type.'">'.$obj->lib.'</a></td>';
+		print '<td align="right">'.$obj->nb.'</td>';
+		print '<td align="right">'.price($obj->total).'</td>';
+		print '<td align="right">'.price($obj->totalpaye).'</td>';
+		print '</tr>';
+		$total = $total + $obj->total;
+		$totalpaye = $totalpaye + $obj->totalpaye;
+		$i++;
+	}
+    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+    print '<td align="right"><b>'.price($total)."</b></td>";
+    print '<td align="right"><b>'.price($totalpaye)."</b></td>";
+	print "</tr>";
+}
+else
+{
+	dolibarr_print_error($db);
+}
+print '</table>';
+
+print "<br>";
+
+$tva = new Tva($db);
+
+print_titre($langs->trans("VATPayments"));
+
+$sql = "SELECT rowid, amount, label, ".$db->pdate("f.datev")." as dm";
+$sql .= " FROM ".MAIN_DB_PREFIX."tva as f ";
 if ($year > 0)
 {
-    $sql .= " WHERE date_format(f.datef, '%Y') = $year";
+	// Si period renseigné on l'utilise comme critere de date, sinon on prend date échéance,
+	// ceci afin d'etre compatible avec les cas ou la période n'etait pas obligatoire
+	$sql .= " WHERE date_format(f.datev, '%Y') = ".$year;
 }
+$sql .= " ORDER BY dm DESC";
 
-if ( $db->query($sql) ) {
-
-  $langs->load("compta");
-  
-  $num = $db->num_rows();
-  $i = 0;
-
-  while ($i < $num) {
-    $obj = $db->fetch_object();
-    $var = !$var;
-    print "<tr $bc[$var]>";
-    print '<td>'.$langs->trans("BillsForSuppliers").'</td>';
-    print '<td align="right">'.$obj->nb.'</td>';
-    print '<td align="right">'.price($obj->total).'</td>';
-    print '<td align="right">'.price($obj->totalpaye).'</td>';
-    print '</tr>';
-    $i++;
-  }
-} else {
+$result = $db->query($sql);
+if ($result)
+{
+    $num = $db->num_rows($result);
+    $i = 0; 
+    $total = 0 ;
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td nowrap>'.$langs->trans("Date").'</td>';
+    print "<td>".$langs->trans("Label")."</td>";
+    print '<td align="right">'.$langs->trans("Amount")."</td>";
+    print "</tr>\n";
+    $var=1;
+    while ($i < $num)
+    {
+        $obj = $db->fetch_object($result);
+        $var=!$var;
+        print "<tr $bc[$var]>";
+        print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
+        print "<td>".$obj->label."</td>\n";
+        $total = $total + $obj->amount;
+        
+        print "<td align=\"right\">".price($obj->amount)."</td>";
+        print "</tr>\n";
+        
+        $i++;
+    }
+    print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
+    print '<td align="right"><b>'.price($total)."</b></td></tr>";
+    
+    print "</table>";
+    $db->free($result);
+}
+else
+{
     dolibarr_print_error($db);
 }
-
-print "</table><br>";
 
 
 $db->close();

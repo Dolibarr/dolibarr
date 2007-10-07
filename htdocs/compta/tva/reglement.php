@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,7 +26,7 @@
 */
 
 require("./pre.inc.php");
-require("../../tva.class.php");
+require_once(DOL_DOCUMENT_ROOT."/tva.class.php");
 
 $langs->load("compta");
 $langs->load("compta");
@@ -52,10 +51,9 @@ if ($result)
     print '<br>';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td nowrap width="120">'.$langs->trans("Date").'</td>';
+    print '<td nowrap align="left">'.$langs->trans("Date").'</td>';
     print "<td>".$langs->trans("Label")."</td>";
     print "<td align=\"right\">".$langs->trans("Amount")."</td>";
-    print "<td>&nbsp;</td>\n";
     print "</tr>\n";
     $var=1;
     while ($i < $num)
@@ -63,17 +61,17 @@ if ($result)
         $obj = $db->fetch_object($result);
         $var=!$var;
         print "<tr $bc[$var]>";
-        print "<td>".dolibarr_print_date($obj->dm)."</td>\n";
+        print '<td align="left">'.dolibarr_print_date($obj->dm,'day')."</td>\n";
         print "<td>".$obj->label."</td>\n";
         $total = $total + $obj->amount;
         
-        print "<td align=\"right\">".price($obj->amount)."</td><td>&nbsp;</td>";
+        print "<td align=\"right\">".price($obj->amount)."</td>";
         print "</tr>\n";
         
         $i++;
     }
     print '<tr class="liste_total"><td align="right" colspan="2">'.$langs->trans("Total").'</td>';
-    print "<td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>";
+    print "<td align=\"right\"><b>".price($total)."</b></td></tr>";
     
     print "</table>";
     $db->free($result);
