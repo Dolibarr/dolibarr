@@ -945,5 +945,5 @@ ALTER TABLE llx_user ADD COLUMN phenix_pass varchar(128) after phenix_login;
 
 update llx_propal set total_ht = price where total_ht = 0 and total > 0;
 
-insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (102,'commande','external', 'SHIPPING',      'Contact client livraison', 1);
+insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (102,'commande','external', 'SHIPPING',      'Contact client livraison commande', 1);
 
