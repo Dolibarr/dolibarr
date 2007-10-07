@@ -94,6 +94,18 @@ $pos = strstr ($uri, '/');      // $pos contient alors url sans nom domaine
 if ($pos == '/') $pos = '';     // si $pos vaut /, on le met a ''
 define('DOL_URL_ROOT', $pos);								// URL racine relative
 
+
+/*
+ * Controle validite fichier conf
+ */
+if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
+{
+    print "Error: Dolibarr config file content seems to be not correctly defined.<br>\n";
+	print "Please run dolibarr setup by calling page <b>/install</b>.<br>\n";
+	exit;
+}
+
+
 /*
  * Creation objet $conf
  */
