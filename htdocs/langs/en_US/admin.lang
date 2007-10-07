@@ -697,7 +697,7 @@ ModifyProductDescAbility=Personalization of descriptions produced in the forms
 ViewProductDescInFormAbility=Visualization of descriptions produced in the forms
 UseSearchToSelectProduct=Use a search form to choose a product (intead of using a list box)
 UseEcoTaxeAbility=Support Eco-Taxe (WEEE)
-SetDefaultBarcodeType=Select the default barcode type to use for products
+SetDefaultBarcodeType=Default barcode type to use for products
 ##### Syslog #####
 SyslogSetup=Syslog module setup
 SyslogOutput=Log output
