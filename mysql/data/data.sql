@@ -59,6 +59,8 @@ insert into llx_action_def (rowid,code,titre,description,objet_type) values (3,'
 insert into llx_const (name, value, type, note, visible) values ('MAIN_NOT_INSTALLED','1','chaine','Setup is running',1);
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MONNAIE','EUR','chaine','Monnaie',0);
+insert into llx_const (name, value, type, note, visible) values ('MAIN_POPUP_CALENDAR','eldy','chaine','Popup calendar module',0);
+
 
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_SERVER','','chaine','Host or ip address for SMTP server',1);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_MAIL_SMTP_PORT','','chaine','Port for SMTP server',1);
