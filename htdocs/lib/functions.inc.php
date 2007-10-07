@@ -308,7 +308,7 @@ function dolibarr_get_const($db, $name)
 
     $sql ="SELECT value";
     $sql.=" FROM llx_const";
-    $sql.=" WHERE name = '$name';";
+    $sql.=" WHERE name = '".addslashes($name)."'";
     $resql=$db->query($sql);
     if ($resql)
     {
@@ -364,11 +364,11 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 }
 
 /**
-   \brief      Effacement d'une constante dans la base de données
-   \see        dolibarr_get_const, dolibarr_sel_const
-   \param	    db          Handler d'accès base
-   \param	    name		Nom ou rowid de la constante
-   \return     int         <0 si ko, >0 si ok
+	\brief		Effacement d'une constante dans la base de données
+	\see        	dolibarr_get_const, dolibarr_sel_const
+	\param	    db          Handler d'accès base
+	\param	    name		Nom ou rowid de la constante
+	\return     	int         <0 si ko, >0 si ok
 */
 function dolibarr_del_const($db, $name)
 {
