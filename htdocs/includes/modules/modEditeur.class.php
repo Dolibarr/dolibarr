@@ -69,6 +69,8 @@ class modEditeur extends DolibarrModules
     $this->depends = array();
     $this->requiredby = array();
     $this->conflictwith = array();
+    $this->needleftmenu = array('default.php');
+    $this->needtotopmenu = array();
     $this->langfiles = array("orders","bills","companies");
 
     // Constantes
