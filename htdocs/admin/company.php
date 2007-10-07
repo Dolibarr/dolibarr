@@ -70,7 +70,9 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 					// Create thumbs of logo
 					if ($isimage > 0)
 					{
-						$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small',80);
+						$quality = 80;
+						
+						$imgThumbSmall = vignette($conf->societe->dir_logos.'/'.$original_file, 200, 100, '_small', $quality);
 						if (eregi('([^\\\/:]+)$',$imgThumbSmall,$reg))
 						{
 							$imgThumbSmall = $reg[1];
@@ -79,7 +81,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 						else dolibarr_syslog($imgThumbSmall);
 						
 						// Création de la vignette de la page "Société/Institution"
-						$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini',80);
+						$imgThumbMini = vignette($conf->societe->dir_logos.'/'.$original_file, 100, 30, '_mini', $quality);
 						if (eregi('([^\\\/:]+)$',$imgThumbMini,$reg))
 						{
 							$imgThumbMini = $reg[1];
