@@ -343,7 +343,7 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
     }
 
     //dolibarr_syslog("dolibarr_set_const name=$name, value=$value");
-    $sql = "DELETE FROM llx_const WHERE name = '$name';";
+    $sql = "DELETE FROM llx_const WHERE name = '".addslashes($name)."';";
     $resql=$db->query($sql);
 
     $sql = "INSERT INTO llx_const(name,value,type,visible,note)";
@@ -372,17 +372,20 @@ function dolibarr_set_const($db, $name, $value, $type='chaine', $visible=0, $not
 */
 function dolibarr_del_const($db, $name)
 {
-  $sql = "DELETE FROM llx_const WHERE name='$name' or rowid='$name'";
-  $resql=$db->query($sql);
-  
-  if ($resql)
-    {
-      return 1;
-    }
-  else
-    {
-      return -1;
-    }
+	global $conf;
+	
+	$sql = "DELETE FROM llx_const";
+	$sql.=" WHERE name='".addslashes($name)."' or rowid='".addslashes($name)."'";
+	$resql=$db->query($sql);
+	if ($resql)
+	{
+		$conf->global->$name='';
+		return 1;
+	}
+	else
+	{
+		return -1;
+	}
 }
 
 
