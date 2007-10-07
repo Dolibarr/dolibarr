@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -33,38 +33,26 @@ $langs->load("admin");
 if (!$user->admin)
   accessforbidden();
 
+
 // Action activation d'un sous module du module adhérent
 if ($_POST["action"] == 'set')
 {
-  $name = "EDITEUR_LIVRE_FORMAT_".time();
-
-  $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('".$name."','".addslashes($_POST["format"])."', 0);";
-  
-  $result=$db->query($sql);
-  if ($result)
-    {
-      Header("Location: editeur.php");
-      exit;
-    }
-  else
-    {
-      dolibarr_print_error($db);   
-      exit;
-    }
+	$name = "EDITEUR_LIVRE_FORMAT_".time();
+	dolibarr_set_const($db, $name, $_POST["format"]);
 }
 
 // Action désactivation d'un sous module du module adhérent
 if ($_GET["action"] == 'unset')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%'";
-  $sql .= " AND rowid='".$_GET["id"]."';";
-
-  if ($db->query($sql))
-    {
-      Header("Location: editeur.php");
-      exit;
-    }
+	$sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name LIKE 'EDITEUR_LIVRE_FORMAT_%'";
+	$sql.= " AND rowid='".$_GET["id"]."';";
+	if ($db->query($sql))
+	{
+		Header("Location: editeur.php");
+		exit;
+	}
 }
+
 
 llxHeader();
 
