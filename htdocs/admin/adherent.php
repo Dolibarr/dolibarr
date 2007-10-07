@@ -39,68 +39,39 @@ if (!$user->admin)
   accessforbidden();
 
 
-// positionne la variable pour le test d'affichage de l'icone
-
-$main_use_mailman = ADHERENT_USE_MAILMAN;
-$main_use_glasnost = ADHERENT_USE_GLASNOST;
-$main_use_glasnost_auto = ADHERENT_USE_GLASNOST_AUTO;
-$main_use_spip = ADHERENT_USE_SPIP;
-$main_use_spip_auto = ADHERENT_USE_SPIP_AUTO;
-
 $typeconst=array('yesno','texte','chaine');
-$var=True;
 
 
 // Action mise a jour ou ajout d'une constante
 if ($_POST["action"] == 'update' || $_POST["action"] == 'add')
 {
-	if (! dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:''))
+	$result=dolibarr_set_const($db, $_POST["constname"],$_POST["constvalue"],$typeconst[$_POST["consttype"]],0,isset($_POST["constnote"])?$_POST["constnote"]:'');
+	if ($result < 0)
 	{
 		print $db->error();
-	}
-	else
-	{
-        Header("Location: adherent.php");
-		exit;
 	}
 }
 
 // Action activation d'un sous module du module adhérent
 if ($_GET["action"] == 'set')
 {
-    $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_GET["name"]."' ;";
-    $result=$db->query($sql);
-    if (! $result) {
-        dolibarr_print_error($db);
-        exit;
-    }
-    
-    $sql ='';
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."const(name,value,visible) values ('".$_GET["name"]."','".$_GET["value"]."', 0);";
-    
-    $result=$db->query($sql);
-    if ($result)
-    {
-        Header("Location: adherent.php");
-		exit;
-    }
-    else {
-        dolibarr_print_error($db);   
-        exit;
-    }
+	$result=dolibarr_set_const($db, $_GET["name"],$_GET["value"]);
+	if ($result < 0)
+	{
+		print $db->error();
+	}
 }
 
 // Action désactivation d'un sous module du module adhérent
 if ($_GET["action"] == 'unset')
 {
-  $sql = "DELETE FROM ".MAIN_DB_PREFIX."const WHERE name = '".$_GET["name"]."'";
-
-  if ($db->query($sql))
-    {
-      Header("Location: adherent.php");
-	  exit;
-    }
+	$result=dolibarr_del_const($db,$_GET["name"]);
+	if ($result < 0)
+	{
+		print $db->error();
+	}
 }
+
 
 
 llxHeader();
@@ -108,6 +79,7 @@ llxHeader();
 /*
  * Interface de configuration de certaines variables de la partie adherent
  */
+$var=True;
 
 print_fiche_titre($langs->trans("MembersSetup"),'','setup');
 print "<br>";

@@ -42,14 +42,10 @@ if (!$user->admin)
 if ($_POST["action"] == 'nbprod')
 {
   dolibarr_set_const($db, "PRODUIT_LIMIT_SIZE", $_POST["value"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'multiprix_num')
 {
   dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", $_POST["value"]);
-  Header("Location: produit.php");
-  exit;
 }
 if ($_POST["action"] == 'multiprix')
 {
@@ -68,16 +64,12 @@ if ($_POST["action"] == 'multiprix')
 	  }
 	  dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
     dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-    Header("Location: produit.php");
-    exit;
   }
   else
   {
   	dolibarr_syslog("Table definition for ".MAIN_DB_PREFIX."societe already ok");
     dolibarr_set_const($db, "PRODUIT_MULTIPRICES", $_POST["activate_multiprix"]);
     dolibarr_set_const($db, "PRODUIT_MULTIPRICES_LIMIT", "6");
-    Header("Location: produit.php");
-    exit;
   }
 }
 else if ($_POST["action"] == 'sousproduits')
@@ -99,66 +91,47 @@ else if ($_POST["action"] == 'sousproduits')
       else
 	{
 	  dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
-	  Header("Location: produit.php");
-	  exit;
 	}
     }
   else
     {
       dolibarr_syslog("Table definition already ok");
       dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
-      Header("Location: produit.php");
-      exit;
     }
 }
 else if ($_POST["action"] == 'changeproductdesc')
 {
   dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
   dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'confirmDeleteProdLineInForm')
 {
   dolibarr_set_const($db, "PRODUIT_CONFIRM_DELETE_LINE", $_POST["activate_confirmDeleteProdLineInForm"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'ProductCanvasAbility')
 {
   dolibarr_set_const($db, "PRODUCT_CANVAS_ABILITY", $_POST["ProductCanvasAbility"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'usesearchtoselectproduct')
 {
   dolibarr_set_const($db, "PRODUIT_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectproduct"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_GET["action"] == 'set')
 {
-  $const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
-  dolibarr_set_const($db, $const, $_GET["value"]);
-  Header("Location: produit.php");
-  exit;
+	$const = "PRODUIT_SPECIAL_".strtoupper($_GET["spe"]);
+	if ($_GET["value"]) dolibarr_set_const($db, $const, $_GET["value"]);
+	else dolibarr_del_const($db, $const);
 }
 else if ($_POST["action"] == 'useecotaxe')
 {
   dolibarr_set_const($db, "PRODUIT_USE_ECOTAXE", $_POST["activate_useecotaxe"]);
-  Header("Location: produit.php");
-  exit;
 }
 else if ($_POST["action"] == 'setdefaultbarcodetype')
 {
   dolibarr_set_const($db, "PRODUIT_DEFAULT_BARCODE_TYPE", $_POST["coder_id"]);
-  Header("Location: produit.php");
-  exit;
 }
 
 
@@ -198,7 +171,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"multiprix\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("MultiPricesAbility").'</td>';
+print '<td>'.$langs->trans("MultiPricesAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_multiprix",$conf->global->PRODUIT_MULTIPRICES,1);
 print '</td><td align="right">';
@@ -227,7 +200,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"sousproduits\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("AssociatedProductsAbility").'</td>';
+print '<td>'.$langs->trans("AssociatedProductsAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_sousproduits",$conf->global->PRODUIT_SOUSPRODUITS,1);
 print '</td><td align="right">';
@@ -241,7 +214,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectproduct\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("UseSearchToSelectProduct").'</td>';
+print '<td>'.$langs->trans("UseSearchToSelectProduct").'</td>';
 if (! $conf->use_ajax)
 {
   print '<td nowrap="nowrap" align="right" colspan="2">';
@@ -265,7 +238,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"changeproductdesc\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ModifyProductDescAbility").'</td>';
+print '<td>'.$langs->trans("ModifyProductDescAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_changeproductdesc",$conf->global->PRODUIT_CHANGE_PROD_DESC,1);
 print '</td><td align="right">';
@@ -279,7 +252,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"viewProdDescInForm\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ViewProductDescInFormAbility").'</td>';
+print '<td>'.$langs->trans("ViewProductDescInFormAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_viewProdDescInForm",$conf->global->PRODUIT_DESC_IN_FORM,1);
 print '</td><td align="right">';
@@ -293,7 +266,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"confirmDeleteProdLineInForm\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
+print '<td>'.$langs->trans("ConfirmDeleteProductLineAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_confirmDeleteProdLineInForm",$conf->global->PRODUIT_CONFIRM_DELETE_LINE,1);
 print '</td><td align="right">';
@@ -307,7 +280,7 @@ $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"useecotaxe\">";
 print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("UseEcoTaxeAbility").'</td>';
+print '<td>'.$langs->trans("UseEcoTaxeAbility").'</td>';
 print '<td width="60" align="right">';
 print $html->selectyesno("activate_useecotaxe",$conf->global->PRODUIT_USE_ECOTAXE,1);
 print '</td><td align="right">';
@@ -321,83 +294,91 @@ if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 {
 	$var=!$var;
 	print "<form method=\"post\" action=\"produit.php\">";
-  print "<input type=\"hidden\" name=\"action\" value=\"setdefaultbarcodetype\">";
-  print "<tr ".$bc[$var].">";
-  print '<td width="80%">'.$langs->trans("SetDefaultBarcodeType").'</td>';
-  print '<td width="60" align="right">';
-  print $html->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
-  print '</td><td align="right">';
-  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-  print "</td>";
-  print '</tr>';
-  print '</form>';
+	print "<input type=\"hidden\" name=\"action\" value=\"setdefaultbarcodetype\">";
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("SetDefaultBarcodeType").'</td>';
+	print '<td width="60" align="right">';
+	print $html->select_barcode_type($conf->global->PRODUIT_DEFAULT_BARCODE_TYPE,"coder_id",1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+	print '</tr>';
+	print '</form>';
 }
 
-print '<tr class="liste_titre">';
-print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
-print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
-print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
-print '<form method="post" action="produit.php">';
-print '<input type="hidden" name="action" value="ProductCanvasAbility">';
-print "<tr ".$bc[$var].">";
-print '<td width="80%">'.$langs->trans("ProductCanvasAbility").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("ProductCanvasAbility",$conf->global->PRODUCT_CANVAS_ABILITY,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
-print '</tr></form>';
-
-require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
-$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
-
-if ($conf->global->PRODUCT_CANVAS_ABILITY==="1")
+if ($conf->left_menu == 'default.php')
 {
-  if(is_dir($dir) )
-    {
-      $handle=opendir($dir);
-      $var=true;
-  
-      while (($file = readdir($handle))!==false)
+	// Propose utilisation de canvas.
+	// Ces derniers ne sont geres que par le menu default
+	$var = false;
+
+	print '<tr class="liste_titre">';
+	print "  <td>".$langs->trans("ProductSpecial")."</td>\n";
+	print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
+	print "  <td width=\"80\">&nbsp;</td></tr>\n";
+
+	print '<form method="post" action="produit.php">';
+	print '<input type="hidden" name="action" value="ProductCanvasAbility">';
+	print "<tr ".$bc[$var].">";
+	print '<td>'.$langs->trans("ProductCanvasAbility").'</td>';
+	print '<td width="60" align="right">';
+	print $html->selectyesno("ProductCanvasAbility",$conf->global->PRODUCT_CANVAS_ABILITY,1);
+	print '</td><td align="right">';
+	print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+	print "</td>";
+	print '</tr></form>';
+
+	require_once(DOL_DOCUMENT_ROOT . "/product.class.php");
+	$dir = DOL_DOCUMENT_ROOT . "/product/canvas/";
+
+	if ($conf->global->PRODUCT_CANVAS_ABILITY)
 	{
-	  if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
-	    {
-	      $parts = explode('.',$file);
-	      $classname = 'Product'.ucfirst($parts[1]);	  
-	      require_once($dir.$file);	  
-	      $module = new $classname();
-	      
-	      $var=!$var;
-	      print "<tr $bc[$var]><td>";
-	      
-	      print $module->description;
-	      
-	      print '</td><td align="center">';
-	      
-	      if (defined ("PRODUIT_SPECIAL_LIVRE") && PRODUIT_SPECIAL_LIVRE == 1)
+		if(is_dir($dir) )
 		{
-		  print img_tick();
-		  print '</td><td align="center">';
-		  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';	      
+			$handle=opendir($dir);
+
+			while (($file = readdir($handle))!==false)
+			{
+				if (substr($file, strlen($file) -10) == '.class.php' && substr($file,0,8) == 'product.')
+				{
+					$parts = explode('.',$file);
+					$classname = 'Product'.ucfirst($parts[1]);	  
+					require_once($dir.$file);	  
+					$module = new $classname();
+					
+					$var=!$var;
+					print "<tr $bc[$var]><td>";
+					
+					print $module->description;
+					
+					print '</td><td align="right">';
+					
+					$const = "PRODUIT_SPECIAL_".strtoupper($parts[1]);
+					if ($conf->global->$const)
+					{
+						print img_tick();
+						print '</td><td align="right">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=0">'.$langs->trans("Disable").'</a>';	      
+					}
+					else
+					{
+						print '&nbsp;</td><td align="right">';
+						print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
+					}
+					
+					print '</td></tr>';
+				}
+			}
+			closedir($handle);
 		}
-	      else
+		else
 		{
-		  print '&nbsp;</td><td align="center">';
-		  print '<a href="'.$_SERVER["PHP_SELF"].'?action=set&amp;spe='.$parts[1].'&amp;value=1">'.$langs->trans("Activate").'</a>';
+			print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
 		}
-	      
-	      print '</td></tr>';
-	    }
 	}
-      closedir($handle);
-    }
-  else
-    {
-      print "<tr><td><b>ERROR</b>: $dir is not a directory !</td></tr>\n";
-    }
+	print '</table>';
 }
-print '</table>';
 
 $db->close();
 

@@ -180,12 +180,26 @@ while (($file = readdir($handle))!==false)
                 $j = 1000 + $i;
             }
 
-            $modules[$i] = $objMod;
-            $filename[$i]= $modName;
-            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
-			$categ[$objMod->special]++;					// Array of all different modules categories
-            $j++;
-            $i++;
+			$modulequalified=1;
+
+			// We discard modules that does not respect constraint on menu handlers
+			if ($objMod->needleftmenu && sizeof($objMod->needleftmenu) && ! in_array($conf->left_menu,$objMod->needleftmenu)) $modulequalified=0;
+			if ($objMod->needtopmenu  && sizeof($objMod->needtopmenu)  && ! in_array($conf->top_menu,$objMod->needtopmenu))   $modulequalified=0;
+
+			// We dsicard modules according to features level (if active we always show them)
+			$const_name = $objMod->const_name;
+			if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2 && ! $conf->global->$const_name) $modulequalified=0;
+			if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1 && ! $conf->global->$const_name) $modulequalified=0;
+
+			if ($modulequalified)
+			{
+	            $modules[$i] = $objMod;
+	            $filename[$i]= $modName;
+	            $orders[$i]  = "$objMod->family"."_".$j;   // Tri par famille puis numero module
+				$categ[$objMod->special]++;					// Array of all different modules categories
+	            $j++;
+	            $i++;
+			}
         }
     }
 }
@@ -280,10 +294,6 @@ foreach ($orders as $key => $value)
     $modName = $filename[$key];
 	$objMod  = $modules[$key];
 
-	// Show modules according to features level
-    if ($objMod->version == 'development'  && $conf->global->MAIN_FEATURES_LEVEL < 2) continue;
-    if ($objMod->version == 'experimental' && $conf->global->MAIN_FEATURES_LEVEL < 1) continue;
-    
     $const_name = $objMod->const_name;
 
     if ($oldfamily && $family!=$oldfamily && $atleastoneforfamily) {

@@ -38,7 +38,11 @@ if (!$user->admin)
 if ($_POST["action"] == 'set')
 {
 	$name = "EDITEUR_LIVRE_FORMAT_".time();
-	dolibarr_set_const($db, $name, $_POST["format"]);
+	$result=dolibarr_set_const($db, $name, $_POST["format"]);
+	if ($result < 0)
+	{
+		print $db->error();
+	}
 }
 
 // Action désactivation d'un sous module du module adhérent
