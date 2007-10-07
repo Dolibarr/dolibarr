@@ -525,10 +525,11 @@ function dolibarr_print_date($time,$format='')
     if (! $format) $format=$conf->format_date_text_short;
 
     if ($format == 'day')         $format=$conf->format_date_short;
+    if ($format == 'hour')        $format=$conf->format_hour_short;
     if ($format == 'daytext')     $format=$conf->format_date_text_short;
     if ($format == 'dayhour')     $format=$conf->format_date_hour_short;
-    if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
     if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
+    if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
 	if (! $format) $format='%Y-%m-%d %H:%M:%S';
 
     // Si date non définie, on renvoie ''
