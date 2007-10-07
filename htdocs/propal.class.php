@@ -272,47 +272,47 @@ class Propal extends CommonObject
     function addline($propalid, $desc, $pu_ht, $qty, $txtva, $fk_product=0, $remise_percent=0, $price_base_type='HT', $pu_ttc)
     {
     	dolibarr_syslog("Propal::Addline propalid=$propalid, desc=$desc, pu_ht=$pu_ht, qty=$qty, txtva=$txtva, fk_product=$fk_product, remise_except=$remise_percent, price_base_type=$price_base_type, pu_ttc=$pu_ttc");
-		include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
-
-        if ($this->statut == 0)
-        {
-			$this->db->begin();
-
-			// Nettoyage paramètres
-            $remise_percent=price2num($remise_percent);
-            $qty=price2num($qty);
-			if (! $qty) $qty=1;
-			$pu_ht=price2num($pu_ht);
-			$pu_ttc=price2num($pu_ttc);
-			$txtva=price2num($txtva);
-
-			if ($price_base_type=='HT')
-			{
-				$pu=$pu_ht;
-			}
-			else
-			{
-				$pu=$pu_ttc;
-			}
-
-			// Calcul du total TTC et de la TVA pour la ligne a partir de
-			// qty, pu, remise_percent et txtva
-			// TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
-			// la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
-			$tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
-			$total_ht  = $tabprice[0];
-			$total_tva = $tabprice[1];
-			$total_ttc = $tabprice[2];
-
-            // \TODO A virer
-			// Anciens indicateurs: $price, $remise (a ne plus utiliser)
-			$price = $pu;
-            $remise = 0;
-			if ($remise_percent > 0)
-            {
-                $remise = round(($pu * $remise_percent / 100), 2);
-                $price = $pu - $remise;
-            }
+    	include_once(DOL_DOCUMENT_ROOT.'/lib/price.lib.php');
+    	
+    	if ($this->statut == 0)
+      {
+      	$this->db->begin();
+	
+      	// Nettoyage paramètres
+      	$remise_percent=price2num($remise_percent);
+      	$qty=price2num($qty);
+      	if (! $qty) $qty=1;
+      	$pu_ht=price2num($pu_ht);
+      	$pu_ttc=price2num($pu_ttc);
+      	$txtva=price2num($txtva);
+      	
+      	if ($price_base_type=='HT')
+      	{
+      		$pu=$pu_ht;
+      	}
+      	else
+      	{
+      		$pu=$pu_ttc;
+      	}
+      	
+      	// Calcul du total TTC et de la TVA pour la ligne a partir de
+			  // qty, pu, remise_percent et txtva
+			  // TRES IMPORTANT: C'est au moment de l'insertion ligne qu'on doit stocker 
+			  // la part ht, tva et ttc, et ce au niveau de la ligne qui a son propre taux tva.
+			  $tabprice=calcul_price_total($qty, $pu, $remise_percent, $txtva, 0, $price_base_type);
+			  $total_ht  = $tabprice[0];
+			  $total_tva = $tabprice[1];
+			  $total_ttc = $tabprice[2];
+			  
+			  // \TODO A virer
+			  // Anciens indicateurs: $price, $remise (a ne plus utiliser)
+			  $price = $pu;
+			  $remise = 0;
+			  if ($remise_percent > 0)
+			  {
+			  	$remise = round(($pu * $remise_percent / 100), 2);
+			  	$price = $pu - $remise;
+			  }
 
 			// Insertion ligne
 			$ligne=new PropaleLigne($this->db);
@@ -2295,6 +2295,7 @@ class PropaleLigne
 
 		// Nettoyage parameteres
 		if (! $this->remise) $this->remise=0;
+		if (! $this->remise_percent) $this->remise_percent=0;
 		
 		$rangtouse=$this->rang;
 		if ($rangtouse == -1)
