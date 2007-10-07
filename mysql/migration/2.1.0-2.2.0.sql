@@ -826,11 +826,13 @@ INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`
 INSERT INTO `llx_c_ecotaxe` (`rowid`, `code`, `libelle`, `price`, `organization`, `fk_pays`, `active`) VALUES (38, 'ES-A-H', 'Jouets et équipements de loisirs et de sports > 10 kg', 1.25000000, 'Eco-systèmes', 1, 1);
 
 ALTER TABLE llx_commandedet CHANGE coef marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_commandedet ADD COLUMN marge_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_commandedet ADD COLUMN marque_tx double(6,3) DEFAULT 0 after marge_tx;
 ALTER TABLE llx_commandedet MODIFY marge_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_commandedet MODIFY marque_tx double(6,3) DEFAULT 0;
 
 ALTER TABLE llx_propaldet CHANGE coef marge_tx double(6,3) DEFAULT 0;
+ALTER TABLE llx_propaldet ADD COLUMN marge_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_propaldet ADD COLUMN marque_tx double(6,3) DEFAULT 0 after marge_tx;
 ALTER TABLE llx_propaldet MODIFY marge_tx double(6,3) DEFAULT 0;
 ALTER TABLE llx_propaldet MODIFY marque_tx double(6,3) DEFAULT 0;
