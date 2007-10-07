@@ -55,7 +55,7 @@ class modMenuDb extends DolibarrModules
         $this->description = "Administration des menus par base de données";
 
 		$this->revision = explode(' ','$Revision$');
-        $this->version = '1.1-beta';                        // 'experimental' or 'dolibarr' or version
+        $this->version = 'experimental';                        // 'experimental' or 'dolibarr' or version
 
         $this->const_name = 'MAIN_MODULE_MENUDB';
         $this->special = 0;
