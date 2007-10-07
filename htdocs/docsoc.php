@@ -183,8 +183,9 @@ if ($socid > 0)
 
 		// Courriers
 		// Les courriers sont des documents speciaux generes par des scripts
+		// situes dans scripts/courrier.
 		// Voir Rodo
-		if ($conf->global->SOCIETE_NOLIST_COURRIER)
+		if ($conf->global->MAIN_MODULE_EDITEUR)
 		{
 			$filearray=array();	
 			$errorlevel=error_reporting();

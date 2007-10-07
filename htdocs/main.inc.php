@@ -492,6 +492,7 @@ if ($user->admin)
     $user->rights->user->self->password=1;
 }
 
+
 /**
  * Overwrite configs global par configs perso
  * ------------------------------------------
@@ -534,22 +535,6 @@ if (isset($user->conf->MAIN_DISABLE_JAVASCRIPT) && $user->conf->MAIN_DISABLE_JAV
     $conf->use_javascript=! $user->conf->MAIN_DISABLE_JAVASCRIPT;
 }
 
-// SMARTY
-// Definit dans le fichier de conf
-// $dolibarr_smarty_libs_dir="/home/www/dolitar/external-libs/smarty/libs/";
-// $dolibarr_smarty_compile="/home/www/dolitar/smarty_templates";
-// $dolibarr_smarty_cache="/home/www/dolitar/smarty_cache";
-
-$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
-if (file_exists ($smarty_libs))
-{
-  require($smarty_libs);
-  $smarty = new Smarty();
-  $smarty->compile_dir = $dolibarr_smarty_compile;
-  $smarty->cache_dir = $dolibarr_smarty_cache;
-  //$smarty->config_dir = '/web/www.domain.com/smarty/configs';
-}
-
 // Defini gestionnaire de menu a utiliser
 if (! $user->societe_id)    // Si utilisateur interne
 {
@@ -562,6 +547,33 @@ else                        // Si utilisateur externe
 {
     $conf->top_menu=$conf->global->MAIN_MENUFRONT_BARRETOP;
     $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
+}
+
+
+if ($conf->left_menu != 'default.php') $conf->global->PRODUCT_CANVAS_ABILITY=0;
+// Si besoin de smarty
+if ($conf->global->PRODUCT_CANVAS_ABILITY)
+{
+	// SMARTY
+	// Definit dans le fichier de conf
+	// $dolibarr_smarty_libs_dir="/home/www/dolibarr/external-libs/smarty/libs/";
+	// $dolibarr_smarty_compile="/home/www/dolibarr/documents/temp/smarty_templates";
+	// $dolibarr_smarty_cache="/home/www/dolibarr/documents/temp/smarty_cache";
+	
+	$smarty_libs = $dolibarr_smarty_libs_dir. "Smarty.class.php";
+	if (file_exists ($smarty_libs))
+	{
+
+		require_once($smarty_libs);
+		$smarty = new Smarty();
+		$smarty->compile_dir = $dolibarr_smarty_compile;
+		$smarty->cache_dir = $dolibarr_smarty_cache;
+		//$smarty->config_dir = '/web/www.domain.com/smarty/configs';
+	}
+	else
+	{
+		dolibarr_print_error('',"Library Smarty ".$smarty_libs." not found. Check parameter dolibarr_smarty_libs_dir in conf file.");
+	}
 }
 
 // Si le login n'a pu etre recupere, on est identifie avec un compte qui n'existe pas.

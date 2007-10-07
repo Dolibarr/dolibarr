@@ -132,6 +132,11 @@ $character_set_client="ISO-8859-1";
 
 
 # Parameters not used yet
+# dolibarr_smarty_libs_dir
+# Examples:
+# $dolibarr_smarty_libs_dir="/var/www/dolibarr/external-libs/smarty/libs/";
+# $dolibarr_smarty_compile="/var/www/dolibarr/documents/temp/smarty_templates";
+# $dolibarr_smarty_cache="/var/www/dolibarr/documents/temp/smarty_cache";
 $dolibarr_smarty_libs_dir="";
 $dolibarr_smarty_compile="";
 $dolibarr_smarty_cache="";

@@ -382,7 +382,6 @@ class ProductLivre extends Product
    */
   function assign_smarty_values(&$smarty, $action='')
   {
-
     if ($action =='edit' or $action == 'create')
       {
 	$this->GetAvailableFormat();

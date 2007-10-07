@@ -175,6 +175,7 @@ if (! defined('NOREQUIREUSER'))
 
 /*
  * Chargement objet $conf
+ * After this, all parameters conf->global->CONSTANTS are loaded
  */
 if (! defined('NOREQUIREDB'))   
 {
