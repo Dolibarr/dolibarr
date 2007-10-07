@@ -203,12 +203,6 @@ insert into llx_const (name, value, type, visible, note) VALUES ('PROPALE_VALIDI
 
 
 --
--- Product
---
-insert into llx_const(name,value,type,visible,note) values('PRODUCT_SHOW_WHEN_CREATE','0','yesno',1,'Add products list in first step of proposal, invoice, order creation');
-
-
---
 -- Barcode
 --
 insert into llx_const (name, value, type, note, visible) values ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
