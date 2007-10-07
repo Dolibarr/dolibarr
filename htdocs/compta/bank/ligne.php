@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -138,24 +137,25 @@ if ($_POST["action"] == 'emetteur')
 
 if ($_POST["action"] == 'num_releve')
 {
-  $num_rel=trim($_POST["num_rel"]);
-  
-  $db->begin();
-  
-  $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-  $sql.= " SET num_releve=".($num_rel?"'".$num_rel."'":"null");
-  $sql.= " WHERE rowid = ".$rowid;
-  
-  $result = $db->query($sql);
-  if ($result)
-    {
-      $db->commit();
-    }
-  else
-    {    
-      $db->rollback();
-      dolibarr_print_error($db);
-    }
+	$db->begin();
+
+	$num_rel=trim($_POST["num_rel"]);
+
+	$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
+	$sql.= " SET num_releve=".($num_rel?"'".$num_rel."'":"null");
+	if (! $num_rel) $sql.= ", rappro = 0";
+	$sql.= " WHERE rowid = ".$rowid;
+
+	$result = $db->query($sql);
+	if ($result)
+	{
+		$db->commit();
+	}
+	else
+	{    
+		$db->rollback();
+		dolibarr_print_error($db);
+	}
 }
 
 
