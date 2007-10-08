@@ -50,7 +50,14 @@ function llxHeader($head = "", $title="") {
 
   $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
 
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/compta.php", "Compta");
+
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/mail.php", "Mails");
+
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/concurrents/liste.php", "Concurrents");
+
+  if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
+    $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/xdsl.php", "Liens xDSL");
 
   left_menu($menu->liste);
 }
