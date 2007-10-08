@@ -107,6 +107,11 @@ class LigneAdsl {
 	if ( $resql )
 	  {
 	    $this->id = $this->db->last_insert_id($resql);
+
+	    // Appel le workflow
+	    $wkf = new WorkflowTelephonie($this->db);
+	    $wkf->notify('xdsl', -1, $this->numero);
+	    
 	    return 0;
 	  }
 	else
