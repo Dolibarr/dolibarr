@@ -19,6 +19,7 @@
  * $Source$
  *
  */
+require_once(DOL_DOCUMENT_ROOT.'/telephonie/workflowtel.class.php');
 
 class LigneAdsl {
   var $db;
@@ -280,6 +281,10 @@ class LigneAdsl {
 
 	$this->db->query($sql);
       }
+    
+    // Appel le workflow
+    $wkf = new WorkflowTelephonie($this->db);
+    $wkf->notify('xdsl', $statut, $this->numero);
 
     return 0;
   }
