@@ -60,7 +60,7 @@ class WorkflowTelephonie {
     return $res;
   }
 
-  function Notify($module, $statut_id, $numero)
+  function Notify($module, $statut_id, $numero, $commentaire='')
   {
     dolibarr_syslog("WorkflowTelephonie::Notify statut_id=$statut_id",LOG_DEBUG);
 
@@ -73,7 +73,7 @@ class WorkflowTelephonie {
       {
 	while ($row = $this->db->fetch_row($resql))
 	  {
-	    $this->SendMail($row[0],$statut_id, $numero);
+	    $this->SendMail($row[0],$statut_id, $numero, $commentaire);
 	  }
 	$this->db->free($resql);
       }       
@@ -84,7 +84,7 @@ class WorkflowTelephonie {
   }
   
   
-  function SendMail($user_id, $statut_id, $numero)
+  function SendMail($user_id, $statut_id, $numero, $commentaire='')
   {
     dolibarr_syslog("WorkflowTelephonie::SendMail user_id=$user_id,statut_id=$statut_id",LOG_DEBUG);
 
@@ -103,6 +103,8 @@ class WorkflowTelephonie {
 
     $message .= "Ligne numéro : ".$numero."\n";
     $message .= "Evénement    : ".$ligne->statuts[$statut_id]."\n";
+    if (strlen(trim($commentaire)))
+	$message .= "Commentaire  : ".$commentaire."\n";
 
     $message .= "\n\n--\n";
     $message .= "Ceci est un message automatique envoyé par Dolibarr\n";
@@ -113,6 +115,31 @@ class WorkflowTelephonie {
 			      'unknown',
 			      $message);
     $mailfile->sendfile();
+  }
+  /**
+   *
+   *
+   */
+  function Delete($module, $user_id, $statut_id)
+  {
+    // $module contient une des valeurs du champs de type enum de la table
+
+    $sql = "DELETE FROM  ".MAIN_DB_PREFIX."telephonie_workflow";
+    $sql .= " WHERE module='".$module."'";
+    $sql .= " AND fk_user = '".$user_id."'";
+    $sql .= " AND fk_statut = '".$statut_id."';";
+    
+    if ($this->db->query($sql) )
+      {
+	$res = 0;
+      }
+    else
+      {
+	dolibarr_syslog("WorkflowTelephonie::Delete ".$this->db->error,LOG_ERR);
+	$res = -1;
+      }
+
+    return $res;
   }
 
 }
