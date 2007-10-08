@@ -414,19 +414,54 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  print "<form action=\"fiche.php\" method=\"post\">\n";
 	  print '<input type="hidden" name="action" value="add">';
 	  print '<input type="hidden" name="client" value="'.$socc->id.'">'."\n";
-	  print '<input type="hidden" name="contrat" value="'.$_GET['contratid'].'">'."\n";
-	  
+	  if ($_GET['contratid'] > 0)
+	    {
+	      print '<input type="hidden" name="contrat" value="'.$_GET['contratid'].'">'."\n";
+	    }
+
 	  print '<table class="border" width="100%" cellspacing="0" cellpadding="4">';
 	  print '<tr><td width="20%">Client</td><td >';  
-	  print $socc->nom;
+	  print "$socc->nom ($socc->code_client)";
 	  print '</td></tr>';
 	  
-	  print '<tr><td width="20%">Code client</td><td >';  
-	  print $socc->code_client;
-	  print '</td></tr>';
-	  
-	  
-	  print '<tr><td width="20%">Numéro de la ligne téléphonique</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
+	  print '<tr><td width="20%">Contrat</td><td>';
+
+	  $contrats = array();
+	  $contrats_id = array();
+	  $sql = "SELECT rowid, ref FROM ".MAIN_DB_PREFIX."telephonie_contrat WHERE fk_soc = ".$socc->id.";";
+	  if ( $resql = $db->query( $sql) )
+	    {
+	      $i = 0;
+	      while ($row = $db->fetch_row($resql))
+		{
+		  $contrats[$i] = $row;
+		  $contrats_id[$row[0]] = $row[1];
+		  $i++;
+		}
+	      $db->free($resql);      
+	    }
+
+	  if ($i == 0)
+	    {
+	      print "Pas de contrat en cours";
+	      print '</td></tr>';
+	    }
+	  elseif($i == 1)
+	    {
+	      print $contrats[0][1];
+	      print '</td></tr>';
+	      print '<input type="hidden" name="contrat" value="'.$contrats[0][1].'">'."\n";
+	    }
+	  else
+	    {
+	      $form->select_array("contrat",$contrats_id);
+	      print '</td></tr>';
+	    }
+
+	  // On continue si il existe des contrats
+	  if (sizeof($contrats) > 0)
+	    {
+	      print '<tr><td width="20%">Numéro de la ligne téléphonique</td><td><input name="numero" size="12" value="'.$ligne->numero.'"></td></tr>';
 	  
 	  print '<tr><td width="20%">Client (Agence/Filiale)</td><td >';
 	  $ff = array();
@@ -495,12 +530,9 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	    }
 	  $form->select_array("type",$ff,$ligne->type);
 	  print '</td></tr>';
-	  
-
 	  /*
 	   * Fournisseur
 	   */
-
 	  print '<tr><td width="20%">Fournisseur</td><td >';
 	  $ff = array();
 	  $sql = "SELECT f.rowid, f.nom FROM ".MAIN_DB_PREFIX."societe as f";
@@ -520,7 +552,6 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 		    }
 		}
 	      $db->free();
-	      
 	    }
 	  else
 	    {
@@ -532,7 +563,6 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	  /*
 	   * Commercial
 	   */
-	  
 	  print '<tr><td width="20%">Commercial</td><td >';
 	  $ff = array();
 	  $sql = "SELECT rowid, name, firstname FROM ".MAIN_DB_PREFIX."user ORDER BY name ";
@@ -553,19 +583,27 @@ elseif ($_GET["action"] == 'create_line' && $_GET["client"] > 0)
 	      
 	    }
       
-      $form->select_array("commercial",$ff,$ligne->commercial);
+	  $form->select_array("commercial",$ff,$ligne->commercial);
       
-      print '</td></tr>';
+	  print '</td></tr>';
       
-      print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
-      print '<textarea name="note" rows="4" cols="50">'."\n";
-      print stripslashes($ligne->note);
-      print '</textarea></td></tr>'."\n";
-      
-      print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
-      print '</table>'."\n";
-      print '</form>';
+	  print '<tr><td width="20%" valign="top">Note</td><td>'."\n";
+	  print '<textarea name="note" rows="4" cols="50">'."\n";
+	  print stripslashes($ligne->note);
+	  print '</textarea></td></tr>'."\n";
+	  
+	  print '<tr><td>&nbsp;</td><td><input type="submit" value="Créer"></td></tr>'."\n";
+	  print '</table>'."\n";
+	  print '</form>';
+	    }
+	  else
+	    {
+	  print '</table>'."\n";
+	  print '</form>';
+	      print '<a href="../contrat/fiche.php?action=create_line&amp;client_comm='.$_GET["client"].'">Nouveau contrat</a>';
+	    }
 
+	  
 	}
       
     }
