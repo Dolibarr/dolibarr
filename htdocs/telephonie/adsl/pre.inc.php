@@ -43,7 +43,7 @@ function llxHeader($head = "", $title="") {
   $menu->add(DOL_URL_ROOT."/telephonie/index.php", "Telephonie");
 
   if ($user->rights->telephonie->configurer)
-    $menu->add(DOL_URL_ROOT."/telephonie/config/", "Configuration");
+    $menu->add(DOL_URL_ROOT."/telephonie/config/xdsl_product.php", "Configuration");
 
   left_menu($menu->liste);
 }
