@@ -60,14 +60,14 @@ class WorkflowTelephonie {
     return $res;
   }
 
-  function Notify($statut_id, $numero)
+  function Notify($module, $statut_id, $numero)
   {
     dolibarr_syslog("WorkflowTelephonie::Notify statut_id=$statut_id",LOG_DEBUG);
 
 
     $sql = "SELECT u.rowid";
     $sql .= " FROM ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."telephonie_workflow as w";
-    $sql .= " WHERE u.rowid = w.fk_user AND w.fk_statut = '".$statut_id."' AND module='xdsl';";
+    $sql .= " WHERE u.rowid = w.fk_user AND w.fk_statut = '".$statut_id."' AND module='".$module."';";
 
     if ( $resql = $this->db->query( $sql) )
       {
