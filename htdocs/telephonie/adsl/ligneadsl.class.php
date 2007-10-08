@@ -289,7 +289,7 @@ class LigneAdsl {
     
     // Appel le workflow
     $wkf = new WorkflowTelephonie($this->db);
-    $wkf->notify('xdsl', $statut, $this->numero);
+    $wkf->notify('xdsl', $statut, $this->numero, $commentaire);
 
     return 0;
   }
