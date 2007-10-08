@@ -71,6 +71,10 @@ $head[$h][1] = $langs->trans("Products");
 $hselected = $h;
 $h++;
 
+$head[$h][0] = DOL_URL_ROOT."/telephonie/config/xdsl_wkf.php";
+$head[$h][1] = $langs->trans("Workflow");
+$h++;
+
 
 dolibarr_fiche_head($head, $hselected, "Configuration des liens xDSL");
 $form = new Form($db);
