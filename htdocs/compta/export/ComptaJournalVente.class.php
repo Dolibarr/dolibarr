@@ -1,5 +1,6 @@
 <?PHP
 /* Copyright (C) 2005-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,12 +18,22 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
- *
  */
+
+ /** 
+        \file       htdocs/compta/export/ComptaJournalVente.php
+        \ingroup    compta
+        \brief      Fichier de la classe export compta journal
+        \version    $Revision$
+*/
 
 require_once(DOL_DOCUMENT_ROOT.'/compta/export/ComptaJournalPdf.class.php');
 
+
+/**
+        \class      ComptaJournalVente
+        \brief      Classe export compta journal
+*/
 class ComptaJournalVente  {
 
   function ComptaJournalVente ($db=0)

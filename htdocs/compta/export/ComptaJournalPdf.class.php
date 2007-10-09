@@ -17,13 +17,22 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
- *
  */
 
-require_once(FPDF_PATH.'fpdi_protection.php');
+/** 
+        \file       htdocs/compta/export/ComptaJournalPdf.php
+        \ingroup    compta
+        \brief      Fichier de la classe export compta journal
+        \version    $Revision$
+*/
+
+require_once(DOL_DOCUMENT_ROOT.'/includes/fpdf/fpdfi/fpdi_protection.php');
 
 
+/**
+        \class      ComptaJournalPdf
+        \brief      Classe export compta journal
+*/
 class ComptaJournalPdf extends FPDF  {
   
   function Footer()
