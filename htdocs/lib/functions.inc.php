@@ -1354,7 +1354,8 @@ function dol_loginfunction($notused,$pearstatus)
 	print '</style>'."\n";
 	print '<script language="javascript" type="text/javascript">'."\n";
 	print "function donnefocus() {\n";
-	print "document.getElementsByTagName('INPUT')[0].focus();";
+	if (! $_REQUEST["username"]) print "document.getElementsByTagName('INPUT')[0].focus();";
+	else print "document.getElementsByTagName('INPUT')[1].focus();";
 	print "}\n";
 	print '</script>'."\n";
 	print '</head>'."\n";

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -104,30 +103,6 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
         {
 			$conf->setValues($db);
 
-// todo: a supprimer ou modifier car le champs code n'existe plus
-/*
-			$code=0;
-			
-			// Recherche du code AD99 le plus élevé.
-			$sql.= "select code from llx_user where code like 'AD%'";
-	        $resql=$db->query($sql);
-	        if ($resql)
-			{
-				$num = $db->num_rows($resql);
-				$i = 0;
-				while ($i < $num)
-				{
-					$obj = $db->fetch_object($resql);
-					$codefound=substr($obj->code,2);
-					if (is_numeric($codefound) && $codefound > $code) $code=$codefound;
-					//print "Found code=$code";
-					$i++;
-				}				
-			}			
-
-			$code++;
-			$code=sprintf("%02d",$code);
-*/			
             $sql = "INSERT INTO llx_user(datec,login,pass,admin,name) VALUES (now()";
             $sql.= ",'".$_POST["login"]."'";
             $sql.= ",'".($conf->password_encrypted?md5($_POST["pass"]):$_POST["pass"])."'";
@@ -143,12 +118,12 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	        {
 	            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 	            {
-	                print $langs->trans("AdminLoginAlreadyExists",$_POST["login"])."<br>";
+	                print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
 	                $success = 1;
 	            }
 	            else
 	            {
-	                print $langs->trans("FailedToCreateAdminLogin")."<br>";
+	                print '<br>'.$langs->trans("FailedToCreateAdminLogin").'<br><br>';
 	            }
 	        }
 	    
@@ -208,7 +183,7 @@ if ($_POST["action"] == "upgrade")
 }
 
 
-print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup">';
+print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup&username='.urlencode($_POST["login"]).'">';
 print $langs->trans("GoToSetupArea");
 print '</a>';
 
