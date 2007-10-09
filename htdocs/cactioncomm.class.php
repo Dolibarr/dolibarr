@@ -158,51 +158,18 @@ class CActionComm {
 
   
 	/*
-	*    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
-	*    \param      id          id ou code du type d'action
-	*    \return     string      libelle du type d'action
+	*   \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
+	*	\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
+	*	\param		option			Sur quoi pointe le lien
+	*   \return     string      	Libelle du type d'action
 	*/
-	function getNom()
+	function getNomUrl($withpicto=0)
 	{
 		global $langs;
 
 		// Check if translation available
 		$transcode=$langs->trans("Action".$this->code);
 		if ($transcode != "Action".$this->code) return $transcode;
-
-		// Check if available in cach
-		if (isset($this->type_actions[$this->code]))
-		{
-			// Si valeur disponible en cache
-			return $this->type_actions[$this->code];
-		}
-
-		// If no translation and no cache available
-		$sql = 'SELECT id, code, libelle';
-		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
-		if (is_numeric($id)) $sql.= " WHERE id=".$this->code;
-		else $sql.= " WHERE code='".$this->code."'";
-
-		dolibarr_syslog("CActionComm::getNom sql=".$sql);
-		$result = $this->db->query($sql);
-		if ($result)
-		{
-			if ($this->db->num_rows($result))
-			{
-				$obj = $this->db->fetch_object($result);
-
-				$transcode=$langs->trans("Action".$obj->code);
-				$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-
-				$this->type_actions[$obj->code]=$libelle;		// Put in cache
-				return $libelle;
-			}
-			$this->db->free($result);
-		}
-		else
-		{
-			dolibarr_print_error($db);
-		}
 	}
 
 }    

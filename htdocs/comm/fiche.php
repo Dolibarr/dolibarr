@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
@@ -273,7 +273,7 @@ if ($socid > 0)
     print '</tr>';
 
 	// multiprix
-	if($conf->global->PRODUIT_MULTIPRICES == 1)
+	if ($conf->global->PRODUIT_MULTIPRICES)
 	{
 		print '<tr><td nowrap>';
 		print '<table width="100%" class="nobordernopadding"><tr><td nowrap>';
@@ -653,18 +653,16 @@ if ($socid > 0)
     {
         $obj = $db->fetch_object($result);
         $var = !$var;
+
         print "<tr $bc[$var]>";
 
+        print '<td>';
         $contactstatic->id = $obj->rowid;
         $contactstatic->name = $obj->name;
         $contactstatic->firstname = $obj->firstname;
-        print '<td>';
         print $contactstatic->getNomUrl(1);
-        if (trim($obj->note))
-        {
-            print '<br>'.nl2br(trim($obj->note));
-        }
         print '</td>';
+
         print '<td>'.$obj->poste.'&nbsp;</td>';
 
         // Lien click to dial
@@ -716,13 +714,17 @@ if ($socid > 0)
     $sql.= " ".$db->pdate("a.datep")." as dp,";
     $sql.= " ".$db->pdate("a.datea")." as da,";
     $sql.= " a.percent,";
-    $sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.login, u.rowid ";
-    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, a.fk_contact,";
+	$sql.= " u.login, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
     $sql.= " AND u.rowid = a.fk_user_author";
     $sql.= " AND c.id=a.fk_action AND a.percent < 100";
     $sql.= " ORDER BY a.datep DESC, a.id DESC";
 
+	dolibarr_syslog("comm/fiche.php sql=".$sql);
     $result=$db->query($sql);
     if ($result)
     {
@@ -774,9 +776,9 @@ if ($socid > 0)
                 if ($obj->propalrowid)
                 {
                     print '<td><a href="propal.php?propalid='.$obj->propalrowid.'">'.img_object($langs->trans("ShowAction"),"task");
-                      $transcode=$langs->trans("Action".$obj->acode);
-                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                      print $libelle;
+                    $transcode=$langs->trans("Action".$obj->acode);
+                    $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
+                    print $libelle;
                     print '</a></td>';
                 }
                 else
@@ -791,9 +793,10 @@ if ($socid > 0)
                 // Contact pour cette action
                 if ($obj->fk_contact > 0)
                 {
-                    $contact = new Contact($db);
-                    $contact->fetch($obj->fk_contact);
-	                print '<td>'.$contact->getNomUrl(1).'</td>';
+                    $contactstatic->name=$obj->name;
+                    $contactstatic->firstname=$obj->firstname;
+                    $contactstatic->id=$obj->fk_contact;
+	                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
                 }
                 else
                 {
@@ -843,13 +846,16 @@ if ($socid > 0)
     $sql.= " a.percent,";
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
-    $sql.= " u.login, u.rowid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " u.login, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
     $sql.= " AND u.rowid = a.fk_user_author";
     $sql.= " AND c.id=a.fk_action AND a.percent = 100";
     $sql.= " ORDER BY a.datea DESC, a.id DESC";
 
+	dolibarr_syslog("comm/fiche.php sql=".$sql);
     $result=$db->query($sql);
     if ($result)
     {
@@ -927,9 +933,10 @@ if ($socid > 0)
             // Contact pour cette action
             if ($obj->fk_contact > 0)
             {
-                $contact = new Contact($db);
-                $contact->fetch($obj->fk_contact);
-                print '<td>'.$contact->getNomUrl(1).'</td>';
+				$contactstatic->name=$obj->name;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
             }
             else
             {

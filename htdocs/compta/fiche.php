@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -456,13 +455,17 @@ if ($socid > 0)
     print '</tr>';
 
     $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
-    $sql.= " c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, a.fk_contact,";
+    $sql.= " u.login, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
     $sql.= " WHERE a.fk_soc = ".$societe->id;
     $sql.= " AND u.rowid = a.fk_user_author";
     $sql.= " AND c.id=a.fk_action AND a.percent < 100";
     $sql.= " ORDER BY a.datea DESC, a.id DESC";
 
+	dolibarr_syslog("compta/fiche.php sql=".$sql);
     $result=$db->query($sql);
     if ($result)
     {
@@ -530,9 +533,10 @@ if ($socid > 0)
             // Contact pour cette action
             if ($obj->fk_contact > 0)
             {
-				$contact = new Contact($db);
-				$contact->fetch($obj->fk_contact);
-				print '<td>'.$contact->getNomUrl(1).'</td>';
+				$contactstatic->name=$obj->name;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
             }
             else
             {
@@ -568,13 +572,16 @@ if ($socid > 0)
     $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
-    $sql.= " u.login, u.rowid";
-    $sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+    $sql.= " u.login, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+    $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
     $sql.= " WHERE a.fk_soc = ".$societe->id;
     $sql.= " AND u.rowid = a.fk_user_author";
     $sql.= " AND c.id=a.fk_action AND a.percent = 100";
     $sql.= " ORDER BY a.datea DESC, a.id DESC";
 
+	dolibarr_syslog("compta/fiche.php sql=".$sql);
     $result=$db->query($sql);
     if ($result)
     {
@@ -644,9 +651,10 @@ if ($socid > 0)
             // Contact pour cette action
             if ($obj->fk_contact > 0)
             {
-                $contact = new Contact($db);
-                $contact->fetch($obj->fk_contact);
-                print '<td>'.$contact->getNomUrl(1).'</td>';
+				$contactstatic->name=$obj->name;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+                print '<td>'.$contactstatic->getNomUrl(1).'</td>';
             }
             else
             {
@@ -679,5 +687,4 @@ $db->close();
 
 
 llxFooter('$Date$ - $Revision$');
-
 ?>

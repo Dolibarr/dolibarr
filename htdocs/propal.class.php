@@ -2153,7 +2153,7 @@ class Propal extends CommonObject
   }
   
   /**
-		\brief    Renvoie nom clicable (avec eventuellement le picto)
+		\brief    	Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
 		\param		option			Sur quoi pointe le lien
         \param      get_param       Parametres ajouté à l'url
