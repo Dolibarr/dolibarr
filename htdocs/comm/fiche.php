@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -96,36 +95,6 @@ if ($_POST["action"] == 'setassujtva' && $user->rights->societe->creer)
     if (! $result) dolibarr_print_error($result);
 }
 
-if ($action == 'stcomm')
-{
-    if ($stcommid <> 'null' && $stcommid <> $oldstcomm)
-    {
-        $sql = "INSERT INTO socstatutlog (datel, fk_soc, fk_statut, author) ";
-        $sql .= " VALUES ('$dateaction',$socid,$stcommid,'" . $user->login . "')";
-        $result = @$db->query($sql);
-
-        if ($result)
-        {
-            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
-            $result = $db->query($sql);
-        }
-        else
-        {
-            $errmesg = "ERREUR DE DATE !";
-        }
-    }
-
-    if ($actioncommid)
-    {
-        $sql = "INSERT INTO ".MAIN_DB_PREFIX."actioncomm (datea, fk_action, fk_soc, fk_user_author) VALUES ('$dateaction',$actioncommid,$socid,'" . $user->id . "')";
-        $result = @$db->query($sql);
-
-        if (!$result)
-        {
-            $errmesg = "ERREUR DE DATE !";
-        }
-    }
-}
 
 /*
  * Recherche
