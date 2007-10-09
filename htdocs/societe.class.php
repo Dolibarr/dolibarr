@@ -718,10 +718,9 @@ class Societe
 
                 // Suppression du répertoire document
                 $docdir = $conf->societe->dir_output . "/" . $id;
-
                 if (file_exists ($docdir))
                 {
-                    $this->deldir($docdir);
+                    dol_delete_dir_recursive($docdir);
                 }
 
                 return 0;
@@ -735,29 +734,6 @@ class Societe
 
     }
 
-    /**
-     *    \brief      Cette fonction permet de supprimer le répertoire de la societe
-     *                et sous répertoire, meme s'ils contiennent des documents.
-     *    \param      dir     repertoire a supprimer
-     */
-    function deldir($dir)
-    {
-        $current_dir = opendir($dir);
-
-        while($entryname = readdir($current_dir))
-        {
-            if(is_dir("$dir/$entryname") and ($entryname != "." and $entryname!=".."))
-            {
-                deldir("${dir}/${entryname}");
-            }
-            elseif($entryname != "." and $entryname!="..")
-            {
-                unlink("${dir}/${entryname}");
-            }
-        }
-        closedir($current_dir);
-        rmdir(${dir});
-    }
 
   /**
    *    \brief     Retournes les factures impayées de la société

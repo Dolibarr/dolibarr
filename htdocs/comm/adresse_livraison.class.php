@@ -408,34 +408,6 @@ class AdresseLivraison
     }
 
 
-  /**
-   *    \brief      Renvoie le nom d'une societe a partir d'un id
-   *    \param      id      id de la société recherchée
-   *
-   */
-  function get_nom($id)
-  {
-
-    $sql = "SELECT nom FROM ".MAIN_DB_PREFIX."societe WHERE rowid='".$id."';";
-
-    $result = $this->db->query($sql);
-
-    if ($result)
-      {
-    	if ($this->db->num_rows())
-    	  {
-    	    $obj = $this->db->fetch_object($result);
-    	    return $obj->nom;
-    	  }
-    	$this->db->free();
-      }
-    else {
-      dolibarr_print_error($this->db);
-    }
-
-  }
-
-
    /*
     *       \brief     Charge les informations d'ordre info dans l'objet societe
     *       \param     id     id de la societe a charger
