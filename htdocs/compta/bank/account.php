@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,6 +45,13 @@ $account=isset($_GET["account"])?$_GET["account"]:$_POST["account"];
 $vline=isset($_GET["vline"])?$_GET["vline"]:$_POST["vline"];
 $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $page=isset($_GET["page"])?$_GET["page"]:0;
+$negpage=isset($_GET["negpage"])?$_GET["negpage"]:0;
+if ($negpage)
+{
+	$page=$_GET["nbpage"] - $negpage;
+	if ($page > $_GET["nbpage"]) $page = $_GET["nbpage"];
+}
+
 
 $mesg='';
 
@@ -187,6 +193,7 @@ if ($account > 0)
 	}
 	$sql.= " WHERE b.fk_account=".$acct->id;
 	$sql.= $sql_rech;
+	
 	dolibarr_syslog("account.php count transactions - sql=".$sql);
 	$result=$db->query($sql);
 	if ($result)
@@ -236,24 +243,35 @@ if ($account > 0)
 	/**
 	* Bandeau recherche
 	*/
-	$navig='';
 
+	// Define navigation string
+	$navig='';
+	$navig.='<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="GET">';
 	$nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
 	if ($limitsql > $viewline)
 	{
 		$navig.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
 	}
-	$navig.= ' Page '.($nbpage-$page).'/'.$nbpage.' ';
+	$navig.= ' Page ';
+	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
+	$navig.='<input type="hidden" name="nbpage"  value="'.$nbpage.'">';
+	$navig.='<input type="hidden" name="account" value="'.($acct->id).'">';
+	$navig.='/'.$nbpage.' ';
 	if ($total_lines > $limitsql )
 	{
 		$navig.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
 	}
+	$navig.='</form>';
+
+	
+	// Show title
 	if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
 	{
 		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
 		print_fiche_titre($titre,$navig);
 	}
 
+	// Confirmation delete
 	if ($_GET["action"]=='delete')
 	{
 		$text=$langs->trans('ConfirmDeleteTransaction');
@@ -332,7 +350,6 @@ if ($account > 0)
 	else print '&nbsp;';
 	print '</td></tr>';
 
-	print '<form method="post" action="account.php">';
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
