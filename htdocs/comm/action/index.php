@@ -64,7 +64,7 @@ llxHeader();
  */
 
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
-$sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.label, a.percent as percent,";
+$sql.= " a.id,".$db->pdate("a.datep")." as dp, ".$db->pdate("a.datea")." as da, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
 $sql.= " u.login, u.rowid as userid,";
 $sql.= " sp.name, sp.firstname";
@@ -122,7 +122,8 @@ if ($resql)
     $i = 0;
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"a.datep",$param,'','colspan="4"',$sortfield);
+    print_liste_field_titre($langs->trans("DatePlanShort"),$_SERVER["PHP_SELF"],"a.datep",$param,'','',$sortfield);
+    print_liste_field_titre($langs->trans("DateRealShort"),$_SERVER["PHP_SELF"],"a.datea",$param,'','',$sortfield);
     print_liste_field_titre($langs->trans("Action"),$_SERVER["PHP_SELF"],"acode",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Title"),$_SERVER["PHP_SELF"],"a.label",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$param,"","",$sortfield);
@@ -142,8 +143,12 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
-       	print '<td align="left" colspan="4">';
+       	print '<td align="left" nowrap="nowrap">';
 		print dolibarr_print_date($obj->dp,"dayhour");
+		print '</td>';
+
+		print '<td align="left" nowrap="nowrap">';
+		print dolibarr_print_date($obj->da,"dayhour");
 		print '</td>';
 
         // Action (type)
@@ -174,7 +179,7 @@ if ($resql)
 			$contactstatic->name=$obj->name;
 			$contactstatic->firstname=$obj->firstname;
 			$contactstatic->id=$obj->fk_contact;
-            print $contactstatic->getNomUrl(1);
+            print $contactstatic->getNomUrl(1,'',16);
         }
         else
         {
@@ -186,7 +191,7 @@ if ($resql)
         print '<td align="center"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->userid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 
         // Status/Percent
-        print '<td align="right">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
+        print '<td align="right" nowrap="nowrap">'.$actionstatic->LibStatut($obj->percent,5).'</td>';
 
         print "</tr>\n";
         $i++;

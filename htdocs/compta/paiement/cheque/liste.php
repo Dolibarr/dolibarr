@@ -123,7 +123,7 @@ if ($resql)
 		print '</td>';
 
         // Date
-        print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+        print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
 
         // Banque
         print '<td>';
