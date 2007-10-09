@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,21 +16,21 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \defgroup   deplacement     Module deplacement
-        \brief      Module pour gérer les déplacements
+        \defgroup   deplacement     Module deplacement et notes de frais
+        \brief      Module pour gérer les déplacements et notes de frais
 */
 
 /**
         \file       htdocs/includes/modules/modDeplacement.class.php
         \ingroup    deplacement
-        \brief      Fichier de description et activation du module Deplacement
+        \brief      Fichier de description et activation du module Deplacement et notes de frais
 */
 
-include_once "DolibarrModules.class.php";
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
+
 
 /**
         \class      modDeplacement

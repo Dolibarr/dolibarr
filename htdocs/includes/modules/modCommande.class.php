@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**     \defgroup   commande     Module commande
@@ -34,7 +33,7 @@
         \brief      Fichier de description et activation du module Commande
 */
 
-include_once "DolibarrModules.class.php";
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**     \class      modCommande
         \brief      Classe de description et activation du module Commande

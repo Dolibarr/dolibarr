@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**     \defgroup   tax		Module taxes
@@ -31,7 +30,8 @@
         \ingroup    comptabilite
         \brief      Fichier de description et activation du module Taxe
 */
-include_once "DolibarrModules.class.php";
+
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 
 /**

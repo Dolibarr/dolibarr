@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**     \defgroup   export      Module export
@@ -29,7 +28,8 @@
         \brief      Fichier de description et activation du module export
 */
 
-include_once "DolibarrModules.class.php";
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
+
 
 /**     \class      modExport
 		\brief      Classe de description et activation du module export

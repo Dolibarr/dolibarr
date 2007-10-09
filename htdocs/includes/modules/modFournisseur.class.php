@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**     \defgroup   fournisseur     Module fournisseur
@@ -31,8 +30,8 @@
         \brief      Fichier de description et activation du module Fournisseur
 */
 
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
-include_once "DolibarrModules.class.php";
 
 /**     \class      modFournisseur
 		\brief      Classe de description et activation du module Fournisseur

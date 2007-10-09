@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -31,7 +30,7 @@
         \brief      Fichier de description et activation du module Utilisateur
 */
 
-include_once "DolibarrModules.class.php";
+include_once(DOL_DOCUMENT_ROOT ."/includes/modules/DolibarrModules.class.php");
 
 /**
         \class      modUser
