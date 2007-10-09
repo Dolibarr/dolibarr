@@ -443,7 +443,8 @@ if ($_GET["action"] == 'create')
 		if ($_GET["actioncode"])
 		{
 			print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
-			print $caction->get_nom($_GET["actioncode"]);
+			$caction->fetch($_GET["actioncode"]);
+			print $caction->getNom();
 		}
 		else
 		{
@@ -471,6 +472,14 @@ if ($_GET["action"] == 'create')
 		}
 		print '</td></tr>';
 
+		// Si la societe est imposée, on propose ces contacts
+		if ($_REQUEST["socid"])
+		{
+			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
+			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
+			print '</td></tr>';
+		}
+
 		// Affecte a
 		print '<tr><td nowrap>'.$langs->trans("ActionAffectedTo").'</td><td>';
 		print $langs->trans("FeatureNotYetSupported");
@@ -480,14 +489,6 @@ if ($_GET["action"] == 'create')
 		print '<tr><td nowrap>'.$langs->trans("ActionDoneBy").'</td><td>';
 		print $langs->trans("FeatureNotYetSupported");
 		print '</td></tr>';
-
-		// Si la societe est imposée, on propose ces contacts
-		if ($_REQUEST["socid"])
-		{
-			print '<tr><td nowrap>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
-			print '</td></tr>';
-		}
 
 		// Avancement
 		if ($_GET["afaire"] == 1)

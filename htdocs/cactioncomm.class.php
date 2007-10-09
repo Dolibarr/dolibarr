@@ -162,57 +162,48 @@ class CActionComm {
 	*    \param      id          id ou code du type d'action
 	*    \return     string      libelle du type d'action
 	*/
-	function get_nom($id)
-	{
-		global $langs;
-	
-		if (! isset($this->type_actions[$id]))
-		{
-			// Si valeur non disponible en cache
-			$sql = 'SELECT id, code, libelle';
-			$sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
-			if (is_numeric($id)) $sql.= " WHERE id=".$id;
-			else $sql.= " WHERE code='".$id."'";
-	
-			$result = $this->db->query($sql);
-			if ($result)
-			{
-				if ($this->db->num_rows($result))
-				{
-					$obj = $this->db->fetch_object($result);
-	
-					$transcode=$langs->trans("Action".$obj->code);
-					$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
-	
-					$this->type_actions[$obj->id]=$libelle; // Met en cache
-					return $libelle;
-				}
-				$this->db->free($result);
-			}
-			else {
-				dolibarr_print_error($db);
-			}
-	
-		}
-		else {
-			// Si valeur disponible en cache
-			return $this->type_actions[$id];
-		}
-	}
-
-
-	/*
-	*    \brief      Renvoie le nom sous forme d'un libellé traduit d'un type d'action
-	*    \return     string      Libelle du type d'action
-	*/
 	function getNom()
 	{
 		global $langs;
-	
+
+		// Check if translation available
 		$transcode=$langs->trans("Action".$this->code);
-		$libelle=($transcode!="Action".$this->code ? $transcode : $this->get_nom($this->code));
-		return $libelle;
+		if ($transcode != "Action".$this->code) return $transcode;
+
+		// Check if available in cach
+		if (isset($this->type_actions[$this->code]))
+		{
+			// Si valeur disponible en cache
+			return $this->type_actions[$this->code];
+		}
+
+		// If no translation and no cache available
+		$sql = 'SELECT id, code, libelle';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'c_actioncomm';
+		if (is_numeric($id)) $sql.= " WHERE id=".$this->code;
+		else $sql.= " WHERE code='".$this->code."'";
+
+		dolibarr_syslog("CActionComm::getNom sql=".$sql);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			if ($this->db->num_rows($result))
+			{
+				$obj = $this->db->fetch_object($result);
+
+				$transcode=$langs->trans("Action".$obj->code);
+				$libelle=($transcode!="Action".$obj->code?$transcode:$obj->libelle);
+
+				$this->type_actions[$obj->code]=$libelle;		// Put in cache
+				return $libelle;
+			}
+			$this->db->free($result);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
 	}
-  
+
 }    
 ?>

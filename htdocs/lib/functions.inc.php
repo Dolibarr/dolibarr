@@ -2034,6 +2034,7 @@ function dol_delete_dir($dir)
 /**
 		\brief  	Effacement d'un répertoire $dir et de son arborescence
 		\param		file			Répertoire a effacer
+		\param		count			Compteur pour comptage nb elements supprimés
 		\return		int				Nombre de fichier+repértoires supprimés
 */
 function dol_delete_dir_recursive($dir,$count=0)

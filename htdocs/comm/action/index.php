@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -66,10 +66,13 @@ llxHeader();
 $sql = "SELECT s.nom as societe, s.rowid as socid, s.client,";
 $sql.= " a.id,".$db->pdate("a.datep")." as dp, a.fk_contact, a.note, a.label, a.percent as percent,";
 $sql.= " c.code as acode, c.libelle,";
-$sql.= " u.login, u.rowid as userid";
+$sql.= " u.login, u.rowid as userid,";
+$sql.= " sp.name, sp.firstname";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
-$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
+$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+$sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
+$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON a.fk_contact = sp.rowid";
 $sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action AND a.fk_user_author = u.rowid";
 if ($_GET["type"])
 {
@@ -91,7 +94,8 @@ if ($status == 'done') { $sql.= " AND a.percent = 100"; }
 if ($status == 'todo') { $sql.= " AND a.percent < 100"; }
 $sql .= " ORDER BY $sortfield $sortorder";
 $sql .= $db->plimit( $limit + 1, $offset);
-  
+
+dolibarr_syslog("comm/action/index.php sql=".$sql);
 $resql=$db->query($sql);
 if ($resql)
 {
@@ -126,6 +130,9 @@ if ($resql)
     print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.login",$param,"","",$sortfield);
     print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"a.percent",$param,"",'align="right"',$sortfield);
     print "</tr>\n";
+	
+    $contactstatic = new Contact($db);
+
     $var=true;
     while ($i < min($num,$limit))
     {
@@ -192,9 +199,10 @@ if ($resql)
         print '<td>';
         if ($obj->fk_contact > 0)
         {
-            $cont = new Contact($db);
-            $cont->fetch($obj->fk_contact);
-            print $cont->getNomUrl(1);
+			$contactstatic->name=$obj->name;
+			$contactstatic->firstname=$obj->firstname;
+			$contactstatic->id=$obj->fk_contact;
+            print $contactstatic->getNomUrl(1);
         }
         else
         {

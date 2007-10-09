@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Éric Seigne          <erics@rycks.com>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -29,6 +28,7 @@
 */
 
 require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 
 $langs->load("companies");
 $langs->load("suppliers");
@@ -167,10 +167,13 @@ else
     $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit( $limit + 1, $offset);
 }
 
+dolibarr_syslog("contact/index.php sql=".$sql);
 $result = $db->query($sql);
 
 if ($result)
 {
+	$contactstatic=new Contact($db);
+	
     $begin=$_GET["begin"];
     
     $num = $db->num_rows($result);
@@ -257,9 +260,10 @@ if ($result)
         
 		// Name
 		print '<td valign="center">';
-        print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->cidp.'">';
-        print img_object($langs->trans("ShowContact"),"contact");
-        print ' '.$obj->name.'</a>';
+		$contactstatic->name=$obj->name;
+		$contactstatic->firstname='';
+		$contactstatic->id=$obj->cidp;
+		print $contactstatic->getNomUrl(1);
         print '</td>';
         
 		// Firstname
