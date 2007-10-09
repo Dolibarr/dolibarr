@@ -1,5 +1,6 @@
 -- ========================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+-- Copyright (C) 2007       Laurent Destailleur <eldy@users.sourceforge.net>
 --
 -- $Id$
 -- $Source$
@@ -20,11 +21,13 @@
 --
 -- ========================================================================
 
-create table llx_socstatutlog
+create table llx_societe_log
 (
   id          integer AUTO_INCREMENT PRIMARY KEY,
   datel       datetime,
-  fk_soc      integer,
-  fk_statut   integer,
-  author      varchar(30)
+  fk_soc      integer,			-- Ne pas mettre de controle d'integrite sur les tables de logs
+  fk_statut   integer,			-- Ne pas mettre de controle d'integrite sur les tables de logs
+  fk_user     integer,			-- Ne pas mettre de controle d'integrite sur les tables de logs
+  author      varchar(30),
+  label       varchar(128)
 )type=innodb;

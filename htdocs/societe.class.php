@@ -1836,7 +1836,29 @@ class Societe
       }
     return -1;
   }
-  
+ 
+
+
+	function set_status($id_status)
+	{ 
+        $sql = "INSERT INTO ".MAIN_DB_PREFIX."societe_log (datel, fk_soc, fk_statut, fk_user, author, label)";
+        $sql.= " VALUES ('$dateaction', $socid, $id_status,";
+		$sql.= "'".$user->id."',";
+		$sql.= "'".addslashes($user->login)."',";
+		$sql.= "'Change statut from $oldstcomm to $stcommid'";
+		$sql.= ")";
+        $result = $db->query($sql);
+        if ($result)
+        {
+            $sql = "UPDATE ".MAIN_DB_PREFIX."societe SET fk_stcomm=$stcommid WHERE rowid=".$socid;
+            $result = $db->query($sql);
+        }
+        else
+        {
+			$errmesg = $db->error;
+        }
+	}
+		
 }
 
 ?>

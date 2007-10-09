@@ -949,3 +949,15 @@ update llx_propal set total_ht = price where total_ht = 0 and total > 0;
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (102,'commande','external', 'SHIPPING',      'Contact client livraison commande', 1);
 
+-- Uniformisation du nom. Rem: Cette table n'est pas utilise en lecture a ce jour
+drop table llx_socstatutlog;
+create table llx_societe_log
+(
+  id          integer AUTO_INCREMENT PRIMARY KEY,
+  datel       datetime,
+  fk_soc      integer,
+  fk_statut   integer,
+  fk_user     integer,
+  author      varchar(30),
+  label       varchar(128)
+)type=innodb;
