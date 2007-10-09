@@ -142,37 +142,9 @@ if ($resql)
 
         print "<tr $bc[$var]>";
 
-        if ($oldyear == strftime("%Y",$obj->dp) )
-        {
-        	print '<td width="30" align="center">|</td>';
-        }
-        else
-        {
-            print '<td width="30" align="center">'.strftime("%Y",$obj->dp).'</td>';
-            $oldyear = strftime("%Y",$obj->dp);
-        }
-
-        if ($oldmonth == strftime("%Y%m",$obj->dp) )
-        {
-        	print '<td width="30" align="center">|</td>';
-        }
-        else
-        {
-            print '<td width="30" align="center">'.strftime("%b",$obj->dp).'</td>';
-            $oldmonth = strftime("%Y%m",$obj->dp);
-        }
-
-        if ($oldday == strftime("%Y%m%d",$obj->dp) )
-        {
-        	print '<td width="30" align="center">|</td>';
-        }
-        else
-        {
-	        print '<td width="30" align="center">'.strftime("%d",$obj->dp).' </td>';
-            $oldday = strftime("%Y%m%d",$obj->dp);
-        }
-
-        print '<td width="30" align="center">'.strftime("%H:%M",$obj->dp).'</td>';
+       	print '<td align="left" colspan="4">';
+		print dolibarr_print_date($obj->dp,"dayhour");
+		print '</td>';
 
         // Action (type)
         print '<td>';
