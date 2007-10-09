@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -481,6 +480,7 @@ else
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("CompanyCurrency").'</td><td>';
     print $form->currency_name($conf->global->MAIN_MONNAIE,1);
+	print ' ('.$conf->global->MAIN_MONNAIE.')';
     print '</td></tr>';
 
     $var=!$var;
