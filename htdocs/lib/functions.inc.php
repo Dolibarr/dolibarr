@@ -170,7 +170,7 @@ function sanitize_string($str)
 				fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
 				au lieu du loggage syslog (configuration du module).
 				Si SYSLOG_FILE_NO_ERROR défini, on ne gère pas erreur ecriture log
-	\remarks	On windows LOG_ERROR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=6
+	\remarks	On windows LOG_ERROR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=LOG_INFO=6
 */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {

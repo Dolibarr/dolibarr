@@ -38,7 +38,7 @@ $langs->load("install");
 $success=0;
 
 
-dolibarr_install_syslog("etape5: Entering etape5.php page");
+dolibarr_install_syslog("etape5: Entering etape5.php page", LOG_INFO);
 
 
 if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
@@ -65,11 +65,6 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
         }
     }
     
-    // If upgrade
-    if ($_POST["action"] == "upgrade")
-    {
-
-    }
 
     pHeader($langs->trans("SetupEnd"),"etape5");
 
@@ -92,7 +87,8 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     // Active module user
     $modName='modUser';
     $file = $modName . ".class.php";
-    include_once("../includes/modules/$file");
+    dolibarr_install_syslog('install/etape5.php Load module user '.DOL_DOCUMENT_ROOT ."/includes/modules/".$file, LOG_INFO);
+	include_once(DOL_DOCUMENT_ROOT ."/includes/modules/".$file);
     $objMod = new $modName($db);
     $objMod->init();
     
@@ -108,6 +104,8 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
             $sql.= ",'".($conf->password_encrypted?md5($_POST["pass"]):$_POST["pass"])."'";
             $sql.= ",1,'Administrateur')";
 	    	//print "sql=".$sql." ".mysql_errno($db->db);
+
+			dolibarr_install_syslog('install/etape5.php sql='.$sql, LOG_INFO);
 	        $resql=$db->query($sql);
 	        if ($resql)
 	        {
@@ -118,11 +116,13 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	        {
 	            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
 	            {
+					dolibarr_install_syslog('install/etape5.php DB_ERROR_RECORD_ALREADY_EXISTS', LOG_WARNING);
 	                print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
 	                $success = 1;
 	            }
 	            else
 	            {
+					dolibarr_install_syslog('install/etape5.php FailedToCreateAdminLogin', LOG_ERR);
 	                print '<br>'.$langs->trans("FailedToCreateAdminLogin").'<br><br>';
 	            }
 	        }
@@ -188,7 +188,7 @@ print $langs->trans("GoToSetupArea");
 print '</a>';
 
 
-dolibarr_install_syslog("Dolibarr install/setup finished");
+dolibarr_install_syslog("Dolibarr install/setup finished", LOG_INFO);
 
 
 pFooter(1,$setuplang);
