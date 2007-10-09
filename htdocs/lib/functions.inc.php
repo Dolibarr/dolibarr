@@ -1302,7 +1302,7 @@ function info_admin($texte)
 
 /**
 		\brief      Affiche formulaire de login PEAR
-		\remarks    Il faut changer le code html dans cette fonction pour changer le design
+		\remarks    Il faut changer le code html dans cette fonction pour changer le design de la logon
 */
 function dol_loginfunction($notused,$pearstatus)
 {
@@ -1390,7 +1390,7 @@ function dol_loginfunction($notused,$pearstatus)
 
 	print '<tr>';
 	print '<td align="left"><br> &nbsp; <b>'.$langs->trans("Login").'</b>  &nbsp;</td>';
-	print '<td><input name="username" class="flat" size="15" maxlength="25" value="'.(isset($_POST["username"])?$_POST["username"]:'').'" tabindex="1" /></td>';
+	print '<td><input name="username" class="flat" size="15" maxlength="25" value="'.(isset($_REQUEST["username"])?$_REQUEST["username"]:'').'" tabindex="1" /></td>';
 
 	if ($conf->main_authentication) $title.=$langs->trans("AuthenticationMode").': '.$conf->main_authentication;
 
