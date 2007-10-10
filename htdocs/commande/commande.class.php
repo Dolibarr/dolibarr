@@ -2286,7 +2286,6 @@ class Commande extends CommonObject
 		$this->nb=array();
 
 		$sql = "SELECT count(co.rowid) as nb";
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= " FROM ".MAIN_DB_PREFIX."commande as co";
 		if (!$user->rights->commercial->client->voir && !$user->societe_id)
 		{

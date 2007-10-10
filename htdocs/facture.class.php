@@ -2703,11 +2703,11 @@ class Facture extends CommonObject
 
 		$sql = "SELECT count(f.rowid) as nb";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
+		if (!$user->rights->commercial->client->voir && !$user->societe_id)
 		{
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = f.rowid";
-			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-			$sql.= " WHERE IFNULL(c.visible,1)=1";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
 		}
 		$resql=$this->db->query($sql);
 		if ($resql)
