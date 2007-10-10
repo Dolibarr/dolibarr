@@ -2291,9 +2291,6 @@ class Commande extends CommonObject
 		{
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = co.rowid";
 			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-		}
-		if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-		{
 			$sql.= " WHERE IFNULL(c.visible,1)=1";
 		}
 		$resql=$this->db->query($sql);
