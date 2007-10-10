@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -246,10 +245,10 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				print $facturesupplierstatic->getNomUrl(1,'');
 				print '</td>';
 				print '<td>';
-				$facturesupplierstatic->id=$obj->socid;
-				$facturesupplierstatic->nom=$obj->nom;
-				$facturesupplierstatic->fournisseur=1;
-				print $facturesupplierstatic->getNomUrl(1,'',16);
+				$companystatic->id=$obj->socid;
+				$companystatic->nom=$obj->nom;
+				$companystatic->client=1;
+				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
 				print '<td align="right">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
