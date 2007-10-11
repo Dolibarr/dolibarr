@@ -270,47 +270,75 @@ if ($_POST["action"] == 'addinpropal')
   $propal = New Propal($db);
   $result=$propal->fetch($_POST["propalid"]);
   if ($result <= 0)
-    {
-      dolibarr_print_error($db,$propal->error);
-      exit;
-    }
+  {
+  	dolibarr_print_error($db,$propal->error);
+    exit;
+  }
   
   $soc = new Societe($db);
-  $soc->fetch($propal->socid,$user);
+  $result=$soc->fetch($propal->socid,$user);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$soc->error);
+    exit;
+  }
   
-  $prod = new Product($db, $_GET['id']);
+  $prod = new Product($db);
   $result=$prod->fetch($_GET['id']);
   if ($result <= 0)
-    {
-      dolibarr_print_error($db,$prod->error);
-      exit;
-    }
-  
-  // multiprix
-  if ($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      $pu = $prod->multiprices[$soc->price_level];
-    }
-  else
-    {
-      $pu=$prod->price;
-    }
+  {
+  	dolibarr_print_error($db,$prod->error);
+    exit;
+  }
   
   $desc = $prod->description;
   $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
   
+  $price_base_type = 'HT';
+  
+  // multiprix
+  if ($conf->global->PRODUIT_MULTIPRICES == 1)
+  {
+    $pu_ht = $prod->multiprices[$soc->price_level];
+    $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+    $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+  }
+  else
+  {
+    $pu_ht = $prod->price;
+	  $pu_ttc = $prod->price_ttc;
+		$price_base_type = $prod->price_base_type;
+  }
+  
+  // On reevalue prix selon taux tva car taux tva transaction peut etre different
+	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+	if ($tva_tx != $prod->tva_tx)
+	{
+		if ($price_base_type != 'HT')
+		{
+			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+	  }
+		else
+		{
+			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+		}
+	}
+  
   $result = $propal->addline($propal->id,
 			     $desc,
-			     $pu,
+			     $pu_ht,
 			     $_POST["qty"],
 			     $tva_tx,
 			     $prod->id,
-			     $_POST["remise_percent"]);
+			     $_POST["remise_percent"],
+			     $price_base_type,
+			     $pu_ttc
+			     );
   if ($result > 0)
-    {
-      Header("Location: ../comm/propal.php?propalid=".$propal->id);
-      return;
-    }
+  {
+    Header("Location: ".DOL_URL_ROOT."/comm/propal.php?propalid=".$propal->id);
+    return;
+  }
   
   $mesg = $langs->trans("ErrorUnknown").": $result";
 }
@@ -320,37 +348,77 @@ if ($_POST["action"] == 'addinpropal')
  */
 if ($_POST["action"] == 'addincommande')
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-  
-  $commande = New Commande($db);
-  $commande->fetch($_POST["commandeid"]);
+  $commande = new Commande($db);
+  $result=$commande->fetch($_POST["commandeid"]);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$commande->error);
+    exit;
+  }
   
   $soc = new Societe($db);
-  $soc->fetch($commande->socid,$user);
+  $result=$soc->fetch($commande->socid,$user);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$soc->error);
+    exit;
+  }
+  
+  $prod = new Product($db);  
+  $result=$prod->fetch($_GET['id']);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$prod->error);
+    exit;
+  }
+
+  $desc = $prod->description;
+  $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
   
   // multiprix
   if ($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      $pu = $product->multiprices[$soc->price_level];
-    }
+  {
+    $pu_ht = $prod->multiprices[$soc->price_level];
+    $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+    $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+  }
   else
-    {
-      $pu=$product->price;
-    }
+  {
+    $pu_ht = $prod->price;
+	  $pu_ttc = $prod->price_ttc;
+		$price_base_type = $prod->price_base_type;
+  }
   
-  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
+  // On reevalue prix selon taux tva car taux tva transaction peut etre different
+	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+	if ($tva_tx != $prod->tva_tx)
+	{
+		if ($price_base_type != 'HT')
+		{
+			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+	  }
+		else
+		{
+			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+		}
+	}
   
   $result =  $commande->addline($commande->id,
-				$product->description,
-				$pu,
+				$desc,
+				$pu_ht,
 				$_POST["qty"],
 				$tva_tx,
-				$product->id,
-				$_POST["remise_percent"]);
+				$prod->id,
+				$_POST["remise_percent"],
+				$price_base_type,
+			  $pu_ttc
+				);
 
-  Header("Location: ../commande/fiche.php?id=".$commande->id);
-  exit;
+  if ($result > 0)
+  {
+  	Header("Location: ".DOL_URL_ROOT."/commande/fiche.php?id=".$commande->id);
+  	exit;
+  }
 }
 
 /*
@@ -358,37 +426,77 @@ if ($_POST["action"] == 'addincommande')
  */
 if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 {
-  $product = new Product($db);
-  $result = $product->fetch($_GET["id"]);
-
   $facture = New Facture($db);
-  $facture->fetch($_POST["factureid"]);
+  $result=$facture->fetch($_POST["factureid"]);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$facture->error);
+    exit;
+  }
   
   $soc = new Societe($db);
   $soc->fetch($facture->socid,$user);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$soc->error);
+    exit;
+  }
   
+  $prod = new Product($db);
+  $result = $prod->fetch($_GET["id"]);
+  if ($result <= 0)
+  {
+  	dolibarr_print_error($db,$prod->error);
+    exit;
+  }
+  
+  $desc = $prod->description;
+  $tva_tx = get_default_tva($mysoc,$soc,$prod->tva_tx);
+
   // multiprix
   if ($conf->global->PRODUIT_MULTIPRICES == 1)
-    {
-      $pu = $product->multiprices[$soc->price_level];
-    }
+  {
+  	$pu_ht = $prod->multiprices[$soc->price_level];
+    $pu_ttc = $prod->multiprices_ttc[$soc->price_level];
+    $price_base_type = $prod->multiprices_base_type[$soc->price_level];
+  }
   else
-    {
-      $pu=$product->price;
-    }
+  {
+  	$pu_ht = $prod->price;
+	  $pu_ttc = $prod->price_ttc;
+		$price_base_type = $prod->price_base_type;
+	}
+	
+	// On reevalue prix selon taux tva car taux tva transaction peut etre different
+	// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+	if ($tva_tx != $prod->tva_tx)
+	{
+		if ($price_base_type != 'HT')
+		{
+			$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+	  }
+		else
+		{
+			$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+		}
+	}
   
-  $tva_tx = get_default_tva($mysoc,$soc,$product->tva_tx);
-  
-  $facture->addline($facture->id,
-		    $product->description,
-		    $pu,
+  $result = $facture->addline($facture->id,
+		    $desc,
+		    $pu_ht,
 		    $_POST["qty"],
 		    $tva_tx,
-		    $product->id,
-		    $_POST["remise_percent"]);
+		    $prod->id,
+		    $_POST["remise_percent"],
+		    $price_base_type,
+			  $pu_ttc
+		    );
   
-  Header("Location: ../compta/facture.php?facid=".$facture->id);
-  exit;
+  if ($result > 0)
+  {
+  	Header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
+  	exit;
+  }
 }
 
 if ($_POST["cancel"] == $langs->trans("Cancel"))
