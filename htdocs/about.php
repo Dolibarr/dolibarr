@@ -77,6 +77,9 @@ if (eregi('^fr_',$langs->getDefaultLang()))
 	print '<li>';
 	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 	print '</li>';
+	print '<li>';
+	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("NewOfficialWebSiteFr").'</a>';
+	print '</li>';
 }
 print '<li>';
 print '<a target="blank" href="http://freshmeat.net/projects/dolibarr/">Freshmeat</a>';
