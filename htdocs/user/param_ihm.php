@@ -33,6 +33,20 @@ $langs->load("products");
 $langs->load("admin");
 $langs->load("users");
 
+// Defini si peux lire/modifier permisssions
+$canreadperms=($user->admin || $user->rights->user->user->lire);
+
+if ($_GET["id"])
+{
+  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
+  $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
+		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer) );
+}
+if ($user->id <> $_GET["id"] && ! $canreadperms)
+{
+  accessforbidden();
+}
+
 $id=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 $dirtop = "../includes/menus/barre_top";
 $dirleft = "../includes/menus/barre_left";
@@ -54,7 +68,7 @@ $html = new Form($db);
 /*
  * Actions
  */
-if ($_POST["action"] == 'update')
+if ($_POST["action"] == 'update' && $caneditfield)
 {
     if ($_POST["cancel"])
     {
@@ -197,7 +211,7 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-    if (($fuser->id == $user->id) || $user->admin)       // Si utilisateur édité = utilisateur courant ou admin
+    if ($caneditfield || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
     {
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
