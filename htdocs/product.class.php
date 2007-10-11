@@ -2473,30 +2473,30 @@ class Product
     $sql = "SELECT count(p.rowid) as nb";
     $sql.= " FROM ".MAIN_DB_PREFIX."product as p";
     if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-      {
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
-      }
+    {
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON cp.fk_categorie = c.rowid";
+    }
     $sql.= " WHERE p.fk_product_type <> 1";
     if ($conf->categorie->enabled && !$user->rights->categorie->voir)
-      {
-	$sql.= " AND IFNULL(c.visible,1)=1";
-      }
+    {
+    	$sql.= " AND IFNULL(c.visible,1)=1";
+    }
     $resql=$this->db->query($sql);
     if ($resql)
-      {
-	while ($obj=$this->db->fetch_object($resql))
-	  {
-	    $this->nb["products"]=$obj->nb;
-	  }
-	return 1;
-      }
+    {
+    	while ($obj=$this->db->fetch_object($resql))
+    	{
+    		$this->nb["products"]=$obj->nb;
+    	}
+    	return 1;
+    }
     else
-      {
-	dolibarr_print_error($this->db);
-	$this->error=$this->db->error();
-	return -1;
-      }
+    {
+    	dolibarr_print_error($this->db);
+    	$this->error=$this->db->error();
+    	return -1;
+    }
   }
   
  /**

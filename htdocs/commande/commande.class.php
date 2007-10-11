@@ -2015,13 +2015,18 @@ class Commande extends CommonObject
 		global $conf, $user;
 
 		$this->nbtodo=$this->nbtodolate=0;
+		$clause = "WHERE";
+		
 		$sql = 'SELECT c.rowid,'.$this->db->pdate('c.date_creation').' as datec';
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
 		$sql.= ' FROM '.MAIN_DB_PREFIX.'commande as c';
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-		$sql.= ' WHERE c.fk_statut BETWEEN 1 AND 2';
+		if (!$user->rights->commercial->client->voir && !$user->societe_id)
+		{
+			$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON c.fk_soc = sc.fk_soc";
+			$sql.= " WHERE sc.fk_user = " .$user->id;
+			$clause = "AND";
+		}
+		$sql.= ' '.$clause.' c.fk_statut BETWEEN 1 AND 2';
 		if ($user->societe_id) $sql.=' AND c.fk_soc = '.$user->societe_id;
-		if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND c.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{

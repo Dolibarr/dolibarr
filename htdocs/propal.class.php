@@ -1846,14 +1846,19 @@ class Propal extends CommonObject
         global $conf, $user;
 
         $this->nbtodo=$this->nbtodolate=0;
+        $clause = "WHERE";
+        
         $sql ="SELECT p.rowid, p.ref, ".$this->db->pdate("p.datec")." as datec,".$this->db->pdate("p.fin_validite")." as datefin";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.=" FROM ".MAIN_DB_PREFIX."propal as p";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        if ($mode == 'opened') $sql.=" WHERE p.fk_statut = 1";
-        if ($mode == 'signed') $sql.=" WHERE p.fk_statut = 2";
+        if (!$user->rights->commercial->client->voir && !$user->societe_id)
+        {
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON p.fk_soc = sc.fk_soc";
+        	$sql.= " WHERE sc.fk_user = " .$user->id;
+        	$clause = "AND";
+        }
+        if ($mode == 'opened') $sql.=" ".$clause." p.fk_statut = 1";
+        if ($mode == 'signed') $sql.=" ".$clause." p.fk_statut = 2";
         if ($user->societe_id) $sql.=" AND p.fk_soc = ".$user->societe_id;
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -1862,11 +1867,11 @@ class Propal extends CommonObject
                 $this->nbtodo++;
                 if ($obj->datefin < (time() - $conf->propal->cloture->warning_delay))
                 {
-					if ($mode == 'opened') $this->nbtodolate++;
-        			if ($mode == 'signed') $this->nbtodolate++;
-// \todo Definir règle des propales à facturer en retard
-// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
-            	}
+                	if ($mode == 'opened') $this->nbtodolate++;
+                	if ($mode == 'signed') $this->nbtodolate++;
+                	// \todo Definir règle des propales à facturer en retard
+                	// if ($mode == 'signed' && ! sizeof($this->FactureListeArray($obj->rowid))) $this->nbtodolate++;
+                }
             }
             return 1;
         }

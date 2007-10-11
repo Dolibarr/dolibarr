@@ -2570,29 +2570,34 @@ class Facture extends CommonObject
     global $conf, $user;
 
     $this->nbtodo=$this->nbtodolate=0;
+    $clause = "WHERE";
+    
     $sql = 'SELECT f.rowid,'.$this->db->pdate('f.date_lim_reglement').' as datefin';
-    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= ' FROM '.MAIN_DB_PREFIX.'facture as f';
-    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-    $sql.= ' WHERE f.paye=0 AND f.fk_statut = 1';
+    if (!$user->rights->commercial->client->voir && !$user->societe_id)
+    {
+    	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON f.fk_soc = sc.fk_soc";
+    	$sql.= " WHERE sc.fk_user = " .$user->id;
+    	$clause = "AND";
+    }
+    $sql.= ' '.$clause.' f.paye=0 AND f.fk_statut = 1';
     if ($user->societe_id) $sql.=' AND f.fk_soc = '.$user->societe_id;
-    if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND f.fk_soc = sc.fk_soc AND sc.fk_user = " .$user->id;
     $resql=$this->db->query($sql);
     if ($resql)
-      {
-	while ($obj=$this->db->fetch_object($resql))
-	  {
-	    $this->nbtodo++;
-	    if ($obj->datefin < (time() - $conf->facture->client->warning_delay)) $this->nbtodolate++;
-	  }
-	return 1;
-      }
+    {
+    	while ($obj=$this->db->fetch_object($resql))
+    	{
+    		$this->nbtodo++;
+    		if ($obj->datefin < (time() - $conf->facture->client->warning_delay)) $this->nbtodolate++;
+    	}
+    	return 1;
+    }
     else
-      {
-	dolibarr_print_error($this->db);
-	$this->error=$this->db->error();
-	return -1;
-      }
+    {
+    	dolibarr_print_error($this->db);
+    	$this->error=$this->db->error();
+    	return -1;
+    }
   }
 
 
