@@ -1123,7 +1123,14 @@ else
 
                         print "<tr $bc[$var]>";
                         print '<td>';
-                        print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+                        if ($canreadperms)
+                        {
+                        	print '<a href="'.DOL_URL_ROOT.'/user/group/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom.'</a>';
+                        }
+                        else
+                        {
+                        	print img_object($langs->trans("ShowGroup"),"group").' '.$obj->nom;
+                        }
                         print '</td>';
                         print '<td>';
 
