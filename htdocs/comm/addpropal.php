@@ -151,47 +151,7 @@ if ($_GET["action"] == 'create')
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';
 
-    // Réductions relatives (Remises-Ristournes-Rabbais)
-/* Une réduction doit s'appliquer obligatoirement sur des lignes de factures
-   et non globalement car une tva est obligatoire meme sur une reduc
-	$relative_discount=$soc->remise_client;
-	print '<tr><td>'.$langs->trans("CustomerRelativeDiscount").'</td>';
-	print '<td>';
-	print '<input type="text" name="remise_percent" size="1" value="'.$relative_discount.'"> %';
-	print '</td><td>'.img_info().' ';
-	if ($relative_discount)
-	{
-		print $langs->trans("CompanyHasRelativeDiscount",$relative_discount);
-	}
-	else
-	{
-		print $langs->trans("CompanyHasNoRelativeDiscount");
-	}
-	print '</td></tr>';
-*/
-
-    // Réductions absolues (Remises-Ristournes-Rabbais)
-/* Les remises absolues doivent s'appliquer par ajout de lignes spécialisées
-	$absolute_discount=$soc->getCurrentDiscount();
-	print '<tr><td>'.$langs->trans("CustomerAbsoluteDiscount").'</td>';
-	print '<td>';
-	print '<input type="text" name="remise_absolue" size="1" value="0"> '.$langs->trans("Currency".$conf->monnaie);
-	print '</td><td>'.img_info().' ';
-	if ($absolute_discount)
-	{
-		print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
-	}
-	else
-	{
-		print $langs->trans("CompanyHasNoAbsoluteDiscount");
-	}
-	print '</td></tr>';
-*/
-
-	// Date de livraison
-	// A quoi sert une date de livraison sur une propale ?
-	// Si il y a date de livraison connue alors ne s'agit-il pas d'une commande plutot ?
-	// Régis : c'est plus pour information afin que le client est un délai de fabrication par exemple.
+	// Date de livraison (ou de fabrication)
 if ($conf->expedition->enabled)
 {
 	if ($conf->global->PROPALE_ADD_SHIPPING_DATE)
