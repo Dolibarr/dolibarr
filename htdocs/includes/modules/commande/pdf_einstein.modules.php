@@ -318,7 +318,7 @@ class pdf_einstein extends ModelePDFCommandes
 
                     // Total HT ligne
                     $pdf->SetXY ($this->postotalht, $curY);
-                    $total = price($com->lignes[$i]->price * $com->lignes[$i]->qty);
+                    $total = price($com->lignes[$i]->total_ht);
                     $pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva

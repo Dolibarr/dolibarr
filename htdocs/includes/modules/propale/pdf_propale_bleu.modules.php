@@ -184,7 +184,7 @@ class pdf_propale_bleu extends ModelePDFPropales
 					$pdf->MultiCell(18, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
 
 					$pdf->SetXY (174, $curY );
-					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
+					$total = price($propale->lignes[$i]->total_ht);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
 					$pdf->line(10, $curY, 200, $curY );

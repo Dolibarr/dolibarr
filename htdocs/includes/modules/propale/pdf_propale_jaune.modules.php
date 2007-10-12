@@ -164,7 +164,6 @@ class pdf_propale_jaune extends ModelePDFPropales
 				for ($i = 0 ; $i < $nblignes ; $i++)
 				{
 					$curY = $nexY;
-					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
 
 					$pdf->SetXY (30, $curY );
 					$pdf->MultiCell(102, 5, $propale->lignes[$i]->desc, 0, 'J', 0);
@@ -184,7 +183,7 @@ class pdf_propale_jaune extends ModelePDFPropales
 					$pdf->MultiCell(22, 5, price($propale->lignes[$i]->price), 0, 'R', 0);
 
 					$pdf->SetXY (176, $curY );
-					$pdf->MultiCell(24, 5, $total, 0, 'R', 0);
+					$pdf->MultiCell(24, 5, price($propale->lignes[$i]->total_ht), 0, 'R', 0);
 
 					$pdf->line(10, $curY, 200, $curY );
 

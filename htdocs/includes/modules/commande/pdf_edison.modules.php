@@ -192,7 +192,7 @@ class pdf_edison extends ModelePDFCommandes
 					$pdf->MultiCell(18, 5, price($com->lignes[$i]->price), 0, 'R', 0);
 	
 					$pdf->SetXY (174, $curY );
-					$total = price($com->lignes[$i]->price * $com->lignes[$i]->qty);
+					$total = price($com->lignes[$i]->total_ht);
 					$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 	
 					$pdf->line(10, $curY, 200, $curY );

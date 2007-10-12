@@ -315,7 +315,7 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
+					$total = price($propale->lignes[$i]->total_ht);
 					$pdf->MultiCell(23, 4, $total, 0, 'R', 0);
 
                     // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
@@ -899,8 +899,7 @@ class pdf_propale_azur extends ModelePDFPropales
 				$arrayidcontact=$object->getIdContact('external','CUSTOMER');
 				if (sizeof($arrayidcontact) > 0)
 				{
-print_r($arrayidcontact);
-				$usecontact=true;
+					$usecontact=true;
 					$result=$object->fetch_contact($arrayidcontact[0]);
 				}
 			}

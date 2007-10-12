@@ -133,7 +133,7 @@ if ($conf->contrat->enabled)
  */
 if ($conf->propal->enabled && $user->rights->propale->lire)
 {
-    $sql = "SELECT p.rowid, p.ref, p.price, s.rowid as socid, s.nom";
+    $sql = "SELECT p.rowid, p.ref, p.total_ht, s.rowid as socid, s.nom";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."societe as s";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -163,7 +163,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 $var=!$var;
                 print '<tr '.$bc[$var].'><td nowrap>'."<a href=\"".DOL_URL_ROOT."/comm/propal.php?propalid=".$obj->rowid."\">".img_object($langs->trans("ShowPropal"),"propal")." ".$obj->ref.'</a></td>';
                 print '<td><a href="fiche.php?socid='.$obj->socid.'">'.dolibarr_trunc($obj->nom,18).'</a></td>';
-                print '<td align="right" nowrap="nowrap">'.price($obj->price).'</td></tr>';
+                print '<td align="right" nowrap="nowrap">'.price($obj->total_ht).'</td></tr>';
                 $i++;
                 $total += $obj->price;
             }

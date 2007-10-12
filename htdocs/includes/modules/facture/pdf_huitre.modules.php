@@ -183,7 +183,7 @@ class pdf_huitre extends ModelePDFFactures
 		$pdf->MultiCell(18, 5, price($fac->lignes[$i]->price), 0, 'R', 0);
 
 		$pdf->SetXY (174, $curY);
-		$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+		$total = price($fac->lignes[$i]->total_ht);
 		$pdf->MultiCell(26, 5, $total, 0, 'R', 0);
 
 		if ($nexY > 200 && $i < $nblignes - 1)

@@ -236,7 +236,7 @@ class pdf_oursin extends ModelePDFFactures
 
 		// Total HT
 		$pdf->SetXY ($this->marges['g']+168, $curY);
-		$total = price($fac->lignes[$i]->price * $fac->lignes[$i]->qty);
+		$total = price($fac->lignes[$i]->total_ht);
 		$pdf->MultiCell(21, 5, $total, 0, 'R', 0);
 
 

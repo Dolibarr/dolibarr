@@ -190,7 +190,7 @@ class pdf_propale_vert extends ModelePDFPropales
 					$pdf->MultiCell(14, 5, $propale->lignes[$i]->remise_percent."%", 0, 'R', 0);
 
 					$pdf->SetXY (180, $curY );
-					$total = price($propale->lignes[$i]->price * $propale->lignes[$i]->qty);
+					$total = price($propale->lignes[$i]->total_ht);
 					$pdf->MultiCell(20, 5, $total, 0, 'R', 0);
 
 					$pdf->line(10, $curY, 200, $curY );
