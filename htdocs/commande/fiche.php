@@ -1174,7 +1174,7 @@ else
 				}
 				else
 				{
-					print dolibarr_print_date($commande->date_livraison,'daytext');
+					print $commande->date_livraison ? dolibarr_print_date($commande->date_livraison,'daytext') : '&nbsp;';
 				}
 				print '</td>';
 				print '<td rowspan="'.$nbrow.'" valign="top">'.$langs->trans('NotePublic').' :<br>';

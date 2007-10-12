@@ -533,7 +533,7 @@ function dolibarr_print_date($time,$format='')
 	if (! $format) $format='%Y-%m-%d %H:%M:%S';
 
     // Si date non définie, on renvoie ''
-    if ("$time" == "") return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
+    if ($time == "") return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
 
     // Analyse de la date
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))

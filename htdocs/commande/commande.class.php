@@ -509,7 +509,7 @@ class Commande extends CommonObject
     $sql.= " '".addslashes($this->note)."', ";
     $sql.= " '".addslashes($this->note_public)."', ";
     $sql.= " '".addslashes($this->ref_client)."', '".$this->modelpdf."', '".$this->cond_reglement_id."', '".$this->mode_reglement_id."',";
-    $sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'null')."',";
+    $sql.= " '".($this->date_livraison?$this->db->idate($this->date_livraison):'')."',";
     $sql.= " '".$this->adresse_livraison_id."',";
     $sql.= " '".$this->remise_absolue."',";
     $sql.= " '".$this->remise_percent."')";
