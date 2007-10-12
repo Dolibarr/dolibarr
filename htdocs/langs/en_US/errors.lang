@@ -1,0 +1,2 @@
+# Dolibarr language file - en_US - errors
+ErrorDuplicateTrigger=A trigger file named '<b>%s</b>' is already loaded. Remove duplicate trigger file in directory '<b>%s</b>'.
