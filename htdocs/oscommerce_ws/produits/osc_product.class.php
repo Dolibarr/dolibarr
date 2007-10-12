@@ -206,9 +206,7 @@ class Osc_product
 
 		if ($mycat->fetch_osccat($osccatid) > 0) 
 		{
-			$x = $mycat->dolicatid;
-			print'<p>'.$x.'</p>';			
-			return $x ;
+			return $mycat->dolicatid;
 		}
 		else return 0;
 	}
@@ -225,20 +223,6 @@ class Osc_product
 		else return -1;	
 	}
 	
-	function get_catid($osccatid)
-	{
-      require_once("./osc_categories.class.php");
-		$mycat=new Osc_categorie($this->db);		
-
-		if ($mycat->fetch_osccat($osccatid) > 0) 
-		{
-			$x = $mycat->dolicatid;
-			print'<p>'.$x.'</p>';			
-			return $x ;
-		}
-		else return 0;
-		
-	}	
        
 	  /**
      *    \brief      création d'un article dans base OSC
