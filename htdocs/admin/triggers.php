@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -37,6 +36,7 @@ if ($_GET["action"] == 'set' && $user->admin)
     Activate($_GET["value"]);
 
     Header("Location: modules.php?spe=".$_GET["spe"]);
+	exit;
 }
 
 if ($_GET["action"] == 'reset' && $user->admin)
@@ -44,6 +44,7 @@ if ($_GET["action"] == 'reset' && $user->admin)
     UnActivate($_GET["value"]);
 
     Header("Location: modules.php?spe=".$_GET["spe"]);
+	exit;
 }
 
 
@@ -99,6 +100,7 @@ function UnActivate($value)
     }
 
     Header("Location: modules.php");
+	exit;
 }
 
 
@@ -138,7 +140,14 @@ while (($file = readdir($handle))!==false)
         {
 	        if (in_array($modName,$modules))
 			{
-        		print "Error: Un fichier triggers du nom de '$modName' est deja chargé. Supprimer le doublon.";
+				$langs->load("errors");
+        		print '<div class="error">'.$langs->trans("Error").' : '.$langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/").'</div>';
+	            $objMod = new $modName($db);
+	
+	            $modules[$i] = $modName;
+	            $files[$i] = $file;
+	            $orders[$i] = "$objMod->family";   // Tri par famille
+	            $i++;
 			}
 			else
 			{
