@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /**
@@ -75,7 +73,8 @@ class Interfaces
 				{
 					if (in_array($modName,$modules))
 					{
-						dolibarr_syslog("Error: Trigger file with name '$modName' already launched. Remove duplicate file.");
+						$langs->load("errors");
+						dolibarr_syslog($langs->trans("ErrorDuplicateTrigger",$modName,"/htdocs/includes/triggers/"),LOG_ERR);
 					}
 					else
 					{
