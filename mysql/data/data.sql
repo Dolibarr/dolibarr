@@ -968,7 +968,10 @@ insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CD', 'D
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CN', 'NOK', 1, 'Couronnes norvegiennes'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CS', 'SEK', 1, 'Couronnes suedoises'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'CZ', 'CZK', 1, 'Couronnes tcheques'); 
-insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'AUD', 1, 'Dollars australiens'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'TD', 'TND', 1, 'Dinar tunisien'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DA', 'DZD', 1, 'Dinar algérien'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'MAD', 1, 'Dirham'); 
+insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'AD', 'AUD', 1, 'Dollars australiens'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DC', 'CAD', 1, 'Dollars canadiens'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DH', 'HKD', 1, 'Dollars hong kong'); 
 insert into llx_c_currencies ( code, code_iso, active, label ) values ( 'DS', 'SGD', 1, 'Dollars singapour'); 
