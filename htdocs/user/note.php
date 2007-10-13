@@ -94,7 +94,7 @@ if ($id)
     // Reference
 	print '<tr><td width="20%">'.$langs->trans('Ref').'</td>';
 	print '<td colspan="3">';
-	print $html->showrefnav($fuser,'id',$user->rights->user->user->lire || $user->admin);
+	print $html->showrefnav($fuser,'id','',$user->rights->user->user->lire || $user->admin);
 	print '</td>';
 	print '</tr>';
 
