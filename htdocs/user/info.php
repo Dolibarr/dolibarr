@@ -36,6 +36,10 @@ $user->getrights('user');
 // Sécurité accés client et commerciaux
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
+$fuser = new User($db);
+$fuser->id = $id;
+$fuser->fetch();
+
 // If user is not user read and no permission to read other users, we stop
 if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
   accessforbidden();
@@ -49,18 +53,15 @@ if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
 
 llxHeader();
 
-$user = new User($db);
-$user->id=$_GET["id"];
-$user->fetch();
-$user->info($_GET["id"]);
+$fuser->info($_GET["id"]);
 
-$head = user_prepare_head($user);
+$head = user_prepare_head($fuser);
 
 dolibarr_fiche_head($head, 'info', $langs->trans("User"));
 
 
 print '<table width="100%"><tr><td>';
-dolibarr_print_object_info($user);
+dolibarr_print_object_info($fuser);
 print '</td></tr></table>';
 
 print '</div>';
