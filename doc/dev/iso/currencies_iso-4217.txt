@@ -1,5 +1,6 @@
 # File of all ISO-4217 currencies codes
 # http://en.wikipedia.org/wiki/ISO_4217
+# http://fx.sauder.ubc.ca/currency_table.html for symbols for 2 letter code
 #
 # Code,Name,Nb decimals
 AED,UAE Dirham,2
