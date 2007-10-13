@@ -1591,7 +1591,7 @@ function accessforbidden($message='',$printheader=1)
 	{
 		print $langs->trans("ErrorForbidden3");
 	}
-	if (function_exists("llxFooter")) lxFooter();
+	if (function_exists("llxFooter")) llxFooter();
 	exit(0);
 }
 
