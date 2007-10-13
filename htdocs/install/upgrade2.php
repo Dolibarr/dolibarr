@@ -1337,12 +1337,21 @@ function migrate_modeles($db,$langs,$conf)
  */
 function migrate_delete_old_files($db,$langs,$conf)
 {
-    //print '<br>';
-    //print '<b>'.$langs->trans('UpdateModelsTable')."</b><br>\n";
-	if (file_exists(DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php-NORUN'))
+    $result=true;
+	
+	$filetodelete=DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php';
+	//print '<b>'.$filetodelete."</b><br>\n";
+	if (file_exists($filetodelete))
 	{
-		@dol_delete_file(DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php');
+		$result=dol_delete_file($filetodelete);
 	}
+	if (! $result)
+	{
+		$langs->load("errors");
+		print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
+		print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+	}
+	return $result;
 }
 
 ?>
