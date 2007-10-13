@@ -43,6 +43,8 @@ $action=isset($_GET["action"])?$_GET["action"]:$_POST["action"];
 $mode=$dolibarr_main_authentication;
 if (! $mode) $mode='http';
 
+if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
+	accessforbidden();
 
 /**
  * Actions

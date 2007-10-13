@@ -1,2 +1,3 @@
 # Dolibarr language file - fr_FR - errors
 ErrorDuplicateTrigger=Un fichier trigger du nom de '<b>%s</b>' est deja chargé. Supprimer le doublon du répertoire '<b>%s</b>'.
+ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.

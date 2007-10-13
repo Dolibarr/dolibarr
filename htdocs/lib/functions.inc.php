@@ -1568,31 +1568,31 @@ function dol_loginfunction($notused,$pearstatus)
 */
 function accessforbidden($message='',$printheader=1)
 {
-  global $user, $langs;
-  $langs->load("other");
+	global $user, $langs;
+	$langs->load("other");
 
-  if ($printheader) llxHeader();
-  print '<div class="error">';
-  if (! $message) print $langs->trans("ErrorForbidden");
-  else print $message;
-  print '</div>';
-  print '<br>';
-  if ($user->login)
-  {
-    print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
-    print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
-  }
-  elseif (! empty($_SERVER["REMOTE_USER"]))
-  {
-    print $langs->trans("CurrentLogin").': <font class="error">'.$_SERVER["REMOTE_USER"]."</font><br>";
-    print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
-  }
-  else
-  {
-    print $langs->trans("ErrorForbidden3");
-  }
-  llxFooter();
-  exit(0);
+	if ($printheader && function_exists("llxHeader")) llxHeader();
+	print '<div class="error">';
+	if (! $message) print $langs->trans("ErrorForbidden");
+	else print $message;
+	print '</div>';
+	print '<br>';
+	if ($user->login)
+	{
+		print $langs->trans("CurrentLogin").': <font class="error">'.$user->login.'</font><br>';
+		print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+	}
+	elseif (! empty($_SERVER["REMOTE_USER"]))
+	{
+		print $langs->trans("CurrentLogin").': <font class="error">'.$_SERVER["REMOTE_USER"]."</font><br>";
+		print $langs->trans("ErrorForbidden2",$langs->trans("Home"),$langs->trans("Users"));
+	}
+	else
+	{
+		print $langs->trans("ErrorForbidden3");
+	}
+	if (function_exists("llxFooter")) lxFooter();
+	exit(0);
 }
 
 

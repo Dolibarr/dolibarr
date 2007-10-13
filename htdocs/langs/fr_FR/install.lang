@@ -113,6 +113,7 @@ CharacterSetDatabaseComment=Veuillez choisir le codage que vous désirez choisir 
 YouAskDatabaseCreationSoDolibarrNeedToConnect=Vous avez demandé la création du login de base de donnée <b>%s</b>, mais pour cela, Dolibarr doit se connecter sur le serveur <b>%s</b> via le super utilisateur <b>%s</b>.
 BecauseConnectionFailedParametersMayBeWrong=La connexion ayant échoué, les paramètres du serveur ou du super utilisateur sont peut-etre incorrects.
 OrphelinsPaymentsDetectedByMethod=Paiement orphelins detectés par la méthode %s
+RemoveItManuallyAndPressF5ToContinue=Supprimer le manuellement et appuyez sur F5 pour continuer.
 
 #########
 # upgrade

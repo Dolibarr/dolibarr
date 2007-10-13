@@ -113,6 +113,7 @@ CharacterSetDatabaseComment=Choose character set wanted for database creation.<b
 YouAskDatabaseCreationSoDolibarrNeedToConnect=You ask to create database login <b>%s</b>, but for this, Dolibarr need to connect to server <b>%s</b> with super user <b>%s</b> permissions.
 BecauseConnectionFailedParametersMayBeWrong=As connection failed, host or super user parameters must be wrong.
 OrphelinsPaymentsDetectedByMethod=Orphelins payment detected by method %s
+RemoveItManuallyAndPressF5ToContinue=Remove it manually and press F5 to continue.
 
 #########
 # upgrade
