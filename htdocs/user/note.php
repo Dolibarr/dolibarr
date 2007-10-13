@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -40,12 +39,14 @@ $langs->load("companies");
 $langs->load("members");
 $langs->load("bills");
 
-if (!$user->rights->user->user->lire)
-  accessforbidden();
-
 $fuser = new User($db);
 $fuser->id = $id;
 $fuser->fetch();
+
+// If user is not user read and no permission to read other users, we stop
+if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
+  accessforbidden();
+
 
 
 /******************************************************************************/

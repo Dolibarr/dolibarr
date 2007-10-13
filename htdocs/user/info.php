@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -33,20 +32,22 @@ require_once(DOL_DOCUMENT_ROOT."/user.class.php");
 $langs->load("user");
 
 $user->getrights('user');
-if (!$user->rights->user->user->lire)
-  accessforbidden();
 
 // Sécurité accés client et commerciaux
 $id = isset($_GET["id"])?$_GET["id"]:'';
 
+// If user is not user read and no permission to read other users, we stop
+if (($fuser->id != $user->id) && (! $user->rights->user->user->lire))
+  accessforbidden();
 
-
-llxHeader();
+  
 
 /*
  * Visualisation de la fiche
  *
  */
+
+llxHeader();
 
 $user = new User($db);
 $user->id=$_GET["id"];
