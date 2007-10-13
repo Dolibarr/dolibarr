@@ -40,7 +40,7 @@ if ($_GET["id"])
 {
   // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
   $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
-		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer)  || $user->admin);
+		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer));
 }
 if ($user->id <> $_GET["id"] && ! $canreadperms)
 {
@@ -68,7 +68,7 @@ $html = new Form($db);
 /*
  * Actions
  */
-if ($_POST["action"] == 'update' && $caneditfield)
+if ($_POST["action"] == 'update' && ($caneditfield  || $user->admin))
 {
     if ($_POST["cancel"])
     {
@@ -211,7 +211,7 @@ else
     print '</div>';
 
     print '<div class="tabsAction">';
-    if ($caneditfield)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
+    if ($caneditfield  || $user->admin)       // Si utilisateur édité = utilisateur courant ayant les droits de créer ou admin
     {
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
