@@ -159,6 +159,19 @@ class modProduit extends DolibarrModules
     }
     $this->export_sql[$r].=' from '.MAIN_DB_PREFIX.'product as p';
     $this->export_permission[$r]=array(array("produit","export"));
+    
+    
+    // Imports
+    //--------
+    $r=0;
+
+    $r++;
+    $this->import_code[$r]=$this->id.'_'.$r;
+    $this->import_label[$r]="ProductsOrServices";	// Translation key
+    $this->import_fields_array[$r]=array('p.rowid'=>"Id",'p.ref'=>"Ref",'p.fk_product_type'=>"Type",'p.label'=>"Label",'p.description'=>"Description",'p.note'=>"Note",'p.price'=>"PriceHT",'p.price_ttc'=>"PriceTTC",'p.tva_tx'=>'VAT','p.envente'=>"OnSell",'p.duration'=>"Duration");
+    $this->import_entities_array[$r]=array('p.rowid'=>"product",'p.ref'=>"product",'p.fk_product_type'=>"product",'p.label'=>"product",'p.description'=>"product",'p.note'=>"product",'p.price'=>"product",'p.price_ttc'=>"product",'p.tva_tx'=>'product','p.envente'=>"product",'p.duration'=>"product");
+    //$this->import_alias_array[$r]=array('p.rowid'=>"id",'p.ref'=>"ref",'p.fk_product_type'=>"type",'p.label'=>"label",'p.description'=>"description",'p.note'=>"note",'p.price'=>"price",'p.tva_tx'=>'vat','p.envente'=>"onsell",'p.duration'=>"duration");
+    
 
 	}
 

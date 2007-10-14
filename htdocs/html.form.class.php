@@ -2935,9 +2935,13 @@ class Form
         \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
+        \param	$use_java       1 pour utiliser des fonctions javascript
+        \param  $fonction       Fonction javascript
+        \param  $translate      Traduire la valeur
     */
-    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $use_java=0, $fonction='')
+    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $use_java=0, $fonction='', $translate=0)
     {
+        global $langs;
         if ($use_java == 1 && $fonction != '')
         {
         	print '<select class="flat" name="'.$htmlname.'" '.$fonction.'>';
@@ -2963,12 +2967,12 @@ class Form
     
             if ($key_in_label)
             {
-                print '>'.$key.' - '.$value."</option>\n";
+                print '>'.$key.' - '.($translate?$langs->trans($value):$value)."</option>\n";
             }
             else
             {
                 if ($value == '' || $value == '-') { $value='&nbsp;'; }
-                print ">".$value."</option>\n";
+                print ">".($translate?$langs->trans($value):$value)."</option>\n";
             }
         }
     
