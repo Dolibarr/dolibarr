@@ -1719,7 +1719,9 @@ function doliMoveFileUpload($src_file, $dest_file)
 		return false;
 	}
 
-	return move_uploaded_file($src_file, $file_name);
+	$return=move_uploaded_file($src_file, $file_name);
+	
+	return $return;
 }
 
 

@@ -124,6 +124,7 @@ OfficialWebSiteFr=Site web officiel francophone (non maintenu)
 CurrentTheme=Theme courant
 CurrentTopMenuHandler=Gestionnaire menu haut courant
 CurrentLeftMenuHandler=Gestionnaire menu gauche courant
+MeasuringUnit=Unité de mesure
 Emails=Emails
 EMailsSetup=Configuration EMails
 EMailsDesc=Cette page permet de remplacer les paramètres PHP en rapport avec l'envoi de mails. Dans la plupart des cas sur des OS comme Unix/Linux, les paramètres PHP sont déjà correcte et cette page est inutile.
@@ -364,6 +365,7 @@ DictionnaryPaymentConditions=Conditions de paiements
 DictionnaryPaymentModes=Modes de paiements
 DictionnaryTypeContact=Types de contacts
 DictionnaryEcotaxe=Barèmes Eco-participation (DEEE)
+DictionnaryPaperFormat=Format papiers
 VATReceivedOnly=Taux special non facturé
 VATManagement=Gestion TVA
 VATIsUsedDesc=Le taux de TVA proposé par défaut lors de la création de propale, facture, commande, etc répond à la règle standard suivante:<br>Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.<br>Si le (pays vendeur = pays acheteur) alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur = particulier ou entreprise sans num TVA intra alors TVA par défaut=TVA du produit vendu. Fin de règle.<br>Si vendeur et acheteur dans Communauté européenne et acheteur = entreprise avec num TVA intra alors TVA par défaut=0. Fin de règle.<br>Sinon TVA proposée par défaut=0. Fin de règle.<br>
