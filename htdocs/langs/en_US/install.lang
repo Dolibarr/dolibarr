@@ -25,6 +25,7 @@ ErrorPHPVersionTooLow=PHP version too old. Version %s is required.
 IfDatabaseExistsGoBackAndCheckCreate=If database already exists, go back and uncheck "Create database" option.
 PHPVersion=PHP Version
 YouCanContinue=You can continue...
+PleaseBePatient=Please be patient...
 License=Using license
 ConfigurationFile=Configuration file
 WebPagesDirectory=Directory where web pages are stored

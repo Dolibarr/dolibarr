@@ -130,6 +130,11 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		dolibarr_install_syslog("upgrade: ".$langs->transnoentities("ServerVersion")." : $version");
 		//print '<td align="right">'.join('.',$versionarray).'</td></tr>';
 	}
+	
+  // Force l'affichage de la progression
+	print '<tr><td>'.$langs->trans("PleaseBePatient").'</td>';
+	ob_flush();
+	flush();
 
 	if ($ok)
 	{
@@ -182,7 +187,6 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 			}
 		}
 	}
-	
 
 	/***************************************************************************************
 	*
