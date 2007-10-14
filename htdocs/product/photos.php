@@ -65,7 +65,7 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && $conf->upload != 0)
 
 if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes')
 {
-	if($user->rights->produit->creer)
+	if ($user->rights->produit->creer)
   {
   	$product = new Product($db);
   	$product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
