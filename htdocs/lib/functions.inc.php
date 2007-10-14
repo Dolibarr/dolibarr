@@ -3394,7 +3394,7 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
 	}
-	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour) or die ("Erreur lors de la création de l'image");
+	if (function_exists("imagefill")) imagefill($imgThumb, 0, 0, $trans_colour);
 
 	dolibarr_syslog("vignette: convert image from ($imgWidth x $imgHeight) to ($thumbWidth x $thumbHeight) as $extImg, newquality=$newquality");
 	//imagecopyresized($imgThumb, $img, 0, 0, 0, 0, $thumbWidth, $thumbHeight, $imgWidth, $imgHeight); // Insère l'image de base redimensionnée
