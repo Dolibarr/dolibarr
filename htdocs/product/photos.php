@@ -213,11 +213,11 @@ if ($_GET["id"] || $_GET["ref"])
                 print '<img border="0" width="'.$imgWidth.'" height="'.$imgHeight.'" src="'.DOL_URL_ROOT.'/viewimage.php?modulepart=product&file='.urlencode($pdir.$filename).'">';
 
                 print '</a>';
-                print '<br>'.$langs->trans("File").': '.dolibarr_trunc($viewfilename,16);
+                print '<br>'.$viewfilename;
                 print '<br>';
 
                 // On propose la génération de la vignette si elle n'existe pas et si la taille est supérieure aux limites
-                if (!$obj['photo_vignette'] && eregi('(\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
+                if (!$obj['photo_vignette'] && eregi('(\.bmp|\.gif|\.jpg|\.jpeg|\.png)$',$obj['photo']) && ($product->imgWidth > $maxWidth || $product->imgHeight > $maxHeight))
                 {
                 	print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=addthumb&amp;file='.urlencode($pdir.$viewfilename).'">'.img_refresh($langs->trans('GenerateThumb')).'&nbsp;&nbsp;</a>';
                 }
