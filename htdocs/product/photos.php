@@ -39,8 +39,7 @@ $langs->load("products");
 $langs->load("bills");
 
 $user->getrights('produit');
-$user->getrights('propale');
-$user->getrights('facture');
+
 $mesg = '';
 
 if (!$user->rights->produit->lire) accessforbidden();
@@ -64,16 +63,19 @@ if ($_FILES['userfile']['size'] > 0 && $_POST["sendit"] && $conf->upload != 0)
     }
 }
 
-if ($_GET["action"] == 'delete' && $_GET["file"]) 
+if ($_REQUEST["action"] == 'confirm_delete' && $_GET["file"] && $_REQUEST['confirm'] == 'yes')
 {
-    $product = new Product($db);
-    $product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
+	if ($user->rights->produit->creer)
+  {
+  	$product = new Product($db);
+  	$product->delete_photo($conf->produit->dir_output."/".$_GET["file"]);
+  }
 }
 
 if ($_GET["action"] == 'addthumb' && $_GET["file"]) 
 {
-    $product = new Product($db);
-    $product->add_thumb($conf->produit->dir_output."/".$_GET["file"]);
+	$product = new Product($db);
+  $product->add_thumb($conf->produit->dir_output."/".$_GET["file"]);
 }
 
 
@@ -94,13 +96,21 @@ if ($_GET["id"] || $_GET["ref"])
 
     if ($result)
     {
-        /*
-         *  En mode visu
-         */
-		$head=product_prepare_head($product, $user);
-		$titre=$langs->trans("CardProduct".$product->type);
-		dolibarr_fiche_head($head, 'photos', $titre);
-
+    	/*
+       *  En mode visu
+       */
+       $head=product_prepare_head($product, $user);
+       $titre=$langs->trans("CardProduct".$product->type);
+       dolibarr_fiche_head($head, 'photos', $titre);
+       
+       /*
+        * Confirmation de la suppression de photo
+        */
+        if ($_GET['action'] == 'delete')
+        {
+        	$html->form_confirm($_SERVER["PHP_SELF"].'?id='.$product->id.'&amp;file='.$_GET["file"], $langs->trans('DeletePicture'), $langs->trans('ConfirmDeletePicture'), 'confirm_delete');
+        	print '<br>';
+        }
 
         print($mesg);
 
@@ -109,7 +119,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Reference
         print '<tr>';
         print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-		print $html->showrefnav($product,'ref');
+        print $html->showrefnav($product,'ref');
         print '</td>';
         print '</tr>';
 
@@ -127,11 +137,11 @@ if ($_GET["id"] || $_GET["ref"])
 		    {
 		      print price($product->price).' '.$langs->trans($product->price_base_type);
 		    }
-		print '</td></tr>';
+		    print '</td></tr>';
 
         // Statut
         print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
-		print $product->getLibStatut(2);
+        print $product->getLibStatut(2);
         print '</td></tr>';
 
         print "</table>\n";
@@ -161,9 +171,9 @@ if ($_GET["id"] || $_GET["ref"])
          */
         if ($_GET["action"] == 'ajout_photo' && $conf->upload && $user->rights->produit->creer)
         {
-		    // Affiche formulaire upload
-			$html=new Form($db);
-			$html->form_attach_new_file(DOL_URL_ROOT.'/product/photos.php?id='.$product->id,$langs->trans("AddPhoto"),1);
+        	// Affiche formulaire upload
+        	$html=new Form($db);
+        	$html->form_attach_new_file(DOL_URL_ROOT.'/product/photos.php?id='.$product->id,$langs->trans("AddPhoto"),1);
         }
 
         // Affiche photos
@@ -223,7 +233,16 @@ if ($_GET["id"] || $_GET["ref"])
                 }
                 if ($user->rights->produit->creer)
                 {
-                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">'.img_delete().'</a>';
+                	if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+                	{
+                		$url = $_SERVER["PHP_SELF"].'?id='.$product->id.'&file='.urlencode($pdir.$viewfilename).'&action=confirm_delete&confirm=yes';
+                		print '<a href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeletePicture').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+                	}
+                	else
+                	{
+                    print '<a href="'.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'&amp;action=delete&amp;file='.urlencode($pdir.$viewfilename).'">';
+                  }
+                  print img_delete().'</a>';
                 }
                 if ($nbbyrow) print '</td>';
                 if ($nbbyrow && ($nbphoto % $nbbyrow == 0)) print '</tr>';
