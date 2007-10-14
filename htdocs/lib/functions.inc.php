@@ -3364,7 +3364,15 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	$thumbWidth=round($thumbWidth);
 	
 	// Create empty image
-	$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
+	if ($infoImg[2] == 1)
+	{
+		// Compatibilité image GIF
+		$imgThumb = imagecreate($thumbWidth, $thumbHeight);
+	}
+	else
+	{
+		$imgThumb = imagecreatetruecolor($thumbWidth, $thumbHeight);
+	}
 
 	// Activate antialiasing for better quality
 	if (function_exists('imageantialias'))
@@ -3382,12 +3390,14 @@ function vignette($file, $maxWidth = 160, $maxHeight = 120, $extName='_small', $
 	switch($infoImg[2])
 	{
 		case 1:	// Gif
-			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);	// 0, not 127 because transparent channel bugged with gif
+			$trans_colour = imagecolorallocate($imgThumb, 255, 255, 255); // On procède autrement pour le format GIF
+			imagecolortransparent($imgThumb,$trans_colour);
 			break;
 		case 2:	// Jpg
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 0);
 			break;
 		case 3:	// Png
+			imagealphablending($imgThumb,false); // Pour compatibilité sur certain système
 			$trans_colour = imagecolorallocatealpha($imgThumb, 255, 255, 255, 127);	// Keep transparent channel
 			break;
 		case 4:	// Bmp
