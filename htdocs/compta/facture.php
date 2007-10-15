@@ -2801,9 +2801,9 @@ else
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
 						print '<td>'.dolibarr_print_date($objp->dp).'</td>';
-						print '<td align="right">'.price($objp->price).'</td>';
+						print '<td align="right">'.price($objp->total_ht).'</td>';
 						print '</tr>';
-						$total = $total + $objp->price;
+						$total = $total + $objp->total_ht;
 						$i++;
 					}
 					print '<tr class="liste_total"><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
