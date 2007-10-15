@@ -2789,7 +2789,7 @@ else
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans('Ref').'</td>';
-					print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+					print '<td align="center">'.$langs->trans('RefCustomerOrderShort').'</td>';
 					print '<td align="center">'.$langs->trans('Date').'</td>';
 					print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 					print '</tr>';
@@ -2801,7 +2801,7 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
-						print '<td>'.$objp->ref_client.'</td>';
+						print '<td align="center">'.$objp->ref_client.'</td>';
 						print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
 						print '<td align="right">'.price($objp->total_ht).'</td>';
 						print '</tr>';
@@ -2841,7 +2841,7 @@ else
 						print '<table class="noborder" width="100%">';
 						print '<tr class="liste_titre">';
 						print '<td>'.$langs->trans('Ref').'</td>';
-						print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+						print '<td align="center">'.$langs->trans('RefCustomerOrderShort').'</td>';
 						print '<td align="center">'.$langs->trans('Date').'</td>';
 						print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 						print '</tr>';
@@ -2852,7 +2852,7 @@ else
 							$var=!$var;
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
-							print '<td>'.$objp->ref_client.'</td>';
+							print '<td align="center">'.$objp->ref_client.'</td>';
 							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
