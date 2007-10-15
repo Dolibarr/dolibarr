@@ -2763,7 +2763,7 @@ else
 			/*
 		*   Propales rattachées
 		*/
-			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.rowid as propalid';
+			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
 			if (!$conf->commande->enabled)
 			{
@@ -2789,8 +2789,9 @@ else
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td>'.$langs->trans('Ref').'</td>';
-					print '<td>'.$langs->trans('Date').'</td>';
-					print '<td align="right">'.$langs->trans('Price').'</td>';
+					print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+					print '<td align="center">'.$langs->trans('Date').'</td>';
+					print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 					print '</tr>';
 
 					$var=True;
@@ -2800,13 +2801,18 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
-						print '<td>'.dolibarr_print_date($objp->dp).'</td>';
+						print '<td>'.$objp->ref_client.'</td>';
+						print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
 						print '<td align="right">'.price($objp->total_ht).'</td>';
 						print '</tr>';
 						$total = $total + $objp->total_ht;
 						$i++;
 					}
-					print '<tr class="liste_total"><td>&nbsp;</td><td align="left">'.$langs->trans('TotalHT').'</td><td align="right">'.price($total).'</td></tr>';
+					print '<tr class="liste_total">';
+					print '<td align="left">'.$langs->trans('TotalHT').'</td>';
+					print '<td>&nbsp;</td>';
+					print '<td>&nbsp;</td>';
+					print '<td align="right">'.price($total).'</td></tr>';
 					print '</table>';
 				}
 			}
