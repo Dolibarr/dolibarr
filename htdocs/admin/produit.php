@@ -307,7 +307,7 @@ if ($conf->barcode->enabled && $conf->global->PRODUIT_USE_BARCODE)
 }
 
 
-if ($conf->left_menu == 'default.php')
+if ($conf->left_menu == 'default.php' || $conf->left_menu == 'auguria_backoffice.php')
 {
 	// Propose utilisation de canvas.
 	// Ces derniers ne sont geres que par le menu default
