@@ -2763,7 +2763,7 @@ else
 			/*
 		*   Propales rattachées
 		*/
-			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.price, p.ref, p.rowid as propalid';
+			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.rowid as propalid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
 			if (!$conf->commande->enabled)
 			{
