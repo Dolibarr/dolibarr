@@ -961,3 +961,48 @@ create table llx_societe_log
   author      varchar(30),
   label       varchar(128)
 )type=innodb;
+
+
+-- Pour la Tunisie (Formes les plus utilisées)
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1000','Société à responsabilité limitée SARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1001','Société en Nom Collectif');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1002','Société en Commandite Simple');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1003','société en participation');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1004','Société Anonyme SA');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1005','Société Unipersonnelle à Responsabilité Limitée SUARL');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1006','Groupement d\'intérêt économique GEI');
+insert into llx_c_forme_juridique (fk_pays, code, libelle) values (10, '1007','Groupe de sociétés');
+
+-- Regions de Tunisie (id pays=10)
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1001,10,1001, '',0,'Ariana');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1002,10,1002, '',0,'Béja');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1003,10,1003, '',0,'Ben Arous');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1004,10,1004, '',0,'Bizerte');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1005,10,1005, '',0,'Gabès');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1006,10,1006, '',0,'Gafsa');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1007,10,1007, '',0,'Jendouba');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1008,10,1008, '',0,'Kairouan');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1009,10,1009, '',0,'Kasserine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1010,10,1010, '',0,'Kébili');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1011,10,1011, '',0,'La Manouba');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1012,10,1012, '',0,'Le Kef');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1013,10,1013, '',0,'Mahdia');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1014,10,1014, '',0,'Médenine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1015,10,1015, '',0,'Monastir');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1016,10,1016, '',0,'Nabeul');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1017,10,1017, '',0,'Sfax');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1018,10,1018, '',0,'Sidi Bouzid');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1019,10,1019, '',0,'Siliana');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1020,10,1020, '',0,'Sousse');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1021,10,1021, '',0,'Tataouine');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1022,10,1022, '',0,'Tozeur');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1023,10,1023, '',0,'Tunis');
+insert into llx_c_regions (rowid,fk_pays,code_region,cheflieu,tncc,nom) values (1024,10,1024, '',0,'Zaghouan');
+
+-- TUNISIE (id 10)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (101,10, '6','0','TVA 6%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (102,10, '12','0','TVA 12%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (103,10, '18','0','VAT 18%',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (104,10, '7.5','0','TVA 6% Majoré à 25% (7.5%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Majoré à 25% (15%)',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
