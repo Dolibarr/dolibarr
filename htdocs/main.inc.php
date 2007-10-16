@@ -549,8 +549,9 @@ else                        // Si utilisateur externe
     $conf->left_menu=$conf->global->MAIN_MENUFRONT_BARRELEFT;
 }
 
+// Only default and auguria menu manage canvas menu (auguria not correctly yet)
+if (! eregi('^default',$conf->left_menu) && ! eregi('^auguria',$conf->left_menu)) $conf->global->PRODUCT_CANVAS_ABILITY=0;
 
-if ($conf->left_menu != 'default.php') $conf->global->PRODUCT_CANVAS_ABILITY=0;
 // Si besoin de smarty
 if ($conf->global->PRODUCT_CANVAS_ABILITY)
 {
