@@ -128,7 +128,7 @@ class ActionComm
         $sql.= ($this->orderrowid?$this->orderrowid:"null");
         $sql.= ")";
     
-        dolibarr_syslog("ActionComm.class::add sql=".$sql);
+        dolibarr_syslog("ActionComm::add sql=".$sql);
         $resql=$this->db->query($sql);
 		if ($resql)
         {

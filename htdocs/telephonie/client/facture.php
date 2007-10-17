@@ -142,7 +142,7 @@ if ($_POST["action"] == 'send' || $_POST["action"] == 'relance')
 		  $actioncomm->label       = $actionmsg2;
 		  $actioncomm->note        = $actionmsg;
 		  $actioncomm->date        = time();
-		  $actioncomm->percent     = 100;
+		  $actioncomm->percentage  = 100;
 		  $actioncomm->contact     = new Contact($db,$sendtoid);
 		  $actioncomm->societe     = new Societe($db,$fac->socid);
 		  $actioncomm->user        = $user;   // User qui a fait l'action

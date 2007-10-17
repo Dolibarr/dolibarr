@@ -237,37 +237,37 @@ if ($_POST["action"] == 'update')
 		if ($_POST["adhour"] == -1) $_POST["adhour"]='0';
 		if ($_POST["admin"] == -1) $_POST["admin"]='0';
 
-        $action = new Actioncomm($db);
-        $action->fetch($_POST["id"]);
+        $actioncomm = new Actioncomm($db);
+        $actioncomm->fetch($_POST["id"]);
 
-    	$action->datep = @mktime($_POST["aphour"],
+    	$actioncomm->datep = @mktime($_POST["aphour"],
                                    $_POST["apmin"],
                                    0,
                                    $_POST["apmonth"],
                                    $_POST["apday"],
                                    $_POST["apyear"]);
-    	$action->date = @mktime($_POST["adhour"],
+    	$actioncomm->date = @mktime($_POST["adhour"],
                                    $_POST["admin"],
                                    0,
                                    $_POST["admonth"],
                                    $_POST["adday"],
                                    $_POST["adyear"]);
 		//print $_POST["apmonth"].",".$_POST["apday"].",".$_POST["apyear"].",".$_POST["aphour"].",".$_POST["apmin"]."<br>\n";
-		//print $action->datep;
-        $action->label       = $_POST["label"];
-        $action->percentage  = $_POST["percentage"];
-        $action->contact->id = $_POST["contactid"];
-        $action->note        = $_POST["note"];
-		if ($action->type_code == 'AC_RDV' && $action->percentage == 100 && ! $action->date)
+		//print $actioncomm->datep;
+        $actioncomm->label       = $_POST["label"];
+        $actioncomm->percentage  = $_POST["percentage"];
+        $actioncomm->contact->id = $_POST["contactid"];
+        $actioncomm->note        = $_POST["note"];
+		if ($actioncomm->type_code == 'AC_RDV' && $actioncomm->percentage == 100 && ! $actioncomm->date)
 		{
-			$action->date = $action->datep;
+			$actioncomm->date = $actioncomm->datep;
 		}
-        $result=$action->update();
+        $result=$actioncomm->update();
     }
 
     if ($result < 0)
     {
-    	$mesg='<div class="error">'.$action->error.'</div>';
+    	$mesg='<div class="error">'.$actioncomm->error.'</div>';
     	$_GET["id"]=$_POST["id"];
     }
     else

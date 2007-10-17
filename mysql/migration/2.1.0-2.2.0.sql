@@ -34,6 +34,7 @@ update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' w
 alter table llx_paiement drop column author;
 
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
+update llx_actioncomm set percent = 100 where percent = 0 and datea is not null;
 
 ALTER TABLE llx_cotisation ADD COLUMN datef date after dateadh;
 ALTER TABLE llx_cotisation modify datef date;

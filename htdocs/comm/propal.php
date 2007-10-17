@@ -402,7 +402,7 @@ if ($_POST['action'] == 'send')
 	                    $actioncomm->label       = $actionmsg2;
 	                    $actioncomm->note        = $actionmsg;
 	                    $actioncomm->date        = time();  // L'action est faite maintenant
-	                    $actioncomm->percent     = 100;
+	                    $actioncomm->percentage  = 100;
 	                    $actioncomm->contact     = new Contact($db,$sendtoid);
 	                    $actioncomm->societe     = new Societe($db,$propal->socid);
 	                    $actioncomm->user        = $user;   // User qui a fait l'action
