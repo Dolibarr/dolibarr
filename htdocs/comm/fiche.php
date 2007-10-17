@@ -351,7 +351,7 @@ if ($socid > 0)
 
         print '<table class="noborder" width="100%">';
 
-	    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.price, p.ref, p.remise, ";
+	    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.fk_statut, p.total_ht, p.ref, p.remise, ";
 	    $sql.= " ".$db->pdate("p.datep")." as dp, ".$db->pdate("p.fin_validite")." as datelimite";
         $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p, ".MAIN_DB_PREFIX."c_propalst as c";
         $sql .= " WHERE p.fk_soc = s.rowid AND p.fk_statut = c.id";
@@ -381,7 +381,7 @@ if ($socid > 0)
                     print " ".img_warning();
                 }
                 print '</td><td align="right" width="80">'.dolibarr_print_date($objp->dp)."</td>\n";
-                print '<td align="right" width="120">'.price($objp->price).'</td>';
+                print '<td align="right" width="120">'.price($objp->total_ht).'</td>';
                 print '<td align="right" nowrap="nowrap">'.$propal_static->LibStatut($objp->fk_statut,5).'</td></tr>';
                 $var=!$var;
                 $i++;
