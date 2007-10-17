@@ -17,7 +17,6 @@
 * or see http://www.gnu.org/
 *
 * $Id$
-* $Source$
 */
 
 /**
@@ -1039,7 +1038,7 @@ class pdf_crabe extends ModelePDFFactures
 				// Nom client
 				$pdf->SetXY(102,$posy+4);
 				$pdf->SetFont('Arial','',9);
-				$pdf->MultiCell(106,4, $object->contact->nom, 0, 'L');
+				$pdf->MultiCell(106,4, $object->contact->getFullName($outputlangs,1), 0, 'L');
 
 				// Caractéristiques client
 				$carac_client=$object->contact->adresse;
