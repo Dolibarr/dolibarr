@@ -42,9 +42,7 @@ class Contact
     var $error;
     
     var $id;
-    var $fullname;
-    var $nom;
-    var $prenom;
+	var $civilite_id;
     var $name;
     var $firstname;
     var $address;
@@ -148,7 +146,7 @@ class Contact
     	// Nettoyage parametres
         $this->name=trim($this->name);
         $this->firstname=trim($this->firstname);
-        $this->fullname=trim($this->firstname.' '.$this->name);
+        $this->fullname=$this->getFullName($langs);
         
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
@@ -234,7 +232,7 @@ class Contact
 		$info["objectclass"]=split(',',$conf->global->LDAP_CONTACT_OBJECT_CLASS);
 		
 		// Champs 
-		if ($this->fullname && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = utf8_encode($this->fullname);
+		if ($this->getFullName($langs) && $conf->global->LDAP_FIELD_FULLNAME) $info[$conf->global->LDAP_FIELD_FULLNAME] = utf8_encode($this->getFullName($langs));
 		if ($this->name && $conf->global->LDAP_FIELD_NAME) $info[$conf->global->LDAP_FIELD_NAME] = utf8_encode($this->name);
 		if ($this->firstname && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = utf8_encode($this->firstname);
 
@@ -393,7 +391,7 @@ class Contact
                 $this->firstname      = $obj->firstname;
                 $this->nom            = $obj->name;
                 $this->prenom         = $obj->firstname;
-                $this->fullname       = trim($this->firstname . ' ' . $this->name);
+                $this->fullname       = $this->getFullName($langs);
 
                 $this->address        = $obj->address;
                 $this->adresse        = $obj->address; // Todo: uniformiser le nom des variables
@@ -718,12 +716,32 @@ class Contact
 			$lienfin='</a>';
 		}
 
-		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->name.' '.$this->firstname,'contact').$lienfin.' ');
-		$result.=$lien.($maxlen?dolibarr_trunc(($this->name.' '.$this->firstname),$maxlen):($this->name.' '.$this->firstname)).$lienfin;
+		if ($withpicto) $result.=($lien.img_object($langs->trans("ShowContact").': '.$this->getFullName($langs),'contact').$lienfin.' ');
+		$result.=$lien.($maxlen?dolibarr_trunc($this->getFullName($langs),$maxlen):$this->getFullName($langs)).$lienfin;
 		return $result;
 	}
 
 
+	/**
+	 *    	\brief      Return full name (name+' '+lastname)
+	 *		\param		lang			Lang for output
+	 *		\param		option			0=No option, 1=Add civility	
+	 *		\return		string			String with full name
+	 */
+	function getFullName($langs,$option=0)
+	{
+		$ret='';
+		if ($option && $this->civilite_id)
+		{	
+			if ($langs->trans("Civility".$this->civilite_id)!="Civility".$this->civilite_id) $ret.=$langs->trans("Civility".$this->civilite_id).' ';
+			else $ret.=$this->civilite_id.' ';
+		}
+		if ($this->name)      $ret.=$this->name.' ';
+		if ($this->firstname) $ret.=$this->firstname.' ';
+		return trim($ret);
+	}
+
+	
 	/**
 	 *    	\brief      Retourne le libellé du statut du contact
 	 *    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
