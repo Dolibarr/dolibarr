@@ -1807,7 +1807,7 @@ else
   $pagenext = $page + 1;
 
   $sql = 'SELECT s.nom, s.rowid, s.client, ';
-  $sql.= 'p.rowid as propalid, p.price, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
+  $sql.= 'p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, '.$db->pdate('p.datep').' as dp,'.$db->pdate('p.fin_validite').' as dfv';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
   $sql.= ' FROM '.MAIN_DB_PREFIX.'societe as s, '.MAIN_DB_PREFIX.'propal as p';
   if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -1828,7 +1828,7 @@ else
     }
   if (!empty($_GET['search_montant_ht']))
     {
-      $sql .= " AND p.price='".addslashes($_GET['search_montant_ht'])."'";
+      $sql .= " AND p.total_ht='".addslashes($_GET['search_montant_ht'])."'";
     }
   if ($sall) $sql.= " AND (s.nom like '%".addslashes($sall)."%' OR p.note like '%".addslashes($sall)."%' OR pd.description like '%".addslashes($sall)."%')";
   if ($socid) $sql .= ' AND s.rowid = '.$socid;
@@ -1865,7 +1865,7 @@ else
       print_liste_field_titre($langs->trans('Company'),$_SERVER["PHP_SELF"],'s.nom','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'',$sortfield);
       print_liste_field_titre($langs->trans('Date'),$_SERVER["PHP_SELF"],'p.datep','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
       print_liste_field_titre($langs->trans('DateEndPropalShort'),$_SERVER["PHP_SELF"],'dfv','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="center"',$sortfield);
-      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.price','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
+      print_liste_field_titre($langs->trans('Price'),$_SERVER["PHP_SELF"],'p.total_ht','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut, 'align="right"',$sortfield);
       print_liste_field_titre($langs->trans('Status'),$_SERVER["PHP_SELF"],'p.fk_statut','','&amp;socid='.$socid.'&amp;viewstatut='.$viewstatut,'align="right"',$sortfield);
       print "</tr>\n";
       // Lignes des champs de filtre
@@ -1952,13 +1952,13 @@ else
                 print '<td>&nbsp;</td>';
             }
 
-            print '<td align="right">'.price($objp->price)."</td>\n";
+            print '<td align="right">'.price($objp->total_ht)."</td>\n";
             $propal=New Propal($db);
             print '<td align="right">'.$propal->LibStatut($objp->fk_statut,5)."</td>\n";
             print "</tr>\n";
 
-            $total = $total + $objp->price;
-            $subtotal = $subtotal + $objp->price;
+            $total = $total + $objp->total_ht;
+            $subtotal = $subtotal + $objp->total_ht;
 
             $i++;
         }
