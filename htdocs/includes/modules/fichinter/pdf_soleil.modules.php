@@ -85,6 +85,7 @@ class pdf_soleil extends ModelePDFFicheinter
 		
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
+		$outputlangs->load("dict");
 		$outputlangs->load("companies");
 		$outputlangs->load("interventions");
 		
@@ -239,7 +240,7 @@ class pdf_soleil extends ModelePDFFicheinter
 				$pdf->SetXY (10, $tab_top + 8 );
 				$pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
 
-				$pdf->SetFont('Arial','', 9);   // On repositionne la police par d?faut
+				$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 				$this->_pagefoot($pdf,$outputlangs);
 				$pdf->Close();
 
@@ -270,11 +271,9 @@ class pdf_soleil extends ModelePDFFicheinter
     {
         global $conf;
 
-        $outputlangs->load("dict");
-
         $html=new Form($this->db);
 
-        // Premiere ligne d'info r?glementaires
+        // Premiere ligne d'info reglementaires
         $ligne1="";
         if ($this->emetteur->forme_juridique_code)
         {
@@ -293,7 +292,7 @@ class pdf_soleil extends ModelePDFFicheinter
             $ligne1.=($ligne1?" - ":"").$outputlangs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$this->emetteur->profid1;
         }
 
-        // Deuxieme ligne d'info r?glementaires
+        // Deuxieme ligne d'info reglementaires
         $ligne2="";
         if ($this->emetteur->profid3)
         {
