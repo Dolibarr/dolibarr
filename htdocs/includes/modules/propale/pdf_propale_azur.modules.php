@@ -105,10 +105,11 @@ class pdf_propale_azur extends ModelePDFPropales
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("propal");
-        $outputlangs->load("products");
+		$outputlangs->load("dict");
+    $outputlangs->load("companies");
+    $outputlangs->load("bills");
+    $outputlangs->load("propal");
+    $outputlangs->load("products");
 
 		$outputlangs->setPhpLang();
 

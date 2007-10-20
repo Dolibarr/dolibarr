@@ -49,12 +49,12 @@ class pdf_crabe extends ModelePDFFactures
     {
         global $conf,$langs,$mysoc;
 
-		$langs->load("main");
+        $langs->load("main");
         $langs->load("bills");
 
         $this->db = $db;
         $this->name = "crabe";
-		$this->description = $langs->trans('PDFCrabeDescription');
+        $this->description = $langs->trans('PDFCrabeDescription');
 
         // Dimension page pour format A4
         $this->type = 'pdf';
@@ -103,39 +103,41 @@ class pdf_crabe extends ModelePDFFactures
      */
     function write_pdf_file($fac,$outputlangs='')
     {
-        global $user,$langs,$conf;
+    	global $user,$langs,$conf;
+    	
+    	if (! is_object($outputlangs)) $outputlangs=$langs;
+    	$outputlangs->load("main");
+    	$outputlangs->load("dict");
+    	$outputlangs->load("companies");
+    	$outputlangs->load("bills");
+    	$outputlangs->load("products");
+    	
+    	$outputlangs->setPhpLang();
 
-		if (! is_object($outputlangs)) $outputlangs=$langs;
-		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("products");
-
-		$outputlangs->setPhpLang();
-
-        if ($conf->facture->dir_output)
+      if ($conf->facture->dir_output)
+      {
+      	// Définition de l'objet $fac (pour compatibilite ascendante)
+      	if (! is_object($fac))
         {
-			// Définition de l'objet $fac (pour compatibilite ascendante)
-        	if (! is_object($fac))
-        	{
-	            $id = $fac;
-	            $fac = new Facture($this->db,"",$id);
-	            $ret=$fac->fetch($id);
-			}
-            $deja_regle = $fac->getSommePaiement();
-
-			// Définition de $dir et $file
-			if ($fac->specimen)
-			{
-				$dir = $conf->facture->dir_output;
-				$file = $dir . "/SPECIMEN.pdf";
-			}
-			else
-			{
-				$facref = sanitize_string($fac->ref);
-				$dir = $conf->facture->dir_output . "/" . $facref;
-				$file = $dir . "/" . $facref . ".pdf";
-			}
+	        $id = $fac;
+	        $fac = new Facture($this->db,"",$id);
+	        $ret=$fac->fetch($id);
+	      }
+	      
+	      $deja_regle = $fac->getSommePaiement();
+	      
+	      // Définition de $dir et $file
+	      if ($fac->specimen)
+	      {
+	      	$dir = $conf->facture->dir_output;
+	      	$file = $dir . "/SPECIMEN.pdf";
+	      }
+	      else
+	      {
+	      	$facref = sanitize_string($fac->ref);
+	      	$dir = $conf->facture->dir_output . "/" . $facref;
+	      	$file = $dir . "/" . $facref . ".pdf";
+	      }
 
             if (! file_exists($dir))
             {

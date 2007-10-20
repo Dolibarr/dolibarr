@@ -107,14 +107,15 @@ class pdf_einstein extends ModelePDFCommandes
 
 		if (! is_object($outputlangs)) $outputlangs=$langs;
 		$outputlangs->load("main");
-        $outputlangs->load("companies");
-        $outputlangs->load("bills");
-        $outputlangs->load("products");
-        $outputlangs->load("orders");
+		$outputlangs->load("dict");
+    $outputlangs->load("companies");
+    $outputlangs->load("bills");
+    $outputlangs->load("products");
+    $outputlangs->load("orders");
 
 		$outputlangs->setPhpLang();
 
-        if ($conf->commande->dir_output)
+    if ($conf->commande->dir_output)
 		{
 			// Définition de l'objet $com (pour compatibilite ascendante)
 	    	if (! is_object($com))
