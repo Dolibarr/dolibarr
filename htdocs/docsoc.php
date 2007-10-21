@@ -53,19 +53,24 @@ if ( $_POST["sendit"] && $conf->upload != 0)
   if (! is_dir($upload_dir)) create_exdir($upload_dir);
   
   if (is_dir($upload_dir))
+  {
+  	$result = doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']);
+  	if ($result == true)
     {
-      if (doliMoveFileUpload($_FILES['userfile']['tmp_name'], $upload_dir . "/" . $_FILES['userfile']['name']))
-        {
-	  $mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
-	  //print_r($_FILES);
-        }
-      else
-        {
-	  // Echec transfert (fichier dépassant la limite ?)
-	  $mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
-	  // print_r($_FILES);
-        }
+    	$mesg = '<div class="ok">'.$langs->trans("FileTransferComplete").'</div>';
+    	//print_r($_FILES);
     }
+    else if ($result == false)
+    {
+    	// Echec transfert (fichier dépassant la limite ?)
+    	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
+    	// print_r($_FILES);
+    }
+    else
+    {
+    	$mesg = '<div class="error">'.$langs->trans("FileIsInfectedWith",$result).'</div>';
+    }
+  }
 }
 
 // Suppression fichier
