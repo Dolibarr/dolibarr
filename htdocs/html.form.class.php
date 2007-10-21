@@ -2229,48 +2229,49 @@ class Form
     {
     	global $conf,$langs;
     	
-        if ($conf->upload != 0)
-        {
-			print "\n\n<!-- Start form attach new file -->\n";
-
-            if (! $titre) $titre=$langs->trans("AttachANewFile");
-            print_titre($titre);
+    	if ($conf->upload != 0)
+      {
+      	print "\n\n<!-- Start form attach new file -->\n";
+      	
+      	if (! $titre) $titre=$langs->trans("AttachANewFile");
+        print_titre($titre);
 
     		print '<form name="userfile" action="'.$url.'" enctype="multipart/form-data" method="POST">';
     
     		print '<table width="100%" class="noborder">';
-            print '<tr><td width="50%" valign="top">';
+        print '<tr><td width="50%" valign="top">';
     
     		$max=$conf->upload;							// En Kb
     		$maxphp=@ini_get('upload_max_filesize');	// En inconnu
-			if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
-			if (eregi('k$',$maxphp)) $maxphp=$maxphp;
-			// Now $max and $maxphp are in Kb
+    		if (eregi('m$',$maxphp)) $maxphp=$maxphp*1024;
+    		if (eregi('k$',$maxphp)) $maxphp=$maxphp;
+    		// Now $max and $maxphp are in Kb
     		if ($maxphp > 0) $max=min($max,$maxphp);
-
-            if ($conf->upload > 0)
-            {
-            	print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
-            }
-            print '<input class="flat" type="file" name="userfile" size="70">';
-            print ' &nbsp; ';
-            print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'">';
-
-            if ($addcancel)
-            {
-            	print ' &nbsp; ';
-            	print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-			}
-			
-			print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb").')';
-            print "</td></tr>";
-            print "</table>";
+    		
+    		if ($conf->upload > 0)
+        {
+        	print '<input type="hidden" name="max_file_size" value="'.($max*1024).'">';
+        }
+        print '<input class="flat" type="file" name="userfile" size="70">';
+        print ' &nbsp; ';
+        print '<input type="submit" class="button" name="sendit" value="'.$langs->trans("Upload").'">';
+        
+        if ($addcancel)
+        {
+        	print ' &nbsp; ';
+          print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+        }
+        
+        print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb").')';
+        if ($conf->global->MAIN_USE_AVSCAN) print cl_info();
+        print "</td></tr>";
+        print "</table>";
 
     		print '</form>';
     		print '<br>';
-
-			print "\n<!-- End form attach new file -->\n\n";
-        }
+    		
+    		print "\n<!-- End form attach new file -->\n\n";
+    	}
     
     	return 1;
     }
