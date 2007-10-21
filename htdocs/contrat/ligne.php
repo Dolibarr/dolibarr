@@ -219,11 +219,6 @@ if ($lineid > 0)
             print "</td></tr>";
         }
 
-/* Fonction remplacé par les contacts de contrat
-        // Commerciaux
-        print '<tr><td width="25%">'.$langs->trans("SalesRepresentativeFollowUp").'</td><td>'.$commercial_suivi->fullname.'</td>';
-        print '<td width="25%">'.$langs->trans("SalesRepresentativeSignature").'</td><td>'.$commercial_signature->fullname.'</td></tr>';
-*/
         print "</table>";
 
 

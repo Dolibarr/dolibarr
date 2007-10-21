@@ -146,7 +146,6 @@ class Contact
     	// Nettoyage parametres
         $this->name=trim($this->name);
         $this->firstname=trim($this->firstname);
-        $this->fullname=$this->getFullName($langs);
         
         $this->email=trim($this->email);
         $this->phone_pro=trim($this->phone_pro);
@@ -391,7 +390,6 @@ class Contact
                 $this->firstname      = $obj->firstname;
                 $this->nom            = $obj->name;
                 $this->prenom         = $obj->firstname;
-                $this->fullname       = $this->getFullName($langs);
 
                 $this->address        = $obj->address;
                 $this->adresse        = $obj->address; // Todo: uniformiser le nom des variables
@@ -724,7 +722,7 @@ class Contact
 
 	/**
 	 *    	\brief      Return full name (name+' '+lastname)
-	 *		\param		lang			Lang for output
+	 *		\param		langs			Lang for output
 	 *		\param		option			0=No option, 1=Add civility	
 	 *		\return		string			String with full name
 	 */
@@ -834,7 +832,6 @@ class Contact
 		// Initialise paramètres
 		$this->id=0;
 		$this->specimen=1;
-		$this->fullname = 'DOLIBARR SPECIMEN';
 		$this->nom = 'DOLIBARR';
 		$this->name = $this->nom;
 		$this->prenom = 'SPECIMEN';

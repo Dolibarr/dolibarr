@@ -118,9 +118,9 @@ if ($_POST["action"] == 'add_action')
         $actioncomm->label = trim($_POST["label"]);
         if (! $_POST["label"])
         {
-            if ($_POST["actioncode"] == 'AC_RDV' && $contact->fullname)
+            if ($_POST["actioncode"] == 'AC_RDV' && $contact->getFullName($langs))
             {
-                $actioncomm->label = $langs->trans("TaskRDVWith",$contact->fullname);
+                $actioncomm->label = $langs->trans("TaskRDVWith",$contact->getFullName($langs));
             }
             else
             {

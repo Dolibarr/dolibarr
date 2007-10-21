@@ -899,7 +899,7 @@ else
                 {
                     $contact = new Contact($db);
                     $contact->fetch($fuser->contact_id);
-                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->fullname,32).'</a>';
+                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
                 }
             }            
             else
@@ -1312,7 +1312,7 @@ else
                 {
                     $contact = new Contact($db);
                     $contact->fetch($fuser->contact_id);
-                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->fullname,32).'</a>';
+                    print ' / '.'<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$fuser->contact_id.'">'.img_object($langs->trans("ShowContact"),'contact').' '.dolibarr_trunc($contact->getFullName($langs),32).'</a>';
                 }
             }            
             else

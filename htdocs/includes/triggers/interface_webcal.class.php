@@ -121,7 +121,7 @@ class InterfaceWebCal
             // Initialisation donnees (date,duree,texte,desc)
             if ($object->type_id == 5 && $object->contact->fullname)
             {
-                $libellecal =$langs->transnoentities("TaskRDVWith",$object->contact->fullname)."\n";
+                $libellecal =$langs->transnoentities("TaskRDVWith",$object->contact->getFullName($langs))."\n";
                 $libellecal.=$object->note;
             }
             else

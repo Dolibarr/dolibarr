@@ -51,7 +51,7 @@ $v->setProdId('Dolibarr '.DOL_VERSION);
 
 $v->setUid('DOLIBARR-CONTACTID-'.$contact->id);
 $v->setName($contact->name, $contact->firstname, "", "", "");
-$v->setFormattedName($contact->fullname);
+$v->setFormattedName($contact->getFullName($langs));
 
 // By default, all informations are for work (except phone_perso and phone_mobile)
 $v->setPhoneNumber($contact->phone_pro, "PREF;WORK;VOICE");

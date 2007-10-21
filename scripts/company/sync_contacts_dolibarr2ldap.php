@@ -85,7 +85,7 @@ if ($resql)
 		$contact->id = $obj->rowid;
 		$contact->fetch($contact->id);
 		
-		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->fullname;
+		print $langs->trans("UpdateContact")." rowid=".$contact->id." ".$contact->getFullName($langs);
 
 		$info=$contact->_load_ldap_info();
 		$dn=$contact->_load_ldap_dn($info);

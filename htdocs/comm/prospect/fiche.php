@@ -405,7 +405,7 @@ if ($socid > 0)
                 if ($obj->fk_contact) {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->getFullName($langs).'</a></td>';
                 } else {
                     print '<td>&nbsp;</td>';
                 }
@@ -492,7 +492,7 @@ if ($socid > 0)
                 {
                     $contact = new Contact($db);
                     $contact->fetch($obj->fk_contact);
-                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->fullname.'</a></td>';
+                    print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->getFullName($langs).'</a></td>';
                 }
                 else
                 {
