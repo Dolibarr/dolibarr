@@ -466,7 +466,9 @@ class Adherent
 	*/
 	function update($user,$notrigger=0,$nosyncuser=0)
 	{
-		global $conf,$langs;
+		global $conf, $langs;
+		
+		$nbrowsaffected=0;
 		$error=0;
 		
 		dolibarr_syslog("Adherent::update notrigger=".$notrigger.", nosyncuser=".$nosyncuser);
@@ -503,113 +505,124 @@ class Adherent
 		$sql.= ",naiss="   .($this->naiss?"'".$this->db->idate($this->naiss)."'":"null");
 		if ($this->datefin)   $sql.= ",datefin='".$this->db->idate($this->datefin)."'";		// Ne doit etre modifié que par effacement cotisation
 		if ($this->datevalid) $sql.= ",datevalid='".$this->db->idate($this->datevalid)."'";	// Ne doit etre modifié que par validation adherent
-
 		$sql.= " WHERE rowid = ".$this->id;
 
 		dolibarr_syslog("Adherent::update sql=".$sql);
-		$result = $this->db->query($sql);
-		if (! $result)
+		$resql = $this->db->query($sql);
+		if ($resql)
 		{
-			$this->error=$this->db->error();
-			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
-			$this->db->rollback();
-			return -1;
-		}
+        	$nbrowsaffected+=$this->db->affected_rows($resql);
 
-		if (sizeof($this->array_options) > 0)
-		{
-			$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
-			dolibarr_syslog("Adherent::update sql=".$sql_del);
-			$this->db->query($sql_del);
-
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
-			foreach($this->array_options as $key => $value)
+			if (sizeof($this->array_options) > 0)
 			{
-				// recupere le nom de l'attribut
-				$attr=substr($key,8);
-				$sql.=",$attr";
-			}
-			$sql .= ") VALUES (".$this->id;
-			foreach($this->array_options as $key => $value)
-			{
-				$sql.=",'".$this->array_options[$key]."'";
-			}
-			$sql.=")";
+				$sql_del = "DELETE FROM ".MAIN_DB_PREFIX."adherent_options WHERE adhid = ".$this->id;
+				dolibarr_syslog("Adherent::update sql=".$sql_del);
+				$this->db->query($sql_del);
 
-			dolibarr_syslog("Adherent::update sql=".$sql);
-			$result = $this->db->query($sql);
-			if (! $result)
-			{
-				$this->error=$this->db->error();
-				dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
-				$this->db->rollback();
-				return -2;
-			}
-		}
-
-		if ($this->user_id && ! $nosyncuser)
-		{
-			// This member is linked with a user, so we also update users informations
-			// if this is an update.
-			$luser=new User($this->db);
-			$luser->id=$this->user_id;
-			$result=$luser->fetch();
-
-			if ($result >= 0)
-			{
-				$luser->prenom=$this->prenom;
-				$luser->nom=$this->nom;
-				$luser->login=$this->user_login;
-				$luser->pass=$this->pass;
-				$luser->societe_id=$this->societe;
-
-				$luser->email=$this->email;
-				$luser->office_phone=$this->phone;
-				$luser->user_mobile=$this->phone_mobile;
-				
-				$luser->note=$this->commentaire;
-
-				$luser->fk_member=$this->id;
-
-				$result=$luser->update($user,0,1);
-				if ($result < 0)
+				$sql = "INSERT INTO ".MAIN_DB_PREFIX."adherent_options (adhid";
+				foreach($this->array_options as $key => $value)
 				{
-					$this->error=$luser->error;
-					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
-					$error++;
+					// recupere le nom de l'attribut
+					$attr=substr($key,8);
+					$sql.=",$attr";
 				}
+				$sql .= ") VALUES (".$this->id;
+				foreach($this->array_options as $key => $value)
+				{
+					$sql.=",'".$this->array_options[$key]."'";
+				}
+				$sql.=")";
+
+				dolibarr_syslog("Adherent::update sql=".$sql);
+				$resql = $this->db->query($sql);
+				if ($resql)
+				{
+					$nbrowsaffected+=1;
+				}
+				else
+				{
+					$this->error=$this->db->error();
+					dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+					$this->db->rollback();
+					return -2;
+				}
+			}
+
+	       	if ($nbrowsaffected)
+			{
+				if ($this->user_id && ! $nosyncuser)
+				{
+					// This member is linked with a user, so we also update users informations
+					// if this is an update.
+					$luser=new User($this->db);
+					$luser->id=$this->user_id;
+					$result=$luser->fetch();
+
+					if ($result >= 0)
+					{
+						$luser->prenom=$this->prenom;
+						$luser->nom=$this->nom;
+						$luser->login=$this->user_login;
+						$luser->pass=$this->pass;
+						$luser->societe_id=$this->societe;
+
+						$luser->email=$this->email;
+						$luser->office_phone=$this->phone;
+						$luser->user_mobile=$this->phone_mobile;
+						
+						$luser->note=$this->commentaire;
+
+						$luser->fk_member=$this->id;
+
+						$result=$luser->update($user,0,1);
+						if ($result < 0)
+						{
+							$this->error=$luser->error;
+							dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$luser->error;
+						$error++;
+					}
+				}	
+				
+				$this->fullname=trim($this->nom.' '.$this->prenom);
+				
+				if (! $error && ! $notrigger)
+				{
+					$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
+
+					// Appel des triggers
+			        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+			        $interface=new Interfaces($this->db);
+			        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
+		            if ($result < 0) { $error++; $this->errors=$interface->errors; }
+		 	        // Fin appel triggers
+				}
+			}
+			
+			if (! $error)
+			{
+				$this->db->commit();
 			}
 			else
 			{
-				$this->error=$luser->error;
-				$error++;
+				$this->db->rollback();
 			}
-		}	
-		
-		$this->fullname=trim($this->nom.' '.$this->prenom);
-		
-		if (! $error && ! $notrigger)
-		{
-			$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
-
-			// Appel des triggers
-	        include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	        $interface=new Interfaces($this->db);
-	        $result=$interface->run_triggers('MEMBER_MODIFY',$this,$user,$langs,$conf);
-            if ($result < 0) $this->errors=$interface->errors;
- 	        // Fin appel triggers
-		}
-
-		if (! $error)
-		{
-			$this->db->commit();
+			
+			return $nbrowsaffected;
 		}
 		else
 		{
 			$this->db->rollback();
-		}
 
-		return 1;
+			$this->error=$this->db->lasterror();
+			dolibarr_syslog("Adherent::update ".$this->error,LOG_ERROR);
+			return -1;
+		}
 	}
 
 
@@ -694,7 +707,7 @@ class Adherent
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
 	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
 	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
-	 *    \return    string           mot de passe, < 0 si erreur
+	 *    \return    string           If OK return clear password, 0 if no change, < 0 if error
 	 */
     function password($user, $password='', $isencrypted=0)
     {
@@ -726,10 +739,11 @@ class Adherent
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".addslashes($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
-        $result = $this->db->query($sql);
+		dolibarr_syslog("Adherent::Password sql=hidden");
+	    $result = $this->db->query($sql);
         if ($result)
         {
-            if ($this->db->affected_rows())
+            if ($this->db->affected_rows($result))
             {
 		        $this->pass=$password;
 		        $this->pass_indatabase=$password_indatabase;
@@ -737,14 +751,14 @@ class Adherent
                 // Appel des triggers
                 include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                 $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$lang,$conf);
+                $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
                 if ($result < 0) $this->errors=$interface->errors;
                 // Fin appel triggers
 
                 return $this->pass;
             }
             else {
-                return -2;
+                return 0;
             }
         }
         else

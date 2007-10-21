@@ -910,7 +910,7 @@ class User
     }
 
   /**
-   *    \brief      Mise à jour en base d'un utilisateur
+   *    \brief      Mise à jour en base d'un utilisateur (sauf info mot de passe)
    *	\param		user			User qui fait la mise a jour
    *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
    *	\param		nosyncmember	Do not synchronize linked member
@@ -918,8 +918,10 @@ class User
    */
   function update($user,$notrigger=0,$nosyncmember=0)
     {
-        global $conf,$langs,$user;
-        $error=0;
+        global $conf, $langs;
+        
+		$nbrowsaffected=0;
+		$error=0;
 
         dolibarr_syslog("User::update notrigger=".$notrigger.", nosyncmember=".$nosyncmember);
 
@@ -964,7 +966,7 @@ class User
         $resql = $this->db->query($sql);
         if ($resql)
         {
-        	$nbrowsaffected=$this->db->affected_rows($resql);
+        	$nbrowsaffected+=$this->db->affected_rows($resql);
         	
         	// Mise a jour mot de passe
 	        if ($this->pass)
@@ -979,11 +981,11 @@ class User
 	       	}
 	       	
 	       	if ($nbrowsaffected)
-          {
-          	if ($this->fk_member && ! $nosyncmember)
-          	{
-          		// This user is linked with a member, so we also update members informations
-          		// if this is an update.
+			{
+				if ($this->fk_member && ! $nosyncmember)
+				{
+					// This user is linked with a member, so we also update members informations
+					// if this is an update.
 					$adh=new Adherent($this->db);
 					$result=$adh->fetch($this->fk_member);
 					
@@ -1005,7 +1007,21 @@ class User
 						$adh->user_login=$this->login;
 
 						$result=$adh->update($user,0,1);
-						if ($result < 0)
+						if ($result)
+						{
+				        	// Mise a jour mot de passe
+					        if ($this->pass)
+					        {
+					        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
+					       		{
+					       			// Si mot de passe saisi et différent de celui en base
+					       			$adh->password($user,$this->pass,0);	// Cryptage non géré dans module adhérent
+					       			
+					       			if (! $nbrowsaffected) $nbrowsaffected++;
+					       		}
+					       	}
+						}
+						else
 						{
 							$this->error=$adh->error;
 							$error++;
@@ -1024,7 +1040,7 @@ class User
                     include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
                     $interface=new Interfaces($this->db);
                     $result=$interface->run_triggers('USER_MODIFY',$this,$user,$lang,$conf);
-                    if ($result < 0) $error++;
+                    if ($result < 0) { $error++; $this->errors=$interface->errors; }
                     // Fin appel triggers
                 }
             }
@@ -1045,6 +1061,7 @@ class User
 			$this->db->rollback();
 
             $this->error=$this->db->lasterror();
+			dolibarr_syslog("User::update ".$this->error,LOG_ERROR);
             return -1;
         }
 
@@ -1117,13 +1134,13 @@ class User
 	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
 	*	\param		changelater				1=Change password only after clicking on confirm email
 	*	\param		notrigger				1=Ne declenche pas les triggers
-	*   \return    	string           		Mot de passe non crypté, < 0 si erreur
+	*   \return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	*/
     function password($user, $password='', $noclearpassword=0, $changelater=0, $notrigger=0)
     {
-        global $langs;
+        global $langs, $conf;
 
-        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted." changelater=".$changelater);
+        dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." noclearpassword=".$noclearpassword." changelater=".$changelater." notrigger=".$notrigger);
 
         // Si nouveau mot de passe non communiqué, on génère par module
         if (! $password)
@@ -1152,11 +1169,12 @@ class User
 			}
 	        $sql.= " WHERE rowid = ".$this->id;
 
-			// dolibarr_syslog("User::update sql=".$sql);  Pas de trace
+			//dolibarr_syslog("User::Password sql=hidden");
+			dolibarr_syslog("User::Password sql=".$sql);
 	        $result = $this->db->query($sql);
 	        if ($result)
 	        {
-	            if ($this->db->affected_rows())
+				if ($this->db->affected_rows($result))
 	            {
 			        $this->pass=$password;
 			        $this->pass_indatabase=$password;
@@ -1167,15 +1185,16 @@ class User
 		                // Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
 		                $interface=new Interfaces($this->db);
-		                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$lang,$conf);
+		                $result=$interface->run_triggers('USER_NEW_PASSWORD',$this,$user,$langs,$conf);
 		                if ($result < 0) $this->errors=$interface->errors;
 		                // Fin appel triggers
 					}
 					
 	                return $this->pass;
 	            }
-	            else {
-	                return -2;
+	            else
+				{
+	                return 0;
 	            }
 	        }
 	        else

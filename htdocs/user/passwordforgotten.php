@@ -16,12 +16,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**     
-        \file       htdocs/user/fiche.php
-        \brief      Onglet user et permissions de la fiche utilisateur
+        \file       htdocs/user/passwordforgotten.php
+        \brief      Page demande nouveau mot de passe
         \version    $Revision$
 */
 
@@ -46,6 +45,7 @@ if (! $mode) $mode='http';
 if ($conf->global->MAIN_SECURITY_DISABLEFORGETPASSLINK)
 	accessforbidden();
 
+
 /**
  * Actions
  */
@@ -64,7 +64,7 @@ if ($_GET["action"] == 'validatenewpassword' && $_GET["username"] && $_GET["pass
 		if (md5($edituser->pass_temp) == $_GET["passwordmd5"])
 		{
 			$newpassword=$edituser->password($user,$edituser->pass_temp,$conf->password_encrypted,0);
-			dolibarr_syslog("passwordforgotten.php new password saved in database");
+			dolibarr_syslog("passwordforgotten.php new password for user->id=".$edituser->id." validated in database");
 			//session_start();
 			//$_SESSION["loginmesg"]=$langs->trans("PasswordChanged");
 			header("Location: ".DOL_URL_ROOT.'/');
