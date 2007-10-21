@@ -2263,7 +2263,7 @@ class Form
         }
         
         print ' ('.$langs->trans("MaxSize").': '.$max.' '.$langs->trans("Kb").')';
-        if ($conf->global->MAIN_USE_AVSCAN) print cl_info();
+        
         print "</td></tr>";
         print "</table>";
 
