@@ -68,7 +68,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
     }
     else
     {
-    	$mesg = '<div class="error">'.$langs->trans("FileIsInfectedWith",$result).'</div>';
+    	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
     }
   }
 }
