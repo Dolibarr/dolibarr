@@ -68,6 +68,7 @@ if ( $_POST["sendit"] && $conf->upload != 0)
     }
     else
     {
+    	// Fichier infecté par un virus
     	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
     }
   }

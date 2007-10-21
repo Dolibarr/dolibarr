@@ -2079,21 +2079,26 @@ function dol_delete_dir_recursive($dir,$count=0)
 }
 
 /**
-		\brief  Scan les fichiers avec Clamav
+		\brief  Scan les fichiers avec un anti-virus
 		\param	 file			Fichier a scanner
 		\return	 malware	Nom du virus si infecté sinon retourne "null"
 */
 function dol_avscan_file($file)
 {
 	$malware = '';
-	$maxreclevel = 5 ; // maximal recursion level
-  $maxfiles = 1000; // maximal number of files to be scanned within archive
-  $maxratio = 200; // maximal compression ratio
-  $archivememlim = 0; // limit memory usage for bzip2 (0/1)
-  $maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
+	
+	// Clamav
+	if (function_exists("cl_scanfile"))
+	{
+		$maxreclevel = 5 ; // maximal recursion level
+    $maxfiles = 1000; // maximal number of files to be scanned within archive
+    $maxratio = 200; // maximal compression ratio
+    $archivememlim = 0; // limit memory usage for bzip2 (0/1)
+    $maxfilesize = 10485760; // archived files larger than this value (in bytes) will not be scanned
   
-  cl_setlimits($maxreclevel, $maxfiles, $maxratio, $archivememlim, $maxfilesize);
-  $malware = cl_scanfile($file);
+    cl_setlimits($maxreclevel, $maxfiles, $maxratio, $archivememlim, $maxfilesize);
+    $malware = cl_scanfile($file);
+  }
 
 	return $malware;
 }

@@ -188,7 +188,7 @@ print "<tr ".$bc[$var].">";
 print '<td colspan="3">'.$langs->trans("UseAvToScanUploadedFiles");
 if($conf->global->MAIN_USE_AVSCAN == 1)
 {
-	print '<br>';
+	print ' : ';
 	// Clamav
 	if (function_exists("cl_scanfile"))
 	{

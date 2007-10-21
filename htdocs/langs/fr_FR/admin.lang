@@ -35,6 +35,7 @@ MustBeLowerThanPHPLimit=Remarque: Votre PHP limite naturellement la taille à <b>
 NoMaxSizeByPHPLimit=Aucune limite interne à votre serveur PHP
 MaxSizeForUploadedFiles=Taille maximum des documents uploadés (0 pour interdire l'upload)
 UseCaptchaCode=Utilisation du code graphique sur la page de login
+UseAvToScanUploadedFiles=Utilisation d'un anti-virus pour scanner les fichiers uploadés
 ComptaSetup=Configuration du module Comptabilité
 UserSetup=Configuration gestion des utilisateurs
 MenuSetup=Administration des menus par base de données

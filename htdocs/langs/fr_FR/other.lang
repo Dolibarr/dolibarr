@@ -81,6 +81,7 @@ SendNewPasswordDesc=Ce formulaire permet d'envoyer un nouveau mot de passe. Il s
 BackToLoginPage=Retour page de connexion
 AuthenticationDoesNotAllowSendNewPassword=Le mode d'authentification de Dolibarr est configuré à "<b>%s</b>".<br>Dans ce mode, Dolibarr n'a pas la possibilité de connaitre ni modifier votre mot de passe.<br>Contacter votre administrateur pour connaitre les modalités de changement.
 EnableGDLibraryDesc=Vous devez activer ou installer la librairie GD avec votre PHP pour pouvoir activer cette option.
+EnablePhpAVModuleDesc=Vous devez installer un module PHP compatible avec votre anti-virus. (Clamav : php4-clamavlib ou php5-clamavlib)
 ##### Webcal #####
 LoginWebcal=Login Webcalendar
 AddCalendarEntry=Ajouter entrée dans le calendrier

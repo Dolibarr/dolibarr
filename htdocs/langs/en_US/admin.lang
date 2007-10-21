@@ -35,6 +35,7 @@ MustBeLowerThanPHPLimit=Note: your PHP limits upload size to <b>%s</b> %s, whate
 NoMaxSizeByPHPLimit=Note: No limit are built in your PHP
 MaxSizeForUploadedFiles=Maximum size for uploaded files (0 to disallow any upload)
 UseCaptchaCode=Use graphical code on logon page
+UseAvToScanUploadedFiles=Use anti-virus to scan uploaded files
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 MenuSetup=Menus management setup

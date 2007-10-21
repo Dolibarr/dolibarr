@@ -81,6 +81,7 @@ SendNewPasswordDesc=This form allows you to request a new passord. It will be se
 BackToLoginPage=Back to login page
 AuthenticationDoesNotAllowSendNewPassword=Authentication mode is <b>%s</b>.<br>In this mode, Dolibarr can't know nor change your password.<br>Contact your system administrator if you want to change your password.
 EnableGDLibraryDesc=Install or enable GD library with your PHP for use this option.
+EnablePhpAVModuleDesc=You need to install a module compatible with your anti-virus. (Clamav : php4-clamavlib ou php5-clamavlib)
 ##### Webcal #####
 LoginWebcal=Login for Webcalendar
 AddCalendarEntry=Add entry in calendar
