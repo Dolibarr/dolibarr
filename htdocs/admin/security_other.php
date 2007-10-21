@@ -64,6 +64,19 @@ else if ($_GET["action"] == 'disable_captcha')
 	exit;
 }
 
+if ($_GET["action"] == 'activate_avscan')
+{
+	dolibarr_set_const($db, "MAIN_USE_AVSCAN", '1');
+	Header("Location: security_other.php");
+	exit;
+}
+else if ($_GET["action"] == 'disable_avscan')
+{
+	dolibarr_del_const($db, "MAIN_USE_AVSCAN");
+	Header("Location: security_other.php");
+	exit;
+}
+
 
 /*
  * Affichage onglet
@@ -162,6 +175,49 @@ else
 {
 	$html = new Form($db);
 	$desc = $html->textwithwarning('',$langs->transnoentities("EnableGDLibraryDesc"),1);
+	print $desc;
+}
+print "</td>";
+
+print "</td>";
+print '</tr>';
+
+// Enable AV scanner
+$var=!$var;
+print "<tr ".$bc[$var].">";
+print '<td colspan="3">'.$langs->trans("UseAvToScanUploadedFiles");
+if($conf->global->MAIN_USE_AVSCAN == 1)
+{
+	print '<br>';
+	// Clamav
+	if (function_exists("cl_scanfile"))
+	{
+		print cl_info();
+	}
+}
+print '</td>';
+print '<td align="center" width="60">';
+if($conf->global->MAIN_USE_AVSCAN == 1)
+{
+ print img_tick();
+}
+print '</td>';
+print '<td align="center" width="100">';
+if (function_exists("cl_scanfile")) // Clamav
+{
+	if ($conf->global->MAIN_USE_AVSCAN == 0)
+	{
+		print '<a href="security_other.php?action=activate_avscan">'.$langs->trans("Activate").'</a>';
+	}
+	if($conf->global->MAIN_USE_AVSCAN == 1)
+	{
+		print '<a href="security_other.php?action=disable_avscan">'.$langs->trans("Disable").'</a>';
+	}
+}
+else
+{
+	$html = new Form($db);
+	$desc = $html->textwithwarning('',$langs->transnoentities("EnablePhpAVModuleDesc"),1);
 	print $desc;
 }
 print "</td>";
