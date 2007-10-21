@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,8 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
- *
  */
 
 /**
@@ -79,7 +77,7 @@ class pdf_soleil extends ModelePDFFicheinter
             \param	    fichinter		Object fichinter
             \return	    int     		1=ok, 0=ko
     */
-    function write_pdf_file($fichinter,$outputlangs='')
+    function write_file($fichinter,$outputlangs='')
 	{
 		global $user,$langs,$conf,$mysoc;
 		

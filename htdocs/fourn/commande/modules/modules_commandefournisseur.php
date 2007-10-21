@@ -165,7 +165,7 @@ function supplier_order_pdf_create($db, $comid, $modele='',$outputlangs='')
   
       $obj = new $classname($db);
 
-      if ($obj->write_pdf_file($comid,$outputlangs) > 0)
+      if ($obj->write_file($comid,$outputlangs) > 0)
         {
           // on supprime l'image correspondant au preview
            supplier_order_delete_preview($db, $comid);

@@ -418,7 +418,7 @@ class RemiseCheque
 
     $pdf->account = &$account;
     
-    $pdf->write_pdf_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number );
+    $pdf->write_file(DOL_DATA_ROOT.'/compta/bordereau', $this->number );
   }
 
   /**

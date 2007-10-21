@@ -192,7 +192,7 @@ function fichinter_pdf_create($db, $id, $modele='', $outputlangs='')
 	
 		$obj = new $classname($db);
 	
-		if ($obj->write_pdf_file($id,$outputlangs) > 0)
+		if ($obj->write_file($id,$outputlangs) > 0)
 		{
 			return 1;
 		}

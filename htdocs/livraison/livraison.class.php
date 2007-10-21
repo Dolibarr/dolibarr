@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005-2006 Regis Houssin        <regis.houssin@cap-networks.com>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -207,7 +206,7 @@ class Livraison extends CommonObject
 	* Lit un bon de livraison
 	*
 	*/
-	function fetch ($id)
+	function fetch($id)
 	{
 		global $conf;
 	
@@ -219,7 +218,6 @@ class Livraison extends CommonObject
 		$sql .= " WHERE l.rowid = ".$id." AND c.rowid = l.fk_commande";
 	
 		$result = $this->db->query($sql) ;
-	
 		if ( $result )
 		{
 			$obj = $this->db->fetch_object($result);

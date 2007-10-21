@@ -123,7 +123,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     		\remarks    MAIN_INFO_TVAINTRA
             \remarks    MAIN_INFO_LOGO
     */
-    function write_pdf_file($com,$outputlangs='')
+    function write_file($com,$outputlangs='')
     {
         global $user,$langs,$conf;
 

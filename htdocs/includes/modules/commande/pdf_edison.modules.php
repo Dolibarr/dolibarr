@@ -74,7 +74,7 @@ class pdf_edison extends ModelePDFCommandes
 			\param	    id		id de la propale à générer
 			\return	    int     1=ok, 0=ko
 	*/
-	function write_pdf_file($com,$outputlangs='')
+	function write_file($com,$outputlangs='')
 	{
 		global $user,$conf,$langs,$mysco;
 

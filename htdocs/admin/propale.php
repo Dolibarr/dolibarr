@@ -64,7 +64,7 @@ if ($_GET["action"] == 'specimen')
 
 		$module = new $classname($db);
 
-		if ($module->write_pdf_file($propal) > 0)
+		if ($module->write_file($propal) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=propal&file=SPECIMEN.pdf");
 			return;

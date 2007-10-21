@@ -195,7 +195,7 @@ function propale_pdf_create($db, $id, $modele='', $outputlangs='')
 
 		$obj = new $classname($db);
 
-		if ($obj->write_pdf_file($id, $outputlangs) > 0)
+		if ($obj->write_file($id, $outputlangs) > 0)
 		{
 			// on supprime l'image correspondant au preview
 			propale_delete_preview($db, $id);

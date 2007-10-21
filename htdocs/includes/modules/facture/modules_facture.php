@@ -192,7 +192,7 @@ function facture_pdf_create($db, $id, $message='', $modele='', $outputlangs='')
 		$obj = new $classname($db);
 		$obj->message = $message;
 
-		if ($obj->write_pdf_file($id, $outputlangs) > 0)
+		if ($obj->write_file($id, $outputlangs) > 0)
 		{
 			// Succès de la création de la facture. On génère le fichier meta
 			facture_meta_create($db, $id);

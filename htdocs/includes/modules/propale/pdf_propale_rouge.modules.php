@@ -81,7 +81,7 @@ class pdf_propale_rouge extends ModelePDFPropales
 	    \param	    propale		Objet propal
 		\return	    int     	1=ok, 0=ko
 	*/
-	function write_pdf_file($propale,$outputlangs='')
+	function write_file($propale,$outputlangs='')
 	{
 		global $user,$conf,$langs;
 

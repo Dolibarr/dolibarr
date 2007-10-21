@@ -20,7 +20,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /** 
@@ -71,21 +70,37 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
   
   /**
         \brief      Fonction générant le bon de livraison sur le disque
-        \param	    id		id du bon de livraison à générer
-   		\return	    int     1=ok, 0=ko
+        \param	    delivery	Object livraison à générer
+   		\return	    int     	1=ok, 0=ko
   */
-  function write_pdf_file($id)
+	function write_file($delivery)
     {
-      global $user,$conf,$langs;
-      
-      $delivery = new Livraison($this->db);
-      if ($delivery->fetch($id))
-	{
-	  	$deliveryref = sanitize_string($delivery->ref);
-	  if ($conf->livraison->dir_output)
-	    {
-              
-              $dir = $conf->livraison->dir_output . "/" . $deliveryref ;
+		global $user,$conf,$langs;
+
+        $langs->load("main");
+        $langs->load("bills");
+        $langs->load("products");
+        $langs->load("deliveries");
+
+		if ($conf->livraison->dir_output)
+		{
+			// If $delivery is id instead of object
+			if (! is_object($delivery))
+			{
+				$id = $delivery;
+				$delivery = new Livraison($this->db);
+				$delivery->fetch($id);
+				$delivery->id = $id;
+				if ($result < 0)
+				{
+					dolibarr_print_error($db,$delivery->error);
+				}
+			}      
+
+			$deliveryref = sanitize_string($delivery->ref);
+			$dir = $conf->livraison->dir_output;
+			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
+			$file = $dir . "/" . $deliveryref . ".pdf";
 
             if (! file_exists($dir))
             {
@@ -95,17 +110,17 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
                     return 0;
                 }
             }
-	    }
-	  else
-	    {
-            $this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
+		}
+		else
+		{
+			$this->error=$langs->transnoentities("ErrorConstantNotDefined","LIVRAISON_OUTPUTDIR");
             return 0;
-	    }
+		}
 
-          $file = $dir . "/" . $deliveryref . ".pdf";
+		$file = $dir . "/" . $deliveryref . ".pdf";
 	  
-	  if (file_exists($dir))
-	    {
+		if (file_exists($dir))
+		{
 	           // Protection et encryption du pdf
                if ($conf->global->PDF_SECURITY_ENCRYPTION)
                {
@@ -243,7 +258,6 @@ class pdf_sirocco extends ModelePDFDeliveryOrder
 	      $pdf->Output($file);
 	      return 1;
 	    }
-	}
     }
 
     /*

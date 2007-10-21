@@ -62,7 +62,7 @@ if ($_GET["action"] == 'specimen')
 
 		$obj = new $classname($db);
 
-		if ($obj->write_pdf_file($inter,$langs) > 0)
+		if ($obj->write_file($inter,$langs) > 0)
 		{
 			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=ficheinter&file=SPECIMEN.pdf");
 			return;

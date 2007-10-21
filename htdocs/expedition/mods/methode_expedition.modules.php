@@ -79,7 +79,7 @@ class methode_expedition
 	}
     }
 
-  function write_pdf_file($id)
+	function write_file($id)
     {
       global $user;
       $propale = new Propal($this->db,"",$id);

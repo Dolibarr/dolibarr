@@ -19,7 +19,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -110,24 +109,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
     /**
     		\brief      Fonction générant la commande sur le disque
-    		\param	    id	        Id de la commande à générer
+			\param	    delivery	Object livraison à générer
     		\return	    int         1=ok, 0=ko
-            \remarks    Variables utilisées
-    		\remarks    MAIN_INFO_SOCIETE_NOM
-    		\remarks    MAIN_INFO_ADRESSE
-    		\remarks    MAIN_INFO_CP
-    		\remarks    MAIN_INFO_VILLE
-    		\remarks    MAIN_INFO_TEL
-    		\remarks    MAIN_INFO_FAX
-    		\remarks    MAIN_INFO_WEB
-    		\remarks    MAIN_INFO_SIRET
-    		\remarks    MAIN_INFO_SIREN
-    		\remarks    MAIN_INFO_RCS
-    		\remarks    MAIN_INFO_CAPITAL
-    		\remarks    MAIN_INFO_TVAINTRA
-            \remarks    MAIN_INFO_LOGO
     */
-    function write_pdf_file($id)
+    function write_file($delivery)
     {
         global $user,$langs,$conf;
 
@@ -138,16 +123,25 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 
         if ($conf->livraison->dir_output)
         {
-            $delivery = new Livraison($this->db);
-            $delivery->fetch($id);
-            $delivery->id = $id;
-            $lignesdelivery = $delivery->fetch_lignes();
-            
+			// If $delivery is id instead of object
+			if (! is_object($delivery))
+			{
+				$id = $delivery;
+				$delivery = new Livraison($this->db);
+	            $delivery->fetch($id);
+	            $delivery->id = $id;
+				if ($result < 0)
+				{
+					dolibarr_print_error($db,$delivery->error);
+				}
+			}
+			
             $nblignes = sizeof($lignesdelivery);
 
-			      $deliveryref = sanitize_string($delivery->ref);
-			      $dir = $conf->livraison->dir_output . "/" . $deliveryref;
-			      $file = $dir . "/" . $deliveryref . ".pdf";
+			$deliveryref = sanitize_string($delivery->ref);
+			$dir = $conf->livraison->dir_output;
+			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
+			$file = $dir . "/" . $deliveryref . ".pdf";
 
             if (! file_exists($dir))
             {

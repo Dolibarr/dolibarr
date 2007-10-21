@@ -197,7 +197,7 @@ class BordereauChequeBlochet
 		\param	month		mois du rapport
 		\param	year		annee du rapport
 	*/
-	function write_pdf_file($_dir, $number)
+	function write_file($_dir, $number)
 	{
 		global $langs;
 		

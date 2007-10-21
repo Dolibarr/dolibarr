@@ -97,7 +97,7 @@ class pdf_oursin extends ModelePDFFactures
    *		\remarks    MAIN_INFO_CAPITAL
    *		\remarks    MAIN_INFO_TVAINTRA
    */
-  function write_pdf_file($fac,$outputlangs='')
+  function write_file($fac,$outputlangs='')
   {
     global $user,$langs,$conf;
     

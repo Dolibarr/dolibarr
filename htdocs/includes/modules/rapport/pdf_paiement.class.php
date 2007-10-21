@@ -166,7 +166,7 @@ class pdf_paiement extends FPDF
 		\param	month		mois du rapport
 		\param	year		annee du rapport
 	*/
-	function write_pdf_file($_dir, $month, $year)
+	function write_file($_dir, $month, $year)
 	{
 		global $langs;
 		
@@ -218,7 +218,7 @@ class pdf_paiement extends FPDF
 		$sql .= " AND date_format(p.datep, '%Y%m') = " . sprintf("%04d%02d",$year,$month);
 		$sql .= " ORDER BY p.datep ASC, pf.fk_paiement ASC";
 
-		dolibarr_syslog("pdf_paiement::write_pdf_file sql=".$sql);
+		dolibarr_syslog("pdf_paiement::write_file sql=".$sql);
 		$result = $this->db->query($sql);
 		if ($result)
 		{

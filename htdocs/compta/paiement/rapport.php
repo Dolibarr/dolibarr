@@ -55,7 +55,7 @@ if (! $year) { $year=date("Y"); }
 if ($_POST["action"] == 'gen')
 {
   $rap = new pdf_paiement($db);
-  $rap->write_pdf_file($dir, $_POST["remonth"], $_POST["reyear"]);
+  $rap->write_file($dir, $_POST["remonth"], $_POST["reyear"]);
   
   $year = $_POST["reyear"];
 }

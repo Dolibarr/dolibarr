@@ -99,7 +99,7 @@ class pdf_propale_azur extends ModelePDFPropales
 	    \param	    propale		Objet propal à générer (ou id si ancienne methode)
 		\return	    int     	1=ok, 0=ko
 	*/
-	function write_pdf_file($propale,$outputlangs='')
+	function write_file($propale,$outputlangs='')
 	{
 		global $user,$langs,$conf;
 

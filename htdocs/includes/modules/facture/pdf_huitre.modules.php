@@ -77,7 +77,7 @@ class pdf_huitre extends ModelePDFFactures
    *		\param	    fac		Objet facture à générer (ou id si ancienne methode)
    *		\return	    int     1=ok, 0=ko
    */
-  function write_pdf_file($fac,$outputlangs='')
+  function write_file($fac,$outputlangs='')
   {
     global $user,$langs,$conf;
 

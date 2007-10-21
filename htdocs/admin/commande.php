@@ -61,7 +61,7 @@ if ($_GET["action"] == 'specimen')
       
       $obj = new $classname($db);
       
-      if ($obj->write_pdf_file($commande) > 0)
+      if ($obj->write_file($commande) > 0)
 	{
 	  header("Location: ".DOL_URL_ROOT."/document.php?modulepart=commande&file=SPECIMEN.pdf");
 	  return;

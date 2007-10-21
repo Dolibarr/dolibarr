@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,6 +45,35 @@ if (!$user->admin) accessforbidden();
 /*
  * Actions
  */
+if ($_GET["action"] == 'specimen')
+{
+	$modele=$_GET["module"];
+
+	$exp = new Expedition($db);
+	$exp->initAsSpecimen();
+	$exp->fetch_commande();
+
+	// Charge le modele
+	$dir = DOL_DOCUMENT_ROOT . "/livraison/mods/pdf/";
+	$file = "pdf_".$modele.".modules.php";
+	if (file_exists($dir.$file))
+	{
+		$classname = "pdf_".$modele;
+		require_once($dir.$file);
+
+		$obj = new $classname($db);
+
+		if ($obj->write_file($exp,$langs) > 0)
+		{
+			header("Location: ".DOL_URL_ROOT."/document.php?modulepart=livraison&file=SPECIMEN.pdf");
+			return;
+		}
+	}
+	else
+	{
+		$mesg='<div class="error">'.$langs->trans("ErrorModuleNotFound").'</div>';
+	}
+}
 
 if ($_GET["action"] == 'set')
 {
@@ -166,47 +194,47 @@ if ($handle)
     while (($file = readdir($handle))!==false)
     {
         if (substr($file, 0, 14) == 'mod_livraison_' && substr($file, strlen($file)-3, 3) == 'php')
-        {
-            $file = substr($file, 0, strlen($file)-4);
+		{
+			$file = substr($file, 0, strlen($file)-4);
 
-            require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/".$file.".php");
+			require_once(DOL_DOCUMENT_ROOT ."/livraison/mods/".$file.".php");
 
-            $module = new $file;
+			$module = new $file;
 
-            $var=!$var;
-            print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
-            print $module->info();
-            print '</td>';
+			$var=!$var;
+			print '<tr '.$bc[$var].'><td>'.$module->nom."</td><td>\n";
+			print $module->info();
+			print '</td>';
 
-	        // Affiche example
-	        print '<td nowrap="nowrap">'.$module->getExample().'</td>';
-	
-	        print '<td align="center">';
-	        if ($conf->global->LIVRAISON_ADDON == "$file")
-	        {
-	            print img_tick($langs->trans("Activated"));
-	        }
-	        else
-	        {
-	            print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
-	        }
-	        print '</td>';
-	
-			    $livraison=new Livraison($db);
-			    
-			    // Info
-			    $htmltooltip='';
-	        $nextval=$module->getNextValue($mysoc,$livraison);
-	        if ($nextval != $langs->trans("NotAvailable"))
-	        {
-	            $htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
-	        }
-	    	print '<td align="center">';
-	    	print $html->textwithhelp('',$htmltooltip,1,0);
-	    	print '</td>';
-    	
-            print '</tr>';
-        }
+			// Affiche example
+			print '<td nowrap="nowrap">'.$module->getExample().'</td>';
+			
+			print '<td align="center">';
+			if ($conf->global->LIVRAISON_ADDON == "$file")
+			{
+				print img_tick($langs->trans("Activated"));
+			}
+			else
+			{
+				print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+			}
+			print '</td>';
+			
+			$livraison=new Livraison($db);
+			
+			// Info
+			$htmltooltip='';
+			$nextval=$module->getNextValue($mysoc,$livraison);
+			if ($nextval != $langs->trans("NotAvailable"))
+			{
+				$htmltooltip='<b>'.$langs->trans("NextValue").'</b>: '.$nextval;
+			}
+			print '<td align="center">';
+			print $html->textwithhelp('',$htmltooltip,1,0);
+			print '</td>';
+			
+			print '</tr>';
+		}
     }
     closedir($handle);
 }
@@ -272,9 +300,9 @@ if(is_dir($dir))
 			print $name;
 			print "</td><td>\n";
 			require_once($dir.$file);
-			$obj = new $classname($db);
+			$module = new $classname($db);
 
-			print $obj->description;
+			print $module->description;
 			print '</td>';
 
 			// Activ
