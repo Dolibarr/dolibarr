@@ -705,9 +705,9 @@ class User
 					}
 					
 					// Update minor fields
-					if ($this->update($user,1,1) < 0)
+					$result = $this->update($user,1,1);
+					if ($result < 0)
 					{
-						$this->error=$this->db->error();
 						$this->db->rollback();
 						return -4;
 					}
@@ -721,7 +721,7 @@ class User
 						$entrepot->statut = 1;
 						$entrepot->create($user);
 					}
-					
+
 					if (! $notrigger)
 					{
 						// Appel des triggers
@@ -823,7 +823,7 @@ class User
    */
   function create_from_member($member)
   {
-        global $user,$langs;
+        global $conf, $user,$langs;
 
         // Positionne paramètres
         $this->nom = $member->nom;
@@ -841,7 +841,7 @@ class User
         $result=$this->create();
         if ($result > 0)
         {
-			$result=$this->password($user,$this->pass,0,0,1);
+			$result=$this->password($user,$this->pass,$conf->password_encrypted);
 
 			$sql = "UPDATE ".MAIN_DB_PREFIX."user";
             $sql.= " SET fk_member=".$member->id;
@@ -974,7 +974,7 @@ class User
 	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 	       		{
 	       			// Si mot de passe saisi et différent de celui en base
-	       			$this->password($user,$this->pass,$conf->password_encrypted);
+	       			$result=$this->password($user,$this->pass,$conf->password_encrypted,0,$notrigger);
 	       			
 	       			if (! $nbrowsaffected) $nbrowsaffected++;
 	       		}
@@ -1007,23 +1007,10 @@ class User
 						$adh->user_login=$this->login;
 
 						$result=$adh->update($user,0,1);
-						if ($result)
+						if ($result < 0)
 						{
-				        	// Mise a jour mot de passe
-					        if ($this->pass)
-					        {
-					        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
-					       		{
-					       			// Si mot de passe saisi et différent de celui en base
-					       			$adh->password($user,$this->pass,0);	// Cryptage non géré dans module adhérent
-					       			
-					       			if (! $nbrowsaffected) $nbrowsaffected++;
-					       		}
-					       	}
-						}
-						else
-						{
-							$this->error=$adh->error;
+							$this->error=$luser->error;
+							dolibarr_syslog("User::update ".$this->error,LOG_ERROR);
 							$error++;
 						}
 					}
@@ -1134,12 +1121,15 @@ class User
 	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
 	*	\param		changelater				1=Change password only after clicking on confirm email
 	*	\param		notrigger				1=Ne declenche pas les triggers
+    *	\param		nosyncmember	        Do not synchronize linked member
 	*   \return    	string           		If OK return clear password, 0 if no change, < 0 if error
 	*/
-    function password($user, $password='', $noclearpassword=0, $changelater=0, $notrigger=0)
+    function password($user, $password='', $noclearpassword=0, $changelater=0, $notrigger=0, $nosyncmember=0)
     {
-        global $langs, $conf;
-
+        global $conf, $langs;
+	
+		$error=0;
+		
         dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." noclearpassword=".$noclearpassword." changelater=".$changelater." notrigger=".$notrigger);
 
         // Si nouveau mot de passe non communiqué, on génère par module
@@ -1180,7 +1170,31 @@ class User
 			        $this->pass_indatabase=$password;
 			        $this->pass_indatabase_crypted=$password_crypted;
 
-					if (! $notrigger)
+					if ($this->fk_member && ! $nosyncmember)
+					{
+						// This user is linked with a member, so we also update members informations
+						// if this is an update.
+						$adh=new Adherent($this->db);
+						$result=$adh->fetch($this->fk_member);
+						
+						if ($result >= 0)
+						{
+							$result=$adh->password($user,$this->pass,0,0,1);	// Cryptage non géré dans module adhérent
+							if ($result < 0)
+							{
+								$this->error=$adh->error;
+								dolibarr_syslog("User::password ".$this->error,LOG_ERROR);
+								$error++;
+							}
+						}
+						else
+						{
+							$this->error=$adh->error;
+							$error++;
+						}
+					}
+
+					if (! $error && ! $notrigger)
 					{
 		                // Appel des triggers
 						include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");

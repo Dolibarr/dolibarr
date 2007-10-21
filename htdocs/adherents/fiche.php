@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -165,15 +164,6 @@ if ($user->rights->adherent->creer && $_REQUEST["action"] == 'update' && ! $_POS
 		$result=$adh->update($user,0);
 		if ($result >= 0 && ! sizeof($adh->errors))
 		{
-			if (isset($_POST["password"]) && $_POST["password"] !='')
-			{
-				$ret=$edituser->password($user,$password,$conf->password_encrypted,0);
-				if ($ret < 0)
-				{
-					$message.='<div class="error">'.$edituser->error.'</div>';
-				}
-			}
-
 			if (isset($_FILES['photo']['tmp_name']) && trim($_FILES['photo']['tmp_name']))
 			{
 				// If photo is provided
@@ -322,11 +312,6 @@ if ($user->rights->adherent->creer && $_POST["action"] == 'add')
         $result=$adh->create($user);
 		if ($result > 0)
         {
-			if (isset($_POST['password']) && trim($_POST['password']))
-			{
-				$adh->password($user,trim($_POST['password']),0);
-			}
-
 			if ($cotisation > 0)
             {
                 $crowid=$adh->cotisation($datecotisation, $cotisation);

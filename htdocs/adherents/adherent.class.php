@@ -352,9 +352,11 @@ class Adherent
 
 	/**
 		\brief  	Fonction qui crée l'adhérent
-		\return		int			<0 si ko, >0 si ok
+		\param      user        	Objet user qui demande la creation
+		\param      notrigger		1 ne declenche pas les triggers, 0 sinon
+		\return		int				<0 si ko, >0 si ok
 	*/
-	function create()
+	function create($user='',$notrigger=0)
 	{
 		global $conf,$langs,$user;
 
@@ -385,7 +387,7 @@ class Adherent
 			{
 				$this->id=$id;
 				
-				// Mise a jour
+				// Update minor fields
 				$result=$this->update($user,1,1);
 				if ($result < 0)
 				{
@@ -395,12 +397,16 @@ class Adherent
 				
 				$this->use_webcal=($conf->global->PHPWEBCALENDAR_MEMBERSTATUS=='always'?1:0);
 
-	            // Appel des triggers
-	            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-	            $interface=new Interfaces($this->db);
-	            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
-                if ($result < 0) $this->errors=$interface->errors;
-	            // Fin appel triggers
+				if (! $notrigger)
+				{
+		            // Appel des triggers
+		            include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+		            $interface=new Interfaces($this->db);
+		            $result=$interface->run_triggers('MEMBER_CREATE',$this,$user,$langs,$conf);
+	                if ($result < 0) $this->errors=$interface->errors;
+		            // Fin appel triggers
+				}
+				
 				if (sizeof($this->errors))
 				{
 					$this->db->rollback();
@@ -458,7 +464,7 @@ class Adherent
 	}
 
 	/**
-			\brief 		Fonction qui met à jour l'adhérent
+			\brief 		Fonction qui met à jour l'adhérent (sauf mot de passe)
 			\param		user			Utilisateur qui réalise la mise a jour
 			\param		notrigger		1=désactive le trigger UPDATE (quand appelé par creation)
 			\param		nosyncuser		Do not synchronize linked user
@@ -486,7 +492,6 @@ class Adherent
 		$sql.= " prenom = ".($this->prenom?"'".addslashes($this->prenom)."'":"null");
 		$sql.= ",nom="     .($this->nom?"'".addslashes($this->nom)."'":"null");
 		$sql.= ",login="   .($this->login?"'".addslashes($this->login)."'":"null");
-		$sql.= ",pass="    .($this->pass?"'".addslashes($this->pass)."'":"null");
 		$sql.= ",societe=" .($this->societe?"'".addslashes($this->societe)."'":"null");
 		$sql.= ",adresse=" .($this->adresse?"'".addslashes($this->adresse)."'":"null");
 		$sql.= ",cp="      .($this->cp?"'".addslashes($this->cp)."'":"null");
@@ -548,6 +553,18 @@ class Adherent
 				}
 			}
 
+        	// Mise a jour mot de passe
+	        if ($this->pass)
+	        {
+	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
+	       		{
+	       			// Si mot de passe saisi et différent de celui en base
+	       			$result=$this->password($user,$this->pass,0,$notrigger);
+	       			
+	       			if (! $nbrowsaffected) $nbrowsaffected++;
+	       		}
+	       	}
+	       	
 	       	if ($nbrowsaffected)
 			{
 				if ($this->user_id && ! $nosyncuser)
@@ -707,11 +724,15 @@ class Adherent
 	 *    \param     user             Object user de l'utilisateur qui fait la modification
 	 *    \param     password         Nouveau mot de passe (à générer si non communiqué)
 	 *    \param     isencrypted      0 ou 1 si il faut crypter le mot de passe en base (0 par défaut)
+	 *	  \param	 notrigger		  1=Ne declenche pas les triggers
+	 *    \param	 nosyncuser		  Do not synchronize linked user
 	 *    \return    string           If OK return clear password, 0 if no change, < 0 if error
 	 */
-    function password($user, $password='', $isencrypted=0)
+    function password($user, $password='', $isencrypted=0, $notrigger=0, $nosyncuser=0)
     {
-        global $langs;
+        global $conf, $langs;
+
+		$error=0;
 
         dolibarr_syslog("Adherent::Password user=".$user->id." password=".eregi_replace('.','*',$password)." isencrypted=".$isencrypted);
 
@@ -739,25 +760,57 @@ class Adherent
         $sql = "UPDATE ".MAIN_DB_PREFIX."adherent SET pass = '".addslashes($password_indatabase)."'";
         $sql.= " WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("Adherent::Password sql=hidden");
+		//dolibarr_syslog("Adherent::Password sql=hidden");
+		dolibarr_syslog("Adherent::Password sql=".$sql);
 	    $result = $this->db->query($sql);
         if ($result)
         {
-            if ($this->db->affected_rows($result))
+            $nbaffectedrows=$this->db->affected_rows();
+
+			if ($nbaffectedrows)
             {
 		        $this->pass=$password;
 		        $this->pass_indatabase=$password_indatabase;
 
-                // Appel des triggers
-                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
-                $interface=new Interfaces($this->db);
-                $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
-                if ($result < 0) $this->errors=$interface->errors;
-                // Fin appel triggers
+				if ($this->user_id && ! $nosyncuser)
+				{
+					// This member is linked with a user, so we also update users informations
+					// if this is an update.
+					$luser=new User($this->db);
+					$luser->id=$this->user_id;
+					$result=$luser->fetch();
 
+					if ($result >= 0)
+					{
+						$result=$luser->password($user,$this->pass,$conf->password_encrypted,0,0,1);
+						if ($result < 0)
+						{
+							$this->error=$luser->error;
+							dolibarr_syslog("Adherent::password ".$this->error,LOG_ERROR);
+							$error++;
+						}
+					}
+					else
+					{
+						$this->error=$luser->error;
+						$error++;
+					}
+				}
+
+				if (! $error && ! $notrigger)
+				{
+	                // Appel des triggers
+	                include_once(DOL_DOCUMENT_ROOT . "/interfaces.class.php");
+	                $interface=new Interfaces($this->db);
+	                $result=$interface->run_triggers('MEMBER_NEW_PASSWORD',$this,$user,$langs,$conf);
+	                if ($result < 0) { $error++; $this->errors=$interface->errors; }
+	                // Fin appel triggers
+				}
+				
                 return $this->pass;
             }
-            else {
+            else
+			{
                 return 0;
             }
         }
