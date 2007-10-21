@@ -22,7 +22,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -984,6 +983,8 @@ class User
 			{
 				if ($this->fk_member && ! $nosyncmember)
 				{
+					require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+					
 					// This user is linked with a member, so we also update members informations
 					// if this is an update.
 					$adh=new Adherent($this->db);
@@ -1172,6 +1173,8 @@ class User
 
 					if ($this->fk_member && ! $nosyncmember)
 					{
+						require_once(DOL_DOCUMENT_ROOT."/adherents/adherent.class.php");
+	
 						// This user is linked with a member, so we also update members informations
 						// if this is an update.
 						$adh=new Adherent($this->db);

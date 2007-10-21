@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -569,6 +568,8 @@ class Adherent
 			{
 				if ($this->user_id && ! $nosyncuser)
 				{
+					require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
 					$luser=new User($this->db);
@@ -774,6 +775,8 @@ class Adherent
 
 				if ($this->user_id && ! $nosyncuser)
 				{
+					require_once(DOL_DOCUMENT_ROOT."/user.class.php");
+
 					// This member is linked with a user, so we also update users informations
 					// if this is an update.
 					$luser=new User($this->db);
