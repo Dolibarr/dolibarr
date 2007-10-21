@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /** 
@@ -130,8 +129,9 @@ if ($result)
     }
 
     $param="";
-    if (isset($_GET["statut"]))     $param.="&statut=$statut";
+    if (isset($_GET["statut"]))     $param.="&statut=".$_GET["statut"];
     if (isset($_GET["search_nom"])) $param.="&search_nom=".$_GET["search_nom"];
+    if (isset($_GET["filter"]))     $param.="&filter=".$_GET["filter"];
     print_barre_liste($titre,$page,$_SERVER["PHP_SELF"],$param,$sortfield,$sortorder,'',$num);
 
     print "<table class=\"noborder\" width=\"100%\">";
