@@ -328,6 +328,10 @@ class Conf
 		$this->export->enabled=defined("MAIN_MODULE_EXPORT")?MAIN_MODULE_EXPORT:0;
 		$this->export->dir_output=DOL_DATA_ROOT."/export";
 		$this->export->dir_temp  =DOL_DATA_ROOT."/export/temp";
+		// Module import
+		$this->import->enabled=defined("MAIN_MODULE_IMPORT")?MAIN_MODULE_IMPORT:0;
+		$this->import->dir_output=DOL_DATA_ROOT."/import";
+		$this->import->dir_temp  =DOL_DATA_ROOT."/import/temp";
 		// Module ldap
 		$this->ldap->enabled=defined("MAIN_MODULE_LDAP")?MAIN_MODULE_LDAP:0;
 		$this->ldap->dir_temp=DOL_DATA_ROOT."/ldap/temp";

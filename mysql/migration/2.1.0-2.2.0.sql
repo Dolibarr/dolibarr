@@ -375,6 +375,8 @@ insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titr
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4002, 'tools', '', 4000, '/bookmarks/liste.php', 'List', 1, 'other', '$user->rights->bookmark->lire', '', 2, 1);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4100, 'tools', '', 8, '/exports/index.php?leftmenu=export', 'FormatedExport', 0, 'exports', '$user->rights->export->lire', '', 2, 2);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4101, 'tools', '', 4100, '/exports/export.php?leftmenu=export', 'NewExport', 1, 'exports', '$user->rights->export->creer', '', 2, 0);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4130, 'tools', '', 8, '/admin/import/index.php?leftmenu=import', 'FormatedImport', 0, 'imports', '$user->rights->import->lire', '', 2, 2);
+insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4131, 'tools', '', 4130, '/admin/import/import.php?leftmenu=import', 'NewImport', 1, 'imports', '$user->rights->import->creer', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4200, 'members', '', 13, '/adherents/index.php?leftmenu=members&mainmenu=members', 'Members', 0, 'members', '$user->rights->adherent->lire', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4201, 'members', '', 4200, '/adherents/fiche.php?action=create', 'NewMember', 1, 'members', '$user->rights->adherent->creer', '', 2, 0);
 insert into `llx_menu` (`rowid`, `mainmenu`, `leftmenu`, `fk_menu`, `url`, `titre`, `level`, `langs`, `right`, `target`, `user`, `order`) values (4202, 'members', '', 4200, '/adherents/liste.php', 'List', 1, 'members', '$user->rights->adherent->lire', '', 2, 1);
@@ -455,6 +457,7 @@ insert into `llx_menu_constraint` (`rowid`, `action`) values (45, '$conf->menudb
 insert into `llx_menu_constraint` (`rowid`, `action`) values (46, '$conf->energie->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (47, '$conf->telephonie->enabled');
 insert into `llx_menu_constraint` (`rowid`, `action`) values (48, '($user->admin && function_exists("eaccelerator_info"))');
+insert into `llx_menu_constraint` (`rowid`, `action`) values (49, '$conf->import->enabled');
 
 -- 
 -- Contenu de la table `llx_menu_const`
@@ -528,28 +531,29 @@ insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) value
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (67, 3900, 28, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (68, 4000, 29, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (69, 4100, 30, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (70, 4200, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (71, 4300, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (72, 4400, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (73, 4500, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (74, 4600, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (75, 4700, 31, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (76, 4400, 21, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (77, 4501, 30, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (78, 2, 32, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (79, 3, 33, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (80, 4, 34, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (81, 5, 35, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (82, 6, 36, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (83, 7, 27, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (84, 8, 37, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (85, 9, 47, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (86, 10, 46, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (87, 11, 38, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (88, 12, 39, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (89, 13, 40, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (90, 14, 41, 2);
-insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (91, 15, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (70, 4130, 49, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (71, 4200, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (72, 4300, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (73, 4400, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (74, 4500, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (75, 4600, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (76, 4700, 31, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (77, 4400, 21, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (78, 4501, 30, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (79, 2, 32, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (80, 3, 33, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (81, 4, 34, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (82, 5, 35, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (83, 6, 36, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (84, 7, 27, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (85, 8, 37, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (86, 9, 47, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (87, 10, 46, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (88, 11, 38, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (89, 12, 39, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (90, 13, 40, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (91, 14, 41, 2);
+insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (92, 15, 31, 2);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (100, 1715, 13, 1);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (101, 1716, 13, 1);
 insert into `llx_menu_const` (`rowid`, `fk_menu`, `fk_constraint`, `user`) values (102, 1717, 13, 1);
