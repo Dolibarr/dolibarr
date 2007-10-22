@@ -16,7 +16,6 @@
 * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 *
 * $Id$
-* $Source$
 */
 
 /**
@@ -752,8 +751,8 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members",$langs->trans("List"),1,$user->rights->adherent->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=-1",$langs->trans("MenuMembersToValidate"),1,$user->rights->adherent->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1",$langs->trans("MenuMembersValidated"),1,$user->rights->adherent->lire);
-					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=uptodate",$langs->trans("MenuMembersUpToDate"),1,$user->rights->adherent->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=1&amp;filter=outofdate",$langs->trans("MenuMembersNotUpToDate"),1,$user->rights->adherent->lire);
 					$newmenu->add_submenu(DOL_URL_ROOT."/adherents/liste.php?leftmenu=members&amp;statut=0",$langs->trans("MenuMembersResiliated"),1,$user->rights->adherent->lire);
 
 					$langs->load("compta");
