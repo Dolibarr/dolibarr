@@ -1,7 +1,10 @@
 # Dolibarr language file - fr_FR - exports
 ExportsArea=Espace exports
+ImportArea=Espace import
 NewExport=Nouvel export
+NewImport=Nouvel import
 ExportableDatas=Lot de données exportables
+ImportableDatas=Lot de données importables
 SelectExportDataSet=Choisissez un lot prédéfini de données que vous désirez exporter...
 SelectExportFields=Choisissez les champs à exporter, ou choisissez un profil d'export prédéfini
 SaveExportModel=Enregistrer ce profil d'export si vous désirez le réutiliser ultérieurement...
@@ -20,8 +23,12 @@ AvailableFormats=Formats dispo.
 LibraryUsed=Librairie utilisée
 LibraryVersion=Version
 Step=Etape
+FormatedImport=Assistant import
+FormatedImportDesc1=Cet espace permet de réaliser des imports personalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
+FormatedImportDesc2=La première étape est de choisir le type de donnée à importer, puis le fichier, ensuite de choisir les champs que vous voulez importer.
 FormatedExport=Assistant export
 FormatedExportDesc1=Cet espace permet de réaliser des exports personalisés des données via un assistant qui évite d'avoir des connaissances techniques de Dolibarr.
 FormatedExportDesc2=La première étape est de choisir un des lots de données prédéfinis, ensuite de choisir les champs que vous voulez dans votre fichier résultat, et dans quel ordre.
 FormatedExportDesc3=Une fois les données sélectionnées, il est possible de choisir le format du fichier export généré.
 Sheet=Feuille
+NoImportableData=Pas de type de données importable (aucun module contenant des définitions de données importable n'est actif)

@@ -1,7 +1,10 @@
 # Dolibarr language file - en_US - exports
 ExportsArea=Exports area
+ImportArea=Import area
 NewExport=New export
+NewImport=New import
 ExportableDatas=Exportable dataset
+ImportableDatas=Importable dataset
 SelectExportDataSet=Choose dataset you want to export...
 SelectExportFields=Choose fields you want to export, or select a predefined export profil
 SaveExportModel=Save this export profile if you plan to reuse it later...
@@ -20,8 +23,12 @@ AvailableFormats=Formats disponibles
 LibraryUsed=Librairie
 LibraryVersion=Version
 Step=Step
+FormatedImport=Import assistant
+FormatedImportDesc1=This area allows to import personalized data, using an assistant to help you in process without technical knowledge.
+FormatedImportDesc2=First step is to choose a king of data you want to load, then file to load, then to choose which fields you want to load.
 FormatedExport=Export assistant
-FormatedExportDesc1=This area allows to export personalized data using an assistant to help in process without technical knowledge.
+FormatedExportDesc1=This area allows to export personalized data, using an assistant to help you in process without technical knowledge.
 FormatedExportDesc2=First step is to choose a predefined dataset, then to choose which fields you want in your result files, and which order.
 FormatedExportDesc3=When data to export are selected, you can define output file format you want to export your data to.
 Sheet=Sheet
+NoImportableData=No importable data (no module with definitions to allow data imports)

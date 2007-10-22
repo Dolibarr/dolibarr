@@ -727,6 +727,13 @@ class MenuLeft {
 					$newmenu->add_submenu(DOL_URL_ROOT."/exports/export.php?leftmenu=export",$langs->trans("NewExport"),1, $user->rights->export->creer);
 				}
 
+				if ($conf->global->MAIN_MODULE_IMPORT)
+				{
+					$langs->load("exports");
+					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/index.php?leftmenu=import",$langs->trans("FormatedImport"),0, $user->rights->import->lire);
+					$newmenu->add_submenu(DOL_URL_ROOT."/admin/import/import.php?leftmenu=import",$langs->trans("NewImport"),1, $user->rights->import->creer);
+				}
+
 				if ($conf->global->MAIN_MODULE_DOMAIN)
 				{
 					$langs->load("domains");
