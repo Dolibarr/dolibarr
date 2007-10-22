@@ -2232,7 +2232,7 @@ function _out($s)
 					
 					if (isset($attr['face']) and in_array(strtolower($attr['face']), $this->fontlist)) {
 						$this->SetFont(strtolower($attr['face']));
-						$this->issetfont=true; //créait un problème de police dans le pdf
+						$this->issetfont=true;
 					}
 					if (isset($attr['size'])) {
 						$headsize = intval($attr['size']);
@@ -2241,6 +2241,7 @@ function _out($s)
 					}
 					$currentFontSize = $this->FontSize;
 					$this->tempfontsize = $this->FontSizePt;
+					//$this->SetFontSize($this->FontSizePt + $headsize);
 					$this->SetFontSize($this->FontSizePt + $headsize - 3); // Todo: correction pour xx-small
 					$this->lasth = $this->FontSize * K_CELL_HEIGHT_RATIO;
 					break;
