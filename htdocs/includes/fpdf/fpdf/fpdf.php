@@ -2003,7 +2003,7 @@ function _out($s)
 			$this->SetY($y);
 					
 			if(empty($w)) {
-				$w = $this->fw - $x - $this->rMargin;
+				$w = $this->w - $x - $this->rMargin;
 			}
 			
 			// store original margin values
@@ -2012,7 +2012,7 @@ function _out($s)
 			
 			// set new margin values
 			$this->SetLeftMargin($x);
-			$this->SetRightMargin($this->fw - $x - $w);
+			$this->SetRightMargin($this->w - $x - $w);
 					
 			// calculate remaining vertical space on page
 			$restspace = $this->getPageHeight() - $this->GetY() - $this->getBreakMargin();
