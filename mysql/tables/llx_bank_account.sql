@@ -38,7 +38,7 @@ create table llx_bank_account
   number         varchar(255),
   cle_rib        varchar(5),
   bic            varchar(11),
-  iban_prefix    varchar(5),
+  iban_prefix    varchar(50), -- Code IBAN
   domiciliation  varchar(255),
   proprio        varchar(60),
   adresse_proprio varchar(255),
