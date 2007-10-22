@@ -72,8 +72,11 @@ class mailing_fraise extends MailingTargets
         global $langs;
         $langs->load("members");
 
+		// Array for requests for statistics board
 	    $statssql=array();
-        $statssql[0]="SELECT '".addslashes($langs->trans("FundationMembers"))."' as label, count(*) as nb FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
+
+        $statssql[0] ="SELECT '".addslashes($langs->trans("FundationMembers"))."' as label, count(*) as nb";
+		$statssql[0].=" FROM ".MAIN_DB_PREFIX."adherent where statut = 1";
 
 		return $statssql;
 	}
@@ -109,8 +112,9 @@ class mailing_fraise extends MailingTargets
         
         $s='';
         $s.='<select name="filter" class="flat">';
-        $s.='<option value="-1">'.$langs->trans("MemberStatusDraftShort").'</option>';
-        $s.='<option value="1" selected="true">'.$langs->trans("MemberStatusActiveShort").'</option>';
+        $s.='<option value="-1">'.$langs->trans("MemberStatusDraft").'</option>';
+        $s.='<option value="1a">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusPayedShort").')</option>';
+        $s.='<option value="1b">'.$langs->trans("MemberStatusActiveShort").' ('.$langs->trans("MemberStatusActiveLateShort").')</option>';
         $s.='<option value="0">'.$langs->trans("MemberStatusResiliatedShort").'</option>';
         $s.='</select>';
         return $s;
@@ -143,9 +147,10 @@ class mailing_fraise extends MailingTargets
         $sql.= " WHERE a.email IS NOT NULL";
         foreach($filtersarray as $key)
         {
-            if ($key == -1) $sql.= " AND a.statut=-1";
-            if ($key == 0)  $sql.= " AND a.statut=0";
-            if ($key == 1)  $sql.= " AND a.statut=1";
+            if ($key == '-1') $sql.= " AND a.statut=-1";
+            if ($key == '1a')  $sql.= " AND a.statut=1 AND datefin >= sysdate()";
+            if ($key == '1b')  $sql.= " AND a.statut=1 AND datefin < sysdate()";
+            if ($key == '0')  $sql.= " AND a.statut=0";
         }
         $sql.= " ORDER BY a.email";
 
