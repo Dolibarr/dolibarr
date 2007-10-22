@@ -354,7 +354,7 @@ a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 /* Pour menu gauche Auguria */
 
 .menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
-font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; }
+font.menu_titre_disabled  { font-size:11px; text-align:left; font-weight: bold; color: #757575; margin: 1em 1em 1em 1em; }
 
 a.menu_titre:link       { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
 a.menu_titre:visited    { font-size:11px; text-align:left; font-weight: bold; color: #FFFFFF; margin: 1em 1em 1em 1em; }
