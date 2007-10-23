@@ -2,7 +2,7 @@
 Category=Category
 Categorie=Category
 categories=categories
-TheCategorie=The catégorie
+TheCategorie=The category
 In=In
 AddIn=Add in
 modify=modify
@@ -39,7 +39,7 @@ AddProductToCat=Add this product to a category?
 ImpossibleAddCat=Impossible to add the category
 ImpossibleAssociateCategory=Impossible to associate the category to
 WasAddedSuccessfully=was added successfully.
-CategorySuccessfullyCreated=La catégorie %s a été ajouté avec succès.
+CategorySuccessfullyCreated=This category %s has been added with success.  
 ProductIsInCategories=Product/service owns to following categories
 SupplierIsInCategories=Supplier owns to following categories
 CompanyIsInCategories=Companie owns to following categories

@@ -67,4 +67,4 @@ ActionAC_FAC=Send billing
 ActionAC_REL=Send billing (reminder)
 ActionAC_CLO=Close
 ActionAC_EMAILING=Send mass emailing
-ActionAC_COM=Envoi commande par mail
+ActionAC_COM=Send order by mail
