@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -108,7 +107,8 @@ class ModeleBoxes
         $bcx[1] = 'class="box_impair"';
 
         $var = true;
-        $nbcol=sizeof($contents[0])+1;
+        $nbcol=0;
+		if (isset($contents[0])) $nbcol=sizeof($contents[0])+1;
         $nblines=sizeof($contents);
 
         print "\n\n<!-- Box start -->\n";
@@ -126,8 +126,8 @@ class ModeleBoxes
 		{
 			print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
 		}
-        print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
-        if ($head['sublink'])
+        if (isset($head['text'])) print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
+        if (isset($head['sublink']) && $head['sublink'])
         {
             print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
         }

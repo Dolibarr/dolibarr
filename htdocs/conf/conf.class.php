@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -124,10 +123,10 @@ class Conf
 		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
 
 		// Variable globales LDAP
-		if (! $this->global->LDAP_KEY_USERS) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_GROUPS) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_CONTACTS) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
-		if (! $this->global->LDAP_KEY_MEMBERS) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_USERS)) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
+		if (! isset($this->global->LDAP_KEY_MEMBERS)) $this->global->LDAP_KEY_MEMBERS=$this->global->LDAP_FIELD_FULLNAME;
 
 
 		/*
@@ -351,21 +350,21 @@ class Conf
 
 		// Debug Mode
 		$this->use_debug_mode=0;
-		if ($this->global->MAIN_ENABLE_DEBUG_MODE) $this->use_debug_mode=$this->global->MAIN_ENABLE_DEBUG_MODE;
+		if (isset($this->global->MAIN_ENABLE_DEBUG_MODE)) $this->use_debug_mode=$this->global->MAIN_ENABLE_DEBUG_MODE;
 		
 		// System tools
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
 
 		// societe
 		if (! $this->global->SOCIETE_CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON="mod_codeclient_leopard";
-		if (! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
-		if (! $this->global->SOCIETE_CODECOMPTA_ADDON) $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
+		if (! isset($this->global->SOCIETE_CODEFOURNISSEUR_ADDON) || ! $this->global->SOCIETE_CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->SOCIETE_CODECLIENT_ADDON;
+		if (! isset($this->global->SOCIETE_CODECOMPTA_ADDON) || ! $this->global->SOCIETE_CODECOMPTA_ADDON) $this->global->SOCIETE_CODECOMPTA_ADDON="mod_codecompta_panicum";
 		// Pour compatibilite ascendante:
-		if ($this->global->CODECLIENT_ADDON) $this->global->SOCIETE_CODECLIENT_ADDON=$this->global->CODECLIENT_ADDON;
-		if ($this->global->CODEFOURNISSEUR_ADDON) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->CODEFOURNISSEUR_ADDON;
+		if (isset($this->global->CODECLIENT_ADDON)) $this->global->SOCIETE_CODECLIENT_ADDON=$this->global->CODECLIENT_ADDON;
+		if (isset($this->global->CODEFOURNISSEUR_ADDON)) $this->global->SOCIETE_CODEFOURNISSEUR_ADDON=$this->global->CODEFOURNISSEUR_ADDON;
 
 		// securite
-		if (! $this->global->USER_PASSWORD_GENERATED) $this->global->USER_PASSWORD_GENERATED='standard';
+		if (! isset($this->global->USER_PASSWORD_GENERATED) || ! $this->global->USER_PASSWORD_GENERATED) $this->global->USER_PASSWORD_GENERATED='standard';
 
 		// conf->use_preview_tabs
 		$this->use_preview_tabs=1;
@@ -426,27 +425,27 @@ class Conf
 		
 		// $this->email_from = email pour envoi par dolibarr des mails automatiques
 		$this->email_from = "dolibarr-robot@domain.com";
-		if ($conf->global->MAIN_MAIL_EMAIL_FROM)
+		if (isset($conf->global->MAIN_MAIL_EMAIL_FROM) && $conf->global->MAIN_MAIL_EMAIL_FROM)
 		{
 			$this->email_from = $conf->global->MAIN_MAIL_EMAIL_FROM;
 		}
 		
 		// $this->notification->email_from = email pour envoi par Dolibarr des notifications
-	    $this->notification->email_from=$conf->global->MAIN_MAIL_EMAIL_FROM;
-		if ($conf->global->NOTIFICATION_EMAIL_FROM)
+	    $this->notification->email_from=$this->email_from;
+		if (isset($conf->global->NOTIFICATION_EMAIL_FROM) && $conf->global->NOTIFICATION_EMAIL_FROM)
 		{
-		    $this->mailing->email_from=$conf->global->NOTIFICATION_EMAIL_FROM;
+		    $this->notification->email_from=$conf->global->NOTIFICATION_EMAIL_FROM;
 		}
 
 		// $this->mailing->email_from = email pour envoi par Dolibarr des mailings
-		$this->mailing->email_from=$conf->global->MAIN_MAIL_EMAIL_FROM;
-		if ($conf->global->MAILING_EMAIL_FROM)
+		$this->mailing->email_from=$this->email_from;;
+		if (isset($conf->global->MAILING_EMAIL_FROM) && $conf->global->MAILING_EMAIL_FROM)
 		{
 		    $this->mailing->email_from=$conf->global->MAILING_EMAIL_FROM;
 		}
 
 		// Defini MAIN_GRAPH_LIBRARY
-		if (! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
+		if (isset($this->global->MAIN_GRAPH_LIBRARY) && ! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
 		{
 			$this->global->MAIN_GRAPH_LIBRARY='phplot';
 			// $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
@@ -485,7 +484,7 @@ class Conf
 		$this->contrat->services->expires->warning_delay=$this->global->MAIN_DELAY_RUNNING_SERVICES*24*60*60;
 		$this->adherent->cotisation->warning_delay=$this->global->MAIN_DELAY_MEMBERS*24*60*60;
 		$this->bank->rappro->warning_delay=$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
-
+		$this->bank->cheque->warning_delay=$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT*24*60*60;
 	}
 
 }

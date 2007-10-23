@@ -682,8 +682,7 @@ class Product
 		$sql.= " AND pfp.rowid = ".$prodfournprice;
 		$sql.= " AND pfp.quantity <= ".$qty;
 	
-		dolibarr_syslog("Product::get_buyprice $prodfournprice,$qty sql=".$sql);
-	
+		dolibarr_syslog("Product::get_buyprice sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -699,7 +698,7 @@ class Product
 			else
 			{
 				// On refait le meme select sur la ref et l'id du produit
-				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc";
+				$sql = "SELECT pfp.price as price, pfp.quantity as quantity, pf.fk_soc,";
 				$sql.= " pf.fk_product, pf.ref_fourn";
 				$sql.= " FROM ".MAIN_DB_PREFIX."product_fournisseur_price as pfp, ".MAIN_DB_PREFIX."product_fournisseur as pf";
 				$sql.= " WHERE pf.rowid = pfp.fk_product_fournisseur";
@@ -709,6 +708,7 @@ class Product
 				$sql.= " ORDER BY pfp.quantity DESC"; 	 
 				$sql.= " LIMIT 1";
 
+				dolibarr_syslog("Product::get_buyprice sql=".$sql);
 				$resql = $this->db->query($sql);
 				if ($resql)
 				{

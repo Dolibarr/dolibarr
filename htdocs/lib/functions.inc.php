@@ -23,7 +23,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -163,26 +162,26 @@ function sanitize_string($str)
 	\brief      Envoi des messages dolibarr dans un fichier ou dans syslog
 				Pour fichier:   fichier défini par SYSLOG_FILE
 				Pour syslog:    facility défini par SYSLOG_FACILITY
-	\param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERROR
+	\param      message		    Message a tracer. Ne doit pas etre traduit si level = LOG_ERR
 	\param      level           Niveau de l'erreur
 	\remarks	Cette fonction n'a un effet que si le module syslog est activé.
 				Warning, les fonctions syslog sont buggués sous Windows et génèrent des
 				fautes de protection mémoire. Pour résoudre, utiliser le loggage fichier,
 				au lieu du loggage syslog (configuration du module).
 				Si SYSLOG_FILE_NO_ERROR défini, on ne gère pas erreur ecriture log
-	\remarks	On windows LOG_ERROR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=LOG_INFO=6
+	\remarks	On windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=LOG_INFO=6
 */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
 	global $conf,$user,$langs;
 
-	if ($conf->syslog->enabled)
+	if (isset($conf->syslog->enabled) && $conf->syslog->enabled)
 	{
 		//print $level.' - '.$conf->global->SYSLOG_LEVEL.' - '.$conf->syslog->enabled." \n";
 		if ($level > $conf->global->SYSLOG_LEVEL) return;
 		
 		// Traduction du message
-		if ($level == LOG_ERROR)
+		if ($level == LOG_ERR)
 		{
 			$langs->load("errors");
 			if ($message != $langs->trans($message)) $message = $langs->trans($message);

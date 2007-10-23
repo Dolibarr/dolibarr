@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -67,7 +66,6 @@ class box_factures_fourn extends ModeleBoxes {
 
         $this->info_box_head = array(
 				'text' => $langs->trans("BoxTitleLastSupplierBills",$max),
-				'limit'=> strlen($text)
 			);
 
         if ($user->rights->fournisseur->facture->lire)

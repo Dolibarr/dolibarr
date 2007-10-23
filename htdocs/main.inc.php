@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -798,7 +797,8 @@ function top_menu($head, $title="", $target="")
         $title.='<br><b>'.$langs->trans("ConnectedSince").'</b>: '.dolibarr_print_date($user->datelastlogin,"dayhour");
         if ($dolibarr_main_authentication) $title.='<br><b>'.$langs->trans("AuthenticationMode").'</b>: '.$dolibarr_main_authentication;
 
-        $text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
+        $text='';
+		$text.='<a href="'.DOL_URL_ROOT.'/user/logout.php"';
         $text.=$menutop->atarget?(' target="'.$menutop->atarget.'"'):'';
         $text.='>';
         $text.='<img class="login" border="0" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/logout.png"';

@@ -495,22 +495,26 @@ class User
 			$i = 0;
 			while ($i < $num)
 			{
-				$row = $this->db->fetch_row($result);
+				$obj = $this->db->fetch_object($result);
 
-				if ($row[1])
+				$module=$obj->module;
+				$perms=$obj->perms;
+				$subperms=$obj->subperms;
+
+				if ($perms)
 				{
-					if ($row[2])
+					if ($subperms)
 					{
-						if (! $this->rights->$row[0] ||
-								(is_object($this->rights->$row[0]) && ! $this->rights->$row[0]->$row[1]) ||
-								(is_object($this->rights->$row[0]->$row[1])) )
+						if (! isset($this->rights->$module) ||
+								(is_object($this->rights->$module) && ! isset($this->rights->$module->$perms)) ||
+								(is_object($this->rights->$module->$perms)) )
 						{
-							$this->rights->$row[0]->$row[1]->$row[2] = 1;
+							$this->rights->$module->$perms->$subperms = 1;
 						}
 					}
 					else
 					{
-						$this->rights->$row[0]->$row[1] = 1;
+						$this->rights->$module->$perms = 1;
 					}
 
 				}

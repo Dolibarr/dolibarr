@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005 Simon Tosser  <simon@kornog-computing.com>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005      Simon Tosser         <simon@kornog-computing.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -52,6 +51,7 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
     dolibarr_set_const($db, "MAIN_DELAY_SUPPLIER_BILLS_TO_PAY",$_POST["SupplierBillsToPay"]);
     dolibarr_set_const($db, "MAIN_DELAY_CUSTOMER_BILLS_UNPAYED",$_POST["CustomerBillsUnpayed"]);
     dolibarr_set_const($db, "MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE",$_POST["TransactionsToConciliate"]);
+    dolibarr_set_const($db, "MAIN_DELAY_CHEQUES_TO_DEPOSIT",$_POST["ChequesToDeposit"]);
 	dolibarr_set_const($db, "MAIN_DELAY_MEMBERS",$_POST["Members"]);
     if ($_POST['action'] != 'updateedit')
     {
@@ -170,6 +170,11 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
         print '<td width="20px">'.img_object('','account').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>';
         print '<input size="5" name="TransactionsToConciliate" value="'. ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . '"> ' . $langs->trans("days") . '</td></tr>'; 
+        $var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','account').'</td>';
+        print '<td>'.$langs->trans("DelaysOfTolerancechequesToDeposit").'</td><td>';
+        print '<input size="5" name="ChequesToDeposit" value="'. ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . '"> ' . $langs->trans("days") . '</td></tr>'; 
     }
     if ($conf->adherent->enabled)
     {
@@ -269,6 +274,10 @@ else
         print '<tr '.$bc[$var].'>';
         print '<td width="20px">'.img_object('','account').'</td>';
         print '<td>'.$langs->trans("DelaysOfToleranceTransactionsToConciliate").'</td><td>' . ($conf->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE+0) . ' ' . $langs->trans("days") . '</td></tr>';    
+    	$var=!$var;
+        print '<tr '.$bc[$var].'>';
+        print '<td width="20px">'.img_object('','account').'</td>';
+        print '<td>'.$langs->trans("DelaysOfToleranceChequesToDeposit").'</td><td>' . ($conf->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT+0) . ' ' . $langs->trans("days") . '</td></tr>';    
     }
 
     if ($conf->adherent->enabled)

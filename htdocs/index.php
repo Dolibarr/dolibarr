@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -205,7 +204,7 @@ if ($user->societe_id == 0)
         {
             $classe=$classes[$key];
             // Cherche dans cache si le load_state_board deja réalisé
-            if (! is_object($boardloaded[$classe]))
+            if (! isset($boardloaded[$classe]) || ! is_object($boardloaded[$classe]))
             {
                 include_once($includes[$key]);
 
@@ -248,7 +247,7 @@ $var=true;
 //
 
 // Nbre actions à faire (en retard)
-if (($conf->commercial->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)  && $user->rights->actions->lire)
+if ($conf->commercial->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
 {
   include_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
   $board=new ActionComm($db);

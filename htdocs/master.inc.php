@@ -59,7 +59,7 @@ else
 }
 
 // Forcage du parametrage PHP error_reporting (Dolibarr non utilisable en mode error E_ALL)
-// error_reporting(E_ALL);
+//error_reporting(E_ALL);
 error_reporting(E_ALL ^ E_NOTICE);
 
 // Test si install ok
@@ -112,7 +112,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
 
 // on décode le mot de passe de la base si besoin
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
