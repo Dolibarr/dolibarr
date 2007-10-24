@@ -62,6 +62,7 @@ class box_factures extends ModeleBoxes {
     {
         global $user, $langs, $db;
 
+        include_once(DOL_DOCUMENT_ROOT."/facture.class.php");
         $facturestatic=new Facture($db);
         
         $this->info_box_head = array(
