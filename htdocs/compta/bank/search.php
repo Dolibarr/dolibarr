@@ -44,6 +44,8 @@ $account=$_POST["account"];
 
 llxHeader();
 
+$html = new Form($db);
+
 if ($vline) $viewline = $vline;
 else $viewline = 50;
 
@@ -60,26 +62,25 @@ print '<td class="liste_titre" align="right">'.$langs->trans("Credit").'</td>';
 print '<td class="liste_titre" align="center">'.$langs->trans("Type").'</td>';
 print '<td class="liste_titre" align="left">'.$langs->trans("Account").'</td>';
 print "</tr>\n";
-?>
 
-<form method="post" action="search.php">
-<tr class="liste_titre">
-<td class="liste_titre">&nbsp;</td>
-<td class="liste_titre">
-<input type="text" class="flat" name="description" size="40" value=<?php echo $description ?>>
-</td>
-<td class="liste_titre" align="right">
-<input type="text" class="flat" name="debit" size="6" value=<?php echo $debit ?>>
-</td>
-<td class="liste_titre" align="right">
-<input type="text" class="flat" name="credit" size="6" value=<?php echo $credit ?>>
-</td>
-<td class="liste_titre" align="center">
-<?php
+print '<form method="post" action="search.php">';
+print '<tr class="liste_titre">';
+print '<td class="liste_titre">&nbsp;</td>';
+print '<td class="liste_titre">';
+print '<input type="text" class="flat" name="description" size="40" value="'.$description.'">';
+print '</td>';
+print '<td class="liste_titre" align="right">';
+print '<input type="text" class="flat" name="debit" size="6" value="'.$debit.'">';
+print '</td>';
+print '<td class="liste_titre" align="right">';
+print '<input type="text" class="flat" name="credit" size="6" value="'.$credit.'">';
+print '</td>';
+print '<td class="liste_titre" align="center">';
+
 $html->select_types_paiements(empty($_POST['type'])?'':$_POST['type'],'type');
-?>	
-</td>
-<?php
+	
+print '</td>';
+
 print '<td class="liste_titre" align="right">';
 print '<input type="hidden" name="action" value="search">';
 print '<input type="image" class="liste_titre" name="submit" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'">';
