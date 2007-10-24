@@ -66,13 +66,17 @@ class Prospect extends Societe
         global $conf, $user;
         
         $this->nb=array("customers" => 0,"prospects" => 0);
+        $clause = "WHERE";
 
         $sql = "SELECT count(s.rowid) as nb, s.client";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", sc.fk_soc, sc.fk_user";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
-        $sql.= " WHERE s.client in (1,2)";
-        if (!$user->rights->commercial->client->voir && !$user->societe_id) $sql .= " AND s.rowid = sc.fk_soc AND sc.fk_user = " .$user->id;
+        if (!$user->rights->commercial->client->voir && !$user->societe_id)
+        {
+        	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe_commerciaux as sc ON s.rowid = sc.fk_soc";
+        	$sql.= " WHERE sc.fk_user = " .$user->id;
+        	$clause = "AND";
+        }
+        $sql.= " ".$clause." s.client in (1,2)";
         $sql.= " GROUP BY s.client";
         $resql=$this->db->query($sql);
         if ($resql)
