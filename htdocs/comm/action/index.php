@@ -70,7 +70,7 @@ $sql.= " u.login, u.rowid as userid,";
 $sql.= " sp.name, sp.firstname";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."user as u,";
-if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
+if (!$user->rights->commercial->client->voir && !$socid) $sql .= " ".MAIN_DB_PREFIX."societe_commerciaux as sc,";
 $sql.= " ".MAIN_DB_PREFIX."actioncomm as a";
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople sp ON a.fk_contact = sp.rowid";
 $sql.= " WHERE a.fk_soc = s.rowid AND c.id = a.fk_action AND a.fk_user_author = u.rowid";
