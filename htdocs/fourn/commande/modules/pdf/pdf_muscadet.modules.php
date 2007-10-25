@@ -295,25 +295,25 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
 
                     // Collecte des totaux par valeur de tva
                     // dans le tableau tva["taux"]=total_tva
-					$tvaligne=$com->lignes[$i]->price * $com->lignes[$i]->qty;
-					if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
-					$this->tva[ (string)$com->lignes[$i]->tva_tx ] += $tvaligne;
+                    $tvaligne=$com->lignes[$i]->price * $com->lignes[$i]->qty;
+                    if ($com->remise_percent) $tvaligne-=($tvaligne*$com->remise_percent)/100;
+                    $this->tva[ (string)$com->lignes[$i]->tva_tx ] += $tvaligne;
 
                     $nexY+=2;    // Passe espace entre les lignes
 
                     if ($nexY > 200 && $i < ($nblignes - 1))
                     {
-                        $this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY);
-						$this->_pagefoot($pdf);
-                        
-                        // Nouvelle page
-                        $pdf->AddPage();
-                        $pagenb++;
-                        $this->_pagehead($pdf, $com, 0, $outputlangs);
-
-						$nexY = $tab_top_newpage + 8;
-                        $pdf->SetTextColor(0,0,0);
-                        $pdf->SetFont('Arial','', 10);
+                    	$this->_tableau($pdf, $tab_top, $tab_height + 20, $nexY, $outputlangs);
+                    	$this->_pagefoot($pdf, $outputlangs);
+                    	
+                    	// Nouvelle page
+                    	$pdf->AddPage();
+                    	$pagenb++;
+                    	$this->_pagehead($pdf, $com, 0, $outputlangs);
+                    	
+                    	$nexY = $tab_top_newpage + 8;
+                    	$pdf->SetTextColor(0,0,0);
+                    	$pdf->SetFont('Arial','', 10);
                     }
 
                 }
@@ -328,8 +328,8 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     $this->_tableau($pdf, $tab_top_newpage, $tab_height, $nexY, $outputlangs);
                     $bottomlasttab=$tab_top_newpage + $tab_height + 1;
                 }
-
-				$deja_regle = "";
+                
+                $deja_regle = "";
 
                 $posy=$this->_tableau_tot($pdf, $com, $deja_regle, $bottomlasttab, $outputlangs);
  
@@ -593,7 +593,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     function _tableau(&$pdf, $tab_top, $tab_height, $nexY, $outputlangs)
     {
         global $conf;
-        
+   
         // Montants exprimés en     (en tab_top - 1)
         $pdf->SetTextColor(0,0,0);
         $pdf->SetFont('Arial','',8);
