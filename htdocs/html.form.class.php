@@ -2812,7 +2812,7 @@ class Form
 	            // Année
 	            if ($empty || $set_time == -1)
 	            {
-	                print '<input class="flat" type="text" size="2" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
+	                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
 	            }
 	            else
 	            {
