@@ -72,7 +72,7 @@ class CommandeFournisseur extends Commande
 	{
 		$sql = "SELECT c.rowid, c.date_creation, c.ref, c.fk_soc, c.fk_user_author, c.fk_statut, c.amount_ht, c.total_ht, c.total_ttc, c.tva,";
 		$sql .= " ".$this->db->pdate("c.date_commande")." as date_commande, c.fk_projet, c.remise_percent, c.source, c.fk_methode_commande,";
-		$sql .= " c.note, c.note_public,";
+		$sql .= " c.note, c.note_public, c.model_pdf,";
 		$sql .= " cm.libelle as methode_commande";
 		$sql .= " FROM ".MAIN_DB_PREFIX."commande_fournisseur as c";
 		$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."c_methode_commande_fournisseur as cm ON cm.rowid = c.fk_methode_commande";
@@ -103,6 +103,7 @@ class CommandeFournisseur extends Commande
 			$this->projet_id           = $obj->fk_projet;
 			$this->note                = $obj->note;
 			$this->note_public         = $obj->note_public;
+			$this->modelpdf            = $obj->model_pdf;
 			
 			$this->db->free();
 			

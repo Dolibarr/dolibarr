@@ -357,15 +357,15 @@ if ($_REQUEST['action']	== 'builddoc')	// En get ou en	post
   }
   $result=supplier_order_pdf_create($db, $commande->id,$commande->modelpdf,$outputlangs);
   if ($result	<= 0)
-    {
-      dolibarr_print_error($db,$result);
-      exit;
-    }
+  {
+  	dolibarr_print_error($db,$result);
+  	exit;
+  }
   else
-    {
-      Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
-      exit;
-    }
+  {
+  	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#builddoc');
+    exit;
+  }
 }
 
 // Efface les fichiers
@@ -824,10 +824,10 @@ else
 	  $relativepath =	$comfournref.'/'.$comfournref.'.pdf';
 	  $filedir = $conf->fournisseur->commande->dir_output	. '/' .	$comfournref;
 	  $urlsource=$_SERVER["PHP_SELF"]."?id=".$commande->id;
-	  $genallowed=$user->rights->fournisseur->commande->creer;
+	  $genallowed=($commande->statut == 0 ? $user->rights->fournisseur->commande->creer : 0);
 	  $delallowed=$user->rights->fournisseur->commande->supprimer;
 	
-	  $somethingshown=$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$commande->statut>0?1:0,$delallowed,$commande->modelpdf);
+	  $somethingshown=$html->show_documents('commande_fournisseur',$comfournref,$filedir,$urlsource,$genallowed,$delallowed,$commande->modelpdf);
 	
 	
 	  print '</td><td	width="50%"	valign="top">';
