@@ -1,4 +1,4 @@
-// script.aculo.us unittest.js v1.7.1_beta3, Fri May 25 17:19:41 +0200 2007
+// script.aculo.us unittest.js v1.8.0_pre1, Fri Oct 12 21:34:51 +0200 2007
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 //           (c) 2005-2007 Jon Tirsen (http://www.tirsen.com)
@@ -524,15 +524,19 @@ Test.setupBDDExtensionMethods = function(){
     shouldNotBe:     'assertReturnsFalse',
     shouldRespondTo: 'assertRespondsTo'
   };
-  Test.BDDMethods = {};
-  for(m in METHODMAP) {
-    Test.BDDMethods[m] = eval(
-      'function(){'+
-      'var args = $A(arguments);'+
-      'var scope = args.shift();'+
-      'scope.'+METHODMAP[m]+'.apply(scope,(args || []).concat([this])); }');
+  var makeAssertion = function(assertion, args, object) { 
+   	this[assertion].apply(this,(args || []).concat([object]));
   }
-  [Array.prototype, String.prototype, Number.prototype].each(
+  
+  Test.BDDMethods = {};   
+  $H(METHODMAP).each(function(pair) { 
+    Test.BDDMethods[pair.key] = function() { 
+       var args = $A(arguments); 
+       var scope = args.shift(); 
+       makeAssertion.apply(scope, [pair.value, args, this]); }; 
+  });
+  
+  [Array.prototype, String.prototype, Number.prototype, Boolean.prototype].each(
     function(p){ Object.extend(p, Test.BDDMethods) }
   );
 }
