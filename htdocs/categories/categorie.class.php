@@ -2,9 +2,9 @@
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2006-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -743,10 +743,10 @@ class Categorie
 	/**
 	* get_primary_way() affiche le chemin le plus court pour se rendre à un produit
 	*/
-	function get_primary_way($id)
+	function get_primary_way($id, $type="")
 	{
 		$primary_way = Array("taille"=>-1,"chemin"=>Array());
-		$meres = $this->containing($id);
+		$meres = $this->containing($id,$type);
 		foreach ($meres as $mere)
 		{
 			foreach ($mere->get_all_ways() as $way)
@@ -765,10 +765,10 @@ class Categorie
 	/**
 	* print_primary_way() affiche le chemin le plus court pour se rendre à un produit
 	*/
-	function print_primary_way($id, $sep= " &gt;&gt; ",$url)
+	function print_primary_way($id, $sep= " &gt;&gt; ", $url, $type="")
 	{
 		$primary_way = Array();
-		$way = $this->get_primary_way($id);
+		$way = $this->get_primary_way($id,$type);
 		$w = array();
 		foreach ($way as $cat)
 		{
@@ -778,7 +778,7 @@ class Categorie
 			}
 			else
 			{
-				$w[] = "<a href='".DOL_URL_ROOT."/$url?catid=".$cat->id."'>".$cat->label."</a>";
+				$w[] = "<a href='".DOL_URL_ROOT."/".$url."?catid=".$cat->id."'>".$cat->label."</a>";
 			}
 		}
 

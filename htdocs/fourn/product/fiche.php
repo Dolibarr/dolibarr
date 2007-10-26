@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -281,18 +282,16 @@ else
    * Fiche produit
    */
   if ($_GET["id"])
-    {
-
-      if ($_GET["action"] <> 're-edit')
-	{
-	  $product = new Product($db);
-	  $result = $product->fetch($_GET["id"]);
-	}
-
-      if ( $product->id > 0 )
-	{ 
-
-	  if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
+  {
+  	if ($_GET["action"] <> 're-edit')
+  	{
+  		$product = new Product($db);
+  		$result = $product->fetch($_GET["id"]);
+  	}
+  	
+  	if ( $product->id > 0 )
+  	{
+  		if ($_GET["action"] <> 'edit' && $_GET["action"] <> 're-edit')
 	    {
 	      /*
 	       *  En mode visu
@@ -306,15 +305,14 @@ else
 	      $h++;
 	      
 	      if($product->isproduct())
-		{
-		  if ($conf->stock->enabled)
-		    {
-		      $head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
-		      $head[$h][1] = $langs->trans("Stock");
-		      $h++;
-		    }
-
-		}
+	      {
+	      	if ($conf->stock->enabled)
+	      	{
+	      		$head[$h][0] = DOL_URL_ROOT."/product/stock/product.php?id=".$product->id;
+	      		$head[$h][1] = $langs->trans("Stock");
+	      		$h++;
+	      	}
+	      }
 	      
 	      $head[$h][0] = DOL_URL_ROOT."/fourn/product/photos.php?id=".$product->id;
 	      $head[$h][1] = $langs->trans("Photos");	      
@@ -322,9 +320,9 @@ else
 
 	      //Affichage onglet Catégories
 	      if ($conf->categorie->enabled){
-		$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
-		$head[$h][1] = $langs->trans('Categories');
-		$h++;
+	      	$head[$h][0] = DOL_URL_ROOT."/fourn/product/categorie.php?id=".$product->id;
+	      	$head[$h][1] = $langs->trans('Categories');
+	      	$h++;
 	      }
 
 	      $head[$h][0] = DOL_URL_ROOT."/product/fiche.php?id=".$product->id;
@@ -338,28 +336,28 @@ else
 	      print '<table class="border" width="100%">';
 
 	      if ($conf->categorie->enabled)
-	      	{		  
-		  print '<tr id="ways">';
-		  print '<td colspan="3">';
-		  $cat = new Categorie ($db);
-		  $way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php');
-		  if ($way == "")
-		    {
-		      print "Ce produit n'appartient à aucune catégorie";
-		    }
-		  else
-		    {
-		      print $langs->trans("Categorie")." : ";
-		      print $way;	
-		    }
-		  print '</td>';
-		  print '</tr>';
-		}
+	      {
+	      	print '<tr id="ways">';
+	      	print '<td colspan="3">';
+	      	$cat = new Categorie ($db);
+	      	$way = $cat->print_primary_way($product->id," &gt; ",'fourn/product/liste.php',"product");
+	      	if ($way == "")
+	      	{
+	      		print "Ce produit n'appartient à aucune catégorie";
+	      	}
+	      	else
+	      	{
+	      		print $langs->trans("Categorie")." : ";
+	      		print $way;	
+	      	}
+	      	print '</td>';
+	      	print '</tr>';
+	      }
 	      
 	      print "<tr>";
 	      print '<td width="20%">'.$langs->trans("Ref").'</td><td width="40%">'.$product->ref.'</td>';
 	      print '<td width="40%">';
-		  print $product->getLibStatut(2);
+	      print $product->getLibStatut(2);
 	      print '</td></tr>';
 	      print '<tr><td>'.$langs->trans("Label").'</td><td colspan="2">'.$product->libelle.'</td></tr>';
 	      print '<tr><td>'.$langs->trans("SellingPrice").'</td><td>'.price($product->price).'</td>';

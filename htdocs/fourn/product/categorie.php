@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -114,7 +114,7 @@ if ($_GET["id"])
       print "</table><br>\n";
 
       $c = new Categorie($db);
-      $cats = $c->containing($_REQUEST['id']);
+      $cats = $c->containing($_REQUEST['id'],"product");
       
       if (sizeof($cats) > 0)
 	{

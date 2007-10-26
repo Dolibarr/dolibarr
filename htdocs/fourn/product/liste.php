@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -83,7 +84,7 @@ $sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
 if ($catid)
 {
-	$sql .= ", ".MAIN_DB_PREFIX."categorie_product as cp";
+	$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."categorie_product as cp ON cp.fk_product = p.rowid";
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
@@ -115,7 +116,6 @@ else
 	}
 	if($catid)
 	{
-		$sql .= " AND cp.fk_product = p.rowid";
 		$sql .= " AND cp.fk_categorie = ".$catid;
 	}
 
