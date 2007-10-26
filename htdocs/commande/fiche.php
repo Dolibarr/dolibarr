@@ -327,14 +327,14 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			// multiprix
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
-            	$pu_ht = $prod->multiprices[$commande->client->price_level];
-            	$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
-            	$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+				$pu_ht = $prod->multiprices[$commande->client->price_level];
+        $pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
+        $price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
 			}
 			else
 			{
 				$pu_ht = $prod->price;
-	            $pu_ttc = $prod->price_ttc;
+	      $pu_ttc = $prod->price_ttc;
 				$price_base_type = $prod->price_base_type;
 			}
 			
