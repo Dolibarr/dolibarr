@@ -37,6 +37,7 @@ $user->getrights('produit');
 if (!$user->rights->produit->lire) accessforbidden();
 
 $sref=isset($_GET["sref"])?$_GET["sref"]:$_POST["sref"];
+$sRefSupplier=isset($_GET["srefsupplier"])?$_GET["srefsupplier"]:$_POST["srefsupplier"];
 $snom=isset($_GET["snom"])?$_GET["snom"]:$_POST["snom"];
 
 $type=isset($_GET["type"])?$_GET["type"]:$_POST["type"];
@@ -58,9 +59,9 @@ if ($_POST["button_removefilter"] == $langs->trans("RemoveFilter")) {
 	$snom="";
 }
 
-if ($_GET["fourn_id"] > 0)
+if ($_GET["fourn_id"] > 0 || $_POST["fourn_id"] > 0)
 {
-	$fourn_id = $_GET["fourn_id"];
+	$fourn_id = isset($_GET["fourn_id"])?$_GET["fourn_id"]:$_POST["fourn_id"];
 }
 
 if (isset($_REQUEST['catid']))
@@ -103,6 +104,10 @@ else
 	if ($sref)
 	{
 		$sql .= " AND p.ref like '%".$sref."%'";
+	}
+	if ($sRefSupplier)
+	{
+		$sql .= " AND pf.ref_fourn like '%".$sRefSupplier."%'";
 	}
 	if ($snom)
 	{
@@ -170,6 +175,7 @@ if ($resql)
 
 	// Lignes des champs de filtre
 	print '<form action="liste.php" method="post">';
+	if ($fourn_id > 0) print '<input type="hidden" name="fourn_id" value="'.$fourn_id.'">';
 	print '<input type="hidden" name="sortfield" value="'.$sortfield.'">';
 	print '<input type="hidden" name="sortorder" value="'.$sortorder.'">';
 	print '<input type="hidden" name="type" value="'.$type.'">';
