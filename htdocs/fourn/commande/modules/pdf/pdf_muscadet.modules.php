@@ -238,23 +238,17 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     // Si ligne associée à un code produit
                     if ($com->lignes[$i]->fk_product)
                     {
-                        $prodser = new Product($this->db);
-
-                        $prodser->fetch($com->lignes[$i]->fk_product);
-                        if ($prodser->ref)
+                    	$libelleproduitservice=$outputlangs->transnoentities("Product")." ".$com->lignes[$i]->ref_fourn." - ".$libelleproduitservice;
+                      
+                      // Ajoute description du produit
+                      if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
+                      {
+                      	if ($com->lignes[$i]->product_desc&&$com->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$com->lignes[$i]->product_desc!=$com->lignes[$i]->desc)
                         {
-                            $libelleproduitservice=$outputlangs->transnoentities("Product")." ".$prodser->ref." - ".$libelleproduitservice;
+                        	if ($libelleproduitservice) $libelleproduitservice.="\n";
+                          $libelleproduitservice.=$com->lignes[$i]->product_desc;
                         }
-
-                        // Ajoute description du produit
-                        if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-                        {
-                            if ($com->lignes[$i]->product_desc&&$com->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$com->lignes[$i]->product_desc!=$com->lignes[$i]->desc)
-                            {
-                                if ($libelleproduitservice) $libelleproduitservice.="\n";
-                                $libelleproduitservice.=$com->lignes[$i]->product_desc;
-                            }
-                        }                    
+                      }                    
                     }
                     if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
                     {

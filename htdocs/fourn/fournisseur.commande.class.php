@@ -112,9 +112,14 @@ class CommandeFournisseur extends Commande
 			// export pdf -----------
 			
 			$this->lignes = array();
-			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice,';
-			$sql.= ' p.label, p.description as product_desc, p.ref, p.rowid as prodid';
+			$sql = 'SELECT l.fk_product, l.description, l.price, l.qty, l.rowid, l.tva_tx, l.remise_percent, l.subprice';
+			$sql.= ', p.label, p.description as product_desc, p.rowid as prodid';
+			$sql.= ', pf.ref_fourn';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'commande_fournisseurdet as l';
+			
+			//Todo: revoir le fonctionnement de la base produit fournisseurs
+			
+			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product_fournisseur as pf ON l.fk_product = pf.fk_product AND l.ref = pf.ref_fourn';
 			$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 			$sql.= ' WHERE l.fk_commande = '.$this->id;
 			$sql.= ' ORDER BY l.rowid';
@@ -137,9 +142,11 @@ class CommandeFournisseur extends Commande
 					$ligne->remise_percent      = $objp->remise_percent;
 					$ligne->price               = $objp->price;
 					
+					$ligne->fk_product          = $objp->fk_product;   // Id du produit
 					$ligne->libelle             = $objp->label;        // Label produit
 					$ligne->product_desc        = $objp->product_desc; // Description produit
-					$ligne->ref                 = $objp->ref;
+
+					$ligne->ref_fourn           = $objp->ref_fourn;    // Reference supplier
 					
 					$this->lignes[$i]      = $ligne;
 					//dolibarr_syslog("1 ".$ligne->desc);
@@ -1393,7 +1400,7 @@ class CommandeFournisseur extends Commande
  */
 class CommandeFournisseurLigne extends CommandeLigne
 {
-  // From llx_propaldet
+  // From llx_commandedet
   var $qty;
   var $tva_tx;
   var $subprice;
@@ -1405,7 +1412,9 @@ class CommandeFournisseurLigne extends CommandeLigne
   // From llx_product
   var $libelle;       // Label produit
   var $product_desc;  // Description produit
-  var $ref;
+  
+  // From llx_product_fournisseur
+  var $ref_fourn;     // Référence fournisseur
 
   function CommandeFournisseurLigne()
   {
