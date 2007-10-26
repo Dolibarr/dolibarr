@@ -64,32 +64,32 @@ if ($_POST['action'] == 'add_paiement' || $_POST['action'] == 'confirm_paiement'
   
   // Verifie si des paiements sont supérieurs au montant facture
   foreach ($_POST as $key => $value)
-    {
-      if (substr($key,0,7) == 'amount_')
-	{
-	  $cursorfacid = substr($key,7);
-	  $amounts[$cursorfacid] = $_POST[$key];
-	  $totalpaiement = $totalpaiement + price2num($amounts[$cursorfacid]);
-	  $tmpfacture=new Facture($db);
-	  $tmpfacture->fetch($cursorfacid);
-	  $amountsresttopay[$cursorfacid]=($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
-	  if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
+  {
+  	if (substr($key,0,7) == 'amount_')
+  	{
+  		$cursorfacid = substr($key,7);
+  		$amounts[$cursorfacid] = price2num($_POST[$key]);
+  		$totalpaiement = $totalpaiement + $amounts[$cursorfacid];
+  		$tmpfacture=new Facture($db);
+  		$tmpfacture->fetch($cursorfacid);
+  		$amountsresttopay[$cursorfacid]=price2num($tmpfacture->total_ttc-$tmpfacture->getSommePaiement());
+  		if ($amounts[$cursorfacid] && $amounts[$cursorfacid] > $amountsresttopay[$cursorfacid])
 	    {
 	      $addwarning=1;
 	      $formquestion['text'] = img_warning($langs->trans("PaymentHigherThanReminderToPay")).' Attention, le montant de paiement pour une ou plusieurs facture est supérieur au reste à payer.';
 	      $formquestion['text'].='<br>Corriger votre saisie, sinon, confirmer et penser à créer un avoir du trop perçu lors de la fermeture de chacune des factures surpayées.';
 	    }
-	  
-	  $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
+	    
+	    $formquestion[$i++]=array('type' => 'hidden','name' => $key,  'value' => $_POST[$key]);
+	  }
 	}
-    }
   
   // Effectue les vérifications des parametres
   if ($_POST['paiementid'] <= 0)
-    {
-      $fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
-      $error++;
-    }
+  {
+  	$fiche_erreur_message = '<div class="error">'.$langs->trans('ErrorFieldRequired',$langs->transnoentities('PaymentMode')).'</div>';
+  	$error++;
+  }
   
   if ($conf->banque->enabled)
     {
