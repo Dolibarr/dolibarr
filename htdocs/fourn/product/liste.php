@@ -30,6 +30,7 @@
 require("./pre.inc.php");
 
 $langs->load("products");
+$langs->load("suppliers");
 
 $user->getrights('produit');
 
@@ -75,7 +76,7 @@ if (isset($_REQUEST['catid']))
 $title=$langs->trans("ProductsAndServices");
 
 $sql = "SELECT p.rowid, p.label, p.ref, p.fk_product_type";
-$sql .= ", pf.fk_soc";
+$sql .= ", pf.fk_soc, pf.ref_fourn";
 $sql .= ", min(ppf.price) as price";
 $sql .= ", s.nom";
 $sql .= " FROM ".MAIN_DB_PREFIX."product as p";
@@ -85,7 +86,7 @@ if ($catid)
 }
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur as pf ON p.rowid = pf.fk_product";
 $sql .= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON s.rowid = pf.fk_soc";
-$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_soc = pf.fk_soc AND ppf.fk_product = p.rowid AND ppf.quantity = 1";
+$sql .= " LEFT JOIN ".MAIN_DB_PREFIX."product_fournisseur_price as ppf ON ppf.fk_product_fournisseur = pf.rowid AND ppf.quantity = 1";
 
 if ($_POST["mode"] == 'search')
 {
@@ -161,6 +162,7 @@ if ($resql)
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
 	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield);
+	print_liste_field_titre($langs->trans("RefSupplierShort"),"liste.php", "pf.ref_fourn",$param,"","",$sortfield);
 	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield);
 	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield);
 	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield);
@@ -174,6 +176,9 @@ if ($resql)
 	print '<tr class="liste_titre">';
 	print '<td class="liste_titre">';
 	print '<input class="flat" type="text" name="sref" value="'.$sref.'">';
+	print '</td>';
+	print '<td class="liste_titre" valign="right">';
+	print '<input class="flat" type="text" name="srefsupplier" value="'.$sRefSupplier.'">';
 	print '</td>';
 	print '<td class="liste_titre" valign="right">';
 	print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
@@ -201,13 +206,14 @@ if ($resql)
 			else print img_object($langs->trans("ShowProduct"),"product");
 			print "</a> ";
 			print '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->rowid.'">'.$objp->ref.'</a></td>';
-			print "<td>$objp->label</td>\n";
+			print '<td>'.$objp->ref_fourn.'</td>';
+			print '<td>'.$objp->label.'</td>'."\n";
 		}
 		else
 		{
 			print '<td colspan="2">&nbsp;</td>';
 		}
-
+		
 		print '<td>'.$objp->nom.'</td>';
 		print '<td align="right">'.price($objp->price).'</td>';
 		print "</tr>\n";
