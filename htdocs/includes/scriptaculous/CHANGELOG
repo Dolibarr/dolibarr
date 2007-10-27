@@ -1,3 +1,158 @@
+*SVN*
+
+* Update to new Class.create syntax in Prototype 1.6; update to latest Prototype 1.6 trunk.
+
+* Fix bottom CSS property reassignment and initialization in queues for Effect#SlideUp.  Closes #7412, #7761.
+
+* Fix an issue with String#parseStyle that could sometimes cause errors on Safari 2.
+
+* Refactoring to use Prototype 1.6. Remove dependency of Effect.tagifyText from builder. Use Prototype code style rules more consistently.
+
+* Remove the deprecated Effect2 namespace.
+
+* Update to Prototype 1.6.0_rc0.
+
+* Some effect code refactoring to take advantage of new Prototype 1.6 features.
+
+* Effect.ScrollTo is now no longer a core effect (returns a Effect.Tween instance now).
+
+* Add Effect.Tween, a new core effect. This effect tweens between two values and sets a property or calls a method on an object (including DOM elements); or allows for a callback method, which will be automatically bound to the object.
+  Examples:
+    var whatever = { blech: 0 };
+    new Effect.Tween(whatever, 5, 0, 'blech'); // sets property on the object
+    new Effect.Tween('foo', 10, 20, 'innerHTML'); // sets property on the 'foo' DOM element
+    new Effect.Tween('foo', 10, 20, 'update');    // method call on 'foo' DOM element
+    new Effect.Tween('foo', 50, 0, { duration: 2.0 }, function(p){
+      this.setStyle({border:p.toFixed(3)+'px solid red'});
+    });
+    new Effect.Tween(null, 0, 100, function(p){ scrollTo(0,p) }); // scrolls the window
+
+* Revert the workaround for the Firefox issue that makes autocompleter input field values be remembered correctly when the back button is hit to return to a page that contains autocompleted values, as this can cause "Are you sure you want to navigate away?" popups.  Closes #8411.  [okada]
+
+* Improve the way deactivating the active droppable is handled.  Closes #9072.  [Karsten Sperling]
+
+* Next version will be 1.8.0. Update to Prototype 1.6.0_pre1.
+
+* Make draggable initialization faster.  Closes #8697.  [ssinghi]
+
+* Make BDD-style testing compatible with IE6 and IE7.  Closes #8972.  [steveluscher]
+
+* Add BDD methods to booleans.  Closes #9147.  [steveluscher]
+
+* Add support for full CSS inheritance in Effect.Morph.  Closes #9054.  [Tobie]
+  IMPORTANT: Note that this could potentially change the outcome of classname-based morphs, so be sure to check your morph effects if you use this feature. 
+  For this feature, the new method Element#getStyles is introduced, which returns an objects which properties correspond to the CSS properties found in Element.CSS_PROPERTIES. Note that this method doesn't work seemlessly across browsers for certain non-measurable CSS properties, such as float.  
+
+* Add the externalControlOnly option to the in-place editors to allow for external controls to exclusively trigger the in-place editing.  Closes #9024.  [tdd]
+
+* Complete rewrite of Ajax.InPlaceEditor and Ajax.InPlaceCollectionEditor.  [tdd]
+  THIS UPDATE MIGHT AFFECT BACKWARDS COMPATIBILITY.
+  Be sure to properly test, especially if you're using multi-line editing and/or monkeypatching.
+  Read more about all the added goodness in this article:
+  http://mir.aculo.us/2007/7/17/in-place-editing-the-summer-2007-rewrite
+
+* Update to Prototype 1.5.2_rc0 r7076:
+  - Works around bugs in Safari 1 and Safari 2 Regexp engines that could cause crashes
+  - Fixes a rendering issue with opacity-based effects and floating elements on Safari
+
+* Mild refactoring of sound.js to take advantage of new Prototype features.
+
+* Add highlight element method as a shortcut to Effect.Highlight.
+    Example:
+      $('message').highlight({startcolor:'#ff0000'}).update('KTHXBYE');
+
+* Improve performance of String.prototype.parseStyle by caching the dummy element used.
+
+* Add combined effects as element methods.
+    Examples:
+      $('message').appear().update('Oh noes!');
+      $('login').shake({ duration: 2 });
+
+* Add Effect.Transitions.spring, which simulates a spring which oscillates while coming to rest. This transition is specifically targeted towards use with Effect.Move, for example as a reverteffect when using Draggables, as it will have return values >1 and cause temporary "overshooting" of the effect.  Closes #8474.  [edg2s]
+
+* Fix effects initialization if no options are given.  Fixes #7809.  [thx Kroc Camen]
+
+* Fix incorrect placement on drop for absolute ghosting elements. Update to Prototype 1.5.2_rc0 r6955 (required for #8581). Closes #8581.  [tdd]
+
+* Make sure the autocompletion happens on the token where the cursor is, not the last token when using tokenized autocompleting text fields.  Closes #8588.  [tdd]
+
+* Fix that non-Mozilla browsers would display messages with the autocompleter back-button fix introduced in 1.7.1 beta 2. Fixes #7752, #8411. [josh, stetz] 
+
+*V1.7.1 beta 3* (May 19, 2007)
+
+* Update to Prototype 1.5.1 final
+
+* New elements and handles options for Sortable.create which take arrays of elements or element ids. These overrule the normal handle and elements finding options on initialization of the sortable, and can yield huge performance increases in situations where these elements or ids are known at call time. [Thomas Fuchs]
+
+* Major performance improvement of Sortable.create when using the handle option. [Tobie Langel]
+
+* Fix Builder.node double quote escaping in attributes, fixes #8125. [Aa!]
+
+*V1.7.1 beta 2* (April 28, 2007)
+
+* Update to Prototype 1.5.1_rc4
+  - Various optimizations and fixes
+  - http://dev.rubyonrails.org/browser/spinoffs/prototype/trunk/CHANGELOG?rev=6604
+
+* Fix autocompleter indicator not appearing when calling activate() directly. Don't show indicator for local autocompleting. Fixes #7770. [pyro8019]
+
+* Don't clear out autocompleting fields in Mozilla-based browsers when navigating back to a page with the Back button, fixes #7752. [seanc]
+
+*V1.7.1 beta 1* (March 12, 2007)
+
+* Update to Prototype 1.5.1 r6386
+  - Fixes SlideUp/SlideDown on IE
+  - Fixes an opacity problem with IE
+  - Performance optimizations
+  - See http://dev.rubyonrails.org/browser/spinoffs/prototype/trunk/CHANGELOG?rev=6381 for more information
+    
+* Make builder unit tests work on IE
+
+* Fix id assignment for sounds on Firefox/Windows, fixes #7709 [Robert Wallis]
+
+* Add Sound.enable() and Sound.disable() to globally turn off Sound.play()
+
+* Added Sound.play(url,options) in new sound.js file. scriptaculous.js automatically includes this file.
+  Based on code by Jules Gravinese, used with permission.
+  
+  The sound player uses native sound support on IE, and falls back to using <embed> on other browsers,
+  which means it uses QuickTime for most cases. The recommended format to use is MP3.
+  
+    Examples:
+      Sound.play('blah.mp3');   
+      // --> plays sound immediately in 'global' track
+      Sound.play('blah.mp3',{replace:true});  
+      // --> stop playing all sounds in 'global' track, and play new sound
+      Sound.play('blah.mp3',{track:'mytrack'});
+      // --> places the sound in the 'mytrack' track
+      Sound.play('blah.mp3',{track:'mytrack',replace:true});
+      // --> stop playing all sounds in 'mytrack' track, and play new sound
+      
+  The sound effect used in the functional test is "Sword being drawn" by James Greever, released as freeware.
+
+* Various effects engine optimizations [Tobie Langel, Thomas Fuchs]
+
+* Make Ajax.InPlaceEditor more customizable: [thx godlie]
+  - Add an okLink option to Ajax.InPlaceEditor so you can have a link instead of a button. Uses the 'editor_ok_link' CSS class for styling, fixes #6455
+  - Add an cancelButton option to Ajax.InPlaceEditor, uses the 'editor_cancel_button' CSS class
+  - Add textBefore-, textBetween- and textAfterControls (which default to empty strings)
+  - For consistency, cancel link now also gets 'editor_cancel_link' CSS class
+
+* Add an onDropped callback to Draggables, that fires at the end of a drag when the Draggable was dropped on a Droppable
+
+* Add revert: 'failure' option to Draggables to only revert if not dropped on a valid drop target, fixes #6909 [davidw]
+
+* Update to new Prototype Browser detection
+
+* Fix a memory leak with Effect.Morph in Firefox, fixes #7558 [Malard]
+
+* Add ability to nest single nodes in Builder.node in addition to arrays of nodes.
+    Examples:
+      var element = Builder.node('div', Builder.node('span','blah'));
+      
+      Builder.dump();
+      var element = DIV(SPAN('blah'));
+
 *V1.7.0* (January 19, 2007)
 
 * Cleanups for Effect.Morph
