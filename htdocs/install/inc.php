@@ -70,7 +70,7 @@ define('DOL_DOCUMENT_ROOT','../');
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
 if (is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-else if ((isset($_ENV["TMP"] && is_writable($_ENV["TMP"]) || (isset($_ENV["TEMP"] && is_writable($_ENV["TEMP"])) {
+else if ((isset($_ENV["TMP"]) && is_writable($_ENV["TMP"])) || (isset($_ENV["TEMP"]) && is_writable($_ENV["TEMP"]))) {
 	define('SYSLOG_FILE',($_ENV["TMP"]?$_ENV["TMP"]:$_ENV["TEMP"]).'/dolibarr_install.log');
 }
 else define('SYSLOG_FILE','/dolibarr_install.log');
