@@ -445,7 +445,7 @@ class Conf
 		}
 
 		// Defini MAIN_GRAPH_LIBRARY
-		if (isset($this->global->MAIN_GRAPH_LIBRARY) && ! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
+		if (!isset($this->global->MAIN_GRAPH_LIBRARY) && ! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
 		{
 			$this->global->MAIN_GRAPH_LIBRARY='phplot';
 			// $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
