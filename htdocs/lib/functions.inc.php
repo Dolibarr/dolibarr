@@ -2303,9 +2303,10 @@ function price2num($amount,$rounding='')
  */
 function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 {
-	dolibarr_syslog("get_default_tva vendeur_assujeti=$societe_vendeuse->tva_assuj pays_vendeur=$societe_vendeuse->pays_id, pays_acheteur=$societe_acheteuse->pays_id, taux_produit=$taux_produit");
+	dolibarr_syslog("get_default_tva vendeur_assujeti=".$societe_vendeuse->tva_assuj." pays_vendeur=".$societe_vendeuse->pays_id.", pays_acheteur=".$societe_acheteuse->pays_id.", taux_produit=".$taux_produit);
 
 	if (!is_object($societe_vendeuse)) return -1;
+	if (!is_object($societe_acheteuse)) return -1;
 
 	// Si vendeur non assujeti à TVA (tva_assuj vaut 0/1 ou franchise/reel)
 	if (is_numeric($societe_vendeuse->tva_assuj) && ! $societe_vendeuse->tva_assuj) return 0;
