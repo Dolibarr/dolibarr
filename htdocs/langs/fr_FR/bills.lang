@@ -223,6 +223,14 @@ BillAddress=Adresse de facturation
 HelpEscompte=Un <b>escompte</b> est une remise accordée, sur une facture donnée, à un client car ce dernier a réalisé son réglement bien avant l'échéance.
 HelpAbandonBadCustomer=Ce montant a été abandonné (client jugé mauvais payeur) et est considéré comme un perte exceptionnelle.
 HelpAbandonOther=Ce montant a été abandonné car il s'agissait d'un trop réclamé (oubli de remise ou retour produit du client). Il doit être régularisé en compta par la saisie d'un avoir.
+InvoiceId=Id facture
+InvoiceRef=Ref. facture
+InvoiceDateCreation=Date création facture
+InvoiceStatus=Statut facture
+InvoiceNote=Note facture
+InvoicePayed=Facture payée
+PaymentNumber=Numéro paiement
+
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
 PaymentConditionRECEP=A réception de facture
