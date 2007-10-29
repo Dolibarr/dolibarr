@@ -220,7 +220,17 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_users($user->id,'contactid');
+			// On récupère les id des users déjà sélectionnés
+			$userAlreadySelected = array();
+			$tab = $propal->liste_contact(-1,'internal');
+			$num=sizeof($tab);
+			$i = 0;
+			while ($i < $num)
+			{
+				$userAlreadySelected[$i] = $tab[$i]['id'];
+				$i++;
+			}
+			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$propal->selectTypeContact($propal, '', 'type','internal');
@@ -249,7 +259,17 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
+			// On récupère les id des contacts déjà sélectionnés
+			$contactAlreadySelected = array();
+			$tab = $propal->liste_contact(-1,'external');
+			$num=sizeof($tab);
+			$i = 0;
+			while ($i < $num)
+			{
+				$contactAlreadySelected[$i] = $tab[$i]['id'];
+				$i++;
+			}
+			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$propal->selectTypeContact($propal, '', 'type','external');
