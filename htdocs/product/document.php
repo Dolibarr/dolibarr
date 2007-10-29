@@ -185,16 +185,20 @@ if ($product->id)
 	error_reporting($errorlevel);
 
 	print '<table width="100%" class="noborder">';
-
+	
+	// Affiche liste des documents existant
+  print_titre($langs->trans("AttachedFiles"));
+  
+  print '<tr class="liste_titre">';
+	print '<td>'.$langs->trans('Document').'</td>';
+	print '<td align="right">'.$langs->trans('Size').'</td>';
+	print '<td align="center">'.$langs->trans('Date').'</td>';
+	print '<td>&nbsp;</td>';
+	print '</tr>';
+	$var=true;
+	
 	if ($handle)
 	{
-		print '<tr class="liste_titre">';
-		print '<td>'.$langs->trans('Document').'</td>';
-		print '<td align="right">'.$langs->trans('Size').'</td>';
-		print '<td align="center">'.$langs->trans('Date').'</td>';
-		print '<td>&nbsp;</td>';
-		print '</tr>';
-		$var=true;
 		while (($file = readdir($handle))!==false)
 		{
 			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
