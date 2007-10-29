@@ -104,7 +104,7 @@ print $langs->trans("Examples").":<br>";
 if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
 {
     // Si le répertoire documents non défini, on en propose un par défaut
-    $dolibarr_main_data_root=ereg_replace("/htdocs","",$dolibarr_main_document_root);
+    $dolibarr_main_data_root=ereg_replace("/htdocs$","",$dolibarr_main_document_root);
     $dolibarr_main_data_root.="/documents";
 }
 ?>
