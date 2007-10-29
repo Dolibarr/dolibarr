@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -32,7 +31,6 @@
 /**     \class      Tva
 		\brief      Classe permettant la gestion de la tva
 */
- 
 class Tva
 {
     var $db;
@@ -190,39 +188,44 @@ class Tva
 
     /*
      *      \brief      Ajoute un paiement de TVA
+	 *		\param		user		Object user that insert
+	 *		\return		int			<0 if KO, rowid in tva table if OK
      */
-
-    function add_payement($user)
+    function addPayment($user)
     {
         global $conf,$langs;
         
         $this->db->begin();
         
-        // Validation parameteres
+        // Check parameters
         $this->amount=price2num($this->amount);
-        if ($conf->banque->enabled)
-        {
-            if (! $this->accountid)
-            {
-                $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Account"));
-                return -3;   
-            }
-        }
+		if (! $this->label)
+		{
+			$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+			return -3;   
+		}
         if ($this->amount <= 0)
         {
-            $this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Amount"));
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"));
             return -4;   
+        }
+        if ($conf->banque->enabled && ! $this->accountid)
+        {
+            $this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Account"));
+            return -5;   
         }
                 
         // Insertion dans table des paiement tva
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."tva (datep, datev, amount";
         if ($this->note)  $sql.=", note";
         if ($this->label) $sql.=", label";
-        $sql.= ") ";
+        $sql.= ", fk_user_creat";
+		$sql.= ") ";
         $sql.= " VALUES ('".$this->db->idate($this->datep)."',";
         $sql.= "'".$this->db->idate($this->datev)."'," . $this->amount;
         if ($this->note)  $sql.=", '".addslashes($this->note)."'";
         if ($this->label) $sql.=", '".addslashes($this->label)."'";
+        $sql.=", '".$user->id."'";
         $sql.= ")";
 
         $result = $this->db->query($sql);
@@ -240,9 +243,10 @@ class Tva
                     $acc = new Account($this->db, $this->accountid);
                     $bank_line_id = $acc->addline($this->datep, $this->paymenttype, $this->label, -abs($this->amount), '', '', $user);
             	  
-                    // Mise a jour fk_bank dans llx_paiementtva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
-                    if ($bank_line_id) {
-                        // $tva->update_fk_bank($bank_line_id);
+                    // Mise a jour fk_bank dans llx_tva. On connait ainsi la ligne de tva qui a généré l'écriture bancaire
+                    if ($bank_line_id)
+					{
+                        $this->update_fk_bank($bank_line_id);
                     }
             	  
                     // Mise a jour liens (pour chaque charge concernée par le paiement)
@@ -273,6 +277,27 @@ class Tva
             return -1;
         }
     }
+	
+    /**
+     *      \brief      Mise a jour du lien entre le paiement tva et la ligne générée dans llx_bank
+     *      \param      id_bank     Id compte bancaire
+	 *		\return		int			<0 if KO, >0 if OK
+     */
+	function update_fk_bank($id_bank)
+	{
+		$sql = 'UPDATE llx_tva set fk_bank = '.$id_bank;
+		$sql.= ' WHERE rowid = '.$this->id;
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			return 1;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
+	
 }
-
 ?>

@@ -53,6 +53,14 @@ delete from llx_adherent_type where libelle IS NULL;
 alter table llx_adherent_type modify libelle varchar(50) NOT NULL;
 
 
+alter table llx_tva add fk_bank         integer NOT NULL;
+alter table llx_tva add fk_user_creat   integer;
+alter table llx_tva add fk_user_modif   integer;
+
+-- V4.1 UPDATE llx_tva as t set fk_bank = (SELECT IFNULL(MIN(rowid),0) FROM llx_bank as b WHERE b.datev = t.datev AND b.amount = -t.amount AND b.label like 'R%glement TVA') WHERE t.fk_bank = 0;
+-- V4.1 UPDATE llx_tva as t set fk_user_creat = (SELECT MIN(fk_user_author) FROM llx_bank as b WHERE b.datev = t.datev AND b.amount = -t.amount AND b.label like 'R%glement TVA') WHERE t.fk_user_creat IS NULL;
+
+
 -- Extention de la gestion des catégories
 alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
@@ -900,6 +908,8 @@ ALTER TABLE llx_element_contact ADD INDEX idx_element_contact_fk_socpeople (fk_s
 
 -- Supprimme orphelins pour permettre montée de la clé
 -- V4 DELETE llx_fichinter FROM llx_fichinter LEFT JOIN llx_societe ON llx_fichinter.fk_soc = llx_societe.rowid WHERE llx_societe.rowid IS NULL;
+
+
 
 ALTER TABLE llx_societe ADD COLUMN supplier_account varchar(32) after fournisseur;
 
