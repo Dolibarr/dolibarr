@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -57,7 +56,6 @@ if ($_POST["action"] == 'add_paiement')
     if ($_POST["paiementtype"] > 0)
     {
         $datepaye = dolibarr_mktime(12, 0 , 0, $_POST["remonth"], $_POST["reday"], $_POST["reyear"]);
-		//print "x".dolibarr_print_date($datepaye,'dayhour');
 
         $paiement_id = 0;
         $amounts = array();

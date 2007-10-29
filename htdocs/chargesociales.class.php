@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -343,10 +342,17 @@ class PaiementCharge
     function create($user)
 	{
 		global $conf;
-		
         $error = 0;
-        $this->db->begin();
 
+		// Validation parametres
+		if (! $this->datepaye)
+		{
+			$this->error='ErrorBadValueForParameters';
+			return -1;
+		}
+		
+        $this->db->begin();
+		
 		$total=0;
 		foreach ($this->amounts as $key => $value)
 		{
@@ -359,7 +365,7 @@ class PaiementCharge
 		{
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."paiementcharge (fk_charge, datec, datep, amount, fk_typepaiement, num_paiement, note, fk_user_creat)";
 			$sql.= " VALUES ($this->chid, now(), ";
-			$sql.= $this->db->idate($this->date_ech).", ";
+			$sql.= $this->db->idate($this->datepaye).", ";
 			$sql.= price2num($total).", $this->paiementtype, '$this->num_paiement', '".addslashes($this->note)."', $user->id)";
 
 			dolibarr_syslog("PaiementCharge::create sql=".$sql);
