@@ -673,21 +673,21 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codeclient_modifiable())
+        if ($soc->codeclient_modifiable() || !$soc->code_client)
         {
-            print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
+        	print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
         }
         else
         {
-            print $soc->code_client;
-			print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
+        	print $soc->code_client;
+        	print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
         }
-		print '</td><td>';
-		$s=$langs->trans("CustomerCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
-		print $form->textwithhelp('',$s,1);
+        print '</td><td>';
+        $s=$langs->trans("CustomerCodeDesc").'<br>';
+        $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
+        $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
+        $s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
+        print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
         print '</td></tr>';
@@ -700,21 +700,21 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codefournisseur_modifiable())
+        if ($soc->codefournisseur_modifiable() || !$soc->code_fournisseur)
         {
-            print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
+        	print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
         }
         else
         {
-            print $soc->code_fournisseur;
-			print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
+        	print $soc->code_fournisseur;
+        	print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
         }
-		print '</td><td>';
-		$s=$langs->trans("SupplierCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
-		print $form->textwithhelp('',$s,1);
+        print '</td><td>';
+        $s=$langs->trans("SupplierCodeDesc").'<br>';
+        $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
+        $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
+        $s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
+        print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
         print '</td></tr>';
