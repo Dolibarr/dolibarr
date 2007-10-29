@@ -21,10 +21,11 @@ update llx_bank_account set currency_code='EUR' where (currency_code IS NULL or 
 
 -- Sequence de requete pour nettoyage et correction champ type table llx_bank_url
 update llx_bank_url set type='company'  where (type is null or type = '') and url like '%compta/fiche.php?socid=%';
-alter table llx_bank_url modify `type` enum("","?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc");
+alter table llx_bank_url modify `type` varchar(20);
 update llx_bank_url set type='?'  where (type is null or type = '') and url like '%compta/facture.php?facid=%';
 update llx_bank_url set type='payment_supplier' where (type='' or type is null) and url like '%fourn/paiement/fiche.php?id=%';
-alter table llx_bank_url modify `type` enum("?","company","payment","payment_supplier","member","subscription","donation","sc","payment_sc") NOT NULL;
+update llx_bank_url set type='?'  where (type is null or type = '');
+alter table llx_bank_url modify `type` varchar(20) NOT NULL;
 
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');

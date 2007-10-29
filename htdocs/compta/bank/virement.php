@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -44,7 +43,7 @@ if (!$user->rights->banque->modifier)
 if ($_POST["action"] == 'add')
 {
 	$mesg='';
-	$dateo = $_POST["reyear"]."-".$_POST["remonth"]."-".$_POST["reday"];
+	$dateo = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	$label = $_POST["label"];
 	$amount= $_POST["amount"];
 
@@ -60,37 +59,31 @@ if ($_POST["action"] == 'add')
 	}
 	if (! $error)
 	{
+		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
+
 		$db->begin();
 		
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num(-1*price2num($amount))."', $user->id, ".$_POST["account_from"].", 'VIR')";
+		$accountfrom=new Account($db);
+		$accountfrom->fetch($_POST["account_from"]);
 
-		dolibarr_syslog("Virement insert bank sql=".$sql);
-		$result = $db->query($sql);
-		if (!$result)
+		$bank_line_id_from = $accountfrom->addline($dateo, 'VIR', $label, -1*price2num($amount), '', '', $user);
+
+		$accountto=new Account($db);
+		$accountto->fetch($_POST["account_to"]);
+
+		$bank_line_id_to = $accountto->addline($dateo, 'VIR', $label, price2num($amount), '', '', $user);
+
+        $result1=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+        $result2=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+
+		if ($result1 > 0 && $result2 > 0)
 		{
-			$db->rollback();
-			dolibarr_print_error($db);
-		}
-
-		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bank (datec, datev, dateo, label, amount, fk_user_author,fk_account, fk_type)";
-		$sql .= " VALUES (now(), '$dateo', '$dateo', '".addslashes($label)."', '".price2num($amount)."',$user->id, ".$_POST["account_to"].", 'VIR')";
-
-		dolibarr_syslog("Virement insert bank sql=".$sql);
-		$result = $db->query($sql);
-		if ($result)
-		{
-			$accountfrom=new Account($db);
-			$accountfrom->fetch($_POST["account_from"]);
-			$accountto=new Account($db);
-			$accountto->fetch($_POST["account_to"]);
-
 			$mesg.="<div class=\"ok\">Le virement depuis «&nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp;» vers «&nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp;» de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été créé.</div>";
 			$db->commit();
 		}
 		else
 		{
-			$mesg.="<div class=\"error\">".$db->lasterror()."</div>";
+			$mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
 			$db->rollback();
 		}
 	}

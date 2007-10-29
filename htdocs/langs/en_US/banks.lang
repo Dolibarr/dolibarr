@@ -110,3 +110,4 @@ ThisWillAlsoDeleteBankRecord=This will also delete generated bank transactions
 BankMovements=Movements
 CashBudget=Cash budget
 ExportDataset_banque_1=Bank transactions and account statement
+TransactionOnTheOtherAccount=Transaction on the other account

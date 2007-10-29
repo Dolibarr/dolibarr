@@ -174,6 +174,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_paiements_orphelins_1($db,$langs,$conf);
 
 		migrate_paiements_orphelins_2($db,$langs,$conf);
+
+		migrate_links_transfert($db,$langs,$conf);
 		
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
@@ -590,6 +592,83 @@ function migrate_contracts_det($db,$langs,$conf)
         print $langs->trans('MigrationContractsFieldDontExist')."<br>\n";
     //    dolibarr_print_error($db);   
     }
+
+	print '</td></tr>';
+}
+
+
+function migrate_links_transfert($db,$langs,$conf)
+{
+ 	print '<tr><td colspan="4">';
+
+    $nberr=0;
+    
+    print '<br>';
+    print '<b>'.$langs->trans('MigrationBankTransfertsUpdate')."</b><br>\n";
+    
+    $sql = "SELECT ba.rowid as barowid, bb.rowid as bbrowid";
+    $sql.= " FROM ".MAIN_DB_PREFIX."bank as bb, ".MAIN_DB_PREFIX."bank as ba";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_url as bu ON bu.fk_bank = ba.rowid";
+    $sql.= " WHERE ba.amount = -bb.amount AND ba.fk_account <> bb.fk_account";
+	$sql.= " AND ba.datev = bb.datev AND ba.datec = bb.datec";
+	$sql.= " AND bu.fk_bank IS NULL";
+    $resql = $db->query($sql);
+
+	dolibarr_install_syslog("migrate_links_transfert sql=".$sql);
+    if ($resql) 
+    {
+        $i = 0;
+        $row = array();
+        $num = $db->num_rows($resql);
+    
+        if ($num)
+        {
+            print $langs->trans('MigrationBankTransfertsToUpdate', $num)."<br>\n";
+            $db->begin();
+            
+            while ($i < $num)
+            {
+                $obj = $db->fetch_object($resql);
+                
+                $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (";
+                $sql.= "fk_bank, url_id, url, label, type";
+				$sql.= ")";
+                $sql.= " VALUES (";
+                $sql.= $obj->barowid.",".$obj->bbrowid.", '/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert'";
+                $sql.= ")";
+
+				print $sql.'<br>';
+				dolibarr_install_syslog("migrate_links_transfert sql=".$sql);
+				
+                if (! $db->query($sql)) 
+                {            
+                    dolibarr_print_error($db);
+                    $nberr++;
+                }
+  
+                $i++;
+            }
+    
+            if (! $nberr)
+            {
+            //      $db->rollback();
+                  $db->commit();
+						print $langs->trans('MigrationSuccessfullUpdate')."<br>";
+            }
+            else
+            {
+					$db->rollback();
+					print $langs->trans('MigrationUpdateFailed').'<br>';
+            }
+        }
+        else {
+            print $langs->trans('MigrationBankTransfertsNothingToUpdate')."<br>\n";
+        }
+    }
+	else
+	{
+		dolibarr_print_error($db);
+	}
 
 	print '</td></tr>';
 }

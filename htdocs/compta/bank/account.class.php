@@ -101,7 +101,7 @@ class Account
      *      \param      type        Type de lien (payment, company, member, ...)
      *      \return     int         <0 si ko, id line si ok
      */
-    function add_url_line($line_id, $url_id, $url, $label, $type='')
+    function add_url_line($line_id, $url_id, $url, $label, $type)
     {
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."bank_url (fk_bank, url_id, url, label, type)";
         $sql .= " VALUES ('".$line_id."', '".$url_id."', '".$url."', '".addslashes($label)."', '".$type."')";

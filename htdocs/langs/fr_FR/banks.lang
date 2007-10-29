@@ -110,3 +110,4 @@ ThisWillAlsoDeleteBankRecord=Ceci supprimera aussi les écritures banquaires géné
 BankMovements=Mouvements
 CashBudget=Budget de trésorerie
 ExportDataset_banque_1=Transaction bancaire et relevé
+TransactionOnTheOtherAccount=Transaction sur l'autre compte

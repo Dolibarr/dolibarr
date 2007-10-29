@@ -376,6 +376,12 @@ if ($result)
 					print $links[$key]['label'];
 					print '</a>';
 				}
+				else if ($links[$key]['type']=='banktransfert') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowTransaction'),'payment').' ';
+					print $langs->trans("TransactionOnTheOtherAccount");
+					print '</a>';
+				}
 				else {
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
 					print $links[$key]['label'];
