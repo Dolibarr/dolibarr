@@ -2521,10 +2521,16 @@ class Form
 		}        	
 		
 		// Définition du taux à présélectionner (si defaulttx non forcé et donc vaut -1 ou '')
-		if ($defaulttx < 0 || strlen($defaulttx) == 0) $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+		if ($defaulttx < 0 || strlen($defaulttx) == 0)
+		{
+			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
+		}
 		// Si taux par defaut n'a pu etre déterminé, on prend dernier de la liste.
 		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
-		if ($defaulttx < 0 || strlen($defaulttx) == 0) $defaulttx = $txtva[sizeof($txtva)-1];
+		if ($defaulttx < 0 || strlen($defaulttx) == 0)
+		{
+			$defaulttx = $txtva[sizeof($txtva)-1];
+		}
 		
 		$nbdetaux = sizeof($txtva);
 		
@@ -2961,7 +2967,7 @@ class Form
         {
             print '<option value="'.($value_as_key?$value:$key).'"';
             // Si il faut présélectionner une valeur
-            if ($id && ($id == $key || $id == $value))
+            if ($id != '' && ($id == $key || $id == $value))
             {
                 print ' selected="true"';
             }
