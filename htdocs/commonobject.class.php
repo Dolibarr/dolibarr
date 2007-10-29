@@ -497,6 +497,25 @@ class CommonObject
   {
 	return 1;
   }
+
+  /**
+   *      \brief      On récupère les id de liste_contact
+   *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
+   *      \return     array
+   */
+   function getListContactId($source='external')
+   {
+   	 $contactAlreadySelected = array();
+   	 $tab = $this->liste_contact(-1,$source);
+   	 $num=sizeof($tab);
+   	 $i = 0;
+   	 while ($i < $num)
+   	 {
+   	 	 $contactAlreadySelected[$i] = $tab[$i]['id'];
+   	 	 $i++;
+   	 }
+   	 return $contactAlreadySelected;
+   	}
 }
 
 ?>
