@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -229,7 +228,7 @@ if ($step == 1 || ! $datatoexport)
     // Affiche les modules d'exports
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print '<td width="25%">'.$langs->trans("Module").'</td>';
+    print '<td>'.$langs->trans("Module").'</td>';
     print '<td>'.$langs->trans("ExportableDatas").'</td>';
     print '<td>&nbsp;</td>';
     print '</tr>';
@@ -239,7 +238,7 @@ if ($step == 1 || ! $datatoexport)
         foreach ($objexport->array_export_code as $key => $value)
         {
             $val=!$val;
-            print '<tr '.$bc[$val].'><td>';
+            print '<tr '.$bc[$val].'><td nospan="nospan">';
             print img_object($objexport->array_export_module[$key]->getName(),$objexport->array_export_module[$key]->picto).' ';
             print $objexport->array_export_module[$key]->getName();
             print '</td><td>';

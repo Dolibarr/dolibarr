@@ -109,3 +109,4 @@ ConfirmDeleteTransaction=Etes-vous sur de vouloir supprimer cette transaction ?
 ThisWillAlsoDeleteBankRecord=Ceci supprimera aussi les écritures banquaires générées
 BankMovements=Mouvements
 CashBudget=Budget de trésorerie
+ExportDataset_banque_1=Transaction bancaire et relevé
