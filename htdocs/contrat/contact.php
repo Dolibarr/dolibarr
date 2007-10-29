@@ -233,7 +233,9 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_users($user->id,'contactid');
+			// On récupère les id des users déjà sélectionnés
+			$userAlreadySelected = $contrat->getListContactId('internal');
+			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$contrat->selectTypeContact($contrat, '', 'type','internal');
@@ -262,7 +264,9 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
+			// On récupère les id des contacts déjà sélectionnés
+			$contactAlreadySelected = $contrat->getListContactId('external');
+			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$contrat->selectTypeContact($contrat, '', 'type','external');

@@ -212,7 +212,9 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_users($user->id,'contactid');
+			// On récupère les id des users déjà sélectionnés
+			$userAlreadySelected = $facture->getListContactId('internal');
+			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$facture->selectTypeContact($facture, '', 'type','internal');
@@ -241,7 +243,9 @@ if ($id > 0)
 			print '</td>';
 
 			print '<td colspan="1">';
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid');
+			// On récupère les id des contacts déjà sélectionnés
+			$contactAlreadySelected = $facture->getListContactId('external');
+			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';
 			$facture->selectTypeContact($facture, '', 'type','external');
