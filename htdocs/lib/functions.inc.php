@@ -520,8 +520,8 @@ function dolibarr_print_date($time,$format='')
 {
     global $conf;
 
-    // Si format non défini, on prend $conf->format_date_text_short
-    if (! $format) $format=$conf->format_date_text_short;
+    // Si format non défini, on prend $conf->format_date_text_short sinon %Y-%m-%d %H:%M:%S
+    if (! $format) $format=(isset($conf->format_date_text_short) ? $conf->format_date_text_short : '%Y-%m-%d %H:%M:%S');
 
     if ($format == 'day')         $format=$conf->format_date_short;
     if ($format == 'hour')        $format=$conf->format_hour_short;
@@ -529,10 +529,9 @@ function dolibarr_print_date($time,$format='')
     if ($format == 'dayhour')     $format=$conf->format_date_hour_short;
     if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
     if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
-	if (! $format) $format='%Y-%m-%d %H:%M:%S';
 
     // Si date non définie, on renvoie ''
-    if ($time == "") return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
+    if ($time == '') return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
 
     // Analyse de la date
     if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+) ?([0-9]+)?:?([0-9]+)?:?([0-9]+)?',$time,$reg))
