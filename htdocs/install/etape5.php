@@ -73,7 +73,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
     
     // on décode le mot de passe de la base si besoin
     require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-    if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+    if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
     $conf->db->type = $dolibarr_main_db_type;
     $conf->db->host = $dolibarr_main_db_host;
@@ -183,7 +183,7 @@ if ($_POST["action"] == "upgrade")
 }
 
 
-print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup&username='.urlencode($_POST["login"]).'">';
+print '<a href="'.$dolibarr_main_url_root .'/admin/index.php?mainmenu=home&leftmenu=setup'.(isset($_POST["login"])?'&username='.urlencode($_POST["login"]):'').'">';
 print $langs->trans("GoToSetupArea");
 print '</a>';
 

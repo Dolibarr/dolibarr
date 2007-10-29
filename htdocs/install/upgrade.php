@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -28,8 +27,6 @@
 
 include_once("./inc.php");
 if (file_exists($conffile)) include_once($conffile);
-if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
-define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
 require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 
 $grant_query='';
@@ -79,7 +76,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	$error=0;
 	
 	// on décode le mot de passe de la base si besoin
-	if ($dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+	if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 	// $conf is already instancied inside inc.php
 	$conf->db->type = $dolibarr_main_db_type;
@@ -133,7 +130,6 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	
   // Force l'affichage de la progression
 	print '<tr><td>'.$langs->trans("PleaseBePatient").'</td>';
-	ob_flush();
 	flush();
 
 	if ($ok)

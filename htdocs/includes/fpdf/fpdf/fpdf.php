@@ -28,7 +28,7 @@ define ("K_PATH_CACHE", $conf->fckeditor->dir_output);
 /**
  * url qui sera substituer par le K_PATH_CACHE lorsqu'une image sera intégrée au pdf
  */
-define ("K_PATH_URL_CACHE", $dolibarr_main_url_root."/document.php?modulepart=editor&amp;file=");
+if (defined('DOL_URL_ROOT')) define ("K_PATH_URL_CACHE", DOL_URL_ROOT."/document.php?modulepart=editor&amp;file=");
 
 if(!class_exists('FPDF'))
 {

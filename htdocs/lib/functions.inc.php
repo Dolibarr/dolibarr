@@ -39,7 +39,7 @@
 */
 
 // Pour compatibilité lors de l'upgrade
-if (!defined('DOL_DOCUMENT_ROOT'))
+if (! defined('DOL_DOCUMENT_ROOT'))
 {
 	define('DOL_DOCUMENT_ROOT', '..');
 }

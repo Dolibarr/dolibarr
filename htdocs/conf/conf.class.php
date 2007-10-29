@@ -99,10 +99,10 @@ class Conf
 				$key=$objp->name;
 				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais après POST quand get_magic_quotes_gpc()==1)
 				if ($key)
-				  {
-				define ("$key", $value);
-				$this->global->$key=$value;
-				  }
+				{
+					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
+					$this->global->$key=$value;
+				}
 				$i++;
 			}
 		}

@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**	    \file       htdocs/install/inc.php
@@ -29,6 +28,8 @@
 
 require_once('../translate.class.php');
 require_once('../lib/functions.inc.php');
+
+// DOL_DOCUMENT_ROOT has been defined in function.inc.php to '..'
 
 // Correction PHP_SELF (ex pour apache via caudium) car PHP_SELF doit valoir URL relative
 // et non path absolu.
@@ -61,18 +62,14 @@ if (file_exists($conffile))
 }
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
 define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-
-
-define('DOL_DOCUMENT_ROOT','../');
-
+define('DOL_DATA_ROOT',$dolibarr_main_data_root);
 
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
 if (is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
-else if ((isset($_ENV["TMP"]) && is_writable($_ENV["TMP"])) || (isset($_ENV["TEMP"]) && is_writable($_ENV["TEMP"]))) {
-	define('SYSLOG_FILE',($_ENV["TMP"]?$_ENV["TMP"]:$_ENV["TEMP"]).'/dolibarr_install.log');
-}
+else if (isset($_ENV["TMP"]) && is_writable($_ENV["TMP"]))   define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
+else if (isset($_ENV["TEMP"]) && is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
 else define('SYSLOG_FILE','/dolibarr_install.log');
 define('SYSLOG_FILE_NO_ERROR',1);
 
@@ -120,7 +117,7 @@ function conf($dolibarr_main_document_root)
 		$conf->db->pass = trim($dolibarr_main_db_pass);
 		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
 		$conf->character_set_client=$character_set_client;
-		if (! isset($dolibarr_main_db_charset) && ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
+		if (! isset($dolibarr_main_db_charset) || ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
 		$conf->db->character_set=$dolibarr_main_db_charset;
 		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
 		$conf->db->collation_connection=$collation_connection;

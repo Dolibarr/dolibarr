@@ -3,7 +3,7 @@
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -433,31 +432,33 @@ class DolibarrModules
 
 
   
-  /**
+	/**
      \brief      Supprime les documents
      \return     int     Nombre d'erreurs (0 si ok)
-  */
-  function delete_docs()
-  {       
-    // Créé les documents générables
-    if (is_array($this->docs))
-      {
-	foreach ($this->docs as $key => $doc)
-	  {
-	    $sql = "DELETE FROM ".MAIN_DB_PREFIX."document_generator ";
-	    $sql .= "WHERE name= '".addslashes($doc[0])."' AND classfile='".$doc[1]."'AND class='".$doc[2]."';";
-	    
-	    $result=$this->db->query($sql);
-	    if (! $result)
-	      {
-		dolibarr_syslog("DolibarrModules.class::delete_docs Error sql=".$sql." - ".$this->db->error());
-		$err++;
-	      }
-	    
-	  }
-      }
-    return $err;
-  }
+	*/
+	function delete_docs()
+	{   
+		$err=0;
+
+		// Créé les documents générables
+		if (is_array($this->docs))
+		{
+			foreach ($this->docs as $key => $doc)
+			{
+				$sql = "DELETE FROM ".MAIN_DB_PREFIX."document_generator ";
+				$sql .= "WHERE name= '".addslashes($doc[0])."' AND classfile='".$doc[1]."'AND class='".$doc[2]."';";
+				
+				$result=$this->db->query($sql);
+				if (! $result)
+				{
+					dolibarr_syslog("DolibarrModules.class::delete_docs Error sql=".$sql." - ".$this->db->error());
+					$err++;
+				}
+				
+			}
+		}
+		return $err;
+	}
   
   
   /**
