@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -258,6 +257,30 @@ if ($resql)
                 print '</a>';
                 $newline=0;
             }
+			else if ($links[$key]['type']=='sc') {
+				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowBill'),'bill').' ';
+				print $langs->trans("SocialContribution");
+				print '</a>';
+			}
+			else if ($links[$key]['type']=='payment_sc') {
+				print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowPayment'),'payment').' ';
+				print $langs->trans("SocialContributionPayment");
+				print '</a>';
+			}
+			else if ($links[$key]['type']=='member') {
+				print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowMember'),'user').' ';
+				print $links[$key]['label'];
+				print '</a>';
+			}
+			else if ($links[$key]['type']=='banktransfert') {
+				print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+				print img_object($langs->trans('ShowTransaction'),'payment').' ';
+				print $langs->trans("TransactionOnTheOtherAccount");
+				print '</a>';
+			}
             else {
                 print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
                 print $links[$key]['label'];

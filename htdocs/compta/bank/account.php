@@ -497,6 +497,15 @@ if ($account > 0)
 						print $langs->trans("SocialContributionPayment");
 						print '</a>';
 					}
+					else if ($links[$key]['type']=='banktransfert') {
+						/* Do not show this link (avoid confusion). Can be accessed from transaction detail.
+						print ' - ';
+						print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+						//print img_object($langs->trans('ShowPayment'),'payment').' ';
+						print $langs->trans("TransactionWithOtherAccount");
+						print '</a>';
+						*/
+					}
 					else if ($links[$key]['type']=='member') {
 					}
 					else {
