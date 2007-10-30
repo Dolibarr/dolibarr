@@ -505,7 +505,7 @@ class Propal extends CommonObject
         $sql.= "'".$this->modelpdf."',".$this->db->idate($this->fin_validite).",";
         $sql.= " ".$this->cond_reglement_id.", ".$this->mode_reglement_id.",";
         $sql.= "'".addslashes($this->ref_client)."'";
-        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", ".$this->db->idate($this->date_livraison);
+        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", ".($this->date_livraison?$this->db->idate($this->date_livraison):'null');
 		$sql.= ")";
 
         $resql=$this->db->query($sql);

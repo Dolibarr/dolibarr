@@ -846,7 +846,6 @@ function left_menu($menu_array, $help_url='', $form_search='')
     $menu=new MenuLeft($db,$menu_array);
     $menu->showmenu();
 
-
     // Affichage des zones de recherche permanantes
     $addzonerecherche=0;
     if ($conf->societe->enabled && $conf->global->MAIN_SEARCHFORM_SOCIETE) $addzonerecherche=1;
@@ -877,14 +876,6 @@ function left_menu($menu_array, $help_url='', $form_search='')
             printSearchForm(DOL_URL_ROOT.'/product/liste.php',DOL_URL_ROOT.'/product/index.php',
                 img_object($langs->trans("List"),'product').' '.$langs->trans("Products")."/".$langs->trans("Services"),'products','sall','product');
         }
-
-        /*
-        if ($conf->categorie->enabled)
-        {
-        $langs->load("categories");
-        printSearchForm(DOL_URL_ROOT.'/categories/search.php',DOL_URL_ROOT.'/categories/',$langs->trans("Categories"),'categories','catname');
-        }
-        */
 
         print '</div>';
     }

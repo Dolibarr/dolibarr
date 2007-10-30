@@ -2314,7 +2314,7 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	// Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
 	//if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id) && ($societe_acheteuse->tva_assuj == 1 || $societe_acheteuse->tva_assuj == 'reel'))
 	// Le test ci-dessus ne devrait pas etre necessaire. Me signaler l'exemple du cas juridique concercné si le test suivant n'est pas suffisant.
-	if (is_object($societe_acheteuse) && ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id))
+	if ($societe_vendeuse->pays_id == $societe_acheteuse->pays_id)
 	{
 		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
 	    return $taux_produit;
@@ -2324,14 +2324,14 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 	// Non géré
 
  	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = particulier ou entreprise sans num TVA intra) alors TVA par défaut=TVA du produit vendu. Fin de règle.
-	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
+	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && ! $societe_acheteuse->tva_intra)
 	{
 		if (strlen($taux_produit) == 0) return -1;	// Si taux produit = '', on ne peut déterminer taux tva
 	    return $taux_produit;
 	}
 
  	// Si (vendeur et acheteur dans Communauté européenne) et (acheteur = entreprise avec num TVA intra) alors TVA par défaut=0. Fin de règle.
-	if (is_object($societe_acheteuse) && ($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
+	if (($societe_vendeuse->isInEEC() && $societe_acheteuse->isInEEC()) && $societe_acheteuse->tva_intra)
 	{
 	    return 0;
 	}

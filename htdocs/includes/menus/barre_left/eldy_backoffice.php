@@ -39,6 +39,8 @@
 
 class MenuLeft {
 
+	var $db;
+	var $menu_array;
 	var $require_top=array("eldy_backoffice");     // Si doit etre en phase avec un gestionnaire de menu du haut particulier
 
 
@@ -47,7 +49,7 @@ class MenuLeft {
 	*    \param      db            Handler d'accès base de donnée
 	*    \param      menu_array    Tableau des entrée de menu défini dans les fichier pre.inc.php
 	*/
-	function MenuLeft($db,&$menu_array)
+	function MenuLeft($db,$menu_array)
 	{
 		$this->db=$db;
 		$this->menu_array=$menu_array;
@@ -100,7 +102,6 @@ class MenuLeft {
 			// On va le chercher en session si non défini par le lien
 			$leftmenu=isset($_SESSION["leftmenu"])?$_SESSION["leftmenu"]:'';
 		}
-
 
 		$newmenu = new Menu();
 		$overwritemenufor=array('home','companies','members','products','suppliers','commercial','accountancy','project','tools');
@@ -160,13 +161,13 @@ class MenuLeft {
 					if ($leftmenu=="admintools" && function_exists('eaccelerator_info')) $newmenu->add_submenu(DOL_URL_ROOT."/admin/tools/eaccelerator.php", $langs->trans("EAccelerator"),1);
 				}
 
-				$langs->load("users");
 				$newmenu->add(DOL_URL_ROOT."/user/home.php?leftmenu=users", $langs->trans("MenuUsersAndGroups"));
 				if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/index.php", $langs->trans("Users"), 1, $user->rights->user->user->lire || $user->admin);
 				if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/fiche.php?action=create", $langs->trans("NewUser"),2, $user->rights->user->user->creer || $user->admin);
 				if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/index.php", $langs->trans("Groups"), 1, $user->rights->user->user->lire || $user->admin);
 				if ($leftmenu=="users") $newmenu->add_submenu(DOL_URL_ROOT."/user/group/fiche.php?action=create", $langs->trans("NewGroup"), 2, $user->rights->user->user->creer || $user->admin);
 			}
+
 
 			/*
 			* Menu TIERS
@@ -887,7 +888,6 @@ class MenuLeft {
 				}
 			}
 		}
-
 	}
 
 }
