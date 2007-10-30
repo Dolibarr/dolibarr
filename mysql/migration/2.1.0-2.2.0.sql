@@ -962,6 +962,7 @@ ALTER TABLE llx_user ADD COLUMN phenix_login varchar(25) after webcal_login;
 ALTER TABLE llx_user ADD COLUMN phenix_pass varchar(128) after phenix_login;
 
 update llx_propal set total_ht = price where total_ht = 0 and total > 0;
+update llx_propal set date_livraison = NULL where date_livraison = '1970-01-01 00:00:00';
 
 insert into llx_c_type_contact(rowid, element, source, code, libelle, active ) values (102,'commande','external', 'SHIPPING',      'Contact client livraison commande', 1);
 
