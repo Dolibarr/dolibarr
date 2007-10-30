@@ -113,6 +113,26 @@ class ModeleThirdPartyCode
         return $liste;
     }
 
+    /** 
+     *      \brief      Return description of module parameters
+     *      \param      langs      	Output language
+	 *		\param		soc			Third party object
+	 *		\param		type		-1=Nothing, 0=Customer, 1=Supplier
+	 *		\return		string		HTML translated description
+     */
+    function getToolTip($langs,$soc,$type)
+    {
+		$s='';
+		if ($type == 0)  $s.=$langs->trans("CustomerCodeDesc").'<br>';
+		if ($type == 1)  $s.=$langs->trans("SupplierCodeDesc").'<br>';
+		if ($type != -1) $s.=$langs->trans("ValidityControledByModule").': <b>'.$this->getNom($langs).'</b><br>';
+		if ($type == 0)  $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$this->code_null).'</b><br>';
+		if ($type == 1)  $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$this->code_null).'</b><br>';
+		$s.=$langs->trans("CanBeModifiedIfOk").': <b>'.yn($this->code_modifiable).'</b><br>';
+		$s.=$langs->trans("CanBeModifiedIfKo").': <b>'.yn($this->code_modifiable_invalide).'</b><br>';
+		if ($type != -1) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,1).'</b>';
+		return $s;
+	}
 }
 
 
