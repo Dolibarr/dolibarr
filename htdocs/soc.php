@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -673,7 +672,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codeclient_modifiable() || !$soc->code_client)
+        if ($soc->codeclient_modifiable())
         {
         	print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
         }
@@ -700,7 +699,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codefournisseur_modifiable() || !$soc->code_fournisseur)
+        if ($soc->codefournisseur_modifiable())
         {
         	print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
         }

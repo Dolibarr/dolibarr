@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -38,12 +37,12 @@ require_once(DOL_DOCUMENT_ROOT."/includes/modules/societe/modules_societe.class.
 class mod_codeclient_zebre extends ModeleThirdPartyCode
 {
 	var $nom;							// Nom du modele
-	var $code_modifiable;				// Code modifiable
-	var $code_modifiable_invalide;		// Code modifiable si il est invalide
-	var $code_modifiable_null;			// Code modifiables si il est null
-	var $code_null;						// Code facultatif
+	var $code_modifiable;				// Can be changed if valid
+	var $code_modifiable_invalide;		// Can be changed if not valid
+	var $code_modifiable_null;			// Can be changed if not defined
+	var $code_null;						// Can be undefined
 	var $version;		// 'development', 'experimental', 'dolibarr'
-	var $code_auto; // Numérotation automatique
+	var $code_auto; 	// Numérotation automatique
 
 	
 	/**		\brief      Constructeur classe
@@ -52,10 +51,10 @@ class mod_codeclient_zebre extends ModeleThirdPartyCode
 	{
 		$this->nom = "Zèbre";
 		$this->version = "dolibarr";
-		$this->code_modifiable = 0;
-		$this->code_modifiable_invalide = 0;
-		$this->code_modifiable_null = 1;
-		$this->code_null = 0;
+		$this->code_modifiable = 0;				// Can be changed if valid
+		$this->code_modifiable_invalide = 1;	// Can be changed if not valid
+		$this->code_modifiable_null = 1;		// Can be changed if not defined
+		$this->code_null = 0;					// Can be undefined
 		$this->code_auto = 0;
 	}
 

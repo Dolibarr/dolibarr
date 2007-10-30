@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
  
 /**

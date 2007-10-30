@@ -127,7 +127,7 @@ if ($socid > 0)
 
     print '<table class="border" width="100%">';
     
-    print '<tr><td>'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
+    print '<tr><td width="100">'.$langs->trans("Name").'</td><td colspan="3">'.$societe->nom.'</td></tr>';
     
     // Prefix
     print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
@@ -137,7 +137,7 @@ if ($socid > 0)
     if ($societe->client)
     {
         print '<tr>';
-        print '<td nowrap width="100">'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
+        print '<td nowrap>'.$langs->trans("CustomerCode"). '</td><td colspan="3">'. $societe->code_client . '</td>';
         print '</tr>';
         print '<tr>';
         print '<td nowrap>'.$langs->trans("CustomerAccountancyCode").'</td><td colspan="3">'.$societe->code_compta.'</td>';

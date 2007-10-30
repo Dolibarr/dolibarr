@@ -1418,7 +1418,8 @@ class Societe
 
 
 	/**
-	 *    \brief      Verifie si un code client est modifiable dans configuration du module de controle des codes
+	 *    \brief      Verifie si un code client est modifiable en fonction des parametres
+	 *                du module de controle des codes.
 	 *    \return     int		0=Non, 1=Oui
 	 */
 	function codeclient_modifiable()
@@ -1433,7 +1434,7 @@ class Societe
 			$mod = new $var;
 	
 			dolibarr_syslog("Societe::codeclient_modifiable code_client=".$this->code_client." module=".$var);
-			if ($mod->code_modifiable_null && ! $this->code_fournisseur) return 1;			
+			if ($mod->code_modifiable_null && ! $this->code_client) return 1;			
 			if ($mod->code_modifiable_invalide && $this->check_codeclient() < 0) return 1;
 			if ($mod->code_modifiable) return 1;	// A mettre en dernier
 			return 0;
