@@ -52,7 +52,6 @@ if ($negpage)
 	if ($page > $_GET["nbpage"]) $page = $_GET["nbpage"];
 }
 
-
 $mesg='';
 
 	
@@ -138,7 +137,6 @@ if ($account > 0)
 	$sql = "SELECT rowid, label";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank_categ";
 	$sql.= " ORDER BY label";
-
 	$result = $db->query($sql);
 	if ($result)
 	{
@@ -156,32 +154,33 @@ if ($account > 0)
 		$db->free($result);
 	}
 
-	/*
-	*
-	*
-	*/
-
-	// Definition de sql_rech
-	$sql_rech="";
+	
+	// Definition de sql_rech et param
+	$param='';
+	$sql_rech='';
 	$mode_search = 0;
-	if ($_POST["req_desc"])
+	if ($_REQUEST["req_desc"])
 	{
-		$sql_rech .= " AND b.label like '%".strtolower($_POST["req_desc"])."%'";
+		$sql_rech.= " AND b.label like '%".$_REQUEST["req_desc"]."%'";
+		$param.='&amp;req_desc='.urlencode($_REQUEST["req_desc"]);
 		$mode_search = 1;
 	}
-	if ($_POST["req_debit"])
+	if ($_REQUEST["req_debit"])
 	{
-		$sql_rech.=" AND amount = -".$_POST["req_debit"];
+		$sql_rech.=" AND amount = -".$_REQUEST["req_debit"];
+		$param.='&amp;req_debit='.urlencode($_REQUEST["req_debit"]);
 		$mode_search = 1;
 	}
-	if ($_POST["req_credit"])
+	if ($_REQUEST["req_credit"])
 	{
-		$sql_rech.=" AND amount = ".$_POST["req_credit"];
+		$sql_rech.=" AND amount = ".$_REQUEST["req_credit"];
+		$param.='&amp;req_credit='.urlencode($_REQUEST["req_credit"]);
 		$mode_search = 1;
 	}
-	if ($_POST["thirdparty"])
+	if ($_REQUEST["thirdparty"])
 	{
-		$sql_rech.=" AND (IFNULL(s.nom,'bidon') like '%".$_POST["thirdparty"]."%')";
+		$sql_rech.=" AND (IFNULL(s.nom,'') like '%".$_REQUEST["thirdparty"]."%')";
+		$param.='&amp;thirdparty='.urlencode($_REQUEST["thirdparty"]);
 		$mode_search = 1;
 	}
 
@@ -217,7 +216,7 @@ if ($account > 0)
 		dolibarr_print_error($db);
 	}
 
-	if ($page > 0 && $mode_search == 0)
+	if ($page > 0)
 	{
 		$limitsql = $nbline - ($page * $viewline);
 		if ($limitsql < $viewline)
@@ -250,16 +249,20 @@ if ($account > 0)
 	$nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
 	if ($limitsql > $viewline)
 	{
-		$navig.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).'">'.img_previous().'</a>';
+		$navig.='<a href="account.php?account='.$acct->id.'&amp;page='.($page+1).$param.'">'.img_previous().'</a>';
 	}
 	$navig.= ' Page ';
 	$navig.='<input type="text" name="negpage" size="1" class="flat" value="'.($nbpage-$page).'">';
+	$navig.='<input type="hidden" name="req_desc"   value="'.$_REQUEST["req_desc"].'">';
+	$navig.='<input type="hidden" name="req_debit"  value="'.$_REQUEST["req_debit"].'">';
+	$navig.='<input type="hidden" name="req_credit" value="'.$_REQUEST["req_credit"].'">';
+	$navig.='<input type="hidden" name="thirdparty" value="'.$_REQUEST["thirdparty"].'">';
 	$navig.='<input type="hidden" name="nbpage"  value="'.$nbpage.'">';
 	$navig.='<input type="hidden" name="account" value="'.($acct->id).'">';
 	$navig.='/'.$nbpage.' ';
 	if ($total_lines > $limitsql )
 	{
-		$navig.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).'">'.img_next().'</a>';
+		$navig.= '<a href="account.php?account='.$acct->id.'&amp;page='.($page-1).$param.'">'.img_next().'</a>';
 	}
 	$navig.='</form>';
 
@@ -286,7 +289,7 @@ if ($account > 0)
 	// Formulaire de saisie d'une opération hors factures
 	if ($user->rights->banque->modifier && $_GET["action"]=='addline')
 	{
-		print '<form method="post" action="account.php">';
+		print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="vline" value="' . $vline . '">';
 		print '<input type="hidden" name="account" value="' . $acct->id . '">';
@@ -350,15 +353,16 @@ if ($account > 0)
 	else print '&nbsp;';
 	print '</td></tr>';
 
+	print '<form action="'.$_SERVER["PHP_SELF"].'" name="search" method="POST">';
 	print '<input type="hidden" name="action" value="search">';
 	print '<input type="hidden" name="account" value="' . $acct->id . '">';
 
 	print '<tr class="liste_titre">';
 	print '<td colspan="3">&nbsp;</td>';
-	print '<td><input type="text" class="flat" name="req_desc" value="'.$_POST["req_desc"].'" size="24"></td>';
-	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_POST["thirdparty"].'" size="16"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_POST["req_debit"].'" size="4"></td>';
-	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_POST["req_credit"].'" size="4"></td>';
+	print '<td><input type="text" class="flat" name="req_desc" value="'.$_REQUEST["req_desc"].'" size="24"></td>';
+	print '<td><input type="text" class="flat" name="thirdparty" value="'.$_REQUEST["thirdparty"].'" size="16"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_debit" value="'.$_REQUEST["req_debit"].'" size="4"></td>';
+	print '<td align="right"><input type="text" class="flat" name="req_credit" value="'.$_REQUEST["req_credit"].'" size="4"></td>';
 	print '<td align="center">&nbsp;</td>';
 	print '<td align="center" width="40"><input type="image" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" alt="'.$langs->trans("Search").'"></td>';
 	print "</tr>\n";
