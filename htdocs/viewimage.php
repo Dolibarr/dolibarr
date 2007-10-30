@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -37,7 +36,7 @@ function llxHeader() { }
 
 $original_file = urldecode($_GET["file"]);
 $modulepart = urldecode($_GET["modulepart"]);
-$type = urldecode($_GET["type"]);
+$type = isset($_GET["type"]) ? urldecode($_GET["type"]) : '';
 
 // Protection, on interdit les .. dans les chemins
 $original_file = eregi_replace('\.\.','',$original_file);
