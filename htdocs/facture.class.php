@@ -216,6 +216,8 @@ class Facture extends CommonObject
 
 			$this->ref='(PROV'.$this->id.')';
 			$sql = 'UPDATE '.MAIN_DB_PREFIX."facture SET facnumber='".$this->ref."' WHERE rowid=".$this->id;
+
+			dolibarr_syslog("Facture::create sql=".$sql);
 			$resql=$this->db->query($sql);
 			if (! $resql) $error++;
 			
@@ -223,12 +225,14 @@ class Facture extends CommonObject
 			if (! $error && $this->id && $this->propalid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'fa_pr (fk_facture, fk_propal) VALUES ('.$this->id.','.$this->propalid.')';
+				dolibarr_syslog("Facture::Create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}
 			if (! $error && $this->id && $this->commandeid)
 			{
 				$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'co_fa (fk_facture, fk_commande) VALUES ('.$this->id.','.$this->commandeid.')';
+				dolibarr_syslog("Facture::Create sql=".$sql);
 				$resql=$this->db->query($sql);
 				if (! $resql) $error++;
 			}

@@ -21,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -2747,8 +2746,8 @@ else
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-		* Documents générés
-		*/
+			* Documents générés
+			*/
 			$filename=sanitize_string($fac->ref);
 			$filedir=$conf->facture->dir_output . '/' . sanitize_string($fac->ref);
 			$urlsource=$_SERVER['PHP_SELF'].'?facid='.$fac->id;
@@ -2761,21 +2760,14 @@ else
 			$somethingshown=$html->show_documents('facture',$filename,$filedir,$urlsource,$genallowed,$delallowed,$fac->modelpdf);
 
 			/*
-		*   Propales rattachées
-		*/
+			*   Propales rattachées
+			*/
 			$sql = 'SELECT '.$db->pdate('p.datep').' as dp, p.total_ht, p.ref, p.ref_client, p.rowid as propalid';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'propal as p';
-			if (!$conf->commande->enabled)
-			{
-				$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-				$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
-			}
-			else
-			{
-				$sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-				$sql .= " WHERE cf.fk_facture = ".$fac->id." AND cf.fk_commande = cp.fk_commande AND cp.fk_propale = p.rowid";
-			}
+			$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+			$sql .= " WHERE fp.fk_propal = p.rowid AND fp.fk_facture = ".$fac->id;
 
+			dolibarr_syslog("facture.php: sql=".$sql);
 			$resql = $db->query($sql);
 			if ($resql)
 			{
@@ -2789,7 +2781,7 @@ else
 					print '<table class="noborder" width="100%">';
 					print '<tr class="liste_titre">';
 					print '<td width="150">'.$langs->trans('Ref').'</td>';
-					print '<td>'.$langs->trans('RefCustomerOrderShort').'</td>';
+					print '<td>'.$langs->trans('RefCustomer').'</td>';
 					print '<td align="center">'.$langs->trans('Date').'</td>';
 					print '<td align="right">'.$langs->trans('AmountHT').'</td>';
 					print '</tr>';
@@ -2822,8 +2814,8 @@ else
 			}
 
 			/*
-		* Commandes rattachées
-		*/
+			* Commandes rattachées
+			*/
 			if($conf->commande->enabled)
 			{
 				$sql = 'SELECT '.$db->pdate('c.date_commande').' as date_commande, c.total_ht, c.ref, c.ref_client, c.rowid as id';
@@ -2834,6 +2826,8 @@ else
 					$num = $db->num_rows($resql);
 					if ($num)
 					{
+						$langs->load("orders");
+						
 						$i = 0; $total = 0;
 						if ($somethingshown) print '<br>';
 						$somethingshown=1;
