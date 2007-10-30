@@ -388,6 +388,8 @@ DetectedVersion=Version détectée
 FollowingConstantsWillBeSubstituted=Les constantes suivantes seront substituées par leur valeur correspondante.
 Refresh=Rafraichir
 BackToList=Retour liste
+CanBeModifiedIfOk=Peut être modifié si valide
+CanBeModifiedIfKo=Peut être modifié si invalide
 # Week day
 Monday=Lundi
 Tuesday=Mardi

@@ -349,10 +349,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
 		}
 		print '</td><td>';
-		$s=$langs->trans("CustomerCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
+		$s=$modCodeClient->getToolTip($langs,$soc,0);
 		print $form->textwithhelp('',$s,1);
 		print '</td></tr></table>';
 
@@ -374,10 +371,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
 		}
 		print '</td><td>';
-		$s=$langs->trans("SupplierCodeDesc").'<br>';
-		$s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
-		$s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-		$s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
+		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
 		print $form->textwithhelp('',$s,1);
 		print '</td></tr></table>';
 
@@ -682,10 +676,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         	print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
         }
         print '</td><td>';
-        $s=$langs->trans("CustomerCodeDesc").'<br>';
-        $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeClient->getNom($langs).'</b><br>';
-        $s.=$langs->trans("RequiredIfCustomer").': <b>'.yn(!$modCodeClient->code_null).'</b><br>';
-        $s.=$langs->trans("Example").': <b>'.$modCodeClient->getExample($langs,$soc,1).'</b>';
+		$s=$modCodeClient->getToolTip($langs,$soc,0);
         print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
@@ -709,10 +700,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         	print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
         }
         print '</td><td>';
-        $s=$langs->trans("SupplierCodeDesc").'<br>';
-        $s.=$langs->trans("ValidityControledByModule").': <b>'.$modCodeFournisseur->getNom($langs).'</b><br>';
-        $s.=$langs->trans("RequiredIfSupplier").': <b>'.yn(!$modCodeFournisseur->code_null).'</b><br>';
-        $s.=$langs->trans("Example").': <b>'.$modCodeFournisseur->getExample($langs,$soc,2).'</b>';
+		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
         print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 

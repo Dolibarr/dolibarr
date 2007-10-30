@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -111,7 +110,7 @@ print '  <td>'.$langs->trans("Name").'</td>';
 print '  <td>'.$langs->trans("Description").'</td>';
 print '  <td>'.$langs->trans("Example").'</td>';
 print '  <td align="center">'.$langs->trans("Activated").'</td>';
-print '  <td>&nbsp;</td>';
+print '  <td align="center" width="20">'.$langs->trans("Infos").'</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -145,17 +144,20 @@ if ($handle)
 	  
 	  if ($conf->global->SOCIETE_CODECLIENT_ADDON == "$file")
 	    {
-	      print "  <td align=\"center\">\n";
+	      print "<td align=\"center\">\n";
     	  print img_tick();
-	      print "</td>\n  <td>&nbsp;</td>\n";
+	      print "</td>\n";
 	    }
 	  else
 	    {
-
-	      print '<td>&nbsp;</td>';
 	      print '<td align="center"><a href="societe.php?action=setcodeclient&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 	    }
-	  
+
+		print '<td align="center">';
+  		$s=$modCodeTiers->getToolTip($langs,$soc,-1);
+		print $form->textwithhelp('',$s,1);
+		print '</td>';
+		
 	  print '</tr>';
 	}
     }
@@ -177,7 +179,7 @@ print '<td>'.$langs->trans("Name").'</td>';
 print '<td>'.$langs->trans("Description").'</td>';
 print '<td>'.$langs->trans("Example").'</td>';
 print '<td align="center">'.$langs->trans("Activated").'</td>';
-print '<td>&nbsp;</td>';
+print '<td align="center" width="20">&nbsp;</td>';
 print "</tr>\n";
 
 clearstatcache();
@@ -208,15 +210,14 @@ if ($handle)
 	    {
 	      print '<td align="center">';
     	  print img_tick();
-	      print '</td><td>&nbsp;</td>';
+	      print '</td>';
 	    }
 	  else
 	    {
-	      print '<td>&nbsp;</td>';
 	      print '<td align="center"><a href="societe.php?action=setcodecompta&amp;value='.$file.'">'.$langs->trans("Activate").'</a></td>';
 
 	    }
-	  
+      print '<td>&nbsp;</td>';
 	  print "</tr>\n";
 	}
     }

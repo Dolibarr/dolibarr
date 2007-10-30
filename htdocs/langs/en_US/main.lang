@@ -387,6 +387,8 @@ DetectedVersion=Detected version
 FollowingConstantsWillBeSubstituted=Following constants will be substitute with corresponding value.
 Refresh=Refresh
 BackToList=Back to list
+CanBeModifiedIfOk=Can be modified if valid
+CanBeModifiedIfKo=Can be modified if not valid
 # Week day
 Monday=Monday
 Tuesday=Tuesday
