@@ -862,47 +862,47 @@ class Form
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='')
     {
-    	// Permettre l'exclusion d'utilisateurs
-    	if (is_array($exclude))
-    	{
-    		$excludeUsers = implode("','",$exclude);
-    	}
-    	
-    	// On recherche les utilisateurs
-      $sql = "SELECT u.rowid, u.name, u.firstname FROM ";
-      $sql.= MAIN_DB_PREFIX ."user as u";
-      if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
-      $sql.= " ORDER BY u.name ASC";
+		// Permettre l'exclusion d'utilisateurs
+		if (is_array($exclude))
+		{
+			$excludeUsers = implode("','",$exclude);
+		}
+		
+		// On recherche les utilisateurs
+		$sql = "SELECT u.rowid, u.name, u.firstname FROM ";
+		$sql.= MAIN_DB_PREFIX ."user as u";
+		if (is_array($exclude) && $excludeUsers) $sql.= " WHERE u.rowid NOT IN ('".$excludeUsers."')";
+		$sql.= " ORDER BY u.name ASC";
 
-      if ($this->db->query($sql))
-      {
-      	print '<select class="flat" name="'.$htmlname.'">';
-        if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
-        $num = $this->db->num_rows();
-        $i = 0;
-        if ($num)
-        {
-        	while ($i < $num)
-          {
-          	$obj = $this->db->fetch_object();
-            
-            if ($selected && $selected == $obj->rowid)
-            {
-            	print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
-            }
-            else
-            {
-            	print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
-            }
-            $i++;
-          }
-        }
-        print '</select>';
-      }
-      else
-      {
-      	dolibarr_print_error($this->db);
-      }
+		if ($this->db->query($sql))
+		{
+			print '<select class="flat" name="'.$htmlname.'">';
+			if ($show_empty) print '<option value="-1"'.($id==-1?' selected="true"':'').'>&nbsp;</option>'."\n";
+			$num = $this->db->num_rows();
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object();
+					
+					if ($selected && $selected == $obj->rowid)
+					{
+						print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+					}
+					else
+					{
+						print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
+					}
+					$i++;
+				}
+			}
+			print '</select>';
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+		}
     }
     
     

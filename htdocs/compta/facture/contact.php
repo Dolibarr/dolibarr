@@ -60,9 +60,18 @@ if ($_POST["action"] == 'addcontact' && $user->rights->facture->creer)
 	{
 		Header("Location: contact.php?facid=".$facture->id);
 		exit;
-	} else
+	}
+	else
 	{
-		$mesg = '<div class="error">'.$facture->error.'</div>';
+		if ($facture->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			$langs->load("errors");
+			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+		}
+		else
+		{
+			$mesg = '<div class="error">'.$facture->error.'</div>';
+		}
 	}
 }
 // modification d'un contact. On enregistre le type
@@ -213,7 +222,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des users déjà sélectionnés
-			$userAlreadySelected = $facture->getListContactId('internal');
+			//$userAlreadySelected = $facture->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
@@ -244,7 +253,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
-			$contactAlreadySelected = $facture->getListContactId('external');
+			//$contactAlreadySelected = $facture->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';

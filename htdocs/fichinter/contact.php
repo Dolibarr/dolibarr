@@ -62,7 +62,15 @@ if ($_POST["action"] == 'addcontact' && $user->rights->ficheinter->creer)
 	}
 	else
 	{
-		$mesg = '<div class="error">'.$fichinter->error.'</div>';
+		if ($fichinter->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			$langs->load("errors");
+			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+		}
+		else
+		{
+			$mesg = '<div class="error">'.$fichinter->error.'</div>';
+		}
 	}
 }
 // modification d'un contact. On enregistre le type
@@ -219,7 +227,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des users déjà sélectionnés
-			$userAlreadySelected = $fichinter->getListContactId('internal');
+			//$userAlreadySelected = $fichinter->getListContactId('internal'); 	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
@@ -250,7 +258,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
-			$contactAlreadySelected = $fichinter->getListContactId('external');
+			//$contactAlreadySelected = $fichinter->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type	
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';

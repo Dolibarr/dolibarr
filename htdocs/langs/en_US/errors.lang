@@ -1,3 +1,4 @@
 # Dolibarr language file - en_US - errors
 ErrorDuplicateTrigger=A trigger file named '<b>%s</b>' is already loaded. Remove duplicate trigger file in directory '<b>%s</b>'.
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
+ErrorThisContactIsAlreadyDefinedAsThisType=this contact is already defined as contact for this type.

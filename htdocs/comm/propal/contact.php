@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -62,9 +61,18 @@ if ($_POST["action"] == 'addcontact' && $user->rights->propale->creer)
 	{
 		Header("Location: contact.php?propalid=".$propal->id);
 		exit;
-	} else
+	}
+	else
 	{
-		$mesg = '<div class="error">'.$propal->error.'</div>';
+		if ($propal->error == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+		{
+			$langs->load("errors");
+			$mesg = '<div class="error">'.$langs->trans("ErrorThisContactIsAlreadyDefinedAsThisType").'</div>';
+		}
+		else
+		{
+			$mesg = '<div class="error">'.$propal->error.'</div>';
+		}
 	}
 }
 // modification d'un contact. On enregistre le type
@@ -221,7 +229,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des users déjà sélectionnés
-			$userAlreadySelected = $propal->getListContactId('internal');
+			//$userAlreadySelected = $propal->getListContactId('internal');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_users($user->id,'contactid',0,$userAlreadySelected);
 			print '</td>';
 			print '<td>';
@@ -252,7 +260,7 @@ if ($id > 0)
 
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
-			$contactAlreadySelected = $propal->getListContactId('external');
+			//$contactAlreadySelected = $propal->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
 			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
 			print '</td>';
 			print '<td>';

@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -101,9 +100,17 @@ class CommonObject
         }
         else
         {
-            $this->error=$this->db->error()." - $sql";
-			dolibarr_syslog($this->error,LOG_ERR);
-            return -1;
+			if ($this->db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+			{
+				$this->error=$this->db->errno();
+				return -2;
+			}
+			else
+			{
+				$this->error=$this->db->error()." - $sql";
+				dolibarr_syslog($this->error,LOG_ERR);
+				return -1;
+			}
         }
 	}
 
@@ -170,8 +177,8 @@ class CommonObject
         if ($source == 'external') $sql.=" t.fk_soc as socid,";
         $sql.=" t.name as nom,";
         $sql.= "tc.source, tc.element, tc.code, tc.libelle";
-        $sql.= " FROM (".MAIN_DB_PREFIX."element_contact ec,";
-        $sql.= " ".MAIN_DB_PREFIX."c_type_contact tc)";
+        $sql.= " FROM ".MAIN_DB_PREFIX."c_type_contact tc,";
+        $sql.= " ".MAIN_DB_PREFIX."element_contact ec";
         if ($source == 'internal') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."user t on ec.fk_socpeople = t.rowid";
         if ($source == 'external') $sql.=" LEFT JOIN ".MAIN_DB_PREFIX."socpeople t on ec.fk_socpeople = t.rowid";
         $sql.= " WHERE ec.element_id =".$this->id;
@@ -286,7 +293,7 @@ class CommonObject
      *                  Exemple: contact client de livraison ('external', 'SHIPPING')
      *                  Exemple: contact interne suivi paiement ('internal', 'SALESREPFOLL')
 	 *		\param		source		'external' or 'internal'
-	 *		\param		source		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
+	 *		\param		code		'BILLING', 'SHIPPING', 'SALESREPFOLL', ...
      *      \return     array       Liste des id contacts
      */
     function getIdContact($source,$code)
