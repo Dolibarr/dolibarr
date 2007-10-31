@@ -60,6 +60,8 @@ function llxHeader($head = "", $title="") {
 
   $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/concurrents/liste.php", "Concurrents");
 
+  $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/perms.php", "Permissions");
+
   if ($user->rights->telephonie->adsl->lire && TELEPHONIE_MODULE_ADSL == 1)
     $menu->add_submenu(DOL_URL_ROOT."/telephonie/config/xdsl.php", "Liens xDSL");
 
