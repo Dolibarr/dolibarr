@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -162,7 +161,7 @@ $tabfieldinsert[5] = "code,civilite";
 $tabfieldinsert[6] = "code,libelle,type";
 $tabfieldinsert[7] = "libelle,deductible";
 $tabfieldinsert[8] = "code,libelle";
-$tabfieldinsert[9] = "code_iso,label";
+$tabfieldinsert[9] = "code,code_iso,label";
 $tabfieldinsert[10]= "fk_pays,taux,recuperableonly,note";
 $tabfieldinsert[11]= "element,source,code,libelle";
 $tabfieldinsert[12]= "code,libelle,libelle_facture,nbjour,fdm,decalage";
@@ -216,6 +215,7 @@ $sortorder=$_GET["sortorder"];
 if ($_POST["actionadd"] || $_POST["actionmodify"])
 {
     $listfield=split(',',$tabfield[$_POST["id"]]);
+    $listfieldinsert=split(',',$tabfieldinsert[$_POST["id"]]);
     $listfieldmodify=split(',',$tabfieldinsert[$_POST["id"]]);
     $listfieldvalue=split(',',$tabfieldvalue[$_POST["id"]]);
 
@@ -256,23 +256,26 @@ if ($_POST["actionadd"] || $_POST["actionmodify"])
     
         // Add new entry
         $sql = "INSERT INTO ".$tabname[$_POST["id"]]." (";
-        if ($tabrowid[$_POST["id"]]) $sql.= $tabrowid[$_POST["id"]].",";
+        // List of fields
+		if ($tabrowid[$_POST["id"]] &&
+			! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $tabrowid[$_POST["id"]].",";
         $sql.= $tabfieldinsert[$_POST["id"]];
         $sql.=",active)";
         $sql.= " VALUES(";
-        // Ajoute valeur des champs
+        // List of values
         if ($tabrowid[$_POST["id"]] &&
-            ! in_array($tabrowid[$_POST["id"]],$listfield)) $sql.= $newid.",";
+            ! in_array($tabrowid[$_POST["id"]],$listfieldinsert)) $sql.= $newid.",";
         $i=0;
-        foreach ($listfieldmodify as $f => $value) {
+        foreach ($listfieldinsert as $f => $value)
+		{
         	if ($value == 'price') { $_POST[$listfieldvalue[$i]] = price2num($_POST[$listfieldvalue[$i]],'MU'); }
-          if ($i) $sql.=",";
-          $sql.="'".addslashes($_POST[$listfieldvalue[$i]])."'";
-          $i++;
+			if ($i) $sql.=",";
+			$sql.="'".addslashes($_POST[$listfieldvalue[$i]])."'";
+			$i++;
         }
         $sql.=",1)";
 
-		     dolibarr_syslog("dict actionadd sql=".$sql);
+	     dolibarr_syslog("dict actionadd sql=".$sql);
         $result = $db->query($sql);
         if (!$result)
         {
