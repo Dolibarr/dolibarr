@@ -237,6 +237,21 @@ class pdf_soleil extends ModelePDFFicheinter
 
 				$pdf->SetXY (10, $tab_top + 8 );
 				$pdf->MultiCell(190, 5, $fichinter->description, 0, 'J', 0);
+				
+				$pdf->SetXY (10, $pdf->GetY() + 20 );
+		    $pdf->MultiCell(60, 5, '', 0, 'J', 0);
+
+		    $pdf->SetXY(20,220);
+		    $pdf->MultiCell(66,5, $langs->transnoentities("NameAndSignatureOfInternalContact"),0,'L',0);
+
+        $pdf->SetXY(20,225);
+        $pdf->MultiCell(80,30, '', 1);
+
+        $pdf->SetXY(110,220);
+        $pdf->MultiCell(80,5, $langs->transnoentities("NameAndSignatureOfExternalContact"),0,'L',0);
+
+        $pdf->SetXY(110,225);
+        $pdf->MultiCell(80,30, '', 1);
 
 				$pdf->SetFont('Arial','', 9);   // On repositionne la police par defaut
 				$this->_pagefoot($pdf,$outputlangs);
@@ -309,7 +324,9 @@ class pdf_soleil extends ModelePDFFicheinter
         $pdf->SetDrawColor(224,224,224);
 
         // On positionne le debut du bas de page selon nbre de lignes de ce bas de page
-        $posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
+        //Todo: correction provisoire afin de régler le problème du bas de page
+        //$posy=$this->marge_basse + 1 + ($ligne1?3:0) + ($ligne2?3:0);
+        $posy=$this->marge_basse + 11 + ($ligne1?3:0) + ($ligne2?3:0);
 
         $pdf->SetY(-$posy);
         $pdf->line($this->marge_gauche, $this->page_hauteur-$posy, 200, $this->page_hauteur-$posy);

@@ -17,6 +17,8 @@ DeleteInterventionLine=Supprimer ligne d'intervention
 ConfirmDeleteIntervention=Êtes-vous sûr de vouloir effacer cette intervention ?
 ConfirmValidateIntervention=Êtes-vous sûr de vouloir valider cette intervention ?
 ConfirmDeleteInterventionLine=Êtes-vous sûr de vouloir effacer cette ligne ?
+NameAndSignatureOfInternalContact=Nom et signature de l'intervenant :
+NameAndSignatureOfExternalContact=Nom et signature du client :
 ##### Types de contacts #####
 TypeContact_fichinter_internal_INTERREPFOLL=Responsable suivi de l'intervention
 TypeContact_fichinter_internal_INTERVENING=Intervenant
