@@ -180,12 +180,23 @@ if ($id > 0)
 		print $propal->ref;
 		print "</td></tr>";
 
+		// Ref client
+		print '<tr><td>';
+		print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+		print $langs->trans('RefCustomer').'</td><td align="left">';
+		print '</td>';
+		print '</tr></table>';
+		print '</td><td colspan="3">';
+		print $propal->ref_client;
+		print '</td>';
+		print '</tr>';
+
 		// Customer
 		if ( is_null($propal->client) )
 			$propal->fetch_client();
-			
 		print "<tr><td>".$langs->trans("Company")."</td>";
 		print '<td colspan="3">'.$propal->client->getNomUrl(1).'</td></tr>';
+
 		print "</table>";
 
 		print '</div>';

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Regis Houssin        <regis.houssin@cap-networks.com>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -87,65 +86,45 @@ if ($_GET["propalid"] > 0)
 
 				print '<table class="border" width="100%">';
 
-		        print '<tr><td width="30%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
+				// Ref
+		        print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="5">'.$propal->ref.'</td></tr>';
 
-				$rowspan=3;
-
-				// ligne 1
-				// partie Gauche
-				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="3">'.$societe->getNomUrl(1).'</td>';
-
-				// partie Droite
-				print '<td align="left">'.$langs->trans("PaymentConditions").'</td>';
-				print '<td>'.'&nbsp;'.'</td>';
+				// Ref client
+				print '<tr><td>';
+				print '<table class="nobordernopadding" width="100%"><tr><td nowrap>';
+				print $langs->trans('RefCustomer').'</td><td align="left">';
+				print '</td>';
+				print '</tr></table>';
+				print '</td><td colspan="5">';
+				print $propal->ref_client;
+				print '</td>';
 				print '</tr>';
 
-				// ligne 2
+				$rowspan=2;
+
+				// Tiers
+				print '<tr><td>'.$langs->trans('Company').'</td><td colspan="5">'.$societe->getNomUrl(1).'</td>';
+				print '</tr>';
+
+				// Ligne info remises tiers
+			    print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
+				if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
+				else print $langs->trans("CompanyHasNoRelativeDiscount");
+				$absolute_discount=$societe->getCurrentDiscount();
+				print '. ';
+				if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+				else print $langs->trans("CompanyHasNoAbsoluteDiscount");
+				print '.';
+				print '</td></tr>';
+
+				// ligne
 				// partie Gauche
 				print '<tr><td>'.$langs->trans('Date').'</td><td colspan="3">';
 				print dolibarr_print_date($propal->date,'daytext');
 				print '</td>';
 
-				// partie Droite
-				print '<td>'.$langs->trans('DateEndPropal').'</td><td>';
-				if ($propal->fin_validite) {
-					print dolibarr_print_date($propal->fin_validite,'daytext');
-				} else {
-					print $langs->trans("Unknown");
-				}
-				print '</td>';
-				print '</tr>';
-
-				// Destinataire
-				$langs->load('mails');
-				// ligne 3
-				print '<tr>';
-				// partie Gauche
-				print '<td>'.$langs->trans('MailTo').'</td>';
-
-				$dests=$societe->contact_array($societe->id);
-				$numdest = count($dests);
-				print '<td colspan="3">';
-				if ($numdest==0) {
-					print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
-					print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
-				} else {
-					if (!empty($propal->contactid)) {
-						require_once(DOL_DOCUMENT_ROOT.'/contact.class.php');
-						$contact=new Contact($db);
-						$contact->fetch($propal->contactid);
-						print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$propal->contactid.'" title="'.$langs->trans('ShowContact').'">';
-						print $contact->firstname.' '.$contact->name;
-						print '</a>';
-					} else {
-						print '&nbsp;';
-					}
-				}
-				print '</td>';
-
 				// partie Droite sur $rowspan lignes
 				print '<td colspan="2" rowspan="'.$rowspan.'" valign="top" width="50%">';
-
 
 				/*
   				 * Documents
@@ -217,17 +196,10 @@ if ($_GET["propalid"] > 0)
 						}
 					}
 				}
-				print "</td></tr>";
-
-
-				// ligne 4
-				// partie Gauche
-				print '<tr><td height="10" nowrap>'.$langs->trans('GlobalDiscount').'</td>';
-				print '<td colspan="3">'.$propal->remise_percent.'%</td>';
+				
+				print "</td>";
 				print '</tr>';
 
-				// ligne 5
-				// partie Gauche
 				print '<tr><td height="10">'.$langs->trans('AmountHT').'</td>';
 				print '<td align="right" colspan="2"><b>'.price($propal->price).'</b></td>';
 				print '<td>'.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
