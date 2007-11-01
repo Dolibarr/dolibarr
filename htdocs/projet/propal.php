@@ -126,7 +126,7 @@ if (sizeof($propales)>0 && is_array($propales))
     
         print '<td>'.dolibarr_print_date($propale->datep).'</td>';
     
-        print '<td align="right">'.price($propale->price).'</td><td>&nbsp;</td></tr>';
+        print '<td align="right">'.price($propale->total_ht).'</td><td>&nbsp;</td></tr>';
         $total = $total + $propale->total_ht;
     }
     
