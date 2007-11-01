@@ -1,6 +1,6 @@
 #!/bin/sh
 #
-# Régis Houssin - regis.houssin@cap-networks.com
+# Régis Houssin - regis@dolibarr.fr
 # Purge des propales
 #
 #
