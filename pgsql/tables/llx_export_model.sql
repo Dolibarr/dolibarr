@@ -4,7 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
+-- Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_export_model.sql,v 1.2 2007/03/24 16:46:02 eldy Exp $
--- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_export_model.sql,v $
+-- $Id: llx_export_model.sql,v 1.2 2007/09/01 15:03:43 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/pgsql/tables/llx_export_model.sql,v $
 --
 -- Liste des modeles de document disponibles
 --

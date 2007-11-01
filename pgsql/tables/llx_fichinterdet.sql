@@ -4,7 +4,7 @@
 
 -- ===================================================================
 -- Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
--- Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@cap-networks.com>
+-- Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -20,8 +20,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_fichinterdet.sql,v 1.1 2007/08/28 07:46:40 hregis Exp $
--- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_fichinterdet.sql,v $
+-- $Id: llx_fichinterdet.sql,v 1.1 2007/09/01 15:03:48 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/pgsql/tables/llx_fichinterdet.sql,v $
 -- ===================================================================
 
 create table llx_fichinterdet

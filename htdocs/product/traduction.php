@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Regis Houssin  <regis.houssin@cap-networks.com>
+/* Copyright (C) 2005-2006 Regis Houssin  <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify

@@ -1,5 +1,5 @@
 -- ========================================================================
--- Copyright (C) 2007 Regis Houssin <regis.houssin@cap-networks.com>
+-- Copyright (C) 2007 Regis Houssin <regis@dolibarr.fr>
 --
 -- $Id$
 -- $Source$

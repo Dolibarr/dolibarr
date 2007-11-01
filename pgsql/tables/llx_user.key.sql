@@ -5,7 +5,7 @@
 -- ============================================================================
 -- Copyright (C) 2003      Rodolphe Quiedeville <rodolphe@quiedeville.org>
 -- Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
--- Copyright (C) 2007      Regis Houssin        <regis.houssin@cap-networks.com>
+-- Copyright (C) 2007      Regis Houssin        <regis@dolibarr.fr>
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
@@ -21,8 +21,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- $Id: llx_user.key.sql,v 1.3 2007/04/26 22:01:11 eldy Exp $
--- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_user.key.sql,v $
+-- $Id: llx_user.key.sql,v 1.2 2007/09/01 15:03:48 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/pgsql/tables/llx_user.key.sql,v $
 --
 -- ===========================================================================
 

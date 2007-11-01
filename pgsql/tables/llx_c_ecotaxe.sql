@@ -3,10 +3,10 @@
 -- (c) 2005, Laurent Destailleur.
 
 -- ========================================================================
--- Copyright (C) 2007 Régis Houssin  <regis.houssin@cap-networks.com>
+-- Copyright (C) 2007 Régis Houssin  <regis@dolibarr.fr>
 --
--- $Id: llx_c_ecotaxe.sql,v 1.4 2007/07/26 17:26:10 hregis Exp $
--- $Source: /cvsroot/dolibarr/dolibarr/mysql/tables/llx_c_ecotaxe.sql,v $
+-- $Id: llx_c_ecotaxe.sql,v 1.2 2007/09/01 15:03:40 hregis Exp $
+-- $Source: /cvsroot/dolibarr/dolibarr/pgsql/tables/llx_c_ecotaxe.sql,v $
 --
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
