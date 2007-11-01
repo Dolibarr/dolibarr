@@ -127,7 +127,7 @@ if (sizeof($propales)>0 && is_array($propales))
         print '<td>'.dolibarr_print_date($propale->datep).'</td>';
     
         print '<td align="right">'.price($propale->price).'</td><td>&nbsp;</td></tr>';
-        $total = $total + $propale->price;
+        $total = $total + $propale->total_ht;
     }
     
     print '<tr class="liste_total"><td colspan="2">'.$i.' '.$langs->trans("Proposal").'</td>';
