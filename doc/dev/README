@@ -1,7 +1,7 @@
 README (english)
-################################
-Developper documentation
-################################
+--------------------------------
+Developper guide
+--------------------------------
 
 
 ***** Doxygen documentation
@@ -20,5 +20,5 @@ diff -Naur --exclude=CVS --exclude=.#  --exclude=~ --exclude=documents --exclude
 
 ***** Other developper documentation
 
-If you speek French, more information is available on the Dolibarr Wiki:
-> http://www.dolibarr.com/wikidev
+If you speek French, more information is available on Dolibarr web site:
+> http://www.dolibarr.org/

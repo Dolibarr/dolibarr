@@ -1,7 +1,7 @@
 README (French)
-################################
+--------------------------------
 Documentation developpeur
-################################
+--------------------------------
 
 
 ***** Documentation doxygen
@@ -16,5 +16,5 @@ Le prerequis est d'avoir Doxygen installé (Linux ou Windows).
 
 ***** Autre documentation développeur
 
-D'autres informations sont disponibles en Français sur le Wiki Dolibarr:
-> http://www.dolibarr.com/wikidev
+D'autres informations sont disponibles en Français sur le site Web Dolibarr:
+> http://www.dolibarr.fr/
