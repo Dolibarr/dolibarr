@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -58,14 +57,14 @@ if ($_GET['action'] == 'create' && $_GET["accountid"] > 0 && $user->rights->banq
 {	
   $remisecheque = new RemiseCheque($db);
   $result = $remisecheque->Create($user, $_GET["accountid"]);
-  if ($result === 0)
+  if ($result >= 0)
     {      
       Header("Location: fiche.php?id=".$remisecheque->id);
       exit;
     }
   else
     {
-      $mesg='<div class="error">'.$paiement->error.'</div>';
+      $mesg='<div class="error">'.$remisecheque->error.'</div>';
     }
 }
 
