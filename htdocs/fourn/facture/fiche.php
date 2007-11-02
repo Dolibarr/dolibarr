@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -513,8 +512,12 @@ else
 				print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht,'MT').'</td>';
 				print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc,'MT').'</td>';
-				print '<td align="center" width="16"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
-				print '<td align="center" width="16"><a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
+				print '<td align="center" width="16">';
+				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
+				print '</td>';
+				print '<td align="center" width="16">';
+				print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
+				print '</td>';
 				print '</td></tr>';
 			}
 
@@ -761,8 +764,14 @@ else
 					print '<td align="right">'.$fac->lignes[$i]->qty.'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ht).'</td>';
 					print '<td align="right" nowrap="nowrap">'.price($fac->lignes[$i]->total_ttc).'</td>';
-					print '<td align="center" width="16"><a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a></td>';
-					print '<td align="center" width="16"><a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a></td>';
+					print '<td align="center" width="16">';
+					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=mod_ligne&amp;etat=0&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_edit().'</a>';
+					else print '&nbsp;';
+					print '</td>';
+					print '<td align="center" width="16">';
+					if ($fac->statut == 0) print '<a href="fiche.php?facid='.$fac->id.'&amp;action=confirm_delete_line&amp;ligne_id='.$fac->lignes[$i]->rowid.'">'.img_delete().'</a>';
+					else print '&nbsp;';
+					print '</td>';
 					print '</tr>';
 				}				
 				
