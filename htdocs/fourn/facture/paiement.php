@@ -248,7 +248,7 @@ if ($action == 'create' || $action == 'add_paiement')
 			if ($conf->banque->enabled)
 			{
 				print '<tr><td>'.$langs->trans('Account').'</td><td>';
-				$html->select_comptes(empty($_POST['accountid'])?(defined('FACTURE_RIB_NUMBER')?FACTURE_RIB_NUMBER:''):$_POST['accountid'],'accountid',0,'',1);
+				$html->select_comptes(empty($_POST['accountid'])?'':$_POST['accountid'],'accountid',0,'',1);
 				print '</td></tr>';
 			}
 			else
