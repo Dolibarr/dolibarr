@@ -3,9 +3,10 @@
   <page>
     <title>Accueil</title>
     <revision>
-      <timestamp>2007-07-30T09:02:24Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <text>[http://www.dolibarr.com Le site officiel francophone Dolibarr] (non maintenu)
+      <timestamp>2007-10-13T19:33:33Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
+      <comment>/* Utilisateurs */</comment>
+      <text>[http://www.dolibarr.fr Le site officiel francophone Dolibarr]
 
 [http://www.dolibarr.org Le site officiel anglophone Dolibarr]
 
@@ -19,10 +20,10 @@ Prochaines versions [[Roadmap|ici]]
 == Utilisateurs ==
 * [[Documentation utilisateur|Documentation Utilisateur]]
 * [[FAQ_Utilisateur|FAQ Utilisateur]]
-* [http://www.dolibarr.org/demo/htdocs/ Demo Dolibarr 2.1alpha]
-* [http://forum.dolibarr.com Forum général]
-** [http://forum.dolibarr.com/viewforum.php?f=15 Retour experience]
-** [http://forum.dolibarr.com/viewforum.php?f=11 Suggestions utilisateurs]
+* [http://demo.dolibarr.fr/ Demo Dolibarr 2.2cvs]
+* [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum général]
+** [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/func,showcat/catid,15/ Retour experience]
+** [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/func,showcat/catid,11/ Suggestions utilisateurs]
 
 == Développeurs ==
 * [[Documentation Développeur]]
@@ -46,301 +47,50 @@ Prochaines versions [[Roadmap|ici]]
     </revision>
   </page>
   <page>
+    <title>Action def</title>
+    <revision>
+      <timestamp>2007-08-06T01:42:06Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+Liste des actions
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
     <title>Actualités</title>
     <revision>
-      <timestamp>2006-03-26T04:51:37Z</timestamp>
-      <contributor><ip>83.233.42.198</ip></contributor>
-      <text>&lt;div style=&quot;overflow:auto; height: 1px;&quot;&gt;
-&lt;br&gt;
-eOnlinepharmacy.com is an &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; online pharmacy &lt;/a&gt; for you to &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; buy prescription drugs online &lt;/a&gt;. We ship &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; prescription drugs &lt;/a&gt; overnight worldwide. To obtain &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; prescription medication&lt;/a&gt; and to &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; order medication online&amp;nbsp; &lt;/a&gt; check out the &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; internet pharmacy  &lt;/a&gt; You can &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; buy drugs online &lt;/a&gt;, &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; buy medication online&lt;/a&gt; 
-and with overnight shipment &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; order drugs online &lt;/a&gt; &amp;nbsp;worldwide.
-&lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; online prescriptions &lt;/a&gt; drugs are 
-available at the &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; discount pharmacy  &lt;/a&gt; it is a &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; pharmacy online  &lt;/a&gt; website where you can find 
-all types of &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; cheap pharmacy &lt;/a&gt; &lt;a href=&quot;http://www.eonlinepharmacy.com/&quot;&gt; drugs online &lt;/a&gt;
-&lt;br&gt;
-&lt;/div &gt;
-
-
-.
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;div id=&quot;kbektt12150&quot; style=&quot;overflow:auto;height:1px;&quot;&gt;
-[http://www.gayhomes.net/moiseev/casino_poker.html casino]
-[http://www.gayhomes.net/moiseev/casino_morongo.html casino]
-[http://www.gayhomes.net/moiseev/viagra_prescription.html viagra prescription]
-[http://mujweb.cz/www/buyonline/prevacid.html prevacid]
-[http://www.gayhomes.net/dermo/acyclovir.html acyclovir]
-[http://www.gayhomes.net/moiseev/casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/atlantic_city_casino.html casino]
-[http://www.gayhomes.net/debil/cyclobenzaprine.html cyclobenzaprine]
-[http://www.gayhomes.net/moiseev/discount_viagra.html discount viagra]
-[http://www.gayhomes.net/moiseev/casino_baccarat.html casino]
-[http://mujweb.cz/Zabava/buycheap/phentermine.html phentermine]
-[http://www.gayhomes.net/moiseev/grand_casino.html casino]
-[http://www.gayhomes.net/dermo/buspar.html buspar]
-[http://www.gayhomes.net/moiseev/louisiana_casino.html casino]
-[http://buy-phentermine-online.ze.cx/ buy phentermine]
-[http://mujweb.cz/www/buyonline/clarinex.html clarinex]
-[http://mujweb.cz/Zabava/buycheap/meridia.html meridia]
-[http://www.gayhomes.net/dermo/zithromax.html zithromax]
-[http://www.gayhomes.net/jopotrah/phentermine_diet.html phentermine diet]
-[http://www.gayhomes.net/moiseev/caesar_palace_hotel_and_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/viagra.html viagra]
-[http://www.gayhomes.net/moiseev/casino.html casino]
-[http://www.gayhomes.net/dermo/sildenafil.html sildenafil]
-[http://mujweb.cz/www/buyonline/norvasc.html norvasc]
-[http://www.gayhomes.net/moiseev/top_online_casino.html casino]
-[http://www.gayhomes.net/debil/remeron.html remeron]
-[http://www.gayhomes.net/moiseev/casino_money.html casino]
-[http://mujweb.cz/www/buyonline/fluoxetine.html fluoxetine]
-[http://buy-phentermine-online.fr.nf/ buy phentermine]
-[http://mujweb.cz/Zabava/buycheap/xanax.html xanax]
-[http://www.gayhomes.net/moiseev/home_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/cialis.html cialis]
-[http://www.gayhomes.net/moiseev/fallsview_casino.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_game.html casino]
-[http://www.gayhomes.net/moiseev/free_online_casino_game.html casino]
-[http://mujweb.cz/www/buyonline/zovirax.html zovirax]
-[http://mujweb.cz/Zabava/buycheap/fioricet.html fioricet]
-[http://www.gayhomes.net/moiseev/free_casino_game.html casino]
-[http://mujweb.cz/www/buyonline/fosamax.html fosamax]
-[http://www.gayhomes.net/moiseev/casino_slot.html casino]
-[http://mujweb.cz/Zabava/buycheap/lorazepam.html lorazepam]
-[http://www.gayhomes.net/debil/fluoxetine.html fluoxetine]
-[http://www.gayhomes.net/dermo/valtrex.html valtrex]
-[http://www.gayhomes.net/moiseev/casino_rama.html casino]
-[http://www.gayhomes.net/moiseev/casino_windsor.html casino]
-[http://www.gayhomes.net/debil/butalbital.html butalbital]
-[http://www.gayhomes.net/moiseev/ameristar_casino.html casino]
-[http://www.gayhomes.net/moiseev/map.html map]
-[http://www.gayhomes.net/debil/amoxicillin.html amoxicillin]
-[http://buy-viagra-online.fr.nf/ buy viagra]
-[http://www.gayhomes.net/moiseev/casino_strategy.html casino]
-[http://www.gayhomes.net/moiseev/aladdin_casino.html casino]
-[http://www.gayhomes.net/moiseev/isle_of_capri_casino.html casino]
-[http://www.gayhomes.net/moiseev/best_online_casino_directory.html casino]
-[http://www.gayhomes.net/moiseev/casino_on_line.html casino]
-[http://mujweb.cz/Zabava/buycheap/valium.html valium]
-[http://www.gayhomes.net/moiseev/free_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_review.html casino]
-[http://www.gayhomes.net/jopotrah/order_phentermine_online.html order phentermine]
-[http://www.gayhomes.net/moiseev/no_deposit_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_gamble.html casino]
-[http://www.gayhomes.net/moiseev/casino_royale.html casino]
-[http://www.gayhomes.net/moiseev/casino_gaming.html casino]
-[http://mujweb.cz/www/buyonline/remeron.html remeron]
-[http://mujweb.cz/www/buyonline/ultracet.html ultracet]
-[http://mujweb.cz/www/buyonline/alesse.html alesse]
-[http://www.gayhomes.net/moiseev/real_casino.html casino]
-[http://mujweb.cz/www/buyonline/tetracycline.html tetracycline]
-[http://www.gayhomes.net/moiseev/internet_casino_gambling_online.html casino]
-[http://www.gayhomes.net/moiseev/buy_viagra.html buy viagra]
-[http://mujweb.cz/Zabava/buycheap/propecia.html propecia]
-[http://www.gayhomes.net/moiseev/internet_casino.html casino]
-[http://mujweb.cz/www/buyonline/aldara.html aldara]
-[http://www.gayhomes.net/dermo/claritin.html claritin]
-[http://www.gayhomes.net/moiseev/hollywood_casino.html casino]
-[http://www.gayhomes.net/moiseev/reno_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/carisoprodol.html carisoprodol]
-[http://mujweb.cz/www/buyonline/motrin.html motrin]
-[http://www.gayhomes.net/moiseev/casino_player.html casino]
-[http://www.gayhomes.net/moiseev/vegas_casino.html casino]
-[http://mujweb.cz/www/buyonline/cyclobenzaprine.html cyclobenzaprine]
-[http://www.gayhomes.net/moiseev/generic_viagra.html generic viagra]
-[http://www.gayhomes.net/moiseev/turning_stone_casino.html casino]
-[http://www.gayhomes.net/debil/norvasc.html norvasc]
-[http://mujweb.cz/www/buyonline/elavil.html elavil]
-[http://www.gayhomes.net/moiseev/winstar_casino.html casino]
-[http://mujweb.cz/www/buyonline/amoxicillin.html amoxicillin]
-[http://buyadipexonline.blogspirit.com/ buy adipex]
-[http://mujweb.cz/Zabava/buycheap/tramadol.html tramadol]
-[http://www.comunalia.com/berty/ alprazolam]
-[http://www.gayhomes.net/moiseev/casino_links.html casino]
-[http://mujweb.cz/www/buyonline/zyban.html zyban]
-[http://www.gayhomes.net/moiseev/casino_chips.html casino]
-[http://phentermine-pharmacy.fr.nf/ phentermine pharmacy]
-[http://www.gayhomes.net/dermo/celebrex.html celebrex]
-[http://www.gayhomes.net/debil/aldara.html aldara]
-[http://www.gayhomes.net/moiseev/viagra_pill.html viagra pill]
-[http://www.gayhomes.net/dermo/yasmin.html yasmin]
-[http://mujweb.cz/www/buyonline/estradiol.html estradiol]
-[http://www.gayhomes.net/moiseev/order_viagra.html order viagra]
-[http://www.gayhomes.net/moiseev/best_online_casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/viagra_erection.html viagra erection]
-[http://www.gayhomes.net/jopotrah/phentermine_adipex.html phentermine adipex]
-[http://mujweb.cz/Zabava/buycheap/soma.html soma]
-[http://www.gayhomes.net/moiseev/tropicana_casino.html casino]
-[http://www.gayhomes.net/moiseev/hooters_casino.html casino]
-[http://www.gayhomes.net/moiseev/best_casino.html casino]
-[http://www.gayhomes.net/debil/prevacid.html prevacid]
-[http://www.gayhomes.net/debil/seasonale.html seasonale]
-[http://buy-fioricet-online.ze.cx/ buy fioricet]
-[http://www.gayhomes.net/moiseev/las_vegas_hotel_casino.html casino]
-[http://www.gayhomes.net/moiseev/virtual_casino.html casino]
-[http://www.gayhomes.net/moiseev/internet_casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/casino_arizona.html casino]
-[http://www.gayhomes.net/debil/allegra.html allegra]
-[http://www.gayhomes.net/moiseev/buy_viagra_online.html buy viagra online]
-[http://www.gayhomes.net/moiseev/casino_niagara.html casino]
-[http://buy-phentermine.fr.nf/ buy phentermine]
-[http://www.gayhomes.net/jopotrah/order_phentermine.html order phentermine]
-[http://www.gayhomes.net/dermo/effexor.html effexor]
-[http://mujweb.cz/Zabava/buycheap/ambien.html ambien]
-[http://www.gayhomes.net/dermo/renova.html renova]
-[http://www.gayhomes.net/dermo/imitrex.html imitrex]
-[http://www.gayhomes.net/moiseev/casino_hotel.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_diet_pill.html phentermine diet pill]
-[http://www.gayhomes.net/moiseev/casino_fun.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_directory.html casino]
-[http://phentermine-information.ze.cx/ phentermine information]
-[http://www.gayhomes.net/moiseev/pechanga_casino.html casino]
-[http://www.gayhomes.net/moiseev/mississippi_casino.html casino]
-[http://mujweb.cz/www/buyonline/flexeril.html flexeril]
-[http://www.gayhomes.net/moiseev/viagra_online.html viagra online]
-[http://www.gayhomes.net/moiseev/casino_on_net.html casino]
-[http://www.gayhomes.net/moiseev/paris_casino_vegas.html casino]
-[http://www.gayhomes.net/moiseev/casino_black_jack.html casino]
-[http://www.gayhomes.net/debil/aciphex.html aciphex]
-[http://mujweb.cz/Zabava/buycheap/alprazolam.html alprazolam]
-[http://www.gayhomes.net/moiseev/casino_bonus.html casino]
-[http://www.gayhomes.net/moiseev/viagra.html viagra]
-[http://www.gayhomes.net/dermo/tadalafil.html tadalafil]
-[http://www.gayhomes.net/moiseev/palm_casino.html casino]
-[http://www.gayhomes.net/moiseev/soaring_eagle_casino.html casino]
-[http://www.gayhomes.net/moiseev/harrahs_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_roulette.html casino]
-[http://www.gayhomes.net/jopotrah/buy_phentermine_online.html buy phentermine]
-[http://www.gayhomes.net/moiseev/cheap_viagra.html cheap viagra]
-[http://www.gayhomes.net/moiseev/casino_sport_book.html casino]
-[http://www.gayhomes.net/moiseev/pala_casino.html casino]
-[http://www.gayhomes.net/moiseev/indian_casino.html casino]
-[http://www.gayhomes.net/moiseev/viagra_alternative.html viagra alternative]
-[http://www.gayhomes.net/moiseev/venetian_casino.html casino]
-[http://www.gayhomes.net/moiseev/indiana_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_cash.html casino]
-[http://www.gayhomes.net/dermo/prozac.html prozac]
-[http://www.gayhomes.net/dermo/celexa.html celexa]
-[http://www.gayhomes.net/moiseev/online_casino_gambling.html casino]
-[http://www.gayhomes.net/dermo/lexapro.html lexapro]
-[http://mujweb.cz/www/buyonline/ortho.html ortho]
-[http://buy-levitra-online.fr.nf/ buy levitra]
-[http://www.gayhomes.net/moiseev/online_gambling_casino.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_online.html phentermine online]
-[http://www.gayhomes.net/moiseev/las_vegas_casino.html casino]
-[http://buy-soma-online.biz.st/ buy soma online]
-[http://www.gayhomes.net/moiseev/golden_palace_casino.html casino]
-[http://www.gayhomes.net/moiseev/vegas_tower_casino.html casino]
-[http://www.gayhomes.net/debil/zovirax.html zovirax]
-[http://www.gayhomes.net/moiseev/casino_guide.html casino]
-[http://www.gayhomes.net/debil/estradiol.html estradiol]
-[http://mujweb.cz/Zabava/buycheap/ultram.html ultram]
-[http://www.gayhomes.net/moiseev/horseshoe_casino.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_prescription.html phentermine prescription]
-[http://www.gayhomes.net/debil/fosamax.html fosamax]
-[http://www.gayhomes.net/moiseev/station_casino.html casino]
-[http://mujweb.cz/www/buyonline/aciphex.html aciphex]
-[http://phentermine55.fr.nf/ phentermine]
-[http://buy-cialis-online.ze.cx/ buy cialis]
-[http://www.gayhomes.net/dermo/zyrtec.html zyrtec]
-[http://mujweb.cz/www/buyonline/butalbital.html butalbital]
-[http://www.gayhomes.net/dermo/flonase.html flonase]
-[http://www.gayhomes.net/dermo/wellbutrin.html wellbutrin]
-[http://www.gayhomes.net/moiseev/hard_rock_casino.html casino]
-[http://www.gayhomes.net/dermo/lamisil.html lamisil]
-[http://www.gayhomes.net/debil/tetracycline.html tetracycline]
-[http://www.gayhomes.net/jopotrah/phentermine_information.html phentermine information]
-[http://mujweb.cz/Zabava/buycheap/levitra.html levitra]
-[http://www.gayhomes.net/debil/zyban.html zyban]
-[http://www.gayhomes.net/moiseev/casino_download.html casino]
-[http://mujweb.cz/www/buyonline/seasonale.html seasonale]
-[http://www.gayhomes.net/dermo/prilosec.html prilosec]
-[http://www.gayhomes.net/debil/ultracet.html ultracet]
-[http://www.gayhomes.net/moiseev/casino_consultant.html casino]
-[http://www.gayhomes.net/moiseev/order_viagra_online.html order viagra online]
-[http://www.gayhomes.net/moiseev/best_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_game.html casino]
-[http://www.gayhomes.net/debil/clarinex.html clarinex]
-[http://www.gayhomes.net/moiseev/casino_directory.html casino]
-[http://www.gayhomes.net/moiseev/casino_on_the_net.html casino]
-[http://www.gayhomes.net/moiseev/free_viagra.html free viagra]
-[http://www.gayhomes.net/moiseev/aladdin_hotel_and_casino.html casino]
-[http://buy-carisoprodol-online.xxl.st/ buy carisoprodol]
-[http://www.gayhomes.net/moiseev/herbal_viagra.html herbal viagra]
-[http://www.gayhomes.net/moiseev/mohegan_sun_casino.html casino]
-[http://www.gayhomes.net/moiseev/argosy_casino.html casino]
-[http://buy-propecia-online.infos.st/ buy propecia]
-[http://www.gayhomes.net/jopotrah/phentermine_pharmacy.html phentermine pharmacy]
-[http://www.gayhomes.net/jopotrah/buy_phentermine.html buy phentermine]
-[http://www.gayhomes.net/moiseev/online_casino.html casino]
-[http://www.gayhomes.net/dermo/zoloft.html zoloft]
-[http://mujweb.cz/Zabava/buycheap/adipex.html adipex]
-[http://mujweb.cz/Zabava/buycheap/didrex.html didrex]
-[http://www.gayhomes.net/jopotrah/phentermine_pill.html phentermine pill]
-[http://www.gayhomes.net/moiseev/jackpot_casino.html casino]
-[http://www.gayhomes.net/debil/diflucan.html diflucan]
-[http://www.gayhomes.net/debil/ortho.html ortho]
-[http://buy-phentermine.biz.st/ buy phentermine]
-[http://mujweb.cz/www/buyonline/allegra.html allegra]
-[http://www.gayhomes.net/moiseev/10_best_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/foxwoods_casino.html casino]
-[http://www.gayhomes.net/dermo/nexium.html nexium]
-[http://www.gayhomes.net/moiseev/online_casino_bonus.html casino]
-[http://www.gayhomes.net/dermo/xenical.html xenical]
-[http://mujweb.cz/www/buyonline/diflucan.html diflucan]
-[http://buy-tramadol-online.fr.nf/ buy tramadol]
-[http://www.gayhomes.net/moiseev/free_casino.html casino]
-[http://www.gayhomes.net/debil/flexeril.html flexeril]
-[http://www.gayhomes.net/moiseev/play_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_portal.html casino]
-[http://www.gayhomes.net/jopotrah/cheap_phentermine.html cheap phentermine]
-[http://www.gayhomes.net/debil/elavil.html elavil]
-[http://www.gayhomes.net/jopotrah/phentermine.html phentermine]
-[http://www.gayhomes.net/moiseev/lake_charles_casino.html casino]
-[http://www.gayhomes.net/dermo/retin.html retin]
-[http://www.gayhomes.net/moiseev/tunica_casino.html casino]
-[http://www.gayhomes.net/debil/alesse.html alesse]
-[http://www.gayhomes.net/jopotrah/phentermine_side_effects.html phentermine side effects]
-[http://www.gayhomes.net/dermo/paxil.html paxil]
-[http://mujweb.cz/Zabava/buycheap/clonazepam.html clonazepam]
-[http://www.gayhomes.net/debil/motrin.html motrin]
-[http://buyambienonline.blogspirit.com/ buy ambien]
-&lt;/div&gt;</text>
+      <timestamp>2007-08-09T16:32:11Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text></text>
     </revision>
   </page>
   <page>
     <title>Adherents</title>
     <revision>
-      <timestamp>2007-05-11T08:39:13Z</timestamp>
-      <contributor><username>Grandoc</username></contributor>
-      <comment>/* Résiliation adhérent */</comment>
+      <timestamp>2007-09-10T17:09:36Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
+
+== Fonctionnalités ==
+
+Le module adhérent permet de gérer les adhérents d'une association.
+* Définition de plusieurs types d'adhérent.
+* Création/Validation/Modification/Résiliation/Suppression d'une fiche adhérent (caractéristiques, photos, ...)
+* Notions d'adhérents soumis a cotisation ou non.
+* Saisie/Modifications/Suppression des adhésions.
+* En association avec le module EMailing, envoi de mailings aux adhérents ou à une certaine catégorie d'adhérents.
+* En association avec le module LDAP, synchronisation des adhérents vers un annuaire LDAP.
+* En association avec le module Banque, interaction avec les adhésions et la trésorerie de l'association.
+* Reporting.
+* Fonction générique d'export.
+
 
 Les fonctions du module Adhérent sont centralisées dans le menu du haut &quot;Adhérents&quot;.
 
@@ -411,13 +161,15 @@ Je clique sur ''Résilier''.</text>
   <page>
     <title>ApercuDesModeles</title>
     <revision>
-      <timestamp>2006-06-02T23:20:58Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Modèle Crabe */</comment>
+      <timestamp>2007-08-16T23:35:46Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* English version */</comment>
       <text>= Aperçu des modèles de facture disponibles dans Dolibarr =
 La liste suivante est générée à partir de factures elles-mêmes générées avec Dolibar 2.1alpha.
 
 Les marques en gris sur les factures ont été ajoutées pour masquer les données privées figurant sur ces exemples générés à partir de factures réelles.
+
+Une explication sommaire sur la structure des scripts générant les factures en PDF est disponible en bas de page.
 
 == Modèle Bernique ==
 
@@ -445,7 +197,61 @@ Les marques en gris sur les factures ont été ajoutées pour masquer les donné
 
 == Modèle Tourteau ==
 
-[[image:pdf_tourteau.png]]</text>
+[[image:pdf_tourteau.png]]
+
+= Comment modifier un modèle =
+
+== Librairie de création ==
+
+La librairie utilisée pour la création de documents en PDF se nomme FPDF et peut être trouvée dans htdocs/includes/fpdf/fpdf/fpdf.class.php. C'est également dans cette classe que l'on trouve les nombreuses méthodes utilisées pour générer les différents éléments des documents.
+
+Les modèles eux-même instancient la classe FPDF et utilisent ensuite ses méthodes, combinées avec les données d'une facture, d'une commande ou d'autres types de données.
+
+On retrouve généralement les appels suivants dans les scripts de création de documents:
+* $pdf-&gt;SetFont() - ''Désigne la fonte à utiliser pour le texte qui suivra''
+* $pdf-&gt;SetXY() - ''Désigne le point de départ pour dessiner le prochain texte en coordonnées X,Y qui sont exprimées en millimètres de la page''
+* $pdf-&gt;MultiCell() - ''Dessine une boîte pouvant contenir du texte, et dont on doit d'abord donner la largeur et la hauteur - très utilisée''
+* $pdf-&gt;GetY() - ''Renvoie la position courante en Y''
+* $pdf-&gt;SetDrawColor() - ''Désigne la couleur à utiliser pour le prochain texte à écrire - généralement noir (0,0,0) ou blanc (255,255,255)''
+* $pdf-&gt;Rect() - ''Dessine un rectangle dont le coin supérieur gauche est au point indiqué par les deux premiers paramètres et le coin inférieur droit utilise les deux derniers paramètres en mode relatif aux deux premiers''
+
+=== English version ===
+
+The library used to create PDF documents is called FPDF and can be found in htdocs/includes/fpdf/fpdf/fpdf.class.php. You can also find in this class the numerous methods used to generate the various elements of the documents.
+
+The models themselves instanciate the FPDF class and use its methods, combined with the data of an invoice, an order or any other type of data.
+
+You can generally find the following calls inside the documents creation scripts:
+* $pdf-&gt;SetFont() - ''Sets the font to use for the text that follows''
+* $pdf-&gt;SetXY() - ''Sets the position of the starting point to display the following text in X,Y coordinates, given in millimeters of the page''
+* $pdf-&gt;MultiCell() - ''Displays a box that can contain text. First the width and the height must be given - very used''
+* $pdf-&gt;GetY() - ''Returns the current Y position''
+* $pdf-&gt;SetDrawColor() - ''Sets the color to use in the following text - generally black (0,0,0) or white (255,255,255)''
+* $pdf-&gt;Rect() - ''Displays a rectangle of which the top-left corner is at the point given by the first two parameters, and the bottom-right corner is at the point given by the last two parameters, relatively to the two first parameters (so basically the last parameters are width and height, not coordinates)''
+
+== Structure des scripts ==
+
+Les scripts de génération des documents PDF, au moment du développement de la version 2.2, disposent des méthodes suivantes (prenant pour exemple le modèle &quot;crabe&quot;) au sein de la classe du nom du modèle:
+* pdf_crabe() - ''Constructeur de l'objet pdf''
+* write_pdf_file() - ''Méthode générale pour la génération du fichier. Cette méthode appelle toute les suivantes après avoir initialisé quelques variables''
+* _pagehead() - ''Méthode de dessin de l'en-tête du document, incluant généralement le logo, le titre du document (et la date) ainsi que les cadres de l'émetteur et du destinataire du document''
+* _tableau() - ''Méthode de dessin du tableau de détails (produits, services, etc)''
+* _tableau_info() - ''Méthode de dessin du tableau reprenant une liste d'informations sur la facture''
+* _tableau_tot() - ''Méthode de dessin du tableau des totaux''
+* _tableau_versement() - ''Méthode de dessin du tableau des règles de versement''
+* _pagefoot() - ''Méthode de dessin du pied de page''
+
+=== English version ===
+
+The PDF documents generation scripts, at the time of version 2.2 development, use the following methods (taking as example the &quot;crabe&quot; model) inside the classe of then model name:
+* pdf_crabe() - ''Constructor of the $pdf object''
+* write_pdf_file() - ''Generic method for the file generation. This method calls all the following methods after having initialised some variables''
+* _pagehead() - ''Method to design the header of the document, including the logo, the document title (and date) as well as the sender and receiver details''
+* _tableau() - ''Method to design the large table with the contents of the invoice''
+* _tableau_info() - ''Method to design the table giving information related to the invoice (payment conditions and so on)''
+* _tableau_tot() - ''Method to design the totals table''
+* _tableau_versement() - ''Method to design the payment references table''
+* _pagefoot() - Method to design the footer of the document</text>
     </revision>
   </page>
   <page>
@@ -861,6 +667,37 @@ Contains bank accounts definitions.
     </revision>
   </page>
   <page>
+    <title>Banques et Caisses</title>
+    <revision>
+      <timestamp>2007-09-14T14:40:27Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>Page utilisateur module banque/caisse</comment>
+      <text>
+== Définitions ==
+
+* '''Un compte banque''' c'est un compte bancaire (souvent ce compte permet de faire des chèques ou de payer par carte bancaire).
+* '''Une caisse''', c'est la boite a gateau de grand-mere dans laquelle tu met de l'argent liquide ou encore ton porte-monnaie ou encore la caisse enregistreuse pour les commercants.
+
+Quand on recoit un paiement en chèque, il sera forcement déposé sur un compte bancaire (compte banque) mais en cas de réception d'argent liquide, il est possible de ranger les billets dans un porte monnaie, une caisse enregistreuse (compte caisse) comme de les mettre de coté pour les déposer à la banque.
+Dolibarr permet de créer autant de comptes banque ou de comptes caisse que besoin. Pour gerer une tresorerie, il en faudra au moins un (en general compte bancaire, a mois que le commerce géré n'accepte ni chèque, ni carte bleu et que tout est fait en liquide, achat comme vente), mais ceci reste optionnel. Si la tresorerie ne doit pas être gérée par Dolibarr, le module Banque/Caisse peut etre désactivé.
+
+
+== Creation d'un nouveau compte bancaire / caisse ==
+
+Aller dans le menu Compta/Tréso puis Banque puis bouton &quot;Creer compte&quot;.
+
+
+== Suppression/Desactivation d'un compte ==
+
+A compléter.
+
+
+== Exemple de cas d'utilisations ==
+
+A compléter.</text>
+    </revision>
+  </page>
+  <page>
     <title>Benoit Mortier</title>
     <revision>
       <timestamp>2004-07-28T22:00:13Z</timestamp>
@@ -955,6 +792,62 @@ La gestion d'un parc informatique : hardware, logciel, licenses</text>
 {{TemplateDocUtil}}
 
 A compléter</text>
+    </revision>
+  </page>
+  <page>
+    <title>Ce que fait Dolibarr</title>
+    <revision>
+      <timestamp>2007-09-10T16:56:30Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Other modules */</comment>
+      <text>Voici un résumé des fonctionnalités géré par Dolibarr
+
+== Modules principaux ==
+* Products and services catalog
+* Stock management
+* Bank accounts management
+* Customers, Suppliers or Prospects directory
+* Contacts directory
+* Commercial actions management
+* Orders management
+* Commercial proposals management with PDF export
+* Contracts management
+* Invoices management with PDF export
+* Payments management
+* Standing orders management
+* Shipping management
+
+== Autres modules ==
+* [[Adherents|Gestion des adhérents d'association]]
+* Gestion des Bookmarks
+* EMailing
+* Can reports Dolibarr events inside Webcalendar
+* Reporting
+* Data export tools
+* LDAP connectivity
+* Donations management
+
+== Miscellanous ==
+* Mutli-user, with several permissions levels for each feature.
+* Serveral menu managers (can be used by internal users, as a back-office, with a particular menu, or by external users, as a front-office, with another menu and permissions).
+* Very user friendly and easy to use.
+* Several skins.
+* Code is highly customizable (a lot of use of modules).
+* Works with Mysql 3.1 or higher, experimental support for PostgreSql.
+* Works with PHP 4.1 or higher.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Ce que ne fait pas Dolibarr</title>
+    <revision>
+      <timestamp>2007-09-10T16:49:39Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>Ces fonctionalités ne sont pas disponibles en version 2.2
+
+* &quot;TVA NPR&quot; (TVA &quot;Non Perçue Récupérable&quot;).
+* Pas de compta (uniquement gestion de trésorerie).
+* Dolibarr ne gère qu'une seule monnaie.
+* Dolibarr ne fait pas le café (pas encore).</text>
     </revision>
   </page>
   <page>
@@ -1141,10 +1034,33 @@ Pour modifier une commande il vous faut ouvrir la fiche de celle-ci. Une command
   <page>
     <title>CommandeFournisseur</title>
     <revision>
-      <timestamp>2007-08-09T15:47:13Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <text>
-Documentation a completer.
+      <timestamp>2007-08-16T16:21:11Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Créer une commande fournisseur */</comment>
+      <text>{{Navigation documentation}}
+{{TemplateDocUtil}}
+
+==Créer une commande fournisseur==
+
+La création d'une commande fournisseur se fait à partir de la fiche fournisseur dans la partie tiers ou fournisseurs de l'application, onglet fournisseur. Le bouton le permettant se trouve dans la barre d'action de la fiche fournisseur.
+
+La commande est alors créée à l'état de brouillon.
+
+Il faut alors sélectionner des produits vendus par le fournisseur dans la liste donnée. Si l'on veut rajouter un nouveau produit, il est nécessaire de passer par l'interface des produits/services, de créer un produit puis d'utiliser l'onglet fournisseur de la fiche produit et d'indiquer le prix et la quantité minimum pour ce fournisseur. Le produit est alors disponible dans la liste des produits de ce fournisseur et peut être ajouté à la ligne de commande.
+
+==Clôturer une commande fournisseur==
+
+Une fois qu'une commande a été entièrement reçue, il faut retourner sur sa fiche pour la clôturer. (? Elle est alors placée dans l'espace comptabilité comme &quot;A facturer&quot;).
+
+==Supprimer une commande fournisseur==
+
+Pour supprimer une commande il vous faut ouvrir la fiche de celle-ci. Une commande ne peut être supprimée que si celle-ci est à l'état de '''brouillon'''. Une fois validée, elle peut seulement être annulée. La suppression d'un commande entraîne l'effacement de toutes les données s'y référant. 
+
+'''Une commande supprimée ne peut pas être récupérée'''.
+
+==Modifier une commande fournisseur==
+
+Pour modifier une commande il vous faut ouvrir sa fiche. Une commande ne peut être modifiée que si celle-ci est à l'état de brouillon.
 
 
 == Cas d'utilisations ==
@@ -1248,28 +1164,138 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
   <page>
     <title>Developpement module</title>
     <revision>
-      <timestamp>2007-08-09T15:43:19Z</timestamp>
+      <timestamp>2007-11-02T13:47:16Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <text>== Développer son propre module ==
+      <text>Pour créer un nouveau module, il existe plusieurs étapes. Ce didacticiel apour but de vous décrire chacune d'elle afin d'ajouter de réaliser un module permettant d'étendre les possibilités de Dolibarr, comme par exemple ajouter une ou plusieurs des fonctionnalités suivantes:
+* Développer de nouvelles permissions
+* Ajouter de nouvelles boites
+* Ajouter des entrées menu
+* Ajouter des écrans
+* Ajouter des exports prédéfinis
+* Déclencher du code automatiquement sur une action Dolibarr particulière
+etc...
 
-Pour créer un nouveau module, la première chose à faire est de créer un fichier descripteur du module.
-Pour cela...
-A compléter.
 
-Dans un second temps, creer vos pages php qui se base sur les donnes de vos tables en utilisant les squelettes fournis comme exemple dans le repertoire '''dev/skeletons'''.
+== Créer un descripteur de Module (obligatoire) ==
+'''Quand''': Obligatoire dès qu'une extention est développée, quelque soit sa vocation.
+
+La première étape est donc de créer un fichier descripteur du module.
+Pour cela, aller dans le répertoire '''htdoc/includes/modules''' et recopier le fichier modFactures.php en modMonModule.php.
+Ensuite, modifier le contenu de ce fichier afin de remplacer:
+* les 'modFactures' en 'modMonModule'.
+* $this-&gt;id = 'invoice' par $this-&gt;id = 'monmodule'
+* $this-&gt;numero = 30  par $this-&gt;numero = 100000   (mettre un id libre pris par aucun module)
+* $this-&gt;const_name = 'MAIN_MODULE_FACTURE' par $this-&gt;const_name = 'MAIN_MODULE_MONMODULE'
+
+'''Tester votre descripteur''':
+Lancer Dolibarr et aller sur la page '''Configuration-&gt;module''', vous devez voir apparaitre une nouvelle ligne avec votre nouveau module et la possibilité de l'activer ou non.
+
+
+== Créer vos tables SQL (optionnel) ==
+'''Quand''': Si votre module a besoin de gérer des données qui lui sont propres
+
+Si votre module a vocation à gérer des données bien a lui, il est nécessaire de définir des tables SQL pour stocker ces données.
+
+Ajouter la définition de vos tables sur le principe d'un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour '''mysql''' qui font fois. Les fichiers des autres bases sont générés à partir de ces derniers via le script '''build/dolibarr_mysql2autrebase.pl''' au moment d'une release.
+
+
+== Créer vos pages PHP (optionnel) ==
+'''Quand''': Si l'objet de votre module est d'ajouter des fonctionnalités qui nécessite des nouveaux écrans.
+
+Dans un second temps, créez vos pages PHP qui se basent sur les données de vos tables en utilisant les squelettes fournis comme exemple dans le repertoire '''dev/skeletons'''.
+
+
+== Définir votre page de configuration (optionnel)  ==
+'''Quand''': Si votre module offre plusieurs options paramétrables.
+
+Si votre module offre plusieurs options paramétrables, il est nécessaire de créer une page PHP pour editer les options (qui sont stockées dans la table '''llx_const''').
+Créé une page PHP nommée '''monmodule_setupapage.php''' qui offre les options possibles et les met à jour, sur le modèle des pages dans '''/admin'''. Placer ce page de configuration dans le répertoire '''/admin''' également.
+Ensuite dans le descripteur de module, modifier la variable pour indiquer le nom de cette page
+&lt;pre&gt;
+$this-&gt;config_page_url = array(&quot;monmodule_setupapage.php&quot;);
+&lt;/pre&gt;
+'''Tester votre page''':
+Aller sur la page '''Configuration-&gt;module''', vous devez voir apparaitre un icone qui permet d'accéder à la page de configuration.
+
+== Définir vos entrées de menu (optionnel) ==
+'''Quand''': Si vous avez créer des pages PHP, il est nécessaire que ces écrans soient accessible depuis le menu Dolibarr.
+
+Cette fonctionnalité n'est pas encore possible. Il faut modifier le code Dolibarr pour l'instant.
+
+
+== Définir vos propres permissions (optionnel) ==
+'''Quand''': Si vous voulez ajouter de nouvelles permissions.
+
+La définition des permissions que gèrera votre module se fait dans le fichier descripteur créé dans la première étape.
+Modifier la ligne $this-&gt;rights_class = 'facture' par
+&lt;pre&gt;
+$this-&gt;rights_class = 'monmodule'
+&lt;/pre&gt;
+
+Ensuite remplisser le tableau $this-&gt;rights avec autant d'entrée que de permissions différentes à gérer.
+
+&lt;pre&gt;
+$r++;
+$this-&gt;rights[$r][0] = 9999;
+$this-&gt;rights[$r][1] = 'Libelle par defaut de ma permission';
+$this-&gt;rights[$r][3] = 1;
+$this-&gt;rights[$r][4] = 'action';
+$this-&gt;rights[$r][5] = 'sousaction';
+&lt;/pre&gt;
+
+Dans $this-&gt;rights[$r][0], mettre un id de permission non déjà pris (Voir dans le menu '''Infos Système''' sur une installation de Dolibarr opérationnelle pour connaitre les id déjà utilisés.
+Dans $this-&gt;rights[$r][3], mettre 1 si cette permission est attribué d'office par défaut quand un utilisateur est créé.
+Dans $this-&gt;rights[$r][1], mettre un libellé par défaut (il sera affiché si aucune traduction n'est trouvé pour votre permission dans le fichier '''admin.lang''').
+Dans $this-&gt;rights[$r][4] et $this-&gt;rights[$r][5], mettre une chaine action et sousaction sans espaces. Vous pourrez alors tester dans le code PHP si un utilisateurs a bien les droits par la séquence suivante:
+
+&lt;pre&gt;
+$user-&gt;getrights('monmodule');
+if ($user-&gt;rights-&gt;action-&gt;sousaction)
+&lt;/pre&gt;
+
+
+== Définir vos propres box (optionnel) ==
+'''Quand''': Si votre module amène avec lui une ou plusieurs Boxes.
+
+Pour cela, modifier les tableaux $this-&gt;boxes du fichier descripteur de module.
+
+
+== Définir vos propres exports (optionnel) ==
+'''Quand''': Si votre module amène avec lui des exports prédéfini de données (pour ces propres tables ou des tables déjà existante d'un autre module de Dolibarr).
+
+Pour cela, modifier les tableaux $this-&gt;export_xxx du fichier descripteur de module.
+
+
+== Définir vos styles CSS (optionnel) ==
+'''Quand''': Si dans vos écrans PHP, vous utiliser des classes de styles qui ne sont pas celle des themes de Dolibarr (non recommendé).
+
+Cette fonctionnalité n'est pas encore possible.
+
+
+== Définir vos fonctions Javascript (optionnel) ==
+'''Quand''': Si dans vos écrans PHP, vous utiliser des fonctions javascript.
+
+Si dans vos écrans PHP, vous utiliser des fonctions javascript, il est nécessaire de faire en sorte que vos fonctions déclarés dans un fichiers javascript '''monmodule.js''' soit chargées dans l'entete head html.
+Pour demander à Dolibarr qui gère la génération de la section header d'inclure un de vos fichiers javascript, il est nécessaire de déclarer votre fichier javascript dans le descripteur de module.
+
+Cette fonctionnalité n'est pas encore possible.
 
 
 
-== Déclencher du code sur un evenement Dolibarr ==
+== Déclencher du code sur un evenement Dolibarr (optionnel) ==
+'''Quand''': Si vous voulez que des actions particulières s'exécutent suite au déclenchement d'action s standards de Dolibarr (exemple: je veux mettre à jour une table de mon module quand une facture se crée dans Dolibarr), il vous faut créer un fichier trigger.
+
 Voir aussi [http://www.dolibarr.com/wikidev/index.php/Interfaces_Dolibarr_vers_exterieur Interfaces_Dolibarr_vers_exterieur]
 et [http://www.dolibarr.com/wikidev/index.php/Interfaces_Exterieur_vers_Dolibarr Interfaces_Exterieur_vers_Dolibarr]
 
+== Créer un package pour livrer et installer mon module ==
+Aller dans le répertoire '''/build''' et modifier le fichier '''dolibarr_makemodules.conf''' afin de saisir la liste des noms de fichiers nouveaux que vous avez créer pour votre module (descripteur de module, nouveaux fichiers sql de tables, page php, etc...)
+
 
 == Règles ==
+Voici quelques règles à suivre dans la réalisation d'un module
 
-* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un nouveau module qui n'est pas encore intégré dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou bien à l'activation du module.
-
-* Ajouter la définition de vos tables dans un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour mysql qui font fois. Les fichiers des autres bases sont generes à partir de ces derniers via le script''' build/dolibarr_mysql2autrebase.pl'''</text>
+* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un nouveau module qui n'est pas encore intégré dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou mieux à l''''activation''' du module.</text>
     </revision>
   </page>
   <page>
@@ -1394,9 +1420,9 @@ Merci à David, Florent et surtout ozit pour leur aide.</text>
   <page>
     <title>Document générés</title>
     <revision>
-      <timestamp>2005-01-05T08:59:33Z</timestamp>
-      <contributor><ip>82.101.11.28</ip></contributor>
-      <comment>/* Structure du DATA_ROOT */</comment>
+      <timestamp>2007-09-15T03:36:12Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Générer des documents dans de nouveaux outils */</comment>
       <text>Les documents générés sont stockés dans le répertoire définit par la constantes DOL_DATA_ROOT
 
 == Structure du DATA_ROOT ==
@@ -1412,15 +1438,34 @@ Merci à David, Florent et surtout ozit pour leur aide.</text>
 ** ligne
 *** commande
 ** logs
-** rapports</text>
+** rapports
+
+= Générer des documents dans de nouveaux outils =
+
+Pour pouvoir profiter de la génération de document à la sauce Dolibarr, il convient de modifier les fichiers:
+# la fiche où placer la &quot;cartouche&quot; (affichage) permettant à l'utilisateur de générer un nouveau document et de consulter les documents existants
+# ''htdocs/html.form.class.php'' pour y ajouter, dans la méthode '''show_documents()''', le type de document ajouté
+# ''htdocs/includes/modules/mod[type de document].class.php'' au cas où ce fichier n'existerait pas déjà
+# ''htdocs/includes/modules/[type de document]/module_[type].php'' qui contiendra la définition de la classe de génération
+# ''htdocs/includes/modules/[type de document]/pdf_[modele]_[type].modules.php'' qui contiendra le modèle de génération du document
+# ''htdocs/document.php'' qui contient la procédure de livraison des fichiers une fois créés (et leur suppression) - il faut également y ajouter le type de document et le répertoire correspondant
+# la(les) classe(s) qui contien(nen)t  les données à afficher  (classes product.class.php ou facture.class.php, ou autres, selon le document à générer)
+
+Par ailleurs, il faudra créer un répertoire contenant les documents générés. Ce répertoire se trouve généralement dans DOL_DATA_ROOT, soit une syntaxe du type:
+  $conf-&gt;[type]-&gt;dir_output = DOL_DATA_ROOT.'[type]';
+
+Il faut également que le modèle soit inséré dans la base de données, dans la [[Table llx_document_model]] avec pour type le type de document et pour nom le nom de la classe correspondante dans includes/modules (commençant par pdf_).
+
+Plus de documentation au sujet de la génération des modèles elle-même est disponible sur la page d'aperçu des modèles:
+[[ApercuDesModeles#Comment_modifier_un_mod.C3.A8le]]</text>
     </revision>
   </page>
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2007-08-09T15:21:44Z</timestamp>
+      <timestamp>2007-11-02T13:44:06Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Général */</comment>
+      <comment>/* Les Modules */</comment>
       <text>== Général ==
 # [[Outils et principe]]
 # [[Langages|Langage et normes de développement]]
@@ -1455,12 +1500,15 @@ Voir la page [[Authentification]]
 == Le [[Système de traduction]] ==
 Voir la page [[Système de traduction]]
 
-== Les Modules ==
-La liste des modules est défini sur la page [[Modules]]
+== Développer un Module ==
+Pour développer votre propre module, aller sur le didacticiel: [[Developpement module]]
+
+La liste des modules standard est définie sur la page [[Modules]]
 
 == La [[Gestion d'erreur]] ==
 
-Voir la page [[Gestion d'erreur]]
+* Voir la page [[Gestion d'erreur]]
+* Voir la page [[Error reporting|Rapport d'erreur]]
 
 == Le stockage des fichiers/documents ==
 Voir la page [[Document générés]]
@@ -1578,9 +1626,13 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
   <page>
     <title>Documentation utilisateur</title>
     <revision>
-      <timestamp>2007-07-31T03:08:26Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <text>* Installation/Démarrage
+      <timestamp>2007-09-14T14:25:45Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text>* Fonctionnalités
+# [[Ce que fait Dolibarr]]
+# [[Ce que ne fait pas Dolibarr]]
+
+* Installation/Démarrage
 # [[Prérequis]]
 # [[Installation / Mise a jour]]
 # [[Premiers paramétrages]]
@@ -1590,6 +1642,7 @@ Quand vous avez créer une nouvelle langue, si elle n'est pas intégré dans Dol
 # [[Produits]] / [[Services]]
 ## [[Produits associés]]
 ## [[Sous-Produits]]
+# [[Banques et Caisses]]
 # [[Proposition commerciale|Propositions commerciales, devis]]
 # [[Commande|Commandes clients]]
 # [[Facturation|Factures clients]]
@@ -1670,9 +1723,9 @@ Contains the list of activated modules, with the activation date and the activat
   <page>
     <title>Développement</title>
     <revision>
-      <timestamp>2007-03-06T19:49:14Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Download */</comment>
+      <timestamp>2007-08-24T14:49:53Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
+      <comment>/* Développeurs officiels */</comment>
       <text>==Download==
 * Télécharger la [http://www.dolibarr.org/en/index.php?module=documents&amp;JAS_DocumentManager_op=downloadFile&amp;JAS_File_id=17 dernière version stable]
 * Télécharger le snapshot de la [http://forum.dolibarr.com/files/dolibarr_snapshot.tgz version CVS]
@@ -1709,6 +1762,8 @@ Pour vous connecter, utiliser le compte suivant:
 * [http://www.destailleur.fr Laurent Destailleur] - Contributeur
 * [[Benoit Mortier]] - Contributeur
 * Yannick Warnier - Contributeur
+* Gaëtan Frenoy - Contributeur
+* Régis Houssin - Contributeur
 
 Si vous souhaitez discuter du développement de Dolibarr avec les développeurs officiels, nous vous invitons à rejoindre la liste de discussions dolibarr-dev. Si vous le souhaitez vous pouvez aussi devenir développeur en lisant la [[Documentation Développeur]] dédiée à cela
 
@@ -1784,6 +1839,30 @@ Contains the stock value for each warehouse for a given date.
     </revision>
   </page>
   <page>
+    <title>Error reporting</title>
+    <revision>
+      <timestamp>2007-08-23T19:35:40Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>The error reporting module is integrated in the Dolibarr administration tool and allows you to configure what level of errors you would like to be reported and where.
+
+To get to the error reporting module configuration page, go to Home, Configuration, Modules and use the configuration icon of the last module on the screen: ''System logs''.
+
+Of course, this module ('''System logs''') must be activated for the following to work.
+
+The '''facility''' option allows you to use pre-set facilities to log your errors. Facilities are a system-level feature to tell your syslog operator where this error comes from, to judge priority and all that. You can find more about this inside the PHP documentation for the ''openlog()'' function which is used inside the ''dolibarr_syslog()'' function: http://www.php.ne/openlog
+Really, you should leave it to '''LOG_USER''' unless you know exactly what you're doing.
+
+The next option, '''file''', allows you to choose a file in which you will store the logs. The path you will indicate there should be relative to the system root (/). If you live it as it is (default option dolibarr.log), it will likely be opened in several directories, depending on the directory you're executing the script from. Of course, to do that, your web server must have write permissions on the directory you are using.
+
+Generally, the '''file''' facility will work more easily because it doesn't depend on your server configuration (or only for the directory that needs to be writeable).
+
+Finally, the level of reporting is how many types of errors you want to report. LOG_DEBUG(7) is the strongest option, reporting pretty much everything that calls a dolibarr_syslog() function. LOG_EMERG(0) is the opposite, letting you see only the errors that would really block your system.
+
+On a typical Linux install, the logs will then be available somewhere in '''/var/log/apache[2]/[dolibarr]-error.log'''. You can watch it ''live'' from the terminal by using:
+  tail -f /var/log/apache2/dolibarr-error.log</text>
+    </revision>
+  </page>
+  <page>
     <title>Expedition (Table SQL)</title>
     <revision>
       <timestamp>2007-08-06T02:46:08Z</timestamp>
@@ -1831,8 +1910,9 @@ Contains the stock value for each warehouse for a given date.
   <page>
     <title>Export Compta</title>
     <revision>
-      <timestamp>2006-12-09T15:39:41Z</timestamp>
-      <contributor><username>Rodo</username></contributor>
+      <timestamp>2007-09-18T20:43:11Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Processus */</comment>
       <text>Export des lignes de factures et des paiements pour intégration dans une comptabilité.
 
 == Présentation ==
@@ -1842,7 +1922,7 @@ La spécifité de traitement des différentes compta obligent à écrire une cla
 
 Chaque nouvel export contient toutes les lignes de factures et de paiements validées qui n'ont pas encore été exportées.
 
-Les tables [[Table llx_paiement|llx_paiement]] et [[facturedet (Table SQL)|llx_facturedet]] ont un champ fk_export_compta, lors de l'export une ligne est créée dans [[Table llx_export_compta|llx_export_compta]], le rowid affecté est alors utilisé pour taggé les lignes exportées.
+Les tables [[Table llx_paiement|llx_paiement]] et [[facturedet (Table SQL)|llx_facturedet]] ont un champ fk_export_compta, lors de l'export une ligne est créée dans [[Table llx_export_compta|llx_export_compta]], le rowid affecté est alors utilisé pour tagger les lignes exportées.
 
 == Format d'échange ==
 
@@ -1886,14 +1966,15 @@ Les formats existants sont csv (Fichier texte) ou xls (Format Excel natif)</text
   <page>
     <title>FAQ Développeur</title>
     <revision>
-      <timestamp>2007-08-09T15:36:54Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2007-08-24T15:07:23Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
+      <comment>/* Récupérer/mettre à jour la version CVS développeur */</comment>
       <text>== Récupérer/mettre à jour la version CVS développeur ==
 
 '''Utilisation du CVS'''
 
 La première opération consiste à récupérer les dernières versions des sources CVS.
-Pour cela, voir la [http://forum.dolibarr.com/viewforum.php?f=13 FAQ CVS du forum].
+Pour cela, voir la [http://forum.dolibarr.com/viewtopic.php?t=263 Version CVS du jour].
 Les nouveaux fichiers doivent écraser les anciens.
 
 '''Mise a jour de la base'''
@@ -1903,7 +1984,6 @@ http://maracinedolibarr/install/
 et choisir l'option &quot;Mise à jour&quot;.
 
 Cette procédure de migration/mise à jour est conçue pour fonctionner quel que soit l'état de départ et peut être repassée plusieurs fois sans risque.
-
 
 == Démarrer le développement ==
 
@@ -2090,9 +2170,9 @@ D'autres sont recensées ici. N'hésitez pas à compléter.
   <page>
     <title>Facturation</title>
     <revision>
-      <timestamp>2007-07-30T08:39:48Z</timestamp>
+      <timestamp>2007-09-13T19:22:03Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Exemples de cas d'utilisations */</comment>
+      <comment>/* Cas d'utilisations */</comment>
       <text>{{Navigation documentation}}
 {{TemplateDocUtil}}
 
@@ -2212,8 +2292,6 @@ Je crée une facture.
 Je reçois un paiement supérieur au montant réclamé. Je saisi le montant reçu.
 Je clos la facture à l'état '''Payé'''.
 Je crée un avoir du trop perçu.
-
-TODO: Sur avoir: vérifier que bouton 'transformer avoir' en réduc pour prochaine facture marche dans ce cas.
 
 
 '''UCIN03: Facturation et paiement intégral puis produit retourné'''
@@ -2442,6 +2520,29 @@ Contains the lines of customer invoices.
 | rang                | int(11)  | YES  |     | 0       |                |
 +---------------------+----------+------+-----+---------+----------------+
 &lt;/pre&gt;</text>
+    </revision>
+  </page>
+  <page>
+    <title>Facturedet rec (Table SQL)</title>
+    <revision>
+      <timestamp>2007-08-06T02:52:00Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <text>[[Catégorie:Table SQL]]
+  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
+  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
+
+= Contenu =
+
+
+= Structure =</text>
+    </revision>
+  </page>
+  <page>
+    <title>Facturer un service daprès tarif</title>
+    <revision>
+      <timestamp>2006-12-13T19:03:16Z</timestamp>
+      <contributor><username>Tiaris</username></contributor>
+      <text>Calculer le prix d'un service d'après une valeur (compteur) et en appliquant un tarif spécifique à ce service.</text>
     </revision>
   </page>
   <page>
@@ -3073,12 +3174,21 @@ Cette technique est préférable à la précédente.
   <page>
     <title>Langages et normes</title>
     <revision>
-      <timestamp>2007-08-09T15:28:30Z</timestamp>
+      <timestamp>2007-09-15T16:41:40Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Autre */</comment>
+      <comment>/* Normes PHP */</comment>
       <text>Voici les quelques règles sur le langage, la syntaxe et normes de développement en vigueur pour le projet Dolibarr:
 
-== Syntaxe PHP et objet ==
+
+== Versions ==
+
+* Dolibarr doit fonctionner sur:
+# Tous OS (Windows, Linux, MACOS...)
+# PHP 4.1 ou + (Doit fonctionner sans aucun module PHP complémentaire hors les modules d'accès base de donnée).
+# Mysql 3.1 ou +
+
+
+== Normes PHP ==
 
 * Dolibarr est écrit en PHP et supporte toutes versions PHP supérieures à la 4.1. Les fichiers doivent tous comporter l'extension .php
 
@@ -3088,7 +3198,22 @@ De plus, le code doit fonctionner quand l'option PHP '''register_globals''' est 
 
 * Les smart tags PHP ne sont pas utilisés. Les sections de code doivent commencer par '''&lt;?php'''
 
-* Pas d'utilisation de la variable '''PHP_SELF'''
+* Pas d'utilisation de la variable '''PHP_SELF'''. Utiliser a la place $_SERVER[&quot;PHP_SELF&quot;]
+
+* Quand plusieurs variables doivent etre initialisées avec la même valeur, il faut utiliser plusieurs lignes
+&lt;pre&gt;
+$var1=1;$var2=1;$var3=1;
+&lt;/pre&gt;
+plutot que
+&lt;pre&gt;
+$var1=$var2=$var3=1;
+&lt;/pre&gt;
+qui est moins performant.
+
+* Les chaines doivent etre encadrés de simple quote et les variables sorties de la chaine.
+&lt;pre&gt;
+print 'Mon texte affiche ma '.$variable.' !';
+&lt;/pre&gt;
 
 * Les commentaires doivent suivre la syntaxe C, ie un double antislash pour un commentaire d'une ligne et utilisation slash-étoile pour ouvrir un bloc de plusieurs ligne
 &lt;pre&gt;
@@ -3109,7 +3234,13 @@ for ($i = 1 , $i &lt; 2 ; $i++)
 
 &lt;/pre&gt;
 
-== Syntaxe SQL ==
+* Les fichiers doivent etre sauvés en format Unix (LF) et non Windows (CR/LF). Le format Unix étant compatible sur les OS Unix like, Windows, Mac, alors que le format fichier texte Windows pose problème sous certains PHP sous Unix.
+
+Les fonctions doivent retourner 0 en cas de succès, et un nombre &lt;0 en cas d'erreur.
+A ce jour, très peu de fonctions respectent ce standard mais c'est celui vers lequel il faut tendre.
+
+== Normes SQL ==
+
 * Les SELECT * sont interdits ! Chaque SELECT doit spécifier la liste complète des champs à récupérer. Cela permet d'éviter les confusions. Exemple:
 
  SELECT field_a, field_b, field_c FROM table_1 WHERE field_d = '$id'
@@ -3118,14 +3249,9 @@ for ($i = 1 , $i &lt; 2 ; $i++)
 
  INSERT INTO table_1 (field_txt, field_num) VALUES ('txt','1234')
 
-== Fonctions ==
 
-Les fonctions doivent retourner 0 en cas de succès, et un nombre &lt;0 en cas d'erreur.
-A ce jour, très peu de fonctions respectent ce standard mais c'est celui vers lequel il faut tendre.
 
-== Autre ==
-
-* Les fichiers doivent etre sauvés en format Unix (LF) et non Windows (CR/LF). Le format Unix étant compatible sur les OS Unix like, Windows, Mac, alors que le format fichier texte Windows pose problème sous certains PHP sous Unix.
+== Normes HTML ==
 
 * Tous les attributs dans les balises HTML doivent être *en minuscule* et quottés avec des *doubles quote* (Norme xhtml)
 
@@ -3143,9 +3269,10 @@ if ($conf-&gt;use_javascript)
 }
 &lt;/pre&gt;
 
-* Les popups windows ne doivent pas être utilisées.
+* Les popups windows ne doivent pas être utilisées, sauf pour des tooltips (et restent condtionner par le point ci-dessus).
 
 * Les scripts externes sont écrits en Perl s'ils ne peuvent l'être en php, l'utilisation d'un autre langage n'est pas interdit mais doit être discuté au préalable dans la mailing list des développeurs. Le langage devra être maitrisé par au moins 2 développeurs pour en assurer la maintenance.
+
 
 == Squelettes de code ==
 
@@ -3268,13 +3395,24 @@ Aucune librairie particulière requise.
   <page>
     <title>Liste des tables</title>
     <revision>
-      <timestamp>2007-08-05T02:44:22Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
+      <timestamp>2007-10-15T01:47:07Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>[[Catégorie:Table SQL]]
+
+  Cette section reprend la liste des tables utilisées par Dolibarr. Chaque table dispose d'une page explicative.
+  Les noms des tables sont indiqués sans aucun préfixe, d'une part pour éviter le problème linguistique lié à
+  l'utilisation d'un terme français ou anglais, et d'autre part pour éviter un préfixe inutile, le préfixe ''llx_''
+  étant utilisé par défaut pour toutes les tables de Dolibarr, mais étant néanmoins une partie variable d'une
+  installation à l'autre.
+
+  This section gives the list of tables used by Dolibarr. Each table has a proper details page.
+  The table names are given without any prefix, to avoid putting a limit due to any linguistical subset on one
+  hand and to avoid the use of a useless prefix on the other hand, ''llx_'' being the default prefix for the 
+  Dolibarr tables, but being a variable part nevertheless from one installation to another.
 
 [[Diagramme des bases de données]]
 
-#[[Table llx_action_def]]
+#[[action_def|Table llx_action_def]]
 #[[Table llx_actioncomm]]
 #[[Table llx_adherent]]
 #[[Table llx_adherent_options]]
@@ -3316,10 +3454,10 @@ Aucune librairie particulière requise.
 #[[Table llx_co_pr]]
 #[[Table llx_comfourn_facfourn]]
 #[[Table llx_commande]]
+#[[Table llx_commandedet]]
 #[[Table llx_commande_fournisseur]]
 #[[Table llx_commande_fournisseur_log]]
 #[[Table llx_commande_fournisseurdet]]
-#[[Table llx_commandedet]]
 #[[Table llx_compta]]
 #[[Table llx_compta_account]]
 #[[Table llx_compta_compte_generaux]]
@@ -3332,14 +3470,15 @@ Aucune librairie particulière requise.
 #[[Table llx_cotisation]]
 #[[Table llx_deplacement]]
 #[[dolibarr_modules (Table SQL)|dolibarr_modules]]
+#[[Table llx_document_model]]
 #[[Table llx_domain]]
 #[[Table llx_don]]
 #[[Table llx_don_projet]]
-#[[entrepot (Table SQL)|entrepot]]
-#[[entrepot_valorisation (Table SQL)|entrepot_valorisation]]
-#[[expedition (Table SQL)|expedition]]
-#[[expedition_methode (Table SQL)|expedition_methode]]
-#[[expeditiondet (Table SQL)|expeditiondet]]
+#[[entrepot (Table SQL)|Table llx_entrepot]]
+#[[entrepot_valorisation (Table SQL)|Table llx_entrepot_valorisation]]
+#[[expedition (Table SQL)|Table llx_expedition]]
+#[[expedition_methode (Table SQL)|Table llx_expedition_methode]]
+#[[expeditiondet (Table SQL)|Table llx_expeditiondet]]
 #[[Table llx_export_compta]]
 #[[Table llx_fa_pr]]
 #[[Table llx_facture]]
@@ -3380,11 +3519,11 @@ Aucune librairie particulière requise.
 #[[Table llx_rights_def]]
 #[[Table llx_societe]]
 #[[Table llx_societe_commerciaux]]
+#[[Table llx_societe_log]]
 #[[Table llx_societe_remise]]
 #[[Table llx_societe_remise_except]]
 #[[Table llx_societe_rib]]
 #[[Table llx_socpeople]]
-#[[Table llx_socstatutlog]]
 #[[Table llx_stock_mouvement]]
 #[[Table llx_telephonie_adsl_fournisseur]]
 #[[Table llx_telephonie_adsl_ligne]]
@@ -3419,9 +3558,9 @@ Aucune librairie particulière requise.
 #[[Table llx_telephonie_tarif_vente]]
 #[[Table llx_tva]]
 #[[Table llx_user]]
-#[[user_alert (Table SQL)|user_alert]]
-#[[user_clicktodial (Table SQL)|user_clicktodial]]
-#[[user_entrepot (Table SQL)|user_entrepot]]
+#[[user_alert (Table SQL)|Table llx_user_alert]]
+#[[user_clicktodial (Table SQL)|Table llx_user_clicktodial]]
+#[[user_entrepot (Table SQL)|Table llx_user_entrepot]]
 #[[Table llx_user_param]]
 #[[Table llx_user_rights]]
 #[[Table llx_usergroup]]
@@ -4247,6 +4386,93 @@ L'envoi n'est réalisé que pour les destinataires qui n'ont pas déjà réçu l
     </revision>
   </page>
   <page>
+    <title>Module OSCommerce2</title>
+    <revision>
+      <timestamp>2007-08-15T00:28:14Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Importer une commande */</comment>
+      <text>= Introduction =
+
+Le module OSCommerce2 permet de synchroniser une partie des informations d'une installation OSCommerce2 avec une installation de Dolibarr.
+
+De cette manière, il est possible de 
+* publier dans OSCommerce des produits introduits dans Dolibarr
+* importer des commandes (et leurs détails) dans Dolibarr depuis OSCommerce
+* importer des clients OSCommerce dans Dolibarr
+
+Ce module fonctionne au travers de l'utilisation d'une librairie facilitant l'utilisation des services web: ''NuSOAP''
+
+= Interface =
+
+On accède à l'interface via l'onglet OSCommerce dans le menu supérieur de l'interface par défaut de Dolibarr. Ce menu nous donne une première page récapitulative des données disponibles dans OSCommerce. 
+
+
+[[image:oscommerce-menu.png]]
+
+Le menu de gauche permet alors d'accéder à plus de fonctionnalités, notamment les fonctionnalités de synchronisation.
+
+La liste de fonctionnalités suivante utilise la convention '''export=Dolibarr-&gt;OSCommerce''' et '''import=OSCommerce-&gt;Dolibarr'''
+
+== Exporter un produit ==
+
+En cliquant sur le lien ''AddProd'' (qui devrait être traduit en français par ''Ajout produit'', on arrive sur la page d'export des produits. Il suffit de sélectionner un produit et une quantité, puis d'appuyer sur le bouton ''OSCsell'' (qui devrait être traduit en français par ''Vendre sur OSCommerce'') pour que la requête de création soit envoyée.
+
+Attention, la liste de produits est limitée en utilisant les limitations de listes de Dolibarr. Il se pourrait donc qu'au-delà de, par exemple, 50 produits, il soit impossible de voir le reste des produits. Pour changer cette limite, on peut aller la modifier dans la configuration de Dolibarr, ou si l'on veut s'en débarrasser, c'est dans '''htdocs/oscommerce_ws/produits/OSCVente.php''', chercher '''$html-&gt;select_produits''' et modifier '''$conf-&gt;produit-&gt;limit_size'''
+
+== Importer un produit ==
+
+Importer un produit se fait au travers du menu &quot;Produits&quot;. La page d'import affiche une liste des produits disponibles dans OSCommerce. Le lien de droite affiche &quot;Importer&quot; ou &quot;Modifier&quot;, selon que les produits figurent ou non dans la table ''llx_osc_product''.
+
+Si un produit existe localement et qu'on le supprime (localement), on trouve un joli bug de synchronisation, où le produit apparaît ensuite toujours comme à &quot;Modifier&quot; plutôt qu'importer.
+
+Un produit importé de la sorte est importé hors de toute catégorie.
+
+Un message consécutif à l'importation indique si le produit a été importé.
+
+== Importer un client ==
+
+Importer un client se fait via le menu de gauche '''Clients'''. Une liste des clients apparaît et, d'une façon identique à la liste des produits, on peut choisir d'importer un client dans Dolibarr depuis OSCommerce via un lien '''Importer'''.
+
+Un message d'information atteste de la réussite de l'opération, indiquant par la même occasion quel est l'identifiant interne attribué à ce client dans Dolibarr.
+
+== Importer une commande ==
+
+L'importation d'une commande se fait via le menu de gauche &quot;Commandes&quot;.
+
+L'importation d'une commande nécessite la présence préalable dans Dolibarr du client et des produits concernés. Si ce n'est pas le cas, un message nous indique les produits ou clients manquants et bloque l'opération d'import.
+
+== Synchroniser une catégorie ==
+
+La synchronisation des catégories se fait toujours à la main pour le moment. L'utilisation du menu de gauche '''Catégories''' nous mène à une page de liste des catégories existantes dans Dolibarr. Il est nécessaire d'indiquer, pour chaque catégorie de Dolibarr, à quelle catégorie de OSCommerce elle correspond. C'est assez peu intuitif pour le moment étant donné qu'il faut connaître le numéro de catégorie dans OSCommerce pour pouvoir appliquer la correspondance.
+
+= Code =
+
+Comme indiqué dans une ébauche de documentation très succinte au sein du code, c'est dans le répertoire '''htdocs/oscommerce_ws''' que l'on trouve le code de l'application. Il existe également pas mal de code dans un répertoire '''htdocs/boutique''' mais il est difficile de déterminer à quoi il sert (probablement au module OSCommerce1).
+
+Le répertoire '''ws_server/''' doit être copié sur le serveur OSCommerce, dans le répertoire '''catalog/'''. Il doit également être configuré, en modifiant le fichier '''ws_server/includes/configuration.php''' pour y placer la configuration de OSCommerce.
+
+
+= Problèmes =
+
+== PHP5 ==
+
+La librairie NuSOAP originale (elle a été modifiée dans le code de Dolibarr pour la version 2.2) entre en conflit avec l'extension SOAP de PHP5, à cause du nom du client SOAP, '''soapclient''' qui est identique des deux côtés. Les autres classes ne causent pas de conflit.
+
+Ceci donne lieu à une erreur du type &quot;Cannot redeclare class SoapClient&quot;.
+
+== Erreur I/O ==
+
+Il est possible que pour certaines requêtes le client (Dolibarr) renvoie une erreur fatale indiquant un problème d'entrée/sortie (une erreur HTTP 1.1 500 du côté serveur). Ce message d'erreur n'est pas très explicite dans le sens où il s'agit généralement d'un problème au niveau d'une méthode fournie en SOAP uniquement, et pas d'un script complet, comme il pourrait le laisser penser.
+
+Pour corriger, une des deux méthodes suivantes est la bonne (pas encore pu filtrer, désolé): réordonner les appels, côté serveur, à $soap_server-&gt;register(méthode) ou donner des paramètres $in et $out à ces mêmes appels à register. D'une façon ou d'une autre, c'est cette partie qui pose problème.
+
+== Mon produit n'apparaît pas dans OSCommerce ==
+
+OSCommerce nécessite une entrée de description de produit pour que le produit apparaisse. Autrement dit, il faut que le produit ait un nom (et éventuellement une description) qui lui soient propres. Tout ça est très joli, le seul problème (dépendant de la version de Dolibarr que vous utilisez) c'est qu'il est possible que la requête d'insertion de la description du produit du côté OSCommerce ne fonctionne pas. Il s'agit de la requête située dans ws_server/ws_articles.php, dans la fonction create_article(). Il faut en fait commenter les 3 lignes commençant par '''products_head''' dans le deuxième tableau.
+Un produit bien inséré dans OSCommerce renvoie inévitablement un message du type '''le produit JADAA2 Aerosol 60/2 est en vente en ligne consulter'''. Si ce message n'apparaît pas, il y a fort à parier que le produit n'a pas été inséré.</text>
+    </revision>
+  </page>
+  <page>
     <title>Module Propositions commerciales</title>
     <revision>
       <timestamp>2005-12-20T23:22:13Z</timestamp>
@@ -4365,20 +4591,40 @@ A completer...
   <page>
     <title>Module Stock</title>
     <revision>
-      <timestamp>2005-11-03T12:13:51Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>Ajout page sur module Stock</comment>
+      <timestamp>2007-08-19T23:19:19Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Améliorations possibles */</comment>
       <text>(Généralités sur les [[Modules]])
 
 Le module stock permet de gérer une liste d'entrepots (ou tout autre &quot;contenant&quot;) et de répertorier, à tout moment, la liste et quantité des produits qu'il contient.
 Quand un produit est livré, le choix de l'entrepot source est réalisé est la quantité est automatiquement décrémentée.
 Il est possible de réajuster le contenu de ces entrepots suite à des inventaires.
 
+Le module stock est paramétrable dans l'administration de Dolibarr pour choisir si la décrémentation du stock se fait à la livraison d'une expédition, à la facturation ou à la commande.
+
+La gestion du stock de cette façon ne permet pas, à l'état actuel, d'incrémenter le stock sur une livraison fournisseur.
+
 
 == Permissions ==
 
 * A compléter
 
+== Implémentation ==
+
+=== Expéditions ===
+
+La modification du stock sur expédition se fait dans le script htdocs/expedition/commandes.php et utilise la classe expedition.class.php (méthode ''valid()''). La vérification avant modification du stock se fait comme suit:
+
+  if ($conf-&gt;stock-&gt;enabled &amp;&amp; $this-&gt;entrepot_id &amp;&amp; $conf-&gt;global-&gt;STOCK_CALCULATE_ON_SHIPMENT == 1)
+
+=== Commandes/Livraison ===
+
+Lorsque l'option d'incrémenter le stock sur commandes est activée, du côté des commandes fournisseurs, c'est la classe htdocs/fourn/fournisseur.commande.class.php qui prend en charge l'incrémentation du stock au travers de sa méthode ''DispatchProduct()''. L'activation de cette commande n'est possible qu'à l'état 3 et 4 de la commande fournisseur, ce qui veut dire qu'il ne faut pas rater son coup au moment d'encoder la commande. Une fois la commande &quot;envoyée&quot;, il est possible de placer les produits dans le stock en cliquant sur l'onglet Dispatch (''Ventilation'').
+
+== Améliorations possibles ==
+
+La gestion du stock devrait pouvoir incorporer une intégration des livraisons fournisseurs directement dans un stock au choix. De même, une livraison d'un produit composé de plusieurs sous-produits devrait pouvoir être intégrée au stock sous forme des différents constituants plutôt que du tout.
+Cette intégration peut être faite de façon simple en ajoutant un checkbox dans fourn/commande/dispatch.php, une méthode donnant la liste détaillée des composants d'un produit (incluant les quantités), et une nouvelle méthode commandeFournisseur::DispatchProductAsComponents() qui va chercher la liste des enfants et les place un à un dans le stock.
 
 == Tables SQL ==
 * [[llx_entrepot]] Contient la liste des entrepots</text>
@@ -4798,14 +5044,14 @@ Identification des classes :
   <page>
     <title>PhpLangEditor</title>
     <revision>
-      <timestamp>2007-01-08T09:41:33Z</timestamp>
-      <contributor><username>Ywarnier</username></contributor>
-      <comment>/* phpLangEditor - Modification pour Dolibarr */</comment>
+      <timestamp>2007-10-15T01:56:02Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Version courte */</comment>
       <text>= phpLangEditor - Modification pour Dolibarr =
 
 == Version courte ==
 
-* Installez l'extension [https://addons.mozilla.org/firefox/687/ phplangeditor (2.1.1)] dans votre Firefox
+* Installez l'extension [https://addons.mozilla.org/firefox/687/ phplangeditor] dans votre Firefox
 * Trouvez où se cache phplangeditor.jar sur votre disque
 * Remplacez-le par [http://glouglou.beeznest.org/phplangeditor.jar cette version-ci]
 * Redémarrez Firefox et cliquez sur Outils -&gt; PHP lang editor
@@ -5080,11 +5326,12 @@ Il existe désormais (version 2.1) un rapport '''quadri détail''' qui permet d'
   <page>
     <title>Roadmap</title>
     <revision>
-      <timestamp>2007-08-08T13:51:36Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2007-10-29T13:45:34Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>* [[Roadmap 2.0.0]] - Disponible depuis février 2005
 * [[Roadmap 2.1.0]] - Abandonnée car mauvaise gestion des arrondis bloquant
 * [[Roadmap 2.2.0]]
+* [[Roadmap 2.3.0]]
 * [[Roadmap 2.4.0]]
 * [[Roadmap 2.6.0]]</text>
     </revision>
@@ -5301,9 +5548,9 @@ pluton: non opérationnel
   <page>
     <title>Roadmap 2.2.0</title>
     <revision>
-      <timestamp>2007-08-08T13:58:51Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Les fonctionnalités */</comment>
+      <timestamp>2007-10-29T13:44:58Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Autre */</comment>
       <text>[[Roadmap]] Dolibarr pour la version 2.2.0
 
 
@@ -5339,13 +5586,12 @@ pluton: non opérationnel
 == Features (english version) ==
 
 * Fix bug reports of 2.1.0
-* Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)
+* Reported to 2.3.0 &lt;strike&gt;Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)&lt;/strike&gt;
 * Addition of documents history (if invoice generated and sent to the client, keep that precise invoice in this form at all costs - with date)
 * Better database input filtering (prevent easy attacks by disatisfied employees) (continual effort)
-* Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)
-* Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)
-* Manage members language (e-mail sending)
-
+* Reported to 2.3.0 &lt;strike&gt;Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)&lt;/strike&gt;
+* Reported to 2.3.0 &lt;strike&gt;Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)&lt;/strike&gt;
+* Reported to 2.3.0 &lt;strike&gt;Manage members language (e-mail sending)&lt;/strike&gt;
 
 == Modules à inclure/exclure pour la release ==
 Tous les modules du CVS peuvent être inclus dans la release 2.2.0 à l'exception des suivants:
@@ -5385,17 +5631,24 @@ Tous les themes sont opérationnels sauf 'rodolphe' qui n'a aucun picto.
 
 == Autre ==
 
-* Le support PosgreSQL n'est pas stable (Manque de testeurs) et ne sera donc pas intégré à la 2.2</text>
+* Le support PostgreSQL n'est pas stable (Manque de testeurs) et ne sera donc pas intégré à la 2.2
+* Le support MSSQL n'est pas stable et ne sera donc pas intégré à la 2.2</text>
     </revision>
   </page>
   <page>
     <title>Roadmap 2.3.0</title>
     <revision>
-      <timestamp>2005-05-14T13:20:11Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2007-10-29T13:46:49Z</timestamp>
+      <contributor><username>Ywarnier</username></contributor>
       <text>[[Roadmap]] Dolibarr pour la version 2.3.0
 
-* La possibilité d'utiliser les librairies présentes sur le système d'exploitation (BenoitMortier)</text>
+* La possibilité d'utiliser les librairies présentes sur le système d'exploitation (BenoitMortier)
+
+
+* Addition of multi-currencies management, only in informative mode at first (Yannick Warnier)
+* Improvements of invoice-related e-mail sending: configurable default fields, automatical CC to a specified e-mail address, drop-down, title and body language in the contact info (introduce concept of contact language)
+* Improvements in the commercial management features. Introduce dated notes, contacts belonging to more than one company, notion of &quot;referral&quot; (a client refers us to another - to keep track of worthy clients)
+* Manage members language (e-mail sending)</text>
     </revision>
   </page>
   <page>
@@ -5871,17 +6124,11 @@ Chaque fichier est une classe qui hérite de la classe ModeleBoxes.</text>
   <page>
     <title>Table llx action def</title>
     <revision>
-      <timestamp>2007-08-06T01:42:06Z</timestamp>
+      <timestamp>2007-08-15T13:51:00Z</timestamp>
       <contributor><username>Ywarnier</username></contributor>
-      <text>[[Catégorie:Table SQL]]
-  La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
-  The documentation related to other tables is available on the tables list page: [[Liste des tables]]
-
-= Contenu =
-
-Liste des actions
-
-= Structure =</text>
+      <comment>Table llx action def déplacé vers Action def</comment>
+      <text>#REDIRECT [[Action def]]
+</text>
     </revision>
   </page>
   <page>
@@ -6570,8 +6817,9 @@ Contains the details of provider orders lines.
   <page>
     <title>Table llx commandedet</title>
     <revision>
-      <timestamp>2007-08-06T02:39:18Z</timestamp>
+      <timestamp>2007-08-22T00:46:40Z</timestamp>
       <contributor><username>Ywarnier</username></contributor>
+      <comment>/* Structure */</comment>
       <text>[[Catégorie:Table SQL]]
   La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
   The documentation related to other tables is available on the tables list page: [[Liste des tables]]
@@ -6585,42 +6833,24 @@ Contains details of customer orders. This table is linked to [[Table llx_command
 = Structure =
 
 &lt;pre&gt;
--- ===================================================================
--- Copyright (C) 2003 Rodolphe Quiedeville &lt;rodolphe@quiedeville.org&gt;
---
--- This program is free software; you can redistribute it and/or modify
--- it under the terms of the GNU General Public License as published by
--- the Free Software Foundation; either version 2 of the License, or
--- (at your option) any later version.
---
--- This program is distributed in the hope that it will be useful,
--- but WITHOUT ANY WARRANTY; without even the implied warranty of
--- MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
--- GNU General Public License for more details.
---
--- You should have received a copy of the GNU General Public License
--- along with this program; if not, write to the Free Software
--- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
---
--- $Id$
--- $Source$
--- ===================================================================
-
-create table llx_commandedet
-(
   rowid          integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande    integer,
   fk_product     integer,
-  label          varchar(255),
   description    text,
   tva_tx         real DEFAULT 19.6, -- taux tva
   qty            real,              -- quantit
-  remise_percent real DEFAULT 0,    -- pourcentage de remise
-  remise         real DEFAULT 0,    -- montant de la remise
-  subprice       real,              -- prix avant remise
-  price          real               -- prix final
-)type=innodb;
-
+  remise_percent double DEFAULT 0,    -- pourcentage de remise
+  remise         double DEFAULT 0,    -- montant de la remise
+  fk_remise_except int default NULL,
+  price          double,              -- prix final
+  subprice       double,              -- prix avant remise
+  total_ht       double,
+  total_tva      double,
+  total_ttc      double,
+  info_bits      int,
+  coef           double,
+  special_code   tinyint default 0,   -- utilisé pour les frais de port (=1) et les écotaxes (=2). Sinon à 0. 
+  rang           int
 &lt;/pre&gt;</text>
     </revision>
   </page>
@@ -7531,7 +7761,7 @@ Liste des lignes de prélèvement.
   <page>
     <title>Table llx product</title>
     <revision>
-      <timestamp>2007-08-06T03:02:35Z</timestamp>
+      <timestamp>2007-08-23T19:38:38Z</timestamp>
       <contributor><username>Ywarnier</username></contributor>
       <text>[[Catégorie:Table SQL]]
   La documentation relative aux autres tables est disponible sur la page [[Liste des tables]]
@@ -7570,13 +7800,18 @@ Contains the list of products and services.
 | seuil_stock_alerte | int(11)      | YES  |     | 0                 |                | 
 | stock_loc          | varchar(10)  | YES  |     | NULL              |                | 
 | gencode            | varchar(255) | YES  |     | NULL              |                | 
-| weight             | float        | YES  |     | NULL              |                | 
-| weight_units       | tinyint(4)   | YES  |     | NULL              |                | 
-| volume             | float        | YES  |     | NULL              |                | 
-| volume_units       | tinyint(4)   | YES  |     | NULL              |                | 
+| weight             | float        | YES  |     | NULL              |                | weight value, depending on weight units
+| weight_units       | tinyint(4)   | YES  |     | NULL              |                | weight units (0=kg,-3=g,-6=mg)
+| volume             | float        | YES  |     | NULL              |                | volume value
+| volume_units       | tinyint(4)   | YES  |     | NULL              |                | volume units (0=m3,-3=cm3,-6=mm3)
 | canvas             | varchar(15)  | YES  |     |                   |                | 
 +--------------------+--------------+------+-----+-------------------+----------------+
-&lt;/pre&gt;</text>
+&lt;/pre&gt;
+
+= Notes =
+
+Une barre de recherche des produits en AJAX peut être utilisée à la place de la liste déroulante, en activant, dans le module produits, l'option &quot;Utiliser une barre de recherche ...&quot; et en laissant AJAX activé dans les paramètres d'interface utilisateur.
+C'est la méthode select_produits() de html.form.class.php qui se charge de renvoyer la liste, qu'elle soit en AJAX ou en liste de formulaire HTML.</text>
     </revision>
   </page>
   <page>

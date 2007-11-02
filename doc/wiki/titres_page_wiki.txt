@@ -1,5 +1,7 @@
 Accueil
+Action def
 Actualités
+Adherent_(Tables_SQL)
 Adherents
 ApercuDesModeles
 Authentification
@@ -8,13 +10,16 @@ Bank_account_(Table_SQL)
 Bank_categ_(Table_SQL)
 Bank_class_(Table_SQL)
 Bank_url_(Table_SQL)
+Banques_et_Caisses
 Benoit Mortier
 Bookmark4u_login_(Table_SQL)
 Bookmark_(Table_SQL)
 Boxes_(Table_SQL)
 Boxes_def(Table_SQL)
 Calendrier
-Charte de nommage
+Ce_que_fait_Dolibarr
+Ce_que_ne_fait_pas_Dolibarr
+Charte_de_nommage
 Commande
 CommandeFournisseur
 Comptabilité
@@ -58,6 +63,8 @@ FactureFournisseur
 FactureModele
 Facture_(Table_SQL)
 Facturedet_(Table_SQL)
+Facturedet_rec_(Table_SQL)
+Facturer un service daprès tarif
 Fichier de configuration
 Fichinter_(Table_SQL)
 Fournisseur_ca_(Table_SQL)
@@ -97,6 +104,7 @@ Module Contrat
 Module Facture
 Module Fournisseur
 Module Mailing
+Module OSCommerce2
 Module Propositions commerciales
 Module Prélèvements bancaires
 Module Société
