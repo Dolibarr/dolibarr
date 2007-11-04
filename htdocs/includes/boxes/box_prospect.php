@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -78,20 +77,20 @@ class box_prospect extends ModeleBoxes {
             {
                 $sql .= " AND s.rowid = ".$user->societe_id;
             }
-            $sql .= " ORDER BY s.datec DESC ";
+            $sql .= " ORDER BY s.datec DESC";
             $sql .= $db->plimit($max, 0);
-    
-            $result = $db->query($sql);
-    
-            if ($result)
+
+			dolibarr_syslog("box_prospect::loadBox sql=".$sql,LOG_DEBUG);
+            $resql = $db->query($sql);
+            if ($resql)
             {
-                $num = $db->num_rows($result);
+                $num = $db->num_rows($resql);
     
                 $i = 0;
     			$prospectstatic=new Prospect($db);
                 while ($i < $num)
                 {
-                    $objp = $db->fetch_object($result);
+                    $objp = $db->fetch_object($resql);
     
                     $this->info_box_contents[$i][0] = array('align' => 'left',
                     'logo' => $this->boximg,
@@ -125,8 +124,11 @@ class box_prospect extends ModeleBoxes {
                     }
                     $i++;
                 }
-
             }
+			else
+			{
+				dolibarr_print_error($db);
+			}
         }
         else {
             $this->info_box_contents[0][0] = array('align' => 'left',
