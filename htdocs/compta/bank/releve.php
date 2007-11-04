@@ -30,7 +30,8 @@ require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/bank.lib.php");
 
 $langs->load("companies");
-
+$langs->load("banks");
+$langs->load("bills");
 
 if (!$user->rights->banque->lire)
   accessforbidden();
