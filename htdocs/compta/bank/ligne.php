@@ -30,7 +30,7 @@
 
 require("./pre.inc.php");
 
-if (!$user->rights->banque->modifier && !$user->rights->banque->consolidate)
+if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
   accessforbidden();
 
 $langs->load("banks");
@@ -265,7 +265,7 @@ if ($result)
       
       // Date ope
       print '<tr><td>'.$langs->trans("DateOperation").'</td>';
-      if (! $objp->rappro)
+      if (! $objp->rappro && $user->rights->banque->modifier)
 	{
 	  print '<td colspan="3">';
 	  $html->select_date($objp->do,'dateo','','','','update');
@@ -280,7 +280,7 @@ if ($result)
       
       // Value date
       print "<tr><td>".$langs->trans("DateValue")."</td>";
-      if (! $objp->rappro)
+      if (! $objp->rappro && $user->rights->banque->modifier)
         {
 	  print '<td colspan="3">';
 	  $html->select_date($objp->dv,'datev','','','','update');
@@ -300,7 +300,7 @@ if ($result)
       
       // Description
       print "<tr><td>".$langs->trans("Label")."</td>";
-      if (! $objp->rappro)
+      if (! $objp->rappro && $user->rights->banque->modifier)
 	{
 	  print '<td colspan="3">';
 	  print '<input name="label" class="flat" value="';
@@ -393,7 +393,7 @@ if ($result)
       
       // Amount
       print "<tr><td>".$langs->trans("Amount")."</td>";
-      if (! $objp->rappro)
+      if (! $objp->rappro && $user->rights->banque->modifier)
         {
 	  print '<td colspan="3">';
 	  print '<input name="amount" class="flat" size="10" value="'.price($objp->amount).'"> '.$langs->trans("Currency".$conf->monnaie);
@@ -410,33 +410,54 @@ if ($result)
       
       // Type paiement
       print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero")."</td><td colspan=\"3\">";
-      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-      print '<input type="hidden" name="action" value="type">';
-      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-      print $html->select_types_paiements($objp->fk_type,"value",'',2);
-      print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
-      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-      print "</form>";
+      if ($user->rights->banque->modifier)
+	  {
+		  print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+	      print '<input type="hidden" name="action" value="type">';
+	      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+	      print $html->select_types_paiements($objp->fk_type,"value",'',2);
+	      print '<input type="text" class="flat" name="num_chq" value="'.(empty($objp->num_chq) ? '' : $objp->num_chq).'">';
+	      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+	      print "</form>";
+		}
+		else
+		{
+			print $objp->fk_type.' '.$objp->num_chq.'</td><td>&nbsp;</td>';
+		}
       print "</td></tr>";
       
       // Banque
       print "<tr><td>".$langs->trans("Bank")."</td><td colspan=\"3\">";
-      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-      print '<input type="hidden" name="action" value="banque">';
-      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-      print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : stripslashes($objp->banque)).'">';
-      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-      print "</form>";
+      if ($user->rights->banque->modifier)
+	  {
+	      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+	      print '<input type="hidden" name="action" value="banque">';
+	      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+	      print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : stripslashes($objp->banque)).'">';
+	      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+	      print "</form>";
+		}
+		else
+		{
+			print $objp->banque.'&nbsp;</td><td>&nbsp;</td>';
+		}
       print "</td></tr>";
 
       // Emetteur
       print "<tr><td>".$langs->trans("CheckTransmitter")."</td><td colspan=\"3\">";
-      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-      print '<input type="hidden" name="action" value="emetteur">';
-      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-      print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
-      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
-      print "</form>";
+      if ($user->rights->banque->modifier)
+	  {
+	      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+	      print '<input type="hidden" name="action" value="emetteur">';
+	      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+	      print '<input type="text" class="flat" size="40" name="emetteur" value="'.(empty($objp->emetteur) ? '' : stripslashes($objp->emetteur)).'">';
+	      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
+	      print "</form>";
+	  }
+	  else
+	  {
+		print $objp->emetteur.'&nbsp;</td><td>&nbsp;</td>';
+	  }
       print "</td></tr>";
 
 
@@ -444,13 +465,20 @@ if ($result)
       if ($acct->rappro)  // Si compte rapprochable
         {
 	  print "<tr><td>".$langs->trans("Conciliation")."</td>";
-	  print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
-	  print '<input type="hidden" name="action" value="num_releve">';
-	  print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-	  print '<td colspan="3">';
-	  print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'">';
-	  print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
-	  print '</form>';
+	  if ($user->rights->banque->consolidate)
+	  {
+		  print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
+		  print '<input type="hidden" name="action" value="num_releve">';
+		  print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
+		  print '<td colspan="3">';
+		  print $langs->trans("AccountStatement").' <input name="num_rel" class="flat" value="'.$objp->num_releve.'">';
+		  print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'"></td>';
+		  print '</form>';
+		}
+		else
+		{
+			print '<td colspan="4">'.$objp->num_releve.'&nbsp;</td>';
+		}
 	  print '</tr>';
         }
       
