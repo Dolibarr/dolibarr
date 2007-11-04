@@ -135,38 +135,38 @@ class modSociete extends DolibarrModules
     $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
     $this->rights[$r][4] = 'export';
     
-    $r++;
-    $this->rights[$r][0] = 281; // id de la permission
-    $this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
-    $this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'contact';
-    $this->rights[$r][5] = 'lire';
-    
-    $r++;
-    $this->rights[$r][0] = 282; // id de la permission
-    $this->rights[$r][1] = 'Créer modifier les contacts'; // libelle de la permission
-    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'contact';
-    $this->rights[$r][5] = 'creer';
-    
-    $r++;
-    $this->rights[$r][0] = 283; // id de la permission
-    $this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
-    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'contact';
-    $this->rights[$r][5] = 'supprimer';
+	$r++;
+	$this->rights[$r][0] = 281; // id de la permission
+	$this->rights[$r][1] = 'Lire les contacts'; // libelle de la permission
+	$this->rights[$r][2] = 'r'; // type de la permission (déprécié à ce jour)
+	$this->rights[$r][3] = 1; // La permission est-elle une permission par défaut
+	$this->rights[$r][4] = 'contact';
+	$this->rights[$r][5] = 'lire';
+	
+	$r++;
+	$this->rights[$r][0] = 282; // id de la permission
+	$this->rights[$r][1] = 'Créer modifier les contacts'; // libelle de la permission
+	$this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][4] = 'contact';
+	$this->rights[$r][5] = 'creer';
+	
+	$r++;
+	$this->rights[$r][0] = 283; // id de la permission
+	$this->rights[$r][1] = 'Supprimer les contacts'; // libelle de la permission
+	$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][4] = 'contact';
+	$this->rights[$r][5] = 'supprimer';
 
-    $r++;
-    $this->rights[$r][0] = 286; // id de la permission
-    $this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
-    $this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
-    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
-    $this->rights[$r][4] = 'contact';
-    $this->rights[$r][5] = 'export';
-
+	$r++;
+	$this->rights[$r][0] = 286; // id de la permission
+	$this->rights[$r][1] = 'Exporter les contacts'; // libelle de la permission
+	$this->rights[$r][2] = 'd'; // type de la permission (déprécié à ce jour)
+	$this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	$this->rights[$r][4] = 'contact';
+	$this->rights[$r][5] = 'export';
+	
     // Exports
     //--------
     $r=0;

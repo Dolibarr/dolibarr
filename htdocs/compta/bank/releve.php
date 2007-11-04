@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -288,6 +287,35 @@ else
 					print dolibarr_trunc($links[$key]['label'],24);
 					print '</a>';
 					$newline=0;
+				}
+				else if ($links[$key]['type']=='sc') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/charges.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowBill'),'bill').' ';
+					print $langs->trans("SocialContribution");
+					print '</a>';
+					$newline=0;
+				}
+				else if ($links[$key]['type']=='payment_sc') {
+					print '<a href="'.DOL_URL_ROOT.'/compta/sociales/xxx.php?id='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowPayment'),'payment').' ';
+					print $langs->trans("SocialContributionPayment");
+					print '</a>';
+					$newline=0;
+				}
+				else if ($links[$key]['type']=='member') {
+					print '<a href="'.DOL_URL_ROOT.'/adherents/fiche.php?rowid='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowMember'),'user').' ';
+					print $links[$key]['label'];
+					print '</a>';
+					$newline=0;
+				}
+				else if ($links[$key]['type']=='banktransfert') {
+				/*	print '<a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$links[$key]['url_id'].'">';
+					print img_object($langs->trans('ShowTransaction'),'payment').' ';
+					print $langs->trans("TransactionOnTheOtherAccount");
+					print '</a>';
+					$newline=0;
+				*/
 				}
 				else {
 					print '<a href="'.$links[$key]['url'].$links[$key]['url_id'].'">';
