@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -73,7 +72,8 @@ function llxHeader($head = "")
 
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/search.php",$langs->trans("SearchTransaction"),1,$user->rights->banque->lire);
 	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/budget.php",$langs->trans("ByCategories"),1,$user->rights->banque->lire);
-	$menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan",1,$user->rights->banque->lire);
+	// Obsolete. Replaced by page Rapport E/S 
+	// $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan",1,$user->rights->banque->lire);
 	
 	if ($user->rights->banque->modifier)
 	{
