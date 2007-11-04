@@ -138,7 +138,7 @@ print '<tr class="liste_titre">';
 print '<td width="30%">'.$langs->trans("SavingAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("Numero").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Conciliable").'</td>';
+print '<td align="center" width="100">'.$langs->trans("TransactionsToConciliate").'</td>';
 print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
@@ -159,7 +159,15 @@ foreach ($accounts as $key=>$type)
 		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
-		print '<td align="center">'.yn($acc->rappro).'</td>';
+		print '<td align="center">';
+		if ($acc->rappro) 
+		{
+			$result=$acc->load_board($user,$acc->id);
+			print $acc->nbtodo;
+			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+		}
+		else print $langs->trans("FeatureDisabled");
+		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
 		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';
