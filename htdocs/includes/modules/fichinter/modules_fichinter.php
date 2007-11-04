@@ -157,12 +157,12 @@ class ModeleNumRefFicheinter
 /**
 		\brief      Crée une fiche intervention sur disque en fonction du modèle de FICHEINTER_ADDON_PDF
 		\param	    db  			objet base de donnée
-		\param	    id				id de la fiche à créer
+		\param	    object			Object fichinter
 		\param	    modele			force le modele à utiliser ('' par defaut)
 		\param		outputlangs		objet lang a utiliser pour traduction
         \return     int         	0 si KO, 1 si OK
 */
-function fichinter_pdf_create($db, $id, $modele='', $outputlangs='')
+function fichinter_create($db, $object, $modele='', $outputlangs='')
 {
 	global $conf,$langs;
 	$langs->load("ficheinter");
@@ -192,7 +192,7 @@ function fichinter_pdf_create($db, $id, $modele='', $outputlangs='')
 	
 		$obj = new $classname($db);
 	
-		if ($obj->write_file($id,$outputlangs) > 0)
+		if ($obj->write_file($object,$outputlangs) > 0)
 		{
 			return 1;
 		}

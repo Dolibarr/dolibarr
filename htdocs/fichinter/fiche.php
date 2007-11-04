@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -75,7 +74,7 @@ if ($_POST["action"] == 'add')
 {
 	$fichinter = new Fichinter($db);
 	
-	$fichinter->date = dolibarr_mktime(12, 0 , 0, $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]);
+	$fichinter->date = dolibarr_mktime($_POST["phour"], $_POST["pmin"] , $_POST["psec"], $_POST["pmonth"], $_POST["pday"], $_POST["pyear"]);
 	$fichinter->socid = $_POST["socid"];
 	$fichinter->duree = $_POST["duree"];
 	$fichinter->projet_id = $_POST["projetidp"];
@@ -125,18 +124,21 @@ if ($_POST["action"] == 'update')
  */
 if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
-  if ($_REQUEST['lang_id'])
-  {
-  	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-    $outputlangs->setDefaultLang($_REQUEST['lang_id']);
-  }
-  
-  $result=fichinter_pdf_create($db, $_REQUEST['id'], $_REQUEST['model'], $outputlangs);
-  if ($result <= 0)
-    {
-      dolibarr_print_error($db,$result);
-      exit;
-    }
+	if ($_REQUEST['lang_id'])
+	{
+		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+	}
+
+	$fichinter = new Fichinter($db);
+	$fichinter->fetch($_GET['id']);
+
+	$result=fichinter_create($db, $fichinter, $_REQUEST['model'], $outputlangs);
+	if ($result <= 0)
+	{
+		dolibarr_print_error($db,$result);
+		exit;
+	}
 }
 
 /*
@@ -164,7 +166,7 @@ if ($_REQUEST['action'] == 'confirm_delete' && $_REQUEST['confirm'] == 'yes')
 if ($_POST['action'] == 'setdate_delivery')
 {
 	$fichinter = new Fichinter($db);
-  $fichinter->fetch($_GET['id']);
+	$fichinter->fetch($_GET['id']);
 	$result=$fichinter->set_date_delivery($user,dolibarr_mktime(12, 0, 0, $_POST['liv_month'], $_POST['liv_day'], $_POST['liv_year']));
 	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
 }
@@ -172,7 +174,7 @@ if ($_POST['action'] == 'setdate_delivery')
 if ($_POST['action'] == 'setdescription')
 {
 	$fichinter = new Fichinter($db);
-  $fichinter->fetch($_GET['id']);
+	$fichinter->fetch($_GET['id']);
 	$result=$fichinter->set_description($user,$_POST['description']);
 	if ($result < 0) dolibarr_print_error($db,$fichinter->error);
 }
@@ -185,7 +187,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 	if ($_POST['np_desc'] && ($_POST['durationhour'] || $_POST['durationmin']))
 	{
 		$fichinter = new Fichinter($db);
-	  $ret=$fichinter->fetch($_POST['fichinterid']);
+		$ret=$fichinter->fetch($_POST['fichinterid']);
 		
 		$desc=$_POST['np_desc'];
 		$date_intervention = $db->idate(mktime(12, 1 , 1, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]));
@@ -203,7 +205,7 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
 			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 		}
-  	fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+		fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	}
 }
 
@@ -212,25 +214,34 @@ if ($_POST['action'] == "addligne" && $user->rights->ficheinter->creer)
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_POST["save"] == $langs->trans("Save"))
 {
-  $fichinter = new Fichinter($db);
-	if (! $fichinter->fetch($_POST['fichinterid']) > 0) dolibarr_print_error($db);
-	
+	$fichinterline = new FichinterLigne($db);
+	if ($fichinterline->fetch($_POST['ligne']) <= 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
+	$fichinter = new Fichinter($db);
+	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
 	$desc=$_POST['desc'];
-  $date_intervention = $db->idate(mktime(12, 1 , 1, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]));
+	$date_intervention = dolibarr_mktime(12, 1 , 1, $_POST["dimonth"], $_POST["diday"], $_POST["diyear"]);
 	$duration = ConvertTime2Seconds($_POST['durationhour'],$_POST['durationmin']);
 
-  $result = $fichinter->updateline($_POST['ligne'],
-  	$desc,
-  	$date_intervention,
-  	$duration
-	 );
+	$fichinterline->desc=$desc;
+	$fichinterline->datei=$date_intervention;
+	$fichinterline->duration=$duration;
+	$result = $fichinterline->update();
 
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-    fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+    fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
+	
 }
 
 /*
@@ -246,7 +257,7 @@ if ($_GET['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$con
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-	fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 }
 
 /*
@@ -264,7 +275,7 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
     	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
     	$outputlangs->setDefaultLang($_REQUEST['lang_id']);
     }
-    fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+    fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
   }
   Header('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET['id']);
   exit;
@@ -284,8 +295,9 @@ if ($_GET['action'] == 'up' && $user->rights->ficheinter->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
+	exit;
 }
 
 if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
@@ -298,7 +310,7 @@ if ($_GET['action'] == 'down' && $user->rights->ficheinter->creer)
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 	}
-  	fichinter_pdf_create($db, $fichinter->id, $fichinter->modelpdf, $outputlangs);
+  	fichinter_create($db, $fichinter, $fichinter->modelpdf, $outputlangs);
 	Header ('Location: '.$_SERVER["PHP_SELF"].'?id='.$_GET["id"].'#'.$_GET['rowid']);
 	exit;
 }
@@ -579,7 +591,7 @@ elseif ($_GET["id"] > 0)
 	}
 	
 	// Durée
-	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.$fichinter->duree.'</td></tr>';
+	print '<tr><td>'.$langs->trans("TotalDuration").'</td><td>'.ConvertSecondToTime($fichinter->duree).'</td></tr>';
 	
 	// Description
 	print '<tr><td>';
@@ -658,7 +670,7 @@ elseif ($_GET["id"] > 0)
 				print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
 				print nl2br($objp->description);
 				
-				print '<td width="150">'.dolibarr_print_date($objp->date_intervention,'%a %d %B %Y').'</td>';
+				print '<td width="150">'.dolibarr_print_date($objp->date_intervention,'day').'</td>';
 				print '<td width="150">'.ConvertSecondToTime($objp->duree).'</td>';
 
 				print "</td>\n";
