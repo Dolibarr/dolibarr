@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -85,7 +84,7 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td width="30%">'.$langs->trans("CurrentAccounts").'</td>';
 print '<td width="20%">'.$langs->trans("Bank").'</td>';
 print '<td align="left">'.$langs->trans("AccountIdShort").'</td>';
-print '<td align="center" width="100">'.$langs->trans("Conciliable").'</td>';
+print '<td align="center">'.$langs->trans("TransactionsToConciliate").'</td>';
 print '<td align="center" width="70">'.$langs->trans("Status").'</td>';
 print '<td align="right" width="100">'.$langs->trans("BankBalance").'</td>';
 print "</tr>\n";
@@ -106,7 +105,15 @@ foreach ($accounts as $key=>$type)
 		print '<td width="30%">'.$acc->getNomUrl(1).'</td>';
 		print '<td>'.$acc->bank.'</td>';
 		print '<td>'.$acc->number.'</td>';
-		print '<td align="center">'.yn($acc->rappro).'</td>';
+		print '<td align="center">';
+		if ($acc->rappro) 
+		{
+			$result=$acc->load_board($user,$acc->id);
+			print $acc->nbtodo;
+			if ($acc->nbtodolate) print ' ('.$acc->nbtodolate.img_warning($langs->trans("Late")).')';
+		}
+		else print $langs->trans("FeatureDisabled");
+		print '</td>';
 		print '<td align="center">'.$acc->getLibStatut(2).'</td>';
 		print '<td align="right">';
 		print '<a href="account.php?account='.$acc->id.'">'.price($solde).'</a>';

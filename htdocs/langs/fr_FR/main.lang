@@ -390,6 +390,8 @@ Refresh=Rafraichir
 BackToList=Retour liste
 CanBeModifiedIfOk=Peut être modifié si valide
 CanBeModifiedIfKo=Peut être modifié si invalide
+NotManaged=Non géré
+FeatureDisabled=Fonction désactivée
 # Week day
 Monday=Lundi
 Tuesday=Mardi

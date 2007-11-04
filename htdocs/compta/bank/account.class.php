@@ -670,10 +670,11 @@ class Account
 
     /**
      *      \brief      Charge indicateurs this->nbtodo et this->nbtodolate de tableau de bord
-     *      \param      user        Objet user
-     *      \return     int         <0 si ko, >0 si ok
+     *      \param      user        		Objet user
+	 *		\param		filteraccountid		To get info for a particular account id
+     *      \return     int         		<0 si ko, >0 si ok
      */
-    function load_board($user)
+    function load_board($user,$filteraccountid=0)
     {
         global $conf;
         
@@ -684,6 +685,7 @@ class Account
         $sql.= " FROM ".MAIN_DB_PREFIX."bank as b, ".MAIN_DB_PREFIX."bank_account as ba";
         $sql.= " WHERE b.rappro=0 AND b.fk_account = ba.rowid";
         $sql.= " AND ba.rappro = 1";	// Compte rapprochable
+		if ($filteraccountid) $sql.=" AND ba.rowid = ".$filteraccountid;
         $resql=$this->db->query($sql);
         if ($resql)
         {

@@ -389,6 +389,8 @@ Refresh=Refresh
 BackToList=Back to list
 CanBeModifiedIfOk=Can be modified if valid
 CanBeModifiedIfKo=Can be modified if not valid
+NotManaged=Not managed
+FeatureDisabled=Feature disabled
 # Week day
 Monday=Monday
 Tuesday=Tuesday
