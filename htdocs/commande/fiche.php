@@ -786,8 +786,8 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 			print '<tr><td>'.$langs->trans('Customer').'</td><td>'.$soc->getNomUrl(1).'</td></tr>';
 			
 			/*
-	* Contact de la commande
-	*/
+			* Contact de la commande
+			*/
 			print "<tr><td>".$langs->trans("DefaultContact").'</td><td>';
 			$html->select_contacts($soc->id,$setcontact,'contactidp',1);
 			print '</td></tr>';

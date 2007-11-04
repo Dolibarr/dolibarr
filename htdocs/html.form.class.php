@@ -792,65 +792,65 @@ class Form
      *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
      *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
      *      \param      exclude         Liste des id contacts à exclure
-     *		\return		int			<0 si ko, >=0 si ok
+     *		\return		int				<0 if KO, Nb of contact in list if OK
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='')
-    {
-    	// Permettre l'exclusion de contacts
-    	if (is_array($exclude))
-    	{
-    		$excludeContacts = implode("','",$exclude);
-    	}
-    	
-    	// On recherche les societes
-	    $sql = "SELECT s.rowid, s.name, s.firstname FROM";
-	    $sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
-	    $sql.= " WHERE fk_soc=".$socid;
-	    if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
-	    $sql.= " ORDER BY s.name ASC";
-	    
-	    $resql=$this->db->query($sql);
-	    if ($resql)
-	    {
-	    	$num=$this->db->num_rows();
-	    	if ($num==0) return 0;
-	    	
-	    	if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
-	      if ($showempty) print '<option value="1">&nbsp;</option>';
-	      $num = $this->db->num_rows();
-	      $i = 0;
-	      if ($num)
-	      {
-	      	while ($i < $num)
-	        {
-	        	$obj = $this->db->fetch_object();
-	        	if ($htmlname != 'none')
-			      {
-			      	if ($selected && $selected == $obj->rowid)
-		          {
-		          	print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
-		          }
-		          else
-		          {
-		          	print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
-		          }
-		        }
+	{
+		// Permettre l'exclusion de contacts
+		if (is_array($exclude))
+		{
+			$excludeContacts = implode("','",$exclude);
+		}
+		
+		// On recherche les societes
+		$sql = "SELECT s.rowid, s.name, s.firstname FROM";
+		$sql.= " ".MAIN_DB_PREFIX ."socpeople as s";
+		$sql.= " WHERE fk_soc=".$socid;
+		if (is_array($exclude) && $excludeContacts) $sql.= " AND s.rowid NOT IN ('".$excludeContacts."')";
+		$sql.= " ORDER BY s.name ASC";
+		
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num=$this->db->num_rows($resql);
+			if ($num == 0) return 0;
+			
+			if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
+			if ($showempty) print '<option value="1">&nbsp;</option>';
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			if ($num)
+			{
+				while ($i < $num)
+				{
+					$obj = $this->db->fetch_object($resql);
+					if ($htmlname != 'none')
+					{
+						if ($selected && $selected == $obj->rowid)
+						{
+							print '<option value="'.$obj->rowid.'" selected="true">'.$obj->name.' '.$obj->firstname.'</option>';
+						}
 						else
 						{
-							if ($selected == $obj->rowid) print $obj->name.' '.$obj->firstname;
+							print '<option value="'.$obj->rowid.'">'.$obj->name.' '.$obj->firstname.'</option>';
 						}
-						$i++;
 					}
+					else
+					{
+						if ($selected == $obj->rowid) print $obj->name.' '.$obj->firstname;
+					}
+					$i++;
 				}
-				if ($htmlname != 'none') print '</select>';
-				return 1;
 			}
-			else
-	    {
-	    	dolibarr_print_error($this->db);
-	      return -1;
-	    }
-	  }
+			if ($htmlname != 'none') print '</select>';
+			return $num;
+		}
+		else
+		{
+			dolibarr_print_error($this->db);
+			return -1;
+		}
+	}
     
     
     /**

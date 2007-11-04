@@ -275,12 +275,15 @@ if ($id > 0)
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
 			//$contactAlreadySelected = $contrat->getListContactId('external');		// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
+			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
+			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
 			$contrat->selectTypeContact($contrat, '', 'type','external');
 			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+			if (! $nbofcontacts) print ' disabled="true"';
+			print '></td>';
 			print '</tr>';
 			
 			print "</form>";

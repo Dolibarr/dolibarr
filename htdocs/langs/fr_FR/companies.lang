@@ -125,6 +125,7 @@ Supplier=Fournisseur
 CompanyList=Liste des sociétés
 AddContact=Créer contact
 Contact=Contact
+NoContactDefined=Aucun contact défini pour ce tiers
 DefaultContact=Contact par défaut
 AddCompany=Créer société
 AddThirdParty=Créer tiers

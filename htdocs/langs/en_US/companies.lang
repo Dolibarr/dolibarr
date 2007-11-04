@@ -125,6 +125,7 @@ Supplier=Supplier
 CompanyList=Companies' list
 AddContact=Add contact
 Contact=Contact
+NoContactDefined=No contact defined for this third party
 DefaultContact=Default contact
 AddCompany=Add company
 AddThirdParty=Add third party

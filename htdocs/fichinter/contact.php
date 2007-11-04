@@ -1,5 +1,6 @@
 <?php
-/* Copyright (C) 2005-2007 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -259,12 +260,15 @@ if ($id > 0)
 			print '<td colspan="1">';
 			// On récupère les id des contacts déjà sélectionnés
 			//$contactAlreadySelected = $fichinter->getListContactId('external');	// On ne doit pas desactiver un contact deja selectionner car on doit pouvoir le seclectionner une deuxieme fois pour un autre type	
-			$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
+			$nbofcontacts=$html->select_contacts($selectedCompany, $selected = '', $htmlname = 'contactid',0,$contactAlreadySelected);
+			if ($nbofcontacts == 0) print $langs->trans("NoContactDefined");
 			print '</td>';
 			print '<td>';
 			$fichinter->selectTypeContact($fichinter, '', 'type','external');
 			print '</td>';
-			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"></td>';
+			print '<td align="right" colspan="3" ><input type="submit" class="button" value="'.$langs->trans("Add").'"';
+			if (! $nbofcontacts) print ' disabled="true"';
+			print '></td>';
 			print '</tr>';
 
 			print "</form>";
