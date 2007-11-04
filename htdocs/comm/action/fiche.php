@@ -444,7 +444,7 @@ if ($_GET["action"] == 'create')
 		{
 			print '<input type="hidden" name="actioncode" value="'.$_GET["actioncode"].'">'."\n";
 			$caction->fetch($_GET["actioncode"]);
-			print $caction->getNom();
+			print $caction->getNomUrl();
 		}
 		else
 		{
