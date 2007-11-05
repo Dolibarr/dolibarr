@@ -27,6 +27,9 @@ update llx_bank_url set type='payment_supplier' where (type='' or type is null) 
 update llx_bank_url set type='?'  where (type is null or type = '');
 alter table llx_bank_url modify `type` varchar(20) NOT NULL;
 
+update llx_bank set datev = datec where datev = '1970-01-01 00:00:00' and rappro = 0;
+update llx_bank set dateo = datec where datev = '1970-01-01 00:00:00' and rappro = 0;
+
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
 update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';
