@@ -1,6 +1,6 @@
 <?php
 /* Copyright (c) 2003-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (c) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (c) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -305,15 +304,15 @@ class DolGraph
 		if (defined('TOTY')) $phplotversion=5;
 
 		// Create graph
-		$this->graph = new PHPlot($this->width, $this->height);
-		$this->graph->SetIsInline(1);
-		$this->graph->SetPlotType($this->type);
-		$this->graph->SetDataValues($this->data);
+		$graph = new PHPlot($this->width, $this->height);
+		$graph->SetIsInline(1);
+		$graph->SetPlotType($this->type);
+		$graph->SetDataValues($this->data);
 
 		// Precision axe y (pas de decimal si 3 chiffres ou plus)
 		if ($this->PrecisionY > -1)
 		{
-			$this->graph->SetPrecisionY($this->PrecisionY);
+			$graph->SetPrecisionY($this->PrecisionY);
 			if ($this->PrecisionY == 0)		// Si precision de 0
 			{
 				// Determine un nombre de ticks qui permet decoupage qui tombe juste
@@ -352,15 +351,15 @@ class DolGraph
 						$maxticks=min(9,$plage);
 					}
 				}
-				$this->graph->SetNumVertTicks($maxticks);
+				$graph->SetNumVertTicks($maxticks);
 				//				print 'minval='.$minval.' - maxval='.$maxval.' - plage='.$plage.' - maxticks='.$maxticks.'<br>';
 			}
 		}
 		else
 		{
-			$this->graph->SetPrecisionY(3-strlen(round($this->GetMaxValueInData())));
+			$graph->SetPrecisionY(3-strlen(round($this->GetMaxValueInData())));
 		}
-		$this->graph->SetPrecisionX(0);
+		$graph->SetPrecisionX(0);
 
 		// Set areas
 		$top_space=40;
@@ -380,52 +379,52 @@ class DolGraph
 			}
 		}
 
-		$this->graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width - $right_space, $this->height-40);
+		$graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width - $right_space, $this->height-40);
 		if (isset($this->MaxValue))
 		{
-			$this->graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
+			$graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
 		}
 
 		// Define title
-		if (isset($this->title)) $this->graph->SetTitle($this->title);
+		if (isset($this->title)) $graph->SetTitle($this->title);
 
 		// Défini position du graphe (et legende) au sein de l'image
 		if (isset($this->Legend) && sizeof($this->Legend))
 		{
-			$this->graph->SetLegendPixels($this->width - $right_space+8,40,'');
-			$this->graph->SetLegend($this->Legend);
+			$graph->SetLegendPixels($this->width - $right_space+8,40,'');
+			$graph->SetLegend($this->Legend);
 		}
 
 		if (isset($this->SetShading))
 		{
-			$this->graph->SetShading($this->SetShading);
+			$graph->SetShading($this->SetShading);
 		}
 
-		$this->graph->SetTickLength(6);
+		$graph->SetTickLength(6);
 
-		$this->graph->SetBackgroundColor($this->bgcolor);
-		$this->graph->SetDataColors($this->datacolor, $this->bordercolor);
+		$graph->SetBackgroundColor($this->bgcolor);
+		$graph->SetDataColors($this->datacolor, $this->bordercolor);
 
 		if ($this->SetNumXTicks > -1)
 		{
 			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
 			{
-				$this->graph->SetXLabelType('');
-				$this->graph->SetNumXTicks($this->SetNumXTicks);
+				$graph->SetXLabelType('');
+				$graph->SetNumXTicks($this->SetNumXTicks);
 			}
 			else
 			{
-				$this->graph->SetNumHorizTicks($this->SetNumXTicks);
+				$graph->SetNumHorizTicks($this->SetNumXTicks);
 			}
 		}
 		if ($this->SetHorizTickIncrement > -1)
 		{
 			// Les ticks sont en mode forc
-			$this->graph->SetHorizTickIncrement($this->SetHorizTickIncrement);
+			$graph->SetHorizTickIncrement($this->SetHorizTickIncrement);
 			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
 			{
-				$this->graph->SetXLabelType('');
-				$this->graph->SetXTickLabelPos('none');
+				$graph->SetXLabelType('');
+				$graph->SetXTickLabelPos('none');
 			}
 		}
 		else
@@ -433,23 +432,25 @@ class DolGraph
 			// Les ticks sont en mode automatique
 			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
 			{
-				$this->graph->SetXDataLabelPos('none');
+				$graph->SetXDataLabelPos('none');
 			}
 		}
 
 		if ($phplotversion >= 5)
 		{
 			// Ne gere la transparence qu'en phplot >= 5
-			// $this->graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
-			$this->graph->SetDrawPlotAreaBackground(array(255,255,255));
+			// $graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
+			$graph->SetDrawPlotAreaBackground(array(255,255,255));
 		}
 
-		$this->graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
-		$this->graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
-		$this->graph->SetOutputFile($file);
+		$graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
+		$graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
+		$graph->SetOutputFile($file);
 		
 		// Generate file
-		$this->graph->DrawGraph();
+		$graph->DrawGraph();
+		
+		unset($graph);
 	}
 
 

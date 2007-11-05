@@ -119,7 +119,7 @@ $memberstatic=new Adherent($db);
 
 $html = new Form($db);
 
-if ($account > 0)
+if ($account || $_GET["ref"])
 {
 	if ($vline)
 	{
@@ -130,7 +130,15 @@ if ($account > 0)
 		$viewline = 20;
 	}
 	$acct = new Account($db);
-	$result=$acct->fetch($account);
+	if ($_GET["account"]) 
+	{
+		$result=$acct->fetch($_GET["account"]);
+	}
+	if ($_GET["ref"]) 
+	{
+		$result=$acct->fetch(0,$_GET["ref"]);
+		$account=$acct->id;
+	}
 
 	// Chargement des categories bancaires dans $options
 	$nbcategories=0;
@@ -235,7 +243,22 @@ if ($account > 0)
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'journal',$langs->trans("FinancialAccount"),0);
 	
+	print '<table class="border" width="100%">';
 
+	// Ref
+	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="3">';
+	print $html->showrefnav($acct,'ref','',1,'ref');
+	print '</td></tr>';
+
+	// Label
+	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<td colspan="3">'.$acct->label.'</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+	
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 	
@@ -267,13 +290,6 @@ if ($account > 0)
 	$navig.='</form>';
 
 	
-	// Show title
-	if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
-	{
-		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-		print_fiche_titre($titre,$navig);
-	}
-
 	// Confirmation delete
 	if ($_GET["action"]=='delete')
 	{
@@ -284,6 +300,12 @@ if ($account > 0)
 
 
 	print '<table class="notopnoleftnoright" width="100%">';
+
+	// Show title
+	if (! $_GET["action"]=='addline' && ! $_GET["action"]=='delete')
+	{
+		print '<tr><td colspan="9" align="right">'.$navig.'</td></tr>';
+	}
 
 	
 	// Formulaire de saisie d'une opération hors factures

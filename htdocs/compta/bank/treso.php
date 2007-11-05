@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -52,13 +51,14 @@ $mesg='';
 */
 
 llxHeader();
+
 $societestatic = new Societe($db);
 $facturestatic=new Facture($db);
 $facturefournstatic=new FactureFournisseur($db);
 
 $html = new Form($db);
 
-if ($account > 0)
+if ($_REQUEST["account"] || $_REQUEST["ref"])
 {
 	if ($vline)
 	{
@@ -68,8 +68,19 @@ if ($account > 0)
 	{
 		$viewline = 20;
 	}
+
 	$acct = new Account($db);
-	$result=$acct->fetch($account);
+	if ($_GET["account"]) 
+	{
+		$result=$acct->fetch($_GET["account"]);
+	}
+	if ($_GET["ref"]) 
+	{
+		$result=$acct->fetch(0,$_GET["ref"]);
+		$_GET["account"]=$acct->id;
+	}
+
+
 	/*
 	*
 	*
@@ -78,7 +89,23 @@ if ($account > 0)
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'cash',$langs->trans("FinancialAccount"),0);
 	
+	print '<table class="border" width="100%">';
 
+	// Ref
+	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="3">';
+	print $html->showrefnav($acct,'ref','',1,'ref');
+	print '</td></tr>';
+
+	// Label
+	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<td colspan="3">'.$acct->label.'</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+	
+	
 	if ($mesg) print '<div class="error">'.$mesg.'</div>';
 
 

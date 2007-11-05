@@ -64,10 +64,20 @@ $pagenext = $page + 1;
 
 llxHeader();
 
+$html = new Form($db);
+
 
 // Récupère info du compte
 $acct = new Account($db);
-$acct->fetch($_GET["account"]);
+if ($_GET["account"]) 
+{
+	$acct->fetch($_GET["account"]);
+}
+if ($_GET["ref"]) 
+{
+	$acct->fetch(0,$_GET["ref"]);
+	$_GET["account"]=$acct->id;
+}
 
 if (! isset($_GET["num"]))
 {
@@ -91,8 +101,25 @@ if (! isset($_GET["num"]))
 		$head=bank_prepare_head($acct);
 		dolibarr_fiche_head($head,'statement',$langs->trans("FinancialAccount"),0);
 
-		$titre=$langs->trans("FinancialAccount")." : ".$acct->label;
-		print_barre_liste($titre, $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
+		print '<table class="border" width="100%">';
+
+		// Ref
+		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+		print '<td colspan="3">';
+		print $html->showrefnav($acct,'ref','',1,'ref');
+		print '</td></tr>';
+
+		// Label
+		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+		print '<td colspan="3">'.$acct->label.'</td></tr>';
+
+		print '</table>';
+
+		print '<br>';
+		
+		
+		
+		print_barre_liste('', $page, $_SERVER["PHP_SELF"], "&amp;account=".$_GET["account"], $sortfield, $sortorder,'',$numrows);
 
 		print '<table class="noborder" width="100%">';
 		print "<tr class=\"liste_titre\">";
@@ -173,6 +200,7 @@ else
 	}
 	$ve=$_GET["ve"];
 
+	
 	$mesprevnext ="<a href=\"releve.php?rel=prev&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_previous()."</a> &nbsp;";
 	$mesprevnext.= $langs->trans("AccountStatement")." $num";
 	$mesprevnext.=" &nbsp; <a href=\"releve.php?rel=next&amp;num=$num&amp;ve=$ve&amp;account=$acct->id\">".img_next()."</a>";

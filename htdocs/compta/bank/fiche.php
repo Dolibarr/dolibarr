@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -262,10 +261,18 @@ if ($_GET["action"] == 'create')
 /* ************************************************************************** */
 else
 {
-    if ($_GET["id"] && $_GET["action"] != 'edit') 
+    if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit') 
 	{
-		$account = new Account($db, $_GET["id"]);
-		$account->fetch($_GET["id"]);
+		$account = new Account($db);
+		if ($_GET["id"]) 
+		{
+			$account->fetch($_GET["id"]);
+		}
+		if ($_GET["ref"]) 
+		{
+			$account->fetch(0,$_GET["ref"]);
+			$_GET["id"]=$account->id;
+		}
 	
 		/*
 		* Affichage onglets
@@ -288,7 +295,9 @@ else
 	
 		// Ref
 		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">'.$account->ref.'</td></tr>';
+		print '<td colspan="3">';
+		print $form->showrefnav($account,'ref','',1,'ref');
+		print '</td></tr>';
 	
 		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 		print '<td colspan="3">'.$account->label.'</td></tr>';

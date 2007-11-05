@@ -3518,14 +3518,15 @@ class Form
      *    \param      object		Objet a afficher
      *    \param      paramid   	Nom du parametre a utiliser pour nommer id dans liens URL
      *    \param      morehtml  	Code html supplementaire a afficher avant barre nav
-	 *	  \param	  shownav	  	Show Condirion
+	 *	  \param	  shownav	  	Show Condition
+     *    \param      fieldid   	Nom du champ a utiliser pour select next et previous
      *	  \return     string    	Portion HTML avec ref + boutons nav
      */
-	function showrefnav($object,$paramid,$morehtml='',$shownav=1)
+	function showrefnav($object,$paramid,$morehtml='',$shownav=1,$fieldid='rowid')
 	{
 		$ret='';
 
-        $object->load_previous_next_ref($object->next_prev_filter);
+        $object->load_previous_next_ref($object->next_prev_filter,$fieldid);
         $previous_ref = $object->ref_previous?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_previous).'">'.img_previous().'</a>':'';
         $next_ref     = $object->ref_next?'<a href="'.$_SERVER["PHP_SELF"].'?'.$paramid.'='.urlencode($object->ref_next).'">'.img_next().'</a>':'';
 

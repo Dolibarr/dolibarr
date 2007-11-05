@@ -37,14 +37,19 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
 
 /**
    \class      User
    \brief      Classe permettant la gestion d'un utilisateur
 */
-class User
+class User extends CommonObject
 {
-  var $db;
+    var $db;
+    var $error;
+    var $element='user';
+    var $table_element='user';
   
   var $id;
   var $ldap_sid;
@@ -81,7 +86,6 @@ class User
   var $statut;
   var $lang;
   
-  var $error;
   var $userpref_limite_liste;
   var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
   //! Liste des entrepots auquel a acces l'utilisateur
@@ -1733,41 +1737,7 @@ class User
             dolibarr_print_error($this->db);
         }
     }
-	
 
-	/**
-	*      \brief      Charge les propriétés id_previous et id_next
-	*      \param      filter      filtre
-	*      \return     int         <0 si ko, >0 si ok
-	*/
-	function load_previous_next_ref($filter='')
-	{
-		$sql = "SELECT MAX(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE rowid < '".addslashes($this->id)."'";
-		if (isset($filter)) $sql.=" AND ".$filter;
-		$result = $this->db->query($sql) ;
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->ref_previous = $row[0];
-		
-		$sql = "SELECT MIN(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."user";
-		$sql.= " WHERE rowid > '".addslashes($this->id)."'";
-		if (isset($filter)) $sql.=" AND ".$filter;
-		$result = $this->db->query($sql) ;
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			return -2;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->ref_next = $row[0];
-	}	
 }
 
 

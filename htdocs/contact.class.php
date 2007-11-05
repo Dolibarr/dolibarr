@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,17 +29,20 @@
         \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
 
 /**
         \class      Contact
         \brief      Classe permettant la gestion des contacts
 */
-
-class Contact 
+class Contact extends CommonObject
 {
     var $db;
     var $error;
-    
+    var $element='contact';
+    var $table_element='socpeople';
+	
     var $id;
 	var $civilite_id;
     var $name;
@@ -385,6 +387,7 @@ class Contact
                 $obj = $this->db->fetch_object($resql);
     
                 $this->id             = $obj->rowid;
+                $this->ref            = $obj->rowid;
                 $this->civilite_id    = $obj->civilite_id;
                 $this->name           = $obj->name;
                 $this->firstname      = $obj->firstname;

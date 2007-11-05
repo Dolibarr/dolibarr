@@ -34,6 +34,7 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT."/commonobject.class.php");
 require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 
 
@@ -42,13 +43,15 @@ require_once(DOL_DOCUMENT_ROOT."/adherents/cotisation.class.php");
 		\brief      Classe permettant la gestion d'un adhérent
 */
 
-class Adherent
+class Adherent extends CommonObject
 {
-	var $id;
 	var $db;
 	var $error;
 	var $errors=array();
+	var $element='member';
+	var $table_element='adherent';
 	
+	var $id;
 	var $ref;
 	var $prenom;
 	var $nom;
@@ -2075,40 +2078,6 @@ class Adherent
             return -1;
         }
     }
-
-	/**
-	*      \brief      Charge les propriétés id_previous et id_next
-	*      \param      filter      filtre
-	*      \return     int         <0 si ko, >0 si ok
-	*/
-	function load_previous_next_ref($filter='')
-	{
-		$sql = "SELECT MAX(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql.= " WHERE rowid < '".addslashes($this->id)."'";
-		if (isset($filter)) $sql.=" AND ".$filter;
-		$result = $this->db->query($sql) ;
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			return -1;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->ref_previous = $row[0];
-		
-		$sql = "SELECT MIN(rowid)";
-		$sql.= " FROM ".MAIN_DB_PREFIX."adherent";
-		$sql.= " WHERE rowid > '".addslashes($this->id)."'";
-		if (isset($filter)) $sql.=" AND ".$filter;
-		$result = $this->db->query($sql) ;
-		if (! $result)
-		{
-			$this->error=$this->db->error();
-			return -2;
-		}
-		$row = $this->db->fetch_row($result);
-		$this->ref_next = $row[0];
-	}
 
 	
 	/**

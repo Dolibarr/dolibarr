@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -42,15 +41,26 @@ $mesg = '';
 
 llxHeader();
 
-if ($account > 0)
+$form = new Form($db);
+
+if ($_GET["account"] || $_GET["ref"])
 {
+
     $datetime = time();
     $year = strftime("%Y", $datetime);
     $month = strftime("%m", $datetime);
     $day = strftime("%d", $datetime);
     
     $acct = new Account($db);
-    $acct->fetch($account);
+	if ($_GET["account"]) 
+	{
+		$result=$acct->fetch($_GET["account"]);
+	}
+	if ($_GET["ref"]) 
+	{
+		$result=$acct->fetch(0,$_GET["ref"]);
+		$account=$acct->id;
+	}
 
 	
 	create_exdir($conf->banque->dir_temp);
@@ -61,9 +71,9 @@ if ($account > 0)
 	$height = 200;
 
 	// Calcul de $min et $max
-	$sql = "SELECT min(".$db->pdate("datev")."),max(".$db->pdate("datev").")";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
+	$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
+	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
+	$sql.= " WHERE fk_account = ".$account;
 	$resql = $db->query($sql);
 	if ($resql)
 	{
@@ -76,8 +86,13 @@ if ($account > 0)
 	{
 		dolibarr_print_error($db);
 	}
-//	print strftime("%Y%m%d",$max);
+	$log="graph.php: min=".$min." max=".$max;
+	dolibarr_syslog($log);
 	
+
+	// Tableau 1
+	
+
 	// Chargement du tableau $amounts
 	// \todo peut etre optimise en virant les date_format
 	$amounts = array();
@@ -97,6 +112,7 @@ if ($account > 0)
 			$amounts[$row[0]] = $row[1];
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -114,6 +130,7 @@ if ($account > 0)
 	{
 		$row = $db->fetch_row($resql);
 		$solde = $row[0];
+		$db->free($resql);
 	}
 	else
 	{
@@ -126,13 +143,19 @@ if ($account > 0)
 	$datamin = array();
 
 	$subtotal = 0;
-	$day = mktime(1,1,1,$month,1,$year);
-	$xmonth = substr("00".strftime("%m",$day), -2);
+	$day = dolibarr_mktime(12,0,0,$month,1,$year);
+	$xmonth = $month;
+
 	$i = 0;
 	while ($xmonth == $month)
 	{
+		$textdate = strftime("%Y%m%d",$day);
+		$xyear = substr($textdate,0,4);
+		$xday = substr($textdate,6,2);
+		$xmonth = substr($textdate,4,2);
+
 		//print strftime ("%e %d %m %y",$day)."\n";
-		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
+		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 		if ($day > time())
 		{
 			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
@@ -143,9 +166,8 @@ if ($account > 0)
 		}
 		$datamin[$i] = $acct->min_desired;
 		//$labels[$i] = strftime("%d",$day);
-		$labels[$i] = strftime("%d",$day);
+		$labels[$i] = $xday;
 		$day += 86400;
-		$xmonth = substr("00".strftime("%m",$day), -2);
 		$i++;
 	}
 
@@ -173,6 +195,16 @@ if ($account > 0)
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($file);
+	
+	unset($graph_datas);
+	unset($px);
+	unset($datas);
+	unset($datamin);
+	unset($labels);
+	unset($amounts);
+
+	
+	// Tableau 2
 
 	
 	// Chargement du tableau $amounts
@@ -194,6 +226,7 @@ if ($account > 0)
 			$amounts[$row[0]] = $row[1];
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -211,6 +244,7 @@ if ($account > 0)
 	{
 		$row = $db->fetch_row($resql);
 		$solde = $row[0];
+		$db->free($resql);
 	}
 	else
 	{
@@ -223,14 +257,17 @@ if ($account > 0)
 	$datamin = array();
 
 	$subtotal = 0;
-	$day = mktime(1,1,1,1,1,$year);
-	$xyear = strftime("%Y",$day);
+	$now = time();
+	$day = dolibarr_mktime(12,0,0,1,1,$year);
 	$i = 0;
 	while ($xyear == $year)
 	{
-		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
-		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
-		if ($day > time())
+		$textdate = strftime("%Y%m%d",$day);
+		$xyear = substr($textdate,0,4);
+		$xday = substr($textdate,6,2);
+
+		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+		if ($day > $now)
 		{
 			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
 		}
@@ -239,12 +276,11 @@ if ($account > 0)
 			$datas[$i] = $solde + $subtotal;
 		}
 		$datamin[$i] = $acct->min_desired;
-		if (strftime("%d",$day) == 15)
+		if ($xday == '15')
 		{
 			$labels[$i] = dolibarr_print_date($day,"%b");
 		}
 		$day += 86400;
-		$xyear = strftime("%Y",$day);
 		$i++;
 	}
 
@@ -273,7 +309,17 @@ if ($account > 0)
 	$px->SetPrecisionY(0);
     $px->draw($file);
 
+	unset($px);
+	unset($graph_datas);
+	unset($datas);
+	unset($datamin);
+	unset($labels);
+	unset($amounts);
 
+
+	// Tableau 3
+
+	
 	// Chargement du tableau $amounts
 	// \todo peut etre optimise en virant les date_format
 	$amounts = array();
@@ -312,7 +358,9 @@ if ($account > 0)
 	$i = 0;
 	while ($day <= ($max+86400))	// On va au dela du dernier jour
 	{
-		$subtotal = $subtotal + (isset($amounts[strftime("%Y%m%d",$day)]) ? $amounts[strftime("%Y%m%d",$day)] : 0);
+		$textdate=strftime("%Y%m%d",$day);
+
+		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
 		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
 		if ($day > ($max+86400))
 		{
@@ -320,12 +368,12 @@ if ($account > 0)
 		}
 		else
 		{
-			$datas[$i] = $solde + $subtotal;
+			$datas[$i] = '' + $solde + $subtotal;
 		}
 		$datamin[$i] = $acct->min_desired;
-		if (strftime("%d",$day) == 1)
+		if (substr($textdate,6,2) == '01')
 		{
-			$labels[$i] = strftime("%m",$day);
+			$labels[$i] = substr($textdate,4,2);
 		}
 		$day += 86400;
 		$i++;
@@ -341,7 +389,7 @@ if ($account > 0)
 		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
     }
 	$px = new DolGraph();
-    $px->SetData($graph_datas);
+    $px->SetData($graph_datas);	
     if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
     else $px->SetLegend(array($langs->transnoentities("Balance")));
 	$px->SetLegendWidthMin(180);
@@ -355,7 +403,16 @@ if ($account > 0)
 	$px->SetPrecisionY(0);
     $px->draw($file);
 
-
+	unset($graph_datas);
+	unset($datas);
+	unset($datamin);
+	unset($labels);
+	unset($amounts);
+	
+	
+	// Tableau 4
+	
+	
 	// Chargement du tableau $credits, $debits
 	$credits = array();
 	$debits = array();
@@ -376,6 +433,7 @@ if ($account > 0)
 			$credits[$row[0]] = $row[1];
 			$i++;
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -394,6 +452,7 @@ if ($account > 0)
 		{
 			$debits[$row[0]] = abs($row[1]);
 		}
+		$db->free($resql);
 	}
 	else
 	{
@@ -408,7 +467,7 @@ if ($account > 0)
 	{
 		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
 		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-		$labels[$i] = strftime("%b",dolibarr_mktime(1,1,1,$i+1,1,2000));
+		$labels[$i] = strftime("%b",dolibarr_mktime(12,0,0,$i+1,1,2000));
 		$datamin[$i] = $acct->min_desired;
 	}
 
@@ -436,11 +495,34 @@ if ($account > 0)
 	$px->SetPrecisionY(0);
     $px->draw($file);
 
+	unset($graph_datas);
+	unset($px);
+	unset($debits);
+	unset($credits);
 
+	
+	
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
 
+	print '<table class="border" width="100%">';
+
+	// Ref
+	print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+	print '<td colspan="3">';
+	print $form->showrefnav($acct,'ref','',1,'ref');
+	print '</td></tr>';
+
+	// Label
+	print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+	print '<td colspan="3">'.$acct->label.'</td></tr>';
+
+	print '</table>';
+
+	print '<br>';
+
+	
 	print '<table class="notopnoleftnoright" width="100%">';
 
     print '<tr><td align="center">';

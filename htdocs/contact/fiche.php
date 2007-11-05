@@ -366,7 +366,7 @@ if ($user->rights->societe->contact->creer)
 
 		// Ref
 		print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
-		print $contact->id;
+		print $contact->ref;
 		print '</td></tr>';
 
 		// Name

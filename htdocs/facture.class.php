@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -44,8 +43,11 @@ require_once(DOL_DOCUMENT_ROOT ."/client.class.php");
 
 class Facture extends CommonObject
 {
-  var $db;
-  var $element='facture';
+	var $db;
+	var $error;
+	var $element='facture';
+    var $table_element='facture';
+
   var $table;
   var $tabledetail;	
   var $id;
@@ -94,7 +96,6 @@ class Facture extends CommonObject
   var $nbtodo;
   var $nbtodolate;
   var $specimen;
-  var $error;
   //! Numero d'erreur de 512 à 1023
   var $errno = 0;
   /**

@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2002-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2003      Jean-Louis Bergamo   <jlb@j1b.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -95,10 +94,18 @@ $form = new Form($db);
 /*                                                                            */
 /* ************************************************************************** */
 
-    if ($_GET["id"] && $_GET["action"] != 'edit') 
+    if (($_GET["id"] || $_GET["ref"]) && $_GET["action"] != 'edit') 
 	{
-		$account = new Account($db, $_GET["id"]);
-		$account->fetch($_GET["id"]);
+		$account = new Account($db);
+		if ($_GET["id"]) 
+		{
+			$result=$account->fetch($_GET["id"]);
+		}
+		if ($_GET["ref"]) 
+		{
+			$result=$account->fetch(0,$_GET["ref"]);
+			$_GET["id"]=$account->id;
+		}
 	
 		/*
 		* Affichage onglets
@@ -120,7 +127,9 @@ $form = new Form($db);
 	
 		// Ref
 		print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
-		print '<td colspan="3">'.$account->ref.'</td></tr>';
+		print '<td colspan="3">';
+		print $form->showrefnav($account,'ref','',1,'ref');
+		print '</td></tr>';
 	
 		print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
 		print '<td colspan="3">'.$account->label.'</td></tr>';

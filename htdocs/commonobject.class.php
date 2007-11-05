@@ -495,16 +495,50 @@ class CommonObject
  }
 
 
-  /**
-   *      \brief      Charge les propriétés ref_previous et ref_next
-   *      \param      filter      filtre
-   *      \return     int         <0 si ko, >0 si ok
-   */
-  function load_previous_next_ref($filter='')
-  {
-	return 1;
-  }
+	/**
+	*      \brief      Load properties id_previous and id_next
+	*      \param      filter		Optional filter
+    *	   \param      fieldid   	Nom du champ a utiliser pour select next et previous
+	*      \return     int         	<0 if KO, >0 if OK
+	*/
+	function load_previous_next_ref($filter='',$fieldid)
+	{
+		if (! $this->table_element)
+		{
+			dolibarr_syslog("CommonObject::load_previous_next was called on objet with property table_element not defined");
+			return -1;
+		}
 
+		$sql = "SELECT MAX(".$fieldid.")";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " WHERE ".$fieldid." < '".addslashes($this->ref)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -1;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->ref_previous = $row[0];
+		
+		$sql = "SELECT MIN(".$fieldid.")";
+		$sql.= " FROM ".MAIN_DB_PREFIX.$this->table_element;
+		$sql.= " WHERE ".$fieldid." > '".addslashes($this->ref)."'";
+		if (isset($filter)) $sql.=" AND ".$filter;
+		$result = $this->db->query($sql) ;
+		if (! $result)
+		{
+			$this->error=$this->db->error();
+			return -2;
+		}
+		$row = $this->db->fetch_row($result);
+		$this->ref_next = $row[0];
+		
+		return 1;
+	}
+	
+	
   /**
    *      \brief      On récupère les id de liste_contact
    *      \param      source      Source du contact external (llx_socpeople) ou internal (llx_user)
@@ -523,6 +557,7 @@ class CommonObject
    	 }
    	 return $contactAlreadySelected;
    	}
+
 }
 
 ?>

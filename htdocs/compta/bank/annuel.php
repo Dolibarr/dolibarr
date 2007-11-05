@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -54,9 +53,19 @@ if ($user->societe_id > 0)
 
 llxHeader();
 
+$form = new Form($db);
+
 // Récupère info du compte
 $acct = new Account($db);
-$acct->fetch($_GET["account"]);
+if ($_GET["account"]) 
+{
+	$result=$acct->fetch($_GET["account"]);
+}
+if ($_GET["ref"]) 
+{
+	$result=$acct->fetch(0,$_GET["ref"]);
+	$_GET["account"]=$acct->id;
+}
 
 
 # Ce rapport de trésorerie est basé sur llx_bank (car doit inclure les transactions sans facture)
@@ -113,12 +122,27 @@ $head=bank_prepare_head($acct);
 dolibarr_fiche_head($head,'annual',$langs->trans("FinancialAccount"),0);
 
 $title=$langs->trans("FinancialAccount")." : ".$acct->label;
-$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
-print_fiche_titre($title,$lien);
+$lien=($year_start?"<a href='annuel.php?account=".$acct->id."&year_start=".($year_start-1)."'>".img_previous()."</a> ".$langs->trans("Year")." <a href='annuel.php?account=".$acct->id."&year_start=".($year_start+1)."'>".img_next()."</a>":"");
 
+print '<table class="border" width="100%">';
+
+// Ref
+print '<tr><td valign="top" width="25%">'.$langs->trans("Ref").'</td>';
+print '<td colspan="3">';
+print $form->showrefnav($acct,'ref','',1,'ref');
+print '</td></tr>';
+
+// Label
+print '<tr><td valign="top">'.$langs->trans("Label").'</td>';
+print '<td colspan="3">'.$acct->label.'</td></tr>';
+
+print '</table>';
+
+print '<br>';
 
 // Affiche tableau
 print '<table class="noborder" width="100%">';
+print '<tr><td colspan="'.(1+($year_end-$year_start+1)*2).'" align="right">'.$lien.'</td></tr>';
 print '<tr class="liste_titre"><td rowspan=2>'.$langs->trans("Month").'</td>';
 
 for ($annee = $year_start ; $annee <= $year_end ; $annee++)

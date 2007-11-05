@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -30,15 +29,21 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
+
 /**
    \class      Product
    \brief      Classe permettant la gestion des produits prédéfinis
 */
-
-class Product
+class Product extends CommonObject
 {
-  var $db ;
-  //! Identifiant unique
+    var $db;
+    var $error;
+    var $element='product';
+    var $table_element='product';
+
+	//! Identifiant unique
   var $id ;
   //! Référence
   var $ref;
@@ -91,8 +96,6 @@ class Product
   var $imgWidth;
   var $imgHeight;
 
-  //! Intitule de l'erreur
-  var $error;
   //! Numero de l'erreur
   //! Numero d'erreur Plage 0256-0511
   var $errno = 0;
@@ -975,43 +978,6 @@ class Product
   }
   
 
-  /**
-   *      \brief      Charge les propriétés ref_previous et ref_next
-   *      \param      filter      filtre
-   *      \return     int         <0 si ko, >0 si ok
-   */
-  function load_previous_next_ref($filter='')
-  {
-    $sql = "SELECT MAX(ref)";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product";
-    $sql.= " WHERE ref < '".addslashes($this->ref)."'";
-    if (isset($filter)) $sql.=" AND ".$filter;
-    $result = $this->db->query($sql) ;
-    if (! $result)
-      {
-	$this->error=$this->db->error();
-	return -1;
-      }
-    $row = $this->db->fetch_row($result);
-    $this->ref_previous = $row[0];
-    
-    $sql = "SELECT MIN(ref)";
-    $sql.= " FROM ".MAIN_DB_PREFIX."product";
-    $sql.= " WHERE ref > '".addslashes($this->ref)."'";
-    if (isset($filter)) $sql.=" AND ".$filter;
-    $result = $this->db->query($sql) ;
-    if (! $result)
-      {
-	$this->error=$this->db->error();
-	return -2;
-      }
-    $row = $this->db->fetch_row($result);
-    $this->ref_next = $row[0];
-    
-    return 1;
-  }
-  
-  
   /**
    *    \brief    Charge tableau des stats propale pour le produit/service
    *    \param    socid       Id societe

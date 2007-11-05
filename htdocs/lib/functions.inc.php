@@ -2129,7 +2129,7 @@ function print_barre_liste($titre, $page, $file, $options='', $sortfield='', $so
 
     if ($page > 0 || $num > $conf->liste_limit)
     {
-        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.' - '.$langs->trans('page').' '.($page+1);
+        print '<tr><td class="notopnoleftnoright"><div class="titre">'.$titre.($titre?' - ':'').$langs->trans('page').' '.($page+1);
         print '</div></td>';
     }
     else

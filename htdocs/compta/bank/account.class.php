@@ -29,14 +29,21 @@
    \version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
 
 /**
    \class      Account
    \brief      Classe permettant la gestion des comptes bancaires
 */
-class Account
+class Account extends CommonObject
 {
-  var $rowid;
+    var $db;
+    var $error;
+    var $element='bank_account';
+    var $table_element='bank_account';
+
+	var $rowid;
   var $ref;
   var $label;
   var $type;
@@ -425,8 +432,9 @@ class Account
     /*
      *      \brief      Charge un compte en memoire depuis la base
      *      \param      id      Id du compte à récupérer
+     *      \param      ref     Ref du compte à récupérer
      */
-    function fetch($id)
+    function fetch($id,$ref='')
     {
         $sql = "SELECT rowid, ref, label, bank, number, courant, clos, rappro, url,";
         $sql.= " code_banque, code_guichet, cle_rib, bic, iban_prefix,";
@@ -434,7 +442,8 @@ class Account
         $sql.= " account_number, currency_code,";
         $sql.= " min_allowed, min_desired, comment";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank_account";
-        $sql.= " WHERE rowid  = ".$id;
+        if ($id)  $sql.= " WHERE rowid  = ".$id;
+        if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
 
 		dolibarr_syslog("Account::fetch sql=".$sql);
         $result = $this->db->query($sql);
