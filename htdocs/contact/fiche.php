@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -244,7 +243,7 @@ if ($_GET["id"] > 0)
 	 */
 	$head = contact_prepare_head($contact);
 
-	dolibarr_fiche_head($head, 'general', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+	dolibarr_fiche_head($head, 'general', $langs->trans("Contact"));
 }
 
 
@@ -284,6 +283,11 @@ if ($user->rights->societe->contact->creer)
 		print '<input type="hidden" name="action" value="add">';
 		print '<table class="border" width="100%">';
 
+		// Name
+		print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
+
+		// Company
 		if ($socid)
 		{
 			// On remplit avec le numéro de la société par défaut
@@ -304,12 +308,10 @@ if ($user->rights->societe->contact->creer)
 			print '</td></tr>';
 		}
 
+		// Civility
 		print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
 		print $form->select_civilite($contact->civilite_id);
 		print '</td></tr>';
-
-		print '<tr><td width="15%">'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="15" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
 		print '<tr><td>'.$langs->trans("PostOrFunction").'</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td>';
 
@@ -362,32 +364,26 @@ if ($user->rights->societe->contact->creer)
 		print '<input type="hidden" name="old_firstname" value="'.$contact->firstname.'">';
 		print '<table class="border" width="100%">';
 
+		// Ref
+		print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+		print $contact->id;
+		print '</td></tr>';
+
+		// Name
+		print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
+		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
+
+		// Company
 		print '<tr><td width="20%">'.$langs->trans("Company").'</td>';
 		print '<td colspan="3">';
 		print $form->select_societes($contact->socid?$contact->socid:-1,'socid','',1);
 		print '</td>';
 		print '</tr>';
-/*
-		if ($contact->socid > 0)
-		{
-			$objsoc = new Societe($db);
-			$objsoc->fetch($contact->socid);
 
-			print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
-		}
-		else
-		{
-			print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
-			print $langs->trans("ContactNotLinkedToCompany");
-			print '</td></tr>';
-		}
-*/
+		// Civility
 		print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 		print $form->select_civilite($contact->civilite_id);
 		print '</td></tr>';
-
-		print '<tr><td>'.$langs->trans("Lastname").'</td><td><input name="name" type="text" size="20" maxlength="80" value="'.$contact->name.'"></td>';
-		print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%"><input name="firstname" type="text" size="20" maxlength="80" value="'.$contact->firstname.'"></td></tr>';
 
 		print '<tr><td>Poste/Fonction</td><td colspan="3"><input name="poste" type="text" size="50" maxlength="80" value="'.$contact->poste.'"></td></tr>';
 
@@ -489,6 +485,16 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 
 	print '<table class="border" width="100%">';
 
+	// Ref
+	print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print $form->showrefnav($contact,'id');
+	print '</td></tr>';
+
+	// Name
+	print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+	print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+	// Company
 	if ($contact->socid > 0)
 	{
 		$objsoc = new Societe($db);
@@ -503,12 +509,10 @@ if ($_GET["id"] && $_GET["action"] != 'edit')
 		print '</td></tr>';
 	}
 
+	// Civility
 	print '<tr><td width="15%">'.$langs->trans("UserTitle").'</td><td colspan="3">';
 	print $form->civilite_name($contact->civilite_id);
 	print '</td></tr>';
-
-	print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-	print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 	print '<tr><td>Poste/Fonction</td><td colspan="3">'.$contact->poste.'</td>';
 

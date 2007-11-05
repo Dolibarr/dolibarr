@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -86,7 +85,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dolibarr_fiche_head($head, 'exportimport', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, 'exportimport', $langs->trans("Contact"));
 
 
 /*
@@ -94,6 +93,16 @@ dolibarr_fiche_head($head, 'exportimport', $langs->trans("Contact").": ".$contac
  */
 print '<table class="border" width="100%">';
 
+// Ref
+print '<tr><td>'.$langs->trans("Ref").'</td><td colspan="3">';
+print $form->showrefnav($contact,'id');
+print '</td></tr>';
+
+// Name
+print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+// Company
 if ($contact->socid > 0)
 {
     $objsoc = new Societe($db);
@@ -108,12 +117,10 @@ else
     print '</td></tr>';
 }
 
+// Civility
 print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
-
-print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
 
 print '</table>';
 

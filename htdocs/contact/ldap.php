@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2006 Regis Houssin        <regis@dolibarr.fr>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006      Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -36,6 +35,7 @@ $user->getrights('commercial');
 
 $langs->load("companies");
 $langs->load("ldap");
+$langs->load("admin");
 
 // Protection quand utilisateur externe
 $contactid = isset($_GET["id"])?$_GET["id"]:'';
@@ -88,8 +88,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
-
+dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact"));
 
 
 /*
@@ -97,42 +96,45 @@ dolibarr_fiche_head($head, 'ldap', $langs->trans("Contact").": ".$contact->first
  */
 print '<table class="border" width="100%">';
 
+// Ref
+print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+print $form->showrefnav($contact,'id');
+print '</td></tr>';
+
+// Name
+print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+// Company
 if ($contact->socid > 0)
 {
     $objsoc = new Societe($db);
     $objsoc->fetch($contact->socid);
 
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
+    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">'.$objsoc->getNomUrl(1).'</td></tr>';
 }
 else
 {
-    print '<tr><td width="15%">'.$langs->trans("Company").'</td><td colspan="3">';
+    print '<tr><td width="20%">'.$langs->trans("Company").'</td><td colspan="3">';
     print $langs->trans("ContactNotLinkedToCompany");
     print '</td></tr>';
 }
 
+// Civility
 print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
 print $form->civilite_name($contact->civilite_id);
 print '</td></tr>';
 
-// Nom
-print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td></tr>';
-
-// Prenom
-print '<tr><td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
-
-$langs->load("admin");
-
 // LDAP DN
-print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPContactDn").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_CONTACT_DN."</td></tr>\n";
 
 // LDAP Clé
-print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPNamingAttribute").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_KEY_CONTACTS."</td></tr>\n";
 
 // LDAP Server
-print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
-print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPPrimaryServer").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_HOST."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPSecondaryServer").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_HOST_SLAVE."</td></tr>\n";
+print '<tr><td>LDAP '.$langs->trans("LDAPServerPort").'</td><td class="valeur" colspan="3">'.$conf->global->LDAP_SERVER_PORT."</td></tr>\n";
 
 print '</table>';
 

@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -101,7 +100,7 @@ $contact->fetch($_GET["id"], $user);
  */
 $head = contact_prepare_head($contact);
 
-dolibarr_fiche_head($head, 'perso', $langs->trans("Contact").": ".$contact->firstname.' '.$contact->name);
+dolibarr_fiche_head($head, 'perso', $langs->trans("Contact"));
 
 
 
@@ -117,7 +116,17 @@ if ($_GET["action"] == 'edit')
     print '<input type="hidden" name="action" value="update">';
     print '<input type="hidden" name="contactid" value="'.$contact->id.'">';
 
-    if ($contact->socid > 0)
+	// Ref
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+    print $contact->id;
+    print '</td></tr>';
+	
+	// Name
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
+    print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
+
+    // Company
+	if ($contact->socid > 0)
     {
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
@@ -131,14 +140,12 @@ if ($_GET["action"] == 'edit')
         print '</td></tr>';
     }
     
+	// Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->nom.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->prenom.'</td>';
-    
-
+	// Birthday
     print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td>';
     $html=new Form($db);
     if ($contact->birthday)
@@ -174,7 +181,17 @@ else
      */
     print '<table class="border" width="100%">';
 
-    if ($contact->socid > 0)
+	// Ref
+    print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
+	print $form->showrefnav($contact,'id');
+    print '</td></tr>';
+
+	// Name
+    print '<tr><td>'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
+    print '<td>'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
+
+    // Company
+	if ($contact->socid > 0)
     {
         $objsoc = new Societe($db);
         $objsoc->fetch($contact->socid);
@@ -189,13 +206,12 @@ else
         print '</td></tr>';
     }
     
+	// Civility
     print '<tr><td>'.$langs->trans("UserTitle").'</td><td colspan="3">';
     print $form->civilite_name($contact->civilite_id);
     print '</td></tr>';
     
-    print '<tr><td width="20%">'.$langs->trans("Lastname").'</td><td>'.$contact->name.'</td>';
-    print '<td width="20%">'.$langs->trans("Firstname").'</td><td width="25%">'.$contact->firstname.'</td></tr>';
-
+	// Birthday
     if ($contact->birthday)
     {
         print '<tr><td>'.$langs->trans("BirthdayDate").'</td><td colspan="3">'.dolibarr_print_date($contact->birthday,"day");
