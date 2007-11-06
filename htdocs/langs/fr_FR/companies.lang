@@ -231,3 +231,7 @@ AllocateCommercial=Affecter un commercial
 SelectCountry=Sélectionner un pays
 SelectCompany=Sélectionner un tiers
 Organization=Organisme
+
+# Tigre
+TigreNumRefModelDesc1=Renvoie un code client/fournisseur personnalisable selon un masque à définir.
+TigreMaskCodes=Vous pouvez saisir tout masque de numérotation. Dans ce masque, les balises suivantes peuvent etre utilisées:<br><b>{000000}</b> correspond a un numéro qui sera incrémenté à chaque code client/fournisseur. Mettre autant de zéro que la longueur désirée du compteur. Le compteur sera complété par des 0 à gauche afin d'avoir autant de zéro que dans le masque.<br><b>{dd}</b> jour de la création du code client/fournisseur (01 à 31).<br><b>{mm}</b> mois de la création du code client/fournisseur (01 à 12).<br><b>{yy}</b> et/ou {yyyy} annee, sur 2 ou 4 chiffres, de la création du code client/fournisseur.<br><b>{pre}</b> prefix du tiers.<br>Tout autre caractère dans le masque sera laissé inchangé.<br>Vous pouvez utiliser les caractères suivant comme séparateur : slash, anti-slash et tiret<br>Différencier les éléments utilisés avec un pipe <b>|</b> (altgr+6).<br>Les espaces ne sont pas permis.<br><br><u>Exemple de code client/fournisseur simple</u><br><b>CC|{00000}</b> donnera <b>CC00001</b><br><b>CF|-|{00000}</b> donnera <b>CF-00001</b><br><br><u>Exemple sur le 99eme code client/fournisseur fait le 31/01/2007:</u><br><b>ABC|-|{yy}|{mm}|-|{000000}</b> donnera <b>ABC-0701-000099</b><br><b>{0000}|-|{pre}|/|{dd}|/|INV</b> donnera <b>0099-SFR/31/INV</b><br>
