@@ -115,6 +115,7 @@ class Societe
     $this->typent_id  = 0;
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
+    $this->prefixIsRequired = 0;
 
     return 1;
   }
@@ -137,8 +138,8 @@ class Societe
         $this->db->begin();
         
         // Pour code automatique
-        if ($this->code_client == "automaticCode") $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == "automaticCode") $this->get_codefournisseur($this->prefix_comm,1);
+        if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
+        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
         $result = $this->verify();
 
@@ -331,8 +332,8 @@ class Societe
         $this->forme_juridique_code=trim($this->forme_juridique_code);
         
         // Pour code client/fournisseur automatique
-        if ($this->code_client == "automaticCode") $this->get_codeclient($this->prefix_comm,0);
-        if ($this->code_fournisseur == "automaticCode") $this->get_codefournisseur($this->prefix_comm,1);
+        if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
+        if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
         $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
 

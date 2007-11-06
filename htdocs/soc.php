@@ -159,8 +159,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		$result=$oldsoc->fetch($socid);
 		
 		// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
-		if (!$soc->client && $soc->code_client == "automaticCode") $soc->code_client = '';
-		if (!$soc->fournisseur && $soc->code_fournisseur == "automaticCode") $soc->code_fournisseur = '';
+		if (!$soc->client && $soc->code_client == -1) $soc->code_client = '';
+		if (!$soc->fournisseur && $soc->code_fournisseur == -1) $soc->code_fournisseur = '';
 		
 		$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 		if ($result >= 0)
@@ -346,7 +346,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeClient->code_auto == 1)
 		{
-			if ($soc->client == 1 || $soc->client == 2) print '<input type="hidden" name="code_client" value="automaticCode">';
+			if ($soc->client == 1 || $soc->client == 2) print '<input type="hidden" name="code_client" value="-1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -369,7 +369,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeFournisseur->code_auto == 1)
 		{
-			if ($soc->fournisseur == 1) print '<input type="hidden" name="code_fournisseur" value="automaticCode">';
+			if ($soc->fournisseur == 1) print '<input type="hidden" name="code_fournisseur" value="-1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -672,9 +672,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if (!$soc->code_client && $modCodeClient->code_auto == 1)
+        if (((!$soc->client && !$soc->code_client)|| $soc->code_client == -1) && $modCodeClient->code_auto == 1)
         {
-        	if (!$soc->client) print '<input type="hidden" name="code_client" value="automaticCode">';
+        	print '<input type="hidden" name="code_client" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
         }
         else if ($soc->codeclient_modifiable())
@@ -701,9 +701,9 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if (!$soc->code_fournisseur && $modCodeFournisseur->code_auto == 1)
+        if (((!$soc->fournisseur && !$soc->code_fournisseur) || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto == 1)
         {
-        	if (!$soc->fournisseur) print '<input type="hidden" name="code_fournisseur" value="automaticCode">';
+        	print '<input type="hidden" name="code_fournisseur" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
         }
         else if ($soc->codefournisseur_modifiable())
