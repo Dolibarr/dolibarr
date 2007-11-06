@@ -81,7 +81,8 @@ class Societe
 	var $prospect;
 	var $fournisseur;
 	
-	var $prefixIsRequired;
+	var $prefixCustomerIsRequired;
+	var $prefixSupplierIsRequired;
 	var $code_client;
 	var $code_fournisseur;
 	var $code_compta;
@@ -115,7 +116,8 @@ class Societe
     $this->typent_id  = 0;
     $this->effectif_id  = 0;
     $this->forme_juridique_code  = 0;
-    $this->prefixIsRequired = 0;
+    $this->prefixCustomerIsRequired = 0;
+    $this->prefixSupplierIsRequired = 0;
 
     return 1;
   }
@@ -249,7 +251,7 @@ class Societe
 				}
 				if ($rescode == -4)
 				{
-					$this->error .= "Vous devez renseigner le préfix.\n";
+					$this->error .= "Vous devez renseigner le préfix pour générer le code client.\n";
 				}
 				$result = -3;
 			}
@@ -273,9 +275,9 @@ class Societe
 				{
 					$this->error .= "Ce code fournisseur est déjà utilisé.\n";
 				}
-				if ($rescode == -4)
+				if ($rescode == -5)
 				{
-					$this->error .= "Vous devez renseigner le préfix.\n";
+					$this->error .= "Vous devez renseigner le préfix pour générer le code fournisseur.\n";
 				}
 				$result = -3;
 			}
@@ -1448,7 +1450,7 @@ class Societe
 			$mod = new $var;
 			
 			$this->code_client = $mod->getNextValue($objsoc,$type);
-			$this->prefixIsRequired = $mod->prefixIsRequired;
+			$this->prefixCustomerIsRequired = $mod->prefixIsRequired;
 
 			dolibarr_syslog("Societe::get_codeclient code_client=".$this->code_client." module=".$var);
 		}
@@ -1468,7 +1470,7 @@ class Societe
 			$mod = new $var;
 			
 			$this->code_fournisseur = $mod->getNextValue($objsoc,$type);
-			$this->prefixIsRequired = $mod->prefixIsRequired;
+			$this->prefixSupplierIsRequired = $mod->prefixIsRequired;
 			
 			dolibarr_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
 		}

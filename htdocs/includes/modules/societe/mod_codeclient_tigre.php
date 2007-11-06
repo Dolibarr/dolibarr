@@ -403,9 +403,13 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 				{
 					$result=-3;
 				}
-				else if ($soc->prefixIsRequired && !$soc->prefix_comm)
+				else if ($soc->prefixCustomerIsRequired && !$soc->prefix_comm)
 				{
 					$result=-4;
+				}
+				else if ($soc->prefixSupplierIsRequired && !$soc->prefix_comm)
+				{
+					$result=-5;
 				}
 				else
 				{
