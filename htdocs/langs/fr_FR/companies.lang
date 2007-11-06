@@ -231,6 +231,7 @@ AllocateCommercial=Affecter un commercial
 SelectCountry=Sélectionner un pays
 SelectCompany=Sélectionner un tiers
 Organization=Organisme
+AutomaticallyGenerated=Généré automatiquement
 
 # Tigre
 TigreNumRefModelDesc1=Renvoie un code client/fournisseur personnalisable selon un masque à définir.

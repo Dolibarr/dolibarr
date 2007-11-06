@@ -103,19 +103,19 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Texte descripif
 	*/
-	function getExample($langs,$objsoc=0,$type=0)
+	function getExample($langs,$objsoc=0,$type=-1)
 	{
-		if ($type == 1)
+		if ($type == 0)
+		{
+			$example = $this->getNextValue($objsoc,0);
+		}
+		else if ($type == 1)
 		{
 			$example = $this->getNextValue($objsoc,1);
 		}
-		else if ($type == 2)
-		{
-			$example = $this->getNextValue($objsoc,2);
-		}
 		else
 		{
-			$example = $this->getNextValue($objsoc,1)."<br>".$this->getNextValue($objsoc,2);
+			$example = $this->getNextValue($objsoc,0)."<br>".$this->getNextValue($objsoc,1);
 		}
 		return $example;
 	}
@@ -124,18 +124,18 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Valeur
 	*/
-  function getNextValue($objsoc=0,$type=0)
+  function getNextValue($objsoc=0,$type=-1)
   {
   	global $db,$conf;
   	
   	$mask = $this->buildMask($objsoc,$type);
   	$count = 0;
   	
-  	if ($type == 1)
+  	if ($type == 0)
   	{
   		$field = 'code_client';
   	}
-  	else if ($type == 2)
+  	else if ($type == 1)
   	{
   		$field = 'code_fournisseur';
   	}
@@ -172,15 +172,15 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*     \param      $type       Client ou fournisseur (1:client, 2:fournisseur)
 	*     \return     string      Valeur
 	*/
-  function buildMask($objsoc=0,$type='')
+  function buildMask($objsoc=0,$type=-1)
   {
   	global $conf;
   	
-  	if ($type==1)
+  	if ($type==0)
   	{
   		$mask = $conf->global->CODE_TIGRE_MASK_CUSTOMER;
   	}
-  	else if ($type==2)
+  	else if ($type==1)
   	{
   		$mask = $conf->global->CODE_TIGRE_MASK_SUPPLIER;
   	}

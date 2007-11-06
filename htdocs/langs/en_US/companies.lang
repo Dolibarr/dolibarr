@@ -228,6 +228,7 @@ AllocateCommercial=Allocate a commercial
 SelectCountry=Select a country
 SelectCompany=Select a third party
 Organization=Organization
+AutomaticallyGenerated=Automatically generated
 
 # Tigre
 TigreNumRefModelDesc1=Return a customizable customer/supplier number according to a defined mask. 

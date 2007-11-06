@@ -132,7 +132,8 @@ class ModeleThirdPartyCode
 		$s.=$langs->trans("CanBeModifiedIfOk").': <b>'.yn($this->code_modifiable).'</b><br>';
 		$s.=$langs->trans("CanBeModifiedIfKo").': <b>'.yn($this->code_modifiable_invalide).'</b><br>';
 		$s.=$langs->trans("AutomaticCode").': <b>'.yn($this->code_auto).'</b><br>';
-		if ($type != -1) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,1).'</b>';
+		if ($type == 0) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,0).'</b>';
+		if ($type == 1) $s.=$langs->trans("Example").': <b>'.$this->getExample($langs,$soc,1).'</b>';
 		return $s;
 	}
 }
