@@ -672,7 +672,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if (((!$soc->client && !$soc->code_client)|| $soc->code_client == -1) && $modCodeClient->code_auto == 1)
+        if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto == 1)
         {
         	print '<input type="hidden" name="code_client" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
@@ -701,7 +701,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if (((!$soc->fournisseur && !$soc->code_fournisseur) || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto == 1)
+        if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto == 1)
         {
         	print '<input type="hidden" name="code_fournisseur" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';

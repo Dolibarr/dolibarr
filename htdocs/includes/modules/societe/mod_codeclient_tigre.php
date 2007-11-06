@@ -383,9 +383,10 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*		\param		$db			Handler acces base
 	*		\param		$code		Code a vérifier/corriger
 	*		\param		$soc		Objet societe
+	*   \param    $type   0 = client/prospect , 1 = fournisseur
 	*		\return		int			<0 si KO, 0 si OK
 	*/
-	function verif($db, &$code, $soc)
+	function verif($db, &$code, $soc, $type)
 	{
 		$result=0;
 		$code = strtoupper(trim($code));
@@ -403,11 +404,11 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 				{
 					$result=-3;
 				}
-				else if ($soc->prefixCustomerIsRequired && !$soc->prefix_comm)
+				else if ($type == 0 && $soc->prefixCustomerIsRequired && !$soc->prefix_comm)
 				{
 					$result=-4;
 				}
-				else if ($soc->prefixSupplierIsRequired && !$soc->prefix_comm)
+				else if ($type == 1 && $soc->prefixSupplierIsRequired && !$soc->prefix_comm)
 				{
 					$result=-5;
 				}

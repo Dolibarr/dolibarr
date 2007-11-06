@@ -1549,7 +1549,8 @@ class Societe
 			$mod = new $var;
 	
 			dolibarr_syslog("Societe::check_codeclient code_client=".$this->code_client." module=".$var);
-			return $mod->verif($this->db, $this->code_client, $this);
+			$result = $mod->verif($this->db, $this->code_client, $this, 0);
+			return $result;
 		}
 		else
 		{
@@ -1573,7 +1574,8 @@ class Societe
 			$mod = new $var;
 
 			dolibarr_syslog("Societe::check_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
-			return $mod->verif($this->db, $this->code_fournisseur, $this);
+			$result = $mod->verif($this->db, $this->code_fournisseur, $this ,1);
+			return $result;
 		}
 		else
 		{
