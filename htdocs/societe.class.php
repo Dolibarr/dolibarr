@@ -81,6 +81,7 @@ class Societe
 	var $prospect;
 	var $fournisseur;
 	
+	var $prefixIsRequired;
 	var $code_client;
 	var $code_fournisseur;
 	var $code_compta;
@@ -134,6 +135,10 @@ class Societe
         dolibarr_syslog("Societe::create ".$this->nom);
 
         $this->db->begin();
+        
+        // Pour code automatique
+        if ($this->code_client == "automaticCode") $this->get_codeclient($this->prefix_comm,0);
+        if ($this->code_fournisseur == "automaticCode") $this->get_codefournisseur($this->prefix_comm,1);
 
         $result = $this->verify();
 
@@ -241,6 +246,10 @@ class Societe
 				{
 					$this->error .= "Ce code client est déjà utilisé.\n";
 				}
+				if ($rescode == -4)
+				{
+					$this->error .= "Vous devez renseigner le préfix.\n";
+				}
 				$result = -3;
 			}
 		}
@@ -262,6 +271,10 @@ class Societe
 				if ($rescode == -3)
 				{
 					$this->error .= "Ce code fournisseur est déjà utilisé.\n";
+				}
+				if ($rescode == -4)
+				{
+					$this->error .= "Vous devez renseigner le préfix.\n";
 				}
 				$result = -3;
 			}
@@ -316,6 +329,10 @@ class Societe
 
         $this->effectif_id=trim($this->effectif_id);
         $this->forme_juridique_code=trim($this->forme_juridique_code);
+        
+        // Pour code client/fournisseur automatique
+        if ($this->code_client == "automaticCode") $this->get_codeclient($this->prefix_comm,0);
+        if ($this->code_fournisseur == "automaticCode") $this->get_codefournisseur($this->prefix_comm,1);
 
         $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
 
@@ -1416,6 +1433,45 @@ class Societe
 		return $this->bank_account->verif();
 	}
 
+  /**
+	 *    \brief      Attribut un code client à partir du module de controle des codes.
+	 *    \return     code_client		Code client automatique
+	 */
+	function get_codeclient($objsoc=0,$type=0)
+	{
+		global $conf;
+		if ($conf->global->SOCIETE_CODECLIENT_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODECLIENT_ADDON.'.php';
+			$var = $conf->global->SOCIETE_CODECLIENT_ADDON;
+			$mod = new $var;
+			
+			$this->code_client = $mod->getNextValue($objsoc,$type);
+			$this->prefixIsRequired = $mod->prefixIsRequired;
+
+			dolibarr_syslog("Societe::get_codeclient code_client=".$this->code_client." module=".$var);
+		}
+	}
+	
+	/**
+	 *    \brief      Attribut un code fournisseur à partir du module de controle des codes.
+	 *    \return     code_fournisseur		Code fournisseur automatique
+	 */
+	function get_codefournisseur($objsoc=0,$type=1)
+	{
+		global $conf;
+		if ($conf->global->SOCIETE_CODEFOURNISSEUR_ADDON)
+		{
+			require_once DOL_DOCUMENT_ROOT.'/includes/modules/societe/'.$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON.'.php';
+			$var = $conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
+			$mod = new $var;
+			
+			$this->code_fournisseur = $mod->getNextValue($objsoc,$type);
+			$this->prefixIsRequired = $mod->prefixIsRequired;
+			
+			dolibarr_syslog("Societe::get_codefournisseur code_fournisseur=".$this->code_fournisseur." module=".$var);
+		}
+	}
 
 	/**
 	 *    \brief      Verifie si un code client est modifiable en fonction des parametres

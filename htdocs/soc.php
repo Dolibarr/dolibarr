@@ -158,6 +158,10 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		$oldsoc=new Societe($db);
 		$result=$oldsoc->fetch($socid);
 		
+		// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
+		if (!$soc->client && $soc->code_client == "automaticCode") $soc->code_client = '';
+		if (!$soc->fournisseur && $soc->code_fournisseur == "automaticCode") $soc->code_fournisseur = '';
+		
 		$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 		if ($result >= 0)
 		{
@@ -342,6 +346,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeClient->code_auto == 1)
 		{
+			if ($soc->client == 1 || $soc->client == 2) print '<input type="hidden" name="code_client" value="automaticCode">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -364,6 +369,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeFournisseur->code_auto == 1)
 		{
+			if ($soc->fournisseur == 1) print '<input type="hidden" name="code_fournisseur" value="automaticCode">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -616,7 +622,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             $soc->typent_id=$_POST["typent_id"];
             $soc->effectif_id=$_POST["effectif_id"];
 
-			$soc->tva_assuj = $_POST["assujtva_value"];
+			      $soc->tva_assuj = $_POST["assujtva_value"];
             $soc->tva_intra_code=$_POST["tva_intra_code"];
             $soc->tva_intra_num=$_POST["tva_intra_num"];
 
@@ -666,7 +672,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codeclient_modifiable())
+        if (!$soc->code_client && $modCodeClient->code_auto == 1)
+        {
+        	if (!$soc->client) print '<input type="hidden" name="code_client" value="automaticCode">';
+        	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+        }
+        else if ($soc->codeclient_modifiable())
         {
         	print '<input type="text" name="code_client" size="16" value="'.$soc->code_client.'" maxlength="15">';
         }
@@ -676,7 +687,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         	print '<input type="hidden" name="code_client" value="'.$soc->code_client.'">';
         }
         print '</td><td>';
-		$s=$modCodeClient->getToolTip($langs,$soc,0);
+        $s=$modCodeClient->getToolTip($langs,$soc,0);
         print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 
@@ -690,7 +701,12 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ($soc->codefournisseur_modifiable())
+        if (!$soc->code_fournisseur && $modCodeFournisseur->code_auto == 1)
+        {
+        	if (!$soc->fournisseur) print '<input type="hidden" name="code_fournisseur" value="automaticCode">';
+        	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
+        }
+        else if ($soc->codefournisseur_modifiable())
         {
         	print '<input type="text" name="code_fournisseur" size="16" value="'.$soc->code_fournisseur.'" maxlength="15">';
         }
@@ -700,7 +716,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         	print '<input type="hidden" name="code_fournisseur" value="'.$soc->code_fournisseur.'">';
         }
         print '</td><td>';
-		$s=$modCodeFournisseur->getToolTip($langs,$soc,1);
+        $s=$modCodeFournisseur->getToolTip($langs,$soc,1);
         print $form->textwithhelp('',$s,1);
         print '</td></tr></table>';
 

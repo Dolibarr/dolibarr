@@ -49,6 +49,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	var $numbitcounter; // Nombre de chiffres du compteur
 	var $substrBegin;
 	var $substrEnd;
+	var $prefixIsRequired;
 
 	
 	/**		\brief      Constructeur classe
@@ -62,6 +63,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 		$this->code_modifiable_null = 1;
 		$this->code_null = 0;
 		$this->code_auto = 1;
+		$this->prefixIsRequired = 0;
 	}
 
 	
@@ -284,17 +286,33 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    else if (is_object($objsoc) && !$objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
   		    $error++;
+  		    $this->prefixIsRequired = 1;
   	    }
   	    else if (!is_object($objsoc) && $maskElement[$i] == '{pre}')
   	    {
-  		    $maskRebuild .= 'ABC';
+  	    	if (is_string($objsoc) && $objsoc)
+  	    	{
+  	    		$prefixLength = strlen($objsoc);
+  	    		$maskRebuild .= $objsoc;
+  	    	}
+  	    	else if (is_bool($objsoc) && $objsoc == 0)
+  	    	{
+  	    		$prefixLength = 3;
+  	    		$maskRebuild .= 'ABC';
+  	    	}
+  	    	else
+  	    	{
+  	    		$error++;
+  	    		$this->prefixIsRequired = 1;
+  	    	}
+  	    	
   		    if ($foundCounter==0)
   		    {
-  		    	$substrBegin += 3;
+  		    	$substrBegin += $prefixLength;
   		    }
   		    else
   		    {
-  		    	$substrEnd += 3;
+  		    	$substrEnd += $prefixLength;
   		    }
   	    }
   	    
@@ -355,6 +373,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	//print 'begin='.$this->substrBegin.'<br>';
   	//print 'end='.$this->substrEnd.'<br>';
   	//print 'searchcode='.$this->searchcode.'<br>';
+  	//print $error;
   	return $maskRebuild;
   }
 
@@ -383,6 +402,10 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 				if ($is_dispo <> 0)
 				{
 					$result=-3;
+				}
+				else if ($soc->prefixIsRequired && !$soc->prefix_comm)
+				{
+					$result=-4;
 				}
 				else
 				{
@@ -414,24 +437,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	*/
 	function get_correct($db, $code)
 	{
-		$return='001';
 		
-		$sql = "SELECT MAX(code_client) as maxval FROM ".MAIN_DB_PREFIX."societe";
-		$resql=$db->query($sql);
-		if ($resql)
-		{	
-			$obj=$db->fetch_object($resql);
-			if ($obj)
-			{
-				$newval=$obj->maxval+1;
-				$return=sprintf('%03d',$newval);
-				return $return;
-			}
-		}
-		else
-		{
-			return -1;
-		}
 	}
 
 	
@@ -476,23 +482,6 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	function verif_syntax($code)
 	{
 		$res = 0;
-		
-		if (strlen($code) < 3)
-		{
-			$res = -1;
-		}
-		else
-		{
-			if (eregi('[0-9][0-9][0-9]+',$code))
-			{
-				$res = 0;	
-			}
-			else
-			{
-				$res = -2;
-			}
-			
-		}
 		return $res;
 	}
 
@@ -503,17 +492,6 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	function is_num($str)
 	{
 		$ok = 0;
-
-		$alpha = '0123456789';
-
-		for ($i = 0 ; $i < length($str) ; $i++)
-		{
-			if (strpos($alpha, substr($str,$i, 1)) === false)
-			{
-				$ok++;
-			}
-		}
-		
 		return $ok;
 	}
 
