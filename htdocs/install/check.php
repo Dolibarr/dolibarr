@@ -91,7 +91,6 @@ if (! function_exists("session_id"))
 else
 {
     print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportSessions")."<br>\n";
-
 /*
 	// On se fout des warning sur session_start, meme si pas moyen de mettre cookie dans http, car on ne test pas entre 2 pages mais au sein de la meme 
 	print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Test sauvegarde donnée en session.'."<br>\n";;
@@ -104,6 +103,18 @@ else
 	else print '<img src="../theme/eldy/img/tick.png" alt="Ok"> Succès récupération donnée en session.'."<br>\n";
 	session_write_close();
 */
+}
+
+
+// Check if GD installed
+if (! function_exists("imagecreate "))
+{
+    print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
+    $checksok=0;
+}
+else
+{
+    print '<img src="../theme/eldy/img/tick.png" alt="Ok"> '.$langs->trans("PHPSupportGD")."<br>\n";
 }
 
 
@@ -129,6 +140,7 @@ if ($memmaxorig != '')
 	    print '<img src="../theme/eldy/img/warning.png" alt="Warning"> '.$langs->trans("PHPMemoryTooLow",$memmaxorig,$memrequiredorig)."<br>\n";
 	}
 }
+
 
 // Si fichier présent et lisible et renseigné
 clearstatcache();
