@@ -47,9 +47,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	
 	var $searchcode; // String de recherche
 	var $numbitcounter; // Nombre de chiffres du compteur
-	var $substrBegin;
-	var $substrEnd;
-	var $prefixIsRequired;
+	var $prefixIsRequired; // Le champ préfix du tiers doit etre renseigné quand on utilise {pre}
 
 	
 	/**		\brief      Constructeur classe
@@ -131,7 +129,6 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	global $db,$conf;
   	
   	$mask = $this->buildMask($objsoc,$type);
-  	$count = 0;
   	
   	if ($type == 0)
   	{
@@ -144,29 +141,28 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 
     // On récupère la valeur max (réponse immédiate car champ indéxé)
     $posindice  = $this->numbitcounter;
-    if ($this->substrEnd > 0) $substrEnd = ',-'.$this->substrEnd;
-    $searchyy='';
-    $sql = "SELECT MAX(".$field.")";
+
+    $sql = "SELECT MAX(0+SUBSTRING(".$field.",-".$posindice."))";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe";
     $sql.= " WHERE ".$field." REGEXP '^".$this->searchcode."$'";
+
     $resql=$db->query($sql);
+
     if ($resql)
     {
     	$row = $db->fetch_row($resql);
-    	//print 'row='.$row[0].'<br>';
-    	//print 'begin='.$this->substrBegin.'<br>';
-    	//print 'end='.$this->substrEnd.'<br>';
-      if ($row[0]) $count = substr($row[0],$this->substrBegin.$substrEnd);
+      $max = $row[0];
     }
-    	  
-    	  // On applique le nombre de chiffres du compteur
-        $arg = '%0'.$this->numbitcounter.'s';
-        $count = sprintf($arg,$count+1);
-        $mask = eregi_replace('\{0+\}',$count,$mask);
-        
-        dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$mask);
-        //print 'count='.$count.'<br>';
-        return $mask;
+    
+    // On applique le nombre de chiffres du compteur
+    $arg = '%0'.$this->numbitcounter.'s';
+
+    $num = sprintf($arg,$max+1);
+    $mask = eregi_replace('\{0+\}',$num,$mask);
+      
+    dolibarr_syslog("mod_codeclient_tigre::getNextValue return ".$mask);
+
+    return $mask;
   }
   
  /**		\brief      Construction du masque de numérotation
@@ -177,7 +173,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   function buildMask($objsoc=0,$type=-1)
   {
   	global $conf;
-  	
+
   	if ($type==0)
   	{
   		$mask = $conf->global->CODE_TIGRE_MASK_CUSTOMER;
@@ -202,15 +198,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
       	if ($maskElement[$i] == '{dd}')
   	    {
   		    $maskRebuild .= strftime("%d",time());
-  		    $this->searchcode .= strftime("%d",time());
-  		    if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += 2;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += 2;
-  		    }
+  		    $this->searchcode .= '([0-9]{2})';
   	    }
   	    else if (eregi('\{d+\}',$maskElement[$i]) && (eregi('\{d+\}',$$maskElement[$i]) != '{dd}'))
   	    {
@@ -221,15 +209,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    if ($maskElement[$i] == '{mm}')
   	    {
   		    $maskRebuild .= strftime("%m",time());
-  		    $this->searchcode .= strftime("%m",time());
-  		    if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += 2;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += 2;
-  		    }
+  		    $this->searchcode .= '([0-9]{2})';
   	    }
   	    else if (eregi('\{m+\}',$maskElement[$i]) && (eregi('\{m+\}',$maskElement[$i]) != '{mm}'))
   	    {
@@ -240,28 +220,12 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    if ($maskElement[$i] == '{aa}')
   	    {
   		    $maskRebuild .= substr(strftime("%Y",time()),2);
-  		    $this->searchcode .= substr(strftime("%Y",time()),2);
-  		    if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += 2;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += 2;
-  		    }
+  		    $this->searchcode .= '([0-9]{2})';
   	    }
   	    else if ($maskElement[$i] == '{aaaa}')
   	    {
   		    $maskRebuild .= strftime("%Y",time());
-  		    $this->searchcode .= strftime("%Y",time());
-  		    if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += 4;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += 4;
-  		    }
+  		    $this->searchcode .= '([0-9]{4})';
   	    }
   	    else if (eregi('\{a+\}',$maskElement[$i]) && ((eregi('\{a+\}',$maskElement[$i]) != '{aa}') || (eregi('\{a+\}',$maskElement[$i]) != '{aaa}')))
   	    {
@@ -271,17 +235,16 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    // Ajout du préfix de la société
   	    if (is_object($objsoc) && $objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
-  		    $maskRebuild .= strtoupper($objsoc->prefix_comm);
-  		    $this->searchcode .= strtoupper($objsoc->prefix_comm);
-  		    $prefixLength = strlen($objsoc->prefix_comm);
-  		    if ($foundCounter==0)
+  		    if ((!$objsoc->fournisseur && !$objsoc->code_fournisseur) || (!$objsoc->client && !$objsoc->code_client))
   		    {
-  		    	$substrBegin += $prefixLength;
+  		    	$maskRebuild .= strtoupper($objsoc->prefix_comm);
+  		    	$this->searchcode .= '([0-9A-Z]{1,})';
   		    }
   		    else
   		    {
-  		    	$substrEnd += $prefixLength;
-  		    }
+  	    		$maskRebuild .= 'ABC';
+  	    		$this->searchcode .= '([0-9A-Z]{1,})';
+  	    	}
   	    }
   	    else if (is_object($objsoc) && !$objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
@@ -292,43 +255,26 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    {
   	    	if (is_string($objsoc) && $objsoc)
   	    	{
-  	    		$prefixLength = strlen($objsoc);
   	    		$maskRebuild .= $objsoc;
+  	    		$this->searchcode .= '([0-9A-Z]{1,})';
   	    	}
-  	    	else if (is_bool($objsoc) && $objsoc == 0)
+  	    	else if ($objsoc === 0)
   	    	{
-  	    		$prefixLength = 3;
   	    		$maskRebuild .= 'ABC';
+  	    		$this->searchcode .= '([0-9A-Z]{1,})';
   	    	}
   	    	else
   	    	{
   	    		$error++;
   	    		$this->prefixIsRequired = 1;
   	    	}
-  	    	
-  		    if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += $prefixLength;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += $prefixLength;
-  		    }
   	    }
   	    
   	    // Ajout des séparateurs éventuels : \ / -
   	    if (eregi('[\/-]{1}',$maskElement[$i]))
   	    {
   	    	$maskRebuild .= $maskElement[$i];
-  	    	$this->searchcode .= $maskElement[$i];
-  	    	if ($foundCounter==0)
-  		    {
-  		    	$substrBegin++;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd++;
-  		    }
+  	    	$this->searchcode .= '([\/-]{1})';
   	    }
   	    else if (eregi('[\/-]{2,}',$maskElement[$i]))
   	    {
@@ -339,16 +285,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    if (eregi('^[0-9A-Z]+$',$maskElement[$i]))
   	    {
   	    	$maskRebuild .= strtoupper($maskElement[$i]);
-  	    	$this->searchcode .= strtoupper($maskElement[$i]);
-  	    	$MaskElementLength = strlen($maskElement[$i]);
-  	    	if ($foundCounter==0)
-  		    {
-  		    	$substrBegin += $MaskElementLength;
-  		    }
-  		    else
-  		    {
-  		    	$substrEnd += $MaskElementLength;
-  		    }
+  	    	$this->searchcode .= '([0-9A-Z]+)';
   	    }
   	
   	    // Définition du compteur
@@ -366,14 +303,8 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    {
   	    	$error++;
   	    }
-  	    //print 'searchcodeTemp='.$this->searchcode.'<br>';
   	}
-  	$this->substrBegin = $substrBegin;
-  	$this->substrEnd = $substrEnd;
-  	//print 'begin='.$this->substrBegin.'<br>';
-  	//print 'end='.$this->substrEnd.'<br>';
-  	//print 'searchcode='.$this->searchcode.'<br>';
-  	//print $error;
+
   	return $maskRebuild;
   }
 
