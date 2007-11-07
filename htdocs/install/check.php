@@ -107,7 +107,7 @@ else
 
 
 // Check if GD installed
-if (! function_exists("imagecreate "))
+if (! function_exists("imagecreate"))
 {
     print '<img src="../theme/eldy/img/warning.png" alt="Error"> '.$langs->trans("ErrorPHPDoesNotSupportGD")."<br>\n";
     $checksok=0;
