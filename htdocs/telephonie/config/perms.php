@@ -62,11 +62,15 @@ if ($_GET["action"] == "all")
 	{
 	  while ($row = $db->fetch_row($resql))
 	    {	      
-	      $sql_i = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms ";
-	      $sql_i.= " (fk_soc,fk_user,pread,pwrite,pperms) ";
-	      $sql_i.= " VALUES ($socs[0],$row[0],1,1,1) ";
-	      
-	      $resql_i = $db->query( $sql_i );
+
+	      foreach ($socs as $soc)
+		{
+		  $sql_i = "INSERT INTO ".MAIN_DB_PREFIX."societe_perms ";
+		  $sql_i.= " (fk_soc,fk_user,pread,pwrite,pperms) ";
+		  $sql_i.= " VALUES ($soc,$row[0],1,1,1) ";
+		  
+		  $resql_i = $db->query( $sql_i );
+		}
 	      
 	    }
 	  $db->free($resql);
@@ -105,8 +109,6 @@ $var=!$var;
 print "<tr $bc[$var]><td>Toutes les permissions a tout le monde</td>";
 print '<td align="center"><a href="perms.php?action=all">Appliquer</a>';
 print '</tr>';
-
-
 
 print '</table>';
 print '</div>';
