@@ -29,6 +29,7 @@ English Dolibarr changelog
   crypted password in database, in config file...).
 - Themes are full CSS compliant.
 - A lot of other minor changes...
+- Option to scan uploaded document by an antivirus.
 
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
