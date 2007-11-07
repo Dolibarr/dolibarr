@@ -64,6 +64,8 @@ VATIsNotUsed=VAT is not used
 ThirdPartyEMail=%s
 WrongCustomerCode=Customer code invalid
 WrongSupplierCode=Supplier code invalid
+CustomerCodeModel=Customer code model
+SupplierCodeModel=Supplier code model
 Gencod=Bar code
 ##### Professionnal ID #####
 ProfId1=Professional ID 1

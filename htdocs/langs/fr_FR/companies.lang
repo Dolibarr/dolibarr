@@ -64,6 +64,8 @@ VATIsNotUsed=Non assujetti à TVA
 ThirdPartyEMail=%s
 WrongCustomerCode=Code client incorrect
 WrongSupplierCode=Code fournisseur incorrect
+CustomerCodeModel=Modèle de code client
+SupplierCodeModel=Modèle de code fournisseur
 Gencod=Code barre
 ##### Professionnal ID #####
 ProfId1=ID professionnel 1

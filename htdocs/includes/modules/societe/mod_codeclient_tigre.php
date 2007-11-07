@@ -82,11 +82,11 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
       $texte.= '<table class="nobordernopadding" width="100%">';
       
       // Paramétrage du masque
-      $texte.= '<tr><td>Modele code client</td>';
+      $texte.= '<tr><td>'.$langs->trans("CustomerCodeModel").'</td>';
       $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="maskcustomer" value="'.$conf->global->CODE_TIGRE_MASK_CUSTOMER.'">',$langs->trans("TigreMaskCodes"),1,1).'</td>';
       $texte.= '</tr>';
       
-      $texte.= '<tr><td>Modele code fournisseur</td>';
+      $texte.= '<tr><td>'.$langs->trans("SupplierCodeModel").'</td>';
       $texte.= '<td align="right">'.$form->textwithhelp('<input type="text" class="flat" size="24" name="masksupplier" value="'.$conf->global->CODE_TIGRE_MASK_SUPPLIER.'">',$langs->trans("TigreMaskCodes"),1,1).'</td>';
       $texte.= '</tr>';
      
