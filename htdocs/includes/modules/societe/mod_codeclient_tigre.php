@@ -55,7 +55,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
 	function mod_codeclient_tigre()
 	{
 		$this->nom = "Tigre";
-		$this->version = "development";
+		$this->version = "experimental";
 		$this->code_modifiable = 0;
 		$this->code_modifiable_invalide = 1;
 		$this->code_modifiable_null = 1;
