@@ -248,6 +248,8 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    }
   	    else if (is_object($objsoc) && !$objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
+  		    $maskRebuild .= 'ABC';
+  	      $this->searchcode .= '([0-9A-Z]{1,})';
   		    $error++;
   		    $this->prefixIsRequired = 1;
   	    }
