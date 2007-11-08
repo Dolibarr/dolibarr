@@ -53,13 +53,14 @@ class DoliDb
     var $connected;               // 1 si connecté, 0 sinon
     var $database_selected;       // 1 si base sélectionné, 0 sinon
     var $database_name;			  // Nom base sélectionnée
-  var $database_user;	   //! Nom user base
+    var $database_user;	   //! Nom user base
     var $transaction_opened;      // 1 si une transaction est en cours, 0 sinon
     var $lastquery;
 	var $lastqueryerror;		// Ajout d'une variable en cas d'erreur
 
     var $ok;
     var $error;
+    var $lasterror;
  
 
 
@@ -89,7 +90,7 @@ class DoliDb
 		}
 		*/
 		$this->forcecharset=$conf->character_set_client;
-	    $this->forcecollate=$conf->collation_connection;
+	    $this->forcecollate=$conf->db->collation_connection;
 	    $this->db_user=$conf->db->user;
 
         $this->transaction_opened=0;
