@@ -131,6 +131,7 @@ class box_prospect extends ModeleBoxes {
 			}
         }
         else {
+			dolibarr_syslog("box_prospect::loadBox not allowed de read this box content",LOG_ERR);
             $this->info_box_contents[0][0] = array('align' => 'left',
             'text' => $langs->trans("ReadPermissionNotAllowed"));
         }

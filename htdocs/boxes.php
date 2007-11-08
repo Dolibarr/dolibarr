@@ -96,7 +96,7 @@ class InfoBox
 			}
 			else {
 				$this->error=$this->db->error();
-				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error);
+				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
 			}
 		}
@@ -134,7 +134,7 @@ class InfoBox
 			}
 			else {
 				$this->error=$this->db->error();
-				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error);
+				dolibarr_syslog("InfoBox::listBoxes Error ".$this->error, LOG_ERR);
 				return array();
 			}
 		}
