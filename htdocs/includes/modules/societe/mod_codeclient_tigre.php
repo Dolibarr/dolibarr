@@ -313,7 +313,7 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   *   \brief  Vérifie si le mask utilise le préfix
   *
   */
-  function verif_prefixIsUse()
+  function verif_prefixIsUsed()
   {
   	global $conf;
   	

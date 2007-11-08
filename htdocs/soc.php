@@ -119,7 +119,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	{
 		$soc->code_client = -1;
 	}
-	else
+	else if ($_POST['code_auto'])
 	{
 		$soc->code_client = '';
 	}
@@ -128,7 +128,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	{
 		$soc->code_fournisseur = -1;
 	}
-	else
+	else if ($_POST['code_auto'])
 	{
 		$soc->code_fournisseur = '';
 	}
@@ -338,6 +338,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<input type="hidden" name="action" value="add">';
 		print '<input type="hidden" name="cleartype" value="0">';
 		print '<input type="hidden" name="private" value='.$soc->particulier.'>';
+		if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 		
 		print '<table class="border" width="100%">';
 		
@@ -359,7 +360,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 
 		print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 		print '<table class="nobordernopadding"><tr><td>';
-		if ($modCodeClient->code_auto == 1)
+		if ($modCodeClient->code_auto)
 		{
 			print '<input type="hidden" name="code_client" value="-1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
@@ -382,7 +383,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '</td>';
 		print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 		print '<table class="nobordernopadding"><tr><td>';
-		if ($modCodeFournisseur->code_auto == 1)
+		if ($modCodeFournisseur->code_auto)
 		{
 			print '<input type="hidden" name="code_fournisseur" value="-1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
@@ -596,6 +597,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeClient = new $module;
+		// On vérifie si la balise préfix est utilisée
+		if ($modCodeClient->code_auto)
+		{
+			$prefixCustomerIsUsed = $modCodeClient->verif_prefixIsUsed();
+		}
 		$module=$conf->global->SOCIETE_CODEFOURNISSEUR_ADDON;
 		if (! $module) $module=$conf->global->SOCIETE_CODECLIENT_ADDON;
 		if (substr($module, 0, 15) == 'mod_codeclient_' && substr($module, -3) == 'php')
@@ -604,6 +610,11 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 		}
 		require_once(DOL_DOCUMENT_ROOT ."/includes/modules/societe/".$module.".php");
 		$modCodeFournisseur = new $module;
+		// On vérifie si la balise préfix est utilisée
+		if ($modCodeFournisseur->code_auto)
+		{
+			$prefixSupplierIsUsed = $modCodeFournisseur->verif_prefixIsUsed();
+		}
 		
 		if ($reload || ! $_POST["nom"])
         {
@@ -669,6 +680,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="socid" value="'.$soc->id.'">';
+        if ($modCodeClient->code_auto || $modCodeFournisseur->code_auto) print '<input type="hidden" name="code_auto" value="1">';
 
         print '<table class="border" width="100%">';
 
@@ -676,7 +688,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
         // On ne permet pas la modification du préfix en mode de numérotation auto utilisant le prefix
-        if ($modCodeClient->verif_prefixIsUse() && $modCodeClient->code_auto)
+        if ($prefixCustomerIsUsed || $prefixSupplierIsUsed)
         {
         	print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
         	print $soc->prefix_comm;
@@ -696,7 +708,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto == 1)
+        if ((!$soc->code_client || $soc->code_client == -1) && $modCodeClient->code_auto)
         {
         	print '<input type="hidden" name="code_client" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
@@ -725,7 +737,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<td>'.$langs->trans('SupplierCode').'</td><td>';
 
         print '<table class="nobordernopadding"><tr><td>';
-        if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto == 1)
+        if ((!$soc->code_fournisseur || $soc->code_fournisseur == -1) && $modCodeFournisseur->code_auto)
         {
         	print '<input type="hidden" name="code_fournisseur" value="-1">';
         	print $langs->trans('AutomaticallyGenerated').'&nbsp;';
