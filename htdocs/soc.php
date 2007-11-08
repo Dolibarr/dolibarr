@@ -194,7 +194,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 
 }
 
-if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes' && $user->rights->societe->supprimer)
+if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && $user->rights->societe->supprimer)
 {
   $soc = new Societe($db);
   $soc->fetch($socid);
@@ -856,44 +856,44 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 			print '</script>';
 			print "\n";
 		}
-        print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
-        print '<td nowrap="nowrap">';
-        $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
-        $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
+    print '<td nowrap="nowrap">'.$langs->trans('VATIntra').'</td>';
+    print '<td nowrap="nowrap">';
+    $s ='<input type="text" class="flat" name="tva_intra_code" size="1" maxlength="2" value="'.$soc->tva_intra_code.'">';
+    $s.='<input type="text" class="flat" name="tva_intra_num" size="12" maxlength="18" value="'.$soc->tva_intra_num.'">';
 		$s.=' ';
 		if ($conf->use_javascript)
 		{
-	        $s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
-	        print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
+			$s.='<a href="#" onclick="javascript: CheckVAT(document.formsoc.tva_intra_code.value,document.formsoc.tva_intra_num.value);" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.$langs->trans("VATIntraCheck").'</a>';
+	    print $form->textwithhelp($s,$langs->trans("VATIntraCheckDesc",$langs->trans("VATIntraCheck")),1);
 		}
 		else
 		{
 			print $s.'<a href="'.$langs->transcountry("VATIntraCheckURL",$soc->id_pays).'" target="_blank" alt="'.$langs->trans("VATIntraCheckableOnEUSite").'">'.img_picto($langs->trans("VATIntraCheckableOnEUSite"),'help').'</a>';
 		}
-        print '</td>';
-        print '</tr>';
+    print '</td>';
+    print '</tr>';
 
-        print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Capital").'</td><td colspan="3"><input type="text" name="capital" size="10" value="'.$soc->capital.'"> '.$langs->trans("Currency".$conf->monnaie).'</td></tr>';
 
-        print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
-        $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
-        print '</td></tr>';
+    print '<tr><td>'.$langs->trans('JuridicalStatus').'</td><td colspan="3">';
+    $form->select_forme_juridique($soc->forme_juridique_code,$soc->pays_code);
+    print '</td></tr>';
 
-        print '<tr><td>'.$langs->trans("Type").'</td><td>';
-        $form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
-        print '</td>';
-        print '<td>'.$langs->trans("Staff").'</td><td>';
-        $form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
-        print '</td></tr>';
+    print '<tr><td>'.$langs->trans("Type").'</td><td>';
+    $form->select_array("typent_id",$soc->typent_array(0), $soc->typent_id);
+    print '</td>';
+    print '<td>'.$langs->trans("Staff").'</td><td>';
+    $form->select_array("effectif_id",$soc->effectif_array(0), $soc->effectif_id);
+    print '</td></tr>';
 
-        print '<tr><td align="center" colspan="4">';
-        print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
+    print '<tr><td align="center" colspan="4">';
+    print '<input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		print ' &nbsp; ';
-        print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
-        print '</td></tr>';
+    print '<input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
+    print '</td></tr>';
 
-        print '</table>';
-        print '</form>';
+    print '</table>';
+    print '</form>';
     }
 }
 else
@@ -1174,7 +1174,7 @@ else
 
         if ($user->rights->societe->creer)
         {
-            print '<a class="butAction" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
+            print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=edit">'.$langs->trans("Edit").'</a>';
         }
         
         if ($conf->projet->enabled && $user->rights->projet->creer)
@@ -1190,7 +1190,17 @@ else
         
         if ($user->rights->societe->supprimer)
         {
-	        print '<a class="butActionDelete" href="'.DOL_URL_ROOT.'/soc.php?socid='.$soc->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
+	        print '<a class="butActionDelete" ';
+	        if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
+	        {
+	        	$url = $_SERVER["PHP_SELF"].'?socid='.$soc->id.'&action=confirm_delete&confirm=yes';
+	        	print 'href="#" onClick="dialogConfirm(\''.$url.'\',\''.$langs->trans('ConfirmDeleteCompany').'\',\''.$langs->trans("Yes").'\',\''.$langs->trans("No").'\',\'delete\')"';
+	        }
+	        else
+	        {
+	        	print 'href="'.$_SERVER["PHP_SELF"].'?socid='.$soc->id.'&amp;action=delete"';
+	        }
+	        print '>'.$langs->trans('Delete').'</a>';
         }
 
         print '</div>';
