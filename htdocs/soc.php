@@ -688,7 +688,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
 
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
         // On ne permet pas la modification du préfix en mode de numérotation auto utilisant le prefix
-        if ($prefixCustomerIsUsed || $prefixSupplierIsUsed)
+        if (($prefixCustomerIsUsed || $prefixSupplierIsUsed) && $soc->prefix_comm)
         {
         	print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
         	print $soc->prefix_comm;
