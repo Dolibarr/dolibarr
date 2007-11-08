@@ -113,6 +113,25 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 	$soc->fournisseur_categorie = $_POST["fournisseur_categorie"];
 	
 	$soc->commercial_id         = $_POST["commercial_id"];
+	
+	// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
+	if ($soc->client && $soc->code_client == -1)
+	{
+		$soc->code_client = -1;
+	}
+	else
+	{
+		$soc->code_client = '';
+	}
+	
+	if ($soc->fournisseur && $soc->code_fournisseur == -1)
+	{
+		$soc->code_fournisseur = -1;
+	}
+	else
+	{
+		$soc->code_fournisseur = '';
+	}
 
 	if ($_POST["action"] == 'add')
 	{
@@ -157,10 +176,6 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		
 		$oldsoc=new Societe($db);
 		$result=$oldsoc->fetch($socid);
-		
-		// On vérifie si un tiers devient client ou fournisseur pour l'obtention d'un code automatiqe
-		if (!$soc->client && $soc->code_client == -1) $soc->code_client = '';
-		if (!$soc->fournisseur && $soc->code_fournisseur == -1) $soc->code_fournisseur = '';
 		
 		$result = $soc->update($socid,$user,1,$oldsoc->codeclient_modifiable(),$oldsoc->codefournisseur_modifiable());
 		if ($result >= 0)
@@ -346,7 +361,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeClient->code_auto == 1)
 		{
-			if ($soc->client == 1 || $soc->client == 2) print '<input type="hidden" name="code_client" value="-1">';
+			print '<input type="hidden" name="code_client" value="-1">';
+			print '<input type="hidden" name="code_auto" value="1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -369,7 +385,8 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<table class="nobordernopadding"><tr><td>';
 		if ($modCodeFournisseur->code_auto == 1)
 		{
-			if ($soc->fournisseur == 1) print '<input type="hidden" name="code_fournisseur" value="-1">';
+			print '<input type="hidden" name="code_fournisseur" value="-1">';
+			print '<input type="hidden" name="code_auto" value="1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -660,7 +677,16 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td>'.$langs->trans('Name').'</td><td colspan="3"><input type="text" size="40" name="nom" value="'.$soc->nom.'"></td></tr>';
 
         print '<tr><td>'.$langs->trans("Prefix").'</td><td colspan="3">';
-        print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+        // On ne permet pas la modification du préfix en mode de numérotation auto utilisant le prefix
+        if ($modCodeClient->verif_prefixIsUse() && $modCodeClient->code_auto)
+        {
+        	print '<input type="hidden" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+        	print $soc->prefix_comm;
+        }
+        else
+        {
+        	print '<input type="text" size="5" name="prefix_comm" value="'.$soc->prefix_comm.'">';
+        }
         print '</td>';
 
         // Client / Prospect

@@ -249,7 +249,6 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	    else if (is_object($objsoc) && !$objsoc->prefix_comm && $maskElement[$i] == '{pre}')
   	    {
   		    $maskRebuild .= 'ABC';
-  	      $this->searchcode .= '([0-9A-Z]{1,})';
   		    $error++;
   		    $this->prefixIsRequired = 1;
   	    }
@@ -308,6 +307,23 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	}
 
   	return $maskRebuild;
+  }
+  
+ /**
+  *   \brief  Vérifie si le mask utilise le préfix
+  *
+  */
+  function verif_prefixIsUse()
+  {
+  	global $conf;
+  	
+  	$mask = $conf->global->CODE_TIGRE_MASK_CUSTOMER;
+  	if (eregi('{pre}',$mask)) return 1;
+  	
+  	$mask = $conf->global->CODE_TIGRE_MASK_SUPPLIER;
+  	if (eregi('{pre}',$mask)) return 1;
+  	
+  	return 0;
   }
 
 
