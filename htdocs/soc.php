@@ -362,7 +362,6 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		if ($modCodeClient->code_auto == 1)
 		{
 			print '<input type="hidden" name="code_client" value="-1">';
-			print '<input type="hidden" name="code_auto" value="1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
@@ -386,7 +385,6 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		if ($modCodeFournisseur->code_auto == 1)
 		{
 			print '<input type="hidden" name="code_fournisseur" value="-1">';
-			print '<input type="hidden" name="code_auto" value="1">';
 			print $langs->trans('AutomaticallyGenerated').'&nbsp;';
 		}
 		else
