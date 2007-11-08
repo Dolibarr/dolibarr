@@ -201,17 +201,15 @@ if ($_REQUEST["action"] == 'confirm_delete' && $_REQUEST["confirm"] == 'yes' && 
   $result = $soc->delete($socid);
  
   if ($result == 0)
-    {
-      llxHeader();
-      print '<div class="ok">'.$langs->trans("CompanyDeleted",$soc->nom).'</div>';
-      llxFooter();
-      exit ;
-    }
+  {
+  	Header("Location: ".DOL_URL_ROOT."/societe.php?delsoc=".$soc->nom."");
+  	exit;
+  }
   else
-    {
-      $reload = 0;
-      $_GET["action"]='';
-    }
+  {
+    $reload = 0;
+    $_GET["action"]='';
+  }
 }
 
 /**

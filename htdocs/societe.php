@@ -113,6 +113,8 @@ if (isset($_POST["button_removefilter_x"]))
     $search_ville="";
 }
 
+// Affiche la confirmation de suppression d'un tiers
+if ($_GET['delsoc']) print '<div class="warning">'.$langs->trans("CompanyDeleted",$_GET['delsoc']).'</div><br>';
 
 /*
  * Mode Liste
