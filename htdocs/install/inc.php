@@ -46,23 +46,26 @@ if (file_exists($conffile))
 	include_once($conffile);	// Fichier conf chargé
 
 	// Remove last / or \ on directories or url value
-	if (! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
-	if (! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
-	if (! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
+	if (isset($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
+	if (isset($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
+	if (isset($dolibarr_main_data_root)     && ! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
 	
-	if ($dolibarr_main_document_root)
+	if (isset($dolibarr_main_document_root) && $dolibarr_main_document_root)
 	{
-		require($dolibarr_main_document_root . "/conf/conf.class.php");
-		conf($dolibarr_main_document_root );
+		conf($dolibarr_main_document_root);
 	}
-	if ($dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
+	if (isset($dolibarr_main_document_root) && $dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
 	{
 		require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
 	}
 }
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
-define('MAIN_DB_PREFIX',$dolibarr_main_db_prefix);
-define('DOL_DATA_ROOT',$dolibarr_main_data_root);
+define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
+define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
+if (! isset($conf->character_set_client))     $conf->character_set_client='iso-8859-1';
+if (! isset($conf->db->collation_connection)) $conf->db->collation_connection='latin1_swedish_ci';
+if (! isset($conf->db->user)) $conf->db->user='';
+	
 
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
@@ -100,9 +103,12 @@ $bc[false]=' class="bg1"';
 $bc[true]=' class="bg2"';
 
 
+/*
+*	\brief		Charge fichier conf (doit exister)
+*/
 function conf($dolibarr_main_document_root)
 {
-		require_once($dolibarr_main_document_root . "/conf/conf.class.php");
+		require_once($dolibarr_main_document_root."/conf/conf.class.php");
 		global $conf;
 		global $dolibarr_main_db_type;
 		global $dolibarr_main_db_host;
@@ -124,6 +130,10 @@ function conf($dolibarr_main_document_root)
 	
 }
 
+
+/*
+*	\brief		Affiche entete HTML
+*/
 function pHeader($soutitre,$next,$action='set')
 {
 	global $conf;

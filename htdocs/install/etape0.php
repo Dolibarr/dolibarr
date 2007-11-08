@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -38,12 +37,15 @@ $langs->load("install");
 
 $error = 0;
 
-/*
- * Actions
+/**
+ * Récuparation des information de connexion
  */
+$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
+$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
+// Répertoire des pages dolibarr
+$main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
 
- 
- 
+
 /*
  * Affichage page
  */
@@ -60,45 +62,57 @@ if ($_POST["action"] == "set")
     }
 }
 
-/**
- * Récuparation des information de connexion
- */
-$userroot=isset($_POST["db_user_root"])?$_POST["db_user_root"]:"";
-$passroot=isset($_POST["db_pass_root"])?$_POST["db_pass_root"]:"";
-// Répertoire des pages dolibarr
-$main_dir=isset($_POST["main_dir"])?trim($_POST["main_dir"]):'';
+// Check parameters
+if (! isset($_POST["db_type"]) || ! $_POST["db_type"])
+{
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseType")).'</div>';
+	$error++;
+}
+if (! isset($_POST["db_host"]) || ! $_POST["db_host"])
+{
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("Server")).'</div>';
+	$error++;
+}
+if (! isset($_POST["db_name"]) || ! $_POST["db_name"])
+{
+	print '<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->transnoentities("DatabaseName")).'</div>';
+	$error++;
+}
+
 
 /**
 * 	Si l'utilisateur n'est pas déjà créé, on se connecte à l'aide du login root'
 */
-require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
-if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
-{	
-	$databasefortest=$conf->db->name;
-	if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
-	{
-		$databasefortest='mysql';
-	}
-	elseif ($_POST["db_type"] == 'pgsql')
-	{
-		$databasefortest='postgres';
+if (! $error)
+{
+	require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
+	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
+	{	
+		$databasefortest=$conf->db->name;
+		if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+		{
+			$databasefortest='mysql';
+		}
+		elseif ($_POST["db_type"] == 'pgsql')
+		{
+			$databasefortest='postgres';
+		}
+		else
+		{
+			$databasefortest='mssql';
+		}
+		$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
 	}
 	else
-	{
-		$databasefortest='mssql';
+	{	
+		$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"]);
 	}
-	$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
+	if ($db->error)
+	{
+			print '<div class="error">'.$db->error.'</div>';
+			$error++;
+	}
 }
-else
-{	
-	$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"]);
-}
-if ($db->error)
-{
-		print '<div class="error">'.$db->error.'</div>';
-		$error++;
-}
-
 
 /*
 * Si creation database demandée, il est possible de faire un choix
@@ -111,7 +125,7 @@ if (! $error && (isset($_POST["db_create_database"]) && $_POST["db_create_databa
 	$disabled="disabled";
 }
 
-if ($db->connected)
+if (! $error && $db->connected)
 {
 	?>
 	<table border="0" cellpadding="1" cellspacing="0">
@@ -145,7 +159,7 @@ if ($db->connected)
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
-	{
+	
 		?>
 		<tr>
 		<td valign="top" class="label"><?php echo $langs->trans("CharacterSetDatabase"); ?></td>
@@ -181,7 +195,7 @@ if ($db->connected)
 		<td class="label"><div class="comment"><?php echo $langs->trans("CharacterSetDatabaseComment"); ?></div></td>
 		</tr>
 		<?php
-	}
+	
 
 	if ($defaultCollationConnection)
 	{
@@ -237,7 +251,7 @@ else
 	}
 	else
 	{
-		print $db->lasterror();
+		if (isset($db)) print $db->lasterror();
 		print '<br>'.$langs->trans("BecauseConnectionFailedParametersMayBeWrong").'<br><br>';
 		print $langs->trans("ErrorGoBackAndCorrectParameters");
 		$error++;

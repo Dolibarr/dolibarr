@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org> 
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
- * Copyright (C) 2004-2005 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  * Copyright (C) 2004      Sebastien DiCintio   <sdicintio@ressource-toi.org>
  *
@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -53,9 +52,9 @@ print '<table border="0" cellpadding="1" cellspacing="0">';
 <?php
 
 print '<tr>';
-print '<td valign="top" class="label">';
+print '<td valign="top" class="label"><b>';
 print $langs->trans("WebPagesDirectory");
-print "</td>";
+print "</b></td>";
 
 if(! isset($dolibarr_main_url_root) || strlen($dolibarr_main_url_root) == 0)
 {
@@ -97,9 +96,9 @@ print $langs->trans("Examples").":<br>";
 </tr>
 
 <tr>
-<td valign="top" class="label">
+<td valign="top" class="label"><b>
 <?php print $langs->trans("DocumentsDirectory"); ?>
-</td>
+</b></td>
 <?php 
 if(! isset($dolibarr_main_data_root) || strlen($dolibarr_main_data_root) == 0)
 {
@@ -121,9 +120,9 @@ print $langs->trans("Examples").":<br>";
 </tr>
 
 <tr>
-<td valign="top" class="label">
+<td valign="top" class="label"><b>
 <?php echo $langs->trans("URLRoot"); ?>
-</td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
+</b></td><td valign="top" class="label"><input type="text" size="60" name="main_url" value="
 <?php 
 if (isset($main_url) && $main_url)
   $dolibarr_main_url_root=$main_url;
@@ -174,9 +173,9 @@ $dolibarr_main_db_host = "localhost";
 ?>
 <tr>
 <!-- moi-->
-<td valign="top" class="label">
+<td valign="top" class="label"><b>
 <?php echo $langs->trans("DriverType"); ?>
-</td>
+</b></td>
 
 <td class="label">
 <?php
@@ -245,10 +244,10 @@ while (($file = readdir($handle))!==false)
 </tr>
 
 <tr>
-<td valign="top" class="label">
+<td valign="top" class="label"><b>
 <?php echo $langs->trans("Server"); ?>
-</td>
-<td valign="top" class="label"><input type="text" name="db_host" value="<?php print isset($dolibarr_main_db_host)?$dolibarr_main_db_host:''; ?>">
+</b></td>
+<td valign="top" class="label"><input type="text" name="db_host" value="<?php print (isset($dolibarr_main_db_host) && $dolibarr_main_db_host)?$dolibarr_main_db_host:'localhost'; ?>">
 <input type="hidden" name="base" value="">
 </td>
 <td class="comment">
@@ -258,9 +257,9 @@ while (($file = readdir($handle))!==false)
 </tr>
 
 <tr>
-<td class="label" valign="top">
+<td class="label" valign="top"><b>
 <?php echo $langs->trans("DatabaseName"); ?>
-</td>
+</b></td>
 
 <td class="label" valign="top"><input type="text" name="db_name" value="<?php echo isset($dolibarr_main_db_name)?$dolibarr_main_db_name:''; ?>"></td>
 <td class="comment">

@@ -71,7 +71,7 @@ if (! $main_data_dir) { $main_data_dir="$main_dir/documents"; }
 if ($_POST["action"] == "set")
 {
 	umask(0);
-	print '<h3>'.$langs->trans("SaveConfigurationFile").'</h3>';  
+	print '<h3>'.$langs->trans("ConfigurationFile").'</h3>';  
 	print '<table cellspacing="0" width="100%" cellpadding="1" border="0">';
 
 	// Verification validite parametre main_dir
@@ -147,15 +147,15 @@ if ($_POST["action"] == "set")
 			fputs($fp,"\n");
 
 			/* Authentication */
-      if ($_POST["db_type"] == 'mssql')
-      {
-      	fputs($fp, '$dolibarr_main_authentication="dolibarr_mdb2";');
-      }
-      else
-      {
-      	fputs($fp, '$dolibarr_main_authentication="dolibarr";');
-      }
-      fputs($fp,"\n");
+			if ($_POST["db_type"] == 'mssql')
+			{
+			fputs($fp, '$dolibarr_main_authentication="dolibarr_mdb2";');
+			}
+			else
+			{
+			fputs($fp, '$dolibarr_main_authentication="dolibarr";');
+			}
+			fputs($fp,"\n");
 
 			/* Preparation integration SMARTY */
 			fputs($fp, '$dolibarr_smarty_libs_dir="";');
@@ -175,6 +175,12 @@ if ($_POST["action"] == "set")
 			{
 				include("$conffile");	// On force rechargement. Ne pas mettre include_once !
 				conf($dolibarr_main_document_root);
+
+				print "<tr><td>";
+				print $langs->trans("SaveConfigurationFile");
+				print "</td><td>";
+				print $langs->trans("OK");
+				print "</td></tr>";
 			}
 			else
 			{
