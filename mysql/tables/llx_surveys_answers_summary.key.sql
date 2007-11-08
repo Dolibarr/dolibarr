@@ -18,14 +18,4 @@
 -- $Id$
 -- ===========================================================================
 
-CREATE TABLE llx_surveys_answers_summary (
-  fk_question       integer PRIMARY KEY,
-  nb_rep1           decimal(10,0) NOT NULL default '0',
-  nb_rep2           decimal(10,0) default NULL,
-  nb_rep3           decimal(10,0) default NULL,
-  nb_rep4           decimal(10,0) default NULL,
-  tot_rep1          decimal(10,0) NOT NULL default '0',
-  tot_rep2          decimal(10,0) default NULL,
-  tot_rep3          decimal(10,0) default NULL,
-  tot_rep4          decimal(10,0) default NULL
-)
+
