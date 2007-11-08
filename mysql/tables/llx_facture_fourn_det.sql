@@ -25,12 +25,12 @@ create table llx_facture_fourn_det
   fk_facture_fourn  integer NOT NULL,
   fk_product        integer NULL,
   description       text,
-  pu_ht             double(16,8),
-  pu_ttc            double(16,8),
+  pu_ht             double(24,8),
+  pu_ttc            double(24,8),
   qty               smallint DEFAULT 1,
-  tva_taux          double(16,8) DEFAULT 0,
-  total_ht          double(16,8) DEFAULT 0,
-  tva               double(16,8) DEFAULT 0,
-  total_ttc         double(16,8) DEFAULT 0
+  tva_taux          double(24,8) DEFAULT 0,
+  total_ht          double(24,8) DEFAULT 0,
+  tva               double(24,8) DEFAULT 0,
+  total_ttc         double(24,8) DEFAULT 0
 
 )type=innodb;

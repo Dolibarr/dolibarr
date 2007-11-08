@@ -26,9 +26,9 @@ create table llx_product_fournisseur_price
   datec                       datetime,
   tms                         timestamp,
   fk_product_fournisseur      integer      NOT NULL,
-  price                       double(16,8) DEFAULT 0,
+  price                       double(24,8) DEFAULT 0,
   quantity                    double,
-  unitprice                   double(16,8) DEFAULT 0,
+  unitprice                   double(24,8) DEFAULT 0,
   fk_user                     integer
 
 )type=innodb;

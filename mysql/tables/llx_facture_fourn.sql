@@ -31,13 +31,13 @@ create table llx_facture_fourn
   datef      date,        -- date de la facture
   libelle    varchar(255),
   paye       smallint DEFAULT 0 NOT NULL,
-  amount     double(16,8)     DEFAULT 0 NOT NULL,
-  remise     double(16,8)     DEFAULT 0,
-  tva        double(16,8)     DEFAULT 0,
-  total      double(16,8)     DEFAULT 0,
-  total_ht   double(16,8)     DEFAULT 0,
-  total_tva  double(16,8)     DEFAULT 0,
-  total_ttc  double(16,8)     DEFAULT 0,
+  amount     double(24,8)     DEFAULT 0 NOT NULL,
+  remise     double(24,8)     DEFAULT 0,
+  tva        double(24,8)     DEFAULT 0,
+  total      double(24,8)     DEFAULT 0,
+  total_ht   double(24,8)     DEFAULT 0,
+  total_tva  double(24,8)     DEFAULT 0,
+  total_ttc  double(24,8)     DEFAULT 0,
 
   fk_statut  smallint DEFAULT 0 NOT NULL,
 

@@ -600,89 +600,89 @@ drop table if exists llx_ventes;
 drop table if exists llx_pointmort;
 drop table if exists llx_birthday_alert;
 
-ALTER TABLE llx_commande_fournisseurdet ADD total_ht  double(16,8) DEFAULT 0 after subprice;
-ALTER TABLE llx_commande_fournisseurdet ADD total_tva double(16,8) DEFAULT 0 after total_ht;
-ALTER TABLE llx_commande_fournisseurdet ADD total_ttc double(16,8) DEFAULT 0 after total_tva;
+ALTER TABLE llx_commande_fournisseurdet ADD total_ht  double(24,8) DEFAULT 0 after subprice;
+ALTER TABLE llx_commande_fournisseurdet ADD total_tva double(24,8) DEFAULT 0 after total_ht;
+ALTER TABLE llx_commande_fournisseurdet ADD total_ttc double(24,8) DEFAULT 0 after total_tva;
 ALTER TABLE llx_commande_fournisseurdet ADD info_bits integer      DEFAULT 0 after total_ttc;
 
 
 -- Pas de limite sur nb decimal des prix dans base car definie en option
 -- Tous les prix doivent etre au format float(16,8)
 -- Tous les tx tva doivent etre au format float(6,3)
-ALTER TABLE llx_product_price ADD COLUMN price_ttc double(16,8) DEFAULT 0 AFTER price;
-ALTER TABLE llx_product ADD COLUMN price_ttc       double(16,8) DEFAULT 0 AFTER price_base_type;
+ALTER TABLE llx_product_price ADD COLUMN price_ttc double(24,8) DEFAULT 0 AFTER price;
+ALTER TABLE llx_product ADD COLUMN price_ttc       double(24,8) DEFAULT 0 AFTER price_base_type;
 
-ALTER TABLE llx_product MODIFY price     double(16,8) DEFAULT 0;
-ALTER TABLE llx_product MODIFY price_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_product MODIFY price     double(24,8) DEFAULT 0;
+ALTER TABLE llx_product MODIFY price_ttc double(24,8) DEFAULT 0;
 ALTER TABLE llx_product MODIFY tva_tx    double(6,3)  DEFAULT 0;
 
-ALTER TABLE llx_product_price MODIFY price     double(16,8) DEFAULT 0;
-ALTER TABLE llx_product_price MODIFY price_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_product_price MODIFY price     double(24,8) DEFAULT 0;
+ALTER TABLE llx_product_price MODIFY price_ttc double(24,8) DEFAULT 0;
 ALTER TABLE llx_product_price MODIFY tva_tx    double(6,3)  DEFAULT 0;
 
-ALTER TABLE llx_product_fournisseur_price_log MODIFY price    double(16,8) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price_log MODIFY price    double(24,8) DEFAULT 0;
 ALTER TABLE llx_product_fournisseur_price_log MODIFY quantity double;
-ALTER TABLE llx_product_fournisseur_price MODIFY price        double(16,8) DEFAULT 0;
+ALTER TABLE llx_product_fournisseur_price MODIFY price        double(24,8) DEFAULT 0;
 ALTER TABLE llx_product_fournisseur_price MODIFY quantity     double;
 
 
-ALTER TABLE llx_facture_fourn MODIFY   amount     double(16,8)     DEFAULT 0 NOT NULL;
-ALTER TABLE llx_facture_fourn MODIFY   remise     double(16,8)     DEFAULT 0;
-ALTER TABLE llx_facture_fourn MODIFY   tva        double(16,8)     DEFAULT 0;
-ALTER TABLE llx_facture_fourn MODIFY   total      double(16,8)     DEFAULT 0;
-ALTER TABLE llx_facture_fourn MODIFY   total_ht   double(16,8)     DEFAULT 0;
-ALTER TABLE llx_facture_fourn MODIFY   total_tva  double(16,8)     DEFAULT 0;
-ALTER TABLE llx_facture_fourn MODIFY   total_ttc  double(16,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   amount     double(24,8)     DEFAULT 0 NOT NULL;
+ALTER TABLE llx_facture_fourn MODIFY   remise     double(24,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   tva        double(24,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total      double(24,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_ht   double(24,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_tva  double(24,8)     DEFAULT 0;
+ALTER TABLE llx_facture_fourn MODIFY   total_ttc  double(24,8)     DEFAULT 0;
 
-ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(16,8);
-ALTER TABLE llx_facture_fourn_det ADD     pu_ttc            double(16,8) AFTER pu_ht;
+ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(24,8);
+ALTER TABLE llx_facture_fourn_det ADD     pu_ttc            double(24,8) AFTER pu_ht;
 ALTER TABLE llx_facture_fourn_det MODIFY  qty               smallint DEFAULT 1;
-ALTER TABLE llx_facture_fourn_det MODIFY  total_ht          double(16,8) DEFAULT 0;
-ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(16,8) DEFAULT 0;
-ALTER TABLE llx_facture_fourn_det MODIFY  tva               double(16,8) DEFAULT 0;
-ALTER TABLE llx_facture_fourn_det MODIFY  total_ttc         double(16,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  total_ht          double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  tva               double(24,8) DEFAULT 0;
+ALTER TABLE llx_facture_fourn_det MODIFY  total_ttc         double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_propal ADD total_ht double(16,8)     DEFAULT 0 after remise;
+ALTER TABLE llx_propal ADD total_ht double(24,8)     DEFAULT 0 after remise;
 
-ALTER TABLE llx_propal MODIFY   tva      double(16,8)     DEFAULT 0;
-ALTER TABLE llx_propal MODIFY   total_ht double(16,8)     DEFAULT 0;
-ALTER TABLE llx_propal MODIFY   total    double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propal MODIFY   tva      double(24,8)     DEFAULT 0;
+ALTER TABLE llx_propal MODIFY   total_ht double(24,8)     DEFAULT 0;
+ALTER TABLE llx_propal MODIFY   total    double(24,8)     DEFAULT 0;
 
 ALTER TABLE llx_propaldet MODIFY   tva_tx    double(6,3)      DEFAULT 0;
-ALTER TABLE llx_propaldet MODIFY   total_ht  double(16,8)     DEFAULT 0;
-ALTER TABLE llx_propaldet MODIFY   total_tva double(16,8)     DEFAULT 0;
-ALTER TABLE llx_propaldet MODIFY   total_ttc double(16,8)     DEFAULT 0;
-ALTER TABLE llx_propaldet MODIFY   subprice  double(16,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_ht  double(24,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_tva double(24,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   total_ttc double(24,8)     DEFAULT 0;
+ALTER TABLE llx_propaldet MODIFY   subprice  double(24,8)     DEFAULT 0;
 
 ALTER TABLE llx_contratdet MODIFY  tva_tx    double(6,3)  DEFAULT 0;
-ALTER TABLE llx_contratdet MODIFY  subprice  double(16,8) DEFAULT 0;
-ALTER TABLE llx_contratdet MODIFY  total_ht  double(16,8) DEFAULT 0;
-ALTER TABLE llx_contratdet MODIFY  total_tva double(16,8) DEFAULT 0;
-ALTER TABLE llx_contratdet MODIFY  total_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_contratdet MODIFY  subprice  double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet MODIFY  total_ht  double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet MODIFY  total_tva double(24,8) DEFAULT 0;
+ALTER TABLE llx_contratdet MODIFY  total_ttc double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_commande MODIFY  total_ht  double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande MODIFY  tva       double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande MODIFY  total_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_commande MODIFY  total_ht  double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande MODIFY  tva       double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande MODIFY  total_ttc double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_commande_fournisseur MODIFY  total_ht  double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande_fournisseur MODIFY  tva       double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande_fournisseur MODIFY  total_ttc double(16,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur MODIFY  total_ht  double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur MODIFY  tva       double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseur MODIFY  total_ttc double(24,8) DEFAULT 0;
 
-ALTER TABLE llx_commandedet MODIFY  subprice   double(16,8) DEFAULT 0;
-ALTER TABLE llx_commandedet MODIFY  total_tva  double(16,8) DEFAULT 0;
-ALTER TABLE llx_commandedet MODIFY  total_ht   double(16,8) DEFAULT 0;
-ALTER TABLE llx_commandedet MODIFY  total_ttc  double(16,8) DEFAULT 0;
+ALTER TABLE llx_commandedet MODIFY  subprice   double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet MODIFY  total_tva  double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet MODIFY  total_ht   double(24,8) DEFAULT 0;
+ALTER TABLE llx_commandedet MODIFY  total_ttc  double(24,8) DEFAULT 0;
 ALTER TABLE llx_commandedet MODIFY  tva_tx     double(6,3)  DEFAULT 0;
 
-ALTER TABLE llx_commande_fournisseurdet MODIFY  subprice   double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande_fournisseurdet MODIFY  total_tva  double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ht   double(16,8) DEFAULT 0;
-ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ttc  double(16,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet MODIFY  subprice   double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_tva  double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ht   double(24,8) DEFAULT 0;
+ALTER TABLE llx_commande_fournisseurdet MODIFY  total_ttc  double(24,8) DEFAULT 0;
 ALTER TABLE llx_commande_fournisseurdet MODIFY  tva_tx     double(6,3)  DEFAULT 0;
 
-ALTER TABLE llx_societe_remise_except MODIFY  amount_ht     double(16,8) DEFAULT 0;
-ALTER TABLE llx_societe_remise_except MODIFY  amount_tva    double(16,8) DEFAULT 0;
-ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(16,8) DEFAULT 0;
+ALTER TABLE llx_societe_remise_except MODIFY  amount_ht     double(24,8) DEFAULT 0;
+ALTER TABLE llx_societe_remise_except MODIFY  amount_tva    double(24,8) DEFAULT 0;
+ALTER TABLE llx_societe_remise_except MODIFY  amount_ttc    double(24,8) DEFAULT 0;
 ALTER TABLE llx_societe_remise_except MODIFY  tva_tx        double(6,3)  DEFAULT 0;
 
 
@@ -783,7 +783,7 @@ drop table if exists `llx_accountingsystem_det`;
 
 update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');
 
-alter table llx_product_fournisseur_price add unitprice double(16,8);
+alter table llx_product_fournisseur_price add unitprice double(24,8);
 update llx_product_fournisseur_price set unitprice = ROUND(price/quantity,8) where unitprice IS NULL;
 
 update llx_fichinter set tms=datec where tms < datec;
@@ -797,7 +797,7 @@ create table llx_c_ecotaxe
   rowid        integer      AUTO_INCREMENT PRIMARY KEY,
   code         varchar(64)  UNIQUE NOT NULL,
   libelle      varchar(255),
-  price        double(16,8),
+  price        double(24,8),
   organization varchar(255),
   fk_pays      integer NOT NULL,
   active       tinyint DEFAULT 1  NOT NULL
@@ -881,7 +881,7 @@ ALTER TABLE llx_facturedet MODIFY special_code tinyint(4) unsigned default 0;
 ALTER TABLE llx_commandedet MODIFY special_code tinyint(4) unsigned default 0;
 
 ALTER TABLE llx_propaldet ADD COLUMN special_code tinyint(4) unsigned default 0 after marque_tx;
-ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(16,8) DEFAULT 0 after info_bits;
+ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(24,8) DEFAULT 0 after info_bits;
 
 -- Nouveau fonctionnement de la table llx_product_fournisseur_price
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_user;

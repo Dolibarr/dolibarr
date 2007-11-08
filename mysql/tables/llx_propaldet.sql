@@ -31,12 +31,12 @@ create table llx_propaldet
   remise_percent    real         DEFAULT 0,          -- pourcentage de remise
   remise            real         DEFAULT 0,          -- montant de la remise (obsolete)
   price             real,                            -- prix final (obsolete)
-  subprice          double(16,8) DEFAULT 0,          -- prix unitaire article
-  total_ht          double(16,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
-  total_tva         double(16,8) DEFAULT 0,          -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
-  total_ttc         double(16,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
+  subprice          double(24,8) DEFAULT 0,          -- prix unitaire article
+  total_ht          double(24,8) DEFAULT 0,          -- Total HT de la ligne toute quantité et incluant remise ligne et globale
+  total_tva         double(24,8) DEFAULT 0,          -- Total TVA de la ligne toute quantité et incluant remise ligne et globale
+  total_ttc         double(24,8) DEFAULT 0,          -- Total TTC de la ligne toute quantité et incluant remise ligne et globale
   info_bits		      integer      DEFAULT 0,          -- TVA NPR ou non
-  pa_ht             double(16,8) DEFAULT 0,          -- prix d'achat HT
+  pa_ht             double(24,8) DEFAULT 0,          -- prix d'achat HT
   marge_tx          double(6,3)  DEFAULT 0,          -- taux de marge (marge sur prix d'achat)
   marque_tx         double(6,3)  DEFAULT 0,          -- taux de marque (marge sur prix de vente)
   special_code      tinyint(4)   UNSIGNED DEFAULT 0, -- code pour les lignes speciales
