@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -75,7 +74,7 @@ class pdf_paiement extends FPDF
 	{
 		global $langs;
 		
-		$title=$this->description.' - '.dolibarr_print_date(mktime($this->year,0,0,$this->month),"%B %Y");
+		$title=$this->description.' - '.dolibarr_print_date(dolibarr_mktime(0,0,0,$this->month,1,$this->year),"%B %Y");
 		$pdf->SetFont('Arial','B',12);
 		$pdf->Text(76, 10, $title);
 		
