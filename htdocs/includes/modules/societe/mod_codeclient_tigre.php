@@ -318,10 +318,10 @@ class mod_codeclient_tigre extends ModeleThirdPartyCode
   	global $conf;
   	
   	$mask = $conf->global->CODE_TIGRE_MASK_CUSTOMER;
-  	if (eregi('{pre}',$mask)) return 1;
+  	if (eregi('\{pre\}',$mask)) return 1;
   	
   	$mask = $conf->global->CODE_TIGRE_MASK_SUPPLIER;
-  	if (eregi('{pre}',$mask)) return 1;
+  	if (eregi('\{pre\}',$mask)) return 1;
   	
   	return 0;
   }
