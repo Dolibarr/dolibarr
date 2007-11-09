@@ -636,6 +636,7 @@ ALTER TABLE llx_facture_fourn MODIFY   total_ttc  double(24,8)     DEFAULT 0;
 
 ALTER TABLE llx_facture_fourn_det MODIFY  pu_ht             double(24,8);
 ALTER TABLE llx_facture_fourn_det ADD     pu_ttc            double(24,8) AFTER pu_ht;
+ALTER TABLE llx_facture_fourn_det MODIFY  pu_ttc            double(24,8);
 ALTER TABLE llx_facture_fourn_det MODIFY  qty               smallint DEFAULT 1;
 ALTER TABLE llx_facture_fourn_det MODIFY  total_ht          double(24,8) DEFAULT 0;
 ALTER TABLE llx_facture_fourn_det MODIFY  tva_taux          double(24,8) DEFAULT 0;
@@ -784,6 +785,7 @@ drop table if exists `llx_accountingsystem_det`;
 update llx_bank set label='(InitialBankBalance)' where fk_type='SOLD' and label in ('Balance','(Balance)','Solde','(Solde)');
 
 alter table llx_product_fournisseur_price add unitprice double(24,8);
+alter table llx_product_fournisseur_price MODIFY unitprice double(24,8);
 update llx_product_fournisseur_price set unitprice = ROUND(price/quantity,8) where unitprice IS NULL;
 
 update llx_fichinter set tms=datec where tms < datec;
@@ -882,6 +884,7 @@ ALTER TABLE llx_commandedet MODIFY special_code tinyint(4) unsigned default 0;
 
 ALTER TABLE llx_propaldet ADD COLUMN special_code tinyint(4) unsigned default 0 after marque_tx;
 ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(24,8) DEFAULT 0 after info_bits;
+ALTER TABLE llx_propaldet MODIFY pa_ht double(24,8) DEFAULT 0;
 
 -- Nouveau fonctionnement de la table llx_product_fournisseur_price
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_user;
