@@ -55,55 +55,53 @@ class RemiseCheque
       $this->previous_id = 0;
     }  
 
-  /**
-     \brief Lecture
-     \param id identifiant de ligne
-  */
-  function Fetch($id)
-  {
-    $sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
-    $sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
-    $sql.=",ba.label as account_label";
-    $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
-    $sql.= " WHERE bc.rowid = $id;";
+	/**
+		\brief 		Load record
+		\param 		id 		Identifiant de ligne
+	*/
+	function Fetch($id)
+	{
+		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
+		$sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
+		$sql.=",ba.label as account_label";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
+		$sql.= " WHERE bc.rowid = $id;";
 
-    $resql = $this->db->query($sql);
+		dolibarr_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			if ($obj = $this->db->fetch_object($resql) )
+			{
+				$this->id             = $obj->rowid;
+				$this->amount         = $obj->amount;
+				$this->date_bordereau = $obj->date_bordereau;
+				$this->account_id     = $obj->fk_bank_account;
+				$this->account_label  = $obj->account_label;
+				$this->author_id      = $obj->fk_user_author;
+				$this->nbcheque       = $obj->nbcheque;
+				$this->statut         = $obj->statut;
 
-    if ($resql)
-      {
-	if ($obj = $this->db->fetch_object($resql) )
-	  {
-	    $this->id             = $obj->rowid;
-	    $this->amount         = $obj->amount;
-	    $this->date_bordereau = $obj->date_bordereau;
-	    $this->account_id     = $obj->fk_bank_account;
-	    $this->account_label  = $obj->account_label;
-	    $this->author_id      = $obj->fk_user_author;
-	    $this->nbcheque       = $obj->nbcheque;
-	    $this->statut         = $obj->statut;
+				if ($this->statut == 0)
+				{
+					$this->number         = "(PROV".$this->id.")";
+				}
+				else
+				{
+					$this->number         = $obj->number;
+				}
 
-	    if ($this->statut == 0)
-	      {
-		$this->number         = "(PROV".$this->id.")";
-	      }
-	    else
-	      {
-		$this->number         = $obj->number;
-	      }
+			}
+			$this->db->free($resql);
 
-	  }
-	$this->db->free($resql);
-
-	return 0;
-      }
-    else
-      {
-	return -1;
-      }
-
-
-  }
+			return 0;
+		}
+		else
+		{
+			return -1;
+		}
+	}
 
 	/**
 		\brief  	Crée bordereau en base
@@ -121,44 +119,46 @@ class RemiseCheque
 		$sql = "INSERT INTO ".MAIN_DB_PREFIX."bordereau_cheque (datec, date_bordereau,fk_user_author,fk_bank_account)";
 		$sql .= " VALUES (now(),now(),".$user->id.",".$account_id.")";
 		
+		dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ( $resql )
 		{
 			$this->id = $this->db->last_insert_id(MAIN_DB_PREFIX."bordereau_cheque");
-			
 			if ($this->id == 0)
 			{
 				$this->errno = -1024;
-				dolibarr_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)");
+				dolibarr_syslog("Remisecheque::Create Erreur Lecture ID ($this->errno)", LOG_ERR);
 			}
 
-			if ($this->id > 0 && $this->errno === 0)
+			if ($this->id > 0 && $this->errno == 0)
 			{
 				$sql = "UPDATE ".MAIN_DB_PREFIX."bordereau_cheque";
 				$sql.= " SET number='(PROV".$this->id.")'";
 				$sql.= " WHERE rowid='".$this->id."';";
-				$resql = $this->db->query($sql);	    
-				if (!$resql)
+				
+				dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
+				$resql = $this->db->query($sql);
+				if (! $resql)
 				{		
 					$this->errno = -1025;
-					dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)");
+					dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)", LOG_ERR);
 				}	    
 			}
 
-			if ($this->id > 0 && $this->errno === 0)
+			if ($this->id > 0 && $this->errno == 0)
 			{
 				$lines = array();
 				$sql = "SELECT b.rowid";
 				$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 				$sql.= " WHERE b.fk_type = 'CHQ' AND b.amount > 0";
-				$sql.= " AND b.fk_bordereau = 0 AND b.fk_account='$account_id'";
-				$sql.= " LIMIT 40;"; // On limite a 40 pour ne générer des PDF que d'une page
+				$sql.= " AND b.fk_bordereau = 0 AND b.fk_account='".$account_id."'";
+				$sql.= " LIMIT 40"; // On limite a 40 pour ne générer des PDF que d'une page
 
+				dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 				$resql = $this->db->query($sql);
-
 				if ($resql)
 				{
-					while ( $row = $this->db->fetch_row($resql) )
+					while ($row = $this->db->fetch_row($resql) )
 					{
 						array_push($lines, $row[0]);
 					}
@@ -167,28 +167,29 @@ class RemiseCheque
 				else
 				{
 					$this->errno = -1026;
-					dolibarr_syslog("RemiseCheque::Create ERREUR SELECT ($this->errno)");
+					dolibarr_syslog("RemiseCheque::Create Error ($this->errno)", LOG_ERR);
 				}
 			}
 
-			if ($this->id > 0 && $this->errno === 0)
+			if ($this->id > 0 && $this->errno == 0)
 			{
 				foreach ($lines as $lineid)
 				{
 					$sql = "UPDATE ".MAIN_DB_PREFIX."bank as b";
 					$sql.= " SET fk_bordereau = ".$this->id;
-					$sql.= " WHERE b.rowid = $lineid;";
+					$sql.= " WHERE b.rowid = ".$lineid;
 					
+					dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 					$resql = $this->db->query($sql);
 					if (!$resql)
 					{		
 						$this->errno = -18;
-						dolibarr_syslog("RemiseCheque::Create ERREUR UPDATE ($this->errno)");
+						dolibarr_syslog("RemiseCheque::Create Error update bank ($this->errno)", LOG_ERR);
 					}
 				}
 			}
 
-			if ($this->id > 0 && $this->errno === 0)
+			if ($this->id > 0 && $this->errno == 0)
 			{
 				if ($this->UpdateAmount() <> 0)
 				{		

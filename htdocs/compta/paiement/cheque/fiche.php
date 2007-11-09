@@ -326,7 +326,7 @@ else
 		$param="&amp;id=".$remisecheque->id;
 		print '<tr class="liste_titre">';
 		'<td>'.$langs->trans("Num").'</td>';
-		print '<td>&nbsp;</td>';
+		print '<td>'.$langs->trans("Position").'</td>';
 		print_liste_field_titre($langs->trans("Num"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield);
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield);
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield);
