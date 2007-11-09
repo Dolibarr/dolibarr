@@ -45,7 +45,7 @@ class FacturationImportCdr {
 	$this->db->free($resql);
       }
     return $nb;
-}
+  }
 
   function Import($id_fourn)
   {
@@ -55,7 +55,8 @@ class FacturationImportCdr {
      * Traitement
      */
     $files = array();
-    
+    $unknown_lines = array();
+  
     if (is_dir($dir))
       {
 	$handle=opendir($dir);
@@ -255,8 +256,12 @@ class FacturationImportCdr {
 			  }
 			else
 			  {
-			    dolibarr_syslog("FacturationImportCdr::Import Ligne $ligne inconnue Ligne : $cont ignoree", LOG_INFO);
-			    array_push($this->messages,array('warning',"Ligne $ligne inconnue"));
+			    if (!in_array($ligne, $unknown_lines))
+			      {
+				dolibarr_syslog("FacturationImportCdr::Import Ligne $ligne inconnue Ligne : $cont ignoree", LOG_INFO);
+				array_push($this->messages,array('warning',"Ligne $ligne inconnue"));
+			      }
+			    array_push($unknown_lines, $ligne);
 			  }
 			$line++;
 		      }		    
