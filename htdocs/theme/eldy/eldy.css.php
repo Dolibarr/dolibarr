@@ -40,7 +40,7 @@ if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_
 ?>
 
 /* ============================================================================== */
-/* Styles par défaut                                                              */
+/* Styles par dï¿½faut                                                              */
 /* ============================================================================== */
 
 body {
@@ -153,7 +153,7 @@ div.vmenu
     margin-right: 2px;
     padding: 0px;
     padding-bottom: 0px;
-    width: 160px;
+    width: 162px;
 }
 
 div.fiche
@@ -384,11 +384,11 @@ a.vmenu:active      { font-size:12px; font-family: helvetica, verdana, arial, sa
 a.vmenu:hover       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; }
 font.vmenudisabled  { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: bold; color: #93a5aa; }
 
-a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1em 1em 1em 1em; }
-font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1em 1em 1em 1em; }
+a.vsmenu:link       { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:visited    { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:active     { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+a.vsmenu:hover      { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #202020; margin: 1px 1px 1px 6px; }
+font.vsmenudisabled { font-size:12px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; color: #93a5aa; margin: 1px 1px 1px 6px; }
 
 a.help:link         { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
 a.help:visited      { font-size:11px; font-family: helvetica, verdana, arial, sans-serif; text-align:left; font-weight: normal; }
@@ -455,14 +455,17 @@ div.menu_fin {
 
 div.blockvmenupair
 {
-    width:158px;
+    width:160px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
     background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
@@ -472,14 +475,17 @@ div.blockvmenupair
 
 div.blockvmenuimpair
 {
-    width:158px;
+    width:160px;
     border-right: 1px solid #555555;
     border-bottom: 1px solid #555555;
 	font-family: helvetica, verdana, arial, sans-serif;
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 	background: #A3BCC6;
     background-image: url(<?php echo $dolibarr_main_url_root.'/theme/eldy/img/tmenu.jpg' ?>);
@@ -489,7 +495,7 @@ div.blockvmenuimpair
 
 div.help
 {
-    width:158px;
+    width:160px;
 	border-right: 1px solid #000000;
 	border-bottom: 1px solid #000000;
 	background: #f0f0f0;
@@ -497,7 +503,10 @@ div.help
 	color: #000000;
 	text-align:left;
 	text-decoration: none;
-    padding: 3px;
+    padding-left: 3px;
+    padding-right: 1px;
+    padding-top: 3px;
+    padding-bottom: 3px;
     margin: 1px 0px 0px 0px;
 }
 
@@ -677,7 +686,7 @@ a.tabimage {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe à utiliser */
+/* Nouvelle syntaxe ï¿½ utiliser */
 
 a.butAction:link    {     font-size: 12px;
 					  font-family: helvetica, verdana, arial, sans-serif;
@@ -945,7 +954,7 @@ font-family: helvetica, verdana, arial, sans-serif;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
-td.warning {	/* Utilisé par Smarty */
+td.warning {	/* Utilisï¿½ par Smarty */
   background: #FF99A9;
 }
 
@@ -1146,7 +1155,7 @@ cursor: pointer;
 	background: beige;
 	color: black;
 }
-#corpForm .normal {	/*** Retour à l'état normal après l'utilisation ***/
+#corpForm .normal {	/*** Retour ï¿½ l'ï¿½tat normal aprï¿½s l'utilisation ***/
 	background: white;
 	color: black;
 }
@@ -1201,7 +1210,7 @@ td.hidden {
                         margin: 1px 1px 1px 1px;
               }
 
-#evolForm input.normal {	/*** Retour à l'état normal après l'utilisation ***/
+#evolForm input.normal {	/*** Retour ï¿½ l'ï¿½tat normal aprï¿½s l'utilisation ***/
                          background: white;
                          color: black;
                          border: solid 1px white;
@@ -1212,7 +1221,7 @@ td.hidden {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste déroulante de l'autocompletion                                   */
+/*  Ajax - Liste dï¿½roulante de l'autocompletion                                   */
 /* ============================================================================== */
 
 div.autocomplete {
