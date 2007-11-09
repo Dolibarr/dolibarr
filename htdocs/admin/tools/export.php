@@ -118,11 +118,13 @@ if ($what == 'mysql')
 	$paramcrypted=$param." -p".eregi_replace('.','*',$dolibarr_main_db_pass);
 	$paramclear=$param." -p".$dolibarr_main_db_pass;
 
-	$relativepathfile='/admin/temp/'.$file;
+	$relativepathdir='/admin/temp';
+	$relativepathfile=$relativepathdir.'/'.$file;
 	// for compression format, we add extension
 	if ($compression == 'gz') $relativepathfile.='.gz';
 	if ($compression == 'bz') $relativepathfile.='.bz2';
 	$relativepatherr=$relativepathfile.'.err';
+	$outputdir=DOL_DATA_ROOT.$relativepathdir;
 	$outputfile=DOL_DATA_ROOT.$relativepathfile;
 	$outputerror=DOL_DATA_ROOT.$relativepatherr;
 	
@@ -133,43 +135,58 @@ if ($what == 'mysql')
 
 	print $langs->trans("BackupResult").': ';
 
+	$errormsg='';
+
+	$result=create_exdir($outputdir);
+	
 	// Debut appel methode execution
 	$fullcommandcrypted=$command." ".$paramcrypted." 2>&1";
 	$fullcommandclear=$command." ".$paramclear." 2>&1";
 	if ($compression == 'none') $handle = fopen($outputfile, 'w');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'w');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'w');
-	
-	dolibarr_syslog("Run command ".$fullcommandcrypted);
-	$handlein = popen($fullcommandclear, 'r');
-	while (!feof($handlein))
-	{
-		$read = fgets($handlein);
-		fwrite($handle,$read);
+
+	if ($handle)
+	{	
+		dolibarr_syslog("Run command ".$fullcommandcrypted);
+		$handlein = popen($fullcommandclear, 'r');
+		while (!feof($handlein))
+		{
+			$read = fgets($handlein);
+			fwrite($handle,$read);
+		}
+		pclose($handlein);
+		
+		if ($compression == 'none') fclose($handle);
+		if ($compression == 'gz')   gzclose($handle);
+		if ($compression == 'bz')   bzclose($handle);
 	}
-	pclose($handlein);
-	if ($compression == 'none') fclose($handle);
-	if ($compression == 'gz')   gzclose($handle);
-	if ($compression == 'bz')   bzclose($handle);
-	
+	else
+	{
+		dolibarr_syslog("Failed to open file $outputfile",LOG_ERR);
+		$errormsg=$langs->trans("ErrorFailedToWriteInDir");
+	}
+		
 	// Get errorstring
-	$errormsg='';
 	if ($compression == 'none') $handle = fopen($outputfile, 'r');
 	if ($compression == 'gz')   $handle = gzopen($outputfile, 'r');
 	if ($compression == 'bz')   $handle = bzopen($outputfile, 'r');
-	$errormsg = fgets($handle,10);
-	if ($compression == 'none') fclose($handle);
-	if ($compression == 'gz')   gzclose($handle);
-	if ($compression == 'bz')   bzclose($handle);
-	if (eregi('^-- MySql',$errormsg)) $errormsg='';	// Pas erreur
-	else
+	if ($hanlde)
 	{
-		// Renommer fichier sortie en fichier erreur	
-		//print "$outputfile -> $outputerror";
-		dol_delete_file($outputerror);
-		@rename($outputfile,$outputerror);
-		// Si safe_mode on et command hors du parametre exec, on a un fichier out donc errormsg vide
-		if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");	
+		$errormsg = fgets($handle,10);
+		if ($compression == 'none') fclose($handle);
+		if ($compression == 'gz')   gzclose($handle);
+		if ($compression == 'bz')   bzclose($handle);
+		if (eregi('^-- MySql',$errormsg)) $errormsg='';	// Pas erreur
+		else
+		{
+			// Renommer fichier sortie en fichier erreur	
+			//print "$outputfile -> $outputerror";
+			dol_delete_file($outputerror);
+			@rename($outputfile,$outputerror);
+			// Si safe_mode on et command hors du parametre exec, on a un fichier out donc errormsg vide
+			if (! $errormsg) $errormsg=$langs->trans("ErrorFailedToRunExternalCommand");	
+		}
 	}
 	// Fin execution commande
 
