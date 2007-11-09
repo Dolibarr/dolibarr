@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -27,27 +26,33 @@
 		\version    $Revision$
 */
 
+require_once(DOL_DOCUMENT_ROOT ."/commonobject.class.php");
+
+
 /**
 		\class RemiseCheque
 		\brief Classe permettant la gestion des remises de cheque
 */
 
-class RemiseCheque
+class RemiseCheque extends CommonObject
 {
-  var $db;
-  var $id;
-  var $num;
-  var $intitule;
-  //! Numero d'erreur Plage 1024-1279
-  var $errno;
+	var $db;
+	var $error;
+ 	var $element='chequereceipt';
+    var $table_element='bordereau_cheque';
 
-  /**
-   *    \brief  Constructeur de la classe
-   *    \param  DB          handler accès base de données
-   *    \param  id          id compte (0 par defaut)
-   */
-	 
-  function RemiseCheque($DB,$langs='')
+	var $id;
+	var $num;
+	var $intitule;
+	//! Numero d'erreur Plage 1024-1279
+	var $errno;
+
+	/**
+	*    \brief  Constructeur de la classe
+	*    \param  DB          handler accès base de données
+	*    \param  id          id compte (0 par defaut)
+	*/
+	function RemiseCheque($DB,$langs='')
     {
       $this->db = $DB;
       $this->langs = $langs;
@@ -57,16 +62,18 @@ class RemiseCheque
 
 	/**
 		\brief 		Load record
-		\param 		id 		Identifiant de ligne
+		\param 		id 			Id record
+		\param 		ref		 	Ref record
 	*/
-	function Fetch($id)
+	function Fetch($id,$ref)
 	{
 		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
 		$sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
 		$sql.=",ba.label as account_label";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."bank_account as ba ON bc.fk_bank_account = ba.rowid";
-		$sql.= " WHERE bc.rowid = $id;";
+		if ($id)  $sql.= " WHERE bc.rowid = ".$id;
+		if ($ref) $sql.= " WHERE bc.number = '".addslashes($ref)."'";
 
 		dolibarr_syslog("RemiseCheque::fetch sql=".$sql, LOG_DEBUG);
 		$resql = $this->db->query($sql);
@@ -91,6 +98,7 @@ class RemiseCheque
 				{
 					$this->number         = $obj->number;
 				}
+				$this->ref            = $this->number;
 
 			}
 			$this->db->free($resql);

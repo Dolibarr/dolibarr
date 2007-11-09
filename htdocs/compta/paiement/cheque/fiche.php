@@ -151,9 +151,18 @@ if ($_GET['action'] == 'new')
 }
 else
 {
-  $remisecheque = new RemiseCheque($db);
-  $result = $remisecheque->Fetch($_GET["id"]);
+	$remisecheque = new RemiseCheque($db);
+	if ($_GET["id"])
+	{
+		$result = $remisecheque->Fetch($_GET["id"]);
+	}
+	if ($_GET["ref"])
+	{
+		$result = $remisecheque->Fetch('',$_GET["ref"]);
+	}
 
+	
+	
   $h=0;
   $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$_GET["id"];
   $head[$h][1] = $langs->trans("CheckReceipt");
@@ -278,17 +287,11 @@ else
 	$accountstatic->id=$remisecheque->account_id;
 	$accountstatic->label=$remisecheque->account_label;
 
-	$remisecheque->load_previous_next_id();
-	$previous_id = $remisecheque->previous_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->previous_id.'">'.img_previous().'</a>':'';
-	$next_id     = $remisecheque->next_id ? '<a href="'.$_SERVER["PHP_SELF"].'?id='.$remisecheque->next_id.'">'.img_next().'</a>':'';
-
 	print '<table class="border" width="100%">';
-	print '<tr><td width="20%">'.$langs->trans('Numero').'</td><td colspan="2" >';
-	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-//	print '<td width="20%" align="right">';
-	print $remisecheque->number;
-	//print $previous_id.' '.$next_id;
-	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="2" >';
+	
+	print $html->showrefnav($remisecheque,'ref','', 1, 'number');
+
 	print "</td>";
 	print "</tr>\n";
 
