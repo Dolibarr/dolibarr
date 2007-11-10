@@ -1183,6 +1183,36 @@ class Facture extends CommonObject
 			{
 				// Classe la société rattachée comme client
 				$result=$this->client->set_as_client();
+				
+				//Si activé on décrémente le produit principal et ses composants à la validation de facture
+				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
+					
+					for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
+					{
+						if ($conf->global->PRODUIT_SOUSPRODUITS)
+						{
+							$prod = new Product($this->db, $this->lignes[$i]->fk_product);
+							$prod -> get_sousproduits_arbo();
+							$prods_arbo = $prod->get_each_prod();
+							if(sizeof($prods_arbo) > 0)
+							{
+								foreach($prods_arbo as $key => $value)
+								{
+									// on décompte le stock de tous les sousproduits
+									$mouvS = new MouvementStock($this->db);
+									$entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+									$result=$mouvS->livraison($user, $value[1], $entrepot_id, $value[0]*$this->lignes[$i]->qty);
+								}
+		    	    }
+		        }
+		        $mouvP = new MouvementStock($this->db);
+		        // on décompte le stock du produit principal
+		        $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		        $result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
+		      }
+		    }
 
 				$this->ref = $numfa;
 
