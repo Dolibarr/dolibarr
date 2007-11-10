@@ -138,35 +138,44 @@ if ($conf->global->STOCK_USERSTOCK == 1)
   print "</tr>\n";
 }
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="60%">'.$langs->trans("DeStockReStockOnBill").'</td>';
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"stock_bill\">";
-print $html->selectyesno("stock_bill",$conf->global->STOCK_CALCULATE_ON_BILL,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n</td>\n</tr>\n";
+if ($conf->facture->enabled)
+{
+	$var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="60%">'.$langs->trans("DeStockReStockOnBill").'</td>';
+  print '<td width="160" align="right">';
+  print "<form method=\"post\" action=\"stock.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"stock_bill\">";
+  print $html->selectyesno("stock_bill",$conf->global->STOCK_CALCULATE_ON_BILL,1);
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</form>\n</td>\n</tr>\n";
+}
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="60%">'.$langs->trans("DeStockReStockOnValidateOrder").'</td>';
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"stock_validateorder\">";
-print $html->selectyesno("stock_validateorder",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n</td>\n</tr>\n";
+if ($conf->commande->enabled)
+{
+	$var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="60%">'.$langs->trans("DeStockReStockOnValidateOrder").'</td>';
+  print '<td width="160" align="right">';
+  print "<form method=\"post\" action=\"stock.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"stock_validateorder\">";
+  print $html->selectyesno("stock_validateorder",$conf->global->STOCK_CALCULATE_ON_VALIDATE_ORDER,1);
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</form>\n</td>\n</tr>\n";
+}
 
-$var=!$var;
-print "<tr ".$bc[$var].">";
-print '<td width="60%">'.$langs->trans("DeStockReStockOnShipment").'</td>';
-print '<td width="160" align="right">';
-print "<form method=\"post\" action=\"stock.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"stock_shipment\">";
-print $html->selectyesno("stock_shipment",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n</td>\n</tr>\n";
+if ($conf->expedition->enabled)
+{
+	$var=!$var;
+  print "<tr ".$bc[$var].">";
+  print '<td width="60%">'.$langs->trans("DeStockReStockOnShipment").'</td>';
+  print '<td width="160" align="right">';
+  print "<form method=\"post\" action=\"stock.php\">";
+  print "<input type=\"hidden\" name=\"action\" value=\"stock_shipment\">";
+  print $html->selectyesno("stock_shipment",$conf->global->STOCK_CALCULATE_ON_SHIPMENT,1);
+  print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+  print "</form>\n</td>\n</tr>\n";
+}
 
 print '</table>';
 $db->close();
