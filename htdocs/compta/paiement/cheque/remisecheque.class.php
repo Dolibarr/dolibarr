@@ -65,7 +65,7 @@ class RemiseCheque extends CommonObject
 		\param 		id 			Id record
 		\param 		ref		 	Ref record
 	*/
-	function Fetch($id,$ref)
+	function Fetch($id,$ref='')
 	{
 		$sql = "SELECT bc.rowid, bc.datec, bc.fk_user_author,bc.fk_bank_account,bc.amount,bc.number,bc.statut,bc.nbcheque";
 		$sql.= ",".$this->db->pdate("date_bordereau"). " as date_bordereau";
