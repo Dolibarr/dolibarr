@@ -59,8 +59,8 @@ elseif ($_POST["action"] == 'stock_bill')
   //Si activée on désactive la décrémentation du stock à la validation de commande et/ou à l'expédition
   if ($_POST["stock_bill"] == 1)
   {
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
+  	if ($conf->commande->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
+  	if ($conf->expedition->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
   }
   Header("Location: stock.php");
   exit;
@@ -71,8 +71,8 @@ elseif ($_POST["action"] == 'stock_validateorder')
   //Si activée on désactive la décrémentation du stock à la facturation et/ou à l'expédition
   if ($_POST["stock_validateorder"] == 1)
   {
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
+  	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
+  	if ($conf->expedition->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_SHIPMENT", 0);
   }
   Header("Location: stock.php");
   exit;
@@ -83,8 +83,8 @@ elseif ($_POST["action"] == 'stock_shipment')
   //Si activée on désactive la décrémentation du stock à la facturation et/ou à la validation de commande
   if ($_POST["stock_shipment"] == 1)
   {
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
-  	dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
+  	if ($conf->facture->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_BILL", 0);
+  	if ($conf->commande->enabled) dolibarr_set_const($db, "STOCK_CALCULATE_ON_VALIDATE_ORDER", 0);
   }
   Header("Location: stock.php");
   exit;
