@@ -191,7 +191,7 @@ if ($_GET["id"] || $_GET["ref"])
 			// Reference
 			print '<tr>';
 			print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-			print $html->showrefnav($product,'ref');
+			print $html->showrefnav($product,'ref','',1,'ref');
 			print '</td>';
 			print '</tr>';
 			

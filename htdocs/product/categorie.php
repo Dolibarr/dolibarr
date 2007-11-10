@@ -1,9 +1,9 @@
 <?php
 /* Copyright (C) 2001-2007 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2005      Brice Davoleau       <brice.davoleau@gmail.com>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin  		<patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin  		  <patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +107,7 @@ if ($_GET["id"] || $_GET["ref"])
 	print "<tr>";
 	// Reference
 	print '<td width="15%">'.$langs->trans("Ref").'</td><td>';
-	print $html->showrefnav($product,'ref');
+	print $html->showrefnav($product,'ref','',1,'ref');
 	print '</td>';
 	print '</tr>';
 

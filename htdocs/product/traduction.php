@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Regis Houssin  <regis@dolibarr.fr>
+/* Copyright (C) 2005-2007 Regis Houssin  <regis@dolibarr.fr>
  * Copyright (C) 2007      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -145,7 +145,7 @@ print '<table class="border" width="100%">';
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $html->showrefnav($product,'ref');
+print $html->showrefnav($product,'ref','',1,'ref');
 print '</td>';
 print '</tr>';
 print '</table>';

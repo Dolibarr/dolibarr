@@ -826,11 +826,11 @@ class Product extends CommonObject
     
     // Verification parametres
     if (! $id && ! $ref)
-      {
-	$this->error=$langs->trans('ErrorWrongParameters');
-	dolibarr_print_error("Product::fetch ".$this->error);
-	return -1;
-      }
+    {
+    	$this->error=$langs->trans('ErrorWrongParameters');
+    	dolibarr_print_error("Product::fetch ".$this->error);
+    	return -1;
+    }
     
     $sql = "SELECT rowid, ref, label, description, note, price, price_ttc, price_base_type, tva_tx, envente,";
     $sql.= " nbvente, fk_product_type, duration, seuil_stock_alerte,canvas,";
@@ -839,11 +839,11 @@ class Product extends CommonObject
     if ($id) $sql.= " WHERE rowid = '".$id."'";
     if ($ref) $sql.= " WHERE ref = '".addslashes($ref)."'";
     
-	dolibarr_syslog("Product::fetch sql=".$sql);
+    dolibarr_syslog("Product::fetch sql=".$sql);
     $result = $this->db->query($sql);
     if ( $result )
-      {
-	$result = $this->db->fetch_array();
+    {
+    	$result = $this->db->fetch_array();
 	
 	$this->id                 = $result["rowid"];
 	$this->ref                = $result["ref"];
@@ -2122,33 +2122,33 @@ class Product extends CommonObject
     $sql.= " WHERE fk_product = '".$this->id."'";
     $result = $this->db->query($sql) ;
     if ($result)
-      {
-	$num = $this->db->num_rows($result);
-	$i=0;
-	if ($num > 0)
-	  {
-	    while ($i < $num )
+    {
+    	$num = $this->db->num_rows($result);
+    	$i=0;
+    	if ($num > 0)
+    	{
+    		while ($i < $num )
 	      {
-		$row = $this->db->fetch_row($result);
-		$this->stock_entrepot[$row[1]] = $row[0];
-		$this->stock_reel = $this->stock_reel + $row[0];
-		$i++;
+	      	$row = $this->db->fetch_row($result);
+	      	$this->stock_entrepot[$row[1]] = $row[0];
+	      	$this->stock_reel = $this->stock_reel + $row[0];
+	      	$i++;
 	      }
-	  
-	    $this->no_stock = 0;
+	      
+	      $this->no_stock = 0;
+	    }
+	    else
+	    {
+	    	$this->no_stock = 1;
+	    }
+	    $this->db->free($result);
+	    return 1;
 	  }
-	else
-	  {
-	    $this->no_stock = 1;
-	  }
-	$this->db->free($result);
-	return 1;
-      }
     else
-      {
-	$this->error=$this->db->error();
-	return -1;
-      }
+    {
+    	$this->error=$this->db->error();
+    	return -1;
+    }
   }
 
 

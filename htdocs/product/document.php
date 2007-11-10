@@ -143,7 +143,7 @@ if ($product->id)
     // Reference
     print '<tr>';
     print '<td width="28%">'.$langs->trans("Ref").'</td><td colspan="3">';
-	print $html->showrefnav($product,'ref');
+	print $html->showrefnav($product,'ref','',1,'ref');
     print '</td>';
     print '</tr>';
 

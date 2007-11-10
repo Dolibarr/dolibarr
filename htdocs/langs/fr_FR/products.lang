@@ -111,6 +111,7 @@ NoProductMatching=Aucun produit/service ne répond au critère
 MatchingProducts=Produits/Services trouvés
 NewBook=Nouveau livre
 NoStockForThisProduct=Pas de stock pour ce produit
+NoStock=Pas de stock
 Restock=Réassort
 ProductSpecial=Special
 QtyMin=Quantité minimum

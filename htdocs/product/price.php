@@ -137,7 +137,7 @@ print '<table class="border" width="100%">';
 // Reference
 print '<tr>';
 print '<td width="15%">'.$langs->trans("Ref").'</td><td colspan="2">';
-print $html->showrefnav($product,'ref');
+print $html->showrefnav($product,'ref','',1,'ref');
 print '</td>';
 print '</tr>';
 

@@ -3,7 +3,7 @@
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
- * Copyright (C) 2005      Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -118,7 +118,7 @@ if ($_GET["id"] || $_GET["ref"])
         // Reference
         print '<tr>';
         print '<td width="25%">'.$langs->trans("Ref").'</td><td>';
-        print $html->showrefnav($product,'ref');
+        print $html->showrefnav($product,'ref','',1,'ref');
         print '</td>';
         print '</tr>';
         
