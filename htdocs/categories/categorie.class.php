@@ -726,7 +726,7 @@ class Categorie
 			{
 				if ($url == '')
 				{
-					$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."'>".$cat->label."</a>";
+					$w[] = "<a href='".DOL_URL_ROOT."/categories/viewcat.php?id=".$cat->id."&amp;type=".$cat->type."'>".$cat->label."</a>";
 				}
 				else
 				{

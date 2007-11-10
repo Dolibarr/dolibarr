@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
  * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
+ * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
+ * Copyright (C) 2005-2007 Regis Houssin	  	  <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -25,7 +26,7 @@
         \version    $Revision$
 */
 
-require "./pre.inc.php";
+require("./pre.inc.php");
 
 if ($_REQUEST['id'] == "")
 {
@@ -85,7 +86,11 @@ $head[$h][1] = $langs->trans("Card");
 $head[$h][2] = 'card';
 $h++;
 
-dolibarr_fiche_head($head, 'card', $langs->trans("Category"));
+if ($type == 0) $title=$langs->trans("ProductsCategoryShort");
+if ($type == 1) $title=$langs->trans("SuppliersCategoryShort");
+if ($type == 2) $title=$langs->trans("CustomersCategoryShort");
+
+dolibarr_fiche_head($head, 'card', $title);
 
 
 /*
@@ -220,7 +225,7 @@ if($c->type == 0)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+			print "<tr><td>".$langs->trans("ThisCategoryHasNoProduct")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -257,7 +262,7 @@ if($c->type == 1)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+			print "<tr><td>".$langs->trans ("ThisCategoryHasNoSupplier")."</td></tr>";
 		}
 		print "</table>\n";
 	}
@@ -274,7 +279,7 @@ if($c->type == 2)
 	{
 		print "<br>";
 		print "<table class='noborder' width='100%'>\n";
-		print "<tr class='liste_titre'><td>".$langs->trans("Commercial")."</td></tr>\n";
+		print "<tr class='liste_titre'><td>".$langs->trans("Customers")."</td></tr>\n";
 		
 		if (sizeof ($socs) > 0)
 		{
@@ -294,7 +299,7 @@ if($c->type == 2)
 		}
 		else
 		{
-			print "<tr><td>".$langs->trans ("NoProd")."</td></tr>";
+			print "<tr><td>".$langs->trans("ThisCategoryHasNoCustomer")."</td></tr>";
 		}
 		print "</table>\n";
 	}

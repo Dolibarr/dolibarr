@@ -28,7 +28,7 @@
         \brief      Page accueil espace categories
 */
 
-require "./pre.inc.php";
+require("./pre.inc.php");
 
 $type=$_GET['type'];
 
