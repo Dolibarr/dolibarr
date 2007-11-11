@@ -17,8 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
 /**
@@ -56,19 +54,19 @@ $html=new Form($db);
 // Affiche en-tête du rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom="Chiffre d'affaire";
-    $nom.=' (Voir le rapport <a href="index.php?year_start='.($year_start).'&amp;modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $nom=$langs->trans("SalesTurnover");
+    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period="$year_start - $year_end";
-    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&amp;modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&amp;modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCADue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom="Chiffre d'affaire";
-    $nom.=' (Voir le rapport en <a href="index.php?year_start='.($year_start).'&amp;modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $nom=$langs->trans("SalesTurnover");
+    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year_start='.$year_start.'&modecompta=CREANCES-DETTES">','</a>').')';
     $period="$year_start - $year_end";
-    $periodlink=($year_start?"<a href='index.php?year_start=".($year_start-1)."&amp;modecompta=".$modecompta."'>".img_previous()."</a> <a href='index.php?year_start=".($year_start+1)."&amp;modecompta=".$modecompta."'>".img_next()."</a>":"");
+    $periodlink=($year_start?"<a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start-1)."&modecompta=".$modecompta."'>".img_previous()."</a> <a href='".$_SERVER["PHP_SELF"]."?year_start=".($year_start+1)."&modecompta=".$modecompta."'>".img_next()."</a>":"");
     $description=$langs->trans("RulesCAIn");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");

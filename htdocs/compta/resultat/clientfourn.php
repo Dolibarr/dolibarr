@@ -50,19 +50,19 @@ $html=new Form($db);
 // Affiche en-tête de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $nom=$langs->trans("AnnualByCompaniesDueDebtMode");
+    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&amp;modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&amp;modecompta='.$modecompta.'">'.img_next().'</a>';
+    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultDue");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom="Bilan des recettes et dépenses, détail";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&amp;modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $nom=$langs->trans("AnnualByCompaniesInputOutputMode");
+    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
     $period=$langs->trans("Year")." ".$year;
-    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&amp;modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&amp;modecompta='.$modecompta.'">'.img_next().'</a>';
+    $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesResultInOut");
     $builddate=time();
     $exportlink=$langs->trans("NotYetAvailable");

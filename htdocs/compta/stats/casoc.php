@@ -1,7 +1,6 @@
 <?php
 /* Copyright (C) 2001-2003 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2005 Laurent Destailleur   <eldy@users.sourceforge.net>
- * Copyright (C) 2006-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerke@telenet.be>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -19,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -52,8 +50,8 @@ $html=new Form($db);
 // Affiche en-tête de rapport
 if ($modecompta=="CREANCES-DETTES")
 {
-    $nom="Chiffre d'affaire par société";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">recettes-dépenses</a> pour n\'inclure que les factures effectivement payées)';
+    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+    $nom.='<br>('.$langs->trans("SeeReportInInputOutputMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=RECETTES-DEPENSES">','</a>').')';
     $period=$langs->trans("Year")." ".$year;
     $periodlink='<a href='.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesCADue");
@@ -61,8 +59,8 @@ if ($modecompta=="CREANCES-DETTES")
     $exportlink=$langs->trans("NotYetAvailable");
 }
 else {
-    $nom="Chiffre d'affaire par société";
-    $nom.=' (Voir le rapport en <a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">créances-dettes</a> pour inclure les factures non encore payée)';
+    $nom=$langs->trans("SalesTurnover").', '.$langs->trans("ByThirdParties");
+    $nom.='<br>('.$langs->trans("SeeReportInDueDebtMode",'<a href="'.$_SERVER["PHP_SELF"].'?year='.$year.'&modecompta=CREANCES-DETTES">','</a>').')';
     $period=$langs->trans("Year")." ".$year;
     $periodlink='<a href="'.$_SERVER["PHP_SELF"].'?year='.($year-1).'&modecompta='.$modecompta.'">'.img_previous().'</a> <a href="'.$_SERVER["PHP_SELF"].'?year='.($year+1).'&modecompta='.$modecompta.'">'.img_next().'</a>';
     $description=$langs->trans("RulesCAIn");
@@ -190,7 +188,7 @@ if (sizeof($amount))
         }
         print "<td>".$linkname."</td>\n";
         print '<td align="right">'.price($amount[$key]).'</td>';
-        print '<td align="right">'.($catotal > 0 ? price(100 / $catotal * $amount[$key]).'%' : '&nbsp;').'</td>';
+        print '<td align="right">'.($catotal > 0 ? round(100 * $amount[$key] / $catotal, 2).'%' : '&nbsp;').'</td>';
         print "</tr>\n";
         $i++;
     }
