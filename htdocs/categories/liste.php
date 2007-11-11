@@ -1,6 +1,6 @@
 <?php
-/* Copyright (C) 2005 Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,7 +45,11 @@ $cats = $c->get_all_categories ();
 if ($cats != -1)
 {
   print '<table class="noborder" width="100%">';
-  print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("AllCats").'</td></tr>';
+  print '<tr class="liste_titre">';
+  print '<td>'.$langs->trans("Ref").'</td>';
+  print '<td>'.$langs->trans("Description").'</td>';
+  print '<td align="right">'.$langs->trans("Type").'</td>';
+  print '</tr>';
   
   $var=true;
   foreach ($cats as $cat)
@@ -54,7 +57,13 @@ if ($cats != -1)
       $var = ! $var;
       print "\t<tr ".$bc[$var].">\n";
       print "\t\t<td><a href='viewcat.php?id=".$cat->id."'>".$cat->label."</a></td>\n";
-      print "\t\t<td>".$cat->description."</td>\n";
+      print "\t\t<td>".dolibarr_trunc($cat->description,36)."</td>\n";
+      print '<td align="right">';
+	  if ($cat->type == 0) print $langs->trans("Product");
+	  elseif ($cat->type == 1) print $langs->trans("Supplier");
+	  elseif ($cat->type == 2) print $langs->trans("Customer");
+	  else print $cat->type;
+	  print "</td>\n";
       print "\t</tr>\n";
     }
   print "</table>";
