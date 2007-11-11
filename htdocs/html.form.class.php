@@ -528,7 +528,9 @@ class Form
                 $filelib=eregi_replace('\.php$','',$file);
 				$prefix='';
 				if (eregi('^eldy',$file)) $prefix='0';			// Recommanded
+				else if (eregi('^auguria',$file)) $prefix='2';	// Other
 				else if (eregi('^default',$file)) $prefix='2';	// Other
+				else if (eregi('^rodolphe',$file)) $prefix='2';	// Other
 				else if (eregi('^empty',$file)) $prefix='2';	// Other
 				else $prefix='1';								// Experimental
 				

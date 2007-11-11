@@ -168,8 +168,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
         migrate_paiementfourn_facturefourn($db,$langs,$conf);
 
-		migrate_delete_old_files($db,$langs,$conf);
-
 		// Script pour V2.1 -> V2.2
 		migrate_paiements_orphelins_1($db,$langs,$conf);
 
@@ -177,6 +175,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 		migrate_links_transfert($db,$langs,$conf);
 		
+		migrate_delete_old_files($db,$langs,$conf);
+
     	// On commit dans tous les cas.
     	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
     	$db->commit();		// FIXME    	
@@ -1414,17 +1414,26 @@ function migrate_delete_old_files($db,$langs,$conf)
 {
     $result=true;
 	
-	$filetodelete=DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php';
-	//print '<b>'.$filetodelete."</b><br>\n";
-	if (file_exists($filetodelete))
+	// List of files to delete
+	$filetodeletearray=array(
+		DOL_DOCUMENT_ROOT.'/includes/triggers/interface_demo.class.php',
+		DOL_DOCUMENT_ROOT.'/includes/menus/barre_left/default.php',
+		DOL_DOCUMENT_ROOT.'/includes/menus/barre_top/default.php'
+	);
+
+	foreach ($filetodeletearray as $filetodelete)
 	{
-		$result=dol_delete_file($filetodelete);
-	}
-	if (! $result)
-	{
-		$langs->load("errors");
-		print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
-		print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+		//print '<b>'.$filetodelete."</b><br>\n";
+		if (file_exists($filetodelete))
+		{
+			$result=dol_delete_file($filetodelete);
+		}
+		if (! $result)
+		{
+			$langs->load("errors");
+			print '<div class="error">'.$langs->trans("Error").': '.$langs->trans("ErrorFailToDeleteFile",$filetodelete);
+			print ' '.$langs->trans("RemoveItManuallyAndPressF5ToContinue").'</div>';
+		}
 	}
 	return $result;
 }

@@ -59,6 +59,11 @@ update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_
 
 update llx_const set visible=0 where name in ('MAIN_UPLOAD_DOC','MAIN_MAIL_SMTP_SERVER','MAIN_MAIL_SMTP_PORT','MAIN_MAIL_EMAIL_FROM');
 
+update llx_const set value='rodolphe.php' where name='MAIN_MENU_BARRELEFT'      and  value='default.php';
+update llx_const set value='rodolphe.php' where name='MAIN_MENU_BARRETOP'       and  value='default.php';
+update llx_const set value='rodolphe.php' where name='MAIN_MENUFRONT_BARRELEFT' and  value='default.php';
+update llx_const set value='rodolphe.php' where name='MAIN_MENUFRONT_BARRETOP'  and  value='default.php';
+
 delete from llx_adherent_type where libelle IS NULL;
 alter table llx_adherent_type modify libelle varchar(50) NOT NULL;
 
