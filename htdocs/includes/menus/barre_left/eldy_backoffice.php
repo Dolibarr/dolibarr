@@ -237,7 +237,7 @@ class MenuLeft {
 				{
 					$langs->load("categories");
 					// Catégories fournisseurs
-					if ($conf->fournisseur->enabled
+					if ($conf->fournisseur->enabled)
 					{
 						$newmenu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0, $user->rights->categorie->lire);
 						if ($user->societe_id == 0)
