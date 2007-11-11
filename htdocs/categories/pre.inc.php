@@ -44,16 +44,29 @@ function llxHeader ($head = "", $urlp = "", $title="")
   
   $menu = new Menu();
   
-  if ($conf->categorie->enabled)
-    {
-      $menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
-      $menu->add_submenu(DOL_URL_ROOT."/categories/liste.php", $langs->trans("List"));
-
-      if ($user->rights->categorie->creer)
+	if ($conf->categorie->enabled)
 	{
-	  $menu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"));
+		$langs->load("customers");
+		$langs->load("suppliers");
+		$menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("ProductsCategoriesShort"));
+		$menu->add_submenu(DOL_URL_ROOT."/categories/liste.php?type=0", $langs->trans("List"));
+		if ($user->rights->categorie->creer)
+		{
+			$menu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=0", $langs->trans("NewCat"));
+		}
+		$menu->add(DOL_URL_ROOT."/categories/index.php?type=1", $langs->trans("SuppliersCategoriesShort"));
+		$menu->add_submenu(DOL_URL_ROOT."/categories/liste.php?type=1", $langs->trans("List"));
+		if ($user->rights->categorie->creer)
+		{
+			$menu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=1", $langs->trans("NewCat"));
+		}
+		$menu->add(DOL_URL_ROOT."/categories/index.php?type=2", $langs->trans("CustomersCategoriesShort"));
+		$menu->add_submenu(DOL_URL_ROOT."/categories/liste.php?type=2", $langs->trans("List"));
+		if ($user->rights->categorie->creer)
+		{
+			$menu->add_submenu(DOL_URL_ROOT."/categories/fiche.php?action=create&amp;type=2", $langs->trans("NewCat"));
+		}
 	}
-    }
   
   left_menu($menu->liste);
 }
