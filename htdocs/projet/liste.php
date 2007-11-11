@@ -105,9 +105,9 @@ if ($resql)
   
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield);
-  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","p.ref","","","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Label"),"liste.php","p.title","","","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","","","",$sortfield,$sortorder);
   print '<td>&nbsp;</td>';
   print "</tr>\n";
   
