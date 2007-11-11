@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,13 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
         \file       htdocs/fourn/stats.php
         \ingroup    fournisseur
-        \brief      Page accueil de la zone fournisseurs
+        \brief      Page stats fournisseurs
         \version    $Revision$
 */
 
@@ -97,6 +96,7 @@ $sql .= " AND ca.year > (date_format(now(),'%Y') - 5)";
 
 $sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
 
+dolibarr_syslog("fourn/stats.php sql=".$sql);
 $resql = $db->query($sql);
 if ($resql)
 {
