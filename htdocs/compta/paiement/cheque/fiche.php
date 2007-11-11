@@ -164,11 +164,11 @@ else
 	
 	
 	$h=0;
-	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$_GET["id"];
+	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$remisecheque->id;
 	$head[$h][1] = $langs->trans("CheckReceipt");
 	$hselected = $h;
 	$h++;
-	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$_GET["id"];
+	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$remisecheque->id;
 	//  $head[$h][1] = $langs->trans("Info");
 	//  $h++;      
 
