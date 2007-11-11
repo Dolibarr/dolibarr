@@ -350,9 +350,16 @@ delete from llx_c_ape;
 -- Types de charges
 --
 
-insert into llx_c_chargesociales (id,libelle,deductible) values ( 1, 'Allocations familiales',1);
-insert into llx_c_chargesociales (id,libelle,deductible) values ( 2, 'GSG Deductible',1);
-insert into llx_c_chargesociales (id,libelle,deductible) values ( 3, 'GSG/CRDS NON Deductible',0);
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 1, 'Allocations familiales', 1,1,'TAXFAM');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 2, 'GSG Deductible',         1,1,'TAXCSGD');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 3, 'GSG/CRDS NON Deductible',0,1,'TAXCSGND');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (11, 'Taxe professionnelle',   0,1,'TAXPRO');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (30, 'Assurance Sante (SECU-URSSAF)',  0,1,'TAXSECU');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (40, 'Mutuelle',                       0,1,'TAXMUT');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (50, 'Assurance vieillesse (CNAV)',    0,1,'TAXRET');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (60, 'Assurance Chomage (ASSEDIC)',    0,1,'TAXSECU');
 
 --
 -- Civilites

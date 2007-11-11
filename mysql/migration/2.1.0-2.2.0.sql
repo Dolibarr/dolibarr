@@ -36,6 +36,23 @@ alter table llx_bank_url modify `type` varchar(20) NOT NULL;
 update llx_bank set datev = datec where datev = '1970-01-01 00:00:00' and rappro = 0;
 update llx_bank set dateo = datec where datev = '1970-01-01 00:00:00' and rappro = 0;
 
+alter table llx_c_chargesociales add column actioncompta varchar(12) NOT NULL;
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 1, 'Allocations familiales', 1,1,'TAXFAM');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 2, 'GSG Deductible',         1,1,'TAXCSGD');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values ( 3, 'GSG/CRDS NON Deductible',0,1,'TAXCSGND');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (10, 'Taxe apprenttissage',    0,1,'TAXAPP');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (11, 'Taxe professionnelle',   0,1,'TAXPRO');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (20, 'Impots locaux/fonciers', 0,1,'TAXFON');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (30, 'Assurance Sante (SECU-URSSAF)',  0,1,'TAXSECU');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (40, 'Mutuelle',                       0,1,'TAXMUT');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (50, 'Assurance vieillesse (CNAV)',    0,1,'TAXRET');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (60, 'Assurance Chomage (ASSEDIC)',    0,1,'TAXSECU');
+update llx_c_chargesociales set actioncompta='TAXFAM'   where id = 1;
+update llx_c_chargesociales set actioncompta='TAXCSGD'  where id = 2;
+update llx_c_chargesociales set actioncompta='TAXCSGND' where id = 3;
+update llx_c_chargesociales set actioncompta='TAXAPP'   where id = 10;
+update llx_c_chargesociales set actioncompta='TAXPRO'   where id = 11;
+update llx_c_chargesociales set actioncompta='TAXFON'   where id = 20;
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
 update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';
