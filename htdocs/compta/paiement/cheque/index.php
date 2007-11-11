@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -110,7 +109,7 @@ if ($resql)
 {
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print '<td>'.$langs->trans("Numero").'</td>';
+	print '<td>'.$langs->trans("CheckReceiptShort").'</td>';
 	print '<td>'.$langs->trans("Date")."</td>";
 	print '<td>'.$langs->trans("Account").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';

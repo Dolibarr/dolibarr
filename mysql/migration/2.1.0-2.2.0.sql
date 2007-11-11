@@ -875,7 +875,10 @@ create table llx_fichinterdet
 
 ALTER TABLE llx_fichinter ADD COLUMN model_pdf varchar(50) after note_public;
 
-ALTER TABLE llx_bordereau_cheque MODIFY number integer;
+ALTER TABLE llx_bordereau_cheque MODIFY number varchar(16) NOT NULL;
+ALTER TABLE llx_bordereau_cheque MODIFY amount double(24,8) NOT NULL;
+ALTER TABLE llx_bordereau_cheque MODIFY nbcheque          smallint NOT NULL;
+ALTER TABLE llx_bordereau_cheque MODIFY statut            smallint(1) NOT NULL DEFAULT 0;
 
 ALTER TABLE llx_facturedet ADD COLUMN special_code tinyint(4) unsigned default 0;
 ALTER TABLE llx_facturedet MODIFY special_code tinyint(4) unsigned default 0;

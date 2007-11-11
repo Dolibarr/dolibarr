@@ -163,35 +163,35 @@ else
 
 	
 	
-  $h=0;
-  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$_GET["id"];
-  $head[$h][1] = $langs->trans("CheckReceipt");
-  $hselected = $h;
-  $h++;
-  //  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/info.php?id='.$_GET["id"];
-  //  $head[$h][1] = $langs->trans("Info");
-  //  $h++;      
+	$h=0;
+	$head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/fiche.php?id='.$_GET["id"];
+	$head[$h][1] = $langs->trans("CheckReceipt");
+	$hselected = $h;
+	$h++;
+	//  $head[$h][0] = DOL_URL_ROOT.'/compta/paiement/cheque/info.php?id='.$_GET["id"];
+	//  $head[$h][1] = $langs->trans("Info");
+	//  $h++;      
 
-  dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
+	dolibarr_fiche_head($head, $hselected, $langs->trans("Cheques"));
 
-  /*
-   * Confirmation de la suppression du bordereau
-   */
-  if ($_GET['action'] == 'delete')
-    {
-      $html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), 'Etes-vous sûr de vouloir supprimer ce bordereau ?', 'confirm_delete');
-      print '<br>';
-    }
-  
-  /*
-   * Confirmation de la validation du bordereau
-   */
-  if ($_GET['action'] == 'valide')
-    {
-      $facid = $_GET['facid'];
-      $html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
-      print '<br>';
-    }
+	/*
+	* Confirmation de la suppression du bordereau
+	*/
+	if ($_GET['action'] == 'delete')
+	{
+		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("DeleteCheckReceipt"), 'Etes-vous sûr de vouloir supprimer ce bordereau ?', 'confirm_delete');
+		print '<br>';
+	}
+
+	/*
+	* Confirmation de la validation du bordereau
+	*/
+	if ($_GET['action'] == 'valide')
+	{
+		$facid = $_GET['facid'];
+		$html->form_confirm('fiche.php?id='.$remisecheque->id, $langs->trans("ValidateCheckReceipt"), 'Etes-vous sûr de vouloir valider ce bordereau, auncune modification n\'est possible une fois le bordereau validé ?', 'confirm_valide');
+		print '<br>';
+	}
 }
 
 if ($mesg) print $mesg.'<br>';
@@ -219,7 +219,6 @@ if ($_GET['action'] == 'new')
 	$sql.= " ORDER BY b.emetteur ASC, b.rowid ASC;";
 	
 	$resql = $db->query($sql);
-	
 	if ($resql)
 	{
 		$i = 0;
@@ -310,7 +309,7 @@ else
 	
 	// Liste des cheques
 	$sql = "SELECT b.rowid,b.amount,";
-	$sql.= " b.num_chq,b.emetteur,".$db->pdate("b.dateo")." as date,b.banque,";
+	$sql.= " b.num_chq,b.emetteur,".$db->pdate("b.dateo")." as date,".$db->pdate("b.datec")." as datec,b.banque,";
 	$sql.= " p.rowid as pid";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement as p ON p.fk_bank = b.rowid";
@@ -319,7 +318,6 @@ else
 	$sql.= " ORDER BY $sortfield $sortorder";
 
 	$resql = $db->query($sql);
-
 	if ($resql)
 	{
 		$num = $db->num_rows($resql);
@@ -329,13 +327,13 @@ else
 		$param="&amp;id=".$remisecheque->id;
 		print '<tr class="liste_titre">';
 		'<td>'.$langs->trans("Num").'</td>';
-		print '<td>'.$langs->trans("Position").'</td>';
-		print_liste_field_titre($langs->trans("Num"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
+		print '<td>'.$langs->trans("Cheque").'</td>';
+		print_liste_field_titre($langs->trans("Numero"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
 		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
-		print_liste_field_titre($langs->trans("DateOperation"),$_SERVER["PHP_SELF"],"b.dateo", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateChequeReceived"),$_SERVER["PHP_SELF"],"b.datec", "",$param,'align="center"',$sortfield,$sortorder);
 		print "<td>&nbsp;</td></tr>\n";
 		$i=1;
 		$var=false;
@@ -361,7 +359,7 @@ else
 				print '&nbsp;';
 			}
 			print '</td>';
-			print '<td align="center">'.dolibarr_print_date($objp->date).'</td>';
+			print '<td align="center">'.dolibarr_print_date($objp->datec,'day').'</td>';
 			if($remisecheque->statut == 0)
 			{
 				print '<td align="right"><a href="fiche.php?id='.$remisecheque->id.'&amp;action=remove&amp;lineid='.$objp->rowid.'">'.img_delete().'</a></td>';

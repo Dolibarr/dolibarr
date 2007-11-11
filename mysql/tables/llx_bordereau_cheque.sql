@@ -25,13 +25,13 @@
 create table llx_bordereau_cheque
 (
   rowid             integer AUTO_INCREMENT PRIMARY KEY,
-  datec             datetime,
-  date_bordereau    date,
-  number            integer,
-  amount            float(12,2),
-  nbcheque          smallint UNSIGNED DEFAULT 0,
+  datec             datetime NOT NULL,
+  date_bordereau    date,					-- A quoi sert cette date ?
+  number            varchar(16) NOT NULL,
+  amount            double(24,8) NOT NULL,
+  nbcheque          smallint NOT NULL,
   fk_bank_account   integer,
   fk_user_author    integer,
   note              text,
-  statut            tinyint(1) UNSIGNED DEFAULT 0
+  statut            smallint(1) NOT NULL DEFAULT 0
 )type=innodb;
