@@ -294,10 +294,15 @@ else
 	print "</td>";
 	print "</tr>\n";
 
-	print '<tr><td>'.$langs->trans('Date').'</td><td colspan="2">'.dolibarr_print_date($remisecheque->date_bordereau).'</td></tr>';
+	print '<tr><td>'.$langs->trans('DateCreation').'</td><td colspan="2">'.dolibarr_print_date($remisecheque->date_bordereau,'day').'</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Account').'</td><td colspan="2">';
 	print $accountstatic->getNomUrl(1);
+	print '</td></tr>';
+
+    // Nb of cheques
+	print '<tr><td>'.$langs->trans('NbOfCheques').'</td><td colspan="2">';
+	print $remisecheque->nbcheque;
 	print '</td></tr>';
 
 	print '<tr><td>'.$langs->trans('Total').'</td><td colspan="2">';

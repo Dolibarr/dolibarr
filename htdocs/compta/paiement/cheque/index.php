@@ -96,12 +96,14 @@ else
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
-$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount,bc.number,";
-$sql.= " bc.statut, ba.label, ba.rowid as bid";
-$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
-$sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
+$sql = "SELECT bc.rowid,".$db->pdate("bc.date_bordereau")." as db, bc.amount, bc.number,";
+$sql.= " bc.statut, bc.nbcheque,";
+$sql.= " ba.label, ba.rowid as bid";
+$sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc,";
+$sql.= " ".MAIN_DB_PREFIX."bank_account as ba";
 $sql.= " WHERE ba.rowid=bc.fk_bank_account"; 
-$sql.= " ORDER BY bc.rowid DESC LIMIT 10;";
+$sql.= " ORDER BY bc.rowid";
+$sql.= " DESC LIMIT 10";
 
 $resql = $db->query($sql);
 
@@ -112,6 +114,7 @@ if ($resql)
 	print '<td>'.$langs->trans("CheckReceiptShort").'</td>';
 	print '<td>'.$langs->trans("Date")."</td>";
 	print '<td>'.$langs->trans("Account").'</td>';
+	print '<td align="right">'.$langs->trans("NbOfCheques").'</td>';
 	print '<td align="right">'.$langs->trans("Amount").'</td>';
 	print '<td align="right">'.$langs->trans("Status").'</td>';
 	print "</tr>\n";
@@ -132,6 +135,7 @@ if ($resql)
 		print '<td>'.$checkdepositstatic->getNomUrl(1).'</td>';
 		print '<td>'.dolibarr_print_date($objp->db,'day').'</td>';
 		print '<td>'.$accountstatic->getNomUrl(1).'</td>';
+		print '<td align="right">'.$objp->nbcheque.'</td>';
 		print '<td align="right">'.price($objp->amount).'</td>';
 		print '<td align="right">'.$checkdepositstatic->LibStatut($objp->statut,3).'</td>';
 

@@ -68,6 +68,7 @@ NewCheckDeposit=New check deposit
 NewCheckDepositOn=New check deposit on account: %s
 NoWaitingChecks=No checks waiting for deposit.
 DateChequeReceived=Cheque reception input date
+NbOfCheques=Nb of cheques
 PaySocialContribution=Pay a social contribution
 ConfirmPaySocialContribution=Are you sure you want to classify this social contribution as payed?
 DeleteSocialContribution=Delete a social contribution

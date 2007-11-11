@@ -68,6 +68,7 @@ NewCheckDeposit=Nouveau dépôt
 NewCheckDepositOn=Nouveau dépôt sur compte: %s
 NoWaitingChecks=Pas de chèque en attente de dépots.
 DateChequeReceived=Date saisie réception chèque
+NbOfCheques=Nb de cheques
 PaySocialContribution=Payer une charge sociale
 ConfirmPaySocialContribution=Etes-vous sûr de vouloir classer cette charge sociale à payé ?
 DeleteSocialContribution=Effacer charge sociale

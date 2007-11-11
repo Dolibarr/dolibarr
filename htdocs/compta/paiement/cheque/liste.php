@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -53,7 +52,7 @@ $sortfield=$_GET["sortfield"];
 $limit = $conf->liste_limit;
 $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
-if (! $sortfield) $sortfield="bc.rowid";
+if (! $sortfield) $sortfield="bc.number";
 
 $checkdepositstatic=new RemiseCheque($db);
 $accountstatic=new Account($db);
@@ -65,7 +64,8 @@ $accountstatic=new Account($db);
 
 llxHeader('',$langs->trans("ChequesReceipts"));
 
-$sql = "SELECT bc.rowid, bc.number, ".$db->pdate("bc.date_bordereau") ." as dp, bc.amount, bc.statut,";
+$sql = "SELECT bc.rowid, bc.number as ref, ".$db->pdate("bc.date_bordereau") ." as dp,";
+$sql.= " bc.nbcheque, bc.amount, bc.statut,";
 $sql.= " ba.rowid as bid, ba.label";
 $sql.= " FROM ".MAIN_DB_PREFIX."bordereau_cheque as bc";
 $sql.= ",".MAIN_DB_PREFIX."bank_account as ba";
@@ -90,16 +90,20 @@ if ($resql)
     print '<form method="get" action="liste.php">';
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"liste.php","p.rowid","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Date"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","bc.number","",$paramlist,"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"liste.php","dp","",$paramlist,'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Account"),"liste.php","ba.label","",$paramlist,"",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Amount"),"liste.php","p.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","p.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("NbOfCheques"),"liste.php","bc.nbcheque","",$paramlist,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Amount"),"liste.php","bc.amount","",$paramlist,'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","bc.statut","",$paramlist,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
     // Lignes des champs de filtre
     print '<tr class="liste_titre">';
-    print '<td colspan="3">&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
+    print '<td>&nbsp;</td>';
     print '<td align="right">';
     print '<input class="fat" type="text" size="6" name="search_montant" value="'.$_GET["search_montant"].'">';
     print '</td><td align="right">';
@@ -118,7 +122,7 @@ if ($resql)
         print '<td width="80">';
 		$checkdepositstatic->rowid=$objp->rowid;
 		$checkdepositstatic->statut=$objp->statut;
-		$checkdepositstatic->number=$objp->number;
+		$checkdepositstatic->number=$objp->ref;
 		print $checkdepositstatic->getNomUrl(1);
 		print '</td>';
 
@@ -131,6 +135,9 @@ if ($resql)
         else print '&nbsp;';
         print '</td>';
         
+        // Nb of cheques
+        print '<td align="right">'.$objp->nbcheque.'</td>';
+
         // Montant
         print '<td align="right">'.price($objp->amount).'</td>';
 
