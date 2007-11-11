@@ -46,7 +46,7 @@ insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta)
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (30, 'Assurance Sante (SECU-URSSAF)',  0,1,'TAXSECU');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (40, 'Mutuelle',                       0,1,'TAXMUT');
 insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (50, 'Assurance vieillesse (CNAV)',    0,1,'TAXRET');
-insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (60, 'Assurance Chomage (ASSEDIC)',    0,1,'TAXSECU');
+insert into llx_c_chargesociales (id, libelle, deductible, active, actioncompta) values (60, 'Assurance Chomage (ASSEDIC)',    0,1,'TAXCHOM');
 update llx_c_chargesociales set actioncompta='TAXFAM'   where id = 1;
 update llx_c_chargesociales set actioncompta='TAXCSGD'  where id = 2;
 update llx_c_chargesociales set actioncompta='TAXCSGND' where id = 3;
