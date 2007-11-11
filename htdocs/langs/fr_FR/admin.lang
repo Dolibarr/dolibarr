@@ -703,6 +703,8 @@ ViewProductDescInFormAbility=Visualisation des descriptions produits dans les fo
 UseSearchToSelectProduct=Utiliser un formulaire de recherche pour choix d'un produit (plutôt que liste déroulante)
 UseEcoTaxeAbility=Prise en charge des éco-taxes (DEEE)
 SetDefaultBarcodeType=Type de code barre utilisé par défaut pour les produits
+##### Suppliers #####
+SuppliersSetup=Configuration du module Fournisseur
 ##### Syslog #####
 SyslogSetup=Configuration du module Syslog
 SyslogOutput=Sortie des log

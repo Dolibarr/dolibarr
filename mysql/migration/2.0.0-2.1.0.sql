@@ -834,12 +834,6 @@ create table llx_categorie_fournisseur
   UNIQUE (fk_categorie, fk_societe)
 )type=innodb;
 
-create table llx_fournisseur_categorie
-(
-  rowid         integer AUTO_INCREMENT PRIMARY KEY,
-  label         varchar(255)
-
-)type=innodb;
 
 create table llx_fournisseur_ca
 (

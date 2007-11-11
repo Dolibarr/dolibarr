@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -151,7 +150,7 @@ llxHeader();
 $dir = "../fourn/commande/modules/pdf/";
 $html=new Form($db);
 
-print_fiche_titre($langs->trans("OrdersSetup"),'','setup');
+print_fiche_titre($langs->trans("SuppliersSetup"),'','setup');
 
 print "<br>";
 
@@ -340,6 +339,9 @@ closedir($handle);
 
 print '</table><br/>';
 
+/* Obsolete. Les categories de fournisseurs sont gerees dans la table llx_categories
+sur le meme principe que les categories clients et produits
+
 print_titre($langs->trans("Categories"));
 
 $sql = "SELECT rowid, label";
@@ -380,6 +382,7 @@ else
 {
   dolibarr_print_error($db);
 }
+*/
 
 llxFooter('$Date$ - $Revision$');
 ?>

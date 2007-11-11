@@ -8,6 +8,10 @@
 -- sans AUCUNE erreur ni warning
 --
 
+-- On migre les categorie fournisseur dans table des categories
+-- V4 INSERT into llx_categorie (label, description, visible, type) (select distinct label, label, 1, 1 from llx_fournisseur_categorie);
+-- Ne pas faire UPDATE llx_categorie_fournisseur as cf SET cf.fk_categorie = (SELECT rowid from llx_categorie as c, llx_fournisseur_categorie as fc where c.type = 1 AND c.label = fc.label);
+
 -- Corrige mauvaise insertion du a champ trop court
 alter table llx_action_def modify code varchar(28) UNIQUE NOT NULL;
 update llx_action_def set code = 'NOTIFY_VAL_ORDER_SUPPLIER' where code = 'NOTIFY_VAL_ORDER_SUUPLIE';

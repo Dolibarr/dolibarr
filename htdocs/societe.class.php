@@ -1838,7 +1838,8 @@ class Societe
     {
       $this->SupplierCategories = array();
       $sql = "SELECT rowid, label";
-      $sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie;";
+      $sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+	  $sql.= " WHERE type = 1";
       
       $resql=$this->db->query($sql);
       if ($resql)

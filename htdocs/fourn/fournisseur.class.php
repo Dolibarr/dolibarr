@@ -216,31 +216,34 @@ class Fournisseur extends Societe
         }
 
     }
-  /**
-   *      \brief      Créé une categorie fournsseur
-   *      \param      user        Utilisateur qui crée
-   *      \return     int         <0 si ko, 0 si ok
-   */
-  function CreateCategory($user, $name)
-  {
-    dolibarr_syslog("Fournisseur::CreateCategory");
 
-    $sql = "INSERT INTO ".MAIN_DB_PREFIX."fournisseur_categorie (label) VALUES ";
-    $sql .=" ('".addslashes($name)."');";
+	/**
+	*    \brief      Créé une categorie fournisseur
+	*    \param      user        Utilisateur qui crée
+	*	\param		name		Nom categorie
+	*    \return     int         <0 si ko, 0 si ok
+	*/
+	function CreateCategory($user, $name)
+	{
+		dolibarr_syslog("Fournisseur::CreateCategory");
 
-    $result = $this->db->query($sql);
-    
-    if ($result == 1)
-      {
-	dolibarr_syslog("Fournisseur::CreateCategory : Success");
-	return 0;
-      }
-    else
-      {
-	dolibarr_syslog("Fournisseur::CreateCategory : Failed (".$this->db->error().")");
-	return -1;
-      }
-  }
+		$sql = "INSERT INTO ".MAIN_DB_PREFIX."categorie (label,visible,type)";
+		$sql.= " VALUES ";
+		$sql.= " ('".addslashes($name)."',1,1)";
+
+		$result = $this->db->query($sql);
+		
+		if ($result == 1)
+		{
+			dolibarr_syslog("Fournisseur::CreateCategory : Success");
+			return 0;
+		}
+		else
+		{
+			dolibarr_syslog("Fournisseur::CreateCategory : Failed (".$this->db->error().")");
+			return -1;
+		}
+	}
 
   /**
    * Retourne la liste des fournisseurs

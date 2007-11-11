@@ -66,45 +66,30 @@ print '<tr><td valign="top" width="30%" class="notopnoleft">';
 
 /*
  * Liste des categories
- * \TODO Il n'y a aucun écran pour les saisir !
  */
-$sql = "SELECT rowid, label";
-$sql.= " FROM ".MAIN_DB_PREFIX."fournisseur_categorie";
-$sql.= " ORDER BY label ASC";
+$companystatic->LoadSupplierCateg();
 
-$resql = $db->query($sql);
-if ($resql)
+if (sizeof($companystatic->SupplierCategories))
 {
-	$num = $db->num_rows($resql);
-	$i = 0;
-
-	if ($num)
-	{
 		print '<table class="liste" width="100%">';
 		print '<tr class="liste_titre"><td colspan="2">';
 		print $langs->trans("Category");
 		print "</td></tr>\n";
 		$var=True;
 
-		while ($obj = $db->fetch_object($resql))
+		foreach ($companystatic->SupplierCategories as $rowid => $label)
 		{
 			$var=!$var;
 			print "<tr $bc[$var]>\n";
-			print '<td><a href="liste.php?cat='.$obj->rowid.'">'.stripslashes($obj->label).'</a>';
+			print '<td><a href="liste.php?cat='.$rowid.'">'.stripslashes($label).'</a>';
 			print '</td><td align="right">';
-			print '<a href="stats.php?cat='.$obj->rowid.'">('.$langs->trans("Stats").')</a>';
+			print '<a href="stats.php?cat='.$rowid.'">('.$langs->trans("Stats").')</a>';
 			print "</tr>\n";
 		}
 		print "</table>\n";
 		print "<br>\n";
-	}
-	
-	$db->free($resql);
 }
-else 
-{
-	dolibarr_print_error($db);
-}
+
 
 
 /*
