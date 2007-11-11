@@ -549,10 +549,10 @@ if ($_GET["id"])
                 // Affiche nom du champ
                 if ($showfield)
                 {
-                	print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield);
+                	print_liste_field_titre($valuetoshow,"dict.php",$fieldlist[$field],"&id=".$_GET["id"],"","",$sortfield,$sortorder);
                 }
             }
-            print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield);
+            print_liste_field_titre($langs->trans("Action"),"dict.php","active","&id=".$_GET["id"],"",'align="center"',$sortfield,$sortorder);
             print '<td colspan="2">&nbsp;</td>';
             print '</tr>';
 

@@ -70,8 +70,8 @@ if ($result)
     }
   print '<table class="noborder" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom","","",'valign=\"center\"');
-  print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville");
+  print_liste_field_titre($langs->trans("Company"),$PHP_SELF,"s.nom","","",'valign="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Town"),$PHP_SELF,"s.ville","","",'valign="center"',$sortfield,$sortorder);
   print "<td>&nbsp;</td>";
 
   print "</tr>\n";

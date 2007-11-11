@@ -388,12 +388,12 @@ if (! $_GET['action'] && ! $_POST['action'])
 		print_barre_liste($langs->trans('Payments'), $page, 'paiement.php','',$sortfield,$sortorder,'',$num);
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans('Ref'),'paiement.php','rowid','','','',$sortfield);
-		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield);
-		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield);
-		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield);
-		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield);
-		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','f.amount','','','align="right"',$sortfield);
+		print_liste_field_titre($langs->trans('Ref'),'paiement.php','rowid','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Date'),'paiement.php','dp','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('ThirdParty'),'paiement.php','s.nom','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Type'),'paiement.php','c.libelle','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('Account'),'paiement.php','ba.label','','','',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans('AmountTTC'),'paiement.php','f.amount','','','align="right"',$sortfield,$sortorder);
 		print '<td>&nbsp;</td>';
 		print "</tr>\n";
 

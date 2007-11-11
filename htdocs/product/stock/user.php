@@ -154,9 +154,9 @@ $form=new Form($db);
 	  
 	  print '<table class="noborder" width="100%">';
 	  print "<tr class=\"liste_titre\">";	  
-	  print_liste_field_titre($langs->trans("User"),"",    "p.ref","&amp;id=".$_GET['id'],"",'align="left"',$sortfield);
-	  print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"",'align="center"',$sortfield);
-	  print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="center"',$sortfield);	  
+	  print_liste_field_titre($langs->trans("User"),"",    "p.ref","&amp;id=".$_GET['id'],"",'align="left"',$sortfield,$sortorder);
+	  print_liste_field_titre($langs->trans("Label"),"", "p.label","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
+	  print_liste_field_titre($langs->trans("Units"),"", "ps.reel","&amp;id=".$_GET['id'],"",'align="center"',$sortfield,$sortorder);
 	  print "</tr>";
 	  $sql = "SELECT u.rowid as rowid, u.name, u.firstname, ue.send, ue.consult ";
 	  $sql .= " FROM ".MAIN_DB_PREFIX."user_entrepot as ue, ".MAIN_DB_PREFIX."user as u ";

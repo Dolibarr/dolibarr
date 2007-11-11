@@ -109,11 +109,10 @@ if ($resql)
     print '<form action="liste.php" method="GET">';
     print '<table class="liste">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref");
-    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom");
-    print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"');
-//    print_liste_field_titre($langs->trans("OrderDateApproved"),$_SERVER["PHP_SELF"],"dc","","",'align="center"');
-    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"');
+    print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"cf.ref","","",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("OrderDate"),$_SERVER["PHP_SELF"],"dc","","",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"cf.fk_statut","","",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
     print '<tr class="liste_titre">';

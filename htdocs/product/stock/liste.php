@@ -78,9 +78,9 @@ if ($result)
 	print '<table class="noborder" width="100%">';
 
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield);
-	print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield);
-	print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut",'','','align="right"',$sortfield);
+	print_liste_field_titre($langs->trans("Ref"),"liste.php", "e.label","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("LocationSummary"),"liste.php", "e.lieu","","","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Status"),"liste.php", "e.statut",'','','align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	if ($num) {

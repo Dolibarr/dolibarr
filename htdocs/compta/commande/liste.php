@@ -114,10 +114,10 @@ if ($resql)
     $i = 0;
     print '<table class="noborder" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","",$param,'',$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","",$param,'',$sortfield);
-    print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","",$param, 'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","",$param,'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Ref"),"liste.php","c.ref","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"liste.php","s.nom","",$param,'',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),"liste.php","c.date_commande","",$param, 'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","c.fk_statut","",$param,'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
 

@@ -431,7 +431,7 @@ else
 				print "<table class=\"noborder\" width=\"100%\">";
 				print '<tr class="liste_titre">';
 				print '<td>'.$langs->trans("Ref").'</td>';
-				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid");
+				print_liste_field_titre($langs->trans("Company"),"fiche-rec.php","s.nom","","&socid=$socid","",$sortfiled,$sortorder);
 				print '</td><td align="right">'.$langs->trans("Amount").'</td>';
 				print '<td>&nbsp;</td>';
 				print "</td>\n";

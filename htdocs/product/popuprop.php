@@ -62,10 +62,10 @@ print_barre_liste("Liste des produits et services par popularité", $page, "popup
 print '<table class="noborder" width="100%">';
 
 print "<tr class=\"liste_titre\">";
-print_liste_field_titre($langs->trans("Ref"),"popuprop.php", "p.ref","","","",$sortfield);
-print_liste_field_titre($langs->trans("Type"),"popuprop.php", "p.type","","","",$sortfield);
-print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","",$sortfield);
-print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield);
+print_liste_field_titre($langs->trans("Ref"),"popuprop.php", "p.ref","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Type"),"popuprop.php", "p.type","","","",$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Label"),"popuprop.php", "p.label","","","",$sortfield,$sortorder);
+print_liste_field_titre("Nb. de proposition","popuprop.php", "c","","",'align="right"',$sortfield,$sortorder);
 print "</tr>\n";
 
 $sql  = "SELECT p.rowid, p.label, p.ref, fk_product_type, count(*) as c";

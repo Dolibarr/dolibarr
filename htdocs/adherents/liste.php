@@ -137,12 +137,12 @@ if ($result)
     print "<table class=\"noborder\" width=\"100%\">";
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Name")." / ".$langs->trans("Company"),"liste.php","d.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Type"),"liste.php","t.libelle",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Person"),"liste.php","d.morphy",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EMail"),"liste.php","d.email",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"liste.php","d.statut,d.datefin",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("EndSubscription"),"liste.php","d.datefin",$param,"","",$sortfield,$sortorder);
     print '<td width="60" align="center">'.$langs->trans("Action")."</td>\n";
     print "</tr>\n";
 

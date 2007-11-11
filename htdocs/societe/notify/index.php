@@ -82,9 +82,9 @@ if ($result)
 	
 	print '<table class="noborder" width="100%">';
 	print '<tr class="liste_titre">';
-	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign=\"center\"');
-	print_liste_field_titre($langs->trans("Contact"),"index.php","c.name");
-	print_liste_field_titre($langs->trans("Action"),"index.php","a.titre");
+	print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Contact"),"index.php","c.name","","",'valign="center"',$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Action"),"index.php","a.titre","","",'valign="center"',$sortfield,$sortorder);
 	print "</tr>\n";
 	$var=True;
 	while ($i < $num)

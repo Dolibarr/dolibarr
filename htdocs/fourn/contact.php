@@ -93,9 +93,9 @@ if ($result) {
     
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield);
-  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield);
-  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield);
+  print_liste_field_titre($langs->trans("Lastname"),"contact.php","p.name", $begin, "", "", $sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Firstname"),"contact.php","p.firstname", $begin, "", "", $sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Company"),"contact.php","s.nom", $begin, "", "", $sortfield,$sortorder);
   print '<td class="liste_titre">'.$langs->trans("Email").'</td>';
   print '<td class="liste_titre">'.$langs->trans("Phone").'</td>';
   print "</tr>\n";

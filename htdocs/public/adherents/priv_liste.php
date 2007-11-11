@@ -64,10 +64,10 @@ if ($result)
 
 	print '<tr class="liste_titre">';
 	print "<td><a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.prenom\">Prenom</a> <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.nom\">Nom</a> / <a href=\"".$_SERVER['SCRIPT_NAME'] . "?page=$page&sortorder=ASC&sortfield=d.societe\">Société</a></td>\n";
-	print_liste_field_titre($langs->trans("Birthdate"),"priv_liste.php","naiss",$param);
-	print_liste_field_titre($langs->trans("EMail"),"priv_liste.php","email",$param);
-	print_liste_field_titre($langs->trans("Zip"),"priv_liste.php","cp",$param);
-	print_liste_field_titre($langs->trans("Town"),"priv_liste.php","ville",$param);
+	print_liste_field_titre($langs->trans("Birthdate"),"priv_liste.php","naiss","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("EMail"),"priv_liste.php","email","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Zip"),"priv_liste.php","cp","",$param,$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Town"),"priv_liste.php","ville","",$param,$sortfield,$sortorder);
 	print "<td>".$langs->trans("Photo")."</td>\n";
 	print "</tr>\n";
 

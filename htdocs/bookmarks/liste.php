@@ -89,12 +89,12 @@ if ($resql)
 
     print "<tr class=\"liste_titre\">";
     //print "<td>&nbsp;</td>";
-    print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield);
+    print_liste_field_titre($langs->trans("Id"),$_SERVER["PHP_SELF"],"bid","","",'align="left"',$sortfield,$sortorder);
     print '<td>'.$langs->trans("Title")."</td>";
     print '<td>'.$langs->trans("Link")."</td>";
     print '<td align="center">'.$langs->trans("Target")."</td>";
-    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.name","","",'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Author"),$_SERVER["PHP_SELF"],"u.name","","",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"b.dateb","","",'align="center"',$sortfield,$sortorder);
     print "<td>&nbsp;</td>";
     print "</tr>\n";
 

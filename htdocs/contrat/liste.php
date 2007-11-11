@@ -100,10 +100,10 @@ if ($resql)
     print '<tr class="liste_titre">';
     $param='&amp;search_contract='.$search_contract;
     $param.='&amp;search_nom='.$search_nom;
-    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'width="50"',$sortfield);
-    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield);
+    print_liste_field_titre($langs->trans("Ref"), $_SERVER["PHP_SELF"], "c.rowid","","$param",'width="50"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"), $_SERVER["PHP_SELF"], "s.nom","","$param","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"), $_SERVER["PHP_SELF"], "c.datec","","$param",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"), $_SERVER["PHP_SELF"], "c.statut","","$param",'align="center"',$sortfield,$sortorder);
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
     print '<td class="liste_titre" width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';

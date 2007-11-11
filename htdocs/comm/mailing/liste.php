@@ -74,11 +74,11 @@ if ($result)
   $addu = "&amp;sall=".$sall;
   print '<table class="liste">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Ref"),"liste.php","m.rowid",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("Title"),"liste.php","m.titre",$addu,"","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"liste.php","m.date_creat",$addu,"",'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("NbOfEMails"),"liste.php","m.nbemail",$addu,"",'align="center"',$sortfield);
-  print_liste_field_titre($langs->trans("Status"),"liste.php","m.statut",$addu,"",'align="right"',$sortfield);
+  print_liste_field_titre($langs->trans("Ref"),"liste.php","m.rowid",$addu,"","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Title"),"liste.php","m.titre",$addu,"","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("DateCreation"),"liste.php","m.date_creat",$addu,"",'align="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("NbOfEMails"),"liste.php","m.nbemail",$addu,"",'align="center"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Status"),"liste.php","m.statut",$addu,"",'align="right"',$sortfield,$sortorder);
   print "</tr>\n";
 
   print '<form method="get" action="clients.php">';

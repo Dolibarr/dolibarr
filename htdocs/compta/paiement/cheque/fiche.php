@@ -330,12 +330,12 @@ else
 		print '<tr class="liste_titre">';
 		'<td>'.$langs->trans("Num").'</td>';
 		print '<td>'.$langs->trans("Position").'</td>';
-		print_liste_field_titre($langs->trans("Num"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield);
-		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield);
-		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield);
-		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield);
-		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield);
-		print_liste_field_titre($langs->trans("DateOperation"),$_SERVER["PHP_SELF"],"b.dateo", "",$param,'align="center"',$sortfield);
+		print_liste_field_titre($langs->trans("Num"),$_SERVER["PHP_SELF"],"b.num_chq", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("CheckTransmitter"),$_SERVER["PHP_SELF"],"b.emetteur", "",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Bank"),$_SERVER["PHP_SELF"],"b.banque", "",$param,"",$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Amount"),$_SERVER["PHP_SELF"],"b.amount", "",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("LineRecord"),$_SERVER["PHP_SELF"],"b.rowid", "",$param,'align="center"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("DateOperation"),$_SERVER["PHP_SELF"],"b.dateo", "",$param,'align="center"',$sortfield,$sortorder);
 		print "<td>&nbsp;</td></tr>\n";
 		$i=1;
 		$var=false;

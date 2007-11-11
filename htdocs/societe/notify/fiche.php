@@ -162,8 +162,8 @@ if ( $soc->fetch($soc->id) )
 	    // Ligne de titres
 	    print '<table width="100%" class="noborder">';
 	    print '<tr class="liste_titre">';
-	    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
-	    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
+	    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
+	    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
 	    print '<td>&nbsp;</td>';
 	    print '</tr>';
 	    
@@ -215,8 +215,8 @@ if ( $soc->fetch($soc->id) )
     // Ligne de titres
     print '<table width="100%" class="noborder">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield);
-    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield);
+    print_liste_field_titre($langs->trans("Contact"),"fiche.php","c.name",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Action"),"fiche.php","a.titre",'',"&socid=$socid",'"width="45%"',$sortfield,$sortorder);
     print '<td>&nbsp;</td>';
     print '</tr>';
     

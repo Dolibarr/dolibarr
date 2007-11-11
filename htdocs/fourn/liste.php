@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -103,11 +102,11 @@ if ($resql)
   print '<form action="liste.php?cat='.$_GET["cat"].'" method="GET">';
   print '<table class="liste" width="100%">';
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$uadd,"",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville",$uadd,"",'valign="middle"',$sortfield);
-  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client",$uadd,"",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta",$uadd,"",'align="left"',$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$uadd,"",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$uadd,"",'valign="middle"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville",$uadd,"",'valign="middle"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client",$uadd,"",'align="left"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta",$uadd,"",'align="left"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$uadd,"",'align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
 

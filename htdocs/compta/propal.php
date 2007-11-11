@@ -695,11 +695,11 @@ else
 		
 		print "<table class=\"noborder\" width=\"100%\">";
 		print '<tr class="liste_titre">';
-		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'width=20%',$sortfield);
-		print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield);
-		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-		print_liste_field_titre($langs->trans("AmountHT"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield);
-		print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="right"',$sortfield);
+		print_liste_field_titre($langs->trans("Ref"),"propal.php","p.ref","","&year=$year&viewstatut=$viewstatut",'width=20%',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Company"),"propal.php","s.nom","&viewstatut=$viewstatut","",'',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Date"),"propal.php","p.datep","&viewstatut=$viewstatut","",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("AmountHT"),"propal.php","p.price","&viewstatut=$viewstatut","",'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Status"),"propal.php","p.fk_statut","&viewstatut=$viewstatut","",'align="right"',$sortfield,$sortorder);
         print '<td class="liste_titre">&nbsp;</td>';
 		print "</tr>\n";
         

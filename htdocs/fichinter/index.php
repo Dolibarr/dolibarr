@@ -84,8 +84,8 @@ if ($result)
     $i = 0;
     print '<table class="noborder" width="100%">';
     print "<tr class=\"liste_titre\">";
-    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield);
+    print_liste_field_titre($langs->trans("Ref"),"index.php","f.ref","",$urlparam,'width="15%"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","",$urlparam,'',$sortfield,$sortorder);
     print '<td>'.$langs->trans("Description").'</td>';
     print_liste_field_titre($langs->trans("Date"),"index.php","f.datei","",$urlparam,'align="center"',$sortfield);
     print '<td align="right">'.$langs->trans("Duration").'</td>';

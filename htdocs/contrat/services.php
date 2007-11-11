@@ -113,16 +113,16 @@ if ($resql)
     print '<table class="liste" width="100%">';
 
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid","$param","","",$sortfield);
-    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description","$param","","",$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom","$param","","",$sortfield);
+    print_liste_field_titre($langs->trans("Contract"),"services.php", "c.rowid","$param","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Service"),"services.php", "p.description","$param","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"services.php", "s.nom","$param","","",$sortfield,$sortorder);
     // Date debut
-    if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue","$param",'',' align="center"',$sortfield);
-    if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture","$param",'',' align="center"',$sortfield);
+    if ($mode == "0") print_liste_field_titre($langs->trans("DateStartPlannedShort"),"services.php", "cd.date_ouverture_prevue","$param",'',' align="center"',$sortfield,$sortorder);
+    if ($mode == "" || $mode > 0) print_liste_field_titre($langs->trans("DateStartRealShort"),"services.php", "cd.date_ouverture","$param",'',' align="center"',$sortfield,$sortorder);
     // Date fin
-    if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite","$param",'',' align="center"',$sortfield);
-    else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture","$param",'',' align="center"',$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut","$param","","align=\"right\"",$sortfield);
+    if ($mode == "" || $mode < 5) print_liste_field_titre($langs->trans("DateEndPlannedShort"),"services.php", "cd.date_fin_validite","$param",'',' align="center"',$sortfield,$sortorder);
+    else print_liste_field_titre($langs->trans("DateEndRealShort"),"services.php", "cd.date_cloture","$param",'',' align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"services.php", "cd.statut","$param","","align=\"right\"",$sortfield,$sortorder);
     print "</tr>\n";
 
     print '<form method="POST" action="services.php">';

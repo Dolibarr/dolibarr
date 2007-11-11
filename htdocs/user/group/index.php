@@ -75,8 +75,8 @@ if ($resql)
     $param="search_group=$search_group&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Group"),"index.php","g.nom",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec",$param,"","",$sortfield);
+    print_liste_field_titre($langs->trans("Group"),"index.php","g.nom",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","g.datec",$param,"","",$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
     while ($i < $num)

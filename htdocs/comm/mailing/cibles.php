@@ -315,9 +315,9 @@ if ($mil->fetch($_REQUEST["id"]) >= 0)
         if ($page)			$addu.= "&amp;page=".$page;
         print '<table class="noborder" width="100%">';
         print '<tr class="liste_titre">';
-        print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$addu,"","",$sortfield);
-        print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield);
-        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield);
+        print_liste_field_titre($langs->trans("Lastname"),$_SERVER["PHP_SELF"],"mc.nom",$addu,"","",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("Firstname"),$_SERVER["PHP_SELF"],"mc.prenom",$addu,"","",$sortfield,$sortorder);
+        print_liste_field_titre($langs->trans("EMail"),$_SERVER["PHP_SELF"],"mc.email",$addu,"","",$sortfield,$sortorder);
         print '<td align="center">&nbsp;</td>';
 
 		// Date

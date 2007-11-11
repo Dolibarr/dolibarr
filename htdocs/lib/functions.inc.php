@@ -1169,12 +1169,12 @@ function img_previous($alt = "default")
         \param      selected    Affiche version "selected" du logo
         \return     string      Retourne tag img
 */
-function img_down($alt = "default", $selected=1)
+function img_down($alt = "default", $selected=0)
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Down");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow_selected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1downarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -1183,12 +1183,12 @@ function img_down($alt = "default", $selected=1)
         \param      selected    Affiche version "selected" du logo
         \return     string      Retourne tag img
 */
-function img_up($alt = "default", $selected=1)
+function img_up($alt = "default", $selected=0)
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Up");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow_selected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1uparrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -1197,12 +1197,12 @@ function img_up($alt = "default", $selected=1)
         \param      selected    Affiche version "selected" du logo
         \return     string      Retourne tag img
 */
-function img_left($alt = "default", $selected=1)
+function img_left($alt = "default", $selected=0)
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Left");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow_selected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1leftarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -1211,12 +1211,12 @@ function img_left($alt = "default", $selected=1)
         \param      selected    Affiche version "selected" du logo
         \return     string      Retourne tag img
 */
-function img_right($alt = "default", $selected=1)
+function img_right($alt = "default", $selected=0)
 {
     global $conf,$langs;
     if ($alt=="default") $alt=$langs->trans("Right");
-    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
-    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow_notselected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    if ($selected) return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow_selected.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
+    else return '<img src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/1rightarrow.png" border="0" alt="'.$alt.'" title="'.$alt.'">';
 }
 
 /**
@@ -1948,6 +1948,8 @@ function transcoS2L($zonein,$devise)
 function print_liste_field_titre($name, $file, $field, $begin="", $options="", $td="", $sortfield="", $sortorder="")
 {
     global $conf;
+	//print "$name, $file, $field, $begin, $options, $td, $sortfield, $sortorder<br>\n";
+
     // Le champ de tri est mis en évidence.
     // Exemple si (sortfield,field)=("nom","xxx.nom") ou (sortfield,field)=("nom","nom")
     if ($sortfield == $field || $sortfield == ereg_replace("^[^\.]+\.","",$field))
@@ -1961,23 +1963,25 @@ function print_liste_field_titre($name, $file, $field, $begin="", $options="", $
     print $name."&nbsp;";
     if (! $sortorder)
     {
-        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+        print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
     }
     else
     {
-        if ($field != $sortfield) {
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+        if ($field != $sortfield)
+		{
+            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
+            print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
         }
         else {
+			$sortorder=strtoupper($sortorder);
             if ($sortorder == 'DESC' ) {
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
-                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
-            }
-            if ($sortorder == 'ASC' ) {
                 print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",0).'</a>';
                 print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",1).'</a>';
+            }
+            if ($sortorder == 'ASC' ) {
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=asc&amp;begin='.$begin.$options.'">'.img_down("A-Z",1).'</a>';
+                print '<a href="'.$file.'?sortfield='.$field.'&amp;sortorder=desc&amp;begin='.$begin.$options.'">'.img_up("Z-A",0).'</a>';
             }
         }
     }

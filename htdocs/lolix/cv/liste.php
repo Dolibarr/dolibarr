@@ -78,12 +78,12 @@ if ($result)
   print '<table class="noborder" width="100%" cellspacing="0" cellpadding="4">';
   print '<TR class="liste_titre">';
   print "<td>id</td><TD valign=\"center\">";
-  print_liste_field_titre("Nom",$PHP_SELF,"c.nom");
+  print_liste_field_titre("Nom",$PHP_SELF,"c.nom","","",'valign="center"',$sortfield,$sortorder);
   print "</td><td>";
-  print_liste_field_titre("Prénom",$PHP_SELF,"c.prenom");
+  print_liste_field_titre("Prénom",$PHP_SELF,"c.prenom","","",'valign="center"',$sortfield,$sortorder);
   print "</td>";
   print "<td align=\"center\">";
-  print_liste_field_titre("Activé le",$PHP_SELF,"s.fk_departement");
+  print_liste_field_titre("Activé le",$PHP_SELF,"s.fk_departement","","",'valign="center"',$sortfield,$sortorder);
   print "</td>";
   print "</TR>\n";
   $var=True;

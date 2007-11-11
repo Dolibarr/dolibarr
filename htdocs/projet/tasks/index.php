@@ -54,7 +54,7 @@ print '<tr><td width="30%" valign="top" class="notopnoleft">';
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield);
+print_liste_field_titre($langs->trans("Project"),"index.php","s.nom","","","",$sortfield,$sortorder);
 print '<td align="center">'.$langs->trans("NbOpenTasks").'</td>';
 print "</tr>\n";
 
@@ -108,7 +108,7 @@ print '</td><td width="70%" valign="top" class="notopnoleft">';
  */
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield);
+print_liste_field_titre($langs->trans("Company"),"index.php","s.nom","","","",$sortfield,$sortorder);
 print '<td>Nb heures</td>';
 print "</tr>\n";
 

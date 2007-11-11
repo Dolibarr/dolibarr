@@ -92,10 +92,10 @@ if ($result)
   print '<form method="get" action="clients.php">'."\n";
   print '<table class="liste">'."\n";
   print '<tr class="liste_titre">';
-  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$param,"","",$sortfield);
-  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$param,"","",$sortfield);
-  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$param,"","",$sortfield);
-  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$param,"",'align="center"',$sortfield);
+  print_liste_field_titre($langs->trans("Company"),"clients.php","s.nom",$param,"","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("Town"),"clients.php","s.ville",$param,"","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("CustomerCode"),"clients.php","s.code_client",$param,"","",$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("DateCreation"),"clients.php","datec",$param,"",'align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre">&nbsp;</td>';
   print "</tr>\n";
   

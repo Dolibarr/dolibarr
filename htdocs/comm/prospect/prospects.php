@@ -139,11 +139,11 @@ if ($resql)
 
     print '<table class="liste" width="100%">';
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield);
-    print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield);
-    print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield);
+    print_liste_field_titre($langs->trans("Company"),"prospects.php","s.nom","","","valign=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Town"),"prospects.php","s.ville","","","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("State"),"prospects.php","s.fk_departement","","","align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"prospects.php","s.datec","","","align=\"center\"",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"prospects.php","s.fk_stcomm","","","align=\"center\"",$sortfield,$sortorder);
     print '<td class="liste_titre" colspan="4">&nbsp;</td>';
     print "</tr>\n";
 

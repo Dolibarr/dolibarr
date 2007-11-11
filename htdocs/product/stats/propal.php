@@ -149,11 +149,11 @@ if ($_GET["id"] || $_GET["ref"])
             $i = 0;
             print "<table class=\"noborder\" width=\"100%\">";
             print '<tr class="liste_titre">';
-            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield);
-            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield);
-            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"p.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield);
-            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
-            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield);
+            print_liste_field_titre($langs->trans("Ref"),$_SERVER["PHP_SELF"],"p.rowid","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","&amp;id=".$_GET["id"],'',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"p.datec","","&amp;id=".$_GET["id"],'align="center"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("AmountHT"),$_SERVER["PHP_SELF"],"p.total","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
+            print_liste_field_titre($langs->trans("Status"),$_SERVER["PHP_SELF"],"p.fk_statut","","&amp;id=".$_GET["id"],'align="right"',$sortfield,$sortorder);
             print "</tr>\n";
 
             $propalstatic=new Propal($db);

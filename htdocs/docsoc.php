@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -37,6 +36,10 @@ $langs->load('other');
 $mesg = "";
 
 $socid = isset($_GET["socid"])?$_GET["socid"]:'';
+$sortorder=$_GET["sortorder"];
+$sortfield=$_GET["sortfield"];
+if (! $sortorder) $sortorder="ASC";
+if (! $sortfield) $sortfield="name";
 
 // Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, 'societe', $socid);
@@ -113,10 +116,8 @@ if ($socid > 0)
 		
 		// Construit liste des fichiers
 		clearstatcache();
-		
 		$totalsize=0;
 		$filearray=array();
-		
 		$errorlevel=error_reporting();
 		error_reporting(0);
 		$handle=opendir($upload_dir);
@@ -128,8 +129,10 @@ if ($socid > 0)
 			{
 				if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
 				{
-					$filearray[$i]=$file;
-					$totalsize+=filesize($upload_dir."/".$file);
+					$filearray[$i]->name=$file;
+					$filearray[$i]->size=filesize($upload_dir."/".$file);
+					$filearray[$i]->date=filemtime($upload_dir."/".$file);
+					$totalsize+=$filearray[$i]->size;
 					$i++;
 				}
 			}
@@ -139,7 +142,7 @@ if ($socid > 0)
 		{
 			//            print '<div class="error">'.$langs->trans("ErrorCanNotReadDir",$upload_dir).'</div>';
 		}
-		
+
 		print '<table class="border"width="100%">';
 		
 		// Ref
@@ -166,27 +169,70 @@ if ($socid > 0)
 		// Affiche liste des documents existant
 		print_titre($langs->trans("AttachedFiles"));
 
+		// \TODO Mettre cette section dans une zone AJAX
+		$prefix=$socid.'/';
+		$modulepart='societe';
+		$url=$_SERVER["PHP_SELF"];
 		print '<table width="100%" class="noborder">';
-		print '<tr class="liste_titre"><td>'.$langs->trans("Document").'</td><td align="right">'.$langs->trans("Size").'</td><td align="center">'.$langs->trans("Date").'</td><td>&nbsp;</td></tr>';
+		print '<tr class="liste_titre">';
+		$param='&amp;socid='.$socid;
+		print_liste_field_titre($langs->trans("Document"),$_SERVER["PHP_SELF"],"name","",$param,'align="left"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Size"),$_SERVER["PHP_SELF"],"size","",$param,'align="right"',$sortfield,$sortorder);
+		print_liste_field_titre($langs->trans("Date"),$_SERVER["PHP_SELF"],"date","",$param,'align="center"',$sortfield,$sortorder);
+		print '<td>&nbsp;</td>';
+		print '</tr>';
+		
+		function compare_file($a, $b)
+		{
+			global $sortorder;
+			global $sortfield;
+			
+			$sortorder=strtoupper($sortorder);
+			
+			if ($sortorder == 'ASC') { $retup=-1; $retdown=1; }
+			else { $retup=1; $retdown=-1; }
+			
+			if ($sortfield == 'name')
+			{
+				if ($a->name == $b->name) return 0;
+				return ($a->name < $b->name) ? $retup : $retdown;
+			}
+			if ($sortfield == 'date')
+			{
+				if ($a->date == $b->date) return 0;
+				return ($a->date < $b->date) ? $retup : $retdown;
+			}
+			if ($sortfield == 'size')
+			{
+				if ($a->size == $b->size) return 0;
+				return ($a->size < $b->size) ? $retup : $retdown;
+			}
+		}
 
+		usort($filearray,"compare_file");
+		
 		$var=true;
 		foreach($filearray as $key => $file)
 		{
-			if (!is_dir($dir.$file) && substr($file, 0, 1) <> '.' && substr($file, 0, 3) <> 'CVS')
+			if (!is_dir($dir.$file->name) && substr($file->name, 0, 1) <> '.' && substr($file->name, 0, 3) <> 'CVS')
 			{
 				$var=!$var;
 				print "<tr $bc[$var]><td>";
-				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart=societe&type=application/binary&file='.urlencode($socid.'/'.$file).'">'.$file.'</a>';
+				echo '<a href="'.DOL_URL_ROOT.'/document.php?modulepart='.$modulepart.'&type=application/binary&file='.urlencode($prefix.$file->name).'">'.$file->name.'</a>';
 				print "</td>\n";
-				print '<td align="right">'.filesize($upload_dir."/".$file). ' '.$langs->trans("bytes").'</td>';
-				print '<td align="center">'.dolibarr_print_date(filemtime($upload_dir."/".$file),"dayhour").'</td>';
+				print '<td align="right">'.$file->size.' '.$langs->trans("bytes").'</td>';
+				print '<td align="center">'.dolibarr_print_date($file->date,"dayhour").'</td>';
 				print '<td align="center">';
-				echo '<a href="docsoc.php?socid='.$socid.'&amp;action=delete_file&urlfile='.urlencode($file).'">'.img_delete().'</a>';
+				echo '<a href="'.$url.'?socid='.$socid.'&amp;action=delete_file&urlfile='.urlencode($file->name).'">'.img_delete().'</a>';
 				print "</td></tr>\n";
 			}
 		}
-		print "</table><br><br>";
-
+		print "</table>";
+		// Fin de zone Ajax
+		
+		
+		print "<br><br>";
+		
 		// Courriers
 		// Les courriers sont des documents speciaux generes par des scripts
 		// situes dans scripts/courrier.

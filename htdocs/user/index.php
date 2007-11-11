@@ -80,12 +80,12 @@ if ($result)
     $param="search_user=$search_user&amp;sall=$sall";
     print "<table class=\"noborder\" width=\"100%\">";
     print '<tr class="liste_titre">';
-    print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield);
-    print_liste_field_titre($langs->trans("Status"),"index.php","u.status",$param,"",'align="right"',$sortfield);
+    print_liste_field_titre($langs->trans("Login"),"index.php","u.login",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastName"),"index.php","u.name",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("Status"),"index.php","u.status",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
     while ($i < $num)

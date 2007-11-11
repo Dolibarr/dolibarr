@@ -166,11 +166,11 @@ if ($resql)
 
 	// Lignes des titres
 	print "<tr class=\"liste_titre\">";
-	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield);
-	print_liste_field_titre($langs->trans("RefSupplierShort"),"liste.php", "pf.ref_fourn",$param,"","",$sortfield);
-	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield);
-	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield);
-	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield);
+	print_liste_field_titre($langs->trans("Ref"),"liste.php", "p.ref",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("RefSupplierShort"),"liste.php", "pf.ref_fourn",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Label"),"liste.php", "p.label",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("Supplier"),"liste.php", "pf.fk_soc",$param,"","",$sortfield,$sortorder);
+	print_liste_field_titre($langs->trans("BuyingPrice"),"liste.php", "ppf.price",$param,"",'align="right"',$sortfield,$sortorder);
 	print "</tr>\n";
 
 	// Lignes des champs de filtre

@@ -126,8 +126,8 @@ print_barre_liste($langs->trans("SuppliersProductsSellSalesTurnover"), $page, "s
 print '<form action="stats.php" method="GET">';
 print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
-print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield);
-print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield);
+print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield,$sortorder);
+print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield,$sortorder);
 print '<td class="liste_titre">&nbsp;</td>';
 
 foreach($years as $year)
