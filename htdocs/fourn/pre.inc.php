@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -94,6 +93,13 @@ function llxHeader($head = "", $title="", $addons='') {
         $menu->add(DOL_URL_ROOT."/product/", $langs->trans("Products"));
     }
   }
+  
+  if ($conf->categorie->enabled)
+	{
+		$langs->load("categories");
+		// Catégories fournisseurs
+		$menu->add(DOL_URL_ROOT."/categories/index.php?leftmenu=cat&amp;type=1", $langs->trans("SuppliersCategoriesShort"), 0);
+	}
   
   left_menu($menu->liste);
 }

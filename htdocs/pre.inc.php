@@ -55,7 +55,13 @@ function llxHeader($head = "")
         }
       $menu->add_submenu(DOL_URL_ROOT."/contact/index.php",$langs->trans("Contacts"));
     }
-  
+
+	if ($conf->categorie->enabled)
+	{
+		$langs->load("categories");
+		$menu->add(DOL_URL_ROOT."/categories/index.php?type=0", $langs->trans("Categories"));
+	}
+	
   if ($conf->commercial->enabled && isset($user->rights->commercial->lire) && $user->rights->commercial->lire)
     {
       $langs->load("commercial");
