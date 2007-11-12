@@ -51,7 +51,7 @@ function product_prepare_head($product, $user)
   //affichage onglet catégorie
   if ($conf->categorie->enabled)
   {
-  	$head[$h][0] = DOL_URL_ROOT."/product/categorie.php?id=".$product->id;
+  	$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$product->id;
     $head[$h][1] = $langs->trans('Categories');
     $head[$h][2] = 'category';
     $h++;

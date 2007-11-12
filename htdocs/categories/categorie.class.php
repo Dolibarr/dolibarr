@@ -832,12 +832,14 @@ class Categorie
 	/**
 	* Retourne les catégories contenant le produit $id
 	*/
-	function containing ($id,$type)
+	function containing ($id,$type,$typeid)
 	{
 		$cats = array ();
 
-		$sql  = "SELECT fk_categorie FROM ".MAIN_DB_PREFIX."categorie_".$type." ";
-		$sql .= "WHERE  fk_".$type." = ".$id;
+		$sql = "SELECT ct.fk_categorie";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
+		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
+		$sql.= " WHERE  ct.fk_".$type." = ".$id." AND c.type = ".$typeid;
 
 		$res = $this->db->query ($sql);
 
@@ -887,7 +889,29 @@ class Categorie
 	}
 	
 	
-	
+	/**
+	* 	\brief	Vérifie le type de la catégorie
+	* 
+	*/
+	function verify_type($id)
+	{
+		$sql  = "SELECT type FROM ".MAIN_DB_PREFIX."categorie ";
+		$sql .= "WHERE rowid = ".$id." ";
+
+		$result = $this->db->query ($sql);
+		if ($result)
+		{
+			$obj = $this->db->fetch_object($result);
+
+			return $obj->type;
+		}
+		else
+		{
+			$this->error=$this->db->error().' sql='.$sql;
+			dolibarr_print_error('',$this->error);
+			return -1;
+		}
+	}
 
 
 
