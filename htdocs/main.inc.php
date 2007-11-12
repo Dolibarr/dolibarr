@@ -468,15 +468,36 @@ if (! isset($_SESSION["dol_login"]))
     $_SESSION["dol_login"]=$user->login;
     dolibarr_syslog("This is a new started user session. _SESSION['dol_login']=".$_SESSION["dol_login"].' Session id='.session_id());
     $user->update_last_login_date();
-}
-
-// Module Phenix
-if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
-{
-	// Création du cookie permettant la connexion automatique, valide jusqu'à la fermeture du browser
-	if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
+	
+	// Module webcalendar
+	if ($conf->webcal->enabled && $user->webcal_login != "")
 	{
-		setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
+		$domain='';
+		// Extract domain from url (Useless because only cookie on same domain are authorized by browser
+		//if (eregi('^(https:[\\\/]+[^\\\/]+)',$conf->global->PHPWEBCALENDAR_URL,$reg)) $domain=$reg[1];
+
+		// Création du cookie permettant de sauver le login
+		$cookiename='webcalendar_login';
+		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
+		{
+			setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
+		}
+		// Création du cookie permettant de sauver la session
+		$cookiename='webcalendar_session';
+		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
+		{
+			setcookie($cookiename, 'TODO', 0, "/", $domain, 0);
+		}
+	}
+
+	// Module Phenix
+	if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
+	{
+		// Création du cookie permettant la connexion automatique, valide jusqu'à la fermeture du browser
+		if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
+		{
+			setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
+		}
 	}
 }
 
