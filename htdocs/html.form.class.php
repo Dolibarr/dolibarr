@@ -1682,9 +1682,8 @@ class Form
     }
      
     /**
-     *    \brief    Retourne la liste des catégories en fonction 
-     *				du nombre choisi.
-     *    \param    type			Type de categories
+     *    \brief    Retourne la liste des catégories du type choisi
+     *    \param    type			Type de categories (0=produit, 1=fournisseur, 2=client)
      *    \param    selected    	Id categorie preselectionnee
      *    \param    select_name		Nom formulaire HTML
      */

@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -110,7 +109,7 @@ if (isset($_REQUEST["catMere"]) && $_REQUEST["catMere"]>=0)
 $html = new Form($db);
 
 /*
- * Fiche objet client/fournisseur
+ * Fiche categorie de client et/ou fournisseur
  */
 if ($_GET["socid"])
 {
@@ -186,26 +185,21 @@ if ($_GET["socid"])
 	
 	if ($mesg) print($mesg);
 	
-	if ($soc->client)
-	{
-		formCategory($db,$soc,$type,2);
-		print '<br><br>';
-	}
+	if ($soc->client) formCategory($db,$soc,$type,2);
+	
+	if ($soc->client && $soc->fournisseur) print '<br><br>';
+	
 	if ($soc->fournisseur) formCategory($db,$soc,$type,1);
 }
 else if ($_GET["id"] || $_GET["ref"])
 {
- /*
-  * Fiche produit
-  */
+	/*
+	* Fiche categorie de produit
+	*/
+	require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
+	require_once(DOL_DOCUMENT_ROOT."/product.class.php");
   
-  require_once(DOL_DOCUMENT_ROOT."/lib/product.lib.php");
-  require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-  
- /*
-  * Creation de l'objet produit correspondant à l'id
-  */
-
+	// Produit
 	$product = new Product($db);
 	if ($_GET["ref"]) $result = $product->fetch('',$_GET["ref"]);
 	if ($_GET["id"]) $result = $product->fetch($_GET["id"]);
@@ -213,9 +207,9 @@ else if ($_GET["id"] || $_GET["ref"])
 	llxHeader("","",$langs->trans("CardProduct".$product->type));
 
 
-  $head=product_prepare_head($product, $user);
-  $titre=$langs->trans("CardProduct".$product->type);
-  dolibarr_fiche_head($head, 'category', $titre);
+	$head=product_prepare_head($product, $user);
+	$titre=$langs->trans("CardProduct".$product->type);
+	dolibarr_fiche_head($head, 'category', $titre);
   
 
 	print '<table class="border" width="100%">';
@@ -230,8 +224,8 @@ else if ($_GET["id"] || $_GET["ref"])
 	print '<tr><td>'.$langs->trans("Label").'</td><td>'.$product->libelle.'</td>';
 	print '</tr>';
 
-  // Prix
-  print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
+	// Prix
+	print '<tr><td>'.$langs->trans("SellingPrice").'</td><td colspan="2">';
 	if ($product->price_base_type == 'TTC')
 	{
 	  print price($product->price_ttc).' '.$langs->trans($product->price_base_type);
@@ -242,10 +236,10 @@ else if ($_GET["id"] || $_GET["ref"])
 	}
 	print '</td></tr>';
 
-  // Statut
-  print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
+	// Statut
+	print '<tr><td>'.$langs->trans("Status").'</td><td colspan="2">';
 	print $product->getLibStatut(2);
-  print '</td></tr>';
+	print '</td></tr>';
 
 	print '</table>';
 
@@ -254,23 +248,22 @@ else if ($_GET["id"] || $_GET["ref"])
 	if ($mesg) print($mesg);
 	
 	formCategory($db,$product,'product',0);
-
 }
-	
-	/*
-	* Fonction Barre d'actions
-	*
-	*/
 
+	
+/*
+* Fonction Barre d'actions
+*/
 function formCategory($db,$object,$type,$typeid)
 {
-	global $user,$langs,$html;
+	global $user,$langs,$html,$bc;
 	
+	if ($typeid == 0) $title = $langs->trans("ProductsCategoriesShort");
+	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
+	if ($typeid == 2) $title = $langs->trans("CustomersCategoriesShort");
 	if ($type == 'societe')
 	{
 		$nameId = 'socid';
-		if ($typeid == 2)	$title = $langs->trans("CustomersCategoriesShort");
-		if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
 	}
 	else
 	{
@@ -304,9 +297,11 @@ function formCategory($db,$object,$type,$typeid)
 
 	if (sizeof($cats) > 0)
 	{
-		print_fiche_titre($langs->trans("CompanyIsInCategories"));
+		if ($typeid == 0) $title=$langs->trans("ProductIsInCategories");
+		if ($typeid == 1) $title=$langs->trans("CompanyIsInSuppliersCategories");
+		if ($typeid == 2) $title=$langs->trans("CompanyIsInCustomersCategories");
 		print '<table class="noborder" width="100%">';
-		print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Categories").'</td></tr>';
+		print '<tr class="liste_titre"><td colspan="2">'.$title.':</td></tr>';
 
 		$var = true;
 		foreach ($cats as $cat)
@@ -337,7 +332,7 @@ function formCategory($db,$object,$type,$typeid)
 				print "</tr>\n";
 			}
 		}
-		print "</table><br/>\n";
+		print "</table>\n";
 	}
 	else if($cats < 0)
 	{

@@ -468,19 +468,22 @@ class Categorie
 	* 	\brief		Reconstruit l'arborescence des catégories sous la forme d'un tableau
 	*				Renvoi un tableau de tableau('id','id_mere',...) trié selon
 	*				arbre et avec:
-	*						id = id de la categorie
-	*						id_mere = id de la categorie mere
-	*						id_children = tableau des id enfant
-	*						label = nom de la categorie
-	*						fulllabel = nom avec chemin complet de la categorie
-	*						fullpath = chemin complet compose des id
-	*	\return		array	Tableau de array
+	*				id = id de la categorie
+	*				id_mere = id de la categorie mere
+	*				id_children = tableau des id enfant
+	*				label = nom de la categorie
+	*				fulllabel = nom avec chemin complet de la categorie
+	*				fullpath = chemin complet compose des id
+    *	\param    	type		Type de categories (0=produit, 1=fournisseur, 2=client)
+	*	\return		array		Tableau de array
 	*/
 	function get_full_arbo($type)
 	{
 		// Charge tableau des meres
 		$sql = "SELECT fk_categorie_mere as id_mere, fk_categorie_fille as id_fille";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+
+		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
 		$res = $this->db->query ($sql);
 		if ($res)
 		{
@@ -502,6 +505,8 @@ class Categorie
 		$sql.= " ON c.rowid=ca.fk_categorie_mere";
 		$sql.= " WHERE c.type = ".$type;
 		$sql.= " ORDER BY c.label, c.rowid";
+
+		dolibarr_syslog("Categorie::get_full_arbo sql=".$sql);
 		$res = $this->db->query ($sql);
 		if ($res)
 		{
@@ -866,7 +871,6 @@ class Categorie
 		$sql.= " WHERE  ct.fk_".$type." = ".$id." AND c.type = ".$typeid;
 
 		$res = $this->db->query ($sql);
-
 		if ($res)
 		{
 			while ($cat = $this->db->fetch_array ($res))

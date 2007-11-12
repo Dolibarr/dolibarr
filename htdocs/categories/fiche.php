@@ -51,13 +51,28 @@ if ($_REQUEST['origin'])
 
 
 
+/*
+*	Actions
+*/
 
-llxHeader("","",$langs->trans("Categories"));
-$html = new Form($db);
-
-// Action ajout d'une catégorie
 if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 {
+	// Action ajout d'une catégorie
+	if ($_POST["cancel"])
+	{
+		if ($idProdOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin);
+			exit;
+		}
+		if ($idSupplierOrigin || $idCompanyOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin);
+			exit;
+		}
+		
+	}
+
 	$categorie = new Categorie($db);
 
 	$categorie->label          = $_POST["nom"];
@@ -87,6 +102,15 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 
 		}
 	}
+}
+
+
+
+llxHeader("","",$langs->trans("Categories"));
+$html = new Form($db);
+
+if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
+{
 	/*
 	* Action confirmation de création de la catégorie
 	*/
@@ -168,7 +192,9 @@ if ($user->rights->categorie->creer)
 		print $html->selectyesno("visible", 1,1);
 		print '</td></tr>';
 		print '<tr><td colspan="2" align="center">';
-		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation"/>';
+		print '<input type="submit" class="button" value="'.$langs->trans("CreateThisCat").'" name="creation" id="creation" />';
+		print ' &nbsp; &nbsp; ';
+		print '<input type="submit" class="button" value="'.$langs->trans("Cancel").'" name="cancel" />';
 		print '</td></tr></form>';
 
 	}
