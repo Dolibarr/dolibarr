@@ -172,9 +172,51 @@ if ($resql)
 			$db->query($sql);
 		}
 	}
+
 	if ($decalage)
 	{
+		// Modification provisoire pour compatibilité Mysql 3
+		
+		$sql = "SELECT box_order";
+		$sql.= " FROM ".MAIN_DB_PREFIX."boxes";
+		$sql.= " WHERE length(box_order) <= 2";
+		$result = $db->query($sql);
+
+		if ($result)
+		{
+			while ($record = $db->fetch_array($result))
+			{
+				if (strlen($record['box_order']) == 1)
+				{
+					if (eregi("[13579]{1}",substr($record['box_order'],-1)))
+					{
+						$sql="update llx_boxes set box_order = concat('A0','".$record['box_order']."') where box_order = ".$record['box_order'];
+						$resql = $db->query($sql);
+					}
+					else if (eregi("[02468]{1}",substr($record['box_order'],-1)))
+					{
+						$sql="update llx_boxes set box_order = concat('B0','".$record['box_order']."') where box_order = ".$record['box_order'];
+						$resql = $db->query($sql);
+					}
+				}
+				else if (strlen($record['box_order']) == 2)
+				{
+					if (eregi("[13579]{1}",substr($record['box_order'],-1)))
+					{
+						$sql="update llx_boxes set box_order = concat('A','".$record['box_order']."') where box_order = ".$record['box_order'];
+						$resql = $db->query($sql);
+					}
+					else if (eregi("[02468]{1}",substr($record['box_order'],-1)))
+					{
+						$sql="update llx_boxes set box_order = concat('B','".$record['box_order']."') where box_order = ".$record['box_order'];
+						$resql = $db->query($sql);
+					}
+				}
+			}
+		}
+		
 		// Si on a renumerote, on corrige champ box_order (Ne doit arriver que sur des anciennes versions)
+		/*
 		$sql="update llx_boxes set box_order = concat('A0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('1','3','5','7','9')";
 		$resql = $db->query($sql);
 		$sql="update llx_boxes set box_order = concat('B0',box_order) where length(box_order) = 1 and substr(box_order,-1) in ('0','2','4','6','8')";
@@ -183,6 +225,7 @@ if ($resql)
 		$resql = $db->query($sql);
 		$sql="update llx_boxes set box_order = concat('B',box_order) where length(box_order) = 2 and substr(box_order,-1) in ('0','2','4','6','8')";
 		$resql = $db->query($sql);
+		*/
 	}
 	$db->free($resql);
 }
