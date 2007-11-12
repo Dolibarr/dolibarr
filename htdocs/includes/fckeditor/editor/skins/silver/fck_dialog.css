@@ -1,0 +1,143 @@
+/*
+ * FCKeditor - The text editor for Internet - http://www.fckeditor.net
+ * Copyright (C) 2003-2007 Frederico Caldeira Knabben
+ *
+ * == BEGIN LICENSE ==
+ *
+ * Licensed under the terms of any of the following licenses at your
+ * choice:
+ *
+ *  - GNU General Public License Version 2 or later (the "GPL")
+ *    http://www.gnu.org/licenses/gpl.html
+ *
+ *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
+ *    http://www.gnu.org/licenses/lgpl.html
+ *
+ *  - Mozilla Public License Version 1.1 or later (the "MPL")
+ *    http://www.mozilla.org/MPL/MPL-1.1.html
+ *
+ * == END LICENSE ==
+ *
+ * Styles used by the dialog boxes.
+ */
+
+body
+{
+	margin: 0px;
+	padding: 10px;
+	background-color: #f7f7f7;
+}
+
+body, td, input, select, textarea
+{
+	font-size: 11px;
+	font-family: 'Microsoft Sans Serif' , Arial, Helvetica, Verdana;
+}
+
+body, .BackColor
+{
+	background-color: #f7f7f7;
+}
+
+.PopupBody
+{
+	margin: 0px;
+	padding: 0px;
+}
+
+.PopupTitle
+{
+	padding-right: 10px;
+	padding-left: 10px;
+	font-weight: bold;
+	font-size: 14pt;
+	padding-bottom: 3px;
+	color: #504845;
+	padding-top: 3px;
+	background-color: #dedede;
+}
+
+.PopupButtons
+{
+	border-top: #cec6b5 1px solid;
+	background-color: #DEDEDE;
+	padding: 7px 10px 7px 10px;
+}
+
+.Button
+{
+	border: #7a7261 1px solid;
+	color: #504845;
+	background-color: #cec6b5;
+}
+
+#btnOk
+{
+	width: 100px;
+}
+
+.DarkBackground
+{
+	background-color: #d7d79f;
+}
+
+.LightBackground
+{
+	background-color: #ffffbe;
+}
+
+.PopupTitleBorder
+{
+	border-bottom: #cec6b5 1px solid;
+}
+
+.PopupTabArea
+{
+	color: #504845;
+	background-color: #DEDEDE;
+}
+
+.PopupTabEmptyArea
+{
+	padding-left: 10px ;
+	border-bottom: #cec6b5 1px solid;
+}
+
+.PopupTab, .PopupTabSelected
+{
+	border-right: #cec6b5 1px solid;
+	border-top: #cec6b5 1px solid;
+	border-left: #cec6b5 1px solid;
+	padding: 3px 5px 3px 5px;
+	color: #504845;
+}
+
+.PopupTab
+{
+	margin-top: 1px;
+	border-bottom: #cec6b5 1px solid;
+	cursor: pointer;
+	cursor: hand;
+}
+
+.PopupTabSelected
+{
+	font-weight:bold;
+	cursor: default;
+	padding-top: 4px;
+	border-bottom: #f1f1e3 1px solid;
+	background-color: #f7f7f7;
+}
+
+.PopupSelectionBox
+{
+	border: #a9a9a9 1px solid !important;
+	background-color: #dcdcdc !important;
+	cursor: pointer;
+	cursor: hand;
+}
+
+#tdBrowse 
+{
+	vertical-align: bottom;
+}

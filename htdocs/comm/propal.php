@@ -537,7 +537,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			}
 			
 			$desc = $prod->description;
-			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+			$desc.= ($prod->description && $_POST['np_desc']) ? "\n" : "";
 			$desc.= $_POST['np_desc'];
 		}
 		else
