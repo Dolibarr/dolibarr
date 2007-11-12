@@ -20,7 +20,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -352,18 +351,9 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 				}
 			}
 
-			// La description de la ligne est celle saisie ou
-			// celle du produit si PRODUIT_CHANGE_PROD_DESC est défini
-			$libelle = $prod->libelle;
-			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-			{
-				$desc = $prod->description;
-			}
-			else
-			{
-				$desc = $_POST['np_desc'];
-			}
-			
+           	$desc = $prod->description;
+			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+           	$desc.= $_POST['np_desc'];
 		}
 		else
 		{
@@ -1343,32 +1333,20 @@ else
 						{
 							print '<td>';
 							print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+
+							// Affiche ligne produit
 							$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
 							if ($objp->fk_product_type==1) $text.= img_object($langs->trans('ShowService'),'service');
 							else $text.= img_object($langs->trans('ShowProduct'),'product');
 							$text.= ' '.$objp->ref.'</a>';
-							$text.= ' - '.nl2br(stripslashes($objp->product));
-							if ($conf->global->PRODUIT_DESC_IN_FORM)
-							{
-								print $text;
-							}
-							else
-							{
-								print $html->textwithtooltip($text,$objp->description,4,'','',$i,$objp->ref.' - '.nl2br(stripslashes($objp->product)));
-							}
+							$text.= ' - '.$objp->product;
+							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+							print $html->textwithtooltip($text,$description,3,'','',$i);
 							// Todo: voir si on insert ou pas en option les dates de début et de fin de service
 							//print_date_range($objp->date_start,$objp->date_end);
-							
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
-								if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-								{
-									print ($objp->description && $objp->description!=$objp->product)?'<br>'.nl2br(stripslashes($objp->description)):'';
-								}
-								else
-								{
-									print '<br>'.nl2br($objp->product_desc);
-								}
+								print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
 							}
 
 							print '</td>';

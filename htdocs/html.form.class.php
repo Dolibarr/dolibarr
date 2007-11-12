@@ -65,15 +65,15 @@ class Form
   
   
   /**
-     \brief     Affiche un texte+picto avec tooltip sur texte ou sur picto
-     \param   text				  Texte à afficher
-     \param   htmltext	    Contenu html du tooltip, codé en html
-	   \param		tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip Ajax
-     \param		direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
-     \param		img					  Code img du picto
-     \return	string				Code html du texte,picto
+		\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
+		\param  text				Texte à afficher
+		\param  htmltext	    	Contenu html du tooltip, codé en html
+		\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcé en Ajaxa
+		\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
+		\param	img					Code img du picto
+		\return	string				Code html du texte,picto
   */
-  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10',$option='')
+  function textwithtooltip($text,$htmltext,$tooltipon=1,$direction=0,$img='',$i=1,$width='200',$shiftX='10')
   {
   	global $conf;
 		
@@ -96,7 +96,7 @@ class Form
     	$s.= '</div>'."\n";
     	$s.= '<script type=\'text/javascript\'>'."\n";
     	$s.= 'TooltipManager.init("","",{width:'.$width.', shiftX:'.$shiftX.'});'."\n";
-      $s.= 'TooltipManager.addHTML("tip'.$i.'", "tooltip_content");'."\n";
+		$s.= 'TooltipManager.addHTML("tip'.$i.'", "tooltip_content");'."\n";
     	$s.= '</script>'."\n";
     }
     else

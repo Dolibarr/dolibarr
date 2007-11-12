@@ -234,6 +234,7 @@ print '</form>';
 
 
 // Modification description produit activation/desactivation
+/* Cet option ne doit pas exister. Les description de lignes doivent toujours etre modifiable.
 $var=!$var;
 print "<form method=\"post\" action=\"produit.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"changeproductdesc\">";
@@ -246,6 +247,7 @@ print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">'
 print "</td>";
 print '</tr>';
 print '</form>';
+*/
 
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;

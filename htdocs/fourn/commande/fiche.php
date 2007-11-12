@@ -116,14 +116,9 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
     	
     	$libelle = $prod->libelle;
     	
-    	// La description de la ligne est celle saisie ou
-	    // celle du	produit	si (non	saisi +	PRODUIT_CHANGE_PROD_DESC défini)
-	    // \todo Ne	faut-il	pas	rendre $conf->global->PRODUIT_CHANGE_PROD_DESC toujours	a on
-	    $desc=$_POST['np_desc'];
-	    if (! $desc	&& $conf->global->PRODUIT_CHANGE_PROD_DESC)
-	    {
-	      $desc =	$prod->description;
-	    }
+		$desc = $prod->description;
+		$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+		$desc.= $_POST['np_desc'];
 
 	    $tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
 	  }
