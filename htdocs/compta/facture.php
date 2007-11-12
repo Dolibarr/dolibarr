@@ -723,7 +723,7 @@ if ($_POST['action'] == 'add' && $user->rights->facture->creer)
  */
 if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') && $user->rights->facture->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu']!='' && $_POST['np_desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['pu']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$fac = new Facture($db);
 		$ret=$fac->fetch($_POST['facid']);
@@ -810,7 +810,7 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
         {
 	        $pu_ht=$_POST['pu'];
 	        $tva_tx=$_POST['tva_tx'];
-	        $desc=$_POST['np_desc'];
+	        $desc=$_POST['dp_desc'];
         }
 
 		// Insere ligne
@@ -2480,12 +2480,12 @@ else
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-					$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+					$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
 					$doleditor->Create();
 				}
 				else
 				{
-					print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
 				}
 				print '</td>';
 				print '<td align="right">';

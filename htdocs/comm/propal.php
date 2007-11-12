@@ -485,7 +485,7 @@ if ($_GET['action'] == 'modif' && $user->rights->propale->creer)
  */
 if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 {
-	if ($_POST['qty'] && (($_POST['np_price']!='' && $_POST['np_desc']) || $_POST['idprod']))
+	if ($_POST['qty'] && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$propal = new Propal($db);
 		$ret=$propal->fetch($_POST['propalid']);
@@ -544,7 +544,7 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 		{
 			$pu_ht=$_POST['np_price'];
 			$tva_tx=$_POST['np_tva_tx'];
-			$desc=$_POST['np_desc'];
+			$desc=$_POST['dp_desc'];
 		}
 
 		$result=$propal->addline(
@@ -1402,12 +1402,12 @@ if ($_GET['propalid'] > 0)
 		if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 		{
 			require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-			$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+			$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
 			$doleditor->Create();
 		}
 		else
 		{
-			print '<textarea class="flat" cols="70" name="np_desc" rows="'.ROWS_2.'"></textarea>';
+			print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
 		}
 		print '</td>';
 		print '<td align="center">';
