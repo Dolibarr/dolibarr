@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2005      Matthieu Valleton    <mv@seeschloss.org>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
@@ -17,6 +17,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program; if not, write to the Free Software
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ *
+ * $Id$
  */
 
 /**
@@ -36,29 +38,44 @@ if (!$user->rights->categorie->lire)
 // Action mise à jour d'une catégorie
 if ($_POST["action"] == 'update' && $user->rights->categorie->creer)
 {
-	$categorie = new Categorie ($db, $_REQUEST['id']);
-
+	$categorie = new Categorie ($db);
+	$result=$categorie->fetch($_REQUEST['id']);
+	
 	$categorie->label          = $_POST["nom"];
 	$categorie->description    = $_POST["description"];
 	$categorie->visible        = $_POST["visible"];
+	
 	if($_POST['catMere'] != "-1")
 		$categorie->id_mere = $_POST['catMere'];
 	else
 		$categorie->id_mere = "";
 	
 
-	if (!$categorie->label || !$categorie->description)
+	if (! $categorie->label)
 	{
 		$_GET["action"] = 'create';
-		$categorie->error = "Le libellé ou la description n'a pas été renseigné";
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"));
+	}
+	if (! $categorie->description)
+	{
+		$_GET["action"] = 'create';
+		$mesg = $langs->trans("ErrorFieldRequired",$langs->transnoentities("Description"));
 	}
 	if (! $categorie->error)
 	{
-		if ($categorie->update() > 0)
+		if ($categorie->update($user) > 0)
 		{
 			header('Location: '.DOL_URL_ROOT.'/categories/viewcat.php?id='.$categorie->id);
 			exit;
 		}
+		else
+		{
+			$mesg=$categorie->error;
+		}
+	}
+	else
+	{
+		$mesg=$categorie->error;
 	}
 }
 
@@ -73,10 +90,10 @@ llxHeader("","",$langs->trans("Categories"));
 print_titre($langs->trans("ModifCat"));
 print "<br>";
 
-if ($categorie->error)
+if ($mesg)
 {
 	print '<div class="error">';
-	print $categorie->error;
+	print $mesg;
 	print '</div>';
 }
 

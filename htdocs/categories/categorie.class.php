@@ -3,8 +3,8 @@
  * Copyright (C) 2005      Davoleau Brice       <brice.davoleau@gmail.com>
  * Copyright (C) 2005      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2006-2007 Regis Houssin        <regis@dolibarr.fr>
- * Copyright (C) 2006      Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2007      Patrick Raguin	  	  <patrick.raguin@gmail.com>
+ * Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007      Patrick Raguin	  	<patrick.raguin@gmail.com>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -21,18 +21,29 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
+
+/**
+	    \file       htdocs/categories/categorie.class.php
+        \ingroup    categorie
+		\brief      Fichier de la classe des categorie
+*/
 
 require_once(DOL_DOCUMENT_ROOT."/product.class.php");
 require_once(DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php");
 
 
+/**
+        \class      Categorie
+		\brief      Classe permettant la gestion des categories
+*/
 class Categorie
 {
+	var $error;
 	var $db;
 
 	var $id;
+	var $id_mere;
 	var $label;
 	var $description;
 	var $statut;
@@ -41,8 +52,6 @@ class Categorie
 	var $cats=array();			// Tableau en memoire des categories
 	var $motherof = array();	// Tableau des correspondances id_fille -> id_mere
 
-	var $error;
-	
 
 	/**
 	* Constructeur
@@ -64,19 +73,20 @@ class Categorie
 	function fetch($id)
 	{
 		$sql = "SELECT rowid, label, description, visible, type";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie WHERE rowid = ".$id;
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie";
+		$sql.= " WHERE rowid = ".$id;
 
+		dolibarr_syslog("Categorie::fetch sql=".$sql);
 		$resql  = $this->db->query ($sql);
-
 		if ($resql)
 		{
 			$res = $this->db->fetch_array($resql);
 
-			$this->id		      = $res['rowid'];
-			$this->label		    = $res['label'];
-			$this->description	= stripslashes($res['description']);
+			$this->id		   = $res['rowid'];
+			$this->label	   = $res['label'];
+			$this->description = $res['description'];
 			$this->visible     = $res['visible'];
-			$this->type     = $res['type'];
+			$this->type        = $res['type'];
 
 			$this->db->free($resql);
 		}
@@ -85,15 +95,18 @@ class Categorie
 			dolibarr_print_error ($this->db);
 			return -1;
 		}
+
 		$sql = "SELECT fk_categorie_mere";
-		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association WHERE fk_categorie_fille = '".$id."'";
+		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_association";
+		$sql.= " WHERE fk_categorie_fille = '".$id."'";
 
+		dolibarr_syslog("Categorie::fetch sql=".$sql);
 		$resql  = $this->db->query ($sql);
-
 		if ($resql)
 		{
 			$res = $this->db->fetch_array($resql);
 			$this->id_mere = $res['fk_categorie_mere'];
+			return $this->id;
 		}
 		else
 		{
@@ -162,45 +175,56 @@ class Categorie
 	*/
 	function update()
 	{
+		// Clean parameters
+		$this->label=trim($this->label);
+		$this->description=trim($this->description);
+		
+		
+		$this->db->begin();
 
 		$sql = 'delete from '.MAIN_DB_PREFIX.'categorie_association';
 		$sql .= ' WHERE fk_categorie_fille = "'.$this->id.'"';
 
+		dolibarr_syslog("Categorie::update sql=".$sql);
 		if (! $this->db->query($sql))
 		{
+			$this->db->rollback();
 			dolibarr_print_error($this->db);
 			return -1;
 		}
 
-
 		if($this->id_mere !="" && $this->id_mere!=$this->id)
 		{
-
 			$sql = 'insert into '.MAIN_DB_PREFIX.'categorie_association(fk_categorie_mere,fk_categorie_fille)';
 			$sql .= ' VALUES ("'.$this->id_mere.'","'.$this->id.'")';
+			
+			dolibarr_syslog("Categorie::update sql=".$sql);
 			if (! $this->db->query($sql))
 			{
+				$this->db->rollback();
 				dolibarr_print_error($this->db);
 				return -1;
 			}
 		}
+
 		$sql = "UPDATE ".MAIN_DB_PREFIX."categorie";
-		$sql.= " SET label = '".trim(addslashes($this->label))."'";
-
-		if (strlen (trim($this->description)) > 0)
+		$sql.= " SET label = '".addslashes($this->label)."'";
+		if ($this->description)
 		{
-			$sql .= ", description = '".trim(addslashes($this->description))."'";
+			$sql .= ", description = '".addslashes($this->description)."'";
 		}
-
 		$sql .= ", visible = '".$this->visible."'";
 		$sql .= " WHERE rowid = ".$this->id;
 
+		dolibarr_syslog("Categorie::update sql=".$sql);
 		if ($this->db->query($sql))
 		{
+			$this->db->commit();
 			return 1;
 		}
 		else
 		{
+			$this->db->rollback();
 			dolibarr_print_error($this->db);
 			return -1;
 		}
