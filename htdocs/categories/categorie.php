@@ -186,8 +186,11 @@ if ($_GET["socid"])
 	
 	if ($mesg) print($mesg);
 	
-	if ($soc->client)	formCategory($db,$soc,$type,2);
-	print '<br><br>';
+	if ($soc->client)
+	{
+		formCategory($db,$soc,$type,2);
+		print '<br><br>';
+	}
 	if ($soc->fournisseur) formCategory($db,$soc,$type,1);
 }
 else if ($_GET["id"] || $_GET["ref"])
