@@ -2263,6 +2263,7 @@ else
 							$text.= ' '.$objp->ref.'</a>';
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+							//print $description;
 							print $html->textwithtooltip($text,$description,3,'','',$i);
 							print_date_range($objp->date_start,$objp->date_end);
 							if ($conf->global->PRODUIT_DESC_IN_FORM)

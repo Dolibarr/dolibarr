@@ -103,6 +103,7 @@ class Form
     {
     	if ($conf->use_javascript)
     	{
+			$htmltext=eregi_replace('"',"\'",$htmltext);
     		if ($tooltipon==1 || $tooltipon==3)
     		{
 				$paramfortooltiptext.=' onmouseover="showtip(\''.$htmltext.'\')"';
