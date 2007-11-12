@@ -488,39 +488,39 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 	if ($_POST['qty'] && (($_POST['np_price']!='' && $_POST['np_desc']) || $_POST['idprod']))
 	{
 		$propal = new Propal($db);
-	  $ret=$propal->fetch($_POST['propalid']);
+		$ret=$propal->fetch($_POST['propalid']);
 		if ($ret < 0)
 		{
 			dolibarr_print_error($db,$propal->error);
 			exit;
 		}
-	  $ret=$propal->fetch_client();
+		$ret=$propal->fetch_client();
 		
 		$price_base_type = 'HT';
 
 		// Ecrase $pu par celui du produit
 		// Ecrase $desc par celui du produit
 		// Ecrase $txtva par celui du produit
-    if ($_POST['idprod'])
-    {
-    	$prod = new Product($db, $_POST['idprod']);
-      $prod->fetch($_POST['idprod']);
-            
+		if ($_POST['idprod'])
+		{
+			$prod = new Product($db, $_POST['idprod']);
+			$prod->fetch($_POST['idprod']);
+			
 			$tva_tx = get_default_tva($mysoc,$propal->client,$prod->tva_tx);
 
-		  // On defini prix unitaire
-      if ($conf->global->PRODUIT_MULTIPRICES == 1)
-      {
-      	$pu_ht = $prod->multiprices[$propal->client->price_level];
-        $pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];
-        $price_base_type = $prod->multiprices_base_type[$propal->client->price_level];
-      }
-      else
-      {
-      	$pu_ht = $prod->price;
-	      $pu_ttc = $prod->price_ttc;
+			// On defini prix unitaire
+			if ($conf->global->PRODUIT_MULTIPRICES == 1)
+			{
+				$pu_ht = $prod->multiprices[$propal->client->price_level];
+				$pu_ttc = $prod->multiprices_ttc[$propal->client->price_level];
+				$price_base_type = $prod->multiprices_base_type[$propal->client->price_level];
+			}
+			else
+			{
+				$pu_ht = $prod->price;
+				$pu_ttc = $prod->price_ttc;
 				$price_base_type = $prod->price_base_type;
-      }
+			}
 
 			// On reevalue prix selon taux tva car taux tva transaction peut etre different
 			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
@@ -536,18 +536,18 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 				}
 			}
 			
-           	$desc = $prod->description;
+			$desc = $prod->description;
 			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
-           	$desc.= $_POST['np_desc'];
-        }
-        else
-        {
-        	$pu_ht=$_POST['np_price'];
-        	$tva_tx=$_POST['np_tva_tx'];
-        	$desc=$_POST['np_desc'];
-        }
+			$desc.= $_POST['np_desc'];
+		}
+		else
+		{
+			$pu_ht=$_POST['np_price'];
+			$tva_tx=$_POST['np_tva_tx'];
+			$desc=$_POST['np_desc'];
+		}
 
-        $propal->addline(
+		$result=$propal->addline(
 			$_POST['propalid'],
 			$desc,
 			$pu_ht,
@@ -557,14 +557,22 @@ if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 			$_POST['remise_percent'],
 			$price_base_type,
 			$pu_ttc
-			);
+		);
 
-		if ($_REQUEST['lang_id'])
+		if ($result > 0)
 		{
-			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
 		}
-  	    propale_pdf_create($db, $propal->id, $propal->modelpdf, $outputlangs);
+		else
+		{
+            $mesg='<div class="error">'.$propal->error.'</div>';
+		}
+		
 	}
 }
 

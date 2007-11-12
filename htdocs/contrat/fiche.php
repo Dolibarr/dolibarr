@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
  
 /**
@@ -168,50 +167,124 @@ if ($_POST["action"] == 'classin')
 
 if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 {
-    if ($_POST["pqty"] && (($_POST["pu"] && $_POST["desc"]) || $_POST["p_idprod"]))
+    if ($_POST["pqty"] && (($_POST["pu"] != '' && $_POST["desc"]) || $_POST["p_idprod"]))
     {
-        $result = 0;
         $contrat = new Contrat($db);
-        $result=$contrat->fetch($_GET["id"]);
-        if ($_POST["p_idprod"] > 0 && $_POST["mode"]=='predefined')
+        $ret=$contrat->fetch($_GET["id"]);
+        if ($ret < 0)
+		{
+			dolibarr_print_error($db,$commande->error);
+			exit;
+		}
+		$ret=$contrat->fetch_client();
+		
+				$date_start='';
+		$date_end='';
+		// Si ajout champ produit libre
+		if ($_POST['mode'] == 'libre')
+		{
+			if ($_POST['date_start_slyear'] && $_POST['date_start_slmonth'] && $_POST['date_start_slday'])
+			{
+				$date_start=dolibarr_mktime(12,0,0,$_POST['date_start_slmonth'],$_POST['date_start_slday'],$_POST['date_start_slyear']);
+			}
+			if ($_POST['date_end_slyear'] && $_POST['date_end_slmonth'] && $_POST['date_end_slday'])
+			{
+				$date_end=dolibarr_mktime(12,0,0,$_POST['date_end_slmonth'],$_POST['date_end_slday'],$_POST['date_end_slyear']);
+			}
+		}
+		// Si ajout champ produit prédéfini
+		if ($_POST['mode'] == 'predefined')
+		{
+			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
+			{
+				$date_start=dolibarr_mktime(12,0,0,$_POST['date_startmonth'],$_POST['date_startday'],$_POST['date_startyear']);
+			}
+			if ($_POST['date_endyear'] && $_POST['date_endmonth'] && $_POST['date_endday'])
+			{
+				$date_end=dolibarr_mktime(12,0,0,$_POST['date_endmonth'],$_POST['date_endday'],$_POST['date_endmonth']);
+			}
+		}
+
+		$price_base_type = 'HT';
+		
+		// Ecrase $pu par celui du produit
+		// Ecrase $desc par celui du produit
+		// Ecrase $txtva par celui du produit
+		// Ecrase $base_price_type par celui du produit
+        if ($_POST['p_idprod'])
         {
-            //print $_POST["desc"]." - ".$_POST["pu"]." - ".$_POST["pqty"]." - ".$_POST["tva_tx"]." - ".$_POST["p_idprod"]." - ".$_POST["premise"]; exit;
-            $result = $contrat->addline(
-                $_POST["desc"],
-                $_POST["pu"],
+            $prod = new Product($db, $_POST['p_idprod']);
+            $prod->fetch($_POST['p_idprod']);
+
+            $tva_tx = get_default_tva($mysoc,$fac->client,$prod->tva_tx);
+
+            // On defini prix unitaire
+            if ($conf->global->PRODUIT_MULTIPRICES == 1)
+            {
+            	$pu_ht = $prod->multiprices[$fac->client->price_level];
+            	$pu_ttc = $prod->multiprices_ttc[$fac->client->price_level];
+            	$price_base_type = $prod->multiprices_base_type[$fac->client->price_level];
+            }
+            else
+            {
+            	$pu_ht = $prod->price;
+	            $pu_ttc = $prod->price_ttc;
+				$price_base_type = $prod->price_base_type;
+            }
+
+			// On reevalue prix selon taux tva car taux tva transaction peut etre different
+			// de ceux du produit par defaut (par exemple si pays different entre vendeur et acheteur).
+			if ($tva_tx != $prod->tva_tx)
+			{
+				if ($price_base_type != 'HT')
+				{
+					$pu_ht = price2num($pu_ttc / (1 + ($tva_tx/100)), 'MU');
+				}
+				else
+				{
+					$pu_ttc = price2num($pu_ht * (1 + ($tva_tx/100)), 'MU');
+				}
+			}
+			
+           	$desc = $prod->description;
+			$desc.= $prod->description && $_POST['desc'] ? "\n" : "";
+           	$desc.= $_POST['desc'];
+        }
+        else
+        {
+	        $pu_ht=$_POST['pu'];
+	        $tva_tx=$_POST['tva_tx'];
+	        $desc=$_POST['desc'];
+        }
+
+		$result = $contrat->addline(
+                $desc,
+                $pu_ht,
                 $_POST["pqty"],
-                $_POST["tva_tx"],
+                $tva_tx,
                 $_POST["p_idprod"],
                 $_POST["premise"],
                 $date_start,
                 $date_end,
-				'HT'
+				$price_base_type,
+				$pu_ttc
                 );
-        }
-        elseif ($_POST["mode"]=='libre')
-        {
-		$result = $contrat->addline(
-                $_POST["desc"],
-                $_POST["pu"],
-                $_POST["pqty"],
-                $_POST["tva_tx"],
-                0,
-                $_POST["premise"],
-                $date_start_sl,
-                $date_end_sl,
-				'HT'
-                );
-        }
     
-        if ($result >= 0)
-        {
-            Header("Location: fiche.php?id=".$contrat->id);
-            exit;
-        }
-        else
-        {
+		if ($result > 0)
+		{
+		/*
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			contrat_pdf_create($db, $contrat->id, $contrat->modelpdf, $outputlangs);
+		*/
+		}
+		else
+		{
             $mesg='<div class="error">'.$contrat->error.'</div>';
-        }
+		}
     }
 }
 

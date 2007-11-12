@@ -327,13 +327,13 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			if ($conf->global->PRODUIT_MULTIPRICES == 1)
 			{
 				$pu_ht = $prod->multiprices[$commande->client->price_level];
-        $pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
-        $price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
+				$pu_ttc = $prod->multiprices_ttc[$commande->client->price_level];
+				$price_base_type = $prod->multiprices_base_type[$commande->client->price_level];
 			}
 			else
 			{
 				$pu_ht = $prod->price;
-	      $pu_ttc = $prod->price_ttc;
+				$pu_ttc = $prod->price_ttc;
 				$price_base_type = $prod->price_base_type;
 			}
 			
@@ -351,9 +351,9 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 				}
 			}
 
-           	$desc = $prod->description;
+			$desc = $prod->description;
 			$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
-           	$desc.= $_POST['np_desc'];
+			$desc.= $_POST['np_desc'];
 		}
 		else
 		{
@@ -374,7 +374,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 			'',
 			$price_base_type,
 			$pu_ttc
-			);
+		);
 
 		if ($result > 0)
 		{
@@ -387,7 +387,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 		}
 		else
 		{
-			print $commande->error;
+            $mesg='<div class="error">'.$commande->error.'</div>';
 		}
 	}
 }

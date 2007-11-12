@@ -832,6 +832,20 @@ if (($_POST['action'] == 'addligne' || $_POST['action'] == 'addligne_predef') &&
 				);
 	}
 
+	if ($result > 0)
+	{
+		if ($_REQUEST['lang_id'])
+		{
+			$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+			$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+		}
+		facture_pdf_create($db, $fac->id, $fac->modelpdf, $outputlangs);
+	}
+	else
+	{
+		$mesg='<div class="error">'.$fac->error.'</div>';
+	}
+
 	$_GET['facid']=$_POST['facid'];   // Pour réaffichage de la fiche en cours d'édition
 }
 
