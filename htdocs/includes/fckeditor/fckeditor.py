@@ -18,15 +18,12 @@ choice:
 
 == END LICENSE ==
 
-File Name: fckeditor.py
-	This is the integration file for Python.
-
-File Authors:
-		Andrew Liu (andrew@liuholdings.com)
+This is the integration file for Python.
 """
 
 import cgi
 import os
+import re
 import string
 
 def escape(text, replace=string.replace):
@@ -110,7 +107,7 @@ class FCKeditor(object):
 					)
 		Html += "</div>"
 		return Html
-	
+
 	def IsCompatible(self):
 		if (os.environ.has_key("HTTP_USER_AGENT")):
 			sAgent = os.environ.get("HTTP_USER_AGENT", "")
@@ -126,6 +123,18 @@ class FCKeditor(object):
 			i = sAgent.find("Gecko/")
 			iVersion = int(sAgent[i+6:i+6+8])
 			if (iVersion >= 20030210):
+				return True
+			return False
+		elif (sAgent.find("Opera/") >= 0):
+			i = sAgent.find("Opera/")
+			iVersion = float(sAgent[i+6:i+6+4])
+			if (iVersion >= 9.5):
+				return True
+			return False
+		elif (sAgent.find("AppleWebKit/") >= 0):
+			p = re.compile('AppleWebKit\/(\d+)', re.IGNORECASE)
+			m = p.search(sAgent)
+			if (m.group(1) >= 522):
 				return True
 			return False
 		else:
@@ -150,4 +159,4 @@ class FCKeditor(object):
 				else:
 					sParams += "%s=%s" % (k, v)
 		return sParams
-					
+

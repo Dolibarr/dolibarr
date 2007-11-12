@@ -1,28 +1,24 @@
 #####
 #  FCKeditor - The text editor for Internet - http://www.fckeditor.net
 #  Copyright (C) 2003-2007 Frederico Caldeira Knabben
-#  
+#
 #  == BEGIN LICENSE ==
-#  
+#
 #  Licensed under the terms of any of the following licenses at your
 #  choice:
-#  
+#
 #   - GNU General Public License Version 2 or later (the "GPL")
 #     http://www.gnu.org/licenses/gpl.html
-#  
+#
 #   - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
 #     http://www.gnu.org/licenses/lgpl.html
-#  
+#
 #   - Mozilla Public License Version 1.1 or later (the "MPL")
 #     http://www.mozilla.org/MPL/MPL-1.1.html
-#  
+#
 #  == END LICENSE ==
-#  
-#  File Name: fckeditor.pl
-#  	This is the integration file for Perl.
-#  
-#  File Authors:
-#  		Takashi Yamaguchi (jack@omakase.net)
+#
+#  This is the integration file for Perl.
 #####
 
 #my $InstanceName;
@@ -111,6 +107,11 @@ sub IsCompatible
 	} elsif($sAgent =~ /Gecko\//i) {
 		$iVersion = substr($sAgent,index($sAgent,'Gecko/') + 6,8);
 		return($iVersion >= 20030210) ;
+	} elsif($sAgent =~ /Opera\//i) {
+		$iVersion = substr($sAgent,index($sAgent,'Opera/') + 6,4);
+		return($iVersion >= 9.5) ;
+	} elsif($sAgent =~ /AppleWebKit\/(\d+)/i) {
+		return($1 >= 522) ;
 	} else {
 		return(0);		# 2.0 PR fix
 	}

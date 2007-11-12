@@ -2,34 +2,30 @@
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
- * 
+ *
  * == BEGIN LICENSE ==
- * 
+ *
  * Licensed under the terms of any of the following licenses at your
  * choice:
- * 
+ *
  *  - GNU General Public License Version 2 or later (the "GPL")
  *    http://www.gnu.org/licenses/gpl.html
- * 
+ *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
  *    http://www.gnu.org/licenses/lgpl.html
- * 
+ *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
- * 
+ *
  * == END LICENSE ==
- * 
- * File Name: fckeditor.html
- * 	Main page that holds the editor.
- * 
- * File Authors:
- * 		Frederico Caldeira Knabben (www.fckeditor.net)
+ *
+ * Main page that holds the editor.
 -->
-<html xmlns="http://www.w3.org/1999/xhtml">
+<html>
 <head>
 	<title>FCKeditor</title>
-	<meta name="robots" content="noindex, nofollow" />
-	<meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+	<meta name="robots" content="noindex, nofollow">
+	<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
 	<meta http-equiv="Cache-Control" content="public" />
 	<script type="text/javascript">
 
@@ -40,16 +36,16 @@
 
 function LoadScript( url )
 {
-	document.write( '<script type="text/javascript" src="' + url + '" onerror="alert(\'Error loading \' + this.src);"><\/script>' ) ;
+	document.write( '<scr' + 'ipt type="text/javascript" src="' + url + '"><\/scr' + 'ipt>' ) ;
 }
 
 function LoadCss( url )
 {
-	document.write( '<link href="' + url + '" type="text/css" rel="stylesheet" onerror="alert(\'Error loading \' + this.src);" />' ) ;
+	document.write( '<link href="' + url + '" type="text/css" rel="stylesheet" />' ) ;
 }
 
 // Main editor scripts.
-var sSuffix = /msie/.test( navigator.userAgent.toLowerCase() ) ? 'ie' : 'gecko' ;
+var sSuffix = ( /*@cc_on!@*/false ) ? 'ie' : 'gecko' ;
 
 LoadScript( 'js/fckeditorcode_' + sSuffix + '.js' ) ;
 
@@ -66,7 +62,7 @@ if ( FCKBrowserInfo.IsIE )
 	{
 		document.execCommand( 'BackgroundImageCache', false, true ) ;
 	}
-	catch (e) 
+	catch (e)
 	{
 		// We have been reported about loading problems caused by the above
 		// line. For safety, let's just ignore errors.
@@ -77,6 +73,11 @@ if ( FCKBrowserInfo.IsIE )
 	FCK.IECleanup.AddItem( FCKTempBin, FCKTempBin.Reset ) ;
 	FCK.IECleanup.AddItem( FCK, FCK_Cleanup ) ;
 }
+
+// The first function to be called on selection change must the the styles
+// change checker, because the result of its processing may be used by another
+// functions listening to the same event.
+FCK.Events.AttachEvent( 'OnSelectionChange', function() { FCKStyles.CheckSelectionChanges() ; } ) ;
 
 // The config hidden field is processed immediately, because
 // CustomConfigurationsPath may be set in the page.
@@ -111,13 +112,9 @@ FCKPlugins.Load() ;
 
 	</script>
 	<script type="text/javascript">
-	
+
 // Set the editor interface direction.
 window.document.dir = FCKLang.Dir ;
-
-// Activate pasting operations.
-if ( FCKConfig.ForcePasteAsPlainText || FCKConfig.AutoDetectPasteFromWord )
-	FCK.Events.AttachEvent( 'OnPaste', FCK.Paste ) ;
 
 	</script>
 	<script type="text/javascript">
@@ -140,7 +137,7 @@ function LoadToolbarSetup()
 function LoadToolbar()
 {
 	var oToolbarSet = FCK.ToolbarSet = FCKToolbarSet_Create() ;
-	
+
 	if ( oToolbarSet.IsLoaded )
 		StartEditor() ;
 	else
@@ -174,10 +171,10 @@ function WaitForActive( editorInstance, newStatus )
 
 		FCK.SetStatus( FCK_STATUS_COMPLETE ) ;
 
-		// Call the special "FCKeditor_OnComplete" function that should be present in 
+		// Call the special "FCKeditor_OnComplete" function that should be present in
 		// the HTML page where the editor is located.
 		if ( typeof( window.parent.FCKeditor_OnComplete ) == 'function' )
-			window.parent.FCKeditor_OnComplete( FCK ) ;	
+			window.parent.FCKeditor_OnComplete( FCK ) ;
 	}
 }
 

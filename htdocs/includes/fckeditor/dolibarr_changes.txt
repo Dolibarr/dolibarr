@@ -9,7 +9,7 @@ FCKConfig.ImageUpload = false ;
 FCKConfig.FlashUpload = false ;
 
 
-* Edit htdocs\includes\fckeditor\editor\filemanager\browser\default\connectors\php\config.php to set:
+* Edit htdocs\includes\fckeditor\editor\filemanager\connectors\php\config.php to set:
 *****************************************************************************************************
 
 //require_once("../../../../../../../../master.inc.php");

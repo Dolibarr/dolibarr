@@ -2,29 +2,25 @@
 <!--
  * FCKeditor - The text editor for Internet - http://www.fckeditor.net
  * Copyright (C) 2003-2007 Frederico Caldeira Knabben
- * 
+ *
  * == BEGIN LICENSE ==
- * 
+ *
  * Licensed under the terms of any of the following licenses at your
  * choice:
- * 
+ *
  *  - GNU General Public License Version 2 or later (the "GPL")
  *    http://www.gnu.org/licenses/gpl.html
- * 
+ *
  *  - GNU Lesser General Public License Version 2.1 or later (the "LGPL")
  *    http://www.gnu.org/licenses/lgpl.html
- * 
+ *
  *  - Mozilla Public License Version 1.1 or later (the "MPL")
  *    http://www.mozilla.org/MPL/MPL-1.1.html
- * 
+ *
  * == END LICENSE ==
- * 
- * File Name: fckdebug.html
- * 	This is the Debug window.
- * 	It automatically popups if the Debug = true in the configuration file.
- * 
- * File Authors:
- * 		Frederico Caldeira Knabben (www.fckeditor.net)
+ *
+ * This is the Debug window.
+ * It automatically popups if the Debug = true in the configuration file.
 -->
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head>
@@ -51,10 +47,10 @@ function Output( message, color, noParse )
 {
 	if ( !noParse && message != null && isNaN( message ) )
 		message = message.replace(/</g, "&lt;") ;
-		
+
 	if ( color )
 		message = '<font color="' + color + '">' + message + '<\/font>' ;
-		
+
 	window.FCKMessages[ window.FCKMessages.length ] = message ;
 	StartTimer() ;
 }
@@ -62,18 +58,18 @@ function Output( message, color, noParse )
 function OutputObject( anyObject, color )
 {
 	var message ;
-	
-	if ( anyObject != null ) 
+
+	if ( anyObject != null )
 	{
 		message = 'Properties of: ' + anyObject + '</b><blockquote>' ;
-		
+
 		for (var prop in anyObject)
 		{
-			try 
+			try
 			{
 				var sVal = anyObject[ prop ] != null ? anyObject[ prop ] + '' : '[null]' ;
 				message += '<b>' + prop + '</b> : ' + sVal.replace(/</g, '&lt;') + '<br>' ;
-			} 
+			}
 			catch (e)
 			{
 				try
@@ -87,10 +83,10 @@ function OutputObject( anyObject, color )
 			}
 		}
 
-		message += '</blockquote><b>' ; 
+		message += '</blockquote><b>' ;
 	} else
 		message = 'OutputObject : Object is "null".' ;
-		
+
 	Output( message, color, true ) ;
 }
 
@@ -105,18 +101,18 @@ function CheckMessages()
 	{
 		// Get the first item in the queue
 		var sMessage = window.FCKMessages[0] ;
-		
+
 		// Removes the first item from the queue
 		var oTempArray = new Array() ;
 		for ( i = 1 ; i < window.FCKMessages.length ; i++ )
 			oTempArray[ i - 1 ] = window.FCKMessages[ i ] ;
 		window.FCKMessages = oTempArray ;
-		
+
 		var d = new Date() ;
-		var sTime = 
-			( d.getHours() + 100 + '' ).substr( 1,2 ) + ':' + 
-			( d.getMinutes() + 100 + '' ).substr( 1,2 ) + ':' + 
-			( d.getSeconds() + 100 + '' ).substr( 1,2 ) + ':' + 
+		var sTime =
+			( d.getHours() + 100 + '' ).substr( 1,2 ) + ':' +
+			( d.getMinutes() + 100 + '' ).substr( 1,2 ) + ':' +
+			( d.getSeconds() + 100 + '' ).substr( 1,2 ) + ':' +
 			( d.getMilliseconds() + 1000 + '' ).substr( 1,3 ) ;
 
 		var oMsgDiv = oWindow.document.createElement( 'div' ) ;
