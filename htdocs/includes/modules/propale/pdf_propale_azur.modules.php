@@ -229,7 +229,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$curY = $nexY;
 
 					// Description de la ligne produit
-					$libelleproduitservice=_dol_htmlentities($propale->lignes[$i]->libelle,0);
+					$libelleproduitservice=dol_htmlentities($propale->lignes[$i]->libelle);
 					if ($propale->lignes[$i]->desc && $propale->lignes[$i]->desc!=$propale->lignes[$i]->libelle)
 					{
 						if ($libelleproduitservice) $libelleproduitservice.="\n";
@@ -242,7 +242,7 @@ class pdf_propale_azur extends ModelePDFPropales
 						}
 						else
 						{
-							$libelleproduitservice.=_dol_htmlentities($propale->lignes[$i]->desc,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+							$libelleproduitservice.=dol_htmlentities($propale->lignes[$i]->desc);
 						}
 					}
 					// Si ligne associée à un code produit
@@ -263,33 +263,16 @@ class pdf_propale_azur extends ModelePDFPropales
 							$libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
 						}
 
-						// Ajoute description complète du produit
-						if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-						{
-							if ($propale->lignes[$i]->product_desc && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->libelle && $propale->lignes[$i]->product_desc!=$propale->lignes[$i]->desc)
-							{
-								if ($libelleproduitservice) $libelleproduitservice.="\n";
-								$libelleproduitservice.=$propale->lignes[$i]->product_desc;
-							}
-						}
 					}
 					if ($propale->lignes[$i]->date_start && $propale->lignes[$i]->date_end)
 					{
 						// Affichage durée si il y en a une
-						$libelleproduitservice.=_dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")",0);
+						$libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($propale->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($propale->lignes[$i]->date_end).")");
 					}
 
 					$pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
-					{
-						$pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
-					}
-					else
-					{
-						$pdf->SetXY ($this->posxdesc-1, $curY);
-						$pdf->MultiCell(108, 4, dol_entity_decode($libelleproduitservice), 0, 'J');
-					}
+					$pdf->writeHTMLCell(112, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
 
 					$pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 					$nexY = $pdf->GetY();

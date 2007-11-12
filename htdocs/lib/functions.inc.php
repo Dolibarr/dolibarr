@@ -2820,16 +2820,23 @@ function hexbin($hexa){
    return $bin;
 }
 
-// Cette fonction est appelée pour coder ou non une chaine en html
-// selon qu'on compte l'afficher dans le PDF avec:
-// writeHTMLCell -> a besoin d'etre encodé en HTML
-// MultiCell -> ne doit pas etre encodé en HTML
-function _dol_htmlentities($stringtoencode,$isstringalreadyhtml)
+/*
+*	\brief		Cette fonction est appelée pour coder ou non une chaine en html.
+*	\param		stringtoencode		String to encode
+*	\param		htmlinfo			1=String IS already html, 0=String IS NOT html, -1=Unknown need autodetection
+*	\remarks	Selon qu'on compte l'afficher dans le PDF avec:
+*					writeHTMLCell -> a besoin d'etre encodé en HTML
+*					MultiCell -> ne doit pas etre encodé en HTML
+*/
+function dol_htmlentities($stringtoencode,$htmlinfo=-1)
 {
-	global $conf;
-
-	if ($isstringalreadyhtml) return $stringtoencode;
-	if ($conf->fckeditor->enabled) return htmlentities($stringtoencode);
+	if ($htmlinfo == 1) return $stringtoencode;
+	if ($htmlinfo == 0) return htmlentities($stringtoencode);
+	if ($htmlinfo == -1)
+	{
+		if (dol_textishtml($stringtoencode)) return $stringtoencode;
+		else return htmlentities($stringtoencode);
+	}
 	return $stringtoencode;
 }
 
@@ -3188,6 +3195,33 @@ function dol_microtime_float()
     return ((float)$usec + (float)$sec);
 }
 
+/*
+ *		\brief		Return if a text is a html content
+ *		\param		msg			Content to check
+ *		\param		option		0=Full detection, 1=Fast check
+ *		\return		boolean		true/false
+ */
+function dol_textishtml($msg,$option=0)
+{
+	if ($option == 1)
+	{
+		if (eregi('<html',$msg))     return true;
+		elseif (eregi('<body',$msg)) return true;
+		elseif (eregi('<br',$msg))   return true;
+		return false;
+	}
+	else
+	{
+		if (eregi('<html',$msg))       return true;
+		elseif (eregi('<body',$msg))   return true;
+		elseif (eregi('<br',$msg))     return true;
+		elseif (eregi('<table',$msg))  return true;
+		elseif (eregi('<font',$msg))   return true;
+		elseif (eregi('<strong',$msg)) return true;
+		elseif (eregi('<img',$msg))    return true;
+		return false;
+	}
+}
 
 /*
  *    \brief      Effectue les substitutions des mots clés par les données en fonction du tableau

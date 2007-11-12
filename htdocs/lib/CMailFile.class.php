@@ -102,9 +102,7 @@ class CMailFile
 		if ($msgishtml == 2)
 		{
 			$this->msgishtml = 0;
-			if (eregi('<html',$msg))     $this->msgishtml = 1;
-			elseif (eregi('<body',$msg)) $this->msgishtml = 1;
-			elseif (eregi('<br',$msg))   $this->msgishtml = 1;
+			if (dol_textishtml($msg,1)) $this->msgishtml = 1;	
 		}
 		else
 		{

@@ -215,11 +215,11 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 					}
 					
                     // Description de la ligne produit
-                    $libelleproduitservice=_dol_htmlentities($this->expe->lignes[$i]->description,0);
+                    $libelleproduitservice=dol_htmlentities($this->expe->lignes[$i]->description);
                     if ($this->expe->lignes[$i]->description&&$this->expe->lignes[$i]->description!=$com->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=_dol_htmlentities($this->expe->lignes[$i]->description,$conf->global->FCKEDITOR_ENABLE_DETAILS);
+                        $libelleproduitservice.=dol_htmlentities($this->expe->lignes[$i]->description);
                     }
                     // Si ligne associée à un code produit
                     if ($this->expe->lignes[$i]->fk_product)
@@ -243,17 +243,8 @@ Class pdf_expedition_rouget extends ModelePdfExpedition
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    if ($conf->fckeditor->enabled)
-                    {
-                    	$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
-//                    	$pdf->SetXY ($this->posxdesc, $curY);
-//                    	$pdf->MultiCell(150, 3, "zzzz g dg fdgdfgfgfgfdg dfg dfgdfgfdggggggggggggggggggg f g fd g fdgfdgggggggggggggggggggggggggggg fg df g ff  hf hz", 0, 'J');
-                    }
-                    else
-                    {
-                    	$pdf->SetXY ($this->posxdesc, $curY);
-                    	$pdf->MultiCell(150, 3, $libelleproduitservice, 0, 'J');
-                    }
+                   	$pdf->writeHTMLCell(150, 3, $this->posxdesc, $curY, $libelleproduitservice, 0, 1);
+
                    	$pdf->SetXY (160, $curY);
 					$pdf->MultiCell(30, 3, $this->expe->lignes[$i]->qty_commande);
 			
