@@ -63,6 +63,7 @@ class Product extends CommonObject
   //! Type 0 for regural product, 1 for service, 2 for assembly kit, 3 for stock kit
   var $type;
   var $typestring;
+  var $stock_reel;
   var $seuil_stock_alerte;
   //! Duree de validite du service
   var $duration_value;
@@ -119,6 +120,7 @@ class Product extends CommonObject
     $this->db = $DB;
     $this->id   = $id ;
     $this->status = 0;
+    $this->stock_reel = 0;
     $this->seuil_stock_alerte = 0;
     
     $this->canvas = '';
@@ -2117,6 +2119,8 @@ class Product extends CommonObject
    */
   function load_stock()
   {
+    $this->stock_reel = 0;
+    
     $sql = "SELECT reel, fk_entrepot";
     $sql.= " FROM ".MAIN_DB_PREFIX."product_stock";
     $sql.= " WHERE fk_product = '".$this->id."'";
