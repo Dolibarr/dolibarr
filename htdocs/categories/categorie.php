@@ -34,6 +34,8 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
 
+$mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
+
 if ($_REQUEST["socid"])
 {
 	$type = 'societe';
@@ -51,7 +53,6 @@ else
 // Sécurité d'accès client et commerciaux
 $objectid = restrictedArea($user, $type, $objectid);
 
-$mesg = '';
 
 
 /*

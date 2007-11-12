@@ -70,7 +70,6 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin);
 			exit;
 		}
-		
 	}
 
 	$categorie = new Categorie($db);
@@ -104,41 +103,28 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	}
 }
 
+if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
+{
+	// Action confirmation de création de la catégorie
+	if ($_GET["action"] == 'confirmed')
+	{
+		if ($idProdOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
+		if ($idSupplierOrigin || $idCompanyOrigin)
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
+	}
+}
+
 
 
 llxHeader("","",$langs->trans("Categories"));
 $html = new Form($db);
-
-if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
-{
-	/*
-	* Action confirmation de création de la catégorie
-	*/
-
-	if ($_GET["action"] == 'confirmed')
-	{
-		print_titre($langs->trans("NewCategory"));
-		print '<br>';
-		
-		print '<table class="notopnoleft" width="100%">';
-		print '<tr><td valign="top" class="notopnoleft" width="30%">';
-		
-		print '<div class="ok">'.$langs->trans("CategorySuccessfullyCreated",$categorie->label).'</div>';
-		print '<br>';
-		
-		if ($idProdOrigin)
-		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'">'.$langs->trans("ReturnInProduct").'</a>';
-		}
-		if ($idSupplierOrigin || $idCompanyOrigin)
-		{
-			print '<a class="butAction" href="'.DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'">'.$langs->trans("ReturnInCompany").'</a>';
-		}
-
-		print '</td></tr></table>';
-	}
-}
-
 
 if ($user->rights->categorie->creer)
 {
