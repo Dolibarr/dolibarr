@@ -215,8 +215,8 @@ else
 	$offset = $limit * $page ;
 
 	$sql = "SELECT  c.label, c.rowid dolicatid, oc.osccatid FROM ".MAIN_DB_PREFIX."categorie as c ";
-	$sql .= "LEFT OUTER JOIN llx_osc_categories as oc ON oc.dolicatid = c.rowid ";
-	$sql .= "WHERE c.visible = 1";
+	$sql .= "LEFT OUTER JOIN ".MAIN_DB_PREFIX."osc_categories as oc ON oc.dolicatid = c.rowid ";
+	$sql .= "WHERE c.visible = 1 AND c.type = 0";
 
 	print_barre_liste("Correspondance des catégories", $page, "categories.php");
 
