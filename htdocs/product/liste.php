@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -96,7 +95,8 @@ else
 
 
 
-$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
+$sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.price_ttc, p.price_base_type,';
+$sql.= ' p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte';
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product as p';
 if ($catid || ($conf->categorie->enabled && !$user->rights->categorie->voir))
@@ -220,7 +220,7 @@ if ($resql)
       print_liste_field_titre($langs->trans("DateModification"),"liste.php", "p.tms","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
       if ($conf->service->enabled && $type != 0) print_liste_field_titre($langs->trans("Duration"),"liste.php", "p.duration","&amp;envente=$envente&".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
       print_liste_field_titre($langs->trans("SellingPrice"),"liste.php", "p.price","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-      if ($conf->stock->enabled && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("TotalStock").'</td>';
+      if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1) print '<td class="liste_titre" align="right">'.$langs->trans("Stock").'</td>';
       print_liste_field_titre($langs->trans("Status"),"liste.php", "p.envente","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&amp;fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
       print "</tr>\n";
       
@@ -232,6 +232,9 @@ if ($resql)
       print '<td class="liste_titre" align="left">';
       print '<input class="flat" type="text" name="snom" value="'.$snom.'">';
       print '</td>';
+      print '<td class="liste_titre">';
+      print '&nbsp;';
+      print '</td>';
       if ($conf->service->enabled && $type != 0)
       {
       	print '<td class="liste_titre">';
@@ -241,10 +244,7 @@ if ($resql)
       print '<td class="liste_titre">';
       print '&nbsp;';
       print '</td>';
-      print '<td class="liste_titre">';
-      print '&nbsp;';
-      print '</td>';
-      if ($conf->stock->enabled && $type != 1)
+      if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
       {
       	print '<td class="liste_titre">';
       	print '&nbsp;';
@@ -279,7 +279,10 @@ if ($resql)
 	    }
 	  
 	  $var=!$var;
-	  print '<tr '.$bc[$var].'><td nowrap="nowrap">';
+	  print '<tr '.$bc[$var].'>';
+	
+		// Ref
+	  print '<td nowrap="nowrap">';
 	  print "<a href=\"fiche.php?id=$objp->rowid\">";
 	  if ($objp->fk_product_type==1)
 	  	print img_object($langs->trans("ShowService"),"service");
@@ -287,8 +290,14 @@ if ($resql)
 	  	print img_object($langs->trans("ShowProduct"),"product");
 	  print '</a> ';
 	  print '<a href="fiche.php?id='.$objp->rowid.'">'.$objp->ref."</a></td>\n";
+
+	  // Label
 	  print '<td>'.$objp->label.'</td>';
-	  print '<td align="center">'.dolibarr_print_date($objp->datem)."</td>\n";
+	  
+	  // Date
+	  print '<td align="center">'.dolibarr_print_date($objp->datem,'day')."</td>\n";
+
+	  // Duration
 	  if ($conf->service->enabled && $type != 0) 
 	  {
 	  	print '<td align="center">';
@@ -298,35 +307,39 @@ if ($resql)
 	    else print $objp->duration;
 	    print '</td>';
 	  }
-	  print '<td align="right">'.price($objp->price).'</td>';
 	  
-	  // Affichage du stock
-	  if ($objp->fk_product_type!=1 && $conf->stock->enabled && $user->rights->stock->lire)
-	  {
-	  	$product_static->id = $objp->rowid;
-	  	$product_static->load_stock();
-	  	if ($product_static->no_stock)
-	  	{
-	  		print '<td align="right">'.$langs->trans("NoStock");
-	  	}
-	  	else
-	  	{
-	  		if ($product_static->stock_reel <= $objp->seuil_stock_alerte)
-	  		{
-	  			print '<td align="right">'.img_warning().' '.$product_static->stock_reel;
-	  		}
-	  		else
-	  		{
-	  			print '<td align="right">'.$product_static->stock_reel;
-	  		}
-	  	}
-	  }
-	  else if (!$type)
-	  {
-	  	print '<td align="right">&nbsp;</td>';
-	  }
+	  // Price
+	  print '<td align="right">';
+	  if ($objp->price_base_type == 'TTC') print price($objp->price_ttc).' '.$langs->trans("TTC");
+	  else print price($objp->price).' '.$langs->trans("HT");
 	  
+	  print '</td>';
+	  
+		// Affichage du stock
+		if ($conf->stock->enabled && $user->rights->stock->lire && $type != 1)
+		{
+			if ($objp->fk_product_type != 1)
+			{
+				$product_static->id = $objp->rowid;
+				$product_static->load_stock();
+				if ($product_static->stock_reel < $objp->seuil_stock_alerte)
+				{
+					print '<td align="right">'.$product_static->stock_reel.' '.img_warning($langs->trans("StockTooLow")).'</td>';
+				}
+				else
+				{
+					print '<td align="right">'.$product_static->stock_reel.'</td>';
+				}
+			}
+			else
+			{
+				print '<td>&nbsp;</td>';
+			}
+		}
+	  
+	  // Statut
 	  print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
+
 	  print "</tr>\n";
 	  $i++;
 	}
