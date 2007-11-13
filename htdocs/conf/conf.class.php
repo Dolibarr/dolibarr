@@ -347,10 +347,6 @@ class Conf
 
 		// Cryped password in database
 		$this->password_encrypted=($this->global->DATABASE_PWD_ENCRYPTED ? 1 : 0);
-
-		// Debug Mode
-		$this->use_debug_mode=0;
-		if (isset($this->global->MAIN_ENABLE_DEBUG_MODE)) $this->use_debug_mode=$this->global->MAIN_ENABLE_DEBUG_MODE;
 		
 		// System tools
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";

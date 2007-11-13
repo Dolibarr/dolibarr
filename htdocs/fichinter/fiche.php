@@ -457,18 +457,6 @@ elseif ($_GET["id"] > 0)
 	}
 	$fichinter->fetch_client();
 
-	// Debug mode
-	// TODO: créer une fonction debug générique
-	if ($conf->use_debug_mode)
-	{
-		$debug = '<div class="error">';
-		$debug.= 'Mode Debugage<br>';
-		$debug.= 'Module intervention: lire='.yn($user->rights->ficheinter->lire).', creer='.yn($user->rights->ficheinter->creer);
-		$debug.= ', supprimer='.yn($user->rights->ficheinter->supprimer);
-		$debug.= '</div>';
-		print $debug;
-	}
-
 	if ($mesg) print $mesg."<br>";
 
 	$head = fichinter_prepare_head($fichinter);
