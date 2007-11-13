@@ -50,48 +50,52 @@ class User extends CommonObject
     var $error;
     var $element='user';
     var $table_element='user';
-  
-  var $id;
-  var $ldap_sid;
-  var $search_sid;
-  var $fullname;
-  var $nom;
-  var $prenom;
-  var $note;
-  var $email;
-  var $office_phone;
-  var $office_fax;
-  var $user_mobile;
-  var $admin;
-  var $login;
 
-  //! Mot de passe en clair en mémoire
-  var $pass;
-  //! Mot de passe en clair en base (renseigné si DATABASE_PWD_ENCRYPTED=0)
-  var $pass_indatabase;
-  //! Mot de passe crypté en base (toujours renseigné)
-  var $pass_indatabase_crypted;
+	var $id;
+	var $ldap_sid;
+	var $search_sid;
+	var $fullname;
+	var $nom;
+	var $prenom;
+	var $note;
+	var $email;
+	var $office_phone;
+	var $office_fax;
+	var $user_mobile;
+	var $admin;
+	var $login;
 
-  var $datec;
-  var $datem;
-  var $societe_id;
-  var $fk_member;
-  var $webcal_login;
-  var $phenix_login;
-  var $phenix_pass;
-  var $phenix_pass_crypted;
-  
-  var $datelastlogin;
-  var $datepreviouslogin;
-  var $statut;
-  var $lang;
-  
-  var $userpref_limite_liste;
-  var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-  //! Liste des entrepots auquel a acces l'utilisateur
-  var $entrepots;
+	//! Mot de passe en clair en mémoire
+	var $pass;
+	//! Mot de passe en clair en base (renseigné si DATABASE_PWD_ENCRYPTED=0)
+	var $pass_indatabase;
+	//! Mot de passe crypté en base (toujours renseigné)
+	var $pass_indatabase_crypted;
 
-  var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargées
+	var $datec;
+	var $datem;
+	var $societe_id;
+	var $fk_member;
+	var $webcal_login;
+	var $phenix_login;
+	var $phenix_pass;
+	var $phenix_pass_crypted;
+
+	var $datelastlogin;
+	var $datepreviouslogin;
+	var $statut;
+	var $lang;
+
+	var $userpref_limite_liste;
+
+	//! Liste des entrepots auquel a acces l'utilisateur
+	var $entrepots;
+
+	var $rights;
+	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
+	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargées
+
+
 
   
   /**
@@ -467,6 +471,7 @@ class User extends CommonObject
     {
 		$this->rights='';
 		$this->all_permissions_are_loaded=false;
+		$this->tab_loaded=array();
 	}
 
 
@@ -474,9 +479,13 @@ class User extends CommonObject
 		\brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
 		\param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
 	*/
-	function getrights($module='')
+	function getrights($moduletag='')
 	{
-		if ($module && isset($this->tab_loaded[$module]) && $this->tab_loaded[$module]) { return; }    // Le fichier de ce module est deja chargé
+		if ($moduletag && isset($this->tab_loaded[$moduletag]) && $this->tab_loaded[$moduletag])
+		{ 
+			// Le fichier de ce module est deja chargé
+			return;
+		}
 
 		if ($this->all_permissions_are_loaded)
 		{
@@ -485,13 +494,14 @@ class User extends CommonObject
 		}
 		
 		// Récupération des droits utilisateurs + récupération des droits groupes
-		dolibarr_syslog('User::Getrights id='.$this->id.' module='.$module, LOG_DEBUG);
 		
 		// D'abord les droits utilisateurs
 		$sql = "SELECT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
-		$sql .= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+		$sql.= " FROM ".MAIN_DB_PREFIX."user_rights as ur, ".MAIN_DB_PREFIX."rights_def as r";
+		$sql.= " WHERE r.id = ur.fk_id AND ur.fk_user= ".$this->id." AND r.perms IS NOT NULL";
+		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 		
+		dolibarr_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -528,10 +538,12 @@ class User extends CommonObject
 		}
 
 		// Maintenant les droits groupes
-		$sql  = " SELECT r.module, r.perms, r.subperms";
-		$sql .= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
-		$sql .= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
+		$sql = "SELECT r.module, r.perms, r.subperms";
+		$sql.= " FROM ".MAIN_DB_PREFIX."usergroup_rights as gr, ".MAIN_DB_PREFIX."usergroup_user as gu, ".MAIN_DB_PREFIX."rights_def as r";
+		$sql.= " WHERE r.id = gr.fk_id AND gr.fk_usergroup = gu.fk_usergroup AND gu.fk_user = ".$this->id." AND r.perms IS NOT NULL";
+		if ($moduletag) $sql.= " AND r.module = '".addslashes($moduletag)."'";
 
+		dolibarr_syslog('User::getRights sql='.$sql, LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -559,7 +571,7 @@ class User extends CommonObject
 			$this->db->free($result);
 		}
 
-		if (! $module)
+		if (! $moduletag)
 		{
 			// Si module etait non defini, alors on a tout chargé, on peut donc considérer
 			// que les droits sont en cache (car tous chargés) pour cet instance de user
@@ -567,8 +579,8 @@ class User extends CommonObject
 		}
 		else
 		{
-			// Si module défini, on considère chargé en cache que le module
-			$this->tab_loaded[$module]=1;
+			// Si module défini, on le marque comme chargé en cache
+			$this->tab_loaded[$moduletag]=1;
 		}
 	}
 
