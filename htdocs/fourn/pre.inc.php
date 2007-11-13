@@ -29,7 +29,9 @@ require("../main.inc.php");
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.class.php";
 require_once DOL_DOCUMENT_ROOT."/fourn/fournisseur.facture.class.php";
 
+
 $user->getrights('fournisseur');
+
 
 function llxHeader($head = "", $title="", $addons='') {
   global $user, $conf, $langs;
