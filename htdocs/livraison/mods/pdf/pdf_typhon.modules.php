@@ -224,11 +224,11 @@ class pdf_typhon extends ModelePDFDeliveryOrder
                 if($prodser->isservice())
                 {
                 	// Un service peur aussi être livré
-                	$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+                	$prefix_prodserv = $langs->transnoentities("Service")." ";
                 }
                 else
                 {
-                	$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
+                	$prefix_prodserv = $langs->transnoentities("Product")." ";
                 }
                 $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
               }
