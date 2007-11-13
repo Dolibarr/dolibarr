@@ -243,6 +243,8 @@ class Livraison extends CommonObject
 	
 			$file = $conf->livraison->dir_output . "/" .get_exdir($livraison->id,2) . "/" . $this->id.".pdf";
 			$this->pdf_filename = $file;
+			
+			$this->fetch_lignes();
 	
 			return 1;
 		}
@@ -566,12 +568,10 @@ class Livraison extends CommonObject
 		$sql .= ", c.fk_product, c.price, p.ref";
 		$sql .= " FROM ".MAIN_DB_PREFIX."livraisondet as l";
 		$sql .= " , ".MAIN_DB_PREFIX."commandedet as c";
-		$sql .= " , ".MAIN_DB_PREFIX."product as p";
-	
+		$sql .= " , ".MAIN_DB_PREFIX."product as p";	
 		$sql .= " WHERE l.fk_livraison = ".$this->id;
 		$sql .= " AND l.fk_commande_ligne = c.rowid";
 		$sql .= " AND c.fk_product = p.rowid";
-	
 	
 		$resql = $this->db->query($sql);
 		if ($resql)
@@ -679,9 +679,12 @@ class LivraisonLigne
 	
 	// From llx_expeditiondet
 	var $qty;
+	var $qty_commande;
+	var $qty_livre;
+	var $price;
 	var $fk_product;
 	var $commande_ligne_id;
-	var $libelle;       // Label produit
+	var $label;       // Label produit
 	var $description;  // Description produit
 	var $ref;
 		

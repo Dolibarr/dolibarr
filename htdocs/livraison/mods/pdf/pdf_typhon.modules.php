@@ -112,141 +112,139 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 			\param	    delivery	Object livraison à générer
     		\return	    int         1=ok, 0=ko
     */
-    function write_file($delivery)
+    function write_file($delivery,$outputlangs='')
     {
-        global $user,$langs,$conf;
+    	global $user,$langs,$conf;
 
-        $langs->load("main");
-        $langs->load("bills");
-        $langs->load("products");
-        $langs->load("deliveries");
+      $langs->load("main");
+      $langs->load("bills");
+      $langs->load("products");
+      $langs->load("deliveries");
 
-        if ($conf->livraison->dir_output)
-        {
-			// If $delivery is id instead of object
-			if (! is_object($delivery))
-			{
-				$id = $delivery;
-				$delivery = new Livraison($this->db);
-	            $delivery->fetch($id);
-	            $delivery->id = $id;
-				if ($result < 0)
-				{
-					dolibarr_print_error($db,$delivery->error);
+      if ($conf->livraison->dir_output)
+      {
+      	// If $delivery is id instead of object
+      	if (! is_object($delivery))
+      	{
+      		$id = $delivery;
+      		$delivery = new Livraison($this->db);
+      		$delivery->fetch($id);
+
+      		if ($result < 0)
+      		{
+      			dolibarr_print_error($db,$delivery->error);
+      		}
 				}
-			}
-			
-            $nblignes = sizeof($lignesdelivery);
-
-			$deliveryref = sanitize_string($delivery->ref);
-			$dir = $conf->livraison->dir_output;
-			if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
-			$file = $dir . "/" . $deliveryref . ".pdf";
-
-            if (! file_exists($dir))
-            {
-                if (create_exdir($dir) < 0)
-                {
-					          $this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
-                    return 0;
-                }
 				
-            }
+				$nblignes = sizeof($delivery->lignes);
+				
+				$deliveryref = sanitize_string($delivery->ref);
+				$dir = $conf->livraison->dir_output;
+				if (! eregi('specimen',$deliveryref)) $dir.= "/" . $deliveryref;
+				$file = $dir . "/" . $deliveryref . ".pdf";
+				
+				if (! file_exists($dir))
+        {
+        	if (create_exdir($dir) < 0)
+        	{
+        		$this->error=$langs->transnoentities("ErrorCanNotCreateDir",$dir);
+            return 0;
+          }
+        }
+        
+        if (file_exists($dir))
+        {
+        	// Protection et encryption du pdf
+          if ($conf->global->PDF_SECURITY_ENCRYPTION)
+          {
+          	$pdf=new FPDI_Protection('P','mm',$this->format);
+     	      $pdfrights = array('print'); // Ne permet que l'impression du document
+    	      $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
+     	      $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
+     	      $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
+          }
+          else
+          {
+          	$pdf=new FPDI('P','mm',$this->format);
+          }
+          
+          $pdf->Open();
+          $pdf->AddPage();
 
-            if (file_exists($dir))
-            {
-	           // Protection et encryption du pdf
-               if ($conf->global->PDF_SECURITY_ENCRYPTION)
-               {
-					$pdf=new FPDI_Protection('P','mm',$this->format);
-     	           $pdfrights = array('print'); // Ne permet que l'impression du document
-    	           $pdfuserpass = ''; // Mot de passe pour l'utilisateur final
-     	           $pdfownerpass = NULL; // Mot de passe du propriétaire, créé aléatoirement si pas défini
-     	           $pdf->SetProtection($pdfrights,$pdfuserpass,$pdfownerpass);
-               }
-			   else
-			   {
-                   $pdf=new FPDI('P','mm',$this->format);
-				}
+          $pdf->SetDrawColor(128,128,128);
 
-                $pdf->Open();
-                $pdf->AddPage();
+          $pdf->SetTitle($delivery->ref);
+          $pdf->SetSubject($langs->transnoentities("DeliveryOrder"));
+          $pdf->SetCreator("Dolibarr ".DOL_VERSION);
+          $pdf->SetAuthor($user->fullname);
 
-                $pdf->SetDrawColor(128,128,128);
-
-                $pdf->SetTitle($delivery->ref);
-                $pdf->SetSubject($langs->transnoentities("DeliveryOrder"));
-                $pdf->SetCreator("Dolibarr ".DOL_VERSION);
-                $pdf->SetAuthor($user->fullname);
-
-                $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
-                $pdf->SetAutoPageBreak(1,0);
+          $pdf->SetMargins($this->marge_gauche, $this->marge_haute, $this->marge_droite);   // Left, Top, Right
+          $pdf->SetAutoPageBreak(1,0);
 /*
-                // Positionne $this->atleastonediscount si on a au moins une remise
-                for ($i = 0 ; $i < $nblignes ; $i++)
-                {
-                    if ($delivery->lignes[$i]->remise_percent)
-                    {
-                        $this->atleastonediscount++;
-                    }
-                }
+          // Positionne $this->atleastonediscount si on a au moins une remise
+          for ($i = 0 ; $i < $nblignes ; $i++)
+          {
+            if ($delivery->lignes[$i]->remise_percent)
+            {
+              $this->atleastonediscount++;
+            }
+          }
 */
-                $this->_pagehead($pdf, $delivery);
+          $this->_pagehead($pdf, $delivery);
 
-                $pagenb = 1;
-                $tab_top = 90;
-                $tab_top_newpage = 50;
-                $tab_height = 150;
+          $pagenb = 1;
+          $tab_top = 90;
+          $tab_top_newpage = 50;
+          $tab_height = 150;
 
-                $iniY = $tab_top + 8;
-                $curY = $tab_top + 8;
-                $nexY = $tab_top + 8;
+          $iniY = $tab_top + 8;
+          $curY = $tab_top + 8;
+          $nexY = $tab_top + 8;
 
-                // Boucle sur les lignes
-                for ($i = 0 ; $i < $nblignes ; $i++)
+          // Boucle sur les lignes
+          for ($i = 0 ; $i < $nblignes ; $i++)
+          {
+          	$curY = $nexY;
+          	
+          	// Description de la ligne produit
+            $libelleproduitservice=dol_htmlentities($delivery->lignes[$i]->label);
+            if ($delivery->lignes[$i]->description&&$delivery->lignes[$i]->description!=$delivery->lignes[$i]->label)
+            {
+            	if ($libelleproduitservice) $libelleproduitservice.="\n";
+              $libelleproduitservice.=dol_htmlentities($delivery->lignes[$i]->description);
+            }
+            // Si ligne associée à un code produit
+            if ($delivery->lignes[$i]->fk_product)
+            {
+            	$prodser = new Product($this->db);
+              $prodser->fetch($delivery->lignes[$i]->fk_product);
+              if ($prodser->ref)
+              {
+              	$prefix_prodserv = "";
+                if($prodser->isservice())
                 {
-                    $curY = $nexY;
+                	// Un service peur aussi être livré
+                	$prefix_prodserv = $outputlangs->transnoentities("Service")." ";
+                }
+                else
+                {
+                	$prefix_prodserv = $outputlangs->transnoentities("Product")." ";
+                }
+                $libelleproduitservice=$prefix_prodserv.$prodser->ref." - ".$libelleproduitservice;
+              }
+            }
+            if ($delivery->lignes[$i]->date_start && $delivery->lignes[$i]->date_end)
+            {
+            	// Affichage durée si il y en a une
+            	$libelleproduitservice.="\n(".$langs->transnoentities("From")." ".dolibarr_print_date($delivery->lignes[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($delivery->lignes[$i]->date_end).")";
+            }
+            
+            $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    // Description de la ligne produit
-                    $libelleproduitservice=$lignesdelivery[$i]->label;
-                    if ($lignesdelivery[$i]->description&&$lignesdelivery[$i]->description!=$lignesdelivery[$i]->label)
-                    {
-                        if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$lignesdelivery[$i]->description;
-                    }
-                    // Si ligne associée à un code produit
-                    if ($lignesdelivery[$i]->fk_product)
-                    {
-                        $prodser = new Product($this->db);
+            $pdf->SetXY ($this->posxdesc-1, $curY);
+            $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
 
-                        $prodser->fetch($lignesdelivery[$i]->fk_product);
-                        if ($prodser->ref)
-                        {
-                            $libelleproduitservice=$langs->transnoentities("Product")." ".$prodser->ref." - ".$libelleproduitservice;
-                        }
-
-                        // Ajoute description du produit
-                        if ($conf->global->PRODUIT_DESC_IN_FORM && !$conf->global->PRODUIT_CHANGE_PROD_DESC)
-                        {
-                            if ($lignesdelivery[$i]->product_desc&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->libelle&&$lignesdelivery[$i]->product_desc!=$lignesdelivery[$i]->desc)
-                            {
-                                if ($libelleproduitservice) $libelleproduitservice.="\n";
-                                $libelleproduitservice.=$lignesdelivery[$i]->product_desc;
-                            }
-                        }                    
-                    }
-                    if ($lignesdelivery[$i]->date_start && $lignesdelivery[$i]->date_end)
-                    {
-                        // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$langs->transnoentities("From")." ".dolibarr_print_date($lignesdelivery[$i]->date_start)." ".$langs->transnoentities("to")." ".dolibarr_print_date($lignesdelivery[$i]->date_end).")";
-                    }
-
-                    $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
-
-                    $pdf->SetXY ($this->posxdesc-1, $curY);
-                    $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
-
-                    $nexY = $pdf->GetY();
+            $nexY = $pdf->GetY();
 /*
                     // TVA
                     $pdf->SetXY ($this->posxtva, $curY);
@@ -258,7 +256,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 */
                     // Quantité
                     $pdf->SetXY ($this->posxqty, $curY);
-                    $pdf->MultiCell(10, 4, $lignesdelivery[$i]->qty_livre, 0, 'R');
+                    $pdf->MultiCell(10, 4, $delivery->lignes[$i]->qty_livre, 0, 'R');
 /*
                     // Remise sur ligne
                     $pdf->SetXY ($this->posxdiscount, $curY);
@@ -680,7 +678,16 @@ class pdf_typhon extends ModelePDFDeliveryOrder
 	$posy+=6;
 	$pdf->SetXY(100,$posy);
 	$pdf->SetTextColor(0,0,60);
-	$pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+	if ($delivery->date_valid)
+	{
+		$pdf->MultiCell(100, 4, $langs->transnoentities("Date")." : " . dolibarr_print_date($delivery->date_valid,"%d %b %Y"), '', 'R');
+	}
+	else
+	{
+		$pdf->SetTextColor(255,0,0);
+		$pdf->MultiCell(100, 4, $langs->transnoentities("DeliveryNotValidated"), '', 'R');
+		$pdf->SetTextColor(0,0,60);
+	}
 
 	$posy+=6;
 	$pdf->SetXY(100,$posy);
