@@ -183,9 +183,9 @@ class RemiseCheque extends CommonObject
 			{
 				foreach ($lines as $lineid)
 				{
-					$sql = "UPDATE ".MAIN_DB_PREFIX."bank as b";
+					$sql = "UPDATE ".MAIN_DB_PREFIX."bank";
 					$sql.= " SET fk_bordereau = ".$this->id;
-					$sql.= " WHERE b.rowid = ".$lineid;
+					$sql.= " WHERE rowid = ".$lineid;
 					
 					dolibarr_syslog("RemiseCheque::Create sql=".$sql, LOG_DEBUG);
 					$resql = $this->db->query($sql);
