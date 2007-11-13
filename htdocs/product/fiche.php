@@ -568,6 +568,8 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			print $langs->trans("RefAlreadyExists");
 		}
 		print '</td></tr>';
+
+		// Label
 		print '<tr><td>'.$langs->trans("Label").'</td><td><input name="libelle" size="40" value="'.$product->libelle.'"></td></tr>';
 
 		if($conf->global->PRODUIT_MULTIPRICES == 1)
@@ -593,15 +595,18 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 			print '</td></tr>';
 		}
 		
+		// VAT
 		print '<tr><td>'.$langs->trans("VATRate").'</td><td>';
 		print $html->select_tva("tva_tx",$conf->defaulttx,$mysoc,'');
 		print '</td></tr>';
 		
+		// Status
 		print '<tr><td>'.$langs->trans("Status").'</td><td>';
 		$statutarray=array('1' => $langs->trans("OnSell"), '0' => $langs->trans("NotOnSell"));
 		$html->select_array('statut',$statutarray,$_POST["statut"]);
 		print '</td></tr>';
 		
+		// Stock min level
 		if ($_GET["type"] != 1 && $conf->stock->enabled)
 		{
 			print '<tr><td>Seuil stock</td><td>';
@@ -840,6 +845,7 @@ if ($_GET["id"] || $_GET["ref"])
 				}
 				print '</td></tr>';
 			}
+
 			// Statut
 			print '<tr><td>'.$langs->trans("Status").'</td><td>';
 			print $product->getLibStatut(2);
@@ -852,22 +858,15 @@ if ($_GET["id"] || $_GET["ref"])
 			if ($product->isproduct() && $conf->stock->enabled)
 			{
 				print '<tr><td>'.$langs->trans("Stock").'</td>';
-				if ($product->no_stock)
+				if ($product->stock_reel < $product->seuil_stock_alerte)
 				{
-					print "<td>".$langs->trans("NoStockForThisProduct");
+					print '<td>'.$product->stock_reel.' '.img_warning().' (Seuil: '.$product->seuil_stock_alerte.')</td>';
 				}
 				else
 				{
-					if ($product->stock_reel <= $product->seuil_stock_alerte)
-					{
-						print '<td>'.img_warning().' '.$product->stock_reel.' Seuil : '.$product->seuil_stock_alerte;
-					}
-					else
-					{
-						print "<td>".$product->stock_reel;
-					}
+					print "<td>".$product->stock_reel.'</td>';
 				}
-				print '</td></tr>';
+				print '</tr>';
 			}
 			
 			// Description

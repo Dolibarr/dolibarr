@@ -145,22 +145,15 @@ if ($_GET["id"] || $_GET["ref"])
 
         // Stock
         print '<tr><td>'.$langs->trans("TotalStock").'</td>';
-        if ($product->no_stock)
-        {
-            print "<td>".$langs->trans("NoStockForThisProduct");
-        }
-        else
-        {
-            if ($product->stock_reel <= $product->seuil_stock_alerte)
-            {
-                print '<td>'.img_warning().' '.$product->stock_reel.' '.$langs->trans("StockLimit").' : '.$product->seuil_stock_alerte;
-            }
-            else
-            {
-                print "<td>".$product->stock_reel;
-            }
-        }
-        print '</td></tr>';
+		if ($product->stock_reel < $product->seuil_stock_alerte)
+		{
+			print '<td>'.$product->stock_reel.' '.img_warning().' (Seuil: '.$product->seuil_stock_alerte.')</td>';
+		}
+		else
+		{
+			print "<td>".$product->stock_reel.'</td>';
+		}
+        print '</tr>';
         
 
         // Nbre de commande clients en cours
