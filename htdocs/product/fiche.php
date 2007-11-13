@@ -409,6 +409,8 @@ if ($_POST["action"] == 'addincommande')
 				$tva_tx,
 				$prod->id,
 				$_POST["remise_percent"],
+				'',
+				'', //Todo: voir si fk_remise_except est encore valable car n'apparait plus dans les propales
 				$price_base_type,
 			  $pu_ttc
 				);
@@ -487,6 +489,10 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 		    $tva_tx,
 		    $prod->id,
 		    $_POST["remise_percent"],
+		    '',
+		    '',
+		    '',
+		    '',
 		    $price_base_type,
 			  $pu_ttc
 		    );

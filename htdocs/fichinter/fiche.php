@@ -536,7 +536,7 @@ elseif ($_GET["id"] > 0)
 			print '</td></tr></table>';
 			print '<td>';
 			print $langs->trans("NoProject").'&nbsp;&nbsp;';
-			if ($fichinter->brouillon) print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+			if ($fichinter->brouillon) print '<a class="butAction" href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
 			print '</td>';
 		}
 		else
