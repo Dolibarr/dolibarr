@@ -169,8 +169,8 @@ function sanitize_string($str)
 				fautes de protection m�moire. Pour r�soudre, utiliser le loggage fichier,
 				au lieu du loggage syslog (configuration du module).
 				Si SYSLOG_FILE_NO_ERROR d�fini, on ne g�re pas erreur ecriture log
-	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_DEBUG=LOG_INFO=6
-				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_DEBUG=7
+	\remarks	On Windows LOG_ERR=4, LOG_WARNING=5, LOG_NOTICE=LOG_INFO=LOG_DEBUG=6
+				On Linux   LOG_ERR=3, LOG_WARNING=4, LOG_INFO=6, LOG_DEBUG=7
 */
 function dolibarr_syslog($message, $level=LOG_INFO)
 {
@@ -199,7 +199,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 			else $file=fopen(SYSLOG_FILE,"a+");
 			if ($file)
 			{
-				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_DEBUG=>'DEBUG');
+				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
 				if (! $liblevel) $liblevel='UNDEF';
 				fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$message."\n");
@@ -2444,7 +2444,7 @@ function get_exdir($num,$level=3)
 */
 function create_exdir($dir)
 {
-    dolibarr_syslog("functions.inc.php::create_exdir: dir=$dir",LOG_DEBUG);
+    dolibarr_syslog("functions.inc.php::create_exdir: dir=$dir",LOG_INFO);
 
   	if (@is_dir($dir)) return 0;
 
