@@ -11,7 +11,7 @@
 
 -- On migre les categorie fournisseur de la table llx_fournisseur_categorie qui est obsolete vers table llx_categories qui est generique pour gerer les categories de tout type
 -- V4 INSERT into llx_categorie (label, description, visible, type) (select distinct label, label, 1, 1 from llx_fournisseur_categorie);
--- V4 UPDATE llx_categorie_fournisseur as cf SET cf.fk_categorie = IFNULL((SELECT distinct c.rowid from llx_categorie as c, llx_fournisseur_categorie as fc where fc.rowid = cf.fk_categorie AND c.type = 1 AND c.label = fc.label),cf.fk_categorie);
+-- V4.1 UPDATE llx_categorie_fournisseur as cf SET cf.fk_categorie = IFNULL((SELECT distinct c.rowid from llx_categorie as c, llx_fournisseur_categorie as fc where fc.rowid = cf.fk_categorie AND c.type = 1 AND c.label = fc.label),cf.fk_categorie);
 
 
 -- Corrige mauvaise insertion du a champ trop court
