@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -128,10 +127,8 @@ if ($result)
     
     print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("LastContracts",5).'</td>';
     print '<td align="center">'.$langs->trans("DateCreation").'</td>';
-    print '<td align="center">'.$langs->trans("Status").'</td>';
-    print '<td width="16">'.$staticcontratligne->LibStatut(0,3).'</td>';
-    print '<td width="16">'.$staticcontratligne->LibStatut(4,3).'</td>';
-    print '<td width="16">'.$staticcontratligne->LibStatut(5,3).'</td>';
+    print '<td align="left">'.$langs->trans("Status").'</td>';
+    print '<td align="center" width="80" colspan="3">'.$langs->trans("Services").'</td>';
     print "</tr>\n";
     
     $var=True;
@@ -149,9 +146,9 @@ if ($result)
         print '<td><a href="../comm/fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.$obj->nom.'</a></td>';
         print '<td align="center">'.dolibarr_print_date($obj->datec).'</td>';
         print '<td align="left">'.$staticcontrat->LibStatut($obj->statut,2).'</td>';
-        print '<td align="center">'.($obj->nb_initial>0?$obj->nb_initial:'').'</td>';
-        print '<td align="center">'.($obj->nb_running+$obj->nb_late>0?$obj->nb_running+$obj->nb_late:'').'</td>';
-        print '<td align="center">'.($obj->nb_closed>0?$obj->nb_closed:'').'</td>';
+        print '<td align="center">'.($obj->nb_initial>0 ? $obj->nb_initial.$staticcontratligne->LibStatut(0,3):'').'</td>';
+        print '<td align="center">'.($obj->nb_running+$obj->nb_late>0 ? ($obj->nb_running+$obj->nb_late).$staticcontratligne->LibStatut(4,3):'').'</td>';
+        print '<td align="center">'.($obj->nb_closed>0 ? $obj->nb_closed.$staticcontratligne->LibStatut(5,3):'').'</td>';
         print "</tr>\n";
         $i++;
     }
