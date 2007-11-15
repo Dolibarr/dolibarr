@@ -29,6 +29,12 @@
 
 require("./pre.inc.php");
 
+$user->getrights();
+
+$langs->load("suppliers");
+$langs->load("orders");
+$langs->load("companies");
+
 if (!$user->rights->societe->lire)
   accessforbidden();
 
@@ -39,10 +45,6 @@ $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:'';
 $socname = isset($_GET["socname"])?$_GET["socname"]:'';
 $search_nom = isset($_GET["search_nom"])?$_GET["search_nom"]:'';
 $search_ville = isset($_GET["search_ville"])?$_GET["search_ville"]:'';
-
-$langs->load("suppliers");
-$langs->load("orders");
-$langs->load("companies");
 
 // Sécurité accés client
 $socid='';

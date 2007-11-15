@@ -29,9 +29,14 @@
 
 require("./pre.inc.php");
 
+$user->getrights();
+
+$langs->load("suppliers");
+$langs->load("orders");
+$langs->load("companies");
+
 if (!$user->rights->societe->lire)
   accessforbidden();
-
 
 $page = isset($_GET["page"])?$_GET["page"]:'';
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:'';
