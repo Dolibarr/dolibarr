@@ -224,7 +224,7 @@ if ($conf->expedition->enabled)
     print '<td>';
     $liste_propal = array();
     $liste_propal[0] = '';
-    $sql ="SELECT p.rowid as id, CONCAT(p.ref, ' - ', s.nom)  as lib";
+    $sql ="SELECT p.rowid as id, p.ref, s.nom";
     $sql.=" FROM ".MAIN_DB_PREFIX."propal p, ".MAIN_DB_PREFIX."societe s";
     $sql.=" WHERE s.rowid = p.fk_soc AND fk_statut <> 0 ORDER BY Id";
     $resql = $db->query($sql);
@@ -235,8 +235,9 @@ if ($conf->expedition->enabled)
         while ($i < $num)
         {
         	$row = $db->fetch_row($resql);
-            $liste_propal[$row[0]]=$row[1];
-            $i++;
+        	$propalRefAndSocName = $row[1]." - ".$row[2];
+        	$liste_propal[$row[0]]=$propalRefAndSocName;
+          $i++;
         }
         $html->select_array("copie_propal",$liste_propal, 0);
     }
