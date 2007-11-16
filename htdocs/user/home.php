@@ -73,7 +73,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Derniers utilisateurs créés
+ * Derniers utilisateurs crï¿½ï¿½s
  */
 $max=10;
 
@@ -114,7 +114,7 @@ if ($resql)
         }
         else print $langs->trans("InternalUser");
         print '</td>';
-        print "<td width=\"80\" align=\"center\">".dolibarr_print_date($obj->datec)."</td>";
+        print "<td align=\"right\">".dolibarr_print_date($obj->datec,'dayhour')."</td>";
         print '</tr>';
         $i++;
     }
@@ -129,7 +129,7 @@ else
 
 
 /*
- * Derniers groupes créés
+ * Derniers groupes crï¿½ï¿½s
  */
 $max=5;
 

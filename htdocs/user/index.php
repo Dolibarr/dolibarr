@@ -56,7 +56,10 @@ llxHeader();
 
 print_titre($langs->trans("ListOfUsers"));
 
-$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login, ".$db->pdate("u.datec")." as datec,";
+$sql = "SELECT u.rowid, u.name, u.firstname, u.admin, u.fk_societe, u.login,";
+$sql.= " ".$db->pdate("u.datec")." as datec,";
+$sql.= " ".$db->pdate("u.tms")." as datem,";
+$sql.= " ".$db->pdate("u.datelastlogin")." as datelastlogin,";
 $sql.= " u.ldap_sid, u.statut,";
 $sql.= " s.nom";
 $sql.= " FROM ".MAIN_DB_PREFIX."user as u";
@@ -85,6 +88,7 @@ if ($result)
     print_liste_field_titre($langs->trans("FirstName"),"index.php","u.firstname",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Company"),"index.php","u.fk_societe",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("DateCreation"),"index.php","u.datec",$param,"","",$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("LastConnexion"),"index.php","u.datelastlogin",$param,"","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"index.php","u.status",$param,"",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
     $var=True;
@@ -113,7 +117,12 @@ if ($result)
         }
         else print $langs->trans("InternalUser");
         print '</td>';
-        print '<td width="100" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
+        
+        // Date creation
+        print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($obj->datec,"day").'</td>';
+
+        // Date last login
+        print '<td nowrap="nowrap" align="center">'.dolibarr_print_date($obj->datelastlogin,"dayhour").'</td>';
 
 		// Statut
 		$userstatic->statut=$obj->statut;
