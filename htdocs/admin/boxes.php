@@ -189,9 +189,7 @@ if ($resql)
 					if (eregi("[13579]{1}",substr($record['box_order'],-1)))
 					{
 						$box_order = "A0".$record['box_order'];
-						print $box_order;
 						$sql="update llx_boxes set box_order = '".$box_order."' where box_order = ".$record['box_order'];
-						print $sql;
 						$resql = $db->query($sql);
 					}
 					else if (eregi("[02468]{1}",substr($record['box_order'],-1)))
