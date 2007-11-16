@@ -33,9 +33,9 @@
 
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT ."/expedition/mods/pdf/ModelePdfExpedition.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
-require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
+if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("companies");
 $langs->load("bills");
@@ -168,7 +168,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
  *
  */
 
-llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
+llxHeader('',$langs->trans('Sending'),'Expedition');
 
 $html = new Form($db);
 
@@ -436,9 +436,6 @@ else
 
         if ($expedition->id > 0)
         {
-            $author = new User($db);
-            $author->id = $expedition->user_author_id;
-            $author->fetch();
 
             $commande = New Commande($db);
             $commande->fetch($expedition->commande_id);

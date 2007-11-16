@@ -30,10 +30,10 @@
 */
 
 require("./pre.inc.php");
-require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/livraison.class.php");
 require_once(DOL_DOCUMENT_ROOT."/livraison/mods/modules_livraison.php");
+if ($conf->produit->enabled) require_once(DOL_DOCUMENT_ROOT."/product.class.php");
+if ($conf->expedition_bon->enabled) require_once(DOL_DOCUMENT_ROOT."/expedition/expedition.class.php");
 if ($conf->stock->enabled) require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 
 $langs->load("sendings");
@@ -68,7 +68,7 @@ if ($_POST["action"] == 'add')
     $livraison->note             = $_POST["note"];
     $livraison->commande_id      = $_POST["commande_id"];
     
-    if (!$conf->expedition->enabled && $conf->stock->enabled)
+    if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
     {
     	$expedition->entrepot_id     = $_POST["entrepot_id"];
     }
@@ -120,7 +120,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == 'yes')
       $livraison->fetch($_GET["id"]);
       $expedition_id = $_GET["expid"];
       $livraison->delete();
-      if ($conf->expedition->enabled)
+      if ($conf->expedition_bon->enabled)
       {
       	Header("Location: ".DOL_URL_ROOT.'/expedition/fiche.php?id='.$expedition_id);
       }
@@ -162,6 +162,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
  *
  */
 
+llxHeader('',$langs->trans('Delivery'),'Livraison');
+
 $html = new Form($db);
 
 /*********************************************************************
@@ -171,8 +173,7 @@ $html = new Form($db);
  *********************************************************************/
 if ($_GET["action"] == 'create') 
 {
-  llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
-
+	
   print_titre($langs->trans("CreateADeliveryOrder"));
 
   if ($mesg)
@@ -191,7 +192,7 @@ if ($_GET["action"] == 'create')
       $author->id = $commande->user_author_id;
       $author->fetch();
       
-      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
       {
       	$entrepot = new Entrepot($db);
       }
@@ -202,7 +203,7 @@ if ($_GET["action"] == 'create')
       print '<form action="fiche.php" method="post">';
       print '<input type="hidden" name="action" value="add">';
       print '<input type="hidden" name="commande_id" value="'.$commande->id.'">';
-      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
       {
       	print '<input type="hidden" name="entrepot_id" value="'.$_GET["entrepot_id"].'">';
       }
@@ -222,7 +223,7 @@ if ($_GET["action"] == 'create')
       
       print '<tr>';
       
-      if (!$conf->expedition->enabled && $conf->stock->enabled)
+      if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
       {
       	print '<td>'.$langs->trans("Warehouse").'</td>';
       	print '<td>';
@@ -362,11 +363,6 @@ else
     
         if ( $livraison->id > 0)
         {
-            $author = new User($db);
-            $author->id = $livraison->user_author_id;
-            $author->fetch();
-    
-            llxHeader('','Fiche expedition','ch-expedition.html',$form_search,$author);
     
             $commande = New Commande($db);
             $commande->fetch($livraison->commande_id);
@@ -375,7 +371,7 @@ else
             $soc->fetch($commande->socid);
     
             $h=0;
-            if ($conf->expedition->enabled)
+            if ($conf->expedition_bon->enabled)
             {
             	$head[$h][0] = DOL_URL_ROOT."/expedition/fiche.php?id=".$livraison->expedition_id;
             	$head[$h][1] = $langs->trans("SendingCard");
@@ -450,7 +446,7 @@ else
             print '<td colspan="3">'.$livraison->getLibStatut(4)."</td>\n";
    			print '</tr>';
 
-            if (!$conf->expedition->enabled && $conf->stock->enabled)
+            if (!$conf->expedition_bon->enabled && $conf->stock->enabled)
             {
             	// Entrepot
             	$entrepot = new Entrepot($db);
@@ -545,7 +541,7 @@ else
 	    
 	                if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
 	                {
-	                    if ($conf->expedition->enabled)
+	                    if ($conf->expedition_bon->enabled)
 	                    {
 	                    	print '<a class="butActionDelete" href="fiche.php?id='.$livraison->id.'&amp;expid='.$livraison->expedition_id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';
 	                    }
@@ -657,14 +653,12 @@ else
         else
         {
             /* Expedition non trouvée */
-            llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
             print "Expedition inexistante ou accés refusé";
         }
     }
     else
     {
         /* Expedition non trouvée */
-        llxHeader('','Fiche expedition','ch-expedition.html',$form_search);
         print "Expedition inexistante ou accés refusé";
     }
 }
