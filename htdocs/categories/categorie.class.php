@@ -326,7 +326,7 @@ class Categorie
 	}
 
 	/**
-	* Ajout d'un produit à la catégorie
+	* Ajout d'un objet à la catégorie
 	* retour :  1 : OK
 	*          -1 : erreur SQL
 	*          -2 : id non renseign
@@ -338,7 +338,7 @@ class Categorie
 			return -2;
 		}
 
-		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".$type.")";
+		$sql  = "INSERT INTO ".MAIN_DB_PREFIX."categorie_".$type." (fk_categorie, fk_".($type=='fournisseur'?'societe':$type).")";
 		$sql .= " VALUES (".$this->id.", ".$obj->id.")";
 
 		if ($this->db->query($sql))
@@ -362,7 +362,7 @@ class Categorie
 	{
 		$sql  = "DELETE FROM ".MAIN_DB_PREFIX."categorie_".$type;
 		$sql .= " WHERE fk_categorie = ".$this->id;
-		$sql .= " AND   fk_".$type."   = ".$obj->id;
+		$sql .= " AND   fk_".($type=='fournisseur'?'societe':$type)."   = ".$obj->id;
 
 		if ($this->db->query($sql))
 		{
@@ -868,7 +868,7 @@ class Categorie
 		$sql = "SELECT ct.fk_categorie";
 		$sql.= " FROM ".MAIN_DB_PREFIX."categorie_".$type." as ct";
 		$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."categorie as c ON ct.fk_categorie = c.rowid";
-		$sql.= " WHERE  ct.fk_".$type." = ".$id." AND c.type = ".$typeid;
+		$sql.= " WHERE  ct.fk_".($type=='fournisseur'?'societe':$type)." = ".$id." AND c.type = ".$typeid;
 
 		$res = $this->db->query ($sql);
 		if ($res)

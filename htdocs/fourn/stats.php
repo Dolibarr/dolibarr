@@ -96,7 +96,7 @@ if ($search_ville)
 }
 $sql .= " AND ca.year > (date_format(now(),'%Y') - 5)";
 
-$sql .= " ORDER BY $sortfield $sortorder " . $db->plimit($conf->liste_limit+1, $offset);
+$sql .= " ORDER BY ".$sortfield $sortorder $db->plimit($conf->liste_limit+1, $offset);
 
 dolibarr_syslog("fourn/stats.php sql=".$sql);
 $resql = $db->query($sql);

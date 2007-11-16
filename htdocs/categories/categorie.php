@@ -34,11 +34,14 @@ require_once(DOL_DOCUMENT_ROOT."/categories/categorie.class.php");
 
 $langs->load("categories");
 
+$user->getrights();
+
 $mesg=isset($_GET["mesg"])?'<div class="ok">'.$_GET["mesg"].'</div>':'';
 
 if ($_REQUEST["socid"])
 {
-	$type = 'societe';
+	if ($_REQUEST["typeid"] == 1) $type = 'fournisseur';
+	if ($_REQUEST["typeid"] == 2) $type = 'societe';
 	$objectid = isset($_REQUEST["socid"])?$_REQUEST["socid"]:'';
 }
 else if ($_REQUEST["id"] || $_REQUEST["ref"])
@@ -186,11 +189,11 @@ if ($_GET["socid"])
 	
 	if ($mesg) print($mesg);
 	
-	if ($soc->client) formCategory($db,$soc,$type,2);
+	if ($soc->client) formCategory($db,$soc,'societe',2);
 	
 	if ($soc->client && $soc->fournisseur) print '<br><br>';
 	
-	if ($soc->fournisseur) formCategory($db,$soc,$type,1);
+	if ($soc->fournisseur) formCategory($db,$soc,'fournisseur',1);
 }
 else if ($_GET["id"] || $_GET["ref"])
 {
@@ -262,11 +265,11 @@ function formCategory($db,$object,$type,$typeid)
 	if ($typeid == 0) $title = $langs->trans("ProductsCategoriesShort");
 	if ($typeid == 1) $title = $langs->trans("SuppliersCategoriesShort");
 	if ($typeid == 2) $title = $langs->trans("CustomersCategoriesShort");
-	if ($type == 'societe')
+	if ($type == 'societe' || $type == 'fournisseur')
 	{
 		$nameId = 'socid';
 	}
-	else
+	else if ($type == 'product')
 	{
 		$nameId = 'id';
 	}
@@ -277,6 +280,7 @@ function formCategory($db,$object,$type,$typeid)
 		print '<br>';
 		print_fiche_titre($title);
 		print '<form method="post" action="'.DOL_URL_ROOT.'/categories/categorie.php?'.$nameId.'='.$object->id.'">';
+		print '<input type="hidden" name="typeid" value="'.$typeid.'">';
 		print '<table class="noborder" width="100%">';
 		print '<tr class="liste_titre"><td>';
 		print $langs->trans("ClassifyInCategory").' ';
@@ -318,9 +322,10 @@ function formCategory($db,$object,$type,$typeid)
 
 				// Lien supprimer
 				print '<td align="right">';
-				if ($user->rights->$type->creer)
+				$module = ($type=='fournisseur'?'societe':$type);
+				if ($user->rights->$module->creer)
 				{
-					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".$nameId."=".$object->id."&amp;removecat=".$cat->id."'>";
+					print "<a href= '".DOL_URL_ROOT."/categories/categorie.php?".$nameId."=".$object->id."&amp;typeid=".$typeid."&amp;removecat=".$cat->id."'>";
 					print img_delete($langs->trans("DeleteFromCat")).' ';
 					print $langs->trans("DeleteFromCat")."</a>";
 				}
