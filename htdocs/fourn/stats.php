@@ -72,7 +72,7 @@ $fourns=array();
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, s.ville, ca.ca_genere as ca, ca.year";
-$sql.= " , code_fournisseur, code_compta_fournisseur";
+$sql.= " , s.code_fournisseur, s.code_compta_fournisseur";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user ";
 $sql.= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."c_stcomm as st, ".MAIN_DB_PREFIX."fournisseur_ca as ca";
 if ($_GET["cat"]) $sql .= ", ".MAIN_DB_PREFIX."categorie_fournisseur as cf";
@@ -106,15 +106,16 @@ if ($resql)
   $i = 0;
   
   while ($i < min($num,$conf->liste_limit))
-    {
-      $obj = $db->fetch_object($resql);	
-      $var=!$var;
-      $i++;
+  {
+  	$obj = $db->fetch_object($resql);	
+    $var=!$var;
+    $i++;
 
-      $fourns[$obj->socid] = $obj->nom;
-      $years[$obj->year] = $obj->year;
-      $ca[$obj->socid][$obj->year] = $obj->ca;
-    }
+    $fourns[$obj->socid] = $obj->nom;
+    $code_fourns[$obj->socid] = $obj->code_fournisseur;
+    $years[$obj->year] = $obj->year;
+    $ca[$obj->socid][$obj->year] = $obj->ca;
+  }
 
 }
 else 
@@ -130,13 +131,13 @@ print '<table class="liste" width="100%">';
 print '<tr class="liste_titre">';
 print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom","","",'valign="middle"',$sortfield,$sortorder);
 print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville","","",'valign="middle"',$sortfield,$sortorder);
-print '<td class="liste_titre">&nbsp;</td>';
+print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur","","",'valign="middle"',$sortfield,$sortorder);
 
 foreach($years as $year)
 {
   print  '<td align="right" class="liste_titre">'.$langs->trans("CA") .' '.$year.'</td>';
 }
-print '<td align="left" class="liste_titre">&nbsp;</td>';
+print '<td align="right" class="liste_titre">&nbsp;</td>';
 print "</tr>\n";
 
 print '<tr class="liste_titre">';
@@ -162,13 +163,13 @@ foreach($fourns as $fid => $fnom)
   print "<tr $bc[$var]>";
   print '<td><a href="fiche.php?socid='.$obj->socid.'">'.img_object($langs->trans("ShowSupplier"),"company").'</a>';
   print "&nbsp;<a href=\"fiche.php?socid=".$fid."\">".$fnom."</a></td>\n";
-  print "<td>".$obj->ville."</td>\n";       
-  print '<td align="left">'.$obj->code_fournisseur.'&nbsp;</td>';
+  print "<td>".$obj->ville."</td>\n";
+  print '<td>'.$code_fourns[$fid].'&nbsp;</td>';
   
   foreach($years as $year)
-    {
-      print '<td align="right">'.price($ca[$fid][$year]).'&nbsp;</td>';
-    }
+  {
+  	print '<td align="right">'.price($ca[$fid][$year]).'&nbsp;</td>';
+  }
   print '<td align="right">&nbsp;</td>';
   print "</tr>\n";
 }
