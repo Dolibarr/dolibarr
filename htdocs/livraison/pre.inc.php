@@ -53,6 +53,6 @@ function llxHeader($head = "", $title="", $help_url='')
   $menu->add_submenu(DOL_URL_ROOT."/livraison/liste.php", $langs->trans("List"));
   $menu->add_submenu(DOL_URL_ROOT."/livraison/stats/", $langs->trans("Statistics"));
 
-  left_menu($menu->liste, $help_url, $form_search, $author);
+  left_menu($menu->liste, $help_url);
 }
 ?>
