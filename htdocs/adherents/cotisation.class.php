@@ -182,26 +182,61 @@ class Cotisation extends CommonObject
 			\param 		rowid	Id cotisation
 			\return		int		<0 si KO, 0 si OK mais non trouve, >0 si OK
 	*/
-	function delete($rowid)
+	function delete()
 	{
-		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$rowid;
+		// Verification
+		if ($this->fk_bank)
+		{
+			require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
+			$accountline=new AccountLine($this->db);
+			$result=$accountline->fetch($this->fk_bank);
+			if ($accountline->rappro)
+			{
+				$this->error="ErrorBankRecordConcialiated";
+				return -1;
+			}
+		}
 
+		$this->db->begin();
+
+		$sql = "DELETE FROM ".MAIN_DB_PREFIX."cotisation WHERE rowid = ".$this->id;
 		dolibarr_syslog("Cotisation::delete sql=".$sql);
 		$resql=$this->db->query($sql);
 		if ($resql)
 		{
-			if ( $this->db->affected_rows($resql))
+			$num=$this->db->affected_rows($resql);
+			if ($num)
 			{
-				return 1;
+				if ($this->fk_bank)
+				{
+					$result=$accountline->delete();
+					if ($result > 0)
+					{
+						$this->db->commit();
+						return 1;
+					}
+					else
+					{
+						$this->db->rollback();
+						return -1;
+					}
+				}
+				else
+				{
+					$this->db->commit();
+					return 1;
+				}
 			}
 			else
 			{
+				$this->db->commit();
 				return 0;
 			}
 		}
 		else
 		{
-			$this->error=$this->db->error();
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
 			return -1;
 		}
 	}
