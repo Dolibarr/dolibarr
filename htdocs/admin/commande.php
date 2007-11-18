@@ -1,9 +1,10 @@
 <?php
 /* Copyright (C) 2003-2006 Rodolphe Quiedeville	<rodolphe@quiedeville.org>
- * Copyright (C) 2004-2007 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2004      Sebastien Di Cintio <sdicintio@ressource-toi.org>
- * Copyright (C) 2004      Benoit Mortier <benoit.mortier@opensides.be>
- * Copyright (C) 2004      Andre Cianfarani <acianfa@free.fr>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
+ * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
+ * Copyright (C) 2004      Andre Cianfarani     <acianfa@free.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis.houssin@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -122,16 +123,29 @@ if ($_GET["action"] == 'setmod')
   // par appel methode canBeActivated
   
   dolibarr_set_const($db, "COMMANDE_ADDON",$_GET["value"]);
+  Header("Location: commande.php");
+  exit;
 }
 
 if ($_POST["action"] == 'setvalidorder')
 {
   dolibarr_set_const($db, "COMMANDE_VALID_AFTER_CLOSE_PROPAL",$_POST["validorder"]);
+  Header("Location: commande.php");
+  exit;
 }
 
 if ($_POST["action"] == 'deliverycostline')
 {
   dolibarr_set_const($db, "COMMANDE_ADD_DELIVERY_COST_LINE",$_POST["addline"]);
+  Header("Location: commande.php");
+  exit;
+}
+
+if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
+{
+	dolibarr_set_const($db, "COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"]);
+  Header("Location: commande.php");
+  exit;
 }
 
 // défini les constantes du modèle saphir
@@ -348,36 +362,44 @@ print_titre($langs->trans("OtherOptions"));
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre">';
 print '<td>'.$langs->trans("Parameter").'</td>';
-print '<td align="center" width="160">'.$langs->trans("Value").'</td>';
+print '<td align="center" width="60">'.$langs->trans("Value").'</td>';
+print "<td>&nbsp;</td>\n";
 print "</tr>\n";
 $var=true;
 
 // Valider la commande après cloture de la propale
 // permet de na pas passer par l'option commande provisoire
 $var=! $var;
-
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("ValidOrderAfterPropalClosed");
-print '</td><td width="160" align="center">';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="setvalidorder">';
-print $html->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</form>\n";
-print "</td></tr>\n";
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("ValidOrderAfterPropalClosed").'</td>';
+print '<td width="60" align="center">'.$html->selectyesno("validorder",$conf->global->COMMANDE_VALID_AFTER_CLOSE_PROPAL,1).'</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
 
 // Ajouter une ligne de frais port indiquant le poids de la commande
 $var=! $var;
-
-print '<tr '.$bc[$var].'><td>';
-print $langs->trans("AddDeliveryCostLine");
-print '</td><td width="160" align="center">';
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
 print '<input type="hidden" name="action" value="deliverycostline">';
-print $html->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1);
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("AddDeliveryCostLine").'</td>';
+print '<td width="60" align="center">'.$html->selectyesno("addline",$conf->global->COMMANDE_ADD_DELIVERY_COST_LINE,1).'</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
 print '</form>';
-print "</td></tr>\n";
+
+// Utiliser le contact de la commande dans le document
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
+print '<tr '.$bc[$var].'>';
+print '<td>'.$langs->trans("UseCustomerContactAsOrderRecipientIfExist").'</td>';
+print '<td width="60" align="center">'.$html->selectyesno("use_customer_contact_as_recipient",$conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1).'</td>';
+print '<td align="right"><input type="submit" class="button" value="'.$langs->trans("Modify").'"></td>';
+print '</tr>';
+print '</form>';
 
 
 

@@ -94,6 +94,8 @@ Error_COMMANDE_SUPPLIER_ADDON_NotDefined=Constant COMMANDE_SUPPLIER_ADDON not de
 Error_COMMANDE_ADDON_NotDefined=Constant COMMANDE_ADDON not defined
 Error_FailedToLoad_COMMANDE_SUPPLIER_ADDON_File=Failed to load module file '%s'
 Error_FailedToLoad_COMMANDE_ADDON_File=Failed to load module file '%s'
+UseCustomerContactAsOrderRecipientIfExist=Use customer contact address if defined instead of third party address as order recipient address
+
 # Sources
 OrderSource0=Commercial proposal
 OrderSource1=Internet

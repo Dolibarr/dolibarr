@@ -1,23 +1,24 @@
 <?php
 /* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
-*
-* This program is free software; you can redistribute it and/or modify
-* it under the terms of the GNU General Public License as published by
-* the Free Software Foundation; either version 2 of the License, or
-* (at your option) any later version.
-*
-* This program is distributed in the hope that it will be useful,
-* but WITHOUT ANY WARRANTY; without even the implied warranty of
-* MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-* GNU General Public License for more details.
-*
-* You should have received a copy of the GNU General Public License
-* along with this program; if not, write to the Free Software
-* Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
-* or see http://www.gnu.org/
-*
-* $Id$
-*/
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ *
+ * This program is free software; you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation; either version 2 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program; if not, write to the Free Software
+ * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
+ * or see http://www.gnu.org/
+ *
+ * $Id$
+ */
 
 /**
        	\file       htdocs/includes/modules/propale/pdf_propale_azur.modules.php
@@ -907,33 +908,40 @@ class pdf_propale_azur extends ModelePDFPropales
 				{
 					$carac_client.=$object->contact->pays."\n";
 				}
-				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
-				$pdf->SetFont('Arial','',9);
-				$pdf->SetXY(102,$posy+8);
-				$pdf->MultiCell(86,4, $carac_client);
 			}
 			else
 			{
 				// Nom client
-		        $pdf->SetXY(102,$posy+3);
-		        $pdf->SetFont('Arial','B',11);
-		        $pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+		    $pdf->SetXY(102,$posy+3);
+		    $pdf->SetFont('Arial','B',11);
+		    $pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+		    
+		    // Nom du contact suivi propal si c'est une société
+				$arrayidcontact = $object->getIdContact('external','CUSTOMER');
+				if (sizeof($arrayidcontact) > 0)
+				{
+					$object->fetch_contact($arrayidcontact[0]);
+					// On vérifie si c'est une société ou un particulier
+					if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+					{
+						$carac_client .= "\n".$object->contact->getFullName($outputlangs,1);
+					}
+				}
 
 				// Caractéristiques client
-		        $carac_client=$object->client->adresse;
-		        $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
-	            if ($this->emetteur->pays_code != $object->client->pays_code)
-	            {
-	            	$carac_client.=$object->client->pays."\n";
-	            }
-				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
-		        $pdf->SetFont('Arial','',9);
-		        $pdf->SetXY(102,$posy+8);
-		        $pdf->MultiCell(86,4, $carac_client);
+		    $carac_client.="\n".$object->client->adresse;
+		    $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+	      if ($this->emetteur->pays_code != $object->client->pays_code)
+	      {
+	      	$carac_client.=$object->client->pays."\n";
+	      }
 			}
-        }
-
-    }
+			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+		  $pdf->SetFont('Arial','',9);
+		  $pdf->SetXY(102,$posy+6);
+		  $pdf->MultiCell(86,4, $carac_client);
+		}
+	}
 
     /*
      *   \brief      Affiche le pied de page

@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -742,143 +741,190 @@ class pdf_einstein extends ModelePDFCommandes
      */
     function _pagehead(&$pdf, $object, $showadress=1, $outputlangs)
     {
-        global $conf,$langs;
+    	global $conf,$langs;
 
-        $outputlangs->load("main");
-        $outputlangs->load("bills");
-        $outputlangs->load("propal");
-        $outputlangs->load("companies");
+      $outputlangs->load("main");
+      $outputlangs->load("bills");
+      $outputlangs->load("propal");
+      $outputlangs->load("companies");
 
-        $pdf->SetTextColor(0,0,60);
-        $pdf->SetFont('Arial','B',13);
+      $pdf->SetTextColor(0,0,60);
+      $pdf->SetFont('Arial','B',13);
 
-        $posy=$this->marge_haute;
+      $posy=$this->marge_haute;
 
-        $pdf->SetXY($this->marge_gauche,$posy);
-
-		// Logo
-        $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
-        if ($this->emetteur->logo)
-        {
-            if (is_readable($logo))
-			{
-                $pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
-            }
-            else
-			{
-                $pdf->SetTextColor(200,0,0);
-                $pdf->SetFont('Arial','B',8);
-                $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
-                $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
-            }
+      $pdf->SetXY($this->marge_gauche,$posy);
+      
+      // Logo
+      $logo=$conf->societe->dir_logos.'/'.$this->emetteur->logo;
+      if ($this->emetteur->logo)
+      {
+      	if (is_readable($logo))
+      	{
+      		$pdf->Image($logo, $this->marge_gauche, $posy, 0, 24);
+      	}
+      	else
+      	{
+      		$pdf->SetTextColor(200,0,0);
+          $pdf->SetFont('Arial','B',8);
+          $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorLogoFileNotFound",$logo), 0, 'L');
+          $pdf->MultiCell(100, 3, $outputlangs->transnoentities("ErrorGoToModuleSetup"), 0, 'L');
         }
-        else if (defined("FAC_PDF_INTITULE"))
-        {
-            $pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
-        }
+      }
+      else if (defined("FAC_PDF_INTITULE"))
+      {
+      	$pdf->MultiCell(100, 4, FAC_PDF_INTITULE, 0, 'L');
+      }
+      
+      $pdf->SetFont('Arial','B',13);
+      $pdf->SetXY(100,$posy);
+      $pdf->SetTextColor(0,0,60);
+      $title=$outputlangs->transnoentities("Order");
+      $pdf->MultiCell(100, 4, $title, '' , 'R');
+      
+      $pdf->SetFont('Arial','B',12);
+      
+      $posy+=6;
+      $pdf->SetXY(100,$posy);
+      $pdf->SetTextColor(0,0,60);
+      $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
+      
+      $posy+=1;
+      $pdf->SetFont('Arial','',10);
 
-        $pdf->SetFont('Arial','B',13);
-        $pdf->SetXY(100,$posy);
-        $pdf->SetTextColor(0,0,60);
-		$title=$outputlangs->transnoentities("Order");        
-		$pdf->MultiCell(100, 4, $title, '' , 'R');
-
-        $pdf->SetFont('Arial','B',12);
-
-        $posy+=6;
-        $pdf->SetXY(100,$posy);
-        $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 4, $outputlangs->transnoentities("Ref")." : " . $object->ref, '', 'R');
-
-		$posy+=1;
-        $pdf->SetFont('Arial','',10);
-
-        $posy+=5;
-        $pdf->SetXY(100,$posy);
-        $pdf->SetTextColor(0,0,60);
-        $pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
-
-
-
-        if ($showadress)
-        {
-	        // Emetteur
-	        $posy=42;
-	        $hautcadre=40;
-	        $pdf->SetTextColor(0,0,0);
-	        $pdf->SetFont('Arial','',8);
-	        $pdf->SetXY($this->marge_gauche,$posy-5);
-	        $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
-
-
-	        $pdf->SetXY($this->marge_gauche,$posy);
-	        $pdf->SetFillColor(230,230,230);
-	        $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
+      $posy+=5;
+      $pdf->SetXY(100,$posy);
+      $pdf->SetTextColor(0,0,60);
+      $pdf->MultiCell(100, 3, $outputlangs->transnoentities("OrderDate")." : " . dolibarr_print_date($object->date,"%d %b %Y"), '', 'R');
+      
+      if ($showadress)
+      {
+      	// Emetteur
+	      $posy=42;
+	      $hautcadre=40;
+	      $pdf->SetTextColor(0,0,0);
+	      $pdf->SetFont('Arial','',8);
+	      $pdf->SetXY($this->marge_gauche,$posy-5);
+	      $pdf->MultiCell(66,5, $outputlangs->transnoentities("BillFrom").":");
 
 
-	        $pdf->SetXY($this->marge_gauche+2,$posy+3);
+	      $pdf->SetXY($this->marge_gauche,$posy);
+	      $pdf->SetFillColor(230,230,230);
+	      $pdf->MultiCell(82, $hautcadre, "", 0, 'R', 1);
 
-	        // Nom emetteur
-	        $pdf->SetTextColor(0,0,60);
-	        $pdf->SetFont('Arial','B',11);
-	        if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
-	        else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
-	        // Caractéristiques emetteur
-	        $carac_emetteur = '';
-	        if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
-	        else {
-	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
-	            $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
-	        }
-	        $carac_emetteur .= "\n";
-	        // Tel
-	        if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
-	        elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$this->emetteur->tel;
-	        // Fax
-	        if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
-	        elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$this->emetteur->fax;
-	        // EMail
-			if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
-	        elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$this->emetteur->email;
-	        // Web
-			if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
-	        elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$this->emetteur->url;
+	      $pdf->SetXY($this->marge_gauche+2,$posy+3);
 
-	        $pdf->SetFont('Arial','',9);
-	        $pdf->SetXY($this->marge_gauche+2,$posy+8);
-	        $pdf->MultiCell(80,4, $carac_emetteur);
+	      // Nom emetteur
+	      $pdf->SetTextColor(0,0,60);
+	      $pdf->SetFont('Arial','B',11);
+	      if (defined("FAC_PDF_SOCIETE_NOM") && FAC_PDF_SOCIETE_NOM) $pdf->MultiCell(80, 4, FAC_PDF_SOCIETE_NOM, 0, 'L');
+	      else $pdf->MultiCell(80, 4, $this->emetteur->nom, 0, 'L');
 
-	        // Client destinataire
-	        $posy=42;
-	        $pdf->SetTextColor(0,0,0);
-	        $pdf->SetFont('Arial','',8);
-	        $pdf->SetXY(102,$posy-5);
-	        $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
-			$object->fetch_client();
+	      // Caractéristiques emetteur
+	      $carac_emetteur = '';
+	      if (defined("FAC_PDF_ADRESSE") && FAC_PDF_ADRESSE) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).FAC_PDF_ADRESSE;
+	      else {
+	      	$carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->adresse;
+	        $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$this->emetteur->cp.' '.$this->emetteur->ville;
+	      }
+	      $carac_emetteur .= "\n";
+	      
+	      // Tel
+	      if (defined("FAC_PDF_TEL") && FAC_PDF_TEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".FAC_PDF_TEL;
+	      elseif ($this->emetteur->tel) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Phone").": ".$this->emetteur->tel;
+	      
+	      // Fax
+	      if (defined("FAC_PDF_FAX") && FAC_PDF_FAX) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".FAC_PDF_FAX;
+	      elseif ($this->emetteur->fax) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Fax").": ".$this->emetteur->fax;
+	      
+	      // EMail
+	      if (defined("FAC_PDF_MEL") && FAC_PDF_MEL) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".FAC_PDF_MEL;
+	      elseif ($this->emetteur->email) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Email").": ".$this->emetteur->email;
+	      
+	      // Web
+	      if (defined("FAC_PDF_WWW") && FAC_PDF_WWW) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".FAC_PDF_WWW;
+	      elseif ($this->emetteur->url) $carac_emetteur .= ($carac_emetteur ? "\n" : '' ).$outputlangs->transnoentities("Web").": ".$this->emetteur->url;
 
-	        // Cadre client destinataire
-	        $pdf->rect(100, $posy, 100, $hautcadre);
+	      $pdf->SetFont('Arial','',9);
+	      $pdf->SetXY($this->marge_gauche+2,$posy+8);
+	      $pdf->MultiCell(80,4, $carac_emetteur);
 
-			// Nom client
-	        $pdf->SetXY(102,$posy+3);
-	        $pdf->SetFont('Arial','B',11);
-	        $pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
-
-			// Caractéristiques client
-	        $carac_client=$object->client->adresse;
-	        $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
-            if ($this->emetteur->pays_code != $object->client->pays_code)
-            {
-            	$carac_client.=$object->client->pays."\n";
-            }
-			if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
-	        $pdf->SetFont('Arial','',9);
-	        $pdf->SetXY(102,$posy+8);
-	        $pdf->MultiCell(86,4, $carac_client);
-        }
-
-    }
+	      // Client destinataire
+	      $posy=42;
+	      $pdf->SetTextColor(0,0,0);
+	      $pdf->SetFont('Arial','',8);
+	      $pdf->SetXY(102,$posy-5);
+	      $pdf->MultiCell(80,5, $outputlangs->transnoentities("BillTo").":");
+	      $object->fetch_client();
+	      
+	      // Cadre client destinataire
+	      $pdf->rect(100, $posy, 100, $hautcadre);
+	      
+	      // If CUSTOMER contact defined on invoice, we use it
+	      $usecontact=false;
+	      if ($conf->global->COMMANDE_USE_CUSTOMER_CONTACT_AS_RECIPIENT)
+	      {
+	      	$arrayidcontact=$object->getIdContact('external','CUSTOMER');
+	      	if (sizeof($arrayidcontact) > 0)
+	      	{
+	      		$usecontact=true;
+	      		$result=$object->fetch_contact($arrayidcontact[0]);
+	      	}
+				}
+				
+				if ($usecontact)
+				{
+					// Nom societe
+					$pdf->SetXY(102,$posy+3);
+					$pdf->SetFont('Arial','B',11);
+					$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+					$posy+=4;
+					
+					// Nom client
+					$pdf->SetXY(102,$posy+4);
+					$pdf->SetFont('Arial','',9);
+					$pdf->MultiCell(106,4, $object->contact->getFullName($outputlangs,1), 0, 'L');
+					
+					// Caractéristiques client
+					$carac_client=$object->contact->adresse;
+					$carac_client.="\n".$object->contact->cp . " " . $object->contact->ville."\n";
+					if ($this->emetteur->pays_code != $object->contact->pays_code)
+					{
+						$carac_client.=$object->contact->pays."\n";
+					}
+				}
+				else
+				{
+					// Nom client
+					$pdf->SetXY(102,$posy+3);
+					$pdf->SetFont('Arial','B',11);
+					$pdf->MultiCell(106,4, $object->client->nom, 0, 'L');
+					
+					// Nom du contact suivi commande si c'est une société
+					$arrayidcontact = $object->getIdContact('external','CUSTOMER');
+					if (sizeof($arrayidcontact) > 0)
+					{
+						$object->fetch_contact($arrayidcontact[0]);
+						// On vérifie si c'est une société ou un particulier
+						if( !preg_match('#'.$object->contact->getFullName($outputlangs,1).'#isU',$object->client->nom) )
+						{
+							$carac_client .= "\n".$object->contact->getFullName($outputlangs,1);
+						}
+					}
+					
+					// Caractéristiques client
+					$carac_client.="\n".$object->client->adresse;
+					$carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+					if ($this->emetteur->pays_code != $object->client->pays_code) $carac_client.=$object->client->pays."\n";
+				}
+				// Numéro TVA intracom
+				if ($object->client->tva_intra) $carac_client.="\n".$outputlangs->transnoentities("VATIntraShort").': '.$object->client->tva_intra;
+        $pdf->SetFont('Arial','',9);
+	      $pdf->SetXY(102,$posy+6);
+	      $pdf->MultiCell(86,4, $carac_client);
+	    }
+	  }
 
     /*
      *   \brief      Affiche le pied de page
