@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -273,30 +272,47 @@ if ($rowid && $action != 'edit')
 
     // Ref
     print '<tr><td width="20%">'.$langs->trans("Ref").'</td>';
-	print '<td class="valeur" colspan="2">';
-	if ($previous_id || $next_id) print '<table class="nobordernopadding" width="100%"><tr class="nobordernopadding"><td class="nobordernopadding">';
-	print $subscription->ref;
-	if ($previous_id || $next_id) print '</td><td class="nobordernopadding" align="center" width="20">'.$previous_id.'</td><td class="nobordernopadding" align="center" width="20">'.$next_id.'</td></tr></table>';
+	print '<td class="valeur" colspan="3">';
+	print $html->showrefnav($subscription,'rowid','',1);
 	print '</td></tr>';
 
     // Member
 	$adh->ref=$adh->fullname;
     print '<tr>';
-	print '<td>'.$langs->trans("Member").'</td><td class="valeur">'.$adh->getNomUrl(1,0,'subscription').'</td>';
+	print '<td>'.$langs->trans("Member").'</td><td class="valeur" colspan="3">'.$adh->getNomUrl(1,0,'subscription').'</td>';
     print '</tr>';
 
     // Date subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur">'.dolibarr_print_date($subscription->dateh,'dayhour').'</td>';
+	print '<td>'.$langs->trans("DateSubscription").'</td><td class="valeur" colspan="3">'.dolibarr_print_date($subscription->dateh,'dayhour').'</td>';
     print '</tr>';
 
     // Date end subscription
     print '<tr>';
-	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur">'.dolibarr_print_date($subscription->datef,'day').'</td>';
+	print '<td>'.$langs->trans("DateEndSubscription").'</td><td class="valeur" colspan="3">'.dolibarr_print_date($subscription->datef,'day').'</td>';
     print '</tr>';
 
     // Amount
-    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur">'.price($subscription->amount).'</td></tr>';
+    print '<tr><td>'.$langs->trans("Amount").'</td><td class="valeur" colspan="3">'.price($subscription->amount).'</td></tr>';
+
+	// Bank account
+	if ($conf->banque->enabled)
+	{
+	    if ($subscription->fk_bank) 
+	    {
+	    	$bankline=new AccountLine($db);
+	    	$bankline->fetch($subscription->fk_bank);
+	    
+	    	$bank=new Account($db);
+	    	$bank->fetch($bankline->fk_account);
+
+	    	print '<tr>';
+	    	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
+			print '<td>'.$bank->getNomUrl(1).'</td>';
+	    	print '<td>'.$langs->trans("BankLineConciliated").'</td><td>'.yn($bankline->rappro).'</td>';
+	    	print '</tr>';
+	    }
+	}
 
     print "</table>\n";
     print '</form>';
@@ -312,9 +328,16 @@ if ($rowid && $action != 'edit')
     
     if ($user->rights->adherent->cotisation->creer)
 	{
-		print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Edit")."</a>";
-    }
-	
+		if (! $bankline->rappro)
+		{
+			print "<a class=\"butAction\" href=\"".$_SERVER["PHP_SELF"]."?rowid=".$subscription->id."&action=edit\">".$langs->trans("Edit")."</a>";
+		}
+		else
+		{
+			print "<a class=\"butActionRefused\" title=\"".$langs->trans("BankLineConciliated")."\" href=\"#\">".$langs->trans("Edit")."</a>";
+		}
+	}
+
     // Supprimer
     if ($user->rights->adherent->cotisation->creer)
     {

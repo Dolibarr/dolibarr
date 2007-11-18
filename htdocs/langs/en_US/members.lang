@@ -6,6 +6,7 @@ SubscriptionCard=Subscription card
 Member=Member
 Members=Members
 MemberAccount=Member login
+ShowMember=Show member card
 UserNotLinkedToMember=User not linked to a member
 MembersTickets=Members Tickets
 FundationMembers=Fundation members

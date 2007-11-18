@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -207,12 +206,23 @@ class Account extends CommonObject
 		}
 		
 		// Verification parametres
+		if (! $oper)
+		{
+			$this->error="Account::addline oper not defined";
+			return -1;
+		}
 		if (! $this->rowid)
 		{
 			$this->error="Account::addline this->rowid not defined";
-			return -1;
+			return -2;
 		}
-
+		if ($this->courant == 2 && $oper != 'LIQ')
+		{
+			$this->error="ErrorCashAccountAcceptsOnlyCashMoney";
+			return -3;
+		}
+		
+		
 		$this->db->begin();
 			
 		$datev = $date;

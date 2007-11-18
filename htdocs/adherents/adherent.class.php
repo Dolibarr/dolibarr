@@ -1132,8 +1132,9 @@ class Adherent extends CommonObject
 	            // Insertion dans la gestion bancaire si configuré pour
 	            if ($conf->global->ADHERENT_BANK_USE && $accountid)
 	            {
-	                $acct=new Account($this->db,$accountid);
-
+	                $acct=new Account($this->db);
+					$result=$acct->fetch($accountid);
+					
 	                $dateop=time();
 
 	                $insertid=$acct->addline($dateop, $operation, $label, $montant, $num_chq, '', $user, $emetteur_nom, $emetteur_banque);
@@ -1143,10 +1144,10 @@ class Adherent extends CommonObject
 	                    if ($inserturlid > 0)
 	                    {
 	                        // Met a jour la table cotisation
-	                        
-							
 							$sql="UPDATE ".MAIN_DB_PREFIX."cotisation SET fk_bank=".$insertid." WHERE rowid=".$rowid;
-	                        $resql = $this->db->query($sql);
+	                        
+							dolibarr_syslog("Adherent::cotisation sql=".$sql);
+							$resql = $this->db->query($sql);
 	                        if (! $resql)
 	                        {
 				                $this->error=$this->db->error();
@@ -1163,7 +1164,7 @@ class Adherent extends CommonObject
 	                }
 	                else
 	                {
-		                $this->error=$this->db->error();
+		                $this->error=$acct->error;
 		                $this->db->rollback();
 		                return -3;
 	                }

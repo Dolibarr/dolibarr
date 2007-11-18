@@ -2,3 +2,4 @@
 ErrorDuplicateTrigger=Un fichier trigger du nom de '<b>%s</b>' est deja chargé. Supprimer le doublon du répertoire '<b>%s</b>'.
 ErrorFailToDeleteFile=Echec de l'effacement du fichier '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=Ce contact est déjà défini comme contact pour ce type.
+ErrorCashAccountAcceptsOnlyCashMoney=Ce compte bancaire est de type caisse et n'accepte que les mode de réglement de type <b>espèce</b>.

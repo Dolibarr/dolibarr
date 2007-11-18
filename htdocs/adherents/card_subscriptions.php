@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -155,7 +154,8 @@ if ($user->rights->adherent->cotisation->creer && $_POST["action"] == 'cotisatio
         else
         {
             $db->rollback();
-            dolibarr_print_error($db,$adh->error);
+            $errmsg=$adh->error;
+			$action = 'addsubscription';
         }
     }
 }
@@ -224,6 +224,11 @@ print "</div>\n";
 
 if ($errmsg)
 {
+	if (eregi('^Error',$errmsg))
+	{
+		$langs->load("errors");
+		$errmsg=$langs->trans($errmsg);
+	}
     print '<div class="error">'.$errmsg.'</div>';
     print "\n";
 }

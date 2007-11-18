@@ -40,7 +40,7 @@ if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_
 ?>
 
 /* ============================================================================== */
-/* Styles par d�faut                                                              */
+/* Styles par defaut                                                              */
 /* ============================================================================== */
 
 body {
@@ -686,7 +686,7 @@ a.tabimage {
 /* Boutons actions                                                                */
 /* ============================================================================== */
 
-/* Nouvelle syntaxe � utiliser */
+/* Nouvelle syntaxe a utiliser */
 
 a.butAction:link    {     font-size: 12px;
 					  font-family: helvetica, verdana, arial, sans-serif;
@@ -732,16 +732,18 @@ a.butAction:hover   {     font-size: 12px;
                       text-decoration: none;
                       white-space: nowrap; }
 
-.butActionRefused    {     font-size: 12px;
-					  font-family: helvetica, verdana, arial, sans-serif;
-                      font-weight: bold;
-                      background: white;
-                      border: 1px solid #AAAAAA;
-                      color: #AAAAAA;
-                      padding: 0em 0.7em;
-                      margin: 0em 0.5em;
-                      text-decoration: none;
-                      white-space: nowrap; }
+.butActionRefused    {     font-size: 12px !important;
+					  font-family: helvetica, verdana, arial, sans-serif !important;
+                      font-weight: bold !important;
+                      background: white !important;
+                      border: 1px solid #AAAAAA !important;
+                      color: #AAAAAA !important;
+                      padding: 0em 0.7em !important;
+                      margin: 0em 0.5em !important;
+                      text-decoration: none !important;
+                      white-space: nowrap !important;
+					  cursor: not-allowed;
+					  }
 
 a.butActionDelete    {     font-size: 12px;
 					  font-family: helvetica, verdana, arial, sans-serif;

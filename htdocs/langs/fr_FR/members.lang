@@ -5,6 +5,7 @@ MemberCard=Fiche adhérent
 SubscriptionCard=Fiche adhésion
 Member=Adhérent
 Members=Adhérents
+ShowMember=Afficher fiche adhérent
 MemberAccount=Login adhérent
 UserNotLinkedToMember=Utilisateur non lié à un adhérent
 MembersTickets=Etiquettes d'adhérents

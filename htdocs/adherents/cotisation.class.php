@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -32,7 +31,7 @@
 	\class 		Cotisation
 	\brief      Classe permettant de gèrer les cotisations
 */
-class Cotisation
+class Cotisation extends CommonObject
 {
 	var $id;
 	var $db;

@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -158,21 +157,23 @@ if ($mesg) print $mesg.'<br>';
 
 print '<table class="border" width="100%">';
 
+// Ref
 print '<tr><td valign="top" width="140">'.$langs->trans('Ref').'</td><td colspan="3">'.$paiement->id.'</td></tr>';
+
+// Bank account
 if ($conf->banque->enabled)
 {
     if ($paiement->bank_account) 
     {
-    	// Si compte renseigné, on affiche libelle
-    	$bank=new Account($db);
-    	$bank->fetch($paiement->bank_account);
-    
     	$bankline=new AccountLine($db);
     	$bankline->fetch($paiement->bank_line);
     
+    	$bank=new Account($db);
+    	$bank->fetch($bankline->fk_account);
+
     	print '<tr>';
     	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';
-    	print '<td><a href="'.DOL_URL_ROOT.'/compta/bank/account.php?account='.$bank->id.'">'.img_object($langs->trans("ShowAccount"),'account').' '.$bank->label.'</a></td>';
+    	print '<td>'.$bank->getNomUrl(1).'</td>';
     	print '<td>'.$langs->trans("BankLineConciliated").'</td><td>'.yn($bankline->rappro).'</td>';
     	print '</tr>';
     }
@@ -201,8 +202,7 @@ print '</table>';
 
 
 /*
- *
- *
+ * Liste des factures
  */
 $allow_delete = 1 ;
 $sql = 'SELECT f.facnumber, f.total_ttc, pf.amount, f.rowid as facid, f.paye, f.fk_statut, s.nom, s.rowid as socid';

@@ -562,17 +562,25 @@ if ($account || $_GET["ref"])
 	                if ($links[$key]['type']=='company') {
 	                    $societestatic->id=$links[$key]['url_id'];
 						$societestatic->nom=$links[$key]['label'];
-						print $societestatic->getNomUrl(0,'',16);
+						print $societestatic->getNomUrl(1,'',16);
 	                }
-					else if ($links[$key]['type']=='sc') {
+					/*else if ($links[$key]['type']=='sc') {
 	                    $chargestatic->id=$links[$key]['url_id'];
-						$chargestatic->nom=$links[$key]['label'];
-						print $chargestatic->getNomUrl(0,'',16);
-					}
+						if (eregi('^\((.*)\)$',$links[$key]['label'],$reg))
+						{
+							if ($reg[1]=='socialcontribution') $reg[1]='SocialContribution';
+							$chargestatic->lib=$langs->trans($reg[1]);
+						}
+						else
+						{
+							$chargestatic->lib=$links[$key]['label'];
+						}
+						print $chargestatic->getNomUrl(1,'',16);
+					}*/
 					else if ($links[$key]['type']=='member') {
 	                    $memberstatic->id=$links[$key]['url_id'];
 						$memberstatic->ref=$links[$key]['label'];
-						print $memberstatic->getNomUrl(0,'',16);
+						print $memberstatic->getNomUrl(1,16,'card');
 					}
 	            }
 	            print '</td>';

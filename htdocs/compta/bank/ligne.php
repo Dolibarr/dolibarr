@@ -35,6 +35,7 @@ if (! $user->rights->banque->lire && ! $user->rights->banque->consolidate)
 
 $langs->load("banks");
 $langs->load("bills");
+if ($conf->adherent->enabled) $langs->load("members");
 
 $rowid=isset($_GET["rowid"])?$_GET["rowid"]:$_POST["rowid"];
 $orig_account=isset($_GET["orig_account"])?$_GET["orig_account"]:$_POST["orig_account"];

@@ -393,7 +393,7 @@ a.butAction:visited { background: white; border: 1px solid #8CACBB; color: #4369
 a.butAction:active { background: white; border: 1px solid #8CACBB; color: #436976; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
 a.butAction:hover { background: #dee7ec; }
 
-.butActionRefused { background: white; border: 1px solid #AAAAAA; color: #AAAAAA; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
+.butActionRefused { background: white; border: 1px solid #AAAAAA; color: #AAAAAA !important; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; cursor: not-allowed; }
 
 a.butActionDelete:link { background: white; border: 1px solid #8CACBB; color: #436976; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
 a.butActionDelete:visited { background: white; border: 1px solid #8CACBB; color: #436976; font: 105% Bold; padding: 0em 1em; margin: 0em 0.2em; text-decoration: none; white-space: nowrap; }
