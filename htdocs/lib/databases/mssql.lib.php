@@ -244,43 +244,51 @@ class DoliDb
   }
   
 
-  /**
-     \brief      Debut d'une transaction.
-     \return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
-  */
-  function begin()
-  {
-    if (! $this->transaction_opened)
-    {
-    	$ret=$this->query("BEGIN TRANSACTION");
-    	if ($ret) $this->transaction_opened++;
-    	return $ret;
-    }
-    else
-    {
-    	$this->transaction_opened++;
-    	return 1;
-    }
-  }
+	/**
+		\brief      Debut d'une transaction.
+		\return	    int         1 si ouverture transaction ok ou deja ouverte, 0 en cas d'erreur
+	*/
+	function begin()
+	{
+		if (! $this->transaction_opened)
+		{
+			$ret=$this->query("BEGIN TRANSACTION");
+			if ($ret)
+			{
+				$this->transaction_opened++;
+				dolibarr_syslog("BEGIN Transaction",LOG_DEBUG);
+			}
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened++;
+			return 1;
+		}
+	}
 
-  /**
-     \brief      Validation d'une transaction
-     \return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
-  */
-  function commit()
-  {
-    if ($this->transaction_opened<=1)
-      {
-	$ret=$this->query("COMMIT TRANSACTION");
-	if ($ret) $this->transaction_opened=0;
-	return $ret;
-      }
-    else
-      {
-	$this->transaction_opened--;
-	return 1;
-      }
-  }
+	/**
+		\brief      Validation d'une transaction
+		\return	    int         1 si validation ok ou niveau de transaction non ouverte, 0 en cas d'erreur
+	*/
+	function commit()
+	{
+		if ($this->transaction_opened <= 1)
+		{
+			$ret=$this->query("COMMIT TRANSACTION");
+			if ($ret) 
+			{
+				$this->transaction_opened=0;
+				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
+			}
+			return $ret;
+		}
+		else
+		{
+			$this->transaction_opened--;
+			return 1;
+		}
+	}
   
   /**
      \brief      Annulation d'une transaction et retour aux anciennes valeurs
@@ -288,13 +296,11 @@ class DoliDb
   */
   function rollback()
   {    
-    dolibarr_syslog("ROLLBACK ".$this->transaction_opened, LOG_ERR);
-    
     if ($this->transaction_opened<=1)
       {
 	$ret=$this->query("ROLLBACK TRANSACTION");
 	$this->transaction_opened=0;
-
+	dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
 	return $ret;
       }
     else

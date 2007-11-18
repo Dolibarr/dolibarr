@@ -252,7 +252,11 @@ class DoliDb
         if (! $this->transaction_opened)
         {
             $ret=$this->query("BEGIN;");
-            if ($ret) $this->transaction_opened++;
+            if ($ret)
+			{
+				$this->transaction_opened++;
+				dolibarr_syslog("BEGIN Transaction",LOG_DEBUG);
+			}
             return $ret;
         }
         else
@@ -271,7 +275,11 @@ class DoliDb
         if ($this->transaction_opened<=1)
         {
             $ret=$this->query("COMMIT;");
-            if ($ret) $this->transaction_opened=0;
+			if ($ret) 
+			{
+				$this->transaction_opened=0;
+				dolibarr_syslog("COMMIT Transaction",LOG_DEBUG);
+			}
             return $ret;
         }
         else
@@ -290,7 +298,8 @@ class DoliDb
         if ($this->transaction_opened<=1)
         {
             $ret=$this->query("ROLLBACK;");
-            $this->transaction_opened=0;
+			$this->transaction_opened=0;
+			dolibarr_syslog("ROLLBACK Transaction",LOG_DEBUG);
             return $ret;
         }
         else

@@ -190,11 +190,6 @@ class Cotisation extends CommonObject
 			require_once(DOL_DOCUMENT_ROOT."/compta/bank/account.class.php");
 			$accountline=new AccountLine($this->db);
 			$result=$accountline->fetch($this->fk_bank);
-			if ($accountline->rappro)
-			{
-				$this->error="ErrorBankRecordConcialiated";
-				return -1;
-			}
 		}
 
 		$this->db->begin();
@@ -209,7 +204,7 @@ class Cotisation extends CommonObject
 			{
 				if ($this->fk_bank)
 				{
-					$result=$accountline->delete();
+					$result=$accountline->delete();		// Renvoi faux si ligne rapprocher
 					if ($result > 0)
 					{
 						$this->db->commit();
@@ -217,6 +212,7 @@ class Cotisation extends CommonObject
 					}
 					else
 					{
+						$this->error=$accountline->error;
 						$this->db->rollback();
 						return -1;
 					}
