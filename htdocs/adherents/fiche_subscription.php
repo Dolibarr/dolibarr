@@ -251,11 +251,6 @@ if ($rowid && $action != 'edit')
 
 	if ($msg) print '<div class="error">'.$msg.'</div>';
 
-	//$result=$subscription->load_previous_next_id($adh->next_prev_filter);
-	//if ($result < 0) dolibarr_print_error($db,$subscription->error);
-	//$previous_id = $adh->id_previous?'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.urlencode($adh->id_previous).'">'.img_previous().'</a>':'';
-	//$next_id     = $adh->id_next?'<a href="'.$_SERVER["PHP_SELF"].'?rowid='.urlencode($adh->id_next).'">'.img_next().'</a>':'';
-
     // Confirmation de la suppression de l'adhérent
     if ($action == 'delete')
     {
@@ -301,10 +296,10 @@ if ($rowid && $action != 'edit')
 	    if ($subscription->fk_bank) 
 	    {
 	    	$bankline=new AccountLine($db);
-	    	$bankline->fetch($subscription->fk_bank);
-	    
+	    	$result=$bankline->fetch($subscription->fk_bank);
+
 	    	$bank=new Account($db);
-	    	$bank->fetch($bankline->fk_account);
+	    	$result=$bank->fetch($bankline->fk_account);
 
 	    	print '<tr>';
 	    	print '<td valign="top" width="140">'.$langs->trans('BankAccount').'</td>';

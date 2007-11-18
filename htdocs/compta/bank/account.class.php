@@ -780,10 +780,12 @@ class AccountLine
     /**
      *      \brief      Charge en memoire depuis la base, une ecriture sur le compte
      *      \param      id      Id de la ligne écriture à récupérer
+	 *		\return		int		<0 if KO, >0 if OK
      */
     function fetch($rowid)
     {
-        $sql = "SELECT datec, datev, dateo, amount, label, fk_user_author, fk_user_rappro,";
+        $sql = "SELECT datec, datev, dateo, amount, label, fk_account,";
+		$sql.= " fk_user_author, fk_user_rappro,";
         $sql.= " fk_type, num_releve, num_chq, rappro, note";
         $sql.= " FROM ".MAIN_DB_PREFIX."bank";
         $sql.= " WHERE rowid  = ".$rowid;
@@ -804,6 +806,7 @@ class AccountLine
                 $this->dateo         = $obj->dateo;
                 $this->amount        = $obj->amount;
                 $this->label         = $obj->label;
+				$this->fk_account    = $obj->fk_account;
                 $this->note          = $obj->note;
 
                 $this->fk_user_author = $obj->fk_user_author;
@@ -816,10 +819,12 @@ class AccountLine
                 $this->rappro        = $obj->rappro;
             }
             $this->db->free($result);
+			return 1;
         }
         else
         {
             dolibarr_print_error($this->db);
+			return -1;
         }
     }
 
