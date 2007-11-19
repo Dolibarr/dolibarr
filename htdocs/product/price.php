@@ -72,20 +72,7 @@ if ($_POST["action"] == 'update_price' &&
 				}
 				else
 				{
-					if ($_POST["multiprices_base_type_".$i] == 'TTC')
-				  {
-				  	$price_ttc = price2num($_POST["price_".$i],'MU');
-					  $price = price2num($_POST["price_".$i]) / (1 + ($product->tva_tx / 100));
-					  $price = price2num($price,'MU');
-				  }
-				  else
-				  {
-					  $price = price2num($_POST["price_".$i],'MU');
-					  $price_ttc = price2num($_POST["price_".$i]) * (1 + ($product->tva_tx / 100));
-					  $price_ttc = price2num($price_ttc,'MU');
-				  }
-				  $product->multiprices["$i"] = $price;
-				  $product->multiprices_ttc["$i"] = $price_ttc;
+				  $product->multiprices["$i"] = price2num($_POST["price_".$i],'MU');
 				  $product->multiprices_base_type["$i"] = $_POST["multiprices_base_type_".$i];
 				}
 			}
