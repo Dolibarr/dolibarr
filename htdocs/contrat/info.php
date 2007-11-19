@@ -37,7 +37,7 @@ $user->getrights('commercial');
 if (!$user->rights->contrat->lire)
   accessforbidden();
 
-// Sï¿½curitï¿½ accï¿½s client et commerciaux
+// Sécurité accès client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 if ($user->societe_id > 0) 
@@ -88,7 +88,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
+// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

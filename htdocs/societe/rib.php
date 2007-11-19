@@ -44,7 +44,7 @@ $socid = isset($_GET["socid"])?$_GET["socid"]:'';
 if (!$socid) accessforbidden();
 
 
-// Sï¿½curitï¿½ accï¿½s client
+// Sécurité accès client
 if ($user->societe_id > 0) 
 {
   $action = '';
@@ -141,7 +141,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
 {
     if (!$account->verif())
     {
-        print '<div class="error"><b>Le contrï¿½le de la clï¿½ indique que les informations de ce compte bancaire sont incomplï¿½tes ou incorrectes.</b></div><br>';
+        print '<div class="error"><b>Le contrôle de la clé indique que les informations de ce compte bancaire sont incomplètes ou incorrectes.</b></div><br>';
     }
 
     print '<table class="border" width="100%">';
@@ -149,7 +149,7 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
     print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
     print '<td colspan="4">'.$account->bank.'</td></tr>';
 
-    print '<tr><td>'.$langs->trans("RIB").'</td><td align="center">Code Banque</td><td align="center">Code Guichet</td><td align="center">Numï¿½ro</td><td align="center">Clï¿½ RIB</td></tr>';
+    print '<tr><td>'.$langs->trans("RIB").'</td><td align="center">Code Banque</td><td align="center">Code Guichet</td><td align="center">Numéro</td><td align="center">Clé RIB</td></tr>';
     print '<tr><td>&nbsp;</td><td align="center">'.$account->code_banque.'</td>';
     print '<td align="center">'.$account->code_guichet.'</td>';
     print '<td align="center">'.$account->number.'</td>';
@@ -165,11 +165,11 @@ if ($_GET["socid"] && $_GET["action"] != 'edit')
     print $account->domiciliation;
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">Nom propriï¿½taire du compte</td><td colspan="4">';
+    print '<tr><td valign="top">Nom propriétaire du compte</td><td colspan="4">';
     print $account->proprio;
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">Adresse propriï¿½taire du compte</td><td colspan="4">';
+    print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="4">';
     print $account->adresse_proprio;
     print "</td></tr>\n";
 
@@ -216,7 +216,7 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
     print '<tr><td valign="top">'.$langs->trans("Bank").'</td>';
     print '<td colspan="4"><input size="30" type="text" name="bank" value="'.$account->bank.'"></td></tr>';
 
-    print '<tr><td>'.$langs->trans("RIB").'</td><td>Code Banque</td><td>Code Guichet</td><td>Numï¿½ro</td><td>Clï¿½ RIB</td></tr>';
+    print '<tr><td>'.$langs->trans("RIB").'</td><td>Code Banque</td><td>Code Guichet</td><td>Numéro</td><td>Clé RIB</td></tr>';
     print '<tr><td>&nbsp;</td><td><input size="8" type="text" name="code_banque" value="'.$account->code_banque.'"></td>';
     print '<td><input size="8" type="text" name="code_guichet" value="'.$account->code_guichet.'"></td>';
     print '<td><input size="15" type="text" name="number" value="'.$account->number.'"></td>';
@@ -233,11 +233,11 @@ if ($_GET["socid"] && $_GET["action"] == 'edit' && $user->rights->societe->creer
     print $account->domiciliation;
     print "</textarea></td></tr>";
 
-    print '<tr><td valign="top">Nom propriï¿½taire du compte</td>';
+    print '<tr><td valign="top">Nom propriétaire du compte</td>';
     print '<td colspan="4"><input size="30" type="text" name="proprio" value="'.$account->proprio.'"></td></tr>';
     print "</td></tr>\n";
 
-    print '<tr><td valign="top">Adresse propriï¿½taire du compte</td><td colspan="4">';
+    print '<tr><td valign="top">Adresse propriétaire du compte</td><td colspan="4">';
     print "<textarea name=\"adresse_proprio\" rows=\"4\" cols=\"40\">";
     print $account->adresse_proprio;
     print "</textarea></td></tr>";

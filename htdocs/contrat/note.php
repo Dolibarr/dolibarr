@@ -41,7 +41,7 @@ if (!$user->rights->contrat->lire)
 $langs->load("companies");
 $langs->load("contracts");
 
-// Sï¿½curitï¿½ accï¿½s client et commerciaux
+// Sécurité accès client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 if ($user->societe_id > 0) 
@@ -169,7 +169,7 @@ if ($_GET["id"])
     }
 	print "</td></tr>";
 
-	// Note privï¿½e
+	// Note privée
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
