@@ -1116,66 +1116,70 @@ class Commande extends CommonObject
    *		\param		only_product	Ne renvoie que ligne liées à des produits physiques prédéfinis
    *		\return		array			Tableau de CommandeLigne
    */
-  function fetch_lines($only_product=0)
-  {
-    $sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
-    $sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
-	  $sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
-    $sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
-    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
-    $sql.= ' WHERE l.fk_commande = '.$this->id;
-    if ($only_product==1) $sql .= ' AND p.fk_product_type = 0';
-    $sql .= ' ORDER BY l.rang';
+	function fetch_lines($only_product=0)
+	{
+		$this->lignes=array();
+		
+		$sql = 'SELECT l.rowid, l.fk_product, l.fk_commande, l.description, l.price, l.qty, l.tva_tx,';
+		$sql.= ' l.fk_remise_except, l.remise_percent, l.subprice, l.marge_tx, l.marque_tx, l.rang, l.info_bits,';
+		$sql.= ' l.total_ht, l.total_ttc, l.total_tva,';
+		$sql.= ' p.ref as product_ref, p.description as product_desc, p.fk_product_type, p.label';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'commandedet as l';
+		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON (p.rowid = l.fk_product)';
+		$sql.= ' WHERE l.fk_commande = '.$this->id;
+		if ($only_product==1) $sql .= ' AND p.fk_product_type = 0';
+		$sql .= ' ORDER BY l.rang';
 
-    $result = $this->db->query($sql);
-    if ($result)
-    {
-    	$num = $this->db->num_rows($result);
-	    $i = 0;
-	    while ($i < $num)
-	    {
-	      $objp = $this->db->fetch_object($result);
+		dolibarr_syslog("Commande::fetch_lines sql=".$sql,LOG_DEBUG);
+		$result = $this->db->query($sql);
+		if ($result)
+		{
+			$num = $this->db->num_rows($result);
 
-	    $ligne = new CommandeLigne($this->db);
-	    $ligne->rowid            = $objp->rowid;
-	    $ligne->id               = $objp->rowid;				// \deprecated
-	    $ligne->fk_commande      = $objp->fk_commande;
-	    $ligne->commande_id      = $objp->fk_commande;		// \deprecated
-	    $ligne->desc             = $objp->description;  // Description ligne
-	    $ligne->qty              = $objp->qty;
-	    $ligne->tva_tx           = $objp->tva_tx;
-	    $ligne->total_ht         = $objp->total_ht;
-	    $ligne->total_ttc        = $objp->total_ttc;
-	    $ligne->total_tva        = $objp->total_tva;
-	    $ligne->subprice         = $objp->subprice;
-	    $ligne->fk_remise_except = $objp->fk_remise_except;
-	    $ligne->remise_percent   = $objp->remise_percent;
-	    $ligne->price            = $objp->price;
-	    $ligne->fk_product       = $objp->fk_product;
-	    $ligne->marge_tx         = $objp->marge_tx;
-	    $ligne->marque_tx        = $objp->marque_tx;
-	    $ligne->rang             = $objp->rang;
-	    $ligne->info_bits        = $objp->info_bits;
+			$i = 0;
+			while ($i < $num)
+			{
+				$objp = $this->db->fetch_object($result);
 
-	    $ligne->ref              = $objp->product_ref;
-	    $ligne->libelle          = $objp->label;	
-	    $ligne->product_desc     = $objp->product_desc; 		// Description produit
-	    $ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+				$ligne = new CommandeLigne($this->db);
+				$ligne->rowid            = $objp->rowid;
+				$ligne->id               = $objp->rowid;				// \deprecated
+				$ligne->fk_commande      = $objp->fk_commande;
+				$ligne->commande_id      = $objp->fk_commande;		// \deprecated
+				$ligne->desc             = $objp->description;  // Description ligne
+				$ligne->qty              = $objp->qty;
+				$ligne->tva_tx           = $objp->tva_tx;
+				$ligne->total_ht         = $objp->total_ht;
+				$ligne->total_ttc        = $objp->total_ttc;
+				$ligne->total_tva        = $objp->total_tva;
+				$ligne->subprice         = $objp->subprice;
+				$ligne->fk_remise_except = $objp->fk_remise_except;
+				$ligne->remise_percent   = $objp->remise_percent;
+				$ligne->price            = $objp->price;
+				$ligne->fk_product       = $objp->fk_product;
+				$ligne->marge_tx         = $objp->marge_tx;
+				$ligne->marque_tx        = $objp->marque_tx;
+				$ligne->rang             = $objp->rang;
+				$ligne->info_bits        = $objp->info_bits;
 
-	    $this->lignes[$i] = $ligne;
-	    $i++;
-	  }
-	  $this->db->free($result);
-	  return 1;
-   }
-   else
-   {
-   	$this->error=$this->db->error();
-	  dolibarr_syslog('Commande::fetch_lines: Error '.$this->error);
-	  return -3;
-   }
-  }
+				$ligne->ref              = $objp->product_ref;
+				$ligne->libelle          = $objp->label;	
+				$ligne->product_desc     = $objp->product_desc; 		// Description produit
+				$ligne->fk_product_type  = $objp->fk_product_type;	// Produit ou service
+
+				$this->lignes[$i] = $ligne;
+				$i++;
+			}
+			$this->db->free($result);
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog('Commande::fetch_lines: Error '.$this->error);
+			return -3;
+		}
+	}
 
 
   /**
@@ -1195,17 +1199,21 @@ class Commande extends CommonObject
     /**
      *      \brief      Charge tableau avec les expéditions par ligne
      *      \param      filtre_statut       Filtre sur statut
-     *      \return     int                 0 si OK, <0 si KO
+     *      \return     int                	<0 if KO, Nb of records if OK
      */
 	function loadExpeditions($filtre_statut=-1)
 	{
+		$num=0;
 		$this->expeditions = array();
+		
 		$sql = 'SELECT fk_product, sum(ed.qty)';
 		$sql.=' FROM '.MAIN_DB_PREFIX.'expeditiondet as ed, '.MAIN_DB_PREFIX.'expedition as e, '.MAIN_DB_PREFIX.'commande as c, '.MAIN_DB_PREFIX.'commandedet as cd';
 		$sql.=' WHERE ed.fk_expedition = e.rowid AND ed.fk_commande_ligne = cd .rowid AND cd.fk_commande = c.rowid';
 		$sql.=' AND cd.fk_commande =' .$this->id;
 		if ($filtre_statut >= 0) $sql.=' AND e.fk_statut = '.$filtre_statut;
 		$sql .= ' GROUP BY fk_product ';
+
+		dolibarr_syslog("Commande::loadExpedition sql=".$sql,LOG_DEBUG);
 		$result = $this->db->query($sql);
 		if ($result)
 		{
@@ -1218,9 +1226,14 @@ class Commande extends CommonObject
 				$i++;
 			}
 			$this->db->free();
+			return $num;
+		}
+		else
+		{
+			$this->error=$this->db->lasterror();
+			return -1;
 		}
 	
-	    return 0;
 	}
 	
 	/**
