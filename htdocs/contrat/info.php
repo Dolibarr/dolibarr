@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -33,10 +32,12 @@ require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
 $langs->load("contracts");
 
 $user->getrights('contrat');
+$user->getrights('commercial');
+
 if (!$user->rights->contrat->lire)
   accessforbidden();
 
-// Sécurité accés client et commerciaux
+// Sï¿½curitï¿½ accï¿½s client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 if ($user->societe_id > 0) 
@@ -87,7 +88,7 @@ print '</td></tr></table>';
 
 print '</div>';
 
-// Juste pour éviter bug IE qui réorganise mal div précédents si celui-ci absent
+// Juste pour ï¿½viter bug IE qui rï¿½organise mal div prï¿½cï¿½dents si celui-ci absent
 print '<div class="tabsAction">';
 print '</div>';
 

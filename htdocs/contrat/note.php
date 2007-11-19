@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -34,13 +33,15 @@ if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.cl
 $socid=isset($_GET["socid"])?$_GET["socid"]:isset($_POST["socid"])?$_POST["socid"]:"";
 
 $user->getrights('contrat');
+$user->getrights('commercial');
+
 if (!$user->rights->contrat->lire)
   accessforbidden();
 
 $langs->load("companies");
 $langs->load("contracts");
 
-// Sécurité accés client et commerciaux
+// Sï¿½curitï¿½ accï¿½s client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 if ($user->societe_id > 0) 
@@ -168,7 +169,7 @@ if ($_GET["id"])
     }
 	print "</td></tr>";
 
-	// Note privée
+	// Note privï¿½e
 	if (! $user->societe_id)
 	{
 	    print '<tr><td valign="top">'.$langs->trans("NotePrivate").' :</td>';
