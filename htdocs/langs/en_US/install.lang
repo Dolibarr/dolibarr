@@ -159,3 +159,9 @@ MigrationReopeningContracts=Open contract closed by error
 MigrationReopenThisContract=Reopen contract %s
 MigrationReopenedContractsNumber=%s contracts modified
 MigrationReopeningContractsNothingToUpdate=No closed contract to open
+
+# Migration transfert
+MigrationBankTransfertsUpdate=Update links between bank transaction and a bank transfert
+MigrationBankTransfertsNothingToUpdate=All links are up to date
+
+

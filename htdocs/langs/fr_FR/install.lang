@@ -166,6 +166,9 @@ MigrationReopenThisContract=Réouverture contrat %s
 MigrationReopenedContractsNumber=%s contrats modifiés
 MigrationReopeningContractsNothingToUpdate=Pas ou plus de contrats à réouvrir.
 
+# Migration transfert
+MigrationBankTransfertsUpdate=Mise a jour des liens entre ecriture bancaire et un transfert entre compte
+MigrationBankTransfertsNothingToUpdate=Aucun lien non à jour
 
 
 
