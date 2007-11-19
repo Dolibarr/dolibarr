@@ -36,8 +36,9 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
     exit;
 }
 
-// Includes
+// Include Dolibarr environment
 require_once($path."../../htdocs/master.inc.php");
+// After this $db is a defined handler to database.
 
 // Main
 $version='$Revision$';
