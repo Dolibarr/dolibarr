@@ -73,7 +73,7 @@ print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
 
 
 /*
- * Derniers utilisateurs crï¿½ï¿½s
+ * Derniers utilisateurs créés
  */
 $max=10;
 
@@ -129,7 +129,7 @@ else
 
 
 /*
- * Derniers groupes crï¿½ï¿½s
+ * Derniers groupes créés
  */
 $max=5;
 
