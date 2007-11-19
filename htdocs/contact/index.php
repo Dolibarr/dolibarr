@@ -105,7 +105,8 @@ if ($_POST["button_removefilter"])
 llxHeader();
 
 $sql = "SELECT s.rowid as socid, s.nom, ";
-$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax";
+$sql.= " p.rowid as cidp, p.name, p.firstname, p.email, p.phone, p.phone_mobile, p.fax,";
+$sql.= " ".$db->pdate("p.tms")." as tms";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 $sql.= " FROM ";
 if (!$user->rights->commercial->client->voir && !$socid) $sql .= MAIN_DB_PREFIX."societe_commerciaux as sc,";
@@ -209,7 +210,8 @@ if ($result)
     {
         print_liste_field_titre($langs->trans("EMail"),"index.php","p.email", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", "", $sortfield,$sortorder);
     }
-    print '<td class="liste_titre" colspan="2">&nbsp;</td>';
+    print_liste_field_titre($langs->trans("DateModification"),"index.php","p.tms", $begin, "&type=$type&view=$view&search_nom=$search_nom&search_prenom=$search_prenom&search_societe=$search_societe&search_email=$search_email", 'align="center"', $sortfield,$sortorder);
+    print '<td class="liste_titre">&nbsp;</td>';
     print "</tr>\n";
 
     // Ligne des champs de filtres
@@ -243,7 +245,8 @@ if ($result)
         print '</td>';
     }
 
-    print '<td class="liste_titre" align="right" colspan="2">';
+	print '<td class="liste_titre">&nbsp;</td>';
+    print '<td class="liste_titre" align="right">';
     print '<input type="image" value="button_search" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/search.png" name="button_search" alt="'.$langs->trans("Search").'">';
     print '&nbsp; <input type="image" value="button_removefilter" class="liste_titre" src="'.DOL_URL_ROOT.'/theme/'.$conf->theme.'/img/searchclear.png" name="button_removefilter" alt="'.$langs->trans("RemoveFilter").'">';
     print '</td>';
@@ -288,11 +291,11 @@ if ($result)
         {
             print '<td>'.dolibarr_print_phone($obj->phone_mobile,$obj->fp_pays).'&nbsp;</td>';
 
-            print '<td colspan="2">'.dolibarr_print_phone($obj->fax,$obj->fp_pays).'&nbsp;</td>';
+            print '<td>'.dolibarr_print_phone($obj->fax,$obj->fp_pays).'&nbsp;</td>';
         }
         else
         {
-            print '<td colspan="2">';
+            print '<td>';
             if (! $obj->email) {
                 print '&nbsp;';
             }
@@ -306,6 +309,9 @@ if ($result)
             print '</td>';
         }
 
+		// Date
+		print '<td align="center">'.dolibarr_print_date($obj->tms,"day").'</td>';
+				
 		// Link export vcard
         print '<td align="right">';
         print '<a href="'.DOL_URL_ROOT.'/contact/vcard.php?id='.$obj->cidp.'">';
