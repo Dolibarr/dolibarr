@@ -621,9 +621,21 @@ class Product extends CommonObject
 			{
 				if($this->multiprices["$i"] != "")
 				{
+					// Prise en compte du type
+					if ($this->multiprices_base_type["$i"] == 'TTC')
+					{
+						$multiprice_ttc = price2num($this->multiprices["$i"],'MU');
+						$multiprice_ht = price2num($this->multiprices["$i"] / (1 + ($this->tva_tx / 100)),'MU');
+					}
+					else
+					{
+						$multiprice_ht = price2num($this->multiprices["$i"],'MU');
+						$multiprice_ttc = price2num($this->multiprices["$i"] * (1 + ($this->tva_tx / 100)),'MU');
+					}
+
 					// On ajoute nouveau tarif
 					$sql_multiprix = "INSERT INTO ".MAIN_DB_PREFIX."product_price(date_price,fk_product,fk_user_author,price_level,price,price_ttc,price_base_type,tva_tx) ";
-					$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($this->multiprices["$i"]).",'".price2num($this->multiprices_ttc["$i"])."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
+					$sql_multiprix .= " VALUES(now(),".$this->id.",".$user->id.",".$i.",".price2num($multiprice_ht).",'".price2num($multiprice_ttc)."','".$this->multiprices_base_type["$i"]."',".$this->tva_tx;
 					$sql_multiprix .= ")";
 					if (! $this->db->query($sql_multiprix) )
 					{
