@@ -1062,6 +1062,7 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
 
 ALTER TABLE llx_bank_account MODIFY iban_prefix varchar(50);
-ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after iban_prefix;
+ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefix;
+ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
 
 delete from llx_const where name='PRODUIT_CHANGE_PROD_DESC';
