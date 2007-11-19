@@ -38,11 +38,6 @@ if (substr($sapi_type, 0, 3) == 'cgi') {
 
 // Includes
 require_once($path."../../htdocs/master.inc.php");
-// Put here all includes required by your script
-require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-//require_once(DOL_DOCUMENT_ROOT."/product.class.php");
-
 
 // Main
 $version='$Revision$';
@@ -54,6 +49,9 @@ $langs->load("main");
 
 print "***** $script_file ($version) *****\n";
 
+
+// -------------------- START OF YOUR CODE HERE --------------------
+
 // Check parameters
 if (! isset($argv[1])) {
     print "Usage: $script_file param1 param2 ...\n";
@@ -61,29 +59,54 @@ if (! isset($argv[1])) {
 }
 
 // Show parameters
-print 'Arg1='.$argv[1]."\n";
-print 'Arg2='.$argv[2]."\n";
+// print 'Arg1='.$argv[1]."\n";
+// print 'Arg2='.$argv[2]."\n";
 
 
 // An example of loading an object
+/*
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog("***** $script_file FETCH");
 $myobject=new Skeleton_class($db);
 $result=$myobject->fetch(1,$user);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
+*/
 
-// An example of updating an object
-dolibarr_syslog("***** $script_file UPDATE");
-$myobject->prop1='newvalue';
-$result=$myobject->update($user);
-if ($result < 0) dolibarr_print_error($db,$myobject->error);
 
-// An example of deleting an object
+// An example of inserting an object in database
+/*
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
 dolibarr_syslog("***** $script_file DELETE");
+$myobject=new Skeleton_class($db);
 $result=$myobject->delete($user);
 if ($result < 0) dolibarr_print_error($db,$myobject->error);
+*/
 
 
-// An example of direct a SQL read
+// An example of updating an object in database
+/*
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
+dolibarr_syslog("***** $script_file UPDATE");
+$myobject=new Skeleton_class($db);
+$myobject->prop1='newvalue_prop1';
+$myobject->prop2='newvalue_prop2';
+$result=$myobject->update($user);
+if ($result < 0) dolibarr_print_error($db,$myobject->error);
+*/
+
+
+// An example of deleting an object in database
+/*
+require_once(DOL_DOCUMENT_ROOT."/../dev/skeletons/skeleton_class.class.php");
+dolibarr_syslog("***** $script_file DELETE");
+$myobject=new Skeleton_class($db);
+$result=$myobject->delete($user);
+if ($result < 0) dolibarr_print_error($db,$myobject->error);
+*/
+
+
+// An example of a direct SQL read
+/*
 $sql = "SELECT field1, field2";
 $sql.= " FROM ".MAIN_DB_PREFIX."c_pays";
 $sql.= " WHERE field3 = 'xxx'";
@@ -115,6 +138,10 @@ else
 	dolibarr_print_error($db);
 	exit;
 }
+*/
+
+
+// -------------------- END OY YOUR CODE --------------------
 
 
 return $error;
