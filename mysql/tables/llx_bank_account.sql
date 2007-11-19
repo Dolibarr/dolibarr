@@ -39,6 +39,7 @@ create table llx_bank_account
   cle_rib        varchar(5),
   bic            varchar(11),
   iban_prefix    varchar(50), -- Code IBAN
+  country_iban   varchar(2),
   cle_iban       varchar(2),
   domiciliation  varchar(255),
   proprio        varchar(60),
