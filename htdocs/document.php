@@ -19,7 +19,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -31,16 +30,12 @@
 
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 
-require_once("main.inc.php");
+require_once("./main.inc.php");
 
 
-function llxHeader()
-{
-  global $user,$langs;
-  top_menu($head, $title);
-  $menu = new Menu();
-  left_menu($menu->liste);
-}
+// C'est un wrapper, donc header vierge
+function llxHeader() { }
+
 
 $action = $_GET["action"];
 $original_file = urldecode($_GET["file"]);
@@ -204,14 +199,14 @@ if ($modulepart)
     // Wrapping pour les bons de livraison
     if ($modulepart == 'livraison')
     {
-        $user->getrights('livraison');
+        $user->getrights('expedition');
         if ($user->rights->expedition->livraison->lire || eregi('^specimen',$original_file))
         {
             $accessallowed=1;
         }
         $original_file=$conf->livraison->dir_output.'/'.$original_file;
 		//$sqlprotectagainstexternals = "SELECT fk_soc as fk_soc FROM ".MAIN_DB_PREFIX."fichinter WHERE ref='$refname'";
-    }
+	}
 
     // Wrapping pour la telephonie
     if ($modulepart == 'telephonie')
@@ -332,7 +327,7 @@ if ($modulepart)
 }
 
 // Basic protection (against external users only)
-if ($user->societe_id>0)
+if ($user->societe_id > 0)
 {
 	if ($sqlprotectagainstexternals)
 	{

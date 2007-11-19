@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 // Code identique a /expedition/commande.php
@@ -274,14 +273,12 @@ if ($_GET["action"] == 'create')
 		echo '<br><table class="noborder" width="100%">';
 
 		$lignes = $commande->fetch_lines(1);
+		$numcommandes = sizeof($commande->lignes);
 
 		/* Lecture des expeditions déjà effectuées */
 		$commande->loadExpeditions();
 
-		$num = sizeof($commande->lignes);
-		$i = 0;
-
-		if ($num)
+		if ($numcommandes)
 		{
 			print '<tr class="liste_titre">';
 			print '<td>'.$langs->trans("Description").'</td>';
@@ -301,10 +298,12 @@ if ($_GET["action"] == 'create')
 			}
 			print "</tr>\n";
 		}
+
 		$var=true;
-		while ($i < $num)
+		$indicecommande = 0;
+		while ($indicecommande < $numcommandes)
 		{
-			$ligne = $commande->lignes[$i];
+			$ligne = $commande->lignes[$indicecommande];
 			$var=!$var;
 			print "<tr $bc[$var]>\n";
 			if ($ligne->fk_product > 0)
@@ -344,8 +343,8 @@ if ($_GET["action"] == 'create')
 
 				// Quantité à livrer
 				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="4" value="'.$defaultqty.'">';
+				print '<input name="idl'.$indicecommande.'" type="hidden" value="'.$ligne->id.'">';
+				print '<input name="qtyl'.$indicecommande.'" type="text" size="4" value="'.$defaultqty.'">';
 				print '</td>';
 
 				// Stock
@@ -396,14 +395,14 @@ if ($_GET["action"] == 'create')
 			{
 				// Quantité à livrer
 				print '<td align="center">';
-				print '<input name="idl'.$i.'" type="hidden" value="'.$ligne->id.'">';
-				print '<input name="qtyl'.$i.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
+				print '<input name="idl'.$indicecommande.'" type="hidden" value="'.$ligne->id.'">';
+				print '<input name="qtyl'.$indicecommande.'" type="text" size="6" value="'.$quantite_a_livrer.'">';
 				print '</td>';
 			}
 
 			print "</tr>\n";
 
-			$i++;
+			$indicecommande++;
 			$var=!$var;
 		}
 
