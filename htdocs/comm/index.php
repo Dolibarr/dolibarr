@@ -549,7 +549,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 {
     $langs->load("propal");
     
-    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+    $sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
     $sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
     if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -598,11 +598,11 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
                 print "<td align=\"left\"><a href=\"fiche.php?socid=".$obj->rowid."\">".img_object($langs->trans("ShowCompany"),"company")." ".dolibarr_trunc($obj->nom,44)."</a></td>\n";
                 print "<td align=\"right\">";
                 print dolibarr_print_date($obj->dp,'day')."</td>\n";
-                print "<td align=\"right\">".price($obj->price)."</td>";
-				print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
+                print "<td align=\"right\">".price($obj->total_ht)."</td>";
+                print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($obj->fk_statut,3)."</td>\n";
                 print "</tr>\n";
                 $i++;
-                $total += $obj->price;
+                $total += $obj->total_ht;
             }
             if ($total>0) {
                 print '<tr class="liste_total"><td colspan="3" align="right">'.$langs->trans("Total")."</td><td align=\"right\">".price($total)."</td><td>&nbsp;</td></tr>";
