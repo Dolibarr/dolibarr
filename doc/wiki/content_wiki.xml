@@ -3,8 +3,8 @@
   <page>
     <title>Accueil</title>
     <revision>
-      <timestamp>2007-10-13T19:33:33Z</timestamp>
-      <contributor><username>Hregis</username></contributor>
+      <timestamp>2007-11-19T12:08:24Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <comment>/* Utilisateurs */</comment>
       <text>[http://www.dolibarr.fr Le site officiel francophone Dolibarr]
 
@@ -21,9 +21,7 @@ Prochaines versions [[Roadmap|ici]]
 * [[Documentation utilisateur|Documentation Utilisateur]]
 * [[FAQ_Utilisateur|FAQ Utilisateur]]
 * [http://demo.dolibarr.fr/ Demo Dolibarr 2.2cvs]
-* [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum général]
-** [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/func,showcat/catid,15/ Retour experience]
-** [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/func,showcat/catid,11/ Suggestions utilisateurs]
+* [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum Dolibarr]
 
 == Développeurs ==
 * [[Documentation Développeur]]
@@ -1164,8 +1162,9 @@ La suite de l'article liste toutes les constantes de configurations utilisées p
   <page>
     <title>Developpement module</title>
     <revision>
-      <timestamp>2007-11-02T13:47:16Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
+      <timestamp>2007-11-17T11:07:30Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
+      <comment>/* Définir votre page de configuration (optionnel) */</comment>
       <text>Pour créer un nouveau module, il existe plusieurs étapes. Ce didacticiel apour but de vous décrire chacune d'elle afin d'ajouter de réaliser un module permettant d'étendre les possibilités de Dolibarr, comme par exemple ajouter une ou plusieurs des fonctionnalités suivantes:
 * Développer de nouvelles permissions
 * Ajouter de nouvelles boites
@@ -1196,8 +1195,8 @@ Lancer Dolibarr et aller sur la page '''Configuration-&gt;module''', vous devez 
 
 Si votre module a vocation à gérer des données bien a lui, il est nécessaire de définir des tables SQL pour stocker ces données.
 
-Ajouter la définition de vos tables sur le principe d'un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour '''mysql''' qui font fois. Les fichiers des autres bases sont générés à partir de ces derniers via le script '''build/dolibarr_mysql2autrebase.pl''' au moment d'une release.
-
+Ajouter la définition de vos tables sur le principe d'un fichier par table dans '''mysql/tables/''' (voir les fichiers existants pour exemples). Ce sont les fichiers pour '''mysql''' qui font fois. Les fichiers des autres bases sont générés, au moment d'une release, à partir de ces derniers via le script:
+&lt;pre&gt;build/dolibarr_mysql2autrebase.pl&lt;/pre&gt;
 
 == Créer vos pages PHP (optionnel) ==
 '''Quand''': Si l'objet de votre module est d'ajouter des fonctionnalités qui nécessite des nouveaux écrans.
@@ -1209,7 +1208,7 @@ Dans un second temps, créez vos pages PHP qui se basent sur les données de vos
 '''Quand''': Si votre module offre plusieurs options paramétrables.
 
 Si votre module offre plusieurs options paramétrables, il est nécessaire de créer une page PHP pour editer les options (qui sont stockées dans la table '''llx_const''').
-Créé une page PHP nommée '''monmodule_setupapage.php''' qui offre les options possibles et les met à jour, sur le modèle des pages dans '''/admin'''. Placer ce page de configuration dans le répertoire '''/admin''' également.
+Créer une page PHP nommée '''monmodule_setupapage.php''' qui offre les options possibles et les met à jour, sur le modèle des pages dans '''/admin'''. Placer cette page de configuration dans le répertoire '''/admin''' également.
 Ensuite dans le descripteur de module, modifier la variable pour indiquer le nom de cette page
 &lt;pre&gt;
 $this-&gt;config_page_url = array(&quot;monmodule_setupapage.php&quot;);
@@ -1288,14 +1287,93 @@ Cette fonctionnalité n'est pas encore possible.
 Voir aussi [http://www.dolibarr.com/wikidev/index.php/Interfaces_Dolibarr_vers_exterieur Interfaces_Dolibarr_vers_exterieur]
 et [http://www.dolibarr.com/wikidev/index.php/Interfaces_Exterieur_vers_Dolibarr Interfaces_Exterieur_vers_Dolibarr]
 
-== Créer un package pour livrer et installer mon module ==
-Aller dans le répertoire '''/build''' et modifier le fichier '''dolibarr_makemodules.conf''' afin de saisir la liste des noms de fichiers nouveaux que vous avez créer pour votre module (descripteur de module, nouveaux fichiers sql de tables, page php, etc...)
 
+== Créer un package pour livrer et installer mon module ==
+* Aller dans le répertoire '''/build''' et modifier le fichier '''makepack-dolibarrmodules.conf''' afin de saisir la liste des nouveaux noms de fichiers que vous avez créé pour votre module (descripteur de module, nouveaux fichiers sql de tables, page php, etc...)
+* Lancer le script via perl (besoin de la version Perl 5.0 ou +):
+&lt;pre&gt;
+perl makepack-dolibarrmodule.pl
+&lt;/pre&gt;
+Un fichier '''monmodule.tgz''' va alors etre fabriqué contenant votre module prêt pour être déployé.
+* La personne qui recoit votre module doit alors placer le fichier dans son répertoire racine d'installation de dolibarr et réaliser la commande:
+&lt;pre&gt;
+tar -xvf monmodule.tgz
+&lt;/pre&gt;
 
 == Règles ==
 Voici quelques règles à suivre dans la réalisation d'un module
 
-* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un nouveau module qui n'est pas encore intégré dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou mieux à l''''activation''' du module.</text>
+* Ne pas créer de table dynamiquement, c'est-à-dire à la première '''utilisation''' du module. Si vous créez un module qui utilise des tables qui ne sont pas encore intégrées en standard dans le code de Dolibarr, veillez à créer vos tables à l'installation ou l'upgrade de Dolibarr, ou mieux à l''''activation''' du module.</text>
+    </revision>
+  </page>
+  <page>
+    <title>Developpement script</title>
+    <revision>
+      <timestamp>2007-11-19T21:27:10Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <comment>/* Etape 2 */</comment>
+      <text>== Localisation ==
+Les scripts en ligne de commande de Dolibarr doivent etre situés dans le répertoire '''scripts''' de Dolibarr. Les scripts sont ensuite répartis dans des sous-répertoire en fonction de leur vocation.
+Un certain nombre de scripts est donc fourni en standard.
+
+== Développer un nouveau script ==
+Les scripts étant souvent réalisés pour un besoin spécifiques, il y a de forte chance que vous ne trouviez pas celui qui vous intéresse. Dans ce cas, nous allons vous expliquer comment développer votre propre script.
+
+=== Etape 1 - Création du squelette du script ===
+La première étape est de reprendre le squelette de script disponible en '''dev/skeletons/skeleton_scripts.php''' et de recopier en le renommant, ce script dans le répertoire '''scripts/monrep/monscript.php'''
+
+Une fois le script renommé, donnez lui les droits en exécution par la commande:
+&lt;pre&gt;
+cd scripts/monrep;
+chmod a+rx monscript.php
+&lt;/pre&gt;
+Ensuite, lancez le pour voir s'il vous pouvez executer un script en mode ligne de commande. Pour cela, taper:
+&lt;pre&gt;php-cli ./monscript.php
+ou
+php ./monscript.php&lt;/pre&gt;
+Vous devriez obtenir le resultat suivant:
+&lt;pre&gt;
+Usage: monscript.php param1 param2 ...
+&lt;/pre&gt;
+
+=== Etape 2 - Edition du code du script ===
+Modifier le contenu du script pour réaliser les opérations qui vous intéressent.
+Tout le code qui se trouve entre les balises
+&lt;pre&gt;// ---------- START OF YOUR CODE HERE&lt;/pre&gt;
+et
+&lt;pre&gt;// ---------- END OY YOUR CODE&lt;/pre&gt;
+est fourni à titre d'exemple.
+Vous pouvez le supprimer et y mettre le code qui vous intéresse.
+Notez que dans cette portion, vous pouvez utiliser la variable $db qui est la ressource d'accès à la base Dolibarr et qui est déjà initialisée.
+L'obet $conf qui contient la configuration Dolibarr est également disponible.
+
+==== Exemple insertion d'un produit ====
+Par exemple pour insérer un produit dans la base dolibarr, vous pouvez y placer le code suivant:
+&lt;pre&gt;
+// Inclusion classe metier product
+require_once(DOL_DOCUMENT_ROOT.&quot;/product.class.php&quot;);
+
+// Creation d'une instance de product
+$myproduct=new Product($db);
+
+// Definition des proprietes de l'instance product
+$product-&gt;ref                = '1234'
+$product-&gt;libelle            = 'libelle';
+$product-&gt;price              = '10';
+$product-&gt;price_base_type    = 'HT';
+$product-&gt;tva_tx             = '19.6';
+$product-&gt;type               = 0;
+$product-&gt;status             = 1;
+$product-&gt;description        = 'Description';
+$product-&gt;note               = 'Note';
+
+// Creation du produit en base
+$idproduct = $product-&gt;create('');
+
+// Gestion erreur
+if ($idproduct &lt; 0) dolibarr_print_error($db,$product-&gt;error);
+else print &quot;Produit $idproduct cree.\n&quot;;
+&lt;/pre&gt;</text>
     </revision>
   </page>
   <page>
@@ -1463,9 +1541,8 @@ Plus de documentation au sujet de la génération des modèles elle-même est di
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2007-11-02T13:44:06Z</timestamp>
+      <timestamp>2007-11-19T12:10:56Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Les Modules */</comment>
       <text>== Général ==
 # [[Outils et principe]]
 # [[Langages|Langage et normes de développement]]
@@ -1500,10 +1577,13 @@ Voir la page [[Authentification]]
 == Le [[Système de traduction]] ==
 Voir la page [[Système de traduction]]
 
-== Développer un Module ==
+== Développer un nouveau module / une extension ==
 Pour développer votre propre module, aller sur le didacticiel: [[Developpement module]]
 
 La liste des modules standard est définie sur la page [[Modules]]
+
+== Développer un script d'import ==
+Pour développer un script d'import de données issus d'un autre système: [[Developpement script]]
 
 == La [[Gestion d'erreur]] ==
 
@@ -5284,9 +5364,9 @@ Dolibarr sait gérer plusieurs modèles de propositions, qui doivent être activ
   <page>
     <title>Prérequis</title>
     <revision>
-      <timestamp>2006-09-09T00:54:49Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* PHP */</comment>
+      <timestamp>2007-11-16T13:07:07Z</timestamp>
+      <contributor><username>Hregis</username></contributor>
+      <comment>/* Bases de données */</comment>
       <text>Dolibarr est conçu pour fonctionner avec les composants suivant:
 
 
@@ -5297,13 +5377,15 @@ Dolibarr sait gérer plusieurs modèles de propositions, qui doivent être activ
 == Bases de données ==
 * Mysql 3.1 ou +
 * PostgresSql (support experimental non operationnel)
-
+* MSSql (support experimental non operationnel)
 
 == PHP ==
 * Version 4.1 ou +
 * Le support des sessions doit etre actifs (c'est le cas par défaut en PHP)
 * Fonctionne quelque soit le paramètre register_globals
-* Fonctionne quelque soit le paramètre magick_quotes</text>
+* Fonctionne quelque soit le paramètre magick_quotes
+* Fonctionne quelque soit le paramètre safe_mode
+* La configuration PHP doit autoriser une taille max de mémoire par session d'au moins de 16Mo.</text>
     </revision>
   </page>
   <page>
