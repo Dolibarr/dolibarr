@@ -931,6 +931,8 @@ class pdf_propale_azur extends ModelePDFPropales
 				// Caractéristiques client
 		    $carac_client.="\n".$object->client->adresse;
 		    $carac_client.="\n".$object->client->cp . " " . $object->client->ville."\n";
+		    
+		    //Pays si différent de l'émetteur
 	      if ($this->emetteur->pays_code != $object->client->pays_code)
 	      {
 	      	$carac_client.=$object->client->pays."\n";

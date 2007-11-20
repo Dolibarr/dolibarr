@@ -71,18 +71,7 @@ class pdf_typhon extends ModelePDFDeliveryOrder
       		$this->franchise=1;
 
         // Recupere code pays de l'emmetteur
-        $this->emetteur->code_pays=substr($langs->defaultlang,-2);    // Par defaut, si on trouve pas
-        $sql  = "SELECT code from ".MAIN_DB_PREFIX."c_pays";
-        $sql .= " WHERE rowid = '".$conf->global->MAIN_INFO_SOCIETE_PAYS."'";
-        $result=$this->db->query($sql);
-        if ($result) {
-            $obj = $this->db->fetch_object($result);
-            if ($obj->code) $this->emetteur->code_pays=$obj->code;
-        }
-        else {
-            dolibarr_print_error($this->db);
-        }
-        $this->db->free($result);
+        if (! $this->emetteur->pays_code) $this->emetteur->pays_code=substr($langs->defaultlang,-2);    // Par defaut, si n'était pas défini
 
         $this->tva=array();
 
@@ -757,27 +746,34 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         /*
          * if a delivery address is used, use that, else use the client address
         */
-	$client = new Societe($this->db);
-        if ($commande->adresse_livraison_id>0) { 
+        $client = new Societe($this->db);
+        if ($commande->adresse_livraison_id > 0) { 
            $client->fetch_adresse_livraison($commande->adresse_livraison_id);
         } else {
            $client->fetch($delivery->socid);
         }
-	$delivery->client = $client;
-	// 
+        $delivery->client = $client; 
 		
         // Cadre client destinataire
         $pdf->rect(100, $posy, 100, $hautcadre);
-
-		// Nom client
+        
+        // Nom client
         $pdf->SetXY(102,$posy+3);
         $pdf->SetFont('Arial','B',11);
         $pdf->MultiCell(106,4, $delivery->client->nom, 0, 'L');
+        
+        // Caractéristiques client
+        $carac_client=$delivery->client->adresse."\n";
+        $carac_client.=$delivery->client->cp . " " . $delivery->client->ville."\n";
 
-		// Caractéristiques client
-        $carac_client=$delivery->client->adresse;
-        $carac_client.="\n".$delivery->client->cp . " " . $delivery->client->ville."\n";
-		if ($delivery->client->tva_intra) $carac_client.="\n".$langs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
+        // Pays si différent de l'émetteur
+        if ($this->emetteur->pays_code != $delivery->client->pays_code)
+	      {
+	      	$carac_client.=$delivery->client->pays."\n";
+	      }
+	      
+	      // Tva intracom
+        if ($delivery->client->tva_intra) $carac_client.="\n".$langs->transnoentities("VATIntraShort").': '.$delivery->client->tva_intra;
         $pdf->SetFont('Arial','',9);
         $pdf->SetXY(102,$posy+8);
         $pdf->MultiCell(86,4, $carac_client);
@@ -810,22 +806,22 @@ class pdf_typhon extends ModelePDFDeliveryOrder
         }
         if ($conf->global->MAIN_INFO_SIRET)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIRET;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIRET;
         }
-        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->code_pays != 'FR'))
+        if ($conf->global->MAIN_INFO_SIREN && (! $conf->global->MAIN_INFO_SIRET || $this->emetteur->pays_code != 'FR'))
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_SIREN;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_SIREN;
         }
         if ($conf->global->MAIN_INFO_APE)
         {
-            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->code_pays).": ".MAIN_INFO_APE;
+            $ligne1.=($ligne1?" - ":"").$langs->transcountry("ProfId3",$this->emetteur->pays_code).": ".MAIN_INFO_APE;
         }
 
         // Deuxieme ligne d'info réglementaires
         $ligne2="";
         if ($conf->global->MAIN_INFO_RCS)
         {
-            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->code_pays).": ".$conf->global->MAIN_INFO_RCS;
+            $ligne2.=($ligne2?" - ":"").$langs->transcountry("ProfId4",$this->emetteur->pays_code).": ".$conf->global->MAIN_INFO_RCS;
         }
         if ($conf->global->MAIN_INFO_TVAINTRA != '')
         {
