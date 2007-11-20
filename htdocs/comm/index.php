@@ -624,7 +624,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire)
 if ($conf->propal->enabled && $user->rights->propale->lire) {
     $NBMAX=5;
     
-	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.price, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
+	$sql = "SELECT s.nom, s.rowid, p.rowid as propalid, p.total_ht, p.ref, p.fk_statut, ".$db->pdate("p.datep")." as dp";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", sc.fk_soc, sc.fk_user";
 	$sql .= " FROM ".MAIN_DB_PREFIX."societe as s, ".MAIN_DB_PREFIX."propal as p";
 	if (!$user->rights->commercial->client->voir && !$socid) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc";
@@ -673,7 +673,7 @@ if ($conf->propal->enabled && $user->rights->propale->lire) {
 		  print '<td align="left"><a href="fiche.php?socid='.$objp->rowid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44).'</a></td>';
 		  print "<td align=\"right\">";
 		  print dolibarr_print_date($objp->dp,'day')."</td>\n";	  
-		  print "<td align=\"right\">".price($objp->price)."</td>\n";
+		  print "<td align=\"right\">".price($objp->total_ht)."</td>\n";
 		  print "<td align=\"center\" width=\"14\">".$propalstatic->LibStatut($objp->fk_statut,3)."</td>\n";
 		  print "</tr>\n";
 		  $i++;
