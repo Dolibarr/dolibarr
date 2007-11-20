@@ -3212,13 +3212,14 @@ function dol_textishtml($msg,$option=0)
 	}
 	else
 	{
-		if (eregi('<html',$msg))       return true;
-		elseif (eregi('<body',$msg))   return true;
-		elseif (eregi('<br',$msg))     return true;
-		elseif (eregi('<table',$msg))  return true;
-		elseif (eregi('<font',$msg))   return true;
-		elseif (eregi('<strong',$msg)) return true;
-		elseif (eregi('<img',$msg))    return true;
+		if (eregi('<html',$msg))             return true;
+		elseif (eregi('<body',$msg))         return true;
+		elseif (eregi('<br',$msg))           return true;
+		elseif (eregi('<table',$msg))        return true;
+		elseif (eregi('<font',$msg))         return true;
+		elseif (eregi('<strong',$msg))       return true;
+		elseif (eregi('<img',$msg))          return true;
+		elseif (eregi('&[A-Z0-9]+;',$msg))   return true;
 		return false;
 	}
 }

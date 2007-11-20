@@ -240,9 +240,10 @@ class pdf_typhon extends ModelePDFDeliveryOrder
             }
             
             $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
-
-            $pdf->SetXY ($this->posxdesc-1, $curY);
-            $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+            
+            $pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+            
+            $pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 
             $nexY = $pdf->GetY();
 /*
