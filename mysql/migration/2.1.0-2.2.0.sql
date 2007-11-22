@@ -1066,3 +1066,14 @@ ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefi
 ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
 
 delete from llx_const where name='PRODUIT_CHANGE_PROD_DESC';
+
+-- Mise à jour des pays
+update llx_c_pays set libelle = 'Palaos' where rowid = 176 and code = 'PW' and libelle = 'Belau';
+update llx_c_pays set libelle = 'Serbie' where rowid = 198 and code = 'CS';
+update llx_c_pays set code = 'RS' where rowid = 198 and code = 'CS';
+insert into llx_c_pays (rowid,code,libelle) values (241, 'GG', 'Guernesey'     );
+insert into llx_c_pays (rowid,code,libelle) values (242, 'IM', 'Ile de Man'    );
+insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        );
+insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
+insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
+insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );

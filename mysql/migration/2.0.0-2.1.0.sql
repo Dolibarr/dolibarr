@@ -446,7 +446,7 @@ insert into llx_c_pays (rowid,code,libelle) values (172, 'MP', 'Mariannes du Nor
 insert into llx_c_pays (rowid,code,libelle) values (173, 'NO', 'Norvège'       );
 insert into llx_c_pays (rowid,code,libelle) values (174, 'OM', 'Oman'          );
 insert into llx_c_pays (rowid,code,libelle) values (175, 'PK', 'Pakistan'      );
-insert into llx_c_pays (rowid,code,libelle) values (176, 'PW', 'Belau'         );
+insert into llx_c_pays (rowid,code,libelle) values (176, 'PW', 'Palaos'        );
 insert into llx_c_pays (rowid,code,libelle) values (177, 'PS', 'territoire Palestinien Occupé');
 insert into llx_c_pays (rowid,code,libelle) values (178, 'PA', 'Panama'        );
 insert into llx_c_pays (rowid,code,libelle) values (179, 'PG', 'Papouasie-Nouvelle-Guinée');
@@ -468,7 +468,7 @@ insert into llx_c_pays (rowid,code,libelle) values (194, 'VC', 'Saint-Vincent-et
 insert into llx_c_pays (rowid,code,libelle) values (195, 'WS', 'Samoa'         );
 insert into llx_c_pays (rowid,code,libelle) values (196, 'SM', 'Saint-Marin'   );
 insert into llx_c_pays (rowid,code,libelle) values (197, 'ST', 'Sao Tomé-et-Principe');
-insert into llx_c_pays (rowid,code,libelle) values (198, 'CS', 'Serbie-Monténégro');
+insert into llx_c_pays (rowid,code,libelle) values (198, 'RS', 'Serbie'        );
 insert into llx_c_pays (rowid,code,libelle) values (199, 'SC', 'Seychelles'    );
 insert into llx_c_pays (rowid,code,libelle) values (200, 'SL', 'Sierra Leone'  );
 insert into llx_c_pays (rowid,code,libelle) values (201, 'SK', 'Slovaquie'     );
