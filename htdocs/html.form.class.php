@@ -819,7 +819,7 @@ class Form
 			if ($num == 0) return 0;
 			
 			if ($htmlname != 'none') print '<select class="flat" name="'.$htmlname.'">';
-			if ($showempty) print '<option value="1">&nbsp;</option>';
+			if ($showempty) print '<option value="0">&nbsp;</option>';
 			$num = $this->db->num_rows($resql);
 			$i = 0;
 			if ($num)

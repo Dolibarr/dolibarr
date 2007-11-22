@@ -248,7 +248,7 @@ if ($_POST['action'] == 'add' && $user->rights->propale->creer)
 		if ($_POST["contactidp"])
 		{
 			$result=$propal->add_contact($_POST["contactidp"],'CUSTOMER','external');
-	
+
 			if ($result > 0)
 			{
 				$error=0;
