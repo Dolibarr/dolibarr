@@ -1061,6 +1061,21 @@ insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (10
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (105,10, '15','0','TVA 12% Majoré à 25% (15%)',1);
 insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values (106,10, '22.5','0','VAT 18% Majoré à 25% (22.5%)',1);
 
+-- GUADELOUPE (id 105)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 111, 105, '8.5','0','VAT Rate 8.5',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 112, 105, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 113, 105,   '0','0','VAT Rate 0 ou non applicable',1);
+
+-- MARTINIQUE (id 150)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 121, 150, '8.5','0','VAT Rate 8.5',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 122, 150, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 123, 150,   '0','0','VAT Rate 0 ou non applicable',1);
+
+-- REUNION (id 187)
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 131, 187, '8.5','0','VAT Rate 8.5',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 132, 187, '8.5','1','VAT Rate 8.5 non perçu par le vendeur mais récupérable par l\'acheteur',1);
+insert into llx_c_tva(rowid,fk_pays,taux,recuperableonly,note,active) values ( 133, 187,   '0','0','VAT Rate 0 ou non applicable',1);
+
 ALTER TABLE llx_bank_account MODIFY iban_prefix varchar(50);
 ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefix;
 ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
