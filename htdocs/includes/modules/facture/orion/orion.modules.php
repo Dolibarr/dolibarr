@@ -55,7 +55,7 @@ class mod_facture_orion extends ModeleNumRefFactures
       
       if ($conf->global->SOCIETE_FISCAL_MONTH_START)
       {
-      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.$conf->global->SOCIETE_FISCAL_MONTH_START.')';
+      	$texte.= ' ('.$langs->trans('DefinedAndHasThisValue').' : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).')';
       }
       else
       {

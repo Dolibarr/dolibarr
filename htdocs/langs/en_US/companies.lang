@@ -231,6 +231,8 @@ SelectCountry=Select a country
 SelectCompany=Select a third party
 Organization=Organization
 AutomaticallyGenerated=Automatically generated
+FiscalYearInformation=Information on the fiscal year
+FiscalMonthStart=Starting month of the fiscal year
 
 # Tigre
 TigreNumRefModelDesc1=Return a customizable customer/supplier number according to a defined mask. 

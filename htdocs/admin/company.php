@@ -109,6 +109,8 @@ if ( (isset($_POST["action"]) && $_POST["action"] == 'update')
 	dolibarr_set_const($db, "MAIN_INFO_APE",$_POST["ape"]);
 	dolibarr_set_const($db, "MAIN_INFO_RCS",$_POST["rcs"]);
 	dolibarr_set_const($db, "MAIN_INFO_TVAINTRA",$_POST["tva"]);
+	
+	dolibarr_set_const($db, "SOCIETE_FISCAL_MONTH_START",$_POST["fiscalmonthstart"]);
 
 	dolibarr_set_const($db, "FACTURE_TVAOPTION",$_POST["optiontva"]);
 
@@ -397,12 +399,28 @@ if ((isset($_GET["action"]) && $_GET["action"] == 'edit')
     $var=!$var;
     print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("VATIntra").'</td><td>';
     print '<input name="tva" size="20" value="' . $conf->global->MAIN_INFO_TVAINTRA . '">';
-	print '</td></tr>';
+    print '</td></tr>';
 
     print '</table>';
+    
+    
+    /*
+     *  Début d'année fiscale
+     */
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+    print "</tr>\n";
+    $var=true;
 
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FiscalMonthStart").'</td><td>';
+    print $form->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonthstart',1) . '</td></tr>';
     
-    
+    print "</table>";
+
+
     /*
      *  Options fiscale
      */
@@ -655,6 +673,22 @@ else
 
     print '</table>';
 	print '</form>';
+	
+	  /*
+     *  Début d'année fiscale
+     */
+    print '<br>';
+    print '<table class="noborder" width="100%">';
+    print '<tr class="liste_titre">';
+    print '<td>'.$langs->trans("FiscalYearInformation").'</td><td>'.$langs->trans("Value").'</td>';
+    print "</tr>\n";
+    $var=true;
+
+    $var=!$var;
+    print '<tr '.$bc[$var].'><td width="35%">'.$langs->trans("FiscalMonthStart").'</td><td>';
+    print monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START) . '</td></tr>';
+    
+    print "</table>";
 
     /*
      *  Options fiscale

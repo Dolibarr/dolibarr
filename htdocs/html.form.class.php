@@ -3480,19 +3480,7 @@ class Form
     	global $langs;
       $langs->load("main");
       
-    	$month = array (1=>"January",
-    	                2=>"February",
-    	                3=>"March",
-    	                4=>"April",
-    	                5=>"May",
-    	                6=>"June",
-    	                7=>"July",
-    	                8=>"August",
-    	                9=>"September",
-    	                10=>"October",
-    	                11=>"November",
-    	                12=>"December"
-    	                );
+    	$month = monthArrayOrSelected();
  
     	$select_month = '<select class="flat" name="'.$htmlname.'">';
     	if ($useempty) 
@@ -3509,7 +3497,7 @@ class Form
     		{
     			$select_month .= '<option value="'.$key.'">';
     		}
-        $select_month .= $langs->trans($val);
+        $select_month .= $val;
       }
       $select_month .= '</select>';
       return $select_month;

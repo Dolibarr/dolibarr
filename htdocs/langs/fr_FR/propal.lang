@@ -54,7 +54,7 @@ RefProposal=Réf proposition commerciale
 SendPropalByMail=Envoi proposition commerciale par mail
 Documents=Documents
 FileNotUploaded=Le fichier n'a pas été téléchargé
-FileUploaded=Le fichier a été téléchargé avec succés
+FileUploaded=Le fichier a été téléchargé avec succès
 AssociatedDocuments=Documents associés à la proposition :
 ErrorCantOpenDir=Impossible d'ouvrir le répertoire
 DateEndPropal=Date fin validité
@@ -78,3 +78,19 @@ UseCustomerContactAsPropalRecipientIfExist=Utiliser adresse contact suivi client
 
 # azur PDF Model
 PDFAzurDescription=Modèle de propositions commerciales complet (logo...)
+
+# NumRef Modules
+DefinedAndHasThisValue=Définie et vaut
+IsNotDefined=N'est pas définie
+
+# Emeraude
+EmeraudeNumRefModelDesc1=Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1
+EmeraudeNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
+EmeraudeNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
+EmeraudeNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2007 une propale nommée PR0800001
+
+# Rubis
+RubisNumRefModelDesc1=Renvoie le numéro sous la forme PRYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1
+RubisNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
+RubisNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
+RubisNumRefModelDesc4=Dans cette exemple nous aurons au 1er septembre 2007 une propale nommée PR0800345

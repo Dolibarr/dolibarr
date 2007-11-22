@@ -361,8 +361,8 @@ NeptuneNumRefModelDesc2=Si la constante FACTURE_NEPTUNE_DELTA est définie, un of
 # orion
 OrionNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
 OrionNumRefModelDesc2=L'année s'incrémente de 1 SANS remise à zero en début d'année d'exercice.
-OrionNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-OrionNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2006 une facture nommée FA0700354.
+OrionNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
+OrionNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2007 une facture nommée FA0800354.
 
 # terre
 TerreNumRefModelDesc1=Renvoie le numéro sous la forme %syymm-nnnn pour les factures et %syymm-nnnn pour les avoirs où yy est l'année, mm le mois et nnnn un compteur séquentiel sans rupture et sans remise à 0
@@ -371,8 +371,8 @@ TerreNumRefModelError=Une facture commençant par $syymm existe en base et est in
 # titan
 TitanNumRefModelDesc1=Renvoie le numéro sous la forme FAYYNNNNN où YY est l'année et NNNNN le numéro d'incrément qui commence à 1.
 TitanNumRefModelDesc2=L'année s'incrémente de 1 et le numéro d'incrément se remet à zero en début d'année d'exercice.
-TitanNumRefModelDesc3=Définir la variable SOCIETE_FISCAL_MONTH_START avec le mois du début d'exercice, ex: 9 pour septembre.
-TitanNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2006 une facture nommée FA0700001.
+TitanNumRefModelDesc3=Définir le mois de début d'exercice dans configuration->société, ex: septembre.
+TitanNumRefModelDesc4=Dans cet exemple nous aurons au 1er septembre 2007 une facture nommée FA0800001.
 
 # uranus
 UranusNumRefModelDesc1=Renvoie le numéro de facture sous une forme numérique simple, préfixé par l'année sur un seul chiffre

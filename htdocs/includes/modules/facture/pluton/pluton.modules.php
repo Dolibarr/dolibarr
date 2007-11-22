@@ -109,16 +109,6 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("OffsetDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
-      
-      // On défini si le debut d'année fiscale
-      $texte.= '<tr><td>Début d\'année fiscale</td>';
-      $texte.= '<form action="'.$_SERVER["PHP_SELF"].'" method="POST">';
-      $texte.= '<input type="hidden" name="action" value="setFiscalMonth">';
-      $texte.= '<td align="right">';
-      $texte.= $form->select_month($conf->global->SOCIETE_FISCAL_MONTH_START,'fiscalmonth',1);
-      $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
-      $texte.= '<td aligne="center">'.$form->textwithwarning('',$langs->trans("FiscalMonthStartDesc"),1).'</td>';
-      $texte.= '</tr></form>';
    
       // On défini si le compteur se remet à zero en debut d'année
       $texte.= '<tr><td>Le compteur se remet à zéro en début d\'année</td>';
@@ -139,6 +129,10 @@ class mod_facture_pluton extends ModeleNumRefFactures
       $texte.= '</td><td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'" name="Button"></td>';
       $texte.= '<td aligne="center">'.$form->textwithhelp('',$langs->trans("CreditNoteNumWithInvoiceDesc"),1,1).'</td>';
       $texte.= '</tr></form>';
+      
+      // On affiche le debut d'année fiscale
+      $texte.= '<tr><td colspan="3">Début d\'année fiscale : '.monthArrayOrSelected($conf->global->SOCIETE_FISCAL_MONTH_START).'</td>';
+      $texte.= '</tr>';
       
       $texte.= '</table><br>';
 

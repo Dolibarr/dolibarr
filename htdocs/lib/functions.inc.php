@@ -3745,4 +3745,39 @@ function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
 	return $url;
 }
 
+/**
+   \brief   Retourne un tableau des mois ou le mois sélectionné
+   \param   Mois sélectionné
+   \return  month
+*/
+function monthArrayOrSelected($selected=0)
+{
+	global $langs;
+	
+	$month = array (1  => $langs->trans("January"),
+    	            2  => $langs->trans("February"),
+    	            3  => $langs->trans("March"),
+    	            4  => $langs->trans("April"),
+    	            5  => $langs->trans("May"),
+    	            6  => $langs->trans("June"),
+    	            7  => $langs->trans("July"),
+    	            8  => $langs->trans("August"),
+    	            9  => $langs->trans("September"),
+    	            10 => $langs->trans("October"),
+    	            11 => $langs->trans("November"),
+    	            12 => $langs->trans("December")
+    	            );
+ if ($selected)
+ {
+ 	 foreach ($month as $key => $val)
+   {
+  	 if ($selected == $key)
+  	 {
+  		 $month = $val;
+  	 }
+   }
+ }
+ return $month;
+}
+
 ?>
