@@ -16,31 +16,13 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
- */
+*/
 
-require("../../don.class.php");
-require("../../conf/conf.class.php");
-
-$conf = new Conf();
-$conf->db->type = $dolibarr_main_db_type;
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = $dolibarr_main_db_pass;
-
-// Si type non défini (pour compatibilité avec ancienne install), on
-// travail avec mysql
-if (! $conf->db->type) { $conf->db->type = 'mysql'; }
-
-require("../../lib/.$dolibarr_main_db_type.lib.php");
+require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
 if ($conf->don->enabled)
 {
-
-  $db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
-
   $don = new Don($db);
       
   $don->projetid    = $_POST["projetid"];
@@ -112,7 +94,7 @@ if ($conf->don->enabled)
 }
 else
 {
-  print "Cette fonctionnalité n'est pas activé sur ce site";
+  print "Cette fonctionnalitï¿½ n'est pas activï¿½ sur ce site";
 }
 
 

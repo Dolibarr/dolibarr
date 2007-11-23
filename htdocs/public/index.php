@@ -7,7 +7,5 @@
   <body>
     <h1>Section Public</h1>
 
-
-
   </body>
 </html>

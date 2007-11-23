@@ -16,19 +16,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
- *
  */
 
+require("./pre.inc.php");
+require_once(DOL_DOCUMENT_ROOT ."/don.class.php");
 
-$conf = new Conf();
-$conf->db->type = $dolibarr_main_db_type;
-$conf->db->host = $dolibarr_main_db_host;
-$conf->db->name = $dolibarr_main_db_name;
-$conf->db->user = $dolibarr_main_db_user;
-$conf->db->pass = $dolibarr_main_db_pass;
-
-$db = new DoliDb($conf->db->type,$conf->db->host,$conf->db->user,$conf->db->pass,$conf->db->name);
+$langs->load("donations");
 
 $sql = "SELECT ".$db->pdate("d.datedon")." as datedon, d.nom, d.prenom, d.amount, d.public, d.societe";
 $sql .= " FROM ".MAIN_DB_PREFIX."don as d";
@@ -37,13 +30,14 @@ $sql .= " WHERE d.fk_don_projet = 1 AND d.fk_statut in (2, 3) ORDER BY d.datedon
 if ( $db->query( $sql) )
 {
   $num = $db->num_rows();
+  
   if ($num)
     {
       
       print "<TABLE border=\"0\" width=\"100%\" cellspacing=\"0\" cellpadding=\"4\">";
 
       print '<TR>';
-      print "<td>Prénom Nom / Société</td>";
+      print "<td>Prï¿½nom Nom / Sociï¿½tï¿½</td>";
       print "<td>Date</td>";
       print "<td align=\"right\">Montant</TD>";
       print "</TR>\n";
@@ -73,10 +67,14 @@ if ( $db->query( $sql) )
       print "</table>";
 
     }
+    else
+    {
+    	print "Aucun don publique";
+    }
 }
 else
 {
-  print $db->error();
+	dolibarr_print_error($db);
 }
 
 $db->close();

@@ -8,7 +8,7 @@
     <h2>Erreur 404</h2>
 
     <br>
-    La page demandée n'existe pas :
+    La page demandÃ©e n'existe pas :
 
     <br>
     Vous venez de <?php print $_SERVER["HTTP_REFERER"] ?>.
