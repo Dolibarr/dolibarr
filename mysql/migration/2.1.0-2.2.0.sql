@@ -9,9 +9,32 @@
 --
 
 
--- On migre les categorie fournisseur de la table llx_fournisseur_categorie qui est obsolete vers table llx_categories qui est generique pour gerer les categories de tout type
--- V4 INSERT into llx_categorie (label, description, visible, type) (select distinct label, label, 1, 1 from llx_fournisseur_categorie);
+
+-- Supprime les doublons de la table llx_categories
+-- V4.1 DROP TABLE tmp_categorie1;
+-- V4.1 DROP TABLE tmp_categorie2;
+-- V4.1 CREATE TABLE tmp_categorie1 SELECT * FROM llx_categorie;
+-- V4.1 CREATE TABLE tmp_categorie2 SELECT * FROM llx_categorie;
+-- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
+-- V4.1 DROP TABLE tmp_categorie1;
+-- V4.1 DROP TABLE tmp_categorie2;
+-- Si suppression des doublons precedente a ete faite, on monte la clé sur les categories
+-- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
+
+-- On migre les categories fournisseur de la table llx_fournisseur_categorie qui est obsolete vers table llx_categories qui est generique pour gerer les categories de tout type
+-- V4.1 INSERT into llx_categorie (label, description, visible, type) (select distinct label, label, 1, 1 from llx_fournisseur_categorie);
 -- V4.1 UPDATE llx_categorie_fournisseur as cf SET cf.fk_categorie = IFNULL((SELECT distinct c.rowid from llx_categorie as c, llx_fournisseur_categorie as fc where fc.rowid = cf.fk_categorie AND c.type = 1 AND c.label = fc.label),cf.fk_categorie);
+
+-- Supprime les doublons de la table llx_categories
+-- V4.1 DROP TABLE tmp_categorie1;
+-- V4.1 DROP TABLE tmp_categorie2;
+-- V4.1 CREATE TABLE tmp_categorie1 SELECT * FROM llx_categorie;
+-- V4.1 CREATE TABLE tmp_categorie2 SELECT * FROM llx_categorie;
+-- V4.1 delete c from llx_categorie as c where c.rowid in (select distinct c2.rowid from tmp_categorie1 as c2, tmp_categorie2 as cc2 where c2.rowid != cc2.rowid and c2.type = cc2.type and c2.label = cc2.label) and c.rowid not in (select min(c3.rowid) from tmp_categorie1 as c3, tmp_categorie2 as cc3 where c3.rowid != cc3.rowid and c3.type = cc3.type and c3.label = cc3.label group by c3.label,c3.type);
+-- V4.1 DROP TABLE tmp_categorie1;
+-- V4.1 DROP TABLE tmp_categorie2;
+-- Si suppression des doublons precedente a ete faite, on monte la clé sur les categories
+-- V4.1 ALTER TABLE llx_categorie ADD UNIQUE INDEX uk_categorie_ref (label,type);
 
 
 -- Corrige mauvaise insertion du a champ trop court
