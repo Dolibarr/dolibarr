@@ -50,41 +50,47 @@ if ($_POST["action"] == 'add')
 	if (! $label)
 	{
 		$error=1;	
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->trans("Label"))."</div>";
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Label"))."</div>";
 	}
 	if (! $amount)
 	{
 		$error=1;	
-		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->trans("Amount"))."</div>";
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
 	}
 	if (! $error)
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/compta/bank/account.class.php');
 
-		$db->begin();
-		
 		$accountfrom=new Account($db);
 		$accountfrom->fetch($_POST["account_from"]);
-
-		$bank_line_id_from = $accountfrom->addline($dateo, 'VIR', $label, -1*price2num($amount), '', '', $user);
 
 		$accountto=new Account($db);
 		$accountto->fetch($_POST["account_to"]);
 
-		$bank_line_id_to = $accountto->addline($dateo, 'VIR', $label, price2num($amount), '', '', $user);
-
-        $result1=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-        $result2=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
-
-		if ($result1 > 0 && $result2 > 0)
+		if ($accountto->id != $accountfrom->id)
 		{
-			$mesg.="<div class=\"ok\">Le virement depuis «&nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp;» vers «&nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp;» de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a été créé.</div>";
-			$db->commit();
+			$db->begin();
+			
+			$bank_line_id_from = $accountfrom->addline($dateo, 'VIR', $label, -1*price2num($amount), '', '', $user);
+			$bank_line_id_to = $accountto->addline($dateo, 'VIR', $label, price2num($amount), '', '', $user);
+	
+	        $result1=$accountfrom->add_url_line($bank_line_id_from, $bank_line_id_to, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+	        $result2=$accountto->add_url_line($bank_line_id_to, $bank_line_id_from, DOL_URL_ROOT.'/compta/bank/ligne.php?rowid=', '(banktransfert)', 'banktransfert');
+	
+			if ($result1 > 0 && $result2 > 0)
+			{
+				$mesg.="<div class=\"ok\">Le virement depuis &nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp; vers &nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp; de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a ete cree.</div>";
+				$db->commit();
+			}
+			else
+			{
+				$mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
+				$db->rollback();
+			}
 		}
 		else
 		{
-			$mesg.="<div class=\"error\">".$accountfrom->error.' '.$accountto->error."</div>";
-			$db->rollback();
+			$mesg.="<div class=\"error\">".$langs->trans("ErrorFromToAccountsMustDiffers")."</div>";
 		}
 	}
 }
