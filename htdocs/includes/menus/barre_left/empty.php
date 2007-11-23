@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2006-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -65,8 +64,9 @@ class MenuLeft {
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/ihm.php", $langs->trans("GUISetup"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
-		$newmenu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
+		$newmenu->add_submenu(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
+		$newmenu->add_submenu(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/dict.php", $langs->trans("DictionnarySetup"));
 		$newmenu->add_submenu(DOL_URL_ROOT."/admin/const.php", $langs->trans("OtherSetup"));
 

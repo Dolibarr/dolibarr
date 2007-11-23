@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2003-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier       <benoit.mortier@opensides.be>
  *
@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,6 +45,7 @@ function llxHeader($head = "", $urlp = "")
     // Dolibarr
     $menu->add(DOL_URL_ROOT."/admin/system/dolibarr.php", "Dolibarr");
     $menu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"));
+	$menu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
     $menu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"));
     
     // OS

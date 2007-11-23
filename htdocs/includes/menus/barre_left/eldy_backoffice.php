@@ -132,7 +132,6 @@ class MenuLeft {
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/boxes.php", $langs->trans("Boxes"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
 
-					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
 					if ($leftmenu=="setup") $newmenu->add_submenu(DOL_URL_ROOT."/admin/limits.php", $langs->trans("Limits"));
@@ -142,6 +141,7 @@ class MenuLeft {
 					$newmenu->add(DOL_URL_ROOT."/admin/system/index.php?leftmenu=system", $langs->trans("SystemInfo"));
 					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/dolibarr.php", $langs->trans("Dolibarr"),1);
 					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/constall.php", $langs->trans("AllParameters"),2);
+					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"),2);
 					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/about.php", $langs->trans("About"),2);
 					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/os.php", $langs->trans("OS"));
 					if ($leftmenu=="system") $newmenu->add_submenu(DOL_URL_ROOT."/admin/system/web.php", $langs->trans("WebServer"));

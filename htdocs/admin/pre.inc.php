@@ -54,8 +54,6 @@ function llxHeader($head = "", $title="", $help_url='')
 
 	$menu->add(DOL_URL_ROOT."/admin/delais.php",$langs->trans("Alerts"));
 
-	$menu->add(DOL_URL_ROOT."/admin/triggers.php", $langs->trans("Triggers"));
-
 	$menu->add(DOL_URL_ROOT."/admin/perms.php", $langs->trans("Security"));
 
 	$menu->add(DOL_URL_ROOT."/admin/mails.php", $langs->trans("EMails"));
