@@ -42,6 +42,8 @@ if (!$user->rights->banque->modifier)
  */
 if ($_POST["action"] == 'add')
 {
+	$langs->load("errors");
+	
 	$mesg='';
 	$dateo = dolibarr_mktime(12,0,0,$_POST["remonth"],$_POST["reday"],$_POST["reyear"]);
 	$label = $_POST["label"];
@@ -56,6 +58,16 @@ if ($_POST["action"] == 'add')
 	{
 		$error=1;	
 		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("Amount"))."</div>";
+	}
+	if (! $_POST['account_from'])
+	{
+		$error=1;	
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferFrom"))."</div>";
+	}
+	if (! $_POST['account_to'])
+	{
+		$error=1;	
+		$mesg.="<div class=\"error\">".$langs->trans("ErrorFieldRequired",$langs->transnoentities("TransferTo"))."</div>";
 	}
 	if (! $error)
 	{
@@ -79,7 +91,9 @@ if ($_POST["action"] == 'add')
 	
 			if ($result1 > 0 && $result2 > 0)
 			{
-				$mesg.="<div class=\"ok\">Le virement depuis &nbsp;<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>&nbsp; vers &nbsp;<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>&nbsp; de ".$amount." ".$langs->trans("Currency".$conf->monnaie)." a ete cree.</div>";
+				$mesg.="<div class=\"ok\">";
+				$mesg.=$langs->trans("TransferFromToDone","<a href=\"account.php?account=".$accountfrom->id."\">".$accountfrom->label."</a>","<a href=\"account.php?account=".$accountto->id."\">".$accountto->label."</a>",$amount,$langs->transnoentities("Currency".$conf->monnaie));
+				$mesg.="</div>";
 				$db->commit();
 			}
 			else
@@ -127,51 +141,18 @@ print '</tr>';
 
 $var=false;
 print '<tr '.$bc[$var].'><td>';
-print "<select class=\"flat\" name=\"account_from\">";
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
-$sql.= " WHERE clos = 0";
-$resql = $db->query($sql);
-if ($resql)
-{
-  $var=True;  
-  $num = $db->num_rows($resql);
-  $i = 0;
-  
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($resql);
-      print "<option value=\"$objp->rowid\">$objp->label</option>";
-      $i++;
-    }
-  $db->free($resql);
-}
-print "</select></td><td>\n";
+print $html->select_comptes($_POST['account_from'],'account_from',0,'',1);
+print "</td>";
 
-print '<select class="flat" name="account_to">';
-$sql = "SELECT rowid, label FROM ".MAIN_DB_PREFIX."bank_account";
-$sql .= " WHERE clos = 0";
-$resql = $db->query($sql);
-if ($resql)
-{
-  $var=True;  
-  $num = $db->num_rows();
-  $i = 0;
-  
-  while ($i < $num)
-    {
-      $objp = $db->fetch_object($resql);
-      print "<option value=\"$objp->rowid\">$objp->label</option>";
-      $i++;
-    }
-  $db->free($resql);
-}
-print "</select></td>\n";
+print "<td>\n";
+print $html->select_comptes($_POST['account_to'],'account_to',0,'',1);
+print "</td>\n";
 
 print "<td>";
-$html->select_date('','','','','','add');
+$html->select_date($dateo,'','','','','add');
 print "</td>\n";
-print '<td><input name="label" class="flat" type="text" size="40"></td>';
-print '<td><input name="amount" class="flat" type="text" size="8"></td>';
+print '<td><input name="label" class="flat" type="text" size="40" value="'.$_POST["label"].'"></td>';
+print '<td><input name="amount" class="flat" type="text" size="8" value="'.$_POST["amount"].'"></td>';
 
 print "</table>";
 
