@@ -27,7 +27,7 @@ create table llx_bank
   datec           datetime,
   datev           date,           -- date de valeur
   dateo           date,           -- date operation
-  amount          real NOT NULL default 0,
+  amount          double(24,8) NOT NULL default 0,
   label           varchar(255),
   fk_account      integer,
   fk_user_author  integer,

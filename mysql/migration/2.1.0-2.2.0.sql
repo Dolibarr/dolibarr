@@ -917,6 +917,9 @@ ALTER TABLE llx_propaldet ADD COLUMN special_code tinyint(4) unsigned default 0 
 ALTER TABLE llx_propaldet ADD COLUMN pa_ht double(24,8) DEFAULT 0 after info_bits;
 ALTER TABLE llx_propaldet MODIFY pa_ht double(24,8) DEFAULT 0;
 
+ALTER TABLE llx_bank MODIFY amount double(24,8) DEFAULT 0;
+
+
 -- Nouveau fonctionnement de la table llx_product_fournisseur_price
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_user;
 -- V4 ALTER TABLE llx_product_fournisseur_price DROP FOREIGN KEY fk_product_fournisseur_price_fk_soc;
