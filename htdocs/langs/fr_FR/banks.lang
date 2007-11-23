@@ -99,6 +99,7 @@ BankTransfers=Virements bancaire
 TransferDesc=En saisissant un virement d'un de vos comptes bancaire vers un autre, Dolibarr crée deux écritures comptables (une de débit dans un compte et l'autre de crédit, du même montant, dans l'autre compte. Le même libellé de transaction, et la même date, sont utilisés pour les 2 écritures)
 TransferFrom=De
 TransferTo=Vers
+TransferFromToDone=Le virement depuis <b>%s</b> vers <b>%s</b> de <b>%s</b> %s a ete cree.
 CheckTransmitter=Emetteur
 ValidateCheckReceipt=Valider ce bordereau de remise ?
 DeleteCheckReceipt=Supprimer ce bordereau de remise ?

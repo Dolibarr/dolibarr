@@ -99,6 +99,7 @@ BankTransfers=Bank transfers
 TransferDesc=Transfer from one account to another one, Dolibarr will write two records (one for debit in source account and a credit in target account, of same amount. Same label and date will be used for this transaction)
 TransferFrom=From
 TransferTo=To
+TransferFromToDone=Transfer from <b>%s</b> to <b>%s</b> of <b>%s</b> %s has been recorded.
 CheckTransmitter=Transmitter
 ValidateCheckReceipt=Validate this check receipt ?
 DeleteCheckReceipt=Delete this check receipt ?

@@ -3,3 +3,4 @@ ErrorDuplicateTrigger=A trigger file named '<b>%s</b>' is already loaded. Remove
 ErrorFailToDeleteFile=Failed to remove file '<b>%s</b>'.
 ErrorThisContactIsAlreadyDefinedAsThisType=This contact is already defined as contact for this type.
 ErrorCashAccountAcceptsOnlyCashMoney=This bank account is a cash account, so it accepts payments of type cash only.
+ErrorFromToAccountsMustDiffers=Source and targets bank accounts must be different.
