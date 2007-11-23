@@ -235,7 +235,7 @@ SelectCompany=Sélectionner un tiers
 Organization=Organisme
 AutomaticallyGenerated=Généré automatiquement
 FiscalYearInformation=Information sur l'année fiscale
-FiscalMonthStart=Mois de début d'année fiscale
+FiscalMonthStart=Mois de début d'exercice
 
 # Tigre
 TigreNumRefModelDesc1=Renvoie un code client/fournisseur personnalisable selon un masque à définir.
