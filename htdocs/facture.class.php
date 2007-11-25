@@ -2345,25 +2345,26 @@ class Facture extends CommonObject
 
   /**
    *  	\brief     	Renvoi liste des factures qualifiables pour correction par avoir
-   *				Statut >= validée + classée payée completement ou classée payée partiellement + pas deja remplacée + pas deja avoir
+   *				Les factures qui respectent les regles suivantes sont retournees:
+   * 				(validée + paiement en cours) ou classée (payée completement ou payée partiellement) + pas deja remplacée + pas deja avoir
    *	\param		socid		Id societe
    *   	\return    	array		Tableau des factures ($id => $ref)
    */
   function list_qualified_avoir_invoices($socid=0)
   {
-    global $conf;
-
     $return = array();
 
-    $sql = "SELECT f.rowid as rowid, f.facnumber";
+    $sql = "SELECT f.rowid as rowid, f.facnumber, f.fk_statut, pf.fk_paiement";
     $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."paiement_facture as pf ON f.rowid = pf.fk_facture";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as ff ON (f.rowid = ff.fk_facture_source AND ff.type=1)";
-    $sql.= " WHERE f.fk_statut >= 1";
-	$sql.= " AND (f.paye = 1";				// Classée payée complètement
-	$sql.= " OR f.close_code IS NOT NULL)";	// Classée payée partiellement
+	$sql.= " WHERE ";
+	$sql.= " f.fk_statut in (1,2)";
+//  $sql.= " WHERE f.fk_statut >= 1";
+//	$sql.= " AND (f.paye = 1";				// Classée payée complètement
+//	$sql.= " OR f.close_code IS NOT NULL)";	// Classée payée partiellement
     $sql.= " AND ff.type IS NULL";			// Renvoi vrai si pas facture de remplacement
-    $sql.= " AND f.type != 2";				// Facture non avoir
+    $sql.= " AND f.type != 2";				// Type non 2 si facture non avoir
 	if ($socid > 0) $sql.=" AND f.fk_soc = ".$socid;
     $sql.= " ORDER BY f.facnumber";
 
@@ -2373,7 +2374,19 @@ class Facture extends CommonObject
       {
 	while ($obj=$this->db->fetch_object($resql))
 	  {
-	    $return[$obj->rowid]=$obj->facnumber;
+	  	$qualified=0;
+	  	// if statut is 1, record is qualified only if some paiement
+		// has already been made.
+		// If not, we must not do credit note but a replacement invoice.
+	    if ($obj->fk_statut == 1 && $obj->fk_paiement) $qualified=1;
+	    if ($obj->fk_statut == 2) $qualified=1;
+	    if ($qualified)
+	    {
+			
+	    	//$ref=$obj->facnumber;
+	    	$ref=($obj->fk_paiement?1:0);
+	    	$return[$obj->rowid]=$ref;
+	    }
 	  }
 
 	return $return;
