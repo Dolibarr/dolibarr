@@ -1890,6 +1890,8 @@ class Propal extends CommonObject
      */
 	function create_from()
 	{
+		global $conf;
+		
 		$this->fin_validite = $this->datep + ($this->duree_validite * 24 * 3600);
 		
 		// on vérifie si la ref n'est pas utilisée
