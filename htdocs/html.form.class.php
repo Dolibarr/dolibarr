@@ -6,7 +6,7 @@
  * Copyright (C) 2004      Eric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
- * Copyright (C) 2006      Marc Barilley/Ocï¿½bo  <marc@ocebo.com>
+ * Copyright (C) 2006      Marc Barilley/Ocebo  <marc@ocebo.com>
  * Copyright (C) 2007      Franky Van Liedekerke <franky.van.liedekerker@telenet.be>
  * Copyright (C) 2007      Patrick Raguin 		<patrick.raguin@gmail.com>
  *
@@ -30,14 +30,14 @@
 
 /**
         \file       htdocs/html.form.class.php
-        \brief      Fichier de la classe des fonctions prï¿½dï¿½finie de composants html
+        \brief      Fichier de la classe des fonctions prédéfinie de composants html
         \version    $Revision$
 */
 
 
 /**
         \class      Form
-        \brief      Classe permettant la gï¿½nï¿½ration de composants html
+        \brief      Classe permettant la génération de composants html
 */
 
 class Form
@@ -54,7 +54,7 @@ class Form
   
   /**
      \brief     Constructeur
-     \param     DB      handler d'accï¿½s base de donnï¿½e
+     \param     DB      handler d'accès base de donnée
   */
   function Form($DB)
   {
@@ -66,10 +66,10 @@ class Form
   
   /**
 		\brief	Affiche un texte+picto avec tooltip sur texte ou sur picto
-		\param  text				Texte ï¿½ afficher
-		\param  htmltext	    	Contenu html du tooltip, codï¿½ en html
-		\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcï¿½ en Ajaxa
-		\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est aprï¿½s
+		\param  text				Texte à afficher
+		\param  htmltext	    	Contenu html du tooltip, codé en html
+		\param	tooltipon			1=tooltip sur texte, 2=tooltip sur picto, 3=tooltip sur les 2, 4=tooltip sur les 2 et forcé en Ajax
+		\param	direction			-1=Le picto est avant, 0=pas de picto, 1=le picto est après
 		\param	img					Code img du picto
 		\return	string				Code html du texte,picto
   */
@@ -145,9 +145,9 @@ class Form
 
 	/**
      \brief     Affiche un texte avec picto help qui affiche un tooltip
-     \param     text				Texte ï¿½ afficher
+     \param     text				Texte à afficher
      \param     htmltooltip     	Contenu html du tooltip
-     \param		direction			1=Le picto est aprï¿½s, -1=le picto est avant
+     \param		direction			1=Le picto est après, -1=le picto est avant
      \param		usehelpcursor		1=Utilise curseur help, 0=Curseur par defaut
      \return	string				Code html du texte,picto
 	*/
@@ -158,9 +158,9 @@ class Form
     
     /**
      \brief     Affiche un texte avec picto warning qui affiche un tooltip
-     \param     text				Texte ï¿½ afficher
+     \param     text				Texte à afficher
      \param     htmltooltip     	Contenu html du tooltip
-     \param		direction			1=Le picto est aprï¿½s, -1=le picto est avant
+     \param		direction			1=Le picto est après, -1=le picto est avant
      \return	string				Code html du texte,picto
 	*/
 	function textwithwarning($text,$htmltext,$direction=1)
@@ -170,13 +170,13 @@ class Form
     
     
     /**
-     *    \brief      Retourne la liste dï¿½roulante des dï¿½partements/province/cantons tout pays confondu ou pour un pays donnï¿½.
+     *    \brief      Retourne la liste déroulante des départements/province/cantons tout pays confondu ou pour un pays donné.
      *    \remarks    Dans le cas d'une liste tout pays confondus, l'affichage fait une rupture sur le pays.
-     *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrï¿½e pour
-     *                un code donnï¿½e mais dans ce cas, le champ pays diffï¿½re).
-     *                Ainsi les liens avec les dï¿½partements se font sur un dï¿½partement indï¿½pendemment de nom som.
-     *    \param      selected        code forme juridique a prï¿½sï¿½lectionnï¿½
-     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays ï¿½ afficher
+     *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+     *                un code donnée mais dans ce cas, le champ pays diffère).
+     *                Ainsi les liens avec les départements se font sur un département indépendemment de son nom.
+     *    \param      selected        code forme juridique a présélectionné
+     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
      */
     function select_departement($selected='',$pays_code=0)
     {
@@ -187,7 +187,7 @@ class Form
       
       $htmlname='departement_id';
       
-      // On recherche les dï¿½partements/cantons/province active d'une region et pays actif
+      // On recherche les départements/cantons/province active d'une region et pays actif
       $sql = "SELECT d.rowid, d.code_departement as code , d.nom, d.active, p.libelle as libelle_pays, p.code as code_pays FROM";
       $sql .= " ".MAIN_DB_PREFIX ."c_departements as d, ".MAIN_DB_PREFIX."c_regions as r,".MAIN_DB_PREFIX."c_pays as p";
       $sql .= " WHERE d.fk_region=r.code_region and r.fk_pays=p.rowid";
@@ -232,7 +232,7 @@ class Form
 	                    {
 	                        print '<option value="'.$obj->rowid.'">';
 	                    }
-	                    // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+	                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
 	                    print $obj->code . ' - ' . ($langs->trans($obj->code)!=$obj->code?$langs->trans($obj->code):($obj->nom!='-'?$obj->nom:''));
 	                    print '</option>';
 	                }
@@ -248,11 +248,11 @@ class Form
   
   
   /**
-   *    \brief      Retourne la liste dï¿½roulante des regions actives dont le pays est actif
-   *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrï¿½e pour
-   *                un code donnï¿½e mais dans ce cas, le champ pays et lang diffï¿½re).
+   *    \brief      Retourne la liste déroulante des regions actives dont le pays est actif
+   *    \remarks    La cle de la liste est le code (il peut y avoir plusieurs entrée pour
+   *                un code donnée mais dans ce cas, le champ pays et lang diffère).
    *                Ainsi les liens avec les regions se font sur une region independemment
-   *                de nom som.
+   *                de son nom.
    */
 	 
   function select_region($selected='',$htmlname='region_id')
@@ -307,7 +307,7 @@ class Form
 
 	/**
 	 *   	\brief      Renvoie la liste des sources de commandes
-	 *		\param      selected		Id de la source prï¿½-sï¿½lectionnï¿½e
+	 *		\param      selected		Id de la source pré-sélectionnée
 	 *    	\param     	htmlname 		Nom de la liste deroulante
 	 *      \param     	addempty		0=liste sans valeur nulle, 1=ajoute valeur inconnue
 	 *      \return		array			Tableau des sources de commandes
@@ -364,11 +364,11 @@ class Form
 	}
   
   	/**
-	 *    \brief     Retourne la liste dï¿½roulante des pays actifs, dans la langue de l'utilisateur
-	 *    \param     selected         Id ou code pays prï¿½-sï¿½lectionnï¿½
+	 *    \brief     Retourne la liste déroulante des pays actifs, dans la langue de l'utilisateur
+	 *    \param     selected         Id ou code pays pré-sélectionné
 	 *    \param     htmlname         Nom de la liste deroulante
 	 *    \param     htmloption       Options html sur le select
-	 *    \todo      trier liste sur noms aprï¿½s traduction plutot que avant
+	 *    \todo      trier liste sur noms après traduction plutot que avant
 	 */
 	function select_pays($selected='',$htmlname='pays_id',$htmloption='')
 	{
@@ -449,7 +449,7 @@ class Form
 					  {
 						  print '<option value="'.$obj->rowid.'">';
 					  }
-					  // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+					  // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
 					  if ($obj->code) { print $obj->code . ' - '; }
 					  print ($obj->code && $langs->trans("Country".$obj->code)!="Country".$obj->code?$langs->trans("Country".$obj->code):($obj->libelle!='-'?$obj->libelle:'&nbsp;'));
 					  print '</option>';
@@ -469,8 +469,8 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des langues disponibles
-     *    \param      selected        Langue prï¿½sï¿½lectionnï¿½e
+     *    \brief      Retourne la liste déroulante des langues disponibles
+     *    \param      selected        Langue pré-sélectionnée
      *    \param      htmlname        Nom de la zone select
      *    \param      showauto        Affiche choix auto
      */
@@ -509,16 +509,16 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy_backoffice, ...)
-     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
+     *    \brief      Retourne la liste déroulante des menus disponibles (eldy_backoffice, ...)
+     *    \param      selected        Menu pré-sélectionnée
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repï¿½rtoire ï¿½ scanner
+     *    \param      dirmenu         Repértoire à scanner
      */
     function select_menu($selected='',$htmlname,$dirmenu)
     {
         global $langs,$conf;
     
-        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilitï¿½
+        if ($selected == 'eldy.php') $selected='eldy_backoffice.php';  // Pour compatibilité
     
 		$menuarray=array();
         $handle=opendir($dirmenu);
@@ -570,10 +570,10 @@ class Form
     }
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des menus disponibles (eldy)
-     *    \param      selected        Menu prï¿½-sï¿½lectionnï¿½e
+     *    \brief      Retourne la liste déroulante des menus disponibles (eldy)
+     *    \param      selected        Menu pré-sélectionnée
      *    \param      htmlname        Nom de la zone select
-     *    \param      dirmenu         Repï¿½rtoire ï¿½ scanner
+     *    \param      dirmenu         Repertoire à scanner
      */
     function select_menu_families($selected='',$htmlname,$dirmenu)
     {
@@ -615,7 +615,7 @@ class Form
 	
 	/**
    *    \brief      Retourne la liste des types de comptes financiers
-   *    \param      selected        Type prï¿½-sï¿½lectionnï¿½
+   *    \param      selected        Type pré-sélectionné
    *    \param      htmlname        Nom champ formulaire
    */
   function select_type_comptes_financiers($selected=1,$htmlname='type')
@@ -648,8 +648,8 @@ class Form
   
   
 	/**
-	 *    \brief      Retourne la liste dï¿½roulante des sociï¿½tï¿½s
-	 *    \param      selected        Societe prï¿½sï¿½lectionnï¿½e
+	 *    \brief      Retourne la liste déroulante des sociétés
+	 *    \param      selected        Societe pré-sélectionnée
 	 *    \param      htmlname        Nom champ formulaire
 	 *    \param      filter          Criteres optionnels de filtre
 	 */
@@ -733,8 +733,8 @@ class Form
   
   
 	/**
-	 *    \brief      Retourne la liste dï¿½roulante des remises fixes
-	 *    \param      selected        Id remise fixe prï¿½sï¿½lectionnï¿½e
+	 *    \brief      Retourne la liste déroulante des remises fixes
+	 *    \param      selected        Id remise fixe pré-sélectionnée
 	 *    \param      htmlname        Nom champ formulaire
 	 *    \param      filter          Criteres optionnels de filtre
 	 */
@@ -789,12 +789,12 @@ class Form
     
     
     /**
-     *    	\brief      Retourne la liste dï¿½roulante des contacts d'une sociï¿½tï¿½ donnï¿½e
-     *    	\param      socid      	    Id de la sociï¿½tï¿½
-     *    	\param      selected   	    Id contact prï¿½-sï¿½lectionn
+     *    	\brief      Retourne la liste déroulante des contacts d'une société donnée
+     *    	\param      socid      	    Id de la société
+     *    	\param      selected   	    Id contact pré-sélectionné
      *    	\param      htmlname  	    Nom champ formulaire ('none' pour champ non editable)
      *      \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *      \param      exclude         Liste des id contacts ï¿½ exclure
+     *      \param      exclude         Liste des id contacts à exclure
      *		\return		int				<0 if KO, Nb of contact in list if OK
      */
     function select_contacts($socid,$selected='',$htmlname='contactid',$showempty=0,$exclude='')
@@ -857,11 +857,11 @@ class Form
     
     
     /**
-     *    \brief      Retourne la liste dï¿½roulante des utilisateurs
-     *    \param      selected        Id contact prï¿½-sï¿½lectionn
+     *    \brief      Retourne la liste déroulante des utilisateurs
+     *    \param      selected        Id contact pré-sélectionné
      *    \param      htmlname        Nom champ formulaire
      *    \param      show_empty      0=liste sans valeur nulle, 1=ajoute valeur inconnue
-     *    \param      exclude         Liste des id utilisateurs ï¿½ exclure
+     *    \param      exclude         Liste des id utilisateurs à exclure
      */
     function select_users($selected='',$htmlname='userid',$show_empty=0,$exclude='')
     {
@@ -910,9 +910,9 @@ class Form
     
     
   /**
-     \brief      Affiche la liste dï¿½roulante des projets d'une sociï¿½tï¿½ donnï¿½e
-     \param      socid       Id sociï¿½tï¿½
-     \param      selected    Id projet prï¿½sï¿½lectionnï¿½
+     \brief      Affiche la liste déroulante des projets d'une société donnée
+     \param      socid       Id société
+     \param      selected    Id projet pré-sélectionné
      \param      htmlname    Nom de la zone html
      \return     int         Nbre de projet si ok, <0 si ko
    */
@@ -958,11 +958,11 @@ class Form
       }
   }
   /**
-     \brief      Retourne la liste des produits en Ajax si ajax activï¿½ ou renvoie ï¿½ select_produits_do
-     \param      selected        Produit prï¿½sï¿½lectionnï¿½
+     \brief      Retourne la liste des produits en Ajax si ajax activé ou renvoie à select_produits_do
+     \param      selected        Produit pré-sélectionné
      \param      htmlname        Nom de la zone select
      \param      filtretype      Pour filtre sur type de produit
-     \param      limit           Limite sur le nombre de lignes retournï¿½es
+     \param      limit           Limite sur le nombre de lignes retournées
      \param      price_level     Niveau de prix en fonction du client
   */
   function select_produits($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0)
@@ -993,12 +993,12 @@ class Form
 	
 	/**
 		\brief      Retourne la liste des produits
-		\param      selected        Produit prï¿½sï¿½lectionnï¿½
+		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
-		\param      limit           Limite sur le nombre de lignes retournï¿½es
+		\param      limit           Limite sur le nombre de lignes retournées
 		\param      price_level     Niveau de prix en fonction du client
-		\param      ajaxkeysearch   Filtre des produits si ajax est utilisï¿½
+		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 	*/
 	function select_produits_do($selected='',$htmlname='productid',$filtretype='',$limit=20,$price_level=0,$ajaxkeysearch='')
 	{
@@ -1032,7 +1032,7 @@ class Form
 		$result=$this->db->query($sql);
 		if (! $result) dolibarr_print_error($this->db);
 		
-		// Multilang : on construit une liste des traductions des produits listï¿½s
+		// Multilang : on construit une liste des traductions des produits listés
 		if ($conf->global->MAIN_MULTILANGS)
 		{
 			$sqld = "SELECT d.fk_product, d.label";
@@ -1071,7 +1071,7 @@ class Form
 			{
 				$objp = $this->db->fetch_object($result);
 				
-				// Multilangs : modification des donnï¿½e si une traduction existe
+				// Multilangs : modification des donnée si une traduction existe
 				if ($conf->global->MAIN_MULTILANGS)
 				{
 					if ( $objp->rowid == $objtp->fk_product ) // si on a une traduction
@@ -1147,11 +1147,11 @@ class Form
 	}
   
 	/**
-		\brief      Retourne la liste des produits fournisseurs en Ajax si ajax activï¿½ ou renvoie ï¿½ select_produits_fournisseurs_do
-		\param      selected        Produit prï¿½sï¿½lectionnï¿½
+		\brief      Retourne la liste des produits fournisseurs en Ajax si ajax activé ou renvoie à select_produits_fournisseurs_do
+		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
-		\param      limit           Limite sur le nombre de lignes retournï¿½es
+		\param      limit           Limite sur le nombre de lignes retournées
 	*/
 	function select_produits_fournisseurs($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='')
 	{
@@ -1169,12 +1169,12 @@ class Form
   
 	/**
 		\brief      Retourne la liste des produits de fournisseurs
-		\param		socid   		Id sociï¿½tï¿½ fournisseur (0 pour aucun filtre)
-		\param      selected        Produit prï¿½sï¿½lectionnï¿½
+		\param		socid   		Id société fournisseur (0 pour aucun filtre)
+		\param      selected        Produit pré-sélectionné
 		\param      htmlname        Nom de la zone select
 		\param      filtretype      Pour filtre sur type de produit
 		\param      filtre          Pour filtre
-		\param      ajaxkeysearch   Filtre des produits si ajax est utilisï¿½
+		\param      ajaxkeysearch   Filtre des produits si ajax est utilisé
 	*/
 	function select_produits_fournisseurs_do($socid,$selected='',$htmlname='productid',$filtretype='',$filtre='',$ajaxkeysearch='')
 	{
@@ -1359,8 +1359,8 @@ class Form
 	}
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des adresses de livraison
-     *    \param      selected        Id contact prï¿½-sï¿½lectionn
+     *    \brief      Retourne la liste déroulante des adresses de livraison
+     *    \param      selected        Id contact pré-sélectionn
      *    \param      htmlname        Nom champ formulaire
      */
     function select_adresse_livraison($selected='', $socid, $htmlname='adresse_livraison_id',$showempty=0)
@@ -1405,13 +1405,13 @@ class Form
 
     /**
      *      \brief      Charge dans cache la liste des conditions de paiements possibles
-     *      \return     int             Nb lignes chargï¿½es, 0 si dï¿½jï¿½ chargï¿½es, <0 si ko
+     *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
      */
     function load_cache_conditions_paiements()
     {
         global $langs;
 
-        if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache dï¿½ja chargï¿½
+        if (sizeof($this->cache_conditions_paiements_code)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_conditions_paiements',LOG_DEBUG);
 
@@ -1428,7 +1428,7 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 $libelle=($langs->trans("PaymentConditionShort".$obj->code)!=("PaymentConditionShort".$obj->code)?$langs->trans("PaymentConditionShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_conditions_paiements_code[$obj->rowid]=$obj->code;
                 $this->cache_conditions_paiements_libelle[$obj->rowid]=$libelle;
@@ -1444,13 +1444,13 @@ class Form
 
     /**
      *      \brief      Charge dans cache la liste des types de paiements possibles
-     *      \return     int             Nb lignes chargï¿½es, 0 si dï¿½jï¿½ chargï¿½es, <0 si ko
+     *      \return     int             Nb lignes chargées, 0 si déjà chargées, <0 si ko
      */
     function load_cache_types_paiements()
     {
         global $langs;
 
-        if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache dï¿½ja chargï¿½
+        if (sizeof($this->cache_types_paiements_code)) return 0;    // Cache déja chargé
 
         dolibarr_syslog('Form::load_cache_types_paiements',LOG_DEBUG);
 
@@ -1467,7 +1467,7 @@ class Form
             {
                 $obj = $this->db->fetch_object($resql);
 
-                // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                 $libelle=($langs->trans("PaymentTypeShort".$obj->code)!=("PaymentTypeShort".$obj->code)?$langs->trans("PaymentTypeShort".$obj->code):($obj->libelle!='-'?$obj->libelle:''));
                 $this->cache_types_paiements_code[$obj->id]=$obj->code;
                 $this->cache_types_paiements_libelle[$obj->id]=$libelle;
@@ -1486,10 +1486,10 @@ class Form
  
      /**
      *      \brief      Retourne la liste des types de paiements possibles
-     *      \param      selected        Id du type de paiement prï¿½sï¿½lectionnï¿½
+     *      \param      selected        Id du type de paiement pré-sélectionné
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
-     *		\param		addempty		Ajoute entrï¿½e vide
+     *		\param		addempty		Ajoute entrée vide
      */
     function select_conditions_paiements($selected='',$htmlname='condid',$filtertype=-1,$addempty=0)
     {
@@ -1517,7 +1517,7 @@ class Form
     
     /**
      *      \brief      Selection HT ou TTC
-     *      \param      selected        Id prï¿½sï¿½lectionnï¿½
+     *      \param      selected        Id pré-sélectionné
      *      \param      htmlname        Nom de la zone select
      */
     function select_PriceBaseType($selected='',$htmlname='price_base_type')
@@ -1545,7 +1545,7 @@ class Form
     
     /**
      *      \brief      Retourne la liste des modes de paiements possibles
-     *      \param      selected        Id du mode de paiement prï¿½sï¿½lectionnï¿½
+     *      \param      selected        Id du mode de paiement pré-sélectionné
      *      \param      htmlname        Nom de la zone select
      *      \param      filtertype      Pour filtre
      *      \param      format          0=id+libelle, 1=code+code, 2=code+libelle
@@ -1568,7 +1568,7 @@ class Form
 		if ($empty) print '<option value="">&nbsp;</option>';
         foreach($this->cache_types_paiements_code as $id => $code)
         {
-            // On passe si on a demandï¿½ de filtrer sur des modes de paiments particuliï¿½rs
+            // On passe si on a demandé de filtrer sur des modes de paiments particuliers
             if (sizeof($filterarray) && ! in_array($this->cache_types_paiements_type[$id],$filterarray)) continue;
 
             if ($format == 0) print '<option value="'.$id.'"';
@@ -1587,9 +1587,9 @@ class Form
         print '</select>';
     }
     /**
-     *    \brief      Retourne la liste dï¿½roulante des diffï¿½rents ï¿½tats d'une propal.
+     *    \brief      Retourne la liste déroulante des différents états d'une propal.
      *                Les valeurs de la liste sont les id de la table c_propalst
-     *    \param      selected    etat pre-sï¿½lï¿½ctionnï¿½
+     *    \param      selected    etat pre-séléctionné
      */
     function select_propal_statut($selected='')
     {
@@ -1615,7 +1615,7 @@ class Form
                     {
                         print '<option value="'.$obj->id.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                     //print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
                     print $obj->label;
                     print '</option>';
@@ -1633,9 +1633,9 @@ class Form
 
     /**
      *    \brief      Retourne la liste des comptes
-     *    \param      selected          Id compte prï¿½sï¿½lectionnï¿½
+     *    \param      selected          Id compte pré-sélectionné
      *    \param      htmlname          Nom de la zone select
-     *    \param      statut            Statut des comptes recherchï¿½s
+     *    \param      statut            Statut des comptes recherchés
      *    \param      filtre            Pour filtre sur la liste
      *    \param      useempty          Affiche valeur vide dans liste
      */
@@ -1682,7 +1682,7 @@ class Form
     }
      
     /**
-     *    \brief    Retourne la liste des catï¿½gories du type choisi
+     *    \brief    Retourne la liste des catégories du type choisi
      *    \param    type			Type de categories (0=produit, 1=fournisseur, 2=client)
      *    \param    selected    	Id categorie preselectionnee
      *    \param    select_name		Nom formulaire HTML
@@ -1726,8 +1726,8 @@ class Form
         
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des civilite actives
-     *    \param      selected    civilite prï¿½-sï¿½lectionnï¿½e
+     *    \brief      Retourne la liste déroulante des civilite actives
+     *    \param      selected    civilite pré-sélectionnée
      */
     function select_civilite($selected='')
     {
@@ -1756,7 +1756,7 @@ class Form
                     {
                         print '<option value="'.$obj->code.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                     print ($langs->trans("Civility".$obj->code)!="Civility".$obj->code ? $langs->trans("Civility".$obj->code) : ($obj->civilite!='-'?$obj->civilite:''));
                     print '</option>';
                     $i++;
@@ -1772,9 +1772,9 @@ class Form
 
 
     /**
-     *    \brief      Retourne le nom traduit de la civilitï¿½
-     *    \param      code        Code de la civilitï¿½
-     *    \return     string      Nom traduit de la civilitï¿½
+     *    \brief      Retourne le nom traduit de la civilité
+     *    \param      code        Code de la civilité
+     *    \return     string      Nom traduit de la civilité
      */
     function civilite_name($code)
     {
@@ -1785,10 +1785,10 @@ class Form
 
 
     /**
-     *    \brief      Retourne la liste dï¿½roulante des formes juridiques tous pays confondus ou pour un pays donnï¿½.
+     *    \brief      Retourne la liste déroulante des formes juridiques tous pays confondus ou pour un pays donné.
      *    \remarks    Dans le cas d'une liste tous pays confondu, on affiche une rupture sur le pays
-     *    \param      selected        Code forme juridique a prï¿½sï¿½lectionn
-     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays ï¿½ afficher
+     *    \param      selected        Code forme juridique a pré-sélectionné
+     *    \param      pays_code       0=liste tous pays confondus, sinon code du pays à afficher
      */
     function select_forme_juridique($selected='',$pays_code=0)
     {
@@ -1837,7 +1837,7 @@ class Form
                         {
                             print '<option value="'.$obj->code.'">';
                         }
-                        // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                        // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                         print $obj->code . ' - ' .($langs->trans("JuridicalStatus".$obj->code)!="JuridicalStatus".$obj->code?$langs->trans("JuridicalStatus".$obj->code):($obj->nom!='-'?$obj->nom:''));
                         print '</option>';
                     }
@@ -1948,13 +1948,13 @@ class Form
     {
         global $langs;
 
-        // Si il existe une traduction, on peut renvoyer de suite le libellï¿½
+        // Si il existe une traduction, on peut renvoyer de suite le libellé
         if ($langs->trans("Currency".$code_iso)!="Currency".$code_iso)
         {
             return $langs->trans("Currency".$code_iso);
         }
         
-        // Si pas de traduction, on consulte libellï¿½ par dï¿½faut en table
+        // Si pas de traduction, on consulte libellé par défaut en table
         $sql = "SELECT label FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql.= " WHERE code_iso='$code_iso';";
     
@@ -2075,7 +2075,7 @@ class Form
      *    \brief      Affiche formulaire de selection de projet
      *    \param      page        Page
      *    \param      socid       Id societe
-     *    \param      selected    Id projet prï¿½sï¿½lectionnï¿½
+     *    \param      selected    Id projet pré-sélectionné
      *    \param      htmlname    Nom du formulaire select
      */
     function form_project($page, $socid, $selected='', $htmlname='projectid')
@@ -2109,9 +2109,9 @@ class Form
     /**
      *    	\brief      Affiche formulaire de selection de conditions de paiement
      *    	\param      page        	Page
-     *    	\param      selected    	Id condition prï¿½sï¿½lectionnï¿½e
+     *    	\param      selected    	Id condition pré-sélectionné
      *    	\param      htmlname    	Nom du formulaire select
-     *		\param		addempty		Ajoute entrï¿½e vide
+     *		\param		addempty		Ajoute entrée vide
      */
     function form_conditions_reglement($page, $selected='', $htmlname='cond_reglement_id', $addempty=0)
     {
@@ -2140,9 +2140,9 @@ class Form
     }
     
 	/**
-     *    \brief      Affiche formulaire de selection de l'assujï¿½tissement ï¿½ la TVA
+     *    \brief      Affiche formulaire de selection de l'assujétissement à la TVA
      *    \param      page        Page
-     *    \param      selected    Id condition prï¿½sï¿½lectionnï¿½e
+     *    \param      selected    Id condition pré-sélectionnée
      *    \param      htmlname    Nom du formulaire select
      */
 	function form_assujetti_tva($page, $selected='', $htmlname='')
@@ -2175,7 +2175,7 @@ class Form
     /**
      *    \brief      Affiche formulaire de selection des modes de reglement
      *    \param      page        Page
-     *    \param      selected    Id mode prï¿½sï¿½lectionnï¿½
+     *    \param      selected    Id mode pré-sélectionné
      *    \param      htmlname    Nom du formulaire select
      */
     function form_modes_reglement($page, $selected='', $htmlname='mode_reglement_id')
@@ -2343,7 +2343,7 @@ class Form
     /**
      *    \brief      Affiche formulaire de selection des contacts
      *    \param      page        Page
-     *    \param      selected    Id contact prï¿½sï¿½lectionnï¿½
+     *    \param      selected    Id contact pré-sélectionné
      *    \param      htmlname    Nom du formulaire select
      */
     function form_contacts($page, $societe, $selected='', $htmlname='contactidp')
@@ -2358,7 +2358,7 @@ class Form
             $num=$this->select_contacts($societe->id, $selected, $htmlname);
             if ($num==0)
             {
-                print '<font class="error">Cette societe n\'a pas de contact, veuillez en crï¿½er un avant de faire votre proposition commerciale</font><br>';
+                print '<font class="error">Cette societe n\'a pas de contact, veuillez en créer un avant de faire votre proposition commerciale</font><br>';
                 print '<a href="'.DOL_URL_ROOT.'/contact/fiche.php?socid='.$societe->id.'&amp;action=create&amp;backtoreferer=1">'.$langs->trans('AddContact').'</a>';
 			}
             print '</td>';
@@ -2384,9 +2384,9 @@ class Form
     /**
      *    	\brief      Affiche formulaire de selection de l'adresse de livraison
      *    	\param      page        	Page
-     *    	\param      selected    	Id condition prï¿½sï¿½lectionnï¿½e
+     *    	\param      selected    	Id condition pré-sélectionné
      *    	\param      htmlname    	Nom du formulaire select
-     *		\param		origin        	Origine de l'appel pour pouvoir crï¿½er un retour
+     *		\param		origin        	Origine de l'appel pour pouvoir créer un retour
      *      \param      originid      	Id de l'origine
      */
     function form_adresse_livraison($page, $selected='', $socid, $htmlname='adresse_livraison_id', $origin='', $originid='')
@@ -2423,16 +2423,16 @@ class Form
     
     /**
      *    \brief     Retourne la liste des devises, dans la langue de l'utilisateur
-     *    \param     selected    code devise prï¿½-sï¿½lectionnï¿½e
+     *    \param     selected    code devise pré-sélectionné
      *    \param     htmlname    nom de la liste deroulante
-     *    \todo      trier liste sur noms aprï¿½s traduction plutot que avant
+     *    \todo      trier liste sur noms après traduction plutot que avant
      */
     function select_currency($selected='',$htmlname='currency_id')
     {
         global $conf,$langs;
         $langs->load("dict");
     
-        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilitï¿½
+        if ($selected=='euro' || $selected=='euros') $selected='EUR';   // Pour compatibilité
     
         $sql = "SELECT code_iso, label, active FROM ".MAIN_DB_PREFIX."c_currencies";
         $sql .= " WHERE active = 1";
@@ -2458,7 +2458,7 @@ class Form
                     {
                         print '<option value="'.$obj->code_iso.'">';
                     }
-                    // Si traduction existe, on l'utilise, sinon on prend le libellï¿½ par dï¿½faut
+                    // Si traduction existe, on l'utilise, sinon on prend le libellé par défaut
                     if ($obj->code_iso) { print $obj->code_iso . ' - '; }
                     print ($obj->code_iso && $langs->trans("Currency".$obj->code_iso)!="Currency".$obj->code_iso?$langs->trans("Currency".$obj->code_iso):($obj->label!='-'?$obj->label:''));
                     print '</option>';
@@ -2476,17 +2476,17 @@ class Form
 
 
     /**
-     *      \brief      Selection du taux de tva appliquï¿½ par vendeur
+     *      \brief      Selection du taux de tva appliqué par vendeur
      *      \param      name                Nom champ html
-     *      \param      defaulttx           Forï¿½age du taux tva prï¿½sï¿½lectionnï¿½. Mettre '' pour aucun forcage.
-     *      \param      societe_vendeuse    Objet sociï¿½tï¿½ vendeuse
-     *      \param      societe_acheteuse   Objet sociï¿½tï¿½ acheteuse
+     *      \param      defaulttx           Forçage du taux tva pré-sélectionné. Mettre '' pour aucun forcage.
+     *      \param      societe_vendeuse    Objet société vendeuse
+     *      \param      societe_acheteuse   Objet société acheteuse
      *      \param      taux_produit        Taux par defaut du produit vendu
-     *      \remarks    Si vendeur non assujeti ï¿½ TVA, TVA par dï¿½faut=0. Fin de rï¿½gle.
-     *                  Si le (pays vendeur = pays acheteur) alors la TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
-     *                  Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par dï¿½faut=0 (La TVA doit ï¿½tre payï¿½ par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de rï¿½gle.
-     *                  Si (vendeur et acheteur dans Communautï¿½ europï¿½enne) et bien vendu autre que transport neuf alors la TVA par dï¿½faut=TVA du produit vendu. Fin de rï¿½gle.
-     *                  Sinon la TVA proposï¿½e par dï¿½faut=0. Fin de rï¿½gle.
+     *      \remarks    Si vendeur non assujeti à TVA, TVA par défaut=0. Fin de règle.
+     *                  Si le (pays vendeur = pays acheteur) alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+     *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu = moyen de transports neuf (auto, bateau, avion), TVA par défaut=0 (La TVA doit être payé par l'acheteur au centre d'impots de son pays et non au vendeur). Fin de règle.
+     *                  Si (vendeur et acheteur dans Communauté européenne) et bien vendu autre que transport neuf alors la TVA par défaut=TVA du produit vendu. Fin de règle.
+     *                  Sinon la TVA proposée par défaut=0. Fin de règle.
      */
     function select_tva($name='tauxtva', $defaulttx='', $societe_vendeuse='', $societe_acheteuse='', $taux_produit='')
 	{
@@ -2548,13 +2548,13 @@ class Form
 			print '<font class="error">'.$this->db->error().'</font>';
 		}        	
 		
-		// Dï¿½finition du taux ï¿½ prï¿½sï¿½lectionner (si defaulttx non forcï¿½ et donc vaut -1 ou '')
+		// Définition du taux à pré-sélectionner (si defaulttx non forcé et donc vaut -1 ou '')
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
 		}
-		// Si taux par defaut n'a pu etre dï¿½terminï¿½, on prend dernier de la liste.
-		// Comme ils sont triï¿½s par ordre croissant, dernier = plus ï¿½levï¿½ = taux courant
+		// Si taux par defaut n'a pu etre déterminé, on prend dernier de la liste.
+		// Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
 		if ($defaulttx < 0 || strlen($defaulttx) == 0)
 		{
 			$defaulttx = $txtva[sizeof($txtva)-1];
@@ -2591,7 +2591,7 @@ class Form
      *  \brief      Selection des unites de mesure
      *  \param      name                Nom champ html
      *  \param      measuring_style     Le style de mesure : weight, volume,...
-     *  \param      default             Forï¿½age de l'unite
+     *  \param      default             Forçage de l'unite
      *  \remarks pour l'instant on ne definit pas les unites dans la base
      */
     function select_measuring_units($name='measuring_units', $measuring_style='', $default='0', $adddefault=0)
@@ -2666,10 +2666,10 @@ class Form
             }
         }
       
-      // Dï¿½finition du taux ï¿½ prï¿½sï¿½lectionner
+      // Définition du taux à pré-sélectionner
       if ($defaulttx == '') $defaulttx=get_default_tva($societe_vendeuse,$societe_acheteuse,$taux_produit);
-      // Si taux par defaut n'a pu etre trouvï¿½, on prend dernier.
-      // Comme ils sont triï¿½s par ordre croissant, dernier = plus ï¿½levï¿½ = taux courant
+      // Si taux par defaut n'a pu etre trouvé, on prend dernier.
+      // Comme ils sont triés par ordre croissant, dernier = plus élevé = taux courant
       if ($defaulttx == '') $defaulttx = $txtva[sizeof($txtva)-1];
       
       $nbdetaux = sizeof($txtva);
@@ -2685,16 +2685,16 @@ class Form
     /**
      *		\brief  Affiche zone de selection de date
      *      		Liste deroulante pour les jours, mois, annee et eventuellement heurs et minutes
-     *            	Les champs sont prï¿½sï¿½lectionnï¿½es avec:
+     *            	Les champs sont pré-sélectionnés avec:
      *            	- La date set_time (timestamps ou date au format YYYY-MM-DD ou YYYY-MM-DD HH:MM)
      *            	- La date du jour si set_time vaut ''
      *            	- Aucune date (champs vides) si set_time vaut -1 (dans ce cas empty doit valoir 1)
-	 *		\param	set_time 		Date de prï¿½-sï¿½lection
+	 *		\param	set_time 		Date de pré-sélection
 	 *		\param	prefix			Prefix pour nom champ
 	 *		\param	h				1=Affiche aussi les heures
 	 *		\param	m				1=Affiche aussi les minutes
 	 *		\param	empty			0=Champ obligatoire, 1=Permet une saisie vide
-	 *		\param	form_name 		Nom du formulaire de provenance. Utilisï¿½ pour les dates en popup style andre.
+	 *		\param	form_name 		Nom du formulaire de provenance. Utilisé pour les dates en popup style andre.
 	 *		\param	d				1=Affiche aussi les jours, mois, annees
      */
 	function select_date($set_time='', $prefix='re', $h=0, $m=0, $empty=0, $form_name="", $d=1)
@@ -2708,7 +2708,7 @@ class Form
 	
         if (! $set_time && $empty == 0) $set_time = time();
     
-        // Analyse de la date de prï¿½selection
+        // Analyse de la date de pré-selection
         if (eregi('^([0-9]+)\-([0-9]+)\-([0-9]+)\s?([0-9]+)?:?([0-9]+)?',$set_time,$reg))
         {
             // Date au format 'YYYY-MM-DD' ou 'YYYY-MM-DD HH:MM:SS'
@@ -2843,7 +2843,7 @@ class Form
 	            }
 	            print "</select>";
 	        
-	            // Annï¿½e
+	            // Année
 	            if ($empty || $set_time == -1)
 	            {
 	                print '<input class="flat" type="text" size="3" maxlength="4" name="'.$prefix.'year" value="'.$syear.'">';
@@ -2926,7 +2926,7 @@ class Form
     }
 	
 	/**
-			\brief  Fonction servant a afficher une durï¿½e dans une liste dï¿½roulante
+			\brief  Fonction servant a afficher une durée dans une liste déroulante
 			\param	prefix   prefix
 			\param  iSecond  Nombre de secondes
 	*/
@@ -2963,13 +2963,13 @@ class Form
 
 
     /**
-        \brief  Affiche un select ï¿½ partir d'un tableau
+        \brief  Affiche un select à partir d'un tableau
         \param	htmlname        Nom de la zone select
         \param	array           Tableau de key+valeur
-        \param	id              Key prï¿½-sï¿½lectionnï¿½e
+        \param	id              Key pré-sélectionnée
         \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
-        \param	value_as_key    1 pour utiliser la valeur comme clï¿½
+        \param	value_as_key    1 pour utiliser la valeur comme clé
         \param	$use_java       1 pour utiliser des fonctions javascript
         \param  $fonction       Fonction javascript
         \param  $translate      Traduire la valeur
@@ -2994,7 +2994,7 @@ class Form
         while (list($key, $value) = each ($array))
         {
             print '<option value="'.($value_as_key?$value:$key).'"';
-            // Si il faut prï¿½sï¿½lectionner une valeur
+            // Si il faut pré-sélectionner une valeur
             if ($id != '' && ($id == $key || $id == $value))
             {
                 print ' selected="true"';
@@ -3016,7 +3016,7 @@ class Form
 
 
     /**
-     *    \brief  Renvoie la chaï¿½ne de caractï¿½re dï¿½crivant l'erreur
+     *    \brief  Renvoie la chaine de caractère décrivant l'erreur
      */
     function error()
     {
@@ -3027,7 +3027,7 @@ class Form
   /**
    *    \brief      Selection de oui/non en chaine (renvoie yes/no)
    *    \param      name            Nom du select
-   *    \param      value           Valeur prï¿½sï¿½lectionnï¿½e
+   *    \param      value           Valeur pré-sélectionnée
    *    \param      option          0 retourne yes/no, 1 retourne 1/0
    */
   function selectyesno($name,$value='',$option=0)
@@ -3072,13 +3072,13 @@ class Form
 
 
   /**
-   *    \brief      Affiche la cartouche gï¿½nï¿½rique d'un rapport
+   *    \brief      Affiche la cartouche générique d'un rapport
    *    \param      nom             Valeur pour nom du rapport
    *    \param      variante        Lien optionnel de variante du rapport
    *    \param      period          Periode du reporting
-   *    \param      periodlink      Lien pour changer de pï¿½riode
+   *    \param      periodlink      Lien pour changer de période
    *    \param      description     Description
-   *    \param      builddate       Date gï¿½nï¿½ration 
+   *    \param      builddate       Date génération 
    *    \param      exportlink      Lien pour export
    */
   function report_header($nom,$variante='',$period,$periodlink,$description,$builddate,$exportlink)
@@ -3137,18 +3137,18 @@ class Form
     /**
      *      \brief      Affiche la cartouche de la liste des documents d'une propale, facture...
      *      \param      modulepart          propal=propal, facture=facture, ...
-     *      \param      filename            Sous rep ï¿½ scanner (vide si filedir deja complet)
-     *      \param      filedir             Repertoire ï¿½ scanner
+     *      \param      filename            Sous rep à scanner (vide si filedir deja complet)
+     *      \param      filedir             Repertoire à scanner
      *      \param      urlsource           Url page origine
-     *      \param      genallowed          Gï¿½nï¿½ration autorisï¿½e (1/0 ou array des formats)
-     *      \param      delallowed          Suppression autorisï¿½e (1/0)
-     *      \param      modelselected       Modele ï¿½ prï¿½sï¿½lectionner par dï¿½faut
+     *      \param      genallowed          Génération autorisée (1/0 ou array des formats)
+     *      \param      delallowed          Suppression autorisée (1/0)
+     *      \param      modelselected       Modele à pré-sélectionner par défaut
      *      \param      modelliste			    Tableau des modeles possibles
-     *      \param      forcenomultilang	  N'affiche pas option langue meme si MAIN_MULTILANGS dï¿½fini
+     *      \param      forcenomultilang	  N'affiche pas option langue meme si MAIN_MULTILANGS défini
      *      \param      iconPDF             N'affiche que l'icone PDF avec le lien (1/0)
-     *      \remarks    Le fichier de facture dï¿½taillï¿½e est de la forme
+     *      \remarks    Le fichier de facture détaillée est de la forme
      *                  REFFACTURE-XXXXXX-detail.pdf ou XXXXX est une forme diverse
-     *		\return		int					<0 si ko, nbre de fichiers affichï¿½s si ok
+     *		\return		int					<0 si ko, nbre de fichiers affichés si ok
      */
     function show_documents($modulepart,$filename,$filedir,$urlsource,$genallowed,$delallowed=0,$modelselected='',$modelliste=array(),$forcenomultilang=0,$iconPDF=0)
     {
@@ -3317,7 +3317,7 @@ class Form
         }
         $file_list=dolibarr_dir_list($filedir,'files',0,$filter,'\.meta$'.$png,'date',SORT_DESC);
 		
-        // Affiche en-tete tableau si non deja affichï¿½
+        // Affiche en-tete tableau si non deja affiché
 		if (sizeof($file_list) && ! $headershown && !$iconPDF)
 		{
 			$headershown=1;
@@ -3325,22 +3325,22 @@ class Form
 		  print '<table class="border" width="100%">';
 		}	
 		
-		// Boucle sur chaque ligne trouvï¿½e
+		// Boucle sur chaque ligne trouvée
 		foreach($file_list as $i => $file)
 		{
-			// Dï¿½fini chemin relatif par rapport au module pour lien download
+			// Défini chemin relatif par rapport au module pour lien download
 	    $relativepath=$file["name"];								// Cas general
-	    if ($filename) $relativepath=$filename."/".$file["name"];	// Cas prpal, facture...
+	    if ($filename) $relativepath=$filename."/".$file["name"];	// Cas propal, facture...
 	    // Autre cas
       if ($modulepart == 'don')        { $relativepath = get_exdir($filename,2).$file["name"]; }
       if ($modulepart == 'export')     { $relativepath = $file["name"]; }
  
-      // Dï¿½fini le type MIME du document
+      // Défini le type MIME du document
       if (eregi('\.([^\.]+)$',$file["name"],$reg)) $extension=$reg[1];
       $mimetype=strtoupper($extension);
       if ($extension == 'pdf') $mimetype='PDF';
       if ($extension == 'html') $mimetype='HTML';
-      if (eregi('\-detail\.pdf',$file["name"])) $mimetype='PDF Dï¿½taillï¿½';
+      if (eregi('\-detail\.pdf',$file["name"])) $mimetype='PDF Détaillé';
 
       if (!$iconPDF) print "<tr $bc[$var]>";
 
@@ -3432,10 +3432,10 @@ class Form
 	}
 	
 	  /**
-     *    \brief      Retourne la liste des modï¿½les d'export
-     *    \param      selected          Id modï¿½le prï¿½sï¿½lectionnï¿½
+     *    \brief      Retourne la liste des modèles d'export
+     *    \param      selected          Id modèle pré-sélectionné
      *    \param      htmlname          Nom de la zone select
-     *    \param      type              Type des modï¿½les recherchï¿½s
+     *    \param      type              Type des modèles recherchés
      *    \param      useempty          Affiche valeur vide dans liste
      */
     function select_export_model($selected='',$htmlname='exportmodelid',$type='',$useempty=0)
@@ -3480,7 +3480,7 @@ class Form
     
     /**
      *    \brief      Retourne la liste des mois
-     *    \param      selected          Id mois prï¿½sï¿½lectionnï¿½
+     *    \param      selected          Id mois pré-sélectionné
      *    \param      htmlname          Nom de la zone select
      *    \param      useempty          Affiche valeur vide dans liste
      */
@@ -3549,11 +3549,11 @@ class Form
 	}
 	
 	/**
-	 *    \brief      Liste de sï¿½lection du gï¿½nï¿½rateur de codes barres
-	 *    \param      selected          Id code prï¿½sï¿½lectionnï¿½
+	 *    \brief      Liste de sélection du générateur de codes barres
+	 *    \param      selected          Id code pré-sélectionné
 	 *    \param      code_id           Id du code barre
 	 *    \param      idForm            Id du formulaire
-	 *    Todo : ajouter une vï¿½rification de dï¿½sactivation du code barre si il est dï¿½jï¿½ utilisï¿½ dans un module
+	 *    Todo : ajouter une vérification de désactivation du code barre si il est déjà utilisé dans un module
 	 */
 	function setBarcodeEncoder($selected=0,$code_id,$idForm='formbarcode')
 	{
@@ -3561,7 +3561,7 @@ class Form
 		
 		$disable = '';
 		
-		// On vï¿½rifie si le code de barre est dï¿½jï¿½ sï¿½lectionnï¿½ par dï¿½faut dans le module produit
+		// On vérifie si le code de barre est déjà sélectionné par défaut dans le module produit
 		if ($conf->produit->enabled && $conf->global->PRODUIT_DEFAULT_BARCODE_TYPE == $code_id)
 		{
 			$disable = 'disabled="disabled"';
@@ -3582,7 +3582,7 @@ class Form
    
    /**
      *    \brief      Retourne la liste des types de codes barres
-     *    \param      selected          Id code prï¿½sï¿½lectionnï¿½
+     *    \param      selected          Id code pré-sélectionné
      *    \param      htmlname          Nom de la zone select
      *    \param      useempty          Affiche valeur vide dans liste
      */
@@ -3636,7 +3636,7 @@ class Form
    /**
      *    	\brief      Affiche formulaire de selection du type de code barre
      *    	\param      page        	Page
-     *    	\param      selected    	Id condition prï¿½sï¿½lectionnï¿½e
+     *    	\param      selected    	Id condition pré-sélectionnée
      *    	\param      htmlname    	Nom du formulaire select
      */
     function form_barcode_type($page, $selected='', $htmlname='barcodetype_id')

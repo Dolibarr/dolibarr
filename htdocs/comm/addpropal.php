@@ -56,7 +56,7 @@ print_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
-// Rï¿½cupï¿½ration de l'id de projet
+// Récupération de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -141,12 +141,12 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
-	// Conditions de rï¿½glement
+	// Conditions de règlement
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de rï¿½glement
+	// Mode de règlement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';

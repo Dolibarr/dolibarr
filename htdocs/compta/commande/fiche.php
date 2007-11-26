@@ -42,7 +42,7 @@ $user->getrights('commande');
 
 if (! $user->rights->commande->lire) accessforbidden();
 
-// Sï¿½curitï¿½ accï¿½s client
+// Sécurité accès client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -126,7 +126,7 @@ if ($_GET["id"] > 0)
 			print '</tr>';
 
 
-			// Sociï¿½tï¿½
+			// Société
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 			print '</tr>';
@@ -221,7 +221,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</td></tr>';
 
-			// Conditions et modes de rï¿½glement
+			// Conditions et modes de règlement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -443,7 +443,7 @@ if ($_GET["id"] > 0)
 		
 		
 		/*
-		* Documents gï¿½nï¿½rï¿½s
+		* Documents générés
 		*
 		*/
 		$comref = sanitize_string($commande->ref);
@@ -505,7 +505,7 @@ if ($_GET["id"] > 0)
         
         
         /*
-         * 	Liste des expï¿½ditions
+         * 	Liste des expéditions
          */
         $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
         $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
@@ -600,7 +600,7 @@ if ($_GET["id"] > 0)
     }
     else
     {
-        // Commande non trouvï¿½e
+        // Commande non trouvée
         print "Commande inexistante";
     }
 }

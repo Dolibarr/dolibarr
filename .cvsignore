@@ -2,3 +2,5 @@ index.php
 documents
 *.htaccess
 *.settings
+.settings
+*.project
