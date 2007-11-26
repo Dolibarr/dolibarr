@@ -418,7 +418,7 @@ if ($chid > 0)
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
-			// Classer 'payï¿½'
+			// Classer 'payé'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
@@ -435,7 +435,7 @@ if ($chid > 0)
 	}
 	else
 	{
-		/* Charge non trouvï¿½e */
+		/* Charge non trouvé */
 		dolibarr_print_error('',$cha->error);
 	}
 }
