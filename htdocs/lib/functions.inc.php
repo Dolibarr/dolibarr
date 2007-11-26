@@ -530,7 +530,7 @@ function dolibarr_print_date($time,$format='')
     if ($format == 'dayhourtext') $format=$conf->format_date_hour_text_short;
     if ($format == 'dayhourldap') $format='%Y%m%d%H%M%SZ';
 
-    // Si date non définie, on renvoie ''
+    // Si date non definie, on renvoie ''
     if ($time == '') return '';		// $time=0 permis car signifie 01/01/1970 00:00:00
 
     // Analyse de la date
@@ -649,7 +649,13 @@ function dolibarr_getdate($timestamp,$fast=false)
 function dolibarr_mktime($hour,$minute,$second,$month,$day,$year,$gm=0)
 {
 	//print "- ".$hour.",".$minute.",".$second.",".$month.",".$day.",".$year.",".$_SERVER["WINDIR"]." -";
-	if (! $month || ! $day) return '';
+	// Check parameters
+	if (! $month || ! $day)  return '';
+	if ($day   > 31) return '';
+	if ($month > 12) return '';
+	if ($min  < 0 || $min  > 60) return '';
+	if ($hour < 0 || $hour > 24) return '';
+	if ($min  < 0 || $min  > 60) return '';
 	
 	$usealternatemethod=false;
 	if ($year <= 1970) $usealternatemethod=true;		// <= 1970
