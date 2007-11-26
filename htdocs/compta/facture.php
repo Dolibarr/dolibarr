@@ -1685,8 +1685,9 @@ else
 			
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
-			$absolute_discount=$soc->getCurrentDiscount();
-			
+			$absolute_discount=$soc->getCurrentDiscount('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getCurrentDiscount('','fk_facture_source IS NOT NULL');
+
 			$totalpaye = $fac->getSommePaiement();
 			$resteapayer = $fac->total_ttc - $totalpaye;
 			if ($fac->paye) $resteapayer=0;
@@ -1956,15 +1957,32 @@ else
 			{
 				if ($fac->statut > 0 || $fac->type == 2)
 				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
 				}
 				else
 				{
+					// Remise dispo de type non avoir
+					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,price($absolute_discount));
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 				}
 			}
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			if ($absolute_creditnote)
+			{
+				// If validated, we show link "add credit note to payment"
+				if ($fac->statut != 1 || $fac->type == 2)
+				{
+					print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+				}
+				else
+				{
+					// Remise dispo de type avoir
+					$filter='fk_facture_source IS NOT NULL';
+					if (! $absolute_discount) print '<br>';
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?facid='.$fac->id,0,'remise_id_for_payment',$soc->id,$absolute_creditnote,$filter);
+				}
+			}
+			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
 			
 			// Dates

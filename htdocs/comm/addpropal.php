@@ -56,7 +56,7 @@ print_titre($langs->trans("NewProp"));
 
 $html=new Form($db);
 
-// Récupération de l'id de projet
+// Rï¿½cupï¿½ration de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -129,7 +129,7 @@ if ($_GET["action"] == 'create')
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
 	$absolute_discount=$soc->getCurrentDiscount();
 	print '. ';
-	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+	if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 	else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 	print '.';
 	print '</td></tr>';
@@ -141,12 +141,12 @@ if ($_GET["action"] == 'create')
 
 	print '<tr><td>'.$langs->trans("ValidityDuration").'</td><td colspan="2"><input name="duree_validite" size="5" value="'.$conf->global->PROPALE_VALIDITY_DURATION.'"> '.$langs->trans("days").'</td></tr>';
 
-	// Conditions de réglement
+	// Conditions de rï¿½glement
 	print '<tr><td nowrap>'.$langs->trans('PaymentConditionsShort').'</td><td colspan="2">';
 	$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id');
 	print '</td></tr>';
 
-	// Mode de réglement
+	// Mode de rï¿½glement
 	print '<tr><td>'.$langs->trans('PaymentMode').'</td><td colspan="2">';
 	$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 	print '</td></tr>';

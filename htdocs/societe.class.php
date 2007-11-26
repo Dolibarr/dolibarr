@@ -95,12 +95,12 @@ class Societe
   
   var $price_level;
   
-  var $commercial_id; //Id du commercial affecté
+  var $commercial_id; //Id du commercial affectï¿½
 
 
   /**
    *    \brief  Constructeur de la classe
-   *    \param  DB     handler accès base de données
+   *    \param  DB     handler accï¿½s base de donnï¿½es
    *    \param  id     id societe (0 par defaut)
    */
   function Societe($DB, $id=0)
@@ -123,8 +123,8 @@ class Societe
   }
 
   /**
-   *    \brief      Crée la societe en base
-   *    \param      user        Objet utilisateur qui demande la création
+   *    \brief      Crï¿½e la societe en base
+   *    \param      user        Objet utilisateur qui demande la crï¿½ation
    *    \return     int         0 si ok, < 0 si erreur
    */
 
@@ -132,7 +132,7 @@ class Societe
     {
         global $langs,$conf;
 
-        // Nettoyage paramètres
+        // Nettoyage paramï¿½tres
         $this->nom=trim($this->nom);
 
         dolibarr_syslog("Societe::create ".$this->nom);
@@ -157,12 +157,12 @@ class Societe
 
                 $ret = $this->update($this->id,$user,0,1,1);
                 
-                // si un commercial crée un client il lui est affecté automatiquement
+                // si un commercial crï¿½e un client il lui est affectï¿½ automatiquement
                 if (!$user->rights->commercial->client->voir)
                 {
                 	$this->add_commercial($user, $user->id);
                 }
-                // Ajout du commercial affecté
+                // Ajout du commercial affectï¿½
                 else if ($this->commercial_id != '' && $this->commercial_id != -1)
                 {
                 	$this->add_commercial($user, $this->commercial_id);
@@ -227,13 +227,13 @@ class Societe
 
 		if (! $this->nom)
 		{
-			$this->error = "Le nom de la société ne peut être vide.\n";
+			$this->error = "Le nom de la sociï¿½tï¿½ ne peut ï¿½tre vide.\n";
 			$result = -2;
 		}
 		if ($this->client && $this->codeclient_modifiable())
 		{
-			// On ne vérifie le code client que si la société est un client / prospect et que le code est modifiable
-			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
+			// On ne vï¿½rifie le code client que si la sociï¿½tï¿½ est un client / prospect et que le code est modifiable
+			// Si il n'est pas modifiable il n'est pas mis ï¿½ jour lors de l'update
 			$rescode = $this->check_codeclient();
 			if ($rescode <> 0)
 			{
@@ -247,19 +247,19 @@ class Societe
 				}
 				if ($rescode == -3)
 				{
-					$this->error .= "Ce code client est déjà utilisé.\n";
+					$this->error .= "Ce code client est dï¿½jï¿½ utilisï¿½.\n";
 				}
 				if ($rescode == -4)
 				{
-					$this->error .= "Vous devez renseigner le préfix pour générer le code client.\n";
+					$this->error .= "Vous devez renseigner le prï¿½fix pour gï¿½nï¿½rer le code client.\n";
 				}
 				$result = -3;
 			}
 		}
 		if ($this->fournisseur && $this->codefournisseur_modifiable())
 		{
-			// On ne vérifie le code fournisseur que si la société est un fournisseur et que le code est modifiable
-			// Si il n'est pas modifiable il n'est pas mis à jour lors de l'update
+			// On ne vï¿½rifie le code fournisseur que si la sociï¿½tï¿½ est un fournisseur et que le code est modifiable
+			// Si il n'est pas modifiable il n'est pas mis ï¿½ jour lors de l'update
 			$rescode = $this->check_codefournisseur();
 			if ($rescode <> 0)
 			{
@@ -273,11 +273,11 @@ class Societe
 				}
 				if ($rescode == -3)
 				{
-					$this->error .= "Ce code fournisseur est déjà utilisé.\n";
+					$this->error .= "Ce code fournisseur est dï¿½jï¿½ utilisï¿½.\n";
 				}
 				if ($rescode == -5)
 				{
-					$this->error .= "Vous devez renseigner le préfix pour générer le code fournisseur.\n";
+					$this->error .= "Vous devez renseigner le prï¿½fix pour gï¿½nï¿½rer le code fournisseur.\n";
 				}
 				$result = -3;
 			}
@@ -287,9 +287,9 @@ class Societe
 	}
 
     /**
-     *      \brief      Mise a jour des paramètres de la société
+     *      \brief      Mise a jour des paramï¿½tres de la sociï¿½tï¿½
      *      \param      id              			id societe
-     *      \param      user            			Utilisateur qui demande la mise à jour
+     *      \param      user            			Utilisateur qui demande la mise ï¿½ jour
      *      \param      call_trigger    			0=non, 1=oui
 	 *		\param		allowmodcodeclient			Autorise modif code client
 	 *		\param		allowmodcodefournisseur		Autorise modif code fournisseur
@@ -301,7 +301,7 @@ class Societe
 
         dolibarr_syslog("Societe::Update id=".$id." call_trigger=".$call_triger." allowmodcodeclient=".$allowmodcodeclient." allowmodcodefournisseur=".$allowmodcodefournisseur);
 
-		// Nettoyage des paramètres
+		// Nettoyage des paramï¿½tres
         $this->id=$id;
         $this->capital=trim($this->capital);
         $this->nom=trim($this->nom);
@@ -414,7 +414,7 @@ class Societe
             if ($resql)
             {
             	
-            	//Si c'est un particulier on crée la fiche contact
+            	//Si c'est un particulier on crï¿½e la fiche contact
             	if ($this->particulier == 1)
             	{
             		require_once (DOL_DOCUMENT_ROOT."/contact.class.php");
@@ -477,7 +477,7 @@ class Societe
 
     /**
      *    \brief      Charge depuis la base l'objet societe
-     *    \param      socid       Id de la société à charger en mémoire
+     *    \param      socid       Id de la sociï¿½tï¿½ ï¿½ charger en mï¿½moire
      *    \param      user        Objet de l'utilisateur
      *    \return     int         >0 si ok, <0 si ko
      */
@@ -680,8 +680,8 @@ class Societe
     }
 
     /**
-     *    \brief      Suppression d'une societe de la base avec ses dépendances (contacts, rib...)
-     *    \param      id      id de la societe à supprimer
+     *    \brief      Suppression d'une societe de la base avec ses dï¿½pendances (contacts, rib...)
+     *    \param      id      id de la societe ï¿½ supprimer
      */
     function delete($id)
     {
@@ -725,7 +725,7 @@ class Societe
             }
             else
             {
-                $this->error .= "Impossible de supprimer la société.\n";
+                $this->error .= "Impossible de supprimer la sociï¿½tï¿½.\n";
                 dolibarr_syslog("Societe::Delete erreur -3");
             }
 
@@ -739,7 +739,7 @@ class Societe
 
                 $this->db->commit();
 
-                // Suppression du répertoire document
+                // Suppression du rï¿½pertoire document
                 $docdir = $conf->societe->dir_output . "/" . $id;
                 if (file_exists ($docdir))
                 {
@@ -759,8 +759,8 @@ class Societe
 
 
   /**
-   *    \brief     Retournes les factures impayées de la société
-   *    \return    array   tableau des id de factures impayées
+   *    \brief     Retournes les factures impayï¿½es de la sociï¿½tï¿½
+   *    \return    array   tableau des id de factures impayï¿½es
    *
    */
   function factures_impayes()
@@ -792,7 +792,7 @@ class Societe
   }
 
 	/**
-	 *    \brief      Attribut le prefix de la société en base
+	 *    \brief      Attribut le prefix de la sociï¿½tï¿½ en base
 	 *
 	 */
 	function attribute_prefix()
@@ -843,10 +843,10 @@ class Societe
 	}
 
 	/**
-	 *    \brief      Génère le préfix de la sociét
-	 *    \param      nom         nom de la sociét
-	 *    \param      taille      taille du prefix à retourner
-	 *    \param      mot         l'indice du mot à utiliser
+	 *    \brief      Gï¿½nï¿½re le prï¿½fix de la sociï¿½t
+	 *    \param      nom         nom de la sociï¿½t
+	 *    \param      taille      taille du prefix ï¿½ retourner
+	 *    \param      mot         l'indice du mot ï¿½ utiliser
 	 */
 	function genprefix($nom, $taille=4, $mot=0)
 	{
@@ -856,7 +856,7 @@ class Societe
 		if ($mot < count($tab))
 		{
 			$prefix = strtoupper(substr($tab[$mot],0,$taille));
-			// On vérifie que ce prefix n'a pas déjà été pris ...
+			// On vï¿½rifie que ce prefix n'a pas dï¿½jï¿½ ï¿½tï¿½ pris ...
 			$sql = "SELECT count(*) as nb FROM ".MAIN_DB_PREFIX."societe WHERE prefix_comm = '$prefix'";
 			$resql=$this->db->query( $sql);
 			if ($resql)
@@ -877,7 +877,7 @@ class Societe
 	}
 
   /**
-   *    \brief     Définit la société comme un client
+   *    \brief     Dï¿½finit la sociï¿½tï¿½ comme un client
    *
    */
   function set_as_client()
@@ -893,10 +893,10 @@ class Societe
   }
 
 	/**
-	 *    	\brief      Définit la société comme un client
+	 *    	\brief      Dï¿½finit la sociï¿½tï¿½ comme un client
 	 *    	\param      remise		Valeur en % de la remise
 	 *    	\param      note		Note/Motif de modification de la remise
-	 *    	\param      user		Utilisateur qui définie la remise
+	 *    	\param      user		Utilisateur qui dï¿½finie la remise
 	 *		\return		int			<0 si ko, >0 si ok
 	 */
 	function set_remise_client($remise, $note, $user)
@@ -951,7 +951,7 @@ class Societe
 	}
 
 	/**
-	 *    	\brief      Ajoute une remise fixe pour la société
+	 *    	\brief      Ajoute une remise fixe pour la sociï¿½tï¿½
 	 *    	\param      remise      Montant de la remise
 	 *    	\param      user        Utilisateur qui accorde la remise
 	 *    	\param      desc		Motif de l'avoir
@@ -1002,8 +1002,8 @@ class Societe
 	}
 
 	/**
-	 *    	\brief      Supprime un avoir (à condition que non affecté à une facture)
-	 *    	\param      id			Id de l'avoir à supprimer
+	 *    	\brief      Supprime un avoir (ï¿½ condition que non affectï¿½ ï¿½ une facture)
+	 *    	\param      id			Id de l'avoir ï¿½ supprimer
 	 *		\return		int			<0 si ko, id de l'avoir si ok
 	 */
 	function del_remise_except($id)
@@ -1022,21 +1022,22 @@ class Societe
 
 
 	/**
-	 *    	\brief      Renvoie montant des avoirs en cours
-	 *		\param		user		Filtre sur un user auteur des l'avoir
+	 *    	\brief      Renvoie montant des avoirs en cours disponibles
+	 *		\param		user		Filtre sur un user auteur des remises
+	 * 		\param		filter		Filtre autre
 	 *		\return		int			<0 si ko, montant avoir sinon
 	 */
-	function getCurrentDiscount($user='')
+	function getCurrentDiscount($user='',$filter='')
 	{
         $sql  = "SELECT SUM(rc.amount_ht) as amount";
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.fk_soc =". $this->id;
         if (is_object($user)) $sql.= " AND rc.fk_user = ".$user->id;
         $sql.= " AND rc.fk_facture IS NULL";
-        $resql=$this->db->query($sql);
+        if ($filter) $sql.=' AND '.$filter;
 
-		dolibarr_syslog("Societe::getCurrentDiscount sql=".$sql);
-		
+        dolibarr_syslog("Societe::getCurrentDiscount sql=".$sql,LOG_DEBUG);
+        $resql=$this->db->query($sql);
         if ($resql)
         {
             $obj = $this->db->fetch_object($resql);
@@ -1157,8 +1158,8 @@ class Societe
 
   /**
    *    \brief      Renvoie le nom d'une societe a partir d'un id
-   *    \param      id      	id de la société recherchée
-   *	\return		string		Nom de la société
+   *    \param      id      	id de la sociï¿½tï¿½ recherchï¿½e
+   *	\return		string		Nom de la sociï¿½tï¿½
    */
   function get_nom($id)
   {
@@ -1184,7 +1185,7 @@ class Societe
 
 
 	/**
-	*    \brief      Renvoie la liste des contacts emails existant pour la sociét
+	*    \brief      Renvoie la liste des contacts emails existant pour la sociï¿½t
 	*    \return     array       tableau des contacts emails
 	*/
 	function thirdparty_and_contact_email_array()
@@ -1194,14 +1195,14 @@ class Societe
 		$contact_email = $this->contact_email_array();
 		if ($this->email)
 		{
-			// TODO: Tester si email non deja présent dans tableau contact
+			// TODO: Tester si email non deja prï¿½sent dans tableau contact
 			$contact_email[-1]=$langs->trans("ThirdParty").': '.dolibarr_trunc($this->nom,16)." &lt;".$this->email."&gt;";;
 		}
 		return $contact_email;
 	}
 	
 	/**
-	*    \brief      Renvoie la liste des contacts emails existant pour la société
+	*    \brief      Renvoie la liste des contacts emails existant pour la sociï¿½tï¿½
 	*    \return     array       tableau des contacts emails
 	*/
 	function contact_email_array()
@@ -1235,7 +1236,7 @@ class Societe
 	
 	
 	/**
-	*    \brief      Renvoie la liste des contacts de cette sociét
+	*    \brief      Renvoie la liste des contacts de cette sociï¿½t
 	*    \return     array      tableau des contacts
 	*/
 	function contact_array()
@@ -1298,7 +1299,7 @@ class Societe
 
 
     /**
-     *    	\brief      Renvoie la liste des libellés traduits des types actifs de sociétés
+     *    	\brief      Renvoie la liste des libellï¿½s traduits des types actifs de sociï¿½tï¿½s
      *		\param		mode		0=renvoi id+libelle, 1=renvoi code+libelle
 	 *    	\return     array      	tableau des typesl
      */
@@ -1440,7 +1441,7 @@ class Societe
 	}
 
   /**
-	 *    \brief      Attribut un code client à partir du module de controle des codes.
+	 *    \brief      Attribut un code client ï¿½ partir du module de controle des codes.
 	 *    \return     code_client		Code client automatique
 	 */
 	function get_codeclient($objsoc=0,$type=0)
@@ -1460,7 +1461,7 @@ class Societe
 	}
 	
 	/**
-	 *    \brief      Attribut un code fournisseur à partir du module de controle des codes.
+	 *    \brief      Attribut un code fournisseur ï¿½ partir du module de controle des codes.
 	 *    \return     code_fournisseur		Code fournisseur automatique
 	 */
 	function get_codefournisseur($objsoc=0,$type=1)
@@ -1538,7 +1539,7 @@ class Societe
 
 	/**
 	 *    \brief      Verifie code client
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisé
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisï¿½
 	 */
 	function check_codeclient()
 	{
@@ -1563,7 +1564,7 @@ class Societe
 	
 	/**
 	 *    \brief      Verifie code fournisseur
-	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisé
+	 *    \return     int		<0 si KO, 0 si OK, peut modifier le code client suivant le module utilisï¿½
 	 */
 	function check_codefournisseur()
 	{
@@ -1588,8 +1589,8 @@ class Societe
 
 	/**
 	 *    	\brief  	Renvoie un code compta, suivant le module de code compta.
-	 *            		Peut être identique à celui saisit ou généré automatiquement.
-	 *            		A ce jour seule la génération automatique est implémentée
+	 *            		Peut ï¿½tre identique ï¿½ celui saisit ou gï¿½nï¿½rï¿½ automatiquement.
+	 *            		A ce jour seule la gï¿½nï¿½ration automatique est implï¿½mentï¿½e
 	 *    	\param      type			Type de tiers ('customer' ou 'supplier')
 	 *		\return		string			Code compta si ok, 0 si aucun, <0 si ko
 	 */
@@ -1623,8 +1624,8 @@ class Societe
 	}
 	
     /**
-     *    \brief      Défini la société mère pour les filiales
-     *    \param      id      id compagnie mère à positionner
+     *    \brief      Dï¿½fini la sociï¿½tï¿½ mï¿½re pour les filiales
+     *    \param      id      id compagnie mï¿½re ï¿½ positionner
      *    \return     int     <0 si ko, >0 si ok
      */
     function set_parent($id)
@@ -1647,8 +1648,8 @@ class Societe
     }
 
     /**
-     *    \brief      Supprime la société mère
-     *    \param      id      id compagnie mère à effacer
+     *    \brief      Supprime la sociï¿½tï¿½ mï¿½re
+     *    \param      id      id compagnie mï¿½re ï¿½ effacer
      *    \return     int     <0 si ko, >0 si ok
      */
     function remove_parent($id)
@@ -1723,7 +1724,7 @@ class Societe
     }
 
     /**
-     *      \brief      Renvoi url de vérification d'un identifiant professionnal
+     *      \brief      Renvoi url de vï¿½rification d'un identifiant professionnal
      *      \param      idprof          1,2,3,4 (Exemple: 1=siren,2=siret,3=naf,4=rcs/rm)
      *      \param      soc             Objet societe
      *      \return     string          url ou chaine vide si aucune url connue
@@ -1741,8 +1742,8 @@ class Societe
     }
 
     /**
-     *      \brief      Indique si la société a des projets
-     *      \return     bool	   true si la société a des projets, false sinon
+     *      \brief      Indique si la sociï¿½tï¿½ a des projets
+     *      \return     bool	   true si la sociï¿½tï¿½ a des projets, false sinon
      */
     function has_projects()
     {
@@ -1823,12 +1824,12 @@ class Societe
     }
 
    /*
-    *       \brief     Renvoi si pays appartient à CEE
+    *       \brief     Renvoi si pays appartient ï¿½ CEE
     *       \param     boolean		true = pays dans CEE, false= pays hors CEE
     */
     function isInEEC()
     {
-      // \todo liste code pays à compléter
+      // \todo liste code pays ï¿½ complï¿½ter
       $country_code_in_EEC=array('BE','FR','LU','GB');	
       //print "dd".$this->pays_code;
       return in_array($this->pays_code,$country_code_in_EEC);

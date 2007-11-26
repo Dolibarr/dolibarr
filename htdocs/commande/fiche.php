@@ -52,7 +52,7 @@ $user->getrights('expedition');
 if (!$user->rights->commande->lire) accessforbidden();
 
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 $socid=0;
 if ($user->societe_id > 0)
 {
@@ -69,7 +69,7 @@ if ($user->societe_id >0 && isset($_GET["id"]) && $_GET["id"]>0)
 
 
 
-// Récupération de l'id de projet
+// Rï¿½cupï¿½ration de l'id de projet
 $projetid = 0;
 if ($_GET["projetid"])
 {
@@ -147,7 +147,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
   $commande->note                 = $_POST['note'];
   $commande->source               = $_POST['source_id'];
   $commande->projetid             = $_POST['projetid'];
-  //$commande->remise_absolue       = $_POST['remise_absolue']; //la remise était appliquée sur les lignes et sur le total
+  //$commande->remise_absolue       = $_POST['remise_absolue']; //la remise ï¿½tait appliquï¿½e sur les lignes et sur le total
   //$commande->remise_percent       = $_POST['remise_percent'];
   $commande->ref_client           = $_POST['ref_client'];
   $commande->modelpdf             = $_POST['model'];
@@ -173,7 +173,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
 
   if ($commande_id > 0)
     {
-      // Insertion contact par defaut si défini
+      // Insertion contact par defaut si dï¿½fini
       if ($_POST["contactidp"])
 	{
 	  $result=$commande->add_contact($_POST["contactidp"],'CUSTOMER','external');
@@ -193,7 +193,7 @@ if ($_POST['action'] == 'add' && $user->rights->commande->creer)
       $action = '';
     }
 
-  // Fin création facture, on l'affiche
+  // Fin crï¿½ation facture, on l'affiche
   if ($commande_id > 0 && ! $error)
     {
       $db->commit();
@@ -393,7 +393,7 @@ if ($_POST['action'] == 'addligne' && $user->rights->commande->creer)
 }
 
 /*
- *  Mise à jour d'une ligne dans la commande
+ *  Mise ï¿½ jour d'une ligne dans la commande
  */
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['save'] == $langs->trans('Save'))
 {
@@ -423,12 +423,12 @@ if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POS
       exit;
     }
   
-  $_GET['id']=$_POST['id'];   // Pour réaffichage de la fiche en cours d'édition
+  $_GET['id']=$_POST['id'];   // Pour rï¿½affichage de la fiche en cours d'ï¿½dition
 }
 
 if ($_POST['action'] == 'updateligne' && $user->rights->commande->creer && $_POST['cancel'] == $langs->trans('Cancel'))
 {
-  Header('Location: fiche.php?id='.$_POST['id']);   // Pour réaffichage de la fiche en cours d'édition
+  Header('Location: fiche.php?id='.$_POST['id']);   // Pour rï¿½affichage de la fiche en cours d'ï¿½dition
   exit;
 }
 
@@ -511,10 +511,10 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
 {
   /*
    * Generation de la commande
-   * définit dans /includes/modules/commande/modules_commande.php
+   * dï¿½finit dans /includes/modules/commande/modules_commande.php
    */
 
-  // Sauvegarde le dernier modèle choisi pour générer un document
+  // Sauvegarde le dernier modï¿½le choisi pour gï¿½nï¿½rer un document
   $commande = new Commande($db, 0, $_REQUEST['id']);
   $commande->fetch($_REQUEST['id']);
   if ($_REQUEST['model'])
@@ -573,13 +573,13 @@ if ($_POST['action'] == 'send')
 
 	  if ($_POST['sendto'])
 	    {
-	      // Le destinataire a été fourni via le champ libre
+	      // Le destinataire a ï¿½tï¿½ fourni via le champ libre
 	      $sendto = $_POST['sendto'];
 	      $sendtoid = 0;
 	    }
 	  elseif ($_POST['receiver'])
 	    {
-	      // Le destinataire a été fourni via la liste déroulante
+	      // Le destinataire a ï¿½tï¿½ fourni via la liste dï¿½roulante
 	      if ($_POST['receiver'] < 0)	// Id du tiers
 		{
 		  $sendto = $commande->client->email;
@@ -610,11 +610,11 @@ if ($_POST['action'] == 'send')
 		    }
 
 		  $actiontypeid=8;
-		  $actionmsg ='Mail envoyé par '.$from.' à '.$sendto.'.<br>';
+		  $actionmsg ='Mail envoyï¿½ par '.$from.' ï¿½ '.$sendto.'.<br>';
 
 		  if ($message)
 		    {
-		      $actionmsg.='Texte utilisé dans le corps du message:<br>';
+		      $actionmsg.='Texte utilisï¿½ dans le corps du message:<br>';
 		      $actionmsg.=$message;
 		    }
 
@@ -705,7 +705,7 @@ if ($_POST['action'] == 'send')
     {
       $langs->load("other");
       $mesg='<div class="error">'.$langs->trans('ErrorFailedToReadEntity',$langs->trans("Invoice")).'</div>';
-      dolibarr_syslog('Impossible de lire les données de la facture. Le fichier facture n\'a peut-être pas été généré.');
+      dolibarr_syslog('Impossible de lire les donnï¿½es de la facture. Le fichier facture n\'a peut-ï¿½tre pas ï¿½tï¿½ gï¿½nï¿½rï¿½.');
     }
 }
 
@@ -822,12 +822,12 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 
 			print '</td></tr>';
 			
-			// Conditions de réglement
+			// Conditions de rï¿½glement
 			print '<tr><td nowrap="nowrap">'.$langs->trans('PaymentConditionsShort').'</td><td>';
 			$html->select_conditions_paiements($soc->cond_reglement,'cond_reglement_id',-1,1);
 			print '</td></tr>';
 			
-			// Mode de réglement
+			// Mode de rï¿½glement
 			print '<tr><td>'.$langs->trans('PaymentMode').'</td><td>';
 			$html->select_types_paiements($soc->mode_reglement,'mode_reglement_id');
 			print '</td></tr>';
@@ -877,7 +877,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				if ($conf->global->PRODUCT_SHOW_WHEN_CREATE)
 				{
 					/*
-		* Services/produits prédéfinis
+		* Services/produits prï¿½dï¿½finis
 		*/
 					$NBLINES=8;
 					
@@ -1022,7 +1022,7 @@ else
 	   */
 	  if ($_GET['action'] == 'validate')
 	  {
-	  	// on vérifie si la facture est en numérotation provisoire
+	  	// on vï¿½rifie si la facture est en numï¿½rotation provisoire
 	    $ref = substr($commande->ref, 1, 4);
 	    if ($ref == 'PROV')
 	    {
@@ -1075,8 +1075,7 @@ else
 	  
 	  // Ref
 	  print '<tr><td width="18%">'.$langs->trans('Ref').'</td>';
-	  print '<td colspan="2">'.$commande->ref.'</td>';
-	  print '<td align="right">'.$langs->trans('Author').' : '.$author->fullname.'</td>';
+	  print '<td colspan="3">'.$commande->ref.'</td>';
 	  print '</tr>';
 	  
 	  // Ref commande client
@@ -1103,7 +1102,7 @@ else
 	  print '</tr>';
 	  
 
-	  // Société
+	  // Sociï¿½tï¿½
 	  print '<tr><td>'.$langs->trans('Company').'</td>';
 	  print '<td colspan="3">'.$soc->getNomUrl(1).'</td>';
 	  print '</tr>';
@@ -1112,21 +1111,28 @@ else
 			print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount();
+			$absolute_discount=$soc->getCurrentDiscount('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getCurrentDiscount('','fk_facture_source IS NOT NULL');
 			print '. ';
 			if ($absolute_discount)
 			{
 				if ($commande->statut > 0)
 				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+					print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->transnoentities("Currency".$conf->monnaie));
 				}
 				else
 				{
+					// Remise dispo de type non avoir
+					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount);
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 				}
 			}
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			if ($absolute_creditnote)
+			{
+				print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+			}
+			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
 
 			// Date
@@ -1194,7 +1200,7 @@ else
 				print '</td></tr>';
 			}
 
-			// Conditions et modes de réglement
+			// Conditions et modes de rï¿½glement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -1213,7 +1219,7 @@ else
 			}
 			print '</td>';
 			
-			//Note public lorsque le module expedition n'est pas activé
+			//Note public lorsque le module expedition n'est pas activï¿½
 			if (!$conf->projet->enabled) $nbrow--;
 			if (!$conf->expedition->enabled)
 			{
@@ -1342,7 +1348,7 @@ else
 							$text.= ' - '.$objp->product;
 							$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
 							print $html->textwithtooltip($text,$description,3,'','',$i);
-							// Todo: voir si on insert ou pas en option les dates de début et de fin de service
+							// Todo: voir si on insert ou pas en option les dates de dï¿½but et de fin de service
 							//print_date_range($objp->date_start,$objp->date_end);
 							if ($conf->global->PRODUIT_DESC_IN_FORM)
 							{
@@ -1407,7 +1413,7 @@ else
 							print '<td align="center">';
 							if (($objp->info_bits & 2) == 2)
 							{
-								// Ligne remise prédéfinie, on permet pas modif
+								// Ligne remise prï¿½dï¿½finie, on permet pas modif
 							}
 							else
 							{
@@ -1479,7 +1485,7 @@ else
 							print ' - '.nl2br($objp->product);
 							print '<br>';
 						}
-						// éditeur wysiwyg
+						// ï¿½diteur wysiwyg
 						if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
 						{
 							require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1544,7 +1550,7 @@ else
 				print '<td colspan="4">&nbsp;</td>';
 				print '</tr>';
 
-				// Ajout produit produits/services personnalisés
+				// Ajout produit produits/services personnalisï¿½s
 				print '<form action="fiche.php?id='.$id.'#add" method="post">';
 				print '<input type="hidden" name="id" value="'.$id.'">';
 				print '<input type="hidden" name="action" value="addligne">';
@@ -1552,7 +1558,7 @@ else
 				$var=true;
 				print '<tr '.$bc[$var].'>';
 				print '<td>';
-				// éditeur wysiwyg
+				// ï¿½diteur wysiwyg
 				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1578,7 +1584,7 @@ else
 
 				print '</form>';
 
-				// Ajout de produits/services prédéfinis
+				// Ajout de produits/services prï¿½dï¿½finis
 				if ($conf->produit->enabled)
 				{
 					print '<tr class="liste_titre">';
@@ -1618,7 +1624,7 @@ else
 				
 				  if (! $conf->global->PRODUIT_CHANGE_PROD_DESC)
 				  {
-				  	// éditeur wysiwyg
+				  	// ï¿½diteur wysiwyg
 				  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 				  	{
 				  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
@@ -1656,7 +1662,7 @@ else
 					print '<a class="butAction" ';
 					if ($conf->use_ajax && $conf->global->MAIN_CONFIRM_AJAX)
 					{
-						// on vérifie si la facture est en numérotation provisoire
+						// on vï¿½rifie si la facture est en numï¿½rotation provisoire
 						$ref = substr($commande->ref, 1, 4);
 						if ($ref == 'PROV')
 						{
@@ -1794,7 +1800,7 @@ else
 			print '<a name="builddoc"></a>'; // ancre
 
 			/*
-			* Documents générés
+			* Documents gï¿½nï¿½rï¿½s
 			*
 			*/
 			$comref = sanitize_string($commande->ref);
@@ -1850,7 +1856,7 @@ else
 			print '</td><td valign="top" width="50%">';
 
 			/*
-			* Liste des actions propres à la commande
+			* Liste des actions propres ï¿½ la commande
 			*/
 			$sql = 'SELECT id, '.$db->pdate('a.datea'). ' as da, label, note, fk_user_author' ;
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'actioncomm as a';
@@ -1936,7 +1942,7 @@ else
 					$liste[$key]=$value;
 				}
 
-				// Créé l'objet formulaire mail
+				// Crï¿½ï¿½ l'objet formulaire mail
 				include_once('../html.formmail.class.php');
 				$formmail = new FormMail($db);
 				$formmail->fromname = $user->fullname;
@@ -1950,7 +1956,7 @@ else
 				$formmail->withdeliveryreceipt=1;
 				// Tableau des substitutions
 				$formmail->substit['__ORDERREF__']=$commande->ref;
-				// Tableau des paramètres complémentaires
+				// Tableau des paramï¿½tres complï¿½mentaires
 				$formmail->param['action']='send';
 				$formmail->param['models']='order_send';
 				$formmail->param['orderid']=$commande->id;
@@ -1963,7 +1969,7 @@ else
 		}
 		else
 		{
-			// Commande non trouvée
+			// Commande non trouvï¿½e
 			dolibarr_print_error($db);
 		}
 	}

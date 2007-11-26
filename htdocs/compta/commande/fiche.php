@@ -42,7 +42,7 @@ $user->getrights('commande');
 
 if (! $user->rights->commande->lire) accessforbidden();
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
   $action = '';
@@ -126,7 +126,7 @@ if ($_GET["id"] > 0)
 			print '</tr>';
 
 
-			// Société
+			// Sociï¿½tï¿½
 			print '<tr><td>'.$langs->trans('Company').'</td>';
 			print '<td colspan="3">'.$soc->getNomUrl(1,'compta').'</td>';
 			print '</tr>';
@@ -135,21 +135,28 @@ if ($_GET["id"] > 0)
             print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount();
+			$absolute_discount=$soc->getCurrentDiscount('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getCurrentDiscount('','fk_facture_source IS NOT NULL');
 			print '. ';
 			if ($absolute_discount)
 			{
 				if ($commande->statut > 0)
 				{
-					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
+					print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->transnoentities("Currency".$conf->monnaie));
 				}
 				else
 				{
+					// Remise dispo de type non avoir
+					$filter='fk_facture_source IS NULL';
 					print '<br>';
-					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount);
+					print $html->form_remise_dispo($_SERVER["PHP_SELF"].'?id='.$commande->id,0,'remise_id',$soc->id,$absolute_discount,$filter);
 				}
 			}
-			else print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
+			if ($absolute_creditnote)
+			{
+				print $langs->trans("CompanyHasCreditNote",price($absolute_creditnote),$langs->transnoentities("Currency".$conf->monnaie)).'. ';
+			}
+			if (! $absolute_discount && ! $absolute_creditnote) print $langs->trans("CompanyHasNoAbsoluteDiscount").'.';
 			print '</td></tr>';
 
 			// Date
@@ -214,7 +221,7 @@ if ($_GET["id"] > 0)
 			}
 			print '</td></tr>';
 
-			// Conditions et modes de réglement
+			// Conditions et modes de rï¿½glement
 			print '<tr><td height="10">';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentConditionsShort');
@@ -436,7 +443,7 @@ if ($_GET["id"] > 0)
 		
 		
 		/*
-		* Documents générés
+		* Documents gï¿½nï¿½rï¿½s
 		*
 		*/
 		$comref = sanitize_string($commande->ref);
@@ -498,7 +505,7 @@ if ($_GET["id"] > 0)
         
         
         /*
-         * 	Liste des expéditions
+         * 	Liste des expï¿½ditions
          */
         $sql = "SELECT cd.fk_product, cd.description, cd.rowid, cd.qty as qty_commande";
         $sql .= " , ed.qty as qty_livre, e.ref, ed.fk_expedition as expedition_id";
@@ -593,7 +600,7 @@ if ($_GET["id"] > 0)
     }
     else
     {
-        // Commande non trouvée
+        // Commande non trouvï¿½e
         print "Commande inexistante";
     }
 }

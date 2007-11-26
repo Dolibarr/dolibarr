@@ -290,6 +290,7 @@ LawApplicationPart4=leurs prix.
 VATDischarged=TVA acquittée sur les débits.
 LimitedLiabilityCompanyCapital=SARL au Capital de
 UseDiscount=Appliquer remise
+UseCreditNoteInInvoicePayment=Appliquer avoir en tant que paiement
 MenuChequeDeposits=Remises de chèques
 MenuCheques=Gestion chèques
 MenuChequesReceipts=Bordereaux

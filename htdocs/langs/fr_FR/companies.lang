@@ -117,6 +117,7 @@ CustomerAbsoluteDiscountShort=Remise fixe
 CompanyHasRelativeDiscount=Ce client a une remise par défaut de <b>%s%%</b>
 CompanyHasNoRelativeDiscount=Ce client n'a pas de remises relatives par défaut
 CompanyHasAbsoluteDiscount=Ce client a <b>%s %s</b> de remises fixes disponibles
+CompanyHasCreditNote=Ce client a <b>%s %s</b> d'avoirs disponibles
 CompanyHasNoAbsoluteDiscount=Ce client n'a pas ou plus de remises fixes disponibles
 CustomerAbsoluteDiscountAllUsers=Remises fixes en cours (accordées par tout utilisateur)
 CustomerAbsoluteDiscountMy=Remises fixes en cours (accordées personnellement)

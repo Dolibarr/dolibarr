@@ -291,6 +291,7 @@ LawApplicationPart4=their price.
 VATDischarged=VAT paid on debits.
 LimitedLiabilityCompanyCapital=SARL with Capital of
 UseDiscount=Use discount
+UseCreditNoteInInvoicePayment=Include credit note as payment
 MenuChequeDeposits=Cheques deposits
 MenuCheques=Cheques
 MenuChequesReceipts=Cheques receipts

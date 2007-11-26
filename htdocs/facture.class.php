@@ -2382,10 +2382,9 @@ class Facture extends CommonObject
 	    if ($obj->fk_statut == 2) $qualified=1;
 	    if ($qualified)
 	    {
-			
 	    	//$ref=$obj->facnumber;
-	    	$ref=($obj->fk_paiement?1:0);
-	    	$return[$obj->rowid]=$ref;
+	    	$paymentornot=($obj->fk_paiement?1:0);
+	    	$return[$obj->rowid]=$paymentornot;
 	    }
 	  }
 
