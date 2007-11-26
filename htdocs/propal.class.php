@@ -1905,13 +1905,17 @@ class Propal extends CommonObject
 
         // Insertion dans la base
         $sql = "INSERT INTO ".MAIN_DB_PREFIX."propal (fk_soc, price, remise, remise_percent, remise_absolue,";
-        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, date_livraison, fk_adresse_livraison) ";
+        $sql.= " tva, total, datep, datec, ref, fk_user_author, note, note_public, model_pdf, fin_validite, fk_cond_reglement, fk_mode_reglement, fk_adresse_livraison";
+        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", date_livraison";
+        $sql.= ")";
         $sql.= " VALUES ('$this->socid', '0', '$this->remise', '$this->remise_percent', '$this->remise_absolue',";
         $sql.= " '0','0','".$this->db->idate($this->datep)."', now(), '$this->ref', '$this->author',";
         $sql.= "'".addslashes($this->note)."',";
         $sql.= "'".addslashes($this->note_public)."',";
         $sql.= "'$this->modelpdf','".$this->db->idate($this->fin_validite)."',";
-        $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '".$this->db->idate($this->date_livraison)."', '$this->adresse_livraison_id')";
+        $sql.= " '$this->cond_reglement_id', '$this->mode_reglement_id', '$this->adresse_livraison_id'";
+        if ($conf->global->PROPALE_ADD_SHIPPING_DATE) $sql.= ", '".$this->db->idate($this->date_livraison);
+        $sql.= ")";
 
         $resql=$this->db->query($sql);
         if ($resql)
