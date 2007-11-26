@@ -33,6 +33,7 @@ $langs->load("bills");
 
 // Protection
 $user->getrights('compta');
+$user->getrights('tax');
 
 if (!$user->admin && !$user->rights->tax->charges)
   accessforbidden();
@@ -49,7 +50,7 @@ $chid=isset($_GET["id"])?$_GET["id"]:$_POST["id"];
 /* *************************************************************************** */
 
 /*
- * 	Classer payé
+ * 	Classer paye
  */
 if ($_POST["action"] == 'confirm_payed')
 {
@@ -90,6 +91,7 @@ if ($_POST["action"] == 'confirm_delete')
 	}
 }
 
+	
 /*
  * Ajout d'une charge sociale
  */
@@ -416,7 +418,7 @@ if ($chid > 0)
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/paiement_charge.php?id=$cha->id&amp;action=create\">".$langs->trans("DoPayment")."</a>";
 			}
 
-			// Classer 'payé'
+			// Classer 'payï¿½'
 			if ($cha->paye == 0 && round($resteapayer) <=0 && $user->rights->tax->charges->creer)
 			{
 				print "<a class=\"butAction\" href=\"".DOL_URL_ROOT."/compta/sociales/charges.php?id=$cha->id&amp;action=payed\">".$langs->trans("ClassifyPayed")."</a>";
@@ -433,7 +435,7 @@ if ($chid > 0)
 	}
 	else
 	{
-		/* Charge non trouvée */
+		/* Charge non trouvï¿½e */
 		dolibarr_print_error('',$cha->error);
 	}
 }
