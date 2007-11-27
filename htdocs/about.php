@@ -48,7 +48,7 @@ print "<br>\n";
 
 print $langs->trans("DolibarrProjectLeader").':';
 print '<ul>';
-print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiï¿½deville</a>';
+print '<li><a target="blank" href="http://rodolphe.quiedeville.org">Rodolphe Quiédeville</a>';
 print '</ul>';
 
 print "<br>\n";
@@ -59,7 +59,7 @@ print '<li><a target="blank" href="http://www.ipsyn.net">Jean-Louis Bergamo</a><
 print '<li><a target="blank" href="http://www.destailleur.fr/">Laurent Destailleur</a></li>';
 print '<li>Eric Seigne</li>';
 print '<li>Benoit Mortier</li>';
-print '<li>Rï¿½gis Houssin</li>';
+print '<li>Régis Houssin</li>';
 print '</ul>';
 
 print "<br>\n";
@@ -87,11 +87,11 @@ print '</li>';
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
 	print '<li>';
-	print 'Les tï¿½ches en cours de rï¿½alisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
+	print 'Les tâches en cours de réalisation sur Dolibarr sont consultables dans le <a target="blank" href="http://savannah.nongnu.org/task/?group=dolibarr">gestionnaire de projet</a> sur Savannah.';
 	print '</li>';
 	
 	print '<li>';
-	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les dï¿½veloppeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">systï¿½me de gestion des bogues</a> de Savannah.';
+	print 'Si vous trouvez un bogue dans Dolibarr, vous pouvez en informer les développeurs sur le <a target="blank" href="http://savannah.nongnu.org/bugs/?group=dolibarr">système de gestion des bogues</a> de Savannah.';
 	print '</li>';
 	
 	print '<li>';
@@ -108,7 +108,7 @@ if (eregi('^fr_',$langs->getDefaultLang()))
     print 'Vente / Support';
     print '<ul>';
     print '<li>';
-    print 'Contactez Rodolphe Quiï¿½deville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>';
+    print 'Contactez Rodolphe Quiédeville sur <a target="blank" href="http://www.dolibarr.com/">www.dolibarr.com</a>';
     print '</li>';
     print '</ul>';
 }
