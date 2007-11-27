@@ -172,6 +172,7 @@ Phones=Phones
 Capital=Capital
 CapitalOf=Capital of %s
 EditCompany=Edit company
+EditDeliveryAddress=Edit delivery address
 ThisUserIsNot=This user is not a prospect, customer nor supplier
 VATIntraCheck=Check
 VATIntraCheckDesc=The link <b>%s</b> allows to ask the european VAT checker service. An external internet access from server is required for this service to work.

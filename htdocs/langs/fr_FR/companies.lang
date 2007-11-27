@@ -172,6 +172,7 @@ Phones=Téléphones
 Capital=Capital
 CapitalOf=Capital de %s
 EditCompany=Modification société
+EditDeliveryAddress=Modification de l'adresse de livraison
 ThisUserIsNot=Cet utilisateur n'est ni un prospect, ni un client, ni un fournisseur
 VATIntraCheck=Vérifier
 VATIntraCheckDesc=Le lien <b>%s</b> permet d'interroger le service européen de contrôle des numéro de TVA intracommunautaire. Un accès au monde internet exterieur depuis le serveur est requis pour que ce service fonctionne.

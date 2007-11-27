@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -157,13 +157,19 @@ $countrynotdefined=$langs->trans("ErrorSetACountryFirst").' ('.$langs->trans("Se
 
 if ($_GET["action"] == 'create' || $_POST["action"] == 'create')
 {
-    if ($user->rights->societe->creer)
-    {
-        /*
-         * Fiche adresse de livraison en mode création
-         */
+	if ($user->rights->societe->creer)
+  {
+  	/*
+     * Fiche adresse de livraison en mode création
+     */
 
 		$livraison = new AdresseLivraison($db);
+		
+		$societe=new Societe($db);
+		$societe->fetch($_GET["socid"]);
+		$head = societe_prepare_head($societe);
+		
+		dolibarr_fiche_head($head, 'customer', $societe->nom);
 
         if ($_POST["label"] && $_POST["nom"])
         {
@@ -248,8 +254,15 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
      * Fiche societe en mode edition
      */
 	$livraison = new AdresseLivraison($db);
+	
+	$societe=new Societe($db);
+  $societe->fetch($_GET["socid"]);
+	$head = societe_prepare_head($societe);
+		
+	dolibarr_fiche_head($head, 'customer', $societe->nom);
 
-    print_titre($langs->trans("EditDeliveyAdress"));
+  print_titre($langs->trans("EditDeliveryAddress"));
+  print "<br>\n";
 
     if ($socid)
     {
