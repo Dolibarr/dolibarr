@@ -267,7 +267,7 @@ class MenuLeft {
 				$newmenu->add(DOL_URL_ROOT."/comm/prospect/index.php?leftmenu=prospects", $langs->trans("Prospects"), 0, $user->rights->societe->lire);
 
 				$newmenu->add_submenu(DOL_URL_ROOT."/soc.php?leftmenu=prospects&amp;action=create&amp;type=p", $langs->trans("MenuNewProspect"), 1, $user->rights->societe->creer);
-				$newmenu->add_submenu(DOL_URL_ROOT."/contact/index.php?leftmenu=prospects&amp;type=p", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
+				$newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?leftmenu=prospects", $langs->trans("List"), 1, $user->rights->societe->contact->lire);
 
 				if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=-1", $langs->trans("LastProspectDoNotContact"), 2, $user->rights->societe->lire);
 				if ($leftmenu=="prospects") $newmenu->add_submenu(DOL_URL_ROOT."/comm/prospect/prospects.php?sortfield=s.datec&amp;sortorder=desc&amp;begin=&amp;stcomm=0", $langs->trans("LastProspectNeverContacted"), 2, $user->rights->societe->lire);

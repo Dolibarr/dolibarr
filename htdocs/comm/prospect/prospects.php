@@ -32,10 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 
 $langs->load("propal");
 
-$user->getrights('propale');
-$user->getrights('fichinter');
-$user->getrights('commande');
-$user->getrights('projet');
+$user->getrights();
 
 // Sécurité accés client
 $socid=0;
