@@ -76,6 +76,8 @@ update llx_c_chargesociales set actioncompta='TAXCSGND' where id = 3;
 update llx_c_chargesociales set actioncompta='TAXAPP'   where id = 10;
 update llx_c_chargesociales set actioncompta='TAXPRO'   where id = 11;
 update llx_c_chargesociales set actioncompta='TAXFON'   where id = 20;
+alter table llx_chargesociales modify fk_type integer NOT NULL; 
+alter table llx_chargesociales modify libelle varchar(80) NOT NULL;
 
 insert into llx_rights_def (id, libelle, module, type, bydefault, subperms, perms) values (114,'Rapprocher transactions','banque','w',0,null,'consolidate');
 update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' where perms='modifier' AND module='banque';

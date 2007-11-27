@@ -24,8 +24,8 @@ create table llx_chargesociales
 (
   rowid      integer AUTO_INCREMENT PRIMARY KEY,
   date_ech   datetime NOT NULL, -- date d'echeance
-  libelle    varchar(80),
-  fk_type    integer,
+  libelle    varchar(80) NOT NULL,
+  fk_type    integer NOT NULL,
   amount     real     default 0 NOT NULL,
   paye       smallint default 0 NOT NULL,
   periode    date
