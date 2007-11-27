@@ -1509,7 +1509,7 @@ class Propal extends CommonObject
 	}
 
     /**
-     *    	\brief      Renvoie un tableau contenant les numéros de factures associées
+     *    	\brief      Renvoie un tableau contenant les id et ref des factures associées
      *		\param		id			Id propal
      *		\return		array		Tableau des id de factures
      */
@@ -1517,20 +1517,32 @@ class Propal extends CommonObject
     {
         $ga = array();
 
-        $sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
-        $sql .= " WHERE fk_propal = " . $id;
-        if ($this->db->query($sql))
+		$sql = "SELECT f.rowid, f.facnumber";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+		$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$id;
+		$sql.= " UNION ";
+		// Cas des factures lier via la commande
+		$sql = "SELECT f.rowid, f.facnumber";
+		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+		$sql.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+		$sql.= " WHERE cp.fk_propale = ".$id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
+
+        //$sql = "SELECT fk_facture FROM ".MAIN_DB_PREFIX."fa_pr as fp";
+        //$sql .= " WHERE fk_propal = " . $id;
+        dolibarr_syslog("Propal::InvoiceArrayList sql=".$sql);
+		$resql=$this->db->query($sql);
+		if ($resql)
         {
-            $nump = $this->db->num_rows();
+            $nump = $this->db->num_rows($resql);
 
             if ($nump)
             {
                 $i = 0;
                 while ($i < $nump)
                 {
-                    $obj = $this->db->fetch_object();
-
-                    $ga[$i] = $obj->fk_facture;
+                    $obj = $this->db->fetch_object($resql);
+                    $ga[$obj->rowid] = $obj->facnumber;
                     $i++;
                 }
             }

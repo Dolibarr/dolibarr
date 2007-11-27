@@ -19,7 +19,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -460,7 +459,8 @@ if ($_GET["propalid"] > 0)
 			print '<a class="butAction" href="facture.php?propalid='.$propal->id."&action=create&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("BuildBill")."</a>";
 		}
 	
-		if ($propal->statut == 2 && sizeof($propal->getInvoiceArrayList()))
+		$arraypropal=$propal->getInvoiceArrayList();
+		if ($propal->statut == 2 && is_array($arraypropal) && sizeof($arraypropal) > 0)
 		{
 			print '<a class="butAction" href="propal.php?propalid='.$propal->id."&action=setstatut&statut=4&socid=$socid&viewstatut=$viewstatut&sortfield=$sortfield&$sortorder\">".$langs->trans("ClassifyBilled")."</a>";
 		}
@@ -511,7 +511,7 @@ if ($_GET["propalid"] > 0)
 				$var=!$var;
 				print '<tr '.$bc[$var].'><td>';
 				print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$coms[$i]->id.'">'.img_object($langs->trans("ShowOrder"),"order").' '.$coms[$i]->ref."</a></td>\n";
-				print '<td align="center">'.dolibarr_print_date($coms[$i]->date).'</td>';
+				print '<td align="center">'.dolibarr_print_date($coms[$i]->date,'day').'</td>';
 				print '<td align="right">'.price($coms[$i]->total_ttc).'</td>';
 				print '<td align="right">'.$coms[$i]->getLibStatut(3).'</td>';
 				print "</tr>\n";
@@ -525,19 +525,19 @@ if ($_GET["propalid"] > 0)
 	/*
 	 * Factures associees
 	 */
+	// Cas des factures lies directement
 	$sql = "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
-	$sql .= " FROM ".MAIN_DB_PREFIX."facture as f";
-	if (!$conf->commande->enabled)
-	{
-		$sql .= ", ".MAIN_DB_PREFIX."fa_pr as fp";
-		$sql .= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
-	}
-	else
-	{
-		$sql .= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
-		$sql .= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
-	}
-	
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= ", ".MAIN_DB_PREFIX."fa_pr as fp";
+	$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$propal->id;
+	$sql.= " UNION ";
+	// Cas des factures lier via la commande
+	$sql.= "SELECT f.facnumber, f.total,".$db->pdate("f.datef")." as df, f.rowid as facid, f.fk_user_author, f.fk_statut, f.paye";
+	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+	$sql.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
+	$sql.= " WHERE cp.fk_propale = ".$propal->id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
+
+	dolibarr_syslog("propal.php::liste factures sql=".$sql);
 	$resql = $db->query($sql);
 	if ($resql)
     {
@@ -560,11 +560,11 @@ if ($_GET["propalid"] > 0)
 		$var=True;
 		while ($i < $num_fac_asso)
 		{
-			$objp = $db->fetch_object();
+			$objp = $db->fetch_object($resql);
 			$var=!$var;
 			print "<tr $bc[$var]>";
 			print '<td><a href="../compta/facture.php?facid='.$objp->facid.'">'.img_object($langs->trans("ShowBill"),"bill").' '.$objp->facnumber.'</a></td>';
-			print '<td align="center">'.dolibarr_print_date($objp->df).'</td>';
+			print '<td align="center">'.dolibarr_print_date($objp->df,'day').'</td>';
 			print '<td align="right">'.price($objp->total).'</td>';
 			print '<td align="right">'.$staticfacture->LibStatut($objp->paye,$objp->fk_statut,3).'</td>';
 			print "</tr>";
@@ -609,7 +609,7 @@ if ($_GET["propalid"] > 0)
 	      $var=!$var;
 	      print '<tr '.$bc[$var].'>';
 	      print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-	      print '<td>'.dolibarr_print_date($objp->da)."</td>\n";
+	      print '<td>'.dolibarr_print_date($objp->da,'dayhour')."</td>\n";
 	      print '<td>'.stripslashes($objp->label).'</td>';
 	      $authoract = new User($db);
 	      $authoract->id = $objp->fk_user_author;

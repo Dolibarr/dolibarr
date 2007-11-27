@@ -202,8 +202,17 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 				$liblevelarray=array(LOG_ERR=>'ERROR',LOG_WARNING=>'WARN',LOG_INFO=>'INFO',LOG_DEBUG=>'DEBUG');
 				$liblevel=$liblevelarray[$level];
 				if (! $liblevel) $liblevel='UNDEF';
-				fwrite($file,strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$message."\n");
+				$message=strftime("%Y-%m-%d %H:%M:%S",time())." ".sprintf("%-5s",$liblevel)." ".$message;
+				fwrite($file,$message."\n");
 				fclose($file);
+				
+				// If development tag enabled and param log enabled, we show output log on HTML comments
+				if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
+				{
+					print "\n\n<!-- Log start\n";
+					print $message."\n";
+					print "Log end -->\n";
+				}
 			}
 			elseif (! defined("SYSLOG_FILE_NO_ERROR"))
 			{
