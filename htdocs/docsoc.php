@@ -22,7 +22,7 @@
 
 /**
    \file       htdocs/docsoc.php
-   \brief      Fichier onglet documents liés à la société
+   \brief      Fichier onglet documents liï¿½s ï¿½ la sociï¿½tï¿½
    \ingroup    societe
    \version    $Revision$
 */
@@ -41,7 +41,7 @@ $sortfield=$_GET["sortfield"];
 if (! $sortorder) $sortorder="ASC";
 if (! $sortfield) $sortfield="name";
 
-// Sécurité d'accès client et commerciaux
+// Sï¿½curitï¿½ d'accï¿½s client et commerciaux
 $socid = restrictedArea($user, 'societe', $socid);
 
 /*
@@ -65,13 +65,13 @@ if ( $_POST["sendit"] && $conf->upload != 0)
     }
     else if (!$result)
     {
-    	// Echec transfert (fichier dépassant la limite ?)
+    	// Echec transfert (fichier dï¿½passant la limite ?)
     	$mesg = '<div class="error">'.$langs->trans("ErrorFileNotUploaded").'</div>';
     	// print_r($_FILES);
     }
     else
     {
-    	// Fichier infecté par un virus
+    	// Fichier infectï¿½ par un virus
     	$mesg = '<div class="error">'.$langs->trans("ErrorFileIsInfectedWith",$result).'</div>';
     }
   }
@@ -169,7 +169,9 @@ if ($socid > 0)
 		// Affiche liste des documents existant
 		print_titre($langs->trans("AttachedFiles"));
 
-		// \TODO Mettre cette section dans une zone AJAX
+		/**
+		 * TODO Mettre cette section dans une zone AJAX
+		 */ 
 		$prefix=$socid.'/';
 		$modulepart='societe';
 		$url=$_SERVER["PHP_SELF"];
