@@ -20,7 +20,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 
@@ -425,10 +424,8 @@ class Ldap
 	}
 
 
-    // 2.2 Password methods ------------------------------------------------------
-
     /**
-     * 2.2.1 : Checks a username and password - does this by logging on to the
+     * Checks a username and password - does this by logging on to the
      * server as a user - specified in the DN. There are several reasons why
      * this login could fail - these are listed below.
      */
@@ -459,136 +456,6 @@ class Ldap
             $this->ldapErrorCode = ldap_errno( $this->connection);
             $this->ldapErrorText = ldap_error( $this->connection);
             return false;
-        }
-    }
-
-
-    /**
-     * 2.2.2 : Allows a password to be changed. Note that on most LDAP servers,
-     * a new ACL must be defined giving users the ability to modify their
-     * password attribute (userPassword). Otherwise this will fail.
-     */
-    function changePass($uname,$oldPass,$newPass)
-    {
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        if ($this->serverType == "activedirectory") {
-            $checkDn = "$uname@$this->domain";
-        } else {
-            $checkDn = $this->getUserIdentifier() . "=$uname, " . $this->setDn(true);
-        }
-        $this->result = @ldap_bind( $this->connection,$checkDn,$oldPass);
-
-        if ( $this->result) {
-            // Connected OK - Now modify the password...
-            $info["userPassword"] = $newPass;
-            $this->result = @ldap_modify( $this->connection, $checkDn, $info);
-            if ( $this->result) {
-                // Change went OK
-                return true;
-            } else {
-                // Couldn't change password...
-                $this->ldapErrorCode = ldap_errno( $this->connection);
-                $this->ldapErrorText = ldap_error( $this->connection);
-                return false;
-            }
-        } else {
-            // Login failed - see checkPass method for common error codes
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false;
-        }
-    }
-
-
-    /**
-     * 2.2.3 : Returns days until the password will expire.
-     * We have to explicitly state this is what we want returned from the
-     * LDAP server - by default, it will only send back the "basic"
-     * attributes.
-     */
-    function checkPassAge ( $uname)
-    {
-        $results[0] = "passwordexpirationtime";
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        $checkDn = $this->setDn(true);
-        $this->result = @ldap_search( $this->connection,$checkDn,$this->getUserIdentifier()."=$uname",$results);
-
-        if ( !$info=@ldap_get_entries( $this->connection, $this->result)) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false;
-        } else {
-            /* Now work out how many days remaining....
-            ** Yes, it's very verbose code but I left it like this so it can easily
-            ** be modified for your needs.
-            */
-            $date  = $info[0]["passwordexpirationtime"][0];
-            $year  = substr( $date,0,4);
-            $month = substr( $date,4,2);
-            $day   = substr( $date,6,2);
-            $hour  = substr( $date,8,2);
-            $min   = substr( $date,10,2);
-            $sec   = substr( $date,12,2);
-
-            $timestamp = mktime( $hour,$min,$sec,$month,$day,$year);
-            $today  = mktime();
-            $diff   = $timestamp-$today;
-            return round( ( ( ( $diff/60)/60)/24));
-        }
-    }
-
-    // 2.3 Group methods ---------------------------------------------------------
-
-    /**
-     * 2.3.1 : Checks to see if a user is in a given group. If so, it returns
-     * true, and returns false if the user isn't in the group, or any other
-     * error occurs (eg:- no such user, no group by that name etc.)
-     */
-    function checkGroup ( $uname,$group)
-    {
-        // builds the appropriate dn, based on whether $this->people and/or $this->group is set
-        $checkDn = $this->setDn(false);
-
-        // We need to search for the group in order to get it's entry.
-        $this->result = @ldap_search( $this->connection, $checkDn, "cn=" .$group);
-        $info = @ldap_get_entries( $this->connection, $this->result);
-
-        // Only one entry should be returned(no groups will have the same name)
-        $entry = ldap_first_entry( $this->connection,$this->result);
-
-        if ( !$entry) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false;  // Couldn't find the group...
-        }
-        // Get all the member DNs
-        if ( !$values = @ldap_get_values( $this->connection, $entry, "uniqueMember")) {
-            $this->ldapErrorCode = ldap_errno( $this->connection);
-            $this->ldapErrorText = ldap_error( $this->connection);
-            return false; // No users in the group
-        }
-
-        foreach ( $values as $key => $value) {
-            /* Loop through all members - see if the uname is there...
-            ** Also check for sub-groups - this allows us to define a group as
-            ** having membership of another group.
-            ** FIXME:- This is pretty ugly code and unoptimised. It takes ages
-            ** to search if you have sub-groups.
-            */
-            list( $cn,$ou) = explode( ",",$value);
-            list( $ou_l,$ou_r) = explode( "=",$ou);
-
-            if ( $this->groups==$ou_r) {
-                list( $cn_l,$cn_r) = explode( "=",$cn);
-                // OK, So we now check the sub-group...
-                if ( $this->checkGroup ( $uname,$cn_r)) {
-                    return true;
-                }
-            }
-
-            if ( preg_match( "/$uname/i",$value)) {
-                return true;
-            }
         }
     }
 
