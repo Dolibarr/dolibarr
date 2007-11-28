@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2002-2003 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -102,7 +103,7 @@ if ($result)
         print '<td><a href="'.DOL_URL_ROOT.'/comm/fiche.php?socid='.$objp->socid.'">'.img_object($langs->trans("ShowCompany"),"company").' '.dolibarr_trunc($objp->nom,44)."</a></td>\n";
         print '<td>'.nl2br($objp->description).'</td>';
         print '<td align="center">'.dolibarr_print_date($objp->dp)."</td>\n";
-        print '<td align="right">'.price($objp->duree).'</td>';
+        print '<td align="right">'.ConvertSecondToTime($objp->duree).'</td>';
         print '<td align="right">'.$fichinter_static->LibStatut($objp->fk_statut,5).'</td>';
 
         print "</tr>\n";
@@ -110,7 +111,7 @@ if ($result)
         $i++;
     }
     print '<tr class="liste_total"><td colspan="3"></td><td>'.$langs->trans("Total").'</td>';
-    print '<td align="right" nowrap>'.price($total).'</td><td></td>';
+    print '<td align="right" nowrap>'.ConvertSecondToTime($total).'</td><td></td>';
     print '</tr>';
 
     print '</table>';

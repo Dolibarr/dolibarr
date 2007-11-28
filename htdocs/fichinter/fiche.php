@@ -435,7 +435,7 @@ if ($_GET["action"] == 'create')
 	print '</td></tr>';
 
 	print '<tr><td colspan="2" align="center">';
-	print '<input type="submit" class="button" value="'.$langs->trans("CreateDaftIntervention").'">';
+	print '<input type="submit" class="button" value="'.$langs->trans("CreateDraftIntervention").'">';
 	print '</td></tr>';
 
 	print '</table>';
