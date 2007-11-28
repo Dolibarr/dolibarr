@@ -18,13 +18,12 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
 		\file       htdocs/projet/tasks/fiche.php
 		\ingroup    projet
-		\brief      Fiche tâches d'un projet
+		\brief      Fiche taches d'un projet
 		\version    $Revision$
 */
 
@@ -36,7 +35,7 @@ $user->getrights('projet');
 if (!$user->rights->projet->lire) accessforbidden();
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
@@ -94,8 +93,6 @@ Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 			$minutes = substr("00"."$minutes", -2);
 
 			print '<td align="right">'.$heure."&nbsp;h&nbsp;".$minutes."</td>\n";
-
-			// TODO améliorer le test
 
 			if ($tasksrole[$lines[$i]->id] == 'admin')
 			{
@@ -251,7 +248,7 @@ if ($_GET["action"] == 'create' && $user->rights->projet->creer)
 
 	$tasksarray=$projet->getTasksArray();
 	
-	/* Nouvelle tâche */
+	/* Nouvelle tï¿½che */
 	print '<tr><td>'.$langs->trans("NewTask").'</td><td colspan="3">';
 	print '<input type="text" size="25" name="task_name" class="flat">&nbsp;';
 	if ($tasksarray)

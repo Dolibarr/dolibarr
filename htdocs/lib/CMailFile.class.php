@@ -198,7 +198,7 @@ class CMailFile
 			if (isset($_SERVER["WINDIR"]))
 			{
 				if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
-				if ($this->addr_from) @ini_set('sendmail_from',getValidAddress($this->addr_from,2));
+				@ini_set('sendmail_from',getValidAddress($this->addr_from,2));
 			}
 
 			// Forcage parametres
@@ -213,19 +213,9 @@ class CMailFile
 			}
 			else
 			{
-				/* Le errors_to doit se gerer dans en-tete http et non par option -f
-				if ($this->errors_to)
-				{
-					// \TODO Tester que le safe_mode est inactif car fonction mail avec ces param non dispo en safe_mode
-					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port').", with errorsto : ".getValidAddress($this->errors_to,1));
-					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers,"-f".getValidAddress($this->errors_to,2));
-				}
-				else
-				{*/
-					dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
-					//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
-					$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
-				/* } */
+				dolibarr_syslog("CMailFile::sendfile: mail start SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port'));
+				//dolibarr_syslog("to=".getValidAddress($this->addr_to,2).", subject=".$this->subject.", message=".stripslashes($this->message).", header=".$this->headers);
+				$res = mail($dest,$this->subject,stripslashes($this->message),$this->headers);
 				if (! $res) 
 				{
 					$this->error="Failed to send mail to SMTP=".ini_get('SMTP').", PORT=".ini_get('smtp_port')."<br>Check your server logs and your firewalls setup";
@@ -240,12 +230,11 @@ class CMailFile
 			if (isset($_SERVER["WINDIR"]))
 			{
 				@ini_restore('sendmail_from');
-
-				// Forcage parametres
-				// \TODO A mettre pout tout OS ?
-				if ($conf->global->MAIN_MAIL_SMTP_SERVER)	ini_restore('SMTP');
-				if ($conf->global->MAIN_MAIL_SMTP_PORT) 	ini_restore('smtp_port');
 			}
+
+			// Forcage parametres
+			if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER))	ini_restore('SMTP');
+			if (! empty($conf->global->MAIN_MAIL_SMTP_PORT)) 	ini_restore('smtp_port');
 		}
 		else
 		{

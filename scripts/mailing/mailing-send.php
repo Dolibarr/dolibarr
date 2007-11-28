@@ -23,25 +23,25 @@
  *
  * !!! Envoi mailing !!!
  *
- * L'utilisation d'adresses de courriers électroniques dans les opérations
- * de prospection commerciale est subordonnée au recueil du consentement 
- * préalable des personnes concernées.
+ * L'utilisation d'adresses de courriers ï¿½lectroniques dans les opï¿½rations
+ * de prospection commerciale est subordonnï¿½e au recueil du consentement 
+ * prï¿½alable des personnes concernï¿½es.
  *
- * Le dispositif juridique applicable a été introduit par l'article 22 de 
- * la loi du 21 juin 2004  pour la confiance dans l'économie numérique.
+ * Le dispositif juridique applicable a ï¿½tï¿½ introduit par l'article 22 de 
+ * la loi du 21 juin 2004  pour la confiance dans l'ï¿½conomie numï¿½rique.
  *
- * Les dispositions applicables sont définies par les articles L. 34-5 du 
- * code des postes et des télécommunications et L. 121-20-5 du code de la 
- * consommation. L'application du principe du consentement préalable en 
- * droit français résulte de la transposition de l'article 13 de la Directive 
- * européenne du 12 juillet 2002 « Vie privée et communications électroniques ». 
+ * Les dispositions applicables sont dï¿½finies par les articles L. 34-5 du 
+ * code des postes et des tï¿½lï¿½communications et L. 121-20-5 du code de la 
+ * consommation. L'application du principe du consentement prï¿½alable en 
+ * droit franï¿½ais rï¿½sulte de la transposition de l'article 13 de la Directive 
+ * europï¿½enne du 12 juillet 2002 ï¿½ Vie privï¿½e et communications ï¿½lectroniques ï¿½. 
  */
 
 
 /**
         \file       scripts/mailing/mailing-send.php
         \ingroup    mailing
-        \brief      Script d'envoi d'un mailing préparé et validé
+        \brief      Script d'envoi d'un mailing prï¿½parï¿½ et validï¿½
 */
 
 
@@ -69,7 +69,7 @@ require_once (DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 $error = 0;
 
 
-// On récupère données du mail
+// On rï¿½cupï¿½re donnï¿½es du mail
 $sql = "SELECT m.rowid, m.titre, m.sujet, m.body";
 $sql .= " , m.email_from, m.email_replyto, m.email_errorsto";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing as m";
@@ -107,8 +107,8 @@ if ($resql)
 
 $nbok=0; $nbko=0;
 
-// On choisit les mails non déjà envoyés pour ce mailing (statut=0)
-// ou envoyés en erreur (statut=-1)
+// On choisit les mails non dï¿½jï¿½ envoyï¿½s pour ce mailing (statut=0)
+// ou envoyï¿½s en erreur (statut=-1)
 $sql = "SELECT mc.rowid, mc.nom, mc.prenom, mc.email";
 $sql .= " FROM ".MAIN_DB_PREFIX."mailing_cibles as mc";
 $sql .= " WHERE mc.statut < 1 AND mc.fk_mailing = ".$id;
@@ -152,7 +152,6 @@ if ($resql)
 			$substitutionisok=true;
 			$subject=make_substitutions($subject,$substitutionarray);
 			$message=make_substitutions($message,$substitutionarray);
-			// TODO Set substitutionisok to flase if errors
 			
             // Fabrication du mail
             $mail = new CMailFile($subject, $sendto, $from, $message, 
