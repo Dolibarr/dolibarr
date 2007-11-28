@@ -34,7 +34,7 @@ $etape = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le délai autorise.
+// Cette page peut etre longue. On augmente le dï¿½lai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
@@ -75,7 +75,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	$error=0;
 	
-	// on décode le mot de passe de la base si besoin
+	// on dï¿½code le mot de passe de la base si besoin
 	if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 	// $conf is already instancied inside inc.php
@@ -140,8 +140,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 		{
 			// Suppression vieilles contraintes sans noms et en doubles
 			// Les contraintes indesirables ont un nom qui commence par 0_ ou se termine par ibfk_999
-		    /*
-			$listtables=array(  'llx_product_fournisseur_price',
+/*			$listtables=array(  'llx_product_fournisseur_price',
 								'llx_fichinter',
 								'llx_facture_fourn',
 								'llx_propal',
@@ -151,7 +150,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 								'llx_telephonie_contact_facture',
 								'llx_telephonie_societe_ligne',
 								'llx_telephonie_tarif_client');
-		    */
+*/		    
 			$listtables = $db->DDLListTables($conf->db->name,'');
 		    foreach ($listtables as $val)
 			{
@@ -178,7 +177,10 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 				}
 				else
 				{
-					// \TODO Ignore only error DB_ERROR_NOSUCHTABLE
+					if ($db->lasterrno() != 'DB_ERROR_NOSUCHTABLE')
+					{
+						print '<tr><td colspan="2"><font  class="error">'.$sql.' : '.$db->lasterror()."</font></td></tr>\n";
+					}
 				}
 			}
 		}
@@ -252,7 +254,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 						{
 							// Version qualified, delete SQL comments
 							$buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
-							//print "Ligne $i qualifiée par version: ".$buf.'<br>';
+							//print "Ligne $i qualifiï¿½e par version: ".$buf.'<br>';
 						}
 					}
 					
@@ -279,7 +281,7 @@ if (! isset($_GET["action"]) || $_GET["action"] == "upgrade")
 			{
 				if ($sql)
 				{
-					// Ajout trace sur requete (eventuellement à commenter si beaucoup de requetes)
+					// Ajout trace sur requete (eventuellement ï¿½ commenter si beaucoup de requetes)
 					print('<tr><td valign="top">'.$langs->trans("Request").' '.($i+1)." sql='".$sql."'</td></tr>\n");
 					dolibarr_install_syslog("upgrade: ".$langs->transnoentities("Request").' '.($i+1)." sql='".$sql);
 
