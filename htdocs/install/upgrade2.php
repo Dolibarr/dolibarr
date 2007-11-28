@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005      Marc Barilley / Océbo <marc@ocebo.com>
+/* Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
  * Copyright (C) 2005-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
@@ -21,7 +21,7 @@
 
 /**
 	\file       htdocs/install/upgrade2.php
-	\brief      Effectue la migration de données diverses
+	\brief      Effectue la migration de donnees diverses
 	\version    $Revision$
 */
 
@@ -39,7 +39,7 @@ $etape = 2;
 $error = 0;
 
 
-// Cette page peut etre longue. On augmente le délai autorise.
+// Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
@@ -73,7 +73,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 	print '<table cellspacing="0" cellpadding="1" border="0" width="100%">';
 	
-	// on décode le mot de passe de la base si besoin
+	// on decode le mot de passe de la base si besoin
 	if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 	// $conf is already instancied inside inc.php
@@ -108,7 +108,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 	/*
 	 * Pour utiliser d'autres versions des librairies externes que les
-	 * versions embarquées dans Dolibarr, définir les constantes adequates:
+	 * versions embarquees dans Dolibarr, definir les constantes adequates:
 	 * Pour FPDF:           FPDF_PATH
 	 * Pour Pear:           PEAR_PATH
 	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
@@ -131,7 +131,7 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 
 	/***************************************************************************************
 	*
-	* Migration des données
+	* Migration des donnees
 	*
 	***************************************************************************************/
 	if (! $error)
@@ -178,8 +178,8 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 		migrate_delete_old_files($db,$langs,$conf);
 
     	// On commit dans tous les cas.
-    	// La procédure etant conçue pour pouvoir passer plusieurs fois quelquesoit la situation.
-    	$db->commit();		// FIXME    	
+    	// La procedure etant concue pour pouvoir passer plusieurs fois quelquesoit la situation.
+    	$db->commit();	
     	$db->close();
     	
 	}
@@ -675,7 +675,7 @@ function migrate_links_transfert($db,$langs,$conf)
 
 
 /*
- * Mise a jour des date de contrats non renseignées
+ * Mise a jour des date de contrats non renseignees
  */
 function migrate_contracts_date1($db,$langs,$conf)
 {
@@ -705,7 +705,7 @@ function migrate_contracts_date1($db,$langs,$conf)
 
 
 /*
- * Mise a jour date contrat avec date min effective mise en service si inférieur
+ * Mise a jour date contrat avec date min effective mise en service si inferieur
  */
 function migrate_contracts_date2($db,$langs,$conf)
 {
@@ -769,7 +769,7 @@ function migrate_contracts_date2($db,$langs,$conf)
 
 
 /*
- * Mise a jour des dates de création de contrat
+ * Mise a jour des dates de creation de contrat
  */
 function migrate_contracts_date3($db,$langs,$conf)
 {
@@ -791,7 +791,7 @@ function migrate_contracts_date3($db,$langs,$conf)
 
 
 /*
- * Reouverture des contrats qui ont au moins une ligne non fermée
+ * Reouverture des contrats qui ont au moins une ligne non fermee
  */
 function migrate_contracts_open($db,$langs,$conf)
 {
@@ -867,13 +867,13 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 		$i=0;
 		$var = true;
         
-		// Pour chaque paiement fournisseur, on insère une ligne dans paiementfourn_facturefourn
+		// Pour chaque paiement fournisseur, on insere une ligne dans paiementfourn_facturefourn
 		while (($i < $select_num) && (! $error))
 		{
 			$var = !$var;
 			$select_obj = $db->fetch_object($select_resql);
 
-			// Vérifier si la ligne est déjà dans la nouvelle table. On ne veut pas insérer de doublons.
+			// Verifier si la ligne est deja dans la nouvelle table. On ne veut pas insï¿½rer de doublons.
 			$check_sql  = 'SELECT fk_paiementfourn, fk_facturefourn';
 			$check_sql .= ' FROM '.MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 			$check_sql .= ' WHERE fk_paiementfourn = '.$select_obj->rowid.' AND fk_facturefourn = '.$select_obj->fk_facture_fourn.';';
