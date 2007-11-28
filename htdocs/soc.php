@@ -161,7 +161,8 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		}
 		else
 		{
-			$mesg=$soc->error;
+			$langs->load("errors");
+			$mesg=$langs->trans($soc->error);
 			$_GET["action"]='create';
 		}
 	}
@@ -324,10 +325,13 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print "<br>\n";
 		}
 		
-		if ($soc->error)
+		if (sizeof($soc->errors))
 		{
 			print '<div class="error">';
-			print nl2br($soc->error);
+			foreach($soc->errors as $message)
+			{
+				print $langs->trans($message)."<br>\n";
+			}
 			print '</div>';
 		}
 		
