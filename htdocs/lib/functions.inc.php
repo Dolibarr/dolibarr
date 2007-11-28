@@ -2948,81 +2948,101 @@ function dolibarr_decode($chain)
 }
 
 /**
-   \brief     Fonction retournant le nombre de jour f�ri�s samedis et dimanches entre 2 dates entr�es en timestamp
-   \brief     SERVANT AU CALCUL DES JOURS OUVRABLES
-   \param	    timestampStart      Timestamp de d�but
+   \brief     	Fonction retournant le nombre de jour fieries samedis et dimanches entre 2 dates entrees en timestamp
+   \remarks		SERVANT AU CALCUL DES JOURS OUVRABLES
+   \param	    timestampStart      Timestamp de debut
    \param	    timestampEnd        Timestamp de fin
-   \return    nbFerie             Nombre de jours f�ri�s
-   \TODO: Pr�voir les jours f�ri�s hors France.
+   \return   	nbFerie             Nombre de jours feries
 */
-function num_public_holiday($timestampStart, $timestampEnd)
+function num_public_holiday($timestampStart, $timestampEnd, $countrycode='FR')
 {
-     
-    // Initialisation de la date de d�but
-    $jour = date("d", $timestampStart);
-    $mois = date("m", $timestampStart);
-    $annee = date("Y", $timestampStart);
     $nbFerie = 0;
+
     while ($timestampStart != $timestampEnd)
     {    
+        $ferie=false; 	
+    	$countryfound=0;
+
+    	$jour  = date("d", $timestampStart);
+	    $mois  = date("m", $timestampStart);
+	    $annee = date("Y", $timestampStart);
+
+	    if ($countrycode == 'FR')
+        {
+        	$countryfound=1;
+        	
+	        // Definition des dates feriees fixes
+	        if($jour == 1 && $mois == 1)   $ferie=true; // 1er janvier
+	        if($jour == 1 && $mois == 5)   $ferie=true; // 1er mai
+	        if($jour == 8 && $mois == 5)   $ferie=true; // 5 mai
+	        if($jour == 14 && $mois == 7)  $ferie=true; // 14 juillet
+	        if($jour == 15 && $mois == 8)  $ferie=true; // 15 aout
+	        if($jour == 1 && $mois == 11)  $ferie=true; // 1 novembre
+	        if($jour == 11 && $mois == 11) $ferie=true; // 11 novembre
+	        if($jour == 25 && $mois == 12) $ferie=true; // 25 decembre
+         
+	        // Calcul du jour de paques
+	        $date_paques = easter_date($annee);
+	        $jour_paques = date("d", $date_paques);
+	        $mois_paques = date("m", $date_paques);
+	        if($jour_paques == $jour && $mois_paques == $mois) $ferie=true;
+	        // Paques
+	     
+	        // Calcul du jour de l ascension (38 jours apres Paques)
+	        $date_ascension = dolibarr_mktime(date("H", $date_paques),
+	         date("i", $date_paques),
+	         date("s", $date_paques),
+	         date("m", $date_paques),
+	         date("d", $date_paques) + 38,
+	         date("Y", $date_paques)
+	        );
+	        $jour_ascension = date("d", $date_ascension);
+	        $mois_ascension = date("m", $date_ascension);
+	        if($jour_ascension == $jour && $mois_ascension == $mois) $ferie=true;
+	        //Ascension
+	    
+	        // Calcul de Pentecote (11 jours apres Paques)
+	        $date_pentecote = dolibarr_mktime(date("H", $date_ascension),
+	         date("i", $date_ascension),
+	         date("s", $date_ascension),
+	         date("m", $date_ascension),
+	         date("d", $date_ascension) + 11,
+	         date("Y", $date_ascension)
+	        );
+	        $jour_pentecote = date("d", $date_pentecote);
+	        $mois_pentecote = date("m", $date_pentecote);
+	        if($jour_pentecote == $jour && $mois_pentecote == $mois) $ferie=true;
+	        //Pentecote
+	     
+	        // Calul des samedis et dimanches
+	        $jour_julien = unixtojd($timestampStart);
+	        $jour_semaine = jddayofweek($jour_julien, 0);
+	        if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+	        //Samedi (6) et dimanche (0)
+        }
+
+        // Mettre ici cas des autres pays
+
+
+        // Cas pays non defini
+	    if (! $countryfound)
+        {
+        	// Calul des samedis et dimanches
+	        $jour_julien = unixtojd($timestampStart);
+	        $jour_semaine = jddayofweek($jour_julien, 0);
+	        if($jour_semaine == 0 || $jour_semaine == 6) $ferie=true;
+	        //Samedi (6) et dimanche (0)
+        }
         
-         // D�finition des dates f�ri�es fixes
-        if($jour == 1 && $mois == 1) $nbFerie++; // 1er janvier
-        if($jour == 1 && $mois == 5) $nbFerie++; // 1er mai
-        if($jour == 8 && $mois == 5) $nbFerie++; // 5 mai
-        if($jour == 14 && $mois == 7) $nbFerie++; // 14 juillet
-        if($jour == 15 && $mois == 8) $nbFerie++; // 15 aout
-        if($jour == 1 && $mois == 11) $nbFerie++; // 1 novembre
-        if($jour == 11 && $mois == 11) $nbFerie++; // 11 novembre
-        if($jour == 25 && $mois == 12) $nbFerie++; // 25 d�cembre
-     
-          // Calcul du jour de p�ques
-         $date_paques = easter_date($annee);
-         $jour_paques = date("d", $date_paques);
-         $mois_paques = date("m", $date_paques);
-         if($jour_paques == $jour && $mois_paques == $mois) $nbFerie++;
-         // P�ques
-     
-         // Calcul du jour de l ascension (38 jours apr�s Paques)
-         $date_ascension = mktime(date("H", $date_paques),
-         date("i", $date_paques),
-         date("s", $date_paques),
-         date("m", $date_paques),
-         date("d", $date_paques) + 38,
-         date("Y", $date_paques)
-         );
-         $jour_ascension = date("d", $date_ascension);
-         $mois_ascension = date("m", $date_ascension);
-         if($jour_ascension == $jour && $mois_ascension == $mois) $nbFerie++;
-         //Ascension
-    
-         // Calcul de Pentec�te (11 jours apr�s Paques)
-         $date_pentecote = mktime(date("H", $date_ascension),
-         date("i", $date_ascension),
-         date("s", $date_ascension),
-         date("m", $date_ascension),
-         date("d", $date_ascension) + 11,
-         date("Y", $date_ascension)
-         );
-         $jour_pentecote = date("d", $date_pentecote);
-         $mois_pentecote = date("m", $date_pentecote);
-         if($jour_pentecote == $jour && $mois_pentecote == $mois) $nbFerie++;
-         //Pentecote
-     
-         // Calul des samedis et dimanches
-        $jour_julien = unixtojd($timestampStart);
-        $jour_semaine = jddayofweek($jour_julien, 0);
-        if($jour_semaine == 0 || $jour_semaine == 6) $nbFerie++;
-         //Samedi (6) et dimanche (0)
-     
-          // Incr�mentation du nombre de jour ( on avance dans la boucle)
-          $jour++;
-          $timestampStart=mktime(0,0,0,$mois,$jour,$annee);
-     
-     }
-     
-      return $nbFerie;
-     
+        // On incremente compteur
+        if ($ferie) $nbFerie++;
+        
+        // Incrementation du nombre de jour (on avance dans la boucle)
+        $jour++;
+        $timestampStart=dolibarr_mktime(0,0,0,$mois,$jour,$annee);
+   	}
+
+    return $nbFerie;
 }
 
 /**
