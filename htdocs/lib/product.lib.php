@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -48,7 +47,7 @@ function product_prepare_head($product, $user)
   $head[$h][2] = 'photos';
   $h++;
   
-  //affichage onglet catégorie
+  //affichage onglet catï¿½gorie
   if ($conf->categorie->enabled)
   {
   	$head[$h][0] = DOL_URL_ROOT."/categories/categorie.php?id=".$product->id;
@@ -67,7 +66,6 @@ function product_prepare_head($product, $user)
 	}
   
   // Multilangs
-  // TODO Ecran a virer et à remplacer par 
   if($conf->global->MAIN_MULTILANGS)
     {
       $head[$h][0] = DOL_URL_ROOT."/product/traduction.php?id=".$product->id;

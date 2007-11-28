@@ -19,7 +19,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  *
  * Lots of code inspired from Dan Potter's CMailFile class
  *
@@ -38,7 +37,7 @@
 
 /**
         \class      CMailFile
-        \brief      Classe d'envoi de mails et pièces jointes. Encapsule mail() avec d'éventuel attachements.
+        \brief      Classe d'envoi de mails et piï¿½ces jointes. Encapsule mail() avec d'ï¿½ventuel attachements.
         \remarks    Usage:
         \remarks    $mailfile = new CMailFile($subject,$sendto,$replyto,$message,$filepath,$mimetype,$filename,$cc,$ccc);
         \remarks    $mailfile->sendfile();
@@ -67,12 +66,12 @@ class CMailFile
             \param 	to                  email destinataire (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
             \param 	from                email emetteur     (RFC 2822: "Nom prenom <email>[, ...]" ou "email[, ...]" ou "<email>[, ...]")
             \param 	msg                 message
-            \param 	filename_list       tableau de fichiers attachés
-            \param 	mimetype_list       tableau des types des fichiers attachés
-            \param 	mimefilename_list   tableau des noms des fichiers attachés
+            \param 	filename_list       tableau de fichiers attaches
+            \param 	mimetype_list       tableau des types des fichiers attaches
+            \param 	mimefilename_list   tableau des noms des fichiers attaches
             \param 	addr_cc             email cc
             \param 	addr_bcc            email bcc
-            \param 	deliveryreceipt		demande accusé réception
+            \param 	deliveryreceipt		demande accuse reception
             \param	msgishtml			1=message is a html message, 0=message is not html, 2=auto detect
     */
     function CMailFile($subject,$to,$from,$msg,
@@ -133,7 +132,7 @@ class CMailFile
 		// Corps message dans $text_body
         $text_body = $this->write_body($msg, $filename_list);
         
-        // Corps message suite (fichiers attachés) dans $text_encoded
+        // Corps message suite (fichiers attachï¿½s) dans $text_encoded
         if ($this->atleastonefile)
         {
             $text_encoded = $this->write_files($filename_list,$mimetype_list,$mimefilename_list);
@@ -145,7 +144,7 @@ class CMailFile
         $this->headers = $smtp_headers . $mime_headers;
         $this->message = $text_body . $text_encoded;
 		// On nettoie le header pour qu'il ne se termine pas un retour chariot.
-		// Ceci evite aussi les lignes vides en fin qui peuvent etre interprétées 
+		// Ceci evite aussi les lignes vides en fin qui peuvent etre interpretees 
 		// comme des injections mail par les serveurs de messagerie.
 		$this->headers = eregi_replace("[\r\n]+$","",$this->headers);
     }
@@ -154,7 +153,7 @@ class CMailFile
     /**
             \brief      Permet d'encoder un fichier
             \param      sourcefile
-            \return     <0 si erreur, fichier encodé si ok
+            \return     <0 si erreur, fichier encode si ok
     */
     function _encode_file($sourcefile)
     {
@@ -177,7 +176,7 @@ class CMailFile
 
     /**
             \brief     Envoi le mail
-            \return    boolean     true si mail envoyé, false sinon
+            \return    boolean     true si mail envoye, false sinon
     */
 	function sendfile()
 	{
@@ -189,25 +188,23 @@ class CMailFile
 		//$this->send_to_file();
 
 		$errorlevel=error_reporting();
-		error_reporting($errorlevel ^ E_WARNING);   // Désactive warnings
+		error_reporting($errorlevel ^ E_WARNING);   // Desactive warnings
 
 		$res=false;
 		
 		if (! $conf->global->MAIN_DISABLE_ALL_MAILS)
 		{
-			// Si Windows, addr_from doit obligatoirement etre défini
+			// Si Windows, addr_from doit obligatoirement etre defini
 			if (isset($_SERVER["WINDIR"]))
 			{
-				if (! $this->addr_from) $this->addr_from = 'robot@mydomain.com';
+				if (empty($this->addr_from)) $this->addr_from = 'robot@mydomain.com';
 				if ($this->addr_from) @ini_set('sendmail_from',getValidAddress($this->addr_from,2));
-
-				// Forcage parametres
-				// \TODO A mettre pout tout OS ?
-				if ($conf->global->MAIN_MAIL_SMTP_SERVER) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
-				if ($conf->global->MAIN_MAIL_SMTP_PORT)   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
 			}
 
-
+			// Forcage parametres
+			if (! empty($conf->global->MAIN_MAIL_SMTP_SERVER)) ini_set('SMTP',$conf->global->MAIN_MAIL_SMTP_SERVER);
+			if (! empty($conf->global->MAIN_MAIL_SMTP_PORT))   ini_set('smtp_port',$conf->global->MAIN_MAIL_SMTP_PORT);
+			
 			$dest=getValidAddress($this->addr_to,2);
 			if (! $dest)
 			{
@@ -256,7 +253,7 @@ class CMailFile
 			dolibarr_syslog("CMailFile::sendfile: ".$this->error);
 		}
 
-		error_reporting($errorlevel);              // Réactive niveau erreur origine
+		error_reporting($errorlevel);              // Reactive niveau erreur origine
 
 		return $res;
 	}
@@ -276,7 +273,7 @@ class CMailFile
 
 
     /**
-            \brief		Création des headers smtp
+            \brief		Creation des headers smtp
     */
     function write_smtpheaders()
     {
@@ -294,7 +291,7 @@ class CMailFile
         if (isset($this->addr_cc)   && $this->addr_cc)   $out .= "Cc: ".getValidAddress($this->addr_cc,2).$this->eol;
         if (isset($this->addr_bcc)  && $this->addr_bcc)  $out .= "Bcc: ".getValidAddress($this->addr_bcc,2).$this->eol;
 
-        // Accusé réception
+        // Accuse reception
         if (isset($this->deliveryreceipt) && $this->deliveryreceipt == 1) $out .= "Disposition-Notification-To: ".getValidAddress($this->addr_from,2).$this->eol;
 
         //$out .= "X-Priority: 3".$this->eol;
@@ -317,7 +314,7 @@ class CMailFile
 
 
     /**
-            \brief 		Création header MIME
+            \brief 		Creation header MIME
             \param 		filename_list
             \param 		mimefilename_list
     */
@@ -388,7 +385,7 @@ class CMailFile
             \param 		filename_list		Tableau
             \param 		mimetype_list		Tableau
             \param 		mimefilename_list	Tableau
-            \return		out					Chaine fichiers encodés
+            \return		out					Chaine fichiers encodï¿½s
     */
     function write_files($filename_list,$mimetype_list,$mimefilename_list)
     {
@@ -430,7 +427,7 @@ class CMailFile
 
 
 /**
-        \brief      Renvoie une adresse acceptée par le serveur SMTP
+        \brief      Renvoie une adresse acceptï¿½e par le serveur SMTP
         \param      adresses		Exemple: 'John Doe <john@doe.com>' ou 'john@doe.com'
         \param		format			0=Auto, 1=emails avec <>, 2=emails sans <>
         \return	    string			Renvoi: Si format 1: '<john@doe.com>' ou 'John Doe <john@doe.com>'
@@ -487,8 +484,8 @@ function getValidAddress($adresses,$format)
 /**
         \brief      Permet de diviser une chaine (RFC2045)
         \param      str
-        \remarks    function chunk_split qui remplace celle de php si nécéssaire
-        \remarks    76 caractères par ligne, terminé par "\n"
+        \remarks    function chunk_split qui remplace celle de php si necessaire
+        \remarks    76 caracteres par ligne, termine par "\n"
 */
 function _chunk_split($str)
 {
