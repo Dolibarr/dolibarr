@@ -41,7 +41,7 @@ class Fichinter extends CommonObject
     var $id;
     
 	  var $socid;		// Id client
-	  var $client;		// Objet societe client (à charger par fetch_client)
+	  var $client;		// Objet societe client (ï¿½ charger par fetch_client)
 
     var $author;
     var $ref;
@@ -57,7 +57,7 @@ class Fichinter extends CommonObject
 
     /**
      *    \brief      Constructeur de la classe
-     *    \param      DB            Handler accès base de données
+     *    \param      DB            Handler accï¿½s base de donnï¿½es
      *    \param      socid			Id societe
      */
     function Fichinter($DB, $socid="")
@@ -69,7 +69,7 @@ class Fichinter extends CommonObject
         $this->products = array();
         $this->projet_id = 0;
 
-        // Statut 0=brouillon, 1=validé
+        // Statut 0=brouillon, 1=validï¿½
         $this->statuts[0]=$langs->trans("Draft");
         $this->statuts[1]=$langs->trans("Validated");
         $this->statuts_short[0]=$langs->trans("Draft");
@@ -78,7 +78,7 @@ class Fichinter extends CommonObject
 
 
     /*
-     *    	\brief      Crée une fiche intervention en base
+     *    	\brief      Crï¿½e une fiche intervention en base
      *		\return		int		<0 if KO, >0 if OK
      */
     function create()
@@ -95,7 +95,7 @@ class Fichinter extends CommonObject
 		
 		$this->db->begin();
 
-		// on vérifie si la ref n'est pas utilisée
+		// on vï¿½rifie si la ref n'est pas utilisï¿½e
 		$soc = new Societe($this->db);
 		$result=$soc->fetch($this->socid);
 		$this->verifyNumRef($soc);
@@ -163,8 +163,8 @@ class Fichinter extends CommonObject
     }
 
     /**
-     *		\brief		Charge en mémoire la fiche intervention
-     *		\param		rowid		Id de la fiche à charger
+     *		\brief		Charge en mï¿½moire la fiche intervention
+     *		\param		rowid		Id de la fiche ï¿½ charger
      *		\return		int			<0 si ko, >0 si ok
      */
     function fetch($rowid)
@@ -240,8 +240,8 @@ class Fichinter extends CommonObject
     }
 
     /**
-     *    \brief      Retourne le libellé du statut de l'intervantion
-     *    \return     string      Libellé
+     *    \brief      Retourne le libellï¿½ du statut de l'intervantion
+     *    \return     string      Libellï¿½
      */
     function getLibStatut($mode=0)
     {
@@ -249,9 +249,9 @@ class Fichinter extends CommonObject
     }
 
     /**
-     *    \brief      Renvoi le libellé d'un statut donné
+     *    \brief      Renvoi le libellï¿½ d'un statut donnï¿½
      *    \param      statut      id statut
-     *    \return     string      Libellé
+     *    \return     string      Libellï¿½
      */
     function LibStatut($statut,$mode=0)
     {
@@ -312,7 +312,7 @@ class Fichinter extends CommonObject
 	}
 	
  /**
-   *      \brief      Vérifie si la ref n'est pas déjà utilisée
+   *      \brief      Vï¿½rifie si la ref n'est pas dï¿½jï¿½ utilisï¿½e
    *      \param	    soc  		            objet societe
    */
   function verifyNumRef($soc)
@@ -333,8 +333,8 @@ class Fichinter extends CommonObject
   	
 	
  /**
-   *      \brief      Renvoie la référence de fiche intervention suivante non utilisée en fonction du module
-   *                  de numérotation actif défini dans FICHEINTER_ADDON
+   *      \brief      Renvoie la rï¿½fï¿½rence de fiche intervention suivante non utilisï¿½e en fonction du module
+   *                  de numï¿½rotation actif dï¿½fini dans FICHEINTER_ADDON
    *      \param	    soc  		            objet societe
    *      \return     string              reference libre pour la fiche intervention
    */
@@ -349,7 +349,7 @@ class Fichinter extends CommonObject
     {
     	$file = FICHEINTER_ADDON.".php";
 
-	    // Chargement de la classe de numérotation
+	    // Chargement de la classe de numï¿½rotation
 	    $classname = FICHEINTER_ADDON;
 	    require_once($dir.$file);
 
@@ -376,7 +376,7 @@ class Fichinter extends CommonObject
   }
   
   /**
- 	 *    \brief      Mets à jour les commentaires publiques et privés
+ 	 *    \brief      Mets ï¿½ jour les commentaires publiques et privï¿½s
 	 *    \param      note	Commentaire
 	 *    \param      type  Type de note
 	 *    \return     int         	<0 si ko, >0 si ok
@@ -453,7 +453,7 @@ class Fichinter extends CommonObject
 	{
 		if ($user->rights->ficheinter->creer)
 		{
-			//verif que le projet et la société concordent
+			//verif que le projet et la sociï¿½tï¿½ concordent
 			$sql = 'SELECT p.rowid, p.title FROM '.MAIN_DB_PREFIX.'projet as p WHERE p.fk_soc ='.$this->socid.' AND p.rowid='.$project_id;
 			$sqlres = $this->db->query($sql);
 			if ($sqlres)
@@ -490,7 +490,7 @@ class Fichinter extends CommonObject
 			if ( $this->db->query($sql) )
 			{
 	
-				// On efface le répertoire du pdf
+				// On efface le rï¿½pertoire du pdf
 				$fichinterref = sanitize_string($this->ref);
 				if ($conf->fichinter->dir_output)
 				{
@@ -531,7 +531,7 @@ class Fichinter extends CommonObject
 	}
 	
 /**
- *      \brief      Définit une date de livraison du bon d'intervention
+ *      \brief      Dï¿½finit une date de livraison du bon d'intervention
  *      \param      user        		Objet utilisateur qui modifie
  *      \param      date_creation   date de livraison
  *      \return     int         		<0 si ko, >0 si ok
@@ -559,7 +559,7 @@ class Fichinter extends CommonObject
  }
  
 /**
- *      \brief      Définit le label de l'intervention
+ *      \brief      Dï¿½finit le label de l'intervention
  *      \param      user        		Objet utilisateur qui modifie
  *      \param      description     description
  *      \return     int         		<0 si ko, >0 si ok
@@ -591,7 +591,7 @@ class Fichinter extends CommonObject
 	 * 		\param    	fichinterid      	  Id de la fiche d'intervention
 	 * 		\param    	desc            	  Description de la ligne
 	 *    \param      date_intervention   Date de l'intervention
-	 *    \param      duration            Durée de l'intervention
+	 *    \param      duration            Durï¿½e de l'intervention
    *    	\return    	int             	>0 si ok, <0 si ko
    */
     function addline($fichinterid, $desc, $date_intervention, $duration)
@@ -629,7 +629,7 @@ class Fichinter extends CommonObject
 
     /**
      *      \brief      Supprime une ligne d'intervention
-     *      \param      idligne     Id de la ligne detail à supprimer
+     *      \param      idligne     Id de la ligne detail ï¿½ supprimer
      *      \return     int         >0 si ok, <0 si ko
      */
     function delete_line($idligne)
@@ -640,7 +640,7 @@ class Fichinter extends CommonObject
 
             if ($this->db->query($sql) )
             {
-                //Todo : faire un update du total de la durée
+                //Todo : faire un update du total de la durï¿½e
                 //$this->update_price();
 
                 return 1;
@@ -657,7 +657,7 @@ class Fichinter extends CommonObject
     }
 
 	/**
-	 *      \brief      Stocke un numéro de rang pour toutes les lignes de
+	 *      \brief      Stocke un numï¿½ro de rang pour toutes les lignes de
 	 *                  detail d'une fiche d'intervention qui n'en ont pas.
 	 */
 	function line_order()
@@ -781,14 +781,14 @@ class Fichinter extends CommonObject
 	}
 	
 	/**
-	*		\brief		Initialise la fiche intervention avec valeurs fictives aléatoire
-	*					Sert à générer une fiche intervention pour l'aperu des modèles ou demo
+	*		\brief		Initialise la fiche intervention avec valeurs fictives alï¿½atoire
+	*					Sert ï¿½ gï¿½nï¿½rer une fiche intervention pour l'aperu des modï¿½les ou demo
 	*/
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de sociï¿½tï¿½ socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -821,7 +821,7 @@ class Fichinter extends CommonObject
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise paramï¿½tres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -871,13 +871,13 @@ class FichinterLigne
 	var $fk_fichinter;
   var $desc;          	// Description ligne
   var $datei;           // Date intervention
-  var $duration;        // Durée de l'intervention
+  var $duration;        // Durï¿½e de l'intervention
   var $rang = 0;
 
 
 	/**
 	 *      \brief     Constructeur d'objets ligne d'intervention
-	 *      \param     DB      handler d'accès base de donnée
+	 *      \param     DB      handler d'accï¿½s base de donnï¿½e
 	 */
 	function FichinterLigne($DB)
 	{
@@ -885,7 +885,7 @@ class FichinterLigne
 	}
 
 	/**
-	 *      \brief     Recupére l'objet ligne d'intervention
+	 *      \brief     Recupï¿½re l'objet ligne d'intervention
 	 *      \param     rowid           id de la ligne
 	 */
 	function fetch($rowid)
@@ -919,7 +919,7 @@ class FichinterLigne
 	}
 	
 	/**
-	 *      \brief     	Insère l'objet ligne d'intervention en base
+	 *      \brief     	Insï¿½re l'objet ligne d'intervention en base
 	 *		\return		int		<0 si ko, >0 si ok
 	 */
 	function insert()
@@ -930,7 +930,7 @@ class FichinterLigne
 		$rangToUse=$this->rang;
 		if ($rangToUse == -1)
 		{
-			// Récupère rang max de la ligne d'intervention dans $rangmax
+			// Rï¿½cupï¿½re rang max de la ligne d'intervention dans $rangmax
 			$sql = 'SELECT max(rang) as max FROM '.MAIN_DB_PREFIX.'fichinterdet';
 			$sql.= ' WHERE fk_fichinter ='.$this->fk_fichinter;
 			$resql = $this->db->query($sql);
@@ -1025,10 +1025,12 @@ class FichinterLigne
 		}
 	}
 	
+	/**
+	 *      \brief     	Mise a jour duree total dans table llx_fichinter
+	 *		\return		int		<0 si ko, >0 si ok
+	 */
 	function update_total()
 	{
-		// \TODO
-		// Mettre à jour duree total dans table llx_fichinter
 		$sql = "SELECT SUM(duree) as total_duration";
 		$sql.= " FROM ".MAIN_DB_PREFIX."fichinterdet";
 		$sql.= " WHERE fk_fichinter=".$this->fk_fichinter;
