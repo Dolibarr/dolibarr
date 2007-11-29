@@ -30,37 +30,17 @@
 require("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-$user->getrights('projet');
-
-if (!$user->rights->projet->lire) accessforbidden();
-
 /*
- * S�curit� acc�s client
+ * Securite acces client
  */
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
 if ($projetid == '') accessforbidden();
 
-if ($user->societe_id > 0) 
-{
-  $socid = $user->societe_id;
-}
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'projet', $projetid);
 
-// Protection restriction commercial
-if ($projetid && !$user->rights->commercial->client->voir)
-{
-        $sql = "SELECT p.rowid, p.fk_soc";
-        $sql .= " FROM ".MAIN_DB_PREFIX."societe_commerciaux as sc, ".MAIN_DB_PREFIX."projet as p";
-        $sql .= " WHERE p.rowid = ".$projetid;
-        if (!$user->rights->commercial->client->voir) $sql .= " AND sc.fk_soc = p.fk_soc AND fk_user = ".$user->id;
-        if ($socid) $sql .= " AND p.fk_soc = ".$socid;
-
-        if ( $db->query($sql) )
-        {
-          if ( $db->num_rows() == 0) accessforbidden();
-        }
-}
 
 Function PLines(&$inc, $parent, $lines, &$level, $tasksrole)
 {

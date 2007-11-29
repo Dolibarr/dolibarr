@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -33,11 +34,6 @@ require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/project.lib.php");
 
-if (!$user->rights->projet->lire) accessforbidden();
-
-/*
- * Sécurité accés client
- */
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
@@ -45,6 +41,7 @@ if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add"
 
 // Sécurité d'accès client et commerciaux
 $socid = restrictedArea($user, 'projet', $projetid);
+
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {

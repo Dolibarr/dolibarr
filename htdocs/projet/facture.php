@@ -1,6 +1,7 @@
 <?php
 /* Copyright (C) 2001-2004 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -37,38 +38,14 @@ $langs->load("projects");
 $langs->load("companies");
 $langs->load("bills");
 
-
-$user->getrights('projet');
-
-if (!$user->rights->projet->lire) accessforbidden();
-
 // Sécurité accés client
 $projetid='';
 if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
 if ($projetid == '') accessforbidden();
 
-if ($user->societe_id > 0) 
-{
-  $socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if ($projetid)
-{
-	$sql = "SELECT p.rowid, p.fk_soc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
-	$sql.= " WHERE p.rowid = ".$projetid;
-	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND p.fk_soc = ".$socid;
-	
-	if ( $db->query($sql) )
-	{
-		if ( $db->num_rows() == 0) accessforbidden();
-	}
-}
-  
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'projet', $projetid);
 
 llxHeader("","../");
 
