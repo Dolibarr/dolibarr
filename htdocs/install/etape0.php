@@ -58,7 +58,8 @@ if ($_POST["action"] == "set")
 	umask(0);
     foreach($_POST as $cle=>$valeur)
     {
-    echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
+    	echo '<input type="hidden" name="'.$cle.'"  value="'.$valeur.'">';
+		if (! eregi('^db_pass',$cle)) dolibarr_install_syslog("Choice for ".$cle." = ".$valeur);
     }
 }
 

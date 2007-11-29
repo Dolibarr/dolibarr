@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/install/etape2.php
-        \brief      Crée les tables, clés primaires, clés étrangères, index et fonctions en base puis charge les données de référence
+        \brief      Crï¿½e les tables, clï¿½s primaires, clï¿½s ï¿½trangï¿½res, index et fonctions en base puis charge les donnï¿½es de rï¿½fï¿½rence
         \version    $Revision$
 */
 
@@ -33,7 +33,7 @@ $etape = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le délai autorise.
+// Cette page peut etre longue. On augmente le dï¿½lai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
@@ -73,7 +73,7 @@ if ($_POST["action"] == "set")
     }
     else
     {
-        print "<tr><td>Erreur lors de la création de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>Erreur lors de la crï¿½ation de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
     }
 
     if ($ok)
@@ -81,7 +81,7 @@ if ($_POST["action"] == "set")
         if($db->database_selected == 1)
         {
 
-            dolibarr_install_syslog("etape2: Connexion réussie à la base : $dolibarr_main_db_name");
+            dolibarr_install_syslog("etape2: Connexion rï¿½ussie ï¿½ la base : $dolibarr_main_db_name");
         }
         else
         {
@@ -110,16 +110,17 @@ if ($_POST["action"] == "set")
     ***************************************************************************************/
     if ($ok)
     {
-        if ($choix==1) $dir = "../../mysql/tables/";
+        if ($choix==1)     $dir = "../../mysql/tables/";
         elseif ($choix==2) $dir = "../../pgsql/tables/";
         elseif ($choix==3) $dir = "../../mssql/tables/";
 
         $ok = 0;
         $handle=opendir($dir);
+        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
         $table_exists = 0;
         while (($file = readdir($handle))!==false)
         {
-            if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) <> '.key.sql')
+            if (eregi('\.sql$',$file) && eregi('^llx_',$file) && ! eregi('\.key\.sql$',$file))
             {
                 $name = substr($file, 0, strlen($file) - 4);
                 $buffer = '';
@@ -135,32 +136,45 @@ if ($_POST["action"] == "set")
                         }
                     }
                     fclose($fp);
-                }
 
-                //print "<tr><td>Création de la table $name/td>";
-				$requestnb++;
-                if ($db->query($buffer))
-                {
-                   // print "<td>OK requete ==== $buffer</td></tr>";
+                    $buffer=trim($buffer);
+                    
+	                //print "<tr><td>Creation de la table $name/td>";
+					$requestnb++;
+					if ($character_set_client=="UTF-8"){
+						$buffer=utf8_encode ($buffer);
+					}
+					
+					dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+					if ($db->query($buffer))
+	                {
+	                   // print "<td>OK requete ==== $buffer</td></tr>";
+	                }
+	                else
+	                {
+	                    if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
+	                    {
+	                        //print "<td>Deja existante</td></tr>";
+	                    }
+	                    else
+	                    {
+	                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
+	                        print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+	                        print "</td>";
+	                        print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
+	                        $error++;
+	                    }
+	                }
                 }
                 else
                 {
-                    if ($db->errno() == 'DB_ERROR_TABLE_ALREADY_EXISTS')
-                    {
-                        //print "<td>Déjà existante</td></tr>";
-                        $table_exists = 1;
-                    }
-                    else
-                    {
-                        print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
-                        print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
-                        print "</td>";
-                        print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
-                        $error++;
-                    }
+	                print "<tr><td>".$langs->trans("CreateTableAndPrimaryKey",$name);
+	                print "</td>";
+	                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+	                $error++;
+	                dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
                 }
-            }
-
+        	}
         }
         closedir($handle);
 
@@ -176,24 +190,24 @@ if ($_POST["action"] == "set")
     /***************************************************************************************
     *
     * Chargement fichiers tables/*.key.sql
-    * A faire après les fichiers *.sql
+    * A faire apres les fichiers *.sql
     *
     ***************************************************************************************/
     if ($ok)
     {
-        if ($choix==1) $dir = "../../mysql/tables/";
+        if ($choix==1)     $dir = "../../mysql/tables/";
         elseif ($choix==2) $dir = "../../pgsql/tables/";
         elseif ($choix==3) $dir = "../../mssql/tables/";
 
         $okkeys = 0;
         $handle=opendir($dir);
-        $table_exists = 0;
+        dolibarr_install_syslog("Ouverture repertoire ".$dir." handle=".$handle,LOG_DEBUG);
         while (($file = readdir($handle))!==false)
         {
-            if (substr($file, strlen($file) - 4) == '.sql' && substr($file,0,4) == 'llx_' && substr($file, -8) == '.key.sql')
+            if (eregi('\.sql$',$file) && eregi('^llx_',$file) && eregi('\.key\.sql$',$file))
             {
                 $name = substr($file, 0, strlen($file) - 4);
-                //print "<tr><td>Création de la table $name</td>";
+                //print "<tr><td>Creation de la table $name</td>";
                 $buffer = '';
                 $fp = fopen($dir.$file,"r");
                 if ($fp)
@@ -213,7 +227,7 @@ if ($_POST["action"] == "set")
                             {
                             	// Version qualified, delete SQL comments
                                 $buf=eregi_replace('^-- V([0-9\.]+)','',$buf);
-                                //print "Ligne $i qualifiée par version: ".$buf.'<br>';
+                                //print "Ligne $i qualifiee par version: ".$buf.'<br>';
                             }                      
                         }
 
@@ -221,44 +235,54 @@ if ($_POST["action"] == "set")
                         if (! eregi('^--',$buf)) $buffer .= $buf;
                     }
                     fclose($fp);
+                    
+	                // Si plusieurs requetes, on boucle sur chaque
+	                $listesql=split(';',$buffer);
+	                foreach ($listesql as $req)
+	                {
+	                	$buffer=trim($req);
+	                    if ($buffer)
+	                    {
+			                //print "<tr><td>Creation des cles et index de la table $name: '$buffer'</td>";
+							$requestnb++;
+							if ($character_set_client=="UTF-8"){
+								$buffer=utf8_encode ($buffer);
+							}
+							
+							dolibarr_install_syslog("Request: ".$buffer,LOG_DEBUG);
+	                        if ($db->query($buffer))
+	                        {
+	                            //print "<td>OK requete ==== $buffer</td></tr>";
+	                        }
+	                        else
+	                        {
+	                            if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
+	                                $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
+	                                $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
+	                                eregi('duplicate key name',$db->error()))
+	                            {
+	                                //print "<td>Deja existante</td></tr>";
+	                                $key_exists = 1;
+	                            }
+	                            else
+	                            {
+	                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
+	                                print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
+	                                print "</td>";
+	                                print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
+	                                $error++;
+	                            }
+	                        }
+	                    }
+                	}
                 }
-
-                // Si plusieurs requetes, on boucle sur chaque
-                $listesql=split(';',$buffer);
-                foreach ($listesql as $buffer)
+                else
                 {
-                    if (trim($buffer))
-                    {
-		                //print "<tr><td>Création des clés et index de la table $name: '$buffer'</td>";
-						$requestnb++;
-						if ($character_set_client=="UTF-8"){
-							$buffer=utf8_encode ($buffer);
-						}
-						
-                        if ($db->query(trim($buffer)))
-                        {
-                            //print "<td>OK requete ==== $buffer</td></tr>";
-                        }
-                        else
-                        {
-                            if ($db->errno() == 'DB_ERROR_KEY_NAME_ALREADY_EXISTS' ||
-                                $db->errno() == 'DB_ERROR_CANNOT_CREATE' ||
-                                $db->errno() == 'DB_ERROR_PRIMARY_KEY_ALREADY_EXISTS' ||
-                                eregi('duplicate key name',$db->error()))
-                            {
-                                //print "<td>Déjà existante</td></tr>";
-                                $key_exists = 1;
-                            }
-                            else
-                            {
-                                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
-                                print "<br>".$langs->trans("Request").' '.$requestnb.' : '.$buffer;
-                                print "</td>";
-                                print "<td>".$langs->trans("Error")." ".$db->errno()." ".$db->error()."</td></tr>";
-                                $error++;
-                            }
-                        }
-                    }
+	                print "<tr><td>".$langs->trans("CreateOtherKeysForTable",$name);
+	                print "</td>";
+	                print "<td>".$langs->trans("Error")." Failed to open file ".$dir.$file."</td></tr>";
+	                $error++;
+	                dolibarr_install_syslog("Failed to open file ".$dir.$file,LOG_ERR);
                 }
             }
 
@@ -305,7 +329,7 @@ if ($_POST["action"] == "set")
         elseif ($choix==2) $dir = "../../pgsql/functions/";
         elseif ($choix==3) $dir = "../../mssql/functions/";
 
-        // Création données
+        // Crï¿½ation donnï¿½es
         $file = "functions.sql";
         if (file_exists($dir.$file)) {
             $fp = fopen($dir.$file,"r");
@@ -323,7 +347,7 @@ if ($_POST["action"] == "set")
             }
 
             // Si plusieurs requetes, on boucle sur chaque
-            $listesql=split('§',eregi_replace(";';",";'§",$buffer));
+            $listesql=split('ï¿½',eregi_replace(";';",";'ï¿½",$buffer));
             foreach ($listesql as $buffer) {                
                 if (trim($buffer)) {
     
@@ -372,7 +396,7 @@ if ($_POST["action"] == "set")
         elseif ($choix==2) $dir = "../../pgsql/data/";
         elseif ($choix==3) $dir = "../../mssql/data/";
 
-        // Création données
+        // Crï¿½ation donnï¿½es
         $file = "data.sql";
         $fp = fopen($dir.$file,"r");
         if ($fp)
@@ -419,7 +443,7 @@ if ($_POST["action"] == "set")
 
     /***************************************************************************************
     *
-    * Les variables qui ecrase le chemin par defaut sont redéfinies
+    * Les variables qui ecrase le chemin par defaut sont redï¿½finies
     *
     ***************************************************************************************/
     if ($ok == 1)
