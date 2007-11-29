@@ -1507,14 +1507,14 @@ function dol_loginfunction($notused,$pearstatus)
 	print "\n</body>\n</html>";
 }
 
-/*
- *    \brief      Vérifie les droits de l'utilisateur
- *    \param      user      	  Utilisateur courant
- *    \param      module        Module a vérifier
- *    \param      objectid      ID du document
- *    \param      dbtable       Table de la base correspondant au module (optionnel)
- *    \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
- */
+/**
+     \brief      Vérifie les droits de l'utilisateur
+     \param      user      	  Utilisateur courant
+     \param      module        Module a vérifier
+     \param      objectid      ID du document
+     \param      dbtable       Table de la base correspondant au module (optionnel)
+     \param      list          Défini si la page sert de liste et donc ne fonctionne pas avec un id
+*/
  function restrictedArea($user, $modulename, $objectid='', $dbtablename='', $list=0)
  {
  	global $db;
