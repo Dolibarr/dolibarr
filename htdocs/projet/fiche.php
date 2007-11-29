@@ -43,27 +43,8 @@ if ($_GET["id"]) { $projetid=$_GET["id"]; }
 
 if ($projetid == '' && ($_GET['action'] != "create" && $_POST['action'] != "add" && $_POST["action"] != "update" && !$_POST["cancel"])) accessforbidden();
 
-if ($user->societe_id > 0) 
-{
-	$socid = $user->societe_id;
-}
-
-// Protection restriction commercial
-if ($projetid && !$user->rights->commercial->client->voir)
-{
-	$sql = "SELECT p.rowid, p.fk_soc";
-	$sql.= " FROM ".MAIN_DB_PREFIX."projet as p";
-	if (!$user->rights->commercial->client->voir) $sql .= ", ".MAIN_DB_PREFIX."societe_commerciaux as sc ";
-	$sql.= " WHERE p.rowid = ".$projetid;
-	if (!$user->rights->commercial->client->voir) $sql .= " AND p.fk_soc = sc.fk_soc AND sc.fk_user = ".$user->id;
-	if ($socid) $sql .= " AND p.fk_soc = ".$socid;
-
-	if ( $db->query($sql) )
-	{
-		if ( $db->num_rows() == 0) accessforbidden();
-	}
-}
-
+// Sécurité d'accès client et commerciaux
+$socid = restrictedArea($user, 'projet', $projetid);
 
 if ($_POST["action"] == 'add' && $user->rights->projet->creer)
 {
