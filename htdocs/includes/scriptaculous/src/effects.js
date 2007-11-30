@@ -1,4 +1,4 @@
-// script.aculo.us effects.js v1.8.0_pre1, Fri Oct 12 21:34:51 +0200 2007
+// script.aculo.us effects.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 // Contributors:
@@ -226,16 +226,13 @@ Effect.Queues = {
   get: function(queueName) {
     if (!Object.isString(queueName)) return queueName;
     
-    if (!this.instances[queueName])
-      this.instances[queueName] = new Effect.ScopedQueue();
-      
-    return this.instances[queueName];
+    return this.instances.get(queueName) ||
+      this.instances.set(queueName, new Effect.ScopedQueue());
   }
 };
 Effect.Queue = Effect.Queues.get('global');
 
-Effect.Base = Class.create();
-Effect.Base.prototype = {
+Effect.Base = Class.create({
   position: null,
   start: function(options) {
     function codeForEvent(options,eventName){
@@ -303,10 +300,10 @@ Effect.Base.prototype = {
   inspect: function() {
     var data = $H();
     for(property in this)
-      if (!Object.isFunction(this[property])) data[property] = this[property];
+      if (!Object.isFunction(this[property])) data.set(property, this[property]);
     return '#<Effect:' + data.inspect() + ',options:' + $H(this.options).inspect() + '>';
   }
-};
+});
 
 Effect.Parallel = Class.create(Effect.Base, {
   initialize: function(effects) {
@@ -657,21 +654,27 @@ Effect.DropOut = function(element) {
 
 Effect.Shake = function(element) {
   element = $(element);
+  var options = Object.extend({
+    distance: 20,
+    duration: 0.5
+  }, arguments[1] || {});
+  var distance = parseFloat(options.distance);
+  var split = parseFloat(options.duration) / 10.0;
   var oldStyle = {
     top: element.getStyle('top'),
     left: element.getStyle('left') };
-    return new Effect.Move(element, 
-      { x:  20, y: 0, duration: 0.05, afterFinishInternal: function(effect) {
+    return new Effect.Move(element,
+      { x:  distance, y: 0, duration: split, afterFinishInternal: function(effect) {
     new Effect.Move(effect.element,
-      { x: -40, y: 0, duration: 0.1,  afterFinishInternal: function(effect) {
+      { x: -distance*2, y: 0, duration: split*2,  afterFinishInternal: function(effect) {
     new Effect.Move(effect.element,
-      { x:  40, y: 0, duration: 0.1,  afterFinishInternal: function(effect) {
+      { x:  distance*2, y: 0, duration: split*2,  afterFinishInternal: function(effect) {
     new Effect.Move(effect.element,
-      { x: -40, y: 0, duration: 0.1,  afterFinishInternal: function(effect) {
+      { x: -distance*2, y: 0, duration: split*2,  afterFinishInternal: function(effect) {
     new Effect.Move(effect.element,
-      { x:  40, y: 0, duration: 0.1,  afterFinishInternal: function(effect) {
+      { x:  distance*2, y: 0, duration: split*2,  afterFinishInternal: function(effect) {
     new Effect.Move(effect.element,
-      { x: -20, y: 0, duration: 0.05, afterFinishInternal: function(effect) {
+      { x: -distance, y: 0, duration: split, afterFinishInternal: function(effect) {
         effect.element.undoPositioned().setStyle(oldStyle);
   }}) }}) }}) }}) }}) }});
 };
@@ -1006,9 +1009,10 @@ Effect.Transform = Class.create({
   },
   addTracks: function(tracks){
     tracks.each(function(track){
-      var data = $H(track).values().first();
+      track = $H(track);
+      var data = track.values().first();
       this.tracks.push($H({
-        ids:     $H(track).keys().first(),
+        ids:     track.keys().first(),
         effect:  Effect.Morph,
         options: { style: data }
       }));
@@ -1018,8 +1022,9 @@ Effect.Transform = Class.create({
   play: function(){
     return new Effect.Parallel(
       this.tracks.map(function(track){
-        var elements = [$(track.ids) || $$(track.ids)].flatten();
-        return elements.map(function(e){ return new track.effect(e, Object.extend({ sync:true }, track.options)) });
+        var ids = track.get('ids'), effect = track.get('effect'), options = track.get('options');
+        var elements = [$(ids) || $$(ids)].flatten();
+        return elements.map(function(e){ return new effect(e, Object.extend({ sync:true }, options)) });
       }).flatten(),
       this.options
     );
@@ -1050,11 +1055,11 @@ String.prototype.parseStyle = function(){
   }
   
   Element.CSS_PROPERTIES.each(function(property){
-    if (style[property]) styleRules[property] = style[property]; 
+    if (style[property]) styleRules.set(property, style[property]); 
   });
   
   if (Prototype.Browser.IE && this.include('opacity'))
-    styleRules.opacity = this.match(/opacity:\s*((?:0|1)?(?:\.\d*)?)/)[1];
+    styleRules.set('opacity', this.match(/opacity:\s*((?:0|1)?(?:\.\d*)?)/)[1]);
 
   return styleRules;
 };
@@ -1072,10 +1077,10 @@ if (document.defaultView && document.defaultView.getComputedStyle) {
     element = $(element);
     var css = element.currentStyle, styles;
     styles = Element.CSS_PROPERTIES.inject({ }, function(hash, property) {
-      hash[property] = css[property];
+      hash.set(property, css[property]);
       return hash;
     });
-    if (!styles.opacity) styles.opacity = element.getOpacity();
+    if (!styles.opacity) styles.set('opacity', element.getOpacity());
     return styles;
   };
 };

@@ -1,4 +1,16 @@
-*SVN*
+*V1.8.0* (November 6, 2007)
+
+* Update to Prototype 1.6.0 final
+
+* Ajax.InPlaceEditor now can deal with callbacks that return an object.  Closes #10064.  [tdd]
+
+* Fix a potential problem with the loader and Firefox 2.0 on the Mac.  Closes #9951.  [awaters]
+
+* Add duration and distance options to Effect.Shake.  Closes #8637.  [amiel, rmm5t]
+
+* Update code to use new Hash implemention in Prototype 1.6. Update InPlaceEditor to use new Class.create syntax.  [tdd]
+
+*V1.8.0 preview 0* (October 12, 2007)
 
 * Update to new Class.create syntax in Prototype 1.6; update to latest Prototype 1.6 trunk.
 

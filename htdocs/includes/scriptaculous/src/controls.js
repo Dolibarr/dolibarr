@@ -1,4 +1,4 @@
-// script.aculo.us controls.js v1.8.0_pre1, Fri Oct 12 21:34:51 +0200 2007
+// script.aculo.us controls.js v1.8.0, Tue Nov 06 15:01:40 +0300 2007
 
 // Copyright (c) 2005-2007 Thomas Fuchs (http://script.aculo.us, http://mir.aculo.us)
 //           (c) 2005-2007 Ivan Krstic (http://blogs.law.harvard.edu/ivan)
@@ -35,15 +35,12 @@
 // enables autocompletion on multiple tokens. This is most 
 // useful when one of the tokens is \n (a newline), as it 
 // allows smart autocompletion after linebreaks.
-//
-// vim:expandtab ts=8 sw=2
 
 if(typeof Effect == 'undefined')
   throw("controls.js requires including script.aculo.us' effects.js library");
 
 var Autocompleter = { }
-Autocompleter.Base = function() { };
-Autocompleter.Base.prototype = {
+Autocompleter.Base = Class.create({
   baseInitialize: function(element, update, options) {
     element          = $(element)
     this.element     = element; 
@@ -245,7 +242,7 @@ Autocompleter.Base.prototype = {
     }
     var value = '';
     if (this.options.select) {
-      var nodes = document.getElementsByClassName(this.options.select, selectedElement) || [];
+      var nodes = $(selectedElement).select('.' + this.options.select) || [];
       if(nodes.length>0) value = Element.collectTextNodes(nodes[0], this.options.select);
     } else
       value = Element.collectTextNodesIgnoreClass(selectedElement, 'informal');
@@ -335,7 +332,7 @@ Autocompleter.Base.prototype = {
     }
     return (this.tokenBounds = [prevTokenPos + 1, nextTokenPos]);
   }
-}
+});
 
 Autocompleter.Base.prototype.getTokenBounds.getFirstDifferencePos = function(newS, oldS) {
   var boundary = Math.min(newS.length, oldS.length);
@@ -345,8 +342,7 @@ Autocompleter.Base.prototype.getTokenBounds.getFirstDifferencePos = function(new
   return boundary;
 };
 
-Ajax.Autocompleter = Class.create();
-Object.extend(Object.extend(Ajax.Autocompleter.prototype, Autocompleter.Base.prototype), {
+Ajax.Autocompleter = Class.create(Autocompleter.Base, {
   initialize: function(element, update, url, options) {
     this.baseInitialize(element, update, options);
     this.options.asynchronous  = true;
@@ -373,7 +369,6 @@ Object.extend(Object.extend(Ajax.Autocompleter.prototype, Autocompleter.Base.pro
   onComplete: function(request) {
     this.updateChoices(request.responseText);
   }
-
 });
 
 // The local array autocompleter. Used when you'd prefer to
@@ -411,8 +406,7 @@ Object.extend(Object.extend(Ajax.Autocompleter.prototype, Autocompleter.Base.pro
 // In that case, the other options above will not apply unless
 // you support them.
 
-Autocompleter.Local = Class.create();
-Autocompleter.Local.prototype = Object.extend(new Autocompleter.Base(), {
+Autocompleter.Local = Class.create(Autocompleter.Base, {
   initialize: function(element, update, array, options) {
     this.baseInitialize(element, update, options);
     this.options.array = array;
@@ -484,74 +478,7 @@ Field.scrollFreeActivate = function(field) {
   }, 1);
 }
 
-Ajax.InPlaceEditor = Class.create();
-Object.extend(Ajax.InPlaceEditor, {
-  DefaultOptions: {
-    ajaxOptions: { },
-    autoRows: 3,                                // Use when multi-line w/ rows == 1
-    cancelControl: 'link',                      // 'link'|'button'|false
-    cancelText: 'cancel',
-    clickToEditText: 'Click to edit',
-    externalControl: null,                      // id|elt
-    externalControlOnly: false,
-    fieldPostCreation: 'activate',              // 'activate'|'focus'|false
-    formClassName: 'inplaceeditor-form',
-    formId: null,                               // id|elt
-    highlightColor: '#ffff99',
-    highlightEndColor: '#ffffff',
-    hoverClassName: '',
-    htmlResponse: true,
-    loadingClassName: 'inplaceeditor-loading',
-    loadingText: 'Loading...',
-    okControl: 'button',                        // 'link'|'button'|false
-    okText: 'ok',
-    paramName: 'value',
-    rows: 1,                                    // If 1 and multi-line, uses autoRows
-    savingClassName: 'inplaceeditor-saving',
-    savingText: 'Saving...',
-    size: 0,
-    stripLoadedTextTags: false,
-    submitOnBlur: false,
-    textAfterControls: '',
-    textBeforeControls: '',
-    textBetweenControls: ''
-  },
-  DefaultCallbacks: {
-    callback: function(form) {
-      return Form.serialize(form);
-    },
-    onComplete: function(transport, element) {
-      // For backward compatibility, this one is bound to the IPE, and passes
-      // the element directly.  It was too often customized, so we don't break it.
-      new Effect.Highlight(element, {
-        startcolor: this.options.highlightColor, keepBackgroundImage: true });
-    },
-    onEnterEditMode: null,
-    onEnterHover: function(ipe) {
-      ipe.element.style.backgroundColor = ipe.options.highlightColor;
-      if (ipe._effect)
-        ipe._effect.cancel();
-    },
-    onFailure: function(transport, ipe) {
-      alert('Error communication with the server: ' + transport.responseText.stripTags());
-    },
-    onFormCustomization: null, // Takes the IPE and its generated form, after editor, before controls.
-    onLeaveEditMode: null,
-    onLeaveHover: function(ipe) {
-      ipe._effect = new Effect.Highlight(ipe.element, {
-        startcolor: ipe.options.highlightColor, endcolor: ipe.options.highlightEndColor,
-        restorecolor: ipe._originalBackground, keepBackgroundImage: true
-      });
-    }
-  },
-  Listeners: {
-    click: 'enterEditMode',
-    keydown: 'checkForEscapeOrReturn',
-    mouseover: 'enterHover',
-    mouseout: 'leaveHover'
-  }
-});
-Ajax.InPlaceEditor.prototype = {
+Ajax.InPlaceEditor = Class.create({
   initialize: function(element, url, options) {
     this.url = url;
     this.element = element = $(element);
@@ -696,8 +623,10 @@ Ajax.InPlaceEditor.prototype = {
     var form = this._form;
     var value = $F(this._controls.editor);
     this.prepareSubmission();
-    var params = this.options.callback(form, value);
-    params = (params ? params + '&' : '?') + 'editorId=' + this.element.id;
+    var params = this.options.callback(form, value) || '';
+    if (Object.isString(params))
+      params = params.toQueryParams();
+    params.editorId = this.element.id;
     if (this.options.htmlResponse) {
       var options = Object.extend({ evalScripts: true }, this.options.ajaxOptions);
       Object.extend(options, {
@@ -818,21 +747,16 @@ Ajax.InPlaceEditor.prototype = {
     // binding + direct element
     this._boundComplete(transport, this.element);
   }
-};
+});
+
 Object.extend(Ajax.InPlaceEditor.prototype, {
   dispose: Ajax.InPlaceEditor.prototype.destroy
 });
 
-
-Ajax.InPlaceCollectionEditor = Class.create();
-Ajax.InPlaceCollectionEditor.DefaultOptions = {
-  loadingCollectionText: 'Loading options...'
-};
-Object.extend(Ajax.InPlaceCollectionEditor.prototype, Ajax.InPlaceEditor.prototype);
-Object.extend(Ajax.InPlaceCollectionEditor.prototype, {
-  initialize: function(element, url, options) {
+Ajax.InPlaceCollectionEditor = Class.create(Ajax.InPlaceEditor, {
+  initialize: function($super, element, url, options) {
     this._extraDefaultOptions = Ajax.InPlaceCollectionEditor.DefaultOptions;
-    Ajax.InPlaceEditor.prototype.initialize.call(this, element, url, options);
+    $super(element, url, options);
   },
 
   createEditField: function() {
@@ -944,13 +868,82 @@ Ajax.InPlaceEditor.prototype.initialize.dealWithDeprecatedOptions = function(opt
   fallback('highlightEndColor', options.highlightendcolor);
 };
 
+Object.extend(Ajax.InPlaceEditor, {
+  DefaultOptions: {
+    ajaxOptions: { },
+    autoRows: 3,                                // Use when multi-line w/ rows == 1
+    cancelControl: 'link',                      // 'link'|'button'|false
+    cancelText: 'cancel',
+    clickToEditText: 'Click to edit',
+    externalControl: null,                      // id|elt
+    externalControlOnly: false,
+    fieldPostCreation: 'activate',              // 'activate'|'focus'|false
+    formClassName: 'inplaceeditor-form',
+    formId: null,                               // id|elt
+    highlightColor: '#ffff99',
+    highlightEndColor: '#ffffff',
+    hoverClassName: '',
+    htmlResponse: true,
+    loadingClassName: 'inplaceeditor-loading',
+    loadingText: 'Loading...',
+    okControl: 'button',                        // 'link'|'button'|false
+    okText: 'ok',
+    paramName: 'value',
+    rows: 1,                                    // If 1 and multi-line, uses autoRows
+    savingClassName: 'inplaceeditor-saving',
+    savingText: 'Saving...',
+    size: 0,
+    stripLoadedTextTags: false,
+    submitOnBlur: false,
+    textAfterControls: '',
+    textBeforeControls: '',
+    textBetweenControls: ''
+  },
+  DefaultCallbacks: {
+    callback: function(form) {
+      return Form.serialize(form);
+    },
+    onComplete: function(transport, element) {
+      // For backward compatibility, this one is bound to the IPE, and passes
+      // the element directly.  It was too often customized, so we don't break it.
+      new Effect.Highlight(element, {
+        startcolor: this.options.highlightColor, keepBackgroundImage: true });
+    },
+    onEnterEditMode: null,
+    onEnterHover: function(ipe) {
+      ipe.element.style.backgroundColor = ipe.options.highlightColor;
+      if (ipe._effect)
+        ipe._effect.cancel();
+    },
+    onFailure: function(transport, ipe) {
+      alert('Error communication with the server: ' + transport.responseText.stripTags());
+    },
+    onFormCustomization: null, // Takes the IPE and its generated form, after editor, before controls.
+    onLeaveEditMode: null,
+    onLeaveHover: function(ipe) {
+      ipe._effect = new Effect.Highlight(ipe.element, {
+        startcolor: ipe.options.highlightColor, endcolor: ipe.options.highlightEndColor,
+        restorecolor: ipe._originalBackground, keepBackgroundImage: true
+      });
+    }
+  },
+  Listeners: {
+    click: 'enterEditMode',
+    keydown: 'checkForEscapeOrReturn',
+    mouseover: 'enterHover',
+    mouseout: 'leaveHover'
+  }
+});
+
+Ajax.InPlaceCollectionEditor.DefaultOptions = {
+  loadingCollectionText: 'Loading options...'
+};
 
 // Delayed observer, like Form.Element.Observer, 
 // but waits for delay after last key input
 // Ideal for live-search fields
 
-Form.Element.DelayedObserver = Class.create();
-Form.Element.DelayedObserver.prototype = {
+Form.Element.DelayedObserver = Class.create({
   initialize: function(element, delay, callback) {
     this.delay     = delay || 0.5;
     this.element   = $(element);
@@ -969,4 +962,4 @@ Form.Element.DelayedObserver.prototype = {
     this.timer = null;
     this.callback(this.element, $F(this.element));
   }
-};
+});
