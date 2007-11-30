@@ -167,6 +167,8 @@ class ProductFournisseur extends Product
 		
 		if ($this->db->query($sql))
 		{
+			$unitBuyPrice = (price2num($buyprice)/$qty);
+
 			// Ajoute prix courant du fournisseur pour cette quantité
 			$sql = "INSERT INTO ".MAIN_DB_PREFIX."product_fournisseur_price";
 			$sql .= " SET datec = now()";
@@ -174,7 +176,7 @@ class ProductFournisseur extends Product
 			$sql .= " ,fk_user = ".$user->id;
 			$sql .= " ,price = ".price2num($buyprice);
 			$sql .= " ,quantity = ".$qty;
-			$sql .= " ,unitprice = ".price2num($buyprice/$qty,'MU');
+			$sql .= " ,unitprice = ".price2num($unitBuyPrice,'MU');
 
 			dolibarr_syslog("ProductFournisseur::update_buyprice sql=".$sql);
 			if (! $this->db->query($sql))
