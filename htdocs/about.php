@@ -74,10 +74,10 @@ print '</li>';
 if (eregi('^fr_',$langs->getDefaultLang()))
 {
 	print '<li>';
-	print '<a target="blank" href="http://www.dolibarr.com/">'.$langs->trans("OfficialWebSiteFr").'</a>';
+	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("OfficialWebSiteFr").'</a>';
 	print '</li>';
 	print '<li>';
-	print '<a target="blank" href="http://www.dolibarr.fr/">'.$langs->trans("NewOfficialWebSiteFr").'</a>';
+	print '<a target="blank" href="http://www.dolibarr.com/wikidev/">'.$langs->trans("OfficialWikiFr").'</a>';
 	print '</li>';
 }
 print '<li>';
