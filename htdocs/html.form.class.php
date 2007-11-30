@@ -679,13 +679,16 @@ class Form
         {
         	if ($conf->use_ajax && $conf->global->COMPANY_USE_SEARCH_TO_SELECT)
         	{
-        		if ($selected) $obj = $this->db->fetch_object($resql);
-        		$socid = $obj->rowid?$obj->rowid:'';
-
+        		$socid = 0;
+        		if ($selected)
+        		{
+        			$obj = $this->db->fetch_object($resql);
+        			$socid = $obj->rowid?$obj->rowid:'';
+        		}
         		print '<table class="nobordernopadding"><tr class="nocellnopadd">';
         		print '<td class="nobordernopadding">';
         		print '<div>';
-        		if ($obj->rowid == 0)
+        		if ($socid == 0)
         		{
         			print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value=""/>';
         		}
