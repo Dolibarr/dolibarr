@@ -1162,65 +1162,57 @@ if ($_GET['propalid'] > 0)
 					print "</td>\n";
 				}
 
-				if ($conf->global->PRODUIT_USE_MARKUP)
+				if ($conf->global->PRODUIT_USE_MARKUP && $conf->use_ajax)
 				{
-					// Champ ???
-					if ($objp->fk_product_type==0 && $conf->use_ajax)
+					$formMarkup = '<form id="formMarkup" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">'."\n";
+					$formMarkup.= '<table class="border" width="100%">'."\n";
+					if ($objp->fk_product > 0)
 					{
-						$formMarkup = '<form id="formMarkup" action="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'" method="post">'."\n";
-						$formMarkup.= '<table class="border" width="100%">'."\n";
-						if ($objp->fk_product > 0)
-						{
-							$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
-							$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SupplierPrice').'</td>'."\n";
-							$formMarkup.= '<td align="left">'.$html->select_product_fourn_price($objp->fk_product,'productfournpriceid').'</td></tr>'."\n";
-						}
 						$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
-						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('PurchasePrice').' '.$langs->trans('HT').'</td>'."\n";
-						$formMarkup.= '<td align="left"><input size="10" type="text" class="flat" name="purchaseprice_ht" value=""></td></tr>'."\n";
-						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('MarkupRate').'</td>'."\n";
-						$formMarkup.= '<td><input size="10" type="text" class="flat" id="markuprate'.$i.'" name="markuprate'.$i.'" value=""></td></tr>'."\n";
-						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SellingPrice').' '.$langs->trans('HT').'</td>'."\n";
-						//$formMarkup.= '<td><div id="sellingprice_ht'.$i.'"><input size="10" type="text" class="flat" id="sellingdata_ht'.$i.'" name="sellingdata_ht'.$i.'" value=""></div></td></tr>'."\n";
-						$formMarkup.= '<td nowrap="nowrap"><div id="sellingprice_ht'.$i.'"><div></td></tr>'."\n";
-						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('CashFlow').' '.$langs->trans('HT').'</td>'."\n";
-						$formMarkup.= '<td nowrap="nowrap"><div id="cashflow'.$i.'"></div></td></tr>'."\n";
-						$formMarkup.= '<tr><td align="center" colspan="2">'."\n";
-						$formMarkup.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">'."\n";
-						//$formMarkup.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">'."\n";
-						$formMarkup.= '</td></tr></table></form>'."\n";
-						$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,"/product/ajaxproducts.php","&count=".$i,"working")."\n";
+						$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SupplierPrice').'</td>'."\n";
+						$formMarkup.= '<td align="left">'.$html->select_product_fourn_price($objp->fk_product,'productfournpriceid').'</td></tr>'."\n";
+					}
+					$formMarkup.= '<tr><td align="left" colspan="2">&nbsp;</td></tr>'."\n";
+					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('PurchasePrice').' '.$langs->trans('HT').'</td>'."\n";
+					$formMarkup.= '<td align="left"><input size="10" type="text" class="flat" name="purchaseprice_ht" value=""></td></tr>'."\n";
+					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('MarkupRate').'</td>'."\n";
+					$formMarkup.= '<td><input size="10" type="text" class="flat" id="markuprate'.$i.'" name="markuprate'.$i.'" value=""></td></tr>'."\n";
+					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('SellingPrice').' '.$langs->trans('HT').'</td>'."\n";
+					//$formMarkup.= '<td><div id="sellingprice_ht'.$i.'"><input size="10" type="text" class="flat" id="sellingdata_ht'.$i.'" name="sellingdata_ht'.$i.'" value=""></div></td></tr>'."\n";
+					$formMarkup.= '<td nowrap="nowrap"><div id="sellingprice_ht'.$i.'"><div></td></tr>'."\n";
+					$formMarkup.= '<tr><td align="left" width="25%" height="19">&nbsp;'.$langs->trans('CashFlow').' '.$langs->trans('HT').'</td>'."\n";
+					$formMarkup.= '<td nowrap="nowrap"><div id="cashflow'.$i.'"></div></td></tr>'."\n";
+					$formMarkup.= '<tr><td align="center" colspan="2">'."\n";
+					$formMarkup.= '<input type="submit" class="button" name="validate" value="'.$langs->trans('Validate').'">'."\n";
+					//$formMarkup.= ' &nbsp; <input onClick="Dialog.closeInfo()" type="button" class="button" name="cancel" value="'.$langs->trans('Cancel').'">'."\n";
+					$formMarkup.= '</td></tr></table></form>'."\n";
+					$formMarkup.= ajax_updaterWithID("rate".$i,"markup","sellingprice_ht".$i,"/product/ajaxproducts.php","&count=".$i,"working")."\n";
 						
 
-						print '<td align="right">'."\n";
-						
-						print '<div id="calc_markup'.$i.'" style="display:none">'."\n";
-						print $formMarkup."\n";
-						print '</div>'."\n";
+					print '<td align="right">'."\n";
+					
+					print '<div id="calc_markup'.$i.'" style="display:none">'."\n";
+					print $formMarkup."\n";
+					print '</div>'."\n";
 						
 
-						print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
-						print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
-						if (($objp->info_bits & 2) == 2)
-						{
-							// Ligne remise prédéfinie, on ne permet pas modif
-						}
-						else
-						{
-							$picto = '<a href="#" onClick="dialogWindow($(\'calc_markup'.$i.'\').innerHTML,\''.$langs->trans('ToCalculateMarkup').'\')">';
-							$picto.= img_calc();
-							$picto.= '</a>';
-							print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
-						}
-						print '</td>';
-				        print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
-						print '</tr></table>';
-						print '</td>';
-			        }
-			        else
-			        {
-			        	print '<td>&nbsp;</td>';
-			        }
+					print '<table class="nobordernopadding" width="100%"><tr class="nocellnopadd">';
+					print '<td class="nobordernopadding" nowrap="nowrap" align="left">';
+					if (($objp->info_bits & 2) == 2)
+					{
+						// Ligne remise prédéfinie, on ne permet pas modif
+					}
+					else
+					{
+						$picto = '<a href="#" onClick="dialogWindow($(\'calc_markup'.$i.'\').innerHTML,\''.$langs->trans('ToCalculateMarkup').'\')">';
+						$picto.= img_calc();
+						$picto.= '</a>';
+						print $html->textwithtooltip($picto,$langs->trans("ToCalculateMarkup"),3,'','',$i);
+					}
+					print '</td>';
+				  print '<td class="nobordernopadding" nowrap="nowrap" align="right">'.vatrate($objp->marge_tx).'% </td>';
+					print '</tr></table>';
+					print '</td>';
 				}
 				
 				// VAT Rate
