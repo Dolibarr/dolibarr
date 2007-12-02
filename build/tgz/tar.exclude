@@ -1,5 +1,8 @@
 build
-dev
+dev/fpdf
+dev/ldap
+dev/purgedemo
+dev/generate*
 doc/dev/dolibarr-phpdoc
 doc/dev/barcode
 doc/dev/compta
@@ -42,6 +45,9 @@ htdocs/includes/triggers/interface_user.class.php
 htdocs/includes/triggers/interface_contractfrombill.class.php-NORUN
 htdocs/oscommerce_ws/ws_client_demo
 htdocs/theme/rodolphe
+mssql
+scripts/addons
+scripts/courrier
 scripts/lolix
 CVS
 *~
