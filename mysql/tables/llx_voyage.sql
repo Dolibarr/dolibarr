@@ -1,9 +1,6 @@
 -- ===================================================================
 -- Copyright (C) 2001-2002 Rodolphe Quiedeville <rodolphe@quiedeville.org>
 --
--- $Id$
--- $Source$
---
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -23,6 +20,8 @@
 
 -- insert into llx_voyage (date_depart, date_arrivee, amount, depart, arrivee, fk_reduc) 
 -- values ('2002-04-23 15:42','2002-04-23 19:10',26.8,'Auray','Paris',1)
+--
+-- $Id$
 -- ===================================================================
 
 create table llx_voyage

@@ -16,9 +16,8 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
---
 -- ===========================================================================
+
 
 -- Supprimme orhpelins pour permettre montée de la clé
 -- V4 DELETE llx_paiement_facture FROM llx_paiement_facture LEFT JOIN llx_facture ON llx_paiement_facture.fk_facture = llx_facture.rowid WHERE llx_facture.rowid IS NULL;

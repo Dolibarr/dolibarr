@@ -16,10 +16,8 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
 --
 -- Historique des remises au groupes de societes
--- 
 -- ========================================================================
 
 create table llx_groupesociete_remise

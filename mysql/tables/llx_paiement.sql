@@ -17,10 +17,9 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
 -- ===================================================================
---
---
+
+
 -- Satut, 0 ou 1, 1 n'est plus supprimable
 -- fk_export_compta 0 pas exporté
 
