@@ -636,11 +636,6 @@ else
 	                    print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=create_delivery">'.$langs->trans("DeliveryOrder").'</a>';
 	                }
 	
-	    			if ($user->rights->expedition->lire && ($expedition->statut > 0))
-	    			{
-	                	print '<a class="butAction" href="fiche.php?id='.$expedition->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
-	    			}
-	
 	                if ($expedition->brouillon && $user->rights->expedition->supprimer)
 	                {
 	                    print '<a class="butActionDelete" href="fiche.php?id='.$expedition->id.'&amp;action=delete">'.$langs->trans("Delete").'</a>';

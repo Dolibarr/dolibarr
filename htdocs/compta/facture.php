@@ -2002,7 +2002,7 @@ else
 			$sql.= ' c.libelle as paiement_type, p.num_paiement, p.rowid';
 			$sql.= ' FROM '.MAIN_DB_PREFIX.'paiement as p, '.MAIN_DB_PREFIX.'c_paiement as c, '.MAIN_DB_PREFIX.'paiement_facture as pf';
 			$sql.= ' WHERE pf.fk_facture = '.$fac->id.' AND p.fk_paiement = c.id AND pf.fk_paiement = p.rowid';
-			$sql.= ' ORDER BY dp DESC';
+			$sql.= ' ORDER BY dp, tms';
 			
 			$result = $db->query($sql);
 			if ($result)
@@ -2646,21 +2646,6 @@ else
 					if ($user->rights->facture->valider)
 					{
 						print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=valid">'.$langs->trans('Validate').'</a>';
-					}
-				}
-				else
-				{
-					// Générer
-					if ($fac->statut >= 1 && $user->rights->facture->creer)
-					{
-						if ($fac->paye == 0)
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
-						}
-						else
-						{
-							print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&amp;action=builddoc">'.$langs->trans('RebuildPDF').'</a>';
-						}
 					}
 				}
 				

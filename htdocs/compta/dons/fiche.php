@@ -410,11 +410,6 @@ if ($_GET["rowid"] && $_GET["action"] != 'edit')
       print "<a class=\"butAction\" href=\"fiche.php?rowid=$don->id&action=set_payed\">".$langs->trans("ClassifyPayed")."</a>";
     }
 
-    if ($don->statut == 2 || $don->statut == 3)
-    {
-        print '  <a class="butAction" href="fiche.php?rowid='.$don->id.'&amp;action=builddoc">'.$langs->trans('BuildDonationReceipt').'</a>';
-    }
-
     if ($don->statut == 0) 
     {
       print "<a class=\"butActionDelete\" href=\"fiche.php?rowid=$don->id&action=delete\">".$langs->trans("Delete")."</a>";

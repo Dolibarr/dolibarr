@@ -1691,18 +1691,6 @@ else
 					}
 				}
 
-				// Build PDF
-				if ($user->rights->commande->creer && $commande->statut < 3)
-				{
-					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
-				}
-
-				// ReBuild PDF
-				if ($user->rights->commande->creer && $commande->statut >= 3)
-				{
-					print '<a class="butAction" href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
-				}
-
 				// Send
 				if ($commande->statut > 0)
 				{

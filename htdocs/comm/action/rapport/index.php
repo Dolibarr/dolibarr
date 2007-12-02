@@ -113,7 +113,9 @@ if ($resql)
 			print "<td>$obj->df</td>\n";
 			print '<td align="center">'.$obj->cc.'</td>';
 	
-			print '<td><a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a></td>';
+			print '<td>';
+			print '<a href="index.php?action=builddoc&amp;page='.$page.'&amp;month='.$obj->month.'&amp;year='.$obj->year.'">'.img_file_new().'</a>';
+			print '</td>';
 	
 			$name = "actions-".$obj->month."-".$obj->year.".pdf";
 			$relativepath= $name;

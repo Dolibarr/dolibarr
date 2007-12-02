@@ -796,15 +796,6 @@ else
 		    }
 		}
 	
-	
-	      // Build PDF
-	      if ($commande->statut >	0)
-		{
-		  if ($user->rights->fournisseur->commande->creer)
-		    {
-		      print '<a class="butAction"	href="fiche.php?id='.$commande->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
-		    }
-		}
 	      print "</div>";
 	    }
 	

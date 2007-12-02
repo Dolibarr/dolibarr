@@ -536,8 +536,6 @@ else
 	                    print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=valid">'.$langs->trans("Validate").'</a>';
 	                }
 	    
-	                print '<a class="butAction" href="fiche.php?id='.$livraison->id.'&amp;action=builddoc">'.$langs->trans('BuildPDF').'</a>';
-	    
 	                if ($livraison->brouillon && $user->rights->expedition->livraison->supprimer)
 	                {
 	                    if ($conf->expedition_bon->enabled)

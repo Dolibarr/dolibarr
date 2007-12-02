@@ -1589,19 +1589,6 @@ if ($_GET['propalid'] > 0)
 			print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=modif">'.$langs->trans('Edit').'</a>';
 		}
 
-		// Build PDF
-		if ($user->rights->propale->creer)
-		{
-			if ($propal->statut < 2)
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("BuildPDF").'</a>';
-			}
-			else
-			{
-				print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?propalid='.$propal->id.'&amp;action=builddoc">'.$langs->trans("RebuildPDF").'</a>';
-			}
-		}
-
 		// Send
 		if ($propal->statut == 1 && $user->rights->propale->envoyer)
 		{
