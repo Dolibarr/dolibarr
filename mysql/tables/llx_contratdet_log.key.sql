@@ -16,8 +16,6 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
---
 -- ============================================================================
 
 ALTER TABLE llx_contratdet_log ADD INDEX idx_contratdet_log_fk_contratdet (fk_contratdet);
