@@ -30,6 +30,7 @@ English Dolibarr changelog
 - Themes are full CSS compliant.
 - A lot of other minor changes...
 - Option to scan uploaded document by an antivirus.
+- Transparency for picto files works with IE.
 
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
