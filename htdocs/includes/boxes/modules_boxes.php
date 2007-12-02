@@ -38,7 +38,7 @@ class ModeleBoxes
 
     var $db;
     var $error='';
-	
+	var $textnohtmlencoded=false;
 
 	/*
 	*	\brief		Constructeur
@@ -105,123 +105,138 @@ class ModeleBoxes
 
         $bcx[0] = 'class="box_pair"';
         $bcx[1] = 'class="box_impair"';
-
         $var = true;
+	
+		// Define nbcol and nblines
         $nbcol=0;
 		if (isset($contents[0])) $nbcol=sizeof($contents[0])+1;
         $nblines=sizeof($contents);
 
         print "\n\n<!-- Box start -->\n";
-        print '<table width="100%" class="noborder"';
-        if (isset($this->box_id)) print ' id="boxobject_'.$this->box_id.'"';
-        print '>';
+		print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$this->box_id.'">'."\n";
 
         // Affiche titre de la boite
-        print '<tr class="box_titre">';
-        print '<td';
-        if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
-        print '>';
-
-		if ($conf->use_ajax)
+		if (! empty($head['text']) || ! empty($head['sublink']))
 		{
-			print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
+			print '<div id="boxto_'.$this->box_id.'_title">'."\n";
+	        print '<table width="100%" class="noborder">'."\n";
+	        print '<tr class="box_titre">';
+	        print '<td';
+	        if ($nbcol > 0) { print ' colspan="'.$nbcol.'"'; }
+	        print '>';
+			if ($conf->use_ajax)
+			{
+				print '<table class="nobordernopadding" width="100%"><tr><td align="left">';
+			}
+	        if (! empty($head['text']))
+			{
+				$s=dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
+				if ($this->textnohtmlencoded) print htmlentities($s);
+				else print $s;
+			}
+	        if (! empty($head['sublink']))
+	        {
+	            print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
+	        }
+			if ($conf->use_ajax)
+	        {
+	      		print '</td><td class="nocellnopadd" width="14">';
+	      		print img_picto($langs->trans("MoveBox",$this->box_id),'uparrow','style="cursor:move;"');
+				print '</td></tr></table>';
+			}
+	        print '</td>';
+	        print "</tr>\n";
+	        print "</table>\n";
+			print "</div>\n";
 		}
-        if (isset($head['text'])) print dolibarr_trunc($head['text'],isset($head['limit'])?$head['limit']:$this->MAXLENGTHBOX);
-        if (isset($head['sublink']) && $head['sublink'])
-        {
-            print ' <a href="'.$head['sublink'].'" target="_new">'.img_picto($head['subtext'],$head['subpicto']).'</a>';
-        }
-		if ($conf->use_ajax)
-        {
-      		print '</td><td class="nocellnopadd" width="14">';
-      		print img_picto($langs->trans("Move"),'uparrow','style="cursor:move;"');
-			print '</td></tr></table>';
-		}
-
-        print '</td>';
-        print '</tr>';
-
+		
         // Affiche chaque ligne de la boite
-        for ($i=0, $n=$nblines; $i < $n; $i++)
-        {
-            if (isset($contents[$i]))
-            {
-                $var=!$var;
-                if (sizeof($contents[$i]))
-                {
-                    if (isset($contents[$i][-1]['class'])) print '<tr valign="top" class="'.$contents[$i][-1]['class'].'">';
-                    else print '<tr valign="top" '.$bcx[$var].'>';
-                }
+        if ($nblines) 
+		{
+			print '<table width="100%" class="noborder">'."\n";
+	        for ($i=0, $n=$nblines; $i < $n; $i++)
+	        {
+	            if (isset($contents[$i]))
+	            {
+	                $var=!$var;
+	                if (sizeof($contents[$i]))
+	                {
+	                    if (isset($contents[$i][-1]['class'])) print '<tr valign="top" class="'.$contents[$i][-1]['class'].'">';
+	                    else print '<tr valign="top" '.$bcx[$var].'>';
+	                }
 
-                // Affiche chaque cellule
-                for ($j=0, $m=isset($contents[$i][-1])?sizeof($contents[$i])-1:sizeof($contents[$i]); $j < $m; $j++)
-                {
-                    $tdparam="";
-                    if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
-                    if (isset($contents[$i][$j]['nowrap'])) $tdparam.=' nowrap="'. $contents[$i][$j]['align'].'"';
-                    if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
-                    if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
-                    if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
-                    if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
+	                // Affiche chaque cellule
+	                for ($j=0, $m=isset($contents[$i][-1])?sizeof($contents[$i])-1:sizeof($contents[$i]); $j < $m; $j++)
+	                {
+	                    $tdparam="";
+	                    if (isset($contents[$i][$j]['align'])) $tdparam.=' align="'. $contents[$i][$j]['align'].'"';
+	                    if (isset($contents[$i][$j]['nowrap'])) $tdparam.=' nowrap="'. $contents[$i][$j]['align'].'"';
+	                    if (isset($contents[$i][$j]['width'])) $tdparam.=' width="'. $contents[$i][$j]['width'].'"';
+	                    if (isset($contents[$i][$j]['colspan'])) $tdparam.=' colspan="'. $contents[$i][$j]['colspan'].'"';
+	                    if (isset($contents[$i][$j]['class'])) $tdparam.=' class="'. $contents[$i][$j]['class'].'"';
+	                    if (isset($contents[$i][$j]['td'])) $tdparam.=' '.$contents[$i][$j]['td'];
 
-                    if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
-                    $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
-                    $textewithnotags=eregi_replace('<[^>]+>','',$texte);
-                    $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
-                    $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
-                    //print "xxx $textewithnotags y";
+	                    if (!$contents[$i][$j]['text']) $contents[$i][$j]['text']="";
+	                    $texte=isset($contents[$i][$j]['text'])?$contents[$i][$j]['text']:'';
+	                    $textewithnotags=eregi_replace('<[^>]+>','',$texte);
+	                    $texte2=isset($contents[$i][$j]['text2'])?$contents[$i][$j]['text2']:'';
+	                    $texte2withnotags=eregi_replace('<[^>]+>','',$texte2);
+	                    //print "xxx $textewithnotags y";
 
-                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
-                    else print '<td '.$tdparam.'>';
+	                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo']) print '<td width="16">';
+	                    else print '<td '.$tdparam.'>';
 
-					// Picto
-                    if (isset($contents[$i][$j]['url'])) {
-                    	print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-                       //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-	                   	print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-                        print '>';
-                    }
+						// Picto
+	                    if (isset($contents[$i][$j]['url'])) {
+	                    	print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+	                       //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+		                   	print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+	                        print '>';
+	                    }
 
-                    // Texte
-                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
-                    {
-                        $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
-                        print img_object($langs->trans("Show"),$logo);
-                        if (isset($contents[$i][$j]['url'])) print '</a>';
-                        print '</td><td '.$tdparam.'>';
-                        if (isset($contents[$i][$j]['url']))
-                        {
-                            print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
-                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
-                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
-                            print '>';
-                        }
-                    }
-                    $maxlength=$this->MAXLENGTHBOX;
-                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
+	                    // Texte
+	                    if (isset($contents[$i][$j]['logo']) && $contents[$i][$j]['logo'])
+	                    {
+	                        $logo=eregi_replace("^object_","",$contents[$i][$j]['logo']);
+	                        print img_object($langs->trans("Show"),$logo);
+	                        if (isset($contents[$i][$j]['url'])) print '</a>';
+	                        print '</td><td '.$tdparam.'>';
+	                        if (isset($contents[$i][$j]['url']))
+	                        {
+	                            print '<a href="'.$contents[$i][$j]['url'].'" title="'.$textewithnotags.'"';
+	                            //print ' alt="'.$textewithnotags.'"';      // Pas de alt sur un "<a href>"
+	                            print isset($contents[$i][$j]['target'])?' target="'.$contents[$i][$j]['target'].'"':'';
+	                            print '>';
+	                        }
+	                    }
+	                    $maxlength=$this->MAXLENGTHBOX;
+	                    if (isset($contents[$i][$j]['maxlength'])) $maxlength=$contents[$i][$j]['maxlength'];
 
-                    if ($maxlength && strlen($textewithnotags) > $maxlength)
-                    {
-                        $texte=substr($texte,0,$maxlength)."...";
-                    }
-                    if ($maxlength && strlen($texte2withnotags) > $maxlength)
-                    {
-                        $texte2=substr($texte2,0,$maxlength)."...";
-                    }
-                    print $texte;
-                    if (isset($contents[$i][$j]['url'])) print '</a>';
-                    print $texte2;
-                    print "</td>";
-                }
+	                    if ($maxlength && strlen($textewithnotags) > $maxlength)
+	                    {
+	                        $texte=substr($texte,0,$maxlength)."...";
+	                    }
+	                    if ($maxlength && strlen($texte2withnotags) > $maxlength)
+	                    {
+	                        $texte2=substr($texte2,0,$maxlength)."...";
+	                    }
+	                    print $texte;
+	                    if (isset($contents[$i][$j]['url'])) print '</a>';
+	                    print $texte2;
+	                    print "</td>";
+	                }
 
-                if (sizeof($contents[$i])) print '</tr>';
-            }
-        }
+	                if (sizeof($contents[$i])) print "</tr>\n";
+	            }
+	        }
+	        print "</table>\n";
+		}
 
-        print "</table>";
-
-        print "\n<!-- Box end -->\n\n";
-
+		// If invisible box with no contents
+		if (empty($head['text']) && empty($head['sublink']) && ! $nblines) print "<br><br>\n";
+		
+		print "</div>\n";
+        print "<!-- Box end -->\n\n";
     }
 
 }

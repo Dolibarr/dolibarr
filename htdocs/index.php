@@ -550,7 +550,8 @@ if (sizeof($boxarray))
 	print '<td>'."\n";
 	
 	// Affichage colonne gauche
-	print '<div id="left" style="width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
+	print "\n<!-- Box container -->\n";
+	print '<div id="left" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: left;">'."\n";
 	$ii=0;
 	foreach ($boxarray as $key => $box)
 	{
@@ -558,21 +559,31 @@ if (sizeof($boxarray))
 		if (eregi('^A',$box->box_order)) // colonne A
 		{
 			$ii++;
-			print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		    $boxid_left[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox();
 			$box->showBox();
-			
-			print '</div>';
 		}
 	}
-    print '</div>';
+
+	// If no box on left, we show add an invisible empty box
+	if (! $ii)
+	{
+		$box->box_id='A';
+		$box->info_box_head=array();
+		$box->info_box_contents=array();
+		$box->showBox();
+	}
+	
+	print "</div>\n";
+	print "<!-- End box container -->\n";
     print "\n";
   
 	// Affichage colonne droite
+	print "\n<!-- Box container -->\n";
+//	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	$ii=0;
 	foreach ($boxarray as $key => $box)
@@ -580,26 +591,35 @@ if (sizeof($boxarray))
 		if (eregi('^B',$box->box_order)) // colonne B
 		{
 			$ii++;
-			print '<div style="padding-right: 2px; padding-left: 2px; padding-bottom: 4px;" id="boxto_'.$box->box_id.'">';
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
 		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
 		    $boxid_right[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox();
 			$box->showBox();
-			
-			print '</div>';
 		}
 	}
-  print '</div>';
-  print "\n";
 
-  print "</td></tr>";
-  print "</table>";
+	// If no box on left, we show add an invisible empty box
+	if (! $ii)
+	{
+		$box->box_id='B';
+		$box->info_box_head=array();
+		$box->info_box_contents=array();
+		$box->showBox();
+	}
+	
+    print "</div>\n";
+	print "<!-- End box container -->\n";
+    print "\n";
+
+	print "</td></tr>";
+	print "</table>";
 }
 
 if ($conf->use_ajax)
 {
+	print "\n";
 	print '<script type="text/javascript" language="javascript">
 	function updateOrder(){
     var left_list = cleanSerialize(Sortable.serialize(\'left\'));

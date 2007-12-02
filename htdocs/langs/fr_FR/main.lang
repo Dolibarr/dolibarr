@@ -393,6 +393,7 @@ CanBeModifiedIfKo=Peut être modifié si invalide
 AutomaticCode=Création automatique du code
 NotManaged=Non géré
 FeatureDisabled=Fonction désactivée
+MoveBox=Déplacer la boite %s
 # Week day
 Monday=Lundi
 Tuesday=Mardi

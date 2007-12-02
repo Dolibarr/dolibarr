@@ -38,7 +38,8 @@ class box_factures_fourn extends ModeleBoxes {
 
 	var $db;
 	var $param;
-
+	var $textnohtmlencoded=true;
+	
     var $info_box_head = array();
     var $info_box_contents = array();
 
@@ -50,7 +51,7 @@ class box_factures_fourn extends ModeleBoxes {
         global $langs;
         $langs->load("boxes");
 
-        $this->boxlabel=$langs->trans("BoxLastSupplierBills");
+        $this->boxlabel=$langs->transnoentities("BoxLastSupplierBills");
     }
 
     /**
@@ -65,7 +66,7 @@ class box_factures_fourn extends ModeleBoxes {
         $facturestatic=new FactureFournisseur($db);
 
         $this->info_box_head = array(
-				'text' => $langs->trans("BoxTitleLastSupplierBills",$max),
+				'text' => $langs->transnoentities("BoxTitleLastSupplierBills",$max),
 			);
 
         if ($user->rights->fournisseur->facture->lire)
@@ -89,7 +90,7 @@ class box_factures_fourn extends ModeleBoxes {
 
             if ($result)
             {
-                $num = $db->num_rows();
+                $num = $db->num_rows($result);
 
                 $i = 0;
 
@@ -124,7 +125,7 @@ class box_factures_fourn extends ModeleBoxes {
         }
         else {
             $this->info_box_contents[0][0] = array('align' => 'left',
-            'text' => $langs->trans("ReadPermissionNotAllowed"));
+            'text' => $langs->transnoentities("ReadPermissionNotAllowed"));
         }
     }
 

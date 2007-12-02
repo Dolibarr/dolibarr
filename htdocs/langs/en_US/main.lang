@@ -392,6 +392,7 @@ CanBeModifiedIfKo=Can be modified if not valid
 AutomaticCode=Automatic code
 NotManaged=Not managed
 FeatureDisabled=Feature disabled
+MoveBox=Move box %s
 # Week day
 Monday=Monday
 Tuesday=Tuesday
