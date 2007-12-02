@@ -57,6 +57,7 @@ CVS
 .cvsignore
 .project
 Thumbs.db
+data_dev.sql
 dolibarr*.tar.gz
 dolibarr*.tgz
 dolibarr*.exe
