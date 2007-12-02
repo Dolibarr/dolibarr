@@ -2319,7 +2319,7 @@ class Form
 			if (! $filter || $filter=='fk_facture_source IS NULL') print $langs->trans("CompanyHasAbsoluteDiscount",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
 			else print $langs->trans("CompanyHasCreditNote",price($amount),$langs->transnoentities("Currency".$conf->monnaie)).': ';
 			//			print $langs->trans("AvailableGlobalDiscounts").': ';
-			$newfilter='fk_facture IS NULL';	// Remises disponibles
+			$newfilter='fk_facture IS NULL AND fk_facture_line IS NULL';	// Remises disponibles
 			if ($filter) $newfilter.=' AND '.$filter;
 			print $this->select_remises('',$htmlname,$newfilter,$socid);
             print '</td>';

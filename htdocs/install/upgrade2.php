@@ -948,11 +948,12 @@ function migrate_price_facture($db,$langs,$conf)
 	print '<b>'.$langs->trans('MigrationInvoice')."</b><br>\n";
 	
 	// Liste des lignes facture non a jour
-	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, ";
-	$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global";
+	$sql = "SELECT fd.rowid, fd.qty, fd.subprice, fd.remise_percent, fd.tva_taux, fd.total_ttc,";
+	$sql.= " f.rowid as facid, f.remise_percent as remise_percent_global, f.total_ttc as total_ttc_f";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facturedet as fd, ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " WHERE fd.fk_facture = f.rowid";
-	$sql.= " AND ((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL)";
+	$sql.= " AND (((fd.total_ttc = 0 AND fd.remise_percent != 100) or fd.total_ttc IS NULL) or f.total_ttc IS NULL)";
+	//print $sql;
 	$resql=$db->query($sql);
 	if ($resql)
 	{
@@ -970,6 +971,7 @@ function migrate_price_facture($db,$langs,$conf)
 				$txtva = $obj->tva_taux;
 				$remise_percent = $obj->remise_percent;
 				$remise_percent_global = $obj->remise_percent_global;
+				$total_ttc_f = $obj->total_ttc_f;
 				
 				// On met a jour les 3 nouveaux champs
 				$facligne= new FactureLigne($db);
@@ -989,28 +991,31 @@ function migrate_price_facture($db,$langs,$conf)
 				$facligne->update_total();
 														
 				
-				/* On touche pas a facture mere
-				$facture = new Facture($db);
-				$facture->id=$obj->facid;
-
-				if ( $facture->fetch($facture->id) >= 0)
+				/* On touche a facture mere uniquement si total_ttc = 0 */
+				if (! $total_ttc_f)
 				{
-					if ( $facture->update_price($facture->id) > 0 )
+					$facture = new Facture($db);
+					$facture->id=$obj->facid;
+
+					if ( $facture->fetch($facture->id) >= 0)
 					{
-						print ". ";
+						if ( $facture->update_price($facture->id) > 0 )
+						{
+							print "X ";
+						}
+						else
+						{
+							print "Error id=".$facture->id;
+							$err++;
+						}
 					}
 					else
 					{
-						print "Error id=".$facture->id;
+						print "Error #3";
 						$err++;
 					}
 				}
-				else
-				{
-					print "Error #3";
-					$err++;
-				}
-				*/
+				
 				$i++;
 			}
 		}

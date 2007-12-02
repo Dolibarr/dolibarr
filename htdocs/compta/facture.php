@@ -105,27 +105,29 @@ if ($_POST['action'] == 'confirm_delete' && $_POST['confirm'] == 'yes')
 if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'yes' && $conf->global->PRODUIT_CONFIRM_DELETE_LINE)
      || ($_GET['action'] == 'deleteline' && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE))
 {
-  if ($user->rights->facture->creer)
-  {
-  	$fac = new Facture($db);
-    $fac->fetch($_GET['facid']);
-    $result = $fac->deleteline($_GET['rowid'], $user);
-    if ($result > 0)
-    {
-    	if ($_REQUEST['lang_id'])
-    	{
-    		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
-    		$outputlangs->setDefaultLang($_REQUEST['lang_id']);
-    	}
-    	facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
-    }
-    else
-    {
-    	print $fac->error;
-    }
-  }
-  Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
-  exit;
+	if ($user->rights->facture->creer)
+	{
+		$fac = new Facture($db);
+		$fac->fetch($_GET['facid']);
+		$result = $fac->deleteline($_GET['rowid'], $user);
+		if ($result > 0)
+		{
+			if ($_REQUEST['lang_id'])
+			{
+				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
+				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
+			}
+			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+
+			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+			exit;
+		}
+		else
+		{
+			$mesg='<div clas="error">'.$fac->error.'</div>';
+			$_GET['action']='';
+		}
+	}
 }
 
 // Validation

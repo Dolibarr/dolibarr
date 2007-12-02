@@ -124,10 +124,7 @@ if ($_socid > 0)
 
 	dolibarr_fiche_head($head, 'absolutediscount', $objsoc->nom);
 
-    /*
-     *
-     *
-     */
+
     print '<form method="POST" action="remx.php?id='.$objsoc->id.'">';
     print '<input type="hidden" name="action" value="setremise">';
 
@@ -138,7 +135,7 @@ if ($_socid > 0)
     $sql = "SELECT SUM(rc.amount_ht) as amount, rc.fk_user";
     $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND fk_facture IS NULL";
+    $sql.= " AND (fk_facture_line IS NULL AND fk_facture IS NULL)";
     $sql.= " GROUP BY rc.fk_user";
     $resql=$db->query($sql);
     if ($resql)
@@ -181,7 +178,7 @@ if ($_socid > 0)
 
 
     /*
-     * Liste remises fixes restant en cours
+     * Liste remises fixes restant en cours (= liees a acune facture ni ligne de facture)
      */
     $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
 	$sql.= $db->pdate("rc.datec")." as dc, rc.description,";
@@ -191,7 +188,8 @@ if ($_socid > 0)
     $sql.= " FROM  ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
 	$sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND u.rowid = rc.fk_user AND rc.fk_facture IS NULL";
+    $sql.= " AND u.rowid = rc.fk_user";
+	$sql.= " AND (rc.fk_facture_line IS NULL AND rc.fk_facture IS NULL)";
     $sql.= " ORDER BY rc.datec DESC";
 
     $resql=$db->query($sql);
@@ -252,10 +250,11 @@ if ($_socid > 0)
     print '<br />';
 
     /*
-     * Liste ristournes appliquées
+     * Liste ristournes appliquées (=liees a une ligne de facture ou facture)
      */
-    $sql = "SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
-	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture,";
+    // Remises liees a lignes de factures
+    $sql = "(SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
     $sql.= " rc.fk_facture_source,";
 	$sql.= " u.login, u.rowid as user_id,";
     $sql.= " f.rowid, f.facnumber,";
@@ -266,10 +265,26 @@ if ($_socid > 0)
     $sql.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
     $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
     $sql.= " WHERE rc.fk_soc =". $objsoc->id;
-    $sql.= " AND rc.fk_facture = fc.rowid";
+    $sql.= " AND rc.fk_facture_line = fc.rowid";
     $sql.= " AND fc.fk_facture = f.rowid";
-    $sql.= " AND rc.fk_user = u.rowid";
-    $sql.= " ORDER BY rc.datec DESC";
+    $sql.= " AND rc.fk_user = u.rowid)";
+	$sql.= " UNION ";
+    // Remises liees a factures
+	$sql.= "(SELECT rc.rowid, rc.amount_ht, rc.amount_tva, rc.amount_ttc, rc.tva_tx,";
+	$sql.= $db->pdate("rc.datec")." as dc, rc.description, rc.fk_facture_line, rc.fk_facture,";
+    $sql.= " rc.fk_facture_source,";
+	$sql.= " u.login, u.rowid as user_id,";
+    $sql.= " f.rowid, f.facnumber,";
+	$sql.= " fa.facnumber as ref, fa.type as type";
+    $sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
+    $sql.= " , ".MAIN_DB_PREFIX."user as u";
+    $sql.= " , ".MAIN_DB_PREFIX."societe_remise_except as rc";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."facture as fa ON rc.fk_facture_source = fa.rowid";
+    $sql.= " WHERE rc.fk_soc =". $objsoc->id;
+    $sql.= " AND rc.fk_facture = f.rowid";
+    $sql.= " AND rc.fk_user = u.rowid)";
+
+    $sql.= " ORDER BY dc DESC";
 
     $resql=$db->query($sql);
     if ($resql)

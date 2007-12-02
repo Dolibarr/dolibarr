@@ -1036,7 +1036,7 @@ class Societe
         $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
         $sql.= " WHERE rc.fk_soc =". $this->id;
         if (is_object($user)) $sql.= " AND rc.fk_user = ".$user->id;
-        $sql.= " AND rc.fk_facture IS NULL";
+        $sql.= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";
         if ($filter) $sql.=' AND '.$filter;
 
         dolibarr_syslog("Societe::getCurrentDiscount sql=".$sql,LOG_DEBUG);

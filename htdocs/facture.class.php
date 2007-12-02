@@ -450,7 +450,6 @@ class Facture extends CommonObject
 				$this->ref                    = $obj->facnumber;
 				$this->ref_client             = $obj->ref_client;
 				$this->type                   = $obj->type;
-				$this->datep                  = $obj->dp;
 				$this->date                   = $obj->df;
 				$this->amount                 = $obj->amount;
 				$this->remise_percent         = $obj->remise_percent;
@@ -1543,25 +1542,31 @@ class Facture extends CommonObject
       }
   }
 
-  /**
-   *	\brief		Supprime une ligne facture de la base
-   *	\param		rowid		Id de la ligne de facture a supprimer
-   */
-  function deleteline($rowid, $user='')
-  {
-    global $langs, $conf;
+	/**
+	*	\brief		Supprime une ligne facture de la base
+	*	\param		rowid		Id de la ligne de facture a supprimer
+	*	\return		int			<0 if KO, >0 if OK
+	*/
+	function deleteline($rowid, $user='')
+	{
+	    global $langs, $conf;
 
-    dolibarr_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
+	    dolibarr_syslog("Facture::Deleteline rowid=".$rowid, LOG_DEBUG);
 
-    if ($this->brouillon)
-    {
-    	$this->db->begin();
-    	
+	    if (! $this->brouillon)
+	    {
+			$this->error='ErrorBadStatus';
+			return -1;
+		}
+
+		$this->db->begin();
+	    	
     	// Libere remise liee a ligne de facture
     	$sql = 'UPDATE '.MAIN_DB_PREFIX.'societe_remise_except';
-    	$sql.= ' SET fk_facture = NULL where fk_facture = '.$rowid;
+    	$sql.= ' SET fk_facture_line = NULL where fk_facture_line = '.$rowid;
+   		dolibarr_syslog("Facture::Deleteline sql=".$sql);
     	$result = $this->db->query($sql);
-    	if ($result < 0)
+    	if (! $result)
     	{
     		$this->error=$this->db->error();
     		dolibarr_syslog("Facture::Deleteline Error ".$this->error);
@@ -1571,8 +1576,9 @@ class Facture extends CommonObject
     	
     	// Efface ligne de facture
     	$sql = 'DELETE FROM '.MAIN_DB_PREFIX.'facturedet WHERE rowid = '.$rowid;
+   		dolibarr_syslog("Facture::Deleteline sql=".$sql);
     	$result = $this->db->query($sql);
-    	if ($result < 0)
+    	if (! $result)
     	{
     		$this->error=$this->db->error();
     		dolibarr_syslog("Facture::Deleteline  Error ".$this->error);
@@ -1591,8 +1597,7 @@ class Facture extends CommonObject
     	$this->db->commit();
     	
     	return 1;
-    }
-  }
+	}
 
 	/**
      \brief     	Mise à jour des sommes de la facture et calculs denormalises
