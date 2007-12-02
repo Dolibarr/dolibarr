@@ -13,8 +13,13 @@ la commande:
 Le prerequis est d'avoir Doxygen installé (Linux ou Windows).
 
 
+***** Build a patch
+
+Pour construire un patch entre deux répertoires, il faut utiliser la commande diff suivante:
+diff -Naur --exclude=CVS --exclude=.#  --exclude=~ --exclude=documents --exclude=phplot5 --exclude=phplot --exclude=scriptaculous --exclude=treemenu --exclude *.htm --exclude samples dolibarr_old dolibarr_new > mydiff.patch
+
 
 ***** Autre documentation développeur
 
-D'autres informations sont disponibles en Français sur le site Web Dolibarr:
+D'autres informations sont disponibles sur le site Web Dolibarr:
 > http://www.dolibarr.fr/

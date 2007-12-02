@@ -14,11 +14,25 @@ Prerequite is only having Doxygen installed (Linux or Windows).
 
 
 ***** Build a patch
-To build a patch between two directories, you can use the patch command:
+
+To build a patch between two directories, you can use the following diff command:
 diff -Naur --exclude=CVS --exclude=.#  --exclude=~ --exclude=documents --exclude=phplot5 --exclude=phplot --exclude=scriptaculous --exclude=treemenu --exclude *.htm --exclude samples dolibarr_old dolibarr_new > mydiff.patch
+
+
+***** Build a release
+
+This is all steps required to build a release od Dolibarr x.x:
+* Update the ChangeLog file.
+* Check that file build/tgz/tar.exclude excludes all non expected files.
+* Check all CVS commits are done.
+* Tagg CVS with tag DOLIBARR_x_x_BETA or DOLIBARR_x_x for a release with option "overwrite tags if exists"
+* Run script makepack-dolibarr.pl
+* Upload script to Dolibarr web site
+* Add a news on Dolibarr Web site
+* Create a branch for version x.x
 
 
 ***** Other developper documentation
 
-If you speek French, more information is available on Dolibarr web site:
+More information is available on Dolibarr web site:
 > http://www.dolibarr.org/
