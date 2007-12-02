@@ -2028,7 +2028,7 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'><td>';
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
-						print dolibarr_print_date($objp->dp).'</a></td>';
+						print dolibarr_print_date($objp->dp,'day').'</a></td>';
 						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
 						print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 						print '</tr>';
@@ -2813,7 +2813,7 @@ else
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="propal.php?propalid='.$objp->propalid.'">'.img_object($langs->trans('ShowPropal'),'propal').' '.$objp->ref.'</a></td>';
 						print '<td>'.$objp->ref_client.'</td>';
-						print '<td align="center">'.dolibarr_print_date($objp->dp).'</td>';
+						print '<td align="center">'.dolibarr_print_date($objp->dp,'day').'</td>';
 						print '<td align="right">'.price($objp->total_ht).'</td>';
 						print '</tr>';
 						$total = $total + $objp->total_ht;
@@ -2866,7 +2866,7 @@ else
 							print '<tr '.$bc[$var].'><td>';
 							print '<a href="'.DOL_URL_ROOT.'/commande/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowOrder'), 'order').' '.$objp->ref."</a></td>\n";
 							print '<td>'.$objp->ref_client.'</td>';
-							print '<td align="center">'.dolibarr_print_date($objp->date_commande).'</td>';
+							print '<td align="center">'.dolibarr_print_date($objp->date_commande,'day').'</td>';
 							print '<td align="right">'.price($objp->total_ht).'</td>';
 							print "</tr>\n";
 							$total = $total + $objp->total_ht;
@@ -2920,8 +2920,8 @@ else
 						$var=!$var;
 						print '<tr '.$bc[$var].'>';
 						print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$objp->id.'">'.img_object($langs->trans('ShowTask'),'task').' '.$objp->id.'</a></td>';
-						print '<td>'.dolibarr_print_date($objp->da).'</td>';
-						print '<td>'.stripslashes($objp->label).'</td>';
+						print '<td>'.dolibarr_print_date($objp->da,'day').'</td>';
+						print '<td>'.$objp->label.'</td>';
 						print '<td>'.$objp->login.'</td>';
 						print '</tr>';
 						$i++;
