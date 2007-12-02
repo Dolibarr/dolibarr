@@ -144,7 +144,9 @@ foreach my $file (keys %filelist) {
     
 		# comments or empty lines
     	if (/^-- \$Id/) { 
-    		next;
+    		$_ =~ s/\$//g;
+    		print OUT $_; 
+			next;
 		}
 		# comments or empty lines
     	if (/^#/ || /^$/ || /^--/) {
