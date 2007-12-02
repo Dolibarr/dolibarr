@@ -48,6 +48,8 @@ CVS
 .#*
 .htaccess
 .settings
+.cvsignore
+.project
 Thumbs.db
 dolibarr*.tar.gz
 dolibarr*.tgz
