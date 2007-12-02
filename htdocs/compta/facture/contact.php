@@ -171,7 +171,7 @@ if ($id > 0)
 		print '<table class="border" width="100%">';
 
 		// Reference du facture
-		print '<tr><td width="25%">'.$langs->trans("Ref").'</td><td colspan="3">';
+		print '<tr><td width="20%">'.$langs->trans("Ref").'</td><td colspan="3">';
 		print $facture->ref;
 		print "</td></tr>";
 

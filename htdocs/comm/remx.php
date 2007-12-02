@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -60,7 +59,7 @@ if ($_POST["action"] == 'setremise')
 			$mesg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("ReasonDiscount")).'</div>';
 		}
 
-		$soc = New Societe($db);
+		$soc = new Societe($db);
 		$soc->fetch($_GET["id"]);
 		$soc->set_remise_except($_POST["amount_ht"],$user,$_POST["desc"],$_POST["tva_tx"]);
 		
@@ -82,17 +81,19 @@ if ($_POST["action"] == 'setremise')
 
 if ($_GET["action"] == 'remove')
 {
-	$soc = New Societe($db);
+	$db->begin();
+	
+	$soc = new Societe($db);
 	$soc->fetch($_GET["id"]);
 	$result=$soc->del_remise_except($_GET["remid"]);
 
 	if ($result > 0)
 	{
-		Header("Location: remx.php?id=".$_GET["id"]);
-		exit;
+		$db->commit();
 	}
 	else
 	{
+		$db->rollback();
 		$mesg='<div class="error">'.$soc->error.'</div>';
 	}
 }

@@ -646,7 +646,7 @@ class Facture extends CommonObject
 				if ($result > 0)
 				{
 					// Crée lien entre remise et ligne de facture
-					$result=$remise->link_to_invoice($lineid);
+					$result=$remise->link_to_invoice($lineid,0);
 					if ($result < 0)
 					{
 						$this->error=$remise->error;
@@ -2991,8 +2991,14 @@ class FactureLigne
 						}
 						else
 						{
-							$discount->link_to_invoice($this->rowid);
-
+							$result=$discount->link_to_invoice($this->rowid,0);
+							if ($result < 0)
+							{
+								$this->error=$discount->error;
+								dolibarr_syslog("FactureLigne::insert Error ".$this->error);
+								$this->db->rollback();
+								return -3;
+							}
 						}
 					}
 					else

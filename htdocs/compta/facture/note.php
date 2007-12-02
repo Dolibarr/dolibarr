@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -113,7 +112,7 @@ if ($_GET["facid"])
     print '<table class="border" width="100%">';
 
     // Reference
-	print '<tr><td width="25%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
+	print '<tr><td width="20%">'.$langs->trans('Ref').'</td><td colspan="3">'.$fac->ref.'</td></tr>';
 
     // Société
     print '<tr><td>'.$langs->trans("Company").'</td>';

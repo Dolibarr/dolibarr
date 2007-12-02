@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,7 +45,8 @@ class DiscountAbsolute
 	var $fk_user;				// Id utilisateur qui accorde la remise
 	var $description;			// Description libre
 	var $datec;					// Date creation
-	var $fk_facture;			// Id facture qd une remise a été utilisé
+	var $fk_facture_line;  		// Id invoice line when a discount linked to invoice line
+	var $fk_facture;			// Id invoice when a discoutn linked to invoice
 	var $fk_facture_source;		// Id facture avoir à l'origine de la remise
 	var $ref_facture_source;	// Ref facture avoir à l'origine de la remise
 	
@@ -78,7 +78,7 @@ class DiscountAbsolute
 		$sql = "SELECT sr.rowid, sr.fk_soc,";
 		$sql.= " sr.fk_user,";
 		$sql.= " sr.amount_ht, sr.amount_tva, sr.amount_ttc, sr.tva_tx,";
-		$sql.= " sr.fk_facture, sr.fk_facture_source, sr.description,";
+		$sql.= " sr.fk_facture_line, sr.fk_facture, sr.fk_facture_source, sr.description,";
 		$sql.= " ".$this->db->pdate("sr.datec")." as datec,";
 		$sql.= " f.facnumber as ref_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as sr";
@@ -102,6 +102,7 @@ class DiscountAbsolute
 				$this->amount_ttc = $obj->amount_ttc;
 				$this->tva_tx = $obj->tva_tx;
 				$this->fk_user = $obj->fk_user;
+				$this->fk_facture_line = $obj->fk_facture_line;
 				$this->fk_facture = $obj->fk_facture;
 				$this->fk_facture_source = $obj->fk_facture_source;		// Id avoir source
 				$this->ref_facture_source = $obj->ref_facture_source;	// Ref avoir source
@@ -167,7 +168,7 @@ class DiscountAbsolute
     }
 
 
-				 	/*
+	/*
 	*   \brief      Delete object in database
 	*	\return		int			<0 if KO, >0 if OK
 	*/
@@ -175,18 +176,47 @@ class DiscountAbsolute
 	{
 		global $conf, $langs;
 	
+		$this->db->begin();
+		
 		$sql = "DELETE FROM ".MAIN_DB_PREFIX."societe_remise_except ";
-		$sql.= " WHERE rowid = ".$this->id." AND fk_facture IS NULL";
+		$sql.= " WHERE rowid = ".$this->id." AND (fk_facture_line IS NULL or fk_facture IS NULL)";
 
-	   	dolibarr_syslog("DiscountAbsolute::delete sql=".$sql);
-		if (! $this->db->query($sql))
+	   	dolibarr_syslog("DiscountAbsolute::delete Delete discount sql=".$sql);
+		$result=$this->db->query($sql);
+		if ($result)
 		{
-			$this->error=$this->db->lasterror().' sql='.$sql;
-			return -1;
+			// If source of discount was a credit not, we change credit note statut.
+			if ($this->fk_facture_source)
+			{
+				$sql = "UPDATE ".MAIN_DB_PREFIX."facture";
+				$sql.=" set paye=0, fk_statut=1";
+				$sql.=" WHERE type = 2 AND rowid=".$this->fk_facture_source;
+
+			   	dolibarr_syslog("DiscountAbsolute::delete Update credit note statut sql=".$sql);
+				$result=$this->db->query($sql);
+				if ($result)
+				{
+					$this->db->commit();
+					return 1;
+				}
+				else
+				{
+					$this->error=$this->db->lasterror();
+					$this->db->rollback();
+					return -1;
+				}
+			}
+			else
+			{
+				$this->db->commit();
+				return 1;
+			}
 		}
 		else
 		{
-			return 1;
+			$this->error=$this->db->lasterror();
+			$this->db->rollback();
+			return -1;
 		}
 	}
 	
@@ -194,16 +224,32 @@ class DiscountAbsolute
 	
 	/**
 	*		\brief		Link the discount to a particular invoice line
-	*		\param		rowid		Invoice line id
-	*		\return		int			<0 ko, >0 ok
+	*		\param		rowidline		Invoice line id
+	*		\param		rowidinvoice	Invoice id
+	*		\return		int				<0 ko, >0 ok
 	*/
-	function link_to_invoice($rowid)
+	function link_to_invoice($rowidline,$rowidinvoice)
 	{
-		dolibarr_syslog("DiscountAbsolute::link_to_invoice link discount ".$this->id." to invoice line rowid=".$rowid);
+		dolibarr_syslog("DiscountAbsolute::link_to_invoice Link discount ".$this->id." to invoice line rowid=".$rowidline." or invoice rowid=".$rowidinvoice);
 
+		// Check parameters
+		if (! $rowidline && ! $rowidinvoice) 
+		{
+			$this->error='ErrorBadParameters';
+			return -1;
+		}
+		if ($rowidline && $rowidinvoice) 
+		{
+			$this->error='ErrorBadParameters';
+			return -2;
+		}
+		
 		$sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
-		$sql.=" SET fk_facture = ".$rowid;
+		if ($rowidline)    $sql.=" SET fk_facture_line = ".$rowidline;
+		if ($rowidinvoice) $sql.=" SET fk_facture = ".$rowidinvoice;
 		$sql.=" WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("DiscountAbsolute::link_to_invoice sql=".$sql);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -212,8 +258,8 @@ class DiscountAbsolute
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error." sql=".$sql);
-			return -1;
+			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error);
+			return -3;
 		}
 	}
 	

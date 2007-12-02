@@ -46,7 +46,7 @@ PaymentsBack=Remboursements
 DatePayment=Date paiement
 DeletePayment=Supprimer le paiement
 ConfirmDeletePayment=Etes vous sur de vouloir supprimer ce paiement ?
-ConfirmConvertToReduc=Voulez-vous convertir cet avoir en réduction future ?<br>Le montant de cet avoir sera alors stocké en réduction fixe en attente pour le client. Cette dernière pourra être utilisée pour réduire le montant d'une prochaine facture de ce client.
+ConfirmConvertToReduc=Voulez-vous convertir cet avoir en réduction future ?<br>Le montant de cet avoir sera alors stocké en réduction fixe en attente pour le client. Cette dernière pourra être utilisée pour réduire le montant d'une facture en cours ou prochaine de ce client.
 ReceivedPayments=Réglements reçus
 ReceivedCustomersPayments=Réglements reçus du client
 ReceivedCustomersPaymentsToValid=Réglements clients reçus à valider
@@ -230,6 +230,7 @@ InvoiceStatus=Statut facture
 InvoiceNote=Note facture
 InvoicePayed=Facture payée
 PaymentNumber=Numéro paiement
+RemoveDiscount=Supprimer remise
 
 # PaymentConditions
 PaymentConditionShortRECEP=A réception
@@ -290,7 +291,7 @@ LawApplicationPart4=leurs prix.
 VATDischarged=TVA acquittée sur les débits.
 LimitedLiabilityCompanyCapital=SARL au Capital de
 UseDiscount=Appliquer remise
-UseCreditNoteInInvoicePayment=Appliquer avoir en tant que paiement
+UseCreditNoteInInvoicePayment=Réduire paiement avec cet avoir
 MenuChequeDeposits=Remises de chèques
 MenuCheques=Gestion chèques
 MenuChequesReceipts=Bordereaux

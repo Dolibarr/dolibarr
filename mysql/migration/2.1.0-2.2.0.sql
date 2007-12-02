@@ -1124,3 +1124,22 @@ insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  )
 
 ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (box_id, position, fk_user);
 
+-- Drop constraints to allow rename
+ALTER TABLE llx_societe_remise_except drop foreign key fk_societe_remise_fk_facture;
+ALTER TABLE llx_societe_remise_except drop index idx_societe_remise_except_fk_facture;
+
+-- Rename field
+ALTER TABLE llx_societe_remise_except change fk_facture fk_facture_line integer;
+ALTER TABLE llx_societe_remise_except add fk_facture integer after fk_facture_line;
+
+-- Create constraints
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture_line (fk_facture_line);
+ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_facture (fk_facture);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture_line   FOREIGN KEY (fk_facture_line) REFERENCES llx_facturedet (rowid);
+ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture        FOREIGN KEY (fk_facture)        REFERENCES llx_facture (rowid);
+
+-- Corrige statut avoir transforme en reduc ou reduc supprime apres coup
+-- V4.1 update llx_facture set paye=0, fk_statut=1 where paye=1 and type=2 and rowid not in (select fk_facture_source from llx_societe_remise_except);
+
+-- Corrige avoirs affectes en ligne a affectation sur facture
+-- V4.1 update llx_societe_remise_except as r set fk_facture_line = NULL, fk_facture = (select fk_facture from llx_facturedet where rowid = r.fk_facture_line)

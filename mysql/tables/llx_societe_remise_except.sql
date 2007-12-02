@@ -17,7 +17,6 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
 --
 -- Remises exceptionnelles
 -- ============================================================================
@@ -32,6 +31,7 @@ create table llx_societe_remise_except
   amount_ttc 	  double(24,8) DEFAULT 0 NOT NULL,
   tva_tx   	      double(6,3)  DEFAULT 0 NOT NULL,
   fk_user           integer NOT NULL,
+  fk_facture_line   integer,
   fk_facture        integer,
   fk_facture_source integer,
   description       varchar(255) NOT NULL

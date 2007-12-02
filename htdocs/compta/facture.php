@@ -188,7 +188,8 @@ if ($_REQUEST['action'] == 'setremisepercent' && $user->rights->facture->creer)
 
 if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 {
-	if ($_POST["remise_id"])
+	// POST[remise_id] ou POST[remise_id_for_payment]
+	if (! empty($_POST["remise_id"]))
 	{
 	    $fac = new Facture($db);
 	    $fac->id=$_GET['facid'];
@@ -205,6 +206,20 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 		{
 			dolibarr_print_error($db,$fac->error);
 		}
+	}
+	if (! empty($_POST["remise_id_for_payment"]))
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
+		$discount = new DiscountAbsolute($db);
+		$discount->fetch($_POST["remise_id_for_payment"]);
+		
+		$result=$discount->link_to_invoice(0,$fac->rowid);
+		if ($result < 0)
+		{
+			$mesg='<div class="error">'.$discount->error.'</div>';
+		}
+		
+		exit;
 	}
 }
 
