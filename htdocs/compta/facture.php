@@ -1801,8 +1801,8 @@ else
 			}
 			
 			/*
-		* Confirmation du classement abandonne
-		*/
+			* Confirmation du classement abandonne
+			*/
 			if ($_GET['action'] == 'canceled')
 			{
 				// S'il y a une facture de remplacement pas encore validée (etat brouillon), 
@@ -1911,7 +1911,7 @@ else
 			print '</tr>';
 			
 			// Type
-			print '<tr><td width="20%">'.$langs->trans('Type').'</td><td colspan="5">';
+			print '<tr><td>'.$langs->trans('Type').'</td><td colspan="5">';
 			print $fac->getLibType();
 			if ($fac->type == 1)
 			{
@@ -2135,7 +2135,7 @@ else
 			print '</td></tr>';
 
 			// Mode de reglement
-			print '<tr><td width="25%">';
+			print '<tr><td>';
 			print '<table class="nobordernopadding" width="100%"><tr><td>';
 			print $langs->trans('PaymentMode');
 			print '</td>';
