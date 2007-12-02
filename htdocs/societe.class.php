@@ -954,7 +954,7 @@ class Societe
 	}
 
 	/**
-	 *    	\brief      Ajoute une remise fixe pour la soci�t�
+	 *    	\brief      Ajoute une remise fixe pour la societe
 	 *    	\param      remise      Montant de la remise
 	 *    	\param      user        Utilisateur qui accorde la remise
 	 *    	\param      desc		Motif de l'avoir
@@ -968,6 +968,7 @@ class Societe
 		$remise = price2num($remise);
 		$desc = trim($desc);
 		
+		// Check parameters
 		if (! $remise > 0)
 		{
 			$this->error=$langs->trans("ErrorWrongValueForParameter","1");
@@ -1005,8 +1006,8 @@ class Societe
 	}
 
 	/**
-	 *    	\brief      Supprime un avoir (� condition que non affect� � une facture)
-	 *    	\param      id			Id de l'avoir � supprimer
+	 *    	\brief      Supprime un avoir (a condition que non affecte a une facture)
+	 *    	\param      id			Id de l'avoir a supprimer
 	 *		\return		int			<0 si ko, id de l'avoir si ok
 	 */
 	function del_remise_except($id)
@@ -1025,28 +1026,26 @@ class Societe
 
 
 	/**
-	 *    	\brief      Renvoie montant des avoirs en cours disponibles
+	 *    	\brief      Renvoie montant TTC des avoirs en cours disponibles de la societe
 	 *		\param		user		Filtre sur un user auteur des remises
 	 * 		\param		filter		Filtre autre
-	 *		\return		int			<0 si ko, montant avoir sinon
+	 *		\return		int			<0 if KO, Credit note amount otherwise
 	 */
 	function getCurrentDiscount($user='',$filter='')
 	{
-        $sql  = "SELECT SUM(rc.amount_ht) as amount";
-        $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
-        $sql.= " WHERE rc.fk_soc =". $this->id;
-        if (is_object($user)) $sql.= " AND rc.fk_user = ".$user->id;
-        $sql.= " AND (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";
-        if ($filter) $sql.=' AND '.$filter;
+		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
-        dolibarr_syslog("Societe::getCurrentDiscount sql=".$sql,LOG_DEBUG);
-        $resql=$this->db->query($sql);
-        if ($resql)
-        {
-            $obj = $this->db->fetch_object($resql);
-            return $obj->amount;
-        }
-		return -1;
+        $discountstatic=new DiscountAbsolute($this->db);
+		$result=$discountstatic->getCurrentDiscount($this,$user,$filter);
+		if ($result >= 0)
+		{
+			return $result;
+		}
+		else
+		{
+			$this->error=$discount->error;
+			return -1;
+		}
 	}
 	
 

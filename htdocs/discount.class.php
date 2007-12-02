@@ -263,6 +263,34 @@ class DiscountAbsolute
 		}
 	}
 	
+
+	/**
+	 *    	\brief      Renvoie montant TTC des avoirs en cours disponibles
+	 *		\param		fk_soc		Filtre sur une societe
+	 *		\param		user		Filtre sur un user auteur des remises
+	 * 		\param		filter		Filtre autre
+	 *		\return		int			<0 si ko, montant avoir sinon
+	 */
+	function getCurrentDiscount($company='', $user='',$filter='')
+	{
+        $sql  = "SELECT SUM(rc.amount_ttc) as amount";
+        $sql.= " FROM ".MAIN_DB_PREFIX."societe_remise_except as rc";
+        $sql.= " WHERE (rc.fk_facture IS NULL AND rc.fk_facture_line IS NULL)";	// Available
+		if (is_object($company)) $sql.= " AND rc.fk_soc = ".$company->id;
+        if (is_object($user))    $sql.= " AND rc.fk_user = ".$user->id;
+        if ($filter) $sql.=' AND '.$filter;
+
+        dolibarr_syslog("Discount::getCurrentDiscount sql=".$sql,LOG_DEBUG);
+        $resql=$this->db->query($sql);
+        if ($resql)
+        {
+            $obj = $this->db->fetch_object($resql);
+            return $obj->amount;
+        }
+		return -1;
+	}
+
+	
 	/**
 		\brief      Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul

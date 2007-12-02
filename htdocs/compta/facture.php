@@ -2054,10 +2054,16 @@ else
 					
 					// Already payed
 					print '<tr><td colspan="2" align="right">'.$langs->trans('AlreadyPayed').' :</td><td align="right"><b>'.price($totalpaye).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
 					// Facturé
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+
 					$resteapayeraffiche=$resteapayer;
 
+					// Boucle sur chaque facture avoir appliquee
+					
+					
+					
 					// Payé partiellement 'escompte'
 					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'escompte')
 					{
