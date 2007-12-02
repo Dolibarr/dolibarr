@@ -1120,3 +1120,7 @@ insert into llx_c_pays (rowid,code,libelle) values (243, 'JE', 'Jersey'        )
 insert into llx_c_pays (rowid,code,libelle) values (244, 'ME', 'Monténégro'    );
 insert into llx_c_pays (rowid,code,libelle) values (245, 'BL', 'Saint-Barthélemy');
 insert into llx_c_pays (rowid,code,libelle) values (246, 'MF', 'Saint-Martin'  );
+
+
+ALTER TABLE llx_boxes ADD UNIQUE INDEX uk_boxes (box_id, position, fk_user);
+
