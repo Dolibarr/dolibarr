@@ -17,10 +17,8 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
 --
 -- Liste des modeles de document disponibles
---
 -- ===================================================================
 
 create table llx_export_model

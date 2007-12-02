@@ -17,9 +17,8 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
---
 -- ===========================================================================
+
 --
 -- position  : 0=index.php
 -- box_order : Box sort order

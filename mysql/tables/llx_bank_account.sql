@@ -17,13 +17,10 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
---
---
+-- =============================================================================
+
 -- courant : type de compte: 0 epargne, 1 courant, 2 caisse
 -- clos : le compte est-il clos ou encore ouvert
---
--- =============================================================================
 
 create table llx_bank_account
 (

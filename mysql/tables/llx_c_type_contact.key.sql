@@ -2,9 +2,6 @@
 -- Copyright (C) 2005     Patrick Rouillon     <patrick.rouillon.net>
 -- Copyright (C) 2005     Laurent Destailleur  <eldy@users.sourceforge.net>
 --
--- $Id$
--- $Source$
---
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -19,6 +16,8 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
+-- $Id$
+-- ========================================================================
 -- Defini les types de contact d'un element sert de reference pour
 -- la table llx_element_contact
 --
@@ -26,8 +25,7 @@
 -- i.e. contact, facture, projet, societe (sans le llx_ devant).
 -- Libelle est un texte décrivant le type de contact.
 -- active précide si cette valeur est active ou 'archivé'.
---
--- ========================================================================
+
 
 
 ALTER TABLE llx_c_type_contact 

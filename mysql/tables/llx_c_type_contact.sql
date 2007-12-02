@@ -2,9 +2,6 @@
 -- Copyright (C) 2005     Patrick Rouillon     <patrick.rouillon.net>
 -- Copyright (C) 2005     Laurent Destailleur  <eldy@users.sourceforge.net>
 --
--- $Id$
--- $Source$
---
 -- This program is free software; you can redistribute it and/or modify
 -- it under the terms of the GNU General Public License as published by
 -- the Free Software Foundation; either version 2 of the License, or
@@ -27,6 +24,7 @@
 -- Libelle est un texte décrivant le type de contact.
 -- active précide si cette valeur est active ou 'archivé'.
 --
+-- $Id$
 -- ========================================================================
 
 

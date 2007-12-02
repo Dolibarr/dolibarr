@@ -16,8 +16,7 @@
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
 -- $Id$
--- $Source$
---
+-- ============================================================================
 -- Association de personnes/societes avec un element de la base (contrat, projet, propal).
 -- Permet de definir plusieur type d'intervenant sur un element.
 -- i.e. commercial, adresse de facturation, prestataire...

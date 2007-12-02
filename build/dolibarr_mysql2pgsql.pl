@@ -142,8 +142,12 @@ foreach my $file (keys %filelist) {
     #----------------------------------
     while(<IN>) {
     
-    	# comments or empty lines
-    	if (/^#/ || /^$/ || /^--/) { 
+		# comments or empty lines
+    	if (/^-- \$Id/) { 
+    		next;
+		}
+		# comments or empty lines
+    	if (/^#/ || /^$/ || /^--/) {
     		print OUT $_; 
     		next;
     	}
