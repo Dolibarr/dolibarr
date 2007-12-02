@@ -22,7 +22,10 @@ diff -Naur --exclude=CVS --exclude=.#  --exclude=~ --exclude=documents --exclude
 ***** Build a release
 
 This is all steps required to build a release od Dolibarr x.x:
+* Check there is no more major bug reports.
+* Check all development features are ok.
 * Update the ChangeLog file.
+* Run script build/dolibarr_mysql2pgsql.pl
 * Check that file build/tgz/tar.exclude excludes all non expected files.
 * Check all CVS commits are done.
 * Tagg CVS with tag DOLIBARR_x_x_BETA or DOLIBARR_x_x for a release with option "overwrite tags if exists"
