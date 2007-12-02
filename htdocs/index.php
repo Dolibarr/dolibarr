@@ -547,7 +547,7 @@ if (sizeof($boxarray))
 	print '<br>';
 	print_fiche_titre($langs->trans("OtherInformationsBoxes"));
 	print '<table width="100%" class="notopnoleftnoright">';
-	print '<td>'."\n";
+	print '<tr><td>'."\n";
 	
 	// Affichage colonne gauche
 	print "\n<!-- Box container -->\n";
