@@ -74,8 +74,6 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_COMP
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_CONTACT','1','yesno',0,'Show form for quick contact search');
 insert into llx_const(name,value,type,visible,note) values('MAIN_FASTSEARCH_PRODUCT','1','yesno',0,'Show form for quick product search');
 
-insert into llx_const(name,value,type,visible,note) values('SOCIETE_NOLIST_COURRIER','1','yesno',0,'Liste les fichiers du repertoire courrier');
-
 
 --
 -- IHM
@@ -104,6 +102,19 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_NOT
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_RUNNING_SERVICES','0','chaine','Tolérance de retard avant alerte (en jours) sur services expirés',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_MEMBERS','31','chaine','Tolérance de retard avant alerte (en jours) sur cotisations adhérent en retard',0);
 insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE','62','chaine','Tolérance de retard avant alerte (en jours) sur rapprochements bancaires à faire',0);
+
+
+--
+-- Tiers
+--
+insert into llx_const(name,value,type,visible,note) values('SOCIETE_NOLIST_COURRIER','1','yesno',0,'Liste les fichiers du repertoire courrier');
+
+
+--
+-- Facture
+--
+insert into llx_const(name,value,type,visible,note) values('FACTURE_DISABLE_RECUR','1','yesno',0,'Desactivation facture recurrentes');
+
 
 --
 -- Mail Adherent
