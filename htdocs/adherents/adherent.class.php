@@ -203,11 +203,10 @@ class Adherent extends CommonObject
 		$subjectosend = preg_replace ($patterns, $replace, $subject);
 
 		// Envoi mail confirmation
-        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-
         $from=$conf->email_from;
         if ($conf->global->ADHERENT_MAIL_FROM) $from=$conf->global->ADHERENT_MAIL_FROM;
 
+        include_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subjectosend,$this->email,$from,$texttosend,
 									$filename_list,$mimetype_list,$mimefilename_list,
 									$addr_cc, $addr_bcc, $deliveryreceipt, $html);

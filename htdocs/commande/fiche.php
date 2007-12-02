@@ -33,7 +33,6 @@ require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT ."/includes/modules/commande/modules_commande.php");
 require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 require_once(DOL_DOCUMENT_ROOT."/lib/order.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
@@ -632,6 +631,7 @@ if ($_POST['action'] == 'send')
 		}
 
 	      // Envoi de la commande
+			require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 	      $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 	      if ($mailfile->error)
 		{

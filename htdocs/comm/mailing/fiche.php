@@ -76,8 +76,6 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 	}
     if ($mil->sendto)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-
         $arr_file = array();
         $arr_mime = array();
         $arr_name = array();
@@ -91,6 +89,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		$mil->sujet=make_substitutions($mil->sujet,$substitutionarrayfortest);
 		$mil->body=make_substitutions($mil->body,$substitutionarrayfortest);
 		
+        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($mil->sujet,$mil->sendto,$mil->email_from,$mil->body,
         							$arr_file,$arr_mime,$arr_name,
         							'', '', 0, $msgishtml);

@@ -85,8 +85,6 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 	}
     if ($sendto)
     {
-        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
-
 		// Le message est-il en html
 		$msgishtml=0;	// Non par defaut
 		//if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_MAILING) $msgishtml=1;
@@ -96,6 +94,7 @@ if ($_POST["action"] == 'send' && ! $_POST["cancel"])
 		$subject=make_substitutions($subject,$substitutionarrayfortest);
 		$body=make_substitutions($body,$substitutionarrayfortest);
 		
+        require_once(DOL_DOCUMENT_ROOT."/lib/CMailFile.class.php");
 		$mailfile = new CMailFile($subject,$sendto,$email_from,$body,
         							$filepath,$mimetype,$filename,
         							'', '', 0, $msgishtml,$errors_to);

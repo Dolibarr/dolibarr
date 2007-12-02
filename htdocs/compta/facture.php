@@ -36,7 +36,6 @@ require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/lib/invoice.lib.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php');
 if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT.'/contrat/contrat.class.php');
@@ -1030,6 +1029,7 @@ if (($_POST['action'] == 'send' || $_POST['action'] == 'relance') && ! $_POST['c
 				}
 				
 				// Envoi de la facture
+				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 				$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{
@@ -2053,7 +2053,8 @@ else
 						print '<a href="'.DOL_URL_ROOT.'/compta/paiement/fiche.php?id='.$objp->rowid.'">'.img_object($langs->trans('ShowPayment'),'payment').' ';
 						print dolibarr_print_date($objp->dp,'day').'</a></td>';
 						print '<td>'.$objp->paiement_type.' '.$objp->num_paiement.'</td>';
-						print '<td align="right">'.price($objp->amount).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
+						print '<td align="right">'.price($objp->amount).'</td>';
+						print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td>';
 						print '</tr>';
 						$i++;
 					}
@@ -2083,7 +2084,10 @@ else
 							$invoice->fetch($obj->fk_facture_source);
 							print $invoice->getNomUrl(0);
 							print ' :</td>';
-							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td>';
+							print '<td nowrap="nowrap">'.$langs->trans('Currency'.$conf->monnaie);
+							print ' <a href="'.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'&action=unlinkdiscount&discountid='.$obj->rowid.'">'.img_delete().'</a>';
+							print '</td></tr>';
 							$i++;
 						}
 					}

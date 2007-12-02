@@ -47,7 +47,6 @@ if ($conf->projet->enabled)   require_once(DOL_DOCUMENT_ROOT.'/project.class.php
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/propal.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/actioncomm.class.php');
-require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 
 $sall=isset($_GET["sall"])?$_GET["sall"]:$_POST["sall"];
 if (isset($_GET["msg"])) { $mesg=urldecode($_GET["mesg"]); }
@@ -382,6 +381,7 @@ if ($_POST['action'] == 'send')
                 }
 
                 // Envoi de la propal
+				require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
                 $mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 				if ($mailfile->error)
 				{

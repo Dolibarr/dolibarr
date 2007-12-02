@@ -216,8 +216,7 @@ class DroitPret
 		$sendtocc = "";
 		$deliveryreceipt = "";
 
-
-
+		require_once(DOL_DOCUMENT_ROOT.'/lib/CMailFile.class.php');
 		$mailfile = new CMailFile($subject,$sendto,$from,$message,$filepath,$mimetype,$filename,$sendtocc,'',$deliveryreceipt);
 		if ($mailfile->error)
 		{
