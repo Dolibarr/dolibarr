@@ -31,7 +31,7 @@
 */
 
 require('./pre.inc.php');
-require_once(DOL_DOCUMENT_ROOT ."/includes/modules/facture/modules_facture.php");
+require_once(DOL_DOCUMENT_ROOT.'/includes/modules/facture/modules_facture.php');
 require_once(DOL_DOCUMENT_ROOT.'/facture.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 require_once(DOL_DOCUMENT_ROOT.'/paiement.class.php');
@@ -41,8 +41,7 @@ if ($conf->propal->enabled)   require_once(DOL_DOCUMENT_ROOT.'/propal.class.php'
 if ($conf->contrat->enabled)  require_once(DOL_DOCUMENT_ROOT.'/contrat/contrat.class.php');
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT.'/commande/commande.class.php');
 
-$user->getrights('facture');
-$user->getrights('banque');
+$user->getrights();
 
 if (! $user->rights->facture->lire)
     accessforbidden();
@@ -126,6 +125,17 @@ if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'ye
 			$mesg='<div clas="error">'.$fac->error.'</div>';
 			$_GET['action']='';
 		}
+	}
+}
+
+// Supprime affectation d'un avoir a la facture
+if ($_GET['action'] == 'unlinkdiscount')
+{
+	if ($user->rights->facture->creer)
+	{
+		$discount=new DiscountAbsolute($db);
+		$result=$discount->fetch($_GET["discountid"]);
+		$discount->unlink_invoice();
 	}
 }
 
@@ -214,13 +224,11 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->facture->creer)
 		$discount = new DiscountAbsolute($db);
 		$discount->fetch($_POST["remise_id_for_payment"]);
 		
-		$result=$discount->link_to_invoice(0,$fac->rowid);
+		$result=$discount->link_to_invoice(0,$_GET['facid']);
 		if ($result < 0)
 		{
 			$mesg='<div class="error">'.$discount->error.'</div>';
 		}
-		
-		exit;
 	}
 }
 

@@ -223,15 +223,13 @@ class DiscountAbsolute
 
 	
 	/**
-	*		\brief		Link the discount to a particular invoice line
+	*		\brief		Link the discount to a particular invoice line or a particular invoice
 	*		\param		rowidline		Invoice line id
 	*		\param		rowidinvoice	Invoice id
 	*		\return		int				<0 ko, >0 ok
 	*/
 	function link_to_invoice($rowidline,$rowidinvoice)
 	{
-		dolibarr_syslog("DiscountAbsolute::link_to_invoice Link discount ".$this->id." to invoice line rowid=".$rowidline." or invoice rowid=".$rowidinvoice);
-
 		// Check parameters
 		if (! $rowidline && ! $rowidinvoice) 
 		{
@@ -249,7 +247,7 @@ class DiscountAbsolute
 		if ($rowidinvoice) $sql.=" SET fk_facture = ".$rowidinvoice;
 		$sql.=" WHERE rowid = ".$this->id;
 
-		dolibarr_syslog("DiscountAbsolute::link_to_invoice sql=".$sql);
+		dolibarr_syslog("DiscountAbsolute::link_to_invoice sql=".$sql,LOG_DEBUG);
 		$resql = $this->db->query($sql);
 		if ($resql)
 		{
@@ -258,11 +256,39 @@ class DiscountAbsolute
 		else
 		{
 			$this->error=$this->db->error();
-			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error);
+			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
 			return -3;
 		}
 	}
 	
+
+	/**
+	*		\brief		Link the discount to a particular invoice line or a particular invoice
+	*		\remarks	Do not call this if discount is linked to a reconcialiated invoice
+	*		\param		rowidline			Invoice line id
+	*		\param		rowidinvoice		Invoice id
+	*		\return		int					<0 if KO, >0 if OK
+	*/
+	function unlink_invoice()
+	{
+		$sql ="UPDATE ".MAIN_DB_PREFIX."societe_remise_except";
+		$sql.=" SET fk_facture_line = NULL, fk_facture = NULL";
+		$sql.=" WHERE rowid = ".$this->id;
+
+		dolibarr_syslog("DiscountAbsolute::unlink_invoice sql=".$sql,LOG_DEBUG);
+		$resql = $this->db->query($sql);
+		if ($resql)
+		{
+			return 1;
+		}
+		else
+		{
+			$this->error=$this->db->error();
+			dolibarr_syslog("DiscountAbsolute::link_to_invoice ".$this->error,LOG_ERR);
+			return -3;
+		}
+	}
+
 
 	/**
 	 *    	\brief      Renvoie montant TTC des avoirs en cours disponibles
