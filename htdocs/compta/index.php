@@ -177,7 +177,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 				$companystatic->client=1;
 				print $companystatic->getNomUrl(1,'',16);
 				print '</td>';
-				print '<td align="right">'.price($obj->total_ttc).'</td>';
+				print '<td align="right" nowrap="nowrap">'.price($obj->total_ttc).'</td>';
 				print '</tr>';
 				$tot_ttc+=$obj->total_ttc;
 				$i++;
