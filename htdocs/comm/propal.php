@@ -823,8 +823,8 @@ if ($_GET['propalid'] > 0)
 	print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="5">';
 	if ($societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$societe->remise_client);
 	else print $langs->trans("CompanyHasNoRelativeDiscount");
-	$absolute_discount=$societe->getCurrentDiscount('','fk_facture_source IS NULL');
-	$absolute_creditnote=$societe->getCurrentDiscount('','fk_facture_source IS NOT NULL');
+	$absolute_discount=$societe->getAvailableDiscounts('','fk_facture_source IS NULL');
+	$absolute_creditnote=$societe->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
 	print '. ';
 	if ($absolute_discount)
 	{

@@ -204,7 +204,7 @@ if ($socid > 0)
         print '</td></tr></table>';
         print '</td>';
         print '<td colspan="3">';
-		$amount_discount=$societe->getCurrentDiscount();
+		$amount_discount=$societe->getAvailableDiscounts();
 		if ($amount_discount < 0) dolibarr_print_error($db,$societe->error);
         if ($amount_discount > 0) print price($amount_discount).'&nbsp;'.$langs->trans("Currency".$conf->monnaie);
         else print $langs->trans("DiscountNone");

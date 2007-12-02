@@ -1814,36 +1814,57 @@ class Facture extends CommonObject
 		}
 	}
 
-  /**
-   * 	\brief     	Renvoie tableau des ids de facture avoir issus de la facture
-   *	\return		array		Tableau d'id de factures avoirs
-   */
-  function getIdAvoirInvoice()
-  {
-    $idarray=array();
+	/**
+	 *    	\brief      Renvoie montant TTC des avoirs utilises par la facture
+	 *		\return		int			<0 if KO, Credit note amount otherwise
+	 */
+	function getSommeCreditNote()
+	{
+		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
-    $sql = 'SELECT rowid';
-    $sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
-    $sql.= ' WHERE fk_facture_source = '.$this->id;
-    $sql.= ' AND type = 2';
-    $resql=$this->db->query($sql);
-    if ($resql)
-      {
-	$num = $this->db->num_rows();
-	$i = 0;
-	while ($i < $num)
-	  {
-	    $row = $this->db->fetch_row($i);
-	    $idarray[]=$row[0];
-	    $i++;
-	  }
-      }
-    else
-      {
-	dolibarr_print_error($this->db);	
-      }
-    return $idarray;
-  }
+        $discountstatic=new DiscountAbsolute($this->db);
+		$result=$discountstatic->getSommeCreditNote($this);
+		if ($result >= 0)
+		{
+			return $result;
+		}
+		else
+		{
+			$this->error=$discountstatic->error;
+			return -1;
+		}
+	}
+	
+	/**
+	* 	\brief     	Renvoie tableau des ids de facture avoir issus de la facture
+	*	\return		array		Tableau d'id de factures avoirs
+	*/
+	function getListIdAvoirFromInvoice()
+	{
+		$idarray=array();
+
+		$sql = 'SELECT rowid';
+		$sql.= ' FROM '.MAIN_DB_PREFIX.'facture';
+		$sql.= ' WHERE fk_facture_source = '.$this->id;
+		$sql.= ' AND type = 2';
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $this->db->fetch_row($resql);
+				$idarray[]=$row[0];
+				$i++;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($this->db);	
+		}
+		return $idarray;
+	}
 	
   /**
    * 	\brief     	Renvoie l'id de la facture qui la remplace

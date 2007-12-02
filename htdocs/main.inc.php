@@ -843,10 +843,10 @@ function top_menu($head, $title="", $target="")
 /**
  *  \brief      Affiche barre de menu gauche
  *  \param      menu_array      Tableau des entrees de menu
- *  \param      help_url        Url pour le lien aide ('' par defaut)
+ *  \param      helppagename    Url pour le lien aide ('' par defaut)
  *  \param      form_search     Formulaire de recherche permanant supplementaire
  */
-function left_menu($menu_array, $help_url='', $form_search='')
+function left_menu($menu_array, $helppagename='', $form_search='')
 {
     global $user, $conf, $langs, $db;
 
@@ -908,12 +908,23 @@ function left_menu($menu_array, $help_url='', $form_search='')
     }
 
     // Lien vers l'aide en ligne (uniquement si langue fr_FR)
-    if ($help_url)
+    if ($helppagename)
     {
+		$langs->load("help");
+		
         $helpbaseurl='';
         if ($langs->defaultlang == "fr_FR") $helpbaseurl='http://www.dolibarr.com/wikidev/index.php/%s';
-
-        if ($helpbaseurl) print '<div class="help"><a class="help" target="_blank" href="'.sprintf($helpbaseurl,$help_url).'">'.$langs->trans("Help").'</a></div>';
+		
+		$helppage=$langs->trans($helppagename);
+	
+        if ($helpbaseurl)
+		{
+			print '<div class="help">';
+			print '<a class="help" target="_blank" href="';
+			print sprintf($helpbaseurl,$helppage);
+			print '">'.$langs->trans("Help").'</a>';
+			print '</div>';
+		}
     }
 
     if ($conf->global->MAIN_SHOW_BUGTRACK_LINK == 1)

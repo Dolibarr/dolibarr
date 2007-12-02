@@ -1031,23 +1031,22 @@ class Societe
 	 * 		\param		filter		Filtre autre
 	 *		\return		int			<0 if KO, Credit note amount otherwise
 	 */
-	function getCurrentDiscount($user='',$filter='')
+	function getAvailableDiscounts($user='',$filter='')
 	{
 		require_once(DOL_DOCUMENT_ROOT.'/discount.class.php');
 
         $discountstatic=new DiscountAbsolute($this->db);
-		$result=$discountstatic->getCurrentDiscount($this,$user,$filter);
+		$result=$discountstatic->getAvailableDiscounts($this,$user,$filter);
 		if ($result >= 0)
 		{
 			return $result;
 		}
 		else
 		{
-			$this->error=$discount->error;
+			$this->error=$discountstatic->error;
 			return -1;
 		}
 	}
-	
 
 	function set_price_level($price_level, $user)
 	{

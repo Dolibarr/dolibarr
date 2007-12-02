@@ -135,8 +135,8 @@ if ($_GET["id"] > 0)
             print '<tr><td>'.$langs->trans('Discounts').'</td><td colspan="3">';
 			if ($soc->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$soc->remise_client);
 			else print $langs->trans("CompanyHasNoRelativeDiscount");
-			$absolute_discount=$soc->getCurrentDiscount('','fk_facture_source IS NULL');
-			$absolute_creditnote=$soc->getCurrentDiscount('','fk_facture_source IS NOT NULL');
+			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
 			print '. ';
 			if ($absolute_discount)
 			{

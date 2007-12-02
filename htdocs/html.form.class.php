@@ -745,7 +745,7 @@ class Form
     {
         global $langs,$conf;
         
-        // On recherche les societes
+        // On recherche les remises
         $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
 		$sql.= " re.description, re.fk_facture_source";
 		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";

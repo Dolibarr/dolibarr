@@ -1138,7 +1138,7 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     }
 }
 
-llxHeader('',$langs->trans('Bill'),'Facture');
+llxHeader('',$langs->trans('Bill'),'HelpInvoice');
 
 $html = new Form($db);
 
@@ -1693,8 +1693,11 @@ else
 		/* *************************************************************************** */
 		if ($mesg) print $mesg.'<br>';
 		
-		$fac = New Facture($db);
-		if ($fac->fetch($_GET['facid']))
+		$facstatic = new Facture($db);
+
+		$fac = new Facture($db);
+		$result=$fac->fetch($_GET['facid']);
+		if ($result > 0)
 		{
 			if ($user->societe_id>0 && $user->societe_id!=$fac->socid)  accessforbidden('',0);
 
@@ -1702,12 +1705,14 @@ else
 			
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
-			$absolute_discount=$soc->getCurrentDiscount('','fk_facture_source IS NULL');
-			$absolute_creditnote=$soc->getCurrentDiscount('','fk_facture_source IS NOT NULL');
+			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
+			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
 
-			$totalpaye = $fac->getSommePaiement();
-			$resteapayer = $fac->total_ttc - $totalpaye;
+			$totalpaye  = $fac->getSommePaiement();
+			$totalavoir = $fac->getSommeCreditNote();
+			$resteapayer = $fac->total_ttc - $totalpaye - $totalavoir;
 			if ($fac->paye) $resteapayer=0;
+			$resteapayeraffiche=$resteapayer;
 			
 			$author = new User($db);
 			if ($fac->user_author)
@@ -1873,6 +1878,7 @@ else
 			/*
 			*   Facture
 			*/
+			
 			print '<table class="border" width="100%">';
 			
 			// Reference
@@ -1942,7 +1948,7 @@ else
 				$facreplaced->fetch($fac->fk_facture_source);
 				print ' ('.$langs->transnoentities("CorrectInvoice",$facreplaced->getNomUrl(1)).')';
 			}
-			$facidavoir=$fac->getIdAvoirInvoice();
+			$facidavoir=$fac->getListIdAvoirFromInvoice();
 			if (sizeof($facidavoir) > 0)
 			{
 				print ' ('.$langs->transnoentities("InvoiceHasAvoir");
@@ -2057,13 +2063,35 @@ else
 
 					// Facturé
 					print '<tr><td colspan="2" align="right">'.$langs->trans("Billed").' :</td><td align="right" style="border: 1px solid;">'.price($fac->total_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
-
 					$resteapayeraffiche=$resteapayer;
 
 					// Boucle sur chaque facture avoir appliquee
-					
-					
-					
+			        $sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+					$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
+					$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
+			        $sql.= " WHERE fk_facture = ".$fac->id;
+			        $resql=$db->query($sql);
+			        if ($resql)
+					{
+			            $num = $db->num_rows($resql);
+			            $i = 0;
+						$invoice=new Facture($db);
+			            while ($i < $num)
+			            {
+							$obj = $db->fetch_object($resql);
+							print '<tr><td colspan="2" align="right">'.$langs->trans("CreditNote").' ';
+							$invoice->fetch($obj->fk_facture_source);
+							print $invoice->getNomUrl(0);
+							print ' :</td>';
+							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+							$i++;
+						}
+					}
+					else
+					{
+						dolibarr_print_error($db);
+					}
+										
 					// Payé partiellement 'escompte'
 					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'escompte')
 					{
@@ -2177,6 +2205,7 @@ else
 			
 			// Lit lignes de facture pour déterminer montant
 			// On s'en sert pas mais ca sert pour debuggage
+			/*
 			$sql  = 'SELECT l.price as price, l.qty, l.rowid, l.tva_taux,';
 			$sql .= ' l.remise_percent, l.subprice';
 			$sql .= ' FROM '.MAIN_DB_PREFIX.'facturedet as l ';
@@ -2201,6 +2230,7 @@ else
 					$i++;
 				}
 			}
+			*/
 			
 			// Montants
 			print '<tr><td>'.$langs->trans('AmountHT').'</td>';
@@ -2736,8 +2766,9 @@ else
 				if ($fac->statut == 1 && $fac->paye == 0 && $resteapayer > 0
 						&& $user->rights->facture->paiement)
 				{
-					if ($totalpaye > 0)
+					if ($totalpaye > 0 || $totalavoir > 0)
 					{
+						// If one payment or one credit note was linked to this invoice
 						print '<a class="butAction" href="'.$_SERVER['PHP_SELF'].'?facid='.$fac->id.'&amp;action=payed">'.$langs->trans('ClassifyPayedPartially').'</a>';
 					}
 					else

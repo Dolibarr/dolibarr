@@ -191,7 +191,7 @@ if ($id > 0)
 	    print '<tr><td>'.$langs->trans('Discount').'</td><td>';
 		if ($contrat->societe->remise_client) print $langs->trans("CompanyHasRelativeDiscount",$contrat->societe->remise_client);
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
-		$absolute_discount=$contrat->societe->getCurrentDiscount();
+		$absolute_discount=$contrat->societe->getAvailableDiscounts();
 		print '. ';
 		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
