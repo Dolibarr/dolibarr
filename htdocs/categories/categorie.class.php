@@ -234,7 +234,6 @@ class Categorie
 	* Supprime la catégorie
 	* Les produits et sous-catégories deviennent orphelins
 	* si $all = false, et sont (seront :) supprimés sinon
-	* TODO : imp. $all
 	*/
 	function remove ($all = false)
 	{
