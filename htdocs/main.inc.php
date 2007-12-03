@@ -86,9 +86,9 @@ dolibarr_syslog("Session name=".$sessionname." Session id()=".session_id().", _S
  * Phase identification
  */
 
-// $authmode contient la liste des différents modes d'identification à tester
-// par ordre de préférence. Attention, rares sont les combinaisons possibles si
-// plusieurs modes sont indiqués.
+// $authmode contient la liste des diffï¿½rents modes d'identification ï¿½ tester
+// par ordre de prï¿½fï¿½rence. Attention, rares sont les combinaisons possibles si
+// plusieurs modes sont indiquï¿½s.
 // Example: array('http','dolibarr');
 // Example: array('http','dolibarr_mdb2');
 // Example: array('ldap');
@@ -136,15 +136,15 @@ if (! sizeof($authmode))
 	exit;
 }
 
-// Si la demande du login a déjà eu lieu, on le récupère depuis la session
-// sinon appel du module qui réalise sa demande.
-// A l'issu de cette phase, la variable $login sera définie.
+// Si la demande du login a dï¿½jï¿½ eu lieu, on le rï¿½cupï¿½re depuis la session
+// sinon appel du module qui rï¿½alise sa demande.
+// A l'issu de cette phase, la variable $login sera dï¿½finie.
 $login='';
 if (! session_id() || ! isset($_SESSION["dol_login"]))
 {
-	// On est pas déjà authentifié, on demande le login/mot de passe
-	// A l'issu de cette demande, le login et un jeton doivent avoir été placé
-	// en session dans dol_login et la page rappelée.
+	// On est pas dï¿½jï¿½ authentifiï¿½, on demande le login/mot de passe
+	// A l'issu de cette demande, le login et un jeton doivent avoir ï¿½tï¿½ placï¿½
+	// en session dans dol_login et la page rappelï¿½e.
 
 	// MODE AUTO
 	if (in_array('forceuser',$authmode) && ! $login)
@@ -166,7 +166,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 
     	$pear = $dolibarr_main_db_type.'://'.$dolibarr_main_db_user.':'.$dolibarr_main_db_pass.'@'.$dolibarr_main_db_host.'/'.$dolibarr_main_db_name;
 
-		// \TODO Virer ce test et toujours faire le test sur le champ crypté
+		// \TODO Virer ce test et toujours faire le test sur le champ cryptï¿½
 		if ($conf->password_encrypted)
 		{
 			$cryptType = "md5";
@@ -206,7 +206,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	        }
 	        else 
 	        {
-	            // Non authentifie, un redirect sur page logon a été envoyé, on peut finir.
+	            // Non authentifie, un redirect sur page logon a ï¿½tï¿½ envoyï¿½, on peut finir.
 	            //dolibarr_syslog("Authentification non realise");
 	        }
 	        exit;
@@ -214,7 +214,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	}
 	
 	// MODE DOLIBARR MDB2
-	//Todo: voir pour l'utiliser par défaut
+	//Todo: voir pour l'utiliser par dï¿½faut
 	if (in_array('dolibarr_mdb2',$authmode) && ! $login)
 	{
     	require_once(PEAR_PATH."/Auth/Auth.php");
@@ -302,7 +302,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		if (! $ldapdn)         $ldapdn=$conf->global->LDAP_SERVER_DN;
 		if (! $ldapadminlogin) $ldapadminlogin=$conf->global->LDAP_ADMIN_DN;
 		if (! $ldapadminpass)  $ldapadminpass=$conf->global->LDAP_ADMIN_PASS;
-		// Fin code pour compatiblité
+		// Fin code pour compatiblitï¿½
 		
 	    $params = array(
 		    'userattr' => $ldapuserattr,
@@ -381,9 +381,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 	    if ($ldapdebug) print "DEBUG: pwdLastSet = ".dolibarr_print_date($ldap->pwdlastset,'day')."<br>\n";
 	    if ($ldapdebug) print "DEBUG: badPasswordTime = ".dolibarr_print_date($ldap->badpwdtime,'day')."<br>\n";
 	    
-	    //TODO : doit etre géré au niveau de PEAR
 /*	    
-	    // On stop si le mot de passe ldap doit etre modifié
+	    // On stop si le mot de passe ldap doit etre modifie
 	    if ($ldap->pwdlastset == 0)
 	    {
 	    	session_destroy();
@@ -406,7 +405,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  $result=$user->fetch($login);
 		  if ($result)
 		  {
-		  	//TODO: on vérifie si le login a changé et on met à jour les attributs dolibarr
+		  	//TODO: on vï¿½rifie si le login a changï¿½ et on met ï¿½ jour les attributs dolibarr
 		  	if ($user->login != $ldap->login && $ldap->login)
 		  	{
 		  		$user->login = $ldap->login;
@@ -453,8 +452,8 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 }
 else
 {
-	// On est déjà en session qui a sauvegardé login
-	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifiés
+	// On est dï¿½jï¿½ en session qui a sauvegardï¿½ login
+	// Remarks: On ne sauvegarde pas objet user car pose pb dans certains cas mal identifiï¿½s
 	$login=$_SESSION["dol_login"];
 	dolibarr_syslog("This is an already user logged session. _SESSION['dol_login']=".$login);
 	$result=$user->fetch($login);
@@ -476,13 +475,13 @@ if (! isset($_SESSION["dol_login"]))
 		// Extract domain from url (Useless because only cookie on same domain are authorized by browser
 		//if (eregi('^(https:[\\\/]+[^\\\/]+)',$conf->global->PHPWEBCALENDAR_URL,$reg)) $domain=$reg[1];
 
-		// Création du cookie permettant de sauver le login
+		// Crï¿½ation du cookie permettant de sauver le login
 		$cookiename='webcalendar_login';
 		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
 		{
 			setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
 		}
-		// Création du cookie permettant de sauver la session
+		// Crï¿½ation du cookie permettant de sauver la session
 		$cookiename='webcalendar_session';
 		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
 		{
@@ -493,7 +492,7 @@ if (! isset($_SESSION["dol_login"]))
 	// Module Phenix
 	if ($conf->phenix->enabled && $user->phenix_login != "" && $conf->phenix->cookie)
 	{
-		// Création du cookie permettant la connexion automatique, valide jusqu'à la fermeture du browser
+		// Crï¿½ation du cookie permettant la connexion automatique, valide jusqu'ï¿½ la fermeture du browser
 		if (!isset($HTTP_COOKIE_VARS[$conf->phenix->cookie]))
 		{
 			setcookie($conf->phenix->cookie, $user->phenix_login.":".$user->phenix_pass_crypted.":1", 0, "/", "", 0);
@@ -665,7 +664,7 @@ else
  *  \brief      Affiche en-tete HTML
  *  \param      head    	Lignes d'en-tete head optionnelles
  *  \param      title   	Titre page web
- *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisée par sous formulaire Ajax)	
+ *	\param		disablejs	N'affiche pas les liens vers les js (Ex: qd fonction utilisï¿½e par sous formulaire Ajax)	
  */
 function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0) 
 {

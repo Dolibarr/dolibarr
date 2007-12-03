@@ -246,14 +246,6 @@ print '</table>';
 print '</form>';
 
 // Cryptage mot de passe
-
-/*
-* \TODO
-*
-* Ajouter options qui désactive le stockage du champ pass (seul le champ pass_crypted est alors stocké)
-* - "Algorithme de cryptage = MD5,..."
-*
-*/
 print '<br>';
 
 $var=true;
