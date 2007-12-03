@@ -2016,7 +2016,7 @@ class Form
 	    	}
 	    	if ($input['type'] == 'select') 
 	    	{
-	    		// TODO	
+
 	    	}
 	    	if ($input['type'] == 'checkbox') 
 	    	{

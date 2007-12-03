@@ -47,7 +47,7 @@ accessforbidden();
 
 
 /*
- * Sécurité accés client
+ * Sï¿½curitï¿½ accï¿½s client
  */
 if ($user->societe_id > 0)
 {
@@ -192,11 +192,6 @@ if ($lineid > 0)
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
 
-            // Factures associées
-            /*
-            TODO
-            */
-
         // Projet
         if ($conf->projet->enabled)
         {
@@ -309,16 +304,16 @@ if ($lineid > 0)
                 if ($objp->date_debut) $dateactstart=$objp->date_debut;
                 if ($objp->date_fin) $dateactend=$objp->date_fin;
 
-                    // Dates de en service prévues et effectives
+                    // Dates de en service prï¿½vues et effectives
                     
                     print '<tr '.$bc[$var].'>';
                     print '<td colspan="7">';
 
-                    // Date prévues
+                    // Date prï¿½vues
                     print $langs->trans("DateStartPlanned").': ';
                     if ($objp->date_debut) {
                         print dolibarr_print_date($objp->date_debut);
-                        // Warning si date prevu passée et pas en service
+                        // Warning si date prevu passï¿½e et pas en service
                         if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
                     }
                     else print $langs->trans("Unknown");
@@ -332,18 +327,18 @@ if ($lineid > 0)
 
                     print '<br>';
 
-                    // Si pas encore activé
+                    // Si pas encore activï¿½
                     if (! $objp->date_debut_reelle) {
                         print $langs->trans("DateStartReal").': ';
                         if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
                         else print $langs->trans("ContractStatusNotRunning");
                     }
-                    // Si activé et en cours
+                    // Si activï¿½ et en cours
                     if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
                         print $langs->trans("DateStartReal").': ';
                         print dolibarr_print_date($objp->date_debut_reelle);
                     }
-                    // Si désactivé
+                    // Si dï¿½sactivï¿½
                     if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
                         print $langs->trans("DateStartReal").': ';
                         print dolibarr_print_date($objp->date_debut_reelle);
@@ -416,7 +411,7 @@ if ($lineid > 0)
         if ($user->rights->contrat->activer && $contrat->statut == 1 && $objp->statut == 4)
         {
             /**
-             * Désactiver la ligne de contrat
+             * Dï¿½sactiver la ligne de contrat
              */
             $form = new Form($db);
 
@@ -458,8 +453,8 @@ if ($lineid > 0)
     }
     else
     {
-            // Contrat non trouvé
-        print "Contrat inexistant ou accés refusé";
+            // Contrat non trouvï¿½
+        print "Contrat inexistant ou accï¿½s refusï¿½";
     }
 }
 

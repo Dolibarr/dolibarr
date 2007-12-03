@@ -99,12 +99,9 @@ class Expedition extends CommonObject
                 $this->commande->id = $this->commande_id;
                 $this->commande->fetch_lines();
     
-                /*
-                *  Insertion des produits dans la base
-                */
+                // Insertion des lignes
                 for ($i = 0 ; $i < sizeof($this->lignes) ; $i++)
                 {
-                    //TODO
                     if (! $this->create_line(0, $this->lignes[$i]->commande_ligne_id, $this->lignes[$i]->qty))
                     {
                         $error++;

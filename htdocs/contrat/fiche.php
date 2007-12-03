@@ -43,7 +43,7 @@ $user->getrights('commercial');
 if (! $user->rights->contrat->lire)
 accessforbidden();
 
-// Sécurité accés client et commerciaux
+// Sï¿½curitï¿½ accï¿½s client et commerciaux
 $contratid = isset($_GET["id"])?$_GET["id"]:'';
 
 if ($user->societe_id > 0)
@@ -71,7 +71,7 @@ if ($contratid && !$user->rights->commercial->client->voir)
 }
 
 
-// Si ajout champ produit prédéfini
+// Si ajout champ produit prï¿½dï¿½fini
 if ($_POST["mode"]=='predefined')
 {
 	$date_start='';
@@ -192,7 +192,7 @@ if ($_POST["action"] == 'addligne' && $user->rights->contrat->creer)
 				$date_end=dolibarr_mktime(12,0,0,$_POST['date_end_slmonth'],$_POST['date_end_slday'],$_POST['date_end_slyear']);
 			}
 		}
-		// Si ajout champ produit prédéfini
+		// Si ajout champ produit prï¿½dï¿½fini
 		if ($_POST['mode'] == 'predefined')
 		{
 			if ($_POST['date_startyear'] && $_POST['date_startmonth'] && $_POST['date_startday'])
@@ -695,11 +695,6 @@ else
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
 
-        // Factures associées
-        /*
-        TODO
-        */
-
         // Projet
         if ($conf->projet->enabled)
         {
@@ -790,7 +785,7 @@ else
                     print '<td align="center">'.vatrate($objp->tva_tx).'%</td>';
                     // Prix
                     print '<td align="right">'.price($objp->subprice)."</td>\n";
-                    // Quantité
+                    // Quantitï¿½
                     print '<td align="center">'.$objp->qty.'</td>';
                     // Remise
                     if ($objp->remise_percent > 0)
@@ -801,7 +796,7 @@ else
                     {
                         print '<td>&nbsp;</td>';
                     }
-                    // Icon update et delete (statut contrat 0=brouillon,1=validé,2=fermé)
+                    // Icon update et delete (statut contrat 0=brouillon,1=validï¿½,2=fermï¿½)
                     print '<td align="center" nowrap>';
                     if ($contrat->statut != 2  && $user->rights->contrat->creer)
                     {
@@ -831,17 +826,17 @@ else
 
                     print "</tr>\n";
 
-                    // Dates de en service prévues et effectives
+                    // Dates de en service prï¿½vues et effectives
                     if ($objp->subprice >= 0)
                     {
 	                    print '<tr '.$bc[$var].'>';
 	                    print '<td colspan="7">';
 	
-	                    // Date prévues
+	                    // Date prï¿½vues
 	                    print $langs->trans("DateStartPlanned").': ';
 	                    if ($objp->date_debut) {
 	                        print dolibarr_print_date($objp->date_debut);
-	                        // Warning si date prevu passée et pas en service
+	                        // Warning si date prevu passï¿½e et pas en service
 	                        if ($objp->statut == 0 && $objp->date_debut < time() - $conf->contrat->warning_delay) { print " ".img_warning($langs->trans("Late")); }
 	                    }
 	                    else print $langs->trans("Unknown");
@@ -855,18 +850,18 @@ else
 	
 	                    print '<br>';
 	
-	                    // Si pas encore activé
+	                    // Si pas encore activï¿½
 	                    if (! $objp->date_debut_reelle) {
 	                        print $langs->trans("DateStartReal").': ';
 	                        if ($objp->date_debut_reelle) print dolibarr_print_date($objp->date_debut_reelle);
 	                        else print $langs->trans("ContractStatusNotRunning");
 	                    }
-	                    // Si activé et en cours
+	                    // Si activï¿½ et en cours
 	                    if ($objp->date_debut_reelle && ! $objp->date_fin_reelle) {
 	                        print $langs->trans("DateStartReal").': ';
 	                        print dolibarr_print_date($objp->date_debut_reelle);
 	                    }
-	                    // Si désactivé
+	                    // Si dï¿½sactivï¿½
 	                    if ($objp->date_debut_reelle && $objp->date_fin_reelle) {
 	                        print $langs->trans("DateStartReal").': ';
 	                        print dolibarr_print_date($objp->date_debut_reelle);
@@ -909,7 +904,7 @@ else
                     print '<td align="center" colspan="3" rowspan="2" valign="middle"><input type="submit" class="button" name="save" value="'.$langs->trans("Modify").'">';
                     print '<br><input type="submit" class="button" name="cancel" value="'.$langs->trans("Cancel").'">';
                     print '</td>';
-                    // Ligne dates prévues
+                    // Ligne dates prï¿½vues
                     print "<tr $bc[$var]>";
                     print '<td colspan="5">';
                     print $langs->trans("DateStartPlanned").' ';
@@ -960,7 +955,7 @@ else
 
             $var=false;
 
-            // Service sur produit prédéfini
+            // Service sur produit prï¿½dï¿½fini
             print '<form name="addligne" action="fiche.php?id='.$id.'" method="post">';
             print '<input type="hidden" name="action" value="addligne">';
             print '<input type="hidden" name="mode" value="predefined">';
