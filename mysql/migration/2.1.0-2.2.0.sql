@@ -1142,9 +1142,10 @@ ALTER TABLE llx_societe_remise_except ADD INDEX idx_societe_remise_except_fk_fac
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture_line   FOREIGN KEY (fk_facture_line) REFERENCES llx_facturedet (rowid);
 ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_facture        FOREIGN KEY (fk_facture)        REFERENCES llx_facture (rowid);
 
--- Corrige statut avoir transforme en reduc ou reduc supprime apres coup
+-- Corrige statut des avoirs qui ont ete transforme en reduc et pour lesquels la reduc a ete ensuite supprimee
 -- V4.1 update llx_facture set paye=0, fk_statut=1 where paye=1 and type=2 and rowid not in (select fk_facture_source from llx_societe_remise_except);
 
 -- Corrige avoirs affectes en ligne a affectation sur facture. On met total a null pour permettre recalcul par upgrade2
 -- V4.1 update llx_facture set total_ttc = NULL where rowid in (select fk_facture from llx_facturedet where description = '(CREDIT_NOTE)');
+-- V4.1 update llx_societe_remise_except as re set re.fk_facture = (select fk_facture from llx_facturedet as fd where fd.rowid = re.fk_facture_line), re.fk_facture_line = NULL where re.fk_facture_line in (select rowid from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 delete from llx_facturedet where description = '(CREDIT_NOTE)';
