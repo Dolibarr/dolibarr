@@ -21,7 +21,7 @@
 
 /**
         \file       htdocs/install/etape2.php
-        \brief      Crï¿½e les tables, clï¿½s primaires, clï¿½s ï¿½trangï¿½res, index et fonctions en base puis charge les donnï¿½es de rï¿½fï¿½rence
+        \brief      Cree les tables, cles primaires, cles etrangeres, index et fonctions en base puis charge les donnees de reference
         \version    $Revision$
 */
 
@@ -33,7 +33,7 @@ $etape = 2;
 $ok = 0;
 
 
-// Cette page peut etre longue. On augmente le dï¿½lai autorise.
+// Cette page peut etre longue. On augmente le delai autorise.
 // Ne fonctionne que si on est pas en safe_mode.
 $err=error_reporting();
 error_reporting(0);
@@ -73,7 +73,7 @@ if ($_POST["action"] == "set")
     }
     else
     {
-        print "<tr><td>Erreur lors de la crï¿½ation de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
+        print "<tr><td>Erreur lors de la creation de : $dolibarr_main_db_name</td><td>".$langs->trans("Error")."</td></tr>";
     }
 
     if ($ok)
@@ -81,7 +81,7 @@ if ($_POST["action"] == "set")
         if($db->database_selected == 1)
         {
 
-            dolibarr_install_syslog("etape2: Connexion rï¿½ussie ï¿½ la base : $dolibarr_main_db_name");
+            dolibarr_install_syslog("etape2: Connexion reussie e la base : $dolibarr_main_db_name");
         }
         else
         {
@@ -329,7 +329,7 @@ if ($_POST["action"] == "set")
         elseif ($choix==2) $dir = "../../pgsql/functions/";
         elseif ($choix==3) $dir = "../../mssql/functions/";
 
-        // Crï¿½ation donnï¿½es
+        // Creation donnees
         $file = "functions.sql";
         if (file_exists($dir.$file)) {
             $fp = fopen($dir.$file,"r");
@@ -347,7 +347,7 @@ if ($_POST["action"] == "set")
             }
 
             // Si plusieurs requetes, on boucle sur chaque
-            $listesql=split('ï¿½',eregi_replace(";';",";'ï¿½",$buffer));
+            $listesql=split('§',eregi_replace(";';",";'§",$buffer));
             foreach ($listesql as $buffer) {                
                 if (trim($buffer)) {
     
@@ -396,7 +396,7 @@ if ($_POST["action"] == "set")
         elseif ($choix==2) $dir = "../../pgsql/data/";
         elseif ($choix==3) $dir = "../../mssql/data/";
 
-        // Crï¿½ation donnï¿½es
+        // Creation donnees
         $file = "data.sql";
         $fp = fopen($dir.$file,"r");
         if ($fp)
@@ -443,7 +443,7 @@ if ($_POST["action"] == "set")
 
     /***************************************************************************************
     *
-    * Les variables qui ecrase le chemin par defaut sont redï¿½finies
+    * Les variables qui ecrase le chemin par defaut sont redefinies
     *
     ***************************************************************************************/
     if ($ok == 1)
