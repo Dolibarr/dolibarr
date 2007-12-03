@@ -405,7 +405,7 @@ if (! session_id() || ! isset($_SESSION["dol_login"]))
 		  $result=$user->fetch($login);
 		  if ($result)
 		  {
-		  	//TODO: on v�rifie si le login a chang� et on met � jour les attributs dolibarr
+		  	//TODO: on verifie si le login a change et on met a jour les attributs dolibarr
 		  	if ($user->login != $ldap->login && $ldap->login)
 		  	{
 		  		$user->login = $ldap->login;

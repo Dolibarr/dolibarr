@@ -419,7 +419,7 @@ class Paiement
 	 */
 	function getNomUrl($withpicto=0,$option='')
 	{
-		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		global $langs;
 		
 		$result='';
 

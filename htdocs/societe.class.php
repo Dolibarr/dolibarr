@@ -1196,8 +1196,8 @@ class Societe
 		$contact_email = $this->contact_email_array();
 		if ($this->email)
 		{
-			// TODO: Tester si email non deja pr�sent dans tableau contact
-			$contact_email[-1]=$langs->trans("ThirdParty").': '.dolibarr_trunc($this->nom,16)." &lt;".$this->email."&gt;";;
+			// TODO: Tester si email non deja present dans tableau contact
+			$contact_email[-1]=$langs->trans("ThirdParty").': '.dolibarr_trunc($this->nom,16)." &lt;".$this->email."&gt;";
 		}
 		return $contact_email;
 	}
