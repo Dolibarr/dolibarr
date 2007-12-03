@@ -50,10 +50,22 @@ if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 
 $langs->load("main");
 
-if(! isset($_GET["sd"])) $_GET["sd"]="00000000";
+$qualified=true;
+
+if (! isset($_GET["sd"])) $_GET["sd"]="00000000";
+
+if (! isset($_GET["m"])) $qualified=false;
+if (! isset($_GET["y"])) $qualified=false;
+if (isset($_GET["m"]) && isset($_GET["y"]))
+{
+	if ($_GET["m"] < 1)    $qualified=false;
+	if ($_GET["m"] > 12)   $qualified=false;
+	if ($_GET["y"] < 0)    $qualified=false;
+	if ($_GET["y"] > 9999) $qualified=false;
+}
 
 // If parameters provided, we show calendar
-if (isset($_GET["m"]) && isset($_GET["y"]))
+if ($qualified)
 {
 	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
 	displayBox($_GET["sd"],$_GET["m"],$_GET["y"]);
