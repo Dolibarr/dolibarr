@@ -2794,7 +2794,7 @@ function clean_url($url,$http=1)
 		$domain=$regs[2];
 		$port=$regs[3];
 		//print $url." -> ".$proto." - ".$domain." - ".$port;
-		$url = unaccent(trim($url));
+		$url = unaccent_isostring(trim($url));
 
 		// Si http: defini on supprime le http (Si https on ne supprime pas)
 		if ($http==0)
