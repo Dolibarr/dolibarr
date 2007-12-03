@@ -12,3 +12,4 @@ ErrorPrefixRequired=Prefix required
 ErrorBadSupplierCodeSyntax=Bad syntax for supplier code
 ErrorSupplierCodeRequired=Supplier code required
 ErrorSupplierCodeAlreadyUsed=Supplier code already used
+ErrorBadParameters=Bad parameters

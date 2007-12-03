@@ -12,3 +12,4 @@ ErrorPrefixRequired=Prefix obligatoire
 ErrorBadSupplierCodeSyntax=La syntaxe du code fournisseur est incorrect
 ErrorSupplierCodeRequired=Code fournisseur obligatoire
 ErrorSupplierCodeAlreadyUsed=Code fournisseur deja utilise
+ErrorBadParameters=Parametres incorrects

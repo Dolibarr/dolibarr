@@ -1664,7 +1664,6 @@ function dolibarr_print_error($db='',$error='')
     }
     else                              // Mode CLI
     {
-
         print $langs->transnoentities("ErrorInternalErrorDetected").": ".$argv[0]."\n";
         $syslog.="pid=".getmypid();
     }
@@ -1693,11 +1692,14 @@ function dolibarr_print_error($db='',$error='')
 
     if ($error)
     {
+    	$langs->load("errors");
+    	
 		if (is_array($error)) $errors=$error;
 		else $errors=array($error);
 		
 		foreach($errors as $msg)
 		{
+			$msg=$langs->trans($msg);
 	        if ($_SERVER['DOCUMENT_ROOT'])  // Mode web
 	        {
 	            print "<b>".$langs->trans("Message").":</b> ".$msg."<br>\n" ;
