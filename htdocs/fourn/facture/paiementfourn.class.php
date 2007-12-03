@@ -24,8 +24,8 @@
 /**
 		\file       htdocs/fourn/facture/paiementfourn.class.php
 		\ingroup    fournisseur, facture
-		\brief      Page de création de paiement factures fournisseurs
-        \remarks	Cette classe est presque identique à paiement.class.php
+		\brief      Page de crï¿½ation de paiement factures fournisseurs
+        \remarks	Cette classe est presque identique ï¿½ paiement.class.php
 		\version    $Revision$
 */
 
@@ -45,12 +45,12 @@ class PaiementFourn
 	var $amount;
 	var $total;
 	var $author;
-	var $paiementid;	// Type de paiement. Stocké dans fk_paiement
-						// de llx_paiement qui est lié aux types de
+	var $paiementid;	// Type de paiement. Stockï¿½ dans fk_paiement
+						// de llx_paiement qui est liï¿½ aux types de
 						//paiement de llx_c_paiement
-	var $num_paiement;	// Numéro du CHQ, VIR, etc...
+	var $num_paiement;	// Numï¿½ro du CHQ, VIR, etc...
 	var $bank_account;	// Id compte bancaire du paiement
-	var $bank_line;		// Id de la ligne d'écriture bancaire
+	var $bank_line;		// Id de la ligne d'ï¿½criture bancaire
 	var $note;
 	// fk_paiement dans llx_paiement est l'id du type de paiement (7 pour CHQ, ...)
 	// fk_paiement dans llx_paiement_facture est le rowid du paiement
@@ -59,7 +59,7 @@ class PaiementFourn
 
 	/**
 	 *    \brief  Constructeur de la classe
-	 *    \param  DB          handler accès base de données
+	 *    \param  DB          handler accï¿½s base de donnï¿½es
 	 */
 
 	function PaiementFourn($DB)
@@ -68,8 +68,8 @@ class PaiementFourn
 	}
 
 	/**
-	 *    \brief      Récupère l'objet paiement
-	 *    \param      id      id du paiement a récupérer
+	 *    \brief      Rï¿½cupï¿½re l'objet paiement
+	 *    \param      id      id du paiement a rï¿½cupï¿½rer
 	 *    \return     int     <0 si ko, >0 si ok
 	 */
 	function fetch($id)
@@ -115,9 +115,9 @@ class PaiementFourn
 	}
 
 	/**
-	 *    \brief      Création du paiement en base
-	 *    \param      user        object utilisateur qui crée
-	 *    \return     int         id du paiement crée, < 0 si erreur
+	 *    \brief      Crï¿½ation du paiement en base
+	 *    \param      user        object utilisateur qui crï¿½e
+	 *    \return     int         id du paiement crï¿½e, < 0 si erreur
 	 */
 	function create($user)
 	{
@@ -137,7 +137,7 @@ class PaiementFourn
 		
 		$this->db->begin();
 		
-		if ($this->total <> 0) // On accepte les montants négatifs
+		if ($this->total <> 0) // On accepte les montants nï¿½gatifs
 		{
 			$sql = 'INSERT INTO '.MAIN_DB_PREFIX.'paiementfourn (datec, datep, amount, fk_paiement, num_paiement, note, fk_user_author)';
 			$sql .= ' VALUES (now(), '.$this->db->idate($this->datepaye).', \''.$this->total.'\', '.$this->paiementid.', \''.$this->num_paiement.'\', \''.$this->note.'\', '.$user->id.')';
@@ -163,7 +163,7 @@ class PaiementFourn
 					}
 					else
 					{
-						dolibarr_syslog('PaiementFourn::Create Montant non numérique');
+						dolibarr_syslog('PaiementFourn::Create Montant non numï¿½rique');
 					}
 				}
 
@@ -184,7 +184,7 @@ class PaiementFourn
 			}
 		}
 
-		if ( $this->total <> 0 && $error == 0 ) // On accepte les montants négatifs
+		if ( $this->total <> 0 && $error == 0 ) // On accepte les montants nï¿½gatifs
 		{
 			$this->db->commit();
 			dolibarr_syslog('PaiementFourn::Create Ok Total = '.$this->total);
@@ -200,9 +200,9 @@ class PaiementFourn
 
 
 	/**
-	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a généré dans comptes
-	 *                  Si le paiement porte sur un écriture compte qui est rapprochée, on refuse
-	 *                  Si le paiement porte sur au moins une facture à "payée", on refuse
+	 *      \brief      Supprime un paiement ainsi que les lignes qu'il a gï¿½nï¿½rï¿½ dans comptes
+	 *                  Si le paiement porte sur un ï¿½criture compte qui est rapprochï¿½e, on refuse
+	 *                  Si le paiement porte sur au moins une facture ï¿½ "payï¿½e", on refuse
 	 *      \return     int     <0 si ko, >0 si ok
 	 */
 	function delete()
@@ -211,14 +211,14 @@ class PaiementFourn
 
 		$this->db->begin();
 
-		// Vérifier si paiement porte pas sur une facture à l'état payée
+		// Vï¿½rifier si paiement porte pas sur une facture ï¿½ l'ï¿½tat payï¿½e
 		// Si c'est le cas, on refuse la suppression
 		$billsarray=$this->getBillsArray('paye=1');
 		if (is_array($billsarray))
 		{
 			if (sizeof($billsarray))
 			{
-				$this->error='Impossible de supprimer un paiement portant sur au moins une facture à l\'état payé';
+				$this->error='Impossible de supprimer un paiement portant sur au moins une facture ï¿½ l\'ï¿½tat payï¿½';
 				$this->db->rollback();
 				return -1;
 			}
@@ -229,7 +229,7 @@ class PaiementFourn
 			return -2;
 		}
 
-		// Vérifier si paiement ne porte pas sur ecriture bancaire rapprochée
+		// Vï¿½rifier si paiement ne porte pas sur ecriture bancaire rapprochï¿½e
 		// Si c'est le cas, on refuse le delete
 		if ($bank_line_id)
 		{
@@ -237,7 +237,7 @@ class PaiementFourn
 			$accline->fetch($bank_line_id);
 			if ($accline->rappro)
 			{
-				$this->error='Impossible de supprimer un paiement qui a généré une écriture qui a été rapprochée';
+				$this->error='Impossible de supprimer un paiement qui a gï¿½nï¿½rï¿½ une ï¿½criture qui a ï¿½tï¿½ rapprochï¿½e';
 				$this->db->rollback();
 				return -3;
 			}
@@ -259,7 +259,7 @@ class PaiementFourn
 				return -3;
 			}
 
-			// Supprimer l'écriture bancaire si paiement lié à écriture
+			// Supprimer l'ï¿½criture bancaire si paiement liï¿½ ï¿½ ï¿½criture
 			if ($bank_line_id)
 			{
     			$accline = new AccountLine($this->db);
@@ -284,7 +284,7 @@ class PaiementFourn
 	}
 
 	/**
-	 *      \brief      Mise a jour du lien entre le paiement et la ligne générée dans llx_bank
+	 *      \brief      Mise a jour du lien entre le paiement et la ligne gï¿½nï¿½rï¿½e dans llx_bank
 	 *      \param      id_bank     Id compte bancaire
 	 */
 	function update_fk_bank($id_bank)
@@ -403,8 +403,8 @@ class PaiementFourn
 	}
 
 	/**
-	*    	\brief      Retourne le libellé du statut d'une facture (brouillon, validée, abandonnée, payée)
-	*    	\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
+	*    	\brief      Retourne le libellï¿½ du statut d'une facture (brouillon, validï¿½e, abandonnï¿½e, payï¿½e)
+	*    	\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
 	*    	\return     string		Libelle
 	*/
 	function getLibStatut($mode=0)
@@ -413,14 +413,15 @@ class PaiementFourn
 	}
 
 	/**
-	*    	\brief      Renvoi le libellé d'un statut donne
+	*    	\brief      Renvoi le libellï¿½ d'un statut donne
 	*    	\param      status      Statut
-	*		\param      mode        0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	*    	\return     string      Libellé du statut
+	*		\param      mode        0=libellï¿½ long, 1=libellï¿½ court, 2=Picto + Libellï¿½ court, 3=Picto, 4=Picto + Libellï¿½ long, 5=Libellï¿½ court + Picto
+	*    	\return     string      Libellï¿½ du statut
 	*/
 	function LibStatut($status,$mode=0)
 	{
-		global $langs;	// TODO Renvoyer le libellé anglais et faire traduction a affichage
+		global $langs;
+		
 		$langs->load('compta');
 		if ($mode == 0)
 		{
