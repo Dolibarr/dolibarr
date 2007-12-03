@@ -32,6 +32,7 @@ English Dolibarr changelog
 - A lot of other minor changes...
 - Option to scan uploaded document by an antivirus.
 - Transparency for picto files works with IE.
+- Can drag and drop boxes on main page.
 
 
 ***** Changelog for 2.1 compared to 2.0.1 *****
