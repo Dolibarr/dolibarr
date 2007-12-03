@@ -220,16 +220,17 @@ if ($nboftargetok) {
         
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
-#    		unlink $BUILDROOT/$FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
    		    $cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
-#        	$cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$BUILDROOT/$FILENAMETGZ.tgz\" $FILENAMETGZ";
-#        	$ret=`$cmd`;
-            if ($OS =~ /windows/i) {
+            if ($OS =~ /windows/i)
+            {
         		print "Move $FILENAMETGZ.tgz to $DESTI/$FILENAMETGZ.tgz\n";
         		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
-#        		$ret=`mv "$BUILDROOT/$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
+            }
+            else
+            {
+        		$ret=`mv "$FILENAMETGZ.tgz" "$DESTI/$FILENAMETGZ.tgz"`;
             }
     		next;
     	}
@@ -241,7 +242,7 @@ if ($nboftargetok) {
             #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
             #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
     		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-		print "Move $FILENAMEZIP.zip to $DESTI\n";
+			print "Move $FILENAMEZIP.zip to $DESTI\n";
     		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
     	}

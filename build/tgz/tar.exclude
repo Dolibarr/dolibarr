@@ -52,9 +52,10 @@ scripts/lolix
 CVS
 *~
 .#*
+.cache
+.cvsignore
 .htaccess
 .settings
-.cvsignore
 .project
 Thumbs.db
 data_dev.sql
