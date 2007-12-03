@@ -48,9 +48,9 @@ class modCategorie extends DolibarrModules
 		$this->id = 'categorie';   // Same value xxx than in file modXxx.class.php file
 		$this->numero = 1780;
 	
-		$this->family = "products";
-		$this->name = "Catégories de produit";
-		$this->description = "Gestion des catégories de produits";
+		$this->family = "technic";
+		$this->name = "Catégories";
+		$this->description = "Gestion des catégories (produits, clients, fournisseurs...)";
 	
 		$this->revision = explode(' ','$Revision$');
 		$this->version = $this->revision[1];
