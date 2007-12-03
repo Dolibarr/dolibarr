@@ -92,7 +92,7 @@ else
 	    $i=0;
 	    while ($i < $num)
 	    {
-	        $obj = $db->fetch_object($rsult);
+	        $obj = $db->fetch_object($result);
 	        $var=!$var;
 	        print "<tr $bc[$var]>";
 	

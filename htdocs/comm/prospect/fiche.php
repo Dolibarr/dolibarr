@@ -105,16 +105,6 @@ if ($socid > 0)
 
 	dolibarr_fiche_head($head, 'prospect', $societe->nom);
 
-
-    /* TODO Finir verification PagesJaunes
-    * print '<form action="http://www.pagesjaunes.fr/pj.cgi" method="post" target="_blank">';
-    * print '<input type="hidden" name="FRM_NOM" value="'.$societe->nom.'">';
-    * print '<input type="hidden" name="FRM_LOCALITE" value="'.$societe->ville.'">';
-    * print '<input type="submit">';
-    * print '</form>';
-    */
-
-
     print "<table width=\"100%\">\n";
     print '<tr><td valign="top" width="50%">';
 
