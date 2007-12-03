@@ -2,6 +2,7 @@
 /* Copyright (C) phpBSM
  * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
+ *
  * This file is a modified version of datepicker.php from phpBSM to fix some
  * bugs, to add new features and to dramatically increase speed.
  *
@@ -20,7 +21,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -28,6 +28,7 @@
         \brief      Fichier de gestion de la popup de selection de date eldy
         \version    $Revision$
 */
+
 if (! defined('NOREQUIREUSER')) define('NOREQUIREUSER','1');
 if (! defined('NOREQUIREMENU')) define('NOREQUIREMENU','1');
 if (! defined('NOREQUIREHTML')) define('NOREQUIREHTML','1');
@@ -38,7 +39,7 @@ if (! defined('NOREQUIRESOC'))  define('NOREQUIRESOC','1');
 require_once("../master.inc.php");
 
 
-// URL http://mydolibarr/lib/datepicker.php?mode=test&cm=shw&m=10&y=2038 can be used for tests
+// URL http://mydolibarr/lib/datepicker.php?mode=test&m=10&y=2038 can be used for tests
 if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 {
 	print '<html><head>';
@@ -49,16 +50,18 @@ if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 
 $langs->load("main");
 
-if(!isset($_GET["cm"])) $_GET["cm"]="shw";
-if(!isset($_GET["sd"])) $_GET["sd"]="00000000";
+if(! isset($_GET["sd"])) $_GET["sd"]="00000000";
 
-switch($_GET["cm"])
+// If parameters provided, we show calendar
+if (isset($_GET["m"]) && isset($_GET["y"]))
 {
-	case "shw":
-		displayBox($_GET["sd"],$_GET["m"],$_GET["y"]);
-	break;
+	//print $_GET["cm"].",".$_GET["sd"].",".$_GET["m"].",".$_GET["y"];exit;
+	displayBox($_GET["sd"],$_GET["m"],$_GET["y"]);
 }
-
+else
+{
+	dolibarr_print_error('','ErrorBadParameters');
+}
 
 
 function xyzToUnixTimestamp($mysqldate){
