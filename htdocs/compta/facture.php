@@ -1218,7 +1218,7 @@ if ($_GET['action'] == 'create')
 		$remise_percent = $soc->remise_client;
 		$remise_absolue = 0;
 	}
-	$absolute_discount=$soc->getCurrentDiscount();
+	$absolute_discount=$soc->getAvailableDiscounts();
 
 
 	print '<form name="add" action="'.$_SERVER["PHP_SELF"].'" method="post">';
