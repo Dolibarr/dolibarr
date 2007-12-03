@@ -695,6 +695,11 @@ else
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
 
+        // Affiche factures associees
+        /*
+        TODO
+        */
+
         // Projet
         if ($conf->projet->enabled)
         {
