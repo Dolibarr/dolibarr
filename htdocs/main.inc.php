@@ -611,7 +611,7 @@ if ($user->statut < 1)
 }
 			
 
-dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"]);
+dolibarr_syslog("Access to ".$_SERVER["PHP_SELF"],LOG_INFO);
 
 
 if (! defined('MAIN_INFO_SOCIETE_PAYS'))

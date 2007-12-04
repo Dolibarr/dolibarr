@@ -23,7 +23,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -32,7 +31,7 @@
    \version    $Revision$
 */
 
-define('DOL_VERSION','2.2-dev');
+define('DOL_VERSION','2.2-beta2');
 define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.
