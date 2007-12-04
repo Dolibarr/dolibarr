@@ -39,7 +39,9 @@
 
 -- Corrige mauvaise insertion du a champ trop court
 alter table llx_action_def modify code varchar(28) UNIQUE NOT NULL;
+alter table llx_action_def modify objet_type varchar(16) NOT NULL;
 update llx_action_def set code = 'NOTIFY_VAL_ORDER_SUPPLIER' where code = 'NOTIFY_VAL_ORDER_SUUPLIE';
+update llx_action_def set objet_type = 'order_supplier' where code = 'NOTIFY_VAL_ORDER_SUPPLIER';
 
 -- Nettoyage champ ref table llx_bank_account
 update llx_bank_account set ref=concat('ACCOUNT',rowid) where (ref='' or ref is null);

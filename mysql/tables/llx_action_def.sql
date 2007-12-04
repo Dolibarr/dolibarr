@@ -27,5 +27,5 @@ create table llx_action_def
   tms             timestamp,
   titre           varchar(255) NOT NULL,
   description     text,
-  objet_type      enum('ficheinter','facture','propale','mailing')
+  objet_type      varchar(16) NOT NULL
 )type=innodb;
