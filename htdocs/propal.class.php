@@ -1523,7 +1523,7 @@ class Propal extends CommonObject
 		$sql.= " WHERE fp.fk_facture = f.rowid AND fp.fk_propal = ".$id;
 		$sql.= " UNION ";
 		// Cas des factures lier via la commande
-		$sql = "SELECT f.rowid, f.facnumber";
+		$sql.= "SELECT f.rowid, f.facnumber";
 		$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 		$sql.= ", ".MAIN_DB_PREFIX."co_pr as cp, ".MAIN_DB_PREFIX."co_fa as cf";
 		$sql.= " WHERE cp.fk_propale = ".$id." AND cf.fk_commande = cp.fk_commande AND cf.fk_facture = f.rowid";
