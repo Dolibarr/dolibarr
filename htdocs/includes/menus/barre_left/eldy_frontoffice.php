@@ -534,7 +534,7 @@ class MenuLeft {
 				*/
 				// Rapports
 				/*
-				if ($conf->facture->enabled || $conf->compta->enabled || $conf->comptaexpert->enabled)
+				if ($conf->compta->enabled || $conf->comptaexpert->enabled)
 				{
 					// Bilan, résultats
 					$newmenu->add(DOL_URL_ROOT."/compta/resultat/index.php?leftmenu=ca&amp;mainmenu=accountancy",$langs->trans("Reportings"),0,$user->rights->compta->resultat->lire||$user->rights->comptaexpert->comptarapport->lire);
