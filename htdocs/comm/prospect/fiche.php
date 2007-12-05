@@ -400,7 +400,7 @@ if ($socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+                print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }
@@ -489,7 +489,7 @@ if ($socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<td><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+                print '<width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
                 print "</tr>\n";
                 $i++;
             }

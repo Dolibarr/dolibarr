@@ -452,7 +452,7 @@ if ( $societe->fetch($socid) )
 			}
 
 			// Auteur
-			print '<td width="50" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+			print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
 			print "</tr>\n";
 			$i++;
 		}
@@ -560,7 +560,7 @@ if ( $societe->fetch($socid) )
 			}
 
 			// Auteur
-			print '<td nowrap="nowrap" width="50"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
 			print "</tr>\n";
 			$i++;
 		}
