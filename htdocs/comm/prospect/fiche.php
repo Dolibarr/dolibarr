@@ -32,7 +32,7 @@ require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/prospect.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
-require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
+if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 
 $langs->load('companies');
 $langs->load('projects');
@@ -90,6 +90,7 @@ llxHeader();
 
 if ($socid > 0)
 {
+    $actionstatic=new ActionComm($db);
     $societe = new Prospect($db, $socid);
     $result = $societe->fetch($socid);
     if ($result < 0)
@@ -316,7 +317,8 @@ if ($socid > 0)
          *
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="9"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
+        print '<tr class="liste_titre">';
+        print '<td colspan="10"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsToDo").'</a></td><td align="right">&nbsp;</td></tr>';
 
         $sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
@@ -383,13 +385,12 @@ if ($socid > 0)
                 }
                 else
                 {
-                    print '<td><a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowAction"),"task");
-                      $transcode=$langs->trans("Action".$obj->acode);
-                      $libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-                      print $libelle;
-                    print '</a></td>';
+                	$actionstatic->code=$obj->acode;
+                	$actionstatic->libelle=$obj->libelle;
+                	$actionstatic->id=$obj->id;
+                	print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
                 }
-                print "<td>$obj->label</td>";
+                print '<td>'.$obj->label.'</td>';
 
                 // Contact pour cette action
                 if ($obj->fk_contact) {
@@ -401,6 +402,10 @@ if ($socid > 0)
                 }
 
                 print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+                
+                // Statut
+                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+            
                 print "</tr>\n";
                 $i++;
             }
@@ -415,9 +420,14 @@ if ($socid > 0)
          *      Listes des actions effectuées
          */
         print '<table width="100%" class="noborder">';
-        print '<tr class="liste_titre"><td colspan="9"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
+        print '<tr class="liste_titre">';
+        print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'">'.$langs->trans("ActionsDone").'</a></td></tr>';
 
-        $sql = "SELECT a.id, ".$db->pdate("a.datea")." as da, c.code as acode, c.libelle, a.propalrowid, a.fk_user_author, fk_contact, u.login, u.rowid ";
+        $sql = "SELECT a.id, a.label,";
+        $sql.= " ".$db->pdate("a.datea")." as da,";
+        $sql.= " a.propalrowid, a.fk_user_author, a.fk_contact, a.percent,";
+        $sql.= " c.code as acode, c.libelle,";
+        $sql.= " u.login, u.rowid ";
         $sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
         $sql .= " WHERE a.fk_soc = ".$societe->id;
         $sql .= " AND u.rowid = a.fk_user_author";
@@ -459,12 +469,11 @@ if ($socid > 0)
                 print '<td>&nbsp;</td>';
 
 				// Action
-        		print '<td>';
-				print '<a href="'.DOL_URL_ROOT.'/comm/action/fiche.php?id='.$obj->id.'">'.img_object($langs->trans("ShowTask"),"task");
-				$transcode=$langs->trans("Action".$obj->acode);
-				$libelle=($transcode!="Action".$obj->acode?$transcode:$obj->libelle);
-				print $libelle;
-				print '</a>';
+        print '<td>';
+				$actionstatic->code=$obj->acode;
+		    $actionstatic->libelle=$obj->libelle;
+		    $actionstatic->id=$obj->id;
+		    print '<td>'.$actionstatic->getNomUrl(1,16).'</td>';
 				print '</td>';
 
         		print '<td>';
@@ -476,6 +485,9 @@ if ($socid > 0)
 				}
 				else print '&nbsp;';
         		print '</td>';
+        		
+        		// Libellé
+        		print '<td>'.$obj->label.'</td>';
 
                 // Contact pour cette action
                 if ($obj->fk_contact)
@@ -489,11 +501,15 @@ if ($socid > 0)
                     print '<td>&nbsp;</td>';
                 }
 
-                print '<width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+                print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+                
+                // Statut
+                print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+            
                 print "</tr>\n";
                 $i++;
             }
-            $db->free();
+            $db->free($result);
         }
         else
         {

@@ -33,7 +33,7 @@ require_once("./pre.inc.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
 require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
-require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
+if ($conf->facture->enabled) require_once(DOL_DOCUMENT_ROOT."/facture.class.php");
 if ($conf->propal->enabled) require_once(DOL_DOCUMENT_ROOT."/propal.class.php");
 if ($conf->commande->enabled) require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 if ($conf->contrat->enabled) require_once(DOL_DOCUMENT_ROOT."/contrat/contrat.class.php");
@@ -847,9 +847,9 @@ if ($socid > 0)
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
     $sql.= " u.login, u.rowid,";
-	$sql.= " sp.name, sp.firstname";
+    $sql.= " sp.name, sp.firstname";
     $sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
-	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+    $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
     $sql.= " WHERE a.fk_soc = ".$objsoc->id;
     $sql.= " AND u.rowid = a.fk_user_author";
     $sql.= " AND c.id=a.fk_action AND a.percent = 100";
@@ -928,7 +928,7 @@ if ($socid > 0)
     		print '</td>';
 
 			// Libellé
-            print "<td>$obj->label</td>";
+      print '<td>'.$obj->label.'</td>';
 
             // Contact pour cette action
             if ($obj->fk_contact > 0)
@@ -951,7 +951,7 @@ if ($socid > 0)
 			print '</td>';
 
 			// Statut
-            print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
 			
             print "</tr>\n";
             $i++;

@@ -31,6 +31,7 @@
 require('./pre.inc.php');
 require_once(DOL_DOCUMENT_ROOT."/contact.class.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/company.lib.php");
+require_once(DOL_DOCUMENT_ROOT."/actioncomm.class.php");
 
 $user->getrights();
 
@@ -74,6 +75,8 @@ if (!$user->rights->commercial->client->voir && $socid && !$user->societe_id > 0
  * Mode fiche
  */  
 $societe = new Fournisseur($db);
+$actionstatic = new ActionComm($db);
+$contactstatic = new Contact($db);
 
 if ( $societe->fetch($socid) )
 {
@@ -367,14 +370,17 @@ if ( $societe->fetch($socid) )
 	 */
 	print_titre($langs->trans("ActionsOnCompany"));
 	print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre"><td colspan="10"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td></tr>';
+	print '<tr class="liste_titre"><td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td></tr>';
 
-	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, fk_contact, u.rowid ";
-	$sql .= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
-	$sql .= " WHERE a.fk_soc = ".$societe->id;
-	$sql .= " AND u.rowid = a.fk_user_author";
-	$sql .= " AND c.id=a.fk_action AND a.percent < 100";
-	$sql .= " ORDER BY a.datep DESC, a.id DESC";
+	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datep")." as dp, c.code as acode, c.libelle, u.login,";
+	$sql.= " a.propalrowid, a.fk_user_author, a.fk_contact, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
+	$sql.= " WHERE a.fk_soc = ".$societe->id;
+	$sql.= " AND u.rowid = a.fk_user_author";
+	$sql.= " AND c.id=a.fk_action AND a.percent < 100";
+	$sql.= " ORDER BY a.datep DESC, a.id DESC";
 
 	$result=$db->query($sql);
 	if ($result)
@@ -442,17 +448,24 @@ if ( $societe->fetch($socid) )
 			print '<td colspan="2">'.$obj->label.'</td>';
 
 			// Contact pour cette action
-			if ($obj->fk_contact)
-			{
-				$contact = new Contact($db);
-				$contact->fetch($obj->fk_contact);
-				print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$obj->fk_contact.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->getFullName($langs).'</a></td>';
-			} else {
-				print '<td>&nbsp;</td>';
-			}
+      if ($obj->fk_contact > 0)
+      {
+      	$contactstatic->name=$obj->name;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+        print '<td>'.$contactstatic->getNomUrl(1).'</td>';
+      }
+      else
+      {
+      	print '<td>&nbsp;</td>';
+      }
 
 			// Auteur
 			print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->fk_user_author.'">'.img_object($langs->trans("ShowUser"),"user").' '.$obj->login.'</a></td>';
+			
+			// Statut
+      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+      
 			print "</tr>\n";
 			$i++;
 		}
@@ -467,13 +480,16 @@ if ( $societe->fetch($socid) )
 	 *      Listes des actions effectuées
 	 */
 	print '<table width="100%" class="noborder">';
-	print '<tr class="liste_titre"><td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td></tr>';
+	print '<tr class="liste_titre">';
+	print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a></td></tr>';
 
-	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da,";
+	$sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
 	$sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
 	$sql.= " c.code as acode, c.libelle,";
-	$sql.= " u.login, u.rowid";
-	$sql.= " FROM ".MAIN_DB_PREFIX."actioncomm as a, ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u ";
+	$sql.= " u.login, u.rowid,";
+	$sql.= " sp.name, sp.firstname";
+	$sql.= " FROM ".MAIN_DB_PREFIX."c_actioncomm as c, ".MAIN_DB_PREFIX."user as u, ".MAIN_DB_PREFIX."actioncomm as a";
+	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."socpeople as sp ON a.fk_contact = sp.rowid";
 	$sql.= " WHERE a.fk_soc = ".$societe->id;
 	$sql.= " AND u.rowid = a.fk_user_author";
 	$sql.= " AND c.id=a.fk_action AND a.percent = 100";
@@ -527,7 +543,7 @@ if ( $societe->fetch($socid) )
 			print '</a>';
 			print '</td>';
 
-			// Objet li
+			// Objet lie
 			print '<td>';
 			if ($obj->propalrowid)
 			{
@@ -544,23 +560,28 @@ if ( $societe->fetch($socid) )
 			else print '&nbsp;';
 			print '</td>';
 
-			// Libell
+			// Libelle
 			print "<td>$obj->label</td>";
 
 			// Contact pour cette action
-			if ($obj->fk_contact)
-			{
-				$contact = new Contact($db);
-				$contact->fetch($obj->fk_contact);
-				print '<td><a href="'.DOL_URL_ROOT.'/contact/fiche.php?id='.$contact->id.'">'.img_object($langs->trans("ShowContact"),"contact").' '.$contact->getFullName($langs).'</a></td>';
-			}
-			else
-			{
-				print '<td>&nbsp;</td>';
-			}
+      if ($obj->fk_contact > 0)
+      {
+      	$contactstatic->name=$obj->name;
+				$contactstatic->firstname=$obj->firstname;
+				$contactstatic->id=$obj->fk_contact;
+        print '<td>'.$contactstatic->getNomUrl(1).'</td>';
+      }
+      else
+      {
+      	print '<td>&nbsp;</td>';
+      }
 
 			// Auteur
 			print '<td width="80" nowrap="nowrap"><a href="'.DOL_URL_ROOT.'/user/fiche.php?id='.$obj->rowid.'">'.img_object($langs->trans("ShowUser"),'user').' '.$obj->login.'</a></td>';
+			
+			// Statut
+      print '<td nowrap="nowrap" width="20">'.$actionstatic->LibStatut($obj->percent,3).'</td>';
+      
 			print "</tr>\n";
 			$i++;
 		}
