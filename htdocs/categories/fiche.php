@@ -94,11 +94,11 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 	
 	if ($categorie->error =="")
 	{
-		if ($categorie->create() > 0)
+		$result = $categorie->create();
+		if ($result > 0)
 		{
 			$_GET["action"] = 'confirmed';
 			$_POST["addcat"] = '';
-
 		}
 	}
 }
@@ -113,9 +113,14 @@ if ($_POST["action"] == 'add' && $user->rights->categorie->creer)
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?id='.$idProdOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
 			exit;
 		}
-		if ($idSupplierOrigin || $idCompanyOrigin)
+		else if ($idSupplierOrigin || $idCompanyOrigin)
 		{
 			header("Location: ".DOL_URL_ROOT.'/categories/categorie.php?socid='.$idCompanyOrigin.'&mesg='.urlencode($langs->trans("CatCreated")));
+			exit;
+		}
+		else
+		{
+			header("Location: ".DOL_URL_ROOT.'/categories/viewcat.php?id='.$result.'&type='.$_POST["type"]);
 			exit;
 		}
 	}
