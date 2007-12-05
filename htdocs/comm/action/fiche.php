@@ -2,6 +2,7 @@
 /* Copyright (C) 2001-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Simon TOSSER         <simon@kornog-computing.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -339,8 +340,9 @@ if ($_GET["action"] == 'create')
 		// Si la societe est imposée, on propose ces contacts
 		if ($_REQUEST["socid"])
 		{
+			$contactid = $_REQUEST["contactid"]?$_REQUEST["contactid"]:'';
 			print '<tr><td>'.$langs->trans("ActionOnContact").'</td><td>';
-			$html->select_contacts($_REQUEST["socid"],'','contactid',1,1);
+			$html->select_contacts($_REQUEST["socid"],$contactid,'contactid',1,1);
 			print '</td></tr>';
 		}
 

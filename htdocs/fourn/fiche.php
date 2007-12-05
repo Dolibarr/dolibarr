@@ -351,7 +351,7 @@ if ( $societe->fetch($socid) )
 			print "<td align=\"center\"><a href=\"../contact/fiche.php?action=edit&amp;id=".$obj->rowid."\">".img_edit()."</a></td>";
 		}
 
-		print '<td align="center"><a href="../comm/action/fiche.php?action=create&actionid=5&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
+		print '<td align="center"><a href="../comm/action/fiche.php?action=create&actioncode=AC_RDV&contactid='.$obj->rowid.'&socid='.$societe->id.'">';
 		print img_object($langs->trans("Rendez-Vous"),"action");
 		print '</a></td>';
 
