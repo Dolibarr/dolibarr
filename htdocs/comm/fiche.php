@@ -741,7 +741,7 @@ if ($socid > 0)
                 $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
-                if ($oldyear == strftime("%Y",$obj->dp) )
+                if ($oldyear == strftime("%Y",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
                 {
                     print '<td width="30" align="center">|</td>';
                 }
@@ -751,7 +751,7 @@ if ($socid > 0)
                     $oldyear = strftime("%Y",$obj->dp);
                 }
 
-                if ($oldmonth == strftime("%Y%b",$obj->dp) )
+                if ($oldmonth == strftime("%Y%b",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
                 {
                     print '<td width="30" align="center">|</td>';
                 }
@@ -873,7 +873,7 @@ if ($socid > 0)
             print "<tr $bc[$var]>";
 
             // Champ date
-            if ($oldyear == strftime("%Y",$obj->da) )
+            if ($oldyear == strftime("%Y",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
             {
                 print '<td width="30" align="center">|</td>';
             }
@@ -883,7 +883,7 @@ if ($socid > 0)
                 $oldyear = strftime("%Y",$obj->da);
             }
 
-            if ($oldmonth == strftime("%Y%b",$obj->da) )
+            if ($oldmonth == strftime("%Y%b",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
             {
                 print '<td width="30" align="center">|</td>';
             }

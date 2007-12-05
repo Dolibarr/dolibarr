@@ -2,6 +2,7 @@
 /* Copyright (C) 2004      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004      Éric Seigne          <eric.seigne@ryxeo.com>
  * Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -67,6 +68,19 @@ if ($_GET["action"] == 'setcodecompta')
 if ($_POST["action"] == 'usesearchtoselectcompany')
 {
   if (dolibarr_set_const($db, "COMPANY_USE_SEARCH_TO_SELECT", $_POST["activate_usesearchtoselectcompany"]))
+  {
+  	Header("Location: ".$_SERVER["PHP_SELF"]);
+  	exit;
+  }
+  else
+  {
+  	dolibarr_print_error($db);
+  }
+}
+
+if ($_POST["action"] == 'viewfulldateactions')
+{
+  if (dolibarr_set_const($db, "COMPANY_VIEW_FULL_DATE_ACTIONS", $_POST["activate_viewfulldateactions"]))
   {
   	Header("Location: ".$_SERVER["PHP_SELF"]);
   	exit;
@@ -237,7 +251,7 @@ print "  <td>".$langs->trans("Parameters")."</td>\n";
 print "  <td align=\"right\" width=\"60\">".$langs->trans("Value")."</td>\n";
 print "  <td width=\"80\">&nbsp;</td></tr>\n";
 
-// utilisation formulaire Ajax sur choix société
+// Utilisation formulaire Ajax sur choix société
 $var=!$var;
 print "<form method=\"post\" action=\"societe.php\">";
 print "<input type=\"hidden\" name=\"action\" value=\"usesearchtoselectcompany\">";
@@ -257,6 +271,20 @@ else
   print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
   print "</td>";
 }
+print '</tr>';
+print '</form>';
+
+// Faire apparaitre les dates en entier dans la liste des actions
+$var=!$var;
+print "<form method=\"post\" action=\"societe.php\">";
+print "<input type=\"hidden\" name=\"action\" value=\"viewfulldateactions\">";
+print "<tr ".$bc[$var].">";
+print '<td width="80%">'.$langs->trans("ViewFullDateActions").'</td>';
+print '<td width="60" align="right">';
+print $html->selectyesno("activate_viewfulldateactions",$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td>";
 print '</tr>';
 print '</form>';
 

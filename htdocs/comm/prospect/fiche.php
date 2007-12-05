@@ -339,7 +339,7 @@ if ($socid > 0)
                 $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
-                if ($oldyear == strftime("%Y",$obj->dp) )
+                if ($oldyear == strftime("%Y",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
                 {
                     print '<td width="30" align="center">|</td>';
                 }
@@ -349,7 +349,7 @@ if ($socid > 0)
                     $oldyear = strftime("%Y",$obj->dp);
                 }
 
-                if ($oldmonth == strftime("%Y%b",$obj->dp) )
+                if ($oldmonth == strftime("%Y%b",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
                 {
                     print '<td width="30" align="center">|</td>';
                 }
@@ -438,14 +438,14 @@ if ($socid > 0)
                 $obj = $db->fetch_object($result);
                 print "<tr $bc[$var]>";
 
-                if ($oldyear == strftime("%Y",$obj->da) ) {
+                if ($oldyear == strftime("%Y",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS) {
                     print '<td width="30" align="center">|</td>';
                 } else {
                     print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                     $oldyear = strftime("%Y",$obj->da);
                 }
 
-                if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+                if ($oldmonth == strftime("%Y%b",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS) {
                     print '<td width="30" align="center">|</td>';
                 } else {
                     print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";

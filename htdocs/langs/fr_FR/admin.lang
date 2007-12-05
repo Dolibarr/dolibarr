@@ -22,6 +22,7 @@ DisableJavascript=Désactiver les fonctions Javascript
 DisableAjax=Désactiver les fonctions Ajax
 ConfirmAjax=Utiliser les popups de confirmation Ajax
 UseSearchToSelectCompany=Utiliser un formulaire de recherche pour choix d'un tiers (plutôt que liste déroulante)
+ViewFullDateActions=Visualiser les dates des actions en entier dans la fiche tiers
 NotAvailableWhenAjaxDisabled=Non disponible quand Ajax désactivé
 JavascriptDisabled=Javascript désactivé
 UsePopupCalendar=Utiliser les popups pour la saisie des dates
