@@ -190,10 +190,12 @@ class InfoBox
 				$listarray=split(',',$list);
 				foreach ($listarray as $id)
 				{
-					//dolibarr_syslog("aaaaa".sizeof($listarray));
-					$i++;
-					$ii=sprintf('%02d',$i);
-					$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
+					if (is_numeric($id))
+					{
+						//dolibarr_syslog("aaaaa".sizeof($listarray));
+						$i++;
+						$ii=sprintf('%02d',$i);
+						$sql = "INSERT INTO ".MAIN_DB_PREFIX."boxes";
 				    $sql.= "(box_id, position, box_order, fk_user)";
 				    $sql.= " values (";
 				    $sql.= " ".$id.",";
@@ -201,14 +203,15 @@ class InfoBox
 				    $sql.= " '".$colonne.$ii."',";
 				    $sql.= " ".$userid;
 				    $sql.= ")";
-
-					dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
+				    
+				    dolibarr_syslog("InfoBox::saveboxorder sql=".$sql);
 				    $result = $this->db->query($sql);
-					if ($result < 0)
-					{
-						$error++;
-						break;
-					}			
+				    if ($result < 0)
+				    {
+				    	$error++;
+				    	break;
+				    }
+				  }
 				}
 			}
 			if ($error)
@@ -229,6 +232,6 @@ class InfoBox
 			$this->db->rollback();
 			return -1;
 		}
-	}  
+	} 
 }
 ?>

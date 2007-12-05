@@ -560,8 +560,8 @@ if (sizeof($boxarray))
 		{
 			$ii++;
 			//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		    $boxid_left[$key] = $boxarray[$key]->box_id;
+		  //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
+		  $boxid_left[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox();
 			$box->showBox();
@@ -569,7 +569,7 @@ if (sizeof($boxarray))
 	}
 
 	// If no box on left, we show add an invisible empty box
-	if (! $ii)
+	if ($ii==0)
 	{
 		$box->box_id='A';
 		$box->info_box_head=array();
@@ -586,22 +586,24 @@ if (sizeof($boxarray))
 //	print '<div id="right" style="position: absolute; display: block; width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	print '<div id="right" style="width: 50%; padding: 0px; margin: 0px; float: right;">'."\n";
 	$ii=0;
+	$boxarray=$infobox->listboxes("0",$user);       // on régénère la liste pour éviter les erreurs avec les empty box
 	foreach ($boxarray as $key => $box)
 	{
 		if (eregi('^B',$box->box_order)) // colonne B
 		{
 			$ii++;
-			//print 'box_id '.$boxarray[$ii]->box_id.' ';
-		    //print 'box_order '.$boxarray[$ii]->box_order.'<br>';
-		    $boxid_right[$key] = $boxarray[$key]->box_id;
+			//print 'key:'.$key.'<br>';
+			//print 'box_id '.$boxarray[$key]->box_id.' ';
+		  //print 'box_order '.$boxarray[$key]->box_order.'<br>';
+		  $boxid_right[$key] = $boxarray[$key]->box_id;
 			// Affichage boite key
 			$box->loadBox();
 			$box->showBox();
 		}
 	}
 
-	// If no box on left, we show add an invisible empty box
-	if (! $ii)
+	// If no box on right, we show add an invisible empty box
+	if ($ii==0)
 	{
 		$box->box_id='B';
 		$box->info_box_head=array();
@@ -609,9 +611,9 @@ if (sizeof($boxarray))
 		$box->showBox();
 	}
 	
-    print "</div>\n";
+  print "</div>\n";
 	print "<!-- End box container -->\n";
-    print "\n";
+  print "\n";
 
 	print "</td></tr>";
 	print "</table>";
