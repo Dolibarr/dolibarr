@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005-2006 Regis Houssin        <regis@dolibarr.fr>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -41,9 +41,13 @@ $staticproduct=new Product($db);
  *
  */
 
+$transAreaType = $langs->trans("ProductsAndServicesArea");
+if (isset($_GET["type"]) && $_GET["type"] == 0) $transAreaType = $langs->trans("ProductsArea");
+if (isset($_GET["type"]) && $_GET["type"] == 1) $transAreaType = $langs->trans("ServicesArea");
+
 llxHeader("","",$langs->trans("ProductsAndServices"));
 
-print_fiche_titre($langs->trans("ProductsAndServicesArea"));
+print_fiche_titre($transAreaType);
 
 print '<table border="0" width="100%" class="notopnoleftnoright">';
 
@@ -85,22 +89,35 @@ print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td colspan="2">'.$langs->trans("Statistics").'</td></tr>';
 if ($conf->produit->enabled)
 {
-  print "<tr $bc[0]>";
-  print '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
-  print "</tr>";
-  print "<tr $bc[1]>";
-  print '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
-  print "</tr>";
+  $statProducts = "<tr $bc[0]>";
+  $statProducts.= '<td><a href="liste.php?type=0&amp;envente=0">'.$langs->trans("ProductsNotOnSell").'</a></td><td align="right">'.round($prodser[0][0]).'</td>';
+  $statProducts.= "</tr>";
+  $statProducts.= "<tr $bc[1]>";
+  $statProducts.= '<td><a href="liste.php?type=0&amp;envente=1">'.$langs->trans("ProductsOnSell").'</a></td><td align="right">'.round($prodser[0][1]).'</td>';
+  $statProducts.= "</tr>";
 }
 if ($conf->service->enabled)
 {
-  print "<tr $bc[0]>";
-  print '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
-  print "</tr>";
-  print "<tr $bc[1]>";
-  print '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
-  print "</tr>";
+  $statServices = "<tr $bc[0]>";
+  $statServices.= '<td><a href="liste.php?type=1&amp;envente=0">'.$langs->trans("ServicesNotOnSell").'</a></td><td align="right">'.round($prodser[1][0]).'</td>';
+  $statServices.= "</tr>";
+  $statServices.= "<tr $bc[1]>";
+  $statServices.= '<td><a href="liste.php?type=1&amp;envente=1">'.$langs->trans("ServicesOnSell").'</a></td><td align="right">'.round($prodser[1][1]).'</td>';
+  $statServices.= "</tr>";
 }
+if (isset($_GET["type"]) && $_GET["type"] == 0)
+{
+	print $statProducts;
+}
+else if (isset($_GET["type"]) && $_GET["type"] == 1)
+{
+	print $statServices;
+}
+else
+{
+	print $statProducts.$statServices;
+}
+
 print '</table>';
 
 print '</td><td valign="top" width="70%" class="notopnoleftnoright">';
@@ -119,6 +136,7 @@ if ($conf->categorie->enabled && !$user->rights->categorie->voir)
 $sql.= " LEFT JOIN ".MAIN_DB_PREFIX."product_subproduct as sp ON p.rowid = sp.fk_product_subproduct";
 $sql.= " WHERE sp.fk_product_subproduct IS NULL";
 if ($conf->categorie->enabled && !$user->rights->categorie->voir) $sql.= " AND IFNULL(c.visible,1)=1 ";
+if (isset($_GET["type"])) $sql.= " AND p.fk_product_type = ".$_GET["type"];
 $sql.= " ORDER BY p.datec DESC ";
 $sql.= $db->plimit($max,0);
 $result = $db->query($sql) ;
@@ -130,12 +148,16 @@ if ($result)
   $i = 0;
   
   if ($num > 0)
-    {
-      print '<table class="noborder" width="100%">';
+  {
+  	$transRecordedType = $langs->trans("LastRecordedProductsAndServices",$max);
+  	if (isset($_GET["type"]) && $_GET["type"] == 0) $transRecordedType = $langs->trans("LastRecordedProducts",$max);
+  	if (isset($_GET["type"]) && $_GET["type"] == 1) $transRecordedType = $langs->trans("LastRecordedServices",$max);
+  	
+  	print '<table class="noborder" width="100%">';
 
-      print '<tr class="liste_titre"><td colspan="4">'.$langs->trans("LastRecordedProducts",$max).'</td></tr>';
+    print '<tr class="liste_titre"><td colspan="4">'.$transRecordedType.'</td></tr>';
     
-      $var=True;
+    $var=True;
 
       while ($i < $num)
 	{
@@ -162,7 +184,7 @@ if ($result)
 	  print "</a> <a href=\"fiche.php?id=$objp->rowid\">$objp->ref</a></td>\n";
 	  print '<td>'.dolibarr_trunc($objp->label,40).'</td>';
 	  print "<td>";
-	  if ($objp->type==1) print $langs->trans("ShowService");
+	  if ($objp->fk_product_type==1) print $langs->trans("ShowService");
 	  else print $langs->trans("ShowProduct");
 	  print "</td>";
 	  print '<td align="right" nowrap="nowrap">';
