@@ -307,7 +307,7 @@ class pdf_crabe extends ModelePDFFactures
                     $pdf->SetXY ($this->posxdiscount, $curY);
                     if ($fac->lignes[$i]->remise_percent)
                     {
-                        $pdf->MultiCell(14, 4, $fac->lignes[$i]->remise_percent."%", 0, 'R');
+                        $pdf->MultiCell(14, 4, dolibarr_print_reduction($fac->lignes[$i]->remise_percent), 0, 'R');
                     }
 
                     // Total HT ligne

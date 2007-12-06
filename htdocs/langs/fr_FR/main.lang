@@ -394,6 +394,7 @@ AutomaticCode=Création automatique du code
 NotManaged=Non géré
 FeatureDisabled=Fonction désactivée
 MoveBox=Déplacer la boite %s
+Offered=Offert
 # Week day
 Monday=Lundi
 Tuesday=Mardi

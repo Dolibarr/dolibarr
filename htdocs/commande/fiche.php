@@ -924,7 +924,7 @@ if ($_GET['action'] == 'create' && $user->rights->commande->creer)
 				print '<tr class="liste_titre"><td>'.$langs->trans('Ref').'</td><td>'.$langs->trans('Product').'</td>';
 				print '<td align="right">'.$langs->trans('Price').'</td>';
 				print '<td align="center">'.$langs->trans('Qty').'</td>';
-				print '<td align="center">'.$langs->trans('Reductionshort').'</td>';
+				print '<td align="center">'.$langs->trans('ReductionShort').'</td>';
 				print '</tr>';
 
 				$var=false;
@@ -1399,7 +1399,7 @@ else
 						print '</td>';
 						if ($objp->remise_percent > 0)
 						{
-							print '<td align="right">'.$objp->remise_percent.'%</td>';
+							print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent).'</td>';
 						}
 						else
 						{

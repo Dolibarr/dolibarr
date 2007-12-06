@@ -294,7 +294,7 @@ class pdf_propale_azur extends ModelePDFPropales
 					$pdf->SetXY ($this->posxdiscount, $curY);
 					if ($propale->lignes[$i]->remise_percent)
 					{
-						$pdf->MultiCell(14, 4, $propale->lignes[$i]->remise_percent."%", 0, 'R');
+						$pdf->MultiCell(14, 4, dolibarr_print_reduction($propale->lignes[$i]->remise_percent), 0, 'R');
 					}
 
 					// Total HT ligne

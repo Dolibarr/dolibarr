@@ -3849,4 +3849,28 @@ function monthArrayOrSelected($selected=0)
 	}
 }
 
+/**
+		\brief  	Returns formated reduction
+		\param		reduction		Reduction percentage
+		\return		string			Formated reduction
+*/
+function dolibarr_print_reduction($reduction=0)
+{
+	global $langs;
+	$langs->load("main");
+	
+	$string = '';
+	
+	if ($reduction == 100)
+	{
+		$string = $langs->trans("Offered");
+	}
+	else
+	{
+		$string = $reduction.'%';
+	}
+	
+	return $string;
+}
+
 ?>

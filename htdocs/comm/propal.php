@@ -1233,7 +1233,7 @@ if ($_GET['propalid'] > 0)
 				// Remise %
 				if ($objp->remise_percent > 0)
 				{
-					print '<td align="right">'.$objp->remise_percent."%</td>\n";
+					print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
 				}
 				else
 				{
