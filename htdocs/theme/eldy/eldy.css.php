@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -956,7 +955,7 @@ font-family: helvetica, verdana, arial, sans-serif;
 .warning { color: #887711; }
 .error   { color: #550000; font-weight: bold; }
 
-td.warning {	/* Utilis� par Smarty */
+td.warning {	/* Utilise par Smarty */
   background: #FF99A9;
 }
 
@@ -1064,7 +1063,7 @@ border-left: solid 1px #BBBBBB;
 border-right: solid 1px #444444;
 border-bottom: solid 1px #444444;
 padding: 2px;
-background-color: lightyellow;
+background-color: #FFFFE0;
 visibility: hidden;
 z-index: 100;
 }
@@ -1154,10 +1153,10 @@ cursor: pointer;
 }
 
 #corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-	background: beige;
+	background: #FFF0F0;
 	color: black;
 }
-#corpForm .normal {	/*** Retour � l'�tat normal apr�s l'utilisation ***/
+#corpForm .normal {	/*** Retour e l'etat normal apres l'utilisation ***/
 	background: white;
 	color: black;
 }
@@ -1196,7 +1195,7 @@ td.hidden {
 
 #evolForm input.focuserr {
                         font-weight: bold;
-                        background: beige;
+                        background: #FAF8E8;
                         color: black;
                         border: solid 1px #FF0000;
                         padding: 1px 1px 1px 1px;
@@ -1205,14 +1204,14 @@ td.hidden {
 
 
 #evolForm input.focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-                        background: beige;
+                        background: #FAF8E8;
                         color: black;
                         border: solid 1px #000000;
                         padding: 1px 1px 1px 1px;
                         margin: 1px 1px 1px 1px;
               }
 
-#evolForm input.normal {	/*** Retour � l'�tat normal apr�s l'utilisation ***/
+#evolForm input.normal {	/*** Retour a l'etat normal apres l'utilisation ***/
                          background: white;
                          color: black;
                          border: solid 1px white;
@@ -1223,7 +1222,7 @@ td.hidden {
 
 
 /* ============================================================================== */
-/*  Ajax - Liste d�roulante de l'autocompletion                                   */
+/*  Ajax - Liste deroulante de l'autocompletion                                   */
 /* ============================================================================== */
 
 div.autocomplete {
@@ -1260,7 +1259,7 @@ form.inplaceeditor-form input[type="text"] { /* Input box */
 }
 
 form.inplaceeditor-form textarea { /* Textarea, if multiple columns */
-background: beige;
+background: #FAF8E8;
 color: black;
 }
 

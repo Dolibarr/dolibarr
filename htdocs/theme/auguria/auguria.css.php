@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -943,7 +942,7 @@ div.titre {
 
 
 /* ============================================================================== */
- * Formulaire confirmation
+/* Formulaire confirmation                                                        */
 /* ============================================================================== */
 
 td.validtitle {
@@ -1102,7 +1101,7 @@ position: absolute;
 width: 420px;
 border: 1px solid #444444;
 padding: 2px;
-background-color: lightyellow;
+background-color: #FFFFE0;
 visibility: hidden;
 z-index: 100;
 }
@@ -1185,7 +1184,7 @@ cursor: pointer;
 }
 
 #corpForm .focus {	/*** Mise en avant des champs en cours d'utilisation ***/
-	background: beige;
+	background: #FFF0F0;
 	color: black;
 }
 #corpForm .normal {	/*** Retour à l'état normal après l'utilisation ***/
@@ -1231,7 +1230,7 @@ form.inplaceeditor-form input[type="text"] { /* Input box */
 }
 
 form.inplaceeditor-form textarea { /* Textarea, if multiple columns */
-background: beige;
+background: #FAF8E8;
 color: black;
 }
 
