@@ -461,6 +461,7 @@ DelaysOfToleranceSupplierBillsToPay=Tolerance delay (in days) before alert on un
 DelaysOfToleranceCustomerBillsUnpayed=Tolerence delay (in days) before alert on unpaid client invoices
 DelaysOfToleranceTransactionsToConciliate=Tolerance delay (in days) before alert on pending bank reconciliation
 DelaysOfToleranceMembers=Tolerance delay (in days) before alert on delayed adherant membership fee
+DelaysOfToleranceChequesToDeposit=Tolerance delay (in days) before alert for cheques deposit to do
 SetupDescription1=All the parameters available in the setup area allow you to setup Dolibarr before starting using it.
 SetupDescription2=The 2 most important setup steps are the 2 first ones in the left setup menu, this means Company/fundation setup page and Modules setup page:
 SetupDescription3=<b>Company/fundation</b> setup is required because input information is used on Dolibarr displays and to modify Dolibarr behaviour (for example for features related to your country).
