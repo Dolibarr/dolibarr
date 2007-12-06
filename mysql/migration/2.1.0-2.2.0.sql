@@ -9,7 +9,7 @@
 --
 
 
-alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;         -- Type de catégorie (product, supplier, societe)
+alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 
 -- Supprime les doublons de la table llx_categories
 -- V4.1 DROP TABLE tmp_categorie1;
