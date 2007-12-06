@@ -710,14 +710,6 @@ else
     print "</table>";
     print "</td></tr>\n";
     
-    /* Je désactive cette option "facturation" car ce statut fiscal n'existe pas. Seul le réel et franchise existe.
-    Cette option ne doit donc pas etre en "exclusif" avec l'option fiscale de gestion de tva. Peut etre faut-il
-    une option a part qui n'entre pas en conflit avec les choix "assujéti TVA" ou "non".
-    $var=!$var;
-    print "<tr ".$bc[$var]."><td width=\"140\"><label><input type=\"radio\" name=\"optiontva\" value=\"facturation\"".($conf->global->FACTURE_TVAOPTION == "facturation"?" checked":"")."> Option facturation</label></td>";
-    print "<td colspan=\"2\">L'option 'facturation' est utilisée par les entreprises qui payent la TVA à facturation (vente de matériel).</td></tr>\n";
-     */
-    
     $var=!$var;
     print "<tr ".$bc[$var]."><td width=\"140\"><label><input ".$bc[$var]." type=\"radio\" name=\"optiontva\" disabled value=\"franchise\"".($conf->global->FACTURE_TVAOPTION == "franchise"?" checked":"")."> ".$langs->trans("VATIsNotUsed")."</label></td>";
     print '<td colspan="2">';

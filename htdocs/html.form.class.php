@@ -3489,11 +3489,8 @@ class Form
      */
     function select_month($selected='',$htmlname='monthid',$useempty=0)
     {
-    	global $langs;
-      $langs->load("main");
-      
-    	$month = monthArrayOrSelected();
- 
+    	$month = monthArrayOrSelected(-1);	// Get array
+
     	$select_month = '<select class="flat" name="'.$htmlname.'">';
     	if ($useempty) 
       {

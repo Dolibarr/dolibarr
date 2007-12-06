@@ -3815,6 +3815,7 @@ function dol_genbarcode($code,$encoding,$generator=1,$readable='Y')
 function monthArrayOrSelected($selected=0)
 {
 	global $langs;
+    $langs->load("main");
 	
 	$month = array (1  => $langs->trans("January"),
 	   	            2  => $langs->trans("February"),
