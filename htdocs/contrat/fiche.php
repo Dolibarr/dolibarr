@@ -681,7 +681,7 @@ else
 		else print $langs->trans("CompanyHasNoRelativeDiscount");
 		$absolute_discount=$contrat->societe->getAvailableDiscounts();
 		print '. ';
-		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",$absolute_discount,$langs->trans("Currency".$conf->monnaie));
+		if ($absolute_discount) print $langs->trans("CompanyHasAbsoluteDiscount",price($absolute_discount),$langs->trans("Currency".$conf->monnaie));
 		else print $langs->trans("CompanyHasNoAbsoluteDiscount");
 		print '.';
 		print '</td></tr>';
@@ -694,11 +694,6 @@ else
         // Date
         print '<tr><td>'.$langs->trans("Date").'</td>';
         print '<td colspan="3">'.dolibarr_print_date($contrat->date_contrat,"dayhour")."</td></tr>\n";
-
-        // Affiche factures associees
-        /*
-        TODO
-        */
 
         // Projet
         if ($conf->projet->enabled)
