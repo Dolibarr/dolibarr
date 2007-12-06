@@ -163,6 +163,7 @@ class Product extends CommonObject
 
 		// Clean parameters
 		$this->ref = trim(sanitize_string($this->ref));
+		$this->libelle = trim($this->libelle);
 		if ($this->tva_tx=='') $this->tva_tx = 0;
 		if ($this->price=='')  $this->price = 0;
 		if ($this->status=='') $this->status = 0;
@@ -201,9 +202,11 @@ class Product extends CommonObject
 					$sql = "INSERT INTO ".MAIN_DB_PREFIX."product";
 					$sql.= " (datec, ";
 					if ($this->ref) $sql.= "ref, ";
+					if ($this->libelle) $sql.= "label, ";
 					$sql.= "fk_user_author, fk_product_type, price, price_ttc, price_base_type, canvas)";
 					$sql.= " VALUES (now(), ";
 					if ($this->ref) $sql.= "'".$this->ref."', ";
+					if ($this->libelle) $sql.= "'".$this->libelle."', ";
 					$sql.= $user->id.",";
 					$sql.= " ".$this->type.",";
 					$sql.= ($price_ht?price2num($price_ht):"null").",";
