@@ -32,7 +32,7 @@ header('Content-type: text/css');
 // each Dolibarr page access.
 if (! isset($conf->global->MAIN_FEATURES_LEVEL) || $conf->global->MAIN_FEATURES_LEVEL < 2)
 {
-	//header('Cache-Control: max-age=3600, public, must-revalidate');
+	header('Cache-Control: max-age=3600, public, must-revalidate');
 }
 
 ?>
@@ -46,7 +46,6 @@ body {
 	color: #101010;
 	font-size: 12px;
     font-family: arial,sans-serif,verdana, helvetica;
-    width:100%;
     margin-top: 0;
     margin-bottom: 0;
     margin-right: 0;
@@ -119,8 +118,12 @@ div.vmenuplusfiche
 {
     top: auto;
     left: auto;
+
+	position: static;
+    float: left;
+
     display: block;
-    margin-right: 13px;
+    margin-right: 10px;
     margin-left: 1px;
 }
 
@@ -135,9 +138,15 @@ div.vmenu
 
 div.fiche
 {
+	float: right;
+<?php
+	//print "_SERVER['HTTP_USER_AGENT']=".$_SERVER['HTTP_USER_AGENT'];
+	if (! eregi('MSIE 7\.0',$_SERVER['HTTP_USER_AGENT'])) print "    position: absolute;\n";
+?>
     display: block;
-    margin-top: 1em;
+    margin-top: 8px;
     margin-left: 180px;
+	margin-right: 4px;
     width:auto;
 }
 
@@ -350,6 +359,8 @@ a.help:link         { font-size: 10px; font-weight: bold; background: #FFFFFF; b
 a.help:visited      { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #68ACCF; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:active       { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
 a.help:hover        { font-size: 10px; font-weight: bold; background: #FFFFFF; border: 1px solid #8CACBB; color: #6198BA; padding: 0em 0.7em; margin: 0em 0.5em; text-decoration: none; white-space: nowrap; }
+
+
 /* Pour menu gauche Auguria */
 
 .menu_titre	a		{font-size:11px; text-align:left; font-weight: bold; color:#FFFFFF}
@@ -365,7 +376,7 @@ div.menu
 	margin: 0px;
 	border-spacing: 0px;
 	padding: 0px;
-	width: 165px;
+	width: 166px;
     border : 0px solid #68ACCF;	
 }
 
@@ -746,8 +757,7 @@ border-collapse: collapse;
 
 
 table.noborder {
-border: 10px;
-border-color:red;
+border: 6px;
 }
 table.noborder td {
 border: 0px;
@@ -767,7 +777,7 @@ padding: 0px 0px;
 table.liste {
 border-collapse: collapse;
 width: 100%;
-border:0px;
+border: 0px;
 }
 
 tr.liste_titre {
@@ -863,7 +873,7 @@ border: 0px;
 /*
  *  Boxes
  */
- table.box {
+table.box {
 margin: 2px;
 }
  
