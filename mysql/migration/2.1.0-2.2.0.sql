@@ -87,6 +87,8 @@ update llx_rights_def set libelle='Créer/modifier/supprimer écriture bancaire' w
 
 -- Supprime colone en doublon avec fk_user_creat
 alter table llx_paiement drop column author;
+-- Supprime colonne obsolete car gérée par llx_paiement_facture
+alter table llx_paiement drop column fk_facture;
 
 update llx_actioncomm set fk_action = 9 where fk_action = 10;
 update llx_actioncomm set percent = 100 where percent = 0 and datea is not null;

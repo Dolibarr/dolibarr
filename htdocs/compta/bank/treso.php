@@ -152,13 +152,13 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture as f";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON f.fk_soc = s.rowid";
-	$sql.= " WHERE f.paye = 0 AND fk_statut > 0";
+	$sql.= " WHERE f.paye = 0 AND fk_statut = 1";
 	$sql.= " UNION DISTINCT";
 	$sql.= " SELECT ff.rowid as facid, ff.facnumber, (-1*ff.total_ttc), ff.type, ".$db->pdate("ff.date_lim_reglement")." as dlr,";
 	$sql.= " s.rowid as socid, s.nom, s.fournisseur";
 	$sql.= " FROM ".MAIN_DB_PREFIX."facture_fourn as ff";
 	$sql.= " LEFT JOIN ".MAIN_DB_PREFIX."societe as s ON ff.fk_soc = s.rowid";
-	$sql.= " WHERE ff.paye = 0 AND fk_statut > 0";
+	$sql.= " WHERE ff.paye = 0 AND fk_statut = 1";
 	$sql.= " ORDER BY dlr ASC";
 
 	$result = $db->query($sql);

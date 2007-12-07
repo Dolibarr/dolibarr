@@ -26,7 +26,6 @@
 create table llx_paiement
 (
   rowid            integer AUTO_INCREMENT PRIMARY KEY,
-  fk_facture       integer,
   datec            datetime,           -- date de creation
   tms              timestamp,
   datep            datetime,           -- payment date
