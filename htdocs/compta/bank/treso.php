@@ -169,6 +169,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 		$i = 0;
 		while ($i < $num)
 		{
+			$paiement = '';
 			$var=!$var;
 			$obj = $db->fetch_object($result);
 			
@@ -181,6 +182,17 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facturefournstatic->id=$obj->facid;
 				$facturefournstatic->type=$obj->type;
 				$facture = $facturefournstatic->getNomUrl(1,'');
+				
+				// On recherche les paiements deja effectue pour les deduires
+				$sqlp = "SELECT sum(amount) as paiement";
+				$sqlp.= " FROM ".MAIN_DB_PREFIX.'paiementfourn_facturefourn';
+				$sqlp.= " WHERE fk_facturefourn = ".$obj->facid;
+				$resql = $db->query($sqlp);
+				if ($resql)
+				{
+					$objp = $db->fetch_object($resql);
+					if ($objp) $paiement = $objp->paiement;
+				}
 			}
 			else
 			{
@@ -188,21 +200,38 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facturestatic->id=$obj->facid;
 				$facturestatic->type=$obj->type;
 				$facture = $facturestatic->getNomUrl(1,'');
+				
+				// On recherche les paiements deja effectue pour les deduires
+				$sqlp = "SELECT sum(amount) as paiement";
+				$sqlp.= " FROM ".MAIN_DB_PREFIX.'paiement_facture';
+				$sqlp.= " WHERE fk_facture = ".$obj->facid;
+				$resql = $db->query($sqlp);
+				if ($resql)
+				{
+					$objp = $db->fetch_object($resql);
+					if ($objp) $paiement = $objp->paiement;
+				}
 			}
 
-			$solde += $obj->total_ttc;
+			$total_ttc = $obj->total_ttc;
+			if ($paiement) $total_ttc = $obj->total_ttc - $paiement;
+			$solde += $total_ttc;
 
 			print "<tr $bc[$var]>";
 			print "<td>".$facture."</td>";
 			print "<td>".$societestatic->getNomUrl(0,'',16)."</td>";
 			print "<td>".dolibarr_print_date($obj->dlr,"day")."</td>";
-			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($obj->total_ttc)."</td><td>&nbsp;</td>"; };
-			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($obj->total_ttc)."</td>"; };			
+			if ($obj->total_ttc < 0) { print "<td align=\"right\">".price($total_ttc)."</td><td>&nbsp;</td>"; };
+			if ($obj->total_ttc >= 0) { print "<td>&nbsp;</td><td align=\"right\">".price($total_ttc)."</td>"; };			
 			print "<td align=\"right\">".price($solde)."</td>";
 			print "</tr>";
 			$i++;
 		}
 		$db->free($result);
+	}
+	else
+	{
+		dolibarr_print_error($db);
 	}
 
 	print "</table>";
