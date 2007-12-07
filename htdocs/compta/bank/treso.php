@@ -176,8 +176,8 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 			
 			$societestatic->id = $obj->socid;
 			$societestatic->nom = $obj->nom;
-			
-			if ($obj->fournisseur == 1)
+
+			if ($obj->fournisseur == 1 && $obj->total_ttc < 0 && $obj->type != 2)
 			{
 				$facturefournstatic->ref=$obj->facnumber;
 				$facturefournstatic->id=$obj->facid;
