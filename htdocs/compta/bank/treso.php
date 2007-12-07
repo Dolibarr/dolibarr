@@ -184,7 +184,7 @@ if ($_REQUEST["account"] || $_REQUEST["ref"])
 				$facture = $facturefournstatic->getNomUrl(1,'');
 				
 				// On recherche les paiements deja effectue pour les deduires
-				$sqlp = "SELECT sum(amount) as paiement";
+				$sqlp = "SELECT sum(-1*amount) as paiement";
 				$sqlp.= " FROM ".MAIN_DB_PREFIX.'paiementfourn_facturefourn';
 				$sqlp.= " WHERE fk_facturefourn = ".$obj->facid;
 				$resql = $db->query($sqlp);
