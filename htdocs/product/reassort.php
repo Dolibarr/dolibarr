@@ -79,7 +79,7 @@ $title=$langs->trans("ProductsAndServices");
 $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate('p.tms').' as datem,';
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' p.stock_commande,';
-$sql.= ' SUM(s.reel) as stock,';
+$sql.= ' SUM(s.reel) as stock_physical,';
 $sql.= ' (SUM(s.reel) - p.stock_commande) as stock_real'; //Todo: Il faudra additionner les commandes fournisseurs
 $sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
@@ -191,8 +191,8 @@ if ($resql)
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("RealStock"),"reassort.php", "stock_real","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("StockLimit"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physical","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("StockLimit"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
@@ -274,7 +274,7 @@ if ($resql)
             print '</td>';
         }
         print '<td align="right">'.$objp->stock_real.'</td>';
-        print '<td align="right">'.$objp->stock.'</td>';
+        print '<td align="right">'.$objp->stock_physical.'</td>';
         print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
         print "</tr>\n";
