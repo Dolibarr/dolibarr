@@ -45,3 +45,4 @@ StockLimitShort=Limit
 StockLimit=Stock limit
 PhysicalStock=Physical stock
 RealStock=Real Stock
+TheoreticalStock=Stock théorique
