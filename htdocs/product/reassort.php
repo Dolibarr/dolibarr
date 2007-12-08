@@ -80,9 +80,8 @@ $sql = 'SELECT p.rowid, p.ref, p.label, p.price, p.fk_product_type, '.$db->pdate
 $sql.= ' p.duration, p.envente as statut, p.seuil_stock_alerte,';
 $sql.= ' p.stock_commande,';
 $sql.= ' SUM(s.reel) as stock,';
-// \FIXME Bug ? On soustrait le stock commandé alors qu'il ait stocké en base en négatif. Du coup on additionne !
 $sql.= ' (SUM(s.reel) - p.stock_commande) as stock_dispo';
-$sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,'; // '.MAIN_DB_PREFIX.'product_det as d'; //en attendant le debugage
+$sql.= ' FROM '.MAIN_DB_PREFIX.'product_stock as s,';
 $sql.= ' '.MAIN_DB_PREFIX.'product as p';
 if ($catid || ($conf->categorie->enabled && ! $user->rights->categorie->voir))
 {
@@ -193,6 +192,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("StockAvailable"),"reassort.php", "p.stock_dispo","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("StockInstant"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("StockLimit"),"reassort.php", "stock","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
@@ -214,10 +214,7 @@ if ($resql)
       print '&nbsp;';
       print '</td>';
     }
-    print '<td class="liste_titre">';
-    print '&nbsp;';
-    print '</td>';
-    print '<td class="liste_titre">';
+    print '<td class="liste_titre" colspan="3">';
     print '&nbsp;';
     print '</td>';
     print '<td class="liste_titre" align="right">';
@@ -278,6 +275,7 @@ if ($resql)
         }
         print '<td align="right">'.$objp->stock_dispo.'</td>';
         print '<td align="right">'.$objp->stock.'</td>';
+        print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
         print "</tr>\n";
         $i++;
