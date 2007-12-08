@@ -249,9 +249,19 @@ if ($_POST['action'] == 'updateligne' && $user->rights->ficheinter->creer && $_P
  */
 if ($_GET['action'] == 'deleteline' && $user->rights->ficheinter->creer && !$conf->global->PRODUIT_CONFIRM_DELETE_LINE)
 {
+	$fichinterline = new FichinterLigne($db);
+	if ($fichinterline->fetch($_GET['ligne']) <= 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
+	$result=$fichinterline->delete_line();
 	$fichinter = new Fichinter($db);
-	$fichinter->fetch($_GET['id']);
-	$result=$fichinter->delete_line($_GET['ligne']);
+	if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
+	{
+		dolibarr_print_error($db);
+		exit;
+	}
 	if ($_REQUEST['lang_id'])
 	{
 		$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
@@ -267,9 +277,19 @@ if ($_REQUEST['action'] == 'confirm_deleteline' && $_REQUEST['confirm'] == 'yes'
 {
   if ($user->rights->ficheinter->creer)
   {
-  	$fichinter = new Fichinter($db);
-    $fichinter->fetch($_GET['id']);
-    $result=$fichinter->delete_line($_GET['ligne']);
+  	$fichinterline = new FichinterLigne($db);
+  	if ($fichinterline->fetch($_GET['ligne']) <= 0)
+	  {
+	  	dolibarr_print_error($db);
+		  exit;
+	  }
+	  $result=$fichinterline->delete_line();
+	  $fichinter = new Fichinter($db);
+	  if ($fichinter->fetch($fichinterline->fk_fichinter) <= 0)
+	  {
+		  dolibarr_print_error($db);
+		  exit;
+	  }
     if ($_REQUEST['lang_id'])
     {
     	$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
