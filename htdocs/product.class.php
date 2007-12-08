@@ -1059,7 +1059,7 @@ class Product extends CommonObject
 
     if ($filtrestatut <> '')
       {
-	$sql.= " AND c.fk_statut = ".$filtrestatut;
+	$sql.= " AND c.fk_statut in (".$filtrestatut.")";
       }
 
     $result = $this->db->query($sql) ;

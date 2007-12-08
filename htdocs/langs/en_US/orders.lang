@@ -40,6 +40,7 @@ StatusOrderRefused=Refused
 StatusOrderReceivedPartially=Partially received
 StatusOrderReceivedAll=Everything received
 DraftOrWaitingApproved=Draft or approved not yet ordered
+DraftOrWaitingShipped=Draft or validated not yet shipped
 MenuOrdersToBill=Orders to bill
 SearchOrder=Search order
 Sending=Sending

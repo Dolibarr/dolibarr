@@ -164,9 +164,9 @@ if ($_GET["id"] || $_GET["ref"])
 	    print '<tr><td>'.$langs->trans("CustomersOrdersRunning").'</td>';
 	    print '<td>';
 	    print $product->stats_commande['qty'];
-	    $result=$product->load_stats_commande(0,'0');
+	    $result=$product->load_stats_commande(0,'0,1');
 	    if ($result < 0) dolibarr_print_error($db,$product->error);
-	    print ' ('.$langs->trans("Draft").': '.$product->stats_commande['qty'].')';
+	    print ' ('.$langs->trans("DraftOrWaitingShipped").': '.$product->stats_commande['qty'].')';
 	    print '</td></tr>';
 	  }
 		        
