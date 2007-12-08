@@ -260,6 +260,7 @@ if ($_GET["account"] || $_GET["ref"])
 	$now = time();
 	$day = dolibarr_mktime(12,0,0,1,1,$year);
 	$i = 0;
+	$xyear = $year;
 	while ($xyear == $year)
 	{
 		$textdate = strftime("%Y%m%d",$day);
@@ -283,7 +284,7 @@ if ($_GET["account"] || $_GET["ref"])
 		$day += 86400;
 		$i++;
 	}
-
+	
 	// Fabrication tableau 2
 	$file= $conf->banque->dir_temp."/balance.$account.$year.png";
 	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Year").': '.$year;
