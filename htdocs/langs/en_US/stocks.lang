@@ -43,4 +43,5 @@ DeStockReStockOnValidateOrder=Decrease/increase stocks on orders notes
 DeStockReStockOnShipment=Decrease/increase stocks on shipment
 StockAvailable=Available stock
 StockInstant=Real stock
-StockLimit=Limit
+StockLimitShort=Limit
+StockLimit=Stock limit

@@ -493,10 +493,11 @@ if ($_POST["action"] == 'addinfacture' && $user->rights->facture->creer)
 		    '',
 		    '',
 		    '',
+		    '',
 		    $price_base_type,
 			  $pu_ttc
 		    );
-  
+ 
   if ($result > 0)
   {
   	Header("Location: ".DOL_URL_ROOT."/compta/facture.php?facid=".$facture->id);
@@ -609,7 +610,7 @@ if ($_GET["action"] == 'create' && $user->rights->produit->creer)
 		// Stock min level
 		if ($_GET["type"] != 1 && $conf->stock->enabled)
 		{
-			print '<tr><td>Seuil stock</td><td>';
+			print '<tr><td>'.$langs->trans("StockLimit").'</td><td>';
 			print '<input name="seuil_stock_alerte" size="4" value="0">';
 			print '</td></tr>';
 		}
@@ -860,7 +861,7 @@ if ($_GET["id"] || $_GET["ref"])
 				print '<tr><td>'.$langs->trans("Stock").'</td>';
 				if ($product->stock_reel < $product->seuil_stock_alerte)
 				{
-					print '<td>'.$product->stock_reel.' '.img_warning().' (Seuil: '.$product->seuil_stock_alerte.')</td>';
+					print '<td>'.$product->stock_reel.' '.img_warning().' ('.$langs->trans("StockLimitShort").': '.$product->seuil_stock_alerte.')</td>';
 				}
 				else
 				{
@@ -962,7 +963,7 @@ if ($_GET["id"] || $_GET["ref"])
 	  print '</td></tr>';
 	  if ($product->isproduct() && $conf->stock->enabled)
 	    {
-	      print "<tr>".'<td>Seuil stock</td><td colspan="2">';
+	      print "<tr>".'<td>'.$langs->trans("StockLimit").'</td><td colspan="2">';
 	      print '<input name="seuil_stock_alerte" size="4" value="'.$product->seuil_stock_alerte.'">';
 	      print '</td></tr>';
 	    }

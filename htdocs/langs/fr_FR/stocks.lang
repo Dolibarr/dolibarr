@@ -43,4 +43,5 @@ DeStockReStockOnValidateOrder=Décrémente/Incrémente les stocks sur les commandes
 DeStockReStockOnShipment=Décrémente/Incrémente les stocks sur les expéditions
 StockAvailable=Stock disponible
 StockInstant=Stock actuel
-StockLimit=Seuil
+StockLimitShort=Seuil
+StockLimit=Seuil stock
