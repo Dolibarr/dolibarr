@@ -285,7 +285,7 @@ class Account extends CommonObject
 
         if (! $this->ref)
         {
-        	$this->error=$langs->trans("ErrorFieldRequired",$langs->trans("Ref"));
+        	$this->error=$langs->trans("ErrorFieldRequired",$langs->transnoentities("Ref"));
         	return -1;
         }
 
