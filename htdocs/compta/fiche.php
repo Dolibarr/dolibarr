@@ -454,7 +454,10 @@ if ($socid > 0)
     print '<td colspan="11"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=todo">'.$langs->trans("ActionsToDoShort").'</a></td><td align="right">&nbsp;</td>';
     print '</tr>';
 
-    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+    $sql = "SELECT a.id, a.label,";
+    $sql.= " ".$db->pdate("a.datep")." as dp,";
+    $sql.= " ".$db->pdate("a.datea")." as da,";
+    $sql.= " a.percent,";
     $sql.= " c.code as acode, c.libelle, u.login, a.propalrowid, a.fk_user_author, a.fk_contact,";
     $sql.= " u.login, u.rowid,";
 	$sql.= " sp.name, sp.firstname";
@@ -480,32 +483,32 @@ if ($socid > 0)
             $obj = $db->fetch_object($result);
             print "<tr $bc[$var]>";
 
-            if ($oldyear == strftime("%Y",$obj->da) )
+            if ($oldyear == strftime("%Y",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
             {
                 print '<td width="30" align="center">|</td>';
             }
             else
             {
-                print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
-                $oldyear = strftime("%Y",$obj->da);
+                print '<td width="30" align="center">'.strftime("%Y",$obj->dp)."</td>\n";
+                $oldyear = strftime("%Y",$obj->dp);
             }
 
-            if ($oldmonth == strftime("%Y%b",$obj->da) )
+            if ($oldmonth == strftime("%Y%b",$obj->dp) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS)
             {
                 print '<td width="30" align="center">|</td>';
             }
             else
             {
-                print '<td width="30" align="center">' .strftime("%b",$obj->da)."</td>\n";
-                $oldmonth = strftime("%Y%b",$obj->da);
+                print '<td width="30" align="center">' .strftime("%b",$obj->dp)."</td>\n";
+                $oldmonth = strftime("%Y%b",$obj->dp);
             }
 
-            print '<td width="20">'.strftime("%d",$obj->da)."</td>\n";
-            print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->da).'</td>';
+            print '<td width="20">'.strftime("%d",$obj->dp)."</td>\n";
+            print '<td width="30" nowrap="nowrap">'.strftime("%H:%M",$obj->dp).'</td>';
 			
 			// Picto warning
 			print '<td width="16">';
-			if (date("U",$obj->da) < time()) print ' '.img_warning("Late");
+			if (date("U",$obj->dp) < time()) print ' '.img_warning("Late");
 			else print '&nbsp;';
 			print '</td>';
 			
@@ -569,7 +572,10 @@ if ($socid > 0)
     print '<td colspan="12"><a href="'.DOL_URL_ROOT.'/comm/action/index.php?socid='.$societe->id.'&amp;status=done">'.$langs->trans("ActionsDoneShort").'</a>';
     print '</td></tr>';
 
-    $sql = "SELECT a.id, a.label, ".$db->pdate("a.datea")." as da, a.percent,";
+    $sql = "SELECT a.id, a.label,";
+    $sql.= " ".$db->pdate("a.datep")." as dp,";
+    $sql.= " ".$db->pdate("a.datea")." as da,";
+    $sql.= " a.percent,";
     $sql.= " a.propalrowid, a.fk_facture, a.fk_user_author, a.fk_contact,";
     $sql.= " c.code as acode, c.libelle,";
     $sql.= " u.login, u.rowid,";
@@ -596,14 +602,14 @@ if ($socid > 0)
             $obj = $db->fetch_object($result);
             print "<tr $bc[$var]>";
 
-            if ($oldyear == strftime("%Y",$obj->da) ) {
+            if ($oldyear == strftime("%Y",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS) {
                 print '<td width="30" align="center">|</td>';
             } else {
                 print '<td width="30" align="center">'.strftime("%Y",$obj->da)."</td>\n";
                 $oldyear = strftime("%Y",$obj->da);
             }
 
-            if ($oldmonth == strftime("%Y%b",$obj->da) ) {
+            if ($oldmonth == strftime("%Y%b",$obj->da) && !$conf->global->COMPANY_VIEW_FULL_DATE_ACTIONS) {
                 print '<td width="30" align="center">|</td>';
             } else {
                 print '<td width="30" align="center">'.strftime("%b",$obj->da)."</td>\n";
