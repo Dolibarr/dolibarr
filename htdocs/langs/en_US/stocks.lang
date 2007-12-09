@@ -46,3 +46,7 @@ StockLimit=Stock limit
 PhysicalStock=Physical stock
 RealStock=Real Stock
 TheoreticalStock=Stock théorique
+MininumStock=Minimum stock
+StockUp=Stock up
+MininumStockShort=Stock min
+StockUpShort=Stock up

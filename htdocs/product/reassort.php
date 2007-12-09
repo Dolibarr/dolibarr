@@ -51,7 +51,7 @@ $type=trim($type);
 
 $sortfield = isset($_GET["sortfield"])?$_GET["sortfield"]:$_POST["sortfield"];
 $sortorder = isset($_GET["sortorder"])?$_GET["sortorder"]:$_POST["sortorder"];
-if (! $sortfield) $sortfield="stock_real";
+if (! $sortfield) $sortfield="stock_theorique";
 if (! $sortorder) $sortorder="ASC";
 $page = $_GET["page"];
 $limit = $conf->liste_limit;
@@ -192,7 +192,7 @@ if ($resql)
     print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("StockLimit"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("MininumStockShort"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
