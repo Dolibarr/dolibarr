@@ -189,10 +189,10 @@ if ($resql)
     print "<tr class=\"liste_titre\">";
     print_liste_field_titre($langs->trans("Ref"),"reassort.php", "p.ref","&amp;envente=$envente".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Label"),"reassort.php", "p.label","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","","",$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("TheoreticalStock"),"reassort.php", "stock_theorique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
     if ($conf->service->enabled && $type == 1) print_liste_field_titre($langs->trans("Duration"),"reassort.php", "p.duration","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
-    print_liste_field_titre($langs->trans("MininumStockShort"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("PhysicalStock"),"reassort.php", "stock_physique","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
+    print_liste_field_titre($langs->trans("MininumStock"),"reassort.php", "p.seuil_stock_alerte","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="center"',$sortfield,$sortorder);
     print_liste_field_titre($langs->trans("Status"),"reassort.php", "p.envente","&envente=$envente&".(isset($type)?"&amp;type=$type":"")."&fourn_id=$fourn_id&amp;snom=$snom&amp;sref=$sref","",'align="right"',$sortfield,$sortorder);
     print "</tr>\n";
 
@@ -273,9 +273,9 @@ if ($resql)
             else print $objp->duration;
             print '</td>';
         }
-        print '<td align="right">'.$objp->stock_theorique.'</td>';
-        print '<td align="right">'.$objp->stock_physique.'</td>';
-        print '<td align="right">'.$objp->seuil_stock_alerte.'</td>';
+        print '<td align="center">'.$objp->stock_theorique.'</td>';
+        print '<td align="center">'.$objp->stock_physique.'</td>';
+        print '<td align="center">'.$objp->seuil_stock_alerte.'</td>';
         print '<td align="right" nowrap="nowrap">'.$product_static->LibStatut($objp->statut,5).'</td>';
         print "</tr>\n";
         $i++;
