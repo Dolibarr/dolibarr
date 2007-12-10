@@ -3261,22 +3261,23 @@ else
 					print $facturestatic->getNomUrl(1);
 					print $objp->increment;
 					print '</td>';
-
-					print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
-					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) print img_warning($langs->trans('Late'));
-					print '</td>';
+					if ($objp->datelimite < (time() - $conf->facture->client->warning_delay) && ! $objp->paye && $objp->fk_statut == 1 && ! $objp->am) 
+					{
+						print '<td width="20" class="nobordernopadding" nowrap="nowrap">';
+						print img_warning($langs->trans('Late'));
+						print '</td>';
+					}
 					print '<td width="16" align="right" class="nobordernopadding">';
-					
 					$filename=sanitize_string($objp->facnumber);
 					$filedir=$conf->facture->dir_output . '/' . sanitize_string($objp->facnumber);
 					$urlsource=$_SERVER['PHP_SELF'].'?facid='.$objp->facid;
 					$html->show_documents('facture',$filename,$filedir,$urlsource,'','','','','',1);
-					
-					print '</td></tr></table>';
+					print '</td>';
+					print '</tr></table>';
 
 					print "</td>\n";
 
-					if ($objp->df > 0 )
+					if ($objp->df > 0)
 					{
 						print '<td align="center" nowrap>';
 						$y = strftime('%Y',$objp->df);
