@@ -130,9 +130,9 @@ if ($account || $_GET["ref"])
 		$viewline = 20;
 	}
 	$acct = new Account($db);
-	if ($_GET["account"]) 
+	if ($account) 
 	{
-		$result=$acct->fetch($_GET["account"]);
+		$result=$acct->fetch($account);
 	}
 	if ($_GET["ref"]) 
 	{
@@ -266,7 +266,7 @@ if ($account || $_GET["ref"])
 	* Bandeau recherche
 	*/
 
-	// Define navigation string
+	// Define transaction list navigation string
 	$navig='';
 	$navig.='<form action="'.$_SERVER["PHP_SELF"].'" name="newpage" method="GET">';
 	$nbpage=floor($total_lines/$viewline)+($total_lines % $viewline > 0?1:0);  // Nombre de page total
@@ -644,7 +644,7 @@ if ($account || $_GET["ref"])
 	    }
 		
 		// Affichage total
-		if ($page == 0 && $action != 'search')
+		if ($page == 0 && ! $mode_search)
 		{
 			print '<tr class="liste_total"><td align="left" colspan="7">'.$langs->trans("CurrentBalance").'</td>';
 			print '<td align="right" nowrap>'.price($total).'</td>';
