@@ -1405,7 +1405,7 @@ function dol_loginfunction($notused,$pearstatus)
 	print '<table cellpadding="0" cellspacing="0" border="0" align="center" width="450">';
 	if (file_exists(DOL_DOCUMENT_ROOT.'/logo.png'))
 	{
-		// Cas qui ne devrait pas arriver (pour compatibilité)
+		// TODO A virer Cas qui ne devrait pas arriver (pour compatibilité)
 		print '<tr><td colspan="3" style="text-align:center;">';
 		print '<img src="/logo.png"></td></tr>';
 	}
@@ -1430,11 +1430,11 @@ function dol_loginfunction($notused,$pearstatus)
 	// Show logo (search in order: small company logo, large company logo, theme logo, common logo)
 	$width=0;
 	$urllogo=DOL_URL_ROOT.'/theme/login_logo.png';
-	if (is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
+	if (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/thumbs/'.$mysoc->logo_small))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode('/thumbs/'.$mysoc->logo_small);
 	}
-	elseif (is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
+	elseif (! empty($mysoc->logo_small) && is_readable($conf->societe->dir_logos.'/'.$mysoc->logo))
 	{
 		$urllogo=DOL_URL_ROOT.'/viewimage.php?modulepart=companylogo&amp;file='.urlencode($mysoc->logo);
 		$width=96;
