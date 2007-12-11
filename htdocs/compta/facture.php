@@ -2577,8 +2577,8 @@ else
 				}
 				print '</td>';
 				print '<td align="right">';
-				if($soc->tva_assuj == "0")
-					print '<input type="hidden" name="tva_tx" value="0">0';
+				if (! $soc->tva_assuj)
+					print '<input type="hidden" name="tva_tx" value="0">0%';
 				else
 					$html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
 				print '</td>';
