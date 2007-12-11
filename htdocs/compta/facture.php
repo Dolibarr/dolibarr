@@ -2494,7 +2494,7 @@ else
 						print '</td>';
 						print '<td align="right">';
 						if(! $soc->tva_assuj)
-							print '<input type="hidden" name="tva_tx" value="0">0';
+							print '<input type="hidden" name="tva_tx" value="0">0%';
 						else
 							print $html->select_tva('tva_tx',$objp->tva_taux,$mysoc,$soc);
 						print '</td>';
