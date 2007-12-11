@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2005      Sylvain SCATTOLINI   <sylvain@s-infoservices.com>
  * Copyright (C) 2006      Rodolphe Quiedeville <rodolphe@quiedeville.org>
  *
@@ -19,7 +19,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -478,92 +477,95 @@ class pdf_oursin extends ModelePDFFactures
 
   }
 
-  /*
-   *   \brief      Affiche le total à payer
-   *   \param      pdf         objet PDF
-   *   \param      fac         objet facture
-   *   \param      deja_regle  montant deja regle
-   */
-  function _tableau_tot(&$pdf, $fac, $deja_regle)
-  {
-    global $langs;
-    $langs->load("main");
-    $langs->load("bills");
+	/*
+	*   \brief      Affiche le total à payer
+	*   \param      pdf         objet PDF
+	*   \param      fac         objet facture
+	*   \param      deja_regle  montant deja regle
+	*/
+	function _tableau_tot(&$pdf, $fac, $deja_regle)
+	{
+		global $langs;
+		$langs->load("main");
+		$langs->load("bills");
 
-    $tab2_top = $this->marges['h']+202;
-    $tab2_hl = 5;
-    $tab2_height = $tab2_hl * 4;
-    $pdf->SetFont('Arial','', 9);
+		$tab2_top = $this->marges['h']+202;
+		$tab2_hl = 5;
+		$tab2_height = $tab2_hl * 4;
+		$pdf->SetFont('Arial','', 9);
 
-    // Affiche la mention TVA non applicable selon option
-    $pdf->SetXY ($this->marges['g'], $tab2_top + 0);
-    if ($this->franchise==1)
-      {
-	$pdf->MultiCell(100, $tab2_hl, $langs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
-      }
+		$pdf->SetXY ($this->marges['g'], $tab2_top + 0);
 
-    // Tableau total
-    $col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
-    $pdf->SetXY ($col1x, $tab2_top + 0);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 0);
+		/*
+		*	If France, show VAT mention if not applicable
+		*/
+		if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
+		{
+			$pdf->MultiCell(100, $tab2_hl, $langs->transnoentities("VATIsNotUsedForInvoice"), 0, 'L', 0);
+		}
 
-    $pdf->SetXY ($col2x, $tab2_top + 0);
-    $pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
+		// Tableau total
+		$col1x=$this->marges['g']+110; $col2x=$this->marges['g']+164;
+		$pdf->SetXY ($col1x, $tab2_top + 0);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalHT"), 0, 'L', 0);
 
-    if ($fac->remise > 0)
-      {
-	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'L', 0);
+		$pdf->SetXY ($col2x, $tab2_top + 0);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht + $fac->remise), 0, 'R', 0);
 
-	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
-	$pdf->MultiCell(26, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 0);
+		if ($fac->remise > 0)
+		{
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("GlobalDiscount"), 0, 'L', 0);
 
-	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("WithDiscountTotalHT"), 0, 'L', 0);
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl);
+			$pdf->MultiCell(26, $tab2_hl, "-".$fac->remise_percent."%", 0, 'R', 0);
 
-	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
-	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * 2);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("WithDiscountTotalHT"), 0, 'L', 0);
 
-	$index = 3;
-      }
-    else
-      {
-	$index = 1;
-      }
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * 2);
+			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ht), 0, 'R', 0);
 
-    $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 0);
+			$index = 3;
+		}
+		else
+		{
+			$index = 1;
+		}
 
-    $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
-    $pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
+		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalVAT"), 0, 'L', 0);
 
-    $pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
-    $pdf->SetTextColor(22,137,210);
-    $pdf->SetFont('Arial','B', 11);
-    $pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), 0, 'L', 0);
+		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_tva), 0, 'R', 0);
 
-    $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
-    $pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
-    $pdf->SetTextColor(0,0,0);
+		$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+1));
+		$pdf->SetTextColor(22,137,210);
+		$pdf->SetFont('Arial','B', 11);
+		$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("TotalTTC"), 0, 'L', 0);
 
-    if ($deja_regle > 0)
-      {
-	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
+		$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+1));
+		$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc), 0, 'R', 0);
+		$pdf->SetTextColor(0,0,0);
 
-	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
-	$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
+		if ($deja_regle > 0)
+		{
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+2));
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("AlreadyPayed"), 0, 'L', 0);
 
-	$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
-	$pdf->SetTextColor(22,137,210);
-	$pdf->SetFont('Arial','B', 11);
-	$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), 0, 'L', 0);
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+2));
+			$pdf->MultiCell(26, $tab2_hl, price($deja_regle), 0, 'R', 0);
 
-	$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
-	$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
-	$pdf->SetTextColor(0,0,0);
-      }
-  }
+			$pdf->SetXY ($col1x, $tab2_top + $tab2_hl * ($index+3));
+			$pdf->SetTextColor(22,137,210);
+			$pdf->SetFont('Arial','B', 11);
+			$pdf->MultiCell($col2x-$col1x, $tab2_hl, $langs->transnoentities("RemainderToPay"), 0, 'L', 0);
+
+			$pdf->SetXY ($col2x, $tab2_top + $tab2_hl * ($index+3));
+			$pdf->MultiCell(26, $tab2_hl, price($fac->total_ttc - $deja_regle), 0, 'R', 0);
+			$pdf->SetTextColor(0,0,0);
+		}
+	}
 
   /*
    *   \brief      Affiche la grille des lignes de factures
@@ -691,11 +693,11 @@ class pdf_oursin extends ModelePDFFactures
     $pdf->SetFont('Arial','',7);
     if (defined("MAIN_INFO_SIREN") && MAIN_INFO_SIREN)
       {
-	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->pays_code).": ".MAIN_INFO_SIREN);
+	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId1",$this->emetteur->pays_code).": ".MAIN_INFO_SIREN);
       }
     elseif (defined("MAIN_INFO_SIRET") && MAIN_INFO_SIRET)
       {
-	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->pays_code).": ".MAIN_INFO_SIRET);
+	$pdf->MultiCell(80, 4, $langs->transcountry("ProfId2",$this->emetteur->pays_code).": ".MAIN_INFO_SIRET);
       }
 
 

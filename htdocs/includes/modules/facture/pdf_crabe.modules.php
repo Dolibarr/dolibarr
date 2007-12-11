@@ -503,9 +503,9 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetFont('Arial','', 9);
 
         /*
-        *	Affiche la mention TVA non applicable selon option
+        *	If France, show VAT mention if not applicable
         */
-    	if ($this->franchise == 1)
+    	if ($this->emetteur->pays_code == 'FR' && $this->franchise == 1)
       	{
 	        $pdf->SetFont('Arial','B',8);
 	        $pdf->SetXY($this->marge_gauche, $posy);
