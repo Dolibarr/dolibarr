@@ -8,6 +8,14 @@
 -- sans AUCUNE erreur ni warning
 --
 
+alter table llx_commande_fournisseur_dispatch drop index fk_commande;
+alter table llx_commande_fournisseur_dispatch drop index fk_commande_2;
+alter table llx_commande_fournisseur_dispatch drop index fk_commande_3;
+alter table llx_commande_fournisseur_dispatch drop index fk_commande_4;
+alter table llx_commande_fournisseur_dispatch drop index fk_commande_5;
+
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commande (fk_commande);
+
 
 alter table llx_categorie add column type tinyint DEFAULT 1 NOT NULL;
 

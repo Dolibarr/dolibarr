@@ -18,4 +18,4 @@
 -- $Id$
 -- ===================================================================
 
-ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commande (fk_commande);
