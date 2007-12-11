@@ -1,5 +1,6 @@
 <?php
 /* Copyright (C) 2007 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2007 Jean Heimburger      <jean@tiaris.info>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -107,7 +108,7 @@ class Osc_Categorie
         else
         {
             $this->error=$this->db->lasterror();
-            $this->error = $sql;
+            $this->error .= "erreur ".$sql;
             dolibarr_syslog("Osc_Categorie.class::create ".$this->error);
             return -1;
         }
@@ -217,6 +218,8 @@ class Osc_Categorie
                 $this->dolicatid = $obj->dolicatid;
                 $this->osccatid = $obj->osccatid;
             }
+            else 
+            	$this->initAsSpecimen();
             $this->db->free($resql);
             
             return 1;
