@@ -1,6 +1,6 @@
 <?php
 /* Copyright (C) 2002-2007 Rodolphe Quiedeville  <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur   <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur   <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio   <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier        <benoit.mortier@opensides.be>
  * Copyright (C) 2005      Marc Barilley / Ocebo <marc@ocebo.com>
@@ -1143,26 +1143,7 @@ class Facture extends CommonObject
 			{
 				$this->fetch_lines();
 
-/* La vérif qu'une remise n'est pas utilisée 2 fois est faite au moment de l'insertion de ligne
-				foreach($this->lignes as $i => $line)
-				{
-					// For each line, we check if it's a discount and, if a discount,
-					// we check it is not already affected to another invoice
-					if ($line->fk_remise_except)
-					{
-						$discount=new DiscountAbsolute($this->db);
-						$result=$discount->fetch($line->fk_remise_except);
-						if ($result > 0)
-						{
-						
-						}
-						else
-						{
-							$this->error=$discount->error;
-							$error++;
-						}
-				}
-*/
+				// La vérif qu'une remise n'est pas utilisée 2 fois est faite au moment de l'insertion de ligne
 
 				// On met a jour table des ventes
 				// On crée ici une denormalisation pas forcement utilisé !!!
@@ -1183,7 +1164,7 @@ class Facture extends CommonObject
 				// Classe la société rattachée comme client
 				$result=$this->client->set_as_client();
 				
-				//Si activé on décrémente le produit principal et ses composants à la validation de facture
+				// Si activé on décrémente le produit principal et ses composants à la validation de facture
 				if($conf->stock->enabled && $conf->global->STOCK_CALCULATE_ON_BILL)
 				{
 					require_once(DOL_DOCUMENT_ROOT."/product/stock/mouvementstock.class.php");
@@ -1208,7 +1189,7 @@ class Facture extends CommonObject
 		        }
 		        $mouvP = new MouvementStock($this->db);
 		        // on décompte le stock du produit principal
-		        $entrepot_id = "1"; //Todo: ajouter possibilité de choisir l'entrepot
+		        $entrepot_id = "1"; // TODO ajouter possibilité de choisir l'entrepot
 		        $result=$mouvP->livraison($user, $this->lignes[$i]->fk_product, $entrepot_id, $this->lignes[$i]->qty);
 		      }
 		    }
@@ -1235,8 +1216,8 @@ class Facture extends CommonObject
 	}
 
 	/**
-	*
-	*
+	*		\brief		Set draft status
+	*		\param		userid		Id user setting
 	*/
 	function set_draft($userid)
 	{
@@ -2757,6 +2738,9 @@ class Facture extends CommonObject
 	$ligne->subprice=100;
 	$ligne->price=100;
 	$ligne->tva_tx=19.6;
+	$ligne->total_ht=100;
+	$ligne->total_ttc=119.6;
+	$ligne->total_tva=19.6;
 	$prodid = rand(1, $num_prods);
 	$ligne->produit_id=$prodids[$prodid];
 	$this->lignes[$xnbp]=$ligne;

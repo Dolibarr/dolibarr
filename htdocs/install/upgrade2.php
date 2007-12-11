@@ -1443,4 +1443,16 @@ function migrate_delete_old_files($db,$langs,$conf)
 	return $result;
 }
 
+
+/* A faire egalement: Modif statut paye et fk_facture des factures payés completement
+
+On recherche facture incorrecte:
+select f.rowid, f.total_ttc as t1, sum(pf.amount) as t2 from llx_facture as f, llx_paiement_facture as pf where pf.fk_facture=f.rowid and f.fk_statut in(2,3) and paye=0 and close_code is null group by f.rowid
+having  f.total_ttc = sum(pf.amount)
+
+On les corrige:
+update llx_facture set paye=1, fk_statut=2 where close_code is null
+and rowid in (...)
+*/
+
 ?>
