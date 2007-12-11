@@ -34,6 +34,7 @@ $langs->setDefaultLang($setuplang);
 
 $langs->load("admin");
 $langs->load("install");
+$langs->load("errors");
 
 $error = 0;
 
@@ -82,36 +83,45 @@ if (! isset($_POST["db_name"]) || ! $_POST["db_name"])
 
 
 /**
-* 	Si l'utilisateur n'est pas déjà créé, on se connecte à l'aide du login root'
+* 	Tentative de connexion a la base
 */
 if (! $error)
 {
-	require_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
-	if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
-	{	
-		$databasefortest=$conf->db->name;
-		if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
-		{
-			$databasefortest='mysql';
-		}
-		elseif ($_POST["db_type"] == 'pgsql')
-		{
-			$databasefortest='postgres';
+	$result=include_once($main_dir."/lib/databases/".$_POST["db_type"].".lib.php");
+	if ($result)
+	{
+		if (isset($_POST["db_create_user"]) && $_POST["db_create_user"] == "on")
+		{	
+			$databasefortest=$conf->db->name;
+			if ($_POST["db_type"] == 'mysql' ||$_POST["db_type"] == 'mysqli')
+			{
+				$databasefortest='mysql';
+			}
+			elseif ($_POST["db_type"] == 'pgsql')
+			{
+				$databasefortest='postgres';
+			}
+			else
+			{
+				$databasefortest='mssql';
+			}
+			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
 		}
 		else
-		{
-			$databasefortest='mssql';
+		{	
+			$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"]);
 		}
-		$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$userroot,$passroot,$databasefortest);
+		if ($db->error)
+		{
+				print '<div class="error">'.$db->error.'</div>';
+				$error++;
+		}
 	}
 	else
-	{	
-		$db = new DoliDb($_POST["db_type"],$_POST["db_host"],$_POST["db_user"],$_POST["db_pass"],$_POST["db_name"]);
-	}
-	if ($db->error)
 	{
-			print '<div class="error">'.$db->error.'</div>';
-			$error++;
+		print "<br>\nFailed to include_once(\"".$main_dir."/lib/databases/".$_POST["db_type"].".lib.php\")<br>\n";
+		print '<div class="error">'.$langs->trans("ErrorWrongValueForParameter",$langs->transnoentities("WebPagesDirectory")).'</div>';
+		$error++;
 	}
 }
 

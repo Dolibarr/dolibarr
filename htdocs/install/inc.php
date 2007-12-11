@@ -38,25 +38,48 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 	$_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
 }
 
-
+$includeconferror='';
 $conffile = "../conf/conf.php";
 $charset="ISO-8859-1";
-if (file_exists($conffile))
+if (! defined('DONOTLOADCONF') && file_exists($conffile))
 {
-	include_once($conffile);	// Fichier conf chargé
+	$result=include_once($conffile);	// Load conf file
+	if ($result) 
+	{
+		// Remove last / or \ on directories or url value
+		if (! empty($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
+		if (! empty($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
+		if (! empty($dolibarr_main_data_root)     && ! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
 
-	// Remove last / or \ on directories or url value
-	if (isset($dolibarr_main_document_root) && ! ereg('^[\\\/]+$',$dolibarr_main_document_root)) $dolibarr_main_document_root=ereg_replace('[\\\/]+$','',$dolibarr_main_document_root);
-	if (isset($dolibarr_main_url_root)      && ! ereg('^[\\\/]+$',$dolibarr_main_url_root))      $dolibarr_main_url_root=ereg_replace('[\\\/]+$','',$dolibarr_main_url_root);
-	if (isset($dolibarr_main_data_root)     && ! ereg('^[\\\/]+$',$dolibarr_main_data_root))     $dolibarr_main_data_root=ereg_replace('[\\\/]+$','',$dolibarr_main_data_root);
-	
-	if (isset($dolibarr_main_document_root) && $dolibarr_main_document_root)
-	{
-		conf($dolibarr_main_document_root);
+		// Create conf object
+		if (! empty($dolibarr_main_document_root))
+		{
+			$result=conf($dolibarr_main_document_root);
+		}
+		// Load database driver
+		if ($result)
+		{
+			if (! empty($dolibarr_main_document_root) && ! empty($dolibarr_main_db_type))
+			{
+				$result=include_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+				if ($result)
+				{
+					// OK
+				}
+				else
+				{
+					$includeconferror='ErrorBadValueForDolibarrMainDBType';
+				}
+			}
+		}
+		else
+		{
+			$includeconferror='ErrorBadValueForDolibarrMainDocumentRoot';			
+		}
 	}
-	if (isset($dolibarr_main_document_root) && $dolibarr_main_document_root && $dolibarr_main_db_type && ! defined('DONOTLOADCONF'))
+	else
 	{
-		require_once($dolibarr_main_document_root . "/lib/databases/".$dolibarr_main_db_type.".lib.php");
+		$includeconferror='ErrorBadFormatForConfFile';	
 	}
 }
 if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
