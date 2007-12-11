@@ -70,8 +70,8 @@ class Facture extends CommonObject
   var $note_public;
   //! 0=brouillon,
   //! 1=validée,
-  //! 2=classée payée partiellement (close_code='discount_vat','bad_customer') ou complètement (close_code=null),
-  //! 3=classée abandonnée et aucun paiement n'a eu lieu (close_code='abandon' ou 'replaced')
+  //! 2=classée payée partiellement (close_code='discount_vat','badcustomer') ou complètement (close_code=null),
+  //! 3=classée abandonnée et aucun paiement n'a eu lieu (close_code='badcustomer','abandon' ou 'replaced')
   var $statut;
   //! 1 si facture payée COMPLETEMENT, 0 sinon (ce champ ne devrait plus servir car insuffisant)
   var $paye;
