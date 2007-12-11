@@ -104,30 +104,36 @@ $bc[true]=' class="bg2"';
 
 
 /*
-*	\brief		Charge fichier conf (doit exister)
+*	\brief		Load conf file (file must exists)
+*	\param		dolibarr_main_document_root		Root directory of Dolibarr bin files
+*	\return		int								<0 if KO, >0 if OK
 */
 function conf($dolibarr_main_document_root)
 {
-		require_once($dolibarr_main_document_root."/conf/conf.class.php");
-		global $conf;
-		global $dolibarr_main_db_type;
-		global $dolibarr_main_db_host;
-		global $dolibarr_main_db_name;
-		global $dolibarr_main_db_user;
-		global $dolibarr_main_db_pass;
-		$conf=new Conf();
-		$conf->db->type = trim($dolibarr_main_db_type);
-		$conf->db->host = trim($dolibarr_main_db_host);
-		$conf->db->name = trim($dolibarr_main_db_name);
-		$conf->db->user = trim($dolibarr_main_db_user);
-		$conf->db->pass = trim($dolibarr_main_db_pass);
-		if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
-		$conf->character_set_client=$character_set_client;
-		if (! isset($dolibarr_main_db_charset) || ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
-		$conf->db->character_set=$dolibarr_main_db_charset;
-		if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
-		$conf->db->collation_connection=$collation_connection;
-	
+	global $conf;
+	global $dolibarr_main_db_type;
+	global $dolibarr_main_db_host;
+	global $dolibarr_main_db_name;
+	global $dolibarr_main_db_user;
+	global $dolibarr_main_db_pass;
+
+    $return=include_once($dolibarr_main_document_root."/conf/conf.class.php");
+    if (! $return) return -1;
+
+	$conf=new Conf();
+	$conf->db->type = trim($dolibarr_main_db_type);
+	$conf->db->host = trim($dolibarr_main_db_host);
+	$conf->db->name = trim($dolibarr_main_db_name);
+	$conf->db->user = trim($dolibarr_main_db_user);
+	$conf->db->pass = trim($dolibarr_main_db_pass);
+	if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+	$conf->character_set_client=$character_set_client;
+	if (! isset($dolibarr_main_db_charset) || ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
+	$conf->db->character_set=$dolibarr_main_db_charset;
+	if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
+	$conf->db->collation_connection=$collation_connection;
+
+	return 1;
 }
 
 
