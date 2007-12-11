@@ -340,7 +340,9 @@ class Societe
         if ($this->code_client == -1) $this->get_codeclient($this->prefix_comm,0);
         if ($this->code_fournisseur == -1) $this->get_codefournisseur($this->prefix_comm,1);
 
-        $result = $this->verify();		// Verifie que nom obligatoire et code client ok et unique
+        // Check name is required and codes are ok or unique.
+		// If error, this->errors[] is filled
+		$result = $this->verify();
 
         if ($result >= 0)
         {
@@ -367,7 +369,7 @@ class Societe
             $sql .= ",ape     = '". addslashes($this->ape)     ."'";
             $sql .= ",idprof4 = '". addslashes($this->idprof4) ."'";
         
-			      $sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
+			$sql .= ",tva_assuj = ".($this->tva_assuj>=0?"'".$this->tva_assuj."'":"null");
             $sql .= ",tva_intra = '" . addslashes($this->tva_intra) ."'";
 
             $sql .= ",capital = '" .   addslashes($this->capital) ."'";
@@ -412,7 +414,7 @@ class Societe
             $sql .= " WHERE rowid = '" . $id ."'";
 
         	
-			      dolibarr_syslog("Societe::update sql=".$sql);
+			dolibarr_syslog("Societe::update sql=".$sql);
             $resql=$this->db->query($sql);
             if ($resql)
             {

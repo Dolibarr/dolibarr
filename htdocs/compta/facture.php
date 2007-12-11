@@ -1713,6 +1713,7 @@ else
 			
 			$soc = new Societe($db, $fac->socid);
 			$soc->fetch($fac->socid);
+
 			$absolute_discount=$soc->getAvailableDiscounts('','fk_facture_source IS NULL');
 			$absolute_creditnote=$soc->getAvailableDiscounts('','fk_facture_source IS NOT NULL');
 

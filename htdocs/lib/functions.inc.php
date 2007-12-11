@@ -3873,4 +3873,38 @@ function dolibarr_print_reduction($reduction=0)
 	return $string;
 }
 
+
+/**
+		\brief  	Returns formated reduction
+		\param		reduction		Reduction percentage
+		\return		int				Return number of error messages shown
+*/
+function dol_htmloutput_errors($mesgstring='',$mesgarray='')
+{
+	global $langs;
+	
+	$ret = 0;
+	$langs->load("errors");
+	
+	if (is_array($mesgarray) && sizeof($mesgarray))
+	{
+		print '<div class="error">';
+		foreach($mesgarray as $message)
+		{
+			$ret++;
+			print $langs->trans($message)."<br>\n";
+		}
+		print '</div>';
+	}
+	if ($mesgstring)
+	{
+		$ret++;
+		print '<div class="error">';
+		print $mesgstring;
+		print '</div>';
+	}
+
+	return $ret;
+}
+
 ?>

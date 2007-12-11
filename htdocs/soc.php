@@ -188,6 +188,7 @@ if ((! $_POST["getcustomercode"] && ! $_POST["getsuppliercode"])
 		{
 			$soc->id = $socid;
 			$reload = 0;
+			
 			$mesg = $soc->error;
 			$_GET["action"]= "edit";
 		}
@@ -325,15 +326,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 			print "<br>\n";
 		}
 		
-		if (sizeof($soc->errors))
-		{
-			print '<div class="error">';
-			foreach($soc->errors as $message)
-			{
-				print $langs->trans($message)."<br>\n";
-			}
-			print '</div>';
-		}
+		dol_htmloutput_errors($soc->error,$soc->errors);
 		
 		print '<form action="soc.php" method="post" name="formsoc">';
 		
@@ -672,13 +665,8 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
             }
         }
 
-        if ($soc->error)
-        {
-            print '<div class="error">';
-            print $soc->error;
-            print '</div>';
-        }
-
+		dol_htmloutput_errors($soc->error,$soc->errors);
+		
         print '<form action="soc.php?socid='.$soc->id.'" method="post" name="formsoc">';
         print '<input type="hidden" name="action" value="update">';
         print '<input type="hidden" name="socid" value="'.$soc->id.'">';
