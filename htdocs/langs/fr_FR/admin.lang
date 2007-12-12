@@ -546,6 +546,7 @@ ClassifiedInvoicedWithOrder=Classé facturée la propale en même temps que la comm
 HideTreadedPropal=Cacher les propositions commerciales traitées de la liste
 AddShippingDateAbility=Possibilité de déterminer une date de livraison
 AddDeliveryAddressAbility=Possibilité de sélectionner une adresse de livraison
+UseOptionLineIfNoQuantity=Une ligne de produit/service ayant une quantité nulle est considérée comme une option
 ##### Orders #####
 OrdersSetup=Configuration du module Commandes
 OrdersNumberingModules=Modules de numérotation des commandes

@@ -506,7 +506,7 @@ if ($_POST['action'] == "setabsolutediscount" && $user->rights->propale->creer)
  */
 if ($_POST['action'] == "addligne" && $user->rights->propale->creer)
 {
-	if ($_POST['qty'] && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
+	if (isset($_POST['qty']) && (($_POST['np_price']!='' && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprod']))
 	{
 		$propal = new Propal($db);
 		$ret=$propal->fetch($_POST['propalid']);
@@ -1068,7 +1068,7 @@ if ($_GET['propalid'] > 0)
 
 	$sql = 'SELECT pt.rowid, pt.description, pt.fk_product, pt.fk_remise_except,';
 	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx,pt.pa_ht,';
+	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc, pt.marge_tx, pt.marque_tx, pt.pa_ht, pt.special_code,';
 	$sql.= ' p.label as product, p.ref, p.fk_product_type, p.rowid as prodid,';
 	$sql.= ' p.description as product_desc';
 	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
@@ -1112,8 +1112,7 @@ if ($_GET['propalid'] > 0)
 				if ($objp->fk_product > 0)
 				{
 					print '<td>';
-					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
-					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
+					print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne;
 
 					// Affiche ligne produit
 					$text = '<a href="'.DOL_URL_ROOT.'/product/fiche.php?id='.$objp->fk_product.'">';
@@ -1223,7 +1222,7 @@ if ($_GET['propalid'] > 0)
 
 				// Qty
 				print '<td align="right">';
-				if (($objp->info_bits & 2) != 2)
+				if ((($objp->info_bits & 2) != 2) && $objp->special_code != 3)
 				{
 					print $objp->qty;
 				}
@@ -1231,7 +1230,7 @@ if ($_GET['propalid'] > 0)
 				print '</td>';
 				
 				// Remise %
-				if ($objp->remise_percent > 0)
+				if ($objp->remise_percent > 0 && $objp->special_code != 3)
 				{
 					print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
 				}
@@ -1239,7 +1238,17 @@ if ($_GET['propalid'] > 0)
 				{
 					print '<td>&nbsp;</td>';
 				}
-				print '<td align="right">'.price($objp->total_ht)."</td>\n";
+				
+				// Montant total HT
+				if ($objp->special_code == 3)
+				{
+					// Si ligne en option
+					print '<td align="right">'.$langs->trans('Option').'</td>';
+				}
+				else
+				{
+					print '<td align="right">'.price($objp->total_ht)."</td>\n";
+				}
 
 				// Icone d'edition et suppression
 				if ($propal->statut == 0  && $user->rights->propale->creer)

@@ -100,6 +100,13 @@ if ($_POST["action"] == 'setadddeliveryaddress')
     exit;
 }
 
+if ($_POST["action"] == 'setuseoptionline')
+{
+    dolibarr_set_const($db, "PROPALE_USE_OPTION_LINE",$_POST["value"]);
+    Header("Location: propale.php");
+    exit;
+}
+
 if ($_POST["action"] == 'setclassifiedinvoiced')
 {
     dolibarr_set_const($db, "PROPALE_CLASSIFIED_INVOICED_WITH_ORDER",$_POST["value"]);
@@ -107,9 +114,9 @@ if ($_POST["action"] == 'setclassifiedinvoiced')
     exit;
 }
 
-if ($_POST["action"] == 'set_use_customer_contact_as_recipient')
+if ($_POST["action"] == 'setusecustomercontactasrecipient')
 {
-    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["use_customer_contact_as_recipient"]);
+    dolibarr_set_const($db, "PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT",$_POST["value"]);
     Header("Location: propale.php");
     exit;
 }
@@ -429,11 +436,23 @@ print '</form>';
 
 $var=! $var;
 print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
-print '<input type="hidden" name="action" value="set_use_customer_contact_as_recipient">';
+print '<input type="hidden" name="action" value="setusecustomercontactasrecipient">';
 print '<tr '.$bc[$var].'><td>';
 print $langs->trans("UseCustomerContactAsPropalRecipientIfExist");
 print '</td><td width="60" align="center">';
-print $html->selectyesno("use_customer_contact_as_recipient",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
+print $html->selectyesno("value",$conf->global->PROPALE_USE_CUSTOMER_CONTACT_AS_RECIPIENT,1);
+print '</td><td align="right">';
+print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
+print "</td></tr>\n";
+print '</form>';
+
+$var=! $var;
+print '<form action="'.$_SERVER["PHP_SELF"].'" method="post">';
+print '<input type="hidden" name="action" value="setuseoptionline">';
+print '<tr '.$bc[$var].'><td>';
+print $langs->trans("UseOptionLineIfNoQuantity");
+print '</td><td width="60" align="center">';
+print $html->selectyesno("value",$conf->global->PROPALE_USE_OPTION_LINE,1);
 print '</td><td align="right">';
 print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
 print "</td></tr>\n";

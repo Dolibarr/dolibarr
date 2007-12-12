@@ -547,6 +547,7 @@ ClassifiedInvoicedWithOrder=Classify invoiced proposal at the same time as the o
 HideTreadedPropal=Hide the treated commercial proposals in the list
 AddShippingDateAbility=Add shipping date ability
 AddDeliveryAddressAbility=Add delivery date ability
+UseOptionLineIfNoQuantity=A line of product/service with a zero amount is considered as an option
 ##### Orders #####
 OrdersSetup=Orders' management setup
 OrdersNumberingModules=Orders numbering modules

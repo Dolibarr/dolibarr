@@ -288,21 +288,29 @@ class pdf_propale_azur extends ModelePDFPropales
 
 					// Quantité
 					$pdf->SetXY ($this->posxqty, $curY);
-					$pdf->MultiCell(10, 4, $propale->lignes[$i]->qty, 0, 'R');
+					if ($propale->lignes[$i]->special_code != 3) $pdf->MultiCell(10, 4, $propale->lignes[$i]->qty, 0, 'R');
 
 					// Remise sur ligne
 					$pdf->SetXY ($this->posxdiscount, $curY);
-					if ($propale->lignes[$i]->remise_percent)
+					if ($propale->lignes[$i]->remise_percent && $propale->lignes[$i]->special_code != 3)
 					{
 						$pdf->MultiCell(14, 4, dolibarr_print_reduction($propale->lignes[$i]->remise_percent), 0, 'R');
 					}
 
 					// Total HT ligne
 					$pdf->SetXY ($this->postotalht, $curY);
-					$total = price($propale->lignes[$i]->total_ht);
-					$pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+					if ($propale->lignes[$i]->special_code == 3)
+					{
+						// Ligne produit en option
+						$pdf->MultiCell(23, 4, $outputlangs->transnoentities("Option"), 0, 'R', 0);
+					}
+					else
+					{
+						$total = price($propale->lignes[$i]->total_ht);
+						$pdf->MultiCell(23, 4, $total, 0, 'R', 0);
+					}
 
-                    // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
+          // Collecte des totaux par valeur de tva dans $this->tva["taux"]=total_tva
 					$tvaligne=$propale->lignes[$i]->total_tva;
 					if ($propale->remise_percent) $tvaligne-=($tvaligne*$propale->remise_percent)/100;
 					$this->tva[(string) $propale->lignes[$i]->tva_tx] += $tvaligne;
