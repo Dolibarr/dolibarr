@@ -109,7 +109,7 @@ if ($resql)
   print '<tr class="liste_titre">';
   print_liste_field_titre($langs->trans("Company"),$_SERVER["PHP_SELF"],"s.nom",$uadd,"",'valign="middle"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("Town"),$_SERVER["PHP_SELF"],"s.ville",$uadd,"",'valign="middle"',$sortfield,$sortorder);
-  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_client",$uadd,"",'align="left"',$sortfield,$sortorder);
+  print_liste_field_titre($langs->trans("SupplierCode"),$_SERVER["PHP_SELF"],"s.code_fournisseur",$uadd,"",'align="left"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("AccountancyCode"),$_SERVER["PHP_SELF"],"s.code_compta",$uadd,"",'align="left"',$sortfield,$sortorder);
   print_liste_field_titre($langs->trans("DateCreation"),$_SERVER["PHP_SELF"],"datec",$uadd,"",'align="center"',$sortfield,$sortorder);
   print '<td class="liste_titre">&nbsp;</td>';
