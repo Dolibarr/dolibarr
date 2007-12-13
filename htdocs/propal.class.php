@@ -2253,45 +2253,48 @@ class Propal extends CommonObject
         \class      PropalLigne
 		\brief      Classe permettant la gestion des lignes de propales
 */
-
 class PropaleLigne
 {
 	var $db;
 	var $error;
 
-  // From llx_propaldet
+	// From llx_propaldet
 	var $rowid;
 	var $fk_propal;
-  var $desc;          // Description ligne
-  var $fk_product;		// Id produit prédéfini
+	var $desc;          // Description ligne
+	var $fk_product;		// Id produit prédéfini
 
-  var $qty;
-  var $tva_tx;
-  var $subprice;
-  var $remise_percent;
+	var $qty;
+	var $tva_tx;
+	var $subprice;
+	var $remise_percent;
 	var $fk_remise_except;
 	
 	var $rang = 0;
 	var $marge_tx;
 	var $marque_tx;
 	
-	var $special_code;	// Bit 3: ligne en option
+	var $special_code;	// Liste d'options non cumulabels:
+						// 1: frais de port
+						// 2: ecotaxe
+						// 3: ?? 
 	 
-	var $info_bits = 0;	// Bit 0: 	0 si TVA normal - 1 si TVA NPR
-											// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
+	var $info_bits = 0;	// Liste d'options cumulables:
+						// Bit 0: 	0 si TVA normal - 1 si TVA NPR
+						// Bit 1:	0 ligne normale - 1 si ligne de remise fixe
 	
 	var $total_ht;			// Total HT  de la ligne toute quantité et incluant la remise ligne
 	var $total_tva;			// Total TVA  de la ligne toute quantité et incluant la remise ligne
 	var $total_ttc;			// Total TTC de la ligne toute quantité et incluant la remise ligne
 
 	// Ne plus utiliser
-  var $remise;
-  var $price;
+	var $remise;
+	var $price;
 
-  // From llx_product
-  var $ref;						// Reference produit
-  var $libelle;       // Label produit
-  var $product_desc;  // Description produit
+	// From llx_product
+	var $ref;						// Reference produit
+	var $libelle;       // Label produit
+	var $product_desc;  // Description produit
 
 
 	/**

@@ -2793,9 +2793,9 @@ class Facture extends CommonObject
 
 
 /**
-   \class      FactureLigne
-   \brief      Classe permettant la gestion des lignes de factures
-   \remarks	Gere des lignes de la table llx_facturedet
+   \class      	FactureLigne
+   \brief      	Classe permettant la gestion des lignes de factures
+   \remarks		Gere des lignes de la table llx_facturedet
 */
 class FactureLigne
 {
@@ -2810,13 +2810,15 @@ class FactureLigne
   var $desc;           
   var $fk_product;	// Id produit prédéfini
 
-  var $qty;		// Quantité (exemple 2)
+  var $qty;			// Quantité (exemple 2)
   var $tva_tx;		// Taux tva produit/service (exemple 19.6)
   var $subprice;      	// P.U. HT (exemple 100)
   var $remise_percent;	// % de la remise ligne (exemple 20%)
   var $rang = 0;
-  var $info_bits = 0;		// Bit 0:	0 si TVA normal - 1 si TVA NPR
-							// Bit 1:	0 si ligne normal - 1 si bit discount
+  
+  var $info_bits = 0;	// Liste d'options cumulables:
+						// Bit 0:	0 si TVA normal - 1 si TVA NPR
+						// Bit 1:	0 si ligne normal - 1 si bit discount
 
   //! Total HT  de la ligne toute quantité et incluant la remise ligne
   var $total_ht;
