@@ -28,7 +28,9 @@
 */
  
 require("./pre.inc.php");
- 
+
+$langs->load("other");
+
 if (! $user->admin)
   accessforbidden();
 
