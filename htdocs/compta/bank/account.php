@@ -678,7 +678,7 @@ if ($account || $_GET["ref"])
 			}
 			else
 			{
-				print '<font class="butActionRefused">'.$langs->trans("Conciliate").'</font>';
+				print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Conciliate")."</a>";
 			}
 		}
 
@@ -688,7 +688,7 @@ if ($account || $_GET["ref"])
 		}
 		else
 		{
-			print '<font class="butActionRefused">'.$langs->trans("AddBankRecord").'</font>';
+			print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("AddBankRecord")."</a>";
 		}
 
 		print '</div>';

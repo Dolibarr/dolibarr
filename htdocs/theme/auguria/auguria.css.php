@@ -672,7 +672,7 @@ a.butActionRefused    {
                       font-weight: bold;
                       background: white;
                       border: 1px solid red;
-                      color: #436976;
+                      color: #AAAAAA;
                       padding: 0em 0.7em;
                       margin: 0em 0.5em;
                       text-decoration: none;
