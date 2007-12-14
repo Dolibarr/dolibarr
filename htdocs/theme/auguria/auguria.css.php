@@ -671,7 +671,7 @@ a.butAction:hover   {
 a.butActionRefused    {
                       font-weight: bold;
                       background: white;
-                      border: 1px solid red;
+                      border: 1px solid #AAAAAA;
                       color: #AAAAAA;
                       padding: 0em 0.7em;
                       margin: 0em 0.5em;
