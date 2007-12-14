@@ -56,9 +56,12 @@ if (isset($_POST["action"]) && $_POST["action"] == 'update')
 }
 
 
+$html=new Form($db);
+
 llxHeader();
 
 print_fiche_titre($langs->trans("LimitsSetup"),'','setup');
+
 
 print $langs->trans("LimitsDesc")."<br>\n";
 print "<br>\n";
@@ -67,8 +70,6 @@ if ($mesg) print $mesg.'<br>';
 
 if (isset($_GET["action"]) && $_GET["action"] == 'edit')
 {
-	$html=new Form($db);
-
     print '<form method="post" action="'.$_SERVER["PHP_SELF"].'">';
     print '<input type="hidden" name="action" value="update">';
 
