@@ -1,3 +1,27 @@
+
+License
+-------
+
+Dolibarr is distributed under GPL terms (See CPOYING file)
+
+However it uses some external libraries under different licences. This is compatibility summary:
+Composant     Version  License                  Compatible GPL   Usage
+----------------------------------------------------------------------------
+PEAR          ?        PHP License              Non              Login (Base, LDAP...)
+PHPlot        v4       PHP License              Non              Graphics
+PHPlot        v5       PHP License              Non              Graphics
+FPDI          ?        Apache Software License  ?                PDF generation
+FCKEditor     2.4.4    GPL v2 depuis 2.0        Oui              Editor WYSIWYG
+XmlRpc        ?        Artistic License         ?                Interface with Glasnot
+Scriptaculous ?        MIT License              Oui              Extension Ajax
+NuSoap        0.6.5    GPL 2.1                  Oui              Interfaces with third tools
+
+
+
+Copyright
+---------
+
+
 Copyright (C) 2007
 - Rodolphe Quiedeville <rodolphe@quiedeville.org>
 - Laurent Destailleur <eldy@users.sourceforge.net>
