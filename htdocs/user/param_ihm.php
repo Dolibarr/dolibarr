@@ -1,5 +1,5 @@
 <?php
-/* Copyright (C) 2005-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+/* Copyright (C) 2005-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,7 +16,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -36,13 +35,13 @@ $langs->load("users");
 // Defini si peux lire/modifier permisssions
 $canreadperms=($user->admin || $user->rights->user->user->lire);
 
-if ($_GET["id"])
+if ($_REQUEST["id"])
 {
-  // $user est le user qui edite, $_GET["id"] est l'id de l'utilisateur edité
-  $caneditfield=( (($user->id == $_GET["id"]) && $user->rights->user->self->creer)
-		  || (($user->id != $_GET["id"]) && $user->rights->user->user->creer));
+  // $user est le user qui edite, $_REQUEST["id"] est l'id de l'utilisateur edité
+  $caneditfield=( (($user->id == $_REQUEST["id"]) && $user->rights->user->self->creer)
+		  || (($user->id != $_REQUEST["id"]) && $user->rights->user->user->creer));
 }
-if ($user->id <> $_GET["id"] && ! $canreadperms)
+if ($user->id <> $_REQUEST["id"] && ! $canreadperms)
 {
   accessforbidden();
 }
@@ -215,6 +214,11 @@ else
     {
         print '<a class="butAction" href="'.$_SERVER["PHP_SELF"].'?action=edit&amp;id='.$_GET["id"].'">'.$langs->trans("Edit").'</a>';
     }
+   	else
+	{
+		print "<a class=\"butActionRefused\" title=\"".$langs->trans("NotEnoughPermissions")."\" href=\"#\">".$langs->trans("Edit")."</a>";
+	}
+   
     print '</div>';
 
 }
