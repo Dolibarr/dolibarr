@@ -110,6 +110,8 @@ insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL'
 
 update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_FROM';
 
+update llx_const set value='bluelagoon' where name='MAIN_THEME' and value ='dolibarr';
+
 update llx_const set visible=0 where name in ('MAIN_UPLOAD_DOC','MAIN_MAIL_SMTP_SERVER','MAIN_MAIL_SMTP_PORT','MAIN_MAIL_EMAIL_FROM');
 
 update llx_const set value='rodolphe.php' where name='MAIN_MENU_BARRELEFT'      and  value='default.php';
