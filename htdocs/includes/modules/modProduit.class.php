@@ -80,20 +80,13 @@ class modProduit extends DolibarrModules
     // Constantes
     $this->const = array();
     $r=0;
-    
-    $this->const[$r][0] = "PRODUIT_CHANGE_PROD_DESC";
-    $this->const[$r][1] = "chaine";
-    $this->const[$r][2] = "0";
-    $this->const[$r][3] = "Mettre à 1 pour permettre modification de description d'un produit dans une propale, commande et facture";
-    $this->const[$r][4] = 1;
-	$r++;
 	
     $this->const[$r][0] = "MAIN_SEARCHFORM_PRODUITSERVICE";
     $this->const[$r][1] = "yesno";
     $this->const[$r][2] = "1";
     $this->const[$r][3] = "Affichage formulaire de recherche des Produits et Services dans la barre de gauche";
     $this->const[$r][4] = 0;
-	$r++;
+    $r++;
 
     // Boxes
     $this->boxes = array();

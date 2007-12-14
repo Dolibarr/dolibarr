@@ -1162,3 +1162,5 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 -- V4.1 update llx_facture set total_ttc = NULL where rowid in (select fk_facture from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 update llx_societe_remise_except as re set re.fk_facture = (select fk_facture from llx_facturedet as fd where fd.rowid = re.fk_facture_line), re.fk_facture_line = NULL where re.fk_facture_line in (select rowid from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 delete from llx_facturedet where description = '(CREDIT_NOTE)';
+
+DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';

@@ -142,16 +142,8 @@ class Propal extends CommonObject
 		{
 			$prod=new Product($this->db);
 			$prod->fetch($idproduct);
-	
-			// on ajoute la description du produit si l'option est active
-			if ($conf->global->PRODUIT_CHANGE_PROD_DESC)
-			{
-				$productdesc = $prod->description;
-			}
-			else
-			{
-				$productdesc = '';
-			}
+
+			$productdesc = $prod->description;
 
 			$tva_tx = get_default_tva($mysoc,$this->client,$prod->tva_tx);
 			// multiprix

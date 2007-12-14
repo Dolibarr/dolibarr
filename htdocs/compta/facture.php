@@ -2638,19 +2638,16 @@ else
 					
 					if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
 					
-					if (! $conf->global->PRODUIT_CHANGE_PROD_DESC)
+				  // éditeur wysiwyg
+				  if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
 				  {
-				  	// éditeur wysiwyg
-				  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
-				  	{
-				  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
-				  		$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
-				  		$doleditor->Create();
-				  	}
-				  	else
-				  	{
-				  		print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
-				  	}
+				  	require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+				  	$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+				  	$doleditor->Create();
+				  }
+				  else
+				  {
+				  	print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
 				  }
 
 					print '</td>';

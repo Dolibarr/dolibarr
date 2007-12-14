@@ -99,10 +99,6 @@ else if ($_POST["action"] == 'sousproduits')
       dolibarr_set_const($db, "PRODUIT_SOUSPRODUITS", $_POST["activate_sousproduits"]);
     }
 }
-else if ($_POST["action"] == 'changeproductdesc')
-{
-  dolibarr_set_const($db, "PRODUIT_CHANGE_PROD_DESC", $_POST["activate_changeproductdesc"]);
-}
 else if ($_POST["action"] == 'viewProdDescInForm')
 {
   dolibarr_set_const($db, "PRODUIT_DESC_IN_FORM", $_POST["activate_viewProdDescInForm"]);
@@ -231,23 +227,6 @@ else
 }
 print '</tr>';
 print '</form>';
-
-
-// Modification description produit activation/desactivation
-/* Cet option ne doit pas exister. Les description de lignes doivent toujours etre modifiable.
-$var=!$var;
-print "<form method=\"post\" action=\"produit.php\">";
-print "<input type=\"hidden\" name=\"action\" value=\"changeproductdesc\">";
-print "<tr ".$bc[$var].">";
-print '<td>'.$langs->trans("ModifyProductDescAbility").'</td>';
-print '<td width="60" align="right">';
-print $html->selectyesno("activate_changeproductdesc",$conf->global->PRODUIT_CHANGE_PROD_DESC,1);
-print '</td><td align="right">';
-print '<input type="submit" class="button" value="'.$langs->trans("Modify").'">';
-print "</td>";
-print '</tr>';
-print '</form>';
-*/
 
 // Visualiser description produit dans les formulaires activation/desactivation
 $var=!$var;
