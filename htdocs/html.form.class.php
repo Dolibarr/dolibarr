@@ -2973,14 +2973,14 @@ class Form
         \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
-        \param	optionType      Type de l'option: 1 pour des fonctions javascript, 2 pour des tooltip, 3 les deux
-        \param  option          Valeur de l'option en fonciton du type choisi
+        \param	optionType      Type de l'option: 1 pour des fonctions javascript
+        \param  option          Valeur de l'option en fonction du type choisi
         \param  translate       Traduire la valeur
     */
     function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0)
     {
         global $langs;
-        if (($optionType == 1 || $optionType == 3) && $option != '')
+        if ($optionType == 1 && $option != '')
         {
         	print '<select class="flat" name="'.$htmlname.'" '.$option.'>';
         }
@@ -3008,27 +3008,13 @@ class Form
             if ($key_in_label)
             {
             	$selectOptionValue = $key.' - '.($translate?$langs->trans($value):$value);
-            	if (($optionType == 2 || $optionType == 3) && $option != '')
-              {
-              	print $this->textwithtooltip($selectOptionValue,$option,1);
-              }
-              else
-              {
-              	print $selectOptionValue;
-              }
+              print $selectOptionValue;
             }
             else
             {
             	$selectOptionValue = ($translate?$langs->trans($value):$value);
-            	if ($value == '' || $value == '-') { $value='&nbsp;'; }
-            	if (($optionType == 2 || $optionType == 3) && $option != '')
-            	{
-            		print $this->textwithtooltip($selectOptionValue,$option,1);
-            	}
-            	else
-            	{
-            		print $selectOptionValue;
-            	}
+            	if ($value == '' || $value == '-') { $selectOptionValue='&nbsp;'; }
+            	print $selectOptionValue;
             }
             print "</option>\n";
         }
