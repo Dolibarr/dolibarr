@@ -1164,3 +1164,5 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 -- V4.1 delete from llx_facturedet where description = '(CREDIT_NOTE)';
 
 DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
+
+ALTER TABLE llx_commande_fournisseurdet MODIFY fk_product integer;

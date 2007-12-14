@@ -685,7 +685,6 @@ class CommandeFournisseur extends Commande
 					if ($result > 0)
 					{
 						$label = $prod->libelle;
-						$desc  = $prod->description;
 						$txtva = $prod->tva_tx;
 						$pu    = $prod->fourn_pu;
 						$ref   = $prod->ref_fourn;
@@ -723,10 +722,17 @@ class CommandeFournisseur extends Commande
 				$price = $pu - $remise;
 			}
 			
-			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet (fk_commande,label,description,fk_product, price, qty, tva_tx, remise_percent, subprice, remise, ref)";
-			$sql .= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',".$fk_product.",".price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
+			$sql = "INSERT INTO ".MAIN_DB_PREFIX."commande_fournisseurdet";
+			$sql.= " (fk_commande,label, description,";
+			$sql.= " fk_product,";
+			$sql.= " price, qty, tva_tx, remise_percent, subprice, remise, ref)";
+			$sql.= " VALUES (".$this->id.", '" . addslashes($label) . "','" . addslashes($desc) . "',";
+			if ($fk_product) { $sql.= $fk_product.","; }
+			else { $sql.= "null,"; }
+			$sql.= price2num($price,'MU').", '$qty', $txtva, $remise_percent,'".price2num($subprice,'MU')."','".price2num($remise)."','".$ref."') ;";
 			dolibarr_syslog('Fournisseur.commande.class::addline sql='.$sql);
 			$resql=$this->db->query($sql);
+			//print $sql;
 			if ($resql)
 			{
 				$this->update_price();

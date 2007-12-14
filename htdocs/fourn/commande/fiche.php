@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
  * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
- * Copyright (C) 2005	   Eric	Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005	     Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under	the	terms of the GNU General Public	License	as published by
@@ -90,18 +91,18 @@ if ($_REQUEST['action'] ==	'setremisepercent' && $user->rights->fournisseur->com
  */
 if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->creer)
 {
-	if ($_POST['qty'] && (($_POST['pu'] && $_POST['desc']) || $_POST['idprodfournprice']))
+	if ($_POST['qty'] && (($_POST['pu'] && ($_POST['np_desc'] || $_POST['dp_desc'])) || $_POST['idprodfournprice']))
   {
   	$commande =	new	CommandeFournisseur($db);
     $ret=$commande->fetch($_POST["id"]);
-
-    $soc = new Societe($db,	$commande->socid);
-    $soc->fetch($commande->socid);
     if ($ret < 0)
     {
     	dolibarr_print_error($db,$commande->error);
     	exit;
     }
+
+    $soc = new Societe($db,	$commande->socid);
+    $soc->fetch($commande->socid);
     
     // Ecrase $pu par celui	du produit
     // Ecrase $desc	par	celui du produit
@@ -116,17 +117,17 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
     	
     	$libelle = $prod->libelle;
     	
-		$desc = $prod->description;
-		$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
-		$desc.= $_POST['np_desc'];
+    	$desc = $prod->description;
+    	$desc.= $prod->description && $_POST['np_desc'] ? "\n" : "";
+			$desc.= $_POST['np_desc'];
 
-	    $tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
+    	$tva_tx	= get_default_tva($soc,$mysoc,$prod->tva_tx);
 	  }
 	  else
 	  {
 	  	$pu=$_POST['pu'];
 	    $tva_tx=$_POST['tva_tx'];
-	    $desc=$_POST['desc'];
+	    $desc=$_POST['dp_desc'];
 	  }
 
     $result=$commande->addline(
@@ -158,7 +159,7 @@ if ($_POST['action'] ==	'addligne' && $user->rights->fournisseur->commande->cree
 }
 
 /*
- *	Mise à jour	d'une ligne	dans la	propale
+ *	Mise à jour	d'une ligne	dans la	commande
  */
 if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->creer &&	$_POST['save'] == $langs->trans('Save'))
 {
@@ -166,7 +167,7 @@ if ($_POST['action'] ==	'updateligne' && $user->rights->fournisseur->commande->c
   if ($commande->fetch($_POST['id']) < 0) dolibarr_print_error($db);
 
   $result	= $commande->updateline($_POST['elrowid'],
-					$_POST['desc'],
+					$_POST['eldesc'],
 					$_POST['pu'],
 					$_POST['qty'],
 					$_POST['remise_percent'],
@@ -622,7 +623,8 @@ else
 	
 	  $sql = "SELECT l.ref as ref_fourn, l.fk_product, l.description, l.price,	l.qty";
 	  $sql.= ", l.rowid, l.tva_tx, l.remise_percent, l.subprice";
-	  $sql.= ", p.rowid as product_id, p.label, p.ref";
+	  $sql.= ", l.total_ht, l.total_tva, l.total_ttc";
+	  $sql.= ", p.rowid as product_id, p.label as product, p.ref";
 	  $sql.= " FROM ".MAIN_DB_PREFIX."commande_fournisseurdet	as l";
 		$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON l.fk_product = p.rowid';
 	  $sql.= " WHERE l.fk_commande = ".$commande->id;
@@ -630,83 +632,132 @@ else
 
 	  $resql = $db->query($sql);
 	  if ($resql)
+	  {
+	  	$num = $db->num_rows($resql);
+	    $i = 0;	$total = 0;
+	    
+	    if ($num)
 	    {
-	      $num = $db->num_rows($resql);
-	      $i = 0;	$total = 0;
-	
-	      if ($num)
-		{
-		  print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans('Description').'</td>';
-		  print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
-			print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
-			print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
-			print '<td width="48" colspan="3">&nbsp;</td>';
-		  print "</tr>\n";
-		}
-	      $var=false;
-	      while ($i <	$num)
-		{
-		  $objp =	$db->fetch_object($resql);
-		  print "<tr $bc[$var]>";
-		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref_fourn.'</a>';
-		  print ' ('.$objp->ref.')';
-		  print ' - '.$objp->label;
-		  if ($objp->description) print '<br>'.nl2br($objp->description);
-		  print "</td>";
-		  print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
-		  print '<td align="right">'.price($objp->subprice)."</td>\n";
-		  print '<td align="right">'.$objp->qty.'</td>';
-		  if ($objp->remise_percent >	0)
-		  {
-		    print '<td align="right">'.$objp->remise_percent."%</td>\n";
-		  }
-		  else
-		  {
-		    print '<td>&nbsp;</td>';
-		  }
-		  print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
-		  if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'valid' &&	$_GET["action"]	!= 'editline')
+	    	print '<tr class="liste_titre">';
+	    	print '<td>'.$langs->trans('Description').'</td>';
+	    	print '<td align="right" width="50">'.$langs->trans('VAT').'</td>';
+	    	print '<td align="right" width="80">'.$langs->trans('PriceUHT').'</td>';
+	    	print '<td align="right" width="50">'.$langs->trans('Qty').'</td>';
+	    	print '<td align="right" width="50">'.$langs->trans('ReductionShort').'</td>';
+	    	print '<td align="right" width="50">'.$langs->trans('AmountHT').'</td>';
+	    	print '<td width="48" colspan="3">&nbsp;</td>';
+	    	print "</tr>\n";
+	    }
+	    $var=true;
+	    while ($i <	$num)
+	    {
+	    	$objp =	$db->fetch_object($resql);
+	    	$var=!$var;
+	    	
+	    	// Ligne en mode visu
+			  if ($_GET['action'] != 'editline' || $_GET['rowid'] != $objp->rowid)
+				{
+					print '<tr '.$bc[$var].'>';
+					if ($objp->fk_product > 0)
+					{
+						print '<td>';
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						
+						// Affiche ligne produit
+						$text = '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">';
+						$text.= img_object($langs->trans('ShowProduct'),'product');
+						$text.= ' '.$objp->ref_fourn.'</a>';
+						$text.= ' ('.$objp->ref.')';
+						$text.= ' - '.$objp->product;
+						$description=($conf->global->PRODUIT_DESC_IN_FORM?'':$objp->description);
+						print $html->textwithtooltip($text,$description,3,'','',$i);
+						if ($conf->global->PRODUIT_DESC_IN_FORM)
+						{
+							print ($objp->description && $objp->description!=$objp->product)?'<br>'.stripslashes(nl2br($objp->description)):'';
+						}
+						
+						print "</td>";
+					}
+					else
+					{
+						print '<td>';
+						print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+						print nl2br($objp->description);
+						print '</td>';
+					}
+					print '<td align="right">'.vatrate($objp->tva_tx).'%</td>';
+					print '<td align="right">'.price($objp->subprice)."</td>\n";
+					print '<td align="right">'.$objp->qty.'</td>';
+					if ($objp->remise_percent >	0)
+					{
+						print '<td align="right">'.dolibarr_print_reduction($objp->remise_percent)."</td>\n";
+					}
+					else
+					{
+						print '<td>&nbsp;</td>';
+					}
+					//Todo: Modifier la classe pour utiliser le champ total_ttc
+					print '<td align="right">'.price($objp->subprice*$objp->qty*(100-$objp->remise_percent)/100).'</td>';
+					if ($commande->statut == 0	&& $user->rights->fournisseur->commande->creer)
+					{
+						print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
+						print img_edit();
+						print '</a></td>';
+						
+						print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
+						print img_delete();
+						print '</a></td>';
+					}
+					else
+					{
+						print '<td>&nbsp;</td><td>&nbsp;</td>';
+					}
+					print "</tr>";
+				}
+				
+				// Ligne en mode update
+				if ($_GET["action"]	== 'editline' && $user->rights->fournisseur->commande->creer && $_GET["rowid"]	== $objp->rowid)
 		    {
-		      print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=editline&amp;rowid='.$objp->rowid.'#'.$objp->rowid.'">';
-		      print img_edit();
-		      print '</a></td>';
-	
-		      print '<td align="center"><a	href="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'&amp;action=delete_product_line&amp;lineid='.$objp->rowid.'">';
-		      print img_delete();
-		      print '</a></td>';
-		    }
-		  else
-		    {
-		      print '<td>&nbsp;</td><td>&nbsp;</td>';
-		    }
-		  print "</tr>";
-	
-		  if ($_GET["action"]	== 'editline' && $_GET["rowid"]	== $objp->rowid)
-		    {
-		      print "<form action=\"fiche.php?id=$commande->id\" method=\"post\">";
-		      print "<tr $bc[$var]>";
-		      print '<td><textarea name="desc" cols="60" rows="'.ROWS_2.'">'.$objp->description.'</textarea>';
-		      print '<input type="hidden"	name="action" value="updateligne">';
-		      print '<input type="hidden"	name="elrowid" value="'.$_GET["rowid"].'">';
-		      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
+		      print '<form action="'.$_SERVER["PHP_SELF"].'#'.$objp->rowid.'" method="post">';
+		      print '<input type="hidden" name="action" value="updateligne">';
+					print '<input type="hidden" name="id" value="'.$_REQUEST["id"].'">';
+					print '<input type="hidden" name="elrowid" value="'.$_GET['rowid'].'">';
+		      print '<tr '.$bc[$var].'>';
+		      print '<td>';
+		      print '<a name="'.$objp->rowid.'"></a>'; // ancre pour retourner sur la ligne
+		      if ($objp->fk_product > 0)
+					{
+						print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->product_id.'">';
+						print img_object($langs->trans('ShowProduct'),'product');
+						print ' '.$objp->ref_fourn.'</a>';
+						print ' ('.$objp->ref.')';
+						print ' - '.nl2br($objp->product);
+						print '<br>';
+					}
+					// éditeur wysiwyg
+					if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS)
+					{
+						require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+						$doleditor=new DolEditor('eldesc',$objp->description,200,'dolibarr_details');
+						$doleditor->Create();
+					}
+					else
+					{
+						print '<textarea name="eldesc" class="flat" cols="70" rows="1">'.$objp->description.'</textarea>';
+					}
 		      print '</td>';
 		      print '<td>';
 		      $html->select_tva('tva_tx',$objp->tva_tx);
 		      print '</td>';
-		      print '<td align="right"><input size="3" type="text" name="qty" value="'.$objp->qty.'"></td>';
-		      print '<td align="right"><input	size="2" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
-		      print '<td align="right"><input	size="6" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
+		      print '<td align="right"><input	size="5" type="text" name="pu"	value="'.price($objp->subprice).'"></td>';
+		      print '<td align="right"><input size="2" type="text" name="qty" value="'.$objp->qty.'"></td>';
+		      print '<td align="right" nowrap="nowrap"><input size="1" type="text" name="remise_percent" value="'.$objp->remise_percent.'">%</td>';
 		      print '<td align="center" colspan="2"><input type="submit" class="button" name="save" value="'.$langs->trans("Save").'">';
 		      print '<br /><input	type="submit" class="button" name="cancel" value="'.$langs->trans('Cancel').'"></td>';
 		      print '</tr>' .	"\n";
 		      print "</form>\n";
 		    }
 		  $i++;
-		  $var=!$var;
 		}
 	      $db->free();
 	    }
@@ -718,41 +769,112 @@ else
 	  /*
 	   * Ajouter une ligne
 	   */
-	  if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer && ($_GET["action"] <> 'valid' ||	$_GET['action']	== 'builddoc'))
+	  if ($commande->statut == 0 && $user->rights->fournisseur->commande->creer && $_GET["action"] <> 'editline')
 	    {
-	      print '<form action="fiche.php?id='.$commande->id.'" method="post">';
-	      print '<input type="hidden"	name="action" value="addligne">';
-	      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
-
 	      print '<tr class="liste_titre">';
-	      print '<td>'.$langs->trans('Description').'</td>';
+	      print '<td>';
+	      print '<a name="add"></a>'; // ancre
+	      print $langs->trans('Description').'</td>';
 		    print '<td align="right">'.$langs->trans('VAT').'</td>';
 			  print '<td align="right">'.$langs->trans('PriceUHT').'</td>';
 			  print '<td align="right">'.$langs->trans('Qty').'</td>';
 			  print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
 			  print '<td colspan="4">&nbsp;</td>';
 	      print '</tr>';
-	
-	      $var=false;
-	      print "<tr $bc[$var]>".'<td colspan="3">';
-	      $html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice',$filtre);
-	      print '</td>';
-	      print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
-	      print '<td align="right"><input	type="text"	size="1" name="remise_percent"	value="0">%</td>';
-	      print '<td align="center" colspan="3"><input type="submit" class="button" value="'.$langs->trans("Add").'"></td></tr>';
-	      print "</tr>\n";
-	
-	      print "</form>";
-	    }
-	
-	  print "</table>";
-	  print '</div>';
+	      
+	      // Ajout produit produits/services personnalisés
+	      print '<form action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
+	      print '<input type="hidden"	name="action" value="addligne">';
+	      print '<input type="hidden"	name="id" value="'.$_REQUEST["id"].'">';
+	      
+	      $var=true;
+				print '<tr '.$bc[$var].'>';
+				print '<td>';
+				// éditeur wysiwyg
+				if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+				{
+					require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+					$doleditor=new DolEditor('dp_desc','',100,'dolibarr_details');
+					$doleditor->Create();
+				}
+				else
+				{
+					print '<textarea class="flat" cols="70" name="dp_desc" rows="'.ROWS_2.'"></textarea>';
+				}
+				print '</td>';
+				print '<td align="center">';
+				if($soc->tva_assuj == "0")
+				print '<input type="hidden" name="tva_tx" value="0">0';
+				else
+				print $html->select_tva('tva_tx',$conf->defaulttx,$mysoc,$soc);
+				print '</td>';
+				print '<td align="right"><input type="text" name="pu" size="5"></td>';
+				print '<td align="right"><input type="text" name="qty" value="1" size="2"></td>';
+				print '<td align="right" nowrap="nowrap"><input type="text" name="remise_percent" size="1" value="'.$soc->remise_client.'">%</td>';
+				print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+				print '</tr>';
+
+				print '</form>';
+				
+				// Ajout de produits/services prédéfinis
+				if ($conf->produit->enabled)
+				{
+					print '<tr class="liste_titre">';
+					print '<td colspan="3">';
+					if ($conf->service->enabled)
+					{
+						print $langs->trans('RecordedProductsAndServices');
+					}
+					else
+					{
+						print $langs->trans('RecordedProducts');
+					}
+					print '</td>';
+					print '<td align="right">'.$langs->trans('Qty').'</td>';
+					print '<td align="right">'.$langs->trans('ReductionShort').'</td>';
+					print '<td colspan="4">&nbsp;</td>';
+					print '</tr>';
+					
+					print '<form id="addpredefinedproduct" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'#add" method="post">';
+					print '<input type="hidden" name="id" value="'.$id.'">';
+					print '<input type="hidden" name="action" value="addligne">';
+
+				  $var=!$var;
+				  print '<tr '.$bc[$var].'>';
+				  print '<td colspan="3">';
+				  $html->select_produits_fournisseurs($commande->fourn_id,'','idprodfournprice');
+				
+				  if (! $conf->global->PRODUIT_USE_SEARCH_TO_SELECT) print '<br>';
+
+			  	// éditeur wysiwyg
+			  	if ($conf->fckeditor->enabled && $conf->global->FCKEDITOR_ENABLE_DETAILS_PERSO)
+			  	{
+			  		require_once(DOL_DOCUMENT_ROOT."/lib/doleditor.class.php");
+			  		$doleditor=new DolEditor('np_desc','',100,'dolibarr_details');
+			  		$doleditor->Create();
+			  	}
+			  	else
+			  	{
+			  		print '<textarea cols="70" name="np_desc" rows="'.ROWS_2.'" class="flat"></textarea>';
+			  	}
+				
+				  print '</td>';
+				  print '<td align="right"><input type="text" size="2" name="qty" value="1"></td>';
+				  print '<td align="right" nowrap="nowrap"><input type="text" size="1" name="remise_percent" value="0">%</td>';
+				  print '<td align="center" colspan="4"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td>';
+				  print '</tr>';
+
+				  print '</form>';
+			  }
+			}
+			print '</table>';
+			print '</div>';
 	
 	
 	  /**
 	   * Boutons actions
 	   */
-	  if ($user->societe_id == 0 && $commande->statut	< 3	&& ($_GET["action"]	<> 'valid' || $_GET['action'] == 'builddoc'))
+	  if ($user->societe_id == 0 && $commande->statut	< 3	&& $_GET['action'] <> 'editline')
 	    {
 	      print '<div	class="tabsAction">';
 	
@@ -800,6 +922,7 @@ else
 	    }
 	
 	  print '<table width="100%"><tr><td width="50%" valign="top">';
+	  print '<a name="builddoc"></a>'; // ancre
 	
 	  /*
 	   * Documents	générés

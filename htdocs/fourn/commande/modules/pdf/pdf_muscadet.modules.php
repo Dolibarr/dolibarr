@@ -108,20 +108,6 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
     		\brief      Fonction générant la commande sur le disque
     		\param	    id	        Id de la commande à générer
     		\return	    int         1=ok, 0=ko
-            \remarks    Variables utilisées
-    		\remarks    MAIN_INFO_SOCIETE_NOM
-    		\remarks    MAIN_INFO_ADRESSE
-    		\remarks    MAIN_INFO_CP
-    		\remarks    MAIN_INFO_VILLE
-    		\remarks    MAIN_INFO_TEL
-    		\remarks    MAIN_INFO_FAX
-    		\remarks    MAIN_INFO_WEB
-    		\remarks    MAIN_INFO_SIRET
-    		\remarks    MAIN_INFO_SIREN
-    		\remarks    MAIN_INFO_RCS
-    		\remarks    MAIN_INFO_CAPITAL
-    		\remarks    MAIN_INFO_TVAINTRA
-            \remarks    MAIN_INFO_LOGO
     */
     function write_file($com,$outputlangs='')
     {
@@ -195,7 +181,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                 $pdf->SetDrawColor(128,128,128);
 
                 $pdf->SetTitle($com->ref);
-                $pdf->SetSubject($outputlangs->transnoentities("Bill"));
+                $pdf->SetSubject($outputlangs->transnoentities("Order"));
                 $pdf->SetCreator("Dolibarr ".DOL_VERSION);
                 $pdf->SetAuthor($user->fullname);
 
@@ -218,6 +204,29 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                 $tab_top_newpage = 50;
                 $tab_height = 110;
                 $tab_height_newpage = 180;
+                
+                // Affiche notes
+                if ($com->note_public)
+                {
+	                $tab_top = 88;
+
+	                $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
+	                $pdf->SetXY ($this->posxdesc-1, $tab_top);
+	                $pdf->MultiCell(190, 3, $com->note_public, 0, 'J');
+	                $nexY = $pdf->GetY();
+	                $height_note=$nexY-$tab_top;
+	                
+	                // Rect prend une longueur en 3eme param
+	                $pdf->SetDrawColor(192,192,192);
+	                $pdf->Rect($this->marge_gauche, $tab_top-1, $this->page_largeur-$this->marge_gauche-$this->marge_droite, $height_note+1);
+
+	                $tab_height = $tab_height - $height_note;
+                	$tab_top = $nexY+6;
+               	}
+               	else
+               	{
+               		$height_note=0;
+               	}
 
                 $iniY = $tab_top + 8;
                 $curY = $tab_top + 8;
@@ -229,34 +238,28 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
                     $curY = $nexY;
 
                     // Description de la ligne produit
-                    $libelleproduitservice=$com->lignes[$i]->libelle;
+                    $libelleproduitservice=dol_htmlentities($com->lignes[$i]->libelle);
                     if ($com->lignes[$i]->desc&&$com->lignes[$i]->desc!=$com->lignes[$i]->libelle)
                     {
                         if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$com->lignes[$i]->desc;
+                        $libelleproduitservice.=dol_htmlentities($com->lignes[$i]->desc);
                     }
                     // Si ligne associée à un code produit
                     if ($com->lignes[$i]->fk_product)
                     {
-                    	$libelleproduitservice=$outputlangs->transnoentities("Product")." ".$com->lignes[$i]->ref_fourn." - ".$libelleproduitservice;
-                      
-                      // Ajoute description du produit
-                      if ($com->lignes[$i]->product_desc&&$com->lignes[$i]->product_desc!=$fac->lignes[$i]->libelle&&$com->lignes[$i]->product_desc!=$com->lignes[$i]->desc)
-                      {
-                      	if ($libelleproduitservice) $libelleproduitservice.="\n";
-                        $libelleproduitservice.=$com->lignes[$i]->product_desc;
-                      }                    
+                    	$libelleproduitservice=$outputlangs->transnoentities("Product")." ".$com->lignes[$i]->ref_fourn." - ".$libelleproduitservice;                    
                     }
                     if ($com->lignes[$i]->date_start && $com->lignes[$i]->date_end)
                     {
                         // Affichage durée si il y en a une
-                        $libelleproduitservice.="\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")";
+                        $libelleproduitservice.=dol_htmlentities("\n(".$outputlangs->transnoentities("From")." ".dolibarr_print_date($com->lignes[$i]->date_start)." ".$outputlangs->transnoentities("to")." ".dolibarr_print_date($com->lignes[$i]->date_end).")");
                     }
 
                     $pdf->SetFont('Arial','', 9);   // Dans boucle pour gérer multi-page
 
-                    $pdf->SetXY ($this->posxdesc-1, $curY);
-                    $pdf->MultiCell(108, 4, $libelleproduitservice, 0, 'J');
+                    $pdf->writeHTMLCell(108, 4, $this->posxdesc-1, $curY, $libelleproduitservice, 0, 1);
+                    
+                    $pdf->SetFont('Arial','', 9);   // On repositionne la police par défaut
 
                     $nexY = $pdf->GetY();
 

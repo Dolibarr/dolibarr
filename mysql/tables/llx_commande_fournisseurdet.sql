@@ -23,7 +23,7 @@ create table llx_commande_fournisseurdet
 (
   rowid                      integer AUTO_INCREMENT PRIMARY KEY,
   fk_commande                integer      NOT NULL,
-  fk_product                 integer      NOT NULL,
+  fk_product                 integer,
   ref                        varchar(50),
   label                      varchar(255),
   description                text,
