@@ -107,7 +107,7 @@ class modBanque extends DolibarrModules
 
 	    $r++;
 	    $this->rights[$r][0] = 114; // id de la permission
-	    $this->rights[$r][1] = 'Rapprocher transactions'; // libelle de la permission
+	    $this->rights[$r][1] = 'Rapprocher les écritures bancaires'; // libelle de la permission
 	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 	    $this->rights[$r][4] = 'consolidate';
