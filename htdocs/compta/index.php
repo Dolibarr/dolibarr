@@ -623,7 +623,7 @@ if ($conf->facture->enabled && $user->rights->facture->lire)
 	$resql = $db->query($sql);
 	if ($resql)
 	{
-		$var=true;
+		$var=false;
 		$num = $db->num_rows($resql);
 		$i = 0;
 
