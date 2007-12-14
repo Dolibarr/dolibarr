@@ -668,7 +668,7 @@ a.butAction:hover   {
                       text-decoration: none;
                       white-space: nowrap; }
 
-a.butActionRefuse    {
+a.butActionRefused    {
                       font-weight: bold;
                       background: white;
                       border: 1px solid red;
@@ -676,12 +676,9 @@ a.butActionRefuse    {
                       padding: 0em 0.7em;
                       margin: 0em 0.5em;
                       text-decoration: none;
-                      white-space: nowrap; }
-
-a.butActionRefuse:hover {
-                          font-weight: bold;
-                          background: #dee7ec; }
-
+                      white-space: nowrap;
+                      cursor: not-allowed;
+                      }
 
 a.butActionDelete    {
                       font-weight: bold;
