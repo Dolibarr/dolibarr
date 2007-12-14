@@ -2973,16 +2973,16 @@ class Form
         \param	show_empty      1 si il faut ajouter une valeur vide dans la liste, 0 sinon
         \param	key_in_label    1 pour afficher la key dans la valeur "[key] value"
         \param	value_as_key    1 pour utiliser la valeur comme clé
-        \param	$use_java       1 pour utiliser des fonctions javascript
-        \param  $fonction       Fonction javascript
-        \param  $translate      Traduire la valeur
+        \param	optionType      Type de l'option: 1 pour des fonctions javascript, 2 pour des tooltip, 3 les deux
+        \param  option          Valeur de l'option en fonciton du type choisi
+        \param  translate       Traduire la valeur
     */
-    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $use_java=0, $fonction='', $translate=0)
+    function select_array($htmlname, $array, $id='', $show_empty=0, $key_in_label=0, $value_as_key=0, $optionType=0, $option='', $translate=0)
     {
         global $langs;
-        if ($use_java == 1 && $fonction != '')
+        if (($optionType == 1 || $optionType == 3) && $option != '')
         {
-        	print '<select class="flat" name="'.$htmlname.'" '.$fonction.'>';
+        	print '<select class="flat" name="'.$htmlname.'" '.$option.'>';
         }
         else
         {
@@ -3003,15 +3003,34 @@ class Form
                 print ' selected="true"';
             }
     
+            print '>';
+            
             if ($key_in_label)
             {
-                print '>'.$key.' - '.($translate?$langs->trans($value):$value)."</option>\n";
+            	$selectOptionValue = $key.' - '.($translate?$langs->trans($value):$value);
+            	if (($optionType == 2 || $optionType == 3) && $option != '')
+              {
+              	print $this->textwithtooltip($selectOptionValue,$option,1);
+              }
+              else
+              {
+              	print $selectOptionValue;
+              }
             }
             else
             {
-                if ($value == '' || $value == '-') { $value='&nbsp;'; }
-                print ">".($translate?$langs->trans($value):$value)."</option>\n";
+            	$selectOptionValue = ($translate?$langs->trans($value):$value);
+            	if ($value == '' || $value == '-') { $value='&nbsp;'; }
+            	if (($optionType == 2 || $optionType == 3) && $option != '')
+            	{
+            		print $this->textwithtooltip($selectOptionValue,$option,1);
+            	}
+            	else
+            	{
+            		print $selectOptionValue;
+            	}
             }
+            print "</option>\n";
         }
     
         print "</select>\n";
@@ -3653,6 +3672,57 @@ class Form
             print '<td align="left"><input type="submit" class="button" value="'.$langs->trans("Modify").'">';
             print '</td></tr></table></form>';
         }
+    }
+    
+    /**
+     *    \brief     Retourne la liste des ecotaxes avec tooltip sur le libelle
+     *    \param     selected    code ecotaxes pre-selectionne
+     *    \param     htmlname    nom de la liste deroulante
+     */
+    function select_ecotaxes($selected='',$htmlname='ecotaxe_id')
+    {
+    	global $langs;
+    	
+    	$sql = "SELECT e.rowid, e.code, e.libelle, e.price, e.organization,";
+    	$sql.= " p.libelle as pays";
+    	$sql.= " FROM ".MAIN_DB_PREFIX."c_ecotaxe as e,".MAIN_DB_PREFIX."c_pays as p";
+      $sql.= " WHERE e.active = 1 AND e.fk_pays = p.rowid";
+      $sql.= " ORDER BY pays, e.organization ASC, e.code ASC";
+      
+      if ($this->db->query($sql))
+      {
+      	print '<select class="flat" name="'.$htmlname.'">';
+        $num = $this->db->num_rows();
+        $i = 0;
+        print '<option value="-1">&nbsp;</option>'."\n";
+        if ($num)
+        {
+          while ($i < $num)
+          {
+          	$obj = $this->db->fetch_object();
+            if ($selected && $selected == $obj->rowid)
+            {
+            	print '<option value="'.$obj->rowid.'" selected="true">';
+            }
+            else
+            {
+            	print '<option value="'.$obj->rowid.'">';
+            	//print '<option onmouseover="showtip(\''.$obj->libelle.'\')" onMouseout="hidetip()" value="'.$obj->rowid.'">';
+            }
+            $selectOptionValue = $obj->code.' : '.price($obj->price).' '.$langs->trans("HT").' ('.$obj->organization.')';
+            print $selectOptionValue;
+            print '</option>';
+            $i++;
+          }
+        }
+        print '</select>';
+        return 0;
+      }
+      else
+      {
+      	dolibarr_print_error($this->db);
+      	return 1;
+      }
     }
 	
 }
