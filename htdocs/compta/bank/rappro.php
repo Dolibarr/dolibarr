@@ -315,7 +315,7 @@ if ($resql)
                 print img_edit();
                 print '</a>&nbsp; ';
 
-                if ($objp->do <= mktime() ) {
+                if ($objp->do <= dolibarr_mktime() ) {
                     print '<a href="'.DOL_URL_ROOT.'/compta/bank/rappro.php?action=del&amp;rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
                     print img_delete();
                     print '</a>';

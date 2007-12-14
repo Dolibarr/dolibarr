@@ -58,7 +58,7 @@ $date_select=isset($_GET["date_select"])?$_GET["date_select"]:$_POST["date_selec
 // Cette fonction me semble pas utile. Si on a fait des adhesions alors que module banque
 // pas actif c'est qu'on voulait pas d'insertion en banque.
 // si on active apres coup, on va pas modifier toutes les adhesions pour avoir une ecriture
-// en banque mais on va mettre le solde banque direct a la valeur apres toutes les adhésions.
+// en banque mais on va mettre le solde banque direct a la valeur apres toutes les adhï¿½sions.
 $allowinsertbankafter=0;	
 
 if (! $user->rights->adherent->cotisation->lire)
@@ -70,7 +70,7 @@ if (! $user->rights->adherent->cotisation->lire)
 */
 
 // Insertion de la cotisation dans le compte banquaire
-if ($allowinsertbankafter && $user->rights->banque->modifier && $_POST["action"] == '2bank' && $_POST["rowid"] !='')
+if ($allowinsertbankafter && $_POST["action"] == '2bank' && $_POST["rowid"] !='')
 {
     if (defined("ADHERENT_BANK_USE") && $conf->global->ADHERENT_BANK_USE)
     {
@@ -83,7 +83,7 @@ if ($allowinsertbankafter && $user->rights->banque->modifier && $_POST["action"]
 			$msg='<div class="error">'.$langs->trans("ErrorFieldRequired",$langs->trans("OperationType")).'</div>';
 		}
 
-		// Créer un tiers + facture et enregistrer son paiement ? -> Non requis avec module compta expert
+		// Crï¿½er un tiers + facture et enregistrer son paiement ? -> Non requis avec module compta expert
 		// Eventuellement offrir option a la creation adhesion
 		
 		if (! $msg)
@@ -211,7 +211,7 @@ if ($result)
 
         $var=!$var;
 
-        if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
 			print "<form method=\"post\" action=\"cotisations.php\">";
 		}
@@ -251,7 +251,7 @@ if ($result)
             else
             {
 				print "<td>";
-                if ($allowinsertbankafter && $user->rights->banque->modifier && $objp->cotisation)
+                if ($allowinsertbankafter && $objp->cotisation)
 				{
 	                print '<input type="hidden" name="action" value="2bank">';
 	                print '<input type="hidden" name="rowid" value="'.$objp->crowid.'">';
@@ -279,7 +279,7 @@ if ($result)
 		print '<td align="right">'.price($objp->cotisation).'</td>';
 		
         print "</tr>";
-        if ($allowinsertbankafter && $user->rights->banque->modifier && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
+        if ($allowinsertbankafter && ! $objp->fk_account && $conf->banque->enabled && $conf->global->ADHERENT_BANK_USE && $objp->cotisation)
 		{
 			print "</form>\n";
 		}

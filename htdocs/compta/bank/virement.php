@@ -33,7 +33,7 @@ $langs->load("banks");
 
 $user->getrights('banque');
 
-if (!$user->rights->banque->modifier)
+if (! $user->rights->banque->transfer)
   accessforbidden();
 
 

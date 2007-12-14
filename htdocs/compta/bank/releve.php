@@ -22,7 +22,7 @@
 /**
 	    \file       htdocs/compta/bank/releve.php
         \ingroup    banque
-		\brief      Page d'affichage d'un relevé
+		\brief      Page d'affichage d'un relevï¿½
 		\version    $Revision$
 */
 
@@ -67,7 +67,7 @@ llxHeader();
 $html = new Form($db);
 
 
-// Récupère info du compte
+// Rï¿½cupï¿½re info du compte
 $acct = new Account($db);
 if ($_GET["account"]) 
 {
@@ -82,7 +82,7 @@ if ($_GET["ref"])
 if (! isset($_GET["num"]))
 {
 	/*
-	*	Vue liste tous relevés confondus
+	*	Vue liste tous relevï¿½s confondus
 	*/
 	$sql = "SELECT distinct(b.num_releve) as numr";
 	$sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
@@ -156,7 +156,7 @@ else
 	*/
 	if ($_GET["rel"] == 'prev')
 	{
-		// Recherche valeur pour num = numéro relevé précédent
+		// Recherche valeur pour num = numï¿½ro relevï¿½ prï¿½cï¿½dent
 		$sql = "SELECT distinct(num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE num_releve < ".$_GET["num"]." AND fk_account = ".$_GET["account"];
@@ -176,7 +176,7 @@ else
 	}
 	elseif ($_GET["rel"] == 'next')
 	{
-		// Recherche valeur pour num = numéro relevé précédent
+		// Recherche valeur pour num = numï¿½ro relevï¿½ prï¿½cï¿½dent
 		$sql = "SELECT distinct(num_releve) as num";
 		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
 		$sql.= " WHERE num_releve > ".$_GET["num"]." AND fk_account = ".$_GET["account"];
@@ -195,7 +195,7 @@ else
 		}
 	}
 	else {
-		// On veut le relevé num
+		// On veut le relevï¿½ num
 		$num=$_GET["num"];
 	}
 	$ve=$_GET["ve"];
@@ -222,7 +222,7 @@ else
 	print '<td>&nbsp;</td>';
 	print "</tr>\n";
 
-	// Calcul du solde de départ du relev
+	// Calcul du solde de dï¿½part du relev
 	$sql = "SELECT sum(amount) as amount FROM ".MAIN_DB_PREFIX."bank";
 	$sql.= " WHERE num_releve < ".$num." AND fk_account = ".$acct->id;
 	$resql=$db->query($sql);
@@ -233,7 +233,7 @@ else
 		$db->free($resql);
 	}
 
-	// Recherche les écritures pour le relev
+	// Recherche les ï¿½critures pour le relev
 	$sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do,".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type";
 	$sql .= " FROM ".MAIN_DB_PREFIX."bank as b";
 	$sql .= " WHERE num_releve='".$num."'";
@@ -251,7 +251,7 @@ else
 		$numrows = $db->num_rows($result);
 		$i = 0;
 
-		// Ligne Solde début releve
+		// Ligne Solde dï¿½but releve
 		print "<tr><td colspan=\"4\"><a href=\"releve.php?num=$num&amp;ve=1&amp;rel=$rel&amp;account=".$acct->id."\">&nbsp;</a></td>";
 		print "<td align=\"right\" colspan=\"2\"><b>".$langs->trans("InitialBankBalance")." :</b></td><td align=\"right\"><b>".price($total)."</b></td><td>&nbsp;</td></tr>\n";
 
@@ -281,7 +281,7 @@ else
 			// Libelle
 			print '<td valign="center"><a href="'.DOL_URL_ROOT.'/compta/bank/ligne.php?rowid='.$objp->rowid.'&amp;account='.$acct->id.'">';
 			$reg=array();
-			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entouré de parenthèe on tente recherche de traduction
+			eregi('\((.+)\)',$objp->label,$reg);	// Si texte entourï¿½ de parenthï¿½e on tente recherche de traduction
 			if ($reg[1] && $langs->trans($reg[1])!=$reg[1]) print $langs->trans($reg[1]);
 			else print $objp->label;
 			print '</a>';
@@ -354,7 +354,7 @@ else
 				}
 			}
 
-			// Catégories
+			// Catï¿½gories
 			if ($ve)
 			{
 				$sql = "SELECT label FROM ".MAIN_DB_PREFIX."bank_categ as ct, ".MAIN_DB_PREFIX."bank_class as cl";
@@ -393,7 +393,7 @@ else
 
 			print "<td align=\"right\" nowrap=\"nowrap\">".price($total)."</td>\n";
 
-			if ($user->rights->banque->modifier)
+			if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 			{
 				print "<td align=\"center\"><a href=\"ligne.php?rowid=$objp->rowid&amp;account=".$acct->id."\">";
 				print img_edit();

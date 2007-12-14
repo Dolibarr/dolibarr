@@ -93,7 +93,7 @@ class modBanque extends DolibarrModules
 
 	    $r++;
 	    $this->rights[$r][0] = 112; // id de la permission
-	    $this->rights[$r][1] = 'Créer/modifier/supprimer écriture bancaire'; // libelle de la permission
+	    $this->rights[$r][1] = 'Créer/modifier montant/supprimer écriture bancaire'; // libelle de la permission
 	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
 	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 	    $this->rights[$r][4] = 'modifier';
@@ -119,6 +119,14 @@ class modBanque extends DolibarrModules
 	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
 	    $this->rights[$r][4] = 'export';
 
+   	    $r++;
+	    $this->rights[$r][0] = 116; // id de la permission
+	    $this->rights[$r][1] = 'Virements entre comptes'; // libelle de la permission
+	    $this->rights[$r][2] = 'w'; // type de la permission (déprécié à ce jour)
+	    $this->rights[$r][3] = 0; // La permission est-elle une permission par défaut
+	    $this->rights[$r][4] = 'transfer';
+
+	    
 		
 		// Exports
         //--------

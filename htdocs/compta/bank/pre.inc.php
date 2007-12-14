@@ -75,9 +75,9 @@ function llxHeader($head = "")
 	// Obsolete. Replaced by page Rapport E/S 
 	// $menu->add_submenu(DOL_URL_ROOT."/compta/bank/bilan.php","Bilan",1,$user->rights->banque->lire);
 	
-	if ($user->rights->banque->modifier)
+	if ($user->rights->banque->transfer)
 	{
-		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->modifier);
+		$menu->add_submenu(DOL_URL_ROOT."/compta/bank/virement.php",$langs->trans("BankTransfers"),1,$user->rights->banque->transfer);
 	}
 	
 	if ($conf->global->COMPTA_ONLINE_PAYMENT_BPLC)

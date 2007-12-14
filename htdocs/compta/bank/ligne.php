@@ -24,7 +24,7 @@
 /**
    \file       htdocs/compta/bank/ligne.php
    \ingroup    compta
-   \brief      Page édition d'une écriture bancaire
+   \brief      Page ï¿½dition d'une ï¿½criture bancaire
    \version    $Revision$
 */
 
@@ -91,7 +91,7 @@ if ($_POST["action"] == "update")
     {
       $objp = $db->fetch_object($result);
       if ($objp->rappro)
-	die ("Vous ne pouvez pas modifier une écriture déjà rapprochée");
+	die ("Vous ne pouvez pas modifier une ï¿½criture dï¿½jï¿½ rapprochï¿½e");
     }
   
     $db->begin();
@@ -100,7 +100,7 @@ if ($_POST["action"] == "update")
     $dateop = $_POST["dateoyear"].'-'.$_POST["dateomonth"].'-'.$_POST["dateoday"];
     $dateval= $_POST["datevyear"].'-'.$_POST["datevmonth"].'-'.$_POST["datevday"];
     $sql = "UPDATE ".MAIN_DB_PREFIX."bank";
-    $sql.= " SET label='".addslashes($_POST["label"])."',"; // Todo: créer une classe pour séparer les requêtes sql
+    $sql.= " SET label='".addslashes($_POST["label"])."',"; // Todo: crï¿½er une classe pour sï¿½parer les requï¿½tes sql
     if (isset($_POST['amount'])) $sql.=" amount='$amount',";
     $sql.= " dateo = '".$dateop."', datev = '".$dateval."',";
     $sql.= " fk_account = ".$_POST['accountid'];
@@ -218,7 +218,7 @@ if ($result)
       // Confirmations
       if ($_GET["action"] == 'delete_categ')
         {
-	  $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,"Supprimer dans la catégorie","Etes-vous sûr de vouloir supprimer le classement dans la catégorie ?","confirm_delete_categ");
+	  $html->form_confirm("ligne.php?rowid=".$_GET["rowid"]."&amp;cat1=".$_GET["fk_categ"]."&amp;orig_account=".$orig_account,"Supprimer dans la catï¿½gorie","Etes-vous sï¿½r de vouloir supprimer le classement dans la catï¿½gorie ?","confirm_delete_categ");
 	  print '<br>';
         }
       
@@ -233,7 +233,7 @@ if ($result)
       
       $links=$acct->get_url($rowid);
       
-      // Tableau sur 4 colonne si déja rapproché, sinon sur 5 colonnes
+      // Tableau sur 4 colonne si dï¿½ja rapprochï¿½, sinon sur 5 colonnes
       
       // Author
       print '<tr><td width="20%">'.$langs->trans("Author")."</td>";
@@ -266,7 +266,7 @@ if ($result)
       
       // Date ope
       print '<tr><td>'.$langs->trans("DateOperation").'</td>';
-      if (! $objp->rappro && $user->rights->banque->modifier)
+      if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 	{
 	  print '<td colspan="3">';
 	  $html->select_date($objp->do,'dateo','','','','update');
@@ -281,7 +281,7 @@ if ($result)
       
       // Value date
       print "<tr><td>".$langs->trans("DateValue")."</td>";
-      if (! $objp->rappro && $user->rights->banque->modifier)
+      if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
         {
 	  print '<td colspan="3">';
 	  $html->select_date($objp->dv,'datev','','','','update');
@@ -301,13 +301,13 @@ if ($result)
       
       // Description
       print "<tr><td>".$langs->trans("Label")."</td>";
-      if (! $objp->rappro && $user->rights->banque->modifier)
+      if (! $objp->rappro && ($user->rights->banque->modifier || $user->rights->banque->consolidate))
 	{
 	  print '<td colspan="3">';
 	  print '<input name="label" class="flat" value="';
 	  if (eregi('^\((.*)\)$',$objp->label,$reg))
 	    {
-	      // Label générique car entre parenthèses. On l'affiche en le traduisant	
+	      // Label gï¿½nï¿½rique car entre parenthï¿½ses. On l'affiche en le traduisant	
 	      print $langs->trans($reg[1]);
 	    }
 	  else
@@ -323,7 +323,7 @@ if ($result)
 	  print '<td colspan="4">';
 	  if (eregi('^\((.*)\)$',$objp->label,$reg))
 	    {
-	      // Label générique car entre parenthèses. On l'affiche en le traduisant	
+	      // Label gï¿½nï¿½rique car entre parenthï¿½ses. On l'affiche en le traduisant	
 	      print $langs->trans($reg[1]);
 	    }
 	  else
@@ -411,7 +411,7 @@ if ($result)
       
       // Type paiement
       print "<tr><td>".$langs->trans("Type")." / ".$langs->trans("Numero")."</td><td colspan=\"3\">";
-      if ($user->rights->banque->modifier)
+      if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 	  {
 		  print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
 	      print '<input type="hidden" name="action" value="type">';
@@ -434,7 +434,7 @@ if ($result)
 	      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
 	      print '<input type="hidden" name="action" value="banque">';
 	      print "<input type=\"hidden\" name=\"orig_account\" value=\"".$orig_account."\">";
-	      print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : stripslashes($objp->banque)).'">';
+	      print '<input type="text" class="flat" size="40" name="banque" value="'.(empty($objp->banque) ? '' : $objp->banque).'">';
 	      print '</td><td align="center"><input type="submit" class="button" value="'.$langs->trans("Update").'">';
 	      print "</form>";
 		}
@@ -446,7 +446,7 @@ if ($result)
 
       // Emetteur
       print "<tr><td>".$langs->trans("CheckTransmitter")."</td><td colspan=\"3\">";
-      if ($user->rights->banque->modifier)
+      if ($user->rights->banque->modifier || $user->rights->banque->consolidate)
 	  {
 	      print "<form method=\"post\" action=\"ligne.php?rowid=$objp->rowid\">";
 	      print '<input type="hidden" name="action" value="emetteur">';
