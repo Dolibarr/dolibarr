@@ -288,6 +288,8 @@ Permission111=Read financial accounts
 Permission112=Create/modify/delete and compare transactions
 Permission113=Setup financiel accounts (create, manage categories)
 Permission114=Consolidate transactions
+Permission115=Exporte transactions et account statements
+Permission116=Transfers between acounts
 Permission121=Read companies
 Permission122=Create/modify companies
 Permission125=Delete companies
@@ -483,6 +485,7 @@ LimitsDesc=You can define here limits and precision used by Dolibarr
 MAIN_MAX_DECIMALS_UNIT=Max decimals for unit prices
 MAIN_MAX_DECIMALS_TOT=Max decimals for total prices
 MAIN_MAX_DECIMALS_SHOWN=Max decimals for prices shown on screen (Add <b>...</b> after this number if you want to see <b>...</b> when number is truncated when shown on screen)
+ParameterActiveForNextInputOnly=Parameter effective for next input only
 ##### Users setup #####
 UserGroupSetup=Users and groups module setup
 GeneratePassword=Suggest a generated password
