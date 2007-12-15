@@ -111,7 +111,7 @@ if (! file_exists(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php"))
 
 // on décode le mot de passe de la base si besoin
 require_once(DOL_DOCUMENT_ROOT ."/lib/functions.inc.php");
-if (isset($dolibarr_main_db_encrypted_pass) && $dolibarr_main_db_encrypted_pass) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
+if (! empty($dolibarr_main_db_encrypted_pass)) $dolibarr_main_db_pass = dolibarr_decode($dolibarr_main_db_encrypted_pass);
 
 require_once(DOL_DOCUMENT_ROOT."/conf/conf.class.php");
 
@@ -121,18 +121,18 @@ $conf->db->host   = $dolibarr_main_db_host;
 $conf->db->name   = $dolibarr_main_db_name;
 $conf->db->user   = $dolibarr_main_db_user;
 $conf->db->pass   = $dolibarr_main_db_pass;
-if (! isset($dolibarr_main_db_type) && ! $dolibarr_main_db_type) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
+if (empty($dolibarr_main_db_type)) $dolibarr_main_db_type='mysql';   // Pour compatibilite avec anciennes configs, si non defini, on prend 'mysql'
 $conf->db->type   = $dolibarr_main_db_type;
-if (! isset($dolibarr_main_db_character_set) && ! $dolibarr_main_db_character_set) $dolibarr_main_db_character_set='latin1'; 
+if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='latin1'; 
 $conf->db->character_set=$dolibarr_main_db_character_set;
-if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_main_db_prefix='llx_'; 
+if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_'; 
 $conf->db->prefix = $dolibarr_main_db_prefix;
-if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
+if (empty($collation_connection)) $collation_connection='latin1_swedish_ci';
 $conf->db->collation_connection=$collation_connection;
 // Identifiant autres
 $conf->main_authentication = $dolibarr_main_authentication;
 // Identifiant propre au client
-if (! isset($character_set_client) || ! $character_set_client) $character_set_client='ISO-8859-1';
+if (empty($character_set_client)) $character_set_client='ISO-8859-1';
 $conf->character_set_client=$character_set_client;
 
 // Defini prefix
