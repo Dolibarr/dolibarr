@@ -32,9 +32,9 @@ require_once(DOL_DOCUMENT_ROOT."/fichinter/fichinter.class.php");
 require_once(DOL_DOCUMENT_ROOT."/includes/modules/fichinter/modules_fichinter.php");
 require_once(DOL_DOCUMENT_ROOT."/lib/fichinter.lib.php");
 if ($conf->projet->enabled) require_once(DOL_DOCUMENT_ROOT."/project.class.php");
-if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php"))
+if (defined("FICHEINTER_ADDON") && is_readable(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php"))
 {
-	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/".FICHEINTER_ADDON.".php");
+	require_once(DOL_DOCUMENT_ROOT ."/includes/modules/fichinter/mod_".FICHEINTER_ADDON.".php");
 }
 
 $langs->load("companies");
@@ -369,7 +369,7 @@ if ($_GET["action"] == 'create')
 	$result=$ficheinter->fetch($fichinterid);
 
 	$obj = $conf->global->FICHEINTER_ADDON;
-	$file = $obj.".php";
+	$obj = "mod_".$obj;
 
 	$modFicheinter = new $obj;
 	$numpr = $modFicheinter->getNextValue($societe,$ficheinter);

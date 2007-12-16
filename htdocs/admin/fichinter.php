@@ -176,6 +176,7 @@ if ($handle)
         if (eregi('^(mod_.*)\.php$',$file,$reg))
         {
             $file = $reg[1];
+            $className = substr($file,4);
 
             require_once($dir.$file.".php");
 
@@ -190,13 +191,13 @@ if ($handle)
             print '<td nowrap="nowrap">'.$module->getExample()."</td>\n";
 
             print '<td align="center">';
-            if ($conf->global->FICHEINTER_ADDON == $file)
+            if ($conf->global->FICHEINTER_ADDON == $className)
             {
                 print img_tick($langs->trans("Activated"));
             }
             else
             {
-                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$file.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
+                print '<a href="'.$_SERVER["PHP_SELF"].'?action=setmod&amp;value='.$className.'" alt="'.$langs->trans("Default").'">'.$langs->trans("Default").'</a>';
             }
             print '</td>';
 
