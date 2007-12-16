@@ -53,5 +53,5 @@ $a->setShowLogin (false);
 $a->start();
 if ($a->getAuth()) $a->logout();
 
-header("Location: ../index.php");
+header("Location: ".DOL_URL_ROOT."/index.php");
 ?>
