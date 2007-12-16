@@ -262,7 +262,6 @@ function loadXMLDoc(url,readyStateFunction,async)
 		if (req.overrideMimeType) {
       req.overrideMimeType('text/xml');
     }
-		req.onreadystatechange = readyStateFunction;
 		req.open("GET", url, async);
 		req.send(null);
 	// branch for IE/Windows ActiveX version
