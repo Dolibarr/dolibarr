@@ -108,6 +108,8 @@ insert into llx_const (name, value, type, note, visible) values ('MAIN_DELAY_TRA
 -- Tiers
 --
 insert into llx_const(name,value,type,visible,note) values('SOCIETE_NOLIST_COURRIER','1','yesno',0,'Liste les fichiers du repertoire courrier');
+insert into llx_const(name,value,type,visible,note) values('SOCIETE_CODECLIENT_ADDON','mod_codeclient_leopard','yesno',0,'Module to control third parties codes');
+insert into llx_const(name,value,type,visible,note) values('SOCIETE_CODECOMPTA_ADDON','mod_codecompta_panicum','yesno',0,'Module to control third parties codes');
 
 
 --
