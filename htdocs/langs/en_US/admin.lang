@@ -40,6 +40,7 @@ UseAvToScanUploadedFiles=Use anti-virus to scan uploaded files
 ComptaSetup=Accounting module setup
 UserSetup=Users' management setup
 MenuSetup=Menus management setup
+MenuLimits=Limits and accuracy
 NotConfigured=Not configured
 Setup=Setup
 Activation=Activation

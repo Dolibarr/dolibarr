@@ -40,6 +40,7 @@ UseAvToScanUploadedFiles=Utilisation d'un anti-virus pour scanner les fichiers u
 ComptaSetup=Configuration du module Comptabilité
 UserSetup=Configuration gestion des utilisateurs
 MenuSetup=Administration des menus par base de données
+MenuLimits=Limites et précision
 NotConfigured=Non configuré
 Setup=Configuration
 Activation=Activation
