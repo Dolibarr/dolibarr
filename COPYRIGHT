@@ -18,7 +18,7 @@ Php-barcode       0.3pl1   GPL 2.0                  Oui              Bar code ge
 Pibarcode         2.05     Perso (ask mail)         Non!             Bar code generation
 Cryptographp      1.4      CeCILL V2                Oui              Captcha generator
 FCKEditor         2.4.4    GPL 2.0                  Oui              Editor WYSIWYG
-FPDF              1.53     Pas clair (freeware)     Non!             PDF generation
+FPDF              1.53     Pas clair (freeware)     Non!             PDF generation (le code d'origine a été modifié et complété)
 FPDI              1.2      Apache License 2.0       Non GPL3 uniqmt  PDF encryption
 MagPieRss         0.72     GPL 2.0                  Oui              Load RSS
 NuSoap            0.6.5    LGPL 2.1                 Oui              Interfaces with third tools
