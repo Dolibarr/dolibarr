@@ -475,13 +475,13 @@ if (! isset($_SESSION["dol_login"]))
 		// Extract domain from url (Useless because only cookie on same domain are authorized by browser
 		//if (eregi('^(https:[\\\/]+[^\\\/]+)',$conf->global->PHPWEBCALENDAR_URL,$reg)) $domain=$reg[1];
 
-		// Cr�ation du cookie permettant de sauver le login
+		// Creation du cookie permettant de sauver le login
 		$cookiename='webcalendar_login';
 		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
 		{
 			setcookie($cookiename, $user->webcal_login, 0, "/", $domain, 0);
 		}
-		// Cr�ation du cookie permettant de sauver la session
+		// Creation du cookie permettant de sauver la session
 		$cookiename='webcalendar_session';
 		if (! isset($HTTP_COOKIE_VARS[$cookiename]))
 		{
@@ -524,7 +524,7 @@ if (isset($user->conf->PRODUIT_LIMIT_SIZE))
 {
     $conf->produit->limit_size = $user->conf->PRODUIT_LIMIT_SIZE;
 }
-if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
+if (! empty($user->conf->MAIN_LANG_DEFAULT))
 {
     if ($langs->getDefaultLang() != $user->conf->MAIN_LANG_DEFAULT)
     {
@@ -533,6 +533,13 @@ if (isset($user->conf->MAIN_LANG_DEFAULT) && $user->conf->MAIN_LANG_DEFAULT)
         $langs->setPhpLang($user->conf->MAIN_LANG_DEFAULT);
     }
 }
+// Cas de forcage de la langue
+if (! empty($_GET["lang"]))
+{
+    $langs->setDefaultLang($_GET["lang"]);
+    $langs->setPhpLang($_GET["lang"]);
+}
+
 
 // Remplace conf->css par valeur personnalise
 if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
@@ -541,7 +548,7 @@ if (isset($user->conf->MAIN_THEME) && $user->conf->MAIN_THEME)
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
 }
 // Cas de forcage du style depuis url
-if (isset($_GET["theme"]) && $_GET["theme"])
+if (! empty($_GET["theme"]))
 {
     $conf->theme=$_GET["theme"];
     $conf->css  = "theme/".$conf->theme."/".$conf->theme.".css";
