@@ -262,10 +262,6 @@ function loadXMLDoc(url,readyStateFunction,async)
 		if (req.overrideMimeType) {
       req.overrideMimeType('text/xml');
     }
-    if (!req) {
-      alert('Cannot create XMLHTTP instance');
-      return false;
-    }
 		req.onreadystatechange = readyStateFunction;
 		req.open("GET", url, async);
 		req.send(null);
@@ -277,6 +273,10 @@ function loadXMLDoc(url,readyStateFunction,async)
 			req.open("GET", url, async);
 			req.send();
 		}
+		else {
+      alert('Cannot create XMLHTTP instance');
+      return false;
+    }
 	}
 }
 
