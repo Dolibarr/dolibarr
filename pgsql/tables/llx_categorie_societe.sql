@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_compta.sql,v 1.4 2004/10/09 10:47:16 opensides Exp 
+-- Id: llx_categorie_societe.sql,v 1.5 2007/12/03 00:13:25 eldy Exp 
 -- ============================================================================
 
 create table llx_categorie_societe

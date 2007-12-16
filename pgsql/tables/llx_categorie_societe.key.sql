@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_compta.sql,v 1.4 2004/10/09 10:47:16 opensides Exp 
+-- Id: llx_categorie_societe.key.sql,v 1.13 2007/12/03 00:13:10 eldy Exp 
 -- ============================================================================
 
 ALTER TABLE llx_categorie_societe ADD PRIMARY KEY (fk_categorie, fk_societe);

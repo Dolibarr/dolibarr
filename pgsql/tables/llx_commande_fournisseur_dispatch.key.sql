@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_commande_fournisseur_dispatch.key.sql,v 1.2 2007/12/02 22:03:23 eldy Exp 
+-- Id: llx_commande_fournisseur_dispatch.key.sql,v 1.3 2007/12/11 01:33:54 eldy Exp 
 -- ===================================================================
 
-ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX (fk_commande);
+ALTER TABLE llx_commande_fournisseur_dispatch ADD INDEX idx_commande_fournisseur_dispatch_fk_commande (fk_commande);

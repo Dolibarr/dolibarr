@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_droitpret_rapport.sql,v 1.2 2007/02/27 09:40:31 patrickrgn Exp 
+-- Id: llx_droitpret_rapport.sql,v 1.5 2007/12/03 00:13:56 eldy Exp 
 -- ========================================================================
 
 

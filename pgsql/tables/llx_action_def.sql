@@ -21,7 +21,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_action_def.sql,v 1.7 2007/12/02 21:51:12 eldy Exp 
+-- Id: llx_action_def.sql,v 1.8 2007/12/04 19:01:38 eldy Exp 
 -- ===================================================================
 
 create table llx_action_def
@@ -31,5 +31,5 @@ create table llx_action_def
   "tms"             timestamp,
   "titre"           varchar(255) NOT NULL,
   "description"     text,
-  "objet_type" varchar(10) CHECK (objet_type IN ('ficheinter','facture','propale','mailing')) 
+  "objet_type"      varchar(16) NOT NULL
 );

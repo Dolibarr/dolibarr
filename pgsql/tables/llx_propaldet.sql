@@ -19,7 +19,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_propaldet.sql,v 1.18 2007/12/02 21:37:46 eldy Exp 
+-- Id: llx_propaldet.sql,v 1.19 2007/12/12 16:36:00 hregis Exp 
 -- ===================================================================
 
 create table llx_propaldet
@@ -51,4 +51,5 @@ create table llx_propaldet
 --
 -- 1 : frais de port
 -- 2 : ecotaxe
+-- 3 : option
 --

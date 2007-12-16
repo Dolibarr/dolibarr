@@ -20,7 +20,7 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_paiement.sql,v 1.13 2007/12/02 21:37:41 eldy Exp 
+-- Id: llx_paiement.sql,v 1.15 2007/12/07 21:27:26 hregis Exp 
 -- ===================================================================
 
 

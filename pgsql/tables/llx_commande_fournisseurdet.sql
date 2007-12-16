@@ -20,14 +20,14 @@
 -- along with this program; if not, write to the Free Software
 -- Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
 --
--- Id: llx_commande_fournisseurdet.sql,v 1.8 2007/12/02 22:03:23 eldy Exp 
+-- Id: llx_commande_fournisseurdet.sql,v 1.9 2007/12/14 19:44:05 hregis Exp 
 -- ===================================================================
 
 create table llx_commande_fournisseurdet
 (
   rowid SERIAL PRIMARY KEY,
   "fk_commande"                integer      NOT NULL,
-  "fk_product"                 integer      NOT NULL,
+  "fk_product"                 integer,
   "ref"                        varchar(50),
   "label"                      varchar(255),
   "description"                text,
