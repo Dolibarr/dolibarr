@@ -2144,8 +2144,12 @@ else
 						print '</td><td align="right">'.price($fac->total_ttc - $totalpaye).'</td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 						$resteapayeraffiche=0;
 					}
-					print '<tr><td colspan="2" align="right">'.$langs->trans('RemainderToPay').' :</td>';
-					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td><td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
+					print '<tr><td colspan="2" align="right">';
+					if ($resteapayeraffiche >= 0) print $langs->trans('RemainderToPay');
+					else print $langs->trans('ExcessReceived');
+					print ' :</td>';
+					print '<td align="right" style="border: 1px solid;" bgcolor="#f0f0f0"><b>'.price($resteapayeraffiche).'</b></td>';
+					print '<td>'.$langs->trans('Currency'.$conf->monnaie).'</td></tr>';
 				}
 				else
 				{
