@@ -115,10 +115,13 @@ if (($_POST['action'] == 'confirm_deleteproductline' && $_POST['confirm'] == 'ye
 				$outputlangs = new Translate(DOL_DOCUMENT_ROOT ."/langs",$conf);
 				$outputlangs->setDefaultLang($_REQUEST['lang_id']);
 			}
-			facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
-
-			Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
-			exit;
+			
+			$result=facture_pdf_create($db, $fac->id, '', $fac->modelpdf, $outputlangs);
+			if ($result > 0)
+			{
+				Header('Location: '.$_SERVER["PHP_SELF"].'?facid='.$_GET['facid']);
+				exit;
+			}
 		}
 		else
 		{
@@ -1145,6 +1148,8 @@ if ($_REQUEST['action'] == 'builddoc')	// En get ou en post
     	Header ('Location: '.$_SERVER["PHP_SELF"].'?facid='.$fac->id.'#builddoc');
     }
 }
+
+
 
 llxHeader('',$langs->trans('Bill'),'HelpInvoice');
 
