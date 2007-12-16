@@ -2109,9 +2109,9 @@ else
 					{
 						dolibarr_print_error($db);
 					}
-										
+							
 					// Payé partiellement 'escompte'
-					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'escompte')
+					if (($fac->statut == 2 || $fac->statut == 3) && $fac->close_code == 'discount_vat')
 					{
 						print '<tr><td colspan="2" align="right" nowrap="1">';
 						print $html->textwithhelp($langs->trans("Escompte").':',$langs->trans("HelpEscompte"),-1);
