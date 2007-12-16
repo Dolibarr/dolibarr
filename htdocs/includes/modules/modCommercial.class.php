@@ -67,7 +67,7 @@ class modCommercial extends DolibarrModules
         
         // Dépendances
         $this->depends = array("modSociete");
-        $this->requiredby = array("modPropale","modContrat","modCommande",);
+        $this->requiredby = array("modPropale","modContrat","modCommande","modFicheinter");
         
         // Constantes
         $this->const = array();

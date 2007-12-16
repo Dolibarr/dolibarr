@@ -71,7 +71,7 @@ class modFicheinter  extends DolibarrModules
     $this->config_page_url = array("fichinter.php");
 
     // Dépendances
-    $this->depends = array("modSociete");
+    $this->depends = array("modSociete","modCommercial");
     $this->requiredby = array();
 
     // Constantes
