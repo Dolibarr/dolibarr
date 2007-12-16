@@ -262,8 +262,14 @@ function loadXMLDoc(url,readyStateFunction,async)
 		if (req.overrideMimeType) {
       req.overrideMimeType('text/xml');
     }
-		req.open("GET", url, async);
-		req.send(null);
+    if (req) {
+    	if(readyStateFunction) req.onreadystatechange = readyStateFunction;
+    	req.open("GET", url, async);
+    	req.send(null);
+    } else {
+    	alert('Cannot create XMLHTTP instance');
+      return false;
+    }
 	// branch for IE/Windows ActiveX version
 	} else if (window.ActiveXObject) {
 		req = new ActiveXObject("Microsoft.XMLHTTP");
@@ -271,8 +277,7 @@ function loadXMLDoc(url,readyStateFunction,async)
 			if(readyStateFunction) req.onreadystatechange = readyStateFunction;
 			req.open("GET", url, async);
 			req.send();
-		}
-		else {
+		}	else {
       alert('Cannot create XMLHTTP instance');
       return false;
     }
