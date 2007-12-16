@@ -5,7 +5,7 @@ Building packages
 
 All sub-directories of "build" directory contains files required to build
 automatically Dolibarr packages.
-There are serval tools:
+There are several tools:
 
 - To build full Dolibarr packages, launch the script
 > perl makepack-dolibarr.pl
