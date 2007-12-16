@@ -682,13 +682,14 @@ class User extends CommonObject
    */
 	function create($user='',$notrigger=0)
 	{
-		global $conf,$langs;
+		global $conf;
 		
 		// Nettoyage parametres
 		$this->login = trim($this->login);
 		
-		dolibarr_syslog("User::Create login=".$this->login.", user=".$user->id);
+		dolibarr_syslog("User::Create login=".$this->login.", user=".(is_object($user)?$user->id:''));
 		
+		$error=0;
 		$this->db->begin();
 		
 		$sql = "SELECT login FROM ".MAIN_DB_PREFIX."user";
@@ -701,7 +702,7 @@ class User extends CommonObject
 			
 			if ($num)
 			{
-				$this->error = $langs->trans("ErrorLoginAlreadyExists");
+				$this->error = 'ErrorLoginAlreadyExists';
 				return -6;
 			}
 			else
@@ -731,7 +732,7 @@ class User extends CommonObject
 						return -4;
 					}
 
-					if ($conf->global->STOCK_USERSTOCK == 1 && $conf->global->STOCK_USERSTOCK_AUTOCREATE == 1)
+					if (! empty($conf->global->STOCK_USERSTOCK) && ! empty($conf->global->STOCK_USERSTOCK_AUTOCREATE))
 					{
 						require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 						$entrepot = new Entrepot($this->db);

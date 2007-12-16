@@ -114,6 +114,7 @@ if ($_POST["action"] == 'confirm_delete' && $_POST["confirm"] == "yes")
         $result = $edituser->delete();
         if ($result < 0)
         {
+			$langs->load("errors");
         	$message='<div class="error">'.$langs->trans("UserCannotBeDelete").'</div>';
         }
         else

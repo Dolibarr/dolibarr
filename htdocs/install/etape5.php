@@ -99,24 +99,30 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
         {
 			$conf->setValues($db);
 
-            $sql = "INSERT INTO llx_user(datec,login,pass,admin,name) VALUES (now()";
-            $sql.= ",'".$_POST["login"]."'";
-            $sql.= ",'".($conf->password_encrypted?md5($_POST["pass"]):$_POST["pass"])."'";
-            $sql.= ",1,'Administrateur')";
-	    	//print "sql=".$sql." ".mysql_errno($db->db);
+			// Create user
+			include_once(DOL_DOCUMENT_ROOT ."/user.class.php");
 
-			dolibarr_install_syslog('install/etape5.php sql='.$sql, LOG_INFO);
-	        $resql=$db->query($sql);
-	        if ($resql)
+			$createuser=new User($db);
+			$createuser->id=0;
+			
+			$newuser = new User($db);
+			$newuser->nom='Admin';
+			$newuser->prenom='';
+			$newuser->login=$_POST["login"];
+			$newuser->pass=$_POST["pass"];
+			$newuser->admin=1;
+
+			$result=$newuser->create($createuser,1);
+	        if ($result > 0)
 	        {
 	            print $langs->trans("AdminLoginCreatedSuccessfuly",$_POST["login"])."<br>";
 	            $success = 1;
 	        }
 	        else
 	        {
-	            if ($db->errno() == 'DB_ERROR_RECORD_ALREADY_EXISTS')
+	            if ($newuser->error == 'ErrorLoginAlreadyExists')
 	            {
-					dolibarr_install_syslog('install/etape5.php DB_ERROR_RECORD_ALREADY_EXISTS', LOG_WARNING);
+					dolibarr_install_syslog('install/etape5.php ErrorLoginAlreadyExists', LOG_WARNING);
 	                print '<br><div class="warning">'.$langs->trans("AdminLoginAlreadyExists",$_POST["login"])."</div><br>";
 	                $success = 1;
 	            }
