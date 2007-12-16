@@ -101,18 +101,18 @@ class InterfaceFraisport
   {
     if ($action == 'LINEORDER_INSERT')
       {
-	return $this->_add_line_haulier($action,$object,$user,$langs,$conf);
+	return $this->_add_line_carrier($action,$object,$user,$langs,$conf);
       }
     if ($action == 'LINEORDER_DELETE')
       {
-	return $this->_add_line_haulier($action,$object,$user,$langs,$conf);
+	return $this->_add_line_carrier($action,$object,$user,$langs,$conf);
       }
     // Renvoi 0 car aucune action de faite
     return 0;
   }
 
 
-  function _add_line_haulier($action,$object,$user,$langs,$conf)
+  function _add_line_carrier($action,$object,$user,$langs,$conf)
   {
     // Ajoute une ligne de frais de port automatiquement
     // 
