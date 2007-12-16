@@ -109,8 +109,6 @@ delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 delete from llx_const where name='MAIN_ENABLE_DEVELOPMENT';
 DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
 DELETE FROM llx_const WHERE name like 'FICHINTER_ADDON%';
-insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON',    'pacific','chaine',0);
-insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine',0);
 
 INSERT INTO llx_const(name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
 insert into llx_const(name, value, type, visible, note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
