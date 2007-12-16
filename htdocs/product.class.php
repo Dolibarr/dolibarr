@@ -209,8 +209,8 @@ class Product extends CommonObject
 					if ($this->libelle) $sql.= "'".addslashes($this->libelle)."', ";
 					$sql.= $user->id.",";
 					$sql.= " ".$this->type.",";
-					$sql.= ($price_ht?price2num($price_ht):"null").",";
-					$sql.= ($price_ttc?price2num($price_ttc):"null").",";
+					$sql.= $price_ht.",";
+					$sql.= $price_ttc.",";
 					$sql.= "'".$this->price_base_type."',";
 					$sql.= "'".$this->canvas."')";
 					

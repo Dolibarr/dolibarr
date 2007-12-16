@@ -1166,3 +1166,7 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_product integer;
+
+-- Le prix d'un produit ne doit pas avoir la valeur NULL
+UPDATE llx_product SET price = 0 WHERE price is NULL;
+UPDATE llx_product SET price_ttc = 0 WHERE price_ttc is NULL;
