@@ -3,7 +3,7 @@
   <page>
     <title>Accueil</title>
     <revision>
-      <timestamp>2007-11-19T12:08:24Z</timestamp>
+      <timestamp>2007-11-25T20:06:24Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Utilisateurs */</comment>
       <text>[http://www.dolibarr.fr Le site officiel francophone Dolibarr]
@@ -20,8 +20,8 @@ Prochaines versions [[Roadmap|ici]]
 == Utilisateurs ==
 * [[Documentation utilisateur|Documentation Utilisateur]]
 * [[FAQ_Utilisateur|FAQ Utilisateur]]
-* [http://demo.dolibarr.fr/ Demo Dolibarr 2.2cvs]
-* [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum Dolibarr]
+* [http://demo.dolibarr.fr/ Demo CVS]
+* [http://www.dolibarr.fr/component/option,com_fireboard/Itemid,32/ Forum]
 
 == Développeurs ==
 * [[Documentation Développeur]]
@@ -838,13 +838,14 @@ A compléter</text>
   <page>
     <title>Ce que ne fait pas Dolibarr</title>
     <revision>
-      <timestamp>2007-09-10T16:49:39Z</timestamp>
+      <timestamp>2007-12-13T14:49:34Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <text>Ces fonctionalités ne sont pas disponibles en version 2.2
 
 * &quot;TVA NPR&quot; (TVA &quot;Non Perçue Récupérable&quot;).
 * Pas de compta (uniquement gestion de trésorerie).
 * Dolibarr ne gère qu'une seule monnaie.
+* Ne gère pas la double tva (Fédérale / provinciale) du canada.
 * Dolibarr ne fait pas le café (pas encore).</text>
     </revision>
   </page>
@@ -1309,9 +1310,9 @@ Voici quelques règles à suivre dans la réalisation d'un module
   <page>
     <title>Developpement script</title>
     <revision>
-      <timestamp>2007-11-19T21:27:10Z</timestamp>
-      <contributor><username>Eldy</username></contributor>
-      <comment>/* Etape 2 */</comment>
+      <timestamp>2007-11-21T10:24:19Z</timestamp>
+      <contributor><username>Grandoc</username></contributor>
+      <comment>/* Exemple insertion d'un produit */</comment>
       <text>== Localisation ==
 Les scripts en ligne de commande de Dolibarr doivent etre situés dans le répertoire '''scripts''' de Dolibarr. Les scripts sont ensuite répartis dans des sous-répertoire en fonction de leur vocation.
 Un certain nombre de scripts est donc fourni en standard.
@@ -1327,7 +1328,7 @@ Une fois le script renommé, donnez lui les droits en exécution par la commande
 cd scripts/monrep;
 chmod a+rx monscript.php
 &lt;/pre&gt;
-Ensuite, lancez le pour voir s'il vous pouvez executer un script en mode ligne de commande. Pour cela, taper:
+Ensuite, lancez le pour voir si vous pouvez exécuter un script en mode ligne de commande. Pour cela, taper:
 &lt;pre&gt;php-cli ./monscript.php
 ou
 php ./monscript.php&lt;/pre&gt;
@@ -1345,18 +1346,18 @@ et
 est fourni à titre d'exemple.
 Vous pouvez le supprimer et y mettre le code qui vous intéresse.
 Notez que dans cette portion, vous pouvez utiliser la variable $db qui est la ressource d'accès à la base Dolibarr et qui est déjà initialisée.
-L'obet $conf qui contient la configuration Dolibarr est également disponible.
+L'objet $conf qui contient la configuration Dolibarr est également disponible.
 
 ==== Exemple insertion d'un produit ====
 Par exemple pour insérer un produit dans la base dolibarr, vous pouvez y placer le code suivant:
 &lt;pre&gt;
-// Inclusion classe metier product
+// Inclusion classe métier product
 require_once(DOL_DOCUMENT_ROOT.&quot;/product.class.php&quot;);
 
-// Creation d'une instance de product
+// Création d'une instance de product
 $myproduct=new Product($db);
 
-// Definition des proprietes de l'instance product
+// Définition des propriétés de l'instance product
 $product-&gt;ref                = '1234'
 $product-&gt;libelle            = 'libelle';
 $product-&gt;price              = '10';
@@ -1367,7 +1368,7 @@ $product-&gt;status             = 1;
 $product-&gt;description        = 'Description';
 $product-&gt;note               = 'Note';
 
-// Creation du produit en base
+// Création du produit en base
 $idproduct = $product-&gt;create('');
 
 // Gestion erreur
@@ -1541,8 +1542,9 @@ Plus de documentation au sujet de la génération des modèles elle-même est di
   <page>
     <title>Documentation Développeur</title>
     <revision>
-      <timestamp>2007-11-19T12:10:56Z</timestamp>
+      <timestamp>2007-11-22T17:02:02Z</timestamp>
       <contributor><username>Eldy</username></contributor>
+      <comment>/* Interfaces et liens avec d'autres applications */</comment>
       <text>== Général ==
 # [[Outils et principe]]
 # [[Langages|Langage et normes de développement]]
@@ -1594,7 +1596,7 @@ Pour développer un script d'import de données issus d'un autre système: [[Dev
 Voir la page [[Document générés]]
 
 == Interfaces et liens avec d'autres applications ==
-# [[Interfaces Dolibarr vers exterieur]]
+# [[Interfaces Dolibarr vers exterieur]] (Triggers Dolibarr)
 # [[Interfaces Exterieur vers Dolibarr]]
 # [[Imports de masse]]
 
@@ -2250,7 +2252,7 @@ D'autres sont recensées ici. N'hésitez pas à compléter.
   <page>
     <title>Facturation</title>
     <revision>
-      <timestamp>2007-09-13T19:22:03Z</timestamp>
+      <timestamp>2007-12-16T19:49:41Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <comment>/* Cas d'utilisations */</comment>
       <text>{{Navigation documentation}}
@@ -2328,98 +2330,143 @@ Voir la page [[Exports]] pour plus d'informations.
 
 '''UCIN00: Erreur sur le contenu de la facture corrigée par facture remplacement'''
 
+'''Situation''':
 Je crée une facture.
 Je valide.
 Je me rend compte de l'erreur après validation.
+
+'''Actions correctives''':
 Je classe la facture abandonnée pour motif 'autre' (opération non obligatoire car automatique avec étape suivante).
 Je crée une nouvelle facture en choisissant '''facture de remplacement''' et en selectionnant la facture remplacée comme facture.
 
 
 '''UCIN00b: Erreur sur le client détecté avant envoi facture'''
 
+'''Situation''':
 Je crée une facture.
 Je valide.
 Je me rend compte que la facture a été crée sur le mauvais client.
-Je classe la facture abandonnée pour motif 'autre' (opération non obligatoire car automatique avec étape suivante).
+
+'''Actions correctives''':
+Je classe la facture abandonnée pour motif 'autre' et je renseigne le motif &quot;Erreur saisi sur mauvais client&quot;.
 Je crée une nouvelle facture sur le bon client.
 
 
 '''UCIN00c: Erreur sur le libellé client détecté après paiement'''
 
+'''Situation''':
 Je crée une facture sur le client de libellé X.
 Je valide.
 Je saisi les paiements.
 Je classe la facture payée.
 Je me rend compte que la facture a été crée sur le mauvais client et le client me demande une contrefacture sur l'ancien nom X et une nouvelle sur le nouveau nom Y.
+
+'''Actions correctives''':
 Je crée un avoir sur la facture en erreur avec toutes les lignes en inverse.
 Je transforme l'avoir en réduction. L'avoir se retrouve ainsi &quot;traité&quot;.
-Je corrige le libelle client X par Y.
-Je crée la nouvelle facture sur le nouveau client Y en incluant toutes les lignes
-ainsi que la réduction issue de l'avoir. Le total est alors à 0 (aucun du) et je valide ainsi.
-Je peux classer la facture à payée sans saisir de réglement (le client a déjà payé).
+J'édite la fiche client pour corriger le libellé client X par Y.
+Je crée la nouvelle facture sur le nouveau client Y en incluant toutes les lignes.
+Je la valide.
+J'inclut le paiement issue de l'avoir.
+Le solde passe alors à 0 (aucun du).
+Je peux classer la facture à '''Payée''' sans saisir d'autres réglements (le client a déjà payé).
 
 
 '''UCIN01: Facturation et paiement intégral'''
 
+'''Situation''':
 Je crée une facture.
-Je reçois l'intégralité des paiements. Je les saisis et le solde devient à 0.
-Je clos la facture à l'état '''Payé'''.
+Je reçois l'intégralité des paiements.
+
+'''Actions''':
+Je saisis tous les paiement sur la facture. Le solde devient à 0.
+Je peux classer la facture à '''Payée'''.
+
 
 
 '''UCIN02: Facturation et paiement supérieur reçu'''
 
+'''Situation''':
 Je crée une facture.
-Je reçois un paiement supérieur au montant réclamé. Je saisi le montant reçu.
+Je reçois un paiement supérieur au montant réclamé.
+
+'''Actions correctives''':
+Je saisi le montant reçu.
 Je clos la facture à l'état '''Payé'''.
 Je crée un avoir du trop perçu.
 
 
 '''UCIN03: Facturation et paiement intégral puis produit retourné'''
 
+'''Situation''':
 Je crée une facture.
 Je reçois l'intégralité des paiements. Je les saisis et le solde devient 0.
 Je clos la facture à l'état '''Payé'''.
-Plus tard, je reçois un retour de produit suite à rétractation légale. Je saisi un avoir sur cette facture.
+Plus tard, je reçois un retour de produit suite à rétractation légale.
+
+'''Actions correctives''':
+Je saisi un avoir sur cette facture.
 Cet avoir peut etre converti en réduction pour la prochaine facture ou rembourser en monétaire.
 
 
 '''UCIN04: Facturation et paiement partiel car anticipé (escompte)'''
 
+'''Situation''':
 Je crée une facture.
-Je reçois un paiement du montant de la facture moins un escompte accordé pour paiement anticipé. Je saisi le paiment reçu.
-Je classe la facture à '''Payé partiellement''' et renseigne le motif '''Escompte'''.
+Je reçois un paiement du montant de la facture moins un escompte accordé pour paiement anticipé.
 
-
-'''UCIN05: Facturation et paiement partiel car mauvais payeur'''
-
-Je crée une facture.
-Je reçois un paiement partiel, je le saisi.
-Après une longue attente, la suite des paiements n'est pas reçue. J'abandonne tout espoir et je classe la facture à l'état '''Payé partiellement''' et renseigne le motif '''Mauvais payeur'''.
+'''Actions''':
+Je saisi le paiment reçu de la valeur reçue.
+Je classe la facture à '''Payé partiellement''' et renseigne le motif &quot;Le manque est un '''Escompte'''&quot;.
 
 
 '''UCIN06: Facturation et paiement partiel car retour produit ou attente correction anomalie'''
 
+'''Situation''':
 Je crée une facture.
 Je reçois un paiement partiel, je le saisi.
 Je reçois un retour d'une partie des produits (retractation du client).
 Le client attend un avoir pour payer la fin de la facture.
-Je saisie un avoir sur la facture au statut &quot;Réglement commencé&quot;
---&gt; TODO: Ce cas est à gérer. Quand l'avoir est fait sur une facture à ce statut, il faut mettre un message disant &quot;Attention, ne crée un avoir sur une facture en cours de paiement que si le client a cessé le paiement et attend cette avoir pour poursuivre la suite&quot;.
-Ensuite il faut vérifier que le montant de l'avoir est inférieur au montant de la facture auquel il s'applique - montant deja reçu. Sinon, refuser création avoir. Ensuite, à la création de l'avoir, ce dernier doit automatiquement etre convertie en réduction qui doit automatiquement etre appliquée sur la facture. Ceci a pour effet de mettre à jour la facture initiale avec une info indiquant que la facture a été corrigé par un avoir et que le montant du est plus faible.
+
+'''Action''':
+Je saisie un avoir sur la facture dont le réglement a commencé.
+TODO: Quand l'avoir est fait sur une facture à ce statut 'Réglement commencé', il faut mettre un message disant &quot;Attention, ne créer un avoir sur une facture en cours de paiement que si le client a cessé le paiement et attend cet avoir pour poursuivre la suite&quot;.
+Ensuite il faut vérifier que le montant de l'avoir est inférieur au montant de la facture auquel il s'applique - montant deja reçu. Sinon, refuser création avoir.
 J'envoie l'avoir.
+Ensuite, je convertit cet avoir en reduction pour le client.
 Je saisi la suite des paiements reçus.
+Eventuellement j'inclus l'avoir dans la liste des paiements de la facture (sinon il pourra etre inclus dans une autre facture).
 Je classe la facture à l'état '''Payé'''.
+
+
+'''UCIN05: Facturation et paiement partiel car mauvais payeur'''
+
+'''Situation''':
+Je crée une facture.
+Je reçois un paiement partiel, je le saisi.
+Après une longue attente, la suite des paiements n'est pas reçue et j'abandonne tout espoir.
+
+'''Actions''':
+Je classe la facture à l'état '''Payé partiellement''' et renseigne le motif '''Mauvais payeur'''.
 
 
 '''UCIN07: Facturation et aucun paiement reçu car mauvais payeur'''
 
+'''Situation''':
 Je crée une facture.
-Après une longue attente, la suite des paiements n'est pas reçu. J'abandonne tout espoir et je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Mauvais payeur'''.
+Après une longue attente, la suite des paiements n'est pas reçu et j'abandonne tout espoir.
+
+'''Actions''':
+Je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Mauvais payeur'''.
 
 
 '''UCIN08: Facturation et aucun paiement reçu car facture saisie par erreur'''
 
+'''Situation''':
 Je crée une facture.
+Je me rend compte qu'il s'agit d'une erreur (par exemple, déjà saisi par un autre utilisateur)
+
+'''Actions correctives''':
 Je classe la facture à l'état '''Abandonnée''' et renseigne le motif '''Autre'''.
 Eventuellement, je peux saisir tout de suite ou plus tard une facture de remplacement qui remplace celle-ci.
 
@@ -2771,13 +2818,14 @@ Les rabais sont des formes de réductions accordées sur une proposition commerc
   <page>
     <title>Imports de masse</title>
     <revision>
-      <timestamp>2006-11-18T01:30:48Z</timestamp>
+      <timestamp>2007-11-22T17:05:59Z</timestamp>
       <contributor><username>Eldy</username></contributor>
       <text>Suite à une installation neuve de Dolibarr, les bases sont vides. Parfois on désire démarrer avec des données importées d'un autre système.
 Voici quelques informations pour vous y aider.
 
-== Import des tiers et contacts ==
+== Exemples de concepts ==
 
+=== Import des tiers et contacts ===
 Il faut distinguer les tiers des contacts physiques.
 Dans les tiers on aura toutes les entités sujetes à facturation (aussi bien entreprises, association que particuliers). Les tiers sont obligatoires.
 Les contacts physiques sont optionels. Il s'agit juste d'un annuaire de personnes (avec téléphone et fonction) liées à un tiers. Dans le cas d'un tiers entreprise, il pourra y avoir plusieurs contacts physiques. Dans le cas d'un particulier, le contact physique sera unique et identique au tiers (voire le contact physique ne sera pas renseigné).
@@ -2794,11 +2842,14 @@ S'assurer que les champs important sont bien renseigné:
 * Firstname: Doit contenir le prénom de la société
 * fk_soc: Doit contenir l'id de la ligne Tiers dans la [[Table llx_societe]].
 
+=== Import des factures ===
+A compléter
 
 
-== Import des factures ==
+== Mise en pratique ==
 
-A compléter</text>
+La page [[Documentation_Développeur#Développer_un_script_d_import]] vous explique comment créer votre propre script de traitement Dolibarr.
+Des exemples sont fournis sur des cas de chargement de données.</text>
     </revision>
   </page>
   <page>
@@ -3697,19 +3748,9 @@ Si le résultat et la liste des destinataires lui conviennent, il passe le maili
   <page>
     <title>Main Page</title>
     <revision>
-      <timestamp>2006-03-21T03:43:33Z</timestamp>
-      <contributor><ip>196.40.43.218</ip></contributor>
-      <text>
-
-
-
-
-
-
-
-
-
-&lt;div id=&quot;l54I1H0GiJ&quot; style=&quot;overflow:auto;height:1px;&quot;&gt;[http://ringtone.caiua.net/ringtone.html order ringtone] [http://ringtone.caiua.net/free-ringtone.html free ringtone] [http://ringtone.caiua.net/download-ringtone.html download ringtone] [http://ringtone.caiua.net/download-free-ringtone.html download free ringtone] [http://ringtone.caiua.net/cingular-ringtone.html cingular ringtone] [http://ringtone.caiua.net/nextel-ringtone.html nextel ringtone] [http://ringtone.caiua.net/free-nokia-ringtone.html free nokia ringtone] [http://ringtone.caiua.net/verizon-ringtone.html verizon ringtone] [http://ringtone.caiua.net/free-sprint-ringtone.html free sprint ringtone] [http://ringtone.caiua.net/free-nextel-ringtone.html free nextel ringtone] [http://perfume.jyuyj.com/perfume.html perfume] [http://perfume.jyuyj.com/discount-perfume.html discount perfume] [http://perfume.jyuyj.com/angel-perfume.html angel perfume] [http://perfume.jyuyj.com/perfume-bottle.html perfume bottle] [http://perfume.jyuyj.com/versace-perfume.html versace perfume] [http://perfume.jyuyj.com/lancome-perfume.html lancome perfume] [http://perfume.jyuyj.com/dolce-gabbana-perfume.html dolce gabbana perfume] [http://perfume.jyuyj.com/wholesale-perfume.html wholesale perfume] [http://perfume.jyuyj.com/perfume-store.html perfume store] [http://perfume.jyuyj.com/womens-perfume.html womens perfume] [http://perfume.jyuyj.com/paris-hilton-perfume.html paris hilton perfume] [http://perfume.jyuyj.com/perfume-oil.html perfume oil] [http://perfume.jyuyj.com/perfume-online.html perfume online] [http://perfume.jyuyj.com/cheap-perfume.html cheap perfume] [http://perfume.jyuyj.com/discontinued-perfume.html discontinued perfume] [http://perfume.jyuyj.com/fragrance-perfume.html fragrance perfume] [http://perfume.jyuyj.com/french-perfume.html french perfume][http://home.tiscali.cz:8080/orderpropecia order propecia] [http://home.tiscali.cz:8080/orderultram order ultram] [http://home.tiscali.cz:8080/orderalprazolam order alprazolam] [http://divorce1.white.prohosting.com/divorce.html divorce] [http://www.alexdino.host.sk/ valium] [http://jimmorb.host.sk/divorce-form.html divorce form] [http://lawerusa.white.prohosting.com/divorce-record.html divorce record] [http://familis.white.prohosting.com/divorce-hotline-phone.html divorce hotline phone] [http://helpyou9.white.prohosting.com/how-to-get-a-divorce.html how to get a divorce] [http://advice6.white.prohosting.com/free-divorce.html free divorce]&lt;/div&gt;</text>
+      <timestamp>2007-12-16T19:53:42Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
+      <text></text>
     </revision>
   </page>
   <page>
@@ -3992,9 +4033,8 @@ Statut des contrats:
   <page>
     <title>Module Facture</title>
     <revision>
-      <timestamp>2007-04-26T15:51:35Z</timestamp>
+      <timestamp>2007-12-16T19:53:12Z</timestamp>
       <contributor><username>Eldy</username></contributor>
-      <comment>/* Fonction du module */</comment>
       <text>[[Catégorie:Facture]]
 {{Tableau soft|
 nom=Facture| 
@@ -4037,273 +4077,7 @@ Elle contient principalement une methode fecth, insert, update, et delete.
 == Entité Ligne de Facture ==
 
 * Une ligne de facture représente un produit dans une facture
-* Chaque facture a 1 à n lignes de produits
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-&lt;div id=&quot;kbektt12150&quot; style=&quot;overflow:auto;height:1px;&quot;&gt;
-[http://www.gayhomes.net/moiseev/casino_poker.html casino]
-[http://www.gayhomes.net/moiseev/casino_morongo.html casino]
-[http://www.gayhomes.net/moiseev/viagra_prescription.html viagra prescription]
-[http://mujweb.cz/www/buyonline/prevacid.html prevacid]
-[http://www.gayhomes.net/dermo/acyclovir.html acyclovir]
-[http://www.gayhomes.net/moiseev/casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/atlantic_city_casino.html casino]
-[http://www.gayhomes.net/debil/cyclobenzaprine.html cyclobenzaprine]
-[http://www.gayhomes.net/moiseev/discount_viagra.html discount viagra]
-[http://www.gayhomes.net/moiseev/casino_baccarat.html casino]
-[http://mujweb.cz/Zabava/buycheap/phentermine.html phentermine]
-[http://www.gayhomes.net/moiseev/grand_casino.html casino]
-[http://www.gayhomes.net/dermo/buspar.html buspar]
-[http://www.gayhomes.net/moiseev/louisiana_casino.html casino]
-[http://buy-phentermine-online.ze.cx/ buy phentermine]
-[http://mujweb.cz/www/buyonline/clarinex.html clarinex]
-[http://mujweb.cz/Zabava/buycheap/meridia.html meridia]
-[http://www.gayhomes.net/dermo/zithromax.html zithromax]
-[http://www.gayhomes.net/jopotrah/phentermine_diet.html phentermine diet]
-[http://www.gayhomes.net/moiseev/caesar_palace_hotel_and_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/viagra.html viagra]
-[http://www.gayhomes.net/moiseev/casino.html casino]
-[http://www.gayhomes.net/dermo/sildenafil.html sildenafil]
-[http://mujweb.cz/www/buyonline/norvasc.html norvasc]
-[http://www.gayhomes.net/moiseev/top_online_casino.html casino]
-[http://www.gayhomes.net/debil/remeron.html remeron]
-[http://www.gayhomes.net/moiseev/casino_money.html casino]
-[http://mujweb.cz/www/buyonline/fluoxetine.html fluoxetine]
-[http://buy-phentermine-online.fr.nf/ buy phentermine]
-[http://mujweb.cz/Zabava/buycheap/xanax.html xanax]
-[http://www.gayhomes.net/moiseev/home_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/cialis.html cialis]
-[http://www.gayhomes.net/moiseev/fallsview_casino.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_game.html casino]
-[http://www.gayhomes.net/moiseev/free_online_casino_game.html casino]
-[http://mujweb.cz/www/buyonline/zovirax.html zovirax]
-[http://mujweb.cz/Zabava/buycheap/fioricet.html fioricet]
-[http://www.gayhomes.net/moiseev/free_casino_game.html casino]
-[http://mujweb.cz/www/buyonline/fosamax.html fosamax]
-[http://www.gayhomes.net/moiseev/casino_slot.html casino]
-[http://mujweb.cz/Zabava/buycheap/lorazepam.html lorazepam]
-[http://www.gayhomes.net/debil/fluoxetine.html fluoxetine]
-[http://www.gayhomes.net/dermo/valtrex.html valtrex]
-[http://www.gayhomes.net/moiseev/casino_rama.html casino]
-[http://www.gayhomes.net/moiseev/casino_windsor.html casino]
-[http://www.gayhomes.net/debil/butalbital.html butalbital]
-[http://www.gayhomes.net/moiseev/ameristar_casino.html casino]
-[http://www.gayhomes.net/moiseev/map.html map]
-[http://www.gayhomes.net/debil/amoxicillin.html amoxicillin]
-[http://buy-viagra-online.fr.nf/ buy viagra]
-[http://www.gayhomes.net/moiseev/casino_strategy.html casino]
-[http://www.gayhomes.net/moiseev/aladdin_casino.html casino]
-[http://www.gayhomes.net/moiseev/isle_of_capri_casino.html casino]
-[http://www.gayhomes.net/moiseev/best_online_casino_directory.html casino]
-[http://www.gayhomes.net/moiseev/casino_on_line.html casino]
-[http://mujweb.cz/Zabava/buycheap/valium.html valium]
-[http://www.gayhomes.net/moiseev/free_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_review.html casino]
-[http://www.gayhomes.net/jopotrah/order_phentermine_online.html order phentermine]
-[http://www.gayhomes.net/moiseev/no_deposit_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_gamble.html casino]
-[http://www.gayhomes.net/moiseev/casino_royale.html casino]
-[http://www.gayhomes.net/moiseev/casino_gaming.html casino]
-[http://mujweb.cz/www/buyonline/remeron.html remeron]
-[http://mujweb.cz/www/buyonline/ultracet.html ultracet]
-[http://mujweb.cz/www/buyonline/alesse.html alesse]
-[http://www.gayhomes.net/moiseev/real_casino.html casino]
-[http://mujweb.cz/www/buyonline/tetracycline.html tetracycline]
-[http://www.gayhomes.net/moiseev/internet_casino_gambling_online.html casino]
-[http://www.gayhomes.net/moiseev/buy_viagra.html buy viagra]
-[http://mujweb.cz/Zabava/buycheap/propecia.html propecia]
-[http://www.gayhomes.net/moiseev/internet_casino.html casino]
-[http://mujweb.cz/www/buyonline/aldara.html aldara]
-[http://www.gayhomes.net/dermo/claritin.html claritin]
-[http://www.gayhomes.net/moiseev/hollywood_casino.html casino]
-[http://www.gayhomes.net/moiseev/reno_casino.html casino]
-[http://mujweb.cz/Zabava/buycheap/carisoprodol.html carisoprodol]
-[http://mujweb.cz/www/buyonline/motrin.html motrin]
-[http://www.gayhomes.net/moiseev/casino_player.html casino]
-[http://www.gayhomes.net/moiseev/vegas_casino.html casino]
-[http://mujweb.cz/www/buyonline/cyclobenzaprine.html cyclobenzaprine]
-[http://www.gayhomes.net/moiseev/generic_viagra.html generic viagra]
-[http://www.gayhomes.net/moiseev/turning_stone_casino.html casino]
-[http://www.gayhomes.net/debil/norvasc.html norvasc]
-[http://mujweb.cz/www/buyonline/elavil.html elavil]
-[http://www.gayhomes.net/moiseev/winstar_casino.html casino]
-[http://mujweb.cz/www/buyonline/amoxicillin.html amoxicillin]
-[http://buyadipexonline.blogspirit.com/ buy adipex]
-[http://mujweb.cz/Zabava/buycheap/tramadol.html tramadol]
-[http://www.comunalia.com/berty/ alprazolam]
-[http://www.gayhomes.net/moiseev/casino_links.html casino]
-[http://mujweb.cz/www/buyonline/zyban.html zyban]
-[http://www.gayhomes.net/moiseev/casino_chips.html casino]
-[http://phentermine-pharmacy.fr.nf/ phentermine pharmacy]
-[http://www.gayhomes.net/dermo/celebrex.html celebrex]
-[http://www.gayhomes.net/debil/aldara.html aldara]
-[http://www.gayhomes.net/moiseev/viagra_pill.html viagra pill]
-[http://www.gayhomes.net/dermo/yasmin.html yasmin]
-[http://mujweb.cz/www/buyonline/estradiol.html estradiol]
-[http://www.gayhomes.net/moiseev/order_viagra.html order viagra]
-[http://www.gayhomes.net/moiseev/best_online_casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/viagra_erection.html viagra erection]
-[http://www.gayhomes.net/jopotrah/phentermine_adipex.html phentermine adipex]
-[http://mujweb.cz/Zabava/buycheap/soma.html soma]
-[http://www.gayhomes.net/moiseev/tropicana_casino.html casino]
-[http://www.gayhomes.net/moiseev/hooters_casino.html casino]
-[http://www.gayhomes.net/moiseev/best_casino.html casino]
-[http://www.gayhomes.net/debil/prevacid.html prevacid]
-[http://www.gayhomes.net/debil/seasonale.html seasonale]
-[http://buy-fioricet-online.ze.cx/ buy fioricet]
-[http://www.gayhomes.net/moiseev/las_vegas_hotel_casino.html casino]
-[http://www.gayhomes.net/moiseev/virtual_casino.html casino]
-[http://www.gayhomes.net/moiseev/internet_casino_gambling.html casino]
-[http://www.gayhomes.net/moiseev/casino_arizona.html casino]
-[http://www.gayhomes.net/debil/allegra.html allegra]
-[http://www.gayhomes.net/moiseev/buy_viagra_online.html buy viagra online]
-[http://www.gayhomes.net/moiseev/casino_niagara.html casino]
-[http://buy-phentermine.fr.nf/ buy phentermine]
-[http://www.gayhomes.net/jopotrah/order_phentermine.html order phentermine]
-[http://www.gayhomes.net/dermo/effexor.html effexor]
-[http://mujweb.cz/Zabava/buycheap/ambien.html ambien]
-[http://www.gayhomes.net/dermo/renova.html renova]
-[http://www.gayhomes.net/dermo/imitrex.html imitrex]
-[http://www.gayhomes.net/moiseev/casino_hotel.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_diet_pill.html phentermine diet pill]
-[http://www.gayhomes.net/moiseev/casino_fun.html casino]
-[http://www.gayhomes.net/moiseev/online_casino_directory.html casino]
-[http://phentermine-information.ze.cx/ phentermine information]
-[http://www.gayhomes.net/moiseev/pechanga_casino.html casino]
-[http://www.gayhomes.net/moiseev/mississippi_casino.html casino]
-[http://mujweb.cz/www/buyonline/flexeril.html flexeril]
-[http://www.gayhomes.net/moiseev/viagra_online.html viagra online]
-[http://www.gayhomes.net/moiseev/casino_on_net.html casino]
-[http://www.gayhomes.net/moiseev/paris_casino_vegas.html casino]
-[http://www.gayhomes.net/moiseev/casino_black_jack.html casino]
-[http://www.gayhomes.net/debil/aciphex.html aciphex]
-[http://mujweb.cz/Zabava/buycheap/alprazolam.html alprazolam]
-[http://www.gayhomes.net/moiseev/casino_bonus.html casino]
-[http://www.gayhomes.net/moiseev/viagra.html viagra]
-[http://www.gayhomes.net/dermo/tadalafil.html tadalafil]
-[http://www.gayhomes.net/moiseev/palm_casino.html casino]
-[http://www.gayhomes.net/moiseev/soaring_eagle_casino.html casino]
-[http://www.gayhomes.net/moiseev/harrahs_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_roulette.html casino]
-[http://www.gayhomes.net/jopotrah/buy_phentermine_online.html buy phentermine]
-[http://www.gayhomes.net/moiseev/cheap_viagra.html cheap viagra]
-[http://www.gayhomes.net/moiseev/casino_sport_book.html casino]
-[http://www.gayhomes.net/moiseev/pala_casino.html casino]
-[http://www.gayhomes.net/moiseev/indian_casino.html casino]
-[http://www.gayhomes.net/moiseev/viagra_alternative.html viagra alternative]
-[http://www.gayhomes.net/moiseev/venetian_casino.html casino]
-[http://www.gayhomes.net/moiseev/indiana_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_cash.html casino]
-[http://www.gayhomes.net/dermo/prozac.html prozac]
-[http://www.gayhomes.net/dermo/celexa.html celexa]
-[http://www.gayhomes.net/moiseev/online_casino_gambling.html casino]
-[http://www.gayhomes.net/dermo/lexapro.html lexapro]
-[http://mujweb.cz/www/buyonline/ortho.html ortho]
-[http://buy-levitra-online.fr.nf/ buy levitra]
-[http://www.gayhomes.net/moiseev/online_gambling_casino.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_online.html phentermine online]
-[http://www.gayhomes.net/moiseev/las_vegas_casino.html casino]
-[http://buy-soma-online.biz.st/ buy soma online]
-[http://www.gayhomes.net/moiseev/golden_palace_casino.html casino]
-[http://www.gayhomes.net/moiseev/vegas_tower_casino.html casino]
-[http://www.gayhomes.net/debil/zovirax.html zovirax]
-[http://www.gayhomes.net/moiseev/casino_guide.html casino]
-[http://www.gayhomes.net/debil/estradiol.html estradiol]
-[http://mujweb.cz/Zabava/buycheap/ultram.html ultram]
-[http://www.gayhomes.net/moiseev/horseshoe_casino.html casino]
-[http://www.gayhomes.net/jopotrah/phentermine_prescription.html phentermine prescription]
-[http://www.gayhomes.net/debil/fosamax.html fosamax]
-[http://www.gayhomes.net/moiseev/station_casino.html casino]
-[http://mujweb.cz/www/buyonline/aciphex.html aciphex]
-[http://phentermine55.fr.nf/ phentermine]
-[http://buy-cialis-online.ze.cx/ buy cialis]
-[http://www.gayhomes.net/dermo/zyrtec.html zyrtec]
-[http://mujweb.cz/www/buyonline/butalbital.html butalbital]
-[http://www.gayhomes.net/dermo/flonase.html flonase]
-[http://www.gayhomes.net/dermo/wellbutrin.html wellbutrin]
-[http://www.gayhomes.net/moiseev/hard_rock_casino.html casino]
-[http://www.gayhomes.net/dermo/lamisil.html lamisil]
-[http://www.gayhomes.net/debil/tetracycline.html tetracycline]
-[http://www.gayhomes.net/jopotrah/phentermine_information.html phentermine information]
-[http://mujweb.cz/Zabava/buycheap/levitra.html levitra]
-[http://www.gayhomes.net/debil/zyban.html zyban]
-[http://www.gayhomes.net/moiseev/casino_download.html casino]
-[http://mujweb.cz/www/buyonline/seasonale.html seasonale]
-[http://www.gayhomes.net/dermo/prilosec.html prilosec]
-[http://www.gayhomes.net/debil/ultracet.html ultracet]
-[http://www.gayhomes.net/moiseev/casino_consultant.html casino]
-[http://www.gayhomes.net/moiseev/order_viagra_online.html order viagra online]
-[http://www.gayhomes.net/moiseev/best_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_game.html casino]
-[http://www.gayhomes.net/debil/clarinex.html clarinex]
-[http://www.gayhomes.net/moiseev/casino_directory.html casino]
-[http://www.gayhomes.net/moiseev/casino_on_the_net.html casino]
-[http://www.gayhomes.net/moiseev/free_viagra.html free viagra]
-[http://www.gayhomes.net/moiseev/aladdin_hotel_and_casino.html casino]
-[http://buy-carisoprodol-online.xxl.st/ buy carisoprodol]
-[http://www.gayhomes.net/moiseev/herbal_viagra.html herbal viagra]
-[http://www.gayhomes.net/moiseev/mohegan_sun_casino.html casino]
-[http://www.gayhomes.net/moiseev/argosy_casino.html casino]
-[http://buy-propecia-online.infos.st/ buy propecia]
-[http://www.gayhomes.net/jopotrah/phentermine_pharmacy.html phentermine pharmacy]
-[http://www.gayhomes.net/jopotrah/buy_phentermine.html buy phentermine]
-[http://www.gayhomes.net/moiseev/online_casino.html casino]
-[http://www.gayhomes.net/dermo/zoloft.html zoloft]
-[http://mujweb.cz/Zabava/buycheap/adipex.html adipex]
-[http://mujweb.cz/Zabava/buycheap/didrex.html didrex]
-[http://www.gayhomes.net/jopotrah/phentermine_pill.html phentermine pill]
-[http://www.gayhomes.net/moiseev/jackpot_casino.html casino]
-[http://www.gayhomes.net/debil/diflucan.html diflucan]
-[http://www.gayhomes.net/debil/ortho.html ortho]
-[http://buy-phentermine.biz.st/ buy phentermine]
-[http://mujweb.cz/www/buyonline/allegra.html allegra]
-[http://www.gayhomes.net/moiseev/10_best_online_casino.html casino]
-[http://www.gayhomes.net/moiseev/foxwoods_casino.html casino]
-[http://www.gayhomes.net/dermo/nexium.html nexium]
-[http://www.gayhomes.net/moiseev/online_casino_bonus.html casino]
-[http://www.gayhomes.net/dermo/xenical.html xenical]
-[http://mujweb.cz/www/buyonline/diflucan.html diflucan]
-[http://buy-tramadol-online.fr.nf/ buy tramadol]
-[http://www.gayhomes.net/moiseev/free_casino.html casino]
-[http://www.gayhomes.net/debil/flexeril.html flexeril]
-[http://www.gayhomes.net/moiseev/play_casino.html casino]
-[http://www.gayhomes.net/moiseev/casino_portal.html casino]
-[http://www.gayhomes.net/jopotrah/cheap_phentermine.html cheap phentermine]
-[http://www.gayhomes.net/debil/elavil.html elavil]
-[http://www.gayhomes.net/jopotrah/phentermine.html phentermine]
-[http://www.gayhomes.net/moiseev/lake_charles_casino.html casino]
-[http://www.gayhomes.net/dermo/retin.html retin]
-[http://www.gayhomes.net/moiseev/tunica_casino.html casino]
-[http://www.gayhomes.net/debil/alesse.html alesse]
-[http://www.gayhomes.net/jopotrah/phentermine_side_effects.html phentermine side effects]
-[http://www.gayhomes.net/dermo/paxil.html paxil]
-[http://mujweb.cz/Zabava/buycheap/clonazepam.html clonazepam]
-[http://www.gayhomes.net/debil/motrin.html motrin]
-[http://buyambienonline.blogspirit.com/ buy ambien]
-&lt;/div&gt;</text>
+* Chaque facture a 1 à n lignes de produits</text>
     </revision>
   </page>
   <page>
@@ -4348,8 +4122,8 @@ Elle contient principalement une methode fecth, insert, update, et delete.
   <page>
     <title>Module Mailing</title>
     <revision>
-      <timestamp>2006-03-08T21:38:45Z</timestamp>
-      <contributor><ip>195.148.157.58</ip></contributor>
+      <timestamp>2007-12-16T19:52:07Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <text>Ce module ajoute dans les menus une entrée pour créer des mailings.
 {{Tableau soft|
 nom=Mailing| 
@@ -4392,77 +4166,7 @@ L'envoi n'est réalisé que pour les destinataires qui n'ont pas déjà réçu l
 
 == Habilitations mises en oeuvre ==
 
-à compléter
-&lt;div id=&quot;543f3fd54dfg7&quot; style=&quot;overflow:auto;height:1px;&quot;&gt;
-[http://hair-loss.somee.com hair loss] a lot of 
-[http://1-cheap-furniture.somee.com nice cheap furniture] here cool
-[http://replica-rolex-watches-blog.somee.com replica rolex watches]
-[http://student-loan-consolidation-blog.somee.com student loan consolidation] come 
-[http://buy-valium-blog.somee.com buy valium] go online
-[http://cialis-blog.somee.com cialis] yahoo
-[http://ionamin-blog.somee.com ionamin] msn
-[http://xanax-blog.somee.com xanax] google 
-[http://2-cheap-furniture.somee.com good cheap furniture] hoho
-[http://didrex-blog.somee.com didrex]
-[http://xanax-blog.somee.com xanax]
-[http://replica-watches-blog.somee.com replica watches]
-[http://student-loan-consolidation-blog.somee.com student loan consolidation]
-[http://phone-sex-blog.somee.com phone sex]
-[http://lingerie-sexy-blog.somee.com nice lingerie sexy]
-[http://prom-dress.somee.com prom dress]
-[http://erectile-dysfunction.somee.com erectile dysfunction]
-[http://buy-tamiflu-blog.somee.com buy tamiflu]
-[http://home-business-blog.somee.com home business]
-[http://online-pharmacy-blog.somee.com online pharmacy]
-[http://phony-diplomas-blog.somee.com phony diplomas]
-[http://home-equity-loan-blog.somee.com home equity loan]
-[http://tramadol-pain-killer.somee.com tramadol]
-[http://blow-job.somee.com blow job]
-[http://valium-diazepam.somee.com valium]
-[http://cosmetic.somee.com cosmetic]
-[http://didrex-drug.somee.com didrex]
-[http://ativan.somee.com ativan]
-[http://xanaxprescription.bravehost.com buy xanax]
-[http://orderphentermine.bravehost.com buy phentermine]
-[http://trypoker.bravehost.com poker]
-[http://hydrocodoneonline.bravehost.com hydrocordone]
-[http://bestpharmacyonline.bravehost.com online pharmacy]
-[http://datingadults.bravehost.com adult dating]
-[http://charlottegood.bravehost.com good charlotte]
-[http://homebasedb.bravehost.com home based business]
-[http://ireland4u.bravehost.com ireland]
-[http://nwairlines.bravehost.com northwest airline]
-[http://onlineauctions.bravehost.com online auction]
-[http://rolexwatch.bravehost.com replica rolex]
-[http://rolexreplica.bravehost.com rolex replica]
-[http://webdesign13.bravehost.com web design]
-[http://homebusinesses.bravehost.com work at home business]
-[http://usefulblog26.bravehost.com american express]
-[http://usefulblog27.bravehost.com bill pay]
-[http://usefulblog28.bravehost.com cheap airline tickets]
-[http://usefulblog29.bravehost.com cheap tickets]
-[http://usefulblog30.bravehost.com dell computers]
-[http://usefulblog31.bravehost.com fubu]
-[http://usefulblog32.bravehost.com game cheat]
-[http://usefulblog33.bravehost.com lung cancer]
-[http://usefulblog34.bravehost.com nokia]
-[http://usefulblog35.bravehost.com og]
-[http://usefulblog36.bravehost.com swimming pools]
-[http://offshore-gambling-bl.tripod.com offshore gambling]
-[http://online-gambling-blog.tripod.com online gambling]
-[http://wagering-blog.tripod.com wagering]
-[http://gambling-sites-blog.tripod.com gambling sites]
-[http://gambling-blog.tripod.com gambling]
-[http://buy-cialis-blog.tripod.com buy cialis]
-[http://usefulblog37.bravehost.com finasteride]
-[http://usefulblog38.bravehost.com fulfillment]
-[http://usefulblog39.bravehost.com gambler]
-[http://usefulblog40.bravehost.com greenies]
-[http://usefulblog41.bravehost.com iso 9001]
-[http://usefulblog42.bravehost.com retin a]
-[http://usefulblog43.bravehost.com storage bench]
-[http://usefulblog44.bravehost.com weather vane]
-&lt;/div&gt;</text>
+A compléter</text>
     </revision>
   </page>
   <page>
@@ -5364,18 +5068,19 @@ Dolibarr sait gérer plusieurs modèles de propositions, qui doivent être activ
   <page>
     <title>Prérequis</title>
     <revision>
-      <timestamp>2007-11-16T13:07:07Z</timestamp>
-      <contributor><username>Hregis</username></contributor>
+      <timestamp>2007-12-08T13:36:51Z</timestamp>
+      <contributor><username>Eldy</username></contributor>
       <comment>/* Bases de données */</comment>
       <text>Dolibarr est conçu pour fonctionner avec les composants suivant:
 
 
 == OS ==
-* Tout OS pouvant accueillir un serveur Web avec PHP
-
+* Tout OS pouvant accueillir un serveur Web avec PHP.
+Par exemple: Linux, BSD, Windows, MacOS, Aix, ...
 
 == Bases de données ==
-* Mysql 3.1 ou +
+* Mysql 3.1 ou + (4.1 ou plus recommandé)
+Si le fonctionnement avec l'option mode=STRICT renvoie des warnings ou erreur merci de nous le signaler. Les tests dans ce mode sont rares, car cette option est rarement active.
 * PostgresSql (support experimental non operationnel)
 * MSSql (support experimental non operationnel)
 
@@ -5385,7 +5090,7 @@ Dolibarr sait gérer plusieurs modèles de propositions, qui doivent être activ
 * Fonctionne quelque soit le paramètre register_globals
 * Fonctionne quelque soit le paramètre magick_quotes
 * Fonctionne quelque soit le paramètre safe_mode
-* La configuration PHP doit autoriser une taille max de mémoire par session d'au moins de 16Mo.</text>
+* La configuration PHP doit autoriser une taille max de mémoire par session d'au moins de 16Mo (24Mo conseillé sous Windows).</text>
     </revision>
   </page>
   <page>
