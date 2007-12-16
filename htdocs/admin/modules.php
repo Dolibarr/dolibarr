@@ -248,7 +248,7 @@ if ($categ[$categidx])
 $categidx=3;
 if ($categ[$categidx])
 {
-	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=3";
+	$head[$h][0] = DOL_URL_ROOT."/admin/modules.php?mode=".$categidx;
 	$head[$h][1] = $langs->trans("ModulesJob");
 	$head[$h][2] = 'functional';
 	$h++;
