@@ -220,7 +220,7 @@ function dolibarr_syslog($message, $level=LOG_INFO)
 				fwrite($file,$message."\n");
 				fclose($file);
 				
-				// If development tag enabled and param log enabled, we show output log on HTML comments
+				// If enable html log tag enabled and url parameter log defined, we show output log on HTML comments
 				if (! empty($conf->global->MAIN_ENABLE_LOG_HTML) && ! empty($_GET["log"]))
 				{
 					print "\n\n<!-- Log start\n";
@@ -2384,16 +2384,26 @@ function get_default_tva($societe_vendeuse, $societe_acheteuse, $taux_produit)
 
 /**
 		\brief  Renvoie oui ou non dans la langue choisie
-		\param	yesno			variable pour test si oui ou non
-		\param	case			Oui/Non ou oui/non
+		\param	yesno			Variable pour test si oui ou non
+		\param	case			1=Yes/No, 0=yes/no
+		\param	color			0=texte only, 1=Text is format with a color font style
 */
-function yn($yesno, $case=1) {
+function yn($yesno, $case=1, $color=0)
+{
     global $langs;
+	$result='unknown';
     if ($yesno == 1 || strtolower($yesno) == 'yes' || strtolower($yesno) == 'true') 	// A mettre avant test sur no a cause du == 0
-        return $case?$langs->trans("Yes"):$langs->trans("yes");
-    if ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
-        return $case?$langs->trans("No"):$langs->trans("no");
-    return "unknown";
+	{
+        $result=($case?$langs->trans("Yes"):$langs->trans("yes"));
+		$class='ok';
+	}
+    elseif ($yesno == 0 || strtolower($yesno) == 'no' || strtolower($yesno) == 'false')
+	{
+        $result=($case?$langs->trans("No"):$langs->trans("no"));
+		$class='error';
+	}
+	if ($color) return '<font class="'.$class.'">'.$result.'</font>';
+	return $result;
 }
 
 

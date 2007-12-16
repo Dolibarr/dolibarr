@@ -126,7 +126,8 @@ class pdf_crabe extends ModelePDFFactures
 	      }
 	      
 	      $deja_regle = $fac->getSommePaiement();
-	      
+	      $amount_credit_not_included = $fac->getSommeCreditNote();
+
 	      // Définition de $dir et $file
 	      if ($fac->specimen)
 	      {
@@ -366,7 +367,8 @@ class pdf_crabe extends ModelePDFFactures
                 $posy=$this->_tableau_tot($pdf, $fac, $deja_regle, $bottomlasttab, $outputlangs);
 
                 // Affiche zone versements
-                if ($deja_regle) {
+                if ($deja_regle || $amount_credit_not_included)
+				{
                     $posy=$this->_tableau_versements($pdf, $fac, $posy, $outputlangs);
                 }
 
@@ -400,10 +402,13 @@ class pdf_crabe extends ModelePDFFactures
     }
 
 
-    /*
-     *   \brief      Affiche tableau des versement
-     *   \param      pdf     objet PDF
-     *   \param      fac     objet facture
+    /**
+     *  \brief      Affiche tableau des versement
+     *  \param      pdf     		Objet PDF
+     *  \param      fac     		Objet facture
+	 *	\param		posy			Position y in PDF
+	 *	\param		outputlangs		Object langs for output
+	 *	\return 	int				<0 if KO, >0 if OK
      */
     function _tableau_versements(&$pdf, $fac, $posy, $outputlangs)
 	{
@@ -427,23 +432,66 @@ class pdf_crabe extends ModelePDFFactures
         $pdf->SetXY ($tab3_posx+60, $tab3_top-1 );
         $pdf->MultiCell(20, 4, $outputlangs->transnoentities("Num"), 0, 'L', 0);
 
+		$y=0;
+
+		// Loop on each credit note included
+		$sql = "SELECT re.rowid, re.amount_ht, re.amount_tva, re.amount_ttc,";
+		$sql.= " re.description, re.fk_facture_source, re.fk_facture_source";
+		$sql.= " FROM ".MAIN_DB_PREFIX ."societe_remise_except as re";
+		$sql.= " WHERE fk_facture = ".$fac->id;
+		$resql=$this->db->query($sql);
+		if ($resql)
+		{
+			$num = $this->db->num_rows($resql);
+            $i=0;
+			$invoice=new Facture($this->db);
+			while ($i < $num)
+			{
+				$y+=3;
+				$obj = $this->db->fetch_object($resql);
+
+				$invoice->fetch($obj->fk_facture_source);
+
+                $pdf->SetXY ($tab3_posx, $tab3_top+$y );
+                $pdf->MultiCell(20, 4,'', 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
+                $pdf->MultiCell(20, 4, price($obj->amount_ttc), 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
+                $pdf->MultiCell(20, 4, $outputlangs->trans("CreditNote"), 0, 'L', 0);
+                $pdf->SetXY ($tab3_posx+60, $tab3_top+$y);
+                $pdf->MultiCell(20, 4, $invoice->ref, 0, 'L', 0);
+
+                $pdf->line($tab3_posx, $tab3_top+$y+3, $tab3_posx+$tab3_width, $tab3_top+$y+3 );
+
+                $i++;
+			}
+		}
+		else
+		{
+            $this->error=$outputlangs->trans("ErrorSQL")." sql=".$sql;
+			dolibarr_syslog($this->db,$this->error);
+            return -1;
+		}
+
+		// Loop on each payment
         $sql = "SELECT ".$this->db->pdate("p.datep")."as date, pf.amount as amount, p.fk_paiement as type, p.num_paiement as num ";
         $sql.= "FROM ".MAIN_DB_PREFIX."paiement as p, ".MAIN_DB_PREFIX."paiement_facture as pf ";
         $sql.= "WHERE pf.fk_paiement = p.rowid and pf.fk_facture = ".$fac->id." ";
         $sql.= "ORDER BY p.datep";
-        if ($this->db->query($sql))
+        $resql=$this->db->query($sql);
+		if ($resql)
         {
             $pdf->SetFont('Arial','',6);
-            $num = $this->db->num_rows();
-            $i=0; $y=0;
+            $num = $this->db->num_rows($resql);
+            $i=0;
             while ($i < $num) {
                 $y+=3;
-                $row = $this->db->fetch_row();
+                $row = $this->db->fetch_row($resql);
 
                 $pdf->SetXY ($tab3_posx, $tab3_top+$y );
                 $pdf->MultiCell(20, 4, dolibarr_print_date($row[0],'day'), 0, 'L', 0);
                 $pdf->SetXY ($tab3_posx+21, $tab3_top+$y);
-                $pdf->MultiCell(20, 4, $row[1], 0, 'L', 0);
+                $pdf->MultiCell(20, 4, price($row[1]), 0, 'L', 0);
                 $pdf->SetXY ($tab3_posx+41, $tab3_top+$y);
             	switch ($row[2])
             	  {

@@ -18,7 +18,6 @@
  * or see http://www.gnu.org/
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -64,7 +63,14 @@ class pdf_huitre extends ModelePDFFactures
     $this->page_hauteur = 297;
     $this->format = array($this->page_largeur,$this->page_hauteur);
         
-    $this->option_logo = 1;                    // Affiche logo
+    $this->option_logo = 1;                    // Affiche logo FAC_PDF_LOGO
+    $this->option_tva = 0;                     // Gere option tva FACTURE_TVAOPTION
+    $this->option_modereg = 0;                 // Gere choix mode règlement FACTURE_CHQ_NUMBER, FACTURE_RIB_NUMBER
+	$this->option_condreg = 1;                 // Affiche conditions règlement
+	$this->option_codeproduitservice = 0;      // Affiche code produit-service
+	$this->option_multilang = 1;               // Dispo en plusieurs langues
+	$this->option_escompte = 0;                // Affiche si il y a eu escompte
+    $this->option_credit_note = 0;             // Gère les avoirs
 
     // Recupere emmetteur
     $this->emetteur=$mysoc;

@@ -2094,8 +2094,8 @@ else
 			            while ($i < $num)
 			            {
 							$obj = $db->fetch_object($resql);
-							print '<tr><td colspan="2" align="right">'.$langs->trans("CreditNote").' ';
 							$invoice->fetch($obj->fk_facture_source);
+							print '<tr><td colspan="2" align="right">'.$langs->trans("CreditNote").' ';
 							print $invoice->getNomUrl(0);
 							print ' :</td>';
 							print '<td align="right" style="border: 1px solid;">'.price($obj->amount_ttc).'</td>';
