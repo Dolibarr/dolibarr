@@ -5,20 +5,35 @@ License
 Dolibarr is distributed under GPL terms 2.0 (See COPYING file)
 
 However it uses some external libraries under different licences. This is compatibility summary:
+
 Composant         Version  License                  Compatible GPL   Usage
 ----------------------------------------------------------------------------
-PEAR         (??) 1.3.1    PHP License              Non              Login (Base, LDAP...)
-PHPlot            v4       PHP License              Non              Graphics
-PHPlot            v5       PHP License              Non              Graphics
-FPDI              1.2      Apache Software License  Non              PDF generation
-FCKEditor         2.4.4    GPL 2 depuis 2.0         Oui              Editor WYSIWYG
-XmlRpc            2.5f     Artistic License         Oui              Interface with Glasnot
+In alphabetical order of external-lib directory:
+ArtiChow          1.07     Public Domain            Oui              Graphics
+Smarty			  2.6.0    LGPL 2.1                 Oui              Some pages templates
+
+In alphabetical order of includes directory:
+AdoDb-Date        0.21     Modified BSD License     Oui              Conversion dates
+Php-barcode       0.3pl1   GPL 2.0                  Oui              Bar code generation
+Pibarcode         2.05     Perso (ask mail)         Non!             Bar code generation
+Cryptographp      1.4      CeCILL V2                Oui              Captcha generator
+FCKEditor         2.4.4    GPL 2.0                  Oui              Editor WYSIWYG
+FPDF              1.53     Pas clair (freeware)     Non!             PDF generation
+FPDI              1.2      Apache License 2.0       Non GPL3 uniqmt  PDF encryption
+MagPieRss         0.72     GPL 2.0                  Oui              Load RSS
+NuSoap            0.6.5    LGPL 2.1                 Oui              Interfaces with third tools
+PEAR Core         1.2.1    PHP License 2.00         Non!             Core code for PEAR
+PEAR Auth         ??       PHP License 2.02         Non!             Login (Database MDB2 Database DB, LDAP)
+PEAR MDB2         2.4.1    Modified BSD License     Oui              Database access MDB2
+PEAR DB           ??       PHP License 2.02         Non!             Database access DB
+PHP_WriteExcel    0.3.0    LGPL 2.1                 Oui              Excel files generation
+PHPExcelReader    2k       PHP License              Non!             Excel files reader
+PHPlot            v4       PHP License              Non!             Graphics
+PHPlot            v5       PHP License              Non!             Graphics
 Scriptaculous     1.8.0    MIT License              Oui              Extension Ajax
 Prototype         1.6.0    MIT License              Oui              Extension Ajax
-NuSoap            0.6.5    LGPL 2.1                 Oui              Interfaces with third tools
-PHP_WriteExcel    0.3.0    LGPL 2.1                 Oui              Excel files generation
-PHP_ExcelReader   2k       PHP License              Non              Excel files reader
-Cryptographp      1.4      CeCILL V2                Oui              Captcha generator
+Treemenu          1.1      Perso                    Oui              Tree in HTML pages (like categories)
+XmlRpc            2.5f     Artistic License         Oui              Interface with Glasnot
 
 http://www.fsf.org/licensing/licenses/index_html
 
