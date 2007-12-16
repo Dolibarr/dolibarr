@@ -78,12 +78,12 @@ class modFicheinter  extends DolibarrModules
     $this->const = array();
    	$r=0;
     	
-	$this->const[$r][0] = "FICHINTER_ADDON_PDF";
+	$this->const[$r][0] = "FICHEINTER_ADDON_PDF";
 	$this->const[$r][1] = "chaine";
 	$this->const[$r][2] = "soleil";
 	$r++;
 
-	$this->const[$r][0] = "FICHINTER_ADDON";
+	$this->const[$r][0] = "FICHEINTER_ADDON";
 	$this->const[$r][1] = "chaine";
 	$this->const[$r][2] = "pacific";
 	$r++;

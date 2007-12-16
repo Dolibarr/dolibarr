@@ -434,7 +434,7 @@ if ($_GET["action"] == 'create')
   print '<td colspan="2">';
   $model=new ModelePDFFicheinter();
   $liste=$model->liste_modeles($db);
-  $html->select_array('model',$liste,$conf->global->FICHINTER_ADDON_PDF);
+  $html->select_array('model',$liste,$conf->global->FICHEINTER_ADDON_PDF);
   print "</td></tr>";
 
 	print '<tr><td valign="top">'.$langs->trans("Description").'</td>';

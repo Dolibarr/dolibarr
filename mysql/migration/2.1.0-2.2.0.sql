@@ -104,9 +104,16 @@ ALTER TABLE llx_cotisation modify datef date;
 ALTER TABLE llx_cotisation ADD UNIQUE INDEX uk_cotisation (fk_adherent,dateadh);
 -- V4.1 update llx_cotisation set datef = ADDDATE(ADDDATE(dateadh, INTERVAL 1 YEAR),INTERVAL -1 DAY);
 
+
 delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 delete from llx_const where name='MAIN_ENABLE_DEVELOPMENT';
-insert into llx_const(name,value,type,visible,note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
+DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
+DELETE FROM llx_const WHERE name like 'FICHINTER_ADDON%';
+insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON',    'pacific','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine',0);
+
+INSERT INTO llx_const(name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
+insert into llx_const(name, value, type, visible, note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
 
 update llx_const set name='MAIN_MAIL_EMAIL_FROM' where name='NOTIFICATION_EMAIL_FROM';
 
@@ -118,6 +125,7 @@ update llx_const set value='rodolphe.php' where name='MAIN_MENU_BARRELEFT'      
 update llx_const set value='rodolphe.php' where name='MAIN_MENU_BARRETOP'       and  value='default.php';
 update llx_const set value='rodolphe.php' where name='MAIN_MENUFRONT_BARRELEFT' and  value='default.php';
 update llx_const set value='rodolphe.php' where name='MAIN_MENUFRONT_BARRETOP'  and  value='default.php';
+
 
 delete from llx_adherent_type where libelle IS NULL;
 alter table llx_adherent_type modify libelle varchar(50) NOT NULL;
@@ -1013,8 +1021,6 @@ INSERT INTO llx_c_barcode_type (rowid, code, libelle, coder, example) VALUES (6,
 ALTER TABLE llx_product CHANGE gencode barcode varchar(255) DEFAULT NULL;
 ALTER TABLE llx_product ADD COLUMN fk_barcode_type integer DEFAULT 0 after barcode;
 
-INSERT INTO llx_const (name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
-
 create table llx_c_paper_format
 (
   rowid    integer                          AUTO_INCREMENT PRIMARY KEY,
@@ -1121,7 +1127,6 @@ ALTER TABLE llx_bank_account MODIFY iban_prefix varchar(50);
 ALTER TABLE llx_bank_account ADD COLUMN country_iban varchar(2) after iban_prefix;
 ALTER TABLE llx_bank_account ADD COLUMN cle_iban varchar(2) after country_iban;
 
-delete from llx_const where name='PRODUIT_CHANGE_PROD_DESC';
 
 -- Mise à jour des pays
 update llx_c_pays set libelle = 'Palaos' where rowid = 176 and code = 'PW' and libelle = 'Belau';
@@ -1162,8 +1167,6 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 -- V4.1 update llx_facture set total_ttc = NULL where rowid in (select fk_facture from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 update llx_societe_remise_except as re set re.fk_facture = (select fk_facture from llx_facturedet as fd where fd.rowid = re.fk_facture_line), re.fk_facture_line = NULL where re.fk_facture_line in (select rowid from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 delete from llx_facturedet where description = '(CREDIT_NOTE)';
-
-DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
 
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_product integer;
 
