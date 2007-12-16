@@ -145,7 +145,7 @@ function loadMonth(base,month,year,ymd)
 		theURL+="&sd="+ymd;
 	}
 
-	loadXMLDoc(theURL,null,false);
+	loadXMLDoc(theURL,alertContents,false);
 	showDP.box.innerHTML=req.responseText;	
 }
 
@@ -259,6 +259,13 @@ function loadXMLDoc(url,readyStateFunction,async)
 	// branch for native XMLHttpRequest object
 	if (window.XMLHttpRequest) {
 		req = new XMLHttpRequest();
+		if (req.overrideMimeType) {
+      req.overrideMimeType('text/xml');
+    }
+    if (!req) {
+      alert('Cannot create XMLHTTP instance');
+      return false;
+    }
 		req.onreadystatechange = readyStateFunction;
 		req.open("GET", url, async);
 		req.send(null);
@@ -271,6 +278,17 @@ function loadXMLDoc(url,readyStateFunction,async)
 			req.send();
 		}
 	}
+}
+
+function alertContents(httpRequest)
+{
+	if (httpRequest.readyState == 4) {
+		if (httpRequest.status == 200) {
+			alert(httpRequest.responseText);
+    } else {
+    	alert('There was a problem with the request.');
+    }
+  }
 }
 
 function hideSelectBoxes() {
