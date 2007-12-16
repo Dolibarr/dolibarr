@@ -717,10 +717,13 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 		print '<link rel="stylesheet" type="text/css" media="print" href="'.DOL_URL_ROOT.'/theme/print.css">'."\n";
 		
 		// Style sheets pour la class Window
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
-		print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
-
+		if (! empty($conf->global->MAIN_CONFIRM_AJAX))
+		{
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/default.css">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alphacube.css">'."\n";
+			print '<link rel="stylesheet" type="text/css" href="'.DOL_URL_ROOT.'/theme/common/window/alert.css">'."\n";
+		}
+		
 		// Definition en alternate style sheet des feuilles de styles les plus maintenues
 		// Les navigateurs qui supportent sont rares. Plus aucun connu.
 		/*
