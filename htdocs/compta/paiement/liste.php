@@ -65,7 +65,7 @@ $offset = $limit * $page ;
 if (! $sortorder) $sortorder="DESC";
 if (! $sortfield) $sortfield="p.rowid";
   
-$sql = "SELECT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
+$sql = "SELECT DISTINCT p.rowid,".$db->pdate("p.datep")." as dp, p.amount,";
 $sql.= " p.statut, p.num_paiement,";
 //$sql.= " c.libelle as paiement_type,";
 $sql.= " c.code as paiement_code,"; 
