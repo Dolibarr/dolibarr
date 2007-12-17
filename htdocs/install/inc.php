@@ -38,6 +38,26 @@ if (isset($_SERVER["DOCUMENT_URI"]) && $_SERVER["DOCUMENT_URI"])
 	$_SERVER["PHP_SELF"]=$_SERVER["DOCUMENT_URI"];
 }
 
+
+// Definition des constantes syslog
+if (function_exists("define_syslog_variables"))
+{
+    define_syslog_variables();
+}
+else
+{
+	// Pour PHP sans syslog (comme sous Windows)
+	define('LOG_EMERG',0);
+	define('LOG_ALERT',1);
+	define('LOG_CRIT',2);
+	define('LOG_ERR',3);
+	define('LOG_WARNING',4);
+	define('LOG_NOTICE',5);
+	define('LOG_INFO',6);
+	define('LOG_DEBUG',7);
+}
+
+
 $includeconferror='';
 $conffile = "../conf/conf.php";
 $charset="ISO-8859-1";
@@ -89,11 +109,13 @@ if (! isset($conf->character_set_client))     $conf->character_set_client='iso-8
 if (! isset($conf->db->collation_connection)) $conf->db->collation_connection='latin1_swedish_ci';
 if (! isset($conf->db->user)) $conf->db->user='';
 	
+// Forcage constante LOG
+
 
 // Forcage du log pour les install et mises a jour
 $conf->syslog->enabled=1;
 $conf->global->SYSLOG_LEVEL=constant('LOG_DEBUG');
-if (is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
+if (@is_writable('/tmp')) define('SYSLOG_FILE','/tmp/dolibarr_install.log');
 else if (isset($_ENV["TMP"]) && is_writable($_ENV["TMP"]))   define('SYSLOG_FILE',$_ENV["TMP"].'/dolibarr_install.log');
 else if (isset($_ENV["TEMP"]) && is_writable($_ENV["TEMP"])) define('SYSLOG_FILE',$_ENV["TEMP"].'/dolibarr_install.log');
 else define('SYSLOG_FILE','/dolibarr_install.log');
