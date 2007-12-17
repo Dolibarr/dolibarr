@@ -119,6 +119,7 @@ class pdf_muscadet extends ModelePDFSuppliersOrders
         $outputlangs->load("bills");
         $outputlangs->load("products");
         $outputlangs->load("orders");
+        $outputlangs->load("dict");
 
 		$outputlangs->setPhpLang();
 
