@@ -671,7 +671,7 @@ class pdf_propale_azur extends ModelePDFPropales
 			$resteapayer = $object->total_ttc - $deja_regle;
 			if ($object->paye) $resteapayer=0;
 
-			if ($object->close_code == 'escompte')
+			if ($object->close_code == 'discount_vat')
 			{
 	            $index++;
         		$pdf->SetFillColor(256,256,256);
