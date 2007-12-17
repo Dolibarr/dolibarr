@@ -30,6 +30,8 @@
 
 require("./pre.inc.php");
 
+$user->getrights("compta");
+
 $mesg = '';
 
 if ($_POST["action"] == 'add' && $user->rights->compta->ventilation->parametrer)
