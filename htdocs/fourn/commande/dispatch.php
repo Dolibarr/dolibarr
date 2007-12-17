@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2004-2006 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur <eldy@users.sourceforge.net>
- * Copyright (C) 2005	   Eric	Seigne <eric.seigne@ryxeo.com>
+ * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2005	     Eric	Seigne          <eric.seigne@ryxeo.com>
+ * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
  * This	program	is free	software; you can redistribute it and/or modify
  * it under the	terms of the GNU General Public	License	as published by
@@ -217,65 +218,69 @@ if ($id	> 0)
 	
 	  $resql = $db->query($sql);
 	  if ($resql)
+	  {
+	  	$num = $db->num_rows($resql);
+	    $i = 0;
+	    
+	    if ($num)
 	    {
-	      $num = $db->num_rows($resql);
-	      $i = 0;
-	
-	      if ($num)
-		{
-		  print '<tr class="liste_titre">';
-		  print '<td>'.$langs->trans("Description").'</td>';
-
-		  print '<td align="right">'.$langs->trans("QtyOrdered").'</td>';
-		  print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
-		  print '<td align="right">'.$langs->trans("Warehouse").'</td>';
-		  print '<td align="right">'.$langs->trans("QtyDelivered").'</td>';
-		  print "</tr>\n";
-		}
-	      $var=false;
-
-	      $entrepot = new Entrepot($db);
-
-	      while ($i < $num)
-		{
-		  $objp = $db->fetch_object($resql);
-		  print "<tr $bc[$var]>";
-		  print '<td>';
-		  print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
-		  print ' - '.$objp->label;
-		  if ($objp->description) print '<br>'.nl2br($objp->description);
-		  print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
-		  print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->price.'">';
-		  print "</td>\n";
-
-		  print '<td align="right">'.$objp->qty.'</td>';
-		  print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
-
-		  print '<td align="right">';
-		  
-		  if (sizeof($user->entrepots) === 1)
-		    {
-		      $uentrepot = array();
-		      $uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
-		      $html->select_array("entrepot_".$i, $uentrepot);
-		    }
-		  else
-		    {
-		      $html->select_array("entrepot_".$i, $entrepot->list_array());
-		    }		  
-		  print "</td>\n";
-		  print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($objp->qty-$products_dispatched[$objp->fk_product]).'"></td>';
-		  print "</tr>\n";
-
-		  $i++;
-		  $var=!$var;
-		}
-	      $db->free($resql);
+	    	print '<tr class="liste_titre">';
+	    	print '<td>'.$langs->trans("Description").'</td>';
+	    	
+	    	print '<td align="right">'.$langs->trans("QtyOrdered").'</td>';
+	    	print '<td align="right">'.$langs->trans("QtyDispatched").'</td>';
+	    	print '<td align="right">'.$langs->trans("Warehouse").'</td>';
+	    	print '<td align="right">'.$langs->trans("QtyDelivered").'</td>';
+	    	print "</tr>\n";
 	    }
+	    
+	    $var=false;
+	    
+	    $entrepot = new Entrepot($db);
+	    
+	    while ($i < $num)
+	    {
+	    	$objp = $db->fetch_object($resql);
+	    	// On n'affiche pas les produits personnalisés
+	    	if ($objp->fk_product)
+	    	{
+	    		$var=!$var;
+	    		print "<tr $bc[$var]>";
+	    		print '<td>';
+	    		print '<a href="'.DOL_URL_ROOT.'/product/fournisseurs.php?id='.$objp->fk_product.'">'.img_object($langs->trans("ShowProduct"),'product').' '.$objp->ref.'</a>';
+	    		print ' - '.$objp->label;
+	    		if ($objp->description) print '<br>'.nl2br($objp->description);
+	    		print '<input name="product_'.$i.'" type="hidden" value="'.$objp->fk_product.'">';
+	    		print '<input name="pu_'.$i.'" type="hidden" value="'.$objp->price.'">';
+	    		print "</td>\n";
+	    		
+	    		print '<td align="right">'.$objp->qty.'</td>';
+	    		print '<td align="right">'.$products_dispatched[$objp->fk_product].'</td>';
+	    		
+	    		print '<td align="right">';
+	    		
+	    		if (sizeof($user->entrepots) === 1)
+	    		{
+	    			$uentrepot = array();
+	    			$uentrepot[$user->entrepots[0]['id']] = $user->entrepots[0]['label'];
+	    			$html->select_array("entrepot_".$i, $uentrepot);
+	    		}
+	    		else
+	    		{
+	    			$html->select_array("entrepot_".$i, $entrepot->list_array());
+	    		}
+	    		print "</td>\n";
+	    		print '<td align="right"><input name="qty_'.$i.'" type="text" size="8" value="'.($objp->qty-$products_dispatched[$objp->fk_product]).'"></td>';
+	    		print "</tr>\n";
+	    	}
+	    	$i++;
+	    }
+	    $db->free($resql);
+	  }
 	  else
-	    {
-	      dolibarr_print_error($db);
-	    }
+	  {
+	    dolibarr_print_error($db);
+	  }
 		
 	  print "</table>\n";
 	  print '<center><input type="submit" value="'.$langs->trans("Save").'"></center></form>';
