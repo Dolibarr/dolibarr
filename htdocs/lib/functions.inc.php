@@ -3291,6 +3291,8 @@ function dol_textishtml($msg,$option=0)
 		elseif (eregi('<font',$msg))             return true;
 		elseif (eregi('<strong',$msg))           return true;
 		elseif (eregi('<img',$msg))              return true;
+		elseif (eregi('<i>',$msg))               return true;
+		elseif (eregi('<b>',$msg))               return true;
 		elseif (eregi('&[A-Z0-9]{1,6};',$msg))   return true;
 		return false;
 	}
