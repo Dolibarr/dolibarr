@@ -809,6 +809,8 @@ class pdf_crabe extends ModelePDFFactures
 
 	            $pdf->SetXY ($col2x, $tab2_top + $tab2_hl * $index);
 	            $pdf->MultiCell($largcol2, $tab2_hl, price(abs($object->total_ttc - $deja_regle)), $useborder, 'R', 1);
+				
+				$resteapayer=0;
 			}
 
             $index++;

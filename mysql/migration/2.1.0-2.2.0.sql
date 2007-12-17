@@ -1166,6 +1166,8 @@ ALTER TABLE llx_societe_remise_except ADD CONSTRAINT fk_societe_remise_fk_factur
 -- V4.1 update llx_societe_remise_except as re set re.fk_facture = (select fk_facture from llx_facturedet as fd where fd.rowid = re.fk_facture_line), re.fk_facture_line = NULL where re.fk_facture_line in (select rowid from llx_facturedet where description = '(CREDIT_NOTE)');
 -- V4.1 delete from llx_facturedet where description = '(CREDIT_NOTE)';
 
+update llx_facture set close_code = 'discount_vat' where close_code = 'escompte';
+
 ALTER TABLE llx_commande_fournisseurdet MODIFY fk_product integer;
 
 -- Le prix d'un produit ne doit pas avoir la valeur NULL
