@@ -853,6 +853,7 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 
 	print '<tr><td colspan="4">';
 	print '<br>';
+	print '<b>'.$langs->trans('SuppliersInvoices')."</b><br>\n";
 	print '</td></tr>';
 	
 	$error = 0;
@@ -923,11 +924,11 @@ function migrate_paiementfourn_facturefourn($db,$langs,$conf)
 	}
 	if (! $nb && ! $error) 
 	{
-   		print '<tr><td colspan="3" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td><td align="right">'.$langs->trans("AlreadyDone").'</td></tr>';
+   		print '<tr><td>'.$langs->trans("AlreadyDone").'</td></tr>';
     }
 	if ($error) 
 	{
-   		print '<tr><td colspan="3" nowrap="nowrap"><b>'.$langs->trans('SuppliersInvoices').'</b></td><td align="right">'.$langs->trans("Error").'</td></tr>';
+   		print '<tr><td>'.$langs->trans("Error").'</td></tr>';
     }
 }
 
