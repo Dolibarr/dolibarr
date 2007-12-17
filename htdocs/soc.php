@@ -350,7 +350,7 @@ if ($_POST["getcustomercode"] || $_POST["getsuppliercode"] ||
 		print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
 		print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
 		print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-		print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
+		print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
 		print '</select></td>';
 
 		print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
@@ -693,7 +693,7 @@ elseif ($_GET["action"] == 'edit' || $_POST["action"] == 'edit')
         print '<tr><td width="25%">'.$langs->trans('ProspectCustomer').'</td><td width="25%"><select class="flat" name="client">';
         print '<option value="2"'.($soc->client==2?' selected="true"':'').'>'.$langs->trans('Prospect').'</option>';
         print '<option value="1"'.($soc->client==1?' selected="true"':'').'>'.$langs->trans('Customer').'</option>';
-        print '<option value="0"'.($soc->client==0?' selected="true"':'').'>Ni client, ni prospect</option>';
+        print '<option value="0"'.($soc->client==0?' selected="true"':'').'>'.$langs->trans('NorProspectNorCustomer').'</option>';
         print '</select></td>';
         print '<td width="25%">'.$langs->trans('CustomerCode').'</td><td width="25%">';
 
