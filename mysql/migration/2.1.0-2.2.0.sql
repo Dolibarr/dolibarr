@@ -109,6 +109,8 @@ delete from llx_const where name='MAIN_SHOW_DEVELOPMENT_MODULES';
 delete from llx_const where name='MAIN_ENABLE_DEVELOPMENT';
 DELETE FROM llx_const WHERE name = 'PRODUIT_CHANGE_PROD_DESC';
 DELETE FROM llx_const WHERE name like 'FICHINTER_ADDON%';
+insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON',    'pacific','chaine',0);
+insert into llx_const (name, value, type, visible) values ('FICHEINTER_ADDON_PDF','soleil','chaine',0);
 
 INSERT INTO llx_const(name, value, type, note, visible) VALUES ('GENBARCODE_LOCATION','/usr/local/bin/genbarcode','chaine','location of genbarcode',0);
 insert into llx_const(name, value, type, visible, note) values('MAIN_FEATURES_LEVEL','0','chaine',1,'Level of features to show (0=stable only, 1=stable+experimental, 2=stable+experimental+development');
@@ -141,7 +143,6 @@ alter table llx_tva add fk_user_modif   integer;
 alter table llx_categorie ADD type int not null default '0';
 -- V4 ALTER TABLE llx_categorie DROP INDEX uk_categorie_ref;
 
-drop table if exists `llx_categorie_societe`;
 create table `llx_categorie_societe` (
   `fk_categorie` int(11) not null,
   `fk_societe` int(11) not null,
@@ -149,7 +150,6 @@ create table `llx_categorie_societe` (
   KEY `fk_societe` (`fk_societe`)
 ) type=innodb;
 
--- 
 alter table `llx_categorie_societe` drop foreign key fk_societe;
 alter table `llx_categorie_societe` add constraint `fk_categorie_societe_categorie_rowid` foreign key(`fk_categorie`) REFERENCES `llx_categorie` (`rowid`);
 alter table `llx_categorie_societe` add constraint `fk_categorie_societe_fk_soc` foreign key(`fk_societe`) REFERENCES `llx_societe` (`rowid`);
