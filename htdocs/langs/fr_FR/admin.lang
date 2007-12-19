@@ -4,6 +4,7 @@ VersionExperimental=Expérimental
 VersionDevelopment=Développement
 VersionUnknown=Inconnue
 VersionRecommanded=Recommandé
+SessionId=ID Session
 WarningModuleNotActive=Module <b>%s</b> non actif
 DolibarrSetup=Installation de Dolibarr
 DolibarrUser=Utilisateur Dolibarr

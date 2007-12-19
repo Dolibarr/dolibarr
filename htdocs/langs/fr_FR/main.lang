@@ -395,6 +395,7 @@ NotManaged=Non géré
 FeatureDisabled=Fonction désactivée
 MoveBox=Déplacer la boite %s
 Offered=Offert
+NotEnoughPermissions=Vous n'avez pas les permissions pour cette action
 # Week day
 Monday=Lundi
 Tuesday=Mardi

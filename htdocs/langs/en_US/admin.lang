@@ -4,6 +4,7 @@ VersionExperimental=Experimental
 VersionDevelopment=Development
 VersionUnknown=Unknown
 VersionRecommanded=Recommanded
+SessionId=Session id
 WarningModuleNotActive=Module <b>%s</b> must be enabled
 DolibarrSetup=Dolibarr setup
 DolibarrUser=Dolibarr user
