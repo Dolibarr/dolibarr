@@ -1022,9 +1022,9 @@ if ($_GET['propalid'] > 0)
 			}
 			else
 			{
+				print '</td></tr></table>';
 				if (!empty($propal->projetidp))
 				{
-					print '</td></tr></table>';
 					print '<td colspan="3">';
 					$proj = new Project($db);
 					$proj->fetch($propal->projetidp);
@@ -1034,7 +1034,6 @@ if ($_GET['propalid'] > 0)
 					print '</td>';
 				}
 				else {
-					print '</td></tr></table>';
 					print '<td colspan="3">&nbsp;</td>';
 				}
 			}

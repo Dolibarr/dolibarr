@@ -244,39 +244,52 @@ if ($_GET["propalid"] > 0)
     if ($conf->projet->enabled)
     {
         $langs->load("projects");
-        print '<tr><td>'.$langs->trans('Project').'</td>';
+        print '<tr><td>';
+        print '<table class="nobordernopadding" width="100%"><tr><td>';
+        print $langs->trans('Project').'</td>';
         $numprojet = $societe->has_projects();
         if (! $numprojet)
         {
-            print '<td colspan="2">';
-            print $langs->trans("NoProject").'</td><td>';
-            print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
-            print '</td>';
+        	print '</td></tr></table>';
+        	print '<td colspan="2">';
+          print $langs->trans("NoProject").'</td><td>';
+          print '<a href=../projet/fiche.php?socid='.$societe->id.'&action=create>'.$langs->trans('AddProject').'</a>';
+          print '</td>';
         }
         else
         {
-            if ($propal->statut == 0 && $user->rights->propale->creer)
+        	if ($propal->statut == 0 && $user->rights->propale->creer)
+        	{
+        		if ($_GET['action'] != 'classer' && $propal->brouillon) print '<td align="right"><a href="'.$_SERVER['PHP_SELF'].'?action=classer&amp;propalid='.$propal->id.'">'.img_edit($langs->trans('SetProject')).'</a></td>';
+        		print '</tr></table>';
+        		print '</td><td colspan="3">';
+        		if ($_GET['action'] == 'classer')
+        		{
+        			$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'projetidp');
+        		}
+        		else
+        		{
+        			$html->form_project($_SERVER['PHP_SELF'].'?propalid='.$propal->id, $propal->socid, $propal->projetidp, 'none');
+        		}
+        		print '</td></tr>';
+        	}
+        	else
+          {
+          	print '</td></tr></table>';
+          	if (!empty($propal->projetidp))
             {
-                print '<td colspan="3">';
-                $html->select_projects($societe->id, $propal->projetidp, 'projetidp');
-                print '</td>';
+            	print '<td colspan="3">';
+              $proj = new Project($db);
+              $proj->fetch($propal->projetidp);
+              print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
+              print $proj->title;
+              print '</a>';
+              print '</td>';
             }
-            else
-            {
-                if (!empty($propal->projetidp))
-                {
-                    print '<td colspan="3">';
-                    $proj = new Project($db);
-                    $proj->fetch($propal->projetidp);
-                    print '<a href="../projet/fiche.php?id='.$propal->projetidp.'" title="'.$langs->trans('ShowProject').'">';
-                    print $proj->title;
-                    print '</a>';
-                    print '</td>';
-                }
-                else {
-                    print '<td colspan="3">&nbsp;</td>';
-                }
+            else {
+            	print '<td colspan="3">&nbsp;</td>';
             }
+          }
         }
         print '</tr>';
     }
@@ -300,23 +313,24 @@ if ($_GET["propalid"] > 0)
     * Lignes de propale
     *
     */
-	$sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
-	$sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
-	$sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
-	$sql.= ' p.rowid as prodid, p.label as product, p.ref, p.fk_product_type, ';
-	$sql.= ' p.description as product_desc';
-	$sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
-	$sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
-	$sql.= ' WHERE pt.fk_propal = '.$propal->id;
-	$sql.= ' ORDER BY pt.rang ASC, pt.rowid';
+    print '<table class="noborder" width="100%">';
+    
+    $sql = 'SELECT pt.rowid, pt.description, pt.price, pt.fk_product, pt.fk_remise_except,';
+    $sql.= ' pt.qty, pt.tva_tx, pt.remise_percent, pt.subprice, pt.info_bits,';
+    $sql.= ' pt.total_ht, pt.total_tva, pt.total_ttc,';
+    $sql.= ' p.rowid as prodid, p.label as product, p.ref, p.fk_product_type, ';
+    $sql.= ' p.description as product_desc';
+    $sql.= ' FROM '.MAIN_DB_PREFIX.'propaldet as pt';
+    $sql.= ' LEFT JOIN '.MAIN_DB_PREFIX.'product as p ON pt.fk_product=p.rowid';
+    $sql.= ' WHERE pt.fk_propal = '.$propal->id;
+    $sql.= ' ORDER BY pt.rang ASC, pt.rowid';
     $resql = $db->query($sql);
     if ($resql)
     {
         $num_lignes = $db->num_rows($resql);
         $i = 0;
         $total = 0;
-
-        print '<table class="noborder" width="100%">';
+        
         if ($num_lignes)
         {
             print '<tr class="liste_titre">';
