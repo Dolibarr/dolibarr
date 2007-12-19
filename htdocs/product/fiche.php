@@ -39,6 +39,7 @@ require_once(DOL_DOCUMENT_ROOT."/commande/commande.class.php");
 
 $langs->load("bills");
 $langs->load("other");
+$langs->load("stocks");
 
 $mesg = '';
 
