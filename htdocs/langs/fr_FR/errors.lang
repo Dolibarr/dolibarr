@@ -14,3 +14,4 @@ ErrorSupplierCodeRequired=Code fournisseur obligatoire
 ErrorSupplierCodeAlreadyUsed=Code fournisseur deja utilise
 ErrorBadParameters=Parametres incorrects
 UserCannotBeDelete=L'utilisateur ne peut pas etre supprimée. Peut-être est-il associé à des éléments de Dolibarr.
+ErrorFieldsRequired=Des champs obligatoires n'ont pas été renseigné
