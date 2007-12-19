@@ -65,11 +65,11 @@ class User extends CommonObject
 	var $admin;
 	var $login;
 
-	//! Mot de passe en clair en mémoire
+	//! Mot de passe en clair en memoire
 	var $pass;
-	//! Mot de passe en clair en base (renseigné si DATABASE_PWD_ENCRYPTED=0)
+	//! Mot de passe en clair en base (renseignï¿½ si DATABASE_PWD_ENCRYPTED=0)
 	var $pass_indatabase;
-	//! Mot de passe crypté en base (toujours renseigné)
+	//! Mot de passe crypte en base (toujours renseignï¿½)
 	var $pass_indatabase_crypted;
 
 	var $datec;
@@ -93,15 +93,15 @@ class User extends CommonObject
 
 	var $rights;
 	var $all_permissions_are_loaded;         /**< \private all_permissions_are_loaded */
-	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargées
+	var $tab_loaded=array();		// Tableau pour signaler les permissions deja chargï¿½es
 
 
 
   
   /**
    *    \brief Constructeur de la classe
-   *    \param  DB         Handler accès base de données
-   *    \param  id         Id de l'utilisateur (0 par défaut)
+   *    \param  DB         Handler acces base de donnees
+   *    \param  id         Id de l'utilisateur (0 par defaut)
    */
   function User($DB, $id=0)
   {
@@ -120,8 +120,8 @@ class User extends CommonObject
   
   
 	/**
-	*	\brief      Charge un objet user avec toutes ces caractéristiques depuis un id ou login
-	*	\param      login       Si défini, login a utiliser pour recherche
+	*	\brief      Charge un objet user avec toutes ces caracteristiques depuis un id ou login
+	*	\param      login       Si defini, login a utiliser pour recherche
 	*	\return		int			<0 if KO, 0 not found, >0 if OK
 	*/
 	function fetch($login='')
@@ -217,8 +217,8 @@ class User extends CommonObject
 			return -1;
 		}
 		
-		// Recupere parametrage global propre à l'utilisateur
-		// \todo a stocker/recupérer en session pour eviter ce select a chaque page
+		// Recupere parametrage global propre a l'utilisateur
+		// \todo a stocker/recuperer en session pour eviter ce select a chaque page
 		$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
 		$sql.= " WHERE fk_user = ".$this->id;
 		$sql.= " AND page = ''";
@@ -243,9 +243,9 @@ class User extends CommonObject
 			return -2;
 		}
 		
-		// Recupere parametrage propre à la page et à l'utilisateur
+		// Recupere parametrage propre a la page et a l'utilisateur
 		// \todo SCRIPT_URL non defini sur tous serveurs
-		// Paramétrage par page desactivé pour l'instant
+		// Parametrage par page desactive pour l'instant
 		if (1==2 && isset($_SERVER['SCRIPT_URL']))
 		{
 			$sql = "SELECT param, value FROM ".MAIN_DB_PREFIX."user_param";
@@ -280,7 +280,7 @@ class User extends CommonObject
   
   /**
    *    \brief      Ajoute un droit a l'utilisateur
-   *    \param      rid         id du droit à ajouter
+   *    \param      rid         id du droit a ajouter
    *    \param      allmodule   Ajouter tous les droits du module allmodule
    *    \param      allperms    Ajouter tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
@@ -295,8 +295,8 @@ class User extends CommonObject
 
         if ($rid)
         {
-            // Si on a demandé ajout d'un droit en particulier, on récupère
-            // les caractéristiques (module, perms et subperms) de ce droit.
+            // Si on a demande ajout d'un droit en particulier, on recupere
+            // les caracteristiques (module, perms et subperms) de ce droit.
             $sql = "SELECT module, perms, subperms";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
@@ -314,21 +314,21 @@ class User extends CommonObject
                 dolibarr_print_error($this->db);
             }
 
-            // Where pour la liste des droits à ajouter
+            // Where pour la liste des droits a ajouter
             $whereforadd="id=".$rid;
             // Ajout des droits induits
             if ($subperms) $whereforadd.=" OR (module='$module' AND perms='$perms' AND subperms='lire')";
             if ($perms)    $whereforadd.=" OR (module='$module' AND perms='lire' AND subperms IS NULL)";
         }
         else {
-            // On a pas demandé un droit en particulier mais une liste de droits
+            // On a pas demande un droit en particulier mais une liste de droits
             // sur la base d'un nom de module de de perms
-            // Where pour la liste des droits à ajouter
+            // Where pour la liste des droits a ajouter
             if ($allmodule) $whereforadd="module='$allmodule'";
             if ($allperms)  $whereforadd=" AND perms='$allperms'";
         }
 
-        // Ajout des droits trouvés grace au critere whereforadd
+        // Ajout des droits trouves grace au critere whereforadd
         if ($whereforadd)
         {
             //print "$module-$perms-$subperms";
@@ -375,7 +375,7 @@ class User extends CommonObject
 
   /**
    *    \brief      Retire un droit a l'utilisateur
-   *    \param      rid         id du droit à retirer
+   *    \param      rid         id du droit a retirer
    *    \param      allmodule   Retirer tous les droits du module allmodule
    *    \param      allperms    Retirer tous les droits du module allmodule, perms allperms
    *    \return     int         > 0 si ok, < 0 si erreur
@@ -389,8 +389,8 @@ class User extends CommonObject
 
         if ($rid)
         {
-            // Si on a demandé supression d'un droit en particulier, on récupère
-            // les caractéristiques module, perms et subperms de ce droit.
+            // Si on a demande supression d'un droit en particulier, on recupere
+            // les caracteristiques module, perms et subperms de ce droit.
             $sql = "SELECT module, perms, subperms";
             $sql.= " FROM ".MAIN_DB_PREFIX."rights_def";
             $sql.= " WHERE ";
@@ -408,15 +408,15 @@ class User extends CommonObject
                 dolibarr_print_error($this->db);
             }
 
-            // Where pour la liste des droits à supprimer
+            // Where pour la liste des droits a supprimer
             $wherefordel="id=".$rid;
             // Suppression des droits induits
             if ($subperms=='lire') $wherefordel.=" OR (module='$module' AND perms='$perms' AND subperms IS NOT NULL)";
             if ($perms=='lire')    $wherefordel.=" OR (module='$module')";
         }
         else {
-            // On a demandé suppression d'un droit sur la base d'un nom de module ou perms
-            // Where pour la liste des droits à supprimer
+            // On a demande suppression d'un droit sur la base d'un nom de module ou perms
+            // Where pour la liste des droits a supprimer
             if ($allmodule) $wherefordel="module='$allmodule'";
             if ($allperms)  $wherefordel=" AND perms='$allperms'";
         }
@@ -477,23 +477,23 @@ class User extends CommonObject
 
 	/**
 		\brief      Charge dans l'objet user, la liste des permissions auxquelles l'utilisateur a droit
-		\param      module    nom du module dont il faut récupérer les droits ('' par defaut signifie tous les droits)
+		\param      module    nom du module dont il faut recuperer les droits ('' par defaut signifie tous les droits)
 	*/
 	function getrights($moduletag='')
 	{
 		if ($moduletag && isset($this->tab_loaded[$moduletag]) && $this->tab_loaded[$moduletag])
 		{ 
-			// Le fichier de ce module est deja chargé
+			// Le fichier de ce module est deja charge
 			return;
 		}
 
 		if ($this->all_permissions_are_loaded)
 		{
-			// Si les permissions ont déja été chargé pour ce user, on quitte
+			// Si les permissions ont deja ete charge pour ce user, on quitte
 			return;
 		}
 		
-		// Récupération des droits utilisateurs + récupération des droits groupes
+		// Recuperation des droits utilisateurs + recuperation des droits groupes
 		
 		// D'abord les droits utilisateurs
 		$sql = "SELECT r.module, r.perms, r.subperms";
@@ -573,13 +573,13 @@ class User extends CommonObject
 
 		if (! $moduletag)
 		{
-			// Si module etait non defini, alors on a tout chargé, on peut donc considérer
-			// que les droits sont en cache (car tous chargés) pour cet instance de user
+			// Si module etait non defini, alors on a tout charge, on peut donc considerer
+			// que les droits sont en cache (car tous charges) pour cet instance de user
 			$this->all_permissions_are_loaded=1;
 		}
 		else
 		{
-			// Si module défini, on le marque comme chargé en cache
+			// Si module defini, on le marque comme charge en cache
 			$this->tab_loaded[$moduletag]=1;
 		}
 	}
@@ -594,7 +594,7 @@ class User extends CommonObject
       
       $this->db->begin();
       
-      // Désactive utilisateur
+      // Desactive utilisateur
       $sql = "UPDATE ".MAIN_DB_PREFIX."user";
       $sql.= " SET statut = ".$statut;
       $sql.= " WHERE rowid = ".$this->id;
@@ -624,7 +624,7 @@ class User extends CommonObject
   
   
   /**
-   *    \brief      Supprime complètement un utilisateur
+   *    \brief      Supprime completement un utilisateur
    */
   function delete()
   {
@@ -675,10 +675,10 @@ class User extends CommonObject
   }
   
   /**
-   *  \brief      Crée l'utilisateur en base
+   *  \brief      Cree l'utilisateur en base
    *  \param      user        	Objet user qui demande la creation
    *  \param      notrigger		1 ne declenche pas les triggers, 0 sinon
-   *  \return     int         	<0 si KO, id compte créé si OK
+   *  \return     int         	<0 si KO, id compte cree si OK
    */
 	function create($user='',$notrigger=0)
 	{
@@ -703,6 +703,7 @@ class User extends CommonObject
 			if ($num)
 			{
 				$this->error = 'ErrorLoginAlreadyExists';
+				$this->db->rollback();
 				return -6;
 			}
 			else
@@ -737,7 +738,7 @@ class User extends CommonObject
 						require_once(DOL_DOCUMENT_ROOT."/product/stock/entrepot.class.php");
 						$entrepot = new Entrepot($this->db);
 						$entrepot->libelle = 'Stock Personnel '.$this->nom;
-						$entrepot->description = 'Cet entrepot représente le stock personnel de '.$this->prenom.' '.$this->nom;
+						$entrepot->description = 'Cet entrepot represente le stock personnel de '.$this->prenom.' '.$this->nom;
 						$entrepot->statut = 1;
 						$entrepot->create($user);
 					}
@@ -782,15 +783,15 @@ class User extends CommonObject
 
 
 	/**
-	*      \brief      Créé en base un utilisateur depuis l'objet contact
+	*      \brief      Cree en base un utilisateur depuis l'objet contact
 	*      \param      contact     Objet du contact source
-	*      \return     int         si erreur <0, si ok renvoie id compte créé
+	*      \return     int         si erreur <0, si ok renvoie id compte cree
 	*/
 	function create_from_contact($contact)
 	{
         global $langs;
 
-        // Positionne paramètres
+        // Positionne parametres
         $this->nom = $contact->nom;
         $this->prenom = $contact->prenom;
 
@@ -801,7 +802,7 @@ class User extends CommonObject
 
         $this->db->begin();
 
-        // Crée et positionne $this->id
+        // Cree et positionne $this->id
         $result=$this->create();
 
         if ($result > 0)
@@ -827,7 +828,7 @@ class User extends CommonObject
         }
         else
         {
-            // $this->error deja positionné
+            // $this->error deja positionne
             dolibarr_syslog("User::create_from_contact - 0");
 
             $this->db->rollback();
@@ -837,15 +838,15 @@ class User extends CommonObject
     }
 
   /**
-   *      \brief      Créé en base un utilisateur depuis l'objet adherent
+   *      \brief      Cree en base un utilisateur depuis l'objet adherent
    *      \param      member	Objet adherent source
-   *      \return     int		Si erreur <0, si ok renvoie id compte créé
+   *      \return     int		Si erreur <0, si ok renvoie id compte cree
    */
   function create_from_member($member)
   {
         global $conf, $user,$langs;
 
-        // Positionne paramètres
+        // Positionne parametres
         $this->nom = $member->nom;
         $this->prenom = $member->prenom;
 
@@ -857,7 +858,7 @@ class User extends CommonObject
 
         $this->db->begin();
 
-        // Crée et positionne $this->id
+        // Cree et positionne $this->id
         $result=$this->create();
         if ($result > 0)
         {
@@ -884,7 +885,7 @@ class User extends CommonObject
 		}
         else
         {
-            // $this->error deja positionné
+            // $this->error deja positionne
             dolibarr_syslog("User::create_from_member - 2 - ".$this->error);
 
             $this->db->rollback();
@@ -893,8 +894,8 @@ class User extends CommonObject
     }
 
 	/**
-	*    \brief      Affectation des permissions par défaut
-	*    \return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnés
+	*    \brief      Affectation des permissions par defaut
+	*    \return     Si erreur <0, si ok renvoi le nbre de droits par defaut positionnes
 	*/
 	function set_default_rights()
     {
@@ -930,7 +931,7 @@ class User extends CommonObject
     }
 
   /**
-   *    \brief      Mise à jour en base d'un utilisateur (sauf info mot de passe)
+   *    \brief      Mise e jour en base d'un utilisateur (sauf info mot de passe)
    *	\param		user			User qui fait la mise a jour
    *    \param      notrigger		1 ne declenche pas les triggers, 0 sinon
    *	\param		nosyncmember	Do not synchronize linked member
@@ -993,7 +994,7 @@ class User extends CommonObject
 	        {
 	        	if ($this->pass != $this->pass_indatabase && $this->pass != $this->pass_indatabase_crypted)
 	       		{
-	       			// Si mot de passe saisi et différent de celui en base
+	       			// Si mot de passe saisi et different de celui en base
 	       			$result=$this->password($user,$this->pass,$conf->password_encrypted,0,$notrigger);
 	       			
 	       			if (! $nbrowsaffected) $nbrowsaffected++;
@@ -1077,9 +1078,9 @@ class User extends CommonObject
    }
 
 	/**
-			\brief 		Fonction qui met à jour le commentaire d'un utilisateur
+			\brief 		Fonction qui met a jour le commentaire d'un utilisateur
 			\param		note			Note
-			\param		user			Utilisateur qui réalise la mise a jour
+			\param		user			Utilisateur qui realise la mise a jour
 			\return		int				<0 si KO, >0 si OK
 	*/
 	function update_note($note,$user)
@@ -1106,8 +1107,8 @@ class User extends CommonObject
 	}
 
   /**
-   *    \brief      Mise à jour en base de la date de deniere connexion d'un utilisateur
-   *				Fonction appelée lors d'une nouvelle connexion
+   *    \brief      Mise e jour en base de la date de deniere connexion d'un utilisateur
+   *				Fonction appelee lors d'une nouvelle connexion
    *    \return     <0 si echec, >=0 si ok
    */
   function update_last_login_date()
@@ -1139,7 +1140,7 @@ class User extends CommonObject
 	/**
 	*   \brief     	Change le mot de passe d'un utilisateur
 	*   \param     	user             		Object user de l'utilisateur qui fait la modification
-	*   \param     	password         		Nouveau mot de passe (à générer si non communiqué)
+	*   \param     	password         		Nouveau mot de passe (e generer si non communique)
 	*   \param     	noclearpassword			0 ou 1 s'il ne faut pas stocker le mot de passe en clair
 	*	\param		changelater				1=Change password only after clicking on confirm email
 	*	\param		notrigger				1=Ne declenche pas les triggers
@@ -1154,10 +1155,10 @@ class User extends CommonObject
 		
         dolibarr_syslog("User::Password user=".$user->id." password=".eregi_replace('.','*',$password)." noclearpassword=".$noclearpassword." changelater=".$changelater." notrigger=".$notrigger);
 
-        // Si nouveau mot de passe non communiqué, on génère par module
+        // Si nouveau mot de passe non communique, on genere par module
         if (! $password)
         {
-        	// TODO Mettre appel au module de génération de mot de passe
+        	// TODO Mettre appel au module de generation de mot de passe
         	$password=creer_pass_aleatoire_1('');
         	//$password=creer_pass_aleatoire_2('');
         }
@@ -1203,7 +1204,7 @@ class User extends CommonObject
 						
 						if ($result >= 0)
 						{
-							$result=$adh->password($user,$this->pass,0,0,1);	// Cryptage non géré dans module adhérent
+							$result=$adh->password($user,$this->pass,0,0,1);	// Cryptage non gere dans module adherent
 							if ($result < 0)
 							{
 								$this->error=$adh->error;
@@ -1324,7 +1325,7 @@ class User extends CommonObject
     }
 
   /**
-   * \brief     Renvoie la dernière erreur fonctionnelle de manipulation de l'objet
+   * \brief     Renvoie la derniere erreur fonctionnelle de manipulation de l'objet
    * \return    string      chaine erreur
    */
 	function error()
@@ -1372,7 +1373,7 @@ class User extends CommonObject
     }
 
   /**
-   *    \brief      Mise à jour des infos de click to dial
+   *    \brief      Mise e jour des infos de click to dial
    */
   	function update_clicktodial()
     {
@@ -1488,8 +1489,8 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    \brief      Retourne le libellé du statut d'un user (actif, inactif)
-	 *    \param      mode          0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long
+	 *    \brief      Retourne le libelle du statut d'un user (actif, inactif)
+	 *    \param      mode          0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long
 	 *    \return     string        Libelle
 	 */
 	function getLibStatut($mode=0)
@@ -1498,10 +1499,10 @@ class User extends CommonObject
 	}
 
 	/**
-	 *    	\brief      Renvoi le libellé d'un statut donné
+	 *    	\brief      Renvoi le libelle d'un statut donne
 	 *    	\param      statut        	Id statut
-	 *    	\param      mode          	0=libellé long, 1=libellé court, 2=Picto + Libellé court, 3=Picto, 4=Picto + Libellé long, 5=Libellé court + Picto
-	 *    	\return     string        	Libellé du statut
+	 *    	\param      mode          	0=libelle long, 1=libelle court, 2=Picto + Libelle court, 3=Picto, 4=Picto + Libelle long, 5=Libelle court + Picto
+	 *    	\return     string        	Libelle du statut
 	 */
 	function LibStatut($statut,$mode=0)
 	{
@@ -1580,7 +1581,7 @@ class User extends CommonObject
 		if ($this->prenom && $conf->global->LDAP_FIELD_FIRSTNAME) $info[$conf->global->LDAP_FIELD_FIRSTNAME] = $this->prenom;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN) $info[$conf->global->LDAP_FIELD_LOGIN] = $this->login;
 		if ($this->login && $conf->global->LDAP_FIELD_LOGIN_SAMBA) $info[$conf->global->LDAP_FIELD_LOGIN_SAMBA] = $this->login;
-		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD) $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypté
+		if ($this->pass && $conf->global->LDAP_FIELD_PASSWORD) $info[$conf->global->LDAP_FIELD_PASSWORD] = $this->pass;	// this->pass = mot de passe non crypte
 		if ($this->ldap_sid && $conf->global->LDAP_FIELD_SID) $info[$conf->global->LDAP_FIELD_SID] = $this->ldap_sid;
 		if ($this->societe_id > 0)
 		{
@@ -1631,13 +1632,13 @@ class User extends CommonObject
 	
 
 	/**
-	 *		\brief		Initialise le user avec valeurs fictives aléatoire
+	 *		\brief		Initialise le user avec valeurs fictives aleatoire
 	 */
 	function initAsSpecimen()
 	{
 		global $user,$langs;
 
-		// Charge tableau des id de société socids
+		// Charge tableau des id de societe socids
 		$socids = array();
 		$sql = "SELECT rowid FROM ".MAIN_DB_PREFIX."societe WHERE client=1 LIMIT 10";
 		$resql = $this->db->query($sql);
@@ -1654,7 +1655,7 @@ class User extends CommonObject
 			}
 		}
 
-		// Initialise paramètres
+		// Initialise parametres
 		$this->id=0;
 		$this->ref = 'SPECIMEN';
 		$this->specimen=1;
@@ -1755,8 +1756,8 @@ class User extends CommonObject
 
 
 /**
-   \brief      Fonction pour créer un mot de passe aléatoire en minuscule
-   \param	    sel			Donnée aléatoire
+   \brief      Fonction pour creer un mot de passe aleatoire en minuscule
+   \param	    sel			Donnee aleatoire
    \return		string		Mot de passe
 */
 function creer_pass_aleatoire_1($sel = "")
@@ -1768,10 +1769,10 @@ function creer_pass_aleatoire_1($sel = "")
 
 
 /**
-   \brief      Fonction pour créer un mot de passe aléatoire mélangeant majuscule,
-   minuscule, chiffre et alpha et caractères spéciaux
-   \remarks    La fonction a été prise sur http://www.uzine.net/spip
-   \param	    sel			Donnée aléatoire
+   \brief      Fonction pour creer un mot de passe aleatoire melangeant majuscule,
+   minuscule, chiffre et alpha et caracteres speciaux
+   \remarks    La fonction a ete prise sur http://www.uzine.net/spip
+   \param	    sel			Donnee aleatoire
    \return		string		Mot de passe
 */
 function creer_pass_aleatoire_2($sel = "")

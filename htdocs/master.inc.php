@@ -69,7 +69,7 @@ if (! @include_once("conf/conf.php"))
 }
 else
 {
-  if (! isset($dolibarr_main_db_host))
+	if (! isset($dolibarr_main_db_host))
     {
       Header("Location: install/index.php");
       exit;
