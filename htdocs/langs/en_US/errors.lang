@@ -14,3 +14,4 @@ ErrorSupplierCodeRequired=Supplier code required
 ErrorSupplierCodeAlreadyUsed=Supplier code already used
 ErrorBadParameters=Bad parameters
 UserCannotBeDelete=User can not be deleted. May be it is associated on Dolibarr entities.
+ErrorFieldsRequired=Some required fields were not filled.
