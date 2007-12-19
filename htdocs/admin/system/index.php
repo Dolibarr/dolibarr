@@ -17,7 +17,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -46,7 +45,7 @@ print info_admin($langs->trans("SystemInfoDesc")).'<br>';
 
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">Dolibarr</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . DOL_VERSION . "</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -59,7 +58,7 @@ phpinfo();
 $chaine = ob_get_contents(); 
 ob_end_clean(); 
 eregi('System </td><td class="v">([^\/]*)</td>',$chaine,$reg);
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$reg[1]."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -67,7 +66,7 @@ print "<br>\n";
 // Serveur web
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("WebServer")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".$_SERVER["SERVER_SOFTWARE"]."</td></tr>\n";
 print '</table>';
 
 print "<br>\n";
@@ -75,7 +74,7 @@ print "<br>\n";
 // Php
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Php")."</td></tr>\n";
-print "<tr $bc[0]><td width=\"240\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>".phpversion()."</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("PhpWebLink")."</td><td>".php_sapi_name()."</td></tr>\n";
 print '</table>';
 
@@ -89,7 +88,7 @@ print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db-
 print "<tr $bc[0]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td width=\"240\">".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[1]><td width=\"280\">".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -104,6 +103,8 @@ $configfileparameters=array(
 							'dolibarr_main_db_user',
 							'dolibarr_main_db_pass',
 							'dolibarr_main_db_type',
+							'dolibarr_main_db_character_set',
+							'collation_connection',
 							'separator',
 							'character_set_client',
 							'separator',
@@ -132,8 +133,10 @@ $configfilelib=array(
 					$langs->trans("Login"),
 					$langs->trans("Password"),
 					$langs->trans("DriverType"),
+					$langs->trans("DBStoringCharset"),
+					$langs->trans("DBSortingCharset"),
 					'separator',
-					$langs->trans("Charset"),
+					$langs->trans("HTMLCharset"),
 					'separator',
 					$langs->trans("AuthenticationMode"),
 					'separator',
@@ -152,7 +155,7 @@ $configfilelib=array(
 					);
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td width="240">'.$langs->trans("ConfigurationFile").'</td>';
+print '<tr class="liste_titre"><td width="280">'.$langs->trans("ConfigurationFile").'</td>';
 print '<td>'.$langs->trans("Parameter").'</td>';
 print '<td>'.$langs->trans("Value").'</td>';
 print '</tr>'."\n";
@@ -171,6 +174,12 @@ foreach($configfileparameters as $key)
 		print "<td>";
 		if ($key == 'dolibarr_main_db_pass') print eregi_replace('.','*',${$key});
 		else print ${$key};
+		// TODO Afficher charset effectif de base $db
+		if ($key == 'dolibarr_main_db_charset')
+		{
+			
+			
+		}
 		print "</td>";
 	}
 	print "</tr>\n";

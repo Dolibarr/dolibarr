@@ -94,14 +94,16 @@ $dolibarr_main_db_pass="";
 $dolibarr_main_db_type="";
 
 
+# dolibarr_main_db_character_set
+# Database character set used to store data.
 #
-#
-#
-$dolibarr_main_db_character_set="";
+$dolibarr_main_db_character_set="latin1";
 
 
-#
-#
+# character_set_client
+# Page code for HTML outputs.
+# Default value: ISO-8859-1
+# Possible values: ISO-8859-1
 #
 $character_set_client="ISO-8859-1";
 

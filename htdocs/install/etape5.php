@@ -135,6 +135,7 @@ if ($_POST["action"] == "set" || $_POST["action"] == "upgrade")
 	    
 	        if ($success)
 	        {
+				dolibarr_install_syslog('install/etape5.php Remove MAIN_NOT_INSTALLED const', LOG_ERR);
 	            $db->query("DELETE FROM llx_const WHERE name='MAIN_NOT_INSTALLED'");
 	        
 	            // Si install non Français, on configure pour fonctionner en mode internationnal
