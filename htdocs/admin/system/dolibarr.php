@@ -43,9 +43,9 @@ print "<br>\n";
 
 $var=true;
 print '<table class="noborder" width="100%">';
-print '<tr class="liste_titre"><td>'.$langs->trans("Parameter").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
+print '<tr class="liste_titre"><td>'.$langs->trans("Version").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("Version")."</td><td>".DOL_VERSION."</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -54,19 +54,19 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("LocalisationDolibarrParameters").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE")."</td><td>".$_SERVER["HTTP_ACCEPT_LANGUAGE"]."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageBrowserParameter","HTTP_ACCEPT_LANGUAGE")."</td><td>".$_SERVER["HTTP_ACCEPT_LANGUAGE"]."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_ALL")."</td><td>".setlocale(LC_ALL,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_NUMERIC")."</td><td>".setlocale(LC_NUMERIC,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_TIME")."</td><td>".setlocale(LC_TIME,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("LanguageParameter","PHP LC_MONETARY")."</td><td>".setlocale(LC_MONETARY,0)."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("DolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("DolibarrTZ")."</td><td>".$_ENV["TZ"]."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("OffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("OffsetWithGreenwich")."</td><td>".(- dolibarr_mktime(0,0,0,1,1,1970))."</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -74,13 +74,15 @@ $var=true;
 print '<table class="noborder" width="100%">';
 print '<tr class="liste_titre"><td>'.$langs->trans("Session").'</td><td>'.$langs->trans("Value").'</td></tr>'."\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("SessionId")."</td><td>".session_id()."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTheme")."</td><td>".$conf->theme."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentTopMenuHandler")."</td><td>".$conf->top_menu."</td></tr>\n";
 $var=!$var;
-print "<tr ".$bc[$var]."><td width=\"240\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentLeftMenuHandler")."</td><td>".$conf->left_menu."</td></tr>\n";
+$var=!$var;
+print "<tr ".$bc[$var]."><td width=\"300\">".$langs->trans("CurrentDolibarrLanguage")."</td><td>".$langs->getDefaultLang()."</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -125,7 +127,7 @@ foreach($sortorder as $numero=>$name)
     $idperms="";
     $var=!$var;
     // Module
-    print "<tr $bc[$var]><td width=\"240\" nowrap=\"nowrap\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
+    print "<tr $bc[$var]><td width=\"300\" nowrap=\"nowrap\">".img_object("",$picto[$numero]).' '.$modules[$numero]->getName()."</td>";
     // Version
     print '<td>'.$modules[$numero]->getVersion().'</td>';
     // Id
@@ -135,7 +137,7 @@ foreach($sortorder as $numero=>$name)
     {
         foreach($modules[$numero]->rights as $rights)
         {
-            $idperms.=($idperms?",":"").$rights[0];
+            $idperms.=($idperms?", ":"").$rights[0];
 	    array_push($rights_ids, $rights[0]);
         }
     }
