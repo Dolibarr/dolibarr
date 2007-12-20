@@ -20,6 +20,7 @@ Cryptographp      1.4      CeCILL V2                Oui              Captcha gen
 FCKEditor         2.4.4    GPL 2.0                  Oui              Editor WYSIWYG
 FPDF              1.53     Pas clair (freeware)     Non!             PDF generation (le code d'origine a été modifié et complété)
 FPDI              1.2      Apache License 2.0       Non GPL3 uniqmt  PDF encryption
+Jabber            0.4      GPL 2.0                  Oui              Lib jabber
 MagPieRss         0.72     GPL 2.0                  Oui              Load RSS
 NuSoap            0.6.5    LGPL 2.1                 Oui              Interfaces with third tools
 PEAR Core         1.2.1    PHP License 2.00         Non!             Core code for PEAR
@@ -33,6 +34,7 @@ PHPlot            v5       PHP License              Non!             Graphics
 Scriptaculous     1.8.0    MIT License              Oui              Extension Ajax
 Prototype         1.6.0    MIT License              Oui              Extension Ajax
 Treemenu          1.1      Perso                    Oui              Tree in HTML pages (like categories)
+VCard             2.0      GPL 2.0                  Oui              Fonctions vcard
 XmlRpc            2.5f     Artistic License         Oui              Interface with Glasnot
 
 http://www.fsf.org/licensing/licenses/index_html
