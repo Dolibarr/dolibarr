@@ -42,7 +42,7 @@ $langs->load('bills');
 $langs->load('suppliers');
 $langs->load('companies');
 
-// Sécurité accés client
+// Sï¿½curitï¿½ accï¿½s client
 if ($user->societe_id > 0)
 {
 	$action = '';
@@ -120,7 +120,7 @@ if ($_POST['action'] == 'update' && ! $_POST['cancel'])
 	$result = $db->query( $sql);
 }
 /*
- * Action création
+ * Action crï¿½ation
  */
 if ($_POST['action'] == 'add' && $user->rights->fournisseur->facture->creer)
 {
@@ -257,7 +257,7 @@ if ($_GET['action'] == 'add_ligne')
 		{
 			$result=$nv_prod->fetch($idprod);
 			
-			// cas spécial pour lequel on a les meme référence que le fournisseur
+			// cas spï¿½cial pour lequel on a les meme rï¿½fï¿½rence que le fournisseur
 			// $label = '['.$nv_prod->ref.'] - '. $nv_prod->libelle;
 			$label = $nv_prod->libelle;
 
@@ -274,7 +274,7 @@ if ($_GET['action'] == 'add_ligne')
 		}
 		if ($idprod == -1)
 		{
-			// Quantité insuffisante
+			// Quantitï¿½ insuffisante
 			$mesg='<div class="error">'.$langs->trans("ErrorQtyTooLowForThisSupplier").'</div>';
 		}
 	}
@@ -346,7 +346,7 @@ if ($_GET['action'] == 'create' or $_GET['action'] == 'copy')
 	}
 	else
 	{
-		$html->select_societes(empty($_GET['socid'])?'':$_GET['socid'],'socid','s.fournisseur = 1');
+		$html->select_societes((empty($_GET['socid'])?'':$_GET['socid']),'socid','s.fournisseur = 1');
 	}
 	print '</td>';
 	print '<td width="50%">'.$langs->trans('NotePublic').'</td></tr>';
@@ -816,7 +816,7 @@ else
 				print '<td align="center" valign="middle" colspan="2"><input type="submit" class="button" value="'.$langs->trans('Add').'"></td></tr>';
 				print '</form>';
 
-	            // Ajout de produits/services prédéfinis
+	            // Ajout de produits/services prï¿½dï¿½finis
 	            if ($conf->produit->enabled)
 	            {
 	                print '<form name="addligne_predef" action="fiche.php?facid='.$fac->id.'&amp;action=add_ligne" method="post">';

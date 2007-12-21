@@ -1,7 +1,8 @@
 <?php
 /* Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
- *
+ * Copyright (C) 2007      Laurent Destailleur  <eldy@users.sourceforge.net>
+ * 
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation; either version 2 of the License, or
@@ -17,11 +18,10 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/societe/ajaxcountries.php
+        \file       htdocs/societe/ajaxcompanies.php
         \brief      Fichier de reponse sur evenement Ajax
         \version    $Revision$
 */
@@ -32,26 +32,26 @@ top_htmlhead("", "", 1, 1);
 
 print '<body id="mainbody">';
 
-// Generation liste des sociétés
-if(isset($_POST['newcompany']) && !empty($_POST['newcompany']) || isset($_POST['socid']) && !empty($_POST['socid'])
-    || isset($_POST['id_fourn']) && !empty($_POST['id_fourn']))
+// Generation liste des societes
+if (! empty($_POST['newcompany']) || ! empty($_POST['socid']) || ! empty($_POST['id_fourn']))
 {
-	
+	// Define filter on text typed
 	$socid = $_POST['newcompany']?$_POST['newcompany']:'';
-	$socid = $_POST['socid']?$_POST['socid']:'';
-	$socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
+	if (! $socid) $socid = $_POST['socid']?$_POST['socid']:'';
+	if (! $socid) $socid = $_POST['id_fourn']?$_POST['id_fourn']:'';
 
 	$sql = "SELECT rowid, nom";
-	$sql.= " FROM ".MAIN_DB_PREFIX."societe";
-	$sql.= " WHERE nom LIKE '%" . utf8_decode($socid) . "%'";
-	$sql.= " ORDER BY nom ASC;";
-
+	$sql.= " FROM ".MAIN_DB_PREFIX."societe as s";
+	$sql.= " WHERE nom LIKE '%" . $socid . "%'";
+	if (! empty($_GET["filter"])) $sql.= " AND ".$_GET["filter"]; // Add other filters
+	$sql.= " ORDER BY nom ASC";
+	
+	//dolibarr_syslog("ajaxcompanies sql=".$sql);
 	$resql=$db->query($sql);
-
 	if ($resql)
 	{
 		print '<ul>';
-		while($company = $db->fetch_object($resql))
+		while ($company = $db->fetch_object($resql))
 		{
 			print '<li>';
 			print $company->nom;

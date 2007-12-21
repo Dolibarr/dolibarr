@@ -674,6 +674,7 @@ class Form
         }
         $sql.= " ORDER BY nom ASC";
     
+        dolibarr_syslog("Html.form::select_societe sql=".$sql);
         $resql=$this->db->query($sql);
         if ($resql)
         {
@@ -696,7 +697,7 @@ class Form
         		{
         			print '<input type="text" size="30" id="'.$htmlname.'" name="'.$htmlname.'" value="'.$obj->nom.'"/>';
         		}
-        		print ajax_autocompleter($socid,$htmlname,'/societe/ajaxcompanies.php','');
+        		print ajax_autocompleter($socid,$htmlname,'/societe/ajaxcompanies.php?filter='.urlencode($filter), '');
         		print '</td>';
         		print '<td class="nobordernopadding" align="left" width="16">';
         		print ajax_indicator($htmlname,'working');
