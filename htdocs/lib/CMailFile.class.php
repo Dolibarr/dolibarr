@@ -254,12 +254,14 @@ class CMailFile
      */
     function send_to_file()
     {
-        $fp = fopen("/tmp/dolibarr_mail","w");
-        fputs($fp, $this->headers);
-        fputs($fp, $this->message);
-        fclose($fp);
+    	if (@is_writeable("/tmp"))	// Avoid fatal error on fopen with open_basedir
+    	{
+        	$fp = fopen("/tmp/dolibarr_mail","w");
+        	fputs($fp, $this->headers);
+        	fputs($fp, $this->message);
+        	fclose($fp);
+    	}
     }
-
 
     /**
             \brief		Creation des headers smtp
