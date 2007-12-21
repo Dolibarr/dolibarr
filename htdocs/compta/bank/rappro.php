@@ -135,6 +135,7 @@ $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev").
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
 $sql.= " ORDER BY dateo ASC";
+$sql.= " LIMIT 1000";	// Limite juste pour eviter saturation page.
 
 $resql = $db->query($sql);
 if ($resql)
