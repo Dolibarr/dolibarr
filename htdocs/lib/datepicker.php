@@ -44,7 +44,12 @@ if (isset($_GET["mode"]) && $_GET["mode"] == 'test')
 {
 	print '<html><head>';
 	print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/lib/lib_head.js"></script>'."\n";
-	print '</head>';
+	print '</head><body>'."\n";
+}
+else
+{
+	//print '<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">'."\n";
+	print '<html><head></head><body>'."\n";
 }
 
 
@@ -76,6 +81,9 @@ else
 }
 
 
+print '</body></html>'."\n";
+
+
 function xyzToUnixTimestamp($mysqldate){
 	$year=substr($mysqldate,0,4);
 	$month=substr($mysqldate,4,2);
@@ -103,9 +111,9 @@ function displayBox($selectedDate,$month,$year){
 		$xyz=0;
 	}
 ?>
-<table class="dp" cellspacing="0" cellpadding="0" border=0>
+<table class="dp" cellspacing="0" cellpadding="0" border="0">
 	<tr>
-		<td colspan=6 class="dpHead">
+		<td colspan="6" class="dpHead">
 		<?php
 		$selectMonth = dolibarr_date("F", $thedate);
 		$selectYear = dolibarr_date("Y", $thedate);
@@ -117,7 +125,7 @@ function displayBox($selectedDate,$month,$year){
 	<tr>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year-1?>','<?php echo $xyz ?>')">&lt;&lt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==1) echo "12"; else echo $month-1?>','<?php if($month==1) echo $year-1; else echo $year?>','<?php echo $xyz ?>')">&lt;</td>
-		<td colspan=3 class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dolibarr_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("Today") ?></td>
+		<td colspan="3" class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo dolibarr_date('m',$today)?>','<?php echo $todayArray["year"]?>','<?php echo $xyz ?>')"><?php echo $langs->trans("Today") ?></td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php if($month==12) echo "1"; else echo $month+1?>','<?php if($month==12) echo $year+1; else echo $year;?>','<?php echo $xyz ?>')">&gt;</td>
 		<td class="dpButtons" onClick="loadMonth('<?php echo $dolibarr_main_url_root.'/lib/' ?>','<?php echo $month?>','<?php echo $year+1?>','<?php echo $xyz ?>')">&gt;&gt;</td>
 	</tr>
@@ -134,23 +142,6 @@ function displayBox($selectedDate,$month,$year){
 		//print "x ".$thedate." y";
 		$firstdate=dolibarr_getdate($thedate);
 		$mydate=$firstdate;
-		$tradTemp=Array($langs->trans("January"),
-		                $langs->trans("February"),
-		                $langs->trans("March"),
-		                $langs->trans("April"),
-		                $langs->trans("May"),
-		                $langs->trans("June"),
-		                $langs->trans("July"),
-		                $langs->trans("August"),
-		                $langs->trans("September"),
-		                $langs->trans("October"),
-		                $langs->trans("November"),
-		                $langs->trans("December")
-		                );
-
-	    print '<script language="Javascript">';
-	    print 'var tradMonths = '.php2js($tradTemp);
-	    print '</script>';
 
 		// Loop on each day of month
 		$day=1;

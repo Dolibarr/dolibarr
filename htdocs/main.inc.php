@@ -757,6 +757,23 @@ function top_htmlhead($head, $title='', $disablejs=0, $disablehead=0)
 			print '<script language="javascript" type="text/javascript" src="'.DOL_URL_ROOT.'/includes/scriptaculous/src/window/tooltip.js"></script>'."\n";
 			
 		}
+		// Define tradMonths javascript array
+		$tradTemp=Array($langs->trans("January"),
+		                $langs->trans("February"),
+		                $langs->trans("March"),
+		                $langs->trans("April"),
+		                $langs->trans("May"),
+		                $langs->trans("June"),
+		                $langs->trans("July"),
+		                $langs->trans("August"),
+		                $langs->trans("September"),
+		                $langs->trans("October"),
+		                $langs->trans("November"),
+		                $langs->trans("December")
+		                );
+		print '<script language="javascript" type="text/javascript">';
+		print 'var tradMonths = '.php2js($tradTemp).';';
+		print '</script>'."\n";
 		
 		print "</head>\n";
 	}

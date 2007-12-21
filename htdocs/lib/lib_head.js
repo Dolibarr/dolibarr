@@ -146,7 +146,8 @@ function loadMonth(base,month,year,ymd)
 		theURL+="&sd="+ymd;
 	}
 
-	loadXMLDoc(theURL,alertContents,false);
+//	loadXMLDoc(theURL,alertContents,false);	Cree erreur javascript avec IE
+	loadXMLDoc(theURL,null,false);
 	showDP.box.innerHTML=req.responseText;	
 }
 
