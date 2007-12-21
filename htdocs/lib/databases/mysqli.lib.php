@@ -121,15 +121,15 @@ class DoliDb
         if (file_exists($conffile)) {
 	    	include($conffile);
 	    	$this->forcecharset=$character_set_database;
-	    	$this->forcecollate=$collation_connection;
+	    	$this->forcecollate=$dolibarr_main_db_collation;
 	    	$this->db_user=$dolibarr_main_db_user;
 		}
 		*/
 		if (isset($conf->db->character_set) && $conf->db->character_set) {
 			$this->forcecharset=$conf->db->character_set;
   		}
-  		if (isset($conf->db->collation_connection) && $conf->db->collation_connection) {
-	    	$this->forcecollate=$conf->db->collation_connection;
+  		if (isset($conf->db->dolibarr_main_db_collation) && $conf->db->dolibarr_main_db_collation) {
+	    	$this->forcecollate=$conf->db->dolibarr_main_db_collation;
   		}
 	    $this->db_user=$conf->db->user;
 
@@ -892,6 +892,10 @@ class DoliDb
 		return 1;
 	}
 	
+	/**
+	*	\brief		Return charset used to store data in database
+	*	\return		string		Charset
+	*/
 	function getDefaultCharacterSetDatabase(){
 		 $resql=$this->query('SHOW VARIABLES LIKE \'character_set_database\'');
 		  if (!$resql)
@@ -923,7 +927,11 @@ class DoliDb
     	return $liste;
 	}
 	
-	function getDefaultCollationConnection(){
+	/**
+	*	\brief		Return collation used in database
+	*	\return		string		Collation value
+	*/
+	function getDefaultCollationDatabase(){
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
 	      {

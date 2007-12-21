@@ -106,7 +106,7 @@ if (! isset($dolibarr_main_db_prefix) || ! $dolibarr_main_db_prefix) $dolibarr_m
 define('MAIN_DB_PREFIX',(isset($dolibarr_main_db_prefix)?$dolibarr_main_db_prefix:''));
 define('DOL_DATA_ROOT',(isset($dolibarr_main_data_root)?$dolibarr_main_data_root:''));
 if (! isset($conf->character_set_client))     $conf->character_set_client='iso-8859-1';
-if (! isset($conf->db->collation_connection)) $conf->db->collation_connection='latin1_swedish_ci';
+if (! isset($conf->db->dolibarr_main_db_collation)) $conf->db->dolibarr_main_db_collation='latin1_swedish_ci';
 if (! isset($conf->db->user)) $conf->db->user='';
 	
 // Forcage constante LOG
@@ -175,8 +175,8 @@ function conf($dolibarr_main_document_root)
 	$conf->character_set_client=$character_set_client;
 	if (! isset($dolibarr_main_db_charset) || ! $dolibarr_main_db_charset) $dolibarr_main_db_charset='latin1'; 
 	$conf->db->character_set=$dolibarr_main_db_charset;
-	if (! isset($collation_connection) || ! $collation_connection) $collation_connection='latin1_swedish_ci';
-	$conf->db->collation_connection=$collation_connection;
+	if (! isset($dolibarr_main_db_collation) || ! $dolibarr_main_db_collation) $dolibarr_main_db_collation='latin1_swedish_ci';
+	$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 
 	return 1;
 }

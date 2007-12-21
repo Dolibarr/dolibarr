@@ -166,7 +166,7 @@ if (! $error && $db->connected)
 
 	<?php
 	$defaultCharacterSet=$db->getDefaultCharacterSetDatabase();
-	$defaultCollationConnection=$db->getDefaultCollationConnection();
+	$defaultCollationConnection=$db->getDefaultCollationDatabase();
 	$listOfCharacterSet=$db->getListOfCharacterSet();
 	$listOfCollation=$db->getListOfCollation();
 
@@ -217,7 +217,7 @@ if (! $error && $db->connected)
 		<?php
 		if (sizeof($listOfCollation))
 		{
-			print '<select name="collation_connection" '.$disabled.'>';
+			print '<select name="dolibarr_main_db_collation" '.$disabled.'>';
 			$selected="";
 			foreach ($listOfCollation as $collation)
 			{
@@ -233,12 +233,12 @@ if (! $error && $db->connected)
 			}
 			print '</select>';
 			if ($disabled=="disabled"){
-				print '<input type="hidden" name="collation_connection"  value="'.$defaultCollationConnection.'">';
+				print '<input type="hidden" name="dolibarr_main_db_collation"  value="'.$defaultCollationConnection.'">';
 			}
 		}
 		else
 		{
-			print '<input type="text" name="collation_connection"  value="'.$defaultCollationConnection.'">';
+			print '<input type="text" name="dolibarr_main_db_collation"  value="'.$defaultCollationConnection.'">';
 		}
 		?>
 		</td>

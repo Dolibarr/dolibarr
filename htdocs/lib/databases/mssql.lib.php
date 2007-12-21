@@ -856,7 +856,7 @@ class DoliDb
     	return ''; // attente débuggage
 	}
 	
-	function getDefaultCollationConnection(){
+	function getDefaultCollationDatabase(){
 		$resql=$this->query("SELECT SERVERPROPERTY('collation')");
 		 if (!$resql)
 	   {

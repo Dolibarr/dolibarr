@@ -96,8 +96,20 @@ $dolibarr_main_db_type="";
 
 # dolibarr_main_db_character_set
 # Database character set used to store data.
+# Default value: depends on database driver
+# Examples:
+# dolibarr_main_db_character_set="latin1";
 #
 $dolibarr_main_db_character_set="latin1";
+
+
+# dolibarr_main_db_collation
+# Database character set used to sort data.
+# Default value: depends on database driver
+# Examples:
+# dolibarr_main_db_collation="latin1_swedish_ci";
+#
+$dolibarr_main_db_collation="latin1_swedish_ci";
 
 
 # character_set_client

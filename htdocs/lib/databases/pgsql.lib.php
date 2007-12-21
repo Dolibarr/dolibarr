@@ -78,12 +78,12 @@ class DoliDb
         if (file_exists($conffile)) {
 	    	include($conffile);
 	    	$this->forcecharset=$character_set_database;
-	    	$this->forcecollate=$collation_connection;
+	    	$this->forcecollate=$dolibarr_main_db_collation;
 	    	$this->db_user=$dolibarr_main_db_user;
 		}
 		*/
 		$this->forcecharset=$conf->character_set_client;
-	    $this->forcecollate=$conf->db->collation_connection;
+	    $this->forcecollate=$conf->db->dolibarr_main_db_collation;
 	    $this->db_user=$conf->db->user;
 
         $this->transaction_opened=0;
@@ -706,7 +706,7 @@ class DoliDb
     	return $liste;
 	}
 	
-	function getDefaultCollationConnection(){
+	function getDefaultCollationDatabase(){
 		$resql=$this->query('SHOW VARIABLES LIKE \'collation_database\'');
 		 if (!$resql)
 	      {

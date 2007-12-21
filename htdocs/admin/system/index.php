@@ -131,6 +131,7 @@ $configfilelib=array(
 					$langs->trans("URLRoot"),
 					$langs->trans("DocumentRootServer"),
 					$langs->trans("DataRootServer"),
+					'separator',
 					$langs->trans("DatabaseServer"),
 					$langs->trans("DatabaseName"),
 					$langs->trans("DriverType"),

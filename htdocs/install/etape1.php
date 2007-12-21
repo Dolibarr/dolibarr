@@ -142,7 +142,7 @@ if ($_POST["action"] == "set")
 			fputs($fp, '$character_set_client="'.$_POST["character_set_client"].'";');
 			fputs($fp,"\n");
 			
-			fputs($fp, '$collation_connection="'.$_POST["collation_connection"].'";');
+			fputs($fp, '$dolibarr_main_db_collation="'.$_POST["dolibarr_main_db_collation"].'";');
 			fputs($fp,"\n");
 
 			/* Authentication */

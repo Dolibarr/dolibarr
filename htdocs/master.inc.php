@@ -127,8 +127,8 @@ if (empty($dolibarr_main_db_character_set)) $dolibarr_main_db_character_set='lat
 $conf->db->character_set=$dolibarr_main_db_character_set;
 if (empty($dolibarr_main_db_prefix)) $dolibarr_main_db_prefix='llx_'; 
 $conf->db->prefix = $dolibarr_main_db_prefix;
-if (empty($collation_connection)) $collation_connection='latin1_swedish_ci';
-$conf->db->collation_connection=$collation_connection;
+if (empty($dolibarr_main_db_collation)) $dolibarr_main_db_collation='latin1_swedish_ci';
+$conf->db->dolibarr_main_db_collation=$dolibarr_main_db_collation;
 // Identifiant autres
 $conf->main_authentication = $dolibarr_main_authentication;
 // Identifiant propre au client
