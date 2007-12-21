@@ -134,8 +134,7 @@ $acct->fetch($_GET["account"]);
 $sql = "SELECT b.rowid,".$db->pdate("b.dateo")." as do, ".$db->pdate("b.datev")." as dv, b.amount, b.label, b.rappro, b.num_releve, b.num_chq, b.fk_type as type";
 $sql.= " FROM ".MAIN_DB_PREFIX."bank as b";
 $sql.= " WHERE rappro=0 AND fk_account=".$_GET["account"];
-$sql.= " ORDER BY dateo";
-$sql.= " ASC LIMIT ".$conf->liste_limit;
+$sql.= " ORDER BY dateo ASC";
 
 $resql = $db->query($sql);
 if ($resql)
