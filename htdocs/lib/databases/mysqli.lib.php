@@ -160,12 +160,6 @@ class DoliDb
 
         if ($this->db)
         {
-			// Si client connecté avec charset different de celui de Dolibarr
-			/*if (mysqli_client_encoding ( $this->db ) != $this->forcecharset)
-			{
-				$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
-				$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
-            }*/
             $this->connected = 1;
             $this->ok = 1;
         }
@@ -186,6 +180,13 @@ class DoliDb
                 $this->database_selected = 1;
                 $this->database_name = $name;
                 $this->ok = 1;
+
+				// Si client connecté avec charset different de celui de Dolibarr
+				/*if (mysqli_client_encoding ( $this->db ) != $this->getDefaultCharacterSetDatabase())
+				{
+					$this->query("SET NAMES '".$this->forcecharset."'", $this->db);
+					$this->query("SET CHARACTER SET '".$this->forcecharset."'", $this->db);
+	            }*/
             }
             else
             {
