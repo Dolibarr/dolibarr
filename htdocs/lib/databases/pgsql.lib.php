@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2004      Sebastien Di Cintio  <sdicintio@ressource-toi.org>
  * Copyright (C) 2004      Benoit Mortier			  <benoit.mortier@opensides.be>
  *
@@ -20,18 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
 	    \file       htdocs/lib/pgsql.lib.php
 		\brief      Fichier de la classe permettant de gérér une base pgsql
-		\author     Fabien Seisen
-		\author     Rodolphe Quiedeville.
-		\author	    Laurent Destailleur.
-		\author     Sébastien Di Cintio
-		\author     Benoit Mortier
-		\version    $Revision$
 */
 
 

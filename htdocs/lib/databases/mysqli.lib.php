@@ -1,7 +1,7 @@
 <?php
 /* Copyright (C) 2001      Fabien Seisen        <seisen@linuxfr.org>
  * Copyright (C) 2002-2005 Rodolphe Quiedeville <rodolphe@quiedeville.org>
- * Copyright (C) 2004-2006 Laurent Destailleur  <eldy@users.sourceforge.net>
+ * Copyright (C) 2004-2007 Laurent Destailleur  <eldy@users.sourceforge.net>
  * Copyright (C) 2006      Andre Cianfarani     <acianfa@free.fr>
  * Copyright (C) 2005-2007 Regis Houssin        <regis@dolibarr.fr>
  *
@@ -20,16 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
-        \file       htdocs/lib/mysql.lib.php
+        \file       htdocs/lib/mysqli.lib.php
         \brief      Fichier de la classe permettant de gérer une base mysql
-        \author     Fabien Seisen
-        \author     Rodolphe Quiedeville.
-        \author     Laurent Destailleur.
-        \version    $Revision$
 */
 
 
@@ -46,8 +41,6 @@ class DoliDb
   var $type='mysqli';          
   //! Charset
   var $forcecharset='latin1';
-  //! Charset client
-  var $forcecharsetclient='iso-8859-1';
   //! Collate
   var $forcecollate='latin1_swedish_ci';
   //! Version min database

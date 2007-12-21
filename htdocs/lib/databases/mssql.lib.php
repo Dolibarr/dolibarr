@@ -19,16 +19,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/lib/mssql.lib.php
    \brief      Fichier de la classe permettant de gérer une base mssql
-   \author     Fabien Seisen
-   \author     Rodolphe Quiedeville.
-   \author     Laurent Destailleur.
-   \version    $Revision$   
 */
 
 

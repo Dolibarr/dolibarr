@@ -20,16 +20,11 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
    \file       htdocs/lib/mysql.lib.php
    \brief      Fichier de la classe permettant de gérer une base mysql
-   \author     Fabien Seisen
-   \author     Rodolphe Quiedeville.
-   \author     Laurent Destailleur.
-   \version    $Revision$   
 */
 
 
@@ -46,8 +41,6 @@ class DoliDb
   var $type='mysql';          
   //! Charset
   var $forcecharset='latin1';
-    //! Charset client
-  var $forcecharsetclient='iso-8859-1';
   //! Collate
   var $forcecollate='latin1_swedish_ci';
   //! Version min database
