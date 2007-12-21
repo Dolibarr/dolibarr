@@ -24,6 +24,7 @@ BalanceMinimalDesired=Minimum desired balance
 InitialBankBalance=Initial balance
 EndBankBalance=End balance
 CurrentBalance=Current balance
+Reconciliation=Reconciliation
 RIB=RIB
 IBAN=IBAN number
 BIC=BIC number
