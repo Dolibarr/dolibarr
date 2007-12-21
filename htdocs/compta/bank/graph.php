@@ -22,7 +22,7 @@
 /**
 	  \file       htdocs/compta/bank/graph.php
 	  \ingroup    banque
-	  \brief      Page de détail des transactions bancaires
+	  \brief      Page graph des transactions bancaires
 	  \version    $Revision$
 */
 
@@ -37,6 +37,7 @@ if (!$user->rights->banque->lire)
 
 $account = $_GET["account"];
 $mesg = '';
+$error=0;
 
 
 llxHeader();
@@ -63,450 +64,459 @@ if ($_GET["account"] || $_GET["ref"])
 	}
 
 	
-	create_exdir($conf->banque->dir_temp);
-	
-
-	// Definition de $width et $height
-	$width = 800;
-	$height = 200;
-
-	// Calcul de $min et $max
-	$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
-	$sql.= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql.= " WHERE fk_account = ".$account;
-	$resql = $db->query($sql);
-	if ($resql)
+	$result=create_exdir($conf->banque->dir_temp);
+	if ($result < 0)
 	{
-		$num = $db->num_rows($resql);
-		$row = $db->fetch_row($resql);
-		$min = $row[0];
-		$max = $row[1];
+		$langs->load("errors");
+		$error++;
+		$mesg='<div class="error">'.$langs->trans("ErrorFailedToCreateDir").'</div>';
 	}
 	else
 	{
-		dolibarr_print_error($db);
-	}
-	$log="graph.php: min=".$min." max=".$max;
-	dolibarr_syslog($log);
-	
 
-	// Tableau 1
+		// Definition de $width et $height
+		$width = 800;
+		$height = 200;
 	
-
-	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
-	$amounts = array();
-	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND date_format(datev,'%Y%m') = '".$year.$month."'";
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
+		// Calcul de $min et $max
+		$sql = "SELECT min(".$db->pdate("datev")."), max(".$db->pdate("datev").")";
+		$sql.= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql.= " WHERE fk_account = ".$account;
+		$resql = $db->query($sql);
+		if ($resql)
 		{
+			$num = $db->num_rows($resql);
 			$row = $db->fetch_row($resql);
-			$amounts[$row[0]] = $row[1];
-			$i++;
-		}
-		$db->free($resql);
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Calcul de $solde avant le debut du graphe
-	$solde = 0;
-	$sql = "SELECT sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND datev < '".$year."-".sprintf("%02s",$month)."-01'";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$row = $db->fetch_row($resql);
-		$solde = $row[0];
-		$db->free($resql);
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Chargement de labels et datas pour tableau 1
-	$labels = array();
-	$datas = array();
-	$datamin = array();
-
-	$subtotal = 0;
-	$day = dolibarr_mktime(12,0,0,$month,1,$year);
-	$xmonth = $month;
-
-	$i = 0;
-	while ($xmonth == $month)
-	{
-		$textdate = strftime("%Y%m%d",$day);
-		$xyear = substr($textdate,0,4);
-		$xday = substr($textdate,6,2);
-		$xmonth = substr($textdate,4,2);
-
-		//print strftime ("%e %d %m %y",$day)."\n";
-		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-		if ($day > time())
-		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$min = $row[0];
+			$max = $row[1];
 		}
 		else
 		{
-			$datas[$i] = $solde + $subtotal;
+			dolibarr_print_error($db);
 		}
-		$datamin[$i] = $acct->min_desired;
-		//$labels[$i] = strftime("%d",$day);
-		$labels[$i] = $xday;
-		$day += 86400;
-		$i++;
-	}
-
-	// Fabrication tableau 1
-	$file= $conf->banque->dir_temp."/balance.$account.$year.$month.png";
-	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
-	$graph_datas=array();
-	foreach($datas as $i => $val)
-	{
-		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
-		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-    }
-	$px = new DolGraph();
-    $px->SetData($graph_datas);
-    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->transnoentities("Balance")));
-	$px->SetLegendWidthMin(180);
-    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-	$px->SetType('lines');
-	$px->setBgColor('onglet');
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($file);
+		$log="graph.php: min=".$min." max=".$max;
+		dolibarr_syslog($log);
+		
 	
-	unset($graph_datas);
-	unset($px);
-	unset($datas);
-	unset($datamin);
-	unset($labels);
-	unset($amounts);
-
+		// Tableau 1
+		
 	
-	// Tableau 2
-
-	
-	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
-	$amounts = array();
-	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND date_format(datev,'%Y') = '".$year."'";
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-		while ($i < $num)
+		// Chargement du tableau $amounts
+		// \todo peut etre optimise en virant les date_format
+		$amounts = array();
+		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND date_format(datev,'%Y%m') = '".$year.$month."'";
+		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		$resql = $db->query($sql);
+		if ($resql)
 		{
-			$row = $db->fetch_row($resql);
-			$amounts[$row[0]] = $row[1];
-			$i++;
-		}
-		$db->free($resql);
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-	
-	// Calcul de $solde avant le debut du graphe
-	$solde = 0;
-	$sql = "SELECT sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND datev < '".$year."-01-01'";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$row = $db->fetch_row($resql);
-		$solde = $row[0];
-		$db->free($resql);
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Chargement de labels et datas pour tableau 2
-	$labels = array();
-	$datas = array();
-	$datamin = array();
-
-	$subtotal = 0;
-	$now = time();
-	$day = dolibarr_mktime(12,0,0,1,1,$year);
-	$i = 0;
-	$xyear = $year;
-	while ($xyear == $year)
-	{
-		$textdate = strftime("%Y%m%d",$day);
-		$xyear = substr($textdate,0,4);
-		$xday = substr($textdate,6,2);
-
-		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-		if ($day > $now)
-		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$amounts[$row[0]] = $row[1];
+				$i++;
+			}
+			$db->free($resql);
 		}
 		else
 		{
-			$datas[$i] = $solde + $subtotal;
+			dolibarr_print_error($db);
 		}
-		$datamin[$i] = $acct->min_desired;
-		if ($xday == '15')
-		{
-			$labels[$i] = dolibarr_print_date($day,"%b");
-		}
-		$day += 86400;
-		$i++;
-	}
 	
-	// Fabrication tableau 2
-	$file= $conf->banque->dir_temp."/balance.$account.$year.png";
-	$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Year").': '.$year;
-	$graph_datas=array();
-	foreach($datas as $i => $val)
-	{
-		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
-		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-    }
-	$px = new DolGraph();
-    $px->SetData($graph_datas);
-    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->transnoentities("Balance")));
-	$px->SetLegendWidthMin(180);
-    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-	$px->SetType('lines');
-	$px->setBgColor('onglet');
-	$px->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
-	$px->SetPrecisionY(0);
-    $px->draw($file);
-
-	unset($px);
-	unset($graph_datas);
-	unset($datas);
-	unset($datamin);
-	unset($labels);
-	unset($amounts);
-
-
-	// Tableau 3
-
-	
-	// Chargement du tableau $amounts
-	// \todo peut etre optimise en virant les date_format
-	$amounts = array();
-	$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
-		$i = 0;
-
-		while ($i < $num)
+		// Calcul de $solde avant le debut du graphe
+		$solde = 0;
+		$sql = "SELECT sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND datev < '".$year."-".sprintf("%02s",$month)."-01'";
+		$resql = $db->query($sql);
+		if ($resql)
 		{
 			$row = $db->fetch_row($resql);
-			$amounts[$row[0]] = $row[1];
-			$i++;
-		}
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Calcul de $solde avant le debut du graphe
-	$solde = 0;
-
-	// Chargement de labels et datas pour tableau 3
-	$labels = array();
-	$datas = array();
-	$datamin = array();
-
-	$subtotal = 0;
-	$day = $min;
-	$i = 0;
-	while ($day <= ($max+86400))	// On va au dela du dernier jour
-	{
-		$textdate=strftime("%Y%m%d",$day);
-
-		$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
-		//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
-		if ($day > ($max+86400))
-		{
-			$datas[$i] = ''; // Valeur spéciale permettant de ne pas tracer le graph
+			$solde = $row[0];
+			$db->free($resql);
 		}
 		else
 		{
-			$datas[$i] = '' + $solde + $subtotal;
+			dolibarr_print_error($db);
 		}
-		$datamin[$i] = $acct->min_desired;
-		if (substr($textdate,6,2) == '01')
-		{
-			$labels[$i] = substr($textdate,4,2);
-		}
-		$day += 86400;
-		$i++;
-	}
-
-	// Fabrication tableau 3
-	$file= $conf->banque->dir_temp."/balance.$account.png";
-	$title=$langs->transnoentities("Balance");
-	$graph_datas=array();
-	foreach($datas as $i => $val)
-	{
-		if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
-		else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
-    }
-	$px = new DolGraph();
-    $px->SetData($graph_datas);	
-    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
-    else $px->SetLegend(array($langs->transnoentities("Balance")));
-	$px->SetLegendWidthMin(180);
-    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-	$px->SetType('lines');
-	$px->setBgColor('onglet');
-	$px->SetPrecisionY(0);
-    $px->draw($file);
-
-	unset($graph_datas);
-	unset($datas);
-	unset($datamin);
-	unset($labels);
-	unset($amounts);
 	
+		// Chargement de labels et datas pour tableau 1
+		$labels = array();
+		$datas = array();
+		$datamin = array();
 	
-	// Tableau 4
+		$subtotal = 0;
+		$day = dolibarr_mktime(12,0,0,$month,1,$year);
+		$xmonth = $month;
 	
-	
-	// Chargement du tableau $credits, $debits
-	$credits = array();
-	$debits = array();
-	$sql = "SELECT date_format(datev,'%m'), sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND date_format(datev,'%Y') = '".$year."'";
-	$sql .= " AND amount > 0";
-	$sql .= " GROUP BY date_format(datev,'%m');";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		$num = $db->num_rows($resql);
 		$i = 0;
-		while ($i < $num)
+		while ($xmonth == $month)
 		{
-			$row = $db->fetch_row($resql);
-			$credits[$row[0]] = $row[1];
+			$textdate = strftime("%Y%m%d",$day);
+			$xyear = substr($textdate,0,4);
+			$xday = substr($textdate,6,2);
+			$xmonth = substr($textdate,4,2);
+	
+			//print strftime ("%e %d %m %y",$day)."\n";
+			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			if ($day > time())
+			{
+				$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
+			}
+			else
+			{
+				$datas[$i] = $solde + $subtotal;
+			}
+			$datamin[$i] = $acct->min_desired;
+			//$labels[$i] = strftime("%d",$day);
+			$labels[$i] = $xday;
+			$day += 86400;
 			$i++;
 		}
-		$db->free($resql);
-	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-	$sql = "SELECT date_format(datev,'%m'), sum(amount)";
-	$sql .= " FROM ".MAIN_DB_PREFIX."bank";
-	$sql .= " WHERE fk_account = ".$account;
-	$sql .= " AND date_format(datev,'%Y') = '".$year."'";
-	$sql .= " AND amount < 0";
-	$sql .= " GROUP BY date_format(datev,'%m');";
-	$resql = $db->query($sql);
-	if ($resql)
-	{
-		while ($row = $db->fetch_row($resql))
+	
+		// Fabrication tableau 1
+		$file= $conf->banque->dir_temp."/balance.$account.$year.$month.png";
+		$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Month").': '.$month.' '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas=array();
+		foreach($datas as $i => $val)
 		{
-			$debits[$row[0]] = abs($row[1]);
+			if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+	    }
+		$px = new DolGraph();
+	    $px->SetData($graph_datas);
+	    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+	    else $px->SetLegend(array($langs->transnoentities("Balance")));
+		$px->SetLegendWidthMin(180);
+	    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+	    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+	    $px->SetTitle($title);
+	    $px->SetWidth($width);
+	    $px->SetHeight($height);
+		$px->SetType('lines');
+		$px->setBgColor('onglet');
+		$px->SetHorizTickIncrement(1);
+		$px->SetPrecisionY(0);
+	    $px->draw($file);
+		
+		unset($graph_datas);
+		unset($px);
+		unset($datas);
+		unset($datamin);
+		unset($labels);
+		unset($amounts);
+	
+		
+		// Tableau 2
+	
+		
+		// Chargement du tableau $amounts
+		// \todo peut etre optimise en virant les date_format
+		$amounts = array();
+		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND date_format(datev,'%Y') = '".$year."'";
+		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$amounts[$row[0]] = $row[1];
+				$i++;
+			}
+			$db->free($resql);
 		}
-		$db->free($resql);
+		else
+		{
+			dolibarr_print_error($db);
+		}
+		
+		// Calcul de $solde avant le debut du graphe
+		$solde = 0;
+		$sql = "SELECT sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND datev < '".$year."-01-01'";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$row = $db->fetch_row($resql);
+			$solde = $row[0];
+			$db->free($resql);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	
+		// Chargement de labels et datas pour tableau 2
+		$labels = array();
+		$datas = array();
+		$datamin = array();
+	
+		$subtotal = 0;
+		$now = time();
+		$day = dolibarr_mktime(12,0,0,1,1,$year);
+		$i = 0;
+		$xyear = $year;
+		while ($xyear == $year)
+		{
+			$textdate = strftime("%Y%m%d",$day);
+			$xyear = substr($textdate,0,4);
+			$xday = substr($textdate,6,2);
+	
+			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			if ($day > $now)
+			{
+				$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
+			}
+			else
+			{
+				$datas[$i] = $solde + $subtotal;
+			}
+			$datamin[$i] = $acct->min_desired;
+			if ($xday == '15')
+			{
+				$labels[$i] = dolibarr_print_date($day,"%b");
+			}
+			$day += 86400;
+			$i++;
+		}
+		
+		// Fabrication tableau 2
+		$file= $conf->banque->dir_temp."/balance.$account.$year.png";
+		$title=$langs->transnoentities("Balance").' '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas=array();
+		foreach($datas as $i => $val)
+		{
+			if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+	    }
+		$px = new DolGraph();
+	    $px->SetData($graph_datas);
+	    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+	    else $px->SetLegend(array($langs->transnoentities("Balance")));
+		$px->SetLegendWidthMin(180);
+	    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+	    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+	    $px->SetTitle($title);
+	    $px->SetWidth($width);
+	    $px->SetHeight($height);
+		$px->SetType('lines');
+		$px->setBgColor('onglet');
+		$px->SetHorizTickIncrement(30.41);	// 30.41 jours/mois en moyenne
+		$px->SetPrecisionY(0);
+	    $px->draw($file);
+	
+		unset($px);
+		unset($graph_datas);
+		unset($datas);
+		unset($datamin);
+		unset($labels);
+		unset($amounts);
+	
+	
+		// Tableau 3
+	
+		
+		// Chargement du tableau $amounts
+		// \todo peut etre optimise en virant les date_format
+		$amounts = array();
+		$sql = "SELECT date_format(datev,'%Y%m%d'), sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " GROUP BY date_format(datev,'%Y%m%d')";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+	
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$amounts[$row[0]] = $row[1];
+				$i++;
+			}
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	
+		// Calcul de $solde avant le debut du graphe
+		$solde = 0;
+	
+		// Chargement de labels et datas pour tableau 3
+		$labels = array();
+		$datas = array();
+		$datamin = array();
+	
+		$subtotal = 0;
+		$day = $min;
+		$i = 0;
+		while ($day <= ($max+86400))	// On va au dela du dernier jour
+		{
+			$textdate=strftime("%Y%m%d",$day);
+	
+			$subtotal = $subtotal + (isset($amounts[$textdate]) ? $amounts[$textdate] : 0);
+			//print strftime ("%e %d %m %y",$day)." ".$subtotal."\n<br>";
+			if ($day > ($max+86400))
+			{
+				$datas[$i] = ''; // Valeur spï¿½ciale permettant de ne pas tracer le graph
+			}
+			else
+			{
+				$datas[$i] = '' + $solde + $subtotal;
+			}
+			$datamin[$i] = $acct->min_desired;
+			if (substr($textdate,6,2) == '01')
+			{
+				$labels[$i] = substr($textdate,4,2);
+			}
+			$day += 86400;
+			$i++;
+		}
+	
+		// Fabrication tableau 3
+		$file= $conf->banque->dir_temp."/balance.$account.png";
+		$title=$langs->transnoentities("Balance");
+		$graph_datas=array();
+		foreach($datas as $i => $val)
+		{
+			if ($acct->min_desired) $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i],$datamin[$i]);
+			else $graph_datas[$i]=array(isset($labels[$i])?$labels[$i]:'',$datas[$i]);
+	    }
+		$px = new DolGraph();
+	    $px->SetData($graph_datas);	
+	    if ($acct->min_desired) $px->SetLegend(array($langs->transnoentities("Balance"),$langs->transnoentities("BalanceMinimalDesired")));
+	    else $px->SetLegend(array($langs->transnoentities("Balance")));
+		$px->SetLegendWidthMin(180);
+	    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+	    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+	    $px->SetTitle($title);
+	    $px->SetWidth($width);
+	    $px->SetHeight($height);
+		$px->SetType('lines');
+		$px->setBgColor('onglet');
+		$px->SetPrecisionY(0);
+	    $px->draw($file);
+	
+		unset($graph_datas);
+		unset($datas);
+		unset($datamin);
+		unset($labels);
+		unset($amounts);
+		
+		
+		// Tableau 4
+		
+		
+		// Chargement du tableau $credits, $debits
+		$credits = array();
+		$debits = array();
+		$sql = "SELECT date_format(datev,'%m'), sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND date_format(datev,'%Y') = '".$year."'";
+		$sql .= " AND amount > 0";
+		$sql .= " GROUP BY date_format(datev,'%m');";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			$num = $db->num_rows($resql);
+			$i = 0;
+			while ($i < $num)
+			{
+				$row = $db->fetch_row($resql);
+				$credits[$row[0]] = $row[1];
+				$i++;
+			}
+			$db->free($resql);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+		$sql = "SELECT date_format(datev,'%m'), sum(amount)";
+		$sql .= " FROM ".MAIN_DB_PREFIX."bank";
+		$sql .= " WHERE fk_account = ".$account;
+		$sql .= " AND date_format(datev,'%Y') = '".$year."'";
+		$sql .= " AND amount < 0";
+		$sql .= " GROUP BY date_format(datev,'%m');";
+		$resql = $db->query($sql);
+		if ($resql)
+		{
+			while ($row = $db->fetch_row($resql))
+			{
+				$debits[$row[0]] = abs($row[1]);
+			}
+			$db->free($resql);
+		}
+		else
+		{
+			dolibarr_print_error($db);
+		}
+	
+		// Chargement de labels et data_xxx pour tableau 4 Mouvements
+		$labels = array();
+		$data_credit = array();
+		$data_debit = array();
+		for ($i = 0 ; $i < 12 ; $i++)
+		{
+			$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
+			$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
+			$labels[$i] = strftime("%b",dolibarr_mktime(12,0,0,$i+1,1,2000));
+			$datamin[$i] = $acct->min_desired;
+		}
+	
+		// Fabrication tableau 4
+		$file= $conf->banque->dir_temp."/movement.$account.$year.png";
+		$title=$langs->transnoentities("BankMovements").' '.$langs->transnoentities("Year").': '.$year;
+		$graph_datas=array();
+		foreach($data_credit as $i => $val)
+		{
+	        $graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
+	    }
+		$px = new DolGraph();
+	    $px->SetData($graph_datas);
+	    $px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
+		$px->SetLegendWidthMin(180);
+	    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
+	    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
+	    $px->SetTitle($title);
+	    $px->SetWidth($width);
+	    $px->SetHeight($height);
+		$px->SetType('bars');
+		$px->SetShading(8);
+		$px->setBgColor('onglet');
+		$px->SetHorizTickIncrement(1);
+		$px->SetPrecisionY(0);
+	    $px->draw($file);
+	
+		unset($graph_datas);
+		unset($px);
+		unset($debits);
+		unset($credits);
 	}
-	else
-	{
-		dolibarr_print_error($db);
-	}
-
-	// Chargement de labels et data_xxx pour tableau 4 Mouvements
-	$labels = array();
-	$data_credit = array();
-	$data_debit = array();
-	for ($i = 0 ; $i < 12 ; $i++)
-	{
-		$data_credit[$i] = isset($credits[substr("0".($i+1),-2)]) ? $credits[substr("0".($i+1),-2)] : 0;
-		$data_debit[$i] = isset($debits[substr("0".($i+1),-2)]) ? $debits[substr("0".($i+1),-2)] : 0;
-		$labels[$i] = strftime("%b",dolibarr_mktime(12,0,0,$i+1,1,2000));
-		$datamin[$i] = $acct->min_desired;
-	}
-
-	// Fabrication tableau 4
-	$file= $conf->banque->dir_temp."/movement.$account.$year.png";
-	$title=$langs->transnoentities("BankMovements").' '.$langs->transnoentities("Year").': '.$year;
-	$graph_datas=array();
-	foreach($data_credit as $i => $val)
-	{
-        $graph_datas[$i]=array($labels[$i],$data_credit[$i],$data_debit[$i]);
-    }
-	$px = new DolGraph();
-    $px->SetData($graph_datas);
-    $px->SetLegend(array($langs->transnoentities("Credit"),$langs->transnoentities("Debit")));
-	$px->SetLegendWidthMin(180);
-    $px->SetMaxValue($px->GetCeilMaxValue()<0?0:$px->GetCeilMaxValue());
-    $px->SetMinValue($px->GetFloorMinValue()>0?0:$px->GetFloorMinValue());
-    $px->SetTitle($title);
-    $px->SetWidth($width);
-    $px->SetHeight($height);
-	$px->SetType('bars');
-	$px->SetShading(8);
-	$px->setBgColor('onglet');
-	$px->SetHorizTickIncrement(1);
-	$px->SetPrecisionY(0);
-    $px->draw($file);
-
-	unset($graph_datas);
-	unset($px);
-	unset($debits);
-	unset($credits);
-
 	
 	
 	// Onglets
 	$head=bank_prepare_head($acct);
 	dolibarr_fiche_head($head,'graph',$langs->trans("FinancialAccount"),0);
 
+	if ($mesg) print $mesg.'<br>';
+	
 	print '<table class="border" width="100%">';
 
 	// Ref
