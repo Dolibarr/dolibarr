@@ -67,14 +67,15 @@ function company_save_refresh()
 
 function showDP(base,dateFieldID,format)
 {
-	showDP.datefieldID=dateFieldID;
+	//check to see if another box is already showing
+	var alreadybox=getObjectFromID("DPCancel");
+	if (alreadybox) closeDPBox();	// This erase value of showDP.datefieldID
+
+	//alert("showDP "+dateFieldID);
+	showDP.datefieldID=dateFieldID;	// Must be after the close
 
 	var dateField=getObjectFromID(dateFieldID);
 	
-	//check to see if another box is already showing
-	var alreadybox=getObjectFromID("DPCancel");
-	if(alreadybox) closeDPBox();
-
 	//get positioning
 	var thetop=getTop(dateField)+dateField.offsetHeight;
 
