@@ -83,12 +83,14 @@ print "<br>\n";
 // Base de donnée
 print '<table class="noborder" width="100%">';
 print "<tr class=\"liste_titre\"><td colspan=\"2\">".$langs->trans("Database")."</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
+print "<tr $bc[0]><td width=\"280\">".$langs->trans("Version")."</td><td>" . $db->getVersion() . "</td></tr>\n";
 print "<tr $bc[1]><td>".$langs->trans("DatabaseServer")."</td><td>" . $conf->db->host . "</td></tr>\n";
 print "<tr $bc[0]><td>".$langs->trans("DatabaseName")."</td><td>" . $conf->db->name . "</td></tr>\n";
-print "<tr $bc[1]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
-print "<tr $bc[0]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
-print "<tr $bc[1]><td width=\"280\">".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DriverType")."</td><td>" . $conf->db->type . "</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("User")."</td><td>" . $conf->db->user . "&nbsp;</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("Password")."</td><td>" . ereg_replace(".","*",$conf->db->pass) . "&nbsp;</td></tr>\n";
+print "<tr $bc[0]><td>".$langs->trans("DBStoringCharset")."</td><td>" . $db->getDefaultCharacterSetDatabase() . "&nbsp;</td></tr>\n";
+print "<tr $bc[1]><td>".$langs->trans("DBSortingCharset")."</td><td>" . $db->getDefaultCollationDatabase() . "&nbsp;</td></tr>\n";
 print '</table>';
 print '<br>';
 
@@ -98,13 +100,14 @@ $configfileparameters=array(
 							'dolibarr_main_url_root',
 							'dolibarr_main_document_root',
 							'dolibarr_main_data_root',
+							'separator',
 							'dolibarr_main_db_host',
 							'dolibarr_main_db_name',
+							'dolibarr_main_db_type',
 							'dolibarr_main_db_user',
 							'dolibarr_main_db_pass',
-							'dolibarr_main_db_type',
 							'dolibarr_main_db_character_set',
-							'collation_connection',
+							'dolibarr_main_db_collation',
 							'separator',
 							'character_set_client',
 							'separator',
@@ -130,9 +133,9 @@ $configfilelib=array(
 					$langs->trans("DataRootServer"),
 					$langs->trans("DatabaseServer"),
 					$langs->trans("DatabaseName"),
-					$langs->trans("Login"),
-					$langs->trans("Password"),
 					$langs->trans("DriverType"),
+					$langs->trans("User"),
+					$langs->trans("Password"),
 					$langs->trans("DBStoringCharset"),
 					$langs->trans("DBSortingCharset"),
 					'separator',
