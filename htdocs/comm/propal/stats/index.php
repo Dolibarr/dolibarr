@@ -66,7 +66,7 @@ if (! $mesg)
     $px->SetMaxValue($px->GetCeilMaxValue());
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
-    $px->SetShading(5);
+    $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename);

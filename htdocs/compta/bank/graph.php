@@ -498,7 +498,7 @@ if ($_GET["account"] || $_GET["ref"])
 	    $px->SetWidth($width);
 	    $px->SetHeight($height);
 		$px->SetType('bars');
-		$px->SetShading(8);
+		$px->SetShading(3);
 		$px->setBgColor('onglet');
 		$px->SetHorizTickIncrement(1);
 		$px->SetPrecisionY(0);

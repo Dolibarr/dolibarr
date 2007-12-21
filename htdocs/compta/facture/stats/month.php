@@ -68,7 +68,7 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(5);
+    $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename);
@@ -96,7 +96,7 @@ if (! $mesg)
 	$px->SetPrecisionY(0);
     $px->SetWidth($GRAPHWIDTH);
     $px->SetHeight($GRAPHHEIGHT);
-    $px->SetShading(5);
+    $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename_amount);

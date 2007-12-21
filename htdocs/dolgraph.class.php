@@ -21,7 +21,7 @@
 
 /**
    \file       htdocs/dolgraph.class.php
-   \brief      Fichier de la classe mère de gestion des graph phplot
+   \brief      Fichier de la classe mï¿½re de gestion des graph phplot
    \version    $Revision$
    \remarks    Usage:
    $graph_data = array(array('labelA',yA),array('labelB',yB));
@@ -40,7 +40,7 @@
 
 /**
    \class      Graph
-   \brief      Classe mère permettant la gestion des graph
+   \brief      Classe mï¿½re permettant la gestion des graph
 */
 
 class DolGraph
@@ -80,7 +80,7 @@ class DolGraph
 		global $theme_bordercolor, $theme_datacolor, $theme_bgcolor, $theme_bgcoloronglet;
 
 
-		// Test si module GD présent
+		// Test si module GD prï¿½sent
 		$modules_list = get_loaded_extensions();
 		$isgdinstalled=0;
 		foreach ($modules_list as $module)
@@ -89,12 +89,12 @@ class DolGraph
 		}
 		if (! $isgdinstalled)
 		{
-			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour générer les graphiques.";
+			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour gï¿½nï¿½rer les graphiques.";
 			return -1;
 		}
 
 
-		// Défini propriétés de l'objet graphe
+		// Dï¿½fini propriï¿½tï¿½s de l'objet graphe
 		$this->library=$conf->global->MAIN_GRAPH_LIBRARY;
 
 		$this->bordercolor = array(235,235,224);
@@ -120,7 +120,7 @@ class DolGraph
 	}
 
 	/**
-	*    \brief      Génère le fichier graphique sur le disque
+	*    \brief      Gï¿½nï¿½re le fichier graphique sur le disque
 	*    \param      file    Nom du fichier image
 	*/
 	function draw($file)
@@ -157,9 +157,13 @@ class DolGraph
 		if ($this->type == 'lines') $class='LinePlot';
 		include_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/".$class.".class.php";
 
-		$group = new PlotGroup;
-		$group->setPadding(30, 10, NULL, NULL);
-
+		// Definition de couleurs
+		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
+		$colortrans=new Color(0,0,0,100);
+		$colorsemitrans=new Color(255,255,255,50);
+		$colorgradient= new LinearGradient(new Color(235, 235, 235),new Color(255, 255, 255),0);
+		    
+		// Graph
 		$graph = new Graph($this->width, $this->height);
 		$graph->border->hide();
 		$graph->setAntiAliasing(true);
@@ -168,19 +172,18 @@ class DolGraph
 			$graph->title->set($this->title);
 			$graph->title->setFont(new Tuffy(10));
 		}
-/*
-		if (isset($this->SetShading))
-		{
-			// Ombre ne fonctionne pas. Un Mars a celui qui trouve pourquoi.
-			$shadow=new Shadow(3);
-			$shadow->setSize($this->SetShading);
-			$graph->Shadow=$shadow;
-		}
-*/
+//		$graph->setBackgroundColor($bgcolor);
+		$graph->setBackgroundGradient($colorgradient);
+		
+		$group = new PlotGroup;
+		//$group->setSpace(5, 5, 0, 0);
+		$group->setPadding(30, 10);
+		$group->legend->setSpace(0);
+		$group->legend->setPadding(2,2,2,2);
+		$group->legend->setPosition(NULL,0.1);
+		$group->legend->setBackgroundColor($colorsemitrans);
+		$group->grid->setBackgroundColor($colortrans);		
 
-		$bgcolor=new Color($this->bgcolor[0],$this->bgcolor[1],$this->bgcolor[2]);
-		$graph->setBackgroundColor($bgcolor);
-		//print "dd".sizeof($this->data);
 		
 		// On boucle sur chaque lot de donnees
 		$legends=array();
@@ -198,34 +201,39 @@ class DolGraph
 				$j++;
 			}
 
-			/*
-			print "Lot de donnees $i<br>";
-			print_r($values);
-			print '<br>';
-			*/
-			
+		
 			if ($this->type == 'bars')
 			{
-				// Artichow ne gère pas les valeurs inconnues
-				// Donc si inconnu, on la fixe à null
+				//print "Lot de donnees $i<br>";
+				//print_r($values);
+				//print '<br>';
+				
+				// Artichow ne gere pas les valeurs inconnues
+				// Donc si inconnu, on la fixe a null
 				$newvalues=array();
 				foreach($values as $val)
 				{
 					$newvalues[]=(is_numeric($val) ? $val : null);
 				}
 
+				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
+				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
+				
 				//$plot = new BarPlot($newvalues,1,1,0);
-				$plot = new BarPlot($newvalues);
-
-			    $plot->barShadow->setSize(2);
-			    $plot->barShadow->setPosition('Shadow::RIGHT_TOP');
-			    $plot->barShadow->setColor(new Color(160, 160, 160, 10));
+				$plot = new BarPlot($newvalues, $i+1, $nblot);
+				
+				$plot->barBorder->setColor($colorborder);
+				$plot->setBarColor($color);
+				
+				$plot->setBarPadding(0.1, 0.1);
+				$plot->setBarSpace(5);
+ 
+			    $plot->barShadow->setSize($this->SetShading);
+			    $plot->barShadow->setPosition(Shadow::RIGHT_TOP);
+			    $plot->barShadow->setColor(new Color(160, 160, 160, 50));
 			    $plot->barShadow->smooth(TRUE);
     			//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
-		
-				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],25);
-				$plot->setBarColor($color);
 		
 				// Le mode automatique est plus efficace
 				$plot->SetYMax($this->MaxValue);
@@ -234,8 +242,8 @@ class DolGraph
 	
 			if ($this->type == 'lines')
 			{
-				// Artichow ne gère pas les valeurs inconnues
-				// Donc si inconnu, on la fixe à null
+				// Artichow ne gere pas les valeurs inconnues
+				// Donc si inconnu, on la fixe a null
 				$newvalues=array();
 				foreach($values as $val)
 				{
@@ -246,7 +254,7 @@ class DolGraph
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
 		
-				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],25);
+				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],30);
 				$plot->setColor($color);
 				
 				// Le mode automatique est plus efficace
@@ -254,39 +262,33 @@ class DolGraph
 				$plot->SetYMin($this->MinValue);
 			}
 	
-			$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce saturés
+			$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
 	
 			if ($nblot >= 2)
 			{
-				$group->legend->add($plot, $this->Legend[$i], 'Legend::MARK');
-
-				$group->add($plot);
+				$group->legend->add($plot, $this->Legend[$i], Legend::BACKGROUND);
 			}
 			else
 			{
    				$plot->xAxis->setLabelText($legends);
 				$plot->xAxis->label->setFont(new Tuffy(7));
-
-				$graph->add($plot);
-			}			
+			}
+			$group->add($plot);
 
 			$i++;
 		}
 		
-		if ($nblot >= 2)
-		{
-			$group->axis->bottom->setLabelText($legends);
-			$group->axis->bottom->label->setFont(new Tuffy(7));
+		$group->axis->bottom->setLabelText($legends);
+		$group->axis->bottom->label->setFont(new Tuffy(7));
 
-			$graph->add($group);
-		}
+		$graph->add($group);
 		
 		// Generate file
 		$graph->draw($file);
 	}
 
 	/**
-	*    \brief		Génère le fichier graphique sur le disque
+	*    \brief		Genere le fichier graphique sur le disque
 	*				via la librairie PHPlot 5 ou 4
 	*    \param		file	Nom du fichier image
 	*/
@@ -294,7 +296,7 @@ class DolGraph
 	{
 		dolibarr_syslog("DolGraph.class::draw_phplot this->type=".$this->type);
 
-		// Vérifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
+		// Verifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
 		$graphpathdir=DOL_DOCUMENT_ROOT."/includes/phplot";
 		if (defined('PHPLOT_PATH')) $graphpathdir=PHPLOT_PATH;
 		if ($conf->global->PHPLOT_PATH) $graphpathdir=$conf->global->PHPLOT_PATH;
@@ -388,7 +390,7 @@ class DolGraph
 		// Define title
 		if (isset($this->title)) $graph->SetTitle($this->title);
 
-		// Défini position du graphe (et legende) au sein de l'image
+		// Dï¿½fini position du graphe (et legende) au sein de l'image
 		if (isset($this->Legend) && sizeof($this->Legend))
 		{
 			$graph->SetLegendPixels($this->width - $right_space+8,40,'');
@@ -716,7 +718,7 @@ class DolGraph
     $plot->mark->setFill(new LightBlue);
     $plot->mark->border->show();
 
-    // // $group->legend->add($plot, "Unités", 3);
+    // // $group->legend->add($plot, "Unitï¿½s", 3);
     $group->add($plot);
     /*
      *
@@ -812,7 +814,7 @@ class DolGraph
     $plot->mark->setFill(new LightBlue);
     $plot->mark->border->show();
 
-    $group->legend->add($plot, "Unités", 3);
+    $group->legend->add($plot, "Unitï¿½s", 3);
     $group->add($plot);
     /*
      *

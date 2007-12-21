@@ -492,7 +492,7 @@ foreach ($accounts as $account)
     $px->SetWidth($width);
     $px->SetHeight($height);
 	$px->SetType('bars');
-	$px->SetShading(8);
+	$px->SetShading(3);
     $px->draw($file);
 }
 

@@ -59,7 +59,7 @@ if (! $mesg)
     $px->SetWidth($WIDTH);
     $px->SetHeight($HEIGHT);
     $px->SetYLabel($langs->trans("NbOfOrders"));
-    $px->SetShading(5);
+    $px->SetShading(3);
 	$px->SetHorizTickIncrement(1);
 	$px->SetPrecisionY(0);
     $px->draw($filename);

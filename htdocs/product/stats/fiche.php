@@ -205,7 +205,7 @@ if ($_GET["id"] || $_GET["ref"])
 					$px->SetHeight($HEIGHT);
 					$px->SetHorizTickIncrement(1);
 					$px->SetPrecisionY(0);
-					$px->SetShading(5);
+					$px->SetShading(3);
 					//print 'x '.$key.' '.$graphfiles[$key]['file'];
 
 					$px->draw($dir."/".$graphfiles[$key]['file']);
