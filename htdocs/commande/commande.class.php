@@ -2138,16 +2138,19 @@ class Commande extends CommonObject
 	/**
 		\brief      Renvoie nom clicable (avec eventuellement le picto)
 		\param		withpicto		0=Pas de picto, 1=Inclut le picto dans le lien, 2=Picto seul
-		\param		option			Sur quoi pointe le lien
+		\param		option			Sur quoi pointe le lien: 0,1,2,4,-1 fiche commande, 3 fiche compta commande
 		\return		string			Chaine avec URL
 	*/
-	function getNomUrl($withpicto=0,$option='')
+	function getNomUrl($withpicto=0,$option=0)
 	{
 		global $langs;
 		
 		$result='';
+		$urlOption='';
 		
-		$lien = '<a href="'.DOL_URL_ROOT.'/compta/commande/fiche.php?id='.$this->id.'">';
+		if ($option == 3) $urlOption = '/compta';
+		
+		$lien = '<a href="'.DOL_URL_ROOT.$urlOption.'/commande/fiche.php?id='.$this->id.'">';
 		$lienfin='</a>';
 		
 		$picto='order';
