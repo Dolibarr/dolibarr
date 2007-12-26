@@ -206,7 +206,7 @@ if ($nboftargetok) {
     $ret=`rm -fr $BUILDROOT/$PROJECT/documents`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/document`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/build`;
-    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db`;
+    $ret=`rm -fr $BUILDROOT/$PROJECT/Thumbs.db $BUILDROOT/$PROJECT/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/Thumbs.db $BUILDROOT/$PROJECT/*/*/*/*/Thumbs.db`;
     $ret=`rm -fr $BUILDROOT/$PROJECT/CVS* $BUILDROOT/$PROJECT/*/CVS* $BUILDROOT/$PROJECT/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/CVS* $BUILDROOT/$PROJECT/*/*/*/*/*/CVS*`;
     rename("$BUILDROOT/$PROJECT","$BUILDROOT/$FILENAMETGZ");
     
@@ -221,7 +221,7 @@ if ($nboftargetok) {
     	if ($target eq 'TGZ') {
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-   		    $cmd="tar --exclude-from \"$DESTI/tgz/tar.exclude\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
+   		    $cmd="tar --exclude-from \"$DESTI/tgz/tar_exclude.txt\" --directory \"$BUILDROOT\" -czvf \"$FILENAMETGZ.tgz\" $FILENAMETGZ";
    		    $ret=`$cmd`;
             if ($OS =~ /windows/i)
             {
@@ -241,7 +241,10 @@ if ($nboftargetok) {
      		chdir("$BUILDROOT");
             #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
             #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-    		$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
+    		print "7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
+			$ret= `7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
+			#$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
+			print $ret;
 			print "Move $FILENAMEZIP.zip to $DESTI\n";
     		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
@@ -251,7 +254,7 @@ if ($nboftargetok) {
     		$BUILDFIC="$FILENAME.spec";
     		unlink $FILENAMETGZ.tgz;
     		print "Compress $FILENAMETGZ into $FILENAMETGZ.tgz...\n";
-    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar.exclude" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
+    		$ret=`tar --exclude-from "$SOURCE/build/tgz/tar_exclude.txt" --directory "$BUILDROOT" -czvf "$BUILDROOT/$FILENAMETGZ.tgz" $FILENAMETGZ`;
 
     		print "Move $FILENAMETGZ.tgz to $RPMDIR/SOURCES/$FILENAMETGZ.tgz\n";
     		$cmd="mv \"$BUILDROOT/$FILENAMETGZ.tgz\" \"$RPMDIR/SOURCES/$FILENAMETGZ.tgz\"";
