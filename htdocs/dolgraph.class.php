@@ -20,28 +20,28 @@
  */
 
 /**
-   \file       htdocs/dolgraph.class.php
-   \brief      Fichier de la classe mere de gestion des graph phplot
-   \version    $Revision$
-   \remarks    Usage:
-   $graph_data = array(array('labelA',yA),array('labelB',yB));
-   array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
-   $px = new DolGraph();
-   $px->SetData($graph_data);
-   $px->SetMaxValue($px->GetCeilMaxValue());
-   $px->SetMinValue($px->GetFloorMinValue());
-   $px->SetTitle("title");
-   $px->SetLegend(array("Val1","Val2"));
-   $px->SetWidth(width);
-   $px->SetHeight(height);
-   $px->draw("file.png");
-*/
+ \file       htdocs/dolgraph.class.php
+ \brief      Fichier de la classe mere de gestion des graph
+ \version    $Revision$
+ \remarks    Usage:
+ $graph_data = array(array('labelA',yA),array('labelB',yB));
+ array(array('labelA',yA1,...,yAn),array('labelB',yB1,...yBn));
+ $px = new DolGraph();
+ $px->SetData($graph_data);
+ $px->SetMaxValue($px->GetCeilMaxValue());
+ $px->SetMinValue($px->GetFloorMinValue());
+ $px->SetTitle("title");
+ $px->SetLegend(array("Val1","Val2"));
+ $px->SetWidth(width);
+ $px->SetHeight(height);
+ $px->draw("file.png");
+ */
 
 
 /**
-   \class      Graph
-   \brief      Classe mere permettant la gestion des graph
-*/
+ \class      Graph
+ \brief      Classe mere permettant la gestion des graph
+ */
 
 class DolGraph
 {
@@ -59,8 +59,8 @@ class DolGraph
 	var $SetNumXTicks=-1;
 	var $Legend=array();
 	var $LegendWidthMin=0;
-	
-	var $graph;     		// Objet Graph (PHPlot ou Artichow...)
+
+	var $graph;     		// Objet Graph (Artichow, Phplot...)
 	var $error;
 
 	var $library='';		// Par defaut on utiliser PHPlot
@@ -68,11 +68,11 @@ class DolGraph
 	var $bordercolor;		// array(R,G,B)
 	var $bgcolor;			// array(R,G,B)
 	var $datacolor;			// array(array(R,G,B),...)
-	
 
-	/*
-	*	Constructeur
-	*/
+
+	/**
+	 *	Constructeur
+	 */
 	function DolGraph()
 	{
 		global $conf;
@@ -119,33 +119,20 @@ class DolGraph
 	}
 
 	/**
-	*    \brief      Genere le fichier graphique sur le disque
-	*    \param      file    Nom du fichier image
-	*/
+	 *    \brief      Genere le fichier graphique sur le disque
+	 *    \param      file    Nom du fichier image
+	 */
 	function draw($file)
 	{
 		$call = "draw_".$this->library;
 		$this->$call($file);
 	}
 
-	function prepare($file)
-	{
-		$call = "prepare_".$this->library;
-		$this->$call($file);
-	}
-
-	function generate($file)
-	{
-		$call = "generate_".$this->library;
-		$this->$call($file);
-	}
 
 	/**
-	* Artichow
-	*
-	*
-	*
-	*/
+	 * 	\brief		Generation graph a partir de la lib Artichow
+	 *	\param		file		Nom fichier a generer
+	 */
 	function draw_artichow($file)
 	{
 		dolibarr_syslog("DolGraph.class::draw_artichow this->type=".$this->type);
@@ -161,19 +148,19 @@ class DolGraph
 		$colortrans=new Color(0,0,0,100);
 		$colorsemitrans=new Color(255,255,255,50);
 		$colorgradient= new LinearGradient(new Color(235, 235, 235),new Color(255, 255, 255),0);
-		    
+
 		// Graph
 		$graph = new Graph($this->width, $this->height);
 		$graph->border->hide();
 		$graph->setAntiAliasing(true);
-		if (isset($this->title)) 
+		if (isset($this->title))
 		{
 			$graph->title->set($this->title);
 			$graph->title->setFont(new Tuffy(10));
 		}
-//		$graph->setBackgroundColor($bgcolor);
+		//		$graph->setBackgroundColor($bgcolor);
 		$graph->setBackgroundGradient($colorgradient);
-		
+
 		$group = new PlotGroup;
 		//$group->setSpace(5, 5, 0, 0);
 		$group->setPadding(30, 10);
@@ -181,9 +168,9 @@ class DolGraph
 		$group->legend->setPadding(2,2,2,2);
 		$group->legend->setPosition(NULL,0.1);
 		$group->legend->setBackgroundColor($colorsemitrans);
-		$group->grid->setBackgroundColor($colortrans);		
+		$group->grid->setBackgroundColor($colortrans);
 
-		
+
 		// On boucle sur chaque lot de donnees
 		$legends=array();
 		$i=0;
@@ -207,58 +194,58 @@ class DolGraph
 			{
 				$newvalues[]=(is_numeric($val) ? $val : null);
 			}
-		
-		
+
+
 			if ($this->type == 'bars')
 			{
 				//print "Lot de donnees $i<br>";
 				//print_r($values);
 				//print '<br>';
-				
+
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
 				$colorborder=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2]);
-				
+
 				//$plot = new BarPlot($newvalues,1,1,0);
 				$plot = new BarPlot($newvalues, $i+1, $nblot);
-				
+
 				$plot->barBorder->setColor($colorborder);
 				$plot->setBarColor($color);
-				
+
 				$plot->setBarPadding(0.1, 0.1);
 				$plot->setBarSpace(5);
- 
-			    $plot->barShadow->setSize($this->SetShading);
-			    $plot->barShadow->setPosition(Shadow::RIGHT_TOP);
-			    $plot->barShadow->setColor(new Color(160, 160, 160, 50));
-			    $plot->barShadow->smooth(TRUE);
-    			//$plot->setSize(1, 0.96);
+
+				$plot->barShadow->setSize($this->SetShading);
+				$plot->barShadow->setPosition(Shadow::RIGHT_TOP);
+				$plot->barShadow->setColor(new Color(160, 160, 160, 50));
+				$plot->barShadow->smooth(TRUE);
+				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
-		
+
 				// Le mode automatique est plus efficace
 				$plot->SetYMax($this->MaxValue);
 				$plot->SetYMin($this->MinValue);
 			}
-	
+
 			if ($this->type == 'lines')
 			{
 				$color=new Color($this->datacolor[$i][0],$this->datacolor[$i][1],$this->datacolor[$i][2],20);
-				
+
 				$plot = new LinePlot($newvalues);
 				//$plot->setSize(1, 0.96);
 				//$plot->setCenter(0.5, 0.52);
-		
+
 				$plot->setColor($color);
 				$plot->setThickness(2);
-				
+
 				// Le mode automatique est plus efficace
 				$plot->SetYMax($this->MaxValue);
 				$plot->SetYMin($this->MinValue);
 				//$plot->setYAxis(0);
 				//$plot->hideLine(true);
 			}
-	
+
 			//$plot->reduce(80);		// Evite temps d'affichage trop long et nombre de ticks absisce satures
-	
+
 			if (sizeof($this->Legend))
 			{
 				if ($this->type == 'bars')  $group->legend->add($plot, $this->Legend[$i], Legend::BACKGROUND);
@@ -268,610 +255,444 @@ class DolGraph
 
 			$i++;
 		}
-		
+
 		$group->axis->bottom->setLabelText($legends);
 		$group->axis->bottom->label->setFont(new Tuffy(7));
 
 		$graph->add($group);
-		
+
 		// Generate file
 		$graph->draw($file);
 	}
 
+
 	/**
-	*    \brief		Genere le fichier graphique sur le disque
-	*				via la librairie PHPlot 5 ou 4
-	*    \param		file	Nom du fichier image
-	*/
-	function draw_phplot($file)
+	 */
+	function SetPrecisionY($which_prec)
 	{
-		dolibarr_syslog("DolGraph.class::draw_phplot this->type=".$this->type);
+		$this->PrecisionY = $which_prec;
+		return true;
+	}
 
-		// Verifie que chemin vers PHPLOT_PATH est connu et on definie $graphpathdir
-		$graphpathdir=DOL_DOCUMENT_ROOT."/includes/phplot";
-		if (defined('PHPLOT_PATH')) $graphpathdir=PHPLOT_PATH;
-		if ($conf->global->PHPLOT_PATH) $graphpathdir=$conf->global->PHPLOT_PATH;
-		if (! eregi('[\\\/]$',$graphpathdir)) $graphpathdir.='/';
-		include_once($graphpathdir.'phplot.php');
-		$phplotversion=4;
-		if (defined('TOTY')) $phplotversion=5;
+	/**
+	 \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 */
+	function SetHorizTickIncrement($xi)
+	{
+		$this->SetHorizTickIncrement = $xi;
+		return true;
+	}
 
-		// Create graph
-		$graph = new PHPlot($this->width, $this->height);
-		$graph->SetIsInline(1);
-		$graph->SetPlotType($this->type);
-		$graph->SetDataValues($this->data);
-
-		// Precision axe y (pas de decimal si 3 chiffres ou plus)
-		if ($this->PrecisionY > -1)
-		{
-			$graph->SetPrecisionY($this->PrecisionY);
-			if ($this->PrecisionY == 0)		// Si precision de 0
-			{
-				// Determine un nombre de ticks qui permet decoupage qui tombe juste
-				$maxval=$this->getMaxValue();
-				$minval=$this->getMinValue();
-				if ($maxval * $minval >= 0)	// Si du meme signe
-				{
-					$plage=$maxval;
-				}
-				else
-				{
-					$plage=$maxval-$minval;
-				}
-				if (abs($plage) <= 2)
-				{
-					$this->SetMaxValue(2);
-					$maxticks=2;
-				}
-				else
-				{
-					$maxticks=10;
-					if (substr($plage,0,1) == 3 || substr($plage,0,1) == 6)
-					{
-						$maxticks=min(6,$plage);
-					}
-					elseif (substr($plage,0,1) == 4 || substr($plage,0,1) == 8)
-					{
-						$maxticks=min(8,$plage);
-					}
-					elseif (substr($plage,0,1) == 7)
-					{
-						$maxticks=min(7,$plage);
-					}
-					elseif (substr($plage,0,1) == 9)
-					{
-						$maxticks=min(9,$plage);
-					}
-				}
-				$graph->SetNumVertTicks($maxticks);
-				//				print 'minval='.$minval.' - maxval='.$maxval.' - plage='.$plage.' - maxticks='.$maxticks.'<br>';
-			}
-		}
-		else
-		{
-			$graph->SetPrecisionY(3-strlen(round($this->GetMaxValueInData())));
-		}
-		$graph->SetPrecisionX(0);
-
-		// Set areas
-		$top_space=40;
-		if ($phplotversion >= 5) $top_space=25;
-		$left_space=80;								// For y labels
-		$right_space=10;							// If no legend
-		if (isset($this->Legend) && sizeof($this->Legend))
-		{
-			foreach($this->Legend as $key => $val)
-			{
-				$maxlen=max($maxlen,$val);
-			}
-			$right_space=50+strlen($maxlen)*6;		// For legend
-			if ($this->LegendWidthMin && $right_space < $this->LegendWidthMin)
-			{
-				$right_space=$this->LegendWidthMin;
-			}
-		}
-
-		$graph->SetNewPlotAreaPixels($left_space, $top_space, $this->width - $right_space, $this->height-40);
-		if (isset($this->MaxValue))
-		{
-			$graph->SetPlotAreaWorld(0,$this->MinValue,sizeof($this->data),$this->MaxValue);
-		}
-
-		// Define title
-		if (isset($this->title)) $graph->SetTitle($this->title);
-
-		// Defini position du graphe (et legende) au sein de l'image
-		if (isset($this->Legend) && sizeof($this->Legend))
-		{
-			$graph->SetLegendPixels($this->width - $right_space+8,40,'');
-			$graph->SetLegend($this->Legend);
-		}
-
-		if (isset($this->SetShading))
-		{
-			$graph->SetShading($this->SetShading);
-		}
-
-		$graph->SetTickLength(6);
-
-		$graph->SetBackgroundColor($this->bgcolor);
-		$graph->SetDataColors($this->datacolor, $this->bordercolor);
-
-		if ($this->SetNumXTicks > -1)
-		{
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$graph->SetXLabelType('');
-				$graph->SetNumXTicks($this->SetNumXTicks);
-			}
-			else
-			{
-				$graph->SetNumHorizTicks($this->SetNumXTicks);
-			}
-		}
-		if ($this->SetHorizTickIncrement > -1)
-		{
-			// Les ticks sont en mode forc
-			$graph->SetHorizTickIncrement($this->SetHorizTickIncrement);
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$graph->SetXLabelType('');
-				$graph->SetXTickLabelPos('none');
-			}
-		}
-		else
-		{
-			// Les ticks sont en mode automatique
-			if ($phplotversion >= 5)	// If PHPlot 5, for compatibility
-			{
-				$graph->SetXDataLabelPos('none');
-			}
-		}
-
-		if ($phplotversion >= 5)
-		{
-			// Ne gere la transparence qu'en phplot >= 5
-			// $graph->SetBgImage(DOL_DOCUMENT_ROOT.'/theme/dolibarr_logo_2.png','tile');
-			$graph->SetDrawPlotAreaBackground(array(255,255,255));
-		}
-
-		$graph->SetPlotBorderType("left");		// Affiche axe y a gauche uniquement
-		$graph->SetVertTickPosition('plotleft');	// Affiche tick axe y a gauche uniquement
-		$graph->SetOutputFile($file);
-		
-		// Generate file
-		$graph->DrawGraph();
-		
-		unset($graph);
+	/**
+	 \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
+	 */
+	function SetNumXTicks($xt)
+	{
+		$this->SetNumXTicks = $xt;
+		return true;
 	}
 
 
+	function SetYLabel($label)
+	{
+		$this->YLabel = $label;
+	}
 
-  /*
-   */
-  function SetPrecisionY($which_prec)
-  {
-    $this->PrecisionY = $which_prec;
-    return true;
-  }
+	function SetWidth($w)
+	{
+		$this->width = $w;
+	}
 
-  /*
-    \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
-  */
-  function SetHorizTickIncrement($xi)
-  {
-    $this->SetHorizTickIncrement = $xi;
-    return true;
-  }
+	function SetTitle($title)
+	{
+		$this->title = $title;
+	}
 
-  /*
-    \remarks	Utiliser SetNumTicks ou SetHorizTickIncrement mais pas les 2
-  */
-  function SetNumXTicks($xt)
-  {
-    $this->SetNumXTicks = $xt;
-    return true;
-  }
+	function SetData($data)
+	{
+		$this->data = $data;
+	}
 
+	function SetType($type)
+	{
+		$this->type = $type;
+	}
 
-  function SetYLabel($label)
-  {
-    $this->YLabel = $label;
-  }
+	function SetLegend($legend)
+	{
+		$this->Legend = $legend;
+	}
+	function SetLegendWidthMin($legendwidthmin)
+	{
+		$this->LegendWidthMin = $legendwidthmin;
+	}
 
-  function SetWidth($w)
-  {
-    $this->width = $w;
-  }
+	function SetMaxValue($max)
+	{
+		$this->MaxValue = $max;
+	}
+	function GetMaxValue()
+	{
+		return $this->MaxValue;
+	}
 
-  function SetTitle($title)
-  {
-    $this->title = $title;
-  }
+	function SetMinValue($min)
+	{
+		$this->MinValue = $min;
+	}
+	function GetMinValue()
+	{
+		return $this->MinValue;
+	}
 
-  function SetData($data)
-  {
-    $this->data = $data;
-  }
+	function SetHeight($h)
+	{
+		$this->height = $h;
+	}
 
-  function SetType($type)
-  {
-    $this->type = $type;
-  }
+	function SetShading($s)
+	{
+		$this->SetShading = $s;
+	}
 
-  function SetLegend($legend)
-  {
-    $this->Legend = $legend;
-  }
-  function SetLegendWidthMin($legendwidthmin)
-  {
-    $this->LegendWidthMin = $legendwidthmin;
-  }
+	function ResetBgColor()
+	{
+		unset($this->bgcolor);
+	}
 
-  function SetMaxValue($max)
-  {
-    $this->MaxValue = $max;
-  }
-  function GetMaxValue()
-  {
-    return $this->MaxValue;
-  }
-
-  function SetMinValue($min)
-  {
-    $this->MinValue = $min;
-  }
-  function GetMinValue()
-  {
-    return $this->MinValue;
-  }
-
-  function SetHeight($h)
-  {
-    $this->height = $h;
-  }
-
-  function SetShading($s)
-  {
-    $this->SetShading = $s;
-  }
-
-  function ResetBgColor()
-  {
-    unset($this->bgcolor);
-  }
-
-  /**
-   *	\brief		Definie la couleur de fond du graphique
-   *	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
-   */
-  function SetBgColor($bg_color = array(255,255,255))
-  {
-    global $theme_bgcolor,$theme_bgcoloronglet;
-    if (! is_array($bg_color))
-      {
-	if ($bg_color == 'onglet')
+	/**
+	 *	\brief		Definie la couleur de fond du graphique
+	 *	\param		bg_color		array(R,G,B) ou 'onglet' ou 'default'
+	 */
+	function SetBgColor($bg_color = array(255,255,255))
+	{
+		global $theme_bgcolor,$theme_bgcoloronglet;
+		if (! is_array($bg_color))
+		{
+			if ($bg_color == 'onglet')
 	  {
-	    //print 'ee'.join(',',$theme_bgcoloronglet);
-	    $this->bgcolor = $theme_bgcoloronglet;
+	  	//print 'ee'.join(',',$theme_bgcoloronglet);
+	  	$this->bgcolor = $theme_bgcoloronglet;
 	  }
-	else
+	  else
 	  {
-	    $this->bgcolor = $theme_bgcolor;
+	  	$this->bgcolor = $theme_bgcolor;
 	  }
-      }
-    else
-      {
-	$this->bgcolor = $bg_color;
-      }
-  }
+		}
+		else
+		{
+			$this->bgcolor = $bg_color;
+		}
+	}
 
-  function ResetDataColor()
-  {
-    unset($this->datacolor);
-  }
+	function ResetDataColor()
+	{
+		unset($this->datacolor);
+	}
 
-  function GetMaxValueInData()
-  {
-    $k = 0;
-    $vals = array();
+	function GetMaxValueInData()
+	{
+		$k = 0;
+		$vals = array();
 
-    $nblines = sizeof($this->data);
-    $nbvalues = sizeof($this->data[0]) - 1;
+		$nblines = sizeof($this->data);
+		$nbvalues = sizeof($this->data[0]) - 1;
 
-    for ($j = 0 ; $j < $nblines ; $j++)
-      {
-	for ($i = 0 ; $i < $nbvalues ; $i++)
+		for ($j = 0 ; $j < $nblines ; $j++)
+		{
+			for ($i = 0 ; $i < $nbvalues ; $i++)
 	  {
-	    $vals[$k] = $this->data[$j][$i+1];
-	    $k++;
+	  	$vals[$k] = $this->data[$j][$i+1];
+	  	$k++;
 	  }
-      }
-    rsort($vals);
-    return $vals[0];
-  }
+		}
+		rsort($vals);
+		return $vals[0];
+	}
 
-  function GetMinValueInData()
-  {
-    $k = 0;
-    $vals = array();
+	function GetMinValueInData()
+	{
+		$k = 0;
+		$vals = array();
 
-    $nblines = sizeof($this->data);
-    $nbvalues = sizeof($this->data[0]) - 1;
+		$nblines = sizeof($this->data);
+		$nbvalues = sizeof($this->data[0]) - 1;
 
-    for ($j = 0 ; $j < $nblines ; $j++)
-      {
-	for ($i = 0 ; $i < $nbvalues ; $i++)
+		for ($j = 0 ; $j < $nblines ; $j++)
+		{
+			for ($i = 0 ; $i < $nbvalues ; $i++)
 	  {
-	    $vals[$k] = $this->data[$j][$i+1];
-	    $k++;
+	  	$vals[$k] = $this->data[$j][$i+1];
+	  	$k++;
 	  }
-      }
-    sort($vals);
-    return $vals[0];
-  }
+		}
+		sort($vals);
+		return $vals[0];
+	}
 
-  function GetCeilMaxValue()
-  {
-    $max = $this->GetMaxValueInData();
-    if ($max != 0) $max++;
-    $size=strlen(abs(ceil($max)));
-    $factor=1;
-    for ($i=0; $i < ($size-1); $i++)
-      {
-	$factor*=10;
-      }
-    $res=ceil($max/$factor)*$factor;
+	function GetCeilMaxValue()
+	{
+		$max = $this->GetMaxValueInData();
+		if ($max != 0) $max++;
+		$size=strlen(abs(ceil($max)));
+		$factor=1;
+		for ($i=0; $i < ($size-1); $i++)
+		{
+			$factor*=10;
+		}
+		$res=ceil($max/$factor)*$factor;
 
-    //print "max=".$max." res=".$res;
-    return $res;
-  }
+		//print "max=".$max." res=".$res;
+		return $res;
+	}
 
-  function GetFloorMinValue()
-  {
-    $min = $this->GetMinValueInData();
-    if ($min != 0) $min--;
-    $size=strlen(abs(floor($min)));
-    $factor=1;
-    for ($i=0; $i < ($size-1); $i++)
-      {
-	$factor*=10;
-      }
-    $res=floor($min/$factor)*$factor;
+	function GetFloorMinValue()
+	{
+		$min = $this->GetMinValueInData();
+		if ($min != 0) $min--;
+		$size=strlen(abs(floor($min)));
+		$factor=1;
+		for ($i=0; $i < ($size-1); $i++)
+		{
+			$factor*=10;
+		}
+		$res=floor($min/$factor)*$factor;
 
-    //print "min=".$min." res=".$res;
-    return $res;
-  }
+		//print "min=".$min." res=".$res;
+		return $res;
+	}
 
-  function BarLineAnnualArtichow($file='', $barvalues, $linevalues, $legends='')
-  {
-    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
-    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
-    
-    $graph = new Graph(240, 220);
-
-    $graph->title->set($this->title);
-    $graph->title->setFont(new Tuffy(10));
-    
-    $graph->border->hide();
-
-    $color = new Color(222,231,236);
-    //new Color(0xF4, 0xF4, 0xF4)
-    $graph->setAntiAliasing(TRUE);
-    $graph->setBackgroundColor($color);
-
-    $group = new PlotGroup;
-    $group->setSize(0.82, 1);
-    $group->setCenter(0.41, 0.5);
-    $group->setPadding(35, 26, 40, 27);
-    $group->setSpace(2, 2);
-
-    $group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
-    //    $group->grid->setType(Line::DASHED);
-    $group->grid->hideVertical(TRUE);
-    $group->grid->setBackgroundColor(new White);
-
-    $group->axis->left->setColor(new DarkGreen);
-    $group->axis->left->label->setFont(new Font2);
-
-    $group->axis->right->setColor(new DarkBlue);
-    $group->axis->right->label->setFont(new Font2);
-
-    $group->axis->bottom->label->setFont(new Font2);
-
-    //$group->legend->setPosition(1.18);
-    //$group->legend->setTextFont(new Tuffy(8));
-    //$group->legend->setSpace(10);
-
-    // Add a bar plot
-    $plot = new BarPlot($barvalues);
-    //$plot->setBarColor(new MidYellow);
-    $plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
-    $plot->setBarPadding(0.15, 0.15);
-    $plot->barShadow->setSize(3);
-    $plot->barShadow->smooth(TRUE);
-    $plot->barShadow->setColor(new Color(200, 200, 200, 10));
-    //$plot->move(1, 0);
-
-    //    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
-    // // $group->legend->add($plot, "CA (HT)", 2);
-    $group->add($plot);
-
-    // Add a line plot
-    $plot = new LinePlot($linevalues, 1);
-    $plot->setColor(new DarkBlue);
-    $plot->setThickness(3);
-    $plot->setYAxis('right');
-
-    $plot->mark->setType(1);
-    $plot->mark->setSize(6);
-    $plot->mark->setFill(new LightBlue);
-    $plot->mark->border->show();
-
-    // // $group->legend->add($plot, "Unites", 3);
-    $group->add($plot);
-    /*
-     *
-     */
-    $group->axis->right->setColor(new DarkBlue);
-    $group->axis->right->label->setColor(new DarkBlue);
-
-    $group->axis->bottom->setLabelText($legends);
-    $group->axis->bottom->hideTicks(TRUE);
-    /*
-     *
-     */
-    $graph->add($group);
-    $graph->draw($file);
-  }
-
-  function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
-  {
-    $ok = 0;
-    foreach($linevalues as $val)
-      {
-	$sum1 += abs($val);
-      }
-    foreach($barvalues as $val)
-      {
-	$sum2 += abs($val);
-      }
-    $ok = sizeof($values) * $sum1 * $sum2;
-
-    if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
-      {
-    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
-    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
-    
-    $graph = new Graph(540, 220);
-
-    $graph->title->set($this->title);
-    $graph->title->setFont(new Tuffy(10));
-    
-    $graph->border->hide();
-
-    $color = new Color(222,231,236);
-    //new Color(0xF4, 0xF4, 0xF4)
-    $graph->setAntiAliasing(TRUE);
-    $graph->setBackgroundColor($color);
-
-    $group = new PlotGroup;
-    $group->setSize(0.82, 1);
-    $group->setCenter(0.41, 0.5);
-    $group->setPadding(35, 26, 40, 27);
-    $group->setSpace(2, 2);
-
-    $group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
-    //    $group->grid->setType(Line::DASHED);
-    $group->grid->hideVertical(TRUE);
-    $group->grid->setBackgroundColor(new White);
-
-    $group->axis->left->setColor(new DarkGreen);
-    $group->axis->left->label->setFont(new Font2);
-
-    $group->axis->right->setColor(new DarkBlue);
-    $group->axis->right->label->setFont(new Font2);
-
-    $group->axis->bottom->label->setFont(new Font2);
-
-    $group->legend->setPosition(1.18);
-    $group->legend->setTextFont(new Tuffy(8));
-    $group->legend->setSpace(10);
-
-    // Add a bar plot
-    $plot = new BarPlot($barvalues);
-    //$plot->setBarColor(new MidYellow);
-    $plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
-    $plot->setBarPadding(0.15, 0.15);
-    $plot->barShadow->setSize(3);
-    $plot->barShadow->smooth(TRUE);
-    $plot->barShadow->setColor(new Color(200, 200, 200, 10));
-    //$plot->move(1, 0);
-
-    //    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
-    $group->legend->add($plot, "CA (HT)", 2);
-    $group->add($plot);
-
-    // Add a line plot
-    $plot = new LinePlot($linevalues, 1);
-    $plot->setColor(new DarkBlue);
-    $plot->setThickness(3);
-    $plot->setYAxis('right');
-
-    $plot->mark->setType(1);
-    $plot->mark->setSize(6);
-    $plot->mark->setFill(new LightBlue);
-    $plot->mark->border->show();
-
-    $group->legend->add($plot, "Unites", 3);
-    $group->add($plot);
-    /*
-     *
-     */
-    $group->axis->right->setColor(new DarkBlue);
-    $group->axis->right->label->setColor(new DarkBlue);
-
-    $group->axis->bottom->setLabelText($legends);
-    $group->axis->bottom->hideTicks(TRUE);
-    /*
-     *
-     */
-    $graph->add($group);
-    $graph->draw($file);
-      }
-  }
-
-  function BarAnnualArtichow($file='', $values='', $legends='')
-  {
-    require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
-
-    $ok = 0;
-    foreach($values as $val)
-      {
-	$sum += abs($val);
-      }
-    $ok = sizeof($values) * $sum;
-
-    if ($ok > 0)
-      {
-	$graph = new Graph(500, 200);
-	$graph->title->set($this->title);
-	$graph->title->setFont(new Tuffy(10));	
-	$graph->border->hide();
 	
-	$color = new Color(222,231,236);
 	
-	$graph->setAntiAliasing(TRUE);
-	$graph->setBackgroundColor( $color );
 	
-	$plot = new BarPlot($values);
-	
-	$plot->setBarGradient(
-			      new LinearGradient(
-						 new Color(244,244,244),
-						 new Color(222,231,236),
-						 90
-						 )
-			      );
-	
-	$plot->setSpace(5, 5, NULL, NULL);
-	
-	$plot->barShadow->setSize(4);
-	$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
-	$plot->barShadow->setColor(new Color(180, 180, 180, 10));
-	$plot->barShadow->smooth(TRUE);
-	
-	$plot->xAxis->hideTicks();
-	
-	$plot->xAxis->setLabelText($legends);
-	$plot->xAxis->label->setFont(new Tuffy(7));
-	
-	$graph->add($plot);
-	$graph->draw($file);    
-      }
-  }
-  
+	function BarLineAnnualArtichow($file='', $barvalues, $linevalues, $legends='')
+	{
+		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
+
+		$graph = new Graph(240, 220);
+
+		$graph->title->set($this->title);
+		$graph->title->setFont(new Tuffy(10));
+
+		$graph->border->hide();
+
+		$color = new Color(222,231,236);
+		//new Color(0xF4, 0xF4, 0xF4)
+		$graph->setAntiAliasing(TRUE);
+		$graph->setBackgroundColor($color);
+
+		$group = new PlotGroup;
+		$group->setSize(0.82, 1);
+		$group->setCenter(0.41, 0.5);
+		$group->setPadding(35, 26, 40, 27);
+		$group->setSpace(2, 2);
+
+		$group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
+		//    $group->grid->setType(Line::DASHED);
+		$group->grid->hideVertical(TRUE);
+		$group->grid->setBackgroundColor(new White);
+
+		$group->axis->left->setColor(new DarkGreen);
+		$group->axis->left->label->setFont(new Font2);
+
+		$group->axis->right->setColor(new DarkBlue);
+		$group->axis->right->label->setFont(new Font2);
+
+		$group->axis->bottom->label->setFont(new Font2);
+
+		//$group->legend->setPosition(1.18);
+		//$group->legend->setTextFont(new Tuffy(8));
+		//$group->legend->setSpace(10);
+
+		// Add a bar plot
+		$plot = new BarPlot($barvalues);
+		//$plot->setBarColor(new MidYellow);
+		$plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
+		$plot->setBarPadding(0.15, 0.15);
+		$plot->barShadow->setSize(3);
+		$plot->barShadow->smooth(TRUE);
+		$plot->barShadow->setColor(new Color(200, 200, 200, 10));
+		//$plot->move(1, 0);
+
+		//    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
+		// // $group->legend->add($plot, "CA (HT)", 2);
+		$group->add($plot);
+
+		// Add a line plot
+		$plot = new LinePlot($linevalues, 1);
+		$plot->setColor(new DarkBlue);
+		$plot->setThickness(3);
+		$plot->setYAxis('right');
+
+		$plot->mark->setType(1);
+		$plot->mark->setSize(6);
+		$plot->mark->setFill(new LightBlue);
+		$plot->mark->border->show();
+
+		// // $group->legend->add($plot, "Unites", 3);
+		$group->add($plot);
+		/*
+		 *
+		 */
+		$group->axis->right->setColor(new DarkBlue);
+		$group->axis->right->label->setColor(new DarkBlue);
+
+		$group->axis->bottom->setLabelText($legends);
+		$group->axis->bottom->hideTicks(TRUE);
+		/*
+		 *
+		 */
+		$graph->add($group);
+		$graph->draw($file);
+	}
+
+	function BarLineOneYearArtichow($file='', $barvalues, $linevalues, $legends='')
+	{
+		$ok = 0;
+		foreach($linevalues as $val)
+		{
+			$sum1 += abs($val);
+		}
+		foreach($barvalues as $val)
+		{
+			$sum2 += abs($val);
+		}
+		$ok = sizeof($values) * $sum1 * $sum2;
+
+		if (( sizeof($barvalues) * sizeof($linevalues) ) > 0)
+		{
+			require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+			require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/LinePlot.class.php";
+
+			$graph = new Graph(540, 220);
+
+			$graph->title->set($this->title);
+			$graph->title->setFont(new Tuffy(10));
+
+			$graph->border->hide();
+
+			$color = new Color(222,231,236);
+			//new Color(0xF4, 0xF4, 0xF4)
+			$graph->setAntiAliasing(TRUE);
+			$graph->setBackgroundColor($color);
+
+			$group = new PlotGroup;
+			$group->setSize(0.82, 1);
+			$group->setCenter(0.41, 0.5);
+			$group->setPadding(35, 26, 40, 27);
+			$group->setSpace(2, 2);
+
+			$group->grid->setColor(new Color(0xC4, 0xC4, 0xC4));
+			//    $group->grid->setType(Line::DASHED);
+			$group->grid->hideVertical(TRUE);
+			$group->grid->setBackgroundColor(new White);
+
+			$group->axis->left->setColor(new DarkGreen);
+			$group->axis->left->label->setFont(new Font2);
+
+			$group->axis->right->setColor(new DarkBlue);
+			$group->axis->right->label->setFont(new Font2);
+
+			$group->axis->bottom->label->setFont(new Font2);
+
+			$group->legend->setPosition(1.18);
+			$group->legend->setTextFont(new Tuffy(8));
+			$group->legend->setSpace(10);
+
+			// Add a bar plot
+			$plot = new BarPlot($barvalues);
+			//$plot->setBarColor(new MidYellow);
+			$plot->setBarGradient(new LinearGradient(new Color(244,244,244),new Color(222,231,236),90 ) );
+			$plot->setBarPadding(0.15, 0.15);
+			$plot->barShadow->setSize(3);
+			$plot->barShadow->smooth(TRUE);
+			$plot->barShadow->setColor(new Color(200, 200, 200, 10));
+			//$plot->move(1, 0);
+
+			//    $group->legend->add($plot, "Yellow bar", Legend::BACKGROUND);
+			$group->legend->add($plot, "CA (HT)", 2);
+			$group->add($plot);
+
+			// Add a line plot
+			$plot = new LinePlot($linevalues, 1);
+			$plot->setColor(new DarkBlue);
+			$plot->setThickness(3);
+			$plot->setYAxis('right');
+
+			$plot->mark->setType(1);
+			$plot->mark->setSize(6);
+			$plot->mark->setFill(new LightBlue);
+			$plot->mark->border->show();
+
+			$group->legend->add($plot, "Unites", 3);
+			$group->add($plot);
+			/*
+			 *
+			 */
+			$group->axis->right->setColor(new DarkBlue);
+			$group->axis->right->label->setColor(new DarkBlue);
+
+			$group->axis->bottom->setLabelText($legends);
+			$group->axis->bottom->hideTicks(TRUE);
+			/*
+			 *
+			 */
+			$graph->add($group);
+			$graph->draw($file);
+		}
+	}
+
+	function BarAnnualArtichow($file='', $values='', $legends='')
+	{
+		require_once DOL_DOCUMENT_ROOT."/../external-libs/Artichow/BarPlot.class.php";
+
+		$ok = 0;
+		foreach($values as $val)
+		{
+			$sum += abs($val);
+		}
+		$ok = sizeof($values) * $sum;
+
+		if ($ok > 0)
+		{
+			$graph = new Graph(500, 200);
+			$graph->title->set($this->title);
+			$graph->title->setFont(new Tuffy(10));
+			$graph->border->hide();
+
+			$color = new Color(222,231,236);
+
+			$graph->setAntiAliasing(TRUE);
+			$graph->setBackgroundColor( $color );
+
+			$plot = new BarPlot($values);
+
+			$plot->setBarGradient(
+			new LinearGradient(
+			new Color(244,244,244),
+			new Color(222,231,236),
+			90
+			)
+			);
+
+			$plot->setSpace(5, 5, NULL, NULL);
+
+			$plot->barShadow->setSize(4);
+			$plot->barShadow->setPosition(SHADOW_RIGHT_TOP);
+			$plot->barShadow->setColor(new Color(180, 180, 180, 10));
+			$plot->barShadow->smooth(TRUE);
+
+			$plot->xAxis->hideTicks();
+
+			$plot->xAxis->setLabelText($legends);
+			$plot->xAxis->label->setFont(new Tuffy(7));
+
+			$graph->add($plot);
+			$graph->draw($file);
+		}
+	}
+
 }
 
 ?>

@@ -25,7 +25,7 @@
 /**
    \file       htdocs/conf/conf.class.php
    \brief      Fichier de la classe de stockage de la config courante
-   \remarks	La config est stockée dans le fichier conf/conf.php
+   \remarks	La config est stockï¿½e dans le fichier conf/conf.php
    \version    $Revision$
 */
 
@@ -39,7 +39,7 @@
 class Conf
 {
     /** \public */
-	//! Objet des caractéristiques de connexions
+	//! Objet des caractï¿½ristiques de connexions
 	var $db;            
 	//! Charset for HTML output
 	var $character_set_client;	
@@ -71,14 +71,14 @@ class Conf
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
-	*      \param      $db			Handler d'accès base
-	*      \return     int         < 0 si erreur, >= 0 si succès
+	*      \param      $db			Handler d'accï¿½s base
+	*      \return     int         < 0 si erreur, >= 0 si succï¿½s
 	*/
 	function setValues($db)
 	{
 		dolibarr_syslog("functions.inc.php::setValues");
 
-		// Par defaut, à oui
+		// Par defaut, ï¿½ oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
 
 		/*
@@ -97,7 +97,7 @@ class Conf
 			{
 				$objp = $db->fetch_object($result);
 				$key=$objp->name;
-				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais après POST quand get_magic_quotes_gpc()==1)
+				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais aprï¿½s POST quand get_magic_quotes_gpc()==1)
 				if ($key)
 				{
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
@@ -110,12 +110,12 @@ class Conf
 
 
 		// On reprend parametres du fichier de config conf.php
-		// \TODO Mettre tous les param de conf DB dans une propriété de la classe
+		// \TODO Mettre tous les param de conf DB dans une propriï¿½tï¿½ de la classe
 
 
 		/*
 		 * Nettoyage variables des gestionnaires de menu
-		 * conf->menu_top et conf->menu_left sont définis dans main.inc.php (selon user)
+		 * conf->menu_top et conf->menu_left sont dï¿½finis dans main.inc.php (selon user)
 		 */
 		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="default.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="default.php";
@@ -141,7 +141,7 @@ class Conf
 
 		/*
 		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
-		 * conf->upload peut etre écrasée dans main.inc.php (selon user)
+		 * conf->upload peut etre ï¿½crasï¿½e dans main.inc.php (selon user)
 		 */
 		$this->upload = $this->global->MAIN_UPLOAD_DOC;
 
@@ -391,7 +391,7 @@ class Conf
 		$this->monnaie=$this->global->MAIN_MONNAIE;
 
 		// $this->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
-		$this->compta->mode = 'RECETTES-DEPENSES';  // Par défaut
+		$this->compta->mode = 'RECETTES-DEPENSES';  // Par dï¿½faut
 		if (defined('COMPTA_MODE') && COMPTA_MODE) {
 			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 		    $this->compta->mode = COMPTA_MODE;
@@ -400,10 +400,10 @@ class Conf
 		// $this->defaulttx
 		if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise')
 		{
-			$this->defaulttx='0';		// Taux par défaut des factures clients
+			$this->defaulttx='0';		// Taux par dï¿½faut des factures clients
 		}
 		else {
-			$this->defaulttx='';		// Pas de taux par défaut des factures clients, le premier sera pris
+			$this->defaulttx='';		// Pas de taux par dï¿½faut des factures clients, le premier sera pris
 		}
 
 		// $this->liste_limit = constante de taille maximale des listes
@@ -441,12 +441,11 @@ class Conf
 		}
 
 		// Defini MAIN_GRAPH_LIBRARY
-		if (!isset($this->global->MAIN_GRAPH_LIBRARY) || ! in_array($this->global->MAIN_GRAPH_LIBRARY, array('phplot','artichow')))
+		if (empty($this->global->MAIN_GRAPH_LIBRARY))
 		{
-			$this->global->MAIN_GRAPH_LIBRARY='phplot';
-			// $this->global->MAIN_GRAPH_LIBRARY = 'artichow';
+			$this->global->MAIN_GRAPH_LIBRARY = 'artichow';
 		}
-
+		
 		// Format de la date
 		// \todo Mettre les 4 formats dans fichier langue
 		$this->format_date_short="%d/%m/%Y";
@@ -463,9 +462,9 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		
-		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de désactiver la fonction TVA
-		 * (pour particuliers ou libéraux en franchise)
-		 * En attendant, valeur forcée à 1
+		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de dï¿½sactiver la fonction TVA
+		 * (pour particuliers ou libï¿½raux en franchise)
+		 * En attendant, valeur forcï¿½e ï¿½ 1
 		 */
 		$this->compta->tva=1;
 

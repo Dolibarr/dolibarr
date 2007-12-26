@@ -113,7 +113,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	 * Pour Pear:           PEAR_PATH
 	 * Pour PHP_WriteExcel: PHP_WRITEEXCEL_PATH
 	 * Pour MagpieRss:      MAGPIERSS_PATH
-	 * Pour PHPlot:         PHPLOT_PATH
 	 * Pour NuSOAP:         NUSOAP_PATH
 	 * Pour TCPDF:          TCPDF_PATH
 	 */
@@ -121,7 +120,6 @@ if (isset($_POST['action']) && $_POST['action'] == 'upgrade')
 	if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 	if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 	if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-	if (! defined('PHPLOT_PATH'))         { define('PHPLOT_PATH',        DOL_DOCUMENT_ROOT .'/includes/phplot/'); }
 	if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
 	// Les autres path
 	if (! defined('FPDF_FONTPATH'))       { define('FPDF_FONTPATH',      FPDF_PATH . 'font/'); }

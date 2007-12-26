@@ -31,7 +31,7 @@
    \version    $Revision$
 */
 
-define('DOL_VERSION','2.2');
+define('DOL_VERSION','2.4-dev');
 define('EURO',chr(128)); 
 
 // La fonction clearstatcache ne doit pas etre appelée de manière globale car ralenti.
@@ -220,17 +220,6 @@ if (! defined('FPDFI_PATH'))          { define('FPDFI_PATH',         DOL_DOCUMEN
 if (! defined('PEAR_PATH'))           { define('PEAR_PATH',          DOL_DOCUMENT_ROOT .'/includes/pear/'); }
 if (! defined('PHP_WRITEEXCEL_PATH')) { define('PHP_WRITEEXCEL_PATH',DOL_DOCUMENT_ROOT .'/includes/php_writeexcel/'); }
 if (! defined('MAGPIERSS_PATH'))      { define('MAGPIERSS_PATH',     DOL_DOCUMENT_ROOT .'/includes/magpierss/'); }
-if (! defined('PHPLOT_PATH'))
-{
-	if (versioncompare(versionphp(),array(4,2,0)) >= 0)
-	{
-		define('PHPLOT_PATH', DOL_DOCUMENT_ROOT .'/includes/phplot5/');
-	}
-	else
-	{
-		define('PHPLOT_PATH', DOL_DOCUMENT_ROOT .'/includes/phplot/');
-	}
-}
 if (! defined('JPGRAPH_PATH'))        { define('JPGRAPH_PATH',       DOL_DOCUMENT_ROOT .'/includes/jpgraph/'); }
 if (! defined('NUSOAP_PATH'))         { define('NUSOAP_PATH',        DOL_DOCUMENT_ROOT .'/includes/nusoap/lib/'); }
 // Les autres path
