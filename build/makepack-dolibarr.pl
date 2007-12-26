@@ -239,12 +239,9 @@ if ($nboftargetok) {
     		unlink $FILENAMEZIP.zip;
     		print "Compress $FILENAMETGZ into $FILENAMEZIP.zip...\n";
      		chdir("$BUILDROOT");
-            #print "cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*\n";
-            #$ret=`cd $BUILDROOTNT & 7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-    		print "7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
-			$ret= `7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-			#$ret=`7z a -r -tzip -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*`;
-			print $ret;
+    		$cmd= "7z a -r -tzip -xr\@\"$DESTI\/zip\/zip_exclude.txt\" -mx $BUILDROOT/$FILENAMEZIP.zip $FILENAMETGZ\\*.*";
+			$ret= `$cmd`;
+			#print $ret;
 			print "Move $FILENAMEZIP.zip to $DESTI\n";
     		rename("$BUILDROOT/$FILENAMEZIP.zip","$DESTI/$FILENAMEZIP.zip");
     		next;
