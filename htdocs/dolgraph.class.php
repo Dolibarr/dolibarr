@@ -21,7 +21,7 @@
 
 /**
    \file       htdocs/dolgraph.class.php
-   \brief      Fichier de la classe m�re de gestion des graph phplot
+   \brief      Fichier de la classe mere de gestion des graph phplot
    \version    $Revision$
    \remarks    Usage:
    $graph_data = array(array('labelA',yA),array('labelB',yB));
@@ -40,7 +40,7 @@
 
 /**
    \class      Graph
-   \brief      Classe m�re permettant la gestion des graph
+   \brief      Classe mere permettant la gestion des graph
 */
 
 class DolGraph
@@ -88,7 +88,7 @@ class DolGraph
 		}
 		if (! $isgdinstalled)
 		{
-			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour g�n�rer les graphiques.";
+			$this->error="Erreur: Le module GD pour php ne semble pas disponible. Il est requis pour generer les graphiques.";
 			return -1;
 		}
 
@@ -119,7 +119,7 @@ class DolGraph
 	}
 
 	/**
-	*    \brief      G�n�re le fichier graphique sur le disque
+	*    \brief      Genere le fichier graphique sur le disque
 	*    \param      file    Nom du fichier image
 	*/
 	function draw($file)
@@ -381,7 +381,7 @@ class DolGraph
 		// Define title
 		if (isset($this->title)) $graph->SetTitle($this->title);
 
-		// D�fini position du graphe (et legende) au sein de l'image
+		// Defini position du graphe (et legende) au sein de l'image
 		if (isset($this->Legend) && sizeof($this->Legend))
 		{
 			$graph->SetLegendPixels($this->width - $right_space+8,40,'');
@@ -709,7 +709,7 @@ class DolGraph
     $plot->mark->setFill(new LightBlue);
     $plot->mark->border->show();
 
-    // // $group->legend->add($plot, "Unit�s", 3);
+    // // $group->legend->add($plot, "Unites", 3);
     $group->add($plot);
     /*
      *
@@ -804,7 +804,7 @@ class DolGraph
     $plot->mark->setFill(new LightBlue);
     $plot->mark->border->show();
 
-    $group->legend->add($plot, "Unit�s", 3);
+    $group->legend->add($plot, "Unites", 3);
     $group->add($plot);
     /*
      *
