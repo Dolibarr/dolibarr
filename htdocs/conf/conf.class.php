@@ -25,7 +25,7 @@
 /**
    \file       htdocs/conf/conf.class.php
    \brief      Fichier de la classe de stockage de la config courante
-   \remarks	La config est stock�e dans le fichier conf/conf.php
+   \remarks	La config est stockee dans le fichier conf/conf.php
    \version    $Revision$
 */
 
@@ -39,7 +39,7 @@
 class Conf
 {
     /** \public */
-	//! Objet des caract�ristiques de connexions
+	//! Objet des caracteristiques de connexions
 	var $db;            
 	//! Charset for HTML output
 	var $character_set_client;	
@@ -71,14 +71,14 @@ class Conf
 
 	/**
 	*      \brief      Positionne toutes les variables de configuration
-	*      \param      $db			Handler d'acc�s base
-	*      \return     int         < 0 si erreur, >= 0 si succ�s
+	*      \param      $db			Handler d'acces base
+	*      \return     int         < 0 si erreur, >= 0 si succes
 	*/
 	function setValues($db)
 	{
 		dolibarr_syslog("functions.inc.php::setValues");
 
-		// Par defaut, � oui
+		// Par defaut, a oui
 		$this->global->PRODUIT_CONFIRM_DELETE_LINE=1;
 
 		/*
@@ -97,7 +97,7 @@ class Conf
 			{
 				$objp = $db->fetch_object($result);
 				$key=$objp->name;
-				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais apr�s POST quand get_magic_quotes_gpc()==1)
+				$value=$objp->value; // Pas de stripslashes (ne s'applique pas sur lecture en base mais apres POST quand get_magic_quotes_gpc()==1)
 				if ($key)
 				{
 					if (! defined("$key")) define ("$key", $value);	// In some cases, the constant might be already forced (Example: SYSLOG_FILE during install)
@@ -110,12 +110,12 @@ class Conf
 
 
 		// On reprend parametres du fichier de config conf.php
-		// \TODO Mettre tous les param de conf DB dans une propri�t� de la classe
+		// \TODO Mettre tous les param de conf DB dans une propriete de la classe
 
 
 		/*
 		 * Nettoyage variables des gestionnaires de menu
-		 * conf->menu_top et conf->menu_left sont d�finis dans main.inc.php (selon user)
+		 * conf->menu_top et conf->menu_left sont definis dans main.inc.php (selon user)
 		 */
 		if (! $this->global->MAIN_MENU_BARRETOP) $this->global->MAIN_MENU_BARRETOP="default.php";
 		if (! $this->global->MAIN_MENUFRONT_BARRETOP) $this->global->MAIN_MENUFRONT_BARRETOP="default.php";
@@ -123,6 +123,7 @@ class Conf
 		if (! $this->global->MAIN_MENUFRONT_BARRELEFT) $this->global->MAIN_MENUFRONT_BARRELEFT="default.php";
 
 		// Variable globales LDAP
+		if (empty($this->global->LDAP_FIELD_FULLNAME)) $this->global->LDAP_FIELD_FULLNAME='';
 		if (! isset($this->global->LDAP_KEY_USERS)) $this->global->LDAP_KEY_USERS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_GROUPS)) $this->global->LDAP_KEY_GROUPS=$this->global->LDAP_FIELD_FULLNAME;
 		if (! isset($this->global->LDAP_KEY_CONTACTS)) $this->global->LDAP_KEY_CONTACTS=$this->global->LDAP_FIELD_FULLNAME;
@@ -141,7 +142,7 @@ class Conf
 
 		/*
 		 * Autorisation globale d'uploader (necessaire pour desactiver dans la demo)
-		 * conf->upload peut etre �cras�e dans main.inc.php (selon user)
+		 * conf->upload peut etre ecrasee dans main.inc.php (selon user)
 		 */
 		$this->upload = $this->global->MAIN_UPLOAD_DOC;
 
@@ -346,7 +347,7 @@ class Conf
 		 */
 
 		// Cryped password in database
-		$this->password_encrypted=($this->global->DATABASE_PWD_ENCRYPTED ? 1 : 0);
+		$this->password_encrypted=(! empty($this->global->DATABASE_PWD_ENCRYPTED) ? 1 : 0);
 		
 		// System tools
 		if (! $this->global->SYSTEMTOOLS_MYSQLDUMP) $this->global->SYSTEMTOOLS_MYSQLDUMP="mysqldump";
@@ -391,7 +392,7 @@ class Conf
 		$this->monnaie=$this->global->MAIN_MONNAIE;
 
 		// $this->compta->mode = Option du module Compta: Defini le mode de calcul des etats comptables (CA,...)
-		$this->compta->mode = 'RECETTES-DEPENSES';  // Par d�faut
+		$this->compta->mode = 'RECETTES-DEPENSES';  // Par defaut
 		if (defined('COMPTA_MODE') && COMPTA_MODE) {
 			// Peut etre 'RECETTES-DEPENSES' ou 'CREANCES-DETTES'
 		    $this->compta->mode = COMPTA_MODE;
@@ -400,10 +401,10 @@ class Conf
 		// $this->defaulttx
 		if (defined('FACTURE_TVAOPTION') && FACTURE_TVAOPTION == 'franchise')
 		{
-			$this->defaulttx='0';		// Taux par d�faut des factures clients
+			$this->defaulttx='0';		// Taux par defaut des factures clients
 		}
 		else {
-			$this->defaulttx='';		// Pas de taux par d�faut des factures clients, le premier sera pris
+			$this->defaulttx='';		// Pas de taux par defaut des factures clients, le premier sera pris
 		}
 
 		// $this->liste_limit = constante de taille maximale des listes
@@ -462,9 +463,9 @@ class Conf
 		if (! isset($this->global->MAIN_MAX_DECIMALS_SHOWN)) $this->global->MAIN_MAX_DECIMALS_SHOWN=8;
 
 		
-		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de d�sactiver la fonction TVA
-		 * (pour particuliers ou lib�raux en franchise)
-		 * En attendant, valeur forc�e � 1
+		/* \todo Ajouter une option Gestion de la TVA dans le module compta qui permet de desactiver la fonction TVA
+		 * (pour particuliers ou liberaux en franchise)
+		 * En attendant, valeur forcee a 1
 		 */
 		$this->compta->tva=1;
 
@@ -479,7 +480,7 @@ class Conf
 		$this->contrat->services->expires->warning_delay=$this->global->MAIN_DELAY_RUNNING_SERVICES*24*60*60;
 		$this->adherent->cotisation->warning_delay=$this->global->MAIN_DELAY_MEMBERS*24*60*60;
 		$this->bank->rappro->warning_delay=$this->global->MAIN_DELAY_TRANSACTIONS_TO_CONCILIATE*24*60*60;
-		$this->bank->cheque->warning_delay=$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT*24*60*60;
+		$this->bank->cheque->warning_delay=(isset($this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT)?$this->global->MAIN_DELAY_CHEQUES_TO_DEPOSIT:0)*24*60*60;
 	}
 
 }
