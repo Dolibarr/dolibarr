@@ -18,7 +18,6 @@
  * Foundation, Inc., 59 Temple Place - Suite 330, Boston, MA 02111-1307, USA.
  *
  * $Id$
- * $Source$
  */
 
 /**
@@ -185,10 +184,10 @@ if ($_GET["id"] > 0)
 			if ($_GET['action'] == 'editdate_livraison')
 			{
 				print '<form name="setdate_livraison" action="'.$_SERVER["PHP_SELF"].'?id='.$commande->id.'" method="post">';
-        print '<input type="hidden" name="action" value="setdate_livraison">';
-        $html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
-        print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
-        print '</form>';
+				print '<input type="hidden" name="action" value="setdate_livraison">';
+				$html->select_date($commande->date_livraison,'liv_','','','',"setdate_livraison");
+				print '<input type="submit" class="button" value="'.$langs->trans('Modify').'">';
+				print '</form>';
 			}
 			else
 			{
